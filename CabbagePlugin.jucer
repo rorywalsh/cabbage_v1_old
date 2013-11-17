@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="cxqeYl" name="CabbagePlugin" projectType="audioplug" version="1.0.0"
+              buildVST="1" buildAU="1" pluginName="CabbagePlugin" pluginDesc="CabbagePlugin"
+              pluginManufacturer="yourcompany" pluginManufacturerCode="Manu"
+              pluginCode="Plug" pluginChannelConfigs="{1, 1}, {2, 2}" pluginIsSynth="0"
+              pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0"
+              pluginTailLength="0" pluginEditorRequiresKeys="0" pluginAUExportPrefix="CabbagePluginAU"
+              pluginAUViewClass="CabbagePluginAU_V1" pluginRTASCategory=""
+              bundleIdentifier="com.yourcompany.CabbagePlugin" aaxIdentifier="com.yourcompany.CabbagePlugin"
+              jucerVersion="3.0.0">
+  <EXPORTFORMATS>
+    <VS2010 targetFolder="Builds/VisualStudio2010" libraryType="1" juceFolder="..\juce\modules"
+            vstFolder="c:\SDKs\vstsdk2.4">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="CabbagePlugin"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="2" targetName="CabbagePlugin"/>
+      </CONFIGURATIONS>
+    </VS2010>
+  </EXPORTFORMATS>
+  <MAINGROUP id="YXCtWC" name="CabbagePlugin">
+    <GROUP id="{7FFA1C7D-B24F-93AF-2A95-1051CD63FEC5}" name="Source">
+      <GROUP id="{E5124214-1FC1-5E34-8A6C-49AC7642E26D}" name="Plugin">
+        <FILE id="MASIOT" name="CabbagePluginEditor.cpp" compile="1" resource="0"
+              file="Source/Plugin/CabbagePluginEditor.cpp"/>
+        <FILE id="ZApGed" name="CabbagePluginEditor.h" compile="0" resource="0"
+              file="Source/Plugin/CabbagePluginEditor.h"/>
+        <FILE id="inekAF" name="CabbagePluginProcessor.cpp" compile="1" resource="0"
+              file="Source/Plugin/CabbagePluginProcessor.cpp"/>
+        <FILE id="sQ6osx" name="CabbagePluginProcessor.h" compile="0" resource="0"
+              file="Source/Plugin/CabbagePluginProcessor.h"/>
+      </GROUP>
+      <FILE id="c7xwFE" name="BinaryData.cpp" compile="1" resource="0" file="Source/BinaryData.cpp"/>
+      <FILE id="YWzdP1" name="BinaryData.h" compile="0" resource="0" file="Source/BinaryData.h"/>
+      <FILE id="ufcE6H" name="CabbageCustomWidgets.h" compile="0" resource="0"
+            file="Source/CabbageCustomWidgets.h"/>
+      <FILE id="NBOKku" name="CabbageGUIClass.cpp" compile="1" resource="0"
+            file="Source/CabbageGUIClass.cpp"/>
+      <FILE id="sYW3Aa" name="CabbageGUIClass.h" compile="0" resource="0"
+            file="Source/CabbageGUIClass.h"/>
+      <FILE id="fPtvLJ" name="CabbageLookAndFeel.cpp" compile="1" resource="0"
+            file="Source/CabbageLookAndFeel.cpp"/>
+      <FILE id="E0hHPB" name="CabbageLookAndFeel.h" compile="0" resource="0"
+            file="Source/CabbageLookAndFeel.h"/>
+      <FILE id="VUboQq" name="CabbageMainPanel.cpp" compile="1" resource="0"
+            file="Source/CabbageMainPanel.cpp"/>
+      <FILE id="nWiQsG" name="CabbageMainPanel.h" compile="0" resource="0"
+            file="Source/CabbageMainPanel.h"/>
+      <FILE id="A44EYI" name="CabbageTable.cpp" compile="1" resource="0"
+            file="Source/CabbageTable.cpp"/>
+      <FILE id="SkMQ5p" name="CabbageTable.h" compile="0" resource="0" file="Source/CabbageTable.h"/>
+      <FILE id="VO0xgF" name="CabbageUtils.h" compile="0" resource="0" file="Source/CabbageUtils.h"/>
+      <FILE id="u0OmFZ" name="ComponentLayoutEditor.cpp" compile="1" resource="0"
+            file="Source/ComponentLayoutEditor.cpp"/>
+      <FILE id="Yqf1l8" name="ComponentLayoutEditor.h" compile="0" resource="0"
+            file="Source/ComponentLayoutEditor.h"/>
+      <FILE id="gHuyzQ" name="JucePluginCharacteristics.h" compile="0" resource="0"
+            file="Source/JucePluginCharacteristics.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_gui_audio" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_QUICKTIME="disabled"/>
+</JUCERPROJECT>

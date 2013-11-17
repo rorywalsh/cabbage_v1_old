@@ -1,0 +1,50 @@
+Troubleshooting, FAQs, tips and tricks 
+--------------------------------------
+- 'Why doesn't my VST host see my Cabbage plugins?'
+The most likely reason is that you have not added the directory containing your plugins to your host's preferences. Most hosts will allow you to choose the folders that contain your plugins. If you don't set the Cabbage plugin directory then the host has no idea where your Cabbage plugins are located. 
+
+[icon="images/smallLogo.PNG"]
+NOTE: On Linux users will most likely have to set the VST_PATH. They can do this using export, for example, 
+------------------
+export VST_PATH=/home/rory/VSTs
+-------------------------
+
+- 'Why doesn't my Cabbage plugin run?' 
+The most likely reason a plugin will not run is because there are errors in the Csound code. Cabbage plugins will load regardless of errors in the Cabbage code, but errors in the Csound code will stop Csound from compiling successfully and prevent the plugin from running. Always make sure that the code is error free before exporting.
+
+- 'Mixing effects and instruments?'
+Adding an effect processor to a plugin instrument might seem like a good idea. For instance you might add some reverb to the output of your FM synth to create some nice presence. In general however it is best to keep them separate. Plugin instruments demand a whole lot more CPU than their effects siblings. Performance will be a lot smoother if you split the two processes up and simply send the output of your synthesiser into an instance of a Cabbage reverb effect plugin. 
+
+- 'What's up? My plugin makes a load of noise?'
+If you have nchnls set to 1 thre will be noise sent to the second, or right channel. Make sure taht nchnls is ALWAYS set to 2!
+
+- 'I can't tell whether my sliders are controlling anything?!'
+There will be times when moving sliders or other interactive controls just doesn't do what you might expect. The best way to de-slug Cabbage instruments is to use the 'printk2' opcode in Csound. For instance if a slider is not behaving as expected make sure that Csound is receiving data from the slider on the correct channel. Using the code below should print the values of the slider to the Cabbage editor output console each time you move it. If not, then you most likely have the wrong channel name set.  
+
+-------------------
+(...)
+k1 chnget "slider1"
+printk2 k1
+(...)
+-------------------
+
+[icon="images/smallLogo.PNG"]
+If you are not using the integrated Cabbage editor you can just place a Csoundoutput contorl on hyour instrument. It will display all Csound messages.
+
+- 'What gives? I've checked my channels and they are consistent, yet moving my sliders does nothing?'
+We have come across some cases of this happening. In all cases it was due to the fact that chosen channel name contained non-standard ascii characters, to ensure you don't have problems, just use a combination of numbers and letters for channel names. Avoid using any kind of mathematical operators or fancy symbols and everything should be Ok. 
+
+- 'Can I use nchnls to determine the number of output channels in my plugin?'
+Currently all Cabbage plugins are stereo by default. Fure releases will provide multichannel plugin support.
+
+- 'Can I use Csound MACROs in the <Cabbage> section of my csd file?'
+I'm afraid not. The Cabbage section of your csd file is parsed by Cabbage's own parser therefore it will not understand any Csound syntax whatsoever. 
+
+- 'I've built some amazing instruments, how do I share them with the world?!'
+Register on the message boards and post them to the Cabbage Recipes section!
+
+- 'Why does my instrument produce clicks/drop-outs?'
+There are several reason why one's instrument might produce clicks. The first thing to do is make sure you're using some kind of amplitude envelope. Next is to make sure that '-m0d' is set in the CsOptions. This will prevent Csound from printing messages to the console which in some cases can slow things down. The next thing to do is the change the buffer size in the Cabbage audio settings. Larger buffer sizes will result in less clicks but longer latency. You will need to experiment with the options to see what suits best. 
+
+- Why doesn't ctrl7 does not work?
+The ctrl7 opcode will not work as Cabbage is not currently set up to pass CC messages to Csound. If you wish to use the ctrl7 opcodes you can turn off Cabbage IO. This will allow Csound to run the instrument just like it would from the command line. In this mode Cabbage acts only as a GUI frontend. Note, this will only works for standalone instruments, plugin should be controlled via host automation, or MIDI-mapping.  

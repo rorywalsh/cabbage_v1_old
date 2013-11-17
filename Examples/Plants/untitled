@@ -1,0 +1,12 @@
+"groupbox bounds(10, 10, 420, 300), colour(160, 160, 160, 20), fontcolour("yellow"), preset("eq"), text("10 Sliders"), plant("filters"){"
+"vslider bounds(.0, .1, .1, .8), text("1"), channel("slid1"), range(0, 1, 0.1), textbox(1), tracker(255, 0, 0, 10), colour("yellow")   "
+"vslider bounds(.1, .1, .1, .8), text("2"), channel("slid2"), range(0, 1, 0.2), textbox(1), tracker(255, 0, 0, 40), colour("yellow")   "
+"vslider bounds(.2, .1, .1, .8), text("3"), channel("slid3"), range(0, 1, 0.3), textbox(1), tracker(255, 0, 0, 60), colour("yellow")   "
+"vslider bounds(.3, .1, .1, .8), text("4"), channel("slid4"), range(0, 1, 0.4), textbox(1), tracker(255, 0, 0, 100), colour("yellow")  "
+"vslider bounds(.4, .1, .1, .8), text("5"), channel("slid5"), range(0, 1, 0.4), textbox(1), tracker(255, 0, 0, 130), colour("yellow")  "
+"vslider bounds(.5, .1, .1, .8), text("6"), channel("slid6"), range(0, 1, 0.3), textbox(1), tracker(255, 0, 0, 150), colour("yellow")  "
+"vslider bounds(.6, .1, .1, .8), text("7"), channel("slid7"), range(0, 1, 0.2), textbox(1), tracker(255, 0, 0, 190), colour("yellow")  "
+"vslider bounds(.7, .1, .1, .8), text("8"), channel("slid8"), range(0, 1, 0.1), textbox(1), tracker(255, 0, 0, 210), colour("yellow")  "
+"vslider bounds(.8, .1, .1, .8), text("9"), channel("slid9"), range(0, 1, 0), textbox(1), tracker(255, 0, 0, 240), colour("yellow")    "
+"vslider bounds(.9, .1, .1, .8), text("10"), channel("slid10"), range(0, 1, 0), textbox(1), tracker(255, 0, 0, 255), colour("yellow")  "
+"}

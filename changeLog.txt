@@ -1,0 +1,59 @@
+Cabbage 0.04
+
+;no brackets can be used in strings
+;destructive editing wtf?
+
+New features:
+- Added support for building MIDI plugins. See arpeggiator instrument in the examples. 
+- Added a populate identifier for use with Comboboxes. Users can now populate a combo box with a series of file from disk. (A current limitation is that this only populates at run time)
+- Users can now edit GUIs using the mouse. 
+- Added option for users to save their custom plants by right-clicking them in GUI edit mode, plants can be inserted through the context-menu
+- Clicking on a GUI control will highlight the corresponding text in the editor
+- Added an 'Audio Enabled' menu command to Host
+- Added new XYPad, improvements over the last one include:
+	- 2 modes of automation, free, and path-based
+	- Automation continues to work if the plugin window is closed
+	- Various aspects of the XYPad can have their colours customised.  
+- Users can now update GUIs without recompiling Csound
+- New Editor menu hotkeys: 
+	Ctrl+u: updates an instrument's GUI, but will not recompile your .csd file
+	Ctrl++: Increase font size
+	Ctrl+-: Decrease font size 
+- Added Host menu hotkeys:
+	Ctrl+b: manually update instrument(if working with external editor)
+	Ctrl+o: open an instrument
+	Ctrl+u: updates an instrument's GUI, but will not recompile your .csd file
+	Ctrl+m: toggle audio
+- 'Always on Top' state is now saved to preferences and remembered across sessions
+- Added new colour scheme to Editor
+- Added a table widget. This is a viewer for function tables. Channels messages get send from Csound to Cabbage to trigger the updating of the tables. Users can also superimpose one table on top of another and use its alpha blend identifier to change the table transparency. While interaction with the tables is not yet possible it is however possible to modify the tables in real time using Csound. See the example .csds for more information 
+- Added a new feature to the editor so users can now select a colour for different colour identifiers using a GUI colour selector
+- Added an 'auto-update' feature so that Cabbage will automatically update if the current file has been saved remotely
+Added standlone feature
+============================== still working on ===========================
+- fix plugin names on OSX
+- fix infobutton poblem..
+- Added destructive/non-destructive editing modes. 
+	Destructive editing will causes your file to be overwritten each time you change the GUI.
+	Non-destructive will make changes to temporary files so you're original is preserved. 
+	Destructive editing mode means users can still design GUIs with the new GUI editor, even if 
+	they use an external editor. Each change to the to GUI should be updated in their external editor. 
+- support now added for a multichannel plugin export with 8ins and 8outs. 
+- plants file that users can write too. Automaitcally populates the plant context-menu
+============================================================================
+
+Modifications/Fixes
+- made the entire thing thread safe, channel messages are only sent between cals to performKsmps()
+============================== still working on ===========================
+- fixed a bug in preset mode that showing up in instruments with only one widget 
+===========================================================================
+- fixed problem with presets overriding initialisation values
+- changed look and feel for tabbed component
+- fixed working directory issue; the directory in which the current .csd file is in is now the current working directory. Any files that Csound writes, which don't have an absolute paths, will be saved to that directory. 
+- fixed initialisation for sliders
+- fixed problem with snapshots not being taking when using Csound to control widgets
+- fixed tracker fill issue, a 0 was not turning the fill off, it will now 
+- added old plant coordinate system back to the mix. Both systems can be used now. Coordinates less that
+  1 will be proportional values, anything above 1 will be absolute values
+
+

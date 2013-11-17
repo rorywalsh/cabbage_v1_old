@@ -1,4 +1,3 @@
-cabbage
-=======
+Framework for developing virtual instruments using the Csound audio synthesis programming language
 
-      351 commits     2 branches     0 releases     2 contributors  cabbage /  Added possible fix for relative path issue.. latest commit 3e2b954dbc rory authored a month ago 	Builds 	another csound6 update.. 	5 months ago 	Docs 	sorted a few bugs Iain reported.. 	9 months ago 	Examples 	updating random samples 	10 months ago 	JuceLibraryCode 	fixed multichannel issue on Linux.. 	9 months ago 	Source 	Added possible fix for relative path issue.. 	a month ago 	Cabbage.jucer 	updated Introjucer project for OSX 	10 months ago 	CabbagePlugin.jucer 	Cleaning source 	a year ago 	README.txt 	Update README.txt 	6 months ago README.txt  Cabbage is a software for prototyping and developing audio plugins with the Csound audio synthesis language. It provides Csound programmers with a simple albeit powerful toolkit for the development of cross-platform audio software. Cabbage is released under the GPL license.
+http://www.thecabbagefoundation.org

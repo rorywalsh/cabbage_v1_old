@@ -336,11 +336,12 @@ xyAutomation.clear();
 }
 
 int CabbagePluginAudioProcessor::performEntireScore(){
-
+#ifndef Cabbage_No_Csound
 	if(!isNativeThreadRunning){
 	csoundPerfThread->Play();
 	isNativeThreadRunning = true;
 	}
+#endif
 	return 1;
 }
 
@@ -356,6 +357,7 @@ void CabbagePluginAudioProcessor::YieldCallback(void* data){
 //============================================================================
 void CabbagePluginAudioProcessor::reCompileCsound(File file)
 {
+#ifndef Cabbage_No_Csound
 this->suspendProcessing(true);
 soundFileIndex = 0;
 midiOutputBuffer.clear();
@@ -415,6 +417,7 @@ else{
     csoundStatus=false;
 	}
 getCallbackLock().exit();
+#endif
 }
 //===========================================================
 // PARSE CSD FILE AND FILL GUI/GUI-LAYOUT VECTORs.
@@ -689,10 +692,12 @@ bool multiLine = false;
 		for(int i=0;i<guiCtrls.size();i++)
 		{
 //		Logger::writeToLog(guiCtrls.getReference(i).getStringProp("channel")+": "+String(guiCtrls[i].getNumProp("value")));
+#ifndef Cabbage_No_Csound
 		csound->SetChannel( guiCtrls.getReference(i).getStringProp("channel").toUTF8(), guiCtrls[i].getNumProp("value"));
 		//float min = guiCtrls.getReference(i).getNumProp("min");
 		//float range = guiCtrls.getReference(i).getNumProp("range");
 		//setParameter(i, (guiCtrls.getReference(i).getNumProp("value")+min)/range);
+#endif
 		}
 
 		#ifdef Cabbage_Build_Standalone
@@ -876,7 +881,10 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 const Array<double, CriticalSection> CabbagePluginAudioProcessor::getTable(int tableNum){
 		Array<double, CriticalSection> points;
 		MYFLT* temp;
-		int tableSize = csound->GetTable(temp, tableNum);
+		int tableSize=0;
+#ifndef Cabbage_No_Csound
+		tableSize = csound->GetTable(temp, tableNum);
+#endif
 		if(tableSize>0)
 		points = Array<double, CriticalSection>(temp, tableSize);
 		return points;        
@@ -954,6 +962,7 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
 //the option of setting how fast this update...  
 void CabbagePluginAudioProcessor::updateCabbageControls()
 {
+#ifndef Cabbage_No_Csound
 String chanName;
 MYFLT* val=0;
 //update all control widgets
@@ -977,15 +986,15 @@ for(int index=0;index<getGUILayoutCtrlsSize();index++)
 			}
 		}	
 	}
+#endif
 }
 
 //==============================================================================
 //this method only gets called when it's safe to do so, i.e., between calls to performKsmps()
 //this method sends any channel messages that are in the queue to from Cabbage to Csound
-#ifndef Cabbage_No_Csound
-
 void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
 {
+#ifndef Cabbage_No_Csound
 for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 		{
 		if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="directoryList"){
@@ -1011,6 +1020,7 @@ if(isAutomator){
 	//Logger::writeToLog("update automation:"+String(automationAmp));
 	
 }
+#endif
 }
 
 //==============================================================================
@@ -1018,6 +1028,7 @@ if(isAutomator){
 //fills Csound channels with sampler from our soundfiler controls..
 void CabbagePluginAudioProcessor::addSoundfilerSource(String filename, StringArray channels)
 {
+#ifndef Cabbage_No_Csound
 	audioSourcesArray.add(new CabbageAudioSource(filename, csound->GetKsmps())); 
 	Logger::writeToLog("Number of soundfilers:"+String(audioSourcesArray.size()));
 	audioSourcesArray[audioSourcesArray.size()-1]->channels = channels;
@@ -1030,12 +1041,14 @@ void CabbagePluginAudioProcessor::addSoundfilerSource(String filename, StringArr
 		audioSourcesArray[audioSourcesArray.size()-1]->isValidFile = false;
 		audioSourcesArray[audioSourcesArray.size()-1]->sampleRate = 44100;
 	}
+#endif
 }
 
 
 //gets sample data from any soundfiler controls and passes it to Csound
 void CabbagePluginAudioProcessor::sendAudioToCsoundFromSoundFilers(int numSamples)
 {
+#ifndef Cabbage_No_Csound
 if(this->isSuspended()==false){
 for(int i=0;i<audioSourcesArray.size();i++){
 	AudioSampleBuffer output (2, numSamples);
@@ -1063,6 +1076,7 @@ for(int i=0;i<audioSourcesArray.size();i++){
 		}
 	}
 }
+#endif
 }	
 
 //========================================================================
@@ -1228,7 +1242,6 @@ for(int y=0;y<xyAutomation.size();y++){
 	}
 #endif
 }
-#endif
 
 //==============================================================================
 void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)

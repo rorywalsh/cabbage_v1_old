@@ -237,6 +237,7 @@ if(table)
 //==================================================================
 void CabbagePluginAudioProcessorEditor::insertScoreStatementText(Table* table, bool overwrite)
 {
+#ifndef Cabbage_No_Csound
 StringArray csdArray;
 StringArray brokenPlant;
 csdArray.addLines(getFilter()->getCsoundInputFileText());
@@ -282,7 +283,7 @@ else{
 	table->currentfStatement = "";
 	getFilter()->sendActionMessage("Score Updated");
 
-
+#endif
 }
 //==================================================================
 //create function table data from our breakpoint envelopes
@@ -2642,11 +2643,10 @@ void CabbagePluginAudioProcessorEditor::InsertPVSViewer(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertTable(CabbageGUIClass &cAttr)
 {
-	#ifndef Cabbage_No_Csound
-	int tableSize=0;
-	int tableNumber = cAttr.getIntArrayPropValue("tablenumber", 0);
-	Array<int> tableSizes;
-	
+int tableSize=0;
+int tableNumber = cAttr.getIntArrayPropValue("tablenumber", 0);
+Array<int> tableSizes;
+#ifndef Cabbage_No_Csound
 	//fill array with points from table, if table is valid
 	if(getFilter()->getCompileStatus()==0 && getFilter()->getCsound())
 		{

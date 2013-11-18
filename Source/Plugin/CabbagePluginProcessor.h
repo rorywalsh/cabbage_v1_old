@@ -83,11 +83,11 @@ protected:
 		//ScopedPointer<FileLogger> fileLogger;
 		File logFile;	
 		bool isAutomator;	
-		
+		bool isNativeThreadRunning;		
 
         //============== Csound related variables/methods ==============================
 #ifndef Cabbage_No_Csound
-		bool isNativeThreadRunning;
+
 		ScopedPointer<CsoundPerformanceThread> csoundPerfThread;
         PVSDATEXT* dataout;
         MYFLT cs_scale;
@@ -97,11 +97,7 @@ protected:
 		int csdKsmps;
 		MYFLT *soundFilerTempVector;
         int CSCompResult;                       //result of Csound performKsmps
-#ifdef CSOUND_5
-        CsoundChannelListEntry* csoundChanList;         // list of all available channels...
-#else
 		controlChannelInfo_s* csoundChanList;
-#endif
         int numCsoundChannels;          //number of Csound channels
         static void messageCallback(CSOUND *csound, int attr, const char *fmt, va_list args);  //message callback function
         int pos;
@@ -110,11 +106,29 @@ protected:
         static int OpenMidiOutputDevice(CSOUND * csnd, void **userData, const char *devName);
         static int ReadMidiData(CSOUND *csound, void *userData, unsigned char *mbuf, int nbytes);
         static int WriteMidiData(CSOUND *csound, void *userData, const unsigned char *mbuf, int nbytes);
+
+		int getNumberCsoundOutChannels(){
+			return csound->GetNchnls();
+		}
+
+		int getNumberCsoundInChannels(){
+			//return csound->GetInNchnls();
+		}
+
+		int getCsoundSamplingRate(){
+			return csound->GetSr();
+		}
+		
+		int getCsoundKsmpsSize(){
+			return csound->GetKsmps();
+		}
+#endif
 		static void YieldCallback(void* data);
 		void updateCabbageControls();
 		void sendOutgoingMessagesToCsound();
 		void sendAudioToCsoundFromSoundFilers(int numSamples);
-#endif
+
+
         StringArray debugInfo;
 		//basic classes that hold all information regarding GUI objects
 		//guiLayoutControls are not used to send data to Csound, and don't show
@@ -128,9 +142,7 @@ protected:
 		String currentLineText;
 		bool editorReOpened;
 		OwnedArray<XYPadAutomation, CriticalSection> xyAutomation;
-#ifdef CSOUND6
 		ScopedPointer<CSOUND_PARAMS> csoundParams;
-#endif
 		void updateGUIControlsKsmps(int speed);
 public:
 
@@ -156,22 +168,6 @@ public:
 
 	double getTailLengthSeconds(void) const {
 	return 1;
-	}
-
-	int getNumberCsoundOutChannels(){
-		return csound->GetNchnls();
-	}
-
-	int getNumberCsoundInChannels(){
-		//return csound->GetInNchnls();
-	}
-
-	int getCsoundSamplingRate(){
-		return csound->GetSr();
-	}
-	
-	int getCsoundKsmpsSize(){
-		return csound->GetKsmps();
 	}
 	
 	int performEntireScore();
@@ -361,6 +357,8 @@ public:
                 return currentLineText;
         }
 
+		void removeGUIComponent(int index, String type);
+
 #ifndef Cabbage_No_Csound
         Csound* getCsound(){
                 return csound;
@@ -369,16 +367,6 @@ public:
         CSOUND* getCsoundStruct(){
                 return csound->GetCsound();
         }
-
-		void removeGUIComponent(int index, String type);
-		
-		void addLayoutCtrl(CabbageGUIClass cAttr){
-		guiLayoutCtrls.add(cAttr);	
-		}
-		
-		void addGUICtrl(CabbageGUIClass cAttr){
-		guiCtrls.add(cAttr);	
-		}
 
         MYFLT getCSScale(){
                 return cs_scale;
@@ -389,6 +377,14 @@ public:
         }
 
 #endif
+		void addLayoutCtrl(CabbageGUIClass cAttr){
+		guiLayoutCtrls.add(cAttr);	
+		}
+		
+		void addGUICtrl(CabbageGUIClass cAttr){
+		guiCtrls.add(cAttr);	
+		}
+		
 
         bool isGuiEnabled(){
                 return guiON;		

@@ -1,0 +1,21 @@
+#!/bin/bash  
+
+if [ $1 = "plugins" ]; then
+echo "Building Cabbage plugin libraries! "
+make -f MakefilePluginEffect clean 
+make -f MakefilePluginEffect
+make -f MakefilePluginSynth clean 
+make -f MakefilePluginSynth 
+elif [ $1 = "standalone" ]; then
+echo "Building Cabbage standalone! "
+make -f MakefileStandalone clean 
+make -f MakefileStandalone 
+else
+echo "Building Cabbage! "
+make -f MakefileStandalone clean 
+make -f MakefileStandalone 
+make -f MakefilePluginEffect clean 
+make -f MakefilePluginEffect 
+make -f MakefilePluginSynth clean 
+make -f MakefilePluginSynth 
+fi

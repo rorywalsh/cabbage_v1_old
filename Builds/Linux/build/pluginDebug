@@ -1,0 +1,5 @@
+echo "setting VST_PATH to current directory and launching"
+echo "CodeLite from the same irectory to allowing debugging"
+echo "of plugins with GDB" 
+export VST_PATH=$(pwd)
+codelite

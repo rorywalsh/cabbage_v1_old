@@ -344,7 +344,7 @@ public:
         inline int getCurrentLine(){
                 return currentLine;
         }
-
+  
         inline void setCurrentLine(int line){
                 currentLine = line;
         }

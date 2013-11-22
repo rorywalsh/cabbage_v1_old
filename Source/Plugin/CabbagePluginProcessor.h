@@ -4,7 +4,7 @@
   Cabbage is free software; you can redistribute it
   and/or modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.   
+  version 2.1 of the License, or (at your option) any later version.
 
   Cabbage is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -62,7 +62,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 																		 public ChangeListener
 {
     //==============================================================================
-protected: 
+protected:
        File csdFile;
 		int masterCounter;
         String filename;
@@ -81,13 +81,13 @@ protected:
 		AudioSourceChannelInfo soundfilerChannelData;
 		int soundFileIndex;
 		//ScopedPointer<FileLogger> fileLogger;
-		File logFile;	
-		bool isAutomator;	
-		bool isNativeThreadRunning;		
+		File logFile;
+		bool isAutomator;
+		bool isNativeThreadRunning;
 
         //============== Csound related variables/methods ==============================
 #ifndef Cabbage_No_Csound
-
+        ScopedPointer<CSOUND_PARAMS> csoundParams;
 		ScopedPointer<CsoundPerformanceThread> csoundPerfThread;
         PVSDATEXT* dataout;
         MYFLT cs_scale;
@@ -118,7 +118,7 @@ protected:
 		int getCsoundSamplingRate(){
 			return csound->GetSr();
 		}
-		
+
 		int getCsoundKsmpsSize(){
 			return csound->GetKsmps();
 		}
@@ -132,7 +132,7 @@ protected:
         StringArray debugInfo;
 		//basic classes that hold all information regarding GUI objects
 		//guiLayoutControls are not used to send data to Csound, and don't show
-		//as parameters in a host, guiCtrls do show are parameters, and can send 
+		//as parameters in a host, guiCtrls do show are parameters, and can send
 		//channel messages to Csound.
         Array<CabbageGUIClass, CriticalSection> guiLayoutCtrls;
         Array<CabbageGUIClass, CriticalSection> guiCtrls;
@@ -142,7 +142,6 @@ protected:
 		String currentLineText;
 		bool editorReOpened;
 		OwnedArray<XYPadAutomation, CriticalSection> xyAutomation;
-		ScopedPointer<CSOUND_PARAMS> csoundParams;
 		void updateGUIControlsKsmps(int speed);
 public:
 
@@ -157,7 +156,7 @@ public:
 
 
 	CsoundCodeEditor* codeEditor;
-	
+
 	bool haveXYAutosBeenCreated(){
 		return xyAutosCreated;
 	}
@@ -169,7 +168,7 @@ public:
 	double getTailLengthSeconds(void) const {
 	return 1;
 	}
-	
+
 	int performEntireScore();
 	void reCompileCsound(File file);
 	void setupNativePluginEditor();
@@ -216,7 +215,7 @@ public:
 	void createGUI(String source, bool refresh);
 	MidiKeyboardState keyboardState;
 	//midiBuffers
-	MidiBuffer midiBuffer;   
+	MidiBuffer midiBuffer;
 	MidiBuffer midiOutputBuffer;
 	MidiBuffer ccBuffer;
 	bool showMIDI;
@@ -232,29 +231,44 @@ public:
 	int pluginType;
 	float automationAmp;
 	int automationParamID;
-	
-			
+
+
 	//==============================================================================
         File getCsoundInputFile(){
                 return csdFile;
         }
 
         inline String getCsoundInputFileText(){
+<<<<<<< HEAD
             if(codeEditor)    
 			return codeEditor->getAllText();
 			else
 			return csdFile.loadFileAsString();
+=======
+        String ret="";
+        #ifdef Cabbage_Build_Standalone
+		if(codeEditor)
+                ret = codeEditor->getAllText();
+			else
+				ret = csdFile.loadFileAsString();
+        #endif
+        return ret;
+>>>>>>> 334fdf7e870d47503f50abfe25ead1cad12a181d
         }
 
         void updateCsoundFile(String text){
 			//csdFile.replaceWithText(text);
 			codeEditor->setAllText(text);
         }
+<<<<<<< HEAD
         
 		void highlightLine(String text){
 		codeEditor->highlightLine(text);
 		}		
 		
+=======
+
+>>>>>>> 334fdf7e870d47503f50abfe25ead1cad12a181d
         String getDebugMessage(){
         return debugMessage;
         }
@@ -271,7 +285,7 @@ public:
                 debugMessageArray.clear();
         }
 
-        int getCompileStatus(){ 
+        int getCompileStatus(){
                 return csCompileResult;
         }
 
@@ -280,7 +294,7 @@ public:
         }
 
         void setPluginName(String name){
-        pluginName = name;      
+        pluginName = name;
         }
 
         String getPluginName(){
@@ -300,8 +314,8 @@ public:
                 return showMIDI;
         }
         //======== log information about GUI controls ===============
-        StringArray logGUIAttributes(CabbageGUIClass cAttr, String type){  
-			
+        StringArray logGUIAttributes(CabbageGUIClass cAttr, String type){
+
                 StringArray arr;
 				/*
                 arr.add(String("----------- ")+type+String(" -----------"));
@@ -351,7 +365,7 @@ public:
         inline int getCurrentLine(){
                 return currentLine;
         }
-  
+
         inline void setCurrentLine(int line){
                 currentLine = line;
         }
@@ -385,16 +399,16 @@ public:
 
 #endif
 		void addLayoutCtrl(CabbageGUIClass cAttr){
-		guiLayoutCtrls.add(cAttr);	
+		guiLayoutCtrls.add(cAttr);
 		}
-		
+
 		void addGUICtrl(CabbageGUIClass cAttr){
-		guiCtrls.add(cAttr);	
+		guiCtrls.add(cAttr);
 		}
-		
+
 
         bool isGuiEnabled(){
-                return guiON;		
+                return guiON;
         }
 
         void setGuiEnabled(bool val);
@@ -418,12 +432,12 @@ public:
 		bool silenceInProducesSilenceOut() const{
 			return true;
 			}
-        
+
 		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePluginAudioProcessor);
-        
+
 };
 
-//pecial auotmation only plugin type. Does not output any audio. 
+//pecial auotmation only plugin type. Does not output any audio.
 #ifdef Cabbage_Host
 class CabbagePluginAutomationProcessor : public CabbagePluginAudioProcessor
 {
@@ -432,8 +446,8 @@ public:
 	CabbagePluginAudioProcessor(inputfile, false, pluginType)
 	{}
 	~CabbagePluginAutomationProcessor(){}
-	
-	
+
+
 };
 #endif
 #endif  // __PLUGINPROCESSOR_H_FE85D052__

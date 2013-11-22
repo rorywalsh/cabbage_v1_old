@@ -15,14 +15,16 @@
   License along with Csound; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
   02111-1307 USA
-    
+
 */
 
 #ifndef CABBMESS_H
 #define CABBMESS_H
 
 #include "CabbageUtils.h"
+#ifndef Cabbage_No_Csound
 #include "csound.hpp"
+#endif
 
 using namespace std;
 
@@ -32,17 +34,21 @@ class CabbageChannelMessage : public CabbageUtils
 {
 public:
 	String channelName;
+#ifndef Cabbage_No_Csound
 	MYFLT value;
+#else
+float value;
+#endif
 	String type;
 	String fStatement;
 
-	CabbageChannelMessage(String chan, double val, String _type):channelName(chan), 
-																 value(val), 
-																 type(_type)																 
+	CabbageChannelMessage(String chan, double val, String _type):channelName(chan),
+																 value(val),
+																 type(_type)
 	{}
 	~CabbageChannelMessage()
 	{}
-	
+
 };
 
 //message queue class
@@ -53,29 +59,29 @@ class CabbageMessageQueue : public CabbageUtils
 public:
 	CabbageMessageQueue(){}
 	~CabbageMessageQueue(){}
-	
+
 	void addOutgoingChannelMessageToQueue(String _chan, double _val, String _type){
 	outgoingChannelMessages.add(CabbageChannelMessage(_chan, _val, _type));
 	}
-	
+
 	void addOutgoingTableUpdateMessageToQueue(String fStatement){
 	CabbageChannelMessage tableMessage("", 0.f, "updateTable");
 	tableMessage.fStatement = fStatement;
 	outgoingChannelMessages.add(tableMessage);
-	}	
-	
+	}
+
 	CabbageChannelMessage getOutgoingChannelMessageFromQueue(int index){
 		return outgoingChannelMessages.getReference(index);
 	}
-	
+
     int getNumberOfOutgoingChannelMessagesInQueue(){
 		return outgoingChannelMessages.size();
-	}	
-	
+	}
+
 	void flushOutgoingChannelMessages(){
 		outgoingChannelMessages.clear();
 	}
-	
+
 };
 
 

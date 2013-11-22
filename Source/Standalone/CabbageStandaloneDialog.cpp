@@ -234,7 +234,7 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message){
 	//that the changes are reflected in the on screen components 
 	filter->createGUI(csdFile.loadFileAsString(), true);
 	if(cabbageCsoundEditor){
-		cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
+		//cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
 		cabbageCsoundEditor->textEditor->highlightLine(filter->getCurrentLineText());
 		}
 	}
@@ -250,7 +250,7 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message){
 	//no need to update our entire GUI here as only on-screen sizes change 
 	setCurrentLine(filter->getCurrentLine()+1);
 	if(cabbageCsoundEditor){
-		cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
+		//cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
 		cabbageCsoundEditor->textEditor->highlightLine(filter->getCurrentLineText());
 		}
 	}

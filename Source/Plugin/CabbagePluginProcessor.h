@@ -240,14 +240,21 @@ public:
         }
 
         inline String getCsoundInputFileText(){
-                return codeEditor->getAllText();
-				//return csdFile.loadFileAsString();
+            if(codeEditor)    
+			return codeEditor->getAllText();
+			else
+			return csdFile.loadFileAsString();
         }
 
         void updateCsoundFile(String text){
-        csdFile.replaceWithText(text);
+			//csdFile.replaceWithText(text);
+			codeEditor->setAllText(text);
         }
         
+		void highlightLine(String text){
+		codeEditor->highlightLine(text);
+		}		
+		
         String getDebugMessage(){
         return debugMessage;
         }

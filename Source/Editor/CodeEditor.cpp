@@ -151,6 +151,10 @@ String CsoundCodeEditor::getAllText(){
 	return getDocument().getAllContent();
 }	
 
+void CsoundCodeEditor::CsoundCodeEditor::setAllText(String text){
+	getDocument().replaceAllContent(text);
+}
+
 String CsoundCodeEditor::getTempChannelInstr(){
 	String channel = "event_i \"i\", 999.999, 0, .1\n";
 	channel << "instr 999\n";

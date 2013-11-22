@@ -632,7 +632,8 @@ ComponentLayoutEditor* le = layoutEditor;
 		
 		plantDefs.clear();		
 		getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
-		getFilter()->sendActionMessage("GUI Updated, controls deleted");
+		
+		//getFilter()->sendActionMessage("GUI Updated, controls deleted");
 		//update frames to reflect changes made to GUI
 		this->updateLayoutEditorFrames();
 		updateLayoutEditorFrames();	
@@ -717,6 +718,7 @@ ComponentLayoutEditor* le = layoutEditor;
 //========================================================
 void CabbagePluginAudioProcessorEditor::updateSizesAndPositionsOfComponents(int newLine)
 {
+newLine = 0;
 #ifdef Cabbage_Build_Standalone
 StringArray csdArray;
 StringArray boundsForSelectComps;
@@ -777,9 +779,10 @@ ComponentLayoutEditor* le = layoutEditor;
 		propsWindow->setVisible(true);
 		propsWindow->toFront(true);
 		getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
+		getFilter()->highlightLine(csdArray[currentLineNumber+newLine]);
 		//getFilter()->setGuiEnabled(true);
-		getFilter()->setCurrentLineText(csdArray[currentLineNumber+newLine]);
-		getFilter()->sendActionMessage("GUI Updated, controls added, resized");
+		//getFilter()->setCurrentLineText(csdArray[currentLineNumber+newLine]);
+		//getFilter()->sendActionMessage("GUI Updated, controls added, resized");
 		lineNumbers.clear();	
 #endif	
 }
@@ -973,6 +976,7 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 			 //always insert text on the last line of GUI code...
                  if(csdArray[i].containsIgnoreCase("</Cabbage>")){
 					csdArray.insert(i, text.joinIntoString("\n")); 
+					getFilter()->setCurrentLineText(csdArray[i]);
 					i=csdArray.size();
 				 }
 				 
@@ -983,6 +987,7 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 	if(text.size()==1)
 		layoutEditor->selectedFilters.deselectAll();
 	getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
+	getFilter()->sendActionMessage("GUI Updated, controls added, resized");
 
 
 	updateLayoutEditorFrames();

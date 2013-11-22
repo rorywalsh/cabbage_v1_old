@@ -118,6 +118,7 @@ public:
 		}
 	
 		setSize(200, (comps.size()-hiddenComponents)*22);	
+		Logger::writeToLog(String(this->getHeight()));
 		addProperties(comps);
 		repaint();
 			

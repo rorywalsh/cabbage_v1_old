@@ -78,6 +78,7 @@ class CsoundCodeEditor : public CodeEditorComponent,
 	void addToRepository();
 	StringArray repoEntries;
 	String getAllText();
+	void setAllText(String text);
 	void highlightLine(String line);
 	void codeDocumentTextDeleted(int,int);
 	void codeDocumentTextInserted(const juce::String &,int);

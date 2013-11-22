@@ -239,12 +239,6 @@ public:
         }
 
         inline String getCsoundInputFileText(){
-<<<<<<< HEAD
-            if(codeEditor)    
-			return codeEditor->getAllText();
-			else
-			return csdFile.loadFileAsString();
-=======
         String ret="";
         #ifdef Cabbage_Build_Standalone
 		if(codeEditor)
@@ -253,22 +247,17 @@ public:
 				ret = csdFile.loadFileAsString();
         #endif
         return ret;
->>>>>>> 334fdf7e870d47503f50abfe25ead1cad12a181d
         }
 
         void updateCsoundFile(String text){
 			//csdFile.replaceWithText(text);
 			codeEditor->setAllText(text);
         }
-<<<<<<< HEAD
         
 		void highlightLine(String text){
 		codeEditor->highlightLine(text);
 		}		
 		
-=======
-
->>>>>>> 334fdf7e870d47503f50abfe25ead1cad12a181d
         String getDebugMessage(){
         return debugMessage;
         }

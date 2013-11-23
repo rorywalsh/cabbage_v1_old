@@ -637,6 +637,8 @@ ComponentLayoutEditor* le = layoutEditor;
 		//update frames to reflect changes made to GUI
 		this->updateLayoutEditorFrames();
 		updateLayoutEditorFrames();	
+		//close props windows after deleting object
+		propsWindow->setVisible(false);
 #endif
 }
 
@@ -989,6 +991,8 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 		layoutEditor->selectedFilters.deselectAll();
 	getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
 	getFilter()->highlightLine(currentText);
+	CabbageGUIClass cAttr(currentText, -99);
+	propsWindow->updateProps(cAttr);
 	getFilter()->sendActionMessage("GUI Updated, controls added, resized");
 
 

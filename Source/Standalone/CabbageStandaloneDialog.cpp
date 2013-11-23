@@ -520,7 +520,7 @@ const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutpu
     selectorComp.setSize (400, 250);
 	setAlwaysOnTop(false);
 	lookAndFeel->setColour(Label::textColourId, Colours::white);
-	//selectorComp.setLookAndFeel(lookAndFeel);
+	selectorComp.setLookAndFeel(lookAndFeel);
 	Colour col(44, 44, 44);
 	DialogWindow::showModalDialog(TRANS("Audio Settings"), &selectorComp, this, col, true, false, false);
 	bool alwaysontop = getPreference(appProperties, "SetAlwaysOnTop");

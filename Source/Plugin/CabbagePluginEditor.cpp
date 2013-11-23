@@ -260,7 +260,7 @@ if(overwrite==true)
 						csdArray.set(i, table->currentfStatement);
 						getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
 						getFilter()->getCsound()->Message("!!Cabbage has overwritten score f-statement!!");	
-						getFilter()->setCurrentLineText(csdArray[i]);
+						getFilter()->highlightLine(csdArray[i]);
 						i=csdArray.size()+100;
 						y=pfields.size()+100;
 						}
@@ -271,8 +271,8 @@ else{
 	for(int i=0;i<csdArray.size();i++)
 		if(csdArray[i].contains("<CsScore>")){
 				csdArray.insert(i+1, table->currentfStatement);
-				getFilter()->setCurrentLineText(csdArray[i+1]);
 				getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
+				getFilter()->highlightLine(csdArray[i+1]);
 				getFilter()->getCsound()->Message("!!Cabbage has inserted new score f-statement!!");	
 				i=csdArray.size()+100;
 		}
@@ -972,11 +972,12 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 		boundsForDuplicatedCtrls.add(bounds); 			
 		}
 		
+	String currentText;
 	for(int i=0;i<csdArray.size();i++)
 			 //always insert text on the last line of GUI code...
                  if(csdArray[i].containsIgnoreCase("</Cabbage>")){
 					csdArray.insert(i, text.joinIntoString("\n")); 
-					getFilter()->setCurrentLineText(csdArray[i]);
+					currentText = csdArray[i];
 					i=csdArray.size();
 				 }
 				 
@@ -987,6 +988,7 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 	if(text.size()==1)
 		layoutEditor->selectedFilters.deselectAll();
 	getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
+	getFilter()->highlightLine(currentText);
 	getFilter()->sendActionMessage("GUI Updated, controls added, resized");
 
 
@@ -2872,10 +2874,10 @@ if(message == "Message sent from PropertiesDialog"){
 	csdArray.addLines(getFilter()->getCsoundInputFileText());
 	csdArray.set(currentLineNumber, CabbageGUIClass::getCabbageCodeFromIdentifiers(propsWindow->updatedIdentifiers));
 	getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
-	getFilter()->setCurrentLineText(csdArray[currentLineNumber]);
+	getFilter()->highlightLine(csdArray[currentLineNumber]);
 	//Logger::writeToLog(csdArray[currentLineNumber]);
 	getFilter()->setGuiEnabled(true);
-	getFilter()->sendActionMessage("GUI Update, PropsPanel");
+	getFilter()->createGUI(csdArray.joinIntoString("\n"), true);
 	//getFilter()->sendActionMessage("GUI Updated, controls added");	
 	//Logger::writeToLog(getCodeFromIdentifiers(propsWindow->updatedIdentifiers));
 #endif

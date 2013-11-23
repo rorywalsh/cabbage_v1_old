@@ -1690,10 +1690,10 @@ String CabbageGUIClass::getStringForIdentifier(var propsArray, String identifier
 			for(int p=0;p<propsArray.size();p++)
 			str += "\""+propsArray[p].toString()+"\",";						
 			str = identifier+str.dropLastCharacters(1)+"), ";
-			//Logger::writeToLog(str);			
+			Logger::writeToLog(str);			
 		}
 		else
-			str = identifier+propsArray.toString()+"\"), ";		
+			str = identifier+String("\"")+propsArray.toString()+"\"), ";		
 		
 	return str;
 	}

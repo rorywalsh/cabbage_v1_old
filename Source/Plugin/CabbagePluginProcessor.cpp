@@ -20,7 +20,6 @@
 #include "CabbagePluginProcessor.h"
 #include "CabbagePluginEditor.h"
 #include <iostream>
-#include <windows.h>
 
 
 #define CABBAGE_VERSION "Cabbage v0.5 BETA"

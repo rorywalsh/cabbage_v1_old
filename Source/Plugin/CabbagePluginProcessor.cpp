@@ -19,6 +19,8 @@
 
 #include "CabbagePluginProcessor.h"
 #include "CabbagePluginEditor.h"
+#include <iostream>
+#include <windows.h>
 
 
 #define CABBAGE_VERSION "Cabbage v0.5 BETA"
@@ -72,6 +74,8 @@ isAutomator(false),
 automationParamID(-1),
 debugMessage("")
 {
+	
+	std::cerr << "This output is tie()'d to cout\n";
 #ifdef Cabbage_Logger
 logFile = File((appProperties->getCommonSettings(true)->getFile().getParentDirectory().getFullPathName()+"/CabbageLog.txt"));
 fileLogger = new FileLogger(logFile, String("Cabbage Log.."));
@@ -83,7 +87,6 @@ patStepMatrix.clear();
 
 patPfieldMatrix.clear();
 setPlayConfigDetails(2, 2, 44100, 512);
-
 
 #ifndef Cabbage_No_Csound
 //don't start of run Csound in edit mode
@@ -207,13 +210,19 @@ File thisFile(File::getSpecialLocation(File::currentExecutableFile));
 #endif
 csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
 
+
 Logger::writeToLog(File::getSpecialLocation(File::currentExecutableFile).getFullPathName());
 
+
+showMessage(File::getSpecialLocation(File::currentExecutableFile).getFullPathName());
 if(csdFile.exists())
 Logger::writeToLog("File exists:"+String(csdFile.getFullPathName()));
 else
 Logger::writeToLog("File doesn't exist"+String(csdFile.getFullPathName()));
 
+
+for(int i=0;i<10;i++)
+Logger::writeToLog("file file");
 
 File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
 

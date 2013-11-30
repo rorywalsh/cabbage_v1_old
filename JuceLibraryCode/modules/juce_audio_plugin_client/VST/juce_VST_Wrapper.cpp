@@ -30,6 +30,7 @@
 
 #if JucePlugin_Build_VST
 
+
 #ifdef _MSC_VER
  #pragma warning (disable : 4996 4100)
 #endif
@@ -41,11 +42,12 @@
  #define STRICT 1
  #include <windows.h>
 
- #ifdef __MINGW32__
+ #ifdef __MINGW3__
   struct MOUSEHOOKSTRUCTEX  : public MOUSEHOOKSTRUCT
   {
      DWORD mouseData;
   };
+
  #endif
 #elif defined (LINUX)
  #include <X11/Xlib.h>
@@ -1555,14 +1557,13 @@ namespace
 //==============================================================================
 // Win32 startup code..
 #else
-
     extern "C" __declspec (dllexport) AEffect* VSTPluginMain (audioMasterCallback audioMaster)
     {
         return pluginEntryPoint (audioMaster);
     }
 
    #ifndef JUCE_64BIT // (can't compile this on win64, but it's not needed anyway with VST2.4)
-    extern "C" __declspec (dllexport) int main (audioMasterCallback audioMaster)
+    extern "C" __declspec (dllexport) int MAIN (audioMasterCallback audioMaster)
     {
         return (int) pluginEntryPoint (audioMaster);
     }

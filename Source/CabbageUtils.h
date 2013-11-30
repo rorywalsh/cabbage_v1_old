@@ -30,11 +30,6 @@
 #endif 
 
 using namespace std;
-#pragma warning(disable: 4389)
-#pragma warning(disable: 4244)
-#pragma warning(disable: 4706)
-#pragma warning(disable: 4100)
-#pragma warning(disable: 4305)
 
 class KeyboardShortcutKeys
 {
@@ -268,7 +263,6 @@ float cabbageABS(float in){
 static void showMessage(String message){
 	AlertWindow alert("Cabbage Message" , message, AlertWindow::WarningIcon);
 	alert.showMessageBox(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
-	Logger::writeToLog("mess1");
 }
 
 //===========================================================================================
@@ -276,7 +270,6 @@ static void showMessageWithLocation(String message){
 File thisFile(File::getSpecialLocation(File::currentApplicationFile));
 	AlertWindow alert(thisFile.getFullPathName() , message, AlertWindow::WarningIcon);
 	alert.showMessageBox(AlertWindow::WarningIcon, thisFile.getFullPathName() , message, "Ok");
-	Logger::writeToLog("mess2");
 }
 //===========================================================================================
 static void showMessage(double num){
@@ -284,7 +277,6 @@ static void showMessage(double num){
 	File thisFile(File::getSpecialLocation(File::currentApplicationFile));
 	AlertWindow alert(thisFile.getFullPathName(), str, AlertWindow::WarningIcon);
 	alert.showMessageBox(AlertWindow::WarningIcon, thisFile.getFullPathName(), str, "Ok");
-	Logger::writeToLog("mess3");
 }
 //===========================================================================================
 static void showMessage(String title, String message, LookAndFeel* feel, Component* mainWindow)
@@ -295,7 +287,6 @@ static void showMessage(String title, String message, LookAndFeel* feel, Compone
 	AlertWindow alert("Cabbage Message" , message, AlertWindow::WarningIcon);
     alert.setLookAndFeel(feel);
 	//alert.showMessageBox(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
-	Logger::writeToLog("mess4");
 	alert.setAlwaysOnTop(true);
     alert.addButton("Ok", 1);
     alert.runModalLoop();
@@ -308,7 +299,6 @@ static void showMessage(String message, LookAndFeel* feel)
 	AlertWindow alert("Cabbage Message" , message, AlertWindow::WarningIcon);
     alert.setLookAndFeel(feel);
 	//alert.showMessageBox(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
-	Logger::writeToLog("mess4");
     alert.addButton("Ok", 1);
     alert.runModalLoop();
 }
@@ -318,7 +308,6 @@ static void showMessage(String title, String message, LookAndFeel* feel)
 	AlertWindow alert(title, message, AlertWindow::WarningIcon);
     alert.setLookAndFeel(feel);
 	//alert.showMessageBox(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
-	Logger::writeToLog("mess4");
     alert.addButton("Ok", 1);
     alert.runModalLoop();
 }

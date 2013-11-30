@@ -22,18 +22,17 @@
   ==============================================================================
 */
 
-#if _MSC_VER
+#if _MSC_VER || JUCE_MINGW
  #include <windows.h>
 #endif
 
 // Your project must contain an AppConfig.h file with your project-specific settings in it,
 // and your header search path must make it accessible to the module's files.
 #include "AppConfig.h"
-
 #include "../utility/juce_CheckSettingMacros.h"
 #include "juce_IncludeModuleHeaders.h"
 
-#if _MSC_VER
+#if _MSC_VER || JUCE_MINGW
 
 #if JucePlugin_Build_RTAS
  extern "C" BOOL WINAPI DllMainRTAS (HINSTANCE, DWORD, LPVOID);

@@ -46,7 +46,9 @@
 #define EXTERNAL_PLUGIN 2
 #define AUTOMATION_PLUGIN 3
 
+#ifdef Cabbage_Build_Standalone
 class CsoundCodeEditor;
+#endif
 
 extern CabbageLookAndFeel* lookAndFeel;
 extern CabbageLookAndFeelBasic* lookAndFeelBasic;
@@ -154,8 +156,9 @@ public:
 #endif
     ~CabbagePluginAudioProcessor();
 
-
+    #ifdef Cabbage_Build_Standalone
 	CsoundCodeEditor* codeEditor;
+    #endif
 
 	bool haveXYAutosBeenCreated(){
 		return xyAutosCreated;
@@ -251,11 +254,15 @@ public:
 
         void updateCsoundFile(String text){
 			//csdFile.replaceWithText(text);
+        #ifdef Cabbage_Build_Standalone
 			codeEditor->setAllText(text);
+        #endif
         }
         
 		void highlightLine(String text){
+        #ifdef Cabbage_Build_Standalone
 		codeEditor->highlightLine(text);
+        #endif
 		}		
 		
         String getDebugMessage(){

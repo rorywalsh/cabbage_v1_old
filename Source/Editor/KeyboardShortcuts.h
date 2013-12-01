@@ -1,7 +1,7 @@
 #ifndef __KB_SHORTUCTS__
 #define __KB_SHORTUCTS__
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "../../JuceLibraryCode/JuceHeader.h"
 
 //============================================================
 // classes for displaying keyboard shortcuts

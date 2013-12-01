@@ -75,6 +75,7 @@ public:
 		seconds = _seconds, 
 		event =_event;
 		startTimer(200);
+		return true;
 	}
 	
 	
@@ -331,7 +332,7 @@ StringArray CreateStringArray(std::string str)
 	int cnt=0;
 	for(int i=0;i<(int)str.length();i++)
 	{
-		int pos = (int)str.find("\n", 0);
+		long pos = (int)str.find("\n", 0);
 		if(pos!=std::string::npos){
 			strArray.add(str2Juce(str.substr(0, pos+1)));
 			str.erase(0, pos+1);

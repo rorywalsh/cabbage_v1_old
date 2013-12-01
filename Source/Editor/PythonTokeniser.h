@@ -2,7 +2,7 @@
 #ifndef __PYTHON_TOKER__
 #define __PYTHON_TOKER__
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "../../JuceLibraryCode/JuceHeader.h"
 
 class PythonTokeniser : public CodeTokeniser
 {

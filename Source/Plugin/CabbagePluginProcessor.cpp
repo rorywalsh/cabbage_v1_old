@@ -73,8 +73,7 @@ isAutomator(false),
 automationParamID(-1),
 debugMessage("")
 {
-	
-	std::cerr << "This output is tie()'d to cout\n";
+
 #ifdef Cabbage_Logger
 logFile = File((appProperties->getCommonSettings(true)->getFile().getParentDirectory().getFullPathName()+"/CabbageLog.txt"));
 fileLogger = new FileLogger(logFile, String("Cabbage Log.."));

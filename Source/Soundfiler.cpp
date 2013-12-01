@@ -135,7 +135,7 @@ void Soundfiler::buttonClicked(Button *button)
 					waveformDisplay->setFile(openFC.getResult(), false);					
 					waveformDisplay->setZoomFactor(1);
 					waveformDisplay->stopTimer();
-					playButton->setToggleState(false, true);
+					playButton->setToggleState(false, sendNotification);
 					
 			}
 		

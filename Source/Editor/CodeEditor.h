@@ -1,7 +1,7 @@
 #ifndef __CODE_EDITOR__
 #define __CODE_EDITOR__
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "../../JuceLibraryCode/JuceHeader.h"
 #include "CsoundTokeniser.h"
 #include "PythonTokeniser.h"
 #include "CommandManager.h"

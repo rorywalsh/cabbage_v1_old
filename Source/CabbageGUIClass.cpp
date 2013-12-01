@@ -1843,7 +1843,7 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
 						else
 						temp = temp+props.getValueAt(i).toString();
 				
-				line = line + temp + "\), ";
+				line = line + temp + "), ";
 				temp = "";
 				}
 			}

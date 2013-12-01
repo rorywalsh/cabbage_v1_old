@@ -3238,9 +3238,9 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
                                 else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("checkbox")){
                                 if(comps[i])
                                         if(value==0)
-                                                ((CabbageCheckbox*)comps[i])->button->setToggleState(0, false);
+                                                ((CabbageCheckbox*)comps[i])->button->setToggleState(0, dontSendNotification);
                                         else
-                                                ((Button*)comps[i])->setToggleState(1, false);
+                                                ((Button*)comps[i])->setToggleState(1, dontSendNotification);
                                 }
                                 getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), value);                             
 								if(message.isController())

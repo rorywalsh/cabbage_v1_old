@@ -26,6 +26,10 @@ If Csound is not installed in the usual place, i.e.,
 that the compiler can find the Csound header files or pass the path in
 argument of buildCabbage (see below).
 
+You'll also need to have the VST SDK. you'll need to pass the location of the 
+SDK so that the compiler can find it. 
+
+
 If you are having problems viewing fonts you should get the following package:
 
 sudo apt-get install msttcorefonts

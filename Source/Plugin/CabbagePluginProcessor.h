@@ -259,6 +259,14 @@ public:
         #endif
         }
         
+		void setOpcodeDirEnv(){
+		#ifdef WIN32
+		String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getFullPathName()+"\\CsoundPlugins";
+		if(File(opcodeDir).exists())
+		csound->SetGlobalEnv("OPCODE6DIR64", opcodeDir.toUTF8().getAddress());
+		#endif
+		}
+		
 		void highlightLine(String text){
         #ifdef Cabbage_Build_Standalone
 		codeEditor->highlightLine(text);

@@ -93,11 +93,7 @@ setPlayConfigDetails(2, 2, 44100, 512);
 
 csound = new Csound();
 
-#ifdef WIN32
-String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getFullPathName()+"\\CsoundPlugins";
-if(File(opcodeDir).exists())
-csound->SetGlobalEnv("OPCODE6DIR64", opcodeDir.toUTF8().getAddress());
-#endif
+setOpcodeDirEnv();
 
 #ifdef CSOUND6
 csound->SetHostImplementedMIDIIO(true);
@@ -238,6 +234,8 @@ Logger::setCurrentLogger(fileLogger);
 
 #ifndef Cabbage_No_Csound
 csound = new Csound();
+setOpcodeDirEnv();
+
 csound->SetHostImplementedMIDIIO(true);
 //csound->Reset();
 //csound->PreCompile();

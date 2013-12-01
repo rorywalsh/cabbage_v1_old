@@ -79,6 +79,7 @@ logFile = File((appProperties->getCommonSettings(true)->getFile().getParentDirec
 fileLogger = new FileLogger(logFile, String("Cabbage Log.."));
 Logger::setCurrentLogger(fileLogger);
 #endif
+
 //reset patMatrix. If this has more than one we know that
 //pattern matrix object is being used
 patStepMatrix.clear();
@@ -88,7 +89,16 @@ setPlayConfigDetails(2, 2, 44100, 512);
 
 #ifndef Cabbage_No_Csound
 //don't start of run Csound in edit mode
+
+
 csound = new Csound();
+
+#ifdef WIN32
+String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getFullPathName()+"\\CsoundPlugins";
+if(File(opcodeDir).exists())
+csound->SetGlobalEnv("OPCODE6DIR64", opcodeDir.toUTF8().getAddress());
+#endif
+
 #ifdef CSOUND6
 csound->SetHostImplementedMIDIIO(true);
 #endif
@@ -212,15 +222,10 @@ csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
 Logger::writeToLog(File::getSpecialLocation(File::currentExecutableFile).getFullPathName());
 
 
-showMessage(File::getSpecialLocation(File::currentExecutableFile).getFullPathName());
 if(csdFile.exists())
 Logger::writeToLog("File exists:"+String(csdFile.getFullPathName()));
 else
 Logger::writeToLog("File doesn't exist"+String(csdFile.getFullPathName()));
-
-
-for(int i=0;i<10;i++)
-Logger::writeToLog("file file");
 
 File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
 

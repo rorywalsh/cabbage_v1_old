@@ -16,6 +16,33 @@ CabbageLookAndFeel::~CabbageLookAndFeel()
 }
 
 //==============================================================================
+
+void CabbageLookAndFeel::drawLevelMeter(Graphics &g, int width, int	height,	float level)
+{
+    g.setColour (Colours::white.withAlpha (0.7f));
+    g.fillRoundedRectangle (0.0f, 0.0f, (float) width, (float) height, 3.0f);
+    g.setColour (Colours::black.withAlpha (0.2f));
+    g.drawRoundedRectangle (1.0f, 1.0f, width - 2.0f, height - 2.0f, 3.0f, 1.0f);
+
+    const int totalBlocks = 15;
+    const int numBlocks = roundToInt (totalBlocks * level);
+    const float w = (width - 6.0f) / (float) totalBlocks;
+
+    for (int i = 0; i < totalBlocks; ++i)
+    {
+        if (i >= numBlocks)
+            g.setColour (Colours::lightblue.withAlpha (0.6f));
+        else
+            g.setColour (i < totalBlocks - 1 ? Colours::cornflowerblue
+                                             : Colours::red);
+
+        g.fillRoundedRectangle (3.0f + i * w + w * 0.1f, 3.0f, w * 0.8f, height - 6.0f, w * 0.4f);
+    }
+
+
+} 	
+
+//==============================================================================
 void CabbageLookAndFeel::drawTreeviewPlusMinusBox (Graphics& g, int x, int y, int w, int h, bool isPlus, bool /*isMouseOver*/)
 {
     const int boxSize = ((jmin (16, w, h) << 1) / 3) | 1;

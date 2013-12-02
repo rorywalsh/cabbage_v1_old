@@ -514,7 +514,7 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
 const int numIns = filter->getNumInputChannels() <= 0 ? JucePlugin_MaxNumInputChannels : filter->getNumInputChannels();
 const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutputChannels : filter->getNumOutputChannels();
 
-    AudioDeviceSelectorComponent selectorComp (*deviceManager,
+    CabbageAudioDeviceSelectorComponent selectorComp (*deviceManager,
                                                numIns, numIns, numOuts, numOuts,
                                                true, false, true, false);
 
@@ -522,7 +522,7 @@ const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutpu
 	setAlwaysOnTop(false);
 	lookAndFeel->setColour(Label::textColourId, Colours::white);
 	selectorComp.setLookAndFeel(lookAndFeel);
-	Colour col(44, 44, 44);
+	Colour col(24, 24, 24);
 	DialogWindow::showModalDialog(TRANS("Audio Settings"), &selectorComp, this, col, true, false, false);
 	bool alwaysontop = getPreference(appProperties, "SetAlwaysOnTop");
 	setAlwaysOnTop(alwaysontop);

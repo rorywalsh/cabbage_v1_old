@@ -129,7 +129,8 @@ public:
 
 
 	void drawTreeviewPlusMinusBox (Graphics& g, int x, int y, int w, int h, bool isPlus, bool /*isMouseOver*/);
-    Button* createTabBarExtrasButton();
+    void drawLevelMeter(Graphics &g, int width, int	height,	float level);
+	Button* createTabBarExtrasButton();
 	
 	juce_UseDebuggingNewOperator
 

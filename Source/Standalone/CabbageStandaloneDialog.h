@@ -24,6 +24,7 @@
 #include "../CabbageUtils.h"
 #include "../Plugin/CabbagePluginProcessor.h"
 #include "../Plugin/CabbagePluginEditor.h"
+#include "../CabbageAudioDeviceSelectorComponent.h"
 
 extern ApplicationProperties* appProperties;
 extern PropertySet* defaultPropSet;

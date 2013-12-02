@@ -314,12 +314,14 @@ static void showMessage(String title, String message, LookAndFeel* feel)
 }
 
 //===========================================================================================
-static int showYesNoMessage(String message, LookAndFeel* feel)
+static int showYesNoMessage(String message, LookAndFeel* feel, int cancel=0)
 {
     AlertWindow alert("Cabbage Message", message, AlertWindow::NoIcon, 0);
     alert.setLookAndFeel(feel);
 	alert.addButton("Yes", 0);
 	alert.addButton("No", 1);
+	if(cancel==1)
+	alert.addButton("Cancel", 2);
 	int result = alert.runModalLoop();
 	//int result = alert.showYesNoCancelBox(AlertWindow::QuestionIcon, "Warning", message, "Yes", "No", "Cancel");
 	return result;

@@ -59,7 +59,6 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 	popupDisplay->addActionListener(this);
 	popupDisplay->setTitleBarHeight(0);
 	popupDisplay->addToDesktop(0);
-	popupDisplay->centreWithSize(500, 500);
 	popupDisplay->setVisible(false);
 	
 
@@ -260,8 +259,8 @@ else if(topLevelMenuIndex==1)
 	return m1;
 	}
 
-else if(topLevelMenuIndex==2)
-	{
+//else if(topLevelMenuIndex==2)
+//	{
 	//m1.addCommandItem(&commandManager, CommandIDs::startSession);
 	//m1.addCommandItem(&commandManager, CommandIDs::commOrchUpdateInstrument);
 	//m1.addCommandItem(&commandManager, CommandIDs::commOrcUpdateChannel);	
@@ -270,11 +269,11 @@ else if(topLevelMenuIndex==2)
 	//m1.addCommandItem(&commandManager, CommandIDs::commScoUpdateMultiLine);
 	//m1.addCommandItem(&commandManager, CommandIDs::commScoUpdateSingleLine);
 	
-	return m1;
-	}
+//	return m1;
+//	}
  
 	
-else if(topLevelMenuIndex==3)
+else if(topLevelMenuIndex==2)
 	{
 	m1.addCommandItem(&commandManager, CommandIDs::viewHelp);
 	return m1;

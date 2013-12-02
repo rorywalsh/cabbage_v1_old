@@ -28,7 +28,7 @@ public:
 	//==============================================================================
 	StringArray getMenuBarNames()
 	{
-		const char* const names[] = { "File", "Edit", "Commands", "Help", 0 };
+		const char* const names[] = { "File", "Edit", "Help", 0 };
 		return StringArray (names);
 	}
 	
@@ -404,8 +404,7 @@ class PopupDisplay : public DialogWindow,
 			Box():firstTime(true)
 			{
 				this->setInterceptsMouseClicks(false, false);
-				centreWithSize(250, 250);
-				;
+				setSize(10, 10);
 			}	
 			
 			~Box(){};
@@ -417,13 +416,15 @@ class PopupDisplay : public DialogWindow,
 
 			void paint(Graphics& g)
 			{
-				g.fillAll(Colour::fromRGB(200,200,200));
+				g.fillAll(Colour::fromRGB(40,40,40));
+				g.setColour(Colours::yellow);
+				g.drawRect(0, 0, getWidth()-1, getHeight()-1, 1);
 				g.setFont(Font(String("Arial"), 16, 1));
-				g.setColour(Colours::black);
+				g.setColour(Colours::whitesmoke);
 				//g.drawFittedText(info, 0, 0, getWidth(), 15, Justification::left, 1, 1);
 				g.drawFittedText(syntax, 10, 10, getWidth(), getHeight(), Justification::topLeft, 100, 1);
 				g.setFont(Font(String("Arial"), 15, 0));
-				g.setColour(Colours::black);				
+				g.setColour(Colours::cornflowerblue);				
 				g.drawFittedText(info, 10, 25, getWidth(), getHeight(), Justification::topLeft, 100, 1);
 			}
 			

@@ -150,7 +150,7 @@ public:
     {
         const int extra = getOutlineThickness() * 2;
 
-        return jmax (getRowHeight() * 2 + extra,
+        return jmax (getRowHeight() + extra,
                      jmin (getRowHeight() * getNumRows() + extra,
                            preferredHeight));
     }

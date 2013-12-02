@@ -531,6 +531,15 @@ const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutpu
 //==============================================================================
 void StandaloneFilterWindow::closeButtonPressed()
 {
+if(filter->hasTextChanged()){
+	int result = showYesNoMessage("You would like to save your changes?", lookAndFeel, 1);
+	if(result==0)saveFile();
+	else if(result==1)
+	JUCEApplication::quit();
+	else
+		return;
+	}
+		
 JUCEApplication::quit();
 }
 
@@ -700,51 +709,55 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	}
 	//----- view text editor ------
 	else if(options==2){
-	if(!cabbageCsoundEditor){
-	cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
-	cabbageCsoundEditor->setVisible(false);
-	cabbageCsoundEditor->setFullScreen(true);
-	cabbageCsoundEditor->addActionListener(this);
-	cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
-	filter->codeEditor = cabbageCsoundEditor->textEditor;
-	}
-	cabbageCsoundEditor->setText(csdFile.loadFileAsString());
-	this->toBehind(cabbageCsoundEditor);
-	cabbageCsoundEditor->setVisible(true);
-	cabbageCsoundEditor->setFullScreen(true);
-	cabbageCsoundEditor->toFront(true);
-	
-	
-	if(!outputConsole){
-	outputConsole = new CsoundMessageConsole("Csound Output Messages", 
-												Colours::black, 
-												getPosition().getY()+getHeight(),
-												getPosition().getX());												
-	outputConsole->setLookAndFeel(lookAndFeel);
-	outputConsole->setText(filter->getCsoundOutput());
-	outputConsole->setAlwaysOnTop(true);
-	outputConsole->toFront(true);
-	outputConsole->setVisible(true);
-	}
-	
+		if(csdFile.getFileName().length()>0){
+			if(!cabbageCsoundEditor){
+			cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
+			cabbageCsoundEditor->setVisible(false);
+			cabbageCsoundEditor->setFullScreen(true);
+			cabbageCsoundEditor->addActionListener(this);
+			cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
+			filter->codeEditor = cabbageCsoundEditor->textEditor;
+			}
+			//cabbageCsoundEditor->setText(csdFile.loadFileAsString());
+			this->toBehind(cabbageCsoundEditor);
+			cabbageCsoundEditor->setVisible(true);
+			cabbageCsoundEditor->setFullScreen(true);
+			cabbageCsoundEditor->toFront(true);
+			
+			
+			if(!outputConsole){
+			outputConsole = new CsoundMessageConsole("Csound Output Messages", 
+														Colours::black, 
+														getPosition().getY()+getHeight(),
+														getPosition().getX());												
+			outputConsole->setLookAndFeel(lookAndFeel);
+			outputConsole->setText(filter->getCsoundOutput());
+			outputConsole->setAlwaysOnTop(true);
+			outputConsole->toFront(true);
+			outputConsole->setVisible(true);
+			}
+		}
+		else showMessage("Please open or create a file first", lookAndFeel);
 	}
 	//-------Csound output console-----
 	else if(options==3){
-	if(!outputConsole){
-	outputConsole = new CsoundMessageConsole("Csound Output Messages", 
-												Colours::black, 
-												getPosition().getY()+getHeight(),
-												getPosition().getX());												
-	outputConsole->setLookAndFeel(lookAndFeel);
-	outputConsole->setText(filter->getCsoundOutput());
-	outputConsole->setAlwaysOnTop(true);
-	outputConsole->toFront(true);
-	outputConsole->setVisible(true);
-	}
-	else
+	if(csdFile.getFullPathName().length()>0){
+		if(!outputConsole){
+		outputConsole = new CsoundMessageConsole("Csound Output Messages", 
+													Colours::black, 
+													getPosition().getY()+getHeight(),
+													getPosition().getX());												
+		outputConsole->setLookAndFeel(lookAndFeel);
+		outputConsole->setText(filter->getCsoundOutput());
+		outputConsole->setAlwaysOnTop(true);
+		outputConsole->toFront(true);
 		outputConsole->setVisible(true);
+		}
+		else
+			outputConsole->setVisible(true);
+		}
+		else showMessage("Please open or create a file first", lookAndFeel);
 	}
-	
 	//----- new effect ------
 	else if(options==30){
 	if(!cabbageCsoundEditor){
@@ -995,6 +1008,8 @@ recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("rece
 																			recentFiles.addFile (csdFile);
 appProperties->getUserSettings()->setValue ("recentlyOpenedFiles", 
 											recentFiles.toString());	
+		
+filter->saveText();
 }
 
 void StandaloneFilterWindow::saveFileAs()
@@ -1017,6 +1032,7 @@ recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("rece
 																			recentFiles.addFile (csdFile);
 appProperties->getUserSettings()->setValue ("recentlyOpenedFiles", 
 											recentFiles.toString());	
+filter->saveText();
 
 }
 //==============================================================================

@@ -255,10 +255,21 @@ public:
         void updateCsoundFile(String text){
 			//csdFile.replaceWithText(text);
         #ifdef Cabbage_Build_Standalone
+			codeEditor->textChanged = true;
 			codeEditor->setAllText(text);
         #endif
         }
         
+		bool hasTextChanged(){
+		if(codeEditor)
+		return codeEditor->textChanged;	
+		else return false;
+		}
+		
+		void saveText(){
+		codeEditor->textChanged = false;	
+		}
+		
 		void setOpcodeDirEnv(){
 		#ifdef WIN32
 		String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getFullPathName()+"\\CsoundPlugins";

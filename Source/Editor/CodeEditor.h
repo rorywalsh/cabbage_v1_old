@@ -82,6 +82,7 @@ class CsoundCodeEditor : public CodeEditorComponent,
 	void highlightLine(String line);
 	void codeDocumentTextDeleted(int,int);
 	void codeDocumentTextInserted(const juce::String &,int);
+	bool textChanged;
 	
 	void setOpcodeStrings(String opcodes){
 	opcodeStrings.addLines(opcodes);	

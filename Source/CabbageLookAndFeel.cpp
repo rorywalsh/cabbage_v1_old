@@ -1564,9 +1564,9 @@ void CabbageLookAndFeel::drawAlertBox (Graphics& g,
 
         if (alert.getAlertType() == AlertWindow::WarningIcon)
         {
-				//Image logo = ImageCache::getFromMemory (BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize);
-				//g.setOpacity(.2f);
-				//g.drawImage(logo, -300, -100, 600, 500, 0, 0, logo.getWidth(), logo.getHeight());
+				Image logo = ImageCache::getFromMemory (BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize);
+				g.setOpacity(.2f);
+				g.drawImage(logo, -300, -100, 600, 500, 0, 0, logo.getWidth(), logo.getHeight());
 				
         }
         else

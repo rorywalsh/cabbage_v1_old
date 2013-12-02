@@ -6,9 +6,6 @@
 
 namespace BinaryData
 {
-    extern const char*   opcodes_txt;
-    const int            opcodes_txtSize = 413;
-
     extern const char*   cabbageLogoHBlueText_png;
     const int            cabbageLogoHBlueText_pngSize = 7732;
 

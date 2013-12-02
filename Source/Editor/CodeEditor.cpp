@@ -3,7 +3,7 @@
 //==============================================================================
 
 CsoundCodeEditor::CsoundCodeEditor(String type, CodeDocument &document, CodeTokeniser *codeTokeniser)
-					: CodeEditorComponent(document, codeTokeniser), type(type)
+					: CodeEditorComponent(document, codeTokeniser), type(type), textChanged(false)
 {
 	document.addListener(this);
 	setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
@@ -151,7 +151,7 @@ String CsoundCodeEditor::getAllText(){
 	return getDocument().getAllContent();
 }	
 
-void CsoundCodeEditor::CsoundCodeEditor::setAllText(String text){
+void CsoundCodeEditor::setAllText(String text){
 	getDocument().replaceAllContent(text);
 }
 
@@ -213,33 +213,38 @@ String CsoundCodeEditor::getInstrumentText(){
 
 void CsoundCodeEditor::codeDocumentTextInserted(const juce::String &,int)
 {
+	
+textChanged = true;
 pos1 = getDocument().findWordBreakBefore(getCaretPos());
 String lineFromCsd = getDocument().getLine(pos1.getLineNumber());
-String parsedString;
-StringArray tokens, inputTokens;
-inputTokens.addTokens(lineFromCsd, ",", "\n");
 
-//for(int x=0;x<inputTokens.size();x++)
-//			Logger::writeToLog(inputTokens[x]);
+String parsedString;
+StringArray syntaxTokens, csdLineTokens;
+csdLineTokens.clear();
+csdLineTokens.addTokens(lineFromCsd, " ", "\n");
 
 	for(int i=0;i<opcodeStrings.size();i++){
 		parsedString = opcodeStrings[i];
-		tokens.addTokens(parsedString, ";", "\"");
-		if(tokens.size()>1)
-		for(int y=0;y<tokens.size();y++){
-				if(lineFromCsd.contains(" "+tokens[0].removeCharacters("\"")+" ")){
-				Logger::writeToLog(tokens[2]);
-				//if(tokens[0].length()>3)
-				sendActionMessage("popupDisplay"+tokens[2]);
-				opcodeTokens = tokens;
-				y=tokens.size();
-				i=opcodeStrings.size();	
+		syntaxTokens.clear();	
+		syntaxTokens.addTokens(parsedString, ";", "\"");
+		if(syntaxTokens.size()>3)
+		for(int x=0;x<csdLineTokens.size();x++){
+			if(syntaxTokens[0].removeCharacters("\"")==csdLineTokens[x].trim()){
+				if(syntaxTokens[0].length()>3){
+						//Logger::writeToLog(syntaxTokens[0]);
+						sendActionMessage("popupDisplay"+syntaxTokens[2]);
+						opcodeTokens = syntaxTokens;
+						x=csdLineTokens.size();
+						i=opcodeStrings.size();	
+					}
 				}	
-			}		
-		tokens.clear();	
+				
+		}
+		
 	}
 }
 
 void CsoundCodeEditor::codeDocumentTextDeleted(int,int){
+textChanged = true;
 sendActionMessage("make popup invisible");	
 }

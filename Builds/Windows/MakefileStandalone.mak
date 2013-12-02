@@ -76,6 +76,7 @@ OBJECTS := \
   $(OBJDIR)/DirectoryContentsComponent_616f5a9f.o \
   $(OBJDIR)/CodeEditor_bb1e171d.o \
   $(OBJDIR)/CodeWindow_86e6d820.o \
+  $(OBJDIR)/CabbageAudioDeviceSelectorComponent_86e6d820.o \
   $(OBJDIR)/CommandManager_f4ac7445.o \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
@@ -199,6 +200,11 @@ $(OBJDIR)/CabbagePluginProcessor_73d6661b.o: ../../Source/Plugin/CabbagePluginPr
 $(OBJDIR)/Soundfiler_35ae1cd0.o: ../../Source/Soundfiler.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling Soundfiler.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbageAudioDeviceSelectorComponent_86e6d820.o: ../../Source/CabbageAudioDeviceSelectorComponent.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageAudioDeviceSelectorComponent.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/CabbageStandaloneDialog_72d272cd.o: ../../Source/Standalone/CabbageStandaloneDialog.cpp

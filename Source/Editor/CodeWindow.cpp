@@ -554,6 +554,7 @@ void CodeWindow::actionListenerCallback(const String &message){
 											font.getStringWidth(textEditor->getOpcodeToken(3)));
 	popupDisplay->killSplash();
 	popupDisplay->setVisible(true);
+	popupDisplay->setAlwaysOnTop(true);
 	popupDisplay->addToDesktop(0);
 	popupDisplay->setTopLeftPosition(this->getCaretScreenPosition().getTopLeft());
 	popupDisplay->setBounds(this->getCaretScreenPosition().getX(),

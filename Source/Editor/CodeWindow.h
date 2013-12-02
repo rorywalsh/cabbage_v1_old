@@ -416,16 +416,29 @@ class PopupDisplay : public DialogWindow,
 
 			void paint(Graphics& g)
 			{
+				#ifdef LINUX
 				g.fillAll(Colour::fromRGB(40,40,40));
 				g.setColour(Colours::yellow);
 				g.drawRect(0, 0, getWidth()-1, getHeight()-1, 1);
 				g.setFont(Font(String("Arial"), 16, 1));
 				g.setColour(Colours::whitesmoke);
-				//g.drawFittedText(info, 0, 0, getWidth(), 15, Justification::left, 1, 1);
 				g.drawFittedText(syntax, 10, 10, getWidth(), getHeight(), Justification::topLeft, 100, 1);
 				g.setFont(Font(String("Arial"), 15, 0));
 				g.setColour(Colours::cornflowerblue);				
 				g.drawFittedText(info, 10, 25, getWidth(), getHeight(), Justification::topLeft, 100, 1);
+				#else
+				g.fillAll(Colour::fromRGB(20, 20, 20));
+				g.setColour(Colours::whitesmoke);
+				g.drawRect(0, 0, getWidth()-1, getHeight()-1, 1);
+				g.setFont(Font(String("Arial"), 16, 1));
+				g.setColour(Colours::yellow);
+				g.drawFittedText(syntax, 10, 10, getWidth(), getHeight(), Justification::topLeft, 100, 1);
+				g.setFont(Font(String("Arial"), 15, 0));
+				g.setColour(Colours::lime);				
+				g.drawFittedText(info, 10, 25, getWidth(), getHeight(), Justification::topLeft, 100, 1);				
+					
+					
+				#endif
 			}
 			
 			void resized(){
@@ -444,7 +457,10 @@ public:
 		time(0), seconds(0)
 		{
 		box = new Box();
-		this->setContentNonOwned(box, true);					
+		this->setContentNonOwned(box, true);
+		#ifndef LINUX
+		this->setAlpha(.9f);
+		#endif
 		}
 		
 		~PopupDisplay(){}		

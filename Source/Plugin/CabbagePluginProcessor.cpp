@@ -73,7 +73,7 @@ isAutomator(false),
 automationParamID(-1),
 debugMessage("")
 {
-
+codeEditor = nullptr;
 #ifdef Cabbage_Logger
 logFile = File((appProperties->getCommonSettings(true)->getFile().getParentDirectory().getFullPathName()+"/CabbageLog.txt"));
 fileLogger = new FileLogger(logFile, String("Cabbage Log.."));

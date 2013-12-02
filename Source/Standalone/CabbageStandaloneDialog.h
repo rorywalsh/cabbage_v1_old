@@ -122,6 +122,7 @@ public:
 private:
 	bool updateEditorOutputConsole;
 	Time lastSaveTime;
+	void openTextEditor();
 	bool standaloneMode;
 	bool cabbageDance;
 	bool timerRunning;

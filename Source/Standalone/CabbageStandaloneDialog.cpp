@@ -531,6 +531,7 @@ const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutpu
 //==============================================================================
 void StandaloneFilterWindow::closeButtonPressed()
 {
+if(filter)
 if(filter->hasTextChanged()){
 	int result = showYesNoMessage("You would like to save your changes?", lookAndFeel, 1);
 	if(result==0)saveFile();
@@ -922,6 +923,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		if(val)
 			showMessage("", "Warning!! This feature is bleeding edge! (that's programmer speak for totally untested and likely to crash hard!). If you like to live on the edge, disable this warning under the 'Preferences' menu command and try 'Edit Mode' again, otherwise just let it be...", lookAndFeel);
 		else{
+			openTextEditor();
 	if(isAFileOpen == true)
 		if(filter->isGuiEnabled()){
 		startTimer(100);
@@ -938,6 +940,42 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		}
 	}
 	repaint();
+}
+
+//==============================================================================
+// open text editor
+//==============================================================================
+void StandaloneFilterWindow::openTextEditor()
+{
+		if(csdFile.getFileName().length()>0){
+			if(!cabbageCsoundEditor){
+			cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
+			cabbageCsoundEditor->setVisible(false);
+			cabbageCsoundEditor->setFullScreen(true);
+			cabbageCsoundEditor->addActionListener(this);
+			cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
+			filter->codeEditor = cabbageCsoundEditor->textEditor;
+			}
+			//cabbageCsoundEditor->setText(csdFile.loadFileAsString());
+			this->toBehind(cabbageCsoundEditor);
+			cabbageCsoundEditor->setVisible(true);
+			cabbageCsoundEditor->setFullScreen(true);
+			cabbageCsoundEditor->toFront(true);
+			
+			
+			if(!outputConsole){
+			outputConsole = new CsoundMessageConsole("Csound Output Messages", 
+														Colours::black, 
+														getPosition().getY()+getHeight(),
+														getPosition().getX());												
+			outputConsole->setLookAndFeel(lookAndFeel);
+			outputConsole->setText(filter->getCsoundOutput());
+			outputConsole->setAlwaysOnTop(true);
+			outputConsole->toFront(true);
+			outputConsole->setVisible(true);
+			}
+		}
+		else showMessage("Please open or create a file first", lookAndFeel);	
 }
 
 //==============================================================================

@@ -210,7 +210,6 @@ String CsoundCodeEditor::getInstrumentText(){
 	return selectedText;
 }
 
-
 void CsoundCodeEditor::codeDocumentTextInserted(const juce::String &,int)
 {
 	

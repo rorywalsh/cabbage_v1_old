@@ -824,7 +824,7 @@ m.addSubMenu(String("Indigenous"), subm);
 subm.clear();
 
 String plantDir = appProperties->getUserSettings()->getValue("PlantFileDir", "");	
-addFilesToPopupMenu(subm, plantFiles, plantDir, "*.plant"); 
+addFilesToPopupMenu(subm, plantFiles, plantDir, "*.plant", 100); 
 m.addSubMenu(String("Homegrown"), subm);
 }
 

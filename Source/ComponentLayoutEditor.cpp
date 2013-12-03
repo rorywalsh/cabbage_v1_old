@@ -272,7 +272,7 @@ else{
 				//Logger::writeToLog(plantDir);
 				Array<File> tempfiles;
 				StringArray plants;   
-				addFilesToPopupMenu(m, tempfiles, plantDir, "*.plant");
+				addFilesToPopupMenu(m, tempfiles, plantDir, "*.plant", 100);
 				
 				for(int i=0;i<tempfiles.size();i++){
 				Logger::outputDebugString(tempfiles[i].getFullPathName());

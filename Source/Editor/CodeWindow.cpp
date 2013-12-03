@@ -222,16 +222,16 @@ m2.clear();
 m2.setLookAndFeel(&getLookAndFeel());
 if(topLevelMenuIndex==0)
 	{		
-	 m1.addCommandItem(&commandManager, CommandIDs::fileNew);	 
-	 m1.addCommandItem(&commandManager, CommandIDs::fileOpen);
+	 //m1.addCommandItem(&commandManager, CommandIDs::fileNew);	 
+	 //m1.addCommandItem(&commandManager, CommandIDs::fileOpen);
 	 
-	 RecentlyOpenedFilesList recentFiles;
-     recentFiles.restoreFromString (appProperties->getUserSettings()
-                                            ->getValue ("recentlyOpenedFiles"));
+	 //RecentlyOpenedFilesList recentFiles;
+     //recentFiles.restoreFromString (appProperties->getUserSettings()
+     //                                       ->getValue ("recentlyOpenedFiles"));
 
-     PopupMenu recentFilesMenu;
-     recentFiles.createPopupMenuItems (recentFilesMenu, 100, true, true);
-     m1.addSubMenu ("Open recent file", recentFilesMenu);	 
+     //PopupMenu recentFilesMenu;
+     //recentFiles.createPopupMenuItems (recentFilesMenu, 100, true, true);
+     //m1.addSubMenu ("Open recent file", recentFilesMenu);	 
 	 
 	 m1.addCommandItem(&commandManager, CommandIDs::fileSave);
 	 m1.addCommandItem(&commandManager, CommandIDs::fileSaveAs);
@@ -454,7 +454,7 @@ if(manual=="Csound")
 				if(temp1.exists()){
 				#ifdef LINUX        
 					if(!process.start("xdg-open "+urlCsound.toString(false).toUTF8())) 
-						CabbageUtils::showMessage("couldn't show file", this->lookAndFeel);
+						CabbageUtils::showMessage("couldn't show file", &getLookAndFeel());
 				#else
 					htmlHelp->goToURL(urlCsound.toString(false));
 					showingHelp = true;
@@ -479,10 +479,19 @@ else{
 it is located in the Docs folder in the same\n\
 directory as the main Cabbage executable", &getLookAndFeel());
 		else{
-				htmlHelp->goToURL(path);
-				showingHelp = true;
-				setContentNonOwned(nullptr, false);
-				setContentNonOwned(htmlHelp, false);
+				ChildProcess process;
+				File temp1(path);
+				if(temp1.exists()){
+				#ifdef LINUX        
+					if(!process.start("xdg-open "+path)) 
+						CabbageUtils::showMessage("couldn't show file", &getLookAndFeel());
+				#else
+					htmlHelp->goToURL(path);
+					showingHelp = true;
+					setContentNonOwned(nullptr, false);
+					setContentNonOwned(htmlHelp, false);
+				#endif
+				}
 		}
 	}
 else{

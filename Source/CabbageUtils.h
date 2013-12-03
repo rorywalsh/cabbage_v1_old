@@ -533,13 +533,33 @@ long cabbageFindPluginID(unsigned char *buf, size_t len, const char *s)
 	return ret;
 }
 
-static void addFilesToPopupMenu(PopupMenu &m, Array<File> &filesArray, String dir, String ext) 
+static void addFilesToPopupMenu(PopupMenu &m, Array<File> &filesArray, String dir, String ext, int indexOffset) 
 {
-File pluginDir(dir);
-pluginDir.findChildFiles(filesArray, 2, true, ext);
+File searchDir(dir);
+Array<File> subFolders;
+subFolders.add(searchDir);
+int noOfFiles=0, fileCnt;
+searchDir.findChildFiles(subFolders, File::findDirectories, false);
 
-for (int i = 0; i < filesArray.size(); i++)
-	m.addItem (i + 100, filesArray[i].getFileNameWithoutExtension());
+PopupMenu subMenu;	
+//grab all file in sub-folders	
+for (int i = 1; i < subFolders.size(); i++){
+	if(subFolders[0].isDirectory()){
+		//Logger::writeToLog(subFolders[i]);
+		subFolders[i].findChildFiles(filesArray, File::findFiles, true, ext); 
+		subMenu.clear();
+		for (fileCnt = noOfFiles; fileCnt < filesArray.size(); fileCnt++)
+			subMenu.addItem (fileCnt + indexOffset, filesArray[fileCnt].getFileNameWithoutExtension());
+			noOfFiles = fileCnt;
+			m.addSubMenu(subFolders[i].getFileName(), subMenu);
+			}
+	}
+
+searchDir.findChildFiles(filesArray, File::findFiles, false);
+//grab any files in the 'examples' folder	
+for (fileCnt = noOfFiles; fileCnt < filesArray.size(); fileCnt++)
+	m.addItem (fileCnt + indexOffset, filesArray[fileCnt].getFileNameWithoutExtension());
+	noOfFiles = fileCnt;	
 
 }
 

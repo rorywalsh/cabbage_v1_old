@@ -566,13 +566,14 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     if (filter == nullptr)
         return;
 
+	int examplesOffset = 4000;
 	String test;
-    PopupMenu m;
-	PopupMenu subMenu;
+	PopupMenu subMenu, m;
 	m.setLookAndFeel(lookAndFeel);
 	subMenu.setLookAndFeel(lookAndFeel);
 	PopupMenu recentFilesMenu;
 	RecentlyOpenedFilesList recentFiles;
+	Array<File> exampleFiles;
 	recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
 	
 	standaloneMode=false;
@@ -582,6 +583,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	
 		recentFiles.createPopupMenuItems (recentFilesMenu, 9000, true, true);
 		m.addSubMenu ("Open recent file", recentFilesMenu);	
+		
+		String examplesDir = appProperties->getUserSettings()->getValue("ExamplesDir", "");	
+		addFilesToPopupMenu(subMenu, exampleFiles, examplesDir, "*.csd", examplesOffset); 
+		m.addSubMenu(String("Examples"), subMenu);
+
+		subMenu.clear();
 		
 		subMenu.addItem(30, String("Effect"));
 		subMenu.addItem(31, String("Instrument"));
@@ -652,6 +659,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		//preferences....
 		subMenu.addItem(203, "Set Cabbage Plant Directory");
 		subMenu.addItem(200, "Set Csound Manual Directory");
+		subMenu.addItem(205, "Set Examples Directory");
 		if(!getPreference(appProperties, "DisablePluginInfo"))
 		subMenu.addItem(201, String("Disable Export Plugin Info"), true, false);
 		else
@@ -678,9 +686,6 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		m.addItem(2000, "About");
 		m.addItem(2345, "Test button");
 	}
-	
-	
-	
 
 	int options = m.showAt (&optionsButton);
  
@@ -691,7 +696,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	else if(options==2345){
 //	filter->removeGUIComponent(2);
 	}
-	//------- preference disable gui edit warning ------
+	else if((options>=examplesOffset) && (options<=examplesOffset+exampleFiles.size())){
+		openFile(exampleFiles[options-examplesOffset].getFullPathName());	
+	}
+
 	else if(options>=9000){
 		openFile(recentFiles.getFile(options-9000).getFullPathName());
 	}
@@ -901,6 +909,15 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 			setPreference(appProperties, "UseCabbageIO", 0);
 	}
 	
+	//------- preference Examples dir ------
+	else if(options==205){
+		String dir = getPreference(appProperties, "ExamplesDir", "");
+		FileChooser browser(String("Please select your Examples directory..."), File(dir), String("*.csd"));
+		if(browser.browseForDirectory()){
+			setPreference(appProperties, "ExamplesDir", browser.getResult().getFullPathName());
+		}	
+	}
+	
 	//------- preference plugin info ------
 	else if(options==201){
 		int val = getPreference(appProperties, "DisablePluginInfo");
@@ -1004,7 +1021,7 @@ else{
 				csdFile = File(csd);
 			}
 			if(cabbageCsoundEditor){
-				cabbageCsoundEditor->setCsoundFile(csdFile);
+				cabbageCsoundEditor->textEditor->setAllText(csdFile.loadFileAsString());
 				filter->codeEditor = cabbageCsoundEditor->textEditor;
 			}
 			isAFileOpen = true;
@@ -1020,7 +1037,7 @@ else{
 			lastSaveTime = csdFile.getLastModificationTime();
 			resetFilter(true);
 			if(cabbageCsoundEditor){
-			cabbageCsoundEditor->setText(csdFile.loadFileAsString());
+			cabbageCsoundEditor->textEditor->setAllText(csdFile.loadFileAsString());
 			filter->codeEditor = cabbageCsoundEditor->textEditor;
 			}
 			isAFileOpen = true;

@@ -40,6 +40,7 @@ class CabbageStandalone : public JUCEApplication
 			String plantDir = appProperties->getCommonSettings(true)->getFile().getParentDirectory().getFullPathName();
 			Logger::writeToLog(plantDir);
 			defaultPropSet->setValue("PlantFileDir", plantDir);
+			defaultPropSet->setValue("ExamplesDir", plantDir+"/Examples");
 			defaultPropSet->setValue("DisablePluginInfo", 0);
 			defaultPropSet->setValue("AutoUpdate", 0);
 			defaultPropSet->setValue("UseCabbageIO", 1);

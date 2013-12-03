@@ -30,8 +30,9 @@ namespace CommandIDs
 	static const int addFromRepo		= 2022;
 	static const int insertRecentEvent	= 2023;
 	static const int openPythonEditor	= 2024;
-	static const int viewHelp			= 4021;
-	static const int viewSource			= 4022;
+	static const int viewCsoundHelp		= 4025;
+	static const int viewCabbageHelp	= 4026;
+	static const int viewSource			= 4027;
 	
 	static const int startSession				= 3023;
 	static const int commOrchUpdateInstrument	= 3024;

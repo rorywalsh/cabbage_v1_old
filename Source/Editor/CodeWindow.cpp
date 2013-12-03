@@ -197,16 +197,19 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		result.addDefaultKeypress ('c', ModifierKeys::altModifier | ModifierKeys::commandModifier);
 		break;	
 		
-	case CommandIDs::viewHelp:
+	case CommandIDs::viewCsoundHelp:
 #ifndef MACOSX
-		result.setInfo (String("View Help F1"), String("View Help"), CommandCategories::help, 0);
+		result.setInfo (String("Toggle Csound Manual F1"), String("Toggle Csound Manual"), CommandCategories::help, 0);
 		result.defaultKeypresses.add(KeyPress(KeyPress::F1Key));
 #else
-			result.setInfo (String("View Help Ctrl+1"), String("View Help"), CommandCategories::help, 0);
-			result.addDefaultKeypress ('1', ModifierKeys::commandModifier);		
+		result.setInfo (String("Toggle Csound Manual Ctrl+1"), String("Toggle Csound Manual"), CommandCategories::help, 0);
+		result.addDefaultKeypress ('1', ModifierKeys::commandModifier);		
 #endif
 		break;
 
+	case CommandIDs::viewCabbageHelp:
+		result.setInfo (String("Toggle Cabbage Manual"), String("Toggle Cabbage Manual"), CommandCategories::help, 0);
+		break;
 	}
 }
 
@@ -277,7 +280,8 @@ else if(topLevelMenuIndex==1)
 	
 else if(topLevelMenuIndex==2)
 	{
-	m1.addCommandItem(&commandManager, CommandIDs::viewHelp);
+	m1.addCommandItem(&commandManager, CommandIDs::viewCsoundHelp);
+	m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
 	return m1;
 	}
 
@@ -409,47 +413,83 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		textEditor->addToRepository();
 		}	
 
-	else if(info.commandID==CommandIDs::viewHelp)
+	else if(info.commandID==CommandIDs::viewCsoundHelp)
 		{
-        if(!showingHelp)
-                {                        
-                        String helpDir = appProperties->getUserSettings()->getValue("CsoundHelpDir", "");
-                        if(helpDir.length()<2)
-                                CabbageUtils::showMessage("Please set the Csound manual directory in the Preference menu", &getLookAndFeel());                
-                        else{                        
-							CodeDocument::Position pos1, pos2;
-							pos1 = textEditor->getDocument().findWordBreakBefore(textEditor->getCaretPos());
-							pos2 = textEditor->getDocument().findWordBreakAfter(textEditor->getCaretPos());
-							String opcode = csoundDoc.getTextBetween(pos1, pos2);
-							URL urlCsound(helpDir+"/"+opcode.trim()+String(".html"));
-							String urlCabbage;
-
-
-							ChildProcess process;
-							File temp1(urlCsound.toString(false));
-							if(temp1.exists()){
-							#ifdef LINUX        
-								if(!process.start("xdg-open "+urlCsound.toString(false).toUTF8())) 
-									CabbageUtils::showMessage("couldn't show file", this->lookAndFeel);
-							#else
-								htmlHelp->goToURL(urlCsound.toString(false));
-								showingHelp = true;
-								setContentNonOwned(nullptr, false);
-								setContentNonOwned(htmlHelp, false);
-							#endif
-							}
-	
-						}
-				}
-				else{
-						setContentNonOwned(nullptr, false);
-						setContentNonOwned(textEditor, false);
-						showingHelp = false;
-				}
+		toggleManuals("Csound");
 		}
 	
+	else if(info.commandID==CommandIDs::viewCabbageHelp)
+		{
+		toggleManuals("Cabbage");
+		}
 				
 return true;
+}
+
+//=======================================================
+// toggle manuals
+//=======================================================
+void CodeWindow::toggleManuals(String manual)
+{
+if(!showingHelp)
+if(manual=="Csound")
+{       
+			String helpDir;
+			if(manual=="Csound")	
+			helpDir = appProperties->getUserSettings()->getValue("CsoundHelpDir", "");
+		
+			if(helpDir.length()<2)
+					CabbageUtils::showMessage("Please set the Csound manual directory in the Preference menu", &getLookAndFeel());                
+			else{                        
+				CodeDocument::Position pos1, pos2;
+				pos1 = textEditor->getDocument().findWordBreakBefore(textEditor->getCaretPos());
+				pos2 = textEditor->getDocument().findWordBreakAfter(textEditor->getCaretPos());
+				String opcode = csoundDoc.getTextBetween(pos1, pos2);
+				URL urlCsound(helpDir+"/"+opcode.trim()+String(".html"));
+				String urlCabbage;
+
+
+				ChildProcess process;
+				File temp1(urlCsound.toString(false));
+				if(temp1.exists()){
+				#ifdef LINUX        
+					if(!process.start("xdg-open "+urlCsound.toString(false).toUTF8())) 
+						CabbageUtils::showMessage("couldn't show file", this->lookAndFeel);
+				#else
+					htmlHelp->goToURL(urlCsound.toString(false));
+					showingHelp = true;
+					setContentNonOwned(nullptr, false);
+					setContentNonOwned(htmlHelp, false);
+				#endif
+				}
+
+			}
+		}
+else{
+		String path;
+		#ifndef MACOSX
+		path = File::getSpecialLocation(File::currentApplicationFile).getParentDirectory().getFullPathName();
+		path = path+"/Docs/cabbage.html"; 
+		#else
+		String path = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+"/Contents/Docs/";
+		#endif
+	if(!File(path).existsAsFile())
+			CabbageUtils::showMessage(
+"Could not find Cabbage manual. Make sure\n\
+it is located in the Docs folder in the same\n\
+directory as the main Cabbage executable", &getLookAndFeel());
+		else{
+				htmlHelp->goToURL(path);
+				showingHelp = true;
+				setContentNonOwned(nullptr, false);
+				setContentNonOwned(htmlHelp, false);
+		}
+	}
+else{
+	setContentNonOwned(nullptr, false);
+	setContentNonOwned(textEditor, false);
+	showingHelp = false;
+}
 }
 
 void CodeWindow::toggleTextWindows()

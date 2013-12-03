@@ -63,7 +63,8 @@ public:
 									CommandIDs::commScoUpdateMultiLine,
 									CommandIDs::commScoUpdateSingleLine,
 									CommandIDs::commOrcUpdateChannel,
-									CommandIDs::viewHelp		
+									CommandIDs::viewCsoundHelp,	
+									CommandIDs::viewCabbageHelp	
 									};
 		commands.addArray (ids, sizeof (ids) / sizeof (ids [0]));
 	}
@@ -100,6 +101,7 @@ public:
 	void getCommandInfo (const CommandID commandID, ApplicationCommandInfo& result);
 	PopupMenu getMenuForIndex (int topLevelMenuIndex, const String& menuName);
 	bool perform (const InvocationInfo& info);
+	void toggleManuals(String manual);
 
 	void setEditorColourScheme(String theme);
 	void actionListenerCallback(const String &message);

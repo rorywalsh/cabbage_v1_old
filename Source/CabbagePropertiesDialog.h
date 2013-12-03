@@ -200,7 +200,7 @@ class CabbagePropertiesDialog : public DocumentWindow,
 								public ActionBroadcaster
 {
 public:
-	CabbagePropertiesDialog(String name):DocumentWindow (name, Colours::black,
+	CabbagePropertiesDialog(String name):DocumentWindow (name, Colour(20, 20, 20),
                       DocumentWindow::minimiseButton
                        | DocumentWindow::closeButton),
 					   cAttr("", -99)
@@ -210,6 +210,9 @@ public:
 		propsPanel = new CabbagePropertiesPanel();	 
 		propsPanel->setLookAndFeel(lookAndFeel);
 		setSize(200, propsPanel->getHeight()); 	
+		#ifndef LINUX
+		setAlpha(.9f);
+		#endif
 	   }
 	   
 	   ~CabbagePropertiesDialog(){

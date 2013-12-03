@@ -8,7 +8,8 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 							  csoundOutputText(""),
 							  debugMessage(""),
 							  firstTime(true),
-							  font(String("Courier New"), 15, 1)
+							  font(String("Courier New"), 15, 1),
+							  showingHelp(false)
 {  
 	setApplicationCommandManagerToWatch(&commandManager);
 	commandManager.registerAllCommandsForTarget(this);
@@ -61,6 +62,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 	popupDisplay->addToDesktop(0);
 	popupDisplay->setVisible(false);
 	
+htmlHelp = new WebBrowserComponent(false);
 
 setContentNonOwned(textEditor, false);
 }
@@ -303,33 +305,11 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		{
 			Logger::writeToLog("fileSaveAs");
 			sendActionMessage("fileSaveAs");
-			/*
-			FileChooser saveFC(String("Save session .csd file..."), File::nonexistent, String("*.csd"));
-			if(saveFC.browseForFileToSave(true)){
-				csdFile = saveFC.getResult().withFileExtension(String(".csd"));
-				csdFile.replaceWithText(getAllDocContent());
-			}
-			 */ 
 		}
 	else if(info.commandID==CommandIDs::fileOpen)
 		{			
 			Logger::writeToLog("fileOpen");
 			sendActionMessage("fileOpen");
-			/*
-			FileChooser openFC(String("Open a .csd file..."), File::nonexistent, String("*.csd"));
-			if(openFC.browseForFileToOpen()){
-				csdFile = openFC.getResult();
-				csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
-				replaceAllDocContent(csdFile.loadFileAsString());				
-				RecentlyOpenedFilesList recentFiles;
-				recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
-																							recentFiles.addFile (csdFile);
-				appProperties->getUserSettings()->setValue ("recentlyOpenedFiles", 
-															recentFiles.toString());				
-				
-			}
-			setName(csdFile.getFullPathName());
-			 */ 
 		}
 
 	else if(info.commandID==CommandIDs::fileQuit)
@@ -343,8 +323,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		}
 		
 	else if(info.commandID==CommandIDs::fileKeyboardShorts)
-		{			
-		
+		{				
 			DialogWindow::LaunchOptions o;
 			o.content.setOwned(new ShortcutsPanel());
 			o.dialogTitle                   = TRANS("Keyboard Shortcuts");
@@ -353,9 +332,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
 			o.useNativeTitleBar				= false;
 			o.escapeKeyTriggersCloseButton  = true;
 			//o.content->setLookAndFeel(&this->getLookAndFeel());
-
-			o.launchAsync();
-			
+			o.launchAsync();			
 		}
 		
 	else if(info.commandID==CommandIDs::editCut)
@@ -430,68 +407,48 @@ bool CodeWindow::perform (const InvocationInfo& info)
 	else if(info.commandID==CommandIDs::addFromRepo)
 		{	
 		textEditor->addToRepository();
-		}		
-		
-	else if(info.commandID==CommandIDs::commOrchUpdateMultiLine)
-		{	
-//		String text = textEditor->getSelectedText();
-//		if(text.length()>0)
-//		csound->CompileOrc(text.toUTF8());
-		}
-		
-	else if(info.commandID==CommandIDs::commOrchUpdateInstrument)
-		{	
-//		String text = textEditor->getInstrumentText();
-//		if(text.length()>0)
-//		csound->CompileOrc(text.toUTF8());
-		}
-	else if(info.commandID==CommandIDs::commOrchUpdateSingleLine)
-		{	
-//		String text = textEditor->getLineText();
-//		if(text.length()>0)
-//		csound->CompileOrc(text.toUTF8());
-		}
-	else if(info.commandID==CommandIDs::commScoUpdateSingleLine)
-		{	
-//		String text = textEditor->getLineText();
-//		recentEvents.add(text);
-//		if(text.length()>0)
-//		csound->InputMessage(text.toUTF8().getAddress());
-		}
-	else if(info.commandID==CommandIDs::commScoUpdateMultiLine)
-		{	
-//		StringArray tempArray = textEditor->getSelectedTextArray();
-//		if(tempArray.size()>0)
-//			for(int i=0;i<tempArray.size();i++)
-//		csound->InputMessage(tempArray[i].toUTF8().getAddress());
-		}
-	else if(info.commandID==CommandIDs::commOrcUpdateChannel)
-		{	
-//		String text = textEditor->getTempChannelInstr();
-//		if(text.length()>0)
-//		csound->CompileOrc(text.toUTF8());
-		}
-	else if(info.commandID==CommandIDs::startSession)
-		{	
-//		StringArray deviceNames;
-		
-//	   int i,n = csoundAudioDevList(csound->GetCsound(),NULL,1);
-//	   CS_AUDIODEVICE *devs = (CS_AUDIODEVICE *)
-//		   malloc(n*sizeof(CS_AUDIODEVICE));
-//	   csoundAudioDevList(csound->GetCsound(),devs,1);
-//	   for(i=0; i < n; i++)
-//		   printf(" %d: %s (%s)\n",
-//				 i, devs[i].device_id, devs[i].device_name);
-//	   free(devs);
-//	   
-		//	if(String(type)=="audio")
-		//		deviceNames.add(name);
+		}	
 
-		//AudioSettings devices(audioDevices, midiDevice);
-		//devices.setLookAndFeel(&this->getLookAndFeel());
-		//DialogWindow::showModalDialog(TRANS("Audio Settings"), &devices, this, Colours::black.brighter(.5), false, false, false);
+	else if(info.commandID==CommandIDs::viewHelp)
+		{
+        if(!showingHelp)
+                {                        
+                        String helpDir = appProperties->getUserSettings()->getValue("CsoundHelpDir", "");
+                        if(helpDir.length()<2)
+                                CabbageUtils::showMessage("Please set the Csound manual directory in the Preference menu", &getLookAndFeel());                
+                        else{                        
+							CodeDocument::Position pos1, pos2;
+							pos1 = textEditor->getDocument().findWordBreakBefore(textEditor->getCaretPos());
+							pos2 = textEditor->getDocument().findWordBreakAfter(textEditor->getCaretPos());
+							String opcode = csoundDoc.getTextBetween(pos1, pos2);
+							URL urlCsound(helpDir+"/"+opcode.trim()+String(".html"));
+							String urlCabbage;
 
-		}		
+
+							ChildProcess process;
+							File temp1(urlCsound.toString(false));
+							if(temp1.exists()){
+							#ifdef LINUX        
+								if(!process.start("xdg-open "+urlCsound.toString(false).toUTF8())) 
+									CabbageUtils::showMessage("couldn't show file", this->lookAndFeel);
+							#else
+								htmlHelp->goToURL(urlCsound.toString(false));
+								showingHelp = true;
+								setContentNonOwned(nullptr, false);
+								setContentNonOwned(htmlHelp, false);
+							#endif
+							}
+	
+						}
+				}
+				else{
+						setContentNonOwned(nullptr, false);
+						setContentNonOwned(textEditor, false);
+						showingHelp = false;
+				}
+		}
+	
+				
 return true;
 }
 

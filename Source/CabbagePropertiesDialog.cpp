@@ -85,7 +85,7 @@ void ControlProperty::resized()
 
 
 void ControlProperty::paint(Graphics &g){
-	g.setColour (Colours::black);
+	g.setColour (Colour(10, 10, 10));
 	g.fillAll();
 
 	g.setColour (Colours::orange);

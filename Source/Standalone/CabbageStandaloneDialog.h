@@ -41,9 +41,9 @@ public:
 	CsoundMessageConsole(String title, Colour bgcolour, int top, int left): DocumentWindow(title, bgcolour, DocumentWindow::allButtons, true){
 	textEditor = new TextEditor();
 	textEditor->setColour(TextEditor::backgroundColourId, Colours::black);
-	textEditor->setColour(TextEditor::textColourId, Colour(31, 100, 20));
+	textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
 	textEditor->setMultiLine(true);
-	textEditor->setFont(Font("Arial", 14, 1));
+	textEditor->setFont(Font("Arial", 14, 0));
 	setSize(700, 200);
 	setTopLeftPosition(top, left);
 	setAlwaysOnTop(true);
@@ -51,6 +51,7 @@ public:
 	this->setTitleBarHeight(20);
 	textEditor->setBounds(0, 30, getWidth(), getHeight());
 	setContentOwned(textEditor, true);	
+	setAlpha(.8f);
 	};
 	
 	~CsoundMessageConsole(){};
@@ -60,7 +61,7 @@ public:
 	}
 
 	void setText(String text){
-		textEditor->setColour(TextEditor::textColourId, Colour(31, 100, 20));
+		textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
 		textEditor->setText(text);
 		textEditor->setCaretPosition(textEditor->getText().length());
 	}

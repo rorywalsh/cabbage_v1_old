@@ -1881,7 +1881,7 @@ Button* CabbageLookAndFeel::createTabBarExtrasButton()
 
     DrawablePath ellipse;
     ellipse.setPath (p);
-    ellipse.setFill (Colour (0x99ffffff));
+    ellipse.setFill (Colours::red);
 
     p.clear();
     p.addEllipse (0.0f, 0.0f, 100.0f, 100.0f);

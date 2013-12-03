@@ -172,6 +172,8 @@ public:
 	CsoundCodeEditor* textEditor;
 	CsoundTokeniser csoundToker;
 	Font font;
+	ScopedPointer<WebBrowserComponent> htmlHelp;
+	bool showingHelp;
 };
 
 

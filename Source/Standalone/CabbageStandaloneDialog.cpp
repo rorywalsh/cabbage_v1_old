@@ -440,12 +440,10 @@ filter->reCompileCsound(csdFile);
 	
 	if(cabbageCsoundEditor){
 	cabbageCsoundEditor->setName(csdFile.getFileName());
+	cabbageCsoundEditor->setText(csdFile.loadFileAsString());
 	filter->codeEditor = cabbageCsoundEditor->textEditor;
 	if(Component::getCurrentlyFocusedComponent()->getName().contains("Panel"))
 		Component::getCurrentlyFocusedComponent()->setWantsKeyboardFocus(false);
-		
-	//if(cabbageCsoundEditor->isVisible())
-	//	cabbageCsoundEditor->csoundEditor->textEditor->grabKeyboardFocus();
 	}
 	
 	
@@ -1022,6 +1020,7 @@ else{
 				csd << "/Contents/" << csdFile.getFileNameWithoutExtension() << ".csd";
 				csdFile = File(csd);
 			}
+			
 			cabbageCsoundEditor->setText(csdFile.loadFileAsString());
 			cabbageCsoundEditor->textEditor->setAllText(csdFile.loadFileAsString());
 			isAFileOpen = true;

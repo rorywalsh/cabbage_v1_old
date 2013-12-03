@@ -261,13 +261,19 @@ public:
         }
         
 		bool hasTextChanged(){
+		#ifdef Cabbage_Build_Standalone	
 		if(codeEditor)
 		return codeEditor->textChanged;	
 		else return false;
+		#else
+		return false;
+		#endif
 		}
 		
 		void saveText(){
+		#ifdef Cabbage_Build_Standalone
 		codeEditor->textChanged = false;	
+		#endif
 		}
 		
 		void setOpcodeDirEnv(){

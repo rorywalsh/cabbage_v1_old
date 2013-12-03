@@ -133,12 +133,23 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 		
 	setPreference(appProperties, "AutoUpdate",0);
 	
+	//create editor but don't display it yet...
+	cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
+	cabbageCsoundEditor->setVisible(false);
+	//cabbageCsoundEditor->setFullScreen(true);
+	cabbageCsoundEditor->addActionListener(this);
+	cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
+	
+	filter->codeEditor = cabbageCsoundEditor->textEditor;	
+	
 	//opens a default file that matches the name of the current executable
 	//this can be used to create more 'standalone' like apps
 	if(File(defaultCSDFile).existsAsFile()){
 		standaloneMode = true;
 		openFile(defaultCSDFile);
 	}
+	
+
 	
 	//filter->codeWindow = cabbageCsoundEditor->textEditor;
 	//start timer for output message, and autoupdate if it's on
@@ -965,20 +976,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 void StandaloneFilterWindow::openTextEditor()
 {
 		if(csdFile.getFileName().length()>0){
-			if(!cabbageCsoundEditor){
-			cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
-			cabbageCsoundEditor->setVisible(false);
-			cabbageCsoundEditor->setFullScreen(true);
-			cabbageCsoundEditor->addActionListener(this);
-			cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
-			filter->codeEditor = cabbageCsoundEditor->textEditor;
-			}
-			//cabbageCsoundEditor->setText(csdFile.loadFileAsString());
+			cabbageCsoundEditor->setText(csdFile.loadFileAsString());
 			this->toBehind(cabbageCsoundEditor);
 			cabbageCsoundEditor->setVisible(true);
 			cabbageCsoundEditor->setFullScreen(true);
-			cabbageCsoundEditor->toFront(true);
-			
+			cabbageCsoundEditor->toFront(true);			
 			
 			if(!outputConsole){
 			outputConsole = new CsoundMessageConsole("Csound Output Messages", 
@@ -1020,10 +1022,8 @@ else{
 				csd << "/Contents/" << csdFile.getFileNameWithoutExtension() << ".csd";
 				csdFile = File(csd);
 			}
-			if(cabbageCsoundEditor){
-				cabbageCsoundEditor->textEditor->setAllText(csdFile.loadFileAsString());
-				filter->codeEditor = cabbageCsoundEditor->textEditor;
-			}
+			cabbageCsoundEditor->setText(csdFile.loadFileAsString());
+			cabbageCsoundEditor->textEditor->setAllText(csdFile.loadFileAsString());
 			isAFileOpen = true;
 			resetFilter(true);
 			//cabbageCsoundEditor->setCsoundFile(csdFile);
@@ -1036,10 +1036,8 @@ else{
 			csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
 			lastSaveTime = csdFile.getLastModificationTime();
 			resetFilter(true);
-			if(cabbageCsoundEditor){
+			cabbageCsoundEditor->setText(csdFile.loadFileAsString());
 			cabbageCsoundEditor->textEditor->setAllText(csdFile.loadFileAsString());
-			filter->codeEditor = cabbageCsoundEditor->textEditor;
-			}
 			isAFileOpen = true;
 		}
 		if(getPreference(appProperties, "SetAlwaysOnTop"))

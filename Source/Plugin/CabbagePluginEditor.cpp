@@ -2305,10 +2305,10 @@ if(!getFilter()->isGuiEnabled()){
 									getFilter()->getGUICtrls(i).setNumProp("value", 0);
 									}
                                 //toggle text values
-                                if(getFilter()->getGUICtrls(i).getItems(1)==button->getButtonText())
-                                        button->setButtonText(getFilter()->getGUICtrls(i).getItems(0));
-                                else if(getFilter()->getGUICtrls(i).getItems(0)==button->getButtonText())
-                                        button->setButtonText(getFilter()->getGUICtrls(i).getItems(1));
+                                if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1)==button->getButtonText())
+                                        button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 0));
+                                else if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 0)==button->getButtonText())
+                                        button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1));
 								}
 								
 							}

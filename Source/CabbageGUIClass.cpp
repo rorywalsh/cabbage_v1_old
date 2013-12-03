@@ -812,7 +812,7 @@ int CabbageGUIClass::parse(String str)
 	try{
 
 	
-		
+	String typeOfWidget="";
 	StringArray identArray;
 	identArray.clear();
     identArray.add(",colour(");
@@ -908,7 +908,9 @@ int CabbageGUIClass::parse(String str)
 			String newString = str.substring(identPos+identArray.getReference(indx).length());
 			String tstr = newString.substring(0, newString.indexOf(0, ")"));
 			if(tstr.length()==0) return 0;
-			StringArray strTokens;
+			StringArray strTokens, fillStrTokens;
+			fillStrTokens.addTokens(str, ", ", "\"");
+			typeOfWidget = fillStrTokens[0];
 			strTokens.addTokens(tstr.removeCharacters(")\""), ",", "\"");
 
 			if(identArray[indx].equalsIgnoreCase("name(")){
@@ -1135,6 +1137,9 @@ int CabbageGUIClass::parse(String str)
 					//	}
 					comboRange = i;
 					}
+					if((value.size()==1) && (typeOfWidget=="button"))
+						value.append(strTokens[0]);
+						
 			  cabbageIdentifiers.set("text", value);	
 			}
 

@@ -7,10 +7,10 @@ rslider bounds(330, 10, 100, 100) channel("vibamp"), range(0,20,0), caption("Vib
 rslider bounds(435, 10, 100, 100) channel("vibrate"), range(0,20,0), caption("Vib rate"), colour("GreenYellow ")
 
 groupbox bounds(15, 120, 240, 100), text("ADSR amplitude"), plant("ADSR"){ 
-rslider bounds(0, 30, 60, 60), text("A"), colour("orange"), channel("att"), range(0.01,3, .5)
-rslider bounds(60, 30, 60, 60), text("D"), colour("orange"), channel("dec"), range(0,1, .5)
-rslider bounds(120, 30, 60, 60), text("S"), colour("orange"), channel("sus"), range(0,1,.8)
-rslider bounds(180, 30, 60, 60), text("R"), colour("orange"), channel("rel"), range(0.01,3, .2)
+rslider bounds(.0, .3, .6, .6), text("A"), colour("orange"), channel("att"), range(0.01,3, .5)
+rslider bounds(.25, .3, .6, .6), text("D"), colour("orange"), channel("dec"), range(0,1, .5)
+rslider bounds(.5, .3, .6, .6), text("S"), colour("orange"), channel("sus"), range(0,1,.8)
+rslider bounds(.75, .3, .6, .6), text("R"), colour("orange"), channel("rel"), range(0.01,3, .2)
 }
 
 combobox bounds(280,120, 160, 20), channel("select"), value(1), text("clar","glass", "loop","perc","piano","rebell","soprano","string","trumpet","vibr")
@@ -180,17 +180,17 @@ imodbase       =         (19 <= 5 ? 19 : 5)
 imodmax        =         (19 <= 5 ? 5 : 19)       
 indxbase       =         (1 <= 2 ? 1 : 2)        
 indxmax        =         (1 <= 2 ? 2 : 1)        
-kmodchg        oscil1i   0.00,(imodmax - imodbase),p3,gifc4       
+kmodchg        oscil1i   0.00,imodmax - imodbase,p3,gifc4       
 kmod           =         imodbase + kmodchg      
-kndxchg        oscil1i   0.00,(indxmax - indxbase),5,gifc5       
+kndxchg        oscil1i   0.00,indxmax - indxbase,5,gifc5       
 kndx           =         indxbase + kndxchg      
-afm1           foscili   (1*.45),kpitch1,1,kmod,kndx,ifunc       
-afm2           foscili   (1*.35),kpitch2,1,kmod,kndx,ifunc        
-afm3           foscili   (1*.32),kpitch3,1,kmod,kndx,ifunc       
+afm1           foscili   1*.45,kpitch1,1,kmod,kndx,ifunc       
+afm2           foscili   1*.35,kpitch2,1,kmod,kndx,ifunc        
+afm3           foscili   1*.32,kpitch3,1,kmod,kndx,ifunc       
 afmttl         =         afm1+afm2+afm3      
-aosc1          poscil     (1 *.45),kpitch1,ifunc      
-aosc2          poscil     (1 *.35),kpitch2,ifunc       
-aosc3          poscil     (1 *.32),kpitch3,ifunc      
+aosc1          poscil     1 *.45,kpitch1,ifunc      
+aosc2          poscil     1 *.35,kpitch2,ifunc       
+aosc3          poscil     1 *.32,kpitch3,ifunc      
 aoscttl        =         aosc1+aosc2+aosc3       
 afm            =         afmttl - aoscttl;                   
 icfbase        =         (3000 <= 12000 ? 3000 : 12000)      
@@ -199,12 +199,13 @@ kcfchg         oscil1i   0.00,(icfmax - icfbase),5,gifc6
 kcf            =         icfbase + kcfchg        
 ibwbase        =         (100 <= 400 ? 100 : 400)        
 ibwmax         =         (100 <= 400 ? 400 : 100)        
-kbwchg         oscil1i   0.00,(ibwmax - ibwbase),5,gifc6      
+kbwchg         oscil1i   0.00,ibwmax - ibwbase,5,gifc6      
 kbw            =         ibwbase + kbwchg        
 aflt1          reson     afm,kcf,kbw,1       
-aflt2          reson     afm,kcf*.9,kbw*1.11,1       
-abal           balance  aflt1+aflt2,afm       
-asig           envlpx    abal, .2, gifc5, gifc5*.39, gifc5, 1,.01                       
+aflt2          reson     afm,kcf*.9, kbw*1.11,1       
+abal           balance   aflt1+aflt2,afm       
+
+asig           envlpx    abal,.2, gifc5, gifc5*.39, gifc5, 1                       
 
 xout asig*kgate         
 
@@ -492,7 +493,7 @@ aoutR = ((aL * (1-kspread)) + (aR * kspread))   *.5
 
 kadsr	mxadsr	iatt,idec,isus,irel
 
-outs	(aoutL)*kadsr, (aoutR)*kadsr
+outs	(aoutL)*kadsr,(aoutR)*kadsr
 vincr	ga1,aoutL*kadsr
 vincr	ga2,aoutR*kadsr
 endin

@@ -7,21 +7,21 @@ rslider bounds(330, 10, 100, 100) channel("reso"), range(.1,.99,.2), caption("Re
 rslider bounds(435, 10, 100, 100) channel("spread"), range(0, 1, .5), caption("Stereo image"), colour("orange")
 
 groupbox bounds(15, 120, 240, 100), text("ADSR amplitude"), plant("ADSR"){ 
-rslider bounds(0, 30, 60, 60), text("A"), colour("orange"), channel("att"), range(0.01,3, .5)
-rslider bounds(60, 30, 60, 60), text("D"), colour("orange"), channel("dec"), range(0,1, .5)
-rslider bounds(120, 30, 60, 60), text("S"), colour("orange"), channel("sus"), range(0,1,.8)
-rslider bounds(180, 30, 60, 60), text("R"), colour("orange"), channel("rel"), range(0.01,3, .2)
+rslider bounds(.0, .3, .6, .6), text("A"), colour("orange"), channel("att"), range(0.01,3, .5)
+rslider bounds(.25, .3, .6, .6), text("D"), colour("orange"), channel("dec"), range(0,1, .5)
+rslider bounds(.5, .3, .6, .6), text("S"), colour("orange"), channel("sus"), range(0,1,.8)
+rslider bounds(.75, .3, .6, .6), text("R"), colour("orange"), channel("rel"), range(0.01,3, .2)
 }
 
 groupbox bounds(270, 120, 130, 100), text("LFO"), plant("lfo"){ 
-rslider bounds(6, 30, 60, 60), text("Lfo Amp"), colour("orange"), channel("lfoamp"), range(0,100, 0)
-rslider bounds(65, 30, 60, 60), text("Lfo Rate"), colour("orange"), channel("lforate"), range(0,20, 0)
+rslider bounds(0.05, .30, .60, .60), text("Lfo Amp"), colour("orange"), channel("lfoamp"), range(0,100, 0)
+rslider bounds(.5, .30, .60, .60), text("Lfo Rate"), colour("orange"), channel("lforate"), range(0,20, 0)
 ;rslider bounds(115, 30, 60, 60), text("S"), colour("orange"), channel("sus"), range(0,1,.8)
 ;rslider bounds(165, 30, 60, 60), text("R"), colour("orange"), channel("rel"), range(0.01,3, .2)
 }
 groupbox bounds(410, 120, 130, 100), text("LFO filter"), plant("lfofilter"){ 
-rslider bounds(6, 30, 60, 60), text("Lfo Amp"), colour("orange"), channel("lfoamp2"), range(0,1000, 0)
-rslider bounds(65, 30, 60, 60), text("Lfo Rate"), colour("orange"), channel("lforate2"), range(0,10, 0)
+rslider bounds(0.05, .30, .60, .60), text("Lfo Amp"), colour("orange"), channel("lfoamp2"), range(0,1000, 0)
+rslider bounds(.5, .30, .60, .60), text("Lfo Rate"), colour("orange"), channel("lforate2"), range(0,10, 0)
 ;rslider bounds(115, 30, 60, 60), text("S"), colour("orange"), channel("sus"), range(0,1,.8)
 ;rslider bounds(165, 30, 60, 60), text("R"), colour("orange"), channel("rel"), range(0.01,3, .2)
 }

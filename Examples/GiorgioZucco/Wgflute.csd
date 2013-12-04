@@ -1,10 +1,10 @@
 <Cabbage>
 form caption("Waveguide flute ") size(335, 165), colour("black"), pluginID("flu")
-rslider pos(0, 0), size(80, 80) channel("jet"), range(0.08,0.56,0.08), caption("Air jet"), colour("yellow"), midictrl(1, 1)
-rslider pos(85, 0), size(80, 80) channel("vib"), range(0,12,1), caption("Vib rate"), colour("yellow"), midictrl(1, 2)
-rslider pos(170, 0), size(80, 80) channel("vibamp"), range(0,1,0), caption("Vib amp"), colour("yellow"), midictrl(1, 3)
-rslider pos(255, 0), size(80, 80) channel("noise"), range(0,0.6,0.1), caption("Noise"), colour("yellow"), midictrl(1, 3)
-keyboard pos(0, 85), size(330, 50)
+rslider bounds(0, 0, 80, 80) channel("jet"), range(0.08,0.56,0.08), caption("Air jet"), colour("yellow"), midictrl(1, 1)
+rslider bounds(85, 0, 80, 80) channel("vib"), range(0,12,1), caption("Vib rate"), colour("yellow"), midictrl(1, 2)
+rslider bounds(170, 0, 80, 80) channel("vibamp"), range(0,1,0), caption("Vib amp"), colour("yellow"), midictrl(1, 3)
+rslider bounds(255, 0, 80, 80) channel("noise"), range(0,0.6,0.1), caption("Noise"), colour("yellow"), midictrl(1, 3)
+keyboard bounds(0, 85, 330, 50)
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>

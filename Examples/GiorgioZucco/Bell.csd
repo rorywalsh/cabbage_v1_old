@@ -4,10 +4,10 @@ form caption("Fm Bell synthesizer"), size(760, 330), pluginID("bel1")
 xypad bounds(0, 0, 250, 210), channel("chanx", "chany"), text("Modulation"), rangex(1,30,6.72), rangey(0,1,0.43)
 
 groupbox bounds(260, 0, 240, 100), text("ADSR"), plant("adsr"){ 
-rslider bounds(0, 30, 60, 60), text("A"), colour("orange"), channel("att"), range(0.01,3, .5)
-rslider bounds(60, 30, 60, 60), text("D"), colour("orange"), channel("dec"), range(0,1, .5)
-rslider bounds(120, 30, 60, 60), text("S"), colour("orange"), channel("sus"), range(0,1,.8)
-rslider bounds(180, 30, 60, 60), text("R"), colour("orange"), channel("rel"), range(0.01,3, .2)
+rslider bounds(.0, .3, .6, .6), text("A"), colour("orange"), channel("att"), range(0.01,3, .5)
+rslider bounds(.25, .3, .6, .6), text("D"), colour("orange"), channel("dec"), range(0,1, .5)
+rslider bounds(.5, .3, .6, .6), text("S"), colour("orange"), channel("sus"), range(0,1,.8)
+rslider bounds(.75, .3, .6, .6), text("R"), colour("orange"), channel("rel"), range(0.01,3, .2)
 }
 
 groupbox bounds(260, 105, 240, 100), text("Tune"), plant("tune"){ 

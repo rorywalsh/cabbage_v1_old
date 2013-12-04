@@ -7,16 +7,16 @@ rslider bounds(330, 10, 100, 100) channel("index"), range(0,2,0), caption("Index
 rslider bounds(435, 10, 100, 100) channel("fback"), range(0, .1,0), caption("Feedback"), colour("white")
 
 groupbox bounds(15, 120, 240, 100), text("ADSR amplitude"), plant("ADSR"){ 
-rslider bounds(.0, .3, .6, .6), text("A"), colour("orange"), channel("att"), range(0.01,3, .5)
+rslider bounds(.0, .3, .6, .6), text("A"), colour("orange"), channel("att"), range(0.01,3, 0.01)
 rslider bounds(.25, .3, .6, .6), text("D"), colour("orange"), channel("dec"), range(0,1, .5)
 rslider bounds(.5, .3, .6, .6), text("S"), colour("orange"), channel("sus"), range(0,1,.8)
 rslider bounds(.75, .3, .6, .6), text("R"), colour("orange"), channel("rel"), range(0.01,3, .2)
 }
 groupbox bounds(260, 120, 280, 100), text("ADSR index modulation"), plant("indexmod"){ 
-rslider bounds(.0, .3, .6, .6), text("A"), colour("orange"), channel("att"), range(0.01,3, .5)
-rslider bounds(.2, .3, .6, .6), text("D"), colour("orange"), channel("dec"), range(0,1, .5)
-rslider bounds(.4, .3, .6, .6), text("S"), colour("orange"), channel("sus"), range(0,1,.8)
-rslider bounds(.6, .3, .6, .6), text("R"), colour("orange"), channel("rel"), range(0.01,3, .2)
+rslider bounds(.0, .3, .6, .6), text("A"), colour("orange"), channel("att2"), range(0.01,3, 0.01)
+rslider bounds(.2, .3, .6, .6), text("D"), colour("orange"), channel("dec2"), range(0,1, .5)
+rslider bounds(.4, .3, .6, .6), text("S"), colour("orange"), channel("sus2"), range(0,1,.8)
+rslider bounds(.6, .3, .6, .6), text("R"), colour("orange"), channel("rel2"), range(0.01,3, .2)
 rslider bounds(.8, .3, .6, .6), text("Spread"),channel("spread"), range(0, 1, .5), colour("white")
 }
 
@@ -84,9 +84,9 @@ aR	clip	acarrier2,0,0dbfs
 aoutL = ((aL * kspread) + (aR * (1 - kspread))) *.5  
 aoutR = ((aL * (1-kspread)) + (aR * kspread))   *.5
 
-kadsr	mxadsr	iatt,idec,isus,irel
+aadsr	mxadsr	iatt,idec,isus,irel
 
-outs	(aoutL*iamp)*kadsr,(aoutR*iamp)*kadsr
+outs	(aoutL*iamp)*aadsr,(aoutR*iamp)*aadsr
 
 endin
 

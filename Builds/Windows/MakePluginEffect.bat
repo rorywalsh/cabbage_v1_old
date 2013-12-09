@@ -1,5 +1,6 @@
 
 @ECHO OFF
+
 ECHO =============Setting Build flags===================
 ECHO * You will need to edit this bat file in order to *
 ECHO * setup the correct directories and provide paths *
@@ -7,19 +8,19 @@ ECHO * to the Csound library                           *
 ECHO ===================================================
 ECHO 
 set JUCE_LIBRARY_CODE=C:\Users\Rory\Documents\SourceCode\cabbageaudio\cabbage\JuceLibraryCode
-set PREPROCESSOR_DEFS=-D__MINGW__=1 -DJUCE_MINGW -D__MINGW_EXTENSION= -DCSOUND6 -D Cabbage_Plugin_Synth=1 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
+set PREPROCESSOR_DEFS=-D__MINGW__=1 -DJUCE_MINGW -D__MINGW_EXTENSION= -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
 set CSOUND_INCLUDE_DIR=C:\Users\Rory\Documents\SourceCode\cabbageaudio\csound6-git\include
 set ASIOSDK2Dir=C:\SDKs\ASIOSDK2.3\common
 set VSTSDKDir=C:\SDKs\vstsdk2.4
 set CABBAGE_SOURCE_DIR=C:\Users\Rory\Documents\SourceCode\cabbageaudio\cabbage\Source
 set CSOUND_LIBRARY=C:\Users\Rory\Documents\SourceCode\cabbageaudio\csound6-git\build\libcsound64.dll.a
 set COMPILER_FLAGS=-Wall -Wno-strict-aliasing -Wno-strict-overflow  -march=pentium4 -g -ggdb -O0 -std=gnu++0x -mstackrealign
-set OUTPUT_TARGET=CabbagePluginSynth.dll
+set OUTPUT_TARGET=CabbagePluginEffect.dll
 
-IF "%1"=="Release" set COMPILER_FLAGS= -Wall -Wreorder -Wno-strict-aliasing -Wno-strict-overflow  -march=pentium4 -O -std=gnu++0x -mstackrealign
-IF "%1"=="Release" set OUTPUT_TARGET=CabbagePluginSynth.dat
+IF "%1"=="release" set COMPILER_FLAGS= -Wall -Wreorder -Wno-strict-aliasing -Wno-strict-overflow -march=pentium4 -O -std=gnu++0x -mstackrealign
+IF "%1"=="release" set OUTPUT_TARGET=CabbagePluginEffect.dat
 
-ECHO on
+@ECHO on
 
 rm -rf build\intermediate\Debug
 mkdir build\intermediate\Debug

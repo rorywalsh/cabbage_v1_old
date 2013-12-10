@@ -133,7 +133,6 @@ private:
 	float yAxis;
 	void timerCallback();
     ScopedPointer<CabbagePluginAudioProcessor> filter;
-	void addFiles2PopupMenu(PopupMenu &m, Array<File> &filesArray, String dir, String ext, int indexOffset);
     ScopedPointer<AudioDeviceManager> deviceManager;
 	void sendMessageToWinXound(String messageType, String message);
 	void sendMessageToWinXound(String messageType, int value);
@@ -151,6 +150,8 @@ private:
 	String consoleMessages;
 	ScopedPointer<CsoundMessageConsole> outputConsole;
 	StringArray previousScoreEvents;
+	
+	
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StandaloneFilterWindow);
 };
 

@@ -540,8 +540,14 @@ Array<File> subFolders;
 subFolders.add(searchDir);
 int noOfFiles=0, fileCnt;
 searchDir.findChildFiles(subFolders, File::findDirectories, true);
-
+String pathSlash;
+#ifdef LINUX
+pathSlash = "/";
 dir = dir+ "/";
+#else
+pathSlash = "\\";
+dir = dir+ "\\";
+#endif
 
 PopupMenu subMenu;	
 //grab all file in sub-folders	
@@ -552,7 +558,7 @@ for (int i = 1; i < subFolders.size(); i++){
 		for (fileCnt = noOfFiles; fileCnt < filesArray.size(); fileCnt++)
 			subMenu.addItem (fileCnt + indexOffset, filesArray[fileCnt].getFileNameWithoutExtension());
 			noOfFiles = fileCnt;
-			m.addSubMenu(subFolders[i].getFullPathName().replace(dir, "").replace("/", "-"), subMenu);			
+			m.addSubMenu(subFolders[i].getFullPathName().replace(dir, "").replace(pathSlash, "-"), subMenu);			
 		}
 	}
 }

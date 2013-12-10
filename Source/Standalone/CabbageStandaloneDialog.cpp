@@ -583,6 +583,14 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		m.addSubMenu ("Open recent file", recentFilesMenu);	
 		
 		String examplesDir = appProperties->getUserSettings()->getValue("ExamplesDir", "");	
+		if(!File(examplesDir).exists()){
+		#ifdef LINUX
+			examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
+		#else
+			examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
+		#endif
+		}
+			
 		addFilesToPopupMenu(subMenu, exampleFiles, examplesDir, "*.csd", examplesOffset); 
 		m.addSubMenu(String("Examples"), subMenu);
 
@@ -678,7 +686,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		subMenu.addItem(204, String("Use Cabbage IO"), true, false);
 		else
 		subMenu.addItem(204, String("Use Cabbage IO"), true, true);
-
+#ifndef LINUX
+		if(!getPreference(appProperties, "Using Cabbage-Csound"))
+		subMenu.addItem(206, String("Using Cabbage-Csound"), true, false);
+		else
+		subMenu.addItem(206, String("Using Cabbage-Csound"), true, true);
+#endif
 		m.addSubMenu("Preferences", subMenu);
 		
 		m.addItem(2000, "About");
@@ -906,6 +919,32 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		else
 			setPreference(appProperties, "UseCabbageIO", 0);
 	}
+	
+	//--------using Cabbage-Csound
+	else if(options==206){
+		String homeFolder = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName();
+		int val = getPreference(appProperties, "Using Cabbage-Csound");
+		if(val==0){ 
+			setPreference(appProperties, "Using Cabbage-Csoun", 1);
+			String homeFolder = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName();
+			String pluginFolder = homeFolder+"\\Disabled_CsoundPlugins";
+			String csoundDLL = homeFolder+"\\Disabled_csound64.dll";
+			if(!File(pluginFolder).moveFileTo(File(homeFolder+"\\CsoundPlugins")))
+				showMessage("Could not find Csound plugins folder?", &getLookAndFeel());
+			if(!File(csoundDLL).moveFileTo(File(homeFolder+"\\csound64.dll")))
+				showMessage("Could not find Csound library dll?", &getLookAndFeel());			
+		}
+		else{
+			setPreference(appProperties, "Using Cabbage-Csound", 0);
+			String pluginFolder = homeFolder+"\\CsoundPlugins";
+			String csoundDLL = homeFolder+"\\csound64.dll";
+			if(!File(pluginFolder).moveFileTo(File(homeFolder+"\\Disabled_CsoundPlugins")))
+				showMessage("Could not find Csound plugins folder?", &getLookAndFeel());
+			if(!File(csoundDLL).moveFileTo(File(homeFolder+"\\Disabled_csound64.dll")))
+				showMessage("Could not find Csound library dll?", &getLookAndFeel());
+			
+		}
+	}	
 	
 	//------- preference Examples dir ------
 	else if(options==205){

@@ -404,7 +404,6 @@ filter->reCompileCsound(csdFile);
 //	filter->sendChangeMessage();
 	filter->createGUI(csdFile.loadFileAsString(), true);
 
-	String test = filter->getPluginName();
 	setName(filter->getPluginName());
 
 	int runningCabbageProcess = getPreference(appProperties, "UseCabbageIO");
@@ -429,11 +428,6 @@ filter->reCompileCsound(csdFile);
 
     if (globalSettings != nullptr)
         globalSettings->removeValue ("filterState");
-	
-#ifdef Cabbage_Named_Pipe
-	//notify WinXound that Cabbage is set up and ready for action
-	//sendMessageToWinXound(String("CABBAGE_LOADED"), "");
-#endif
 
 
 	startTimer(100);
@@ -441,11 +435,11 @@ filter->reCompileCsound(csdFile);
 	if(cabbageCsoundEditor){
 	cabbageCsoundEditor->setName(csdFile.getFileName());
 	cabbageCsoundEditor->setText(csdFile.loadFileAsString());
+	cabbageCsoundEditor->textEditor->textChanged = false;
 	filter->codeEditor = cabbageCsoundEditor->textEditor;
 	if(Component::getCurrentlyFocusedComponent()->getName().contains("Panel"))
 		Component::getCurrentlyFocusedComponent()->setWantsKeyboardFocus(false);
 	}
-	
 	
 	
 }
@@ -515,11 +509,6 @@ PropertySet* StandaloneFilterWindow::getGlobalSettings()
 
 void StandaloneFilterWindow::showAudioSettingsDialog()
 {
-//int runningCabbageProcess = appProperties->getUserSettings()->getValue("UseCabbageIO", var(0)).getFloatValue();
-//if(!runningCabbageProcess){
-//	showMessage("Cabbage is currently letting Csound access the audio and MIDI inputs/outputs. If you wish to use Cabbage IO please enable it from the preferences.", &this->getLookAndFeel());
-//	return;
-//}
 const int numIns = filter->getNumInputChannels() <= 0 ? JucePlugin_MaxNumInputChannels : filter->getNumInputChannels();
 const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutputChannels : filter->getNumOutputChannels();
 
@@ -995,6 +984,9 @@ void StandaloneFilterWindow::openTextEditor()
 		else showMessage("Please open or create a file first", lookAndFeel);	
 }
 
+//==========================================================================
+
+
 //==============================================================================
 // open/save/save as methods
 //==============================================================================
@@ -1025,7 +1017,6 @@ else{
 			cabbageCsoundEditor->textEditor->setAllText(csdFile.loadFileAsString());
 			isAFileOpen = true;
 			resetFilter(true);
-			//cabbageCsoundEditor->setCsoundFile(csdFile);
 		}			
 #else
 		FileChooser openFC(String("Open a Cabbage .csd file..."), File::nonexistent, String("*.csd"));

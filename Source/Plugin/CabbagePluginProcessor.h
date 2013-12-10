@@ -83,6 +83,8 @@ protected:
 		AudioSourceChannelInfo soundfilerChannelData;
 		int soundFileIndex;
 		//ScopedPointer<FileLogger> fileLogger;
+
+
 		File logFile;
 		bool isAutomator;
 		bool isNativeThreadRunning;
@@ -255,7 +257,7 @@ public:
         void updateCsoundFile(String text){
 			//csdFile.replaceWithText(text);
         #ifdef Cabbage_Build_Standalone
-			codeEditor->textChanged = true;
+			//codeEditor->textChanged = true;
 			codeEditor->setAllText(text);
         #endif
         }

@@ -539,28 +539,22 @@ File searchDir(dir);
 Array<File> subFolders;
 subFolders.add(searchDir);
 int noOfFiles=0, fileCnt;
-searchDir.findChildFiles(subFolders, File::findDirectories, false);
+searchDir.findChildFiles(subFolders, File::findDirectories, true);
+
+dir = dir+ "/";
 
 PopupMenu subMenu;	
 //grab all file in sub-folders	
 for (int i = 1; i < subFolders.size(); i++){
-	if(subFolders[0].isDirectory()){
-		//Logger::writeToLog(subFolders[i]);
-		subFolders[i].findChildFiles(filesArray, File::findFiles, true, ext); 
+	if(!subFolders[i].containsSubDirectories()){
+		subFolders[i].findChildFiles(filesArray, File::findFiles, false);
 		subMenu.clear();
 		for (fileCnt = noOfFiles; fileCnt < filesArray.size(); fileCnt++)
 			subMenu.addItem (fileCnt + indexOffset, filesArray[fileCnt].getFileNameWithoutExtension());
 			noOfFiles = fileCnt;
-			m.addSubMenu(subFolders[i].getFileName(), subMenu);
-			}
+			m.addSubMenu(subFolders[i].getFullPathName().replace(dir, "").replace("/", "-"), subMenu);			
+		}
 	}
-
-searchDir.findChildFiles(filesArray, File::findFiles, false);
-//grab any files in the 'examples' folder	
-for (fileCnt = noOfFiles; fileCnt < filesArray.size(); fileCnt++)
-	m.addItem (fileCnt + indexOffset, filesArray[fileCnt].getFileNameWithoutExtension());
-	noOfFiles = fileCnt;	
-
 }
 
 //======================================================================================

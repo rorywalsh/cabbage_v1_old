@@ -133,6 +133,7 @@ private:
 	float yAxis;
 	void timerCallback();
     ScopedPointer<CabbagePluginAudioProcessor> filter;
+	void addFiles2PopupMenu(PopupMenu &m, Array<File> &filesArray, String dir, String ext, int indexOffset);
     ScopedPointer<AudioDeviceManager> deviceManager;
 	void sendMessageToWinXound(String messageType, String message);
 	void sendMessageToWinXound(String messageType, int value);

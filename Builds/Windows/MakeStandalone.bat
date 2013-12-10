@@ -11,7 +11,7 @@ set PREPROCESSOR_DEFS=-D__MINGW__=1 -D__MINGW_EXTENSION= -DCabbage_Build_Standal
 set CSOUND_INCLUDE_DIR=C:\Users\Rory\Documents\SourceCode\cabbageaudio\csound6-git\include
 set ASIOSDK2Dir=C:\SDKs\ASIOSDK2.3\common
 set VSTSDKDir=C:\SDKs\vstsdk2.4
-set CABBAGE_SOURCE_DIR=%CABBAGE_SOURCE_DIR%
+set CABBAGE_SOURCE_DIR=C:\Users\Rory\Documents\SourceCode\cabbageaudio\cabbage\Source
 set CSOUND_LIBRARY=C:\Users\Rory\Documents\SourceCode\cabbageaudio\csound6-git\build\libcsound64.dll.a
 set COMPILER_FLAGS= -Wall -Wreorder -Wno-strict-aliasing -ggdb -Wno-strict-overflow  -march=pentium4 -g -O -std=gnu++0x -mstackrealign
 set OUTPUT_TARGET=Cabbage.exe
@@ -22,8 +22,6 @@ ECHO on
 
 rm -rf build\intermediate\Debug
 mkdir build\intermediate\Debug
-
-g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %CABBAGE_SOURCE_DIR%\Standalone\CabbageStandaloneDialog.cpp -o build\intermediate\Debug\CabbageStandaloneDialog.o
 
 g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS% -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %JUCE_LIBRARY_CODE%\modules\juce_audio_basics\juce_audio_basics.cpp -o build\intermediate\Debug\juce_audio_basics.o
 
@@ -88,5 +86,7 @@ g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%C
 g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %CABBAGE_SOURCE_DIR%\XYPad.cpp -o build\intermediate\Debug\XYPad.o
 
 g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %CABBAGE_SOURCE_DIR%\XYPadAutomation.cpp -o build\intermediate\Debug\XYPadAutomation.o
+
+g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %CABBAGE_SOURCE_DIR%\Standalone\CabbageStandaloneDialog.cpp -o build\intermediate\Debug\CabbageStandaloneDialog.o
 
 g++.exe  -o build\%OUTPUT_TARGET% build\intermediate\Debug\juce_audio_basics.o build\intermediate\Debug\juce_audio_devices.o build\intermediate\Debug\juce_audio_formats.o build\intermediate\Debug\juce_audio_processors.o build\intermediate\Debug\juce_audio_utils.o build\intermediate\Debug\juce_core.o build\intermediate\Debug\juce_cryptography.o build\intermediate\Debug\juce_data_structures.o build\intermediate\Debug\juce_events.o build\intermediate\Debug\juce_graphics.o build\intermediate\Debug\juce_gui_basics.o build\intermediate\Debug\juce_gui_extra.o build\intermediate\Debug\BinaryData.o build\intermediate\Debug\CabbageAudioDeviceSelectorComponent.o build\intermediate\Debug\CabbageCallOutBox.o build\intermediate\Debug\CabbageGUIClass.o build\intermediate\Debug\CabbageLookAndFeel.o build\intermediate\Debug\CabbageMainPanel.o build\intermediate\Debug\CabbagePropertiesDialog.o build\intermediate\Debug\CabbageTable.o build\intermediate\Debug\ComponentLayoutEditor.o build\intermediate\Debug\csPerfThread.o build\intermediate\Debug\DirectoryContentsComponent.o build\intermediate\Debug\CodeEditor.o build\intermediate\Debug\CodeWindow.o build\intermediate\Debug\CommandManager.o build\intermediate\Debug\CabbagePluginEditor.o build\intermediate\Debug\CabbagePluginProcessor.o build\intermediate\Debug\Soundfiler.o build\intermediate\Debug\CabbageStandaloneDialog.o build\intermediate\Debug\StandaloneFilterApp.o build\intermediate\Debug\XYPad.o build\intermediate\Debug\XYPadAutomation.o -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 %CSOUND_LIBRARY%  -mwindows cabbage.res

@@ -1,5 +1,6 @@
 
 @ECHO OFF
+
 ECHO =============Setting Build flags===================
 ECHO * You will need to edit this bat file in order to *
 ECHO * setup the correct directories and provide paths *
@@ -16,10 +17,10 @@ set CSOUND_LIBRARY=C:\Users\Rory\Documents\SourceCode\cabbageaudio\csound6-git\b
 set COMPILER_FLAGS=-Wall -Wno-strict-aliasing -Wno-strict-overflow  -march=pentium4 -g -ggdb -O0 -std=gnu++0x -mstackrealign
 set OUTPUT_TARGET=CabbagePluginSynth.dll
 
-IF "%1"=="Release" set COMPILER_FLAGS= -Wall -Wreorder -Wno-strict-aliasing -Wno-strict-overflow  -march=pentium4 -O -std=gnu++0x -mstackrealign
-IF "%1"=="Release" set OUTPUT_TARGET=CabbagePluginSynth.dat
+IF "%1"=="release" set COMPILER_FLAGS= -Wall -Wreorder -Wno-strict-aliasing -Wno-strict-overflow  -march=pentium4 -O -std=gnu++0x -mstackrealign
+IF "%1"=="release" set OUTPUT_TARGET=CabbagePluginSynth.dat
 
-ECHO on
+@ECHO on
 
 rm -rf build\intermediate\Debug
 mkdir build\intermediate\Debug

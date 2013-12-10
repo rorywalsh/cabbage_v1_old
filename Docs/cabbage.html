@@ -13,7 +13,7 @@
 /* Default font. */
 body {
   font-family: Verdana, Sans-serif;
-  color: black;
+  color: white;
 }
 
 /* Title font. */
@@ -28,7 +28,7 @@ thead, p.table.header,
 
 body {
   margin: 1em 5% 1em 5%;
-  background-color:white;
+  background-color: rgb(60, 60, 60);
 }
 
 a {
@@ -758,7 +758,7 @@ asciidoc.install(2);
 <div class="sect1">
 <h2 id="x1">Introduction</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Cabbage is a software for prototyping and developing audio plugins with the Csound audio synthesis language. It provides Csound programmers with a simple albeit powerful toolkit for the development of cross-platform audio software. This document will take you through the basics of using Cabbage. It starts with a look at features provided by the run-time player, or standalone host, and then moves on to some simple examples. The text concludes with a reference section for the various GUI controls available in Cabbage. It&#8217;s assumed that the reader has some prior knowledge of Csound.</p></div>
+<div class="paragraph"><p>Cabbage is a software for prototyping and developing audio plugins with the Csound audio synthesis language. It provides users with a powerful toolkit for the development of cross-platform audio software. This document will take you through the basics of using Cabbage. It starts with a look at features provided by the run-time player, or standalone host, and then moves on to some simple examples. The text concludes with a reference section for the various GUI controls available in Cabbage. It&#8217;s assumed that the reader has some prior knowledge of Csound.</p></div>
 <div class="paragraph"><p>In order to use Cabbage you MUST have Csound installed.</p></div>
 </div>
 </div>
@@ -1447,7 +1447,7 @@ checkbox bounds(130, 110, 120, 70), text("Mute"), channel("freq2"), value(1)</co
 <div class="content">
 <pre><code>table bounds(x, y, width, height), channel("chan1", "chan2", ...), tableNumbers(1, 2, ...), colour("colour1", "colour2", ...)</code></pre>
 </div></div>
-<div class="paragraph"><p>table is a new and experimental control which creates a function table viewer capable of displaying any number of tables at once. If multiple tables are specified the tables will be superimposed on top of each other. Although it&#8217;s not yet possible to interact with the table directly, it is possible to use sliders or other such widgets to alter the contents of the table in real time. See the sample table instrument in the example folder.</p></div>
+<div class="paragraph"><p>table is a new and experimental control which creates a function table editor capable of displaying any number of tables at once. If multiple tables are specified the tables will be superimposed on top of each other. To edit a table one must right click the table and select <em>edit</em>. You mst choose the number of points that will be used to represent the table. Note that this leads to some decimation or tables (If you wish to create a high resolution table just use a Csound GEN routine).</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels)</p></div>
 <div class="paragraph"><p><em>channel("chan1",  &#8230;)</em>: specifies the channel with which to communicate with Csound on. As table is not an interactive control it only retrieves data from Csound. A value of -1 will causes Cabbage to update the corresponding table, while a value between 0 and 1 will cause a scrubber to appear on the table, 0 being the start of the table, 1 being the end.</p></div>
 <div class="paragraph"><p><em>tableNumbers(1, 2, ..)</em>: sets the table to be displayed.</p></div>
@@ -1892,7 +1892,7 @@ cellspacing="0" cellpadding="4">
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2013-04-10 08:18:13 IST
+Last updated 2013-12-10 15:54:21 GMT
 </div>
 </div>
 </body>

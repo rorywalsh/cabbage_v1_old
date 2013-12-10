@@ -1,3 +1,22 @@
+/*
+  Copyright (C) 2012 Rory Walsh
+
+  Cabbage is free software; you can redistribute it
+  and/or modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  Cabbage is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with Csound; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+  02111-1307 USA
+*/
+
 #include "CodeWindow.h"
 
 //==============================================================================
@@ -564,7 +583,7 @@ void CodeWindow::actionListenerCallback(const String &message){
 	popupDisplay->addToDesktop(0);
 	popupDisplay->setTopLeftPosition(this->getCaretScreenPosition().getTopLeft());
 	popupDisplay->setBounds(this->getCaretScreenPosition().getX(),
-							this->getCaretScreenPosition().getY(),
+							this->getCaretScreenPosition().getY()+18.f,
 							width, 50);
 	//popupDisplay->setWantsKeyboardFocus(false);
 	textEditor->toFront(true);

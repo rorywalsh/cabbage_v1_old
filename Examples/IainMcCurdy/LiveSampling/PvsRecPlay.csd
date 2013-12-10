@@ -1,5 +1,5 @@
 <Cabbage>
-form caption("PVS Rec/Play") size(300, 410)
+form caption("PVS Rec/Play") size(300, 410), pluginID("pvrp")
 
 groupbox bounds(  0,  0,300, 95), text("Transport")
 
@@ -12,9 +12,9 @@ checkbox bounds( 80, 25, 70, 50), channel("Pause"), value(0), shape("square"), c
 checkbox bounds(150, 25, 70, 50), channel("PlayLoop"), value(0), shape("square")
 checkbox bounds(220, 25, 70, 50), channel("PlayOnce"), value(0), shape("square")
 
-hslider bounds(  5,  95, 280,50), channel("Speed"), range(0, 4, 1)	;, text("Speed")
+hslider bounds(  5,  95, 280,50), channel("Speed"), range(-4.00, 4.00, 1)	;, text("Speed")
 label   bounds(125, 135,  70,13), text("Speed") 
-hslider bounds(  5, 145, 280,50), channel("Pitch"), range(0.25, 4, 1)	;, text("Pitch")
+hslider bounds(  5, 145, 280,50), channel("Pitch"), range(0.25, 4.00, 1)	;, text("Pitch")
 label   bounds(128, 185,  70,13), text("Pitch") 
 hslider bounds(  5, 195, 280,50), channel("LoopBeg"), range(0, 1, 0)	;, text("Loop Begin")
 label   bounds(113, 235,  70,13), text("Loop Begin") 
@@ -119,10 +119,10 @@ instr	PlayLoop
 	kLoopEnd	portk	gkLoopEnd, kporttime		;APPLY PORTAMENTO SMOOTHING TO CHANGES OF LOOP END SLIDER
 	kLoopBeg	=	kLoopBeg * gkRecDur		;RESCALE gkLoopBeg (RANGE 0-1) TO BE WITHIN THE RANGE 0-FILE_LENGTH.
 	kLoopEnd	=	kLoopEnd * gkRecDur		;RESCALE gkLoopEnd (RANGE 0-1) TO BE WITHIN THE RANGE 0-FILE_LENGTH.
-	kLoopLen	=	kLoopEnd - kLoopBeg		;DERIVE LOOP LENGTH FROM LOOP START AND END POINTS
+	kLoopLen	=	abs(kLoopEnd - kLoopBeg)	;DERIVE LOOP LENGTH FROM LOOP START AND END POINTS
 	kPlayPhasFrq	divz	gkSpeed, kLoopLen, 0.00001	;SAFELY DIVIDE, PROVIDING ALTERNATIVE VALUE IN CASE DENOMINATOR IS ZERO 
 	kPlayNdx	phasor	kPlayPhasFrq			;DEFINE PHASOR POINTER FOR BUFFER READ INDEX
-	kLoopBeg	=	(kLoopBeg < kLoopEnd ? kLoopBeg : kLoopEnd)	;CHECK IF LOOP-BEGINNING AND LOOP-END SLIDERS HAVE BEEN REVERSED
+	;kLoopBeg	=	(kLoopBeg < kLoopEnd ? kLoopBeg : kLoopEnd)	;CHECK IF LOOP-BEGINNING AND LOOP-END SLIDERS HAVE BEEN REVERSED
 	kPlayNdx	=	(kPlayNdx*kLoopLen) + kLoopBeg	;RESCALE INDEX POINTER ACCORDING TO LOOP LENGTH AND LOOP BEGINING
 
 	f_bufL 		pvsbufread  	kPlayNdx , gkhandleL	;READ BUFFER

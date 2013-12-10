@@ -2,16 +2,16 @@ Reverb effect that employs screverb and freeverb opcodes.
 Pitch Mod. is only used by reverbsc.
 
 <Cabbage>
-form caption("Multi Reverb") size(415, 120), pluginID("Rvrb")
-image  bounds(  7, 22, 73, 45), colour("tan"), shape("rounded"), outline("black"), line(1) 
-image pos(0, 0), size(415, 90), colour("tan"), shape("rounded"), outline("white"), line(4) 
-label  bounds( 29, 26, 60, 12), text("Type"), fontColour("black")
+form caption("Multi Reverb") size(415, 90), pluginID("Rvrb")
+image  bounds(  7, 22, 73, 45), colour( 39, 31, 20), shape("rounded"), outline(white), line(1) 
+image                bounds(0, 0, 415, 90), colour( 39, 31, 20), shape("rounded"), outline("white"), line(4) 
+label  bounds( 29, 26, 60, 12), text("Type"), fontColour(white)
 button bounds( 11, 40, 66, 20), text("freeverb", "screverb"), channel("type"), value(0), fontcolour("lime")
-rslider bounds( 80, 11, 70, 70), text("Size"), 		fontcolour("black"), 		channel("fblvl"), 	range(0, 1, 0.8), colour("Silver")
-rslider bounds(145, 11, 70, 70), text("Damping"), 	fontcolour("black"), 		channel("fco"), 	range(0, 1, 0.6), colour("Silver")
-rslider bounds(210, 11, 70, 70), text("Pitch Mod."), 	fontcolour("black"), 		channel("pitchm"), 	range(0, 20, 1), colour("Silver")
-rslider bounds(275, 11, 70, 70), text("Mix"), 		fontcolour("black"), 		channel("mix"), 	range(0, 1, 1), colour("Silver")
-rslider bounds(340, 11, 70, 70), text("Level"),	 	fontcolour("black"), 		channel("amp"), 	range(0, 1, 1), colour("Silver")
+rslider bounds( 80, 11, 70, 70), text("Size"), 		fontcolour(white), 		channel("fblvl"), 	range(0, 1.00, 0.8), colour( 79, 81, 70), tracker(240,210,170)
+rslider bounds(145, 11, 70, 70), text("Damping"), 	fontcolour(white), 		channel("fco"), 	range(0, 1.00, 0.6), colour( 79, 81, 70), tracker(240,210,170)
+rslider bounds(210, 11, 70, 70), text("Pitch Mod."), 	fontcolour(white), 		channel("pitchm"), 	range(0, 20.0, 1),   colour( 79, 81, 70), tracker(240,210,170)
+rslider bounds(275, 11, 70, 70), text("Mix"), 		fontcolour(white), 		channel("mix"), 	range(0, 1.00, 1),   colour( 79, 81, 70), tracker(240,210,170)
+rslider bounds(340, 11, 70, 70), text("Level"),	 	fontcolour(white), 		channel("amp"), 	range(0, 1.00, 1),   colour( 79, 81, 70), tracker(240,210,170)
 }
 image bounds(5, 95, 205, 20), colour(75, 85, 90, 100), plant("credit"), line(0){
 label bounds(0.03, 0.1, .95, .7), text("Author: Iain McCurdy |2012|"), colour("white")

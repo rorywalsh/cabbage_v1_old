@@ -1,8 +1,11 @@
 <Cabbage>
-form caption("pvsBlur"), size(290, 145) colour("DarkGrey")
-hslider bounds( 10,  3,280, 40), text("Blur Time"), channel("blurtime"), range(0, 2, 0.5), fontcolour("white")
-hslider bounds( 10, 43,280, 40), text("Mix"), channel("mix"), range(0, 1, 0.5)    , fontcolour("white")
-hslider bounds( 10, 83,280, 40), text("Level"), channel("lev"), range(0, 1, 0.5, 0.5)    , fontcolour("white")
+form caption("pvsBlur"), size(235,125) colour( 70, 90,100), pluginID("blur")
+image             bounds(0, 0,235,125), colour( 70, 90,100), shape("rounded"), outline("white"), line(5) 
+rslider bounds( 10, 10, 70, 70), text("FFT Size"),  channel("att_table"), range(1, 7, 4, 1,1),              fontcolour("white"),colour( 70, 90,100),tracker("white")
+rslider bounds( 80, 10, 70, 70), text("Mix"),       channel("mix"),       range(0, 1.00, 1),                fontcolour("white"),colour( 70, 90,100),tracker("white")
+rslider bounds(150, 10, 70, 70), text("Level"),     channel("lev"),       range(0, 1.00, 0.5, 0.5),        fontcolour("white"),colour( 70, 90,100),tracker("white")
+hslider bounds( 10, 70,210, 40), channel("blurtime"),  range(0, 2.00, 0.0, 0.5, 0.0001), fontcolour("white"),colour( 70, 90,100),tracker("white")
+label   bounds( 92,103, 60, 11), text("Blur Time"), fontcolour("white")
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>
@@ -14,9 +17,17 @@ ksmps 		= 	64
 nchnls 		= 	2
 0dbfs		=	1	;MAXIMUM AMPLITUDE
 
-;Author: Iain McCurdy (2012)
-;http://iainmccurdy.org/csound.html
+; Author: Iain McCurdy (2012)
+; http://iainmccurdy.org/csound.html
 
+/* FFT attribute tables */
+giFFTattributes1	ftgen	0, 0, 4, -2,  128,  64,  128, 1
+giFFTattributes2	ftgen	0, 0, 4, -2,  256, 128,  256, 1
+giFFTattributes3	ftgen	0, 0, 4, -2,  512, 128,  512, 1
+giFFTattributes4	ftgen	0, 0, 4, -2, 1024, 256, 1024, 1
+giFFTattributes5	ftgen	0, 0, 4, -2, 2048, 512, 2048, 1
+giFFTattributes6	ftgen	0, 0, 4, -2, 4096,1024, 4096, 1
+giFFTattributes7	ftgen	0, 0, 4, -2, 8192,2048, 8192, 1
 
 opcode	pvsblur_module,a,akkkiiii
 	ain,kblurtime,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype	xin
@@ -35,10 +46,19 @@ instr	1
 	ainL,ainR	ins
 	;ainL,ainR	diskin	"808loop.wav",1,0,1	;USE FOR TESTING
 
-	iFFTsize	=	1024
-	ioverlap	=	512
-	iwinsize	=	1024
-	iwintype	=	1
+	/* SET FFT ATTRIBUTES */
+	katt_table	chnget	"att_table"	; FFT atribute table
+	katt_table	init	5
+	ktrig		changed	katt_table
+	if ktrig==1 then
+	 reinit update
+	endif
+	update:
+	iFFTsize	table	0, giFFTattributes1 + i(katt_table) - 1
+	ioverlap	table	1, giFFTattributes1 + i(katt_table) - 1
+	iwinsize	table	2, giFFTattributes1 + i(katt_table) - 1
+	iwintype	table	3, giFFTattributes1 + i(katt_table) - 1
+	/*-------------------*/
 	
 	kporttime	linseg	0,0.001,0.02
 	kblurtime	portk	kblurtime,kporttime

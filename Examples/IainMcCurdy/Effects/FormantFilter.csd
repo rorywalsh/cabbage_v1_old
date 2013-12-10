@@ -10,11 +10,11 @@ reson 2 uses reson with scaling method 2.
 form caption("Formant Filter"), colour("SlateGrey"), size(550, 300), pluginID("form")  
 xypad bounds(5, 5, 350, 260), channel("x", "y"), rangex(0, 1, 0.5), rangey(0, 1, 0), text("upper edge:A E I | lower edge:U O")
 
-vslider bounds(360,  0, 30,140), text("f1"), channel("f1"), range(0, 1, 1), fontcolour("white")
-vslider bounds(380,  0, 30,140), text("f2"), channel("f2"), range(0, 1, 1), fontcolour("white")
-vslider bounds(400,  0, 30,140), text("f3"), channel("f3"), range(0, 1, 1), fontcolour("white")
-vslider bounds(420,  0, 30,140), text("f4"), channel("f4"), range(0, 1, 1), fontcolour("white")
-vslider bounds(440,  0, 30,140), text("f5"), channel("f5"), range(0, 1, 1), fontcolour("white")
+vslider bounds(360,  0, 30,140), text("f1"), channel("f1"), range(0, 1.00, 1), fontcolour("white")
+vslider bounds(380,  0, 30,140), text("f2"), channel("f2"), range(0, 1.00, 1), fontcolour("white")
+vslider bounds(400,  0, 30,140), text("f3"), channel("f3"), range(0, 1.00, 1), fontcolour("white")
+vslider bounds(420,  0, 30,140), text("f4"), channel("f4"), range(0, 1.00, 1), fontcolour("white")
+vslider bounds(440,  0, 30,140), text("f5"), channel("f5"), range(0, 1.00, 1), fontcolour("white")
 combobox bounds(365, 155,100, 20), channel("voice"), value(1), text("bass", "tenor", "countertenor", "alto", "soprano")
 combobox bounds(365, 185,100, 20), channel("filter"), value(1), text("reson 1", "reson 2", "butterworth")
 checkbox bounds(365, 215,100, 20), colour("yellow"), channel("balance"),  value(0), text("Balance"), fontcolour("white")
@@ -22,8 +22,8 @@ button   bounds(365, 245,100, 20), text("Noise Input", "Live Input"), channel("i
 
 rslider bounds(480,  5, 60, 60), text("BW.Mult"), channel("BWMlt"), range(0.01, 4, 1, 0.4), fontcolour("white")
 rslider bounds(480, 70, 60, 60), text("Freq.Mult"), channel("FrqMlt"), range(0.25, 4, 1, 0.4), fontcolour("white")
-rslider bounds(480,140, 60, 60), text("Mix"), channel("mix"), range(0, 1, 1), fontcolour("white")
-rslider bounds(480,210, 60, 60), text("Gain"), channel("gain"), range(0, 5, 1, 0.5), fontcolour("white")
+rslider bounds(480,140, 60, 60), text("Mix"), channel("mix"), range(0, 1.00, 1), fontcolour("white")
+rslider bounds(480,210, 60, 60), text("Gain"), channel("gain"), range(0, 5.00, 1, 0.5), fontcolour("white")
 
 image bounds( 5, 275, 350, 18), colour(75, 85, 90, 100), plant("credit"), line(0){
 label bounds(0.03, 0.1, .6, .8), text("Author: Iain McCurdy |2012|"), colour("white")
@@ -269,11 +269,17 @@ instr	2
 		outs	aOutMixL, aOutMixR				;SEND AUDIO TO OUTPUTS
 endin
 
+instr	99			; fix cabbage bug
+	kon	=	1
+		chnset	kon,"f1"
+endin
+
 </CsInstruments>
 
 <CsScore>
 i 1 0 [3600*24*7]
 i 2 0 [3600*24*7]
+i 99 0 0.01			; fix for cabbage bug
 </CsScore>
 
 </CsoundSynthesizer>

@@ -1,12 +1,15 @@
 <Cabbage>
-form caption("Autopan / Tremolo") size(350, 110)
-image pos( 0,  0), size(350, 80), colour("Maroon"), shape("rounded"), outline("white"), line(4) 
-rslider  bounds(  5,  6, 70, 70), text("Rate"), channel("rate"), range(0.1, 50, 0.5, 0.5)
-checkbox bounds( 75, 24, 20, 20), colour("yellow"), channel("indicator"),  value(0), shape("rounded")
-rslider  bounds( 95,  6, 70, 70), text("Depth"), channel("depth"), range(0, 1, 1, 0.5)
-combobox bounds(175, 13,  90,20), channel("mode"), value(1), text("Autopan", "Tremolo")
-combobox bounds(175, 43,  90,20), channel("wave"), value(1), text("Sine", "Triangle", "Square", "Randomi", "Randomh")
-rslider  bounds(275,  6, 70, 70), text("Level"), channel("level"), range(0, 1, 1)
+form caption("Autopan / Tremolo") size(440, 102), pluginID("aptr")
+image pos( 0,  0),                size(440, 102), colour("Maroon"), shape("rounded"), outline("white"), line(4) 
+rslider  bounds(  5,  6, 90, 90), text("Freq.[Hz]"), channel("rate"), range(0.1, 50, 0.5, 0.5), textBox(1)
+rslider  bounds( 80,  6, 90, 90), text("Tempo[BPM]"), channel("tempo"), range(6, 3000, 30, 0.5, 1), textBox(1)
+rslider  bounds(175,  6, 90, 90), text("Depth"), channel("depth"), range(0, 1.00, 1, 0.5), textBox(1)
+rslider  bounds(345,  6, 90, 90), text("Level"), channel("level"), range(0, 1.00, 1), textBox(1)
+checkbox bounds(160, 15, 25, 25), colour("yellow"), channel("indicator"),  value(0), shape("rounded")
+combobox bounds(260, 13,  90,20), channel("mode"), value(1), text("Autopan", "Tremolo")
+combobox bounds(260, 38,  90,20), channel("wave"), value(1), text("Sine", "Triangle", "Square", "Randomi", "Randomh")
+checkbox bounds(260, 63, 90, 15), text("TEST TONE"), colour("lime"), channel("test"),  value(0)
+
 
 </Cabbage>
 <CsoundSynthesizer>
@@ -61,11 +64,28 @@ endop
 
 instr 1
 krate chnget "rate"
+ktempo chnget "tempo"
 kdepth chnget "depth"
 kmode chnget "mode"
 kwave chnget "wave"
 klevel chnget "level"
-a1,a2	ins
+ktest	chnget	"test"
+
+ktrig	changed	krate
+ktrig2	changed	ktempo
+if ktrig=1 then
+ chnset	krate*60,"tempo"
+elseif ktrig2=1 then
+ chnset	ktempo/60,"rate"
+endif
+
+if ktest=1 then
+ a1	vco2	0.2,300,4,0.5
+ a2	=	a1
+else
+ a1,a2	ins
+endif
+
 a1,a2	PanTrem	a1,a2,krate,kdepth,kmode-1,kwave-1	
 a1	=	a1 * klevel
 a2	=	a2 * klevel

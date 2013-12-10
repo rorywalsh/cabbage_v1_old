@@ -7,7 +7,7 @@ The 'bandwidth' and 'scaling mode' parameters are as they are in the reson opcod
 'kbf' (base frequency) defines the centre frequency of the first filter. In 'oct.total' separation mode the pitch interval between the base frequency and (base frequency + separation) is divided into equal intervals according to the number of filters that have been selected. Note that no filter is created at the frequency of (base frequency + separation). For example: if separation=1 and num.filters=2, filters will be created at the base frequency and a tritone above the base frequency (i.e. an interval of 1/2 and an octave). I suspect this is a mistake in the opcode implementation so in this example I rescale the separation interval before passing it to the resony opcode so that the interval between the lowest and highest filter in this mode will always be the interval defined in the GUI. A further option I have provided allows the defined interval to be the interval between adjacent filters rather than the interval from lowest to highest. If 'hertz' separation mode is selected behaviour is somewhat curious. I have made some modifications to the values passed to the opcode to make this mode more controllable. Without these modifications, if number of filters is '1' no filters would be created. The frequency relationship between filters in the stack always follows the harmonic series. Both 'Base Frequency' and 'Separation' normally shift this harmonic stack of filters up or down, for this reason I have disabled user control of 'Separation' in this example, instead a value equal to the 'Number of Filters' will always be used for 'Separation'. This ensures that a harmonic stack will always be created built upon 'Base Frequency' as the fundamental. Negative values for 'separation' are allowed whenever 'separation mode' is 'octaves' (if this is the case, the stack of frequencies will extend below the base frequency). Negative values for 'separation' when 'separation mode' is 'hertz' will cause filters to 'explode'. As 'Separation' is fixed at 'Number of Filters' in this example this explosion will not occur.
 
 <Cabbage>
-form caption("resony") size(810, 120), pluginID("rsny"), colour("red")
+form caption("resony") size(810, 90), pluginID("rsny"), colour(255,100,0,255)
 image    bounds(  0,  0,810, 90), colour("black"), shape("rounded"), outline("white"), line(4) 
 button   bounds( 10, 20, 80, 50), text("Noise", "Live"), channel("input"), value(0), fontcolour("lime")
 rslider  bounds( 90, 10, 70, 70), text("BF."), fontcolour("white"), channel("bf"), range(20, 20000, 909, 0.5), colour("red")
@@ -19,8 +19,8 @@ combobox bounds(450, 10,130, 70), caption("Scaling Mode"), channel("scl"), value
 combobox bounds(590, 10,130, 70), caption("Separation Mode"), channel("sepmode"), value(1), text("octs.total", "hertz", "octs.adjacent")
 rslider  bounds(730, 10, 70, 70), text("Level"), fontcolour("white"), channel("gain"), range(0.0001, 1, 30, 0.5), colour("red")
 }
-image bounds(5, 95, 205, 20), colour(75, 85, 90, 100), plant("credit"), line(0){
-label bounds(0.03, 0.1, .95, .7), text("Author: Iain McCurdy |2012|"), colour("white")
+image bounds(5, 95, 205, 20), colour(100,100,100,80), plant("credit"), line(0){
+label bounds(0.03, 0.1, .95, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white")
 }
 </Cabbage>
 

@@ -11,31 +11,40 @@ N.Voices value is not strictly speaking accurate: 	1 = 1 voice
 							5 = 8 voices, this is on account of how the mechanism implements a stereo effect
 
 <Cabbage>
-form caption("Choir") size(570, 335)
-image bounds(  0,  0,570, 360), colour(255,100,  0, 40), shape("rounded"), outline("white"), line(3)
-image bounds(  0, 40,570,  75), colour(100,100,  0, 60), shape("sharp")
-image bounds(  0,130,570,  35), colour(  0,  0,255, 60), shape("sharp")
+form caption("Choir") size(770, 335), pluginID("choi")
+; main container
+image bounds(  0,  0,770, 360), colour(255,100,  0, 40), shape("rounded"), outline("white"), line(3)
+; horizontal stripes
+image bounds(  0, 40,770,  75), colour(100,100,  0, 60), shape("sharp")
+image bounds(  0,130,770,  35), colour(  0,  0,255, 60), shape("sharp")
+; vertical stripes
 image bounds(310,  0, 30, 360), colour(  5,255,  0, 60), shape("sharp")
 image bounds(370,  0, 80, 360), colour(255,  0,200, 60), shape("sharp")
 image bounds(490,  0, 60, 360), colour(  0,255,200, 60), shape("sharp")
-xypad bounds(10, 10, 250, 210), channel("vowel", "oct"), text("X = Vowel 'AEIOU' : Y = Octave Division"), rangex(0, 1, 0.5), rangey(4, 0, 0)
+image bounds(560,  0, 40, 360), colour(100, 55,200, 60), shape("sharp")
+image bounds(620,  0, 20, 360), colour(255, 55,  0, 60), shape("sharp")
+image bounds(660,  0, 90, 360), colour(  5,255,100, 60), shape("sharp")
+
+xypad bounds(10, 10, 250, 210), channel("vowel", "oct"), text("X = Vowel 'AEIOU' : Y = Octave Division"), rangex(0, 1, 0), rangey(0, 4, 0)
 combobox bounds(265, 10, 110, 25), channel("voice"), value(5), text("Bass", "Tenor", "Countertenor", "Alto", "Soprano")
 button   bounds(265, 40, 110, 25), text("monophonic", "polyphonic"), channel("monopoly"), value(1), fontcolour("lime")
 rslider  bounds(385, 10, 60, 60), text("Leg.Time"), channel("LegTim"), range(0.005, 0.3, 0.025, 0.5, 0.005)	,colour("green"), tracker("white")
-rslider  bounds(445, 10, 60, 60), text("Vowel"), channel("vowel"), range(0, 1, 0)	,colour("green"),midCtrl(1, 2), tracker("white")
-rslider  bounds(505, 10, 60, 60), text("Level"), channel("lev"), range(0, 1, 0.6)	,colour("green"), tracker("white")
-rslider  bounds(265, 80, 60, 60), text("Vib.Dep."), channel("vibdep"), range(0, 2, 0.35)	,colour("tomato"),midCtrl(1, 1), tracker("white")
-rslider  bounds(325, 80, 60, 60), text("Trem.Dep."), channel("trmdep"), range(0, 1, 0.2)	,colour("tomato"),midCtrl(1, 1), tracker("white")
-rslider  bounds(385, 80, 60, 60), text("Mod.Rate"), channel("modrte"), range(0.1,20, 5, 0.5)	,colour("tomato"), tracker("white")
-rslider  bounds(445, 80, 60, 60), text("Mod.Delay"), channel("moddel"), range(0, 2, 0.3, 0.5)	,colour("tomato"), tracker("white")
-rslider  bounds(505, 80, 60, 60), text("Mod.Rise"), channel("modris"), range(0, 4, 2, 0.5)	,colour("tomato"), tracker("white")
+rslider  bounds(445, 10, 60, 60), text("Vowel"), channel("vowel"), range(0, 1.00, 0)	,colour("green"),midCtrl(1, 2), tracker("white")
+rslider  bounds(505, 10, 60, 60), text("Level"), channel("lev"), range(0, 1.00, 0.6)	,colour("green"), tracker("white")
+rslider  bounds(265, 80, 60, 60), text("Vib.Dep."), channel("vibdep"), range(0, 2.00, 0.35)	,colour("tomato"),midCtrl(1, 1), tracker("white")
+rslider  bounds(325, 80, 60, 60), text("Trem.Dep."), channel("trmdep"), range(0, 1.00, 0.2)	,colour("tomato"),midCtrl(1, 1), tracker("white")
+rslider  bounds(385, 80, 60, 60), text("Mod.Rate"), channel("modrte"), range(0.10,20, 5, 0.5)	,colour("tomato"), tracker("white")
+rslider  bounds(445, 80, 60, 60), text("Mod.Delay"), channel("moddel"), range(0, 2.00, 0.3, 0.5)	,colour("tomato"), tracker("white")
+rslider  bounds(505, 80, 60, 60), text("Mod.Rise"), channel("modris"), range(0, 4.00, 2, 0.5)	,colour("tomato"), tracker("white")
 rslider  bounds(265,150, 60, 60), text("N.Voices"), channel("nvoices"), range(1,  50, 6, 1, 1)		,colour("yellow"), tracker("white")
-rslider  bounds(325,150, 60, 60), text("Dtn.Dep."), channel("DtnDep"), range(0,    4, 1,    0.5)	,colour("yellow"), tracker("white")
+rslider  bounds(325,150, 60, 60), text("Dtn.Dep."), channel("DtnDep"), range(0,    4.00, 1,    0.5)	,colour("yellow"), tracker("white")
 rslider  bounds(385,150, 60, 60), text("Dtn.Rate"), channel("DtnRte"), range(0.01,40, 0.2,  0.25)	,colour("yellow"), tracker("white")
-rslider  bounds(445,150, 60, 60), text("Rvb.Mix"), channel("RvbMix"), range(0, 1, 0.15)	,colour("steelblue"), tracker("white")
-rslider  bounds(505,150, 60, 60), text("Rvb.Size"), channel("RvbSize"), range(0.5, 1, 0.82, 2)	,colour("steelblue"), tracker("white")
+rslider  bounds(445,150, 60, 60), text("Rvb.Mix"), channel("RvbMix"), range(0, 1.00, 0.15)	,colour("steelblue"), tracker("white")
+rslider  bounds(505,150, 60, 60), text("Rvb.Size"), channel("RvbSize"), range(0.5, 1.00, 0.82, 2)	,colour("steelblue"), tracker("white")
+checkbox bounds(570, 10,190, 20), text("Filter On/Off") channel("FiltOnOff"), colour("lime")  value(0)
+xypad bounds(570, 35, 190, 185), channel("cf", "bw"), text("x:c.off/y:b.width"), rangex(5, 13, 8), rangey(0.1, 5, 0.3)
 
-keyboard pos(10, 225), size(560, 80)
+keyboard pos(10, 225), size(760, 80)
 image bounds(10, 309, 250, 22), colour(75, 85, 90, 100), plant("credit"){
 label bounds(0.03, 0.15, .99, .7), text("Author: Iain McCurdy |2012|"), colour("white")
 }
@@ -186,11 +195,18 @@ opcode 		fofx5, a, kkki
 	ifnb		=		giexp	;function table that defines the attack and decay shapes of each fof grain
 	itotdur		=		3600	;total maximum duration of a note (overestimate)
 	;FOF===================================================================================================================================================================
-	a1 		fof 		k1amp, kfund, k1form, koct, k1band, iris, idur, idec, iolaps, ifna, ifnb, itotdur
-	a2 		fof 		k2amp, kfund, k2form, koct, k2band, iris, idur, idec, iolaps, ifna, ifnb, itotdur
-	a3 		fof 		k3amp, kfund, k3form, koct, k3band, iris, idur, idec, iolaps, ifna, ifnb, itotdur
-	a4 		fof 		k4amp, kfund, k4form, koct, k4band, iris, idur, idec, iolaps, ifna, ifnb, itotdur
-	a5 		fof 		k5amp, kfund, k5form, koct, k5band, iris, idur, idec, iolaps, ifna, ifnb, itotdur
+	iRandRange	=		.1
+#define	RandFact
+	#
+	kRndFact	rspline		-iRandRange,iRandRange,1,10
+	kRndFact	=		semitone(kRndFact)
+	#
+	$RandFact
+	a1 		fof 		k1amp, kfund*kRndFact, k1form, koct, k1band, iris, idur, idec, iolaps, ifna, ifnb, itotdur
+	a2 		fof 		k2amp, kfund*kRndFact, k2form, koct, k2band, iris, idur, idec, iolaps, ifna, ifnb, itotdur
+	a3 		fof 		k3amp, kfund*kRndFact, k3form, koct, k3band, iris, idur, idec, iolaps, ifna, ifnb, itotdur
+	a4 		fof 		k4amp, kfund*kRndFact, k4form, koct, k4band, iris, idur, idec, iolaps, ifna, ifnb, itotdur
+	a5 		fof 		k5amp, kfund*kRndFact, k5form, koct, k5band, iris, idur, idec, iolaps, ifna, ifnb, itotdur
 	;======================================================================================================================================================================
 
 	;OUT===================================================================================================================================================================
@@ -223,24 +239,33 @@ instr	1	;instrument that continuously scans widgets
 	gktrmdep	chnget	"trmdep"			
 	gklevel		chnget	"lev"				
 	gkvowel		chnget	"vowel"				
-	gkoct		chnget	"oct"				
+	gkoct		chnget	"oct"
 	gkLegTim	chnget	"LegTim"
 	gkRvbMix	chnget	"RvbMix"
 	gkRvbSize	chnget	"RvbSize"
 	kporttime	linseg	0,0.001,0.1		;portamento time (ramps up quickly from zero to a held value)
 	gkvowel		portk	gkvowel,kporttime	;apply portamento smoothing
 	gkoct		portk	gkoct,kporttime
+	gkFiltOnOff	chnget	"FiltOnOff"
+	gkcf	chnget	"cf"
+	gkbw	chnget	"bw"
+	gkcf		portk	cpsoct(gkcf),kporttime		;apply portamento smoothing
+	gkbw		portk	gkbw*gkcf,kporttime		;apply portamento smoothing
 endin
 
 instr	2	;triggered via MIDI
 	gkNoteTrig	init	1	;at the beginning of a new note set note trigger flag to '1'
 	icps		cpsmidi		;read in midi note pitch in cycles per second
 	givel		veloc	0,1	;read in midi note velocity
-	gkcps	init	icps		;update a global krate variable for note pitch
+	gkcps	=	icps		;update a global krate variable for note pitch
 
 	if i(gkmonopoly)==0 then		;if we are *not* in legato mode...
-	 aL,aR	subinstr	p1+1,icps	;call voice instrument as a subinstrument. Audio will be fed back to this instrument before being sent to the outputs.
-		outs	aL,aR		;send audio to outputs
+	 inum	notnum						; read midi note number (0 - 127)
+	 	event_i	"i",p1+1+(inum*0.001),0,-1,icps	; call soud producing instr
+	 krel	release						; release flag (1 when note is released, 0 otherwise)
+	 if krel==1 then					; when note is released...
+	  turnoff2	p1+1+(inum*0.001),4,1			; turn off the called instrument
+	 endif							; end of conditional
 	else				;otherwise... (i.e. legato mode)
 	 iactive	active p1+1	;check to see if these is already a note active...
 	 if iactive==0 then		;...if not...
@@ -287,11 +312,14 @@ instr	3
 	ktrem		=		(ktrem+0.5) + (gktrmdep * 0.5)	;OFFSET AND RESCALE TREMOLO FUNCTION ACCORDING TO TREMOLO DEPTH WIDGET SETTING 
 	
 	iRelTim	=	0.05
-	kCpsAtt	expsegr	0.4,rnd(0.004)+0.001,1,iRelTim,1-rnd(0.1)	;a little jump in pitch at the beginning of a note will give the note a realistic attack sound. This will be most apparent when note velocity is high. And a little gliss at the end of notes.
+	kCpsAtt	expsegr	0.6,rnd(0.004)+0.001,1,iRelTim,1-rnd(0.05)	;a little jump in pitch at the beginning of a note will give the note a realistic attack sound. This will be most apparent when note velocity is high. And a little gliss at the end of notes.
 	
 	kcpsRnd	gaussi	1,0.01,10					;create a function that will be used to apply naturalistic pitch instability
 	kcps	=	kcps*(1+kcpsRnd)				;apply pitch instability
 	asig	fofx5	kcps*semitone(kvib)*kCpsAtt, gkvowel, gkoct, ivoice-1	;CALL fofx5 UDO
+	if gkFiltOnOff==1 then
+	 asig		reson		asig,gkcf,gkbw,1			;parametric EQ
+	endif
 	aatt	linseg	0,(0.3*(1-givel)*(invoices^0.8))+0.01,1			;AMPLITUDE ENVELOPE - ATTACK TIME IS INFLUENCED BY KEY VELOCITY
 	asig	=	asig*aatt*ktrem*(0.3+givel*0.7)*gklevel			;APPLY AMPLITUDE CONTROLS: ENVELOPE, TREMOLO, KEY VELOCITY AND LEVEL
 
@@ -311,9 +339,9 @@ instr	3
 	 asigL	=	asig						;send mono signal to both channels
 	 asigR	=	asig	 
 	endif
-	krel	linsegr	1,iRelTim,0					;release envelope
-	asigL	=	asigL*krel					;apply release envelope
-	asigR	=	asigR*krel
+	arel	linsegr	1,iRelTim,0					;release envelope
+	asigL	=	asigL*arel					;apply release envelope
+	asigR	=	asigR*arel
 
 	kwet	limit	2*gkRvbMix,0,1					;wet (reverb) level control (reaches maximum a knob halfway point and hold that value for the remainder of its travel)
 	gasendL	=	gasendL+asigL*kwet				;send some audio to the reverb instrument

@@ -2,7 +2,7 @@ Convolution Reverb
 ------------------
 You are encouraged to experiment with different impulse files.
 You can find some here: http://www.openairlib.net/
-The one I've reference in this example can be found here: http://www.iainmccurdy.org/CsoundRealtimeExamples/SourceMaterials/Stairwell.wav
+The one I reference in this example can be found here: http://www.iainmccurdy.org/CsoundRealtimeExamples/SourceMaterials/Stairwell.wav
 NOTE THAT ZERO LATENCY (or close to zero) CONV0LUTION WILL NOT BE POSSIBLE.
 
 Instructions
@@ -16,21 +16,19 @@ Increase 'iplen' (must be a power of 2) if experiencing performance problems, or
 'Delay OS' fine tunes the delay applied to the dry signal. Normally this should be zero but adjust it to modify how the dry signal lines up with the convoluted signal.
 
 <Cabbage>
-form caption("Convolution Reverb") size(505, 120), pluginID("Conv")
-image pos(0, 0), size(505, 90), colour("maroon"), shape("rounded"), outline("white"), line(4) 
-button  bounds( 10,  10, 90, 20),	text("backward", "forward"), 				channel("FwdBwd"), value(0)
-label   bounds( 30,  30, 60, 12),	text("direction"), 	fontColour("white")
-button  bounds( 10,  50, 90, 20),	text("compressed", "normal"), 				channel("resize"), value(0)
-label   bounds( 35,  70, 60, 12),	text("resize"), 	fontColour("white")
-rslider bounds(105, 11, 70, 70),	text("Size Ratio"), 	fontcolour("white"), 		channel("CompRat"), 	range(0, 1, 1)
-rslider bounds(170, 11, 70, 70),	text("Curve"), 		fontcolour("white"), 		channel("Curve"), 	range(-8, 8, 0)
-rslider bounds(235, 11, 70, 70),	text("In Skip"), 	fontcolour("white"), 		channel("skipsamples"), range(0, 1, 0)
-rslider bounds(300, 11, 70, 70),	text("Del.OS."), 	fontcolour("white"), 		channel("DelayOS"), 	range(-1, 1, 0)
-rslider bounds(365, 11, 70, 70),	text("Mix"), 		fontcolour("white"), 		channel("mix"), 	range(0, 1, 0.25)
-rslider bounds(430, 11, 70, 70),	text("Level"), 		fontcolour("white"), 		channel("level"), 	range(0, 1, 1)
+form caption("Convolution Reverb") size(505, 90), pluginID("Conv")
+image bounds(0, 0, 505, 90), colour(135, 30, 30,220), shape("rounded"), outline(255,255,150), line(4) 
+button  bounds( 10,  10, 90, 20),       text("backward", "forward"),                            channel("FwdBwd"), value(0), fontcolour(250,250,250)
+label   bounds( 30,  30, 60, 12),       text("direction"), fontcolour(250,250,250)
+button  bounds( 10,  50, 90, 20),       text("compressed", "normal"),                           channel("resize"), value(0), fontcolour(250,250,250)
+label   bounds( 35,  70, 60, 12),       text("resize"), fontcolour(250,250,250)
+rslider bounds(105, 11, 70, 70),        text("Size Ratio"),     colour(135, 30, 30), tracker(255,255,150), fontcolour(250,250,250),  channel("CompRat"),     range(0, 1.00, 1)
+rslider bounds(170, 11, 70, 70),        text("Curve"),          colour(135, 30, 30), tracker(255,255,150), fontcolour(250,250,250),  channel("Curve"),       range(-8.00, 8.00, 0)
+rslider bounds(235, 11, 70, 70),        text("In Skip"),        colour(135, 30, 30), tracker(255,255,150), fontcolour(250,250,250),  channel("skipsamples"), range(0, 1.00, 0)
+rslider bounds(300, 11, 70, 70),        text("Del.OS."),        colour(135, 30, 30), tracker(255,255,150), fontcolour(250,250,250),  channel("DelayOS"),     range(-1.00, 1.00, 0)
+rslider bounds(365, 11, 70, 70),        text("Mix"),            colour(135, 30, 30), tracker(255,255,150), fontcolour(250,250,250),  channel("mix"),         range(0, 1.00, 0.25)
+rslider bounds(430, 11, 70, 70),        text("Level"),          colour(135, 30, 30), tracker(255,255,150), fontcolour(250,250,250),  channel("level"),       range(0, 1.00, 0)
 }
-image bounds(5, 95, 205, 20), colour(75, 85, 90, 100), plant("credit"), line(0){
-label bounds(0.03, 0.1, .95, .7), text("Author: Iain McCurdy |2012|"), colour("white")
 </Cabbage>
 
 <CsoundSynthesizer>

@@ -228,7 +228,7 @@ endin
 instr	2	;MIDI TRIGGERED INSTRUMENT
 	gkNoteTrig	init	1	;at the beginning of a new note set note trigger flag to '1'	
 	ibase	cpsmidi							;read in midi note number as a cps value
-	gkbase	init	ibase
+	gkbase	=	ibase
 	ivel	ampmidi	1						;read in midi note velocity as a value within the range 0 to 1
 	gkvel	init	ivel
 	inum	notnum							;read in midi note number as an integer (used for create a table of active notes flags)
@@ -274,6 +274,13 @@ instr	3				;impulse and modal resonators instrument
 	ivel	init	i(gkvel)
 	kenv		linseg	0,(1-ivel)+0.01,ivel			;create an amplitude envelope for the impulse sound. impulse sound will be velocity sensitive and the attack time of this envelope will be proportionate to the note velocity also. 
 	rireturn
+
+	ktrig	changed	gksound					; to fix bug where sound would not update in mono mode
+	if ktrig==1 then
+	 reinit RESTART_INSTRUMENT2
+	endif
+	RESTART_INSTRUMENT2:
+
 	aSineMix	SineVoice	kbase,gkJitDep,gkJitRte,icount,invoices,irtos,gisine	;call sine oscillator udo (it will be recursively recalled within the udo the appropriate number of times according to invoices)
 	aSineMix	=	aSineMix*0.002*kactivePort*kenv*gkImpAmp	;scale the mixture of sines audio signal
 	aSineMix	buthp	aSineMix,gkHPF

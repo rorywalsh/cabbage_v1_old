@@ -1,16 +1,15 @@
 <Cabbage>
-form caption("Lowpass Filter") size(370, 120), pluginID("LPFl")
-image pos(0, 0), size(370, 90), colour("yellow"), shape("rounded"), outline("white"), line(4) 
-rslider bounds( 10, 11, 70, 70), text("Freq."),colour("orange"), 		fontcolour("black"), 		channel("cf"), 		range(20, 20000, 20000, 0.333)
-rslider bounds( 75, 11, 70, 70), text("Res."),colour("orange"), 		fontcolour("black"), 		channel("res"),		range( 0,     1, 0)
-rslider bounds(140, 11, 70, 70), text("Mix"),colour("orange"),		fontcolour("black"), 		channel("mix"), 	range(0, 1, 1)
-button  bounds(215,  10, 80, 20), text("24dB/oct", "12dB/oct"), channel("steepness"), value(0)
-label   bounds(225,  30, 80, 12), text("Steepness"), FontColour("black")
-checkbox bounds(215, 50, 80, 20), channel("ResType"), FontColour("black"),  value(0), text("Resonant"), shape("rounded")
-rslider bounds(295, 11, 70, 70), text("Level"),colour("orange"),		fontcolour("black"), 		channel("level"), 	range(0, 1, 1)
-}
-image bounds(5, 95, 205, 20), colour(75, 85, 90, 100), plant("credit"), line(0){
-label bounds(0.03, 0.1, .95, .7), text("Author: Iain McCurdy |2012|"), colour("white")
+form caption("Lowpass Filter") size(435, 90), pluginID("LPFl")
+image pos(0, 0),               size(435, 90), colour(  70, 90,100), shape("rounded"), outline("white"), line(4) 
+label    bounds( 22, 22, 60, 11), text("INPUT"), fontcolour("white")
+combobox bounds( 10, 33, 60, 20), channel("input"), value(1), text("Live","Tone","Noise")
+rslider  bounds( 75, 11, 70, 70), channel("cf"),        text("Freq."), colour(  0, 40, 50), tracker(200,240,250), 		fontcolour("white"), 		range(20, 20000, 20000, 0.333)
+rslider  bounds(140, 11, 70, 70), channel("res"),       text("Res."),  colour(  0, 40, 50), tracker(200,240,250), 		fontcolour("white"),		range(0,1.00,0)
+rslider  bounds(205, 11, 70, 70), channel("mix"),       text("Mix"),   colour(  0, 40, 50), tracker(200,240,250),		fontcolour("white"), 	range(0,1.00,1)
+button   bounds(280, 10, 80, 20), channel("steepness"), text("24dB/oct", "12dB/oct"), value(0)
+label    bounds(290, 30, 80, 12), text("Steepness"), FontColour("white")
+checkbox bounds(280, 50, 80, 15), channel("ResType"), FontColour("white"),  value(0), text("Resonant"), colour(yellow)
+rslider  bounds(360, 11, 70, 70), text("Level"),                       colour(  0, 40, 50), tracker(200,240,250),		fontcolour("white"), 		channel("level"), 	range(0, 1.00, 1)
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -37,7 +36,17 @@ instr	1
 	klevel		chnget	"level"				;
 	kporttime	linseg	0,0.001,0.02
 	kcf	portk	kcf,kporttime
-	aL,aR	ins	
+	/* INPUT */
+	kinput		chnget	"input"
+	if kinput=1 then
+	 aL,aR	ins
+	elseif kinput=2 then
+	 aL	vco2	0.2, 100
+	 aR	=	aL
+	else
+	 aL	pinkish	0.2
+	 aR	pinkish	0.2
+	endif
 	if ksteepness==0&&kResType!=1 then
 	 aFiltL	tone	aL,kcf
 	 aFiltR	tone	aR,kcf

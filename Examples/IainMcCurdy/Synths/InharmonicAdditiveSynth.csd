@@ -251,7 +251,8 @@ instr	2	;SOUND GENERATING INSTRUMENT
 	  rireturn
 	endif
 	
-	asig	butlp		asig, kcf					;LOW PASS FILTER THE SOUND (SUBTRACTIVE SYNTHESIS)
+	;asig	butlp		asig, kcf
+	asig	clfilt		asig, kcf, 0, 2					;LOW PASS FILTER THE SOUND (SUBTRACTIVE SYNTHESIS)
 	gasend	=	gasend+asig
 
 endin

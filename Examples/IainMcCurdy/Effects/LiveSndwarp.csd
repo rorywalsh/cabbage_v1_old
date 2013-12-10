@@ -53,13 +53,13 @@ groupbox bounds(  0,  0, 300,100), text("Master"), colour(30, 30, 40), fontcolou
 checkbox bounds( 10, 28, 110, 20), colour("yellow"), channel("OnOff"),  value(1), text("On/Off [MIDI]"), tracker("red")
 label    bounds( 22, 53,  80, 13), text("In/Out Mode")
 combobox bounds( 10, 69, 100, 20), channel("monostereo"), value(2), text("mono","stereo out","stereo in/out")
-rslider  bounds(115, 30,  60, 60), text("In Gain"), channel("InGain"), range(0, 2, 1, 0.5), tracker("red")
-rslider  bounds(175, 30,  60, 60), text("Out Gain"), channel("amp"), range(0, 2, 1, 0.5), tracker("red")
-rslider  bounds(235, 30,  60, 60), text("Mix"), channel("mix"), range(0, 1, 1), tracker("red")
+rslider  bounds(115, 30,  60, 60), text("In Gain"), channel("InGain"), range(0, 2.00, 1, 0.5), tracker("red")
+rslider  bounds(175, 30,  60, 60), text("Out Gain"), channel("amp"), range(0, 2.00, 1, 0.5), tracker("red")
+rslider  bounds(235, 30,  60, 60), text("Mix"), channel("mix"), range(0, 1.00, 1), tracker("red")
 }
 
 groupbox bounds(300,  0, 230,100), text("Feedback - CAUTION!"), colour(25, 25, 35), fontcolour(250,120,120){
-rslider  bounds(305, 30,  60, 60), text("Amount"), channel("feedback"), range(0, 1, 0), tracker("red")
+rslider  bounds(305, 30,  60, 60), text("Amount"), channel("feedback"), range(0, 1.00, 0), tracker("red")
 checkbox bounds(365, 35,  70, 20), colour("yellow"), channel("clip"),  value(1), text("Clip"), tracker("red")
 checkbox bounds(365, 65,  70, 20), colour("yellow"), channel("LPF_On"),  value(0), text("LPF"), tracker("red")
 rslider  bounds(410, 30,  60, 60), text("Clip Lev."), channel("ClipLev"), range(0.01, 1, 0.5, 0.5), tracker("red")
@@ -76,15 +76,15 @@ label    bounds(305,125, 100, 13), text("Grain Envelope")
 combobox bounds(305,141, 100, 20), channel("wfn"), value(1), text("Half Sine","Perc. 1","Perc. 2","Gate","Rev. Perc. 1 ","Rev. Perc. 2")
 checkbox bounds(315,170, 100, 20), colour("yellow"), channel("balance"),  value(0), text("Balance")
 rslider  bounds(405,130,  60, 60), text("Delay"), channel("dly"), range(0, 5, 0.01, 0.5), tracker("red")
-rslider  bounds(465,130,  60, 60), text("Distr."), channel("beta"), range(1, 16, 1, 0.5), tracker("red")
+rslider  bounds(465,130,  60, 60), text("Distr."), channel("beta"), range(1, 16.0, 1, 0.5), tracker("red")
 }
 
 groupbox bounds(  0,200,530,135), text("Freeze"), colour(45, 45, 55), fontcolour(255,100,100){
 label    bounds(234,230, 80, 17), text("FREEZE"), fontcolour("LightBlue")
 label    bounds(233,231, 80, 17), text("FREEZE"), fontcolour(105,105,255)
 checkbox bounds(225,249, 80, 30), colour(115,115,255), channel("freeze"),  value(0)
-rslider  bounds( 10,227, 60, 60), text("Port.Time"), channel("ManPtrPort"), range(0, 1, 0.5), tracker("red")
-hslider  bounds( 10,280,510, 40), channel("ManPtr"), range(-1, 0, 0, 1, 0.001), tracker("red")
+rslider  bounds( 10,227, 60, 60), text("Port.Time"), channel("ManPtrPort"), range(0, 1.00, 0.5), tracker("red")
+hslider  bounds( 10,280,510, 40), channel("ManPtr"), range(-1.00, 0, 0, 1, 0.001), tracker("red")
 label    bounds(220,315,100, 13), text("Manual Pointer")
 }
 

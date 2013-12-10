@@ -1,5 +1,5 @@
 <Cabbage>
-form caption("Bass Line") size(615, 250), pluginID("basl")
+form caption("Bassline") size(615, 250), pluginID("basl")
 
 snapshot bounds( 80,185,200, 20), preset("bassline"), items("Preset 1", "Preset 2", "Preset 3", "Preset 4", "Preset 5", "Preset 6", "Preset 7", "Preset 8", "Preset 9", "Preset 10")
 
@@ -96,13 +96,13 @@ checkbox bounds(586, 98, 12, 12), channel("Acc16"), value(0), preset("bassline")
 button   bounds( 10,120, 60, 25), colour("Green"), text("Stop", "Run"), channel("OnOff"), value(1)
 combobox bounds( 10,150, 60, 15), channel("Waveform"), value(1), text("saw","square","triangle","PWM","noise"), preset("bassline")
 rslider  bounds( 20,170, 40, 40), text("P.W."),  channel("pw"),  range(0.01,0.99, 0.25), preset("bassline"), FontColour("black")
-rslider  bounds( 70,120, 60, 60), text("Vol."),  channel("Vol"),  range(0, 5, 1), preset("bassline"), FontColour("black")
-rslider  bounds(120,120, 60, 60), text("Cutoff"),  channel("CfBase"),  range(4, 14, 8), preset("bassline"), FontColour("black")
-rslider  bounds(170,120, 60, 60), text("Env.Mod"),  channel("CfEnv"),  range(0, 10, 4), preset("bassline"), FontColour("black")
-rslider  bounds(220,120, 60, 60), text("Res."),  channel("Res"),  range(0,.98, .4), preset("bassline"), FontColour("black")
-rslider  bounds(270,120, 60, 60), text("Dist."),  channel("Dist"),  range(0,1, 0), preset("bassline"), FontColour("black")
-rslider  bounds(320,120, 60, 60), text("Decay"),  channel("Decay"),  range(0.1, 5, .3, 0.25), preset("bassline"), FontColour("black")
-rslider  bounds(370,120, 60, 60), text("Accent"),  channel("Accent"),  range(0, 1, .5), preset("bassline"), FontColour("black")
+rslider  bounds( 70,120, 60, 60), text("Vol."),  channel("Vol"),  range(0, 5.00, 1), preset("bassline"), FontColour("black")
+rslider  bounds(120,120, 60, 60), text("Cutoff"),  channel("CfBase"),  range(4.00, 14, 8), preset("bassline"), FontColour("black")
+rslider  bounds(170,120, 60, 60), text("Env.Mod"),  channel("CfEnv"),  range(0, 10.00, 4), preset("bassline"), FontColour("black")
+rslider  bounds(220,120, 60, 60), text("Res."),  channel("Res"),  range(0,0.98, .4), preset("bassline"), FontColour("black")
+rslider  bounds(270,120, 60, 60), text("Dist."),  channel("Dist"),  range(0,1.00, 0), preset("bassline"), FontColour("black")
+rslider  bounds(320,120, 60, 60), text("Decay"),  channel("Decay"),  range(0.10, 5, .3, 0.25), preset("bassline"), FontColour("black")
+rslider  bounds(370,120, 60, 60), text("Accent"),  channel("Accent"),  range(0, 1.00, .5), preset("bassline"), FontColour("black")
 rslider  bounds(420,120, 60, 60), text("Tempo"),  channel("Tempo"),  range(1, 500, 110, 1, 1), FontColour("black"), FontColour("black")
 button   bounds(480,120, 60, 15), text("Reset"), channel("Reset"), value(0)
 button   bounds(540,120, 60, 15), text("Random"), channel("Rnd"), value(0)
@@ -158,6 +158,7 @@ opcode	resonsr,a,akki
 endop
 
 instr	1	;BASSLINE INSTRUMENT
+	kporttime	linseg	0,0.001,0.01	;PORTAMENTO TIME RAMPS UP QUICKLY FROM ZERO TO A HELD VALUE
 	;READ IN WIDGETS...
 	gkOnOff		chnget	"OnOff"
 	gkNote1		chnget	"Note1"
@@ -226,7 +227,9 @@ instr	1	;BASSLINE INSTRUMENT
 	gkAcc16	chnget	"Acc16"
 	gkVol	chnget	"Vol"
 	gkCfBase	chnget	"CfBase"
+	gkCfBase	portk	gkCfBase,kporttime*5
 	gkCfEnv	chnget	"CfEnv"
+	gkCfEnv	portk	gkCfEnv,kporttime*5
 	gkRes	chnget	"Res"
 	gkDist	chnget	"Dist"
 	gkDecay	chnget	"Decay"
@@ -274,7 +277,6 @@ instr	1	;BASSLINE INSTRUMENT
 	kPhFreq   =            gkTempo/240	;FREQUENCY WITH WHICH TO REPEAT THE ENTIRE PHRASE
 	kBtFreq   =            gkTempo/15	;FREQUENCY OF EACH 1/16TH NOTE
 	kNewNote	metro	kBtFreq		;GENERATES A TRIGGER FOR EACH BEAT
-	kporttime	linseg	0,0.001,0.01	;PORTAMENTO TIME RAMPS UP QUICKLY FROM ZERO TO A HELD VALUE
 	;ENVELOPES WITH HELD SEGMENTS
 	;                      freq     trig      ph  NOTE:1 (dur) 2            3            4            5            6            7            8            9            10            11            12            13            14            15            16             DUMMY
 	kNoteLoop lpshold      kPhFreq, 0,        0,  gkNote1, 1,  gkNote2, 1,  gkNote3, 1,  gkNote4, 1,  gkNote5, 1,  gkNote6, 1,  gkNote7, 1,  gkNote8, 1,  gkNote9, 1,  gkNote10, 1,  gkNote11, 1,  gkNote12, 1,  gkNote13, 1,  gkNote4,  1,  gkNote15, 1,  gkNote16,   1  ;,gkNote1	;NEED AN EXTRA 'DUMMY' VALUE
@@ -302,7 +304,6 @@ instr	1	;BASSLINE INSTRUMENT
 	;                       freq    trig                ph v                          t        v         t             v         t(?)
 	kCfOct	  loopseg	1/3600, kFiltRetrig+kNewOn, 0, gkCfBase+gkCfEnv+(kAcc*2), gkDecay, gkCfBase, 3600-gkDecay, gkCfBase, 0
 	kCfOct    limit        kCfOct, 4, 14	;LIMIT THE CUTOFF FREQUENCY TO BE WITHIN SENSIBLE LIMITS
-
 	;AMPLITUDE ENVELOPE - SEPARATES NOTES THAT ARE NOT HELD
 	katt	=	0.02 * (60/gkTempo)
 	kdec	=	0.02 * (60/gkTempo)
@@ -337,8 +338,10 @@ instr	1	;BASSLINE INSTRUMENT
 
 	;FILTER (CALLS UDO: A VERSION OF moogladder IN WHICH CUTOFF FREQUENCY IS MODULATED AT kr=sr) IN ORDER TO PREVENT QUANTISATION NOISE)
 	kres	limit	gkRes+(kAcc*0.4),0,0.98				;PREVENT EXCESSIVE RESONANCE THAT COULD RESULT FROM THE COMBINATION OF RESONANCE SETTING AND ACCENTING
-	aSig      moogladdersr   aSig, cpsoct(kCfOct), kres		;FILTER AUDIO 
-
+	
+	/*
+	aFilt      moogladdersr   aSig, cpsoct(kCfOct), kres		;FILTER AUDIO 
+	aSig       balance        aFilt,aSig
 	;DISTORTION
 	if gkDist==0 kgoto SKIP_DISTORTION 
 	iSclLimit ftgentmp     0, 0, 1024, -16, 1, 1024,  -8, 0.01	;RESCALING CURVE FOR CLIP 'LIMIT' PARAMETER
@@ -353,6 +356,17 @@ instr	1	;BASSLINE INSTRUMENT
 	aSig      clip         aSig, 0, i(kLimit)			;CLIP DISTORT AUDIO SIGNAL
 	rireturn							;
 	aSig      =            aSig * kGain				;COMPENSATE FOR GAIN LOSS FROM 'CLIP' PROCESSING
+	*/
+	
+	iSclGain  ftgentmp     0, 0, 1024, -16, 1, 1024,   -6, 0.1	;RESCALING CURVE FOR GAIN COMPENSATION
+	kGain     table        gkDist, iSclGain, 1			;READ GAIN VALUE FROM RESCALING CURVE
+	aSig	lpf18	aSig,cpsoct(kCfOct),kres, (gkDist^2)*20		;LOWPASS
+	;aSig	tone	aSig,cpsoct(kCfOct)
+	af1	resonz	aSig,150,150,1
+	aSig	=	aSig+af1
+	aSig	butlp	aSig,4000
+	aSig      =            aSig * kGain				;COMPENSATE FOR GAIN LOSS FROM 'CLIP' PROCESSING
+	
 	SKIP_DISTORTION:
 		
 	kOn       port         kOn, 0.006				;SMOOTH CHANGES IN ON OFF SWITCHING

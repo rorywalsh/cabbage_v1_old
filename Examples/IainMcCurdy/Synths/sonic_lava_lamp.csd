@@ -1,14 +1,14 @@
 <Cabbage>
-form caption("Sonic Lava Lamp") size(510, 450)
+form caption("Sonic Lava Lamp") size(510, 450), pluginID("sonl")
 image bounds(  5,  0,250, 210), colour(255,255, 50,100),shape("rounded"), outline("white"), line(0)
 image bounds(255,  0,250, 210), colour(  0,  0,255,100),shape("rounded"), outline("white"), line(0)
 image bounds(  5,210,250, 210), colour(  5,255,  0,100),shape("rounded"), outline("white"), line(0)
 image bounds(255,210,250, 210), colour(255,  0,200,100),shape("rounded"), outline("white"), line(0)
 
-xypad bounds(5, 0, 250, 210), channel("LFOspeed", "LFO_OS"), rangex(0, 1, 1, 0.5), rangey(5, 11, 10);, text("Speed/OS")
-xypad bounds(255, 0, 250, 210), channel("LFOshape", "LFOdepth"), rangex(0, 1, 0), rangey(0.1, 4, 1);, text("Shape/Depth")
-xypad bounds(5, 210, 250, 210), channel("pan", "amp"), rangex(0, 1, 0.5), rangey(0, 1, 0.8);, text("pan/amp")
-xypad bounds(255, 210, 250, 210), channel("DelTim", "DelSnd"), rangex(0, 1, 0.5), rangey(0, 1, 0.5, 0.5);, text("Delay Time/Send")
+xypad bounds(5, 0, 250, 210), channel("LFOspeed", "LFO_OS"), rangex(0, 1.00, 0.01), rangey(5, 11, 8), text("Speed/OS")
+xypad bounds(255, 0, 250, 210), channel("LFOshape", "LFOdepth"), rangex(0, 1, 0.7), rangey(0.1, 4, 2), text("Shape/Depth")
+xypad bounds(5, 210, 250, 210), channel("pan", "amp"), rangex(0, 1, 0.5), rangey(0, 1, 0.8), text("pan/amp")
+xypad bounds(255, 210, 250, 210), channel("DelTim", "DelSnd"), rangex(0, 1.00, 0.5), rangey(0, 1.00, 0.5), text("Delay Time/Send")
 infobutton bounds(5,425, 100, 20), text("Help"), file("SonicLavaLampHelp.html")
 image bounds(105, 425, 315, 20), colour(75, 85, 90, 100), plant("credit"), line(0){
 label bounds(0.03, 0.1, .6, .7), text("Author: Iain McCurdy |2012|"), colour("white")
@@ -50,6 +50,23 @@ opcode	PingPongDelay, aa,aakk
 			delayw	ainR+(aDelR*kfeedback)			;WRITE INPUT AUDIO INTO BUFFER
 			xout	aDelL+aL_OS,aDelR
 endop
+
+instr	InitialiseXYpads
+; xypads output zeroes until they are moved (regardless of any initialisation done within the widget)
+; a workaround is to initialise the xypad using chnset within an instrument
+; here I have used a macro so cut down on code repetition
+#define	SET_XYPAD_INIT(NAME'VAL)#
+	kval	=	$VAL
+	chnset	kval,"$NAME"#
+$SET_XYPAD_INIT(LFOspeed'0.01)
+$SET_XYPAD_INIT(LFO_OS'8)
+$SET_XYPAD_INIT(LFOshape'0.7)
+$SET_XYPAD_INIT(LFOdepth'2)
+$SET_XYPAD_INIT(pan'0.5)
+$SET_XYPAD_INIT(amp'0.8)
+$SET_XYPAD_INIT(DelTim'0.5)
+$SET_XYPAD_INIT(DelSnd'0.5)
+endin
 
 instr	1
 	kLFOspeed	chnget	"LFOspeed"
@@ -103,6 +120,7 @@ endin
 </CsInstruments>
 
 <CsScore>
+i "InitialiseXYpads" 0 0.01
 i 1 0 [3600*24*7]
 </CsScore>
 

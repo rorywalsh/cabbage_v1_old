@@ -1,13 +1,19 @@
+; pvsBuffer.csd (for Cabbage)
+; Writes audio into a circular FFT buffer.
+; Read speed can be modified as can the frequencies.
+; Take Care! Feedback values above 1 are intended to be used only when transposition if not unison. 
+
 <Cabbage>
-form caption("pvsBuffer") size(510, 120)
-image pos(0, 0), size(510, 90), colour("firebrick"), shape("rounded"), outline("white"), line(4) 
-rslider bounds(10, 11, 70, 70), text("Speed"), channel("speed"), range(0, 4, 1, 0.5, 0.0001)
-rslider bounds(80, 11, 70, 70), text("Buf. Size"), channel("buflen"), range(0.1, 8, 1, 0.5)
-rslider bounds(150, 11, 70, 70), text("Semitones"), channel("semis"), range(-24, 24, 0, 1, 1)
-rslider bounds(220, 11, 70, 70), text("Cents"), channel("cents"), range(-100, 100, 0, 1, 1)
-rslider bounds(290, 11, 70, 70), text("Feedback"), channel("FB"), range(0, 1, 0)
-rslider bounds(360, 11, 70, 70), text("Mix"), channel("mix"), range(0, 1, 1)
-rslider bounds(430, 11, 70, 70), text("Level"), channel("lev"), range(0, 1, 0.5)
+form caption("pvsBuffer") size(580,90), pluginID("buff")
+image             bounds(0, 0, 580, 90), colour(100, 80, 80,125), shape("rounded"), outline("white"), line(4) 
+rslider bounds(10, 11, 70, 70), text("Speed"), channel("speed"), range(0, 4, 1, 0.5, 0.0001), fontcolour("white"),    colour(100, 80, 80,  5) tracker(silver)
+rslider bounds(80, 11, 70, 70), text("Buf. Size"), channel("buflen"), range(0.10, 8.00, 1, 0.5), fontcolour("white"), colour(100, 80, 80,  5) tracker(silver)
+rslider bounds(150, 11, 70, 70), text("Semitones"), channel("semis"), range(-24, 24, 0, 1, 1), fontcolour("white"),   colour(100, 80, 80,  5) tracker(silver)
+rslider bounds(220, 11, 70, 70), text("Cents"), channel("cents"), range(-100, 100, 0, 1, 1), fontcolour("white"),     colour(100, 80, 80,  5) tracker(silver)
+rslider bounds(290, 11, 70, 70), text("Feedback"), channel("FB"), range(0, 1.50, 0), fontcolour("white"),             colour(100, 80, 80,  5) tracker(silver)
+rslider bounds(360, 11, 70, 70), text("FFT Size"), channel("att_table"), range(1, 8, 5, 1,1), fontcolour("white"),    colour(100, 80, 80,  5) tracker(silver)
+rslider bounds(430, 11, 70, 70), text("Mix"), channel("mix"), range(0, 1.00, 1), fontcolour("white"),                 colour(100, 80, 80,  5) tracker(silver)
+rslider bounds(500, 11, 70, 70), text("Level"), channel("lev"), range(0, 1.00, 0.5), fontcolour("white"),             colour(100, 80, 80,  5) tracker(silver)
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>
@@ -23,6 +29,15 @@ nchnls 		= 	2
 ;Author: Iain McCurdy (2012)
 ;http://iainmccurdy.org/csound.html
 
+/* FFT attribute tables */
+giFFTattributes1	ftgen	0, 0, 4, -2,   64,  32,   64, 1
+giFFTattributes2	ftgen	0, 0, 4, -2,  128,  64,  128, 1
+giFFTattributes3	ftgen	0, 0, 4, -2,  256, 128,  256, 1
+giFFTattributes4	ftgen	0, 0, 4, -2,  512, 128,  512, 1
+giFFTattributes5	ftgen	0, 0, 4, -2, 1024, 256, 1024, 1
+giFFTattributes6	ftgen	0, 0, 4, -2, 2048, 512, 2048, 1
+giFFTattributes7	ftgen	0, 0, 4, -2, 4096,1024, 4096, 1
+giFFTattributes8	ftgen	0, 0, 4, -2, 8192,2048, 8192, 1
 
 opcode	pvsbuffer_module,a,akkkkkkiiii
 	ain,kspeed,kbuflen,kscale,kfeedback,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype	xin
@@ -48,13 +63,14 @@ opcode	pvsbuffer_module,a,akkkkkkiiii
 	f_buf  		pvsbufread  	kread , khandle					;READ BUFFER
 	f_scale		pvscale 	f_buf, kscale					;RESCALE FREQUENCIES
 	aresyn 		pvsynth  	f_scale			                   	;RESYNTHESIZE THE f-SIGNAL AS AN AUDIO SIGNAL	
-	aFB		=		aresyn*kfeedback
+	aFB		dcblock2	aresyn * kfeedback				;CREATE FEEDBACK SIGNAL FOR NEXT PASS AND BLOCK DC OFFSET ACCUMULATION
 	amix		ntrpol		ain, aresyn, kmix				;CREATE DRY/WET MIX
 			xout		amix*klev	
 endop
 
 instr	1
 	ainL,ainR	ins
+	;ainL,ainR	diskin	"SynthPad.wav",1,0,1	;USE FOR TESTING
 	kspeed		chnget	"speed"
 	kbuflen		chnget	"buflen"
 	ksemis		chnget	"semis"
@@ -71,10 +87,21 @@ instr	1
 	kmix		init	1
 	kfeedback	init	0
 	klev		init	0.5
-	iFFTsize	=	1024
-	ioverlap	=	256
-	iwinsize	=	1024
-	iwintype	=	1
+
+	/* SET FFT ATTRIBUTES */
+	katt_table	chnget	"att_table"	; FFT atribute table
+	katt_table	init	5
+	ktrig		changed	katt_table
+	if ktrig==1 then
+	 reinit update
+	endif
+	update:
+	iFFTsize	table	0, giFFTattributes1 + i(katt_table) - 1
+	ioverlap	table	1, giFFTattributes1 + i(katt_table) - 1
+	iwinsize	table	2, giFFTattributes1 + i(katt_table) - 1
+	iwintype	table	3, giFFTattributes1 + i(katt_table) - 1
+	/*-------------------*/
+	
 	aoutL		pvsbuffer_module	ainL,kspeed,kbuflen,kscale,kfeedback,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype
 	aoutR		pvsbuffer_module	ainR,kspeed,kbuflen,kscale,kfeedback,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype
 			outs	aoutL,aoutR

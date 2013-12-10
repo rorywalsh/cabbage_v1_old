@@ -1,5 +1,5 @@
 <Cabbage>
-form caption("Tab.Rec/Play") size(300, 360)
+form caption("Tab.Rec/Play") size(300, 360), pluginID("tbrp")
 
 groupbox bounds(  0,  0,300, 95), text("Transport")
 

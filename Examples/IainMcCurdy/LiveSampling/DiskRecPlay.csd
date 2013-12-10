@@ -1,5 +1,5 @@
 <Cabbage>
-form caption("Disk Rec/Play") size(300, 390)
+form caption("Disk Rec/Play") size(300, 390), pluginID("dkrp")
 groupbox bounds(10,   0, 70, 80), text("Record")
 checkbox channel("Record"), bounds(20,25,50,50), value(0), shape("square"), colour("red")
 groupbox bounds(80,   0, 70, 80), text("Pause")

@@ -9,7 +9,7 @@ rslider bounds( 10, 25,60,60), text("Sustain"), colour("Olive"), FontColour("Lig
 rslider bounds( 70, 25,60,60), text("Filt. Ratio"), colour("Olive"), FontColour("LightGreen"), channel("FiltRatio"), range(0.5, 32, 1, 0.5)
 rslider bounds(130, 25,60,60), text("B.width"), colour("Olive"), FontColour("LightGreen"), channel("bw"), range(1, 32, 16)
 rslider bounds(190, 25,60,60), text("Att"), colour("Olive"), FontColour("LightGreen"), channel("att"), range(0, 3, 1,0.5)
-checkbox bounds(260, 35, 30, 30), text("Legato") channel("legato"), text("Legato"),FontColour("LightGreen"), colour("yellow")  value(1)
+checkbox bounds(260, 35, 30, 30), text("Legato") channel("legato"),FontColour("LightGreen"), colour("yellow")  value(1)
 label    bounds(255, 72, 40, 12), text("Legato"), FontColour("LightGreen")
 rslider bounds(300, 25,60,60), text("Leg.Speed"), colour("Olive"), FontColour("LightGreen"), channel("LegSpeed"), range(0.01,1,0.05,0.5)
 rslider bounds(360, 25,60,60), text("Vib.Depth"), colour("Olive"), FontColour("LightGreen"), channel("VibDep"), range(0, 1, 0.25, 0.75, 0.001)
@@ -36,7 +36,7 @@ sr 		= 	44100
 ksmps 		= 	64
 nchnls 		= 	2
 0dbfs		=	1	;MAXIMUM AMPLITUDE
-massign	3,1
+massign	0,2
 
 gkNoteTrig	init	0
 giwave	ftgen	0,0,4097,11,20,1,0.5	;waveform used by excitation (pluck) signal
@@ -80,7 +80,7 @@ opcode	butlpsr,a,aii
 		xout	asig
 endop
 
-instr	1	;read in widgets - this instrument runs constantly diuring performance
+instr	1	;read in widgets - this instrument runs constantly during performance
 	gkfeedback	chnget	"feedback"
 	gkFiltRatio	chnget	"FiltRatio"
 	gkbw		chnget	"bw"
@@ -98,11 +98,15 @@ instr	2	;triggered via MIDI
 	icps		cpsmidi		;read in midi note pitch in cycles per second
 	givel		veloc	0,1	;read in midi note velocity
 
-	gkcps	init	icps		;update a global krate variable for note pitch
+	gkcps	=	icps		;update a global krate variable for note pitch
 
 	if i(gklegato)==0 then		;if we are *not* in legato mode...
-	 aL,aR	subinstr	p1+1,icps	;call plucked string instrument as a subinstrument. Audio will be fed back to this instrument before being sent to the outputs.
-		outs	aL,aR		;send audio to outputs
+	 inum	notnum						; read midi note number (0 - 127)
+	 	event_i	"i",p1+1+(inum*0.001),0,-1,icps		; call sound producing instr
+	 krel	release						; release flag (1 when note is released, 0 otherwise)
+	 if krel==1 then					; when note is released...
+	  turnoff2	p1+1+(inum*0.001),4,1			; turn off the called instrument
+	 endif							; end of conditional
 	else				;otherwise... (i.e. legato mode)
 	 iactive	active p1+1	;check to see if these is already a note active...
 	 if iactive==0 then		;...if not...

@@ -1,10 +1,11 @@
 <Cabbage>
-form caption("clip") size(315, 120)
-image pos(0, 0), size(315, 90), colour("DarkRed"), shape("rounded"), outline("white"), line(4) 
-rslider  bounds( 10, 11, 70, 70), text("Limit"), channel("limit"), range(0.001, 1, 1, 0.5,0.001)
-rslider  bounds( 75, 11, 70, 70), text("Argument"), channel("arg"), range(0, 1, 0.5)
+form caption("clip") size(315, 90), pluginID("clip")
+image        bounds(0, 0, 315, 90), colour(  0, 10, 20), shape("rounded"), outline("white"), line(4) 
+rslider  bounds( 10, 11, 70, 70), text("Limit"), channel("limit"), range(0.001, 1, 1, 0.5,0.001)     , colour(0,10,20), fontcolour(silver), tracker(lightblue)
+rslider  bounds( 75, 11, 70, 70), text("Argument"), channel("arg"), range(0, 1.00, 0.5)              , colour(0,10,20), fontcolour(silver), tracker(lightblue)
 combobox bounds(150, 15, 80,20), channel("method"), size(80,50), value(1), text("B.D.J.", "Sine", "Tanh")
-rslider  bounds(235, 11, 70, 70), text("Level"), channel("level"), range(0, 10, 0.7)
+checkbox bounds(150, 45, 100, 20), channel("clip_light"), text("clip") fontcolour("white"), shape("rounded"), colour("red")
+rslider  bounds(235, 11, 70, 70), text("Level"), channel("level"), range(0, 10.00, 0.7)              , colour(0,10,20), fontcolour(silver), tracker(lightblue)
 }
 </Cabbage>
 
@@ -37,10 +38,25 @@ instr	1
 		reinit	START		;...BEGIN A REINITIALISATION PASS FROM LABEL 'START' 
 	endif				;END OF CONDITIONAL BRANCHING
 	START:				;LABEL
+	
+	/* clip meter */
+	krmsL		rms		asigL
+	krmsR		rms		asigR
+	kon	=	1
+	koff	=	0
+	if(krmsL>gklimit||krmsR>gklimit) then
+	 	chnset	kon,"clip_light"
+	else
+	 	chnset	koff,"clip_light"
+	endif		
+	/*------------*/
+	
+	
 	aL		clip 		asigL, i(gkmethod), i(gklimit), i(gkarg)
 	aR		clip 		asigR, i(gkmethod), i(gklimit), i(gkarg)
 	rireturn			;RETURN TO PERFORMANCE PASSES FROM INITIALISATION PASS
-			outs		aL*gklevel*(1/(gklimit^0.5)), aR*gklevel*(1/(gklimit^0.5))		;pdclip OUTPUT ARE SENT TO THE SPEAKERS
+	;		outs		aL*gklevel*(1/(gklimit^0.5)), aR*gklevel*(1/(gklimit^0.5))		;pdclip OUTPUTS ARE SENT TO THE SPEAKERS
+			outs		aL*gklevel, aR*gklevel							;pdclip OUTPUTS ARE SENT TO THE SPEAKERS
 endin
 		
 </CsInstruments>

@@ -49,7 +49,7 @@ rslider bounds(295, 25, 60, 60), text("Speed"),   colour(195,126,  0), FontColou
 groupbox bounds(360,  0,170, 90), text("Pick-up"), fontcolour(195,126, 0){
 rslider bounds(365, 25, 60, 60), text("Position"),colour(195,126,  0), FontColour(195,126,  0), channel("PickPos"),   range(0, 1, 0.1)
 checkbox bounds(425, 25, 70, 15), text("Auto") channel("auto"), FontColour(195,126,  0), colour("orange")
-rslider bounds(465, 25, 60, 60), text("Speed"),colour(195,126,  0), FontColour(195,126,  0), channel("PickPosSpeed"),   range(0.01, 8, 1, 0.5,0.001)
+rslider bounds(465, 25, 60, 60), text("Speed"),colour(195,126,  0), FontColour(195,126,  0), channel("PickPosSpeed"),   range(0.001, 8, 1, 0.5,0.001)
 }
 
 groupbox bounds(530,  0,120, 90), text("Reverb"), fontcolour(195,126, 0){
@@ -87,12 +87,15 @@ massign		0,1		; assign all midi to channel 1
 
 gasendL,gasendR,garvbL,garvbR	init	0	; initialise global variables to zero
 giscal	ftgen	0,0,1024,-16,1,1024,4,8		; amplitude scaling used in 'overdrive' mechanism
+gifbscl	ftgen	0,0,128,-27, 0,1, 36,1, 86,3, 127,3	; Feedback scaling function table. Higher notes need higher levels of feedback.
 
 instr	1
 kporttime	linseg	0,0.001,0.05	; used to smooth GUI control movement
 iplk	=	0.1			; pluck position (largely irrelevant)
 iamp	=	1			; amplitude
 icps	cpsmidi				; midi note played (in cycles-per-second)
+inum	notnum				; midi note number
+ifbscl	table	inum, gifbscl		; Feedback scaling. Higher notes need higher levels of feedback. This scaling function is defined earlier in a function table.
 ksustain	chnget	"sustain"	; string sustain (inverse of damping). Higher values = more sustain
 krefl	=	1-ksustain		; string damping (derived from sustain value). Higher values = more damping. Range 0 - 1
 adel	init	0			; feedback signal from the modulating delay (initial value for the first pass)
@@ -113,7 +116,7 @@ aInRel	linsegr	1,irel,0		; feedback signal release envelope
 adust	dust		0.1,1		; generate a sparse crackle signal. This is used to help keep the string vibrating.
 
 kfback	chnget	"fback"			; 'Feedback' value from GUI knob
-asig 	repluck 	iplk, iamp, icps, kpick, krefl,( (adel*kfback) + ( (garvbL+garvbR) * 0.1) + adust) * aInRel	; vibrating string model
+asig 	repluck 	iplk, iamp, icps, kpick, krefl,( (adel*kfback*ifbscl) + ( (garvbL+garvbR) * 0.1) + adust) * aInRel	; vibrating string model
 
 ; overdrive
 kDrive	chnget	"drive"			; overdrive value from GUI knob
@@ -139,7 +142,7 @@ kHPF	limit	icps*kHPF,1,sr/2
 asig	buthp	asig, kHPF
 
 ; amplitude enveloping
-aAmpEnv	expsegr	0.001,1,1,15,0.001	; amplitude envelope
+aAmpEnv	expsegr	0.001,.1,1,15,0.001	; amplitude envelope
 asig	=	asig*aAmpEnv		; apply amplitude envelope
 
 ; delay (this controls how different harmonics are accentuated in the feedback process)

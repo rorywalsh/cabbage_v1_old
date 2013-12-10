@@ -4,7 +4,7 @@ image:images/hlogo_blue_text.PNG[Cabbage]
 [[x1]]
 Introduction
 ------------
-Cabbage is a software for prototyping and developing audio plugins with the Csound audio synthesis language. It provides Csound programmers with a simple albeit powerful toolkit for the development of cross-platform audio software. This document will take you through the basics of using Cabbage. It starts with a look at features provided by the run-time player, or standalone host, and then moves on to some simple examples. The text concludes with a reference section for the various GUI controls available in Cabbage. It's assumed that the reader has some prior knowledge of Csound. 
+Cabbage is a software for prototyping and developing audio plugins with the Csound audio synthesis language. It provides users with a powerful toolkit for the development of cross-platform audio software. This document will take you through the basics of using Cabbage. It starts with a look at features provided by the run-time player, or standalone host, and then moves on to some simple examples. The text concludes with a reference section for the various GUI controls available in Cabbage. It's assumed that the reader has some prior knowledge of Csound. 
 
 In order to use Cabbage you MUST have Csound installed. 
 
@@ -24,7 +24,7 @@ Use this command to open a cabbage instrument(unified Csound file with a dedicat
 NOTE: On OSX users can open .csd files contained within plugins. Just select a .vst file instead of a .csd file when opening. See the sections on exporting plugins for more information. 
 
 [[x4]]
-New Cabbage... 
+New Cabbage...
 ~~~~~~~~~~~~~~
 This command will help you create a new Cabbage instrument/effect. Cabbage instruments are synthesisers capable of creating sounds from scratch while effects process incoming audio. Effects can access the incoming audio by using the 'inch' or 'ins' opcodes. All effects have stereo inputs and stereo outputs. Instruments can access the incoming MIDI data in a host of different ways but the easiest is to pipe the MIDI data directly to instrument p-fields using the MIDI inter-op command line flags. Examples can be found in the examples folder.
 
@@ -736,7 +736,7 @@ Table
 table bounds(x, y, width, height), channel("chan1", "chan2", ...), tableNumbers(1, 2, ...), colour("colour1", "colour2", ...)
 ----------------------------
 
-table is a new and experimental control which creates a function table viewer capable of displaying any number of tables at once. If multiple tables are specified the tables will be superimposed on top of each other. Although it's not yet possible to interact with the table directly, it is possible to use sliders or other such widgets to alter the contents of the table in real time. See the sample table instrument in the example folder.    
+table is a new and experimental control which creates a function table editor capable of displaying any number of tables at once. If multiple tables are specified the tables will be superimposed on top of each other. To edit a table one must right click the table and select 'edit'. You mst choose the number of points that will be used to represent the table. Note that this leads to some decimation or tables (If you wish to create a high resolution table just use a Csound GEN routine).     
 
 'bounds(x, y, width, height)': integer values that set position and size on screen(in pixels)
 

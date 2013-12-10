@@ -37,10 +37,10 @@ class CabbageStandalone : public JUCEApplication
 			defaultPropSet = new PropertySet();
 			ScopedPointer<XmlElement> xml;
 			xml = new XmlElement("PLANTS");
-			String plantDir = appProperties->getCommonSettings(true)->getFile().getParentDirectory().getFullPathName();
-			Logger::writeToLog(plantDir);
-			defaultPropSet->setValue("PlantFileDir", plantDir);
-			defaultPropSet->setValue("ExamplesDir", plantDir+"/Examples");
+			String homeDir = appProperties->getCommonSettings(true)->getFile().getParentDirectory().getFullPathName();
+			Logger::writeToLog(homeDir);
+			defaultPropSet->setValue("PlantFileDir", homeDir+"/Plants");
+			defaultPropSet->setValue("ExamplesDir", homeDir+"/Examples");
 			defaultPropSet->setValue("DisablePluginInfo", 0);
 			defaultPropSet->setValue("AutoUpdate", 0);
 			defaultPropSet->setValue("UseCabbageIO", 1);

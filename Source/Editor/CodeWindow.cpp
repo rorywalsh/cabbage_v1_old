@@ -490,7 +490,7 @@ else{
 		path = File::getSpecialLocation(File::currentApplicationFile).getParentDirectory().getFullPathName();
 		path = path+"/Docs/cabbage.html"; 
 		#else
-		String path = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+"/Contents/Docs/";
+		ath = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+"/Contents/Docs/";
 		#endif
 	if(!File(path).existsAsFile())
 			CabbageUtils::showMessage(

@@ -567,7 +567,7 @@ for (int i = 1; i < subFolders.size(); i++){
 static String setDecimalPlaces(const double& x, const int& numDecimals) {
 	int y=x;
 	double z=x-y;
-	double m=pow(10,numDecimals);
+	double m=pow((double)10.f, (double)numDecimals);
 	double q=z*m;
 	double r=round(q);
 

@@ -645,7 +645,7 @@ untitledCSD=
 "form size(400, 300), caption(\"Untitled\"), pluginID(\"plu1\")\n"
 "\n"
 "</Cabbage>\n"
-"<CsoundSynthesizer>\n"
+"<CsoundSynthesizer>\n"  
 "<CsOptions>\n"
 "-n -d\n"
 "</CsOptions>\n"

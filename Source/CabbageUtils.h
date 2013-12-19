@@ -541,7 +541,7 @@ subFolders.add(searchDir);
 int noOfFiles=0, fileCnt;
 searchDir.findChildFiles(subFolders, File::findDirectories, true);
 String pathSlash;
-#ifdef LINUX
+#if defined(LINUX) || defined(MACOSX)
 pathSlash = "/";
 dir = dir+ "/";
 #else

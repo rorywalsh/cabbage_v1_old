@@ -44,7 +44,12 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 	
 	this->setTitleBarHeight(20);
 	this->setColour(DocumentWindow::backgroundColourId, CabbageUtils::getBackgroundSkin());
-	setMenuBar(this, 25);
+	
+#ifdef MACOSX
+	setUsingNativeTitleBar (true);
+#endif
+	setMenuBar(this, 25);	
+	
 	setVisible(true);
 
 	this->setWantsKeyboardFocus(false);
@@ -486,12 +491,13 @@ if(manual=="Csound")
 		}
 else{
 		String path;
-		#ifndef MACOSX
-		path = File::getSpecialLocation(File::currentApplicationFile).getParentDirectory().getFullPathName();
-		path = path+"/Docs/cabbage.html"; 
-		#else
-		ath = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+"/Contents/Docs/";
-		#endif
+#if defined(LINUX) || defined(MACOSX)
+	path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/cabbage.html";
+#else
+	path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\cabbage.html";
+#endif	
+	
+	
 	if(!File(path).existsAsFile())
 			CabbageUtils::showMessage(
 "Could not find Cabbage manual. Make sure\n\

@@ -584,7 +584,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		
 		String examplesDir = appProperties->getUserSettings()->getValue("ExamplesDir", "");	
 		if(!File(examplesDir).exists()){
-		#ifdef LINUX
+		#if defined(LINUX) || defined(MACOSX)
 			examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
 		#else
 			examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
@@ -898,7 +898,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	//------- preference Csound manual dir ------
 	else if(options==200){
 		String dir = getPreference(appProperties, "CsoundHelpDir", "");
-		FileChooser browser(String("Please select the Csound manual directory..."), File(dir), String("*.csd"));
+		FileChooser browser(String("Please select the Csound manual directory...\n(Windows: Program Files\\Csound)\n(OSX /Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual)"), File(dir), String("*.csd"));
 		if(browser.browseForDirectory()){
 			setPreference(appProperties, "CsoundHelpDir", browser.getResult().getFullPathName());
 		}	

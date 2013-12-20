@@ -8,7 +8,7 @@ You will need to have Csound6 installed. You'll also need to have the VST SDK.
 If you place the VSTSDK in a directory called SDKs in your home diectory, i.e, ~SDKs
 then you will not have to edit the Cabbage Xcode projects. If you place the SDK in 
 another directory you will need to edit the include paths in the Cabbage and Cabbage
-Plugin Xcode Projects. 
+Plugin Xcode Projects.  
 
 Building
 ========
@@ -22,7 +22,9 @@ chmod 777 buildAll.sh
 
 This should create a Debug build directory with a Cabbage bundle. The bundle will contain
 the required plugins libraries, examples, docs, and everything else you need in order
-to start using Cabbage. 
+to start using Cabbage. If the build does not work please open the projects in Xcode where you will
+find it easier to identify the problem. You may need to remove the reference to CsoundLib64 and replace
+it by clicking 'add framework' from the frameworks context menu. 
 
 Building directly in XCode
 ==========================

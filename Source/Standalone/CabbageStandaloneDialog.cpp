@@ -136,6 +136,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	//create editor but don't display it yet...
 	cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
 	cabbageCsoundEditor->setVisible(false);
+	cabbageCsoundEditor->setSize(800, 500);
 	//cabbageCsoundEditor->setFullScreen(true);
 	cabbageCsoundEditor->addActionListener(this);
 	cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
@@ -148,8 +149,6 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 		standaloneMode = true;
 		openFile(defaultCSDFile);
 	}
-	
-
 	
 	//filter->codeWindow = cabbageCsoundEditor->textEditor;
 	//start timer for output message, and autoupdate if it's on
@@ -733,7 +732,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 			if(!cabbageCsoundEditor){
 			cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
 			cabbageCsoundEditor->setVisible(false);
+#ifndef MACOSX
 			cabbageCsoundEditor->setFullScreen(true);
+#endif
 			cabbageCsoundEditor->addActionListener(this);
 			cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
 			filter->codeEditor = cabbageCsoundEditor->textEditor;
@@ -741,7 +742,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 			//cabbageCsoundEditor->setText(csdFile.loadFileAsString());
 			this->toBehind(cabbageCsoundEditor);
 			cabbageCsoundEditor->setVisible(true);
+#ifndef MACOSX
 			cabbageCsoundEditor->setFullScreen(true);
+#endif
 			cabbageCsoundEditor->toFront(true);
 			
 			

@@ -724,7 +724,7 @@ xypad is an x/y controller that sends data to Csound on two named channels. The 
 
 Example:
 ---------------
-xypad bounds(5, 5, 250, 250), channel("xpad", "ypad"), rangex(0, 2, 0), rangey(0, 20, 0), colour("cornflowerblue"), text("XY Bother"), fontcolour("lime")
+xypad bounds(5, 5, 250, 250), channel("xpad", "ypad"), rangex(0, 2, 0), rangey(0, 20, 0), colour("cornflowerblue"), text("XY Bother"), fontColour("lime")
 ---------------
 
 image:images/xypad.PNG[xypad]
@@ -733,7 +733,7 @@ image:images/xypad.PNG[xypad]
 Table
 ~~~~~
 ----------------------------
-table bounds(x, y, width, height), channel("chan1", "chan2", ...), tableNumbers(1, 2, ...), colour("colour1", "colour2", ...)
+table bounds(x, y, width, height), channel("chan1", "chan2", ...), tableNumbers(1, 2, ...), colour("colour1", "colour2", ...), drawMode(m1, m2, ...), amprange(min, max), resizeMode(val), readonly(val)
 ----------------------------
 
 table is a new and experimental control which creates a function table editor capable of displaying any number of tables at once. If multiple tables are specified the tables will be superimposed on top of each other. To edit a table one must right click the table and select 'edit'. You mst choose the number of points that will be used to represent the table. Note that this leads to some decimation or tables (If you wish to create a high resolution table just use a Csound GEN routine).     
@@ -742,9 +742,27 @@ table is a new and experimental control which creates a function table editor ca
 
 'channel("chan1",  ...)': specifies the channel with which to communicate with Csound on. As table is not an interactive control it only retrieves data from Csound. A value of -1 will causes Cabbage to update the corresponding table, while a value between 0 and 1 will cause a scrubber to appear on the table, 0 being the start of the table, 1 being the end. 
 
+'amprange(min, max)': sets the global amplitude range(Y-axis). Min and Max are the minimum and maximum values. Omitting this identifiers will cause the table widgets to rescale the Y-axis if users increase the max amp value. 
+
+'drawMode(m1, m2, ...)': sets the drawing mode for the tables, where m1, m2, m3, etc, are integers denoting the particular drawing mode to be used in the table see below. 
+
+'resizemode(val)': If this is set to 1 the table will resize if a users drags a point above the maximum amplitude value. val should be 0 or 1
+
 'tableNumbers(1, 2, ..)': sets the table to be displayed. 
 
-'colour("colour1", "colour2", ...)': sets the colours of the tables. 
+'readonly(val)': This identifier removes edit-mode from a table. By default tables can be put into edit mode with a right-click. With readonly set to 1 tables can no longer be editing on the fly however, users can still interact with a table if its draw mode is set to five. val should be 0 or 1. 
+
+'colour("colour1", "colour2", ...)': sets the colours of the tables. Note that you must pass valid CSS colour names and NOT RGB colours to this list.  
+
+
+Drawing Modes:
+
+'0': Normal drawing mode. Joins each successive point in the table with a straight line. No fill. Users must right click to enable edit mode in the table.
+'1': Same as above, but horizontal lines are drawn between points resulting in a bar-graph type of representation. 
+'2': Same as mode 0 only the envelope will used fixed points. This means users will not be able to move any points on the envelope left or right. They are restricted to up/down movement only. 
+'3': Same as above but with horizontal lines between the fixed points.  
+'4': This mode results in a fixed point table with horizontal lines that is in edit mode from the onset. This mode also has toggle min/max enabled meaning users can click on a point to toggle it between min and max values. This drawing mode is useful for pattern editors.
+     
 
 Example:
 

@@ -649,6 +649,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set("tablenumber", 1);
 		cabbageIdentifiers.set("drawmode", 0);
 		cabbageIdentifiers.set("resizemode", 0);
+		cabbageIdentifiers.set("readonly", 0);
 		
 		cabbageIdentifiers.set("tablecolour", Colours::lime.toString());
 		cabbageIdentifiers.set("amprange", 0);

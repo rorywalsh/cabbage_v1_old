@@ -748,7 +748,7 @@ void Table::removeHandle (CabbageEnvelopeHandleComponent* thisHandle)
 */
 CabbageTableManager::CabbageTableManager(int tableSize)
 	: alpha(1.0f), zoom(1), maxZoom(1), maxNumPixelsPerIndex(1),
-	globalMaxAmp(0.f), globalMinAmp(0.f), tableSize(tableSize)
+	globalMaxAmp(0.f), globalMinAmp(0.f), tableSize(tableSize), readOnly(false)
 {
 }
 
@@ -828,6 +828,7 @@ void CabbageTableManager::addTable (String name,
 									int resizeMode,
 									Point<float> minMax,
 									Colour colour, 
+									bool readonly,
 									ChangeListener* listener)
 {
 	int i = tables.size();
@@ -838,6 +839,7 @@ void CabbageTableManager::addTable (String name,
 	tables[i]->setViewWidth(getWidth());
 	tables[i]->toggleMaxMin = toggleMaxMin;
 	tables[i]->drawFill = drawFill;
+	readOnly = readonly;
 	addAndMakeVisible (tables[i]);
 	tables[i]->addMouseListener(this, false); //"this" will now also get mouse events for tables[i]
 	tableToTop(i); //setting this table to the top
@@ -954,9 +956,11 @@ void CabbageTableManager::mouseDown (const MouseEvent& e)
 {	
 	if(e.mods.isRightButtonDown())
 		{
+		
 		PopupMenu pop, subMenu;
 		pop.setLookAndFeel(&getTopLevelComponent()->getLookAndFeel());
 		subMenu.setLookAndFeel(&getTopLevelComponent()->getLookAndFeel());
+		if(!readOnly){	
 		subMenu.addItem(101, "1 segment");
 		subMenu.addItem(102, "2 segments");
 		subMenu.addItem(104, "4 segments");
@@ -969,14 +973,16 @@ void CabbageTableManager::mouseDown (const MouseEvent& e)
 		subMenu.addItem(132, "32 segments");
 		pop.addSubMenu(TRANS("Edit..."), subMenu);
 		subMenu.clear();
-		
+		}
 		for(int i=0;i<tables.size();i++)
 		subMenu.addColouredItem(200+i, "fTable:"+String(tables[i]->tableNumber), tables[i]->currColour);
 		pop.addSubMenu(TRANS("Table to front..."), subMenu);
 
+		if(!readOnly){	
 		pop.addItem(300, "Replace existing table");
 		pop.addItem(301, "Add table to score");
-
+		}
+		
 		int choice = pop.show();
 		if((choice>=100) && (choice<200)){
 			for(int i=0;i<tables.size();i++){

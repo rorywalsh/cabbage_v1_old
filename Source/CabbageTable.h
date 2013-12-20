@@ -180,6 +180,7 @@ public:
 				   int resizeMode,
 				   Point<float> maxMin,
 	               Colour colour,
+				   bool readOnly,
 	               ChangeListener* listener);
 	void fillTable (int tableID, Array<double, CriticalSection> csndInputData);
 	void tableToTop (int tableOnTop);
@@ -195,6 +196,7 @@ private:
 	OwnedArray<Table, CriticalSection> tables;
 	float originalWidth;
 	float alpha;
+	bool readOnly;
 	int zoom, maxZoom;
 	float globalMaxAmp, globalMinAmp, globalAmpRange;
 	float maxNumPixelsPerIndex;

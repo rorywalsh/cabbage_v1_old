@@ -1213,6 +1213,7 @@ Array<int> tableSizes, tableNumbers, drawingModes, resizingModes;
 Array< Point<float> > minMax;
 float alpha;
 public:
+bool readOnly;
 ScopedPointer<GroupComponent> groupbox;
 ScopedPointer<CabbageTableManager> table;
 ScopedPointer<TextButton> button;
@@ -1225,12 +1226,12 @@ CabbageTable(String name, String text, String caption, StringArray chans,
 													   Array<int> resizingModes,
 													   Array<float> ampRanges,
 													   StringArray Colours, 
-													   float alpha, 
+													   bool readOnly, 
 													   ChangeListener* listen)
 : tableSizes(tblSize), 
   colours(Colours), 
   channels(chans),
-  alpha(alpha),
+  readOnly(readOnly),
   listener(listen),
   tableNumbers(tblNumbers),
   drawingModes(drawingModes),
@@ -1349,7 +1350,7 @@ if(tableNumbers.size()>1)
 		setDrawingModeBooleans(fixed, horizontal, toggleMaxMin, drawOriginal, drawFill, drawingModes[i]);
 		table->addTable(name, channels[i], tableNumbers[i], tableSizes[i], fixed, 
 						horizontal, drawOriginal, toggleMaxMin, drawFill, 
-						resizingModes[i], minMax[i], Colours::findColourForName(colours[i], Colours::white), listener);
+						resizingModes[i], minMax[i], Colours::findColourForName(colours[i], Colours::white), readOnly, listener);
 	}
 else{	
 	setDrawingModeBooleans(fixed, horizontal, toggleMaxMin, drawOriginal, drawFill, drawingModes[0]);
@@ -1358,7 +1359,7 @@ else{
 	table->addTable("table0", channels[0], tableNumbers[0], tableSizes[0], fixed, 
 					horizontal, drawOriginal, toggleMaxMin, drawFill, 
 					resizingModes[0], minMax[0],
-					Colours::findColourForName(colours[0], Colours::white), listener);
+					Colours::findColourForName(colours[0], Colours::white), readOnly, listener);
 }	
 	
 }

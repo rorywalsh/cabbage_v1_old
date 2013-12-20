@@ -2694,7 +2694,7 @@ Array<int> tableSizes;
 					cAttr.getIntArrayProp("resizemode"),
 					cAttr.getFloatArrayProp("amprange"),
 					cAttr.getStringArrayProp("tablecolour"),
-					cAttr.getNumProp("alpha"),
+					cAttr.getNumProp("readonly"),
 					this)); 
 			
 			int idx = layoutComps.size()-1;

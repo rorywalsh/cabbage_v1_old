@@ -1,3 +1,6 @@
+#ifndef __MAINCOMPONENT_H_615ECE56__
+#define __MAINCOMPONENT_H_615ECE56__
+
 /*
   Copyright (C) 2012 Rory Walsh
 
@@ -17,692 +20,524 @@
   02111-1307 USA
 */
 
-#include "CodeWindow.h"
+#include "CodeEditor.h"
+#include "KeyboardShortcuts.h"
+#include "../Plugin/CabbagePluginProcessor.h"
+//class LiveCsound;
+class PythonEditor;
+class PopupDisplay;
 
 //==============================================================================
-CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
-							  DocumentWindow::allButtons),
-							  fontSize(15),
-							  showOutput(true),
-							  csoundOutputText(""),
-							  debugMessage(""),
-							  firstTime(true),
-							  font(String("Courier New"), 15, 1),
-							  showingHelp(false)
-{  
-	setApplicationCommandManagerToWatch(&commandManager);
-	commandManager.registerAllCommandsForTarget(this);
-	addKeyListener(commandManager.getKeyMappings());
-	
-	textEditor = new CsoundCodeEditor("csound", csoundDoc, &csoundToker);
-
-	restoreWindowStateFromString (appProperties->getUserSettings()->getValue ("mainWindowPos"));
-
-
-	textEditor->addActionListener(this);
-
-	
-	this->setTitleBarHeight(20);
-	this->setColour(DocumentWindow::backgroundColourId, CabbageUtils::getBackgroundSkin());
-	
-#ifdef MACOSX
-	setUsingNativeTitleBar (true);
-#endif
-	setMenuBar(this, 25);	
-	
-	setVisible(true);
-
-	this->setWantsKeyboardFocus(false);
-
-
-	if(!appProperties->getUserSettings()->getValue("EditorColourScheme", var(0)).getIntValue())
-		setEditorColourScheme("white");
-	else if(appProperties->getUserSettings()->getValue("EditorColourScheme", var(0)).getIntValue())
-		setEditorColourScheme("dark");
-
-	RecentlyOpenedFilesList recentFiles;
-	recentFiles.restoreFromString (appProperties->getUserSettings()
-										->getValue ("recentlyOpenedFiles"));
-
-	csdFile = recentFiles.getFile (0);
-	csoundDoc.replaceAllContent(csdFile.loadFileAsString());
-	
-	//cabbageTimer->addActionListener(this);
-	//cabbageTimer->startTimedEvent(10, "splash");
-	setResizable(true, false);
-
-	String opcodeFile = File(File::getSpecialLocation(File::currentExecutableFile)).getParentDirectory().getFullPathName(); 
-	opcodeFile += "/opcodes.txt";
-	Logger::writeToLog(opcodeFile);
-
-	if(File(opcodeFile).existsAsFile())
-		textEditor->setOpcodeStrings(File(opcodeFile).loadFileAsString());
-	//else csound->Message("Could not open opcodes.txt file, parameter display disabled..");
-
-	//set up popup for displaying info regarding opcodes..
-	popupDisplay = new PopupDisplay("Poppy");
-	popupDisplay->addActionListener(this);
-	popupDisplay->setTitleBarHeight(0);
-	popupDisplay->addToDesktop(0);
-	popupDisplay->setVisible(false);
-	
-htmlHelp = new WebBrowserComponent(false);
-
-setContentNonOwned(textEditor, false);
-}
-
-CodeWindow::~CodeWindow(){
-	setMenuBar(0);
-	setApplicationCommandManagerToWatch(nullptr);
-	commandManager.deleteInstance();
-	deleteAndZero(textEditor);
-}
-
-
-void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandInfo& result)
-{	
-	KeyboardShortcutKeys shortcuts(appProperties->getUserSettings()->getXmlValue("KeyboardShortcutXmlData"));
-
-	switch (commandID)
-	{
-	
-	//file commands
-	case CommandIDs::fileNew:
-		result.setInfo (String("New"), String("Create a new file"), CommandCategories::file, 0);
-		result.addDefaultKeypress ('n', ModifierKeys::commandModifier);
-		break;
-	case CommandIDs::fileOpen:
-		result.setInfo (String("Open"), String("Open a file"), CommandCategories::file, 0);
-		result.addDefaultKeypress ('o', ModifierKeys::commandModifier);
-		break;
-	case CommandIDs::fileSave:
-		result.setInfo (String("Save"), String("Save a file"), CommandCategories::file, 0);
-		result.addDefaultKeypress ('s', ModifierKeys::commandModifier);
-		break;
-	case CommandIDs::fileSaveAs:
-		result.setInfo (String("Save as"), String("Save file as.."), CommandCategories::file, 0);
-		result.addDefaultKeypress ('s', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
-		break;
-	case CommandIDs::fileQuit:
-		result.setInfo (String("Quit"), String("Quit"), CommandCategories::file, 0);
-		result.addDefaultKeypress ('s', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
-		break;
-	case CommandIDs::fileUpdateGUI:
-		result.setInfo (String("Update GUI"), String("Update GUI"), CommandCategories::file, 0);
-		result.addDefaultKeypress ('#', ModifierKeys::commandModifier);
-		break;		
-	case CommandIDs::fileKeyboardShorts:
-		result.setInfo (String("Keyboard Shortcuts"), String("Update GUI"), CommandCategories::file, 0);
-		break;
-	//edit commands
-	case CommandIDs::editUndo:
-		result.setInfo (String("Undo"), String("Undo last action"), CommandCategories::edit, 0);
-		result.addDefaultKeypress ('z', ModifierKeys::commandModifier);
-		break;
-	case CommandIDs::editRedo:
-		result.setInfo (String("Redo"), String("Redo last action"), CommandCategories::edit, 0);
-		result.addDefaultKeypress ('z', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
-		break;
-	case CommandIDs::editCut:
-		result.setInfo (String("Cut"), String("Cut selection"), CommandCategories::edit, 0);
-		result.addDefaultKeypress ('x', ModifierKeys::commandModifier);
-		break;
-	case CommandIDs::editCopy:
-		result.setInfo (String("Copy"), String("Copy selection"), CommandCategories::edit, 0);
-		result.addDefaultKeypress ('c', ModifierKeys::commandModifier);
-		break;
-	case CommandIDs::editPaste:
-		result.setInfo (String("Paste"), String("Paste selection"), CommandCategories::edit, 0);
-		result.addDefaultKeypress ('v', ModifierKeys::commandModifier);
-		break;
-	case CommandIDs::editToggleText:
-		result.setInfo (String("Toggle output"), String("Toggle output"), CommandCategories::edit, 0);
-		result.addDefaultKeypress ('t', ModifierKeys::commandModifier);
-		break;
-	case CommandIDs::editZoomIn:
-		result.setInfo (String("Zoom in"), String("Zoom in"), CommandCategories::edit, 0);
-		result.addDefaultKeypress ('=', ModifierKeys::commandModifier);
-		break;
-	case CommandIDs::editZoomOut:
-		result.setInfo (String("Zoom out"), String("Zoom out"), CommandCategories::edit, 0);
-		result.addDefaultKeypress ('-', ModifierKeys::commandModifier);
-		break;
-	case CommandIDs::whiteBackground:
-		result.setInfo (String("White background"), String("White scheme"), CommandCategories::edit, 0);
-		break;
-	case CommandIDs::blackBackground:
-		result.setInfo (String("Dark background"), String("Dark scheme"), CommandCategories::edit, 0);
-		break;
-	case CommandIDs::insertFromRepo:
-		result.setInfo (String("Insert from repo"), String("Insert from repo"), CommandCategories::edit, 0);
-		//result.defaultKeypresses.add (KeyPress::createFromDescription(shortcuts.getKeyPress("InsertFromRepo")));
-		//result.addDefaultKeypress (KeyPress::createFromDescription(shortcuts.getKeyPress("InsertFromRepo")));
-		break;	
-	case CommandIDs::addFromRepo:
-		result.setInfo (String("Add from repo"), String("Add from repo"), CommandCategories::edit, 0);
-		result.addDefaultKeypress ('j', ModifierKeys::commandModifier);
-		break;	
-	case CommandIDs::insertRecentEvent:
-		result.setInfo (String("Insert recent event"), String("Insert recent event"), CommandCategories::edit, 0);
-		result.addDefaultKeypress ('e', ModifierKeys::commandModifier | ModifierKeys::altModifier);
-		break;	
-	case CommandIDs::openPythonEditor:
-		result.setInfo (String("Insert Python code"), String("Insert Python code"), CommandCategories::edit, 0);
-		result.addDefaultKeypress ('p', ModifierKeys::commandModifier | ModifierKeys::altModifier);
-		break;	
-		
-	//interactive commands	
-	case CommandIDs::commOrchUpdateInstrument:
-		result.setInfo (String("Update entire instr"), String("Update entire instr"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('u', ModifierKeys::commandModifier);
-		break;	
-	case CommandIDs::startSession:
-		result.setInfo (String("Restart Session"), String("Restart Session"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('r', ModifierKeys::commandModifier);
-		break;	
-	case CommandIDs::commOrchUpdateMultiLine:
-		result.setInfo (String("Update orc multi-line"), String("Update orch mutli-line"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('m', ModifierKeys::commandModifier);
-		break;	
-	case CommandIDs::commOrchUpdateSingleLine:
-		result.setInfo (String("Update orc single-line"), String("Update orch single-line"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('l', ModifierKeys::commandModifier);
-		break;	
-	case CommandIDs::commScoUpdateMultiLine:
-		result.setInfo (String("Update sco multi-line"), String("Update orch multi-line"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('p', ModifierKeys::commandModifier);
-		break;	
-	case CommandIDs::commScoUpdateSingleLine:
-		result.setInfo (String("Update sco single-line"), String("Update orch multi-line"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('e', ModifierKeys::commandModifier);
-		break;	
-	case CommandIDs::commOrcUpdateChannel:
-		result.setInfo (String("Update channel"), String("Update channel"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('c', ModifierKeys::altModifier | ModifierKeys::commandModifier);
-		break;	
-		
-	case CommandIDs::viewCsoundHelp:
-#ifndef MACOSX
-		result.setInfo (String("Toggle Csound Manual F1"), String("Toggle Csound Manual"), CommandCategories::help, 0);
-		result.defaultKeypresses.add(KeyPress(KeyPress::F1Key));
-#else
-		result.setInfo (String("Toggle Csound Manual Ctrl+1"), String("Toggle Csound Manual"), CommandCategories::help, 0);
-		result.addDefaultKeypress ('1', ModifierKeys::commandModifier);		
-#endif
-		break;
-
-	case CommandIDs::viewCabbageHelp:
-		result.setInfo (String("Toggle Cabbage Manual"), String("Toggle Cabbage Manual"), CommandCategories::help, 0);
-		break;
-	}
-}
-
+//Main window. This window holds a 2 textEditors. One for the code, and the other for
+//displaying Csound output messages
 //==============================================================================
-PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menuName)
+class CodeWindow : public DocumentWindow,
+					 public ApplicationCommandTarget,
+					 public MenuBarModel,
+					 public ActionListener,
+					 public ActionBroadcaster,
+					 public CodeDocument::Listener,
+					 public Timer
 {
-PopupMenu m1, m2;
-m1.clear();
-m2.clear();
-m2.setLookAndFeel(&getLookAndFeel());
-if(topLevelMenuIndex==0)
-	{		
-	 //m1.addCommandItem(&commandManager, CommandIDs::fileNew);	 
-	 //m1.addCommandItem(&commandManager, CommandIDs::fileOpen);
-	 
-	 //RecentlyOpenedFilesList recentFiles;
-     //recentFiles.restoreFromString (appProperties->getUserSettings()
-     //                                       ->getValue ("recentlyOpenedFiles"));
-
-     //PopupMenu recentFilesMenu;
-     //recentFiles.createPopupMenuItems (recentFilesMenu, 100, true, true);
-     //m1.addSubMenu ("Open recent file", recentFilesMenu);	 
-	 
-	 m1.addCommandItem(&commandManager, CommandIDs::fileSave);
-	 m1.addCommandItem(&commandManager, CommandIDs::fileSaveAs);
-	 m1.addCommandItem(&commandManager, CommandIDs::fileQuit);
-	 //m1.addCommandItem(&commandManager, CommandIDs::fileKeyboardShorts);
-	 
-	 return m1;
-	}
-
-else if(topLevelMenuIndex==1)
+public:
+	CodeWindow(String name);
+	~CodeWindow();
+		CodeDocument csoundDoc;
+	//==============================================================================
+	StringArray getMenuBarNames()
 	{
-	m1.addCommandItem(&commandManager, CommandIDs::editUndo);
-	m1.addCommandItem(&commandManager, CommandIDs::editRedo);
-	m1.addCommandItem(&commandManager, CommandIDs::editCut);
-	m1.addCommandItem(&commandManager, CommandIDs::editCopy);
-	m1.addCommandItem(&commandManager, CommandIDs::editPaste);
-	m1.addCommandItem(&commandManager, CommandIDs::editToggleText);
-	m1.addSeparator();
-	m2.addCommandItem(&commandManager, CommandIDs::editZoomIn);
-	m2.addCommandItem(&commandManager, CommandIDs::editZoomOut);
-	m1.addSubMenu(String("Font Size"), m2);
-	m2.clear();
-	m2.addCommandItem(&commandManager, CommandIDs::whiteBackground);
-	m2.addCommandItem(&commandManager, CommandIDs::blackBackground);
-	m1.addSubMenu("Change editor theme", m2);
-	//m1.addCommandItem(&commandManager, CommandIDs::insertFromRepo);
-	//m1.addCommandItem(&commandManager, CommandIDs::addFromRepo);
-	//m1.addCommandItem(&commandManager, CommandIDs::insertRecentEvent);
-	//m1.addCommandItem(&commandManager, CommandIDs::openPythonEditor);
-	return m1;
+		const char* const names[] = { "File", "Edit", "Help", 0 };
+		return StringArray (names);
 	}
-
-//else if(topLevelMenuIndex==2)
-//	{
-	//m1.addCommandItem(&commandManager, CommandIDs::startSession);
-	//m1.addCommandItem(&commandManager, CommandIDs::commOrchUpdateInstrument);
-	//m1.addCommandItem(&commandManager, CommandIDs::commOrcUpdateChannel);	
-	//m1.addCommandItem(&commandManager, CommandIDs::commOrchUpdateMultiLine);
-	//m1.addCommandItem(&commandManager, CommandIDs::commOrchUpdateSingleLine);
-	//m1.addCommandItem(&commandManager, CommandIDs::commScoUpdateMultiLine);
-	//m1.addCommandItem(&commandManager, CommandIDs::commScoUpdateSingleLine);
 	
-//	return m1;
-//	}
- 
-	
-else if(topLevelMenuIndex==2)
+	//==============================================================================
+	void getAllCommands (Array <CommandID>& commands)
 	{
-	m1.addCommandItem(&commandManager, CommandIDs::viewCsoundHelp);
-	m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
-	return m1;
-	}
-
-else return m1;
-}
-
-bool CodeWindow::perform (const InvocationInfo& info)
-{
-	Logger::writeToLog(String(info.commandID));
-	//---------------------------------------------------------------------------------------------
-	if(info.commandID==CommandIDs::fileNew)
-		{		
-			String tempFile = File::getSpecialLocation(File::userHomeDirectory).getFullPathName()+"/liveCodeSession.csd";
-			Logger::writeToLog(tempFile);
-			csdFile = tempFile;
-			csoundDoc.replaceAllContent(csdFile.loadFileAsString());			
-			toggleTextWindows();
-		}
-	else if(info.commandID==CommandIDs::fileSave)
-		{
-			Logger::writeToLog("fileSaved");
-			sendActionMessage("fileSaved");
-		}
-	else if(info.commandID==CommandIDs::fileSaveAs)
-		{
-			Logger::writeToLog("fileSaveAs");
-			sendActionMessage("fileSaveAs");
-		}
-	else if(info.commandID==CommandIDs::fileOpen)
-		{			
-			Logger::writeToLog("fileOpen");
-			sendActionMessage("fileOpen");
-		}
-
-	else if(info.commandID==CommandIDs::fileQuit)
-		{			
-		JUCEApplication::getInstance()->systemRequestedQuit();	
-		}
-		
-	else if(info.commandID==CommandIDs::editUndo)
-		{			
-			textEditor->undo();
-		}
-		
-	else if(info.commandID==CommandIDs::fileKeyboardShorts)
-		{				
-			DialogWindow::LaunchOptions o;
-			o.content.setOwned(new ShortcutsPanel());
-			o.dialogTitle                   = TRANS("Keyboard Shortcuts");
-			o.dialogBackgroundColour        = Colours::black;
-			o.resizable                     = false;
-			o.useNativeTitleBar				= false;
-			o.escapeKeyTriggersCloseButton  = true;
-			//o.content->setLookAndFeel(&this->getLookAndFeel());
-			o.launchAsync();			
-		}
-		
-	else if(info.commandID==CommandIDs::editCut)
-		{			
-			textEditor->cutToClipboard();
-		}
-	else if(info.commandID==CommandIDs::editCopy)
-		{			
-			textEditor->copyToClipboard();
-		}
-	else if(info.commandID==CommandIDs::editPaste)
-		{			
-			textEditor->pasteFromClipboard();
-		}
-
-	else if(info.commandID==CommandIDs::editRedo)
-		{			
-			textEditor->redo();
-		}
-	else if(info.commandID==CommandIDs::editToggleText)
-		{			
-		toggleTextWindows();
-		}
-		
-	else if(info.commandID==CommandIDs::editZoomIn)
-		{			
-			setFontSize("in");
-		}
-	else if(info.commandID==CommandIDs::editZoomOut)
-		{			
-			setFontSize("out");
-		}
-	else if(info.commandID==CommandIDs::whiteBackground)
-		{			
-		setEditorColourScheme("white");
-		}
-
-	else if(info.commandID==CommandIDs::blackBackground)
-		{			
-		setEditorColourScheme("dark");
-		}
-
-	else if(info.commandID==CommandIDs::insertRecentEvent)
-		{
-			
-		}
-	else if(info.commandID==CommandIDs::insertFromRepo)
-		{			
-		popupDisplay->setVisible(false);
-		CodeWindow::insertFromRepo();
-		}
-
-	else if(info.commandID==CommandIDs::openPythonEditor)
-		{	
-		/*if(pythonEditor==nullptr){
-			pythonEditor = new PythonEditor("Python Editor");
-			//pythonEditor->textEditor->setLookAndFeel(lookAndFeel);
-			//pythonEditor->setLookAndFeel(lookAndFeel);
-			pythonEditor->addActionListener(this);
-			pythonEditor->setAlwaysOnTop(true);
-			pythonEditor->setVisible(true);
-			pythonEditor->textEditor->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(40, 40, 40));
-		}
-		
-		pythonEditor->toFront(true);
-		cabbageTimer->startTimedEvent(1, "pythonFocus");
-		//pythonEditor->textEditor->highlightLine("oscil 1");
-		
-		 */
-		}	
-		
-	else if(info.commandID==CommandIDs::addFromRepo)
-		{	
-		textEditor->addToRepository();
-		}	
-
-	else if(info.commandID==CommandIDs::viewCsoundHelp)
-		{
-		toggleManuals("Csound");
-		}
-	
-	else if(info.commandID==CommandIDs::viewCabbageHelp)
-		{
-		toggleManuals("Cabbage");
-		}
-				
-return true;
-}
-
-//=======================================================
-// toggle manuals
-//=======================================================
-void CodeWindow::toggleManuals(String manual)
-{
-if(!showingHelp)
-if(manual=="Csound")
-{       
-			String helpDir;
-			if(manual=="Csound")	
-			helpDir = appProperties->getUserSettings()->getValue("CsoundHelpDir", "");
-		
-			if(helpDir.length()<2)
-					CabbageUtils::showMessage("Please set the Csound manual directory in the Preference menu", &getLookAndFeel());                
-			else{                        
-				CodeDocument::Position pos1, pos2;
-				pos1 = textEditor->getDocument().findWordBreakBefore(textEditor->getCaretPos());
-				pos2 = textEditor->getDocument().findWordBreakAfter(textEditor->getCaretPos());
-				String opcode = csoundDoc.getTextBetween(pos1, pos2);
-				URL urlCsound(helpDir+"/"+opcode.trim()+String(".html"));
-				String urlCabbage;
-
-
-				ChildProcess process;
-				File temp1(urlCsound.toString(false));
-				if(temp1.exists()){
-				#ifdef LINUX        
-					if(!process.start("xdg-open "+urlCsound.toString(false).toUTF8())) 
-						CabbageUtils::showMessage("couldn't show file", &getLookAndFeel());
-				#else
-					htmlHelp->goToURL(urlCsound.toString(false));
-					showingHelp = true;
-					setContentNonOwned(nullptr, false);
-					setContentNonOwned(htmlHelp, false);
-				#endif
-				}
-
-			}
-		}
-else{
-		String path;
-#if defined(LINUX) || defined(MACOSX)
-	path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/cabbage.html";
-#else
-	path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\cabbage.html";
-#endif	
-	
-	
-	if(!File(path).existsAsFile())
-			CabbageUtils::showMessage(
-"Could not find Cabbage manual. Make sure\n\
-it is located in the Docs folder in the same\n\
-directory as the main Cabbage executable", &getLookAndFeel());
-		else{
-				ChildProcess process;
-				File temp1(path);
-				if(temp1.exists()){
-				#ifdef LINUX        
-					if(!process.start("xdg-open "+path)) 
-						CabbageUtils::showMessage("couldn't show file", &getLookAndFeel());
-				#else
-					htmlHelp->goToURL(path);
-					showingHelp = true;
-					setContentNonOwned(nullptr, false);
-					setContentNonOwned(htmlHelp, false);
-				#endif
-				}
-		}
-	}
-else{
-	setContentNonOwned(nullptr, false);
-	setContentNonOwned(textEditor, false);
-	showingHelp = false;
-}
-}
-
-void CodeWindow::toggleTextWindows()
-{
-/*
-if(showOutput){
-		setContentNonOwned(textEditor, false);
-		setMenuBar(this, 25);
-		stopTimer();
-		if(firstTime)
-		outputTextEditor->setText("");
-		firstTime==false;
-		repaint();
-}
-else{
-	startTimer(100);	
-	setContentNonOwned(outputTextEditor, false);
-	setMenuBar(this, 25);
-	outputTextEditor->setFont(Font(String("Courier New"), 15, 1));
-		repaint();
-}				
-showOutput=!showOutput;
-*/	
-}
-
-void CodeWindow::setEditorColourScheme(String theme){
-	setColourScheme(theme);
-}
-
-void CodeWindow::actionListenerCallback(const String &message){
-	Logger::writeToLog(message);
-	if(message=="splash")
-		toggleTextWindows();
-	//else if(message=="pythonFocus")
-	//	pythonEditor->textEditor->grabKeyboardFocus();
-	else if(message=="make popup invisible")
-		popupDisplay->setVisible(false);
-	else if(message=="sendPythonEvent"){
-	/*	String text = pythonEditor->textEditor->getSelectedText();
-		String event = "pyruni {{\n";
-		if(text.length()>0)
-		event << text;
-		event << "\n}}";
-		Logger::writeToLog(event);
-//		csound->CompileOrc(event.toUTF8());
-		this->grabKeyboardFocus();
-	
-	 */
-	}
-	else if(message=="return focus to editor"){
-	textEditor->grabKeyboardFocus();		
-	}
-	else if(message.contains("popupDisplay")){
-	popupDisplay->box->setText(textEditor->getOpcodeToken(2).removeCharacters("\""), 
-								textEditor->getOpcodeToken(3).removeCharacters("\""));
-			
-	int width = (font.getStringWidth(textEditor->getOpcodeToken(2)) > font.getStringWidth(textEditor->getOpcodeToken(3)) ? 
-											font.getStringWidth(textEditor->getOpcodeToken(2)) : 
-											font.getStringWidth(textEditor->getOpcodeToken(3)));
-	popupDisplay->killSplash();
-	popupDisplay->setVisible(true);
-	popupDisplay->setAlwaysOnTop(true);
-	popupDisplay->addToDesktop(0);
-	popupDisplay->setTopLeftPosition(this->getCaretScreenPosition().getTopLeft());
-	popupDisplay->setBounds(this->getCaretScreenPosition().getX(),
-							this->getCaretScreenPosition().getY()+18.f,
-							width, 50);
-	//popupDisplay->setWantsKeyboardFocus(false);
-	textEditor->toFront(true);
-	//cabbageTimer->startTimedEvent(1, "return focus to editor");
-	textEditor->grabKeyboardFocus();
-
+		const CommandID ids[] = {
+									CommandIDs::fileNew,
+									CommandIDs::fileOpen,
+									CommandIDs::fileSave,
+									CommandIDs::fileSaveAs,	
+									CommandIDs::fileQuit,
+									CommandIDs::fileKeyboardShorts,	
+									CommandIDs::editUndo,
+									CommandIDs::editCopy,
+									CommandIDs::editCut,
+									CommandIDs::editPaste,
+									CommandIDs::editRedo,
+									CommandIDs::editToggleText,
+									CommandIDs::editZoomIn,
+									CommandIDs::editZoomOut,
+									CommandIDs::whiteBackground,
+									CommandIDs::blackBackground,
+									CommandIDs::startSession,
+									CommandIDs::insertFromRepo,
+									CommandIDs::addFromRepo,
+									CommandIDs::insertRecentEvent,
+									CommandIDs::openPythonEditor,
+									CommandIDs::commOrchUpdateInstrument,
+									CommandIDs::commOrchUpdateMultiLine,
+									CommandIDs::commOrchUpdateSingleLine,
+									CommandIDs::commScoUpdateMultiLine,
+									CommandIDs::commScoUpdateSingleLine,
+									CommandIDs::commOrcUpdateChannel,
+									CommandIDs::viewCsoundHelp,	
+									CommandIDs::viewCabbageHelp	
+									};
+		commands.addArray (ids, sizeof (ids) / sizeof (ids [0]));
 	}
 	
-		
-}
-
-
-void CodeWindow::timerCallback(){
-//		if(showOutput){
-//			outputTextEditor->setText(csoundOutputText);
-//			outputTextEditor->setCaretPosition(outputTextEditor->getText().length());
-//		}
-}
-
-void CodeWindow::insertFromRepo(){
-int repoIndex = 1;
-		PopupMenu m;
-		StringArray repoEntries;
-		m.setLookAndFeel(&this->getLookAndFeel());
-		ScopedPointer<XmlElement> xmlElement;
-		xmlElement = appProperties->getUserSettings()->getXmlValue("CopeRepoXmlData");
-
-		forEachXmlChildElement (*xmlElement, e)
+	//==============================================================================
+	void menuItemSelected (int menuItemID, int topLevelMenuIndex){
+		if (menuItemID >= 100 && menuItemID < 200)
 			{
-			m.addItem(repoIndex, e->getTagName());
-			repoEntries.add(e->getTagName());
-			repoIndex++;
+			RecentlyOpenedFilesList recentFiles;
+			recentFiles.restoreFromString (appProperties->getUserSettings()
+												->getValue ("recentlyOpenedFiles"));
+
+			csdFile = recentFiles.getFile (menuItemID - 100);
+			textEditor->getDocument().replaceAllContent(csdFile.loadFileAsString());
+			setName(csdFile.getFullPathName());
+			}		
+	}
+	
+	//==============================================================================
+	void setFontSize(String zoom)
+	{
+		if(zoom==String("in"))
+		textEditor->setFont(Font(String("Courier New"), ++fontSize, 1));
+		else
+		textEditor->setFont(Font(String("Courier New"), --fontSize, 1));
+	}	
+	
+	
+	//================= command methods ====================
+	ApplicationCommandTarget* getNextCommandTarget(){
+		return findFirstTargetParentComponent();
+	}
+
+	void getCommandInfo (const CommandID commandID, ApplicationCommandInfo& result);
+	PopupMenu getMenuForIndex (int topLevelMenuIndex, const String& menuName);
+	bool perform (const InvocationInfo& info);
+	void toggleManuals(String manual);
+
+	void setEditorColourScheme(String theme);
+	void actionListenerCallback(const String &message);
+
+	void timerCallback();
+	void toggleTextWindows();
+	
+	Rectangle<int> getCaretScreenPosition(){
+		Rectangle<int> rect(textEditor->getCaretPoisition());
+		rect.setLeft(rect.getX()+this->getTopLevelComponent()->getX()+10);
+		rect.setTop(rect.getY()+this->getTopLevelComponent()->getY()+45);
+		return rect;		
+	}
+
+
+	void closeButtonPressed(){
+	//JUCEApplication::getInstance()->systemRequestedQuit();
+	this->setVisible(false);
+	}
+
+	void codeDocumentTextDeleted(int,int){}
+	void codeDocumentTextInserted(const juce::String &,int){}
+	void codeDocumentChanged (const CodeDocument::Position &affectedTextStart, const CodeDocument::Position &affectedTextEnd);
+	void insertFromRepo();
+	
+	void setText(String file){
+	csoundDoc.replaceAllContent(file);
+	}
+
+
+	String getText(){
+	 return csoundDoc.getAllContent();	
+	}
+	
+	
+	void setColourScheme(String theme){
+	if(theme=="white"){
+			textEditor->setColourScheme(csoundToker.getDefaultColourScheme());
+			textEditor->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
+			textEditor->setColour(CaretComponent::caretColourId, Colours::black);
+			textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue);
+			appProperties->getUserSettings()->setValue("EditorColourScheme", 0); 			
+			}
+	else if(theme=="dark"){
+			textEditor->setColourScheme(csoundToker.getDarkColourScheme());
+			textEditor->setColour(CaretComponent::caretColourId, Colours::white);
+			textEditor->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
+			textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f)); 
+			appProperties->getUserSettings()->setValue("EditorColourScheme", 1);
+			}	
+	}
+	
+	void newFile(String type);
+	bool unSaved;
+
+	StringArray recentEvents;
+	//ScopedPointer<CabbageLookAndFeel> lookAndFeel;
+
+	String csoundOutputText;
+	bool firstTime;
+	String debugMessage;
+	bool showOutput;
+	CommandManager commandManager;
+	File csdFile;
+	int fontSize;
+	String ASCIICabbage;
+
+	StringArray opcodeStrings;
+	ScopedPointer<PopupDisplay> popupDisplay;
+	CsoundCodeEditor* textEditor;
+	CsoundTokeniser csoundToker;
+	Font font;
+	ScopedPointer<WebBrowserComponent> htmlHelp;
+	bool showingHelp;
+};
+
+
+//============================================================
+// window for Python editor
+//============================================================
+class PythonEditor: public DocumentWindow,
+					public ActionListener,
+					public ActionBroadcaster
+{
+public:
+	PythonEditor(String name):DocumentWindow (name, Colours::black,
+							  DocumentWindow::closeButton)
+	{
+		textEditor = new CsoundCodeEditor("python", csoundDocu, &csoundToker);
+		textEditor->setColour(TextEditor::textColourId, Colours::white);
+		textEditor->setFont(Font(String("Courier New"), 15, 1));
+		textEditor->addActionListener(this);
+		textEditor->setSize(600, 400);
+
+		if(!appProperties->getUserSettings()->getValue("EditorColourScheme", var(0)).getIntValue())
+			setEditorColourScheme("white");
+		else if(appProperties->getUserSettings()->getValue("EditorColourScheme", var(0)).getIntValue())
+			setEditorColourScheme("dark");		
+		
+		centreWithSize(600, 400);
+		setContentNonOwned(textEditor, true);
+		setResizable(true, false);
+	}
+	
+	~PythonEditor()
+	{
+		 delete textEditor;
+	} 
+	 
+	void codeDocumentChanged (const CodeDocument::Position &affectedTextStart, const CodeDocument::Position &affectedTextEnd)
+	{
+	}	 
+	 
+	void actionListenerCallback(const String &message)
+	{
+	if(message=="make invisible"){
+		//this->setVisible(false);
+		sendActionMessage("sendPythonEvent");
+		//if(textEditor->getm)
+	}	
+	}
+	
+	void closeButtonPressed(){
+	setVisible(false);
+	}	
+	
+
+	
+	void setEditorColourScheme(String theme){
+		if(theme=="white"){
+				textEditor->setColourScheme(csoundToker.getDefaultColourScheme());
+				textEditor->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
+				textEditor->setColour(CaretComponent::caretColourId, Colours::black);
+				textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue);
+				appProperties->getUserSettings()->setValue("EditorColourScheme", 0); 			
+				}
+		else if(theme=="dark"){
+				textEditor->setColourScheme(csoundToker.getDarkColourScheme());
+				textEditor->setColour(CaretComponent::caretColourId, Colours::white);
+				textEditor->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
+				textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f)); 
+				appProperties->getUserSettings()->setValue("EditorColourScheme", 1);
+				}	
+	}
+	
+	void codeDocumentTextDeleted(int,int){}
+	void codeDocumentTextInserted(const juce::String &,int){}	
+	
+	CsoundCodeEditor* textEditor;
+
+	CodeDocument csoundDocu;
+	PythonTokeniser csoundToker;
+	  
+};
+
+//============================================================
+// audio settings class (not currently used...)
+//============================================================
+class AudioSettings: public Component,
+					public ActionListener,
+					public ActionBroadcaster
+{
+public:
+	AudioSettings(StringArray deviceStrings)
+	{
+    addAndMakeVisible (label = new Label ("new label",
+                                          "Sampling Rate"));
+    label->setFont (Font (15.00f, Font::bold));
+    label->setJustificationType (Justification::centredLeft);
+    label->setEditable (false, false, false);
+    label->setColour (TextEditor::textColourId, Colours::lime);
+    label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (samplingRate = new ComboBox ("new combo box"));
+	samplingRate->addItem("44100", 1);
+	samplingRate->addItem("48000", 2);
+	samplingRate->setSelectedId(1, dontSendNotification );
+    samplingRate->setEditableText (false);
+    samplingRate->setJustificationType (Justification::centredLeft);
+    samplingRate->setTextWhenNothingSelected (String::empty);
+    samplingRate->setTextWhenNoChoicesAvailable ("(no choices)");
+    //samplingRate->addListener (this);
+
+    addAndMakeVisible (label2 = new Label ("new label",
+                                           "Ksmps"));
+    label2->setFont (Font (20.00f, Font::bold));
+    label2->setJustificationType (Justification::centredLeft);
+    label2->setEditable (false, false, false);
+    label2->setColour (TextEditor::textColourId, Colours::lime);
+    label2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (ksmps = new ComboBox ("new combo box"));
+	ksmps->addItem("32", 1);
+	ksmps->addItem("64", 2);
+	ksmps->addItem("128", 3);
+	ksmps->addItem("512", 4);
+	ksmps->addItem("1024", 5);
+	ksmps->addItem("2048", 6);
+	ksmps->addItem("4096", 7);
+	ksmps->setSelectedId(2, dontSendNotification );
+    ksmps->setEditableText (false);
+    ksmps->setJustificationType (Justification::centredLeft);
+    ksmps->setTextWhenNothingSelected (String::empty);
+    ksmps->setTextWhenNoChoicesAvailable ("(no choices)");
+   // ksmps->addListener (this);
+
+    addAndMakeVisible (label3 = new Label ("new label",
+                                           "Audio Device"));
+    label3->setFont (Font (15.00f, Font::bold));
+    label3->setJustificationType (Justification::centredLeft);
+    label3->setEditable (false, false, false);
+    label3->setColour (TextEditor::textColourId, Colours::lime);
+    label3->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (audioDevice = new ComboBox ("new combo box"));
+    audioDevice->setEditableText (false);
+	for(int i=0;i<deviceStrings.size();i++)
+		audioDevice->addItem(deviceStrings[i], i+1);
+		
+	audioDevice->setSelectedId(deviceStrings.size(), dontSendNotification );	
+	
+    audioDevice->setJustificationType (Justification::centredLeft);
+    audioDevice->setTextWhenNothingSelected (String::empty);
+    audioDevice->setTextWhenNoChoicesAvailable ("(no choices)");
+    //audioDevice->addListener (this);
+
+    addAndMakeVisible (label4 = new Label ("new label",
+                                           "MIDI Device"));
+    label4->setFont (Font (15.00f, Font::bold));
+    label4->setJustificationType (Justification::centredLeft);
+    label4->setEditable (false, false, false);
+    label4->setColour (TextEditor::textColourId, Colours::lime);
+    label4->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (midiDevice = new ComboBox ("new combo box"));
+    midiDevice->setEditableText (false);
+    midiDevice->setJustificationType (Justification::centredLeft);
+    midiDevice->setTextWhenNothingSelected (String::empty);
+    midiDevice->setTextWhenNoChoicesAvailable ("(no choices)");
+    //midiDevice->addListener (this);
+
+	setSize(300, 200);
+
+	}
+
+	void actionListenerCallback(const String &message)
+	{
+	if(message=="make invisible"){
+		//this->setVisible(false);
+		sendActionMessage("sendPythonEvent");
+		}	
+	}
+	
+	void resized(){
+    label->setBounds (28, 16, 96, 24);
+    samplingRate->setBounds (130, 16, 118, 24);
+    label2->setBounds (58, 52, 80, 24);
+    ksmps->setBounds (130, 52, 117, 24);
+    label3->setBounds (41, 87, 80, 24);
+    audioDevice->setBounds (130, 88, 117, 24);
+    label4->setBounds (42, 122, 80, 24);
+    midiDevice->setBounds (130, 121, 118, 24);	
+	}
+	
+	void paint(Graphics& g){
+		g.fillAll(Colours::black);
+	}
+	
+	~AudioSettings(){
+    label = nullptr;
+    samplingRate = nullptr;
+    label2 = nullptr;
+    ksmps = nullptr;
+    label3 = nullptr;
+    audioDevice = nullptr;
+    label4 = nullptr;
+    midiDevice = nullptr;	
+	}
+	
+private:
+    ScopedPointer<Label> label;
+    ScopedPointer<ComboBox> samplingRate;
+    ScopedPointer<Label> label2;
+    ScopedPointer<ComboBox> ksmps;
+    ScopedPointer<Label> label3;
+    ScopedPointer<ComboBox> audioDevice;
+    ScopedPointer<Label> label4;
+    ScopedPointer<ComboBox> midiDevice;
+	
+};
+
+
+//============================================================
+// class for displaying popup text
+//============================================================
+class PopupDisplay : public DialogWindow, 
+						public Timer,
+							public ActionBroadcaster
+{
+
+		class Box : public Component
+		{
+		public:
+			Box():firstTime(true)
+			{
+				this->setInterceptsMouseClicks(false, false);
+				setSize(10, 50);
 			}	
 			
-
-		const int result = m.showAt(getCaretScreenPosition());
-
-		forEachXmlChildElement (*xmlElement, e)
-			{
-			if(e->getTagName()==repoEntries[result-1])
-			textEditor->insertText(e->getAllSubText());
+			~Box(){};
+			
+			void setText(String _info, String _syntax){
+				syntax=_syntax;
+				info=_info;
+				repaint();
 			}
-		xmlElement = nullptr;			
-}
 
-//===============================================================================
-void CodeWindow::newFile(String type)
-{
-String untitledCSD;
-if(type=="effect"){
-untitledCSD= 
-"<Cabbage>\n"
-"form size(400, 300), caption(\"Untitled\"), pluginID(\"plu1\")\n"
-"\n"
-"</Cabbage>\n"
-"<CsoundSynthesizer>\n"  
-"<CsOptions>\n"
-"-n -d\n"
-"</CsOptions>\n"
-"<CsInstruments>\n"
-"sr = 44100\n"
-"ksmps = 64\n"
-"nchnls = 2\n"
-"0dbfs=1\n"
-"\n"
-"instr 1\n"
-"a1 inch 1\n"
-"a2 inch 2\n"
-"\n"
-"\n"
-";muting outputs\n"
-"outs a1*0, a2*0\n"
-"endin\n"
-"\n"
-"</CsInstruments>  \n"
-"<CsScore>\n"
-"f1 0 1024 10 1\n"
-"i1 0 3600\n"
-"</CsScore>\n"
-"</CsoundSynthesizer>";
-}
-else if(type=="instrument")
-{
-untitledCSD= 
-"<Cabbage>\n"
-"form size(400, 300), caption(\"Untitled\"), pluginID(\"plu1\")\n"
-"keyboard bounds(10, 200, 360, 100)\n"
-"\n"
-"</Cabbage>\n"
-"<CsoundSynthesizer>\n"
-"<CsOptions>\n"
-"-n -d -+rtmidi=NULL -M0 --midi-key-cps=4 --midi-velocity-amp=5\n" 
-"</CsOptions>\n"
-"<CsInstruments>\n"
-"sr = 44100\n"
-"ksmps = 64\n"
-"nchnls = 2\n"
-"0dbfs=1\n"
-"\n"
-"instr 1\n"
-"a1 oscili p5, p4, 1\n"
-"outs a1, a1"
-"\n"
-"endin\n"
-"\n"
-"</CsInstruments>  \n"
-"<CsScore>\n"
-"f1 0 1024 10 1\n"
-"f0 3600\n"
-"</CsScore>\n"
-"</CsoundSynthesizer>";
-}
-csoundDoc.replaceAllContent(untitledCSD);
-unSaved = true;
-sendActionMessage("fileSavedAs");
-}
+			void paint(Graphics& g)
+			{
+				#ifdef LINUX
+				g.fillAll(Colour::fromRGB(40,40,40));
+				g.setColour(Colours::yellow);
+				g.drawRect(0, 0, getWidth()-1, getHeight()-1, 1);
+				g.setFont(Font(String("Arial"), 16, 1));
+				g.setColour(Colours::whitesmoke);
+				g.drawFittedText(syntax, 10, 10, getWidth(), getHeight(), Justification::topLeft, 100, 1);
+				g.setFont(Font(String("Arial"), 15, 0));
+				g.setColour(Colours::cornflowerblue);				
+				g.drawFittedText(info, 10, 25, getWidth(), getHeight(), Justification::topLeft, 100, 1);
+				#else
+				g.fillAll(Colour::fromRGB(20, 20, 20));
+				g.setColour(Colours::whitesmoke);
+				g.drawRect(0, 0, getWidth()-1, getHeight()-1, 1);
+				g.setFont(Font(String("Arial"), 16, 1));
+				g.setColour(Colours::yellow);
+				g.drawFittedText(syntax, 10, 10, getWidth(), getHeight(), Justification::topLeft, 100, 1);
+				g.setFont(Font(String("Arial"), 15, 0));
+				g.setColour(Colours::lime);				
+				g.drawFittedText(info, 10, 25, getWidth(), getHeight(), Justification::topLeft, 100, 1);				
+					
+					
+				#endif
+			}
+			
+			void resized(){
+				setSize(getWidth(), getHeight());	
+			}
+			
+	bool firstTime;
+	private:
+
+		String syntax, info;
+		
+		};
+		
+public:
+		PopupDisplay(String name): DialogWindow(name, Colours::black, true, true),
+		time(0), seconds(0)
+		{
+		box = new Box();
+		this->setContentNonOwned(box, true);
+		#ifndef LINUX
+		this->setAlpha(.9f);
+		#endif
+		}
+		
+		~PopupDisplay(){}		
+		
+		void resized(){
+		setSize(getWidth(), 50);
+		//	box->repaint();
+		}
+	
+		void setText(String opcodeName, String opcodeDescrptor){
+			box->setText(opcodeName, opcodeDescrptor);	
+		}
+	
+		int getDesktopWindowStyleFlags() 	const{
+			int styleFlags = ComponentPeer::windowAppearsOnTaskbar;
+
+			//if (useDropShadow)       styleFlags |= ComponentPeer::windowHasDropShadow;
+			//if (useNativeTitleBar)   styleFlags |= ComponentPeer::windowHasTitleBar;
+
+			return 0;
+		}		
+		
+		void timerCallback(){
+			if(time<seconds){
+				time++;
+				stopTimer();
+				setVisible(true);
+				sendActionMessage("");
+			}		
+		}
+		
+		void killSplash(){
+		box->firstTime=false;
+		box->repaint();
+		}
+		
+		bool triggerToAppear(int _seconds)
+		{
+		time=0;
+		seconds = _seconds;
+		startTimer(1000);
+		}
+			
+		
+		void closeButtonPressed(){
+		setVisible(false);
+		}		
+		
+		ScopedPointer<Box> box;
+		int time;
+		int seconds;
+		
+	
+};
+
+
+#endif  // __MAINCOMPONENT_H_615ECE56__

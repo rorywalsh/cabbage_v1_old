@@ -426,7 +426,7 @@ class PopupDisplay : public DialogWindow,
 			Box():firstTime(true)
 			{
 				this->setInterceptsMouseClicks(false, false);
-				setSize(10, 10);
+				setSize(10, 50);
 			}	
 			
 			~Box(){};
@@ -434,6 +434,7 @@ class PopupDisplay : public DialogWindow,
 			void setText(String _info, String _syntax){
 				syntax=_syntax;
 				info=_info;
+				repaint();
 			}
 
 			void paint(Graphics& g)
@@ -464,7 +465,7 @@ class PopupDisplay : public DialogWindow,
 			}
 			
 			void resized(){
-				
+				setSize(getWidth(), getHeight());	
 			}
 			
 	bool firstTime;
@@ -487,6 +488,15 @@ public:
 		
 		~PopupDisplay(){}		
 		
+		void resized(){
+		setSize(getWidth(), 50);
+		//	box->repaint();
+		}
+	
+		void setText(String opcodeName, String opcodeDescrptor){
+			box->setText(opcodeName, opcodeDescrptor);	
+		}
+	
 		int getDesktopWindowStyleFlags() 	const{
 			int styleFlags = ComponentPeer::windowAppearsOnTaskbar;
 

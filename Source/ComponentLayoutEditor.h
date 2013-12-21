@@ -115,6 +115,8 @@ class ChildAlias   :   public Component,
       
       bool boundsChangedSinceStart ();
       
+	  void restrictBounds(int &x, int &y);
+	  
       void mouseEnter (const MouseEvent& e);
       void mouseExit (const MouseEvent& e);
       void mouseDown (const MouseEvent& e);

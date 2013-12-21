@@ -892,6 +892,7 @@ int CabbageGUIClass::parse(String str)
 	identArray.add("tabpage(");
 	identArray.add("drawmode(");
 	identArray.add("resizemode(");
+	identArray.add("readonly(");
 	//add a few dummy identifiers so we can catch bogus one in the Cabbage code
 	identArray.add("");
 	identArray.add("");
@@ -1384,12 +1385,11 @@ int CabbageGUIClass::parse(String str)
 			}
             else if(identArray[indx].equalsIgnoreCase("textbox(")){
 				textBox = strTokens[0].trim().getFloatValue();  
-				cabbageIdentifiers.set("textbox", strTokens[0].trim().getFloatValue());
-				
+				cabbageIdentifiers.set("textbox", strTokens[0].trim().getFloatValue());				
 			}
 			
-            else if(identArray[indx].equalsIgnoreCase("alpha(")){
-				alpha = strTokens[0].trim().getFloatValue();  
+            else if(identArray[indx].equalsIgnoreCase("readonly(")){
+				cabbageIdentifiers.set("readonly", strTokens[0].trim().getFloatValue());		
 			}			
 			
             else if(identArray[indx].equalsIgnoreCase("tablenum(")||

@@ -681,6 +681,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		else
 		subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, false);
 
+		if(!getPreference(appProperties, "EnablePopupDisplay"))
+		subMenu.addItem(207, String("Enable opcode popup help display"), true, false);
+		else
+		subMenu.addItem(207, String("Enable opcode popup help display"), true, true);
+
+
 		if(!getPreference(appProperties, "UseCabbageIO"))
 		subMenu.addItem(204, String("Use Cabbage IO"), true, false);
 		else
@@ -966,6 +972,16 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		else
 			appProperties->getUserSettings()->setValue("DisablePluginInfo", var(0));
 	}
+	
+	//------- preference popup display ------
+	else if(options==207){
+		int val = getPreference(appProperties, "EnablePopupDisplay");
+		if(val==0)
+			appProperties->getUserSettings()->setValue("EnablePopupDisplay", var(1));
+		else
+			appProperties->getUserSettings()->setValue("EnablePopupDisplay", var(0));
+	}
+	
 	//------- preference disable gui edit warning ------
 	else if(options==202){
 		int val = getPreference(appProperties, "DisableGUIEditModeWarning");
@@ -1005,10 +1021,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 void StandaloneFilterWindow::openTextEditor()
 {
 		if(csdFile.getFileName().length()>0){
-			cabbageCsoundEditor->setText(csdFile.loadFileAsString());
+			cabbageCsoundEditor->setText(filter->getCsoundInputFileText());
 			this->toBehind(cabbageCsoundEditor);
 			cabbageCsoundEditor->setVisible(true);
-			cabbageCsoundEditor->setFullScreen(true);
+#ifndef MACOSX
+//			cabbageCsoundEditor->setFullScreen(true);
+#endif
 			cabbageCsoundEditor->toFront(true);			
 			
 			if(!outputConsole){

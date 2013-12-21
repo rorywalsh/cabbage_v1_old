@@ -428,7 +428,10 @@ if (e.mods.isLeftButtonDown()){
 			selectedCompsPosX = selectedCompsPosX/gridSize*gridSize;
 			selectedCompsPosY = selectedCompsPosY/gridSize*gridSize;			 
 			 
-			 c->setTopLeftPosition(selectedCompsPosX,selectedCompsPosY);
+			restrictBounds(selectedCompsPosX, selectedCompsPosY);
+					
+				c->setTopLeftPosition(selectedCompsPosX,selectedCompsPosY);
+				
 			 c->applyToTarget("");		 
 		 }
 		 else{
@@ -443,7 +446,10 @@ if (e.mods.isLeftButtonDown()){
 			int gridSize = 2;
 			selectedCompsPosX = selectedCompsPosX/gridSize*gridSize;
 			selectedCompsPosY = selectedCompsPosY/gridSize*gridSize;
-		 setTopLeftPosition(selectedCompsPosX,selectedCompsPosY);
+			
+			restrictBounds(selectedCompsPosX, selectedCompsPosY);
+	
+				setTopLeftPosition(selectedCompsPosX,selectedCompsPosY);
 		 }
 		 applyToTarget ("");
 		 if(type.containsIgnoreCase("juce::GroupComponent")||
@@ -457,6 +463,23 @@ if (e.mods.isLeftButtonDown()){
    else 
 	   toFront(true);
 }//end of left click check
+}
+//=====================================
+//restrict bounds
+//=====================================
+
+void ChildAlias::restrictBounds(int &x, int &y)
+{
+if(x>getParentComponent()->getWidth()-this->getWidth())
+		x = getParentComponent()->getWidth()-this->getWidth();
+if(x<0)
+		x = 0;
+if(y>getParentComponent()->getHeight()-this->getHeight())
+		y = getParentComponent()->getHeight()-this->getHeight();
+if(y<0)
+		y = 0;		
+	
+	
 }
 
 void ChildAlias::mouseEnter (const MouseEvent& e)

@@ -43,7 +43,8 @@ class CsoundCodeEditor : public CodeEditorComponent,
 
 	bool keyPressed (const KeyPress& key){
 	//Logger::writeToLog(key.getTextDescription());
-	if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down"))  
+	if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down") 
+        || key.getTextDescription().contains("cursor left") || key.getTextDescription().contains("cursor right"))  
 	handleEscapeKey();
 
 	if (! TextEditorKeyMapper<CodeEditorComponent>::invokeKeyFunction (*this, key))

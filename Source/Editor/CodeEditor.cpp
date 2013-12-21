@@ -236,29 +236,32 @@ textChanged = true;
 pos1 = getDocument().findWordBreakBefore(getCaretPos());
 String lineFromCsd = getDocument().getLine(pos1.getLineNumber());
 
-String parsedString;
-StringArray syntaxTokens, csdLineTokens;
-csdLineTokens.clear();
-csdLineTokens.addTokens(lineFromCsd, " ", "\n");
+int val = CabbageUtils::getPreference(appProperties, "EnablePopupDisplay");
+if(val){
+	String parsedString;
+	StringArray syntaxTokens, csdLineTokens;
+	csdLineTokens.clear();
+	csdLineTokens.addTokens(lineFromCsd, " ", "\n");
 
-	for(int i=0;i<opcodeStrings.size();i++){
-		parsedString = opcodeStrings[i];
-		syntaxTokens.clear();	
-		syntaxTokens.addTokens(parsedString, ";", "\"");
-		if(syntaxTokens.size()>3)
-		for(int x=0;x<csdLineTokens.size();x++){
-			if(syntaxTokens[0].removeCharacters("\"")==csdLineTokens[x].trim()){
-				if(syntaxTokens[0].length()>3){
-						//Logger::writeToLog(syntaxTokens[0]);
-						sendActionMessage("popupDisplay"+syntaxTokens[2]);
-						opcodeTokens = syntaxTokens;
-						x=csdLineTokens.size();
-						i=opcodeStrings.size();	
-					}
-				}	
-				
+		for(int i=0;i<opcodeStrings.size();i++){
+			parsedString = opcodeStrings[i];
+			syntaxTokens.clear();	
+			syntaxTokens.addTokens(parsedString, ";", "\"");
+			if(syntaxTokens.size()>3)
+			for(int x=0;x<csdLineTokens.size();x++){
+				if(syntaxTokens[0].removeCharacters("\"")==csdLineTokens[x].trim()){
+					if(syntaxTokens[0].length()>3){
+							//Logger::writeToLog(syntaxTokens[0]);
+							sendActionMessage("popupDisplay"+syntaxTokens[2]);
+							opcodeTokens = syntaxTokens;
+							x=csdLineTokens.size();
+							i=opcodeStrings.size();	
+						}
+					}	
+					
+			}
+			
 		}
-		
 	}
 }
 

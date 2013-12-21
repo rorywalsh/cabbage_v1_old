@@ -1164,7 +1164,7 @@ void CabbagePluginAudioProcessor::setGuiEnabled(bool val){
 	if(editor){
 	if(val==false){
 		//editor->resizer->setVisible(false);
-		editor->propsWindow->setVisible(false);
+		//editor->propsWindow->setVisible(false);
 	}
 	else{
 	//editor->resizer->setVisible(true);

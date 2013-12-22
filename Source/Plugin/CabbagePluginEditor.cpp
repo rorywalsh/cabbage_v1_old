@@ -2114,7 +2114,7 @@ void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
 {
         comps.add(new CabbageButton(cAttr.getStringProp("name"),
                 cAttr.getStringProp("caption"),
-                cAttr.getItems(1-(int)cAttr.getNumProp("value")),
+                cAttr.getStringArrayPropValue("text", 0),
                 cAttr.getStringProp("colour"),
                 cAttr.getStringProp("fontcolour")));    
         int idx = comps.size()-1;
@@ -2146,8 +2146,8 @@ void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
         }
         ((CabbageButton*)comps[idx])->button->addListener(this);
         //((CabbageButton*)comps[idx])->button->setName("button");
-        if(cAttr.getItemsSize()>0)
-        ((CabbageButton*)comps[idx])->button->setButtonText(cAttr.getItems(cAttr.getNumProp("value")));
+        //if(cAttr.getItemsSize()>0)
+        //((CabbageButton*)comps[idx])->button->setButtonText(cAttr.getItems(cAttr.getNumProp("value")));
 #ifdef Cabbage_Build_Standalone
         ((CabbageButton*)comps[idx])->button->setWantsKeyboardFocus(true);
 #endif
@@ -3086,7 +3086,7 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
         else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("button")){
         CabbageButton* cabButton = dynamic_cast<CabbageButton*>(comps[i]);
 		if(cabButton){
-                cabButton->button->setButtonText(getFilter()->getGUICtrls(i).getItems(1-(int)inValue));
+                cabButton->button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1-(int)inValue));
 				incomingValues.set(i, 1-(int)inValue);
 			}
         }

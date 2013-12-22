@@ -76,6 +76,7 @@ CabbageButton(String name, String caption, String buttonText, String colour, Str
 	addAndMakeVisible(button);
 	groupbox->setVisible(false);
 	groupbox->getProperties().set("groupLine", var(1));
+	Logger::writeToLog(buttonText);
 	button->setButtonText(buttonText);
 	if(caption.length()>0){
 		offX=10;

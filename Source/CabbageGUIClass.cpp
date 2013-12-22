@@ -291,7 +291,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set("text", array);
 		cabbageIdentifiers.set("caption", "");
 		cabbageIdentifiers.set("colour", Colours::black.toString());	
-		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());	
+		cabbageIdentifiers.set("fontcolour", Colours::white.toString());	
 		cabbageIdentifiers.set("type", "button");
 		cabbageIdentifiers.set("name", "button");
 		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
@@ -1139,8 +1139,11 @@ int CabbageGUIClass::parse(String str)
 					//	}
 					comboRange = i;
 					}
-					if((value.size()==1) && (typeOfWidget=="button"))
+					//Logger::writeToLog(String(value.size())+typeOfWidget);
+					if((value.size()==1) && (typeOfWidget=="button")){
 						value.append(strTokens[0]);
+						Logger::writeToLog(strTokens[0].trim());
+					}
 						
 			  cabbageIdentifiers.set("text", value);	
 			}

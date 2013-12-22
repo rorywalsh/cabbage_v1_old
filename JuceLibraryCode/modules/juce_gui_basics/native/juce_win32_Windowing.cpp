@@ -1590,6 +1590,7 @@ private:
     //==============================================================================
     void doMouseEvent (Point<int> position)
     {
+		if(getMouseEventTime())
         handleMouseEvent (0, position, currentModifiers, getMouseEventTime());
     }
 

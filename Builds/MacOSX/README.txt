@@ -35,3 +35,11 @@ plugin project. One with the PreProcessor directive "Cabbage_Plugin_Synth=1" and
 also need to rename the resulting .component files, renaming them CabbagePluginSynth.component, and
 CabbagePluginEffect.componenet. You then need to place them in the contents directory of the Cabbage 
 bundle. The buildAll.sh script automates all this..
+
+Tourble Shooting
+================
+If your build does not work you may need to open the two Cabbage projects in Xcode and:
+- Make sure that you are including the correct directories for the Csound headers
+- Make sure the paths to the VST SDK are valid
+- You may need to change the compiler settings in Xcode projects under 'settings'. You should select the most
+up to date LLVM compiler available to you in Xcode. 

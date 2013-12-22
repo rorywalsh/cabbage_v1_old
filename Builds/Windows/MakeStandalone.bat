@@ -7,21 +7,21 @@ ECHO * to the Csound library                           *
 ECHO ===================================================
 ECHO 
 set JUCE_LIBRARY_CODE=C:\Users\Rory\Documents\SourceCode\cabbageaudio\cabbage\JuceLibraryCode
-set PREPROCESSOR_DEFS=-D__MINGW__=1 -DWIN32 -D__MINGW_EXTENSION= -DCabbage_Build_Standalone=1 -DUSE_DOUBLE=1 -DCSOUND6 -DCabbage_GUI_Editor=1 -DJUCER_CODEBLOCKS_20734A5D=1
+set PREPROCESSOR_DEFS=-D__MINGW__=1 -DWIN32 -D__MINGW_EXTENSION= -DCabbage_Build_Standalone=1 -DUSE_DOUBLE=1 -DCSOUND6=1 -DCabbage_GUI_Editor=1 -DJUCER_CODEBLOCKS_20734A5D=1
 set CSOUND_INCLUDE_DIR=C:\Users\Rory\Documents\SourceCode\cabbageaudio\csound6-git\include
 set ASIOSDK2Dir=C:\SDKs\ASIOSDK2.3\common
 set VSTSDKDir=C:\SDKs\vstsdk2.4
 set CABBAGE_SOURCE_DIR=C:\Users\Rory\Documents\SourceCode\cabbageaudio\cabbage\Source
 set CSOUND_LIBRARY=C:\Users\Rory\Documents\SourceCode\cabbageaudio\csound6-git\build\libcsound64.dll.a
-set COMPILER_FLAGS= -Wall -Wreorder -Wno-strict-aliasing -ggdb -Wno-strict-overflow  -march=pentium4 -g -O -std=gnu++0x -mstackrealign
+set COMPILER_FLAGS= -Wall -Wreorder -Wno-strict-aliasing -ggdb -Wno-strict-overflow -static-libgcc -static-libstdc++  -march=pentium4 -g -O0 -std=gnu++0x -mstackrealign
 set OUTPUT_TARGET=Cabbage.exe
 
-IF "%1"=="release" set COMPILER_FLAGS= -Wall -Wreorder -Wno-strict-aliasing -Wno-strict-overflow  -march=pentium4 -O -std=gnu++0x -mstackrealign
+IF "%1"=="release" set COMPILER_FLAGS= -Wall -Wreorder -O0 -Wno-strict-aliasing -Wno-strict-overflow  -march=pentium4 -static-libgcc -static-libstdc++ -std=gnu++0x -mstackrealign
 
 ECHO on
 
-rm -rf build\intermediate\Debug
-mkdir build\intermediate\Debug
+REM rm -rf build\intermediate\Debug
+REM mkdir build\intermediate\Debug
 
 g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS% -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %JUCE_LIBRARY_CODE%\modules\juce_audio_basics\juce_audio_basics.cpp -o build\intermediate\Debug\juce_audio_basics.o
 

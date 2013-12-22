@@ -26,7 +26,7 @@ checkbox bounds(250,  0,  10, 10), channel("Act6"),  value(0), colour("white"), 
 checkbox bounds(300,  0,  10, 10), channel("Act7"),  value(0), colour("white"), shape("ellipse")
 checkbox bounds(350,  0,  10, 10), channel("Act8"),  value(0), colour("white"), shape("ellipse")
                                                                                   
-table bounds(  5, 10, 400, 115), channel("notetable","amptable","speedtable"), tableNumbers(1,2,3), colour("yellow","green","blue")
+table bounds(  5, 10, 400, 115), channel("notetable","amptable","speedtable"), tableNumbers(1,2,3), readonly(1), colour("yellow","green","blue")
 
 rslider bounds(  5,130, 50, 50), channel("note1"), text("Note.1"), range(0, 108, 48, 1, 1),colour("yellow")  
 rslider bounds( 55,130, 50, 50), channel("note2"), text("Note.2"), range(0, 108, 50, 1, 1),colour("yellow")

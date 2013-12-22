@@ -416,7 +416,7 @@ filter->reCompileCsound(csdFile);
 				deviceManager->restartLastAudioDevice();
 			}
 		}
-		//filter->suspendProcessing(false);
+		
 	}
 	else{
 		filter->performEntireScore();
@@ -440,7 +440,7 @@ filter->reCompileCsound(csdFile);
 		Component::getCurrentlyFocusedComponent()->setWantsKeyboardFocus(false);
 	}
 	
-	
+	filter->suspendProcessing(false);
 }
 
 //==============================================================================

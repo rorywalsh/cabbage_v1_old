@@ -21,7 +21,7 @@
 <Cabbage>
 form caption("GEN09"), size(420, 555), pluginID("gn09")
 
-table bounds( 10,  5, 400, 120), channel("table"), tableNumbers(8), colour("LightBlue")
+table bounds( 10,  5, 400, 120), channel("table"), tableNumbers(8), readonly(1), colour("LightBlue")
 
 rslider bounds( 13,130, 43, 43), channel("pn1"), range(1, 200, 1,1,1), colour(230,230,230,200)
 rslider bounds( 63,130, 43, 43), channel("pn2"), range(1, 200, 2,1,1), colour(230,230,230,200)

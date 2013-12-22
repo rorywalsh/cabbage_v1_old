@@ -22,7 +22,7 @@
 #include <iostream>
 
 
-#define CABBAGE_VERSION "Cabbage v0.5 BETA"
+#define CABBAGE_VERSION "Cabbage v0.50 Alpha"
 #define MAX_BUFFER_SIZE 1024
 
 #define LOGGER 0

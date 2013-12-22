@@ -14,10 +14,10 @@ set ASIOSDK2Dir=C:\SDKs\ASIOSDK2.3\common
 set VSTSDKDir=C:\SDKs\vstsdk2.4
 set CABBAGE_SOURCE_DIR=C:\Users\Rory\Documents\SourceCode\cabbageaudio\cabbage\Source
 set CSOUND_LIBRARY=C:\Users\Rory\Documents\SourceCode\cabbageaudio\csound6-git\build\libcsound64.dll.a
-set COMPILER_FLAGS=-Wall -Wno-strict-aliasing -Wno-strict-overflow  -march=pentium4 -g -ggdb -O0 -std=gnu++0x -mstackrealign
+set COMPILER_FLAGS=-Wall -Wno-strict-aliasing -Wno-strict-overflow  -march=pentium4 -g -ggdb -O0 -std=gnu++0x -g -ggdb -O0 -static-libgcc -static-libstdc++ -mstackrealign
 set OUTPUT_TARGET=CabbagePluginEffect.dll
 
-IF "%1"=="release" set COMPILER_FLAGS= -Wall -Wreorder -Wno-strict-aliasing -Wno-strict-overflow -march=pentium4 -O -std=gnu++0x -mstackrealign
+IF "%1"=="release" set COMPILER_FLAGS= -Wall -Wreorder -Wno-strict-aliasing -O0 -static-libgcc -static-libstdc++ -Wno-strict-overflow -march=pentium4 -O -std=gnu++0x -mstackrealign
 IF "%1"=="release" set OUTPUT_TARGET=CabbagePluginEffect.dat
 
 @ECHO on

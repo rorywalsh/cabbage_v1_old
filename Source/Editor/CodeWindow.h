@@ -72,6 +72,7 @@ public:
 									CommandIDs::blackBackground,
 									CommandIDs::startSession,
 									CommandIDs::insertFromRepo,
+									CommandIDs::AudioSettings,
 									CommandIDs::addFromRepo,
 									CommandIDs::insertRecentEvent,
 									CommandIDs::openPythonEditor,

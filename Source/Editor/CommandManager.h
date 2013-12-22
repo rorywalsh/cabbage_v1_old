@@ -52,6 +52,7 @@ namespace CommandIDs
 	static const int viewCsoundHelp		= 4025;
 	static const int viewCabbageHelp	= 4026;
 	static const int viewSource			= 4027;
+	static const int AudioSettings		= 4028;
 	
 	static const int startSession				= 3023;
 	static const int commOrchUpdateInstrument	= 3024;

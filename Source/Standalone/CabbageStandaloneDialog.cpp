@@ -280,6 +280,10 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message){
 	openFile("");
 	}
 
+	else if(message.contains("audioSettings")){
+	showAudioSettingsDialog();
+	}
+	
 	else if(message.contains("fileSaveAs")){
 	saveFileAs();
 	}

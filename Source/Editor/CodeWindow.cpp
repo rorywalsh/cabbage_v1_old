@@ -189,6 +189,9 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		result.setInfo (String("Insert Python code"), String("Insert Python code"), CommandCategories::edit, 0);
 		result.addDefaultKeypress ('p', ModifierKeys::commandModifier | ModifierKeys::altModifier);
 		break;	
+	case CommandIDs::AudioSettings:
+		result.setInfo (String("Audio Settings"), String("Edit audio settings"), CommandCategories::edit, 0);
+		break;			
 		
 	//interactive commands	
 	case CommandIDs::commOrchUpdateInstrument:
@@ -280,6 +283,7 @@ else if(topLevelMenuIndex==1)
 	m2.addCommandItem(&commandManager, CommandIDs::whiteBackground);
 	m2.addCommandItem(&commandManager, CommandIDs::blackBackground);
 	m1.addSubMenu("Change editor theme", m2);
+	m1.addCommandItem(&commandManager, CommandIDs::AudioSettings);
 	//m1.addCommandItem(&commandManager, CommandIDs::insertFromRepo);
 	//m1.addCommandItem(&commandManager, CommandIDs::addFromRepo);
 	//m1.addCommandItem(&commandManager, CommandIDs::insertRecentEvent);
@@ -338,7 +342,10 @@ bool CodeWindow::perform (const InvocationInfo& info)
 			Logger::writeToLog("fileOpen");
 			sendActionMessage("fileOpen");
 		}
-
+	else if(info.commandID==CommandIDs::AudioSettings)
+		{			
+			sendActionMessage("audioSettings");
+		}
 	else if(info.commandID==CommandIDs::fileQuit)
 		{			
 		JUCEApplication::getInstance()->systemRequestedQuit();	

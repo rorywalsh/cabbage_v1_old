@@ -8,7 +8,7 @@ If the sum of durations exceeds table size they are automatically scaled down in
 <Cabbage>
 form caption("GEN16"), size(325, 360), pluginID("gn16"), colour(13,130,167,50)
 
-table bounds( 10,  5, 305, 120), channel("table"), tableNumbers(1), readonly(1), colour("lime")
+table bounds( 10,  5, 305, 120), channel("table"), tableNumbers(1), colour("lime")
 
 rslider bounds( 10,130, 50, 70), channel("val1"), text("Value.1"), textBox(1), range(0, 1, 0), colour(100,130,130,250)
 rslider bounds( 70,130, 50, 70), channel("val2"), text("Value.2"), textBox(1), range(0, 1, 1), colour(100,130,130,250)

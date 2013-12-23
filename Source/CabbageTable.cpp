@@ -957,30 +957,33 @@ void CabbageTableManager::mouseDown (const MouseEvent& e)
 	if(e.mods.isRightButtonDown())
 		{
 		
-		PopupMenu pop, subMenu;
+		PopupMenu pop, subMenu1, subMenu2;
 		pop.setLookAndFeel(&getTopLevelComponent()->getLookAndFeel());
-		subMenu.setLookAndFeel(&getTopLevelComponent()->getLookAndFeel());
-		if(!readOnly){	
-		subMenu.addItem(101, "1 segment");
-		subMenu.addItem(102, "2 segments");
-		subMenu.addItem(104, "4 segments");
-		subMenu.addItem(108, "8 segments");
-		subMenu.addItem(112, "12 segments");
-		subMenu.addItem(116, "16 segments");
-		subMenu.addItem(120, "20 segments");
-		subMenu.addItem(124, "24 segments");
-		subMenu.addItem(128, "28 segments");
-		subMenu.addItem(132, "32 segments");
-		pop.addSubMenu(TRANS("Edit..."), subMenu);
-		subMenu.clear();
-		}
-		for(int i=0;i<tables.size();i++)
-		subMenu.addColouredItem(200+i, "fTable:"+String(tables[i]->tableNumber), tables[i]->currColour);
-		pop.addSubMenu(TRANS("Table to front..."), subMenu);
+		subMenu1.setLookAndFeel(&getTopLevelComponent()->getLookAndFeel());
+		subMenu2.setLookAndFeel(&getTopLevelComponent()->getLookAndFeel());
 
-		if(!readOnly){	
-		pop.addItem(300, "Replace existing table");
-		pop.addItem(301, "Add table to score");
+		subMenu1.addItem(101, "1 segment");
+		subMenu1.addItem(102, "2 segments");
+		subMenu1.addItem(104, "4 segments");
+		subMenu1.addItem(108, "8 segments");
+		subMenu1.addItem(112, "12 segments");
+		subMenu1.addItem(116, "16 segments");
+		subMenu1.addItem(120, "20 segments");
+		subMenu1.addItem(124, "24 segments");
+		subMenu1.addItem(128, "28 segments");
+		subMenu1.addItem(132, "32 segments");
+
+
+		
+		for(int i=0;i<tables.size();i++){
+		subMenu2.addColouredItem(200+i, "fTable:"+String(tables[i]->tableNumber), tables[i]->currColour);
+		
+		if(!readOnly){
+			pop.addSubMenu(TRANS("Edit..."), subMenu1);			
+			pop.addSubMenu(TRANS("Table to front..."), subMenu2);
+			pop.addItem(300, "Replace existing table");
+			pop.addItem(301, "Add table to score");
+			}
 		}
 		
 		int choice = pop.show();

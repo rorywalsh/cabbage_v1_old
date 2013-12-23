@@ -45,6 +45,7 @@ class ComponentLayoutEditor   :   public Component,
       ~ComponentLayoutEditor ();
       
 	void findLassoItemsInArea (Array <ChildAlias*>& results, const Rectangle<int>& area);
+	Rectangle<int> getLassoRect(SelectedItemSet <ChildAlias*>);
 
     SelectedItemSet <ChildAlias*>& getLassoSelection();
 	
@@ -124,7 +125,7 @@ class ChildAlias   :   public Component,
       void mouseDrag (const MouseEvent& e);
 	  void mouseDoubleClick(const MouseEvent &event);		
 		
-      bool interest;
+      bool interest, lockMovement;
     private:
 	  int index;
 	  Array<Rectangle<int> > origBounds;

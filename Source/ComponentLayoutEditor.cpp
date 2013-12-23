@@ -23,7 +23,7 @@ void SelectedComponents::itemDeselected (ChildAlias* item){
 
 
 ChildAlias::ChildAlias (Component* targetChild, String type, int ind)
-:   target (targetChild), index(ind), type(type), dragX(0), dragY(0)
+:   target (targetChild), index(ind), type(type), dragX(0), dragY(0), lockMovement(false)
 {   
    resizeContainer = new ComponentBoundsConstrainer();
    resizeContainer->setMinimumSize(jmax(target.getComponent()->getWidth()/10, 2), jmax(target.getComponent()->getHeight()/10, 2)); //set minimum size so objects cant be resized too small
@@ -412,9 +412,7 @@ if (e.mods.isLeftButtonDown()){
 		 if(numSelected>0)
 		 for(int i=0;i<numSelected;i++){
 			 ChildAlias* c = getLayoutEditor()->getLassoSelection().getSelectedItem(i);
-			 int selectedCompsPosX = getLayoutEditor()->selectedCompsOrigCoordinates[i].getX();
-			 int selectedCompsPosY = getLayoutEditor()->selectedCompsOrigCoordinates[i].getY();
-			 	
+		 	
 			 
 			//if(e.getDistanceFromDragStartX()%10==0)
 				dragX = e.getDistanceFromDragStartX();
@@ -422,23 +420,24 @@ if (e.mods.isLeftButtonDown()){
 				dragY = e.getDistanceFromDragStartY();
 			 
 			//snap to grid....
-			int gridSize = 2;			 
+			int gridSize = 2;	
+
+	        Rectangle<int> bounds = getLayoutEditor()->getLassoRect(getLayoutEditor()->getLassoSelection());
+
+			int selectedCompsPosX = getLayoutEditor()->selectedCompsOrigCoordinates[i].getX();
+			int selectedCompsPosY = getLayoutEditor()->selectedCompsOrigCoordinates[i].getY();
+			selectedCompsPosY = selectedCompsPosY+dragY;			
+			selectedCompsPosY = selectedCompsPosY/gridSize*gridSize;				
 			selectedCompsPosX = selectedCompsPosX+dragX;	
-			selectedCompsPosY = selectedCompsPosY+dragY;
 			selectedCompsPosX = selectedCompsPosX/gridSize*gridSize;
-			selectedCompsPosY = selectedCompsPosY/gridSize*gridSize;			 
-			 
-			restrictBounds(selectedCompsPosX, selectedCompsPosY);
-					
-				c->setTopLeftPosition(selectedCompsPosX,selectedCompsPosY);
-				
-			 c->applyToTarget("");		 
+
+			restrictBounds(selectedCompsPosX, selectedCompsPosY);				
+			c->setTopLeftPosition(selectedCompsPosX, selectedCompsPosY);
+			c->applyToTarget(""); 
 		 }
 		 else{
-			// dragger.dragComponent (this,e, constrainer);
-			//if(e.getDistanceFromDragStartX()%1==0)
+
 				dragX = e.getDistanceFromDragStartX();
-			//if(e.getDistanceFromDragStartY()%1==0)
 				dragY = e.getDistanceFromDragStartY();	
 			int selectedCompsPosX = startBounds.getX()+dragX;	
 			int selectedCompsPosY = startBounds.getY()+dragY;
@@ -528,6 +527,26 @@ void ComponentLayoutEditor::paint (Graphics& g)
 SelectedItemSet <ChildAlias*>& ComponentLayoutEditor::getLassoSelection()
 {
    return selectedFilters;
+}
+
+
+Rectangle<int> ComponentLayoutEditor::getLassoRect(SelectedItemSet <ChildAlias*> children)
+{
+Rectangle<int> bounds(9999, 9999, -9999, -9999);
+for(int i=0;i<children.getItemArray().size();i++)
+	bounds.setX(children.getSelectedItem(i)->getX()<bounds.getX() ? children.getSelectedItem(i)->getX() : bounds.getX());
+for(int i=0;i<children.getItemArray().size();i++)
+	bounds.setY(children.getSelectedItem(i)->getY()<bounds.getY() ? children.getSelectedItem(i)->getY() : bounds.getY());
+for(int i=0;i<children.getItemArray().size();i++)
+	bounds.setY(children.getSelectedItem(i)->getY()<bounds.getY() ? children.getSelectedItem(i)->getY() : bounds.getY());
+for(int i=0;i<children.getItemArray().size();i++)
+	if(children.getSelectedItem(i)->getWidth()+children.getSelectedItem(i)->getX()>bounds.getX()+bounds.getWidth())
+	bounds.setWidth(children.getSelectedItem(i)->getWidth()+children.getSelectedItem(i)->getX()-bounds.getX());
+for(int i=0;i<children.getItemArray().size();i++)
+	if(children.getSelectedItem(i)->getHeight()+children.getSelectedItem(i)->getY()>bounds.getY()+bounds.getHeight())
+	bounds.setHeight(children.getSelectedItem(i)->getHeight()+children.getSelectedItem(i)->getY()-bounds.getY());
+
+return bounds;	
 }
 
 void ComponentLayoutEditor::setTargetComponent (Component* targetComp)

@@ -145,7 +145,7 @@ gitemp2  ftgen 0 , 0, 512, 10, 1, .4, .2, .1, .1, .05
 kamp,kfreq  xin
 
 
-k1        randi     (kamp*.01),5
+k1        randi     kamp*.01,5
 k1        =         k1 + kamp
 k2        poscil    k1,1/.24,gitemp1
 k2        =         k2 + .74

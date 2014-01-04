@@ -69,8 +69,17 @@ afl2	flanger	a2,adel2+klfo,.9
 
 kadsr	mxadsr	iatt,idec,isus,irel
 
-aleft	clip	(a1+afl1)*.1,2,.8
-aright	clip	(a2+afl2)*.1,2,.8
+;aleft	clip    (a1+afl1)*.1,2,.8
+;aright	clip    (a2+afl2)*.1,2,.8
+
+;al1	= (a1+afl1)
+;ar1	= (a2+afl2)
+;aleft	clip    al1*.1,2,.8
+;aright	clip    ar1*.1,2,.8
+
+; Or using function syntax
+aleft	= clip    ((a1+afl1)*.1,2,.8)
+aright	= clip    ((a2+afl2)*.1,2,.8)
 
 outs	(aleft)*kadsr,(aright)*kadsr
 

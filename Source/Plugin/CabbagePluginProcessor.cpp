@@ -27,7 +27,7 @@
 
 #define LOGGER 0
 
-//these two lines need to be copied to top part of csound.h
+//these two lines may need to be copied to top part of csound.h
 //#define int32 int
 //#define uint32 unsigned int
 

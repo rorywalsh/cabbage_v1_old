@@ -34,7 +34,7 @@
   </EXPORTFORMATS>
   <MAINGROUP id="XGFrPE" name="Cabbage">
     <GROUP id="{90E930CC-60C2-ABED-2F10-3FB163FA3799}" name="Source">
-      <GROUP id="{DBC23293-7574-68D3-1ABD-C9E913561343}" name="Editor">
+      <GROUP id="{DBC23293-7574-68D3-1ABD-C9E913561343}" name="Editor"> 
         <FILE id="MwoZd1" name="CabbageCsoundEditor.cpp" compile="1" resource="0"
               file="Source/Editor/CabbageCsoundEditor.cpp"/>
         <FILE id="oG3rED" name="CabbageCsoundEditor.h" compile="0" resource="0"

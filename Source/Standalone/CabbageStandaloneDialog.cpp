@@ -733,7 +733,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		credits.append("\t\t\t\t\tNil Geisweiller\n", 2056);
 		credits.append("\t\t\t\t\tDave Philips\n", 2056);
 		credits.append("\t\t\t\t\tEamon Brady\n", 2056);
-		showMessage("			About Cabbage", credits, lookAndFeel, this);
+		String title(CABBAGE_VERSION);
+		showMessage("			"+title, credits, lookAndFeel, this);
 		
 	}
 	//----- view text editor ------

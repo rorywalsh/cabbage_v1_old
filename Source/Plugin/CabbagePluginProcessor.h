@@ -30,8 +30,6 @@
 #include "CabbageGenericAudioProcessorEditor.h"
 #include "../CabbageLookAndFeel.h"
 
-
-
 #ifndef Cabbage_No_Csound
 #include <csound.hpp>
 #include "cwindow.h"
@@ -41,6 +39,9 @@
 //#ifndef Cabbage_Build_Standalone
 //#include "../Editor/CabbageEditorWindow.h"
 //#endif
+
+
+#define CABBAGE_VERSION "Cabbage v0.5.01 Alpha"
 
 #define AUDIO_PLUGIN 1
 #define EXTERNAL_PLUGIN 2

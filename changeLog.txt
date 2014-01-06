@@ -1,3 +1,12 @@
+v0.5.01
+
+Fixes:
+- infobutton fixed, and updated to work with Linux too
+- xypads labels fixed
+- auto update fixed
+- menus updated so they only display csd files in examples folder
+
+
 v0.5.0
 
 - Majority of the source code has been rewritten. On the surface things will still run as usual, but underneath it all things are running much smoother.

@@ -285,7 +285,7 @@ static void showMessage(String title, String message, LookAndFeel* feel, Compone
 	if(title.length()<1)title="Cabbage Message";
 	mainWindow->setAlwaysOnTop(false);
 //	mainWindow->toBack();
-	AlertWindow alert("Cabbage Message" , message, AlertWindow::WarningIcon);
+	AlertWindow alert(title, message, AlertWindow::WarningIcon);
     alert.setLookAndFeel(feel);
 	//alert.showMessageBox(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
 	alert.setAlwaysOnTop(true);

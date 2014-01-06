@@ -943,8 +943,8 @@ int CabbageGUIClass::parse(String str)
 			cabbageIdentifiers.set("caption", strTokens[0].trim());
 			} 
 			
-            else if(identArray[indx].equalsIgnoreCase("channel(")||
-				identArray[indx].equalsIgnoreCase(" chan(")||
+            else if(identArray[indx].equalsIgnoreCase(" channel(")||
+				identArray[indx].equalsIgnoreCase(",channel(")||
 				identArray[indx].equalsIgnoreCase(" chans(") ||
 				identArray[indx].equalsIgnoreCase(" channels("))
 				{

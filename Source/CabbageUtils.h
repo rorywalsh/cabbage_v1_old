@@ -553,7 +553,7 @@ PopupMenu subMenu;
 //grab all file in sub-folders	
 for (int i = 1; i < subFolders.size(); i++){
 	if(!subFolders[i].containsSubDirectories()){
-		subFolders[i].findChildFiles(filesArray, File::findFiles, false);
+		subFolders[i].findChildFiles(filesArray, File::findFiles, false, ext);
 		subMenu.clear();
 		for (fileCnt = noOfFiles; fileCnt < filesArray.size(); fileCnt++)
 			subMenu.addItem (fileCnt + indexOffset, filesArray[fileCnt].getFileNameWithoutExtension());

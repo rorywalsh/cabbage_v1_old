@@ -10,7 +10,7 @@
               bundleIdentifier="com.yourcompany.CabbagePlugin" aaxIdentifier="com.yourcompany.CabbagePlugin"
               jucerVersion="3.0.0">
   <EXPORTFORMATS>
-    <VS2010 targetFolder="Builds/VisualStudio2010" libraryType="1" juceFolder="..\juce\modules"
+    <VS2010 targetFolder="Builds/VisualStudio2010" libraryType="1" juceFolder="..\juce\modules" 
             vstFolder="c:\SDKs\vstsdk2.4">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"

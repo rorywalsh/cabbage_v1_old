@@ -52,7 +52,12 @@ endin
 
 instr	10	
 
-a1	pluck	(p4*1-p6)/p6,p5,p5,0,1
+;a1	pluck	(p4*1-p6)/p6,p5,p5,0,1
+ival	=	(p4*1-p6)
+a1	pluck	ival/p6,p5,p5,0,1
+
+; Or using the new csound 6 function syntax
+;a1	=	pluck((p4*1-p6)/p6,p5,p5,0,1)
 
 
 aout	clip	a1,0,0dbfs

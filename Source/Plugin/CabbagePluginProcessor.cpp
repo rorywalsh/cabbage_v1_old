@@ -977,8 +977,8 @@ MYFLT* val=0;
 //update all control widgets
 for(int index=0;index<getGUICtrlsSize();index++)
 	{
-	float value = csound->GetChannel(guiCtrls.getReference(index).getStringProp("channel").toUTF8());
-    getGUICtrls(index).setNumProp("value", value);
+	float value = csound->GetChannel(guiCtrls[index].getStringProp("channel").toUTF8());
+    guiCtrls[index].setNumProp("value", value);
 	}
 
 //update all layout control widgets
@@ -988,10 +988,10 @@ for(int index=0;index<getGUILayoutCtrlsSize();index++)
 	{
 	if(getGUILayoutCtrls(index).getStringProp("type")=="table")
 		{
-		for(int y=0;y<getGUILayoutCtrls(index).getStringArrayProp("channel").size();y++){
+		for(int y=0;y<guiLayoutCtrls[index].getStringArrayProp("channel").size();y++){
 			//String test = getGUILayoutCtrls(index).getStringArrayPropValue("channel", y);
-			float value = csound->GetChannel(getGUILayoutCtrls(index).getStringArrayPropValue("channel", y).toUTF8());
-			getGUILayoutCtrls(index).setTableChannelValues(y, value);
+			float value = csound->GetChannel(guiLayoutCtrls[index].getStringArrayPropValue("channel", y).toUTF8());
+			guiLayoutCtrls[index].setTableChannelValues(y, value);
 			}
 		}
 	}

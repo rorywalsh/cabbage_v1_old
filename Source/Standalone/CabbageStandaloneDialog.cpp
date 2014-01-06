@@ -704,7 +704,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		m.addSubMenu("Preferences", subMenu);
 		
 		m.addItem(2000, "About");
-		m.addItem(2345, "Test button");
+		//m.addItem(2345, "Test button");
 	}
 
 	int options = m.showAt (&optionsButton);
@@ -732,7 +732,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		credits.append("\t\t\t\t\tGiorgio Zucco\n", 2056);
 		credits.append("\t\t\t\t\tNil Geisweiller\n", 2056);
 		credits.append("\t\t\t\t\tDave Philips\n", 2056);
-		credits.append("\t\t\t\t\tEamon Brady\n", 2056);
+		credits.append("\t\t\t\t\tEamon Brady\n\n", 2056);
+		credits.append("\t\t\t\tUsers Forum:\n", 2056);
+		credits.append("\t\t\t\t\twww.thecabbagefoundation.org", 2056);
 		String title(CABBAGE_VERSION);
 		showMessage("			"+title, credits, lookAndFeel, this);
 		
@@ -787,8 +789,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		outputConsole->toFront(true);
 		outputConsole->setVisible(true);
 		}
-		else
+		else{
+			outputConsole->setAlwaysOnTop(true);
+			outputConsole->toFront(true);
 			outputConsole->setVisible(true);
+			}
 		}
 		else showMessage("Please open or create a file first", lookAndFeel);
 	}

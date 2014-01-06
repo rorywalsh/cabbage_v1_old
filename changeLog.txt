@@ -1,9 +1,21 @@
-Cabbage 0.04
+v0.5.0
 
-;no brackets can be used in strings
-;destructive editing wtf?
+- Majority of the source code has been rewritten. On the surface things will still run as usual, but underneath it all things are running much smoother.
+- All channel mechanisms are now thread safe
+- Code has been updated for Csound6. Csound5 is no longer supported.
+- Code editor has received some attention, now features popup opcode hints.
+- Csound console is now in a separate window from the editor.
+- There is a new GUI designer
+       - features a properties dialogue for editing widget parameters. (Users can still hand code GUI elements, but for those who wish you can now use a GUI editor)
+       - users can select copy/move/delete and duplicate widgets
+       - all colour attributes of widgets can be modified
+       - widgets can be grouped together into plants, and un-grouped at any time
+       - plants can be save and recalled from the context menu
+- Table editors can now enter edit mode so that tables can be modified in real time. Edited tables can be saved to Csound files using GEN16. 
+- Cabbage now comes bundled with Csound on Windows.
+- Updated build projects for Windows, Linux and OSX.   
 
-New features:
+Older features brought in from previous code base:
 - Added support for building MIDI plugins. See arpeggiator instrument in the examples. 
 - Added a populate identifier for use with Comboboxes. Users can now populate a combo box with a series of file from disk. (A current limitation is that this only populates at run time)
 - Users can now edit GUIs using the mouse. 
@@ -29,24 +41,9 @@ New features:
 - Added a table widget. This is a viewer for function tables. Channels messages get send from Csound to Cabbage to trigger the updating of the tables. Users can also superimpose one table on top of another and use its alpha blend identifier to change the table transparency. While interaction with the tables is not yet possible it is however possible to modify the tables in real time using Csound. See the example .csds for more information 
 - Added a new feature to the editor so users can now select a colour for different colour identifiers using a GUI colour selector
 - Added an 'auto-update' feature so that Cabbage will automatically update if the current file has been saved remotely
-Added standlone feature
-============================== still working on ===========================
-- fix plugin names on OSX
-- fix infobutton poblem..
-- Added destructive/non-destructive editing modes. 
-	Destructive editing will causes your file to be overwritten each time you change the GUI.
-	Non-destructive will make changes to temporary files so you're original is preserved. 
-	Destructive editing mode means users can still design GUIs with the new GUI editor, even if 
-	they use an external editor. Each change to the to GUI should be updated in their external editor. 
-- support now added for a multichannel plugin export with 8ins and 8outs. 
-- plants file that users can write too. Automaitcally populates the plant context-menu
-============================================================================
-
-Modifications/Fixes
-- made the entire thing thread safe, channel messages are only sent between cals to performKsmps()
-============================== still working on ===========================
+- Added standlone feature, tested mostly on Windows
+- made the entire system thread safe, channel messages are only sent between calls to performKsmps()
 - fixed a bug in preset mode that showing up in instruments with only one widget 
-===========================================================================
 - fixed problem with presets overriding initialisation values
 - changed look and feel for tabbed component
 - fixed working directory issue; the directory in which the current .csd file is in is now the current working directory. Any files that Csound writes, which don't have an absolute paths, will be saved to that directory. 

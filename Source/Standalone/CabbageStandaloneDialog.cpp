@@ -695,12 +695,15 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		subMenu.addItem(204, String("Use Cabbage IO"), true, false);
 		else
 		subMenu.addItem(204, String("Use Cabbage IO"), true, true);
+//when buiding for inclusion with the Windows Csound installer comment out
+//this section
 #ifndef LINUX
 		if(!getPreference(appProperties, "Using Cabbage-Csound"))
 		subMenu.addItem(206, String("Using Cabbage-Csound"), true, false);
 		else
 		subMenu.addItem(206, String("Using Cabbage-Csound"), true, true);
 #endif
+//END of commented section for Windows Csound installer
 		m.addSubMenu("Preferences", subMenu);
 		
 		m.addItem(2000, "About");

@@ -815,10 +815,11 @@ CabbageGUIClass::~CabbageGUIClass()
 
 }
 //===========================================================================================
-int CabbageGUIClass::parse(String str)
+int CabbageGUIClass::parse(String inStr)
 {
 	//Logger::writeToLog(str);
 	//remove any text after a semicolon
+	String str = inStr.removeCharacters("\t");
 	if(str.indexOf(0, ";")!=-1)
 		str = str.substring(0, str.indexOf(0, ";"));
 
@@ -914,19 +915,22 @@ int CabbageGUIClass::parse(String str)
 	{
 		//check to see if identifier is part of input string..turn to lowercase first..
 		//showMessage("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
-		int identPos = str.removeCharacters("\t").toLowerCase().indexOf(identArray.getReference(indx));
+		int identPos = str.toLowerCase().indexOf(identArray.getReference(indx));
           if(identPos!=-1){
-			String newString = str.substring(identPos+identArray.getReference(indx).length());
-			String tstr = newString.substring(0, newString.indexOf(0, ")"));
-			if(tstr.length()==0) return 0;
-			
-
-			
 			StringArray strTokens, fillStrTokens;
 			fillStrTokens.addTokens(str, ", ", "\"");
 			typeOfWidget = fillStrTokens[0];
-			Logger::writeToLog(typeOfWidget);
-			strTokens.addTokens(tstr.removeCharacters(")\""), ",", "\"");
+			
+			String newString = str.substring(identPos+identArray.getReference(indx).length());
+			
+			String tstr = newString.substring(0, newString.indexOf(0, ")"));
+			
+			if(tstr.length()==0) return 0;
+			
+			strTokens.addTokens(tstr.removeCharacters("\t()\""), ",", "\"");
+			
+			//for(int i=0;i<strTokens.size();i++)
+			//	showMessage(strTokens[i]);
 
 			if(identArray[indx].equalsIgnoreCase("name(")){
 					name = strTokens[0].trim();
@@ -1292,29 +1296,29 @@ int CabbageGUIClass::parse(String str)
 				StringArray tempArray;
 				//showMessage(str);
 				//showMessage(strTokens[0]);
-				min = strTokens[0].removeCharacters("()").trim().getDoubleValue();// getFloatValue(); 
-				max = strTokens[1].removeCharacters("()").trim().getDoubleValue();//.getFloatValue(); 
-				cabbageIdentifiers.set("min", strTokens[0].removeCharacters("()").trim().getDoubleValue());	
-				cabbageIdentifiers.set("max", strTokens[1].removeCharacters("()").trim().getDoubleValue());	
-				tempArray.add(strTokens[0].trim().removeCharacters("()"));
-				tempArray.add(strTokens[1].trim().removeCharacters("()"));
+				min = strTokens[0].trim().getDoubleValue();// getFloatValue(); 
+				max = strTokens[1].trim().getDoubleValue();//.getFloatValue(); 
+				cabbageIdentifiers.set("min", strTokens[0].trim().getDoubleValue());	
+				cabbageIdentifiers.set("max", strTokens[1].trim().getDoubleValue());	
+				tempArray.add(strTokens[0].trim());
+				tempArray.add(strTokens[1].trim());
 				if(strTokens.size()>2){
-				value = strTokens[2].trim().removeCharacters("()").getDoubleValue();//.getFloatValue(); 
-				cabbageIdentifiers.set("value", strTokens[2].removeCharacters("()").trim().getDoubleValue());	
-				tempArray.add(strTokens[2].removeCharacters("()").trim());
+				value = strTokens[2].trim().getDoubleValue();//.getFloatValue(); 
+				cabbageIdentifiers.set("value", strTokens[2].trim().getDoubleValue());	
+				tempArray.add(strTokens[2].trim());
 				}
 				else value = 0;				
 
 				if(strTokens.size()>3){
-				sliderSkew = strTokens[3].removeCharacters("()").trim().getFloatValue();//.getFloatValue(); 
+				sliderSkew = strTokens[3].trim().getFloatValue();//.getFloatValue(); 
 				cabbageIdentifiers.set("sliderskew", strTokens[3].trim().getDoubleValue());
-				tempArray.add(strTokens[3].removeCharacters("()").trim());
+				tempArray.add(strTokens[3].trim());
 				}
 				
 				if(strTokens.size()>4){  
-				sliderIncr = strTokens[4].removeCharacters("()").trim().getDoubleValue();
-				tempArray.add(strTokens[4].removeCharacters("()").trim());
-				cabbageIdentifiers.set("sliderincr", strTokens[4].removeCharacters("()").trim().getDoubleValue());
+				sliderIncr = strTokens[4].trim().getDoubleValue();
+				tempArray.add(strTokens[4].trim());
+				cabbageIdentifiers.set("sliderincr", strTokens[4].trim().getDoubleValue());
 				}
 				
 				sliderRange = max-min;				
@@ -1338,15 +1342,15 @@ int CabbageGUIClass::parse(String str)
 				maxX = strTokens[1].removeCharacters("()").trim().getFloatValue();  
 				valueX = strTokens[2].removeCharacters("()").trim().getFloatValue(); 
 				
-				cabbageIdentifiers.set("minx", strTokens[0].removeCharacters("()").trim().getDoubleValue());			
-				cabbageIdentifiers.set("maxx", strTokens[1].removeCharacters("()").trim().getDoubleValue());
-				cabbageIdentifiers.set("valuex", strTokens[2].removeCharacters("()").trim().getDoubleValue());
+				cabbageIdentifiers.set("minx", strTokens[0].trim().getDoubleValue());			
+				cabbageIdentifiers.set("maxx", strTokens[1].getDoubleValue());
+				cabbageIdentifiers.set("valuex", strTokens[2].getDoubleValue());
 				cabbageIdentifiers.set("rangex", maxX-minX);
 				
 				if(strTokens.size()==4)
 				decimalPlaces = strTokens[3].trim().getFloatValue();
 				xypadRangeX = maxX-minX;
-				cabbageIdentifiers.set("decimalplaces", strTokens[3].removeCharacters("()").trim().getDoubleValue());
+				cabbageIdentifiers.set("decimalplaces", strTokens[3].trim().getDoubleValue());
 				}
 			}
 			else if(identArray[indx].equalsIgnoreCase("rangey(")){
@@ -1354,26 +1358,26 @@ int CabbageGUIClass::parse(String str)
 					debugMessage ="WARNING: Not enough paramters passed to range(): usage range(minx, max, value\")";
 				}
 				else{
-				minY = strTokens[0].removeCharacters("()").trim().getFloatValue();  
-				maxY = strTokens[1].removeCharacters("()").trim().getFloatValue();  
-				valueY = strTokens[2].removeCharacters("()").trim().getFloatValue();
+				minY = strTokens[0].trim().getFloatValue();  
+				maxY = strTokens[1].trim().getFloatValue();  
+				valueY = strTokens[2].trim().getFloatValue();
 				
 
-				cabbageIdentifiers.set("miny", strTokens[0].removeCharacters("()").trim().getDoubleValue());	
-				cabbageIdentifiers.set("maxy", strTokens[1].removeCharacters("()").trim().getDoubleValue());
-				cabbageIdentifiers.set("valuey", strTokens[2].removeCharacters("()").trim().getDoubleValue());
+				cabbageIdentifiers.set("miny", strTokens[0].trim().getDoubleValue());	
+				cabbageIdentifiers.set("maxy", strTokens[1].trim().getDoubleValue());
+				cabbageIdentifiers.set("valuey", strTokens[2].trim().getDoubleValue());
 				cabbageIdentifiers.set("rangey", maxY-minY);
 				
 
 				if(strTokens.size()==4)
-				decimalPlaces = strTokens[3].trim().removeCharacters("()").getFloatValue();
+				decimalPlaces = strTokens[3].trim().getFloatValue();
 				xypadRangeY = maxY-minY;
-				cabbageIdentifiers.set("decimalplaces", strTokens[3].removeCharacters("()").trim().getDoubleValue());
+				cabbageIdentifiers.set("decimalplaces", strTokens[3].trim().getDoubleValue());
 				}
 			}
 			else if(identArray[indx].equalsIgnoreCase("min(")){
 				min = strTokens[0].removeCharacters("()").trim().getFloatValue();  
-				cabbageIdentifiers.set("min", strTokens[0].removeCharacters("()").trim().getFloatValue());	
+				cabbageIdentifiers.set("min", strTokens[0].trim().getFloatValue());	
 			}
 			else if(identArray[indx].equalsIgnoreCase("midictrl(")){
 				if(strTokens.size()<2){

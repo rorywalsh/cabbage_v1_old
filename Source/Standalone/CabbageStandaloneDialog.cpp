@@ -440,8 +440,8 @@ filter->reCompileCsound(csdFile);
 	cabbageCsoundEditor->setText(csdFile.loadFileAsString());
 	cabbageCsoundEditor->textEditor->textChanged = false;
 	filter->codeEditor = cabbageCsoundEditor->textEditor;
-	if(Component::getCurrentlyFocusedComponent()->getName().contains("Panel"))
-		Component::getCurrentlyFocusedComponent()->setWantsKeyboardFocus(false);
+//	if(Component::getCurrentlyFocusedComponent()->getName().contains("Panel"))
+//		Component::getCurrentlyFocusedComponent()->setWantsKeyboardFocus(false);
 	}
 	
 	filter->suspendProcessing(false);

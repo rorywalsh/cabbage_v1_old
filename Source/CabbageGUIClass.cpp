@@ -189,6 +189,18 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		  caption = "";
 		  type = name;
           //name.append(String(ID), 1024);
+		cabbageIdentifiers.set("top", 10);
+		cabbageIdentifiers.set("left", 10);
+		cabbageIdentifiers.set("width", 80);
+		cabbageIdentifiers.set("height", 40);	
+
+		cabbageIdentifiers.set("text", "");
+		cabbageIdentifiers.set("caption", "");
+		cabbageIdentifiers.set("colour", Colours::black.toString());	
+		cabbageIdentifiers.set("fontcolour", Colours::white.toString());	
+		cabbageIdentifiers.set("type", "infobutton");
+		cabbageIdentifiers.set("name", "infobutton");
+		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
 	}
 
 	//===============directory list==================//
@@ -334,7 +346,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set("caption", "");
 		cabbageIdentifiers.set("shape", "square");
 		
-		cabbageIdentifiers.set("colour", Colours::white.toString());	
+		cabbageIdentifiers.set("colour", Colours::lime.toString());	
 		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());
 		cabbageIdentifiers.set("type", "checkbox");
 		cabbageIdentifiers.set("name", "checkbox");
@@ -810,8 +822,6 @@ int CabbageGUIClass::parse(String str)
 	if(str.indexOf(0, ";")!=-1)
 		str = str.substring(0, str.indexOf(0, ";"));
 
-	try{
-
 	
 	String typeOfWidget="";
 	StringArray identArray;
@@ -823,6 +833,7 @@ int CabbageGUIClass::parse(String str)
 	identArray.add(" colours(");
     identArray.add("fontcolour(");
 	identArray.add("size(");
+	identArray.add("items(");
     identArray.add("pos(");
     identArray.add("min(");
     identArray.add("max(");
@@ -843,7 +854,8 @@ int CabbageGUIClass::parse(String str)
 	identArray.add("rangey(");
 	identArray.add("plant(");
 	identArray.add("alpha(");
-    identArray.add("channel(");
+    identArray.add(",channel(");
+	identArray.add(" channel(");
 	identArray.add(" chan(");
     identArray.add("channels(");
 	identArray.add(" chans(");
@@ -860,7 +872,6 @@ int CabbageGUIClass::parse(String str)
     identArray.add("kind(");
 	identArray.add("config(");
     identArray.add("beveltype(");
-    identArray.add("items(");
 	identArray.add("text(");
     identArray.add("runcsound(");
 	identArray.add("tabs(");
@@ -897,22 +908,26 @@ int CabbageGUIClass::parse(String str)
 	identArray.add("");
 	identArray.add("");
 	identArray.add("");
-
+	Logger::writeToLog(String(identArray.size()));
 	//retrieve paramters consisting of strings
 	for(int indx=0;indx<identArray.size();indx++)
-	{		
-					
-		//Logger::writeToLog(str);
+	{
 		//check to see if identifier is part of input string..turn to lowercase first..
+		//Logger::writeToLog(String(indx));
 		//Logger::writeToLog(identArray.getReference(indx));
+		//Logger::writeToLog(str);
 		int identPos = str.toLowerCase().indexOf(identArray.getReference(indx));
           if(identPos!=-1){
 			String newString = str.substring(identPos+identArray.getReference(indx).length());
 			String tstr = newString.substring(0, newString.indexOf(0, ")"));
 			if(tstr.length()==0) return 0;
+			
+
+			
 			StringArray strTokens, fillStrTokens;
 			fillStrTokens.addTokens(str, ", ", "\"");
 			typeOfWidget = fillStrTokens[0];
+			Logger::writeToLog(typeOfWidget);
 			strTokens.addTokens(tstr.removeCharacters(")\""), ",", "\"");
 
 			if(identArray[indx].equalsIgnoreCase("name(")){
@@ -1126,6 +1141,7 @@ int CabbageGUIClass::parse(String str)
 					identArray[indx].equalsIgnoreCase("text(")){
               items.clear();//clear any unwanted items
 			  text = strTokens[0];
+			  Logger::writeToLog(typeOfWidget+":"+text);
 			  var value;
 			  for(int i= 0;i<(int)strTokens.size();i++)
 					{
@@ -1480,14 +1496,7 @@ int CabbageGUIClass::parse(String str)
           }
 	}
 	return 1;//must add error checking to this...
-	}
 
-catch(...){
-
-	return 0;
-	
-
-}
 }
 //=========================================================================
 //retrieve numerical attributes

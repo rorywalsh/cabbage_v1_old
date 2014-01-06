@@ -2235,10 +2235,17 @@ if(!getFilter()->isGuiEnabled()){
 //                              getFilter()->createAndShowSourceEditor(lookAndFeel);
                         }
                         else if(button->getName()=="infobutton"){
-                                if(!infoWindow){
-                                String file = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
-                                file.append("\\", 5);
+                                String file = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();							
+							#ifdef LINUX  
+								ChildProcess process;
+                                file.append("/", 5);
                                 file.append(button->getProperties().getWithDefault("filename", ""), 1024);
+								if(!process.start("xdg-open "+file)) 
+									CabbageUtils::showMessage("Couldn't show file", &getLookAndFeel());
+							#else
+                                file.append("\\", 5);
+                                file.append(button->getProperties().getWithDefault("filename", ""), 1024);						
+                                if(!infoWindow){
                                 //showMessage(file);
                                 infoWindow = new InfoWindow(lookAndFeel, file);
                                 infoWindow->centreWithSize(600, 400);
@@ -2247,6 +2254,7 @@ if(!getFilter()->isGuiEnabled()){
                                 }
                                 else
                                         infoWindow->setVisible(true);
+							#endif
                         }
 
 		

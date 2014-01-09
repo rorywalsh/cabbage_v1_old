@@ -40,7 +40,6 @@
 //#include "../Editor/CabbageEditorWindow.h"
 //#endif
 
-
 #define CABBAGE_VERSION "Cabbage v0.5.01 Alpha"
 
 #define AUDIO_PLUGIN 1
@@ -279,11 +278,22 @@ public:
 		#endif
 		}
 		
-		void setOpcodeDirEnv(){
-		#ifdef WIN32
-		String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getFullPathName()+"\\CsoundPlugins";
-		if(File(opcodeDir).exists())
-		csound->SetGlobalEnv("OPCODE6DIR64", opcodeDir.toUTF8().getAddress());
+		void setOpcodeDirEnv(String action){
+		#ifdef WIN32		
+		if(action=="change"){
+		showMessage(getenv("OPCODE6DIR64"));
+		String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\CsoundPlugins";
+		showMessage(opcodeDir);
+			if(File(opcodeDir).exists()){
+			String env = "OPCODE6DIR64="+opcodeDir;
+			_putenv(env.toUTF8().getAddress());
+			showMessage(getenv("OPCODE6DIR64"));
+			}
+		}
+		//csound->SetGlobalEnv("OPCODE6DIR64", );
+		else{
+						
+		}
 		#endif
 		}
 		

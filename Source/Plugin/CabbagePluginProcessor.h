@@ -278,7 +278,7 @@ public:
 		#endif
 		}
 		
-		void setOpcodeDirEnv(String action){
+		void setOpcodeDirEnv(){
 		#ifdef WIN32		
 		if(action=="change"){
 		showMessage(getenv("OPCODE6DIR64"));
@@ -289,11 +289,7 @@ public:
 			_putenv(env.toUTF8().getAddress());
 			showMessage(getenv("OPCODE6DIR64"));
 			}
-		}
-		//csound->SetGlobalEnv("OPCODE6DIR64", );
-		else{
-						
-		}
+		} 
 		#endif
 		}
 		

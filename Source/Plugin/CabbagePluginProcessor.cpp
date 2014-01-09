@@ -88,11 +88,9 @@ setPlayConfigDetails(2, 2, 44100, 512);
 
 #ifndef Cabbage_No_Csound
 //don't start of run Csound in edit mode
-
+setOpcodeDirEnv();
 
 csound = new Csound();
-
-setOpcodeDirEnv();
 
 #ifdef CSOUND6
 csound->SetHostImplementedMIDIIO(true);
@@ -231,9 +229,11 @@ fileLogger = new FileLogger(logFile, String("Cabbage Log.."));
 Logger::setCurrentLogger(fileLogger);
 #endif
 
+setOpcodeDirEnv();
+
 #ifndef Cabbage_No_Csound
 csound = new Csound();
-setOpcodeDirEnv();
+
 
 csound->SetHostImplementedMIDIIO(true);
 //csound->Reset();

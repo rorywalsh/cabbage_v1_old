@@ -374,7 +374,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		items.add("Item 2");
 		items.add("Item 3");
 		items.add("Item 4");
-		items.add("Item 5");
+
 
 		name = "combobox";		 
 		type = name;
@@ -395,7 +395,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set("colour", Colours::black.toString());
 		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());
 		cabbageIdentifiers.set("type", "combobox");
-		cabbageIdentifiers.set("name", "combobox");
+		cabbageIdentifiers.set("name", "combobox");		
+		cabbageIdentifiers.set("comborange", 4);
 		var populate;
 		populate.append("");
 		populate.append("");
@@ -1163,7 +1164,8 @@ int CabbageGUIClass::parse(String inStr)
 						Logger::writeToLog(strTokens[0].trim());
 					}
 						
-			  cabbageIdentifiers.set("text", value);	
+			  cabbageIdentifiers.set("text", value);
+			  cabbageIdentifiers.set("comborange", comboRange);
 			}
 
 			//!!! This haven't been set for the generic data system

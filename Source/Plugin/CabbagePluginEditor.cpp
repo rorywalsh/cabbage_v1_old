@@ -2445,9 +2445,10 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 			}
 		}
 
-        cAttr.setNumProp("range", cAttr.getItemsSize());
+        //cAttr.setNumProp("comborange", cAttr.getItemsSize());
         lookAndFeel->setColour(ComboBox::textColourId, Colour::fromString(cAttr.getStringProp("fontcolour")));
-        ((CabbageComboBox*)comps[idx])->combo->setSelectedId(cAttr.getNumProp("value"));
+		Logger::writeToLog("combo value:"+String(cAttr.getNumProp("value")));
+        ((CabbageComboBox*)comps[idx])->combo->setSelectedItemIndex(cAttr.getNumProp("value"));
         ((CabbageComboBox*)comps[idx])->setName(cAttr.getStringProp("name"));
         ((CabbageComboBox*)comps[idx])->combo->addListener(this);
 
@@ -2472,8 +2473,10 @@ if(combo->isEnabled()) // before sending data to on named channel
 					  //              getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), (float)combo->getSelectedItemIndex()+1);
 									
 #ifndef Cabbage_Build_Standalone
-									getFilter()->setParameter(i, (float)(combo->getSelectedItemIndex())/(getFilter()->getGUICtrls(i).getNumProp("range")));
-									getFilter()->setParameterNotifyingHost(i, (float)(combo->getSelectedItemIndex())/(getFilter()->getGUICtrls(i).getNumProp("range")));
+Logger::writeToLog("ComboRange:"+String(getFilter()->getGUICtrls(i).getNumProp("comborange")));
+Logger::writeToLog(String(combo->getSelectedItemIndex()));
+									getFilter()->setParameter(i, (float)(combo->getSelectedItemIndex())/(getFilter()->getGUICtrls(i).getNumProp("comborange")));
+									getFilter()->setParameterNotifyingHost(i, (float)(combo->getSelectedItemIndex())/(getFilter()->getGUICtrls(i).getNumProp("comborange")));
 #else
 									getFilter()->setParameter(i, (float)(combo->getSelectedItemIndex()+1));
 									getFilter()->setParameterNotifyingHost(i, (float)(combo->getSelectedItemIndex()+1));
@@ -3125,11 +3128,11 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
         else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("combobox")){
         //if(comps[i])
 		#ifdef Cabbage_Build_Standalone
-                //((CabbageComboBox*)comps[i])->combo->setSelectedId((int)getFilter()->getParameter(i), false);
+                ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)getFilter()->getParameter(i), false);
 		#else
                 //Logger::writeToLog(String("timerCallback():")+String(getFilter()->getParameter(i)));
-                float val = getFilter()->getGUICtrls(i).getNumProp("range")*getFilter()->getParameter(i);
-                ((CabbageComboBox*)comps[i])->combo->setSelectedId(int(val), dontSendNotification);
+                float val = getFilter()->getGUICtrls(i).getNumProp("comborange")*getFilter()->getParameter(i);
+                ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex(int(val), dontSendNotification);
 				incomingValues.set(i, val);
 		#endif
         }

@@ -914,6 +914,9 @@ float min = getGUICtrls(index).getNumProp("min");
 if(index<(int)guiCtrls.size()){//make sure index isn't out of range
 	#ifndef Cabbage_Build_Standalone
 	float val = (getGUICtrls(index).getNumProp("value")/range)-(min/range);
+	if(getGUICtrls(index).getStringProp("type")=="combobox")
+	return (getGUICtrls(index).getNumProp("value")/getGUICtrls(index).getNumProp("comborange"));
+	else
 	return (getGUICtrls(index).getNumProp("value")/range)-(min/range);
 	#else
 	return getGUICtrls(index).getNumProp("value");
@@ -932,20 +935,21 @@ by the host, via automation. The timer thread in the plugin's editor
 will constantly update with the values that have been set here.
 We don't actually change any parameters here, we simply add the messages
 to a queue. See next method. The updates will only happen when it's safe to do. */
-float range, min, max;
+float range, min, max, comboRange;
 //Logger::writeToLog("parameterSet:"+String(newValue));
 if(index<(int)guiCtrls.size())//make sure index isn't out of range
    {
 	#ifndef Cabbage_Build_Standalone
 	//scaling in here because incoming values in plugin mode range from 0-1
 	range = getGUICtrls(index).getNumProp("range");
+	comboRange = getGUICtrls(index).getNumProp("comborange");
 	//Logger::writeToLog("inValue:"+String(newValue));
 	min = getGUICtrls(index).getNumProp("min");
 
 	if(getGUICtrls(index).getStringProp("type")=="xypad")
 		newValue = (jmax(0.f, newValue)*range)+min;
 	else if(getGUICtrls(index).getStringProp("type")=="combobox")//combo box value need to be rounded...
-		newValue = (int)(newValue*range)+min;
+		newValue = (int)(newValue*comboRange);
 	else if(getGUICtrls(index).getStringProp("type")=="checkbox")
 		range=1;
 	else

@@ -108,7 +108,8 @@ public:
  			attributeNames[i].contains("kind") ||
 			attributeNames[i].contains("scaley") ||
 			attributeNames[i].contains("scalex") ||
-			attributeNames[i].contains("sliderrange") ||
+			attributeNames[i].contains("range") ||
+			attributeNames[i].contains("comborange") ||
 			attributeNames[i].contains("basetype") ||
 			attributeNames[i].contains("decimalplaces")){
 			comps[i]->setPreferredHeight(0);

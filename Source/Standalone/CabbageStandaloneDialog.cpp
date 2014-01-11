@@ -698,7 +698,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 //when buiding for inclusion with the Windows Csound installer comment out
 //this section
 #ifndef LINUX
-		if(!getPreference(appProperties, "Using Cabbage-Csound"))
+		if(!getPreference(appProperties, "UsingCabbageCsound"))
 		subMenu.addItem(206, String("Using Cabbage-Csound"), true, false);
 		else
 		subMenu.addItem(206, String("Using Cabbage-Csound"), true, true);
@@ -945,9 +945,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	//--------using Cabbage-Csound
 	else if(options==206){
 		String homeFolder = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName();
-		int val = getPreference(appProperties, "Using Cabbage-Csound");
+		//showMessage(homeFolder);
+		int val = getPreference(appProperties, "UsingCabbageCsound");
 		if(val==0){ 
-			setPreference(appProperties, "Using Cabbage-Csoun", 1);
+			setPreference(appProperties, "UsingCabbageCsound", 1);
 			String homeFolder = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName();
 			String pluginFolder = homeFolder+"\\Disabled_CsoundPlugins";
 			String csoundDLL = homeFolder+"\\Disabled_csound64.dll";
@@ -957,13 +958,13 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 				showMessage("Could not find Csound library dll?", &getLookAndFeel());			
 		}
 		else{
-			setPreference(appProperties, "Using Cabbage-Csound", 0);
+			setPreference(appProperties, "UsingCabbageCsound", 0);
 			String pluginFolder = homeFolder+"\\CsoundPlugins";
 			String csoundDLL = homeFolder+"\\csound64.dll";
 			if(!File(pluginFolder).moveFileTo(File(homeFolder+"\\Disabled_CsoundPlugins")))
-				showMessage("Could not find Csound plugins folder?", &getLookAndFeel());
+				showMessage("Could not find Disable_CsoundPlugins folder?", &getLookAndFeel());
 			if(!File(csoundDLL).moveFileTo(File(homeFolder+"\\Disabled_csound64.dll")))
-				showMessage("Could not find Csound library dll?", &getLookAndFeel());
+				showMessage("Could not find Disabled_Csound64.dll?", &getLookAndFeel());
 			
 		}
 	}	

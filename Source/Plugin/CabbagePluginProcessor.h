@@ -40,7 +40,7 @@
 //#include "../Editor/CabbageEditorWindow.h"
 //#endif
 
-#define CABBAGE_VERSION "Cabbage v0.5.01 Alpha"
+#define CABBAGE_VERSION "Cabbage v0.5.02 Alpha"
 
 #define AUDIO_PLUGIN 1
 #define EXTERNAL_PLUGIN 2
@@ -288,6 +288,8 @@ public:
 			_putenv(env.toUTF8().getAddress());
 			//showMessage(getenv("OPCODE6DIR64"));
 			}
+			else
+				showMessage("can't find opcode plugins");
 		#endif
 		}
 		

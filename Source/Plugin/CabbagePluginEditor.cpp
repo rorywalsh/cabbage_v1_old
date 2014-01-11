@@ -2304,6 +2304,7 @@ if(!getFilter()->isGuiEnabled()){
                                 //toggle button values
                                 if(getFilter()->getGUICtrls(i).getNumProp("value")==0){
 									getFilter()->setParameterNotifyingHost(i, 1.f);
+									getFilter()->setParameter(i, 1.f);
 									//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), 1.f);
 									getFilter()->getGUICtrls(i).setNumProp("value", 1);
 									}
@@ -2311,6 +2312,7 @@ if(!getFilter()->isGuiEnabled()){
 									getFilter()->setParameterNotifyingHost(i, 0.f);
 									//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), 0.f);
 									getFilter()->getGUICtrls(i).setNumProp("value", 0);
+									getFilter()->setParameter(i, 0.f);
 									}
                                 //toggle text values
                                 if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1)==button->getButtonText())
@@ -2344,12 +2346,14 @@ if(!getFilter()->isGuiEnabled()){
 
                                 if(button->getToggleState()){
                                         button->setToggleState(true, dontSendNotification);
+										getFilter()->setParameter(i, 1.f);
 										getFilter()->setParameterNotifyingHost(i, 1.f);
 										//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), 1.f);
 										getFilter()->getGUICtrls(i).setNumProp("value", 1);
                                 }
                                 else{
                                         button->setToggleState(false, dontSendNotification);
+										getFilter()->setParameter(i, 0.f);
 										getFilter()->setParameterNotifyingHost(i, 0.f);
 										//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), 0.f);
 										getFilter()->getGUICtrls(i).setNumProp("value", 0);

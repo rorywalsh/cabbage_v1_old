@@ -946,6 +946,8 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
 		newValue = (jmax(0.f, newValue)*range)+min;
 	else if(getGUICtrls(index).getStringProp("type")=="combobox")//combo box value need to be rounded...
 		newValue = (int)(newValue*range)+min;
+	else if(getGUICtrls(index).getStringProp("type")=="checkbox")
+		range=1;
 	else
 		newValue = (newValue*range)+min;
 

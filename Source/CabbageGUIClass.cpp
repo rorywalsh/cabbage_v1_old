@@ -1156,7 +1156,7 @@ int CabbageGUIClass::parse(String inStr)
 					//	value.append(strTokens[i].trim());
 					//	i++;
 					//	}
-					comboRange = i;
+					comboRange = i+1;
 					}
 					//Logger::writeToLog(String(value.size())+typeOfWidget);
 					if((value.size()==1) && (typeOfWidget=="button")){

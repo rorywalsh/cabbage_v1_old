@@ -958,7 +958,7 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
 	guiCtrls.getReference(index).setNumProp("value", newValue);
 	messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp("channel").toUTF8(),  newValue,
 	guiCtrls.getReference(index).getStringProp("type"));
-	//Logger::writeToLog(String("parameterSet:"+String(newValue)));
+	Logger::writeToLog(String("parameterSet:"+String(newValue)));
 	#else
 	//no need to scale here when in standalone mode
 	guiCtrls.getReference(index).setNumProp("value", newValue);

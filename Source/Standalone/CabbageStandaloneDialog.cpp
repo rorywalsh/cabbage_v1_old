@@ -224,7 +224,8 @@ void StandaloneFilterWindow::timerCallback()
 	
 
 	if(outputConsole)
-		outputConsole->setText(filter->getCsoundOutput());	
+		if(outputConsole->getText()!=filter->getCsoundOutput())
+			outputConsole->setText(filter->getCsoundOutput());	
 		
 //	updateEditorOutputConsole=false;
 //	}

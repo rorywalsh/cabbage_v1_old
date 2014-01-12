@@ -65,6 +65,10 @@ public:
 		textEditor->setText(text);
 		textEditor->setCaretPosition(textEditor->getText().length());
 	}
+
+	String getText(){
+		return textEditor->getText();
+	}
 };  
 
 //==============================================================================

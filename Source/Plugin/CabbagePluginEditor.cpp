@@ -3086,7 +3086,8 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
         CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(comps[i]);
 		if(cabSlider){
 		#ifndef Cabbage_Build_Standalone
-                float val = getFilter()->getGUICtrls(i).getNumProp("range")*getFilter()->getParameter(i);
+                float val = (getFilter()->getGUICtrls(i).getNumProp("range")*getFilter()->getParameter(i))+
+											getFilter()->getGUICtrls(i).getNumProp("min");
                 cabSlider->slider->setValue(val, dontSendNotification);
 				incomingValues.set(i, val);
 				
@@ -3127,6 +3128,7 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
         //no automation for comboboxes, still problematic! 
         else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("combobox")){
         //if(comps[i])
+		/*
 		#ifdef Cabbage_Build_Standalone
                 ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)getFilter()->getParameter(i), false);
 		#else
@@ -3135,6 +3137,7 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
                 ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex(int(val), dontSendNotification);
 				incomingValues.set(i, val);
 		#endif
+		 */
         }
 
         else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("checkbox")){

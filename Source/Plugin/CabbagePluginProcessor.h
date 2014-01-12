@@ -288,8 +288,6 @@ public:
 			_putenv(env.toUTF8().getAddress());
 			//showMessage(getenv("OPCODE6DIR64"));
 			}
-			else
-				showMessage("can't find opcode plugins");
 		#endif
 		}
 		

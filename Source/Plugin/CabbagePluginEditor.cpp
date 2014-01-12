@@ -3126,7 +3126,7 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
         //no automation for comboboxes, still problematic! 
         else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("combobox")){
 		#ifdef Cabbage_Build_Standalone
-                ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)getFilter()->getParameter(i), false);
+                ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)getFilter()->getParameter(i)-1, dontSendNotification);
 		#else
                 //Logger::writeToLog(String("timerCallback():")+String(getFilter()->getParameter(i)));
                 float val = getFilter()->getGUICtrls(i).getNumProp("comborange")*getFilter()->getParameter(i);

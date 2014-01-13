@@ -820,6 +820,7 @@ subm.addItem(11, "label");
 //subm.addItem(12, "infobutton");
 //subm.addItem(13, "soundfiler");
 subm.addItem(14, "table");
+subm.addItem(15, "Csound message console");
 m.addSubMenu(String("Indigenous"), subm);
 subm.clear();
 
@@ -859,6 +860,8 @@ int choice = m.show();
 			 insertComponentsFromCabbageText(StringArray(String("soundfiler bounds(")+String(x)+(", ")+String(y)+String(", 360, 160)")), false);
 	 else if(choice==14)
 			 insertComponentsFromCabbageText(StringArray(String("table bounds(")+String(x)+(", ")+String(y)+String(", 260, 160)")), false);
+	 else if(choice==15)
+			 insertComponentsFromCabbageText(StringArray(String("csoundoutput bounds(")+String(x)+(", ")+String(y)+String(", 360, 200)")), false);
 
 
 	 else if(choice>=100){

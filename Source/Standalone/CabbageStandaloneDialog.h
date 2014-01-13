@@ -125,6 +125,7 @@ public:
 	}
 
 private:
+	AudioDeviceManager::AudioDeviceSetup audioDeviceSetup;
 	bool updateEditorOutputConsole;
 	Time lastSaveTime;
 	void openTextEditor();

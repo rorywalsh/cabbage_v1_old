@@ -565,8 +565,10 @@ void CodeWindow::actionListenerCallback(const String &message){
 		toggleTextWindows();
 	//else if(message=="pythonFocus")
 	//	pythonEditor->textEditor->grabKeyboardFocus();
-	else if(message=="make popup invisible")
+	else if(message=="make popup invisible"){
+		popupDisplay->setTopLeftPosition(1000, 1000);
 		popupDisplay->setVisible(false);
+	}
 	else if(message=="sendPythonEvent"){
 	/*	String text = pythonEditor->textEditor->getSelectedText();
 		String event = "pyruni {{\n";

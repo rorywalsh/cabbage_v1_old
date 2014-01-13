@@ -90,9 +90,12 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
     PropertySet* const globalSettings = getGlobalSettings();
 
+
+
     deviceManager = new AudioDeviceManager();
 	deviceManager->addAudioCallback (&player);
 	deviceManager->addMidiInputCallback (String::empty, &player);
+
 
 	ScopedPointer<XmlElement> savedState;
 	if (globalSettings != nullptr)
@@ -395,12 +398,16 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 //first we check that the audio device is up and running ok
 stopTimer();
 filter->suspendProcessing(true);
+
+
+
+
 if(shouldResetFilter){
 	deleteFilter();
 	deviceManager->closeAudioDevice();
 	filter = createCabbagePluginFilter(csdFile.getFullPathName(), false, AUDIO_PLUGIN);	
 	filter->addChangeListener(this);
-	filter->addActionListener(this);
+	filter->addActionListener(this);	
 }
 else{
 filter->reCompileCsound(csdFile);	
@@ -413,11 +420,13 @@ filter->reCompileCsound(csdFile);
 	int runningCabbageProcess = getPreference(appProperties, "UseCabbageIO");
     
 	setContentOwned (filter->createEditorIfNeeded(), true);
+
     if(runningCabbageProcess){
 		if (filter != nullptr)
 		{
 			if (deviceManager != nullptr){
 				player.setProcessor (filter);
+				//deviceManager->setAudioDeviceSetup(audioDeviceSetup, true);
 				deviceManager->restartLastAudioDevice();
 			}
 		}
@@ -426,6 +435,8 @@ filter->reCompileCsound(csdFile);
 	else{
 		filter->performEntireScore();
 	}
+
+
 
 
     PropertySet* const globalSettings = getGlobalSettings();

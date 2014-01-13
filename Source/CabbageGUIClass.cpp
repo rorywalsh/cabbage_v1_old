@@ -621,6 +621,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set("top", 10);
 		cabbageIdentifiers.set("left", 10);
 		cabbageIdentifiers.set("width", 400);
+		cabbageIdentifiers.set("text", "Csound output");
 		cabbageIdentifiers.set("height", 200);	
 		cabbageIdentifiers.set("colour", Colours::white.toString());
 		cabbageIdentifiers.set("name", "csoundoutput");

@@ -89,7 +89,7 @@ section "install"
 sectionEnd
  
 # Uninstaller
- 
+   
 function un.onInit
 	SetShellVarContext all
  

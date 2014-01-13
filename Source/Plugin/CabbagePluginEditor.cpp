@@ -2147,7 +2147,7 @@ void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
         ((CabbageButton*)comps[idx])->button->addListener(this);
         //((CabbageButton*)comps[idx])->button->setName("button");
         //if(cAttr.getItemsSize()>0)
-        //((CabbageButton*)comps[idx])->button->setButtonText(cAttr.getItems(cAttr.getNumProp("value")));
+        ((CabbageButton*)comps[idx])->button->setButtonText(cAttr.getStringArrayPropValue("text", cAttr.getNumProp("value")));
 #ifdef Cabbage_Build_Standalone
         ((CabbageButton*)comps[idx])->button->setWantsKeyboardFocus(true);
 #endif

@@ -98,8 +98,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	if (globalSettings != nullptr)
     savedState = globalSettings->getXmlValue ("audioSetup");
 
-    deviceManager->initialise (filter->getNumInputChannels(),
-                               filter->getNumOutputChannels(), 0, false);
+    deviceManager->initialise(filter->getNumInputChannels(),
+                               filter->getNumOutputChannels(), savedState, false);
 	//deviceManager->closeAudioDevice();
 	filter->suspendProcessing(true);
 

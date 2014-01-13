@@ -1,3 +1,21 @@
+v0.5.02
+Fixes/Mod/Additions:
+- Added Windows installer
+- Fixed 'use last known audio device' problem
+- Fixed strange window behaviour in Linux
+- Added temp fix for combobox, removed automation..will dig deeper soon
+- Fixed output console window so that users can copy output, 
+- Fixed problem with negative slider ranges in plugin mode
+- Fixed checkbox bug for plugins
+- Update opcodedir trick for windows 
+- Updated linux synth makefile
+- Fixed issues with spaces and tabs in identifiers
+- Fixed small problem with channels 
+- Updated examples menus so they only show csds
+- Fixed checkbox colour issue
+- Fixed auto-update issue
+- Fixed xypad labels
+
 v0.5.01
 
 Fixes:

@@ -70,7 +70,7 @@ basicLookAndFeel = new CabbageLookAndFeelBasic();
 #ifdef Cabbage_Build_Standalone
 propsWindow->setAlwaysOnTop(true);
 propsWindow->setVisible(false);
-propsWindow->centreWithSize(500,400);
+propsWindow->centreWithSize(5,5);
 propsWindow->addActionListener(this);
 propsWindow->setLookAndFeel(basicLookAndFeel);
 propsWindow->setTitleBarHeight(20);

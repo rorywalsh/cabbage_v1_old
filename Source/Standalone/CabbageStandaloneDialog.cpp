@@ -698,7 +698,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		subMenu.addItem(204, String("Use Cabbage IO"), true, true);
 //when buiding for inclusion with the Windows Csound installer comment out
 //this section
-#ifndef LINUX
+#if !defined(LINUX) && !defined(MACOSX)
 		if(!getPreference(appProperties, "UsingCabbageCsound"))
 		subMenu.addItem(206, String("Using Cabbage-Csound"), true, false);
 		else
@@ -1251,7 +1251,7 @@ if(!csdFile.exists()){
 	
 #if MACOSX
 	
-	FileChooser saveFC(String("Save as..."), File::nonexistent, String(".vst"));
+	FileChooser saveFC(String("Save as..."), File::nonexistent, String("*.vst"));
 	String VST;
 	if (saveFC.browseForFileToSave(true)){
 		//showMessage("name of file is:");

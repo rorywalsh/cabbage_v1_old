@@ -394,6 +394,7 @@ if(csCompileResult==0){
         //simple hack to allow tables to be set up correctly.
 		keyboardState.allNotesOff(0);
 		keyboardState.reset();
+		csndIndex = 0;
         CSspout = csound->GetSpout();
         CSspin  = csound->GetSpin();
         csound->PerformKsmps();
@@ -1297,7 +1298,7 @@ if(!isSuspended() && !isGuiEnabled()){
 
 				CSCompResult = csound->PerformKsmps();
 				if(CSCompResult!=0)
-					suspendProcessing(true);
+					suspendProcessing(true);	
 				getCallbackLock().exit();
 				csndIndex = 0;
 			}

@@ -1169,6 +1169,9 @@ void CabbagePluginAudioProcessor::setGuiEnabled(bool val){
 	CabbagePluginAudioProcessorEditor* editor = dynamic_cast< CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
 	if(editor){
 	if(val==false){
+		int val = getPreference(appProperties, "ExternalEditor");
+		if(val)
+		csdFile.replaceWithText(codeEditor->getAllText());
 		//editor->resizer->setVisible(false);
 		//editor->propsWindow->setVisible(false);
 	}

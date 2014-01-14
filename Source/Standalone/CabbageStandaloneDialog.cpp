@@ -134,7 +134,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     else
 		centreWithSize (getWidth(), getHeight());
 		
-	setPreference(appProperties, "AutoUpdate",0);
+	//setPreference(appProperties, "ExternalEditor",0);
 	
 	//create editor but don't display it yet...
 	cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
@@ -207,7 +207,7 @@ StandaloneFilterWindow::~StandaloneFilterWindow()
 void StandaloneFilterWindow::timerCallback()
 {   
 
-	if(getPreference(appProperties, "AutoUpdate")){
+	if(getPreference(appProperties, "ExternalEditor")){
 		int64 diskTime = csdFile.getLastModificationTime().toMilliseconds();
 		int64 tempTime = lastSaveTime.toMilliseconds();
 		if(diskTime>tempTime){
@@ -331,8 +331,9 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message){
 			else{
 			((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(true);
 			filter->setGuiEnabled(true);
-			stopTimer();
-			setPreference(appProperties, "AutoUpdate", 0);
+			
+			//stopTimer();
+			//setPreference(appProperties, "ExternalEditor", 0);
 			}
 		}		
 	}
@@ -687,10 +688,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		subMenu.addItem(201, String("Disable Export Plugin Info"), true, true);
 
 
-		if(!getPreference(appProperties, "AutoUpdate"))
-		subMenu.addItem(299, String("Auto-update"), true, false);
+		if(!getPreference(appProperties, "ExternalEditor"))
+		subMenu.addItem(299, String("Use external editor"), true, false);
 		else
-		subMenu.addItem(299, String("Auto-update"), true, true);
+		subMenu.addItem(299, String("Use external editor"), true, true);
 
 		if(!getPreference(appProperties, "DisableGUIEditModeWarning"))
 		subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, true);
@@ -906,13 +907,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
 	//----- auto-update file when saved remotely ------
 	else if(options==299){
-		int val = getPreference(appProperties, "AutoUpdate");
-		if(val==0){
-			setPreference(appProperties, "AutoUpdate", 1);
+		if(getPreference(appProperties, "ExternalEditor")==0){
+			setPreference(appProperties, "ExternalEditor", 1);
 			startTimer(100);	
 			}
 		else{
-			setPreference(appProperties, "AutoUpdate", 0);
+			setPreference(appProperties, "ExternalEditor", 0);
 			stopTimer();
 		}
 		}
@@ -947,8 +947,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	}
 	//--------preference Csound IO
 	else if(options==204){
-		int val = getPreference(appProperties, "UseCabbageIO");
-		if(val==0) 
+		if(getPreference(appProperties, "UseCabbageIO")==0) 
 			setPreference(appProperties, "UseCabbageIO", 1);
 		else
 			setPreference(appProperties, "UseCabbageIO", 0);
@@ -958,8 +957,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	else if(options==206){
 		String homeFolder = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName();
 		//showMessage(homeFolder);
-		int val = getPreference(appProperties, "UsingCabbageCsound");
-		if(val==0){ 
+		if(getPreference(appProperties, "UsingCabbageCsound")==0){ 
 			setPreference(appProperties, "UsingCabbageCsound", 1);
 			String homeFolder = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName();
 			String pluginFolder = homeFolder+"\\Disabled_CsoundPlugins";
@@ -992,8 +990,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	
 	//------- preference plugin info ------
 	else if(options==201){
-		int val = getPreference(appProperties, "DisablePluginInfo");
-		if(val==0)
+		if(getPreference(appProperties, "DisablePluginInfo")==0)
 			appProperties->getUserSettings()->setValue("DisablePluginInfo", var(1));
 		else
 			appProperties->getUserSettings()->setValue("DisablePluginInfo", var(0));
@@ -1001,8 +998,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	
 	//------- preference popup display ------
 	else if(options==207){
-		int val = getPreference(appProperties, "EnablePopupDisplay");
-		if(val==0)
+		if(getPreference(appProperties, "EnablePopupDisplay")==0)
 			appProperties->getUserSettings()->setValue("EnablePopupDisplay", var(1));
 		else
 			appProperties->getUserSettings()->setValue("EnablePopupDisplay", var(0));
@@ -1010,18 +1006,17 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	
 	//------- preference disable gui edit warning ------
 	else if(options==202){
-		int val = getPreference(appProperties, "DisableGUIEditModeWarning");
-		if(val==0) 
+		if(getPreference(appProperties, "DisableGUIEditModeWarning")==0) 
 			setPreference(appProperties, "DisableGUIEditModeWarning", 1);
 		else
 			setPreference(appProperties, "DisableGUIEditModeWarning", 0);
 	}
 	//------- enable GUI edito mode------
 	else if(options==100){
-		int val = getPreference(appProperties, "DisableGUIEditModeWarning");
-		if(val)
+		if(getPreference(appProperties, "DisableGUIEditModeWarning"))
 			showMessage("", "Warning!! This feature is bleeding edge! (that's programmer speak for totally untested and likely to crash hard!). If you like to live on the edge, disable this warning under the 'Preferences' menu command and try 'Edit Mode' again, otherwise just let it be...", lookAndFeel);
 		else{
+			if(getPreference(appProperties, "ExternalEditor")==0)
 			openTextEditor();
 	if(isAFileOpen == true)
 		if(filter->isGuiEnabled()){
@@ -1033,7 +1028,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(true);
 		filter->setGuiEnabled(true);
 		stopTimer();
-		setPreference(appProperties, "AutoUpdate", 0);
+		//setPreference(appProperties, "ExternalEditor", 0);
 		}
 	else showMessage("", "Open or create a file first", &getLookAndFeel(), this);
 		}

@@ -70,7 +70,7 @@ void CsoundCodeEditor::addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEve
 	int repoIndex = 100;
 	ScopedPointer<XmlElement> xmlElement;
 	xmlElement = appProperties->getUserSettings()->getXmlValue("CopeRepoXmlData");
-
+	if(xmlElement)
 	forEachXmlChildElement (*xmlElement, e)
 		{
 		m.addItem(repoIndex, e->getTagName());

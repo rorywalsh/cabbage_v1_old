@@ -94,11 +94,10 @@ void CsoundCodeEditor::handleTabKey(String direction)
 	 * formatting
 	 */
 	 
-	StringArray selectedText;
+	StringArray selectedText, csdArray;
 	selectedText.addLines(getSelectedText());
-	StringArray csdArray;
-	StringArray newTextArray;
 	csdArray.addLines(getAllText());
+	String csdText;
 	String currentLine;	
 
 	if(direction.equalsIgnoreCase("forwards")){
@@ -109,43 +108,44 @@ void CsoundCodeEditor::handleTabKey(String direction)
 		}
 		else{ 
 		//multiline tab
-		for(int i=0;i<csdArray.size();i++)
-			for(int y=0;y<selectedText.size();y++)
-				if(selectedText[y]==csdArray[i]){
-						csdArray.set(i, "\t"+selectedText[y]);	
-						Logger::writeToLog(String(y));
-						newTextArray.add(csdArray[i]);
-				}
+		int indexOfText = getAllText().indexOf(getSelectedText());
+		csdText = getAllText().replace(getSelectedText(), "");
+		for(int i=0;i<selectedText.size();i++)
+						selectedText.set(i, "\t"+selectedText[i]);	
+
+		csdText = csdText.replaceSection(indexOfText, 0, selectedText.joinIntoString("\n"));
 		}
+		
 	}
-	
 	else if(direction.equalsIgnoreCase("backwards"))
 	//single line back tab
 	if(selectedText.size()<1){
 		pos1 = getCaretPos();
 		//Logger::writeToLog(csdArray[pos1.getLineNumber()]);
 		currentLine = csdArray[pos1.getLineNumber()];
-		if(csdArray[pos1.getLineNumber()].contains("\t"))
+		if(csdArray[pos1.getLineNumber()].contains("\t")){
 			csdArray.set(pos1.getLineNumber(), currentLine.substring(1));
+			csdText = csdArray.joinIntoString("\n");
+		}
+		else
+			return;
 	}
 	//multiline back tab
-	else{
-		for(int i=0;i<csdArray.size();i++)
-			for(int y=0;y<selectedText.size();y++)
-				if(selectedText[y]==csdArray[i]){					
-					if(selectedText[y].substring(0, 1).equalsIgnoreCase("\t"))
-						csdArray.set(i, selectedText[y].substring(1));
-					else
-						csdArray.set(i, selectedText[y]);
-					newTextArray.add(csdArray[i]);
-					}
-				
-	}
+		else{ 
+		//multiline tab
+		int indexOfText = getAllText().indexOf(getSelectedText());
+		csdText = getAllText().replace(getSelectedText(), "");
+		for(int i=0;i<selectedText.size();i++)
+			if(selectedText[i].substring(0, 1).equalsIgnoreCase("\t"))
+						selectedText.set(i, selectedText[i].substring(1));	
 
-	Logger::writeToLog(newTextArray.joinIntoString("\n"));
-	setAllText(csdArray.joinIntoString("\n"));	
-	if(newTextArray.size()>0)
-		highlightLine(newTextArray.joinIntoString("\n"));
+		csdText = csdText.replaceSection(indexOfText, 0, selectedText.joinIntoString("\n"));
+		}
+
+	//Logger::writeToLog(newTextArray.joinIntoString("\n"));
+	setAllText(csdText);	
+	if(selectedText.size()>0)
+		highlightLine(selectedText.joinIntoString("\n"));
 	else
 		moveCaretTo(CodeDocument::Position (getDocument(), getAllText().indexOf(currentLine.substring(1))), false);
 

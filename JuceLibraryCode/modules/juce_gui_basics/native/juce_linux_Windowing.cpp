@@ -1364,7 +1364,10 @@ public:
         const ModifierKeys oldMods (currentModifiers);
         bool keyPressed = false;
 
-        if ((sym & 0xff00) == 0xff00)
+
+
+
+        if ((sym & 0xff00) == 0xff00 || sym==XK_ISO_Left_Tab)
         {
             switch (sym)  // Translate keypad
             {
@@ -1410,11 +1413,11 @@ public:
                 case XK_End:
                 case XK_Home:
                 case XK_Delete:
+				case XK_ISO_Left_Tab:
                 case XK_Insert:
                     keyPressed = true;
                     keyCode = (keyCode & 0xff) | Keys::extendedKeyModifier;
                     break;
-
                 case XK_Tab:
                 case XK_Return:
                 case XK_Escape:
@@ -1424,6 +1427,7 @@ public:
                     break;
 
                 default:
+
                     if (sym >= XK_F1 && sym <= XK_F16)
                     {
                         keyPressed = true;
@@ -3467,6 +3471,7 @@ const int KeyPress::endKey                  = (XK_End & 0xff) | Keys::extendedKe
 const int KeyPress::homeKey                 = (XK_Home & 0xff) | Keys::extendedKeyModifier;
 const int KeyPress::insertKey               = (XK_Insert & 0xff) | Keys::extendedKeyModifier;
 const int KeyPress::deleteKey               = (XK_Delete & 0xff) | Keys::extendedKeyModifier;
+const int KeyPress::tabLeft                 = (XK_ISO_Left_Tab & 0xff) | Keys::extendedKeyModifier;
 const int KeyPress::tabKey                  = XK_Tab & 0xff;
 const int KeyPress::F1Key                   = (XK_F1 & 0xff) | Keys::extendedKeyModifier;
 const int KeyPress::F2Key                   = (XK_F2 & 0xff) | Keys::extendedKeyModifier;

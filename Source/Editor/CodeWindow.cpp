@@ -154,8 +154,8 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		result.setInfo (String("Paste"), String("Paste selection"), CommandCategories::edit, 0);
 		result.addDefaultKeypress ('v', ModifierKeys::commandModifier);
 		break;
-	case CommandIDs::editToggleText:
-		result.setInfo (String("Toggle output"), String("Toggle output"), CommandCategories::edit, 0);
+	case CommandIDs::editToggleComments:
+		result.setInfo (String("Toggle comments"), String("Toggle comments"), CommandCategories::edit, 0);
 		result.addDefaultKeypress ('t', ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::editZoomIn:
@@ -274,7 +274,7 @@ else if(topLevelMenuIndex==1)
 	m1.addCommandItem(&commandManager, CommandIDs::editCut);
 	m1.addCommandItem(&commandManager, CommandIDs::editCopy);
 	m1.addCommandItem(&commandManager, CommandIDs::editPaste);
-	m1.addCommandItem(&commandManager, CommandIDs::editToggleText);
+	m1.addCommandItem(&commandManager, CommandIDs::editToggleComments);
 	m1.addSeparator();
 	m2.addCommandItem(&commandManager, CommandIDs::editZoomIn);
 	m2.addCommandItem(&commandManager, CommandIDs::editZoomOut);
@@ -386,9 +386,9 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		{			
 			textEditor->redo();
 		}
-	else if(info.commandID==CommandIDs::editToggleText)
+	else if(info.commandID==CommandIDs::editToggleComments)
 		{			
-		toggleTextWindows();
+		textEditor->toggleComments();
 		}
 		
 	else if(info.commandID==CommandIDs::editZoomIn)

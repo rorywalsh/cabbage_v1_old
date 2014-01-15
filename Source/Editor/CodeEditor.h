@@ -41,35 +41,12 @@ class CsoundCodeEditor : public CodeEditorComponent,
 			~CsoundCodeEditor();
 
 
-	bool keyPressed (const KeyPress& key){
-	//Logger::writeToLog(key.getTextDescription());
-	if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down") 
-        || key.getTextDescription().contains("cursor left") || key.getTextDescription().contains("cursor right"))  
-	handleEscapeKey();
+	bool keyPressed (const KeyPress& key);
+	void handleTabKey();
+	void toggleComments();
 
-	if (! TextEditorKeyMapper<CodeEditorComponent>::invokeKeyFunction (*this, key))
-    {
-			
-        if (key == KeyPress::returnKey)
-			handleReturnKey();                               
-			
-        else if (key == KeyPress::escapeKey)                                
-			handleEscapeKey();
-        //else if (key == KeyPress ('[', ModifierKeys::commandModifier, 0))   unindentSelection();
-        //else if (key == KeyPress (']', ModifierKeys::commandModifier, 0))   indentSelection();
-        else if (key.getTextCharacter() >= ' ')                             
-			insertTextAtCaret (String::charToString (key.getTextCharacter()));
-        else                                                                
-		return false;
-    }
 
-    //handleUpdateNowIfNeeded();
-    return true;
-	}
-
-	void handleDirectionKey(){
-		
-	}
+	void handleDirectionKey(){}
 
 	void handleEscapeKey(){
 	if(type=="python")

@@ -65,7 +65,7 @@ public:
 									CommandIDs::editCut,
 									CommandIDs::editPaste,
 									CommandIDs::editRedo,
-									CommandIDs::editToggleText,
+									CommandIDs::editToggleComments,
 									CommandIDs::editZoomIn,
 									CommandIDs::editZoomOut,
 									CommandIDs::whiteBackground,

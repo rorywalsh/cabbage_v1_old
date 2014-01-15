@@ -55,6 +55,63 @@ void CsoundCodeEditor::highlightLine(String line){
 		//setHighlightedRegion(range);
 }
 
+bool CsoundCodeEditor::keyPressed (const KeyPress& key)
+{
+	//Logger::writeToLog(key.getTextDescription());
+	if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down") 
+        || key.getTextDescription().contains("cursor left") || key.getTextDescription().contains("cursor right"))  
+	handleEscapeKey();
+
+	if (! TextEditorKeyMapper<CodeEditorComponent>::invokeKeyFunction (*this, key))
+    {
+			
+        if (key == KeyPress::returnKey)
+			handleReturnKey();                               
+			
+        else if (key == KeyPress::escapeKey)                                
+			handleEscapeKey();
+        //else if (key == KeyPress ('[', ModifierKeys::commandModifier, 0))   unindentSelection();
+        //else if (key == KeyPress (']', ModifierKeys::commandModifier, 0))   indentSelection();
+        else if (key.getTextCharacter() >= ' ')                             
+			insertTextAtCaret (String::charToString (key.getTextCharacter()));
+		else if(key == KeyPress::tabKey)
+			handleTabKey();
+        else                                                                
+		return false;
+    }
+    //handleUpdateNowIfNeeded();
+    return true;
+}
+
+void CsoundCodeEditor::handleTabKey()
+{	
+	insertTabAtCaret();
+}
+
+void CsoundCodeEditor::toggleComments()
+{
+StringArray selectedText;
+selectedText.addLines(getSelectedText());
+StringArray csdArray;
+csdArray.addLines(this->getAllText());
+String lastLine;
+
+for(int i=0;i<csdArray.size();i++)
+	for(int y=0;y<selectedText.size();y++)
+		if(selectedText[y]==csdArray[i]){
+			if(!csdArray[i].equalsIgnoreCase("")){
+				if(selectedText[y].substring(0, 1).equalsIgnoreCase(";"))
+				csdArray.set(i, selectedText[y].substring(1));
+				else
+				csdArray.set(i, ";"+selectedText[y]);	
+				lastLine = selectedText[y].substring(1);
+			}
+		}
+		
+this->setAllText(csdArray.joinIntoString("\n"));
+moveCaretTo(CodeDocument::Position (getDocument(), getAllText().indexOf(lastLine)+lastLine.length()), false);
+}
+
 void CsoundCodeEditor::addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEvent *mouseClickEvent){
 	menuToAddTo.addItem(1, "Cut");
 	menuToAddTo.addItem(1, "Copy");

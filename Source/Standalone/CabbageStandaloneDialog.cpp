@@ -757,6 +757,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	}
 	//----- view text editor ------
 	else if(options==2){
+		if(!getPreference(appProperties, "ExternalEditor")){
 		if(csdFile.getFileName().length()>0){
 			if(!cabbageCsoundEditor){
 			cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
@@ -790,6 +791,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 			}
 		}
 		else showMessage("Please open or create a file first", lookAndFeel);
+		}
+		else
+			showMessage("Please disable \'Use external editor\' from preferences first", lookAndFeel);
 	}
 	//-------Csound output console-----
 	else if(options==3){

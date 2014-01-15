@@ -956,7 +956,6 @@ void CabbageTableManager::mouseDown (const MouseEvent& e)
 {	
 	if(e.mods.isRightButtonDown())
 		{
-		
 		PopupMenu pop, subMenu1, subMenu2;
 		pop.setLookAndFeel(&getTopLevelComponent()->getLookAndFeel());
 		subMenu1.setLookAndFeel(&getTopLevelComponent()->getLookAndFeel());

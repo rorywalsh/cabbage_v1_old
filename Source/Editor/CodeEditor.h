@@ -42,7 +42,7 @@ class CsoundCodeEditor : public CodeEditorComponent,
 
 
 	bool keyPressed (const KeyPress& key);
-	void handleTabKey();
+	void handleTabKey(String direction);
 	void toggleComments();
 
 

@@ -57,7 +57,7 @@ void CsoundCodeEditor::highlightLine(String line){
 
 bool CsoundCodeEditor::keyPressed (const KeyPress& key)
 {
-	//Logger::writeToLog(key.getTextDescription());
+	//Logger::writeToLog(String(key.getKeyCode()));	
 	if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down") 
         || key.getTextDescription().contains("cursor left") || key.getTextDescription().contains("cursor right"))  
 	handleEscapeKey();
@@ -74,8 +74,12 @@ bool CsoundCodeEditor::keyPressed (const KeyPress& key)
         //else if (key == KeyPress (']', ModifierKeys::commandModifier, 0))   indentSelection();
         else if (key.getTextCharacter() >= ' ')                             
 			insertTextAtCaret (String::charToString (key.getTextCharacter()));
-		else if(key == KeyPress::tabKey)
-			handleTabKey();
+		else if(key.getKeyCode() ==  268435488)
+			handleTabKey("backwards");
+		else if(key ==  KeyPress::tabKey)
+			handleTabKey("forwards");
+			
+			
         else                                                                
 		return false;
     }
@@ -83,9 +87,69 @@ bool CsoundCodeEditor::keyPressed (const KeyPress& key)
     return true;
 }
 
-void CsoundCodeEditor::handleTabKey()
+void CsoundCodeEditor::handleTabKey(String direction)
 {	
-	insertTabAtCaret();
+	/*multi line action, get highlited text, find the position of
+	 * it within the text editor, remove it from editor and reinsert it with
+	 * formatting
+	 */
+	 
+	StringArray selectedText;
+	selectedText.addLines(getSelectedText());
+	StringArray csdArray;
+	StringArray newTextArray;
+	csdArray.addLines(getAllText());
+	String currentLine;	
+
+	if(direction.equalsIgnoreCase("forwards")){
+		//single line tab
+		if(selectedText.size()<1){
+			insertTabAtCaret();
+			return;
+		}
+		else{ 
+		//multiline tab
+		for(int i=0;i<csdArray.size();i++)
+			for(int y=0;y<selectedText.size();y++)
+				if(selectedText[y]==csdArray[i]){
+						csdArray.set(i, "\t"+selectedText[y]);	
+						Logger::writeToLog(String(y));
+						newTextArray.add(csdArray[i]);
+				}
+		}
+	}
+	
+	else if(direction.equalsIgnoreCase("backwards"))
+	//single line back tab
+	if(selectedText.size()<1){
+		pos1 = getCaretPos();
+		//Logger::writeToLog(csdArray[pos1.getLineNumber()]);
+		currentLine = csdArray[pos1.getLineNumber()];
+		if(csdArray[pos1.getLineNumber()].contains("\t"))
+			csdArray.set(pos1.getLineNumber(), currentLine.substring(1));
+	}
+	//multiline back tab
+	else{
+		for(int i=0;i<csdArray.size();i++)
+			for(int y=0;y<selectedText.size();y++)
+				if(selectedText[y]==csdArray[i]){					
+					if(selectedText[y].substring(0, 1).equalsIgnoreCase("\t"))
+						csdArray.set(i, selectedText[y].substring(1));
+					else
+						csdArray.set(i, selectedText[y]);
+					newTextArray.add(csdArray[i]);
+					}
+				
+	}
+
+	Logger::writeToLog(newTextArray.joinIntoString("\n"));
+	setAllText(csdArray.joinIntoString("\n"));	
+	if(newTextArray.size()>0)
+		highlightLine(newTextArray.joinIntoString("\n"));
+	else
+		moveCaretTo(CodeDocument::Position (getDocument(), getAllText().indexOf(currentLine.substring(1))), false);
+
+	sendActionMessage("make popup invisible");	
 }
 
 void CsoundCodeEditor::toggleComments()

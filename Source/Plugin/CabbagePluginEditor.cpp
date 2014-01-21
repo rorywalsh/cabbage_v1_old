@@ -2318,9 +2318,12 @@ if(!getFilter()->isGuiEnabled()){
 									getFilter()->setParameter(i, 0.f);
 									}
                                 //toggle text values
-                                if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1)==button->getButtonText())
+								for(int o=0;o<getFilter()->getGUICtrls(i).getStringArrayProp("text").size();o++)
+									Logger::writeToLog(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", o));
+									
+                                if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1).equalsIgnoreCase(button->getButtonText()))
                                         button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 0));
-                                else if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 0)==button->getButtonText())
+                                else
                                         button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1));
 								}
 								
@@ -3103,8 +3106,15 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
         else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("button")){
         CabbageButton* cabButton = dynamic_cast<CabbageButton*>(comps[i]);
 		if(cabButton){
-                cabButton->button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1-(int)inValue));
-				incomingValues.set(i, 1-(int)inValue);
+				Logger::writeToLog("Button:"+String(inValue));
+                cabButton->button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1-inValue));
+				incomingValues.set(i, inValue);
+				//if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1).equalsIgnoreCase(cabButton->button->getButtonText()))
+                //       cabButton->button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 0));
+                //else
+                //       cabButton->button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1));
+								
+				
 			}
         }
   

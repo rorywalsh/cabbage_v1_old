@@ -299,7 +299,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		var channels;
 		channels.append("buttonchan");
 		cabbageIdentifiers.set("channel", channels);
-		cabbageIdentifiers.set("value", 1);	
+		cabbageIdentifiers.set("value", 0);	
 		cabbageIdentifiers.set("text", array);
 		cabbageIdentifiers.set("caption", "");
 		cabbageIdentifiers.set("colour", Colours::black.toString());	
@@ -1149,6 +1149,7 @@ int CabbageGUIClass::parse(String inStr)
 			  var value;
 			  for(int i= 0;i<(int)strTokens.size();i++)
 					{
+					Logger::writeToLog(strTokens[i]);
 					String test = strTokens[i]; 
 					items.add(strTokens[i]);	
 					value.append(strTokens[i].trim());

@@ -917,6 +917,9 @@ if(index<(int)guiCtrls.size()){//make sure index isn't out of range
 	float val = (getGUICtrls(index).getNumProp("value")/range)-(min/range);
 	if(getGUICtrls(index).getStringProp("type")=="combobox")
 	return (getGUICtrls(index).getNumProp("value")/getGUICtrls(index).getNumProp("comborange"));
+	else if(getGUICtrls(index).getStringProp("type")=="checkbox" ||
+			getGUICtrls(index).getStringProp("type")=="button")
+	return getGUICtrls(index).getNumProp("value");			
 	else
 	return (getGUICtrls(index).getNumProp("value")/range)-(min/range);
 	#else
@@ -951,7 +954,8 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
 		newValue = (jmax(0.f, newValue)*range)+min;
 	else if(getGUICtrls(index).getStringProp("type")=="combobox")//combo box value need to be rounded...
 		newValue = (newValue*comboRange);
-	else if(getGUICtrls(index).getStringProp("type")=="checkbox")
+	else if(getGUICtrls(index).getStringProp("type")=="checkbox" ||
+			getGUICtrls(index).getStringProp("type")=="button")
 		range=1;
 	else
 		newValue = (newValue*range)+min;
@@ -1165,6 +1169,7 @@ bool CabbagePluginAudioProcessor::producesMidi() const
 }
 
 void CabbagePluginAudioProcessor::setGuiEnabled(bool val){
+#ifdef Cabbage_Build_Standalone
 	guiON = val;
 	CabbagePluginAudioProcessorEditor* editor = dynamic_cast< CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
 	if(editor){
@@ -1179,6 +1184,7 @@ void CabbagePluginAudioProcessor::setGuiEnabled(bool val){
 	//editor->resizer->setVisible(true);
 	}
 	}
+#endif
 }
 
 int CabbagePluginAudioProcessor::getNumPrograms()

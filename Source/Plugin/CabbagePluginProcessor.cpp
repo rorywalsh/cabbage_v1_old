@@ -394,7 +394,7 @@ if(csCompileResult==0){
         //simple hack to allow tables to be set up correctly.
 		keyboardState.allNotesOff(0);
 		keyboardState.reset();
-		csndIndex = 0;
+		//csndIndex = 0;
         CSspout = csound->GetSpout();
         CSspin  = csound->GetSpin();
         csound->PerformKsmps();
@@ -923,7 +923,7 @@ if(index<(int)guiCtrls.size()){//make sure index isn't out of range
 	else
 	return (getGUICtrls(index).getNumProp("value")/range)-(min/range);
 	#else
-	return getGUICtrls(index).getNumProp("value");
+	return guiCtrls[index].getNumProp("value");
 	#endif
 	}
 else
@@ -989,6 +989,7 @@ MYFLT* val=0;
 for(int index=0;index<getGUICtrlsSize();index++)
 	{
 	float value = csound->GetChannel(guiCtrls[index].getStringProp("channel").toUTF8());
+	Logger::writeToLog(String(value));
     guiCtrls[index].setNumProp("value", value);
 	}
 

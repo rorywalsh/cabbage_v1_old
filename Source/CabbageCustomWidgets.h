@@ -608,7 +608,6 @@ CabbageXYController(XYPadAutomation* xyAuto,
 	caption="";
 	groupbox = new GroupComponent(String("groupbox_")+name);
 	groupbox->setWantsKeyboardFocus(false);
-	CabbageUtils::showMessage(text);
 	xypad = new XYPad(xyAuto, text, minX, maxX, minY, maxY, dec, Colour::fromString(colour), Colour::fromString(fontcolour), xValue, yValue);
 	xypad->setWantsKeyboardFocus(false);
 	addAndMakeVisible(xypad);

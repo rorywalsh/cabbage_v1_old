@@ -3084,6 +3084,7 @@ for(int y=0;y<getFilter()->getXYAutomaterSize();y++){
 for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 	{
 	//only update controls if their value has changed...
+	//Logger::writeToLog(String(getFilter()->getParameter(i)));
     if(incomingValues[i]!=getFilter()->getParameter(i))
 		{    
 		inValue = getFilter()->getParameter(i);
@@ -3100,7 +3101,7 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 				incomingValues.set(i, val);
 				
 		#else
-		Logger::writeToLog(String(inValue));
+		//Logger::writeToLog(String(inValue));
 		cabSlider->slider->setValue(inValue, sendNotification);
 		incomingValues.set(i, inValue);		
 		#endif

@@ -394,7 +394,7 @@ if(csCompileResult==0){
         //simple hack to allow tables to be set up correctly.
 		keyboardState.allNotesOff(0);
 		keyboardState.reset();
-		//csndIndex = 0;
+		csndIndex = 0;
         CSspout = csound->GetSpout();
         CSspin  = csound->GetSpin();
         csound->PerformKsmps();
@@ -923,6 +923,7 @@ if(index<(int)guiCtrls.size()){//make sure index isn't out of range
 	else
 	return (getGUICtrls(index).getNumProp("value")/range)-(min/range);
 	#else
+	//Logger::writeToLog("GetParam:"+String(guiCtrls[index].getNumProp("value")));
 	return guiCtrls[index].getNumProp("value");
 	#endif
 	}
@@ -963,8 +964,9 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
 	guiCtrls.getReference(index).setNumProp("value", newValue);
 	messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp("channel").toUTF8(),  newValue,
 	guiCtrls.getReference(index).getStringProp("type"));
-	Logger::writeToLog(String("parameterSet:"+String(newValue)));
+	//Logger::writeToLog(String("parameterSet:"+String(newValue)));
 	#else
+	//Logger::writeToLog(String("parameterSet:"+String(newValue)));
 	//no need to scale here when in standalone mode
 	guiCtrls.getReference(index).setNumProp("value", newValue);
 	messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp("channel").toUTF8(), newValue,
@@ -989,8 +991,9 @@ MYFLT* val=0;
 for(int index=0;index<getGUICtrlsSize();index++)
 	{
 	float value = csound->GetChannel(guiCtrls[index].getStringProp("channel").toUTF8());
-	Logger::writeToLog(String(value));
-    guiCtrls[index].setNumProp("value", value);
+	//Logger::writeToLog(String(value));
+    guiCtrls.getReference(index).setNumProp("value", value);
+	//setParameter (index, value);
 	}
 
 //update all layout control widgets

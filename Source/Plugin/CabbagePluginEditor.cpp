@@ -2512,7 +2512,7 @@ don't need to recreate the automation
 */
 int idx;
 
-if(getFilter()->haveXYAutosBeenCreated()){
+if(getFilter()->haveXYAutosBeenCreated()){	
 		comps.add(new CabbageXYController(getFilter()->getXYAutomater(xyPadIndex), 
 				cAttr.getStringProp("name"),
                 cAttr.getStringProp("text"),

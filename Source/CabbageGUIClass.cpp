@@ -726,6 +726,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set("height", 200);
 		cabbageIdentifiers.set("minx", 0);
 		cabbageIdentifiers.set("maxx", 200);	
+		cabbageIdentifiers.set("text", "");	
 
 		cabbageIdentifiers.set("miny", 0);
 		cabbageIdentifiers.set("maxy", 200);	
@@ -858,7 +859,7 @@ int CabbageGUIClass::parse(String inStr)
 	identArray.add("plant(");
 	identArray.add("alpha(");
     identArray.add(",channel(");
-	identArray.add(" channel(");
+	identArray.add("channel(");
 	identArray.add(" chan(");
     identArray.add("channels(");
 	identArray.add(" chans(");
@@ -911,12 +912,12 @@ int CabbageGUIClass::parse(String inStr)
 	identArray.add("");
 	identArray.add("");
 	identArray.add("");
-	Logger::writeToLog(String(identArray.size()));
+	//Logger::writeToLog(String(identArray.size()));
 	//retrieve paramters consisting of strings
 	for(int indx=0;indx<identArray.size();indx++)
 	{
 		//check to see if identifier is part of input string..turn to lowercase first..
-		//showMessage("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
+		Logger::writeToLog("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
 		int identPos = str.toLowerCase().indexOf(identArray.getReference(indx));
           if(identPos!=-1){
 			StringArray strTokens, fillStrTokens;
@@ -947,9 +948,10 @@ int CabbageGUIClass::parse(String inStr)
 			cabbageIdentifiers.set("caption", strTokens[0].trim());
 			} 
 			
-            else if(identArray[indx].equalsIgnoreCase(" channel(")||
+            else if(identArray[indx].equalsIgnoreCase("channel(")||
 				identArray[indx].equalsIgnoreCase(",channel(")||
 				identArray[indx].equalsIgnoreCase(" chans(") ||
+				identArray[indx].equalsIgnoreCase("channel(") ||
 				identArray[indx].equalsIgnoreCase(" channels("))
 				{
 					channel = strTokens[0].trim();
@@ -962,7 +964,6 @@ int CabbageGUIClass::parse(String inStr)
 					yChannel = strTokens[1].trim();
 					cabbageIdentifiers.set("xchannel", strTokens[0].trim());
 					cabbageIdentifiers.set("ychannel", strTokens[1].trim());
-					return 0;
 					}
 					else if(str.containsIgnoreCase("vumeter"))
 						{
@@ -1145,7 +1146,7 @@ int CabbageGUIClass::parse(String inStr)
 					identArray[indx].equalsIgnoreCase("text(")){
               items.clear();//clear any unwanted items
 			  text = strTokens[0];
-			  Logger::writeToLog(typeOfWidget+":"+text);
+			  //CabbageUtils::showMessage(typeOfWidget+":"+text);
 			  var value;
 			  for(int i= 0;i<(int)strTokens.size();i++)
 					{
@@ -1580,6 +1581,16 @@ return rect;
 String CabbageGUIClass::getStringProp(String prop)
 {
 	var strings = cabbageIdentifiers.getWithDefault(prop.toLowerCase(), "");
+	
+	
+   if(prop.equalsIgnoreCase("snapshotData")){
+	String data;
+	data << "------------------------ Instrument ID: " << getStringProp("preset") << "\n";
+	data << snapshotData.joinIntoString("\n") << "------------------------ End of Instrument ID: " << getStringProp("preset") << "\n";
+	return data;
+	}	
+	
+	
 	if(strings.size()>0){
 		//Logger::writeToLog(prop+":"+strings[0].toString());
 		return strings[0].toString();

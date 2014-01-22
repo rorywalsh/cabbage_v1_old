@@ -2150,7 +2150,7 @@ void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
         ((CabbageButton*)comps[idx])->button->addListener(this);
         //((CabbageButton*)comps[idx])->button->setName("button");
         //if(cAttr.getItemsSize()>0)
-		showMessage(cAttr.getStringArrayPropValue("text", cAttr.getNumProp("value")));
+		//showMessage(cAttr.getStringArrayPropValue("text", cAttr.getNumProp("value")));
         ((CabbageButton*)comps[idx])->button->setButtonText(cAttr.getStringArrayPropValue("text", cAttr.getNumProp("value")));
 		//getFilter()->setParameter(idx, cAttr.getNumProp("value"));
 		//getFilter()->setParameterNotifyingHost(idx, cAttr.getNumProp("value"));

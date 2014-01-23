@@ -954,7 +954,7 @@ void CabbageTableManager::mouseDrag(const MouseEvent& e)
 
 void CabbageTableManager::mouseDown (const MouseEvent& e)
 {	
-	if(e.mods.isRightButtonDown())
+	if(e.mods.isPopupMenu())
 		{
 		
 		PopupMenu pop, subMenu1, subMenu2;

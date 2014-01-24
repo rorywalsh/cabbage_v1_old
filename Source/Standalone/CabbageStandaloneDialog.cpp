@@ -288,6 +288,10 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message){
 	showAudioSettingsDialog();
 	}
 	
+	else if(message.contains("hideOutputWindow")){
+	outputConsole->setVisible(false);
+	}	
+	
 	else if(message.contains("fileSaveAs")){
 	saveFileAs();
 	}
@@ -401,11 +405,9 @@ stopTimer();
 filter->suspendProcessing(true);
 
 
-
-
 if(shouldResetFilter){
-	deleteFilter();
 	deviceManager->closeAudioDevice();
+	deleteFilter();
 	filter = createCabbagePluginFilter(csdFile.getFullPathName(), false, AUDIO_PLUGIN);	
 	filter->addChangeListener(this);
 	filter->addActionListener(this);	

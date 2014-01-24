@@ -445,11 +445,13 @@ bool CodeWindow::perform (const InvocationInfo& info)
 
 	else if(info.commandID==CommandIDs::viewCsoundHelp)
 		{
+		sendActionMessage("hideOutputWindow");
 		toggleManuals("Csound");
 		}
 	
 	else if(info.commandID==CommandIDs::viewCabbageHelp)
 		{
+		sendActionMessage("hideOutputWindow");
 		toggleManuals("Cabbage");
 		}
 				

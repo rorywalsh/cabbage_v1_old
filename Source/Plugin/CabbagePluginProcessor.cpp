@@ -984,30 +984,33 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
 {
 #ifndef Cabbage_No_Csound
 String chanName;
-MYFLT* val=0;
-//update all control widgets
-for(int index=0;index<getGUICtrlsSize();index++)
+if(!CSCompResult)
 	{
-	float value = csound->GetChannel(guiCtrls[index].getStringProp("channel").toUTF8());
-	//Logger::writeToLog(String(value));
-    guiCtrls.getReference(index).setNumProp("value", value);
-	//setParameter (index, value);
-	}
-
+	MYFLT* val=0;
+	//update all control widgets
+	for(int index=0;index<getGUICtrlsSize();index++)
+		{
+		float value = csound->GetChannel(guiCtrls[index].getStringProp("channel").toUTF8());
+		//Logger::writeToLog(String(value));
+		guiCtrls.getReference(index).setNumProp("value", value);
+		//setParameter (index, value);
+		}
 //update all layout control widgets
 //currently this is only needed for table widgets as other layout controls
 //don't use channel messages...
-for(int index=0;index<getGUILayoutCtrlsSize();index++)
-	{
-	if(getGUILayoutCtrls(index).getStringProp("type")=="table")
+	for(int index=0;index<getGUILayoutCtrlsSize();index++)
 		{
-		for(int y=0;y<guiLayoutCtrls[index].getStringArrayProp("channel").size();y++){
-			//String test = getGUILayoutCtrls(index).getStringArrayPropValue("channel", y);
-			float value = csound->GetChannel(guiLayoutCtrls[index].getStringArrayPropValue("channel", y).toUTF8());
-			guiLayoutCtrls[index].setTableChannelValues(y, value);
+		if(guiLayoutCtrls[index].getStringProp("type")=="table")
+			{
+			for(int y=0;y<guiLayoutCtrls[index].getStringArrayProp("channel").size();y++){
+				//String test = getGUILayoutCtrls(index).getStringArrayPropValue("channel", y);
+				float value = csound->GetChannel(guiLayoutCtrls[index].getStringArrayPropValue("channel", y).toUTF8());
+				guiLayoutCtrls[index].setTableChannelValues(y, value);
+				}
 			}
 		}
 	}
+
 #endif
 }
 
@@ -1017,6 +1020,7 @@ for(int index=0;index<getGUILayoutCtrlsSize();index++)
 void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
 {
 #ifndef Cabbage_No_Csound
+if(!CSCompResult){
 for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 		{
 		//Logger::writeToLog("MessageType:"+messageQueue.getOutgoingChannelMessageFromQueue(i).type);
@@ -1042,12 +1046,13 @@ for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 
 	messageQueue.flushOutgoingChannelMessages();
 
-if(isAutomator){
-	//sendChangeMessage();
-	//sendActionMessage("update automation:"+String(automationParamID)+"|"+String(automationAmp));
-	//Logger::writeToLog("update automation:"+String(automationAmp));
+	if(isAutomator){
+		//sendChangeMessage();
+		//sendActionMessage("update automation:"+String(automationParamID)+"|"+String(automationAmp));
+		//Logger::writeToLog("update automation:"+String(automationAmp));
+		}
+	}
 
-}
 #endif
 }
 
@@ -1315,7 +1320,12 @@ if(!isSuspended() && !isGuiEnabled()){
 
 				CSCompResult = csound->PerformKsmps();
 				if(CSCompResult!=0)
-					suspendProcessing(true);	
+					suspendProcessing(true);
+				else{
+					
+					
+					
+				}
 				getCallbackLock().exit();
 				csndIndex = 0;
 			}

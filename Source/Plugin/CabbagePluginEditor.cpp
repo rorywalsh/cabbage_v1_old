@@ -2567,28 +2567,35 @@ void CabbagePluginAudioProcessorEditor::savePresetsFromParameters(File selectedF
 									
 void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement* xmlState)
 {
-	ScopedPointer<XmlElement> xml = xmlState;
+	ScopedPointer<XmlElement> xml;
+	xml = xmlState;
 	// make sure that it's actually our type of XML object..
 	if (xml->hasTagName (getName()))
 	{
 	for(int i=0;i<getFilter()->getNumParameters();i++)
 		{
 		float newValue = (float)xml->getDoubleAttribute(getFilter()->getGUICtrls(i).getStringProp("channel"));
+
+		#ifndef Cabbage_Build_Stanalone
+		
 		float range = getFilter()->getGUICtrls(i).getNumProp("range");
 		float comboRange = getFilter()->getGUICtrls(i).getNumProp("comborange");
 		//Logger::writeToLog("inValue:"+String(newValue));
 		float min = getFilter()->getGUICtrls(i).getNumProp("min");
 
+		if(getFilter()->getGUICtrls(i).getStringProp("type")=="rslider")
+			Logger::writeToLog("slider");
+
 		if(getFilter()->getGUICtrls(i).getStringProp("type")=="xypad")
-			newValue = (jmax(0.f, newValue)*range)+min;
+			newValue = (jmax(0.f, newValue)/range)+min;
 		else if(getFilter()->getGUICtrls(i).getStringProp("type")=="combobox")//combo box value need to be rounded...
-			newValue = (newValue*comboRange);
+			newValue = (newValue/comboRange);
 		else if(getFilter()->getGUICtrls(i).getStringProp("type")=="checkbox" ||
 				getFilter()->getGUICtrls(i).getStringProp("type")=="button")
 			range=1;
 		else
-			newValue = (newValue*range)+min;		
-		
+			newValue = (newValue/range)+min;		
+		#endif
 		
 		getFilter()->setParameter(i, newValue);
 		}

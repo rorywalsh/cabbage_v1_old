@@ -201,6 +201,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set("type", "infobutton");
 		cabbageIdentifiers.set("name", "infobutton");
 		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		
 	}
 
 	//===============directory list==================//
@@ -268,7 +269,13 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());	
 		cabbageIdentifiers.set("type", "filebutton");
 		cabbageIdentifiers.set("name", "filebutton");
-		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));	  
+		cabbageIdentifiers.set("mode", "open");
+		
+		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));	
+		var populate;
+		populate.append("");
+		populate.append("");
+		cabbageIdentifiers.set("populate", populate);  
 	}
 
 	//===============button==================//
@@ -880,6 +887,8 @@ int CabbageGUIClass::parse(String inStr)
     identArray.add("runcsound(");
 	identArray.add("tabs(");
 	identArray.add("tab(");
+	identArray.add(" mode(");
+	identArray.add(",mode(");
 	identArray.add("tablenumber(");
 	identArray.add("tablenum(");
 	identArray.add("tablenumbers(");
@@ -1185,6 +1194,11 @@ int CabbageGUIClass::parse(String inStr)
 				cabbageIdentifiers.set("preset", strTokens[0].trim());	
 			}
 
+			else if(identArray[indx].equalsIgnoreCase(" mode(") ||
+					identArray[indx].equalsIgnoreCase(",mode(")){
+				cabbageIdentifiers.set("mode", strTokens[0].trim());	
+			}
+			
 			else if(identArray[indx].equalsIgnoreCase("native(")){
 				native = strTokens[0].trim();
 				cabbageIdentifiers.set("native", strTokens[0].trim());	

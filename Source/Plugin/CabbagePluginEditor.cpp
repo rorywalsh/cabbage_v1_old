@@ -2150,7 +2150,7 @@ void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
         ((CabbageButton*)comps[idx])->button->addListener(this);
         //((CabbageButton*)comps[idx])->button->setName("button");
         //if(cAttr.getItemsSize()>0)
-		showMessage(cAttr.getStringArrayPropValue("text", cAttr.getNumProp("value")));
+		//showMessage(cAttr.getStringArrayPropValue("text", cAttr.getNumProp("value")));
         ((CabbageButton*)comps[idx])->button->setButtonText(cAttr.getStringArrayPropValue("text", cAttr.getNumProp("value")));
 		//getFilter()->setParameter(idx, cAttr.getNumProp("value"));
 		//getFilter()->setParameterNotifyingHost(idx, cAttr.getNumProp("value"));
@@ -2237,116 +2237,139 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 if(!getFilter()->isGuiEnabled()){
         if(button->isEnabled()){     // check button is ok before sending data to on named channel
         if(dynamic_cast<TextButton*>(button)){//check what type of button it is
-                //deal with non-interactive buttons first..
-                        if(button->getName()=="source"){
+		//deal with non-interactive buttons first..
+				if(button->getName()=="source"){
 //                              getFilter()->createAndShowSourceEditor(lookAndFeel);
-                        }
-                        else if(button->getName()=="infobutton"){
-                                String file = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();							
-							#ifdef LINUX  
-								ChildProcess process;
-                                file.append("/", 5);
-                                file.append(button->getProperties().getWithDefault("filename", ""), 1024);
-								if(!process.start("xdg-open "+file)) 
-									CabbageUtils::showMessage("Couldn't show file", &getLookAndFeel());
-							#else
-                                file.append("\\", 5);
-                                file.append(button->getProperties().getWithDefault("filename", ""), 1024);						
-                                if(!infoWindow){
-                                //showMessage(file);
-                                infoWindow = new InfoWindow(lookAndFeel, file);
-                                infoWindow->centreWithSize(600, 400);
-                                infoWindow->toFront(true);
-                                infoWindow->setVisible(true);
-                                }
-                                else
-                                        infoWindow->setVisible(true);
-							#endif
-                        }
-
-		
-				//check layoutControls for fileButtons, these are once off buttons....
-				for(int i=0;i<(int)getFilter()->getGUILayoutCtrlsSize();i++){//find correct control from vector  
-				//Logger::writeToLog(button->getName());
-                         if(getFilter()->getGUILayoutCtrls(i).getStringProp("name")==button->getName())
-							 {
-							 if(getFilter()->getGUILayoutCtrls(i).getStringProp("type")==String("filebutton"))
-								{  
-								WildcardFileFilter wildcardFilter ("*.*", String::empty, "Foo files");
-								//FileChooser dialogBox(const String &dialogBoxTitle);
-								//FileBrowserComponent browser (FileBrowserComponent::canSelectFiles|FileBrowserComponent::saveMode,  File::nonexistent, &wildcardFilter, nullptr);
-								//FileChooserDialogBox dialogBox ("Open some kind of file", "Please choose...", browser, false, Colours::black);
-								//dialogBox.getLookAndFeel().setDefaultLookAndFeel(basicLookAndFeel);
-								//setLookAndFeel(basicLookAndFeel);
-								//browser.setLookAndFeel(basicLookAndFeel);
-								//dialogBox.setAlwaysOnTop(true);
-								//dialogBox.setUsingNativeTitleBar(true);
-								FileChooser fc ("Select a file to open",
-														File::getCurrentWorkingDirectory(),
-														"*.mp3;*.wav;*.ogg;*.Aif;*.flac", true);
-								//dialogBox.toFront(true);
-								//dialogBox.setColour(0x1000850, Colours::lime);
-								 if (fc.browseForFileToOpen())
-										{
-										File selectedFile = fc.getResult();
-										//Logger::writeToLog(selectedFile.getFullPathName());
-										if(getFilter()->getCsound())
-										getFilter()->getCsound()->SetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp("channel").toUTF8().getAddress(),
-																			selectedFile.getFullPathName().toUTF8().getAddress());
-										}
-								}
-							 }
-				}  
+				}
+				else if(button->getName()=="infobutton"){
+						String file = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();							
+					#ifdef LINUX  
+						ChildProcess process;
+						file.append("/", 5);
+						file.append(button->getProperties().getWithDefault("filename", ""), 1024);
+						if(!process.start("xdg-open "+file)) 
+							CabbageUtils::showMessage("Couldn't show file", &getLookAndFeel());
+					#else
+						file.append("\\", 5);
+						file.append(button->getProperties().getWithDefault("filename", ""), 1024);						
+						if(!infoWindow){
+						//showMessage(file);
+						infoWindow = new InfoWindow(lookAndFeel, file);
+						infoWindow->centreWithSize(600, 400);
+						infoWindow->toFront(true);
+						infoWindow->setVisible(true);
+						}
+						else
+								infoWindow->setVisible(true);
+					#endif
+				}
 
 
-			    for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++){//find correct control from vector                        
-                      
-                        //+++++++++++++button+++++++++++++
-                                //Logger::writeToLog(getFilter()->getGUICtrls(i).getStringProp("name"));
-                                //Logger::writeToLog(button->getName());
-                         if(getFilter()->getGUICtrls(i).getStringProp("name")==button->getName())
-							 {
-								if(getFilter()->getGUICtrls(i).getStringProp("type")==String("button"))
-								{   
-                                //toggle button values
-                                if(getFilter()->getGUICtrls(i).getNumProp("value")==0){
-									getFilter()->setParameterNotifyingHost(i, 1.f);
-									getFilter()->setParameter(i, 1.f);
-									//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), 1.f);
-									getFilter()->getGUICtrls(i).setNumProp("value", 1);
+		//check layoutControls for fileButtons, these are once off buttons....
+		for(int i=0;i<(int)getFilter()->getGUILayoutCtrlsSize();i++){//find correct control from vector  
+		//Logger::writeToLog(button->getName());
+				 if(getFilter()->getGUILayoutCtrls(i).getStringProp("name")==button->getName())
+					 {
+					 if(getFilter()->getGUILayoutCtrls(i).getStringProp("type")==String("filebutton"))
+						{  
+						WildcardFileFilter wildcardFilter ("*.*", String::empty, "Foo files");
+						
+						
+						const String filetype = getFilter()->getGUILayoutCtrls(i).getStringProp("filetype");
+						const String selectedDir = getFilter()->getGUILayoutCtrls(i).getStringProp("workingdir");
+						File directory;
+						if(selectedDir.isNotEmpty())
+						directory = File(selectedDir);
+						else
+						directory = File::getCurrentWorkingDirectory();
+						
+
+						 File selectedFile;
+						 if (getFilter()->getGUILayoutCtrls(i).getStringProp("mode").equalsIgnoreCase("open")){
+							FileChooser fc("Select a file to open", directory.getFullPathName(), filetype, true);
+							if(fc.browseForFileToOpen()){
+								selectedFile = fc.getResult();
+								getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"), 
+																							selectedFile.getFullPathName(),
+																							"string");
 									}
-                                else{
-									getFilter()->setParameterNotifyingHost(i, 0.f);
-									//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), 0.f);
-									getFilter()->getGUICtrls(i).setNumProp("value", 0);
-									getFilter()->setParameter(i, 0.f);
-									}
-                                //toggle text values
-								for(int o=0;o<getFilter()->getGUICtrls(i).getStringArrayProp("text").size();o++)
-									Logger::writeToLog(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", o));
+							Logger::writeToLog(selectedFile.getFullPathName());
+							Logger::writeToLog(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"));
+							
+						 }
+						 else{
+							FileChooser fc("Select a file to save", directory.getFullPathName(), filetype, true);
+							if(fc.browseForFileToSave(true)){
+								selectedFile = fc.getResult();
+								if(filetype.contains("snaps"))
+									{
+									XmlElement xml ("CABBAGE_PLUGIN_SETTINGS");								
+									for(int i=0;i<getFilter()->getGUICtrlsSize();i++)
+										xml.setAttribute(getFilter()->getGUICtrls(i).getStringProp("channel"), getFilter()->getGUICtrls(i).getNumProp("value"));																	
 									
-                                if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1).equalsIgnoreCase(button->getButtonText()))
-                                        button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 0));
-                                else
-                                        button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1));
-								}
-								
+									File file(selectedFile.getFullPathName());
+									file.replaceWithText(xml.createDocument(""));
+									}
+								else
+								getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"), 
+																							selectedFile.getFullPathName(),
+																							"string");
 							}
+						 }
 
-                        //show plants as popup window
-                        else{
-                                for(int p=0;p<getFilter()->getGUILayoutCtrlsSize();p++){
-                                if(getFilter()->getGUILayoutCtrls(p).getStringProp("plant") ==button->getName()){
-                                int index = button->getProperties().getWithDefault(String("index"), 0);
-                                subPatch[index]->setVisible(true);
-								subPatch[index]->setAlwaysOnTop(true);
-								subPatch[index]->toFront(true);
-                                i=getFilter()->getGUICtrlsSize();
-                                break;
-                                }
+						}
+					 }
+		}  
+
+
+		for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++){//find correct control from vector                        
+			  
+				//+++++++++++++button+++++++++++++
+						//Logger::writeToLog(getFilter()->getGUICtrls(i).getStringProp("name"));
+						//Logger::writeToLog(button->getName());
+				 if(getFilter()->getGUICtrls(i).getStringProp("name")==button->getName())
+					 {
+						if(getFilter()->getGUICtrls(i).getStringProp("type")==String("button"))
+						{   
+						//toggle button values
+						if(getFilter()->getGUICtrls(i).getNumProp("value")==0){
+							getFilter()->setParameterNotifyingHost(i, 1.f);
+							getFilter()->setParameter(i, 1.f);
+							//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), 1.f);
+							getFilter()->getGUICtrls(i).setNumProp("value", 1);
 							}
-                        }
+						else{
+							getFilter()->setParameterNotifyingHost(i, 0.f);
+							//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), 0.f);
+							getFilter()->getGUICtrls(i).setNumProp("value", 0);
+							getFilter()->setParameter(i, 0.f);
+							}
+						//toggle text values
+						for(int o=0;o<getFilter()->getGUICtrls(i).getStringArrayProp("text").size();o++)
+							Logger::writeToLog(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", o));
+							
+						if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1).equalsIgnoreCase(button->getButtonText()))
+								button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 0));
+						else
+								button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1));
+						}
+						
 					}
+
+				//show plants as popup window
+				else{
+						for(int p=0;p<getFilter()->getGUILayoutCtrlsSize();p++){
+						if(getFilter()->getGUILayoutCtrls(p).getStringProp("plant") ==button->getName()){
+						int index = button->getProperties().getWithDefault(String("index"), 0);
+						subPatch[index]->setVisible(true);
+						subPatch[index]->setAlwaysOnTop(true);
+						subPatch[index]->toFront(true);
+						i=getFilter()->getGUICtrlsSize();
+						break;
+						}
+					}
+				}
+			}
         }
         
         else if(dynamic_cast<ToggleButton*>(button)){
@@ -2446,8 +2469,8 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 
 			for (int i = 0; i < dirFiles.size(); ++i){
 				//m.addItem (i + menuSize, cabbageFiles[i].getFileNameWithoutExtension());
-                String test  = String(i+1)+": "+dirFiles[i].getFileName();
-                ((CabbageComboBox*)comps[idx])->combo->addItem(test, i+1);
+                //String test  = String(i+1)+": "+dirFiles[i].getFileName();
+                ((CabbageComboBox*)comps[idx])->combo->addItem(dirFiles[i].getFileName(), i+1);
 			}
 		}
 
@@ -2471,31 +2494,23 @@ void CabbagePluginAudioProcessorEditor::comboBoxChanged (ComboBox* combo)
 #ifndef Cabbage_No_Csound
 if(combo->isEnabled()) // before sending data to on named channel
     {
-	for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++){//find correct control from vector
-			String test = combo->getName();
-			String test2 = getFilter()->getGUICtrls(i).getStringProp("name");
-			if(getFilter()->getGUICtrls(i).getStringProp("name").equalsIgnoreCase(combo->getName())){
-					for(int y=0;y<(int)getFilter()->getGUICtrls(i).getStringArrayProp("text").size();y++)
-							if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", y).equalsIgnoreCase(combo->getItemText(combo->getSelectedItemIndex()))){
-								Logger::writeToLog("here we go");
-					                getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), (float)combo->getSelectedItemIndex()+1);
-									
+for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control from vector
+	if(getFilter()->getGUICtrls(i).getStringProp("name")==combo->getName())
+		{		
 #ifndef Cabbage_Build_Standalone
-Logger::writeToLog("ComboRange:"+String(getFilter()->getGUICtrls(i).getNumProp("comborange")));
-Logger::writeToLog(String(combo->getSelectedItemIndex()));
-									getFilter()->setParameter(i, (float)(combo->getSelectedItemIndex()+1)/(getFilter()->getGUICtrls(i).getNumProp("comborange")));
-									getFilter()->setParameterNotifyingHost(i, (float)(combo->getSelectedItemIndex()+1)/(getFilter()->getGUICtrls(i).getNumProp("comborange")));
-#else
-									getFilter()->setParameter(i, (float)(combo->getSelectedItemIndex()+1));
-									getFilter()->setParameterNotifyingHost(i, (float)(combo->getSelectedItemIndex()+1));
+		getFilter()->setParameter(i, (float)(combo->getSelectedItemIndex()+1)/(getFilter()->getGUICtrls(i).getNumProp("comborange")));
+		getFilter()->setParameterNotifyingHost(i, (float)(combo->getSelectedItemIndex()+1)/(getFilter()->getGUICtrls(i).getNumProp("comborange")));
+#else		
+		getFilter()->setParameter(i, (float)(combo->getSelectedItemIndex()+1));
+		getFilter()->setParameterNotifyingHost(i, (float)(combo->getSelectedItemIndex()+1));
 #endif
-							}
-			}
 		}
 	}
 		
 #endif
 }
+
+
 
 //+++++++++++++++++++++++++++++++++++++++++++
 //                                      xypad
@@ -3146,9 +3161,9 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 		#ifdef Cabbage_Build_Standalone
                 ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)getFilter()->getParameter(i)-1, dontSendNotification);
 		#else
-                //Logger::writeToLog(String("timerCallback():")+String(getFilter()->getParameter(i)));
                 float val = getFilter()->getGUICtrls(i).getNumProp("comborange")*getFilter()->getParameter(i);
-                //((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex(int(val-1), dontSendNotification);
+				//Logger::writeToLog(String("timerCallback():")+String(val));
+                ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex(int(val)-1, dontSendNotification);
 				incomingValues.set(i, val);
 		#endif
         }

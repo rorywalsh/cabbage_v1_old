@@ -288,6 +288,10 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message){
 	showAudioSettingsDialog();
 	}
 	
+	else if(message.contains("toggleCsoundOutput")){
+	outputConsole->setVisible(false);
+	}
+	
 	else if(message.contains("fileSaveAs")){
 	saveFileAs();
 	}
@@ -400,12 +404,9 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 stopTimer();
 filter->suspendProcessing(true);
 
-
-
-
 if(shouldResetFilter){
-	deleteFilter();
 	deviceManager->closeAudioDevice();
+	deleteFilter();	
 	filter = createCabbagePluginFilter(csdFile.getFullPathName(), false, AUDIO_PLUGIN);	
 	filter->addChangeListener(this);
 	filter->addActionListener(this);	

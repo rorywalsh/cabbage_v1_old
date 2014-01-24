@@ -1304,20 +1304,23 @@ if(!isSuspended() && !isGuiEnabled()){
 			if(csndIndex == csound->GetKsmps())
 			{
 				getCallbackLock().enter();
-				//slow down calls to these functions, no need for them to be firing at k-rate
-				yieldCounter = (yieldCounter>10) ? 0 : yieldCounter+1;
-				if(yieldCounter==0){
-				sendOutgoingMessagesToCsound();
-				updateCabbageControls();
-				}
-				if(audioSourcesArray.size()>0)
-				sendAudioToCsoundFromSoundFilers(csound->GetKsmps());
-
 				CSCompResult = csound->PerformKsmps();
 				if(CSCompResult!=0)
 					suspendProcessing(true);	
 				getCallbackLock().exit();
 				csndIndex = 0;
+				
+				if(!CSCompResult){
+					//slow down calls to these functions, no need for them to be firing at k-rate
+					yieldCounter = (yieldCounter>10) ? 0 : yieldCounter+1;
+					if(yieldCounter==0){
+					sendOutgoingMessagesToCsound();
+					updateCabbageControls();
+					}
+					if(audioSourcesArray.size()>0)
+					sendAudioToCsoundFromSoundFilers(csound->GetKsmps());								
+				}	
+				
 			}
 			if(!CSCompResult)
 				{

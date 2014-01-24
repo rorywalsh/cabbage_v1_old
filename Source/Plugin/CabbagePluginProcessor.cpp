@@ -432,6 +432,7 @@ getCallbackLock().exit();
 // GUI OBJECTS ARE CREATED ON THE FLY IN THE CABBAGE PLUGIN
 // EDITOR FROM INFORMATION HELD IN THE GUICONTROLS VECTOR
 //===========================================================
+//maybe this should only be done at the end of a k-rate cycle..
 void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 {
 //clear arrays if refresh is set
@@ -701,9 +702,6 @@ bool multiLine = false;
 //		Logger::writeToLog(guiCtrls.getReference(i).getStringProp("channel")+": "+String(guiCtrls[i].getNumProp("value")));
 #ifndef Cabbage_No_Csound
 		csound->SetChannel( guiCtrls.getReference(i).getStringProp("channel").toUTF8(), guiCtrls[i].getNumProp("value"));
-		//float min = guiCtrls.getReference(i).getNumProp("min");
-		//float range = guiCtrls.getReference(i).getNumProp("range");
-		//setParameter(i, (guiCtrls.getReference(i).getNumProp("value")+min)/range);
 #endif
 		}
 
@@ -1021,6 +1019,7 @@ void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
 #ifndef Cabbage_No_Csound
 for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 		{
+		//Logger::writeToLog("MessageType:"+messageQueue.getOutgoingChannelMessageFromQueue(i).type);
 		if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="directoryList"){
 			for(int y=0;y<scoreEvents.size();y++)
 			csound->InputMessage(scoreEvents[y].toUTF8());
@@ -1030,6 +1029,11 @@ for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 		else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="updateTable"){
 			//Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.toUTF8());
 			csound->InputMessage(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.toUTF8());
+		}
+		//catch string messags
+		else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="string"){
+		csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.toUTF8(),
+						   messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal.toUTF8().getAddress());
 		}
 		else
 		csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.toUTF8(),
@@ -1463,17 +1467,39 @@ AudioProcessorEditor* CabbagePluginAudioProcessor::createEditor()
 }
 
 //==============================================================================
-void CabbagePluginAudioProcessor::getStateInformation (MemoryBlock& /*destData*/)
+void CabbagePluginAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    // Here's an example of how you can use XML to make it easy and more robust:
+
+    // Create an outer XML element..
+    XmlElement xml ("CABBAGE_PLUGIN_SETTINGS");
+	
+	for(int i=0;i<guiCtrls.size();i++)
+			xml.setAttribute (guiCtrls[i].getStringProp("channel"), guiCtrls[i].getNumProp("value"));
+
+
+    // then use this helper function to stuff it into the binary blob and return it..
+    copyXmlToBinary (xml, destData);
 }
 
-void CabbagePluginAudioProcessor::setStateInformation (const void* /*data*/, int /*sizeInBytes*/)
+void CabbagePluginAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    // This getXmlFromBinary() helper function retrieves our XML from the binary blob..
+    ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+
+    if (xmlState != nullptr)
+    {
+        // make sure that it's actually our type of XML object..
+        if (xmlState->hasTagName ("CABBAGE_PLUGIN_SETTINGS"))
+        {
+		for(int i=0;i<this->getNumParameters();i++)
+			this->setParameter(i, (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp("channel")));
+
+        }
+    }
 }
 
 //==============================================================================

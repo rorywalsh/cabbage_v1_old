@@ -136,6 +136,9 @@ private:
         void showInsertControlsMenu(int x, int y);
 		void actionListenerCallbackForWidgets(const String message);
 		void insertScoreStatementText(Table *table, bool overwrite);
+		void restoreParametersFromPresets(XmlElement* xmlData);
+		void savePresetsFromParameters(File selectedFile, String mode);
+		void refreshGUIControls(String typeOfControl);
 
 		void timerCallback();
         bool LOCKED;

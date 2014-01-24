@@ -921,7 +921,7 @@ if(index<(int)guiCtrls.size()){//make sure index isn't out of range
 	else
 	return (getGUICtrls(index).getNumProp("value")/range)-(min/range);
 	#else
-	Logger::writeToLog("GetParam:"+String(guiCtrls[index].getNumProp("value")));
+	//Logger::writeToLog("GetParam:"+String(guiCtrls[index].getNumProp("value")));
 	return guiCtrls[index].getNumProp("value");
 	#endif
 	}

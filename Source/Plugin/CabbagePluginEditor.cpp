@@ -2285,7 +2285,7 @@ if(!getFilter()->isGuiEnabled()){
 						
 
 						 File selectedFile;
-						 if (getFilter()->getGUILayoutCtrls(i).getStringProp("mode").equalsIgnoreCase("open")){
+						 if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode").equalsIgnoreCase("open")){
 							FileChooser fc("Select a file to open", directory.getFullPathName(), filetype, true);
 							if(fc.browseForFileToOpen()){
 								selectedFile = fc.getResult();
@@ -2300,20 +2300,14 @@ if(!getFilter()->isGuiEnabled()){
 						 else{
 							FileChooser fc("Select a file to save", directory.getFullPathName(), filetype, true);
 							if(fc.browseForFileToSave(true)){
-								selectedFile = fc.getResult();
+								selectedFile = fc.getResult();	
 								if(filetype.contains("snaps"))
-									{
-									XmlElement xml ("CABBAGE_PLUGIN_SETTINGS");								
-									for(int i=0;i<getFilter()->getGUICtrlsSize();i++)
-										xml.setAttribute(getFilter()->getGUICtrls(i).getStringProp("channel"), getFilter()->getGUICtrls(i).getNumProp("value"));																	
-									
-									File file(selectedFile.getFullPathName());
-									file.replaceWithText(xml.createDocument(""));
-									}
+								savePresetsFromParameters(selectedFile, "create");
 								else
 								getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"), 
 																							selectedFile.getFullPathName(),
 																							"string");
+								refreshGUIControls("combobox");
 							}
 						 }
 
@@ -2496,11 +2490,21 @@ if(combo->isEnabled()) // before sending data to on named channel
     {
 for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control from vector
 	if(getFilter()->getGUICtrls(i).getStringProp("name")==combo->getName())
-		{		
+		{
+
+		if(getFilter()->getGUICtrls(i).getStringProp("filetype").contains("snaps")){
+		String workingDir = getFilter()->getGUICtrls(i).getStringProp("workingdir");
+		String filename = workingDir+"/"+combo->getText();
+		Logger::writeToLog(filename);
+		restoreParametersFromPresets(XmlDocument::parse(File(filename)));
+		//File(combo->getText())	
+		}
+
+		
 #ifndef Cabbage_Build_Standalone
 		getFilter()->setParameter(i, (float)(combo->getSelectedItemIndex()+1)/(getFilter()->getGUICtrls(i).getNumProp("comborange")));
 		getFilter()->setParameterNotifyingHost(i, (float)(combo->getSelectedItemIndex()+1)/(getFilter()->getGUICtrls(i).getNumProp("comborange")));
-#else		
+#else
 		getFilter()->setParameter(i, (float)(combo->getSelectedItemIndex()+1));
 		getFilter()->setParameterNotifyingHost(i, (float)(combo->getSelectedItemIndex()+1));
 #endif
@@ -2510,8 +2514,86 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control fro
 #endif
 }
 
+//=========================================================================================
+//			resfresh GUI controls that read from disk..
+//========================================================================================
+void CabbagePluginAudioProcessorEditor::refreshGUIControls(String typeOfControl)
+{
+for(int i=0;i<getFilter()->getGUICtrlsSize();i++)
+	{
+		//if typeOfControl == combobox, user must have file type set for comboboxes to refresh
+		if(getFilter()->getGUICtrls(i).getStringProp("type").equalsIgnoreCase(typeOfControl) &&
+			getFilter()->getGUICtrls(i).getStringProp("filetype").isNotEmpty())
+		{
+		CabbageComboBox* cabCombo = dynamic_cast<CabbageComboBox*>(comps[i]);
+		if(cabCombo)
+			{
+			File pluginDir;
+			int currentItemID = cabCombo->combo->getSelectedId();
+			String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
 
 
+			if(getFilter()->getGUICtrls(i).getStringProp("workingDir").isEmpty())
+				pluginDir = File(currentFileLocation);
+			else
+				pluginDir = File(getFilter()->getGUICtrls(i).getStringProp("workingdir"));	
+			
+			const String filetype = getFilter()->getGUICtrls(i).getStringProp("filetype");
+			Array<File> dirFiles;
+			pluginDir.findChildFiles(dirFiles, 2, false, filetype);
+			cabCombo->combo->clear(dontSendNotification);
+			for (int i = 0; i < dirFiles.size(); ++i)
+				cabCombo->combo->addItem(dirFiles[i].getFileName(), i+1);
+				
+			cabCombo->combo->setSelectedId(currentItemID, dontSendNotification);	
+			}
+		}
+	}
+}
+
+
+//=========================================================================================
+//			save and recall presets
+//========================================================================================
+void CabbagePluginAudioProcessorEditor::savePresetsFromParameters(File selectedFile, String mode)
+{
+	XmlElement xml (getName());								
+	for(int i=0;i<getFilter()->getGUICtrlsSize();i++)
+		xml.setAttribute(getFilter()->getGUICtrls(i).getStringProp("channel"), getFilter()->getGUICtrls(i).getNumProp("value"));																	
+	
+	File file(selectedFile.getFullPathName());
+	file.replaceWithText(xml.createDocument(""));
+}
+									
+void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement* xmlState)
+{
+	ScopedPointer<XmlElement> xml = xmlState;
+	// make sure that it's actually our type of XML object..
+	if (xml->hasTagName (getName()))
+	{
+	for(int i=0;i<getFilter()->getNumParameters();i++)
+		{
+		float newValue = (float)xml->getDoubleAttribute(getFilter()->getGUICtrls(i).getStringProp("channel"));
+		float range = getFilter()->getGUICtrls(i).getNumProp("range");
+		float comboRange = getFilter()->getGUICtrls(i).getNumProp("comborange");
+		//Logger::writeToLog("inValue:"+String(newValue));
+		float min = getFilter()->getGUICtrls(i).getNumProp("min");
+
+		if(getFilter()->getGUICtrls(i).getStringProp("type")=="xypad")
+			newValue = (jmax(0.f, newValue)*range)+min;
+		else if(getFilter()->getGUICtrls(i).getStringProp("type")=="combobox")//combo box value need to be rounded...
+			newValue = (newValue*comboRange);
+		else if(getFilter()->getGUICtrls(i).getStringProp("type")=="checkbox" ||
+				getFilter()->getGUICtrls(i).getStringProp("type")=="button")
+			range=1;
+		else
+			newValue = (newValue*range)+min;		
+		
+		
+		getFilter()->setParameter(i, newValue);
+		}
+	}
+}
 //+++++++++++++++++++++++++++++++++++++++++++
 //                                      xypad
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -3158,14 +3240,16 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 
         //no automation for comboboxes, still problematic! 
         else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("combobox")){
-		#ifdef Cabbage_Build_Standalone
-                ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)getFilter()->getParameter(i)-1, dontSendNotification);
+			float val;
+			#ifdef Cabbage_Build_Standalone
+			val = getFilter()->getParameter(i);
+			((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)getFilter()->getParameter(i)-1, dontSendNotification);
 		#else
-                float val = getFilter()->getGUICtrls(i).getNumProp("comborange")*getFilter()->getParameter(i);
-				//Logger::writeToLog(String("timerCallback():")+String(val));
-                ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex(int(val)-1, dontSendNotification);
-				incomingValues.set(i, val);
+			val = getFilter()->getGUICtrls(i).getNumProp("comborange")*getFilter()->getParameter(i);
+			//Logger::writeToLog(String("timerCallback():")+String(val));
+			((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex(int(val)-1, dontSendNotification);
 		#endif
+			incomingValues.set(i, val);
         }
 
         else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("checkbox")){

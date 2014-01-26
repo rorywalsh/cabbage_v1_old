@@ -162,7 +162,7 @@ for(int index=0;index<getFilter()->getGUILayoutCtrlsSize();index++)
 	}
 
 //start timer. Timer callback updates our GUI control states/positions, etc. with data from Csound
-startTimer(20);
+startTimer(50);
 resized();
 }
 
@@ -2229,6 +2229,12 @@ void CabbagePluginAudioProcessorEditor::InsertCheckBox(CabbageGUIClass &cAttr)
                                                 /*****************************************************/
                                                 /*     button/filebutton/checkbox press event        */
                                                 /*****************************************************/
+												
+void CabbagePluginAudioProcessorEditor::buttonStateChanged(Button* button)
+{												
+	
+}
+												
 void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 {
 #ifndef Cabbage_No_Csound
@@ -2452,7 +2458,6 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 			//Logger::writeToLog(currentFileLocation);
 			if(cAttr.getStringProp("workingDir").length()<1){
 			pluginDir = File(currentFileLocation);
-			
 			}
 			else
 			pluginDir = File(cAttr.getStringProp("workingdir"));	
@@ -2464,7 +2469,12 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 			for (int i = 0; i < dirFiles.size(); ++i){
 				//m.addItem (i + menuSize, cabbageFiles[i].getFileNameWithoutExtension());
                 //String test  = String(i+1)+": "+dirFiles[i].getFileName();
-                ((CabbageComboBox*)comps[idx])->combo->addItem(dirFiles[i].getFileName(), i+1);
+				String filename;
+				if(filetype.contains("snaps"))
+					filename = dirFiles[i].getFileNameWithoutExtension();
+				else
+					filename = dirFiles[i].getFileName();
+				((CabbageComboBox*)comps[idx])->combo->addItem(filename, i+1);
 			}
 		}
 
@@ -3242,13 +3252,14 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 		}
         }
 
-        //no automation for comboboxes, still problematic! 
         else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("combobox")){
 			float val;
 		#ifdef Cabbage_Build_Standalone
 			val = getFilter()->getParameter(i);
 			//if(val==getFilter()->getGUICtrls(i).getNumProp("comborange"))
 			((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)val-1, dontSendNotification);
+			incomingValues.set(i, val);
+			//Logger::writeToLog(String("timerCallback():")+String(val));
 		#else
 			//needed to move combobox to full when controlled by a host
 			if(getFilter()->getParameter(i)>=0.98)
@@ -3258,7 +3269,7 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 			//Logger::writeToLog(String("timerCallback():")+String(val));
 			((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex(int(val)-1, dontSendNotification);
 		#endif
-			//incomingValues.set(i, val);
+			
         }
 
         else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("checkbox")){

@@ -132,7 +132,8 @@ private:
         void InsertSnapshot(CabbageGUIClass &cAttr);
         void InsertPVSViewer(CabbageGUIClass &cAttr);
 		void InsertTransport(CabbageGUIClass &cAttr);
-        void buttonClicked (Button*);
+        void buttonClicked(Button*);
+		void buttonStateChanged(Button*);
         void showInsertControlsMenu(int x, int y);
 		void actionListenerCallbackForWidgets(const String message);
 		void insertScoreStatementText(Table *table, bool overwrite);

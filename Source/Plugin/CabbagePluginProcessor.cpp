@@ -703,8 +703,8 @@ bool multiLine = false;
 #ifndef Cabbage_No_Csound
 		if(guiCtrls.getReference(i).getStringProp("channeltype")=="string")
 		//deal with combobox strings..
-		csound->SetChannel(guiCtrls.getReference(i).getStringProp("channel").toUTF8(), 
-									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp("value")-1).toUTF8().getAddress());
+		csound->SetChannel(guiCtrls.getReference(i).getStringProp("channel").toUTF8(), "");
+//									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp("value")-1).toUTF8().getAddress());
 		else
 		csound->SetChannel( guiCtrls.getReference(i).getStringProp("channel").toUTF8(), guiCtrls[i].getNumProp("value"));
 #endif
@@ -912,7 +912,7 @@ float CabbagePluginAudioProcessor::getParameter (int index)
 float range = getGUICtrls(index).getNumProp("range");
 float min = getGUICtrls(index).getNumProp("min");
 //Logger::writeToLog("parameterGet-"+String(index)+String("-Min:")+String(min)+" Range:"+String(range)+ " Val:"+String(getGUICtrls(index).getNumProp("value")));
-//Logger::writeToLog("parameterGet:"+String(index)+String(":")+String(getGUICtrls(index).getNumProp("value")));
+//Logger::writeToLog("parameterGet:"+String(index)+String(":")+String(guiCtrls[index].getNumProp("value")));
 
 /* this gets called at any time by our host or out GUI editor */
 if(index<(int)guiCtrls.size()){//make sure index isn't out of range
@@ -986,9 +986,8 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
 												  newValue,
 												  guiCtrls.getReference(index).getStringProp("type"));
 	
-		guiCtrls.getReference(index).setNumProp("value", newValue);
-		
 	
+	guiCtrls.getReference(index).setNumProp("value", newValue);	
    }
 #endif
 }
@@ -1009,10 +1008,14 @@ if(!CSCompResult)
 	//update all control widgets
 	for(int index=0;index<getGUICtrlsSize();index++)
 		{
-		float value = csound->GetChannel(guiCtrls[index].getStringProp("channel").toUTF8());
-		//Logger::writeToLog(String(value));
-		guiCtrls.getReference(index).setNumProp("value", value);
-		//setParameter (index, value);
+		if(guiCtrls[index].getStringProp("channeltype").equalsIgnoreCase("string")){
+			
+		}
+		else{	
+			float value = csound->GetChannel(guiCtrls[index].getStringProp("channel").toUTF8());
+			//Logger::writeToLog(String(value));
+			guiCtrls.getReference(index).setNumProp("value", value);
+			}
 		}
 //update all layout control widgets
 //currently this is only needed for table widgets as other layout controls
@@ -1054,8 +1057,7 @@ for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 			csound->InputMessage(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.toUTF8());
 		}
 		//catch string messags
-		else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="string"){
-		Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);	
+		else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="string"){	
 		csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.toUTF8(),
 						   messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal.toUTF8().getAddress());
 		}

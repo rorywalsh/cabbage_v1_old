@@ -514,7 +514,8 @@ label bounds(0, 0, 3, 10), text("Label"), fontcolour("white")
 Button
 ~~~~~~
 -------------
-button bounds(x, y, width, height), channel("chanName")[, text("offCaption","onCaption"), caption("caption"), value(val), colour("colour"), fontcolour("colour")]
+button bounds(x, y, width, height), channel("chanName")[, text("offCaption","onCaption"), caption("caption"), \
+	value(val), colour("colour"), fontcolour("colour"), latched(val)]
 --------------
 
 Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish. 
@@ -532,6 +533,9 @@ Button creates a button on screen that can be used for a whole range of differen
 'colour("colour")': This sets the colour of the image if a file name is not passed to file. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.  
 
 'fontcolour("colour")': Sets the colour of the text that appears with the slider. See above for details on "colour".
+
+'latched(val)': where val will be a 0 or a 1. With latched turned off the button will send a message to Csound on the initial mouse press, and as soon as the user releases the button. Therefore the button will toggle between 0 and 1 on each click rather than needing two separate mouse clicks. 
+
 
 `Example:`
 -----------------------------------------

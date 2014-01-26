@@ -311,6 +311,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set("caption", "");
 		cabbageIdentifiers.set("colour", Colours::black.toString());	
 		cabbageIdentifiers.set("fontcolour", Colours::white.toString());	
+		cabbageIdentifiers.set("latched", 1);
 		cabbageIdentifiers.set("type", "button");
 		cabbageIdentifiers.set("name", "button");
 		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
@@ -919,6 +920,7 @@ int CabbageGUIClass::parse(String inStr)
 	identArray.add("drawmode(");
 	identArray.add("resizemode(");
 	identArray.add("readonly(");
+	identArray.add("latched(");
 	//add a few dummy identifiers so we can catch bogus one in the Cabbage code
 	identArray.add("");
 	identArray.add("");
@@ -1430,6 +1432,9 @@ int CabbageGUIClass::parse(String inStr)
             else if(identArray[indx].equalsIgnoreCase("tab(")){
 				tabbed = strTokens[0].trim().getFloatValue();  
 				cabbageIdentifiers.set("tabbed", strTokens[0].trim().getFloatValue());	
+			}
+            else if(identArray[indx].equalsIgnoreCase("latched(")){ 
+				cabbageIdentifiers.set("latched", strTokens[0].trim().getFloatValue());	
 			}
             else if(identArray[indx].equalsIgnoreCase("textbox(")){
 				textBox = strTokens[0].trim().getFloatValue();  

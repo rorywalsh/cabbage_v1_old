@@ -1272,7 +1272,8 @@ line bounds(.27, .3, .01, .5), colour("lime")
 <h3 id="x34">Button</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>button bounds(x, y, width, height), channel("chanName")[, text("offCaption","onCaption"), caption("caption"), value(val), colour("colour"), fontcolour("colour")]</code></pre>
+<pre><code>button bounds(x, y, width, height), channel("chanName")[, text("offCaption","onCaption"), caption("caption"), \
+        value(val), colour("colour"), fontcolour("colour"), latched(val)]</code></pre>
 </div></div>
 <div class="paragraph"><p>Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels). If widget is part of a plant these values should be between 0 and 1. See PLANTS</p></div>
@@ -1282,6 +1283,7 @@ line bounds(.27, .3, .01, .5), colour("lime")
 <div class="paragraph"><p><em>value(val)</em>: val sets the initial state of the control</p></div>
 <div class="paragraph"><p><em>colour("colour")</em>: This sets the colour of the image if a file name is not passed to file. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p></div>
 <div class="paragraph"><p><em>fontcolour("colour")</em>: Sets the colour of the text that appears with the slider. See above for details on "colour".</p></div>
+<div class="paragraph"><p><em>latched(val)</em>: where val will be a 0 or a 1. With latched turned off the button will send a message to Csound on the initial mouse press, and as soon as the user releases the button. Therefore the button will toggle between 0 and 1 on each click rather than needing two separate mouse clicks.</p></div>
 <div class="paragraph"><p><code>Example:</code></p></div>
 <div class="listingblock">
 <div class="content">
@@ -1921,7 +1923,7 @@ cellspacing="0" cellpadding="4">
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-01-26 12:27:12 GMT
+Last updated 2014-01-26 16:38:57 GMT
 </div>
 </div>
 </body>

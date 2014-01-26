@@ -2229,11 +2229,45 @@ void CabbagePluginAudioProcessorEditor::InsertCheckBox(CabbageGUIClass &cAttr)
                                                 /*****************************************************/
                                                 /*     button/filebutton/checkbox press event        */
                                                 /*****************************************************/
-												
+//												
 void CabbagePluginAudioProcessorEditor::buttonStateChanged(Button* button)
 {												
-	
+if(button->isMouseButtonDown())
+	{
+	for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
+		{//find correct control from vector                        	  
+			//+++++++++++++button+++++++++++++
+			 if(getFilter()->getGUICtrls(i).getStringProp("name")==button->getName())
+				 {
+					if(getFilter()->getGUICtrls(i).getStringProp("type")==String("button")&&
+					getFilter()->getGUICtrls(i).getNumProp("latched")==0)
+					{   
+					//toggle button values
+					if(getFilter()->getGUICtrls(i).getNumProp("value")==0){
+						getFilter()->setParameterNotifyingHost(i, 1.f);
+						getFilter()->setParameter(i, 1.f);
+						getFilter()->getGUICtrls(i).setNumProp("value", 1);
+						}
+					else{
+						getFilter()->setParameterNotifyingHost(i, 0.f);
+						getFilter()->getGUICtrls(i).setNumProp("value", 0);
+						getFilter()->setParameter(i, 0.f);
+						}
+					//toggle text values
+					for(int o=0;o<getFilter()->getGUICtrls(i).getStringArrayProp("text").size();o++)
+						Logger::writeToLog(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", o));
+						
+					if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1).equalsIgnoreCase(button->getButtonText()))
+							button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 0));
+					else
+							button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1));
+					}
+					
+				}
+		}
+	}
 }
+
 												
 void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 {

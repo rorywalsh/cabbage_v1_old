@@ -701,6 +701,11 @@ bool multiLine = false;
 		{
 //		Logger::writeToLog(guiCtrls.getReference(i).getStringProp("channel")+": "+String(guiCtrls[i].getNumProp("value")));
 #ifndef Cabbage_No_Csound
+		if(guiCtrls.getReference(i).getStringProp("channeltype")=="string")
+		//deal with combobox strings..
+		csound->SetChannel(guiCtrls.getReference(i).getStringProp("channel").toUTF8(), 
+									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp("value")-1).toUTF8().getAddress());
+		else
 		csound->SetChannel( guiCtrls.getReference(i).getStringProp("channel").toUTF8(), guiCtrls[i].getNumProp("value"));
 #endif
 		}
@@ -921,7 +926,6 @@ if(index<(int)guiCtrls.size()){//make sure index isn't out of range
 	else
 	return (getGUICtrls(index).getNumProp("value")/range)-(min/range);
 	#else
-	//Logger::writeToLog("GetParam:"+String(guiCtrls[index].getNumProp("value")));
 	return guiCtrls[index].getNumProp("value");
 	#endif
 	}
@@ -932,6 +936,7 @@ else
 
 void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
 {
+String stringMessage;
 #ifndef Cabbage_No_Csound
 /* this will get called by the plugin GUI sliders or
 by the host, via automation. The timer thread in the plugin's editor
@@ -959,17 +964,31 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
 	else
 		newValue = (newValue*range)+min;
 
-	guiCtrls.getReference(index).setNumProp("value", newValue);
-	messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp("channel").toUTF8(),  newValue,
-	guiCtrls.getReference(index).getStringProp("type"));
+	//guiCtrls.getReference(index).setNumProp("value", newValue);
+	//messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp("channel").toUTF8(),  newValue,
+	//guiCtrls.getReference(index).getStringProp("type"));
 	//Logger::writeToLog(String("parameterSet:"+String(newValue)));
-	#else
+	#endif
 	//Logger::writeToLog(String("parameterSet:"+String(newValue)));
 	//no need to scale here when in standalone mode
-	guiCtrls.getReference(index).setNumProp("value", newValue);
-	messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp("channel").toUTF8(), newValue,
-																			guiCtrls.getReference(index).getStringProp("type"));
-	#endif
+	
+	if(getGUICtrls(index).getStringProp("type")=="combobox" &&
+								getGUICtrls(index).getStringProp("channeltype")=="string")
+	  {
+		stringMessage = getGUICtrls(index).getStringArrayPropValue("text", newValue-1);
+		Logger::writeToLog(stringMessage);
+		messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp("channel").toUTF8(), 
+												  stringMessage,
+												  "string");
+	  }
+	else
+		messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp("channel").toUTF8(), 
+												  newValue,
+												  guiCtrls.getReference(index).getStringProp("type"));
+	
+		guiCtrls.getReference(index).setNumProp("value", newValue);
+		
+	
    }
 #endif
 }
@@ -1036,6 +1055,7 @@ for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 		}
 		//catch string messags
 		else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="string"){
+		Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);	
 		csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.toUTF8(),
 						   messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal.toUTF8().getAddress());
 		}

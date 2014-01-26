@@ -396,6 +396,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		var channels;
 		channels.append("combochan");
 		cabbageIdentifiers.set("channel", channels);
+		cabbageIdentifiers.set("channeltype", "number");
 		cabbageIdentifiers.set("text", array);
 		cabbageIdentifiers.set("value", 1);	
 		cabbageIdentifiers.set("caption", "");
@@ -867,6 +868,7 @@ int CabbageGUIClass::parse(String inStr)
 	identArray.add("alpha(");
     identArray.add(",channel(");
 	identArray.add("channel(");
+	identArray.add("channeltype(");
 	identArray.add(" chan(");
     identArray.add("channels(");
 	identArray.add(" chans(");
@@ -1203,6 +1205,10 @@ int CabbageGUIClass::parse(String inStr)
 				native = strTokens[0].trim();
 				cabbageIdentifiers.set("native", strTokens[0].trim());	
 				//Logger::writeToLog(native);
+			}
+			
+			else if(identArray[indx].equalsIgnoreCase("channeltype(")){
+				cabbageIdentifiers.set("channeltype", strTokens[0].trim());	
 			}
 			
 			else if(identArray[indx].equalsIgnoreCase("populate(")){

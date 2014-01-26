@@ -2293,8 +2293,8 @@ if(!getFilter()->isGuiEnabled()){
 																							selectedFile.getFullPathName(),
 																							"string");
 									}
-							Logger::writeToLog(selectedFile.getFullPathName());
-							Logger::writeToLog(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"));
+									Logger::writeToLog(selectedFile.getFullPathName());
+									Logger::writeToLog(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"));
 							
 						 }
 						 else{
@@ -2491,7 +2491,6 @@ if(combo->isEnabled()) // before sending data to on named channel
 for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control from vector
 	if(getFilter()->getGUICtrls(i).getStringProp("name")==combo->getName())
 		{
-
 		if(getFilter()->getGUICtrls(i).getStringProp("filetype").contains("snaps")){
 		String workingDir = getFilter()->getGUICtrls(i).getStringProp("workingdir");
 		String filename = workingDir+"/"+combo->getText();
@@ -2499,7 +2498,6 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control fro
 		restoreParametersFromPresets(XmlDocument::parse(File(filename)));
 		//File(combo->getText())	
 		}
-
 		
 #ifndef Cabbage_Build_Standalone
 		getFilter()->setParameter(i, (float)(combo->getSelectedItemIndex()+1)/(getFilter()->getGUICtrls(i).getNumProp("comborange")));
@@ -3223,7 +3221,6 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
                 //else
                 //       cabButton->button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1));
 								
-				
 			}
         }
   
@@ -3248,15 +3245,20 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
         //no automation for comboboxes, still problematic! 
         else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("combobox")){
 			float val;
-			#ifdef Cabbage_Build_Standalone
+		#ifdef Cabbage_Build_Standalone
 			val = getFilter()->getParameter(i);
-			((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)getFilter()->getParameter(i)-1, dontSendNotification);
+			//if(val==getFilter()->getGUICtrls(i).getNumProp("comborange"))
+			((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)val-1, dontSendNotification);
 		#else
+			//needed to move combobox to full when controlled by a host
+			if(getFilter()->getParameter(i)>=0.98)
+			val = getFilter()->getGUICtrls(i).getNumProp("comborange");
+			else
 			val = getFilter()->getGUICtrls(i).getNumProp("comborange")*getFilter()->getParameter(i);
 			//Logger::writeToLog(String("timerCallback():")+String(val));
 			((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex(int(val)-1, dontSendNotification);
 		#endif
-			incomingValues.set(i, val);
+			//incomingValues.set(i, val);
         }
 
         else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("checkbox")){

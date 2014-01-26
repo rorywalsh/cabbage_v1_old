@@ -130,7 +130,7 @@ public:
 	
 	Rectangle<int> getCaretScreenPosition(){
 		Rectangle<int> rect(textEditor->getCaretPoisition());
-		rect.setLeft(rect.getX()+this->getTopLevelComponent()->getX()+10);
+		rect.setLeft(rect.getX()+this->getTopLevelComponent()->getX()+100);
 		rect.setTop(rect.getY()+this->getTopLevelComponent()->getY()+45);
 		return rect;		
 	}

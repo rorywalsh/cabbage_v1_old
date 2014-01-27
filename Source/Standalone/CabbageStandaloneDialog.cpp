@@ -278,6 +278,11 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message){
 
 	else if(message.equalsIgnoreCase("fileSaved")){
 	saveFile();
+	if(filter->isGuiEnabled()){
+	startTimer(100);
+	((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
+	filter->setGuiEnabled(false);
+	}
 	}
 
 	else if(message.contains("fileOpen")){

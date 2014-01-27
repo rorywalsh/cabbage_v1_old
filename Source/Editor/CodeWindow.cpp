@@ -604,8 +604,8 @@ void CodeWindow::actionListenerCallback(const String &message){
 	//						this->getCaretScreenPosition().getY()+18.f,
 	//						width, 50);
 	//popupDisplay->setWantsKeyboardFocus(false);
-		popupDisplay->setText(textEditor->getOpcodeToken(2).removeCharacters("\""), 
-								   textEditor->getOpcodeToken(3).removeCharacters("\""));
+	popupDisplay->setText(textEditor->getOpcodeToken(2).removeCharacters("\""), 
+								   "....  "+textEditor->getOpcodeToken(3).removeCharacters("\""));
 		
 	textEditor->toFront(true);
 	//cabbageTimer->startTimedEvent(1, "return focus to editor");

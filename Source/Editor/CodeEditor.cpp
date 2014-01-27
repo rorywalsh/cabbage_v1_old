@@ -357,19 +357,20 @@ textChanged = true;
 pos1 = getDocument().findWordBreakBefore(getCaretPos());
 String lineFromCsd = getDocument().getLine(pos1.getLineNumber());
 
-int val = CabbageUtils::getPreference(appProperties, "EnablePopupDisplay");
-if(val){
-	String parsedString;
+if(CabbageUtils::getPreference(appProperties, "EnablePopupDisplay"))
+	{
+	String opcodeHelpString;
 	StringArray syntaxTokens, csdLineTokens;
 	csdLineTokens.clear();
-	csdLineTokens.addTokens(lineFromCsd, " ", "\n");
+	csdLineTokens.addTokens(lineFromCsd, " ,\t", "");
 
 		for(int i=0;i<opcodeStrings.size();i++){
-			parsedString = opcodeStrings[i];
+			opcodeHelpString = opcodeStrings[i];
 			syntaxTokens.clear();	
-			syntaxTokens.addTokens(parsedString, ";", "\"");
+			syntaxTokens.addTokens(opcodeHelpString, ";", "\"");
 			if(syntaxTokens.size()>3)
 			for(int x=0;x<csdLineTokens.size();x++){
+				//Logger::writeToLog(csdLineTokens[x]);
 				if(syntaxTokens[0].removeCharacters("\"")==csdLineTokens[x].trim()){
 					if(syntaxTokens[0].length()>3){
 							//Logger::writeToLog(syntaxTokens[0]);

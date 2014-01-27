@@ -2229,7 +2229,7 @@ void CabbagePluginAudioProcessorEditor::InsertCheckBox(CabbageGUIClass &cAttr)
                                                 /*****************************************************/
                                                 /*     button/filebutton/checkbox press event        */
                                                 /*****************************************************/
-//												
+//for unlatched buttons...												
 void CabbagePluginAudioProcessorEditor::buttonStateChanged(Button* button)
 {												
 if(button->isMouseButtonDown())
@@ -2325,30 +2325,72 @@ if(!getFilter()->isGuiEnabled()){
 						
 
 						 File selectedFile;
-						 if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode").equalsIgnoreCase("open")){
-							FileChooser fc("Select a file to open", directory.getFullPathName(), filetype, true);
-							if(fc.browseForFileToOpen()){
-								selectedFile = fc.getResult();
-								getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"), 
-																							selectedFile.getFullPathName(),
-																							"string");
-									}
-									Logger::writeToLog(selectedFile.getFullPathName());
-									Logger::writeToLog(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"));
+						 
+						 if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode").equalsIgnoreCase("snapshot") &&
+							getFilter()->getGUILayoutCtrls(i).getStringProp("filetype").contains("snaps"))
+						 {
+							//here we write the files with generic names for quick saving
+							Array<File> dirFiles;
+							File pluginDir;
+							String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
+							//Logger::writeToLog(currentFileLocation);
+							if(selectedDir.length()<1){
+							pluginDir = File(currentFileLocation);
+							}
+							else
+							pluginDir = File(selectedDir);	
+							pluginDir.findChildFiles(dirFiles, 2, false, filetype);	
+							
+							//now check existing files in directory and make sure we use a unique name 
+							for(int i=0;i<100;i++){
+								String newName = getFilter()->getCsoundInputFile().getFileNameWithoutExtension()+"_"+String(i);
+								#ifdef WIN32
+								String fullFileName = pluginDir.getFullPathName()+"\\"+newName+".snaps";
+								#else
+								String fullFileName = pluginDir.getFullPathName()+"/"+newName+".snaps";
+								#endif
+								//Logger::writeToLog(fullFileName);
+								bool allowSave = true;
+								for(int y=0;y<dirFiles.size();y++){
+									if(dirFiles[y].getFileNameWithoutExtension().equalsIgnoreCase(newName))
+										allowSave = false;									
+								}
+								if(allowSave){
+									savePresetsFromParameters(File(fullFileName), "create");
+									refreshGUIControls("combobox");
+									return;
+								}
+							}
+								
 							
 						 }
+						 //else let the user specify the filename for the snapshot
 						 else{
-							FileChooser fc("Select a file to save", directory.getFullPathName(), filetype, true);
-							if(fc.browseForFileToSave(true)){
-								selectedFile = fc.getResult();	
-								if(filetype.contains("snaps"))
-								savePresetsFromParameters(selectedFile, "create");
-								else
-								getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"), 
-																							selectedFile.getFullPathName(),
-																							"string");
-								refreshGUIControls("combobox");
-							}
+							 if(!getFilter()->getGUILayoutCtrls(i).getStringProp("filetype").contains("snaps")){
+								FileChooser fc("Select a file", directory.getFullPathName(), filetype, true);
+								if(fc.browseForFileToOpen()){
+									selectedFile = fc.getResult();
+									getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"), 
+																								selectedFile.getFullPathName(),
+																								"string");
+										}
+										Logger::writeToLog(selectedFile.getFullPathName());
+										Logger::writeToLog(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"));
+								
+							 }
+							 else{
+								FileChooser fc("Select a file to save", directory.getFullPathName(), filetype, true);
+								if(fc.browseForFileToSave(true)){
+									selectedFile = fc.getResult();	
+									if(filetype.contains("snaps"))
+									savePresetsFromParameters(selectedFile, "create");
+									else
+									getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"), 
+																								selectedFile.getFullPathName(),
+																								"string");
+									refreshGUIControls("combobox");
+								}
+							 }
 						 }
 
 						}
@@ -2494,10 +2536,11 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 			pluginDir = File(currentFileLocation);
 			}
 			else
-			pluginDir = File(cAttr.getStringProp("workingdir"));	
-			
+			if(File(cAttr.getStringProp("workingdir")).exists())
+			pluginDir = File(cAttr.getStringProp("workingdir"));
+	
 			const String filetype = cAttr.getStringProp("filetype");
-			//Logger::writeToLog(cAttr.getStringProp("fileType"));
+
 			pluginDir.findChildFiles(dirFiles, 2, false, filetype);
 
 			for (int i = 0; i < dirFiles.size(); ++i){
@@ -2535,11 +2578,20 @@ if(combo->isEnabled()) // before sending data to on named channel
 for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control from vector
 	if(getFilter()->getGUICtrls(i).getStringProp("name")==combo->getName())
 		{
+		
 		if(getFilter()->getGUICtrls(i).getStringProp("filetype").contains("snaps")){
+		String filename;
 		String workingDir = getFilter()->getGUICtrls(i).getStringProp("workingdir");
-		String filename = workingDir+"/"+combo->getText();
+		if(workingDir.isEmpty())
+			workingDir = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
+		#ifdef WIN32
+		filename = workingDir+"\\"+combo->getText()+".snaps";
+		#else
+		filename = workingDir+"/"+combo->getText()+".snaps";
+		#endif
 		Logger::writeToLog(filename);
-		restoreParametersFromPresets(XmlDocument::parse(File(filename)));
+		if(File(filename).existsAsFile())
+			restoreParametersFromPresets(XmlDocument::parse(File(filename)));
 		//File(combo->getText())	
 		}
 		
@@ -2585,6 +2637,9 @@ for(int i=0;i<getFilter()->getGUICtrlsSize();i++)
 			pluginDir.findChildFiles(dirFiles, 2, false, filetype);
 			cabCombo->combo->clear(dontSendNotification);
 			for (int i = 0; i < dirFiles.size(); ++i)
+				if(filetype.contains("snaps"))
+				cabCombo->combo->addItem(dirFiles[i].getFileNameWithoutExtension(), i+1);	
+				else
 				cabCombo->combo->addItem(dirFiles[i].getFileName(), i+1);
 				
 			cabCombo->combo->setSelectedId(currentItemID, dontSendNotification);	
@@ -2599,7 +2654,7 @@ for(int i=0;i<getFilter()->getGUICtrlsSize();i++)
 //========================================================================================
 void CabbagePluginAudioProcessorEditor::savePresetsFromParameters(File selectedFile, String mode)
 {
-	XmlElement xml (getName());								
+	XmlElement xml (getFilter()->getCsoundInputFile().getFileNameWithoutExtension());								
 	for(int i=0;i<getFilter()->getGUICtrlsSize();i++)
 		xml.setAttribute(getFilter()->getGUICtrls(i).getStringProp("channel"), getFilter()->getGUICtrls(i).getNumProp("value"));																	
 	
@@ -2611,14 +2666,21 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
 {
 	ScopedPointer<XmlElement> xml;
 	xml = xmlState;
+	
+/* 
+ * Might be a better idea to simply change the GUI control positions in the editor
+ * we don't need to update a combobox if it is a snapshot combobox..
+ */
+	
+	//Logger::writeToLog(getFilter()->getCsoundInputFile().getFileNameWithoutExtension());
 	// make sure that it's actually our type of XML object..
-	if (xml->hasTagName (getName()))
+	if (xml->hasTagName (getFilter()->getCsoundInputFile().getFileNameWithoutExtension()))
 	{
 	for(int i=0;i<getFilter()->getNumParameters();i++)
 		{
 		float newValue = (float)xml->getDoubleAttribute(getFilter()->getGUICtrls(i).getStringProp("channel"));
 
-		#ifndef Cabbage_Build_Stanalone
+		#ifndef Cabbage_Build_Standalone
 		
 		float range = getFilter()->getGUICtrls(i).getNumProp("range");
 		float comboRange = getFilter()->getGUICtrls(i).getNumProp("comborange");
@@ -2639,6 +2701,7 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
 			newValue = (newValue/range)+min;		
 		#endif
 		
+		if(!getFilter()->getGUICtrls(i).getStringProp("filetype").contains("snaps")	)	
 		getFilter()->setParameter(i, newValue);
 		}
 	}
@@ -3288,10 +3351,15 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 
         else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("combobox")){
 			float val;
+			NotificationType notify;
+			if(getFilter()->getGUICtrls(i).getStringProp("filetype").contains("snaps"))
+				notify = sendNotification;
+			else
+				notify = dontSendNotification;
+			
 		#ifdef Cabbage_Build_Standalone
 			val = getFilter()->getParameter(i);
-			//if(val==getFilter()->getGUICtrls(i).getNumProp("comborange"))
-			((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)val-1, dontSendNotification);
+			((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)val-1, notify);
 			incomingValues.set(i, val);
 			//Logger::writeToLog(String("timerCallback():")+String(val));
 		#else
@@ -3301,7 +3369,7 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 			else
 			val = getFilter()->getGUICtrls(i).getNumProp("comborange")*getFilter()->getParameter(i);
 			//Logger::writeToLog(String("timerCallback():")+String(val));
-			((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex(int(val)-1, dontSendNotification);
+			((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex(int(val)-1, notify);
 		#endif
 			
         }

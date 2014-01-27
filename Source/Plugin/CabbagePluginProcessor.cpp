@@ -1009,11 +1009,12 @@ if(!CSCompResult)
 	for(int index=0;index<getGUICtrlsSize();index++)
 		{
 		if(guiCtrls[index].getStringProp("channeltype").equalsIgnoreCase("string")){
-			
+		//argghhh!! THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE!	
 		}
 		else{	
 			float value = csound->GetChannel(guiCtrls[index].getStringProp("channel").toUTF8());
-			//Logger::writeToLog(String(value));
+			//Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp("channel"));
+			//Logger::writeToLog("value:"+String(value));
 			guiCtrls.getReference(index).setNumProp("value", value);
 			}
 		}

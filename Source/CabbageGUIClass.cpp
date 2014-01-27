@@ -271,6 +271,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set("name", "filebutton");
 		cabbageIdentifiers.set("mode", "open");
 		
+		
 		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));	
 		var populate;
 		populate.append("");
@@ -1795,7 +1796,8 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
 					identifier=="scalex" ||
 					identifier=="scaley" ||
 					identifier=="basetype" ||
-					identifier=="kind")
+					identifier=="kind" ||
+					identifier=="comborange")
 			{
 				//none of these identifiers need to be seen...
 			}

@@ -258,15 +258,15 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set("top", 10);
 		cabbageIdentifiers.set("left", 10);
 		cabbageIdentifiers.set("width", 80);
-		cabbageIdentifiers.set("height", 40);
+		cabbageIdentifiers.set("height", 40);	
 		var channels;
-		channels.append("filechan");	
-		cabbageIdentifiers.set("value", 1);	
+		channels.append("filebutton");
 		cabbageIdentifiers.set("channel", channels);
-		cabbageIdentifiers.set("text", array);		
+		cabbageIdentifiers.set("value", 1);	
+		cabbageIdentifiers.set("text", array);
 		cabbageIdentifiers.set("caption", "");
-		cabbageIdentifiers.set("colour", Colours::white.toString());	
-		cabbageIdentifiers.set("fontcolour", CabbageUtils::getComponentFontColour().toString());	
+		cabbageIdentifiers.set("colour", Colours::black.toString());	
+		cabbageIdentifiers.set("fontcolour", Colours::white.toString());	
 		cabbageIdentifiers.set("type", "filebutton");
 		cabbageIdentifiers.set("name", "filebutton");
 		cabbageIdentifiers.set("mode", "open");
@@ -1176,7 +1176,7 @@ int CabbageGUIClass::parse(String inStr)
 					comboRange = i+1;
 					}
 					//Logger::writeToLog(String(value.size())+typeOfWidget);
-					if((value.size()==1) && (typeOfWidget=="button")){
+					if((value.size()==1) && ((typeOfWidget=="button") || (typeOfWidget=="filebutton"))){
 						value.append(strTokens[0]);
 						Logger::writeToLog(strTokens[0].trim());
 					}

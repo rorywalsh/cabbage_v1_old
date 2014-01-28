@@ -817,7 +817,7 @@ subm.addItem(8, "image");
 subm.addItem(9, "keyboard");
 subm.addItem(10, "xypad");
 subm.addItem(11, "label");
-//subm.addItem(12, "infobutton");
+subm.addItem(16, "filebutton");
 //subm.addItem(13, "soundfiler");
 subm.addItem(14, "table");
 subm.addItem(15, "Csound message console");
@@ -855,7 +855,9 @@ int choice = m.show();
 	 else if(choice==11)
 			 insertComponentsFromCabbageText(StringArray(String("label bounds(")+String(x)+(", ")+String(y)+String(", 50, 15), text(\"Label\"), fontcolour(\"white\")")), false);
 	 else if(choice==12)
-			 insertComponentsFromCabbageText(StringArray(String("infobutton bounds(")+String(x)+(", ")+String(y)+String(", 60, 25), text(\"Info\"), file(\"info.html\")")), false);
+			 insertComponentsFromCabbageText(StringArray(String("infobutton bounds(")+String(x)+(", ")+String(y)+String(", 60, 25), text(\"Info\"), file(\"info.html\")"), false);
+	 else if(choice==16)
+			 insertComponentsFromCabbageText(StringArray(String("filebutton bounds(")+String(x)+(", ")+String(y)+String(", 60, 25), text(\"File\")")), false);
 	 else if(choice==13)
 			 insertComponentsFromCabbageText(StringArray(String("soundfiler bounds(")+String(x)+(", ")+String(y)+String(", 360, 160)")), false);
 	 else if(choice==14)
@@ -1690,7 +1692,7 @@ void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
         ((CabbageButton*)layoutComps[idx])->button->addListener(this);
         //((CabbageButton*)layoutComps[idx])->button->setName("button");
         if(cAttr.getItemsSize()>0)
-        ((CabbageButton*)layoutComps[idx])->button->setButtonText(cAttr.getItems(cAttr.getNumProp("value")));
+        ((CabbageButton*)layoutComps[idx])->button->setButtonText(cAttr.getStringArrayPropValue("text", cAttr.getNumProp("value")));
 #ifdef Cabbage_Build_Standalone
         ((CabbageButton*)layoutComps[idx])->button->setWantsKeyboardFocus(true);
 #endif

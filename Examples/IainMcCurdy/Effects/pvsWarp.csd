@@ -1,12 +1,12 @@
 <Cabbage>
 form caption("pvsWarp") size(440, 90), pluginID("warp")
 image pos(0, 0), size(440, 90), colour( 50, 50,75,220), shape("rounded"), outline("white"), line(4) 
-rslider bounds( 10, 11, 70, 70), text("Scale"), channel("scal"), range(0.1, 4, 1, 0.5, 0.001) , colour("LightSlateGrey"), fontcolour("white")
-rslider bounds( 80, 11, 70, 70), text("Shift"), channel("shift"), range(-5000, 5000, 0), colour("LightSlateGrey"), fontcolour("white")
-rslider bounds(150, 11, 70, 70), text("Feedback"), channel("FB"), range(0, 0.99, 0), colour("LightSlateGrey"), fontcolour("white")
-rslider bounds(220, 10, 70, 70), text("FFT Size"), channel("att_table"), range(1, 8, 5, 1,1), colour("LightSlateGrey"), fontcolour("white")
-rslider bounds(290, 11, 70, 70), text("Mix"), channel("mix"), range(0, 1.00, 1), colour("LightSlateGrey"), fontcolour("white")
-rslider bounds(360, 11, 70, 70), text("Level"), channel("lev"), range(0, 1.00, 0.5), colour("LightSlateGrey"), fontcolour("white")
+rslider bounds( 10, 11, 70, 70), text("Scale"),    channel("scal"),      range(0.1, 4, 1, 0.5, 0.001), colour("LightSlateGrey"), fontcolour("white"), trackercolour("white")
+rslider bounds( 80, 11, 70, 70), text("Shift"),    channel("shift"),     range(-5000, 5000, 0),        colour("LightSlateGrey"), fontcolour("white"), trackercolour("white")
+rslider bounds(150, 11, 70, 70), text("Feedback"), channel("FB"),        range(0, 0.99, 0),            colour("LightSlateGrey"), fontcolour("white"), trackercolour("white")
+rslider bounds(220, 10, 70, 70), text("FFT Size"), channel("att_table"), range(1, 8, 5, 1,1),          colour("LightSlateGrey"), fontcolour("white"), trackercolour("white")
+rslider bounds(290, 11, 70, 70), text("Mix"),      channel("mix"),       range(0, 1.00, 1),            colour("LightSlateGrey"), fontcolour("white"), trackercolour("white")
+rslider bounds(360, 11, 70, 70), text("Level"),    channel("lev"),       range(0, 1.00, 0.5),          colour("LightSlateGrey"), fontcolour("white"), trackercolour("white")
 </Cabbage>
 
 <CsoundSynthesizer>

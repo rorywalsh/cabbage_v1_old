@@ -10,7 +10,7 @@ label    bounds(222, 75, 70, 14), text("Play Once")
 checkbox bounds( 10, 25, 70, 50), channel("Record"), value(0), shape("square"), colour("red")
 checkbox bounds( 80, 25, 70, 50), channel("Pause"), value(0), shape("square"), colour("Blue")
 checkbox bounds(150, 25, 70, 50), channel("PlayLoop"), value(0), shape("square")
-checkbox bounds(220, 25, 70, 50), channel("PlayOnce"), value(0), shape("square")
+checkbox bounds(220, 25, 70, 50), channel("PlayOnce"), value(0), shape("square"), colour("yellow")
 
 hslider bounds(  5,  95, 280,50), channel("Speed"), range(-4.00, 4.00, 1)	;, text("Speed")
 label   bounds(125, 135,  70,13), text("Speed") 

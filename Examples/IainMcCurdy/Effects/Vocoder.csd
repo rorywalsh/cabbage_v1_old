@@ -1,6 +1,9 @@
 <Cabbage>
 form caption("vocoder"), size(530, 230), pluginID("voco")
 
+image pos(0, 0), size(530, 200), colour(255,255,150), shape("rounded"), outline("LightBrown"), line(4)
+
+image 	bounds(140,  6,180, 31), colour( 10,225, 90,100), shape("ellipse"), outline(205,205, 70), line(1)
 label   bounds(158,  5, 33, 33), text("v"), FontColour(100,100,100)
 label   bounds(178,  5, 33, 33), text("o"), FontColour(100,100,100)
 label   bounds(198,  5, 33, 33), text("c"), FontColour(100,100,100)
@@ -15,9 +18,7 @@ label   bounds(221,  4, 30, 30), text("o"), FontColour(195,  0, 60)
 label   bounds(241,  4, 30, 30), text("d"), FontColour(175,  0, 80)
 label   bounds(261,  4, 30, 30), text("e"), FontColour(155,  0,100)
 label   bounds(281,  4, 30, 30), text("r"), FontColour(135,  0,120)
-image 	bounds(140,  6,180, 31), colour( 10,225, 90,100), shape("ellipse"), outline(205,205, 70), line(1)
 
-image pos(0, 0), size(530, 200), colour(255,255,150), shape("rounded"), outline("LightBrown"), line(4)
 label    bounds( 15, 10, 85, 11), text("Carrier Source"), FontColour("black")
 combobox bounds( 10, 21, 85, 15), channel("CarSource"), value(1), text("synth","external")
 label    bounds( 10, 40, 85, 11), text("Filter Steepness"), FontColour("black")

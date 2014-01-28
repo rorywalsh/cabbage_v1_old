@@ -15,7 +15,7 @@ label    bounds(370, 29, 70, 12), text("Arp.Mode")
 combobox bounds(350, 42, 90, 20), channel("mode"), value(6), text("Up","Down","Up<->Down","Random Dir.","Random Pick","Seq. Play")
 rslider  bounds(440, 30, 60, 60), text("Swing"), channel("swing"), range(0, 1.00, 0)
 label    bounds(505, 29, 80, 13), text("Clock Source")
-button   bounds(505, 42, 80, 20), text("External", "Internal"), channel("ClockSource"), value(0)
+button   bounds(505, 42, 80, 20), text("Internal","External"), channel("ClockSource"), value(0)
 checkbox bounds(597, 40, 30, 30), colour("red"), channel("pause"), value(0)
 label    bounds(595, 77, 40, 12), text("Pause")
 checkbox bounds(647, 40, 30, 30), colour("Cyan"), channel("onoff"),  value(1)
@@ -71,9 +71,6 @@ rslider  bounds(530,250, 60, 60), text("Mix"), channel("DryWet"),	range(0,  1.00
 rslider  bounds(580,250, 60, 60), text("Time"), channel("DlyTim"),	range(1, 16,   4,1,1)
 rslider  bounds(630,250, 60, 60), text("F.back"), channel("DlyFB"),	range(0,  1.00,   0.5)
 }
-
-;xypad bounds(700,  0, 196, 200), channel("att", "dec"), rangex(0.001, 1, 0.001), rangey(0.001, 1, 0.1)
-;xypad bounds(700,210, 196, 200), channel("EnvAmt", "res"), rangex(0.001, 2, 0), rangey(0, 1, 0)
 
 keyboard pos(5, 330), size(690, 80)
 infobutton bounds(5,415, 70, 20), text("Help"), file("ArpeggiatorHelp.html")

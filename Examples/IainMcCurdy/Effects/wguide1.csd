@@ -12,25 +12,20 @@
 
 <Cabbage>
 form caption("wguide1") size(415,210), pluginID("WGu1")
-image   bounds(229,  9,174,  1), colour(200,170,130), shape("sharp"), outline(silver), line(1)
-image   bounds(233, 21,170,  1), colour(200,170,130), shape("sharp"), outline(silver), line(1)
 image           bounds(0, 0, 415,125), colour(125, 95, 55), shape("sharp"), outline(225,195,155), line(2) 
+label   bounds(227,  4,180, 22), text("W A V E G U I D E"), fontcolour(silver)
+image   bounds(228,  8,175,  1), colour(200,170,130), shape("sharp"), outline(silver), line(1)
+image   bounds(231, 22,172,  1), colour(200,170,130), shape("sharp"), outline(silver), line(1)
 checkbox bounds( 20, 10,120, 17), text("Keyboard Input"), channel("input") fontcolour("white") colour(yellow) value(0)
 label    bounds(153,  5, 40, 11), text("Source"), fontcolour("white")
 combobox bounds(140, 16, 62, 16), channel("source"), value(1), text("Live","Gravel","Dust","Air")
-rslider  bounds( 10, 41, 70, 70),  text("Frequency"),  channel("freq"),      tracker(225,195,155), range(8.2, 12542, 160, 0.25), colour( 85, 55,15), fontcolour(white)
-rslider  bounds( 75, 41, 70, 70),  text("Note Num."),  channel("notnum"),    tracker(225,195,155), range(0, 127, 51, 1,1),     colour( 85, 55,15), fontcolour(white)
-rslider  bounds(140, 41, 70, 70), text("Cutoff"),     channel("cutoff"),    tracker(225,195,155), range(20,20000,8000,0.25),  colour( 85, 55,15), fontcolour(white)
-rslider  bounds(205, 41, 70, 70), text("Feedback"),   channel("feedback"),  tracker(225,195,155), range(-0.99999, 0.99999, 0.8),  colour( 85, 55,15), fontcolour(white)
-rslider  bounds(270, 41, 70, 70), text("Mix"),        channel("mix"),       tracker(225,195,155), range(0, 1.00, 1),        colour( 85, 55,15), fontcolour(white)
-rslider  bounds(335, 41, 70, 70), text("Level"),      channel("level"),     tracker(225,195,155), range(0, 1.00, 0.7),        colour( 85, 55,15), fontcolour(white)
+rslider  bounds( 10, 41, 70, 70),  text("Frequency"),  channel("freq"),      trackercolour(225,195,155), range(8.2, 12542, 160, 0.25), colour( 85, 55,15), fontcolour(white)
+rslider  bounds( 75, 41, 70, 70),  text("Note Num."),  channel("notnum"),    trackercolour(225,195,155), range(0, 127, 51, 1,1),     colour( 85, 55,15), fontcolour(white)
+rslider  bounds(140, 41, 70, 70),  text("Cutoff"),     channel("cutoff"),    trackercolour(225,195,155), range(20,20000,8000,0.25),  colour( 85, 55,15), fontcolour(white)
+rslider  bounds(205, 41, 70, 70),  text("Feedback"),   channel("feedback"),  trackercolour(225,195,155), range(-0.99999, 0.99999, 0.8),  colour( 85, 55,15), fontcolour(white)
+rslider  bounds(270, 41, 70, 70),  text("Mix"),        channel("mix"),       trackercolour(225,195,155), range(0, 1.00, 1),        colour( 85, 55,15), fontcolour(white)
+rslider  bounds(335, 41, 70, 70),  text("Level"),      channel("level"),     trackercolour(225,195,155), range(0, 1.00, 0.7),        colour( 85, 55,15), fontcolour(white)
 keyboard bounds(  0,125, 415, 85)
-
-;label   bounds(225,  3,180, 22), text("W A V E G U I D E"), fontcolour( 80, 60, 40)
-
-;line    bounds(227,  4,180,  3), colour(200,170,130)
-
-label   bounds(227,  4,180, 22), text("W A V E G U I D E"), fontcolour(silver)
 
 </Cabbage>
 

@@ -1,16 +1,16 @@
 <Cabbage>
 form caption("clfilt - Multi-Mode Filter") size(600, 90), pluginID("clfl")
 image                              bounds(0, 0, 600, 90), colour( 40,40,100), shape("rounded"), outline("white"), line(4) 
-rslider bounds( 10, 11, 70, 70), text("Freq."),       colour( 40,40,100), 	fontcolour("white"), 	channel("cf"), 		range(20, 20000, 2000, 0.333)
-rslider bounds( 75, 11, 70, 70), text("N.Poles"),     colour( 40,40,100), 	fontcolour("white"), 	channel("npol"),	range(2,80,24,1,2)
-rslider bounds(140, 11, 70, 70), text("Ripple"),      colour( 40,40,100), 	fontcolour("white"), 	channel("pbr"),		range(0.1,50,14)
-rslider bounds(205, 11, 70, 70), text("Attenuation"), colour( 40,40,100), 	fontcolour("white"), 	channel("sba"),		range(-120,-1,-60)
+rslider bounds( 10, 11, 70, 70), text("Freq."),       colour( 40,40,100), 	fontcolour("white"), 	channel("cf"), 		range(20, 20000, 2000, 0.333), trackercolour("white")
+rslider bounds( 75, 11, 70, 70), text("N.Poles"),     colour( 40,40,100), 	fontcolour("white"), 	channel("npol"),	range(2,80,24,1,2),            trackercolour("white")
+rslider bounds(140, 11, 70, 70), text("Ripple"),      colour( 40,40,100), 	fontcolour("white"), 	channel("pbr"),		range(0.1,50,14),              trackercolour("white")
+rslider bounds(205, 11, 70, 70), text("Attenuation"), colour( 40,40,100), 	fontcolour("white"), 	channel("sba"),		range(-120,-1,-60),            trackercolour("white")
 combobox channel("type"),  bounds(275, 12, 120, 20), value(1), text("Lowpass","Highpass")
 label bounds(320, 32,110, 12), text("Type"), fontcolour("white")
 combobox channel("kind"),  bounds(275, 46, 120, 20), value(2), text("Butterworth","Chebychev type I","Chebychev type II")
-label bounds(320, 66,110, 12), text("Kind"), fontcolour("white")
-rslider bounds(400, 11, 70, 70), text("Mix"),	      colour( 40,40,100),	fontcolour("white"), 	channel("mix"), 	range(0,1.00,1)
-rslider bounds(465, 11, 70, 70), text("Level"),	      colour( 40,40,100),	fontcolour("white"), 	channel("level"), 	range(0,1.00,0.3)
+label bounds(313, 66,120, 12), text("Method"), fontcolour("white")
+rslider bounds(400, 11, 70, 70), text("Mix"),	      colour( 40,40,100),	fontcolour("white"), 	channel("mix"), 	range(0,1.00,1),   trackercolour("white")
+rslider bounds(465, 11, 70, 70), text("Level"),	      colour( 40,40,100),	fontcolour("white"), 	channel("level"), 	range(0,1.00,0.3), trackercolour("white")
 checkbox channel("test"), pos(540, 35), text("TEST"), colour("yellow"), fontcolour("white"), size(100, 15), value(0)
 }
 </Cabbage>

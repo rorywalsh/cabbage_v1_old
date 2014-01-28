@@ -855,7 +855,7 @@ int choice = m.show();
 	 else if(choice==11)
 			 insertComponentsFromCabbageText(StringArray(String("label bounds(")+String(x)+(", ")+String(y)+String(", 50, 15), text(\"Label\"), fontcolour(\"white\")")), false);
 	 else if(choice==12)
-			 insertComponentsFromCabbageText(StringArray(String("infobutton bounds(")+String(x)+(", ")+String(y)+String(", 60, 25), text(\"Info\"), file(\"info.html\")"), false);
+			 insertComponentsFromCabbageText(StringArray(String("infobutton bounds(")+String(x)+(", ")+String(y)+String(", 60, 25), text(\"Info\"), file(\"info.html\")")), false);
 	 else if(choice==16)
 			 insertComponentsFromCabbageText(StringArray(String("filebutton bounds(")+String(x)+(", ")+String(y)+String(", 60, 25), text(\"File\")")), false);
 	 else if(choice==13)

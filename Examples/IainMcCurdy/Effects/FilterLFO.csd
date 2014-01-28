@@ -38,10 +38,10 @@
 <Cabbage>
 form caption("Filter LFO") size(790,170), pluginID("FLFO")
 image pos(0, 0),           size(790,170), colour(0,0,0,170), shape("rounded"), outline("white"), line(4) 
-rslider bounds( 10, 11, 70, 70), text("Freq."), colour( 30, 30, 30),	tracker("black"),	fontcolour("white"), 		channel("cf"), 		range(1, 20000, 300, 0.333)
-rslider bounds( 75, 11, 70, 70), text("Res."),  colour( 30, 30, 30),	tracker("black"),	fontcolour("white"), 		channel("res"),		range(0,1.00,0.75)
-rslider bounds(140, 11, 70, 70), text("Mix"),   colour( 30, 30, 30),	tracker("black"),	fontcolour("white"), 		channel("mix"), 	range(0,1.00,1)
-rslider bounds(205, 11, 70, 70), text("Level"), colour( 30, 30, 30),	tracker("black"),	fontcolour("white"), 		channel("level"), 	range(0, 1.00, 0.2)
+rslider bounds( 10, 11, 70, 70), text("Freq."), colour( 30, 30, 30),	trackercolour("black"),	fontcolour("white"), 		channel("cf"), 		range(1, 20000, 300, 0.333)
+rslider bounds( 75, 11, 70, 70), text("Res."),  colour( 30, 30, 30),	trackercolour("black"),	fontcolour("white"), 		channel("res"),		range(0,1.00,0.75)
+rslider bounds(140, 11, 70, 70), text("Mix"),   colour( 30, 30, 30),	trackercolour("black"),	fontcolour("white"), 		channel("mix"), 	range(0,1.00,1)
+rslider bounds(205, 11, 70, 70), text("Level"), colour( 30, 30, 30),	trackercolour("black"),	fontcolour("white"), 		channel("level"), 	range(0, 1.00, 0.2)
 
 combobox bounds( 20, 90, 100, 18), channel("model"), value(6), text("Tone","Butterworth","Moogladder","cl-Butterworth","cl-Chebychev I","resonz","phaser2","resony")
 label    bounds( 44,108, 80, 12), text("MODEL"), fontcolour("white")
@@ -57,27 +57,27 @@ button   bounds(140,127, 80, 18), colour("Green"), text("RESYNC.", "RESYNC."), c
 ; controls pertaining to the setup of clfilt accessed in a pop-up panel.
 groupbox bounds(280, 15,150, 90),  colour("black"), plant("clfilt"), line(0), popup(1);, fontcolour("white")
 {
-rslider bounds(  5, 16, 70, 70), text("N.Poles"), colour( 30 , 30, 30),	tracker("black"), FontColour("white"), channel("npol"),   range(2, 80, 2, 1, 2)
-rslider bounds( 75, 16, 70, 70), text("Ripple"),  colour( 30 , 30, 30),	tracker("black"), FontColour("white"), channel("pbr"),   range(0.1, 50.00, 1, 0.5, 0.001)
+rslider bounds(  5, 16, 70, 70), text("N.Poles"), colour( 30 , 30, 30),	trackercolour("black"), FontColour("white"), channel("npol"),   range(2, 80, 2, 1, 2)
+rslider bounds( 75, 16, 70, 70), text("Ripple"),  colour( 30 , 30, 30),	trackercolour("black"), FontColour("white"), channel("pbr"),    range(0.1, 50.00, 1, 0.5, 0.001)
 }
 
 ; controls pertaining to the setup of phaser2 accessed in a pop-up panel.
 groupbox bounds(280, 55,315, 90),  colour("black"), plant("phaser2"), line(0), popup(1);, fontcolour(white)
 {
-rslider  bounds(  5, 16, 70, 70), text("Q"), channel("q"), range(0.0001,4,3), colour( 30 , 30, 30),	tracker("black"), FontColour("white")
-rslider  bounds( 75, 16, 70, 70), text("N.Ords."), channel("ord"), range(1, 256, 8, 0.5,1), colour( 30 , 30, 30),	tracker("black"), FontColour("white")
+rslider  bounds(  5, 16, 70, 70), text("Q"),       channel("q"),   range(0.0001,4,3),       colour( 30 , 30, 30),	trackercolour("black"), FontColour("white")
+rslider  bounds( 75, 16, 70, 70), text("N.Ords."), channel("ord"), range(1, 256, 8, 0.5,1), colour( 30 , 30, 30),	trackercolour("black"), FontColour("white")
 label    bounds(160, 20, 60,12), text("Sep. Mode")
-combobox bounds(150, 34, 80,25), channel("mode"), size(100,50), value(1), text("Equal", "Power"), colour( 30 , 30, 30),	tracker("black"), FontColour("white")
-rslider  bounds(240, 16, 70, 70), text("Separation"), channel("sep"), range(-3, 3.00, 0.9), colour( 30 , 30, 30),	tracker("black"), FontColour("white")
+combobox bounds(150, 34, 80,25), channel("mode"), size(100,50), value(1), text("Equal", "Power"), colour( 30 , 30, 30),	trackercolour("black"), FontColour("white")
+rslider  bounds(240, 16, 70, 70), text("Separation"), channel("sep"), range(-3, 3.00, 0.9), colour( 30 , 30, 30),	trackercolour("black"), FontColour("white")
 }
 
 ; controls pertaining to the setup of resony accessed in a pop-up panel.
 groupbox bounds(280, 95,565, 90),  colour("black"), plant("resony"), line(0), popup(1);, fontcolour(white)
 {
-rslider  bounds(  5, 16, 70, 70), text("BW."),           fontcolour("white"), channel("bw"), range(0.01, 1000, 13, 0.5), colour( 30 , 30, 30),	tracker("black")
-rslider  bounds( 75, 16, 70, 70), text("Num."),          fontcolour("white"), channel("num"), range(1, 80, 10, 1,1), colour( 30 , 30, 30),	tracker("black")
-rslider  bounds(145, 16, 70, 70), text("Sep.oct."),      fontcolour("white"), channel("sepR"), range(-11, 11, 2), colour( 30 , 30, 30),	tracker("black")
-rslider  bounds(215, 16, 70, 70), text("Sep.semi."),     fontcolour("white"), channel("sepR2"), range(-48, 48, 24,1,1), colour( 30 , 30, 30),	tracker("black")
+rslider  bounds(  5, 16, 70, 70), text("BW."),           fontcolour("white"), channel("bw"),    range(0.01, 1000, 13, 0.5), colour( 30 , 30, 30),	trackercolour("black")
+rslider  bounds( 75, 16, 70, 70), text("Num."),          fontcolour("white"), channel("num"),   range(1, 80, 10, 1,1),      colour( 30 , 30, 30),	trackercolour("black")
+rslider  bounds(145, 16, 70, 70), text("Sep.oct."),      fontcolour("white"), channel("sepR"),  range(-11, 11, 2),          colour( 30 , 30, 30),	trackercolour("black")
+rslider  bounds(215, 16, 70, 70), text("Sep.semi."),     fontcolour("white"), channel("sepR2"), range(-48, 48, 24,1,1),     colour( 30 , 30, 30),	trackercolour("black")
 combobox bounds(285, 10,130, 70), caption("Scaling Mode"), channel("scl"), value(2), text("none", "peak response", "RMS")
 combobox bounds(425, 10,130, 70), caption("Separation Mode"), channel("sepmode"), value(1), text("octs.total", "hertz", "octs.adjacent")
 }
@@ -91,20 +91,20 @@ line bounds(390, 10,  2,150), colour("Grey")
 label    bounds(405, 11, 45, 17), text("LFO 1"), fontcolour("white")
 combobox bounds(405, 50, 100, 18), channel("LFOtype"), value(3), text("Sine","Triangle","Square[bi]","Square[uni]","Saw Up","Saw Down","Rand.S&H","Rand.Spline")
 label    bounds(425, 54, 80, 12), text("LFO-Shape"), fontcolour("white")
-rslider  bounds(515, 11, 70, 70), text("Amp"), colour( 30, 30 ,30),	tracker("black"), fontcolour("white"), channel("LFOamp"), range(0, 9.00, 0.67)
-rslider  bounds(580, 11, 70, 70), text("Rate"),colour( 30, 30 ,30),	tracker("black"), fontcolour("white"), channel("LFOBPM"), range(0, 480, 60, 1, 1)
-rslider  bounds(645, 11, 70, 70), text("Rate Div."),colour( 30, 30 ,30),	tracker("black"), fontcolour("white"), channel("LFOBPMDiv"), range(1, 64, 1, 1, 1)
-rslider  bounds(710, 11, 70, 70), text("Smoothing"),colour( 30, 30 ,30),	tracker("black"), fontcolour("white"), channel("LFOport"), range(0, 0.1, 0.005, 0.25, 0.000001)
+rslider  bounds(515, 11, 70, 70), text("Amp"),      colour( 30, 30 ,30),	trackercolour("black"), fontcolour("white"), channel("LFOamp"), range(0, 9.00, 0.67)
+rslider  bounds(580, 11, 70, 70), text("Rate"),     colour( 30, 30 ,30),	trackercolour("black"), fontcolour("white"), channel("LFOBPM"), range(0, 480, 60, 1, 1)
+rslider  bounds(645, 11, 70, 70), text("Rate Div."),colour( 30, 30 ,30),	trackercolour("black"), fontcolour("white"), channel("LFOBPMDiv"), range(1, 64, 1, 1, 1)
+rslider  bounds(710, 11, 70, 70), text("Smoothing"),colour( 30, 30 ,30),	trackercolour("black"), fontcolour("white"), channel("LFOport"), range(0, 0.1, 0.005, 0.25, 0.000001)
 checkbox bounds(405, 31, 80, 12), text("Link Rates"), channel("RateLink"),colour(yellow), fontcolour("white"),  value(0)
 
 ;LFO2
 label    bounds(405, 91, 45, 17), text("LFO 2"), fontcolour("white")
 combobox bounds(405,130, 100, 18), channel("LFOtype2"), value(8), text("Sine","Triangle","Square[bi]","Square[uni]","Saw Up","Saw Down","Rand.S&H","Rand.Spline")
 label    bounds(425,134, 80, 12), text("Shape"), fontcolour("white")
-rslider  bounds(515, 91, 70, 70), text("Amp"), colour( 30, 30 ,30),	tracker("black"), fontcolour("white"), channel("LFOamp2"), range(0, 9.00, 2.5)
-rslider  bounds(580, 91, 70, 70), text("Rate"),colour( 30, 30 ,30),	tracker("black"), fontcolour("white"), channel("LFOBPM2"), range(0, 480,  1, 1, 1)
-rslider  bounds(645, 91, 70, 70), text("Rate Div."),colour( 30, 30 ,30),	tracker("black"), fontcolour("white"), channel("LFOBPMDiv2"), range(1, 64, 1, 1, 1)
-rslider  bounds(710, 91, 70, 70), text("Smoothing"),colour( 30, 30 ,30),	tracker("black"), fontcolour("white"), channel("LFOport2"), range(0, 0.1, 0.001, 0.25, 0.000001)
+rslider  bounds(515, 91, 70, 70), text("Amp"), colour( 30, 30 ,30),	        trackercolour("black"), fontcolour("white"), channel("LFOamp2"), range(0, 9.00, 2.5)
+rslider  bounds(580, 91, 70, 70), text("Rate"),colour( 30, 30 ,30),	        trackercolour("black"), fontcolour("white"), channel("LFOBPM2"), range(0, 480,  1, 1, 1)
+rslider  bounds(645, 91, 70, 70), text("Rate Div."),colour( 30, 30 ,30),	trackercolour("black"), fontcolour("white"), channel("LFOBPMDiv2"), range(1, 64, 1, 1, 1)
+rslider  bounds(710, 91, 70, 70), text("Smoothing"),colour( 30, 30 ,30),	trackercolour("black"), fontcolour("white"), channel("LFOport2"), range(0, 0.1, 0.001, 0.25, 0.000001)
 checkbox bounds(405,111, 80, 12), text("Link Rates"), channel("RateLink"),colour(yellow), fontcolour("white"),  value(0)
 
 label   bounds(220,150, 200, 12), text("Author: Iain McCurdy |2013|"), FontColour("grey")

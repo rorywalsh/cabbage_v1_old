@@ -42,6 +42,8 @@ gkNoteTrig	init	0
 giwave	ftgen	0,0,4097,11,20,1,0.5	;waveform used by excitation (pluck) signal
 gisine	ftgen	0,0,4097,10,1		;sine wave (used by lfos)
 
+gkactive	init	0	; Will contain number of active instances of instr 3 when legato mode is chosen. NB. notes in release stage will not be regarded as active. 
+
 ;UDOs
 ;UDO for plucked electric string - using a UDO facilitates the use of ksmps=1 to improve sound quality
 opcode	PluckedElectricString,a,aakkkak
@@ -108,9 +110,9 @@ instr	2	;triggered via MIDI
 	  turnoff2	p1+1+(inum*0.001),4,1			; turn off the called instrument
 	 endif							; end of conditional
 	else				;otherwise... (i.e. legato mode)
-	 iactive	active p1+1	;check to see if these is already a note active...
-	 if iactive==0 then		;...if not...
-	  event_i	"i",p1+1,0,-1	;...start a new held note
+	 iactive	=	i(gkactive)			;number of active notes of instr 3 (note in release are disregarded)
+	 if iactive==0 then					;...if no notes are active
+	  event_i	"i",p1+1,0,-1				;...start a new held note
 	 endif
 	endif
 endin
@@ -120,6 +122,8 @@ instr	3
 	kporttime	=	kporttime*gkLegSpeed	;scale portamento time function with value from GUI knob widget
 	
 	if i(gklegato)==1 then				;if we are in legato mode...
+	 krel	release					;sense when  note has been released
+	 gkactive	=	1-krel			;if note is in release, gkactive=0, otherwise =1
 	 kcps	portk	gkcps,kporttime			;apply portamento smooth to changes in note pitch (this will only have an effect in 'legato' mode)
 	 acps	interp	kcps				;create a a-rate version of pitch (cycles per second)
 	 kactive	active	p1-1			;...check number of active midi notes (previous instrument)

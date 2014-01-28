@@ -8,7 +8,8 @@ reson 2 uses reson with scaling method 2.
 
 <Cabbage>
 form caption("Formant Filter"), colour("SlateGrey"), size(550, 300), pluginID("form")  
-xypad bounds(5, 5, 350, 260), channel("x", "y"), rangex(0, 1, 0.5), rangey(0, 1, 0), text("upper edge:A E I | lower edge:U O")
+
+xypad bounds(5, 5, 350, 260), channel("x", "y"), rangex(0, 1, 0.5), rangey(0, 1, 0), text("upper edge:A E I | lower :U O"), fontcolour("white")
 
 vslider bounds(360,  0, 30,140), text("f1"), channel("f1"), range(0, 1.00, 1), fontcolour("white")
 vslider bounds(380,  0, 30,140), text("f2"), channel("f2"), range(0, 1.00, 1), fontcolour("white")
@@ -18,7 +19,7 @@ vslider bounds(440,  0, 30,140), text("f5"), channel("f5"), range(0, 1.00, 1), f
 combobox bounds(365, 155,100, 20), channel("voice"), value(1), text("bass", "tenor", "countertenor", "alto", "soprano")
 combobox bounds(365, 185,100, 20), channel("filter"), value(1), text("reson 1", "reson 2", "butterworth")
 checkbox bounds(365, 215,100, 20), colour("yellow"), channel("balance"),  value(0), text("Balance"), fontcolour("white")
-button   bounds(365, 245,100, 20), text("Noise Input", "Live Input"), channel("input"), value(0), fontcolour("lime")
+button   bounds(365, 245,100, 20), text("Live Input","Noise Input"), channel("input"), value(0), fontcolour("lime")
 
 rslider bounds(480,  5, 60, 60), text("BW.Mult"), channel("BWMlt"), range(0.01, 4, 1, 0.4), fontcolour("white")
 rslider bounds(480, 70, 60, 60), text("Freq.Mult"), channel("FrqMlt"), range(0.25, 4, 1, 0.4), fontcolour("white")

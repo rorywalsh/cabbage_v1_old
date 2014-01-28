@@ -27,20 +27,20 @@ image bounds(660,  0, 90, 360), colour(  5,255,100, 60), shape("sharp")
 
 xypad bounds(10, 10, 250, 210), channel("vowel", "oct"), text("X = Vowel 'AEIOU' : Y = Octave Division"), rangex(0, 1, 0), rangey(0, 4, 0)
 combobox bounds(265, 10, 110, 25), channel("voice"), value(5), text("Bass", "Tenor", "Countertenor", "Alto", "Soprano")
-button   bounds(265, 40, 110, 25), text("monophonic", "polyphonic"), channel("monopoly"), value(1), fontcolour("lime")
-rslider  bounds(385, 10, 60, 60), text("Leg.Time"), channel("LegTim"), range(0.005, 0.3, 0.025, 0.5, 0.005)	,colour("green"), tracker("white")
-rslider  bounds(445, 10, 60, 60), text("Vowel"), channel("vowel"), range(0, 1.00, 0)	,colour("green"),midCtrl(1, 2), tracker("white")
-rslider  bounds(505, 10, 60, 60), text("Level"), channel("lev"), range(0, 1.00, 0.6)	,colour("green"), tracker("white")
-rslider  bounds(265, 80, 60, 60), text("Vib.Dep."), channel("vibdep"), range(0, 2.00, 0.35)	,colour("tomato"),midCtrl(1, 1), tracker("white")
-rslider  bounds(325, 80, 60, 60), text("Trem.Dep."), channel("trmdep"), range(0, 1.00, 0.2)	,colour("tomato"),midCtrl(1, 1), tracker("white")
-rslider  bounds(385, 80, 60, 60), text("Mod.Rate"), channel("modrte"), range(0.10,20, 5, 0.5)	,colour("tomato"), tracker("white")
-rslider  bounds(445, 80, 60, 60), text("Mod.Delay"), channel("moddel"), range(0, 2.00, 0.3, 0.5)	,colour("tomato"), tracker("white")
-rslider  bounds(505, 80, 60, 60), text("Mod.Rise"), channel("modris"), range(0, 4.00, 2, 0.5)	,colour("tomato"), tracker("white")
-rslider  bounds(265,150, 60, 60), text("N.Voices"), channel("nvoices"), range(1,  50, 6, 1, 1)		,colour("yellow"), tracker("white")
-rslider  bounds(325,150, 60, 60), text("Dtn.Dep."), channel("DtnDep"), range(0,    4.00, 1,    0.5)	,colour("yellow"), tracker("white")
-rslider  bounds(385,150, 60, 60), text("Dtn.Rate"), channel("DtnRte"), range(0.01,40, 0.2,  0.25)	,colour("yellow"), tracker("white")
-rslider  bounds(445,150, 60, 60), text("Rvb.Mix"), channel("RvbMix"), range(0, 1.00, 0.15)	,colour("steelblue"), tracker("white")
-rslider  bounds(505,150, 60, 60), text("Rvb.Size"), channel("RvbSize"), range(0.5, 1.00, 0.82, 2)	,colour("steelblue"), tracker("white")
+button   bounds(265, 40, 110, 25), text("polyphonic","monophonic"), channel("monopoly"), value(1), fontcolour("lime")
+rslider  bounds(385, 10, 60, 60), text("Leg.Time"),     channel("LegTim"),  range(0.005, 0.3, 0.025, 0.5, 0.005),colour("green"), trackercolour("white")
+rslider  bounds(445, 10, 60, 60), text("Vowel"),        channel("vowel"),   range(0, 1.00, 0),       colour("green"),    trackercolour("white"),midCtrl(1, 2)
+rslider  bounds(505, 10, 60, 60), text("Level"),        channel("lev"),     range(0, 1.00, 0.6),     colour("green"),    trackercolour("white")
+rslider  bounds(265, 80, 60, 60), text("Vib.Dep."),     channel("vibdep"),  range(0, 2.00, 0.35),    colour("tomato"),   trackercolour("white"),midCtrl(1, 1)
+rslider  bounds(325, 80, 60, 60), text("Trem.Dep."),    channel("trmdep"),  range(0, 1.00, 0.2),     colour("tomato"),   trackercolour("white"),midCtrl(1, 1)
+rslider  bounds(385, 80, 60, 60), text("Mod.Rate"),     channel("modrte"),  range(0.10,20, 5, 0.5),  colour("tomato"),   trackercolour("white")
+rslider  bounds(445, 80, 60, 60), text("Mod.Delay"),    channel("moddel"),  range(0, 2.00, 0.3, 0.5),colour("tomato"),   trackercolour("white")
+rslider  bounds(505, 80, 60, 60), text("Mod.Rise"),     channel("modris"),  range(0, 4.00, 2, 0.5),  colour("tomato"),   trackercolour("white")
+rslider  bounds(265,150, 60, 60), text("N.Voices"),     channel("nvoices"), range(1,  50, 6, 1, 1),  colour("yellow"),   trackercolour("white")
+rslider  bounds(325,150, 60, 60), text("Dtn.Dep."),     channel("DtnDep"),  range(0,    4.00, 1,0.5),colour("yellow"),   trackercolour("white")
+rslider  bounds(385,150, 60, 60), text("Dtn.Rate"),     channel("DtnRte"),  range(0.01,40, 0.2,0.25),colour("yellow"),   trackercolour("white")
+rslider  bounds(445,150, 60, 60), text("Rvb.Mix"),      channel("RvbMix"),  range(0, 1.00, 0.15),    colour("steelblue"),trackercolour("white")
+rslider  bounds(505,150, 60, 60), text("Rvb.Size"),     channel("RvbSize"), range(0.5, 1.00, 0.82,2),colour("steelblue"),trackercolour("white")
 checkbox bounds(570, 10,190, 20), text("Filter On/Off") channel("FiltOnOff"), colour("lime")  value(0)
 xypad bounds(570, 35, 190, 185), channel("cf", "bw"), text("x:c.off/y:b.width"), rangex(5, 13, 8), rangey(0.1, 5, 0.3)
 
@@ -164,6 +164,8 @@ giSBW3		ftgen	0, 0, 8, -2,	5, 120,	100,	100,	100,	170	;BAND WIDTH
 giSBW4		ftgen	0, 0, 8, -2,	5, 130,	150,	120,	130,	180	;BAND WIDTH
 giSBW5		ftgen	0, 0, 8, -2,	5, 140,	200,	120,	135,	200	;BAND WIDTH
 
+gkactive	init	0	; Will contain number of active instances of instr 3 when legato mode is chosen. NB. notes in release stage will not be regarded as active. 
+
 opcode 		fofx5, a, kkki
 	kfund,kvowel,koct,ivoice	xin
 		
@@ -267,9 +269,9 @@ instr	2	;triggered via MIDI
 	  turnoff2	p1+1+(inum*0.001),4,1			; turn off the called instrument
 	 endif							; end of conditional
 	else				;otherwise... (i.e. legato mode)
-	 iactive	active p1+1	;check to see if these is already a note active...
-	 if iactive==0 then		;...if not...
-	  event_i	"i",p1+1,0,-1	;...start a new held note
+	 iactive	=	i(gkactive)			;number of active notes of instr 3 (note in release are disregarded)
+	 if iactive==0 then					;...if no notes are active
+	  event_i	"i",p1+1,0,-1				;...start a new held note
 	 endif
 	endif
 endin
@@ -284,6 +286,8 @@ instr	3
 	kporttime	=	kporttime*gkLegTim	;scale portamento time function with value from GUI knob widget
 	
 	if i(gkmonopoly)==1 then			;if we are in legato mode...
+	 krel	release					;sense when  note has been released
+	 gkactive	=	1-krel			;if note is in release, gkactive=0, otherwise =1
 	 kcps	portk	gkcps,kporttime			;apply portamento smooth to changes in note pitch (this will only have an effect in 'legato' mode)
 	 kactive	active	p1-1			;...check number of active midi notes (previous instrument)
 	 if kactive==0 then				;if no midi notes are active...

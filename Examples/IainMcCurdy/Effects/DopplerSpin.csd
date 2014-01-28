@@ -39,7 +39,7 @@ Written by Iain McCurdy, 2013
 ; The degree to which this is present can be scaled using the 'Reverb Scaling' slider.                                    
 
 <Cabbage>
-form caption("Spinning Doppler"), size(700,265), pluginID("SDop")
+form caption("Doppler Spin"), size(700,265), pluginID("SDop")
 
 ;label    bounds(23, 10, 60,11), text("Input")
 label    bounds( 10, 4,120, 15), text("i  n  p  u  t"), fontcolour("white")
@@ -48,23 +48,23 @@ combobox bounds(10, 30, 60,20), channel("input"), value(1), text("left","right",
 line     bounds( 85,  5,  2, 70), colour("Grey")
 label    bounds(185,  4,120, 15), text("r  e  v  e  r  b"), fontcolour("white")
 checkbox bounds(100, 33,110, 20), text("Reverb On/Off") channel("RvbOnOff"), FontColour("White"), colour("lime")  value(1)
-rslider  bounds(210, 23, 55, 55), channel("RvbScaling"), range(0,1.000,0.3,1,0.001),     text("Scaling"),               TextBox(0), colour( 95, 45,115), tracker( 95, 45,115)
-rslider  bounds(270, 23, 55, 55), channel("RvbTime"),    range(0.3,0.990,0.7,1,0.001),   text("Time"),                  TextBox(0), colour( 85, 45,125), tracker( 85, 45,125)
-rslider  bounds(330, 23, 55, 55), channel("RvbFilt"), range(20,20000,4000,0.5,0.001),    text("Damping"),               TextBox(0), colour( 75, 45,135), tracker( 75, 45,135)
+rslider  bounds(210, 23, 55, 55), channel("RvbScaling"), range(0,1.000,0.3,1,0.001),     text("Scaling"),               TextBox(0), colour( 95, 45,115), trackercolour( 95, 45,115)
+rslider  bounds(270, 23, 55, 55), channel("RvbTime"),    range(0.3,0.990,0.7,1,0.001),   text("Time"),                  TextBox(0), colour( 85, 45,125), trackercolour( 85, 45,125)
+rslider  bounds(330, 23, 55, 55), channel("RvbFilt"), range(20,20000,4000,0.5,0.001),    text("Damping"),               TextBox(0), colour( 75, 45,135), trackercolour( 75, 45,135)
 
 line     bounds(390,  5,  2, 70), colour("Grey")
 label    bounds(411,  4,120, 15), text("o  u  t  p  u  t"), fontcolour("white")
-rslider  bounds(400, 23, 55, 55), channel("mix"),        range(0,1.000,1,1,0.001),       text("Mix"),                   TextBox(0), colour( 65, 45,145), tracker( 65, 45,145)
-rslider  bounds(460, 23, 55, 55), channel("OutGain"),    range(0,1.000,0.7,1,0.001),     text("Level"),                 TextBox(0), colour( 55, 45,155), tracker( 65, 45,145)
+rslider  bounds(400, 23, 55, 55), channel("mix"),        range(0,1.000,1,1,0.001),       text("Mix"),                   TextBox(0), colour( 65, 45,145), trackercolour( 65, 45,145)
+rslider  bounds(460, 23, 55, 55), channel("OutGain"),    range(0,1.000,0.7,1,0.001),     text("Level"),                 TextBox(0), colour( 55, 45,155), trackercolour( 65, 45,145)
 line     bounds(520,  5,  2, 70), colour("Grey")
 
 checkbox bounds(530, 33,110, 20), text("Auto-Frequency") channel("AutoFreq"), FontColour("White"), colour("lime")  value(0)
 
-hslider bounds(  5, 80,690, 35), channel("freq"),        range(-10,10.00,0.2,1,0.0001),     text("Frequency of Rotation"), TextBox(1), colour(145, 45, 65), tracker(145, 45, 65)
-hslider bounds(  5,110,690, 35), channel("AmpDepth"),    range(0,1.000,0.7,1,0.001),     text("Central/Edge"),          TextBox(1), colour(135, 45, 75), tracker(135, 45, 75)
-hslider bounds(  5,140,690, 35), channel("AmpPhase"),    range(0,1.000,0.5,1,0.001),     text("Orientation [radians]"), TextBox(1), colour(125, 45, 85), tracker(125, 45, 85)
-hslider bounds(  5,170,690, 35), channel("PanDepth"),    range(0,1.000,1,1,0.001),       text("Panning Width"),         TextBox(1), colour(115, 45, 95), tracker(115, 45, 95)
-hslider bounds(  5,200,690, 35), channel("DopDep"),      range(0,0.030,0.003,0.5,0.000001),   text("Doppler Depth"),         TextBox(1), colour(105, 45,105), tracker(105, 45,105)
+hslider bounds(  5, 80,690, 35), channel("freq"),        range(-10,10.00,0.2,1,0.0001),     text("Frequency of Rotation"), TextBox(1), colour(145, 45, 65), trackercolour(145, 45, 65)
+hslider bounds(  5,110,690, 35), channel("AmpDepth"),    range(0,1.000,0.7,1,0.001),        text("Central/Edge"),          TextBox(1), colour(135, 45, 75), trackercolour(135, 45, 75)
+hslider bounds(  5,140,690, 35), channel("AmpPhase"),    range(0,1.000,0.5,1,0.001),        text("Orientation [radians]"), TextBox(1), colour(125, 45, 85), trackercolour(125, 45, 85)
+hslider bounds(  5,170,690, 35), channel("PanDepth"),    range(0,1.000,1,1,0.001),          text("Panning Width"),         TextBox(1), colour(115, 45, 95), trackercolour(115, 45, 95)
+hslider bounds(  5,200,690, 35), channel("DopDep"),      range(0,0.030,0.003,0.5,0.000001), text("Doppler Depth"),         TextBox(1), colour(105, 45,105), trackercolour(105, 45,105)
 
 label   bounds( 5,247, 200, 12), text("Author: Iain McCurdy |2013|"), FontColour("grey")
 
@@ -116,7 +116,7 @@ instr	1
 	endif	 
 
 	if kAutoFreq=1 then
-	 kfreq	jspline	kfreq,0.5,2
+	 kfreq	jspline	kfreq,1,4
 	endif
 
 

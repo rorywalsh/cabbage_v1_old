@@ -87,6 +87,35 @@ bool CsoundCodeEditor::keyPressed (const KeyPress& key)
     return true;
 }
 
+void CsoundCodeEditor::handleReturnKey (){
+if(type=="csound"){
+	insertNewLine("\n");
+	sendActionMessage("make popup invisible");		
+}		
+}	
+
+
+void CsoundCodeEditor::insertText(String text){
+	pos1 = getCaretPos();
+	getDocument().insertText(pos1, text);
+}
+
+
+void CsoundCodeEditor::insertNewLine(String text){
+	pos1 = getCaretPos();
+	StringArray csdArray;
+	csdArray.addLines(getAllText());
+	String curLine = csdArray[pos1.getLineNumber()];	
+	int numberOfTabs=0;
+	String tabs;
+	while(curLine.substring(numberOfTabs, numberOfTabs+1).equalsIgnoreCase("\t")){
+		tabs.append("\t", 8);
+		numberOfTabs++;
+	}
+	Logger::writeToLog("Number of tabs:"+String(numberOfTabs));
+	getDocument().insertText(pos1, text+tabs);
+}
+
 void CsoundCodeEditor::handleTabKey(String direction)
 {	
 	/*multi line action, get highlited text, find the position of
@@ -123,7 +152,7 @@ void CsoundCodeEditor::handleTabKey(String direction)
 		pos1 = getCaretPos();
 		//Logger::writeToLog(csdArray[pos1.getLineNumber()]);
 		currentLine = csdArray[pos1.getLineNumber()];
-		if(csdArray[pos1.getLineNumber()].contains("\t")){
+		if(csdArray[pos1.getLineNumber()].substring(0, 1).contains("\t")){
 			csdArray.set(pos1.getLineNumber(), currentLine.substring(1));
 			csdText = csdArray.joinIntoString("\n");
 		}
@@ -274,10 +303,7 @@ void CsoundCodeEditor::addToRepository()
 	}
 }
 
-void CsoundCodeEditor::insertText(String text){
-	pos1 = getCaretPos();
-	getDocument().insertText(pos1, text);
-}
+
 
 String CsoundCodeEditor::getLineText(){
 	StringArray csdLines;

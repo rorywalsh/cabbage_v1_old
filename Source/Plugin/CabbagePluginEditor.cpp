@@ -162,7 +162,7 @@ for(int index=0;index<getFilter()->getGUILayoutCtrlsSize();index++)
 	}
 
 //start timer. Timer callback updates our GUI control states/positions, etc. with data from Csound
-startTimer(50);
+startTimer(20);
 resized();
 }
 
@@ -1134,8 +1134,7 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
         else if(cAttr.getStringProp("type")==String("pvsview")){    
                 InsertPVSViewer(cAttr);            
                 }
-
-        if(cAttr.getStringProp("type")==String("hslider")
+        else if(cAttr.getStringProp("type")==String("hslider")
                 ||cAttr.getStringProp("type")==String("vslider")
                 ||cAttr.getStringProp("type")==String("rslider")){                                
                 InsertSlider(cAttr);       //insert slider                        
@@ -1247,13 +1246,13 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 #endif
 	if(cAttr.getStringProp("file").length()<2)
 		pic="";
-	else
+	else{
 	#ifdef MACOSX
     pic.append(String("/Contents/")+String(cAttr.getStringProp("file")), 1024);
 	#else
-	//pic.append(String("/")+String(cAttr.getStringProp("file")), 1024);
+	pic = pic+String("\\")+String(cAttr.getStringProp("file"));;
 	#endif
-	
+	}
 
 	Logger::writeToLog(pic);
 	

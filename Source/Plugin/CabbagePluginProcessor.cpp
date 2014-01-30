@@ -125,7 +125,7 @@ csndIndex = 32;
 //set up PVS struct
 dataout = new PVSDATEXT;
 
-if(!inputfile.isEmpty()){
+if(inputfile.isNotEmpty()){
 File(inputfile).setAsCurrentWorkingDirectory();
 #ifdef CSOUND6
 csoundParams = new CSOUND_PARAMS();
@@ -136,6 +136,7 @@ csCompileResult = csound->Compile(const_cast<char*>(inputfile.toUTF8().getAddres
 
 if(csCompileResult==0){
 
+//send root directory path to Csound.	
 	setPlayConfigDetails(getNumberCsoundOutChannels(),
 						getNumberCsoundOutChannels(),
 						getCsoundSamplingRate(),
@@ -159,6 +160,8 @@ if(csCompileResult==0){
         csoundStatus = true;
         debugMessageArray.add(CABBAGE_VERSION);
         debugMessageArray.add(String("\n"));
+		csound->SetChannel("CABBAGE_CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().toUTF8().getAddress());	
+	
 }
 else{
         Logger::writeToLog("Csound couldn't compile your file");
@@ -263,9 +266,12 @@ csoundParams->nchnls_override =2;
 csound->SetParams(csoundParams);
 #endif
 
+csdFile.setAsCurrentWorkingDirectory();
+
 csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
 csdFile.setAsCurrentWorkingDirectory();
 if(csCompileResult==0){
+	
 	Logger::writeToLog("compiled Ok");
 		keyboardState.allNotesOff(0);
 		keyboardState.reset();
@@ -287,6 +293,8 @@ if(csCompileResult==0){
         csoundStatus = true;
         debugMessageArray.add(VERSION);
         debugMessageArray.add(String("\n"));
+		csound->SetChannel("CABBAGE_CSD_PATH", csdFile.getParentDirectory().getFullPathName().toUTF8().getAddress());	
+
 }
 else{
         Logger::writeToLog("Csound couldn't compile your file");

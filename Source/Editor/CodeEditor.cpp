@@ -72,8 +72,10 @@ bool CsoundCodeEditor::keyPressed (const KeyPress& key)
 			handleEscapeKey();
         //else if (key == KeyPress ('[', ModifierKeys::commandModifier, 0))   unindentSelection();
         //else if (key == KeyPress (']', ModifierKeys::commandModifier, 0))   indentSelection();
-        else if (key.getTextCharacter() >= ' ')                             
-			insertTextAtCaret (String::charToString (key.getTextCharacter()));
+        else if (key.getTextCharacter() >= ' ')                            
+		insertTextAtCaret (String::charToString (key.getTextCharacter()));
+		//insertMultiTextAtCaret(String::charToString (key.getTextCharacter()));
+
 		else if(key.getKeyCode() ==  268435488)
 			handleTabKey("backwards");
 		else if(key ==  KeyPress::tabKey)
@@ -114,6 +116,32 @@ void CsoundCodeEditor::insertNewLine(String text){
 	}
 	Logger::writeToLog("Number of tabs:"+String(numberOfTabs));
 	getDocument().insertText(pos1, text+tabs);
+}
+
+void CsoundCodeEditor::insertMultiTextAtCaret (String text)
+{
+	StringArray csdArray;
+	csdArray.addLines(getAllText());
+	String curLine;	
+	CodeDocument::Position newPos, indexPos;
+	newPos = getCaretPos();
+	int currentLine = getCaretPos().getLineNumber();
+	int index = newPos.getIndexInLine();
+	Logger::writeToLog(String(index));
+	
+	for(int i=0;i<3;i++){
+		curLine = newPos.getLineText();
+		Logger::writeToLog(String(curLine.length()));
+		/* need to check for tabs and add four spaces!!*/		
+		for(int y=curLine.length();y<index+2;y++){
+			getDocument().insertText(CodeDocument::Position(getDocument(), newPos.getLineNumber(), curLine.length()), " ");
+			newPos = newPos.movedBy(1);
+			//curLine = csdArray[currentLine+i];
+		}
+
+		getDocument().insertText(newPos, text);	
+		newPos = newPos.movedByLines(1);
+		}
 }
 
 void CsoundCodeEditor::handleTabKey(String direction)
@@ -183,29 +211,31 @@ void CsoundCodeEditor::handleTabKey(String direction)
 
 void CsoundCodeEditor::toggleComments()
 {
-StringArray selectedText;
-selectedText.addLines(getSelectedText());
-StringArray csdArray;
-csdArray.addLines(this->getAllText());
-String lastLine;
+	StringArray selectedText;
+	selectedText.addLines(getSelectedText());
+	StringArray csdArray;
+	csdArray.addLines(this->getAllText());
+	String lastLine;
 
-for(int i=0;i<csdArray.size();i++)
-	for(int y=0;y<selectedText.size();y++)
-		if(selectedText[y]==csdArray[i]){
-			if(!csdArray[i].equalsIgnoreCase("")){
-				if(selectedText[y].substring(0, 1).equalsIgnoreCase(";"))
-				csdArray.set(i, selectedText[y].substring(1));
-				else
-				csdArray.set(i, ";"+selectedText[y]);	
-				lastLine = selectedText[y].substring(1);
+	for(int i=0;i<csdArray.size();i++)
+		for(int y=0;y<selectedText.size();y++)
+			if(selectedText[y]==csdArray[i]){
+				if(!csdArray[i].equalsIgnoreCase("")){
+					if(selectedText[y].substring(0, 1).equalsIgnoreCase(";"))
+					csdArray.set(i, selectedText[y].substring(1));
+					else
+					csdArray.set(i, ";"+selectedText[y]);	
+					lastLine = selectedText[y].substring(1);
+				}
 			}
-		}
-		
-this->setAllText(csdArray.joinIntoString("\n"));
-moveCaretTo(CodeDocument::Position (getDocument(), getAllText().indexOf(lastLine)+lastLine.length()), false);
+			
+	this->setAllText(csdArray.joinIntoString("\n"));
+	moveCaretTo(CodeDocument::Position (getDocument(), getAllText().indexOf(lastLine)+lastLine.length()), false);
 }
 
-void CsoundCodeEditor::addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEvent *mouseClickEvent){
+//=================== addPopupMenuItems =======================
+void CsoundCodeEditor::addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEvent *mouseClickEvent)
+{
 	menuToAddTo.addItem(1, "Cut");
 	menuToAddTo.addItem(1, "Copy");
 	menuToAddTo.addItem(1, "Paste");
@@ -214,9 +244,7 @@ void CsoundCodeEditor::addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEve
 	menuToAddTo.addItem(1, "Undo");
 	menuToAddTo.addItem(1, "Redo");
 	menuToAddTo.addItem(10, "Add to repo");
-		
 	PopupMenu m;
-	
 	int repoIndex = 100;
 	ScopedPointer<XmlElement> xmlElement;
 	xmlElement = appProperties->getUserSettings()->getXmlValue("CopeRepoXmlData");
@@ -227,18 +255,17 @@ void CsoundCodeEditor::addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEve
 		repoEntries.add(e->getTagName());
 		repoIndex++;
 		}	
-
 	xmlElement =nullptr;	
 	menuToAddTo.addSubMenu("Insert from repo", m);
-
 };
+
 
 Rectangle<int> CsoundCodeEditor::getCaretPoisition()
 {
 pos1 = getCaretPos();
-return getCharacterBounds(pos1);	
-	
+return getCharacterBounds(pos1);		
 }
+
 
 void CsoundCodeEditor::performPopupMenuAction (int menuItemID){
 	if(menuItemID==1000){	

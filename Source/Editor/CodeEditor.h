@@ -75,11 +75,11 @@ class CsoundCodeEditor : public CodeEditorComponent,
 	void codeDocumentTextInserted(const juce::String &,int);
 	bool textChanged;
 	void insertNewLine(String text);
-	
 	void setOpcodeStrings(String opcodes){
-	opcodeStrings.addLines(opcodes);	
+	opcodeStrings.addLines(opcodes);
 	}
-	
+
+	void insertMultiTextAtCaret(String text);
 	String getOpcodeToken(int index){
 	return opcodeTokens[index];	
 	}	

@@ -95,7 +95,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     deviceManager = new AudioDeviceManager();
 	deviceManager->addAudioCallback (&player);
 	deviceManager->addMidiInputCallback (String::empty, &player);
-
+	deviceManager->closeAudioDevice();
 
 	ScopedPointer<XmlElement> savedState;
 	if (globalSettings != nullptr)

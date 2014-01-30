@@ -146,6 +146,8 @@ if(csCompileResult==0){
         csound->PerformKsmps();
         csound->SetScoreOffsetSeconds(0);
         csound->RewindScore();
+		csound->SetChannel("CABBAGE_CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().toUTF8().getAddress());	
+
         Logger::writeToLog("Csound compiled your file");
 
 		//csound->SetYieldCallback(CabbagePluginAudioProcessor::yieldCallback);
@@ -160,7 +162,6 @@ if(csCompileResult==0){
         csoundStatus = true;
         debugMessageArray.add(CABBAGE_VERSION);
         debugMessageArray.add(String("\n"));
-		csound->SetChannel("CABBAGE_CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().toUTF8().getAddress());	
 	
 }
 else{
@@ -424,7 +425,9 @@ if(csCompileResult==0){
 												guiCtrls.getReference(i).getNumProp("value"));
 		}
 
+		csound->SetChannel("CABBAGE_CSD_PATH", file.getParentDirectory().getFullPathName().toUTF8().getAddress());
 		this->suspendProcessing(false);
+		
 		return;
 }
 else{

@@ -120,16 +120,21 @@ void CsoundCodeEditor::insertNewLine(String text){
 
 void CsoundCodeEditor::insertMultiTextAtCaret (String text)
 {
+	sendActionMessage("make popup invisible");
 	StringArray csdArray;
 	csdArray.addLines(getAllText());
 	String curLine;	
 	CodeDocument::Position newPos, indexPos;
-	newPos = getCaretPos();
+	newPos = getSelectionStartCaretPos();
 	int currentLine = getCaretPos().getLineNumber();
 	int index = newPos.getIndexInLine();
 	Logger::writeToLog(String(index));
 	
-	for(int i=0;i<3;i++){
+	StringArray selectedText;
+	selectedText.addLines(getTextInRange(this->getHighlightedRegion()));
+	
+	
+	for(int i=0;i<selectedText.size();i++){
 		curLine = newPos.getLineText();
 		Logger::writeToLog(String(curLine.length()));
 		/* need to check for tabs and add four spaces!!*/		
@@ -142,6 +147,7 @@ void CsoundCodeEditor::insertMultiTextAtCaret (String text)
 		getDocument().insertText(newPos, text);	
 		newPos = newPos.movedByLines(1);
 		}
+	sendActionMessage("make popup invisible");
 }
 
 void CsoundCodeEditor::handleTabKey(String direction)
@@ -302,6 +308,23 @@ void CsoundCodeEditor::addRepoToSettings()
 
 }
 
+void CsoundCodeEditor::updateCaretPosition()
+{
+	/*
+	Logger::writeToLog("Updating caret position");
+	int columnEdit = 1;
+	
+	if(columnEdit==1){
+	StringArray selectedText;
+	selectedText.addLines(getTextInRange(this->getHighlightedRegion()));
+	Rectangle<int> newCaretPosition(getCharacterBounds(getSelectionStartCaretPosition()));
+	newCaretPosition.setHeight(getCharacterBounds (getCaretPos()).getHeight()*selectedText.size());
+	caret->setCaretPosition (newCaretPosition);
+	}
+	else*/
+		setCaretPos(getCharacterBounds (getCaretPos()));
+}
+
 void CsoundCodeEditor::addToRepository()
 {
 	AlertWindow alert("Add to Repository", "Enter a name and hit 'escape'", AlertWindow::NoIcon, this->getTopLevelComponent()); 
@@ -329,8 +352,6 @@ void CsoundCodeEditor::addToRepository()
 		newEntryXml = nullptr;
 	}
 }
-
-
 
 String CsoundCodeEditor::getLineText(){
 	StringArray csdLines;

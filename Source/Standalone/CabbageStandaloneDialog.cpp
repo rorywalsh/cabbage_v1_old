@@ -92,6 +92,10 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
 
 
+
+
+
+
     deviceManager = new AudioDeviceManager();
 	deviceManager->addAudioCallback (&player);
 	deviceManager->addMidiInputCallback (String::empty, &player);

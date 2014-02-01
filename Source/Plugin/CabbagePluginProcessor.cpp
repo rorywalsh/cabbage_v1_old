@@ -421,8 +421,8 @@ if(csCompileResult==0){
 		//init all channels with their init val
 		for(int i=0;i<guiCtrls.size();i++)
 		{
-		csound->SetChannel( guiCtrls.getReference(i).getStringProp("channel").toUTF8(),
-												guiCtrls.getReference(i).getNumProp("value"));
+		csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
+												guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
 		}
 
 		csound->SetChannel("CABBAGE_CSD_PATH", file.getParentDirectory().getFullPathName().toUTF8().getAddress());
@@ -577,11 +577,11 @@ bool multiLine = false;
 
 							//set up stuff for tables
 							if(tokes[0].equalsIgnoreCase(String("table"))){
-								if(cAttr.getStringArrayProp("channel").size()==0)
+								if(cAttr.getStringArrayProp(CabbageIDs::channel).size()==0)
 								for(int i=0;i<cAttr.getIntArrayProp("tablenumber").size();i++)
 								cAttr.addDummyChannel("dummy"+String(i));
 
-								for(int i=0;i<cAttr.getStringArrayProp("channel").size();i++)
+								for(int i=0;i<cAttr.getStringArrayProp(CabbageIDs::channel).size();i++)
 								cAttr.addTableChannelValues();
 
 
@@ -644,29 +644,29 @@ bool multiLine = false;
 					//to our contorl vector so that plugin hosts display two sliders. We name one of the xypad pads
 					// 'dummy' so that our editor doesn't display it. Our editor only needs to show one xypad.
 							if(tokes[0].equalsIgnoreCase(String("xypad"))){
-									cAttr.setStringProp(String("xychannel"), String("X"));
-									cAttr.setNumProp("range",  cAttr.getNumProp("rangex"));
-									cAttr.setNumProp("min",  cAttr.getNumProp("minx"));
-									cAttr.setNumProp("max",  cAttr.getNumProp("maxx"));
-									cAttr.setNumProp("value", cAttr.getNumProp("valuex"));
-									cAttr.setStringProp(String("channel"), cAttr.getStringProp("xchannel"));
+									cAttr.setStringProp(CabbageIDs::xychannel, String("X"));
+									cAttr.setNumProp(CabbageIDs::range,  cAttr.getNumProp(CabbageIDs::rangex));
+									cAttr.setNumProp(CabbageIDs::min,  cAttr.getNumProp(CabbageIDs::minx));
+									cAttr.setNumProp(CabbageIDs::max,  cAttr.getNumProp(CabbageIDs::maxx));
+									cAttr.setNumProp(CabbageIDs::value, cAttr.getNumProp(CabbageIDs::valuex));
+									cAttr.setStringProp(String(CabbageIDs::channel), cAttr.getStringProp(CabbageIDs::xchannel));
 									guiCtrls.add(cAttr);
 
-									cAttr.setStringProp(String("xychannel"), String("Y"));
-									cAttr.setNumProp("range",  cAttr.getNumProp("rangey"));
-									cAttr.setNumProp("min",  cAttr.getNumProp("miny"));
-									cAttr.setNumProp("max",  cAttr.getNumProp("maxy"));
-									cAttr.setNumProp("value", cAttr.getNumProp("valuey"));
-									cAttr.setStringProp(String("channel"), cAttr.getStringProp("ychannel"));
+									cAttr.setStringProp(CabbageIDs::xychannel, String("Y"));
+									cAttr.setNumProp(CabbageIDs::range,  cAttr.getNumProp(CabbageIDs::rangey));
+									cAttr.setNumProp(CabbageIDs::min,  cAttr.getNumProp(CabbageIDs::miny));
+									cAttr.setNumProp(CabbageIDs::max,  cAttr.getNumProp(CabbageIDs::maxy));
+									cAttr.setNumProp(CabbageIDs::value, cAttr.getNumProp(CabbageIDs::valuey));
+									cAttr.setStringProp(String(CabbageIDs::channel), cAttr.getStringProp(CabbageIDs::ychannel));
 									//append 'dummy' to name so the editor know not to display the
 									//second xypad
-									cAttr.setStringProp("name", cAttr.getStringProp("name")+String("dummy"));
+									cAttr.setStringProp("name", cAttr.getStringProp(CabbageIDs::name)+String("dummy"));
 									guiCtrls.add(cAttr);
 									guiID++;
 									startTimer(10);
 							}
 							else{
-								Logger::writeToLog("Value:"+String(cAttr.getNumProp("value")));
+								Logger::writeToLog("Value:"+String(cAttr.getNumProp(CabbageIDs::value)));
 							guiCtrls.add(cAttr);
 							guiID++;
 							}
@@ -710,14 +710,14 @@ bool multiLine = false;
 		//init all channels with their init val, and set parameters
 		for(int i=0;i<guiCtrls.size();i++)
 		{
-//		Logger::writeToLog(guiCtrls.getReference(i).getStringProp("channel")+": "+String(guiCtrls[i].getNumProp("value")));
+//		Logger::writeToLog(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel)+": "+String(guiCtrls[i].getNumProp(CabbageIDs::value)));
 #ifndef Cabbage_No_Csound
 		if(guiCtrls.getReference(i).getStringProp("channeltype")=="string")
 		//deal with combobox strings..
-		csound->SetChannel(guiCtrls.getReference(i).getStringProp("channel").toUTF8(), "");
-//									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp("value")-1).toUTF8().getAddress());
+		csound->SetChannel(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), "");
+//									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
 		else
-		csound->SetChannel( guiCtrls.getReference(i).getStringProp("channel").toUTF8(), guiCtrls[i].getNumProp("value"));
+		csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::value));
 #endif
 		}
 
@@ -786,7 +786,7 @@ void CabbagePluginAudioProcessor::setupNativePluginEditor()
 				Logger::writeToLog(parameterInfo);
 				CabbageGUIClass cAttr(parameterInfo, guiID);
 				cAttr.setNumProp("range", dmax-dmin);
-				//cAttr.setStringProp("channel", entry.name);
+				//cAttr.setStringProp(CabbageIDs::channel, entry.name);
 				//cAttr.setNumProp("max", (dmax>0 ? dmax : 1));
 				//cAttr.setNumProp("init", (ddefault<dmin ? dmin : ddefault));
 
@@ -920,24 +920,24 @@ const Array<double, CriticalSection> CabbagePluginAudioProcessor::getTable(int t
 //=================================================================================
 float CabbagePluginAudioProcessor::getParameter (int index)
 {
-float range = getGUICtrls(index).getNumProp("range");
-float min = getGUICtrls(index).getNumProp("min");
-//Logger::writeToLog("parameterGet-"+String(index)+String("-Min:")+String(min)+" Range:"+String(range)+ " Val:"+String(getGUICtrls(index).getNumProp("value")));
-//Logger::writeToLog("parameterGet:"+String(index)+String(":")+String(guiCtrls[index].getNumProp("value")));
+float range = getGUICtrls(index).getNumProp(CabbageIDs::range);
+float min = getGUICtrls(index).getNumProp(CabbageIDs::min);
+//Logger::writeToLog("parameterGet-"+String(index)+String("-Min:")+String(min)+" Range:"+String(range)+ " Val:"+String(getGUICtrls(index).getNumProp(CabbageIDs::value)));
+//Logger::writeToLog("parameterGet:"+String(index)+String(":")+String(guiCtrls[index].getNumProp(CabbageIDs::value)));
 
 /* this gets called at any time by our host or out GUI editor */
 if(index<(int)guiCtrls.size()){//make sure index isn't out of range
 	#ifndef Cabbage_Build_Standalone
-	float val = (getGUICtrls(index).getNumProp("value")/range)-(min/range);
-	if(getGUICtrls(index).getStringProp("type")=="combobox")
-	return (getGUICtrls(index).getNumProp("value")/getGUICtrls(index).getNumProp("comborange"));
-	else if(getGUICtrls(index).getStringProp("type")=="checkbox" ||
-			getGUICtrls(index).getStringProp("type")=="button")
-	return getGUICtrls(index).getNumProp("value");			
+	float val = (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
+	if(getGUICtrls(index).getStringProp(CabbageIDs::type)=="combobox")
+	return (getGUICtrls(index).getNumProp(CabbageIDs::value)/getGUICtrls(index).getNumProp(CabbageIDs::comborange));
+	else if(getGUICtrls(index).getStringProp(CabbageIDs::type)=="checkbox" ||
+			getGUICtrls(index).getStringProp(CabbageIDs::type)=="button")
+	return getGUICtrls(index).getNumProp(CabbageIDs::value);			
 	else
-	return (getGUICtrls(index).getNumProp("value")/range)-(min/range);
+	return (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
 	#else
-	return guiCtrls[index].getNumProp("value");
+	return guiCtrls[index].getNumProp(CabbageIDs::value);
 	#endif
 	}
 else
@@ -960,45 +960,45 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
    {
 	#ifndef Cabbage_Build_Standalone
 	//scaling in here because incoming values in plugin mode range from 0-1
-	range = getGUICtrls(index).getNumProp("range");
-	comboRange = getGUICtrls(index).getNumProp("comborange");
+	range = getGUICtrls(index).getNumProp(CabbageIDs::range);
+	comboRange = getGUICtrls(index).getNumProp(CabbageIDs::comborange);
 	//Logger::writeToLog("inValue:"+String(newValue));
-	min = getGUICtrls(index).getNumProp("min");
+	min = getGUICtrls(index).getNumProp(CabbageIDs::min);
 
-	if(getGUICtrls(index).getStringProp("type")=="xypad")
+	if(getGUICtrls(index).getStringProp(CabbageIDs::type)=="xypad")
 		newValue = (jmax(0.f, newValue)*range)+min;
-	else if(getGUICtrls(index).getStringProp("type")=="combobox")//combo box value need to be rounded...
+	else if(getGUICtrls(index).getStringProp(CabbageIDs::type)=="combobox")//combo box value need to be rounded...
 		newValue = (newValue*comboRange);
-	else if(getGUICtrls(index).getStringProp("type")=="checkbox" ||
-			getGUICtrls(index).getStringProp("type")=="button")
+	else if(getGUICtrls(index).getStringProp(CabbageIDs::type)=="checkbox" ||
+			getGUICtrls(index).getStringProp(CabbageIDs::type)=="button")
 		range=1;
 	else
 		newValue = (newValue*range)+min;
 
-	//guiCtrls.getReference(index).setNumProp("value", newValue);
-	//messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp("channel").toUTF8(),  newValue,
+	//guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
+	//messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel).toUTF8(),  newValue,
 	//guiCtrls.getReference(index).getStringProp("type"));
 	//Logger::writeToLog(String("parameterSet:"+String(newValue)));
 	#endif
 	//Logger::writeToLog(String("parameterSet:"+String(newValue)));
 	//no need to scale here when in standalone mode
 	
-	if(getGUICtrls(index).getStringProp("type")=="combobox" &&
-								getGUICtrls(index).getStringProp("channeltype")=="string")
+	if(getGUICtrls(index).getStringProp(CabbageIDs::type)=="combobox" &&
+								getGUICtrls(index).getStringProp(CabbageIDs::channeltype)=="string")
 	  {
-		stringMessage = getGUICtrls(index).getStringArrayPropValue("text", newValue-1);
+		stringMessage = getGUICtrls(index).getStringArrayPropValue(CabbageIDs::text, newValue-1);
 		Logger::writeToLog(stringMessage);
-		messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp("channel").toUTF8(), 
+		messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel).toUTF8(), 
 												  stringMessage,
 												  "string");
 	  }
 	else
-		messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp("channel").toUTF8(), 
+		messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel).toUTF8(), 
 												  newValue,
-												  guiCtrls.getReference(index).getStringProp("type"));
+												  guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
 	
 	
-	guiCtrls.getReference(index).setNumProp("value", newValue);	
+	guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);	
    }
 #endif
 }
@@ -1019,14 +1019,14 @@ if(!CSCompResult)
 	//update all control widgets
 	for(int index=0;index<getGUICtrlsSize();index++)
 		{
-		if(guiCtrls[index].getStringProp("channeltype").equalsIgnoreCase("string")){
+		if(guiCtrls[index].getStringProp(CabbageIDs::channeltype).equalsIgnoreCase("string")){
 		//argghhh!! THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE!	
 		}
 		else{	
-			float value = csound->GetChannel(guiCtrls[index].getStringProp("channel").toUTF8());
-			//Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp("channel"));
+			float value = csound->GetChannel(guiCtrls[index].getStringProp(CabbageIDs::channel).toUTF8());
+			//Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));
 			//Logger::writeToLog("value:"+String(value));
-			guiCtrls.getReference(index).setNumProp("value", value);
+			guiCtrls.getReference(index).setNumProp(CabbageIDs::value, value);
 			}
 		}
 //update all layout control widgets
@@ -1034,11 +1034,11 @@ if(!CSCompResult)
 //don't use channel messages...
 	for(int index=0;index<getGUILayoutCtrlsSize();index++)
 		{
-		if(guiLayoutCtrls[index].getStringProp("type")=="table")
+		if(guiLayoutCtrls[index].getStringProp(CabbageIDs::type)=="table")
 			{
-			for(int y=0;y<guiLayoutCtrls[index].getStringArrayProp("channel").size();y++){
-				//String test = getGUILayoutCtrls(index).getStringArrayPropValue("channel", y);
-				float value = csound->GetChannel(guiLayoutCtrls[index].getStringArrayPropValue("channel", y).toUTF8());
+			for(int y=0;y<guiLayoutCtrls[index].getStringArrayProp(CabbageIDs::channel).size();y++){
+				//String test = getGUILayoutCtrls(index).getStringArrayPropValue(CabbageIDs::channel, y);
+				float value = csound->GetChannel(guiLayoutCtrls[index].getStringArrayPropValue(CabbageIDs::channel, y).toUTF8());
 				guiLayoutCtrls[index].setTableChannelValues(y, value);
 				}
 			}
@@ -1162,14 +1162,14 @@ int CabbagePluginAudioProcessor::getNumParameters()
 const String CabbagePluginAudioProcessor::getParameterName (int index)
 {
     if(index<(int)guiCtrls.size())//make sure index isn't out of range
-                return guiCtrls.getReference(index).getStringProp("channel");
+                return guiCtrls.getReference(index).getStringProp(CabbageIDs::channel);
         else return String::empty;
 }
 
 const String CabbagePluginAudioProcessor::getParameterText (int index)
 {
         if(index<(int)guiCtrls.size())//make sure index isn't out of range
-    return String (guiCtrls.getReference(index).getNumProp("value"), 2);
+    return String (guiCtrls.getReference(index).getNumProp(CabbageIDs::value), 2);
         else return String::empty;
 }
 
@@ -1286,23 +1286,23 @@ if(!isGuiEnabled()){
         for(int i=0;i<(int)getGUILayoutCtrlsSize();i++){
                 if(getGUILayoutCtrls(i).getStringProp("type")==String("hostbpm")){
                 if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp("channel").toUTF8(), hostInfo.bpm);
+                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.bpm);
                 }
                 else if(getGUILayoutCtrls(i).getStringProp("type")==String("hosttime")){
                 if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp("channel").toUTF8(), hostInfo.timeInSeconds);
+                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.timeInSeconds);
                 }
                 else if(getGUILayoutCtrls(i).getStringProp("type")==String("hostplaying")){
                 if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp("channel").toUTF8(), hostInfo.isPlaying);
+                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.isPlaying);
                 }
                 else if(getGUILayoutCtrls(i).getStringProp("type")==String("hostrecording")){
                 if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp("channel").toUTF8(), hostInfo.isRecording);
+                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.isRecording);
                 }
                 else if(getGUILayoutCtrls(i).getStringProp("type")==String("hostppqpos")){
                 if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp("channel").toUTF8(), hostInfo.ppqPosition);
+                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.ppqPosition);
                 }
         }
 
@@ -1520,7 +1520,7 @@ void CabbagePluginAudioProcessor::getStateInformation (MemoryBlock& destData)
     XmlElement xml ("CABBAGE_PLUGIN_SETTINGS");
 	
 	for(int i=0;i<guiCtrls.size();i++)
-			xml.setAttribute (guiCtrls[i].getStringProp("channel"), guiCtrls[i].getNumProp("value"));
+			xml.setAttribute (guiCtrls[i].getStringProp(CabbageIDs::channel), guiCtrls[i].getNumProp(CabbageIDs::value));
 
 
     // then use this helper function to stuff it into the binary blob and return it..
@@ -1540,7 +1540,7 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
         if (xmlState->hasTagName ("CABBAGE_PLUGIN_SETTINGS"))
         {
 		for(int i=0;i<this->getNumParameters();i++)
-			this->setParameter(i, (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp("channel")));
+			this->setParameter(i, (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel)));
 
         }
     }

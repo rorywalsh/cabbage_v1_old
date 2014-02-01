@@ -154,10 +154,10 @@ layoutEditor->updateFrames();
 //the data will only be sent to Csund when it's safe
 for(int index=0;index<getFilter()->getGUILayoutCtrlsSize();index++)
 	{	
-	if(getFilter()->getGUILayoutCtrls(index).getStringProp("type")=="table")
+	if(getFilter()->getGUILayoutCtrls(index).getStringProp(CabbageIDs::type)=="table")
 		{
 		for(int y=0;y<getFilter()->getGUILayoutCtrls(index).getStringArrayProp("channels").size();y++)
-			getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(index).getStringArrayPropValue("channel", y).toUTF8(),  -1.f, getFilter()->getGUILayoutCtrls(index).getStringProp("type"));
+			getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(index).getStringArrayPropValue(CabbageIDs::channel, y).toUTF8(),  -1.f, getFilter()->getGUILayoutCtrls(index).getStringProp(CabbageIDs::type));
 		}	
 	}
 
@@ -452,7 +452,7 @@ ComponentLayoutEditor* le = layoutEditor;
 			
 			for(int i=0;i<newPlantText.size();i++){
 			CabbageGUIClass cAttr(newPlantText[i], -99);
-			Rectangle<int> newBounds(cAttr.getNumProp("left")-bounds.getX(), cAttr.getNumProp("top")-bounds.getY(), cAttr.getNumProp("width"), cAttr.getNumProp("height"));			
+			Rectangle<int> newBounds(cAttr.getNumProp(CabbageIDs::left)-bounds.getX(), cAttr.getNumProp(CabbageIDs::top)-bounds.getY(), cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));			
 			newPlantText.getReference(i) = replaceIdentifier(newPlantText[i], "bounds", getBoundsString(newBounds));	
 			}
 			
@@ -506,10 +506,10 @@ ComponentLayoutEditor* le = layoutEditor;
 			for(int i=0;i<brokenPlant.size();i++){
 			//reposition all controls relative to the plant position
 			CabbageGUIClass cAttr(brokenPlant[i], -99);
-			Rectangle <int> bounds(cAttr.getNumProp("left")+plantPos.getX(), 
-									cAttr.getNumProp("top")+plantPos.getY(),
-									cAttr.getNumProp("width"),
-									cAttr.getNumProp("height"));
+			Rectangle <int> bounds(cAttr.getNumProp(CabbageIDs::left)+plantPos.getX(), 
+									cAttr.getNumProp(CabbageIDs::top)+plantPos.getY(),
+									cAttr.getNumProp(CabbageIDs::width),
+									cAttr.getNumProp(CabbageIDs::height));
 			brokenPlant.getReference(i) = replaceIdentifier(brokenPlant[i], "bounds", getBoundsString(bounds));									
 			}
 			//Logger::writeToLog(brokenPlant.joinIntoString("\n"));
@@ -568,7 +568,7 @@ ComponentLayoutEditor* le = layoutEditor;
 		//now that the line numbers have been located, remove GUI comps from relevant vectors
 		for(int i=0;i<lineNumbers.size();i++){	
 		CabbageGUIClass cAttr(csdArray[lineNumbers[i]], -99);
-		if(cAttr.getStringProp("basetype").contains("interactive")){
+		if(cAttr.getStringProp(CabbageIDs::basetype).contains("interactive")){
 			//first remove component from interactive comps vector..
 			for(int y=0;y<comps.size();y++)
 				if(cAttr.getBounds()==comps[y]->getBounds())
@@ -737,9 +737,9 @@ ComponentLayoutEditor* le = layoutEditor;
 				
 			int numSelected = le->selectedCompsOrigCoordinates.size();		
 			
-			if(CAttr.getNumProp("width")>0)
+			if(CAttr.getNumProp(CabbageIDs::width)>0)
 			for(int y=0;y<numSelected;y++){		
-				if(CAttr.getStringProp("type")=="groupbox")		
+				if(CAttr.getStringProp(CabbageIDs::type)=="groupbox")		
 				Logger::writeToLog("SelectedCompBounds:"+getBoundsString(le->selectedCompsOrigCoordinates[y]));
 				if(le->selectedCompsOrigCoordinates[y]==CAttr.getComponentBounds())	{	
 					lineNumbers.add(i);
@@ -967,14 +967,14 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 			String plantName = "GUIabst_"+String(getFilter()->getGUILayoutCtrlsSize()+numberPlantsToBeDuplicated);
 			numberPlantsToBeDuplicated++;
 			text.getReference(i) = replaceIdentifier(text[i], "plant", "plant(\""+plantName+"\")");
-			Rectangle<int> bounds(cAttr.getNumProp("left")+offset, cAttr.getNumProp("top")+offset, cAttr.getNumProp("width"), cAttr.getNumProp("height"));			
+			Rectangle<int> bounds(cAttr.getNumProp(CabbageIDs::left)+offset, cAttr.getNumProp(CabbageIDs::top)+offset, cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));			
 			text.getReference(i) = replaceIdentifier(text[i], "bounds", getBoundsString(bounds));				
 			boundsForDuplicatedCtrls.add(bounds); 
 			}
 		}
 		else{
 		CabbageGUIClass cAttr(text[i], i-99);			
-		Rectangle<int> bounds(cAttr.getNumProp("left")+offset, cAttr.getNumProp("top")+offset, cAttr.getNumProp("width"), cAttr.getNumProp("height"));			
+		Rectangle<int> bounds(cAttr.getNumProp(CabbageIDs::left)+offset, cAttr.getNumProp(CabbageIDs::top)+offset, cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));			
 		text.getReference(i) = replaceIdentifier(text[i], "bounds", getBoundsString(bounds));				
 		boundsForDuplicatedCtrls.add(bounds); 			
 		}
@@ -1024,7 +1024,7 @@ if(layoutEditor)layoutEditor->setBounds(0, 0, this->getWidth(), this->getHeight(
 void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 {
         for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
-                if(getFilter()->getGUILayoutCtrls(i).getStringProp("type").equalsIgnoreCase("keyboard")){
+                if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("keyboard")){
 #ifdef Cabbage_Build_Standalone
 				if(keyIsPressed)
                 if(isMouseOver(true)){
@@ -1077,78 +1077,78 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 //==============================================================================
 void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
 {
-        if(cAttr.getStringProp("type")==String("form")){
+        if(cAttr.getStringProp(CabbageIDs::type)==String("form")){
                 SetupWindow(cAttr);   //set main application
                 }
-        else if(cAttr.getStringProp("type")==String("groupbox")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("groupbox")){
                 InsertGroupBox(cAttr);  
                 }
-        else if(cAttr.getStringProp("type")==String("image")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("image")){
                 InsertImage(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("patmatrix")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("patmatrix")){
                 InsertPatternMatrix(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("keyboard")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("keyboard")){
                 InsertMIDIKeyboard(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("label")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("label")){
                 InsertLabel(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("csoundoutput")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("csoundoutput")){
                 InsertCsoundOutput(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("vumeter")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("vumeter")){
                 InsertVUMeter(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("snapshot")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("snapshot")){
                 InsertSnapshot(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("source")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("source")){
                 InsertSourceButton(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("infobutton")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("infobutton")){
                 InsertInfoButton(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("filebutton")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("filebutton")){
                 InsertFileButton(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("transport")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("transport")){
                 InsertTransport(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("soundfiler")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("soundfiler")){
                 InsertSoundfiler(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("directorylist")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("directorylist")){
                 InsertDirectoryList(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("multitab")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("multitab")){
                 InsertMultiTab(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("line")){
+        else if(cAttr.getStringProp(CabbageIDs::type)==String(CabbageIDs::line)){
                 InsertLineSeparator(cAttr);   
                 }
-        else if(cAttr.getStringProp("type")==String("table")){      
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("table")){      
                 InsertTable(cAttr);       
                 }
-        else if(cAttr.getStringProp("type")==String("pvsview")){    
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("pvsview")){    
                 InsertPVSViewer(cAttr);            
                 }
-        else if(cAttr.getStringProp("type")==String("hslider")
-                ||cAttr.getStringProp("type")==String("vslider")
-                ||cAttr.getStringProp("type")==String("rslider")){                                
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("hslider")
+                ||cAttr.getStringProp(CabbageIDs::type)==String("vslider")
+                ||cAttr.getStringProp(CabbageIDs::type)==String("rslider")){                                
                 InsertSlider(cAttr);       //insert slider                        
                 }
-        else if(cAttr.getStringProp("type")==String("button")){                           
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("button")){                           
                 InsertButton(cAttr);       //insert button           
                 }
-        else if(cAttr.getStringProp("type")==String("checkbox")){                         
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("checkbox")){                         
                 InsertCheckBox(cAttr);       //insert checkbox
                 }
-        else if(cAttr.getStringProp("type")==String("combobox")){                         
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("combobox")){                         
                 InsertComboBox(cAttr);       //insert combobox    
                 }
-        else if(cAttr.getStringProp("type")==String("xypad")){    
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("xypad")){    
                 InsertXYPad(cAttr);       //insert xypad  
                 }
         //}
@@ -1163,18 +1163,18 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 {
-        layoutComps.add(new CabbageGroupbox(cAttr.getStringProp("name"), 
-                                                                                 cAttr.getStringProp("caption"), 
+        layoutComps.add(new CabbageGroupbox(cAttr.getStringProp(CabbageIDs::name), 
+                                                                                 cAttr.getStringProp(CabbageIDs::caption), 
                                                                                  cAttr.getItems(0), 
-                                                                                 cAttr.getStringProp("colour"),
-                                                                                 cAttr.getStringProp("fontcolour"),
-                                                                                 cAttr.getNumProp("line")));
+                                                                                 cAttr.getStringProp(CabbageIDs::colour),
+                                                                                 cAttr.getStringProp(CabbageIDs::fontcolour),
+                                                                                 cAttr.getNumProp(CabbageIDs::line)));
         
 		int idx = layoutComps.size()-1;
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
         int relY=0,relX=0;
         if(layoutComps.size()>0){
         for(int y=0;y<layoutComps.size();y++)
@@ -1198,8 +1198,8 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
                 plantButton[plantButton.size()-1]->button->addListener(this);
 				//plantButton[plantButton.size()-1]->button->setLookAndFeel(basicLookAndFeel);
 				plantButton[plantButton.size()-1]->button->setColour(TextButton::buttonColourId, Colour::fromString(cAttr.getStringProp("fill")));
-				plantButton[plantButton.size()-1]->button->setColour(TextButton::textColourOffId, Colour::fromString(cAttr.getStringProp("fontcolour")));
-				plantButton[plantButton.size()-1]->button->setColour(TextButton::textColourOnId, Colour::fromString(cAttr.getStringProp("fontcolour")));
+				plantButton[plantButton.size()-1]->button->setColour(TextButton::textColourOffId, Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour)));
+				plantButton[plantButton.size()-1]->button->setColour(TextButton::textColourOnId, Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour)));
 				//layoutComps.add(plantButton[plantButton.size()-1]);
                 componentPanel->addAndMakeVisible(plantButton[plantButton.size()-1]);
                 plantButton[plantButton.size()-1]->button->getProperties().set(String("index"), plantButton.size()-1); 
@@ -1216,9 +1216,9 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 			}
 		
 		}
-		cAttr.setStringProp("type", "groupbox");
+		cAttr.setStringProp(CabbageIDs::type, "groupbox");
         layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
-        layoutComps[idx]->getProperties().set(String("groupLine"), cAttr.getNumProp("line"));
+        layoutComps[idx]->getProperties().set(String("groupLine"), cAttr.getNumProp(CabbageIDs::line));
 
 }
 
@@ -1230,7 +1230,7 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 	String pic;
 		
 #ifdef Cabbage_Build_Standalone
-	pic = cAttr.getStringProp("file");
+	pic = cAttr.getStringProp(CabbageIDs::file);
 	Logger::writeToLog(pic);
 #else
 #ifdef MACOSX
@@ -1244,27 +1244,27 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 	Logger::writeToLog(pic);
 	
 #endif
-	if(cAttr.getStringProp("file").length()<2)
+	if(cAttr.getStringProp(CabbageIDs::file).length()<2)
 		pic="";
 	else{
 	#ifdef MACOSX
-    pic.append(String("/Contents/")+String(cAttr.getStringProp("file")), 1024);
+    pic.append(String("/Contents/")+String(cAttr.getStringProp(CabbageIDs::file)), 1024);
 	#else
-	pic = pic+String("\\")+String(cAttr.getStringProp("file"));;
+	pic = pic+String("\\")+String(cAttr.getStringProp(CabbageIDs::file));;
 	#endif
 	}
 
 	Logger::writeToLog(pic);
 	
-	layoutComps.add(new CabbageImage(cAttr.getStringProp("name"),
-									 pic, cAttr.getColourProp("outline"), cAttr.getColourProp("colour"),
-									 cAttr.getStringProp("shape"), cAttr.getNumProp("line")));
+	layoutComps.add(new CabbageImage(cAttr.getStringProp(CabbageIDs::name),
+									 pic, cAttr.getStringProp("outline"), cAttr.getStringProp(CabbageIDs::colour),
+									 cAttr.getStringProp("shape"), cAttr.getNumProp(CabbageIDs::line)));
 	
         int idx = layoutComps.size()-1;
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
         int relY=0,relX=0;
         if(layoutComps.size()>0){
         for(int y=0;y<layoutComps.size();y++)
@@ -1291,11 +1291,11 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 					plantButton[plantButton.size()-1]->button->addListener(this);
 					plantButton[plantButton.size()-1]->button->setLookAndFeel(basicLookAndFeel);
 					plantButton[plantButton.size()-1]->button->setColour(TextButton::buttonColourId,
-																		 Colour::fromString(cAttr.getColourProp("fill")));
+																		 Colour::fromString(cAttr.getStringProp("fill")));
 					plantButton[plantButton.size()-1]->button->setColour(TextButton::textColourOffId,
-																		 Colour::fromString(cAttr.getColourProp("fontcolour")));
+																		 Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour)));
 					plantButton[plantButton.size()-1]->button->setColour(TextButton::textColourOnId,
-																		 Colour::fromString(cAttr.getColourProp("fontcolour")));
+																		 Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour)));
 					
 					
 					componentPanel->addAndMakeVisible(plantButton[plantButton.size()-1]);
@@ -1326,7 +1326,7 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 	layoutComps[idx]->getProperties().set(String("scaleX"), cAttr.getNumProp("scaleX"));
 	layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
 	//layoutComps[idx]->toBack();
-    cAttr.setStringProp("type", "image");
+    cAttr.setStringProp(CabbageIDs::type, "image");
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -1334,13 +1334,13 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertLineSeparator(CabbageGUIClass &cAttr)
 {
-        layoutComps.add(new CabbageLine(true, cAttr.getStringProp("colour")));
+        layoutComps.add(new CabbageLine(true, cAttr.getStringProp(CabbageIDs::colour)));
         int idx = layoutComps.size()-1;
 
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
         int relY=0,relX=0;
         for(int y=0;y<layoutComps.size();y++){
         if(cAttr.getStringProp("reltoplant").length()>0){
@@ -1383,10 +1383,10 @@ void CabbagePluginAudioProcessorEditor::InsertLineSeparator(CabbageGUIClass &cAt
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertTransport(CabbageGUIClass &cAttr)
 {
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 		
         layoutComps.add(new CabbageTransportControl(width, height));
         int idx = layoutComps.size()-1;
@@ -1434,13 +1434,13 @@ void CabbagePluginAudioProcessorEditor::InsertTransport(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertLabel(CabbageGUIClass &cAttr)
 {
-        layoutComps.add(new CabbageLabel(cAttr.getStringProp("text"), cAttr.getStringProp("fontcolour")));      
+        layoutComps.add(new CabbageLabel(cAttr.getStringProp("text"), cAttr.getStringProp(CabbageIDs::fontcolour)));      
         int idx = layoutComps.size()-1;
 
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
         int relY=0,relX=0;
         for(int y=0;y<layoutComps.size();y++){
         if(cAttr.getStringProp("reltoplant").length()>0){
@@ -1475,7 +1475,7 @@ void CabbagePluginAudioProcessorEditor::InsertLabel(CabbageGUIClass &cAttr)
         }
         }
 
-        cAttr.setStringProp("type", "label");
+        cAttr.setStringProp(CabbageIDs::type, "label");
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -1483,22 +1483,22 @@ void CabbagePluginAudioProcessorEditor::InsertLabel(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
 {
-        setName(cAttr.getStringProp("caption"));
-        getFilter()->setPluginName(cAttr.getStringProp("caption"));
-        int left = cAttr.getNumProp("left");
-        int top = cAttr.getNumProp("top");
-        int width = cAttr.getNumProp("width");
-        int height = cAttr.getNumProp("height");
+        setName(cAttr.getStringProp(CabbageIDs::caption));
+        getFilter()->setPluginName(cAttr.getStringProp(CabbageIDs::caption));
+        int left = cAttr.getNumProp(CabbageIDs::left);
+        int top = cAttr.getNumProp(CabbageIDs::top);
+        int width = cAttr.getNumProp(CabbageIDs::width);
+        int height = cAttr.getNumProp(CabbageIDs::height);
         setSize(width, height);
         componentPanel->setBounds(left, top, width, height);
 
-        if(cAttr.getStringProp("colour").length()>2)
-        formColour = Colour::fromString(cAttr.getStringProp("colour"));
+        if(cAttr.getStringProp(CabbageIDs::colour).length()>2)
+        formColour = Colour::fromString(cAttr.getStringProp(CabbageIDs::colour));
         else
         formColour = CabbageUtils::getBackgroundSkin();
 
-        if(cAttr.getStringProp("fontcolour").length()>2)
-        fontColour = Colour::fromString(cAttr.getStringProp("fontcolour"));
+        if(cAttr.getStringProp(CabbageIDs::fontcolour).length()>2)
+        fontColour = Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour));
         else
         fontColour = CabbageUtils::getComponentFontColour();
 
@@ -1513,12 +1513,12 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
 #endif
 
 #ifdef LINUX
-        formPic.append(String("/")+String(cAttr.getStringProp("file")), 1024);
+        formPic.append(String("/")+String(cAttr.getStringProp(CabbageIDs::file)), 1024);
 #else 
-        formPic.append(String("\\")+String(cAttr.getStringProp("file")), 1024); 
+        formPic.append(String("\\")+String(cAttr.getStringProp(CabbageIDs::file)), 1024); 
 #endif
 
-        if(cAttr.getStringProp("file").length()<2)
+        if(cAttr.getStringProp(CabbageIDs::file).length()<2)
                 formPic = "";
 
         this->resized();
@@ -1533,15 +1533,15 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
 void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIClass &cAttr)
 {
 
-        layoutComps.add(new CabbageMessageConsole(cAttr.getStringProp("name"), 
-                                                                                 cAttr.getStringProp("caption"), 
+        layoutComps.add(new CabbageMessageConsole(cAttr.getStringProp(CabbageIDs::name), 
+                                                                                 cAttr.getStringProp(CabbageIDs::caption), 
                                                                                  cAttr.getStringProp("text"))); 
         int idx = layoutComps.size()-1;
 
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 
         //check to see if widgets is anchored
         //if it is offset its position accordingly. 
@@ -1578,17 +1578,17 @@ void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIClass &cAtt
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertSourceButton(CabbageGUIClass &cAttr)
 {
-        layoutComps.add(new CabbageButton(cAttr.getStringProp("name"),
-                cAttr.getStringProp("caption"),
-                cAttr.getItems(1-(int)cAttr.getNumProp("value")),
-                cAttr.getStringProp("colour"),
+        layoutComps.add(new CabbageButton(cAttr.getStringProp(CabbageIDs::name),
+                cAttr.getStringProp(CabbageIDs::caption),
+                cAttr.getItems(1-(int)cAttr.getNumProp(CabbageIDs::value)),
+                cAttr.getStringProp(CabbageIDs::colour),
                 ""));   
         int idx = layoutComps.size()-1;
 
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 
         //check to see if widgets is anchored
         //if it is offset its position accordingly. 
@@ -1617,16 +1617,16 @@ void CabbagePluginAudioProcessorEditor::InsertSourceButton(CabbageGUIClass &cAtt
 void CabbagePluginAudioProcessorEditor::InsertInfoButton(CabbageGUIClass &cAttr)
 {
         layoutComps.add(new CabbageButton("infoButton",
-                cAttr.getStringProp("caption"),
-                cAttr.getItems(1-(int)cAttr.getNumProp("value")),
-                cAttr.getColourProp("colour"),
-                cAttr.getColourProp("fontcolour")));    
+                cAttr.getStringProp(CabbageIDs::caption),
+                cAttr.getItems(1-(int)cAttr.getNumProp(CabbageIDs::value)),
+                cAttr.getColourProp(CabbageIDs::colour),
+                cAttr.getColourProp(CabbageIDs::fontcolour)));    
         int idx = layoutComps.size()-1;
 
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 
         //check to see if widgets is anchored
         //if it is offset its position accordingly. 
@@ -1645,7 +1645,7 @@ void CabbagePluginAudioProcessorEditor::InsertInfoButton(CabbageGUIClass &cAttr)
         }
 		
         ((CabbageButton*)layoutComps[idx])->button->setName("infobutton");
-        ((CabbageButton*)layoutComps[idx])->button->getProperties().set(String("filename"), cAttr.getStringProp("file"));
+        ((CabbageButton*)layoutComps[idx])->button->getProperties().set(String("filename"), cAttr.getStringProp(CabbageIDs::file));
         layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
         ((CabbageButton*)layoutComps[idx])->button->addListener(this);
         ((CabbageButton*)layoutComps[idx])->button->setButtonText(cAttr.getItems(0));
@@ -1656,17 +1656,17 @@ void CabbagePluginAudioProcessorEditor::InsertInfoButton(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
 {
-        layoutComps.add(new CabbageButton(cAttr.getStringProp("name"),
-                cAttr.getStringProp("caption"),
-                cAttr.getItems(1-(int)cAttr.getNumProp("value")),
-                cAttr.getStringProp("colour"),
-                cAttr.getStringProp("fontcolour")));    
+        layoutComps.add(new CabbageButton(cAttr.getStringProp(CabbageIDs::name),
+                cAttr.getStringProp(CabbageIDs::caption),
+                cAttr.getItems(1-(int)cAttr.getNumProp(CabbageIDs::value)),
+                cAttr.getStringProp(CabbageIDs::colour),
+                cAttr.getStringProp(CabbageIDs::fontcolour)));    
         int idx = layoutComps.size()-1;
 
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 
         //check to see if widgets is anchored
         //if it is offset its position accordingly. 
@@ -1691,12 +1691,12 @@ void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
         ((CabbageButton*)layoutComps[idx])->button->addListener(this);
         //((CabbageButton*)layoutComps[idx])->button->setName("button");
         if(cAttr.getItemsSize()>0)
-        ((CabbageButton*)layoutComps[idx])->button->setButtonText(cAttr.getStringArrayPropValue("text", cAttr.getNumProp("value")));
+        ((CabbageButton*)layoutComps[idx])->button->setButtonText(cAttr.getStringArrayPropValue("text", cAttr.getNumProp(CabbageIDs::value)));
 #ifdef Cabbage_Build_Standalone
         ((CabbageButton*)layoutComps[idx])->button->setWantsKeyboardFocus(true);
 #endif
 		//add initial values to incomingValues array
-		//incomingValues.add(cAttr.getNumProp("value"));
+		//incomingValues.add(cAttr.getNumProp(CabbageIDs::value));
 		//showMessage(layoutComps[idx]->getParentComponent()->getName());
 
 }
@@ -1708,15 +1708,15 @@ void CabbagePluginAudioProcessorEditor::InsertSoundfiler(CabbageGUIClass &cAttr)
 {
 	if(getFilter()->audioSourcesArray[cAttr.getNumProp("soundfilerIndex")]){
 	
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 		
-        layoutComps.add(new CabbageSoundfiler(cAttr.getStringProp("name"),
-				cAttr.getStringProp("file"),
-				cAttr.getStringProp("colour"),
-				cAttr.getStringProp("fontcolour"),
+        layoutComps.add(new CabbageSoundfiler(cAttr.getStringProp(CabbageIDs::name),
+				cAttr.getStringProp(CabbageIDs::file),
+				cAttr.getStringProp(CabbageIDs::colour),
+				cAttr.getStringProp(CabbageIDs::fontcolour),
                 *getFilter()->audioSourcesArray[cAttr.getNumProp("soundfilerIndex")],
                 getFilter()->audioSourcesArray[cAttr.getNumProp("soundfilerIndex")]->sampleRate));
     
@@ -1749,8 +1749,8 @@ void CabbagePluginAudioProcessorEditor::InsertSoundfiler(CabbageGUIClass &cAttr)
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertDirectoryList(CabbageGUIClass &cAttr)
 {
-        layoutComps.add(new CabbageDirectoryList(cAttr.getStringProp("name"),
-				cAttr.getStringProp("channel"),
+        layoutComps.add(new CabbageDirectoryList(cAttr.getStringProp(CabbageIDs::name),
+				cAttr.getStringProp(CabbageIDs::channel),
 				cAttr.getStringProp("workingDir"),
                 cAttr.getStringProp("fileType")));
 	
@@ -1759,10 +1759,10 @@ void CabbagePluginAudioProcessorEditor::InsertDirectoryList(CabbageGUIClass &cAt
         //check to see if widgets is anchored
         //if it is offset its position accordingly. 
         int idx = layoutComps.size()-1;
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
         int relY=0,relX=0;
         if(layoutComps.size()>0){
         for(int y=0;y<layoutComps.size();y++)
@@ -1788,9 +1788,9 @@ void CabbagePluginAudioProcessorEditor::InsertDirectoryList(CabbageGUIClass &cAt
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertMultiTab(CabbageGUIClass &cAttr)
 {
-        layoutComps.add(new CabbageMultiTab(cAttr.getStringProp("name"),
-				cAttr.getStringProp("fontcolour"),
-				cAttr.getStringProp("colour")));
+        layoutComps.add(new CabbageMultiTab(cAttr.getStringProp(CabbageIDs::name),
+				cAttr.getStringProp(CabbageIDs::fontcolour),
+				cAttr.getStringProp(CabbageIDs::colour)));
 	
 		int idx = layoutComps.size()-1;
 			
@@ -1801,17 +1801,17 @@ void CabbagePluginAudioProcessorEditor::InsertMultiTab(CabbageGUIClass &cAttr)
 				for(int y=0;y<cAttr.getItemsSize();y++)
 					if(cAttr.getItems(y).trim()==plant)
 							((CabbageMultiTab*)layoutComps[idx])->tabComp->addTab(plant, 
-																				Colour::fromString(cAttr.getStringProp("colour")), 
+																				Colour::fromString(cAttr.getStringProp(CabbageIDs::colour)), 
 																				layoutComps[i], 
 																				false);					
 		}	
 
         //check to see if widgets is anchored
         //if it is offset its position accordingly. 
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
         int relY=0,relX=0;
         if(layoutComps.size()>0){
         for(int y=0;y<layoutComps.size();y++)
@@ -1836,10 +1836,10 @@ void CabbagePluginAudioProcessorEditor::InsertMultiTab(CabbageGUIClass &cAttr)
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertVUMeter(CabbageGUIClass &cAttr)
 {
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 
         //set up meters. If config() is not used then the number of channels
         //is used to determine the layout. 1 = Mono, 2 = Stereo, and anything
@@ -1862,9 +1862,9 @@ void CabbagePluginAudioProcessorEditor::InsertVUMeter(CabbageGUIClass &cAttr)
                         config.add(1);
         }
 
-        layoutComps.add(new CabbageVUMeter(cAttr.getStringProp("name"), 
+        layoutComps.add(new CabbageVUMeter(cAttr.getStringProp(CabbageIDs::name), 
                                                                                  cAttr.getStringProp("text"),
-                                                                                 cAttr.getStringProp("caption"), 
+                                                                                 cAttr.getStringProp(CabbageIDs::caption), 
                                                                                  config));      
         int idx = layoutComps.size()-1;
 
@@ -1893,16 +1893,16 @@ void CabbagePluginAudioProcessorEditor::InsertVUMeter(CabbageGUIClass &cAttr)
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertSnapshot(CabbageGUIClass &cAttr)
 {
-        layoutComps.add(new CabbageSnapshot(cAttr.getStringProp("name"), cAttr.getStringProp("caption"), cAttr.getStringProp("preset"), cAttr.getNumProp("masterSnap")));       
+        layoutComps.add(new CabbageSnapshot(cAttr.getStringProp(CabbageIDs::name), cAttr.getStringProp(CabbageIDs::caption), cAttr.getStringProp("preset"), cAttr.getNumProp("masterSnap")));       
         int idx = layoutComps.size()-1;
 
         String snap= getFilter()->getCsoundInputFile().withFileExtension(".snaps").getFullPathName();
         SnapShotFile = File(snap);
 
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
         int relY=0,relX=0;
         for(int y=0;y<layoutComps.size();y++){
         if(cAttr.getStringProp("reltoplant").length()>0){
@@ -1926,7 +1926,7 @@ void CabbagePluginAudioProcessorEditor::InsertSnapshot(CabbageGUIClass &cAttr)
                 cAttr.setNumProp("maxItems", i);
         }
 
-        ((CabbageSnapshot*)layoutComps[idx])->combobox->setSelectedItemIndex(cAttr.getNumProp("value")-1);
+        ((CabbageSnapshot*)layoutComps[idx])->combobox->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);
         
         //Load any snapshot files that already exist for this instrument
         String snapshotFile = getFilter()->getCsoundInputFile().withFileExtension(".snaps").getFullPathName();
@@ -1968,7 +1968,7 @@ void CabbagePluginAudioProcessorEditor::InsertSnapshot(CabbageGUIClass &cAttr)
                 }
         //showMessage(cAttr.getStringProp("snapshotData"));
         //cAttr.setStringProp("snapshotData", presetText);
-        cAttr.setStringProp("type", "snapshot");
+        cAttr.setStringProp(CabbageIDs::type, "snapshot");
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1981,10 +1981,10 @@ void CabbagePluginAudioProcessorEditor::InsertMIDIKeyboard(CabbageGUIClass &cAtt
                                      MidiKeyboardComponent::horizontalKeyboard));       
         int idx = layoutComps.size()-1;
 
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 
         //check to see if widgets is anchored
         //if it is offset its position accordingly. 
@@ -2002,7 +2002,7 @@ void CabbagePluginAudioProcessorEditor::InsertMIDIKeyboard(CabbageGUIClass &cAtt
         }
         }
 
-        ((MidiKeyboardComponent*)layoutComps[idx])->setLowestVisibleKey(cAttr.getNumProp("value"));
+        ((MidiKeyboardComponent*)layoutComps[idx])->setLowestVisibleKey(cAttr.getNumProp(CabbageIDs::value));
 
         layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
 #ifdef Cabbage_Build_Standalone
@@ -2021,16 +2021,16 @@ void CabbagePluginAudioProcessorEditor::InsertMIDIKeyboard(CabbageGUIClass &cAtt
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertSlider(CabbageGUIClass &cAttr)
 {
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");     
-        comps.add(new CabbageSlider(cAttr.getStringProp("name"),
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);     
+        comps.add(new CabbageSlider(cAttr.getStringProp(CabbageIDs::name),
                                             cAttr.getStringProp("text"),
-                                            cAttr.getStringProp("caption"),
+                                            cAttr.getStringProp(CabbageIDs::caption),
                                             cAttr.getStringProp("kind"),
-                                            cAttr.getStringProp("colour"),
-                                            cAttr.getStringProp("fontcolour"),
+                                            cAttr.getStringProp(CabbageIDs::colour),
+                                            cAttr.getStringProp(CabbageIDs::fontcolour),
                                             cAttr.getNumProp("textbox"),
                                             cAttr.getStringProp("trackercolour"),
 											cAttr.getNumProp("decimalplaces")
@@ -2041,11 +2041,11 @@ void CabbagePluginAudioProcessorEditor::InsertSlider(CabbageGUIClass &cAttr)
         int relY=0,relX=0;
         if(layoutComps.size()>0){
         for(int y=0;y<layoutComps.size();y++){
-		//Logger::writeToLog("Creating Slider "+cAttr.getStringProp("name")+" with plant:"+cAttr.getStringProp("reltoplant"));
+		//Logger::writeToLog("Creating Slider "+cAttr.getStringProp(CabbageIDs::name)+" with plant:"+cAttr.getStringProp("reltoplant"));
         if(cAttr.getStringProp("reltoplant").length()>0){
         if(layoutComps[y]->getProperties().getWithDefault(String("plant"), -99).toString().equalsIgnoreCase(cAttr.getStringProp("reltoplant")))
                 {
-					positionComponentWithinPlant(cAttr.getStringProp("type"), idx, left, top, width, height, layoutComps[y], comps[idx]);
+					positionComponentWithinPlant(cAttr.getStringProp(CabbageIDs::type), idx, left, top, width, height, layoutComps[y], comps[idx]);
                 }
         }
                 else{
@@ -2068,10 +2068,10 @@ void CabbagePluginAudioProcessorEditor::InsertSlider(CabbageGUIClass &cAttr)
 		//Logger::writeToLog("Skew:"+String(cAttr.getNumProp("sliderSkew")));
         ((CabbageSlider*)comps[idx])->slider->setSkewFactor(cAttr.getNumProp("sliderskew"));
         ((CabbageSlider*)comps[idx])->slider->setRange(cAttr.getNumProp("min"), cAttr.getNumProp("max"), cAttr.getNumProp("sliderincr"));
-        ((CabbageSlider*)comps[idx])->slider->setValue(cAttr.getNumProp("value"));	
+        ((CabbageSlider*)comps[idx])->slider->setValue(cAttr.getNumProp(CabbageIDs::value));	
 		
 		//add initial values to incomingValues array
-		incomingValues.add(cAttr.getNumProp("value"));
+		incomingValues.add(cAttr.getNumProp(CabbageIDs::value));
 
         ((CabbageSlider*)comps[idx])->slider->addListener(this);
 
@@ -2087,10 +2087,10 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
 #ifndef Cabbage_No_Csound
 
 for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control from vector
-       if(getFilter()->getGUICtrls(i).getStringProp("name")==sliderThatWasMoved->getParentComponent()->getName())
+       if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==sliderThatWasMoved->getParentComponent()->getName())
 		   {
 #ifndef Cabbage_Build_Standalone
-			getFilter()->getGUICtrls(i).setNumProp("value", (float)sliderThatWasMoved->getValue());
+			getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, (float)sliderThatWasMoved->getValue());
 			float min = getFilter()->getGUICtrls(i).getNumProp("min");
 			float range = getFilter()->getGUICtrls(i).getNumProp("range");
 			//normalise parameters in plugin mode.
@@ -2100,7 +2100,7 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control fro
 			//getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getValue());
 			getFilter()->endParameterChangeGesture(i);
 #else
-			float value = sliderThatWasMoved->getValue();//getFilter()->getGUICtrls(i).getNumProp("value");
+			float value = sliderThatWasMoved->getValue();//getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
 			getFilter()->beginParameterChangeGesture(i);
 			getFilter()->setParameter(i, (float)sliderThatWasMoved->getValue());
 			getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getValue());
@@ -2116,17 +2116,17 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control fro
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
 {
-        comps.add(new CabbageButton(cAttr.getStringProp("name"),
-                cAttr.getStringProp("caption"),
+        comps.add(new CabbageButton(cAttr.getStringProp(CabbageIDs::name),
+                cAttr.getStringProp(CabbageIDs::caption),
                 cAttr.getStringArrayPropValue("text", 0),
-                cAttr.getStringProp("colour"),
-                cAttr.getStringProp("fontcolour")));    
+                cAttr.getStringProp(CabbageIDs::colour),
+                cAttr.getStringProp(CabbageIDs::fontcolour)));    
         int idx = comps.size()-1;
 
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 
         //check to see if widgets is anchored
         //if it is offset its position accordingly. 
@@ -2151,16 +2151,16 @@ void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
         ((CabbageButton*)comps[idx])->button->addListener(this);
         //((CabbageButton*)comps[idx])->button->setName("button");
         //if(cAttr.getItemsSize()>0)
-		//showMessage(cAttr.getStringArrayPropValue("text", cAttr.getNumProp("value")));
-        ((CabbageButton*)comps[idx])->button->setButtonText(cAttr.getStringArrayPropValue("text", cAttr.getNumProp("value")));
-		//getFilter()->setParameter(idx, cAttr.getNumProp("value"));
-		//getFilter()->setParameterNotifyingHost(idx, cAttr.getNumProp("value"));
+		//showMessage(cAttr.getStringArrayPropValue("text", cAttr.getNumProp(CabbageIDs::value)));
+        ((CabbageButton*)comps[idx])->button->setButtonText(cAttr.getStringArrayPropValue("text", cAttr.getNumProp(CabbageIDs::value)));
+		//getFilter()->setParameter(idx, cAttr.getNumProp(CabbageIDs::value));
+		//getFilter()->setParameterNotifyingHost(idx, cAttr.getNumProp(CabbageIDs::value));
 		
 #ifdef Cabbage_Build_Standalone
         ((CabbageButton*)comps[idx])->button->setWantsKeyboardFocus(true);
 #endif
 		//add initial values to incomingValues array
-		//incomingValues.add(cAttr.getNumProp("value"));
+		//incomingValues.add(cAttr.getNumProp(CabbageIDs::value));
 		//showMessage(comps[idx]->getParentComponent()->getName());
 
 }
@@ -2172,17 +2172,17 @@ void CabbagePluginAudioProcessorEditor::InsertCheckBox(CabbageGUIClass &cAttr)
 {
         bool RECT = cAttr.getStringProp("shape").equalsIgnoreCase("square");
                 
-        comps.add(new CabbageCheckbox(cAttr.getStringProp("name"),
-                cAttr.getStringProp("caption"),
+        comps.add(new CabbageCheckbox(cAttr.getStringProp(CabbageIDs::name),
+                cAttr.getStringProp(CabbageIDs::caption),
                 cAttr.getItems(0),
-                cAttr.getStringProp("colour"),
-                cAttr.getStringProp("fontcolour"),
+                cAttr.getStringProp(CabbageIDs::colour),
+                cAttr.getStringProp(CabbageIDs::fontcolour),
                 RECT)); 
         int idx = comps.size()-1;
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 
 
         int relY=0,relX=0;
@@ -2210,11 +2210,11 @@ void CabbagePluginAudioProcessorEditor::InsertCheckBox(CabbageGUIClass &cAttr)
         ((CabbageCheckbox*)comps[idx])->button->setButtonText(cAttr.getItems(0));
 
         //set user-defined colour if given
-        if(cAttr.getStringProp("colour")!=Colours::lime.toString())
-                ((CabbageCheckbox*)comps[idx])->button->getProperties().set("colour", cAttr.getStringProp("colour"));
+        if(cAttr.getStringProp(CabbageIDs::colour)!=Colours::lime.toString())
+                ((CabbageCheckbox*)comps[idx])->button->getProperties().set(CabbageIDs::colour, cAttr.getStringProp(CabbageIDs::colour));
 
         //set initial value if given
-        if(cAttr.getNumProp("value")==1)
+        if(cAttr.getNumProp(CabbageIDs::value)==1)
                 ((CabbageCheckbox*)comps[idx])->button->setToggleState(true, sendNotification);
         else
                 ((CabbageCheckbox*)comps[idx])->button->setToggleState(false, sendNotification);
@@ -2224,7 +2224,7 @@ void CabbagePluginAudioProcessorEditor::InsertCheckBox(CabbageGUIClass &cAttr)
 #endif
         
 		//add initial values to incomingValues array
-		incomingValues.add(cAttr.getNumProp("value"));
+		incomingValues.add(cAttr.getNumProp(CabbageIDs::value));
 }
 
                                                 /*****************************************************/
@@ -2238,20 +2238,20 @@ if(button->isMouseButtonDown())
 	for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 		{//find correct control from vector                        	  
 			//+++++++++++++button+++++++++++++
-			 if(getFilter()->getGUICtrls(i).getStringProp("name")==button->getName())
+			 if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==button->getName())
 				 {
-					if(getFilter()->getGUICtrls(i).getStringProp("type")==String("button")&&
+					if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("button")&&
 					getFilter()->getGUICtrls(i).getNumProp("latched")==0)
 					{   
 					//toggle button values
-					if(getFilter()->getGUICtrls(i).getNumProp("value")==0){
+					if(getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value)==0){
 						getFilter()->setParameterNotifyingHost(i, 1.f);
 						getFilter()->setParameter(i, 1.f);
-						getFilter()->getGUICtrls(i).setNumProp("value", 1);
+						getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 1);
 						}
 					else{
 						getFilter()->setParameterNotifyingHost(i, 0.f);
-						getFilter()->getGUICtrls(i).setNumProp("value", 0);
+						getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 0);
 						getFilter()->setParameter(i, 0.f);
 						}
 					//toggle text values
@@ -2309,9 +2309,9 @@ if(!getFilter()->isGuiEnabled()){
 		//check layoutControls for fileButtons, these are once off buttons....
 		for(int i=0;i<(int)getFilter()->getGUILayoutCtrlsSize();i++){//find correct control from vector  
 		//Logger::writeToLog(button->getName());
-				 if(getFilter()->getGUILayoutCtrls(i).getStringProp("name")==button->getName())
+				 if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::name)==button->getName())
 					 {
-					 if(getFilter()->getGUILayoutCtrls(i).getStringProp("type")==String("filebutton"))
+					 if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==String("filebutton"))
 						{  
 						WildcardFileFilter wildcardFilter ("*.*", String::empty, "Foo files");
 						
@@ -2371,12 +2371,12 @@ if(!getFilter()->isGuiEnabled()){
 								FileChooser fc("Select a file", directory.getFullPathName(), filetype, true);
 								if(fc.browseForFileToOpen()){
 									selectedFile = fc.getResult();
-									getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"), 
+									getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel), 
 																								selectedFile.getFullPathName(),
 																								"string");
 										}
 										Logger::writeToLog(selectedFile.getFullPathName());
-										Logger::writeToLog(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"));
+										Logger::writeToLog(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel));
 								
 							 }
 							 else{
@@ -2386,7 +2386,7 @@ if(!getFilter()->isGuiEnabled()){
 									if(filetype.contains("snaps"))
 									savePresetsFromParameters(selectedFile, "create");
 									else
-									getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp("channel"), 
+									getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel), 
 																								selectedFile.getFullPathName(),
 																								"string");
 									refreshGUIControls("combobox");
@@ -2402,23 +2402,23 @@ if(!getFilter()->isGuiEnabled()){
 		for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++){//find correct control from vector                        
 			  
 				//+++++++++++++button+++++++++++++
-						//Logger::writeToLog(getFilter()->getGUICtrls(i).getStringProp("name"));
+						//Logger::writeToLog(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name));
 						//Logger::writeToLog(button->getName());
-				 if(getFilter()->getGUICtrls(i).getStringProp("name")==button->getName())
+				 if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==button->getName())
 					 {
-						if(getFilter()->getGUICtrls(i).getStringProp("type")==String("button"))
+						if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("button"))
 						{   
 						//toggle button values
-						if(getFilter()->getGUICtrls(i).getNumProp("value")==0){
+						if(getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value)==0){
 							getFilter()->setParameterNotifyingHost(i, 1.f);
 							getFilter()->setParameter(i, 1.f);
-							//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), 1.f);
-							getFilter()->getGUICtrls(i).setNumProp("value", 1);
+							//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), 1.f);
+							getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 1);
 							}
 						else{
 							getFilter()->setParameterNotifyingHost(i, 0.f);
-							//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), 0.f);
-							getFilter()->getGUICtrls(i).setNumProp("value", 0);
+							//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), 0.f);
+							getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 0);
 							getFilter()->setParameter(i, 0.f);
 							}
 						//toggle text values
@@ -2451,25 +2451,25 @@ if(!getFilter()->isGuiEnabled()){
         
         else if(dynamic_cast<ToggleButton*>(button)){
         for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control from vector
-                        if(getFilter()->getGUICtrls(i).getStringProp("name")==button->getName()){
+                        if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==button->getName()){
                         //      Logger::writeToLog(String(button->getToggleStateValue().getValue()));
 
                                 if(button->getToggleState()){
                                         button->setToggleState(true, dontSendNotification);
 										getFilter()->setParameter(i, 1.f);
 										getFilter()->setParameterNotifyingHost(i, 1.f);
-										//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), 1.f);
-										getFilter()->getGUICtrls(i).setNumProp("value", 1);
+										//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), 1.f);
+										getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 1);
                                 }
                                 else{
                                         button->setToggleState(false, dontSendNotification);
 										getFilter()->setParameter(i, 0.f);
 										getFilter()->setParameterNotifyingHost(i, 0.f);
-										//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), 0.f);
-										getFilter()->getGUICtrls(i).setNumProp("value", 0);
+										//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), 0.f);
+										getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 0);
                                         //Logger::writeToLog("pressed");
                                 }
-                                //getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), button->getToggleStateValue().getValue());
+                                //getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), button->getToggleStateValue().getValue());
                                 //getFilter()->setParameterNotifyingHost(i, button->getToggleStateValue().getValue());
                         }
                         }
@@ -2488,18 +2488,18 @@ if(!getFilter()->isGuiEnabled()){
 void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 {
 	    Array<File> dirFiles;
-        comps.add(new CabbageComboBox(cAttr.getStringProp("name"),
-                cAttr.getStringProp("caption"),
+        comps.add(new CabbageComboBox(cAttr.getStringProp(CabbageIDs::name),
+                cAttr.getStringProp(CabbageIDs::caption),
                 cAttr.getItems(0),
-                cAttr.getStringProp("colour"),
-                cAttr.getStringProp("fontcolour")));
+                cAttr.getStringProp(CabbageIDs::colour),
+                cAttr.getStringProp(CabbageIDs::fontcolour)));
 
         int idx = comps.size()-1;
         
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 
         int relY=0,relX=0;
         if(layoutComps.size()>0){
@@ -2557,15 +2557,15 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 		}
 
         //cAttr.setNumProp("comborange", cAttr.getItemsSize());
-        lookAndFeel->setColour(ComboBox::textColourId, Colour::fromString(cAttr.getStringProp("fontcolour")));
-		Logger::writeToLog("combo value:"+String(cAttr.getNumProp("value")));
-        ((CabbageComboBox*)comps[idx])->combo->setSelectedItemIndex(cAttr.getNumProp("value")-1);
+        lookAndFeel->setColour(ComboBox::textColourId, Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour)));
+		Logger::writeToLog("combo value:"+String(cAttr.getNumProp(CabbageIDs::value)));
+        ((CabbageComboBox*)comps[idx])->combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);
 		
-        ((CabbageComboBox*)comps[idx])->setName(cAttr.getStringProp("name"));
+        ((CabbageComboBox*)comps[idx])->setName(cAttr.getStringProp(CabbageIDs::name));
         ((CabbageComboBox*)comps[idx])->combo->addListener(this);
 
 		//add initial values to incomingValues array
-		incomingValues.add(cAttr.getNumProp("value"));
+		incomingValues.add(cAttr.getNumProp(CabbageIDs::value));
 }
 
                                         /******************************************/
@@ -2577,7 +2577,7 @@ void CabbagePluginAudioProcessorEditor::comboBoxChanged (ComboBox* combo)
 if(combo->isEnabled()) // before sending data to on named channel
     {
 for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control from vector
-	if(getFilter()->getGUICtrls(i).getStringProp("name")==combo->getName())
+	if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==combo->getName())
 		{
 		
 		if(getFilter()->getGUICtrls(i).getStringProp("filetype").contains("snaps")){
@@ -2617,7 +2617,7 @@ void CabbagePluginAudioProcessorEditor::refreshGUIControls(String typeOfControl)
 for(int i=0;i<getFilter()->getGUICtrlsSize();i++)
 	{
 		//if typeOfControl == combobox, user must have file type set for comboboxes to refresh
-		if(getFilter()->getGUICtrls(i).getStringProp("type").equalsIgnoreCase(typeOfControl) &&
+		if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase(typeOfControl) &&
 			getFilter()->getGUICtrls(i).getStringProp("filetype").isNotEmpty())
 		{
 		CabbageComboBox* cabCombo = dynamic_cast<CabbageComboBox*>(comps[i]);
@@ -2657,7 +2657,7 @@ void CabbagePluginAudioProcessorEditor::savePresetsFromParameters(File selectedF
 {
 	XmlElement xml (getFilter()->getCsoundInputFile().getFileNameWithoutExtension());								
 	for(int i=0;i<getFilter()->getGUICtrlsSize();i++)
-		xml.setAttribute(getFilter()->getGUICtrls(i).getStringProp("channel"), getFilter()->getGUICtrls(i).getNumProp("value"));																	
+		xml.setAttribute(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel), getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value));																	
 	
 	File file(selectedFile.getFullPathName());
 	file.replaceWithText(xml.createDocument(""));
@@ -2679,7 +2679,7 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
 	{
 	for(int i=0;i<getFilter()->getNumParameters();i++)
 		{
-		float newValue = (float)xml->getDoubleAttribute(getFilter()->getGUICtrls(i).getStringProp("channel"));
+		float newValue = (float)xml->getDoubleAttribute(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel));
 
 		#ifndef Cabbage_Build_Standalone
 		
@@ -2688,15 +2688,15 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
 		//Logger::writeToLog("inValue:"+String(newValue));
 		float min = getFilter()->getGUICtrls(i).getNumProp("min");
 
-		if(getFilter()->getGUICtrls(i).getStringProp("type")=="rslider")
+		if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="rslider")
 			Logger::writeToLog("slider");
 
-		if(getFilter()->getGUICtrls(i).getStringProp("type")=="xypad")
+		if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="xypad")
 			newValue = (jmax(0.f, newValue)/range)+min;
-		else if(getFilter()->getGUICtrls(i).getStringProp("type")=="combobox")//combo box value need to be rounded...
+		else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="combobox")//combo box value need to be rounded...
 			newValue = (newValue/comboRange);
-		else if(getFilter()->getGUICtrls(i).getStringProp("type")=="checkbox" ||
-				getFilter()->getGUICtrls(i).getStringProp("type")=="button")
+		else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="checkbox" ||
+				getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="button")
 			range=1;
 		else
 			newValue = (newValue/range)+min;		
@@ -2724,7 +2724,7 @@ int idx;
 
 if(getFilter()->haveXYAutosBeenCreated()){	
 		comps.add(new CabbageXYController(getFilter()->getXYAutomater(xyPadIndex), 
-				cAttr.getStringProp("name"),
+				cAttr.getStringProp(CabbageIDs::name),
                 cAttr.getStringProp("text"),
 				"",
                 cAttr.getNumProp("minx"),
@@ -2733,8 +2733,8 @@ if(getFilter()->haveXYAutosBeenCreated()){
                 cAttr.getNumProp("maxy"),
 				xyPadIndex,
 				cAttr.getNumProp("decimalplaces"),
-				cAttr.getStringProp("colour"),
-				cAttr.getStringProp("fontcolour"),
+				cAttr.getStringProp(CabbageIDs::colour),
+				cAttr.getStringProp(CabbageIDs::fontcolour),
 				cAttr.getNumProp("valuex"),
 				cAttr.getNumProp("valuey"))); 
 				xyPadIndex++;  
@@ -2749,7 +2749,7 @@ else{
 	cAttr.setNumProp("xyautoindex", getFilter()->getXYAutomaterSize()-1);
 
 	comps.add(new CabbageXYController(getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1), 
-				cAttr.getStringProp("name"),
+				cAttr.getStringProp(CabbageIDs::name),
                 cAttr.getStringProp("text"),
 				"",
                 cAttr.getNumProp("minx"),
@@ -2758,8 +2758,8 @@ else{
                 cAttr.getNumProp("maxy"),
 				getFilter()->getXYAutomaterSize()-1,
 				cAttr.getNumProp("decimalPlaces"),
-				cAttr.getStringProp("colour"),
-				cAttr.getStringProp("fontcolour"),
+				cAttr.getStringProp(CabbageIDs::colour),
+				cAttr.getStringProp(CabbageIDs::fontcolour),
 				cAttr.getNumProp("valuex"),
 				cAttr.getNumProp("valuey")));   
 	idx = comps.size()-1;
@@ -2768,10 +2768,10 @@ else{
 	
 }
 
-        float left = cAttr.getNumProp("left");    
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);    
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 
 
 
@@ -2789,13 +2789,13 @@ else{
         }
                 else{
             comps[idx]->setBounds(left+relX, top+relY, width, height);
-                if(!cAttr.getStringProp("name").containsIgnoreCase("dummy"))
+                if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
                 componentPanel->addAndMakeVisible(comps[idx]);               
                 }
         }
         else{
             comps[idx]->setBounds(left+relX, top+relY, width, height);
-                if(!cAttr.getStringProp("name").containsIgnoreCase("dummy"))
+                if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
                 componentPanel->addAndMakeVisible(comps[idx]);               
         }
 
@@ -2814,7 +2814,7 @@ else{
 		getFilter()->setParameter(idx+1, cAttr.getNumProp("valuey"));
 		
 		//add initial values to incomingValues array
-		if(!cAttr.getStringProp("name").contains("dummy")){
+		if(!cAttr.getStringProp(CabbageIDs::name).contains("dummy")){
 		incomingValues.add(cAttr.getNumProp("valuex"));
 		incomingValues.add(cAttr.getNumProp("valuey"));		
 		}
@@ -2826,8 +2826,8 @@ else{
 #ifdef Cabbage_Build_Standalone 
         comps[idx]->setWantsKeyboardFocus(false);
 #endif
-	//if(!cAttr.getStringProp("name").containsIgnoreCase("dummy"))
-    //    actionListenerCallback(cAttr.getStringProp("name"));
+	//if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
+    //    actionListenerCallback(cAttr.getStringProp(CabbageIDs::name));
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -2843,8 +2843,8 @@ void CabbagePluginAudioProcessorEditor::InsertPVSViewer(CabbageGUIClass &cAttr)
         getFilter()->getPVSDataOut()->overlap = cAttr.getNumProp("fftSize")/4;
         getFilter()->getPVSDataOut()->frame = (float *) calloc(sizeof(float),(getFilter()->getPVSDataOut()->N+2));
 
-        layoutComps.add(new CabbagePVSView(cAttr.getStringProp("name"),
-                cAttr.getStringProp("caption"),
+        layoutComps.add(new CabbagePVSView(cAttr.getStringProp(CabbageIDs::name),
+                cAttr.getStringProp(CabbageIDs::caption),
                 cAttr.getStringProp("text"),
                 cAttr.getNumProp("winSize"),
                 cAttr.getNumProp("fftSize"),
@@ -2853,10 +2853,10 @@ void CabbagePluginAudioProcessorEditor::InsertPVSViewer(CabbageGUIClass &cAttr)
 
 
         int idx = layoutComps.size()-1;
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 
         int relY=0,relX=0;
         if(layoutComps.size()>0){
@@ -2913,14 +2913,14 @@ Array<int> tableSizes;
 		}
 #endif
 	tableSizes.clear();
-	for(int i=0;i<cAttr.getStringArrayProp("channel").size();i++)
+	for(int i=0;i<cAttr.getStringArrayProp(CabbageIDs::channel).size();i++)
 	 tableSizes.add(tableSize);
 
 
-			 layoutComps.add(new CabbageTable(cAttr.getStringProp("name"),
+			 layoutComps.add(new CabbageTable(cAttr.getStringProp(CabbageIDs::name),
 					cAttr.getStringProp("text"),
-					cAttr.getStringProp("caption"),
-					cAttr.getStringArrayProp("channel"),
+					cAttr.getStringProp(CabbageIDs::caption),
+					cAttr.getStringArrayProp(CabbageIDs::channel),
 					cAttr.getIntArrayProp("tablenumber"),
 					tableSizes,
 					cAttr.getIntArrayProp("drawmode"),
@@ -2931,10 +2931,10 @@ Array<int> tableSizes;
 					this)); 
 			
 			int idx = layoutComps.size()-1;
-			float left = cAttr.getNumProp("left");
-			float top = cAttr.getNumProp("top");
-			float width = cAttr.getNumProp("width");
-			float height = cAttr.getNumProp("height");
+			float left = cAttr.getNumProp(CabbageIDs::left);
+			float top = cAttr.getNumProp(CabbageIDs::top);
+			float width = cAttr.getNumProp(CabbageIDs::width);
+			float height = cAttr.getNumProp(CabbageIDs::height);
 			int relY=0,relX=0;
 			if(layoutComps.size()>0){
 			for(int y=0;y<layoutComps.size();y++)
@@ -2969,7 +2969,7 @@ int masterSnap = message.substring(message.indexOf(String("?"))+1, 100).getIntVa
 if(message.equalsIgnoreCase(String("updatingDirectoryTables"))){
 for(int i=0;i<(int)getFilter()->getGUILayoutCtrlsSize();i++)//find correct control from vector
 		//if message came from a directorylist
-		if(getFilter()->getGUILayoutCtrls(i).getStringProp("type").containsIgnoreCase("directorylist"))	
+		if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).containsIgnoreCase("directorylist"))	
 		{
 			//Logger::writeToLog("update tables now please...");
 			StringArray events = ((CabbageDirectoryList*)layoutComps[i])->getListContents();
@@ -2996,7 +2996,7 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control fro
                 for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++)
                         if(getFilter()->getGUILayoutCtrls(i).getStringProp("preset").equalsIgnoreCase(name))
                         {
-                                //showMessage(getFilter()->getGUILayoutCtrls(i).getStringProp("name"));
+                                //showMessage(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::name));
                                 //showMessage(getFilter()->getGUILayoutCtrls(i).getStringProp("snapshotData"));
                                 //showMessage(getFilter()->getGUILayoutCtrls(i).getNumPresets());
                                 for(int x=0;x<getFilter()->getGUILayoutCtrls(i).getItemsSize();x++){
@@ -3010,13 +3010,13 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control fro
                                                         String comp1 = getFilter()->getGUICtrls(n).getStringProp("preset");
                                                         //checks if all widgets are being controlled by this preset, or just some
                                                         if(masterSnap)
-                                                                str = str << getFilter()->getGUICtrls(n).getStringProp("channel") << ":\t\t\t" << getFilter()->getGUICtrls(n).getNumProp("value") << "\n";      
+                                                                str = str << getFilter()->getGUICtrls(n).getStringProp(CabbageIDs::channel) << ":\t\t\t" << getFilter()->getGUICtrls(n).getNumProp(CabbageIDs::value) << "\n";      
 
                                                         else if(comp1.trim().equalsIgnoreCase(name.trim()))
                                                         {
                                                                 //showMessage(getFilter()->getGUILayoutCtrls(i).getStringProp("preset"));
                                                                 
-                                                                str = str << getFilter()->getGUICtrls(n).getStringProp("channel") << ":\t\t\t" << getFilter()->getGUICtrls(n).getNumProp("value") << "\n";      
+                                                                str = str << getFilter()->getGUICtrls(n).getStringProp(CabbageIDs::channel) << ":\t\t\t" << getFilter()->getGUICtrls(n).getNumProp(CabbageIDs::value) << "\n";      
 
                                                         }
                                                 }
@@ -3062,21 +3062,21 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control fro
                                                 for(int z=1;z<values.size()-1;z++){
                                                         channel = values[z].substring(0, values[z].indexOf(":"));
                                                         for(int u=0;u<getFilter()->getGUICtrlsSize();u++)
-                                                                if(getFilter()->getGUICtrls(u).getStringProp("channel").equalsIgnoreCase(channel)){
+                                                                if(getFilter()->getGUICtrls(u).getStringProp(CabbageIDs::channel).equalsIgnoreCase(channel)){
                                                                         double val = values[z].substring(values[z].indexOf(":")+1, 100).getDoubleValue();
                                                                         //showMessage(String(val));
-                                                                        getFilter()->getGUICtrls(u).setNumProp("value", val);
-                                                                        if(getFilter()->getGUICtrls(i).getStringProp("type")==String("hslider")||
-                                                                        getFilter()->getGUICtrls(u).getStringProp("type")==String("rslider")||
-                                                                        getFilter()->getGUICtrls(u).getStringProp("type")==String("vslider")){
+                                                                        getFilter()->getGUICtrls(u).setNumProp(CabbageIDs::value, val);
+                                                                        if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("hslider")||
+                                                                        getFilter()->getGUICtrls(u).getStringProp(CabbageIDs::type)==String("rslider")||
+                                                                        getFilter()->getGUICtrls(u).getStringProp(CabbageIDs::type)==String("vslider")){
                                                                         if(comps[u])
                                                                         ((CabbageSlider*)comps[u])->slider->setValue(val, dontSendNotification);
                                                                         }
-                                                                        else if(getFilter()->getGUICtrls(u).getStringProp("type")==String("checkbox")){
+                                                                        else if(getFilter()->getGUICtrls(u).getStringProp(CabbageIDs::type)==String("checkbox")){
                                                                         if(comps[u])
                                                                         ((CabbageCheckbox*)comps[u])->button->setToggleState((bool)val, sendNotification);
                                                                         }
-                                                                        else if(getFilter()->getGUICtrls(u).getStringProp("type")==String("combobox")){
+                                                                        else if(getFilter()->getGUICtrls(u).getStringProp(CabbageIDs::type)==String("combobox")){
                                                                         //if(comps[u])
                                                                         //((CabbageComboBox*)comps[u])->combo->setSelectedItemIndex(val);
                                                                         }
@@ -3138,18 +3138,18 @@ void CabbagePluginAudioProcessorEditor::InsertPatternMatrix(CabbageGUIClass &cAt
 int tableSize=0;
 //getFilter()->patStepMatrix.clear();
 //getFilter()->patPfieldMatrix.clear();
-        comps.add(new CabbagePatternMatrix(getFilter(), cAttr.getStringProp("name"),
-                cAttr.getNumProp("width"),
-                cAttr.getNumProp("height"),
-                cAttr.getStringProp("caption"),
+        comps.add(new CabbagePatternMatrix(getFilter(), cAttr.getStringProp(CabbageIDs::name),
+                cAttr.getNumProp(CabbageIDs::width),
+                cAttr.getNumProp(CabbageIDs::height),
+                cAttr.getStringProp(CabbageIDs::caption),
                 cAttr.getItemArray(),
                 cAttr.getNumProp("noSteps"),
                 cAttr.getNumProp("rCtrls")));   
         int idx = comps.size()-1;
-        float left = cAttr.getNumProp("left");
-        float top = cAttr.getNumProp("top");
-        float width = cAttr.getNumProp("width");
-        float height = cAttr.getNumProp("height");
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
 
 
         int relY=0,relX=0;
@@ -3254,9 +3254,9 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++){
                 if(getFilter()->getGUICtrls(i).getKeySize()>0)
                 if(getFilter()->getGUICtrls(i).getkey(0).equalsIgnoreCase(key.getTextDescription()))
                 if(key.isCurrentlyDown()){
-                        if(getFilter()->getGUICtrls(i).getStringProp("type")==String("button"))
+                        if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("button"))
                                 this->buttonClicked(((CabbageButton*)comps[i])->button);
-                        else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("checkbox")){
+                        else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("checkbox")){
                                 if(((CabbageCheckbox*)comps[i])->button->getToggleState())
                                         ((CabbageCheckbox*)comps[i])->button->setToggleState(0, dontSendNotification);
                                 else
@@ -3299,9 +3299,9 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 		{    
 		inValue = getFilter()->getParameter(i);
 		
-        if(getFilter()->getGUICtrls(i).getStringProp("type")==String("hslider")||
-                        getFilter()->getGUICtrls(i).getStringProp("type")==String("rslider")||
-                        getFilter()->getGUICtrls(i).getStringProp("type")==String("vslider")){
+        if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("hslider")||
+                        getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("rslider")||
+                        getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("vslider")){
         CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(comps[i]);
 		if(cabSlider){
 		#ifndef Cabbage_Build_Standalone
@@ -3318,7 +3318,7 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
         }
         }
         
-        else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("button")){
+        else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("button")){
         CabbageButton* cabButton = dynamic_cast<CabbageButton*>(comps[i]);
 		if(cabButton){
 				Logger::writeToLog("Button:"+String(inValue));
@@ -3332,14 +3332,14 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 			}
         }
   
-        else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("xypad") &&
-                getFilter()->getGUICtrls(i).getStringProp("xychannel").equalsIgnoreCase("x")){
+        else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("xypad") &&
+                getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::xychannel).equalsIgnoreCase("x")){
         if(comps[i]){
 		#ifndef Cabbage_Build_Standalone
-			float xRange = getFilter()->getGUICtrls(i).getNumProp("range");
-			float xMin = getFilter()->getGUICtrls(i).getNumProp("minx");
-			float yMin = getFilter()->getGUICtrls(i).getNumProp("miny");
-			float yRange = getFilter()->getGUICtrls(i+1).getNumProp("range");
+			float xRange = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range);
+			float xMin = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::minx);
+			float yMin = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::miny);
+			float yRange = getFilter()->getGUICtrls(i+1).getNumProp(CabbageIDs::range);
 			((CabbageXYController*)comps[i])->xypad->setXYValues(getFilter()->getParameter(i)*xRange+xMin, getFilter()->getParameter(i+1)*yRange+yMin);
 		#else
 			((CabbageXYController*)comps[i])->xypad->setXYValues(getFilter()->getParameter(i), getFilter()->getParameter(i+1));		
@@ -3349,11 +3349,12 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 			incomingValues.set(i+1, getFilter()->getParameter(i+1));
 		}
         }
+		
 
-        else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("combobox")){
+        else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("combobox")){
 			float val;
 			NotificationType notify;
-			if(getFilter()->getGUICtrls(i).getStringProp("filetype").contains("snaps"))
+			if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::filetype).contains("snaps"))
 				notify = sendNotification;
 			else
 				notify = dontSendNotification;
@@ -3366,7 +3367,7 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 		#else
 			//needed to move combobox to full when controlled by a host
 			if(getFilter()->getParameter(i)>=0.98)
-			val = getFilter()->getGUICtrls(i).getNumProp("comborange");
+			val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::comborange);
 			else
 			val = getFilter()->getGUICtrls(i).getNumProp("comborange")*getFilter()->getParameter(i);
 			//Logger::writeToLog(String("timerCallback():")+String(val));
@@ -3375,9 +3376,9 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 			
         }
 
-        else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("checkbox")){
+        else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("checkbox")){
         if(comps[i]){
-			int val = getFilter()->getGUICtrls(i).getNumProp("value");
+			int val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
                         ((CabbageCheckbox*)comps[i])->button->setToggleState((bool)val, dontSendNotification);
                         incomingValues.set(i, val);
                         }
@@ -3387,25 +3388,25 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
 
 #ifndef Cabbage_Build_Standalone
 for(int i=0;i<(int)getFilter()->getGUILayoutCtrlsSize();i++){
-        if(getFilter()->getGUILayoutCtrls(i).getStringProp("type")==String("hostbpm")){     
+        if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==String("hostbpm")){     
     if (getFilter()->getPlayHead() != 0 && getFilter()->getPlayHead()->getCurrentPosition (hostInfo))
-                getFilter()->getCsound()->SetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp("channel").toUTF8(), hostInfo.bpm);
+                getFilter()->getCsound()->SetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.bpm);
         }
-        else if(getFilter()->getGUILayoutCtrls(i).getStringProp("type")==String("hosttime")){       
+        else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==String("hosttime")){       
     if (getFilter()->getPlayHead() != 0 && getFilter()->getPlayHead()->getCurrentPosition (hostInfo))
-                getFilter()->getCsound()->SetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp("channel").toUTF8(), hostInfo.timeInSeconds);
+                getFilter()->getCsound()->SetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.timeInSeconds);
         }
-        else if(getFilter()->getGUILayoutCtrls(i).getStringProp("type")==String("hostplaying")){            
+        else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==String("hostplaying")){            
     if (getFilter()->getPlayHead() != 0 && getFilter()->getPlayHead()->getCurrentPosition (hostInfo))
-                getFilter()->getCsound()->SetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp("channel").toUTF8(), hostInfo.isPlaying);
+                getFilter()->getCsound()->SetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.isPlaying);
         }
-        else if(getFilter()->getGUILayoutCtrls(i).getStringProp("type")==String("hostrecording")){          
+        else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==String("hostrecording")){          
     if (getFilter()->getPlayHead() != 0 && getFilter()->getPlayHead()->getCurrentPosition (hostInfo))
-                getFilter()->getCsound()->SetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp("channel").toUTF8(), hostInfo.isRecording);
+                getFilter()->getCsound()->SetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.isRecording);
         }
-        else if(getFilter()->getGUILayoutCtrls(i).getStringProp("type")==String("hostppqpos")){     
+        else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==String("hostppqpos")){     
     if (getFilter()->getPlayHead() != 0 && getFilter()->getPlayHead()->getCurrentPosition (hostInfo))
-                getFilter()->getCsound()->SetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp("channel").toUTF8(), hostInfo.ppqPosition);
+                getFilter()->getCsound()->SetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.ppqPosition);
         debugLabel->setText(String(hostInfo.ppqPosition), dontSendNotification );
         }
 }
@@ -3414,21 +3415,21 @@ for(int i=0;i<(int)getFilter()->getGUILayoutCtrlsSize();i++){
 //the following code looks after updating any objects that don't get recognised as plugin parameters, 
 //for example, table objects don't get listed by the host as a paramters. Likewise the csoundoutput widget.. 
 for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
-        //String test = getFilter()->getGUILayoutCtrls(i).getStringProp("type");
+        //String test = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type);
         //Logger::writeToLog(test);
-        if(getFilter()->getGUILayoutCtrls(i).getStringProp("type").containsIgnoreCase("csoundoutput")){
+        if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).containsIgnoreCase("csoundoutput")){
                 ((CabbageMessageConsole*)layoutComps[i])->editor->setText(getFilter()->getCsoundOutput());
                 ((CabbageMessageConsole*)layoutComps[i])->editor->setCaretPosition(getFilter()->getCsoundOutput().length());
         }
-        else if(getFilter()->getGUILayoutCtrls(i).getStringProp("type").containsIgnoreCase("vumeter")){
+        else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).containsIgnoreCase("vumeter")){
                 //Logger::writeToLog(layoutComps[i]->getName());
                 for(int y=0;y<((CabbageVUMeter*)layoutComps[i])->getNoMeters();y++)
-                //String chann = getFilter()->getGUILayoutCtrls(i).getStringProp("channel", y);
-                //float val = getFilter()->getCsound()->GetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp("channel", y).toUTF8());
+                //String chann = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel, y);
+                //float val = getFilter()->getCsound()->GetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel, y).toUTF8());
                 ((CabbageVUMeter*)layoutComps[i])->vuMeter->setVULevel(y, 10);
                 //}
         }
-        else if(getFilter()->getGUILayoutCtrls(i).getStringProp("type").containsIgnoreCase("table")){
+        else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).containsIgnoreCase("table")){
 				//int tableNumber = getFilter()->getGUILayoutCtrls(i).getNumProp("tableNum");
                 int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp("tablenumber").size();				
 				//for(int y=0;y<getFilter()->getGUILayoutCtrls(i).getNumberOfTableChannels();y++)
@@ -3441,8 +3442,8 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 						int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue("tablenumber", y);
 						Array <double, CriticalSection> tableValues = getFilter()->getTable(tableNumber);
 						((CabbageTable*)layoutComps[i])->fillTable(y, tableValues);
-						getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringArrayPropValue("channel", y).toUTF8(), 0,
-																				getFilter()->getGUILayoutCtrls(i).getStringProp("type"));
+						getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringArrayPropValue(CabbageIDs::channel, y).toUTF8(), 0,
+																				getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type));
 						}
 					else
 						{
@@ -3473,29 +3474,29 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
                                         (getFilter()->getGUICtrls(i).getNumProp("max")-getFilter()->getGUICtrls(i).getNumProp("min")+
                                         getFilter()->getGUICtrls(i).getNumProp("min"));
 
-                                if(getFilter()->getGUICtrls(i).getStringProp("type")==String("hslider")||
-                                                getFilter()->getGUICtrls(i).getStringProp("type")==String("rslider")||
-                                                getFilter()->getGUICtrls(i).getStringProp("type")==String("vslider")){
+                                if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("hslider")||
+                                                getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("rslider")||
+                                                getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("vslider")){
                                 if(comps[i])
                                                 ((CabbageSlider*)comps[i])->slider->setValue(value, dontSendNotification);
                                 }
-                                else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("button")){
+                                else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("button")){
                                 if(comps[i])
                                         ((CabbageButton*)comps[i])->button->setButtonText(getFilter()->getGUICtrls(i).getItems(1-(int)value));
                                 }
-                                else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("combobox")){
+                                else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("combobox")){
                                         if(comps[i]){
                                         //((CabbageComboBox*)comps[i])->combo->setSelectedId((int)value+1.5, false);
                                         }
                                 }
-                                else if(getFilter()->getGUICtrls(i).getStringProp("type")==String("checkbox")){
+                                else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("checkbox")){
                                 if(comps[i])
                                         if(value==0)
                                                 ((CabbageCheckbox*)comps[i])->button->setToggleState(0, dontSendNotification);
                                         else
                                                 ((Button*)comps[i])->setToggleState(1, dontSendNotification);
                                 }
-                                getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp("channel").toUTF8(), value);                             
+                                getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), value);                             
 								if(message.isController())
 										if(getFilter()->getMidiDebug()){
                                         String debugInfo =  String("MIDI Channel:    ")+String(message.getChannel())+String(" \t")+

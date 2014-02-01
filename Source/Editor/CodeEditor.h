@@ -78,7 +78,8 @@ class CsoundCodeEditor : public CodeEditorComponent,
 	void setOpcodeStrings(String opcodes){
 	opcodeStrings.addLines(opcodes);
 	}
-
+	
+	void updateCaretPosition();
 	void insertMultiTextAtCaret(String text);
 	String getOpcodeToken(int index){
 	return opcodeTokens[index];	

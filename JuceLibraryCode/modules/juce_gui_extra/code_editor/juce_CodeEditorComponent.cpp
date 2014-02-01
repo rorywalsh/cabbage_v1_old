@@ -567,9 +567,15 @@ void CodeEditorComponent::codeDocumentChanged (const int startIndex, const int e
 }
 
 //==============================================================================
+void CodeEditorComponent::setCaretPos(Rectangle<int> rect)
+{
+	caret->setCaretPosition(rect);    
+}
+
+//==============================================================================
 void CodeEditorComponent::updateCaretPosition()
 {
-    caret->setCaretPosition (getCharacterBounds (getCaretPos()));
+	caret->setCaretPosition (getCharacterBounds (getCaretPos()));    
 }
 
 void CodeEditorComponent::moveCaretTo (const CodeDocument::Position& newPos, const bool highlighting)

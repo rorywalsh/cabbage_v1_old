@@ -86,10 +86,19 @@ public:
     */
     int getNumColumnsOnScreen() const noexcept                  { return columnsOnScreen; }
 
+    /** Returns the selection start caret position. */
+    CodeDocument::Position getSelectionStartCaretPos() const                  { return selectionStart; }
+
+    /** Returns the selection end caret position. */
+    CodeDocument::Position getSelectionEndCaretPos() const                  { return selectionEnd; }
+	
     /** Returns the current caret position. */
     CodeDocument::Position getCaretPos() const                  { return caretPos; }
 
-    /** Returns the position of the caret, relative to the editor's origin. */
+     /** Sets the current caret position. */
+    void setCaretPos(Rectangle<int> caretPos);
+   
+	/** Returns the position of the caret, relative to the editor's origin. */
     Rectangle<int> getCaretRectangle() override;
 
     /** Moves the caret.
@@ -203,6 +212,12 @@ public:
 
     /** Returns the font that the editor is using. */
     const Font& getFont() const noexcept                { return font; }
+
+    /** Makes the editor read-only. */
+    void setReadOnly (bool shouldBeReadOnly) noexcept;
+
+    /** Returns true if the editor is set to be read-only. */
+    bool isReadOnly() const noexcept                    { return readOnly; }
 
     //==============================================================================
     struct JUCE_API  ColourScheme
@@ -352,7 +367,7 @@ private:
     float charWidth;
     int lineHeight, linesOnScreen, columnsOnScreen;
     int scrollbarThickness, columnToTryToMaintain;
-    bool useSpacesForTabs, showLineNumbers;
+    bool readOnly, useSpacesForTabs, showLineNumbers, shouldFollowDocumentChanges;
     double xOffset;
 
     CodeDocument::Position caretPos, selectionStart, selectionEnd;
@@ -400,7 +415,7 @@ private:
 
     //==============================================================================
     void insertText (const String&);
-    void updateCaretPosition();
+    virtual void updateCaretPosition();
     void updateScrollBars();
     void scrollToLineInternal (int line);
     void scrollToColumnInternal (double column);

@@ -2558,7 +2558,7 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 
         //cAttr.setNumProp("comborange", cAttr.getItemsSize());
         lookAndFeel->setColour(ComboBox::textColourId, Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour)));
-		Logger::writeToLog("combo value:"+String(cAttr.getNumProp(CabbageIDs::value)));
+		//Logger::writeToLog("combo value:"+String(cAttr.getNumProp(CabbageIDs::value)));
         ((CabbageComboBox*)comps[idx])->combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);
 		
         ((CabbageComboBox*)comps[idx])->setName(cAttr.getStringProp(CabbageIDs::name));
@@ -2590,7 +2590,7 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control fro
 		#else
 		filename = workingDir+"/"+combo->getText()+".snaps";
 		#endif
-		Logger::writeToLog(filename);
+		//Logger::writeToLog(filename);
 		if(File(filename).existsAsFile())
 			restoreParametersFromPresets(XmlDocument::parse(File(filename)));
 		//File(combo->getText())	
@@ -3321,7 +3321,7 @@ for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)
         else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("button")){
         CabbageButton* cabButton = dynamic_cast<CabbageButton*>(comps[i]);
 		if(cabButton){
-				Logger::writeToLog("Button:"+String(inValue));
+				//Logger::writeToLog("Button:"+String(inValue));
                 cabButton->button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", inValue));
 				incomingValues.set(i, inValue);
 				//if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1).equalsIgnoreCase(cabButton->button->getButtonText()))

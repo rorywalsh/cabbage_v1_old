@@ -98,6 +98,20 @@ namespace CabbageIDs
 	static const Identifier workingdir = "workingdir";
 	static const Identifier author = "author";
 	static const Identifier xychannel = "xychannel";
+	
+	static const String combobox = "combobox";
+	static const String rslider = "rslider";
+	static const String hslider = "hslider";
+	static const String vslider = "vslider";
+	static const String checkbox = "checkbox";
+	static const String button = "button";
+	static const String filebutton = "filebutton";
+	static const String table = "table";
+	static const String groupbox = "groupbox";
+	static const String image = "image";
+	static const String form = "form";
+	static const String xypad = "xypad";
+	static const String stringchannel = "string";
 
 };
 

@@ -627,7 +627,7 @@ bool multiLine = false;
 									||tokes[0].equalsIgnoreCase(String("xypad"))
 									||tokes[0].equalsIgnoreCase(String("button"))){
 							CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
-							Logger::writeToLog(csdLine.trimEnd());
+							//Logger::writeToLog(csdLine.trimEnd());
 							csdLine = "";
 							//Logger::writeToLog(tokes[0]);
 							//attach widget to plant if need be
@@ -666,7 +666,7 @@ bool multiLine = false;
 									startTimer(10);
 							}
 							else{
-								Logger::writeToLog("Value:"+String(cAttr.getNumProp(CabbageIDs::value)));
+								//Logger::writeToLog("Value:"+String(cAttr.getNumProp(CabbageIDs::value)));
 							guiCtrls.add(cAttr);
 							guiID++;
 							}
@@ -887,8 +887,8 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 	else
 		yVal = (xyPad->getYValue()/xyPad->getYRange())-(fabs(xyPad->getMinimumYValue())/xyPad->getYRange());
 
-	Logger::writeToLog("Param:"+String(xyPad->paramIndex)+"  xyPadXVal:"+String(xVal));
-	Logger::writeToLog("Param:"+String(xyPad->paramIndex+1)+"  xyPadYVal:"+String(yVal));
+	//Logger::writeToLog("Param:"+String(xyPad->paramIndex)+"  xyPadXVal:"+String(xVal));
+	//Logger::writeToLog("Param:"+String(xyPad->paramIndex+1)+"  xyPadYVal:"+String(yVal));
 
 	setParameterNotifyingHost(xyPad->paramIndex, xVal);
 	setParameterNotifyingHost(xyPad->paramIndex+1, yVal);
@@ -929,10 +929,10 @@ float min = getGUICtrls(index).getNumProp(CabbageIDs::min);
 if(index<(int)guiCtrls.size()){//make sure index isn't out of range
 	#ifndef Cabbage_Build_Standalone
 	float val = (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
-	if(getGUICtrls(index).getStringProp(CabbageIDs::type)=="combobox")
+	if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox)
 	return (getGUICtrls(index).getNumProp(CabbageIDs::value)/getGUICtrls(index).getNumProp(CabbageIDs::comborange));
-	else if(getGUICtrls(index).getStringProp(CabbageIDs::type)=="checkbox" ||
-			getGUICtrls(index).getStringProp(CabbageIDs::type)=="button")
+	else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::checkbox ||
+			getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::button)
 	return getGUICtrls(index).getNumProp(CabbageIDs::value);			
 	else
 	return (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
@@ -965,12 +965,12 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
 	//Logger::writeToLog("inValue:"+String(newValue));
 	min = getGUICtrls(index).getNumProp(CabbageIDs::min);
 
-	if(getGUICtrls(index).getStringProp(CabbageIDs::type)=="xypad")
+	if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::xypad)
 		newValue = (jmax(0.f, newValue)*range)+min;
-	else if(getGUICtrls(index).getStringProp(CabbageIDs::type)=="combobox")//combo box value need to be rounded...
+	else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox)//combo box value need to be rounded...
 		newValue = (newValue*comboRange);
-	else if(getGUICtrls(index).getStringProp(CabbageIDs::type)=="checkbox" ||
-			getGUICtrls(index).getStringProp(CabbageIDs::type)=="button")
+	else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::checkbox ||
+			getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::button)
 		range=1;
 	else
 		newValue = (newValue*range)+min;
@@ -983,17 +983,17 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
 	//Logger::writeToLog(String("parameterSet:"+String(newValue)));
 	//no need to scale here when in standalone mode
 	
-	if(getGUICtrls(index).getStringProp(CabbageIDs::type)=="combobox" &&
-								getGUICtrls(index).getStringProp(CabbageIDs::channeltype)=="string")
+	if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox &&
+								getGUICtrls(index).getStringProp(CabbageIDs::channeltype)==CabbageIDs::stringchannel)
 	  {
 		stringMessage = getGUICtrls(index).getStringArrayPropValue(CabbageIDs::text, newValue-1);
-		Logger::writeToLog(stringMessage);
-		messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel).toUTF8(), 
+		//Logger::writeToLog(stringMessage);
+		messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel), 
 												  stringMessage,
-												  "string");
+												  CabbageIDs::stringchannel);
 	  }
 	else
-		messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel).toUTF8(), 
+		messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel), 
 												  newValue,
 												  guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
 	
@@ -1019,11 +1019,11 @@ if(!CSCompResult)
 	//update all control widgets
 	for(int index=0;index<getGUICtrlsSize();index++)
 		{
-		if(guiCtrls[index].getStringProp(CabbageIDs::channeltype).equalsIgnoreCase("string")){
+		if(guiCtrls[index].getStringProp(CabbageIDs::channeltype).equalsIgnoreCase(CabbageIDs::stringchannel)){
 		//argghhh!! THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE!	
 		}
 		else{	
-			float value = csound->GetChannel(guiCtrls[index].getStringProp(CabbageIDs::channel).toUTF8());
+			float value = csound->GetChannel(guiCtrls[index].getStringProp(CabbageIDs::channel).getCharPointer());
 			//Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));
 			//Logger::writeToLog("value:"+String(value));
 			guiCtrls.getReference(index).setNumProp(CabbageIDs::value, value);
@@ -1034,11 +1034,11 @@ if(!CSCompResult)
 //don't use channel messages...
 	for(int index=0;index<getGUILayoutCtrlsSize();index++)
 		{
-		if(guiLayoutCtrls[index].getStringProp(CabbageIDs::type)=="table")
+		if(guiLayoutCtrls[index].getStringProp(CabbageIDs::type)==CabbageIDs::table)
 			{
 			for(int y=0;y<guiLayoutCtrls[index].getStringArrayProp(CabbageIDs::channel).size();y++){
 				//String test = getGUILayoutCtrls(index).getStringArrayPropValue(CabbageIDs::channel, y);
-				float value = csound->GetChannel(guiLayoutCtrls[index].getStringArrayPropValue(CabbageIDs::channel, y).toUTF8());
+				float value = csound->GetChannel(guiLayoutCtrls[index].getStringArrayPropValue(CabbageIDs::channel, y).getCharPointer());
 				guiLayoutCtrls[index].setTableChannelValues(y, value);
 				}
 			}
@@ -1066,15 +1066,15 @@ for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 		//update Csound function tables with values from table widget
 		else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="updateTable"){
 			//Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.toUTF8());
-			csound->InputMessage(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.toUTF8());
+			csound->InputMessage(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.getCharPointer());
 		}
 		//catch string messags
-		else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="string"){	
-		csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.toUTF8(),
+		else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type==CabbageIDs::stringchannel){	
+		csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
 						   messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal.toUTF8().getAddress());
 		}
 		else
-		csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.toUTF8(),
+		csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
 						   messageQueue.getOutgoingChannelMessageFromQueue(i).value);
 		}
 
@@ -1344,7 +1344,7 @@ if(!isSuspended() && !isGuiEnabled()){
 			{
 				getCallbackLock().enter();
 				//slow down calls to these functions, no need for them to be firing at k-rate
-				yieldCounter = (yieldCounter>10) ? 0 : yieldCounter+1;
+				yieldCounter = (yieldCounter>20) ? 0 : yieldCounter+1;
 				if(yieldCounter==0){
 				sendOutgoingMessagesToCsound();
 				updateCabbageControls();

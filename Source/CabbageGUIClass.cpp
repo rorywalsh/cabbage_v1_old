@@ -924,7 +924,7 @@ int CabbageGUIClass::parse(String inStr)
 	for(int indx=0;indx<identArray.size();indx++)
 	{
 		//check to see if identifier is part of input string..turn to lowercase first..
-		Logger::writeToLog("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
+		//Logger::writeToLog("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
 		int identPos = str.toLowerCase().indexOf(identArray.getReference(indx));
           if(identPos!=-1){
 			StringArray strTokens, fillStrTokens;
@@ -1157,7 +1157,7 @@ int CabbageGUIClass::parse(String inStr)
 			  var value;
 			  for(int i= 0;i<(int)strTokens.size();i++)
 					{
-					Logger::writeToLog(strTokens[i]);
+					//Logger::writeToLog(strTokens[i]);
 					String test = strTokens[i]; 
 					items.add(strTokens[i]);	
 					value.append(strTokens[i].trim());
@@ -1171,7 +1171,7 @@ int CabbageGUIClass::parse(String inStr)
 					//Logger::writeToLog(String(value.size())+typeOfWidget);
 					if((value.size()==1) && ((typeOfWidget=="button") || (typeOfWidget=="filebutton"))){
 						value.append(strTokens[0]);
-						Logger::writeToLog(strTokens[0].trim());
+						//Logger::writeToLog(strTokens[0].trim());
 					}
 						
 			  cabbageIdentifiers.set(CabbageIDs::text, value);
@@ -1706,7 +1706,7 @@ String CabbageGUIClass::getStringForIdentifier(var propsArray, String identifier
 			for(int p=0;p<propsArray.size();p++)
 			str += "\""+propsArray[p].toString()+"\",";						
 			str = identifier+str.dropLastCharacters(1)+"), ";
-			Logger::writeToLog(str);			
+			//Logger::writeToLog(str);			
 		}
 		else
 			str = identifier+String("\"")+propsArray.toString()+"\"), ";		

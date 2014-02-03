@@ -70,8 +70,10 @@ pluginType(_pluginType),
 automationAmp(0),
 isAutomator(false),
 automationParamID(-1),
-debugMessage("")
+debugMessage(""),
+guiRefreshRate(20)
 {
+//suspendProcessing(true);
 codeEditor = nullptr;
 #ifdef Cabbage_Logger
 logFile = File((appProperties->getCommonSettings(true)->getFile().getParentDirectory().getFullPathName()+"/CabbageLog.txt"));
@@ -149,7 +151,7 @@ if(csCompileResult==0){
 		csound->SetChannel("CABBAGE_CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().toUTF8().getAddress());	
 
         Logger::writeToLog("Csound compiled your file");
-
+  
 		//csound->SetYieldCallback(CabbagePluginAudioProcessor::yieldCallback);
         if(csound->GetSpout()==nullptr);
         CSspout = csound->GetSpout();
@@ -376,7 +378,7 @@ void CabbagePluginAudioProcessor::YieldCallback(void* data){
 void CabbagePluginAudioProcessor::reCompileCsound(File file)
 {
 #ifndef Cabbage_No_Csound
-this->suspendProcessing(true);
+suspendProcessing(true);
 soundFileIndex = 0;
 midiOutputBuffer.clear();
 getCallbackLock().enter();
@@ -415,7 +417,7 @@ if(csCompileResult==0){
         csoundStatus = true;
         debugMessageArray.add(CABBAGE_VERSION);
         debugMessageArray.add(String("\n"));
-		removeAllChangeListeners();
+		//removeAllChangeListeners();
 		getCallbackLock().exit();
 
 		//init all channels with their init val
@@ -564,6 +566,8 @@ bool multiLine = false;
 								nativePluginEditor = true;
 								return;
 							}
+							if(cAttr.getNumProp(CabbageIDs::guirefresh)>1)
+								guiRefreshRate = cAttr.getNumProp(CabbageIDs::guirefresh);
 
 							//showMessage(cAttr.getStringProp("type"));
 							csdLine = "";
@@ -1044,7 +1048,7 @@ if(!CSCompResult)
 			}
 		}
 	}
-
+sendChangeMessage();
 #endif
 }
 
@@ -1344,7 +1348,7 @@ if(!isSuspended() && !isGuiEnabled()){
 			{
 				getCallbackLock().enter();
 				//slow down calls to these functions, no need for them to be firing at k-rate
-				yieldCounter = (yieldCounter>20) ? 0 : yieldCounter+1;
+				yieldCounter = (yieldCounter>guiRefreshRate) ? 0 : yieldCounter+1;
 				if(yieldCounter==0){
 				sendOutgoingMessagesToCsound();
 				updateCabbageControls();

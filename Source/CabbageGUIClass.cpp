@@ -778,6 +778,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::caption, "");
 		cabbageIdentifiers.set(CabbageIDs::name, "form");
 		cabbageIdentifiers.set(CabbageIDs::type, "form");
+		cabbageIdentifiers.set(CabbageIDs::guirefresh, 20);
 	}
 
     else if(strTokens[0].trim() == "hostbpm"){
@@ -830,6 +831,7 @@ int CabbageGUIClass::parse(String inStr)
 		str = str.substring(0, str.indexOf(0, ";"));
 
 	
+	//making this static would also speed things up!!
 	String typeOfWidget="";
 	StringArray identArray;
 	identArray.clear();
@@ -846,6 +848,7 @@ int CabbageGUIClass::parse(String inStr)
     identArray.add("max(");
     identArray.add("value(");
 	identArray.add("tabpage(");
+	identArray.add("guirefresh(");
 	identArray.add("midictrl(");
 	//check line values with spaces, otherwise
 	//it gets confused with the outline identifier
@@ -1188,7 +1191,7 @@ int CabbageGUIClass::parse(String inStr)
 			}
 
 			else if(identArray[indx].equalsIgnoreCase("preset(")){
-				CabbageUtils::showMessage("preset is no longer supported, see docs");
+				//CabbageUtils::showMessage("preset is no longer supported, see docs");
 			}
 
 			else if(identArray[indx].equalsIgnoreCase(" mode(") ||
@@ -1422,6 +1425,9 @@ int CabbageGUIClass::parse(String inStr)
 			}
             else if(identArray[indx].equalsIgnoreCase("latched(")){ 
 				cabbageIdentifiers.set(CabbageIDs::latched, strTokens[0].trim().getFloatValue());	
+			}
+            else if(identArray[indx].equalsIgnoreCase("guirefresh(")){ 
+				cabbageIdentifiers.set(CabbageIDs::guirefresh, strTokens[0].trim().getFloatValue());	
 			}
             else if(identArray[indx].equalsIgnoreCase("textbox(")){
 				textBox = strTokens[0].trim().getFloatValue();  

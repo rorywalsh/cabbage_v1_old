@@ -98,7 +98,9 @@ namespace CabbageIDs
 	static const Identifier workingdir = "workingdir";
 	static const Identifier author = "author";
 	static const Identifier xychannel = "xychannel";
+	static const Identifier guirefresh = "guirefresh";
 	
+	//type of widgets
 	static const String combobox = "combobox";
 	static const String rslider = "rslider";
 	static const String hslider = "hslider";
@@ -112,6 +114,7 @@ namespace CabbageIDs
 	static const String form = "form";
 	static const String xypad = "xypad";
 	static const String stringchannel = "string";
+	static const String csoundoutput = "csoundoutput";
 
 };
 

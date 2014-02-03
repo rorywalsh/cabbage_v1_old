@@ -411,6 +411,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 {
 //first we check that the audio device is up and running ok
 stopTimer();
+
 filter->suspendProcessing(true);
 
 
@@ -422,6 +423,7 @@ if(shouldResetFilter){
 	filter->addActionListener(this);	
 }
 else{
+deviceManager->closeAudioDevice();
 filter->reCompileCsound(csdFile);	
 }
 //	filter->sendChangeMessage();
@@ -432,7 +434,11 @@ filter->reCompileCsound(csdFile);
 	int runningCabbageProcess = getPreference(appProperties, "UseCabbageIO");
     
 	setContentOwned (filter->createEditorIfNeeded(), true);
-
+	//filter->addChangeListener(filter->getActiveEditor());
+	CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*> (filter->getActiveEditor());
+	if(editor)
+		filter->addChangeListener(editor);
+		
     if(runningCabbageProcess){
 		if (filter != nullptr)
 		{
@@ -447,8 +453,6 @@ filter->reCompileCsound(csdFile);
 	else{
 		filter->performEntireScore();
 	}
-
-
 
 
     PropertySet* const globalSettings = getGlobalSettings();
@@ -468,7 +472,8 @@ filter->reCompileCsound(csdFile);
 //		Component::getCurrentlyFocusedComponent()->setWantsKeyboardFocus(false);
 	}
 	
-	filter->suspendProcessing(false);
+	//filter->suspendProcessing(false);
+	//filter->getCallbackLock().exit();
 }
 
 //==============================================================================

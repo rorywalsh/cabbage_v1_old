@@ -125,7 +125,7 @@ void CsoundCodeEditor::insertMultiTextAtCaret (String text)
 	csdArray.addLines(getAllText());
 	String curLine;	
 	CodeDocument::Position newPos, indexPos;
-	newPos = getSelectionStartCaretPos();
+	newPos = getCaretPos();//getSelectionStartCaretPos();
 	int currentLine = getCaretPos().getLineNumber();
 	int index = newPos.getIndexInLine();
 	Logger::writeToLog(String(index));
@@ -322,7 +322,7 @@ void CsoundCodeEditor::updateCaretPosition()
 	caret->setCaretPosition (newCaretPosition);
 	}
 	else*/
-		setCaretPos(getCharacterBounds (getCaretPos()));
+	setCaretPos(getCharacterBounds (getCaretPos()));
 }
 
 void CsoundCodeEditor::addToRepository()

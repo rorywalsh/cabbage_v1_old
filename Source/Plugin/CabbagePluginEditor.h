@@ -139,7 +139,8 @@ private:
 		void insertScoreStatementText(Table *table, bool overwrite);
 		void restoreParametersFromPresets(XmlElement* xmlData);
 		void savePresetsFromParameters(File selectedFile, String mode);
-		void refreshGUIControls(String typeOfControl);
+		void refreshDiskReadingGUIControls(String typeOfControl);
+		void updateGUIControls();
 
 		void timerCallback();
         bool LOCKED;

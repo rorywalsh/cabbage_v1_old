@@ -55,13 +55,7 @@ class CsoundCodeEditor : public CodeEditorComponent,
 		sendActionMessage("make popup invisible");	
 	}
 	
-	void handleReturnKey (){
-	if(type=="csound"){
-		insertText("\n");
-		sendActionMessage("make popup invisible");		
-	}		
-	}	
-	
+	void handleReturnKey ();	
 	void addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEvent *mouseClickEvent);
 	void performPopupMenuAction (int menuItemID);
 	String getLineText();
@@ -80,11 +74,13 @@ class CsoundCodeEditor : public CodeEditorComponent,
 	void codeDocumentTextDeleted(int,int);
 	void codeDocumentTextInserted(const juce::String &,int);
 	bool textChanged;
-	
+	void insertNewLine(String text);
 	void setOpcodeStrings(String opcodes){
-	opcodeStrings.addLines(opcodes);	
+	opcodeStrings.addLines(opcodes);
 	}
 	
+	void updateCaretPosition();
+	void insertMultiTextAtCaret(String text);
 	String getOpcodeToken(int index){
 	return opcodeTokens[index];	
 	}	

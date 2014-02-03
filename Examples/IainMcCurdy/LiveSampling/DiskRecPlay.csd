@@ -7,7 +7,7 @@ checkbox channel("Pause"), bounds(90,25,50,50), value(0), shape("square"), colou
 groupbox bounds(150,   0, 70, 80), text("Play Loop")
 checkbox channel("PlayLoop"), bounds(160,25,50,50), value(0), shape("square")
 groupbox bounds(220,   0, 70, 80), text("Play Once")
-checkbox channel("PlayOnce"), bounds(230,25,50,50), value(0), shape("square")
+checkbox channel("PlayOnce"), bounds(230,25,50,50), value(0), shape("square"), colour("yellow")
 hslider bounds(10,  80, 280,70), channel("Speed"), range(-4, 4, 1), caption("Speed")
 hslider bounds(10, 150, 280,70), channel("InSkip"), range(0, 1, 0), caption("In Skip")
 hslider bounds(10, 220, 280,70), channel("InGain"), range(0, 1, 1), caption("Input Gain")

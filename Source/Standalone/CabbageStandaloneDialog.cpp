@@ -92,10 +92,14 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
 
 
+
+
+
+
     deviceManager = new AudioDeviceManager();
 	deviceManager->addAudioCallback (&player);
 	deviceManager->addMidiInputCallback (String::empty, &player);
-
+	deviceManager->closeAudioDevice();
 
 	ScopedPointer<XmlElement> savedState;
 	if (globalSettings != nullptr)
@@ -278,6 +282,11 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message){
 
 	else if(message.equalsIgnoreCase("fileSaved")){
 	saveFile();
+	if(filter->isGuiEnabled()){
+	startTimer(100);
+	((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
+	filter->setGuiEnabled(false);
+	}
 	}
 
 	else if(message.contains("fileOpen")){
@@ -288,9 +297,9 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message){
 	showAudioSettingsDialog();
 	}
 	
-	else if(message.contains("toggleCsoundOutput")){
+	else if(message.contains("hideOutputWindow")){
 	outputConsole->setVisible(false);
-	}
+	}	
 	
 	else if(message.contains("fileSaveAs")){
 	saveFileAs();
@@ -402,16 +411,19 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 {
 //first we check that the audio device is up and running ok
 stopTimer();
+  
 filter->suspendProcessing(true);
+
 
 if(shouldResetFilter){
 	deviceManager->closeAudioDevice();
-	deleteFilter();	
+	deleteFilter();
 	filter = createCabbagePluginFilter(csdFile.getFullPathName(), false, AUDIO_PLUGIN);	
 	filter->addChangeListener(this);
 	filter->addActionListener(this);	
 }
 else{
+deviceManager->closeAudioDevice();
 filter->reCompileCsound(csdFile);	
 }
 //	filter->sendChangeMessage();
@@ -422,7 +434,11 @@ filter->reCompileCsound(csdFile);
 	int runningCabbageProcess = getPreference(appProperties, "UseCabbageIO");
     
 	setContentOwned (filter->createEditorIfNeeded(), true);
-
+	//filter->addChangeListener(filter->getActiveEditor());
+	CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*> (filter->getActiveEditor());
+	if(editor)
+		filter->addChangeListener(editor);
+		
     if(runningCabbageProcess){
 		if (filter != nullptr)
 		{
@@ -437,8 +453,6 @@ filter->reCompileCsound(csdFile);
 	else{
 		filter->performEntireScore();
 	}
-
-
 
 
     PropertySet* const globalSettings = getGlobalSettings();
@@ -458,7 +472,8 @@ filter->reCompileCsound(csdFile);
 //		Component::getCurrentlyFocusedComponent()->setWantsKeyboardFocus(false);
 	}
 	
-	filter->suspendProcessing(false);
+	//filter->suspendProcessing(false);
+	//filter->getCallbackLock().exit();
 }
 
 //==============================================================================

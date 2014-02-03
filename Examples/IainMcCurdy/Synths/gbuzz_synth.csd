@@ -1,73 +1,122 @@
-<Cabbage>
-form caption("gbuzz Synth") size(875, 285), pluginID("wtsy")
-image   bounds( 10,  6,365, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp")	;main
-image   bounds(380,  6,170, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp")	;polyphony
-image   bounds(555,  6,120, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp")	;reverb
-image   bounds(580,101,125, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp")	;
-image   bounds(680,  6,185, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp")	;pitch bend
-image   bounds( 10,101,305, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp")	;multplier envelope
-image   bounds(320,101,125, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp")	;Low Cut
-image   bounds(450,101,125, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp")	;High Cut
-image pos(0, 0), size(875, 285), colour("DarkSlateGrey"), outline("MediumSlateBlue"), line(3)
 
-label   bounds(190, 11,100, 15), text("Main"), fontcolour(white)
-label   bounds(415, 11,100, 15), text("Polyphony"), fontcolour(white)
-label   bounds(590, 11,100, 15), text("Reverb"), fontcolour(white)
-label   bounds( 93,106,160, 15), text("Multiplier Envelope"), fontcolour(white)
-label   bounds(616,106,100, 15), text("Control"), fontcolour(white)
-label   bounds(732, 11,100, 15), text("Pitch Bend"), fontcolour(white)
+<Cabbage>
+form caption("gbuzz Synth") size(875, 375), pluginID("GBuz")
+image   bounds(  0,  0,875,295), colour("DarkSlateGrey"), outline("MediumSlateBlue"), line(3)	; main panel colouration    
 
 ;MAIN
-rslider  bounds( 10, 29, 62, 62), text("Level"),  colour(SlateGrey) channel("level"),range(0,20, 1,0.5,0.001), fontcolour(white)
-rslider  bounds( 70, 29, 62, 62), text("Power"),  colour(SlateGrey) channel("mul"), range(0, 0.97, 0.6), fontcolour(white)
-rslider  bounds(130, 29, 62, 62), text("Lowest"), colour(SlateGrey)  channel("lh"), range(1, 40, 1,1,1), fontcolour(white)
-rslider  bounds(190, 29, 62, 62), text("Number"), colour(SlateGrey)  channel("nh"), range(1,200,80,1,1), fontcolour(white)
-rslider  bounds(250, 29, 62, 62), text("Jitter"), colour(SlateGrey) channel("jitter"),range(0, 1, 0.4), fontcolour(white)
-rslider  bounds(310, 29, 62, 62), text("Pan"),    colour(SlateGrey) channel("pan"),range(0, 1, 0.5), fontcolour(white)
-
+image    bounds( 10,  6,495, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp"),plant("main"){	;main
+label    bounds(180,  5,100, 15), text("Main"), fontcolour(white)
+rslider  bounds(  0, 23, 62, 62), text("Level"),  colour(SlateGrey) channel("level"),range(0,20, 10,0.5,0.001), fontcolour(white)
+rslider  bounds( 60, 23, 62, 62), text("Power"),  colour(SlateGrey) channel("mul"), range(0, 0.97, 0.1), fontcolour(white)
+rslider  bounds(120, 23, 62, 62), text("Lowest"), colour(SlateGrey)  channel("lh"), range(1, 40, 3,1,1), fontcolour(white)
+rslider  bounds(180, 23, 62, 62), text("Number"), colour(SlateGrey)  channel("nh"), range(1,200,10,1,1), fontcolour(white)
+rslider  bounds(240, 23, 62, 62), text("Jitter"), colour(SlateGrey) channel("jitter"),range(0, 1, 0.4), fontcolour(white)
+rslider  bounds(300, 23, 62, 62), text("Pan"),    colour(SlateGrey) channel("pan"),range(0, 1, 0.5), fontcolour(white)
+label    bounds(368, 19, 90, 11), text("Waveform"), fontcolour(white)
+combobox bounds(365, 30, 60, 18), channel("waveform"), value(3), text("cosine", "sine", "user")
+label    bounds(368, 52, 90, 11), text("User Matrix"), fontcolour(white)
+checkbox bounds(368, 63, 10, 10), channel("part1"), FontColour(white), colour("lime"), value(1)
+checkbox bounds(378, 63, 10, 10), channel("part2"), FontColour(white), colour("lime"), value(0)
+checkbox bounds(388, 63, 10, 10), channel("part3"), FontColour(white), colour("lime"), value(1)
+checkbox bounds(398, 63, 10, 10), channel("part4"), FontColour(white), colour("lime"), value(0)
+checkbox bounds(408, 63, 10, 10), channel("part5"), FontColour(white), colour("lime"), value(0)
+checkbox bounds(418, 63, 10, 10), channel("part6"), FontColour(white), colour("lime"), value(0)
+checkbox bounds(368, 73, 10, 10), channel("part7"), FontColour(white), colour("lime"), value(1)
+checkbox bounds(378, 73, 10, 10), channel("part8"), FontColour(white), colour("lime"), value(0)
+checkbox bounds(388, 73, 10, 10), channel("part9"), FontColour(white), colour("lime"), value(0)
+checkbox bounds(398, 73, 10, 10), channel("part10"), FontColour(white), colour("lime"), value(1)
+checkbox bounds(408, 73, 10, 10), channel("part11"), FontColour(white), colour("lime"), value(1)
+checkbox bounds(418, 73, 10, 10), channel("part12"), FontColour(white), colour("lime"), value(0)
+rslider  bounds(430, 23, 62, 62), text("Octave"),    colour(SlateGrey) channel("octave"),range(-8, 8, -4,1,1), fontcolour(white)
+}              
 
 ;POLYPHONY
-button   bounds(390, 30, 70, 25), text("mono", "poly"), channel("monopoly"), value(1), fontcolour("lime") 
-rslider  bounds(490, 32, 60, 60), text("Leg.Time"), channel("LegTim"), range(0.01, 15, 0.05, 0.25, 0.00001), fontcolour(white) colour(SlateGrey)
-label    bounds(417, 60, 90, 11), text("Mode"), fontcolour(white)
-combobox bounds(390, 71, 90, 18), channel("PortMode"), value(1), text("Fixed", "Proportional")
+image    bounds(510,  6,170, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp"), plant("polyphony"){	;polyphony
+label    bounds( 35,  5,100, 15), text("Polyphony"), fontcolour(white)
+button   bounds( 10, 24, 70, 25), text("mono", "poly"), channel("monopoly"), value(1), fontcolour("lime") 
+rslider  bounds(110, 26, 60, 60), text("Leg.Time"), channel("LegTim"), range(0.01, 15, 0.05, 0.25, 0.00001), fontcolour(white) colour(SlateGrey)
+label    bounds( 37, 54, 90, 11), text("Mode"), fontcolour(white)
+combobox bounds( 10, 65, 90, 18), channel("PortMode"), value(1), text("Fixed", "Proportional")
+}
 
-;REVERB
-rslider bounds(555, 29, 60, 60), text("Mix"), channel("RvbMix"), range(0, 1, 0.3), fontcolour(white) colour(SlateGrey)
-rslider bounds(615, 29, 60, 60), text("Size"), channel("RvbSize"), range(0.3, 1, 0.7), fontcolour(white) colour(SlateGrey)
+;REVERB              
+image   bounds(710,101,120, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp"), plant("reverb"){	;reverb
+label   bounds( 35,  5,100, 15), text("Reverb"), fontcolour(white)
+rslider bounds(  0, 23, 60, 60), text("Mix"), channel("RvbMix"), range(0, 1, 0.3), fontcolour(white) colour(SlateGrey)
+rslider bounds( 60, 23, 60, 60), text("Size"), channel("RvbSize"), range(0.3, 1, 0.7), fontcolour(white) colour(SlateGrey)
+}                       
 
 ;PITCH BEND
-rslider  bounds(680, 29, 60, 60), fontcolour("white"), text("< Bend"),    channel("BendDown"),    range(-1,0, 0, 1,0.001), colour(SlateGrey)
-rslider  bounds(740, 29, 60, 60), fontcolour("white"), text("Bend >"),    channel("BendUp"),      range(0, 1, 0, 1,0.001), colour(SlateGrey)
-rslider  bounds(800, 29, 60, 60), fontcolour("white"), text("Bend Rng."), channel("BendRange"),   range(1, 24, 12, 1,1),   colour(SlateGrey)
+image   bounds(685,  6,185, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp"), plant("pitchbend"){	;pitch bend
+label   bounds( 52,  5,100, 15), text("Pitch Bend"), fontcolour(white)
+rslider  bounds(  0, 23, 60, 60), fontcolour("white"), text("< Bend"),    channel("BendDown"),    range(-1,0, 0, 1,0.001), colour(SlateGrey)
+rslider  bounds( 60, 23, 60, 60), fontcolour("white"), text("Bend >"),    channel("BendUp"),      range(0, 1, 0, 1,0.001), colour(SlateGrey)
+rslider  bounds(120, 23, 60, 60), fontcolour("white"), text("Bend Rng."), channel("BendRange"),   range(1, 24, 12, 1,1),   colour(SlateGrey)
+}
 
 ;MULTIPLIER ENVELOPE
-rslider  bounds( 10,124, 62, 62), text("Att"),  colour(SlateGrey) channel("MAtt"),range(0, 5.000, 0.01, 0.375,0.0001), fontcolour(white)
-rslider  bounds( 70,124, 62, 62), text("Lev"),  colour(SlateGrey) channel("MLev"),range(0, 1.000, 0), fontcolour(white)
-rslider  bounds(130,124, 62, 62), text("Dec"),  colour(SlateGrey) channel("MDec"),range(0, 5.000, 0.1,  0.375,0.0001), fontcolour(white)
-rslider  bounds(190,124, 62, 62), text("Sus"),  colour(SlateGrey) channel("MSus"),range(0, 1.000, 0), fontcolour(white)
-rslider  bounds(250,124, 62, 62), text("Rel"),  colour(SlateGrey) channel("MRel"),range(0, 5.000, 0.1,  0.375,0.0001), fontcolour(white)
+image    bounds( 10,101,305, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp"), plant("multiplierenvelope"){	;multiplier envelope
+label    bounds( 83,  5,160, 15), text("Multiplier Envelope"), fontcolour(white)
+rslider  bounds(  0, 23, 62, 62), text("Att"),  colour(SlateGrey) channel("MAtt"),range(0, 8.000, 0.01, 0.375,0.0001), fontcolour(white)
+rslider  bounds( 60, 23, 62, 62), text("Lev"),  colour(SlateGrey) channel("MLev"),range(0, 1.000, 0.6), fontcolour(white)
+rslider  bounds(120, 23, 62, 62), text("Dec"),  colour(SlateGrey) channel("MDec"),range(0, 8.000, 3,  0.375,0.0001), fontcolour(white)
+rslider  bounds(180, 23, 62, 62), text("Sus"),  colour(SlateGrey) channel("MSus"),range(0, 1.000, 0), fontcolour(white)
+rslider  bounds(240, 23, 62, 62), text("Rel"),  colour(SlateGrey) channel("MRel"),range(0, 8.000, 0.1,  0.375,0.0001), fontcolour(white)
+}
 
-;LOW CUT
-checkbox bounds(350,107, 70, 12), text("Low Cut") channel("LowCutOnOff"), FontColour(white), colour("lime")
-rslider  bounds(320,124, 62, 62), text("Low Cut"),  colour(SlateGrey) channel("LowCut"),range(0, 30.00, 0,1,0.0011), fontcolour(white)
-rslider  bounds(380,124, 62, 62), text("Lo Poles"),  colour(SlateGrey) channel("LowPoles"),range(2, 30, 2,1,1), fontcolour(white)
+;LOW CUT                                                                  
+image    bounds(320,101,125, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp"), plant("lowcut"){	;Low Cut
+checkbox bounds( 30,  6, 70, 12), text("Low Cut") channel("LowCutOnOff"), FontColour(white), colour("lime")
+rslider  bounds(  0, 23, 62, 62), text("Low Cut"),  colour(SlateGrey) channel("LowCut"),range(0, 30.00, 0,1,0.0011), fontcolour(white)
+rslider  bounds( 60, 23, 62, 62), text("Lo Poles"),  colour(SlateGrey) channel("LowPoles"),range(2, 30, 2,1,1), fontcolour(white)
+}
+
 ;HIGH CUT
-checkbox bounds(478,107, 70, 12), text("High Cut") channel("HighCutOnOff"), FontColour(white), colour("lime")
-rslider  bounds(452,124, 62, 62), text("High Cut"),  colour(SlateGrey) channel("HighCut"),range(1, 100.00, 100,1,0.001), fontcolour(white)
-rslider  bounds(512,124, 62, 62), text("Hi Poles"),  colour(SlateGrey) channel("HighPoles"),range(2, 30, 2,1,1), fontcolour(white)
+image    bounds(450,101,125, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp"), plant("highcut"){	;High Cut
+checkbox bounds( 28,  6, 70, 12), text("High Cut") channel("HighCutOnOff"), FontColour(white), colour("lime"), value(1)
+rslider  bounds(  2, 23, 62, 62), text("High Cut"),  colour(SlateGrey) channel("HighCut"),range(1, 100.00, 7,0.25,0.0001), fontcolour(white)
+rslider  bounds( 62, 23, 62, 62), text("Hi Poles"),  colour(SlateGrey) channel("HighPoles"),range(2, 30, 8,1,1), fontcolour(white)
+}
 
-rslider  bounds(582,124, 62, 62), text("Mod."),  colour(SlateGrey) channel("mod"),range(0, 1.00, 0, 1, 0.0001), fontcolour(white)
-rslider  bounds(642,124, 62, 62), text("Noise"),  colour(SlateGrey) channel("NoiseAmp"),range(0, 5.00, 0, 1, 0.0001), fontcolour(white)
+;AMPLITUDE ENVELOPE
+image    bounds( 10,196,305, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp"), plant("amplitudeenvelope"){	;amplitude envelope
+label    bounds( 83,  5,160, 15), text("Amplitude Envelope"), fontcolour(white)
+rslider  bounds(  0, 23, 62, 62), text("Att"),  colour(SlateGrey) channel("AAtt"),range(0, 8.000, 0, 0.375,0.0001), fontcolour(white)
+rslider  bounds( 60, 23, 62, 62), text("Lev"),  colour(SlateGrey) channel("ALev"),range(0, 1.000, 1), fontcolour(white)
+rslider  bounds(120, 23, 62, 62), text("Dec"),  colour(SlateGrey) channel("ADec"),range(0, 8.000, 3,  0.375,0.0001), fontcolour(white)
+rslider  bounds(180, 23, 62, 62), text("Sus"),  colour(SlateGrey) channel("ASus"),range(0, 1.000, 0), fontcolour(white)
+rslider  bounds(240, 23, 62, 62), text("Rel"),  colour(SlateGrey) channel("ARel"),range(0, 8.000, 0.05, 0.375,0.0001), fontcolour(white)
+}
 
-keyboard pos(10, 195), size(855, 80)
+;MODULATION
+image   bounds(320,196,485, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp"), plant("modulation"){	;MODULATION
+label   bounds(203,  5,100, 15), text("Modulation"), fontcolour(white)
+rslider bounds(  2, 23, 62, 62), text("Mod.Depth"),     colour(SlateGrey) channel("mod"),    range(0, 1.00, 0.7), fontcolour(white)
+rslider bounds( 62, 23, 62, 62), text("Delay"),     colour(SlateGrey) channel("VDel"),   range(0, 4.00, 0), fontcolour(white)
+rslider bounds(122, 23, 62, 62), text("Rise"),      colour(SlateGrey) channel("VRis"),   range(0, 5.00, 1.5), fontcolour(white)
+rslider bounds(182, 23, 62, 62), text("Rate"),      colour(SlateGrey) channel("VRate"),  range(0,30.00, 2.7), fontcolour(white)
+rslider bounds(242, 23, 62, 62), text("Rate Rnd."), colour(SlateGrey) channel("VRatRnd"),range(0, 2.00, 0.5), fontcolour(white)
+rslider bounds(302, 23, 62, 62), text("Vib.Dep."), colour(SlateGrey) channel("VibDep"),range(0, 1.00, 0.2), fontcolour(white)
+rslider bounds(362, 23, 62, 62), text("Trem.Dep."), colour(SlateGrey) channel("TremDep"),range(0, 0.5, 0.3), fontcolour(white)
+rslider bounds(422, 23, 62, 62), text("Tone Dep."), colour(SlateGrey) channel("ToneDep"),range(0, 4.00, 0), fontcolour(white)
+}
+
+;NOISE
+image   bounds(580,101,125, 90), colour("DarkSlateGrey"), outline("white"), line(2), shape("sharp"), plant("noise"){	;NOISE
+label   bounds( 40,  5,100, 15), text("Noise"), fontcolour(white)
+rslider bounds(  2, 23, 62, 62), text("Depth"),  colour(SlateGrey) channel("NoiseAmp"),range(0,300.00, 0, 1, 0.0001), fontcolour(white)
+rslider bounds( 62, 23, 62, 62), text("Damp"),  colour(SlateGrey) channel("NoiseDamp"),range(15, 10000, 1000, 0.5, 0.01), fontcolour(white)
+}                 
+
+
+keyboard pos(0, 295), size(875, 80)
 
 </Cabbage>
 
 <CsoundSynthesizer>
 
 <CsOptions>
--dm0 -n -+rtmidi=null -M0
+-dm0 -n -+rtmidi=null -M0                                              
 </CsOptions>
 
 <CsInstruments>
@@ -81,8 +130,9 @@ massign	0,2
 
 ;Author: Iain McCurdy (2012)
 
-gisine	ftgen	0,0,131072,10,1			;A SINE WAVE. USED BY THE LFOs.
 gicos	ftgen	0,0,131072,9,1,1,90		;FUNCTION TABLE THAT STORES A SINGLE CYCLE OF A COSINE WAVE
+gisine	ftgen	0,0,131072,10,1			;A SINE WAVE. USED BY THE LFOs.
+giwave	ftgen	999,0,131073,10,1,0,1		;USER WAVEFORM
 
 gasendL,gasendR	init	0
 
@@ -90,6 +140,7 @@ gasendL,gasendR	init	0
 giattscl	ftgen	0,0,128,-16,2,128,-10,0.005
 giNAttScl	ftgen	0,0,128,-16,8,128,-4,0.25
 
+gkactive	init	0	; Will contain number of active instances of instr 3 when legato mode is chosen. NB. notes in release stage will not be regarded as active. 
 
 opcode	FreqShifter,a,aki
 	ain,kfshift,ifn	xin					;READ IN INPUT ARGUMENTS
@@ -126,15 +177,37 @@ opcode	SsplinePort,k,KkkO												;DEFINE OPCODE
 	 		xout	kout                                                                                    ;SEND PORTAMENTOED VALUES BACK TO CALLER INSTRUMENT
 endop
 
-instr	1
+instr	1	; read in widgets
 	kporttime	linseg	0,0.001,0.05
 
 	gkmul		chnget	"mul"
 	gklh		chnget	"lh"
 	gknh		chnget	"nh"
 	gkjitter	chnget		"jitter"
+	gkwaveform	chnget	"waveform"
+	gkoctave	chnget	"octave"
+	gkpart1		chnget	"part1"
+	gkpart2		chnget	"part2"
+	gkpart3		chnget	"part3"
+	gkpart4		chnget	"part4"
+	gkpart5		chnget	"part5"
+	gkpart6		chnget	"part6"
+	gkpart7		chnget	"part7"
+	gkpart8		chnget	"part8"
+	gkpart9		chnget	"part9"
+	gkpart10	chnget	"part10"
+	gkpart11	chnget	"part11"
+	gkpart12	chnget	"part12"
+	ktrig	changed	gkpart1,gkpart2,gkpart3,gkpart4,gkpart5,gkpart6,gkpart7,gkpart8,gkpart9,gkpart10,gkpart11,gkpart12
+	if ktrig==1 then
+	reinit USER_WAVEFORM
+	 endif
+	USER_WAVEFORM:
+	 giwave	ftgen	999,0,131073,10,i(gkpart1),i(gkpart2),i(gkpart3),i(gkpart4),i(gkpart5),i(gkpart6),i(gkpart7),i(gkpart8),i(gkpart9),i(gkpart10),i(gkpart11),i(gkpart12)		;USER WAVEFORM
+	rireturn
 	
 	gkmonopoly	chnget	"monopoly"
+	printk2	gkmonopoly
 	gkLegTim	chnget	"LegTim"
 	gkPortMode	chnget	"PortMode"
 	
@@ -143,11 +216,17 @@ instr	1
 	gkRvbMix	chnget	"RvbMix"
 	gkRvbSize	chnget	"RvbSize"
 
-	gkMAtt	chnget	"MAtt"
+	gkMAtt	chnget	"MAtt"		; multiplier envelope
 	gkMLev	chnget	"MLev"
 	gkMDec	chnget	"MDec"
 	gkMSus	chnget	"MSus"
 	gkMRel	chnget	"MRel"
+
+	gkAAtt	chnget	"AAtt"		; amplitude envelope
+	gkALev	chnget	"ALev"
+	gkADec	chnget	"ADec"
+	gkASus	chnget	"ASus"
+	gkARel	chnget	"ARel"
 
 	gkLowCutOnOff	chnget	"LowCutOnOff"
 	gkLowCut	chnget	"LowCut"
@@ -156,11 +235,17 @@ instr	1
 	gkHighCut	chnget	"HighCut"
 	gkHighPoles	chnget	"HighPoles"
 	
-	gkmod		chnget	"mod"
-	gkVibDep	=	0.2
-	gkTremDep	=	0.3
-	gkToneDep	=	1
-	gkNoiseAmp	chnget	"NoiseAmp"
+	gkmod		chnget	"mod"		; modulation
+	gkVDel		chnget	"VDel"
+	gkVRis		chnget	"VRis"
+	gkVRate		chnget	"VRate"
+	gkVRatRnd	chnget	"VRatRnd"
+	gkVibDep	chnget	"VibDep"
+	gkTremDep	chnget	"TremDep"
+	gkToneDep	chnget	"ToneDep"
+
+	gkNoiseAmp	chnget	"NoiseAmp"	; noise
+	gkNoiseDamp	chnget	"NoiseDamp"
 	
 	gkBendDown	chnget	"BendDown"
 	gkBendUp	chnget	"BendUp"
@@ -169,22 +254,116 @@ instr	1
 endin
 
 instr	2	;triggered via MIDI
-	gkNoteTrig	init	1	;at the beginning of a new note set note trigger flag to '1'
-	inum		notnum		;read in midi note number
-	givel		veloc	0,1	;read in midi note velocity
-	gknum	=	inum		;update a global krate variable for note pitch
+	gkNoteTrig	init	1				;at the beginning of a new note set note trigger flag to '1'
+	inum		notnum					;read in midi note number
+	givel		veloc	0,1				;read in midi note velocity
+	gknum	=	inum					;update a global krate variable for note pitch
 
-	if i(gkmonopoly)==0 then		;if we are *not* in legato mode...
-	 inum	notnum						; read midi note number (0 - 127)
-	 	event_i	"i",p1+1+(inum*0.001),0,-1,inum		; call sound producing instr
-	 krel	release						; release flag (1 when note is released, 0 otherwise)
-	 if krel==1 then					; when note is released...
-	  turnoff2	p1+1+(inum*0.001),4,1			; turn off the called instrument
-	 endif							; end of conditional
-	else				;otherwise... (i.e. legato mode)
-	 iactive	active p1+1	;check to see if there is already a note active...
-	 if iactive==0 then		;...if not...
-	  event_i	"i",p1+1,0,-1	;...start a new held note
+                                                                                             
+	;============================================================================================================================================================
+	if i(gkmonopoly)==0 then				; if we are *not* in legato mode...
+	 
+	 ; METHOD 1: calling sub-instruments using event_1, fractional p1s and turnoff2s. (problematic on windows)   
+	 ;	event_i	"i",p1+1+(inum*0.001),0,-1,inum		; call sound producing instr
+	 ;krel	release						; release flag (1 when note is released, 0 otherwise)
+	 ;if krel==1 then					; when note is released...
+	 ; turnoff2	p1+1+(inum*0.001),4,1			; turn off the called instrument
+	 ;endif							; end of conditional
+	 
+	 ; METHOD 2: using subinstr (problematic on windows and mac) 
+	 ;a1,a2	subinstr	3,inum
+	 ;	outs		a1,a2
+
+	 ; METHOD 3: all instr code within the same instrument (the safest option on windows and mac, if rather inelegant)
+	 kporttime	linseg	0,0.001,1		;portamento time function rises quickly from zero to a held value
+	 kglisstime	=	kporttime*gkLegTim	;scale portamento time function with value from GUI knob widget
+         
+	 /* MODULATION */
+	krate	randomi	gkVRate-gkVRatRnd,gkVRate+gkVRatRnd,1,1
+	kModRise	linseg	0,i(gkVDel)+0.0001, 0, i(gkVRis)+0.0001, 1
+	kmod	lfo	gkmod*kModRise,krate,0
+	 
+	 kporttime	linseg		0,0.001,1		;CREATE A FUNCTION  THAT RISES RAPIDLY FROM ZERO TO A FIXED VALUE THAT WILL BE USED FOR PORTAMENTO TIME 
+	 
+	 ;------------------------------------------------------------------------------------------------------------
+	 ;PITCH JITTER (THIS WILL BE USED TO ADD HUMAN-PLAYER REALISM)
+	 ;------------------------------------------------------------------------------------------------------------
+	 ;				AMP | MIN_FREQ. | MAX_FREQ
+	 kPitchJit	jitter		0.05*gkjitter*4,     1,         20
+         
+	 ;------------------------------------------------------------------------------------------------------------
+	 ;AMPLITUDE JITTER (THIS WILL BE USED TO ADD HUMAN-PLAYER REALISM)
+	 ;------------------------------------------------------------------------------------------------------------
+	 ;				AMP | MIN_FREQ. | MAX_FREQ
+	 kAmpJit		jitter		0.1*gkjitter*4,     0.2,        1
+	 kAmpJit		=		kAmpJit+1			;OFFSET SO IT MODULATES ABOUT '1' INSTEAD OF ABOUT ZERO
+	 
+	 knum		=		inum+kPitchJit			;DERIVE K-RATE NOTE NUMBER VALUE INCORPORATING PITCH BEND, VIBRATO, AND PITCH JITTER	
+         
+	 /* OSCILLATOR */
+	 kmul		portk		gkmul, kporttime*0.1
+	 ;kMulEnv		linsegr		0, i(gkMAtt)+0.0001, i(gkMLev), i(gkMDec)+0.0001, i(gkMSus), i(gkMRel)+0.0001, 0
+	 kMulEnv		expsegr		0.001, i(gkMAtt)+0.0001, i(gkMLev)+0.001, i(gkMDec)+0.0001, i(gkMSus)+0.001, i(gkMRel)+0.0001, 0.001
+	 kMulEnv		=		kMulEnv + 0.001		; offset
+	 kmul		=		kmul+kMulEnv+(kmod*gkToneDep)
+	 kmul		limit		kmul,0,0.9
+	 knum	=	knum + gkPchBend + (kmod*gkVibDep)
+	 ifn	=	( i(gkwaveform) < 3 ? (gicos+i(gkwaveform)-1) : giwave)
+	 knum	=	knum+(gkoctave*12)
+	 asig		gbuzz		(kAmpJit*0.1)*(1+(kmod*gkTremDep*0.9)), cpsmidinn(knum), gknh, gklh, kmul, ifn;gicos+i(gkwaveform)-1
+	                                                                                                                
+	 /* NOISE */
+	 kNoiseAmp	expcurve	kmul,40
+	 kNoiseAmp	scale		kNoiseAmp,2,0.1
+	 anoise		gauss		kNoiseAmp*gkNoiseAmp
+	 anoise		butlp		anoise,gkNoiseDamp
+	 asig		=		asig * (1+anoise)
+
+	 /* LOW CUT / HIGH CUT FILTERS */
+	 ;FILTER
+	 if gkLowCutOnOff=1 then
+	  kLowCut	portk	gkLowCut,kporttime*0.1
+	  kLowCut	limit	cpsmidinn(knum)*kLowCut,20,sr/2
+	  ktrig		changed	gkLowPoles
+	  if ktrig=1 then
+	   reinit	RESTART_LOWCUT
+	  endif
+	  RESTART_LOWCUT:                                    
+	  asig		clfilt	asig,kLowCut,1,i(gkLowPoles)
+	  rireturn
+	 endif
+	 if gkHighCutOnOff=1 then
+	  kHighCut	portk	gkHighCut,kporttime*0.1
+	  kHighCut	limit	cpsmidinn(knum)*kHighCut,20,sr/2
+	  ktrig		changed	gkHighPoles                                         
+	  if ktrig=1 then              
+	   reinit	RESTART_HIGHCUT
+	  endif
+	  RESTART_HIGHCUT:
+	  asig		clfilt	asig,kHighCut,0,i(gkHighPoles)
+	  rireturn
+	 endif
+
+	 aenv		linsegr		0,i(gkAAtt)+0.0001,i(gkALev),i(gkADec),i(gkASus),i(gkARel),0			;AMPLITUDE ENVELOPE
+	 asig		=		asig * aenv
+	 klevel		portk		gklevel,kporttime*0.1
+	 kpan		portk		gkpan,kporttime*0.1
+	 kRvbMix	portk		gkRvbMix,kporttime*0.1
+	 aL,aR		pan2		asig*klevel,kpan		;scale amplitude level and create stereo panned signal
+	 		outs		aL*(1-gkRvbSize), aR*(1-gkRvbSize)		;SEND AUDIO TO THE OUTPUTS
+	 gasendL		=		gasendL+aL*kRvbMix
+	 gasendR		=		gasendR+aR*kRvbMix
+	;============================================================================================================================================================
+
+	
+	
+	 
+	 
+	else							;otherwise... (i.e. legato mode)
+	 ;iactive	active p1+1				;check to see if there is already a note active...
+	 iactive	=	i(gkactive)			;number of active notes of instr 3 (note in release are disregarded)
+	 if iactive==0 then					;...if no notes are active
+	  event_i	"i",p1+1,0,-1				;...start a new held note
 	 endif
 	endif
 endin
@@ -194,19 +373,20 @@ instr	3	;gbuzz instrument. MIDI notes are directed here.
 	kglisstime	=	kporttime*gkLegTim	;scale portamento time function with value from GUI knob widget
 
 	/* MODULATION */
-	krate	randomi	3,4,1,1
+	krate	randomi	gkVRate-gkVRatRnd,gkVRate+gkVRatRnd,1,1
 	if gkNoteTrig==1 then
 	 reinit RESTART_MOD_ENV
 	endif
 	RESTART_MOD_ENV:
-	kModRise	linseg	0,1.5,1
+	kModRise	linseg	0,i(gkVDel)+0.0001, 0, i(gkVRis)+0.0001, 1
 	kmod	lfo	gkmod*kModRise,krate,0
 	rireturn
+	gkNoteTrig	=	0			;reset new-note trigger (in case it was '1')
 	
 	if i(gkmonopoly)==1 then			;if we are in legato mode...
-
+	 krel	release					;sense when  note has been released
+	 gkactive	=	1-krel			;if note is in release, gkactive=0, otherwise =1
 	 knum	SsplinePort	gknum,kglisstime,1,i(gkPortMode)-1
-
 	 kactive	active	p1-1			;...check number of active midi notes (previous instrument)
 	 if kactive==0 then				;if no midi notes are active...
 	  turnoff					;... turn this instrument off
@@ -215,17 +395,15 @@ instr	3	;gbuzz instrument. MIDI notes are directed here.
 	 knum	=	p4		 		;pitch equal to the original note pitch
 	endif
 	ivel	init	givel
-	
-	kporttime	linseg		0,0.001,0.02		;CREATE A FUNCTION  THAT RISES RAPIDLY FROM ZERO TO A FIXED VALUE THAT WILL BE USED FOR PORTAMENTO TIME 
-	
+		
 	;------------------------------------------------------------------------------------------------------------
-	;PITCH JITTER (THIS WILL BE USED TO ADD HUMAN-PLAYER REALISM)
+	;PITCH JITTER (THIS WILL BE USED TO ADD HUMAN-PLAYER-LIKE INSTABILITY)
 	;------------------------------------------------------------------------------------------------------------
 	;				AMP | MIN_FREQ. | MAX_FREQ
 	kPitchJit	jitter		0.05*gkjitter*4,     1,         20
 
 	;------------------------------------------------------------------------------------------------------------
-	;AMPLITUDE JITTER (THIS WILL BE USED TO ADD HUMAN-PLAYER REALISM)
+	;AMPLITUDE JITTER (THIS WILL BE USED TO ADD HUMAN-PLAYER-LIKE INSTABILITY)
 	;------------------------------------------------------------------------------------------------------------
 	;				AMP | MIN_FREQ. | MAX_FREQ
 	kAmpJit		jitter		0.1*gkjitter*4,     0.2,        1
@@ -234,31 +412,27 @@ instr	3	;gbuzz instrument. MIDI notes are directed here.
 	knum		=		knum+kPitchJit			;DERIVE K-RATE NOTE NUMBER VALUE INCORPORATING PITCH BEND, VIBRATO, AND PITCH JITTER	
 
 	/* OSCILLATOR */
-	kmul		portk		gkmul, kporttime*0.5
-	kMulEnv		linsegr		0, i(gkMAtt)+0.0001, i(gkMLev), i(gkMDec)+0.0001, i(gkMSus), i(gkMRel)+0.0001, 0
-	kmul		=		kmul+kMulEnv+(kmod*0.3)
+	kmul		portk		gkmul, kporttime*0.1
+	;kMulEnv		linsegr		0, i(gkMAtt)+0.0001, i(gkMLev), i(gkMDec)+0.0001, i(gkMSus), i(gkMRel)+0.0001, 0
+	kMulEnv		expsegr		0.001, i(gkMAtt)+0.0001, i(gkMLev)+0.001, i(gkMDec)+0.0001, i(gkMSus)+0.001, i(gkMRel)+0.0001, 0.001
+	kMulEnv		=		kMulEnv + 0.001		; offset
+	kmul		=		kmul+kMulEnv+(kmod*gkToneDep)
 	kmul		limit		kmul,0,0.9
-
 	knum	=	knum + gkPchBend + (kmod*gkVibDep)
-	
-	asig		gbuzz		(kAmpJit*0.1)*(1+(kmod*gkTremDep*0.9)), cpsmidinn(knum), gknh, gklh, kmul, gicos
-
-	/* FREQUENCY SHIFTER */
-	;aFS		FreqShifter	asig,cpsmidinn(knum)*8,gisine
-	;kscale		expcurve	kmul,1000
-	;asig		sum		asig,aFS*kscale*5
+	ifn	=	( i(gkwaveform) < 3 ? (gicos+i(gkwaveform)-1) : giwave)
+	asig		gbuzz		(kAmpJit*0.1)*(1+(kmod*gkTremDep*0.9)), cpsmidinn(knum+(gkoctave*12)), gknh, gklh, kmul, ifn;gicos+i(gkwaveform)-1
 	
 	/* NOISE */
 	kNoiseAmp	expcurve	kmul,40
 	kNoiseAmp	scale		kNoiseAmp,2,0.1
-	anoise		gauss		kNoiseAmp*gkNoiseAmp
-	anoise		butlp		anoise,1000
+	anoise		gauss		kNoiseAmp*gkNoiseAmp                                                                      
+	anoise		butlp		anoise,gkNoiseDamp
 	asig		=		asig * (1+anoise)
 	
 	/* LOW CUT / HIGH CUT FILTERS */
 	;FILTER
 	if gkLowCutOnOff=1 then
-	 kLowCut	portk	gkLowCut,kporttime*5
+	 kLowCut	portk	gkLowCut,kporttime*0.1
 	 kLowCut	limit	cpsmidinn(knum)*kLowCut,20,sr/2
 	 ktrig		changed	gkLowPoles
 	 if ktrig=1 then
@@ -268,28 +442,29 @@ instr	3	;gbuzz instrument. MIDI notes are directed here.
 	 asig		clfilt	asig,kLowCut,1,i(gkLowPoles)
 	endif
 	if gkHighCutOnOff=1 then
-	 kHighCut	portk	gkHighCut,kporttime*5
-	 kHighCut	limit	cpsmidinn(knum)*gkHighCut,20,sr/2
+	 kHighCut	portk	gkHighCut,kporttime*0.1
+	 kHighCut	limit	cpsmidinn(knum)*kHighCut,20,sr/2
 	 ktrig		changed	gkHighPoles
-	 if ktrig=1 then
+	 if ktrig=1 then              
 	  reinit	RESTART_HIGHCUT
 	 endif
 	 RESTART_HIGHCUT:
 	 asig		clfilt	asig,kHighCut,0,i(gkHighPoles)
 	 rireturn
 	endif
-
-	;asig	pinkish	0.2
-
-	iatt		=		0.05
-	aenv		linsegr		0,iatt,1,0.05,0			;AMPLITUDE ENVELOPE
+            
+	aenv		linsegr		0,i(gkAAtt)+0.0001,i(gkALev),i(gkADec),i(gkASus),i(gkARel),0			;AMPLITUDE ENVELOPE
 	asig		=		asig * aenv
-	aL,aR		pan2		asig*gklevel,gkpan		;scale amplitude level and create stereo panned signal
+	klevel		portk		gklevel,kporttime*0.1
+	kpan		portk		gkpan,kporttime*0.1
+	kRvbMix	portk		gkRvbMix,kporttime*0.1
+	aL,aR		pan2		asig*klevel,kpan		;scale amplitude level and create stereo panned signal
 			outs		aL*(1-gkRvbSize), aR*(1-gkRvbSize)		;SEND AUDIO TO THE OUTPUTS
-	gasendL		=		gasendL+aL*gkRvbMix
-	gasendR		=		gasendR+aR*gkRvbMix
-	gkNoteTrig	=	0					;reset new-note trigger (in case it was '1')
+	gasendL		=		gasendL+aL*kRvbMix
+	gasendR		=		gasendR+aR*kRvbMix
 endin
+
+
 
 instr	5	;reverb
 	if gkRvbMix==0 kgoto SKIP_REVERB
@@ -299,12 +474,13 @@ instr	5	;reverb
 	SKIP_REVERB:
 endin
 
+
 </CsInstruments>
 
 <CsScore>
-;i "UpdateTableNumbers" 0 3600
-i 1 0 3600			;reverb
-i 5 0 3600			;reverb
+i 1 0 3600			; read widgets
+i 5 0 3600			; reverb
+f 0 3600
 </CsScore>
 
 </CsoundSynthesizer>

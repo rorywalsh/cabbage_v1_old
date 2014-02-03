@@ -37,37 +37,37 @@ form size(960, 340), caption("Modulating Delays"), pluginID("mdel")
 
 label    bounds(200,  5, 80, 11), text("G A T E"), fontcolour("white")
 checkbox bounds( 10, 35,100, 20), text("Gate On/Off") channel("GateActive"), FontColour("White"), colour("lime")  value(1)
-rslider  bounds(100, 20, 60, 60), channel("OnThreshold"), text("On Thrsh."), range(0, 1, 0.05, 0.5, 0.001), colour(30,30,30) tracker(100,100,100)
-rslider  bounds(160, 20, 60, 60), channel("OffThreshold"), text("Off Thrsh."), range(0, 1, 0.01, 0.5, 0.001), colour(30,30,30) tracker(100,100,100)
-rslider  bounds(220, 20, 60, 60), channel("RiseTime"), text("Rise Time"), range(0, 10, 1, 0.5, 0.001), colour(30,30,30) tracker(100,100,100)
-rslider  bounds(280, 20, 60, 60), channel("RelTime"), text("Rel.Time"), range(0, 10, 0.01, 0.5, 0.001), colour(30,30,30) tracker(100,100,100)
+rslider  bounds(100, 20, 60, 60), channel("OnThreshold"),  text("On Thrsh."),  range(0, 1, 0.05, 0.5, 0.001),  colour(30,30,30) trackercolour(100,100,100)
+rslider  bounds(160, 20, 60, 60), channel("OffThreshold"), text("Off Thrsh."), range(0, 1, 0.01, 0.5, 0.001),  colour(30,30,30) trackercolour(100,100,100)
+rslider  bounds(220, 20, 60, 60), channel("RiseTime"),     text("Rise Time"),  range(0, 10, 1, 0.5, 0.001),    colour(30,30,30) trackercolour(100,100,100)
+rslider  bounds(280, 20, 60, 60), channel("RelTime"),      text("Rel.Time"),   range(0, 10, 0.01, 0.5, 0.001), colour(30,30,30) trackercolour(100,100,100)
 checkbox bounds(340, 35, 90, 15), text("Gating") channel("gating"), FontColour("White"), colour("red")  value(0) shape(ellipse)
 
 label    bounds(487,  5, 80, 11), text("S E T U P"), fontcolour("white")
 line     bounds(405, 25,  3, 50), colour("Grey")
-rslider  bounds(420, 20, 60, 60), channel("width"),  text("Pan Width"),range(0, 0.5, 0.5),         colour(100,100,100) tracker(100,100,100)
-rslider  bounds(480, 20, 60, 60), channel("spread"), text("Spread"),   range(0, 4, 1, 0.5, 0.001), colour(100,100,100) tracker(100,100,100)
-rslider  bounds(540, 20, 60, 60), channel("layers"), text("Layers"),   range(1, 22, 8,1,1),        colour(100,100,100) tracker(100,100,100)
+rslider  bounds(420, 20, 60, 60), channel("width"),  text("Pan Width"),range(0, 0.5, 0.5),         colour(100,100,100) trackercolour(100,100,100)
+rslider  bounds(480, 20, 60, 60), channel("spread"), text("Spread"),   range(0, 4, 1, 0.5, 0.001), colour(100,100,100) trackercolour(100,100,100)
+rslider  bounds(540, 20, 60, 60), channel("layers"), text("Layers"),   range(1, 22, 8,1,1),        colour(100,100,100) trackercolour(100,100,100)
 line     bounds(610, 25,  3, 50), colour("Grey")
 label    bounds(680,  5, 80, 11), text("R E V E R B"), fontcolour("white")
-rslider  bounds(620, 20, 60, 60), channel("RvbAmt"), text("Amount"),   range(0, 0.2, 0.06,1,0.001),       colour(100,100,100) tracker(100,100,100)
-rslider  bounds(680, 20, 60, 60), channel("RvbTime"),text("Time"),     range(0.01,10,    7),       colour(100,100,100) tracker(100,100,100)
-rslider  bounds(740, 20, 60, 60), channel("damping"), text("Damping"),  range(0, 1, 0.5),           colour(100,100,100) tracker(100,100,100)
+rslider  bounds(620, 20, 60, 60), channel("RvbAmt"),  text("Amount"),   range(0, 0.2, 0.06,1,0.001), colour(100,100,100) trackercolour(100,100,100)
+rslider  bounds(680, 20, 60, 60), channel("RvbTime"), text("Time"),     range(0.01,10,    7),        colour(100,100,100) trackercolour(100,100,100)
+rslider  bounds(740, 20, 60, 60), channel("damping"), text("Damping"),  range(0, 1, 0.5),            colour(100,100,100) trackercolour(100,100,100)
 line     bounds(810, 25,  3, 50), colour("Grey")
 label    bounds(856,  5, 80, 11), text("O U T P U T"), fontcolour("white")
-rslider  bounds(825, 20, 60, 60), channel("dry"),    text("Dry"),      range(0, 4, 0, 0.5, 0.001), colour(160,160,160) tracker(160,160,160)
-rslider  bounds(885, 20, 60, 60), channel("wet"),    text("Wet"),      range(0, 4, 1, 0.5, 0.001), colour(160,160,160) tracker(160,160,160)
+rslider  bounds(825, 20, 60, 60), channel("dry"),    text("Dry"),      range(0, 4, 0, 0.5, 0.001), colour(160,160,160) trackercolour(160,160,160)
+rslider  bounds(885, 20, 60, 60), channel("wet"),    text("Wet"),      range(0, 4, 1, 0.5, 0.001), colour(160,160,160) trackercolour(160,160,160)
 
 line     bounds(  0, 95,960, 3), colour("Grey")
 
-hslider bounds(10,110, 940, 30), channel("MinTime"), text(Delay Time Minimum), range(0.001, 10, 0.131, 0.5, 0.000001), colour("blue") tracker(blue)
-hslider bounds(10,130, 940, 30), channel("MaxTime"), text(Delay Time Maximum), range(0.001, 10, 0.9, 0.5, 0.000001), colour("blue") tracker(blue)
-hslider bounds(10,160, 940, 30), channel("MinRate"), text(Random Rate Minimum), range(0.001, 10, 0.1, 0.5, 0.00001), colour("red") tracker(red)
-hslider bounds(10,180, 940, 30), channel("MaxRate"), text(Random Rate Maximum), range(0.001, 10, 0.2, 0.5, 0.00001), colour("red") tracker(red)
-hslider bounds(10,210, 940, 30), channel("MinFB"),   text(Delay Feedback Minimum), range(0, 0.999, 0.95,1,0.001), colour("yellow") tracker(yellow)
-hslider bounds(10,230, 940, 30), channel("MaxFB"),   text(Delay Feedback Maximum), range(0, 0.999, 0.975,1,0.001), colour("yellow") tracker(yellow)
-hslider bounds(10,260, 940, 30), channel("MinTone"), text(Tone Cutoff Frequency Minimum), range(4, 14, 11), colour(purple) tracker(purple)
-hslider bounds(10,280, 940, 30), channel("MaxTone"), text(Tone Cutoff Frequency Maximum), range(4, 14, 14), colour(purple) tracker(purple)
+hslider bounds(10,110, 940, 30), channel("MinTime"), text(Delay Time Minimum),     range(0.001, 10, 0.131, 0.5, 0.000001),colour("blue"),   trackercolour(blue)
+hslider bounds(10,130, 940, 30), channel("MaxTime"), text(Delay Time Maximum),     range(0.001, 10, 0.9, 0.5, 0.000001),  colour("blue"),   trackercolour(blue)
+hslider bounds(10,160, 940, 30), channel("MinRate"), text(Random Rate Minimum),    range(0.001, 10, 0.1, 0.5, 0.00001),   colour("red"),    trackercolour(red)
+hslider bounds(10,180, 940, 30), channel("MaxRate"), text(Random Rate Maximum),    range(0.001, 10, 0.2, 0.5, 0.00001),   colour("red"),    trackercolour(red)
+hslider bounds(10,210, 940, 30), channel("MinFB"),   text(Delay Feedback Minimum), range(0, 0.999, 0.95,1,0.001),         colour("yellow"), trackercolour(yellow)
+hslider bounds(10,230, 940, 30), channel("MaxFB"),   text(Delay Feedback Maximum), range(0, 0.999, 0.975,1,0.001),        colour("yellow"), trackercolour(yellow)
+hslider bounds(10,260, 940, 30), channel("MinTone"), text(Tone Cutoff Frequency Minimum), range(4, 14, 11),               colour(purple),   trackercolour(purple)
+hslider bounds(10,280, 940, 30), channel("MaxTone"), text(Tone Cutoff Frequency Maximum), range(4, 14, 14),               colour(purple),   trackercolour(purple)
 
 label   bounds( 10,320, 200, 12), text("Author: Iain McCurdy |2013|"), FontColour("grey")
 
@@ -87,7 +87,7 @@ nchnls = 2
 0dbfs=1
 
 
-opcode	DelayIteration,aa,aakkkkkkkkkkkkiii
+opcode	DelayIteration,aa,aakkkkkkkkkkkKiii
  aL,aR,kMinTime,kMaxTime,kMinRate,kMaxRate,kMinFB,kMaxFB,kwidth,kMinTone,kMaxTone,kRvbAmt,kRvbTime,kdamping,ispread,icount,ilayers	xin
 
  kdel		rspline	kMinTime,kMaxTime,kMinRate,kMaxRate

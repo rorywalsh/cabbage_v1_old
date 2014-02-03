@@ -326,7 +326,7 @@ form  caption("Simple Synth"), pluginID("plu1")
 GroupBox
 ~~~~~~~~
 ----------------------------------------------------------------------
-groupbox bounds(x, y, width, height)[, text("Caption"), colour("colour"), fontcolour("colour"), line(value), preset("name"), plant("name"), popup(val)]
+groupbox bounds(x, y, width, height)[, text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), popup(val)]
 ----------------------------------------------------------------------
 
 Groupbox creates a container for other GUI controls. They do not communicate with Csound but can be useful for organising widgets into panels.
@@ -340,8 +340,6 @@ Groupbox creates a container for other GUI controls. They do not communicate wit
 'fontcolour("colour")': Sets the colour of the font to appear on the groupbox. See above for details on "colour".
 
 'line(value)': Turns off the line that appears on a groupbox. 
-
-'preset("name")': If using the plant() identifier one can set preset("name"), which will attach all child widgets to a previously defined snapshot widget. See snapshot widget for details. 
 
 'plant("name")': Sets the name of the plant. No two plants can have the same name. See 'PLANTS'
 
@@ -431,7 +429,7 @@ Image
 ~~~~~
 ---------------------------------------
 image bounds(x, y, width, height), colour("colour")[, file("file name"), shape("type"), outline("colour"), line(thickness), 'plant("name"), 
-preset("name"), popup(val)] 
+popup(val)] 
 ---------------------------------------
 Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. The file must be in the same directory as your Cabbage instrument. If you simply wish to draw a shape you can choose a background colour with colour() and an outline colour with outline(). line() will let you determine the thickness of the outline. 
 
@@ -450,8 +448,6 @@ Image creates a static shape or graphic. It can be used to show pictures or it c
 'plant("name")': Sets the name of the plant. No two plants can have the same name. See 'PLANTS'
 
 'popup("name")': Sets whether the plant is to behave as a 'popup' plant or not. If  a one is passed to popup, i.e., popup(1) then a button of fixed size 100x30 will on screen in position x,y as set by bounds. When a user clicks the button their controls will appear in a separate window. This can be useful for saving space in the main instrument's GUI. 
-
-'preset("name")': If using the plant() identifier one can set preset("name"), which will attach all child widgets to a previously defined snapshot widget. See snapshot widget for details. 
 
 
 Example:
@@ -515,40 +511,46 @@ label bounds(0, 0, 3, 10), text("Label"), fontcolour("white")
 ------------------
 
 [[x34]]
-Snapshot
-~~~~~~~~
---------------
-snapshot bounds(x, y, width, height), preset("name")[, items("item1", "item2", ...), master(val)] 
+Button
+~~~~~~
 -------------
+button bounds(x, y, width, height), channel("chanName")[, text("offCaption","onCaption"), caption("caption"), \
+	value(val), colour("colour"), fontcolour("colour"), latched(val)]
+--------------
 
-Snapshot is a widget that lets users save and load pre-sets. Hit the 'Snapshot' button to record a pre-set and use the combo box to recall them. Pre-sets are stored in a text file in the same directory as your .csd file. If a pre-set file doesn't already exist Cabbage will create one. preset("name") sets the name that needs to be used for each widgets you want to control. You attach a widget to a pre-set using the preset() identifier. See examples below. 
+Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish. 
 
 'bounds(x, y, width, height)': integer values that set position and size on screen(in pixels). If widget is part of a plant these values should be between 0 and 1. See PLANTS
 
-'items("item1", "item2", ...)': list of pre-set names will populate the combo box. This identifier is optional. If left out default values of "One", "Two", "Three", "Four" and "Five" will be used.  
+'channel("chanName")': "chanName" is the name of the channel upon which to communicate with Csound(see examples above). 
 
-'preset("name")': Sets the name of the preset. To use a snapshot widget to control other widget you must set a valid preset for the widgets concerned. In the following code a snapshot widget is created. The next widget, rslider is then assigned the previous snapshot widget by setting "LFO" for its preset value. 
+'caption("caption")': This identifier lets you place your control within a groupbox. "caption" is the text that will appear on group box. This identifier is useful for naming and containing controls.  
 
-'master(val)': This lets you use the snapshot widget as a master controller for all other IO widgets. With a value of 1, i.e, master(1), users do not need to use the pre-set identifier for other widgets as ALL widgets will now be controllable from this snapshot control.  
+'text("offCaption", "onCaption")': The text identifier must be passed at least one string argument. This string will be the one that will appear on the button. If you pass two strings to text() the button will toggle between the two string each time it is pushed.  
 
-Example:
------------------
-snapshot bounds(0, 0, 3, 10), preset("LFO"), items("Green Cabbage", "Yellow Cabbage")
-rslider bounds(0, 50, 70, 70), channel("slider"), preset("LFO") 
--------------
+'value(val)': val sets the initial state of the control
 
-image:images/snapshot.PNG[csound output]
+'colour("colour")': This sets the colour of the image if a file name is not passed to file. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.  
 
-[icon="images/smallLogo.PNG"]
-NOTE: snapshot widgets must be placed/declared above any other widget they will be controlling. 
+'fontcolour("colour")': Sets the colour of the text that appears with the slider. See above for details on "colour".
 
+'latched(val)': where val will be a 0 or a 1. With latched turned off the button will send a message to Csound on the initial mouse press, and as soon as the user releases the button. Therefore the button will toggle between 0 and 1 on each click rather than needing two separate mouse clicks. 
+
+
+`Example:`
+-----------------------------------------
+button bounds(0, 110, 120, 70), caption("Freq1"), text("On", "Off"), channel("freq2"), value(1)
+button bounds(150, 110, 120, 70), text("On", "Off"), channel("freq2"), value(0)
+------------------------------------------
+
+image:images/buttons.PNG[Buttons]
 
 [[x35]]
 Sliders
 ~~~~~~~
 -------------------------------------------------------------------
 hslider bounds(x, y, width, height), channel("chanName")[, caption("caption"), text("name"), textBox(on/off), range(min, max, value, skew, incr), 
-midCtrl(Channel, Ctrlnum), colour("colour"), fontcolour("colour"), preset("name"), tracker("colour")] 
+midCtrl(Channel, Ctrlnum), colour("colour"), fontcolour("colour"), tracker("colour")] 
 -------------------------------------------------------------------	
 
 Slider can be used to create an on-screen slider. Data can be sent to Csound on the channel specified through the chanName string. Presented above is the syntax for a horizontal slider, i.e., 'hslider'. In order to change it to another slider type simple substitute hslider with the appropriate identifier as outlined below. 
@@ -572,8 +574,6 @@ Slider can be used to create an on-screen slider. Data can be sent to Csound on 
 'fontcolour("colour")': Sets the colour of the text that appears with the slider. See above for details on "colour".
 
 'tracker("colour")': Sets the colour of the slider's tracker. This is the line that follows the slider when you move it. See above for details on "colour". If you pass 0 for the colour you will turn of the tracker.
-
-'preset("name")': Attaches the widget to a snapshot widget. "name" must be valid and match at least one of the snapshot widgets 'preset' value. See snapshot widget. If your widget is part of a plant it can have its preset value set directly by using the preset() identifier in the plant definition. See PLANTS, SNAPSHOT  
 
 
 Slider types:
@@ -599,21 +599,27 @@ rslider bounds(190, 120, 70, 70), text("Freq3"), channel("freq2"), colour("green
 image:images/sliders.PNG[Sliders]
 
 [[x36]]
-Button
-~~~~~~
+FileButton
+~~~~~~~~~~
 -------------
-button bounds(x, y, width, height), channel("chanName")[, text("offCaption","onCaption"), caption("caption"), value(val), colour("colour"), fontcolour("colour")]
+filebutton bounds(x, y, width, height), channel("chanName")[, mode("mode"), \
+	text("offCaption","onCaption"), populate("filetype", "dir"), caption("caption"), \
+	value(val), colour("colour"), fontcolour("colour")]
 --------------
 
-Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish. 
+A filebutton can be used to select files from disk. The filename selected, or created will be sent to Csound on the named channel as a string message. Filebuttons can also be used to select snapshot files for Cabbage to save parameter presets. See the populate identifier below.  
 
 'bounds(x, y, width, height)': integer values that set position and size on screen(in pixels). If widget is part of a plant these values should be between 0 and 1. See PLANTS
 
 'channel("chanName")': "chanName" is the name of the channel upon which to communicate with Csound(see examples above). 
 
+'mode("mode")': Specifies the mode of the button. 
+
 'caption("caption")': This identifier lets you place your control within a groupbox. "caption" is the text that will appear on group box. This identifier is useful for naming and containing controls.  
 
 'text("offCaption", "onCaption")': The text identifier must be passed at least one string argument. This string will be the one that will appear on the button. If you pass two strings to text() the button will toggle between the two string each time it is pushed.  
+
+'populate("filetype", "dir")': Sets the type of file to search for, and the initial directory to look in. If using the filebutton to record parameter snapshots, you must specify a filetype of "*.snaps". If no directory is specified, Cabbage will look in the current working directory.  
 
 'value(val)': val sets the initial state of the control
 
@@ -635,7 +641,7 @@ CheckBox
 
 -----------------------------------------------------------------------------------------------
 checkbox bounds(x, y, width, height), channel("chanName")[, text("name"), value(val), caption("Caption")], colour("colour"), shape("shape"),
-fontcolour("colour"), preset("name")
+fontcolour("colour")
 -----------------------------------------------------------------------------------------------
 
 Checkbox creates a checkbox which functions like a button, only the associated caption will not change when the user checks it. As with all controls capable of sending data to an instance of Csound the channel string is the channel on which the control will communicate with Csound. 
@@ -656,8 +662,6 @@ Checkbox creates a checkbox which functions like a button, only the associated c
 
 'shape("shape")': Sets the shape of the LED. Default is "square" but users can use "circle" also. 
 
-'preset("name")': Attaches the widget to a snapshot widget. "name" must be valid and match at least one of the snapshot widgets 'preset' value. See snapshot widget. If your widget is part of a plant it can have its preset value set directly by using the preset() identifier in the plant definition. See PLANTS, SNAPSHOT  
-
 Example
 -------------------
 checkbox bounds(0, 110, 120, 70), caption("Freq1"), text("On"), channel("freq2")
@@ -670,7 +674,8 @@ image:images/checkboxes.PNG[Checkboxes]
 ComboBox
 ~~~~~~~~
 ----------------------------------------------------------------------------------------------
-combobox bounds(x, y, width, height), channel("chanName")[, value(val), items("item1", "item2", ...), caption("caption"), colour("colour"),  preset("name")]
+combobox bounds(x, y, width, height), channel("chanName")[, value(val), items("item1", "item2", ...), \n
+	populate("filetype", "dir"), channeltype("type"), caption("caption"), colour("colour")]
 ----------------------------------------------------------------------------------------------
 
 Combobox creates a drop-down list of items which users can choose from. Once the user selects an item, the index of their selection will be sent to Csound on a channel named by the channel string. The default value is 0.
@@ -683,11 +688,13 @@ Combobox creates a drop-down list of items which users can choose from. Once the
 
 'value(val)': val sets the initial state of the control
   
+'populate("filetype", "dir")': This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "*.snaps". When using populate you don't need to use items() to populate the combobox. If no directory is specified, Cabbage will look in the current working directory.  
+  
 'caption("caption")': This identifier lets you place your control within a groupbox. "caption" is the text that will appear on groupbox. This identifier is useful for naming and containing controls.  
 
-'colour("colour")': This sets the background colour of the combobox. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.  
+'channeltype("type")': Specifies the type of channel. If you wish to send the text contained in the combobox set type to "string". Otherwise the index of the selected item will be sent to Csound. 
 
-'preset("name")': Attaches the widget to a snapshot widget. "name" must be valid and match at least one of the snapshot widgets 'preset' value. See snapshot widget. If your widget is part of a plant it can have its preset value set directly by using the preset() identifier in the plant definition. See PLANTS, SNAPSHOT  
+'colour("colour")': This sets the background colour of the combobox. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.  
 
 Example:
 ------------------------
@@ -695,9 +702,6 @@ combobox bounds(0, 110, 120, 70), channel"freq"), caption("Freq"), items("200Hz"
 ------------------------
 
 image:images/combobox.PNG[Combo]
-
-[icon="images/smallLogo.PNG"]
-NOTE: Combo boxes are proving difficult when it comes to controlling them with Csound. So for now Csound can't be used to change the value of a combobox.       
 
 [[x39]]
 XYPad
@@ -778,7 +782,7 @@ Plants
 Cabbage plants are GUI abstractions that contain one or more controls. These abstractions are used as anchors to the child widgets contained within. All widgets contained within a plant have top and left positions which are relative the the top left position of the parent. While all widgets can be children of a plant, only group boxes and images can be used as plants themselves. Adding a plant identifier to an image or group box definition will cause them to act as containers. The plant() identifier takes a string that denotes the name of the plant. Plant names must be unique within an instrument or plants will end up being placed on top of each other. When using an image or a group box as a plant, you must enclose the code from the controls that follow in curly brackets, to indicate which controls belong to the plant. In the code below a group box control is set up as a plant, and three child sliders are placed within it.
 
 ---------------
-groupbox bounds(12, 115, 170, 100), text("Output Filter -k-rate-"),  preset("pre"), plant("filter"){ 
+groupbox bounds(12, 115, 170, 100), text("Output Filter -k-rate-"), plant("filter"){ 
 rslider bounds(.01, .3, .6, .6), text("Freq"), channel("filtFreq"), range(0, 22050, 10000)
 rslider bounds(.32, .3, .6, .6), text("Res"), channel("filtRes"), range(0, 1, 0)
 rslider bounds(.64, .3, .6, .6), text("Dist"), channel("filtDist"), range(0, 4, 0)
@@ -791,6 +795,18 @@ The values passed to bounds() for the child controls can be either fractions pro
 
 The major advantage to using plant abstractions is that you can easily move and resize them without needing to modify the dimensions of the child components contained within. You can also save your plants and recall them later from a plant repository. Plants are intended to be reused across instruments so users don't have to keep rebuilding GUIs from scratch. They can also be used to give your plugins a unique look and feel. 
 
+[[x41]]
+Preset Snapshots
+----------------
+There are several ways to save your instrument's parameters so that they can be recalled at a later time. If you are working in a VST host you can use the host's save/load functionality to save the parameters as fxp/fxb files. You can also use a filebutton with the file type ".snaps" to create a snapshot file of all your widget states. Snapshot files can be recalled using a combobox with a filetype of ".snaps" set. In the code below the user will be shown a filebutton whereby they can select the preset file to save. The combobox will auto-update with all the presets located in the set directory. When a user makes a selection with the combobox Cabbage will update all control states to reflect the data saved in the selected snapshot file. 
+If no directory is given Cabbage will look in the current working directory. 
+
+The final and perhaps most powerful mechanism for saving preset data is to use Csound's file opcodes. Using Csound to manage the reading and writing of the files opens up a host of further options. Presets could for example be morphed from one state to another.   
+
+---------------
+filebutton bounds(16, 332, 60, 25), text("Open", "Open"), populate(".snaps", "/usr/"), colour("red"), mode("create"), channel("filechooser")
+combobox bounds(376, 86, 268, 30), channel("combobox"), populate("*.snaps", "/home/rory/Desktop"),  colour(0, 0, 0, 255)
+---------------
 
 [[x42]]
 Quick Reference 
@@ -800,28 +816,29 @@ This quick reference table table gives a list of the valid identifiers for each 
 
 [width="70%",frame="topbot",options="header"]
 |=====================================================================================================
-|Parameter 	|form	|slider	|button	|checkbox	|groupbox	|combobox	|xypad	|image	|csoundoutput	|label	|snapshot	|line	|infobutton	|table
-|bounds    	|x		|x		|x		|x			|x			|x			|x		|x		|x				|x		|x			|x		|x			|x
-|caption	|x		|x		|x		|x			|x			|x			|		|		|				|		|			|		|x			|
-|channel	|		|x		|x		|x			|x			|x			|x		|		|				|		|			|		|x			|x
-|colour		|		|x		|		|x			|x			|			|		|x		|				|x		|			|x		|			|x
-|fontcolour	|		|x		|x		|x			|x			|x			|		|		|				|x		|			|		|x			|
-|tracker	|		|x		|		|			|			|			|		|		|				|		|			|		|			|
-|file		|		|		|		|			|			|			|		|x		|				|		|			|		|x			|
-|items		|		|		|		|			|			|x			|		|		|				|		|x			|		|			|
-|line		|		|		|		|			|x			|			|		|x		|				|		|			|		|			|
-|max		|		|x		|		|			|			|			|		|		|				|		|			|		|			|
-|midictrl	|		|x		|x		|			|			|x			|		|		|				|		|			|		|			|
-|min       	|x		|x		|		|			|			|			|		|		|				|		|			|		|			|
-|outline	|		|		|		|			|			|			|		|x		|				|		|			|		|			|
-|rangex		|		|		|		|			|			|			|x		|		|				|		|			|		|			|
-|rangey		|		|		|		|			|			|			|x		|		|				|		|			|		|			|
-|shape		|		|		|		|x			|			|			|		|x		|				|		|			|		|			|
-|text		|		|x		|x		|x			|x			|			|x		|		|x				|x		|x			|		|x			|
-|value		|		|x		|x		|x			|			|x			|x		|		|				|		|x			|		|			|
-|plant		|		|		|		|			|x			|			|		|x		|				|		|			|		|			|
-|popup		|		|		|		|			|x			|			|		|x		|				|		|			|		|			|
-|tablenumber|		|		|		|			|x			|			|		|x		|				|		|			|		|			|x
+|Parameter 	  |form	|slider	|button	|checkbox	|groupbox	|combobox	|xypad	|image	|csoundoutput	|label	|filebutton	|line	|infobutton	|table
+|bounds    	  |x	|x		|x		|x			|x			|x			|x		|x		|x				|x		|x			|x		|x			|x
+|caption	  |x	|x		|x		|x			|x			|x			|		|		|				|		|x			|		|x			|
+|channel	  |		|x		|x		|x			|x			|x			|x		|		|				|		|x			|		|x			|x
+|colour		  |		|x		|x		|x			|x			|			|		|x		|				|x		|x			|x		|			|x
+|fontcolour	  |		|x		|x		|x			|x			|x			|		|		|				|x		|x			|		|x			|
+|trackercolour|		|x		|		|			|			|			|		|		|				|		|			|		|			|
+|file		  |		|		|		|			|			|			|		|x		|				|		|			|		|x			|
+|items		  |		|		|		|			|			|x			|		|		|				|		|x			|		|			|
+|line		  |		|		|		|			|x			|			|		|x		|				|		|			|		|			|
+|max		  |		|x		|		|			|			|			|		|		|				|		|			|		|			|
+|midictrl	  |		|x		|x		|			|			|x			|		|		|				|		|			|		|			|
+|min       	  |x	|x		|		|			|			|			|		|		|				|		|			|		|			|
+|outline	  |		|		|		|			|			|			|		|x		|				|		|			|		|			|
+|rangex		  |		|		|		|			|			|			|x		|		|				|		|			|		|			|
+|rangey		  |		|		|		|			|			|			|x		|		|				|		|			|		|			|
+|shape		  |		|		|		|x			|			|			|		|x		|				|		|			|		|			|
+|text		  |		|x		|x		|x			|x			|			|x		|		|x				|x		|x			|		|x			|
+|value		  |		|x		|x		|x			|			|x			|x		|		|				|		|x			|		|			|
+|plant		  |		|		|		|			|x			|			|		|x		|				|		|			|		|			|
+|popup		  |		|		|		|			|x			|			|		|x		|				|		|			|		|			|
+|tablenumber  |		|		|		|			|x			|			|		|x		|				|		|			|		|			|x
+|tablecolour  |		|		|		|			|x			|			|		|x		|				|		|			|		|			|x
 |==================================================================================================
 
 

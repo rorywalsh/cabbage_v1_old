@@ -157,7 +157,7 @@ label bounds(0.03, 0.15, .9, .7), text("Author: Iain McCurdy |2012|"), colour("w
 <CsInstruments>
 
 sr 		= 	44100	;SAMPLE RATE
-ksmps 		= 	4	;NUMBER OF AUDIO SAMPLES IN EACH CONTROL CYCLE. HIGHER ksmps can result in quantisation noise in kbrite modulations.
+ksmps 		= 	32	;NUMBER OF AUDIO SAMPLES IN EACH CONTROL CYCLE. HIGHER ksmps can result in quantisation noise in kbrite modulations.
 nchnls 		= 	2	;NUMBER OF CHANNELS (2=STEREO)
 0dbfs		=	1
 seed	0

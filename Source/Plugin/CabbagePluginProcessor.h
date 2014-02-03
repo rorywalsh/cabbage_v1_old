@@ -40,7 +40,7 @@
 //#include "../Editor/CabbageEditorWindow.h"
 //#endif
 
-#define CABBAGE_VERSION "Cabbage v0.5.04 Alpha"
+#define CABBAGE_VERSION "Cabbage v0.5.06 Alpha"
 
 #define AUDIO_PLUGIN 1
 #define EXTERNAL_PLUGIN 2
@@ -118,7 +118,7 @@ protected:
 		int getNumberCsoundInChannels(){
 			//return csound->GetInNchnls();
 		}
-
+  
 		int getCsoundSamplingRate(){
 			return csound->GetSr();
 		}
@@ -147,6 +147,7 @@ protected:
 		bool editorReOpened;
 		OwnedArray<XYPadAutomation, CriticalSection> xyAutomation;
 		void updateGUIControlsKsmps(int speed);
+		int guiRefreshRate;
 public:
 
     //==============================================================================

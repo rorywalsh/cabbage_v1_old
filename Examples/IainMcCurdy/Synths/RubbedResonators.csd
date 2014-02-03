@@ -34,7 +34,7 @@ rslider  bounds(370,125, 60, 60), text("Gain"), colour("orange"), channel("gain"
 
 ;POLYPHONY
 groupbox bounds( 10,100,100, 90), text("Polyphony"), fontcolour("white"){
-button   bounds( 20,125, 80, 20), text("mono", "poly"), channel("monopoly"), value(0), fontcolour("lime")
+button   bounds( 20,125, 80, 20), text("poly","mono"), channel("monopoly"), value(0), fontcolour("lime")
 hslider  bounds( 15,143, 90, 38), colour("chocolate"), channel("GlissTime"), range(0.005, 0.3, 0.1, 0.25, 0.001)
 label    bounds( 32,174, 90, 12), text("Gliss Time")
 }

@@ -122,7 +122,7 @@ rslider  bounds(755,175,  45,  45), text("Pan"),   FontColour("black"),channel("
 
 keyboard pos(0, 225), size(800, 80)
 
-button   bounds( 10,315, 80, 25), text("Stop", "Run"), channel("OnOff"), value(0)
+button   bounds( 10,315, 80, 25), text("Run","Stop"), channel("OnOff"), value(0)
 combobox bounds( 10,345, 80, 15), channel("sound"), value(1), text("Bass Drum","Snare","Open HH","Cl. HH","Hi Tom","Mid Tom","Lo Tom","Cymbal","Rimshot","Claves","Cowbell","Clap","Maraca","Hi Conga","Mid Conga","Lo Conga")
 button   bounds(462,315, 80, 20), text("Clear","Clear"), channel("clear"), value(0)
 button   bounds(462,338, 38, 20), text("Save","Save"), channel("save"), value(0)

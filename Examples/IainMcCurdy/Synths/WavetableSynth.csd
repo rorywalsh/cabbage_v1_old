@@ -21,6 +21,7 @@
 
 <Cabbage>
 form caption("Wavetable Synth") size(675, 320), pluginID("wtsy")
+image pos(0, 0), size(675, 290), colour("brown"), shape("rounded"), outline("maroon"), line(4)	
 image   bounds(160,  6,240, 88), colour("brown"), shape("rounded"), outline("white"), line(1)	;modulation
 image   bounds(405,  6,140, 88), colour("brown"), shape("rounded"), outline("white"), line(1)	;polyphony
 image   bounds(550,  6,110, 88), colour("brown"), shape("rounded"), outline("white"), line(1)	;pitch bend
@@ -28,7 +29,6 @@ image   bounds( 15,103,110, 88), colour("brown"), shape("rounded"), outline("whi
 image   bounds(130,103,155, 88), colour("brown"), shape("rounded"), outline("white"), line(1)	;quality
 image   bounds(290,103,110, 88), colour("brown"), shape("rounded"), outline("white"), line(1)	;reverb
 image   bounds(405,103,260, 88), colour("brown"), shape("rounded"), outline("white"), line(1)	;output
-image pos(0, 0), size(675, 290), colour("brown"), shape("rounded"), outline("maroon"), line(4)	
 combobox caption("Instrument"), channel("Instr"),  bounds(10, 10, 140, 80)  value(1), text("Clarinet", "Bass Clarinet", "C.bass Clarinet", "Oboe", "Bassoon", "C.bassoon", "Violin", "Cello", "Piccolo", "Flute", "Alto Flute", "Bass Flute", "Ahh", "Horn P", "Horn F", "B.Trb.Harmon Mute", "B.Trb.Cup Mute", "B.Trb.Open")
 label   bounds(170, 80, 40, 12), text("Mod.")
 label   bounds(245, 11,100, 15), text("Modulation")
@@ -48,7 +48,7 @@ rslider bounds(290, 32, 60, 60), text("Tone"), channel("tonedep"), range(0, 4, 2
 rslider bounds(340, 32, 60, 60), text("Rate"), channel("ModRte"), range(0, 16, 4.25, 0.5)
 
 ;POLYPHONY
-button   bounds(415, 40, 70, 25), text("mono", "poly"), channel("monopoly"), value(1), fontcolour("lime")
+button   bounds(415, 40, 70, 25), text("poly","mono"), channel("monopoly"), value(1), fontcolour("lime")
 rslider  bounds(485, 32, 60, 60), text("Leg.Time"), channel("LegTim"), range(0.001, 2, 0.002, 0.5, 0.001)
 
 ;PITCH BEND
@@ -95,6 +95,8 @@ nchnls 		= 	2
 0dbfs		=	1	;MAXIMUM AMPLITUDE
 seed	0
 massign	0,2
+
+gkactive	init	0	; Will contain number of active instances of instr 3 when legato mode is chosen. NB. notes in release stage will not be regarded as active. 
 
 ;Author: Iain McCurdy (2012)
 
@@ -571,9 +573,9 @@ instr	2	;triggered via MIDI
 	  turnoff2	p1+1+(inum*0.001),4,1			; turn off the called instrument
 	 endif							; end of conditional
 	else				;otherwise... (i.e. legato mode)
-	 iactive	active p1+1	;check to see if these is already a note active...
-	 if iactive==0 then		;...if not...
-	  event_i	"i",p1+1,0,-1	;...start a new held note
+	 iactive	=	i(gkactive)			;number of active notes of instr 3 (note in release are disregarded)
+	 if iactive==0 then					;...if no notes are active
+	  event_i	"i",p1+1,0,-1				;...start a new held note
 	 endif
 	endif
 endin
@@ -582,6 +584,8 @@ instr	3	;waveguide instrument. MIDI notes are directed here.
 	kporttime	linseg	0,0.001,1		;portamento time function rises quickly from zero to a held value
 	kporttime	=	kporttime*gkLegTim	;scale portamento time function with value from GUI knob widget
 	if i(gkmonopoly)==1 then			;if we are in legato mode...
+	 krel	release					;sense when  note has been released
+	 gkactive	=	1-krel			;if note is in release, gkactive=0, otherwise =1
 
  	 knum	SsplinePort	gknum,kporttime,2,1	;GLISSANDO TIME PROPORTIONAL TO NOTE GAP (OPTION SET TO '1'), THEREFORE PORTAMENTO TIME DEPENDENT UPON NOTE GAP. LARGER INTERVALS WILL RESULT IN PROPORTIONALLY LONGER PORTAMENTO TIMES.
 	

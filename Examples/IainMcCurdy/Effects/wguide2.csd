@@ -1,14 +1,14 @@
 <Cabbage>
 form caption("wguide2") size(545, 90)
 image pos(0, 0), size(545, 90), colour(25,0,25), shape("rounded"), outline("white"), line(4) 
-rslider bounds(10, 11, 70, 70), text("Freq. 1"), channel("freq1"), range(20, 8000, 160, 0.25),colour(150,110,110)
-rslider bounds(75, 11, 70, 70), text("Freq. 2"), channel("freq2"), range(20, 8000, 160, 0.25),colour(150,110,110)
-rslider bounds(140, 11, 70, 70), text("Cutoff 1"), channel("cutoff1"), range(20,20000,8000,0.25),colour(150,110,110)
-rslider bounds(205, 11, 70, 70), text("Cutoff 1"), channel("cutoff2"), range(20,20000,8000,0.25),colour(150,110,110)
-rslider bounds(270, 11, 70, 70), text("F.back 1"), channel("feedback1"), range(-0.999, 0.999, 0.2),colour(150,110,110)
-rslider bounds(335, 11, 70, 70), text("F.back 2"), channel("feedback2"), range(-0.999, 0.999, 0.2),colour(150,110,110)
-rslider bounds(400, 11, 70, 70), text("Mix"), channel("mix"), range(0, 1.00, 0.7),colour(150,110,110)
-rslider bounds(465, 11, 70, 70), text("Level"), channel("level"), range(0, 1.00, 0.7),colour(150,110,110)
+rslider bounds(10, 11, 70, 70), text("Freq. 1"),   channel("freq1"),     range(20, 8000, 160, 0.25), colour(150,110,110), trackercolour(white)
+rslider bounds(75, 11, 70, 70), text("Freq. 2"),   channel("freq2"),     range(20, 8000, 160, 0.25), colour(150,110,110), trackercolour(white)
+rslider bounds(140, 11, 70, 70), text("Cutoff 1"), channel("cutoff1"),   range(20,20000,8000,0.25),  colour(150,110,110), trackercolour(white)
+rslider bounds(205, 11, 70, 70), text("Cutoff 1"), channel("cutoff2"),   range(20,20000,8000,0.25),  colour(150,110,110), trackercolour(white)
+rslider bounds(270, 11, 70, 70), text("F.back 1"), channel("feedback1"), range(-0.999, 0.999, 0.2),  colour(150,110,110), trackercolour(white)
+rslider bounds(335, 11, 70, 70), text("F.back 2"), channel("feedback2"), range(-0.999, 0.999, 0.2),  colour(150,110,110), trackercolour(white)
+rslider bounds(400, 11, 70, 70), text("Mix"),      channel("mix"),       range(0, 1.00, 0.7),        colour(150,110,110), trackercolour(white)
+rslider bounds(465, 11, 70, 70), text("Level"),    channel("level"),     range(0, 1.00, 0.7),        colour(150,110,110), trackercolour(white)
 }
 </Cabbage>
 

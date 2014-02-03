@@ -53,58 +53,57 @@ image bounds(  0,  0,525, 330), colour( 0, 0, 50), shape("sharp"), outline("whit
 
 ;OSCILLATOR
 groupbox bounds(  0,  0,525, 85), text("Oscillators"), fontcolour("white") plant("oscillators"){
-rslider  bounds(  5, 25, 55, 55), fontcolour("white"), text("Amp."), channel("amp"), range(0, 10.00, 1.24), tracker("white") colour(LightBlue)
-rslider  bounds( 50, 25, 55, 55), fontcolour("white"), text("N.Oscs."), channel("NOscs"), range(1, 100, 10, 1, 1), tracker("white") colour(LightBlue)
-rslider  bounds( 95, 25, 55, 55), fontcolour("white"), text("Spread"), channel("fmd"), range(0, 1.00, 0.005,0.25,0.000001), tracker("white") colour(LightBlue)
-rslider  bounds(140, 25, 55, 55), fontcolour("white"), text("Speed"), channel("mvt"), range(0, 100.000, 1, 0.25,0.0001), tracker("white") colour(LightBlue)
-rslider  bounds(185, 25, 55, 55), fontcolour("white"), text("Width"), channel("width"), range(0, 1.000, 1, 1,0.001), tracker("white") colour(LightBlue)
+rslider  bounds(  5, 25, 55, 55), fontcolour("white"), text("Amp."),    channel("amp"),   range(0, 1.00, 0.2),                trackercolour("white") colour(LightBlue)
+rslider  bounds( 50, 25, 55, 55), fontcolour("white"), text("N.Oscs."), channel("NOscs"), range(1, 100, 10, 1, 1),             trackercolour("white") colour(LightBlue)
+rslider  bounds( 95, 25, 55, 55), fontcolour("white"), text("Spread"),  channel("fmd"),   range(0, 1.00, 0.005,0.25,0.000001), trackercolour("white") colour(LightBlue)
+rslider  bounds(140, 25, 55, 55), fontcolour("white"), text("Speed"),   channel("mvt"),   range(0, 100.000, 1, 0.25,0.0001),   trackercolour("white") colour(LightBlue)
+rslider  bounds(185, 25, 55, 55), fontcolour("white"), text("Width"),   channel("width"), range(0, 1.000, 1, 1,0.001),         trackercolour("white") colour(LightBlue)
 combobox bounds(240, 25, 80,18), channel("waveform"), value(1), text("saw", "square", "organ", "eee", "ooh", "Clarinet","Bass Clarinet", "C.Bass Clarinet","Oboe","Bassoon","C.Bassoon",Violin","Cello","Piccolo","Flute","Alto Flute","Bass Flute", "Ahh", "Horn P", "Horn F", "B.Tbn.Harmon", "B.Tbn.Straight", "B.Tbn.Open")
 checkbox bounds(240, 50, 85, 13), text("Legato"), colour("yellow"), channel("legato"),  value(0)
 checkbox bounds(240, 65, 85, 13), text("Mono"), colour("yellow"), channel("mono"),  value(0)
-rslider  bounds(292, 44, 38, 38), fontcolour("white"), text("Time"), channel("LegTim"), range(0, 4.00, 0.09, 0.5, 0.01), tracker("white") colour(LightBlue)
-
-rslider  bounds(325, 25, 55, 55), fontcolour("white"), text("T.Shift"), channel("WTableShift"), range(-36, 36, 0, 1,0.001), tracker("white") colour(LightBlue)
+rslider  bounds(292, 44, 38, 38), fontcolour("white"), text("Time"),    channel("LegTim"),      range(0, 4.00, 0.09, 0.5, 0.01), trackercolour("white") colour(LightBlue)
+rslider  bounds(325, 25, 55, 55), fontcolour("white"), text("T.Shift"), channel("WTableShift"), range(-36, 36, 0, 1,0.001),      trackercolour("white") colour(LightBlue)
 ;PITCH BEND
-rslider  bounds(370, 25, 55, 55), fontcolour("white"), text("< Bend"), channel("BendDown"), range(-1,0, 0, 1,0.001), tracker("white") colour(LightBlue)
-rslider  bounds(415, 25, 55, 55), fontcolour("white"), text("Bend >"), channel("BendUp"),   range(0, 1, 0, 1,0.001), tracker("white") colour(LightBlue)
-rslider  bounds(465, 25, 55, 55), fontcolour("white"), text("Bend Rng."), channel("BendRange"),   range(1, 24, 12, 1,1), tracker("white") colour(LightBlue)
+rslider  bounds(370, 25, 55, 55), fontcolour("white"), text("< Bend"),    channel("BendDown"),    range(-1,0, 0, 1,0.001), trackercolour("white") colour(LightBlue)
+rslider  bounds(415, 25, 55, 55), fontcolour("white"), text("Bend >"),    channel("BendUp"),      range(0, 1, 0, 1,0.001), trackercolour("white") colour(LightBlue)
+rslider  bounds(465, 25, 55, 55), fontcolour("white"), text("Bend Rng."), channel("BendRange"),   range(1, 24, 12, 1,1),   trackercolour("white") colour(LightBlue)
 }
 
 ;AMPLITUDE ENVELOPE
 groupbox bounds(290,85, 200, 85), text("Amplitude Envelope"), plant("AmpEnv"), fontcolour("white"){
-rslider bounds(  5, 25, 55, 55), fontcolour("white"), text("Att."), channel("AAtt"), range(0, 8.00, 0.13,0.5), tracker("white") colour(LightBlue)
-rslider bounds( 50, 25, 55, 55), fontcolour("white"), text("Dec."), channel("ADec"), range(0, 8.00, 0.01,0.5), tracker("white") colour(LightBlue)
-rslider bounds( 95, 25, 55, 55), fontcolour("white"), text("Sus."), channel("ASus"), range(0, 1.00, 1.00, 0.5), tracker("white") colour(LightBlue)
-rslider bounds(140, 25, 55, 55), fontcolour("white"), text("Rel."), channel("ARel"), range(0.01, 8, 1.67, 0.5), tracker("white") colour(LightBlue)
+rslider bounds(  5, 25, 55, 55), fontcolour("white"), text("Att."), channel("AAtt"), range(0, 8.00, 0.13,0.5),  trackercolour("white") colour(LightBlue)
+rslider bounds( 50, 25, 55, 55), fontcolour("white"), text("Dec."), channel("ADec"), range(0, 8.00, 0.01,0.5),  trackercolour("white") colour(LightBlue)
+rslider bounds( 95, 25, 55, 55), fontcolour("white"), text("Sus."), channel("ASus"), range(0, 1.00, 1.00, 0.5), trackercolour("white") colour(LightBlue)
+rslider bounds(140, 25, 55, 55), fontcolour("white"), text("Rel."), channel("ARel"), range(0.01, 8, 1.67, 0.5), trackercolour("white") colour(LightBlue)
 }
 
 ;FILTER
 groupbox bounds(0, 85, 290, 85), text("Filter Envelope"), fontcolour("white"){
-rslider bounds(  5, 110, 55, 55), fontcolour("white"), text("Filter"), channel("cf"), range(0, 10.00, 6), tracker("white") colour(LightBlue)
-rslider bounds( 50, 110, 55, 55), fontcolour("white"), text("Env."), channel("FEnvAmt"), range(0, 10.00, 1.16), tracker("white") colour(LightBlue)
-rslider bounds( 95, 110, 55, 55), fontcolour("white"), text("Att."), channel("FAtt"), range(0, 8.00, 0.1,0.5), tracker("white") colour(LightBlue)
-rslider bounds(140, 110, 55, 55), fontcolour("white"), text("Dec."), channel("FDec"), range(0, 8.00, 1,0.5), tracker("white") colour(LightBlue)
-rslider bounds(185, 110, 55, 55), fontcolour("white"), text("Sus."), channel("FSus"), range(0, 1.00, 4, 0.5), tracker("white") colour(LightBlue)
-rslider bounds(230, 110, 55, 55), fontcolour("white"), text("Rel."), channel("FRel"), range(0.01, 8, 1.3, 0.5), tracker("white") colour(LightBlue)
+rslider bounds(  5, 110, 55, 55), fontcolour("white"), text("Filter"), channel("cf"), range(0, 10.00, 6),       trackercolour("white") colour(LightBlue)
+rslider bounds( 50, 110, 55, 55), fontcolour("white"), text("Env."), channel("FEnvAmt"), range(0, 10.00, 1.16), trackercolour("white") colour(LightBlue)
+rslider bounds( 95, 110, 55, 55), fontcolour("white"), text("Att."), channel("FAtt"), range(0, 8.00, 0.1,0.5),  trackercolour("white") colour(LightBlue)
+rslider bounds(140, 110, 55, 55), fontcolour("white"), text("Dec."), channel("FDec"), range(0, 8.00, 1,0.5),    trackercolour("white") colour(LightBlue)
+rslider bounds(185, 110, 55, 55), fontcolour("white"), text("Sus."), channel("FSus"), range(0, 1.00, 4, 0.5),   trackercolour("white") colour(LightBlue)
+rslider bounds(230, 110, 55, 55), fontcolour("white"), text("Rel."), channel("FRel"), range(0.01, 8, 1.3, 0.5), trackercolour("white") colour(LightBlue)
 }
 
 ;FILTER
 groupbox bounds(  0,170, 90, 85), text("Filter"), plant("Filter"){
-rslider bounds( 17,  25,  55, 55), fontcolour("white"), text("Layers"), channel("FiltLayers"), range(1, 10, 1,1,1), tracker("white") colour(LightBlue)
+rslider bounds( 17,  25,  55, 55), fontcolour("white"), text("Layers"), channel("FiltLayers"), range(1, 10, 1,1,1), trackercolour("white") colour(LightBlue)
 }
 
 ;FILTER LFO
 groupbox bounds( 90,170,290, 85), text("Filter LFO"), plant("FilterLFO"), fontcolour("white"){
 combobox bounds( 15, 35, 80, 20), channel("FlfoType"), value(2), text("sine", "splines", "S+H", "square")
-rslider  bounds( 95, 25, 55, 55), text("Rate"), channel("FRte"), range(0, 16.00, 4), fontcolour("white"), tracker("white") colour(LightBlue)
-rslider  bounds(140, 25, 55, 55), text("Depth"), channel("FDep"), range(0, 4.00, 0), fontcolour("white"), tracker("white") colour(LightBlue)
-rslider  bounds(185, 25, 55, 55), text("Delay"), channel("FDel"), range(0, 2.00, 0, 0.5), fontcolour("white"), tracker("white") colour(LightBlue)
-rslider  bounds(230, 25, 55, 55), text("Rise"), channel("FRis"), range(0, 2.00, 0.1, 0.5), fontcolour("white"), tracker("white") colour(LightBlue)
+rslider  bounds( 95, 25, 55, 55), text("Rate"),  channel("FRte"), range(0, 16.00, 4),       fontcolour("white"), trackercolour("white") colour(LightBlue)
+rslider  bounds(140, 25, 55, 55), text("Depth"), channel("FDep"), range(0, 4.00, 0),        fontcolour("white"), trackercolour("white") colour(LightBlue)
+rslider  bounds(185, 25, 55, 55), text("Delay"), channel("FDel"), range(0, 2.00, 0, 0.5),   fontcolour("white"), trackercolour("white") colour(LightBlue)
+rslider  bounds(230, 25, 55, 55), text("Rise"),  channel("FRis"), range(0, 2.00, 0.1, 0.5), fontcolour("white"), trackercolour("white") colour(LightBlue)
 
 ;REVERB
 groupbox bounds(380,170, 110, 85), text("Reverb"), plant("Reverb"), fontcolour("white"){
-rslider bounds(  5,  25,  55, 55), fontcolour("white"), text("Mix"), channel("RvbMix"), range(0, 1.00, 0.5), tracker("white") colour(LightBlue)
-rslider bounds( 50,  25,  55, 55), fontcolour("white"), text("Size"), channel("RvbSize"), range(0, 1.00, 0.77), tracker("white") colour(LightBlue)
+rslider bounds(  5,  25,  55, 55), fontcolour("white"), text("Mix"),  channel("RvbMix"),  range(0, 1.00, 0.5),  trackercolour("white") colour(LightBlue)
+rslider bounds( 50,  25,  55, 55), fontcolour("white"), text("Size"), channel("RvbSize"), range(0, 1.00, 0.77), trackercolour("white") colour(LightBlue)
 }
 
 keyboard bounds(0, 255, 525, 75)
@@ -349,10 +348,6 @@ giharmon65 ftgen 0,0,4096,10,0.314097,0.342771,0.973682,0.028876,0.015118,0.0127
 giwavemapharmon		ftgen	0,0,128,-27, 0,0, 33,0, 34,1, 36,2, 38,3, 39,3, 40,4, 41,5, 43,6, 45,7, 46,8, 48,9, 50,10,  52,11, 53,12, 55,13, 57,14, 60,15, 62,16, 64,17, 65,18, 127,18 
 gitabs4morfharmon	ftgen	0,0,32,-2, giharmon33,giharmon34,giharmon36,giharmon38,giharmon39,giharmon40,giharmon41,giharmon43,giharmon45,giharmon46,giharmon48,giharmon50,giharmon52,giharmon53,giharmon55,giharmon57,giharmon60,giharmon62,giharmon64,giharmon65,giharmon65,giharmon65,giharmon65,giharmon65,giharmon65,giharmon65,giharmon65,giharmon65,giharmon65,giharmon65,giharmon65,giharmon65
 
-
-
-
-
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ; BASS TROMBONE (STRAIGHT MUTE)
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -396,9 +391,6 @@ giMute158 ftgen 0,0,4096,10,0.428817,0.965152,0.013016,0.001790,0.004347,0.00499
 ;GEN02 TABLE CONTAINING THE FUNCTION TABLE NUMBERS OF THE TABLES BETWEEN WHICH MORPHING WILL TAKE PLACE
 giwavemapMute1		ftgen	0,0,128,-27, 0,0, 22,0, 23,1, 24,2, 25,3, 26,4, 27,5, 28,6, 29,7, 30,8, 31,9, 32,10, 33,11, 34,12, 35,13, 36,14, 37,15, 38,16, 39,17, 40,18, 41,19, 42,20, 43,21, 44,22, 45,23, 46,24, 47,25, 48,26, 49,27, 50,28, 51,29, 52,30, 53,31, 54,32, 55,33, 56,34, 57,35, 58,36, 127,36
 gitabs4morfMute1	ftgen	0,0,64,-2, giMute122,giMute123,giMute124,giMute125,giMute126,giMute127,giMute128,giMute129,giMute130,giMute131,giMute132,giMute133,giMute134,giMute135,giMute136,giMute137,giMute138,giMute139,giMute140,giMute141,giMute142,giMute143,giMute144,giMute145,giMute146,giMute147,giMute148,giMute149,giMute150,giMute151,giMute152,giMute153,giMute154,giMute155,giMute156,giMute157,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158,giMute158
-
-
-
 
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ; BASS TROMBONE (OPEN)
@@ -464,6 +456,8 @@ gieqqfn		ftgen	0,0,4097,7,-1,4096,1
 
 gasendL,gasendR	init	0
 
+gkactive	init	0	; Will contain number of active instances of instr 3 when legato mode is chosen. NB. notes in release stage will not be regarded as active. 
+
 opcode	sspline,k,Kiii
 	kdur,istart,iend,icurve	xin										;READ IN INPUT ARGUMENTS
 	imid	=	istart+((iend-istart)/2)								;SPLINE MID POINT VALUE
@@ -495,11 +489,11 @@ instr	ReadWidgets
 	gkWTableShift	portk	gkWTableShift, kporttime
 	gkFiltLayers	chnget	"FiltLayers"
 
-	gkFlfoType	chnget	"FlfoType"				;
-	gkFRte		chnget	"FRte"					;
-	gkFDep		chnget	"FDep"					;
-	gkFDel		chnget	"FDel"					;
-	gkFRis		chnget	"FRis"					;
+	gkFlfoType	chnget	"FlfoType"
+	gkFRte		chnget	"FRte"
+	gkFDep		chnget	"FDep"
+	gkFDel		chnget	"FDel"
+	gkFRis		chnget	"FRis"
 
 	gkcfoct		chnget	"cf"
 	gkFEnvAmt	chnget	"FEnvAmt"
@@ -514,47 +508,58 @@ instr	ReadWidgets
 	gkADec		chnget	"ADec"
 	gkASus		chnget	"ASus"
 	gkARel		chnget	"ARel"
+
+	gklegato	chnget	"legato"
+	gkLegTim	chnget	"LegTim"
+	gkmono		chnget	"mono"
 endin
 
-instr	1
-	ilegato	chnget	"legato"
+instr	1	; triggered via midi
 	gkNoteTrig	init	1	;at the beginning of a new note set note trigger flag to '1'
 	inum		notnum
 	gknum		=	inum
-	givel		veloc	0,1	;read in midi note velocity
+	ivel		veloc	0,1	;read in midi note velocity
 
-	if ilegato==0 then		;if we are *not* in legato mode...
-	 aL,aR	subinstr	p1+1,inum	;call voice instrument as a subinstrument. Audio will be fed back to this instrument before being sent to the outputs.
-		outs	aL,aR		;send audio to outputs
+	if i(gklegato)==0 then		;if we are *not* in legato mode...
+
+	 ;aL,aR	subinstr	p1+1,inum	;call voice instrument as a subinstrument. Audio will be fed back to this instrument before being sent to the outputs.
+	 ;	outs	aL,aR		;send audio to outputs
+	 
+	 	event_i	"i",p1+1+(inum*0.001),0,-1,inum,ivel	; call sound producing instr
+	 krel	release						; release flag (1 when note is released, 0 otherwise)
+	 if krel==1 then					; when note is released...
+	  turnoff2	p1+1+(inum*0.001),4,1			; turn off the called instrument
+	 endif							; end of conditional	 	 
+	 
 	else				;otherwise... (i.e. legato mode)
-	 iactive	active p1+1	;check to see if these is already a note active...
-	 if iactive==0 then		;...if not...
-	  event_i	"i",p1+1,0,-1	;...start a new held note
+	 iactive	=	i(gkactive)			;number of active notes of instr 3 (note in release are disregarded)
+	 if iactive==0 then					;...if no notes are active
+	  event_i	"i",p1+1,0,3600,inum,ivel		;...start a new held note
 	 endif
 	endif
 endin
 
-instr	2
-	ilegato	chnget	"legato"
-	kLegTim	chnget	"LegTim"
-	kmono	chnget	"mono"
+instr	2	; triggered by instr 2
+	;print	p4
+	;kporttime	linseg	0,0.001,1		;portamento time function rises quickly from zero to a held value
+	kLegTime	=	gkLegTim;*kporttime	;scale portamento time function with value from GUI knob widget
 	
-	kporttime	linseg	0,0.001,1		;portamento time function rises quickly from zero to a held value
-	kglisstime	=	kporttime*kLegTim	;scale portamento time function with value from GUI knob widget
-	
-	if ilegato==1 then				;if we are in legato mode...
-
-	 ktrig	changed	gknum						;...GENERATE A TRIGGER IS A NEW NOTE NUMBER IS GENERATED (FROM INSTR. 1)
-	 gkOldNum	init	i(gknum)				;OLD NOTE NUMBER = FIRST NOTE NUMBER UPON INITIAL NOTE BEING PLAYED 
+	if i(gklegato)==1 then				;if we are in legato mode...
+	 krel	release					;sense when  note has been released
+	 gkactive	=	1-krel			;if note is in release, gkactive=0, otherwise =1
+	 if krel==0 then
+	  ktrig	changed	gknum						;...GENERATE A TRIGGER IS A NEW NOTE NUMBER IS GENERATED (FROM INSTR. 1)
+	  gkNoteTrig	=	0
+	 endif
+	 gkOldNum	init	p4					;OLD NOTE NUMBER = FIRST NOTE NUMBER UPON INITIAL NOTE BEING PLAYED 
 	 if ktrig=1 then						;IF A NEW (LEGATO) NOTE HAS BEEN PRESSED
 	  reinit	S_CURVE_2					;BEGIN A REINITIALISATION PASS FROM LABEL
 	 endif								;END OF CONDITIONAL BRANCH
 	 S_CURVE_2:							;A LABEL. REINITIALISATION BEGINS FROM HERE.
 	 idiff	=	1+abs(i(gknum)-i(gkOldNum))			;ABSOLUTE DIFFERENCE BETWEEN OLD NOTE AND NEW NOTE IN STEPS (+ 1)
-	 knum	sspline	(kglisstime*idiff)+ksmps/sr,i(gkOldNum),i(gknum),2;CALL sspline UDO (PORTASMENTO TIME MULTIPLIED BY NOTE GAP (idiff))
+	 knum	sspline	(kLegTime*idiff)+ksmps/sr,i(gkOldNum),i(gknum),1 ;CALL sspline UDO (PORTASMENTO TIME MULTIPLIED BY NOTE GAP (idiff))
 	 rireturn							;RETURN FROM INITIALISATION PASS
 	 gkOldNum	=	knum					;SET OLD NUMBER CURRENT NUMBER
-
 	 kactive	active	p1-1			;...check number of active midi notes (previous instrument)
 	 if kactive==0 then				;if no midi notes are active...
 	  turnoff					;... turn this instrument off
@@ -562,6 +567,8 @@ instr	2
 	else						;otherwise... (polyphonic / non-legato mode)
 	 knum	=	p4
 	endif
+
+	knum	init	p4
 
 	knum	=	knum + gkPchBend		;add pitch bend
 	
@@ -591,15 +598,13 @@ instr	2
 	kCFoct		limit	4+kFEnv+gkcfoct+kFLFO,4,14
 	kCF		=	cpsoct(kCFoct)
 	  
-	ivel	veloc	0,0.1					;READ IN NOTE VELOCITY	  
-	  
 	if i(gkwaveform)==6 then
 	 giwavemap	=	giwavemapClar
 	 gitabs4morf	=	gitabs4morfClar
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==7 then
 	 giwavemap	=	giwavemapBClar
@@ -607,7 +612,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==8 then
 	 giwavemap	=	giwavemapCBClar
@@ -615,7 +620,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==9 then
 	 giwavemap	=	giwavemapOboe
@@ -623,7 +628,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==10 then
 	 giwavemap	=	giwavemapBassoon
@@ -631,7 +636,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==11 then
 	 giwavemap	=	giwavemapCBassoon
@@ -639,7 +644,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==12 then
 	 giwavemap	=	giwavemapViolin
@@ -647,7 +652,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==13 then
 	 giwavemap	=	giwavemapCello
@@ -655,7 +660,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==14 then
 	 giwavemap	=	giwavemapPiccolo
@@ -663,7 +668,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==15 then
 	 giwavemap	=	giwavemapFlute
@@ -671,7 +676,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==16 then
 	 giwavemap	=	giwavemapAFlute
@@ -679,7 +684,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==17 then
 	 giwavemap	=	giwavemapBFlute
@@ -687,7 +692,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==18 then
 	 giwavemap	=	giwavemapAhh
@@ -695,7 +700,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==19 then
 	 giwavemap	=	giwavemapHornP
@@ -703,7 +708,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==20 then
 	 giwavemap	=	giwavemapHornF
@@ -711,7 +716,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==21 then
 	 giwavemap	=	giwavemapharmon
@@ -719,7 +724,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==22 then
 	 giwavemap	=	giwavemapMute1
@@ -727,7 +732,7 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	elseif i(gkwaveform)==23 then
 	 giwavemap	=	giwavemapUnmuted
@@ -735,13 +740,14 @@ instr	2
 	 imorphtab	ftgentmp	0,0,4096,10,1
 	 kndx		limit		knum+gkWTableShift,0,127
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
-			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
+			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
 	else 
 	 kwave	=	gisaw+gkwaveform-1			;DERIVE FUNCTION TABLE NUMBER OF WAVEFORM FOR THE OSCILLATORS
 	endif
 
-	ktrig	changed	gkNOscs,kmono				;IF ANY OF THE CONTROLS WHICH MUST BE ENTERED AS I-RATE CONTROLLERS HAVE CHANGED GENERATE A TRIGGER IMPULSE AT THE OUTPUT
+
+	ktrig	changed	gkNOscs,gkmono				;IF ANY OF THE CONTROLS WHICH MUST BE ENTERED AS I-RATE CONTROLLERS HAVE CHANGED GENERATE A TRIGGER IMPULSE AT THE OUTPUT
 	if ktrig==1 then					;IF ANY I-RATE CONTROL HAS CHANGED...
 	  reinit	UPDATE					;BEGIN A RE-INITILISATION PASS FROM LABEL 'UPDATE'
 	endif							
@@ -749,15 +755,15 @@ instr	2
 	kmvt	jspline	gkmvt,gkmvt,gkmvt
 	kcps	=	cpsmidinn(knum)
 
-	if i(kmono)==1 then
+	if i(gkmono)==1 then
 	;OUTPUT	OPCODE  CPS  | AMD  |    FMD     | PMD | OVERLAPS   | SEED | L1MINF  | L1MAXF  | L2MINF  | L2MAXF  | LFOMODE | EQMINF  | EQMAXF | EQMINL | EQMAXL | EQMINQ | EQMAXQ  | EQMODE | KFN  | L1FN | L2FN | EQFFN  | EQLF   |  EQQFN |  TABL  | OUTFN
 	 aL	oscbnk	kcps,   0,    gkfmd*kcps,    0,  i(gkNOscs),   rnd(1),    0,      kmvt,      0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1,   kwave, gicos, gicos, gieqffn, gieqlfn, gieqqfn
 	 aR	=	aL
 	else
 	 ;TWO ITERATIONS OF oscbnk ARE CREATED, ONE FOR EACH OF THE STEREO AUDIO CHANNELS. THE OUTPUTS WILL BE DIFFERENT AS THE RANDOM NUMBER GENERATORS WILL BE SEEDED BY THE SYSTEM CLOCK
-	 ;OUTPUT	OPCODE  CPS  | AMD  |    FMD     | PMD | OVERLAPS   | SEED | L1MINF  | L1MAXF  | L2MINF  | L2MAXF  | LFOMODE | EQMINF  | EQMAXF | EQMINL | EQMAXL | EQMINQ | EQMAXQ  | EQMODE | KFN  | L1FN | L2FN | EQFFN  | EQLF   |  EQQFN |  TABL  | OUTFN
-	 aL	oscbnk	kcps,   0,    gkfmd*kcps,    0,  i(gkNOscs),   rnd(1),    0,      kmvt,      0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1,   kwave, gicos, gicos, gieqffn, gieqlfn, gieqqfn
-	 aR	oscbnk	kcps,   0,    gkfmd*kcps,    0,  i(gkNOscs),   rnd(1),    0,     -kmvt,      0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1,   kwave, gicos, gicos, gieqffn, gieqlfn, gieqqfn
+	 ;OUTPUT	OPCODE  CPS  | AMD  |    FMD     | PMD | OVERLAPS   | SEED  | L1MINF  | L1MAXF  | L2MINF  | L2MAXF  | LFOMODE | EQMINF  | EQMAXF | EQMINL | EQMAXL | EQMINQ | EQMAXQ  | EQMODE | KFN  | L1FN | L2FN | EQFFN  | EQLF   |  EQQFN |  TABL  | OUTFN
+	 aL		oscbnk	kcps,   0,    gkfmd*kcps,   0,  i(gkNOscs),   rnd(1),   0,       kmvt,      0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1,   kwave, gicos, gicos, gieqffn, gieqlfn, gieqqfn
+	 aR		oscbnk	kcps,   0,    gkfmd*kcps,   0,  i(gkNOscs),   rnd(1),   0,      -kmvt,      0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1,   kwave, gicos, gicos, gieqffn, gieqlfn, gieqqfn
 	 aL	ntrpol	(aL+aR)*0.66,aL,gkwidth
 	 aR	ntrpol	(aL+aR)*0.66,aR,gkwidth
 	endif
@@ -775,8 +781,8 @@ instr	2
 	aR 	tonex 		aR, kCF,i(gkFiltLayers)
 	rireturn
 	
-	aL	=	aL*aenv*ivel*gkamp
-	aR	=	aR*aenv*ivel*gkamp
+	aL	=	aL*aenv*gkamp*p5
+	aR	=	aR*aenv*gkamp*p5
 	
 		outs		aL, aR	;SEND AUDIO TO THE OUTPUTS. RESCALE EACH CHANNEL WITH NOTE VELOCITY, AMPLITUDE ENVELOPE AND AMP CONTROL WIDGET.
 	gasendL	=	gasendL+(aL*gkRvbMix)

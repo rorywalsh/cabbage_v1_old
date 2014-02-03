@@ -19,20 +19,20 @@ form caption("Metronome"), size(770,140), pluginID("mtro")
 image            bounds(  0,  0,770,140), colour(160, 70,20,100), shape("rounded"), outline("white"), line(4) 
 checkbox bounds( 15, 20,130, 40), text("Start/Stop") channel("OnOff"), FontColour("White"), colour(250,250,100)  value(0)
 
-rslider  bounds(120, 13, 65, 65), text("Level 1"),     colour(160, 70,20,100), tracker(250,250,200), FontColour("White"), channel("level1"), range(0, 1.00, 0.4, 0.5, 0.001)
-rslider  bounds(180, 13, 65, 65), text("Level 2"),     colour(160, 70,20,100), tracker(250,250,200), FontColour("White"), channel("level2"), range(0, 1.00, 0.1, 0.5, 0.001)
-rslider  bounds(240, 13, 65, 65), text("Subdiv."),     colour(160, 70,20,100), tracker(250,250,200), FontColour("White"), channel("subdiv"), range(1, 16, 3, 1, 1)
-rslider  bounds(300, 13, 65, 65), text("Tone 1"),      colour(160, 70,20,100), tracker(250,250,200), FontColour("White"), channel("tone1"), range(0, 4.00, 2.5)
-rslider  bounds(360, 13, 65, 65), text("Tone 2"),      colour(160, 70,20,100), tracker(250,250,200), FontColour("White"), channel("tone2"), range(0, 4.00, 1.56)
-rslider  bounds(420, 13, 65, 65), text("Duration"),    colour(160, 70,20,100), tracker(250,250,200), FontColour("White"), channel("dur"), range(0.003, 0.1, 0.012, 0.5, 0.00001)
-rslider  bounds(480, 13, 65, 65), text("Width"),       colour(160, 70,20,100), tracker(250,250,200), FontColour("White"), channel("width"), range(0, 2.00, 0)
+rslider  bounds(120, 13, 65, 65), text("Level 1"),     colour(160, 70,20,100), trackercolour(250,250,200), FontColour("White"), channel("level1"), range(0, 1.00, 0.4, 0.5, 0.001)
+rslider  bounds(180, 13, 65, 65), text("Level 2"),     colour(160, 70,20,100), trackercolour(250,250,200), FontColour("White"), channel("level2"), range(0, 1.00, 0.1, 0.5, 0.001)
+rslider  bounds(240, 13, 65, 65), text("Subdiv."),     colour(160, 70,20,100), trackercolour(250,250,200), FontColour("White"), channel("subdiv"), range(1, 16, 3, 1, 1)
+rslider  bounds(300, 13, 65, 65), text("Tone 1"),      colour(160, 70,20,100), trackercolour(250,250,200), FontColour("White"), channel("tone1"),  range(0, 4.00, 2.5)
+rslider  bounds(360, 13, 65, 65), text("Tone 2"),      colour(160, 70,20,100), trackercolour(250,250,200), FontColour("White"), channel("tone2"),  range(0, 4.00, 1.56)
+rslider  bounds(420, 13, 65, 65), text("Duration"),    colour(160, 70,20,100), trackercolour(250,250,200), FontColour("White"), channel("dur"),    range(0.003, 0.1, 0.012, 0.5, 0.00001)
+rslider  bounds(480, 13, 65, 65), text("Width"),       colour(160, 70,20,100), trackercolour(250,250,200), FontColour("White"), channel("width"),  range(0, 2.00, 0)
 checkbox bounds(550, 18, 45, 45) channel("indicator"), FontColour("White"), colour(255, 50, 50)  value(0), shape("ellipse")
 checkbox bounds(600, 18, 45, 45) channel("indicator2"), FontColour("White"), colour(100,255,100)  value(0), shape("ellipse")
 
-hslider  bounds( 10, 75,750, 40), colour(160, 70,20,100), tracker(160, 70, 20,100), FontColour("White"), channel("tempo"), range(10,1000, 90, 1, 1) textBox(1)
+hslider  bounds( 10, 75,750, 40), colour(160, 70,20,100), trackercolour(160, 70, 20,100), FontColour("White"), channel("tempo"), range(10,1000, 90, 1, 1) textBox(1)
 label    bounds(345, 110, 80, 12), text("Tempo [BPM]"), fontcolour("white")
 
-groupbox bounds(655, 25,1030, 520), colour(160, 70,20,100), line(0), popup(1), plant("Large Indicators"){
+groupbox bounds(655, 25,1030, 520), colour(160, 70,20,100), line(0), popup(1), plant("Large LEDs"){
 checkbox bounds( 10, 10,500,500) channel("indicator"), FontColour("White"), colour(255, 50, 50)  value(0), shape("ellipse")
 checkbox bounds(520, 10,500,500) channel("indicator2"), FontColour("White"), colour(100,255,100)  value(0), shape("ellipse")
 }

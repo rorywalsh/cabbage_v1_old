@@ -26,7 +26,7 @@ checkbox bounds(250,  0,  10, 10), channel("Act6"),  value(0), colour("white"), 
 checkbox bounds(300,  0,  10, 10), channel("Act7"),  value(0), colour("white"), shape("ellipse")
 checkbox bounds(350,  0,  10, 10), channel("Act8"),  value(0), colour("white"), shape("ellipse")
                                                                                   
-table bounds(  5, 10, 400, 115), channel("notetable","amptable","speedtable"), tableNumbers(1,2,3), readonly(1), colour("yellow","green","blue")
+table bounds(  5, 10, 400, 115), channel("notetable","amptable","speedtable"), tableNumbers(1,2,3), tablecolour("yellow","green","blue")
 
 rslider bounds(  5,130, 50, 50), channel("note1"), text("Note.1"), range(0, 108, 48, 1, 1),colour("yellow")  
 rslider bounds( 55,130, 50, 50), channel("note2"), text("Note.2"), range(0, 108, 50, 1, 1),colour("yellow")
@@ -60,11 +60,11 @@ rslider bounds(235,310, 50, 55), channel("echo"), text("Echo"), range(0, 1.00, 0
 rslider bounds(290,310, 50, 55), channel("rpts"), text("Repeats"), range(0, 1.00, 0.4), colour("pink")
 rslider bounds(345,310, 50, 55), channel("time"), text("Time"), range(0, 7, 3,1,1), colour("pink")
 rslider bounds(345,370, 50, 55), channel("amp"), text("Level"), range(0, 1.00, 0.6), colour("orange")
-vslider bounds( 25,357,50,  60), text(""), channel("dir"), fontcolour("black"), range(0, 2, 1,1,1), colour("white"), tracker("black")
+vslider bounds( 25,357,50,  60), text(""), channel("dir"), fontcolour("black"), range(0, 2, 1,1,1), colour("white"), trackercolour("black")
 label    bounds( 50,370, 55, 12), text("Bwd"),  FontColour("white")
 label    bounds( 50,386, 55, 12), text("Fwd/Bwd"),  FontColour("white")
 label    bounds( 50,403, 55, 12), text("Fwd"),  FontColour("white")
-hslider bounds(105,370, 240, 45), channel("tempo"),range(10,500,150, 1, 1), colour(150,150,150), tracker("black")
+hslider bounds(105,370, 240, 45), channel("tempo"),range(10,500,150, 1, 1), colour(150,150,150), trackercolour("black")
 label    bounds(205,402, 55, 14), text("Tempo"),  FontColour("white")
 </Cabbage>                                                   
                     

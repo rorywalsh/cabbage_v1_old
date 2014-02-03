@@ -1,14 +1,14 @@
 <Cabbage>
 form caption("pvsAdsyn") size(580, 90), pluginID("adsy")
 image pos(0, 0), size(580, 90), colour(200,100,50,150), shape("rounded"), outline("white"), line(5) 
-rslider bounds(10, 11, 70, 70), text("Freq.Mod."), channel("fmod"), range(0.25, 4, 1), fontcolour("white"), colour(200,100,50,250), tracker(tan)
-rslider bounds(80, 11, 70, 70), text("Num.Osc.s"), channel("noscs"), range(1, 1024, 256,1,1), fontcolour("white"), colour(200,100,50,250), tracker(tan)
-rslider bounds(150, 11, 70, 70), text("Bin Offset"), channel("binoffset"), range(0, 256, 1,1,1), fontcolour("white"), colour(200,100,50,250), tracker(tan)
-rslider bounds(220, 11, 70, 70), text("Bin Incr."), channel("binincr"), range(1, 32, 1,1,1), fontcolour("white"), colour(200,100,50,250), tracker(tan)
-rslider bounds(290, 11, 70, 70), text("FFT Size"), channel("att_table"), range(1, 8, 5, 1,1), fontcolour("white"), colour(200,100,50,250), tracker(tan)
-rslider bounds(360, 11, 70, 70), text("Feedback"), channel("feedback"), range(0, 0.99, 0), fontcolour("white"), colour(200,100,50,250), tracker(tan)
-rslider bounds(430, 11, 70, 70), text("Mix"), channel("mix"), range(0, 1.00, 1), fontcolour("white"), colour(200,100,50,250), tracker(tan)
-rslider bounds(500, 11, 70, 70), text("Level"), channel("lev"), range(0, 5.00, 0.5, 0.5), fontcolour("white"), colour(200,100,50,250), tracker(tan)
+rslider bounds(10, 11, 70, 70),  text("Freq.Mod."),  channel("fmod"),      range(0.25, 4, 1),        fontcolour("white"), colour(200,100,50,250), trackercolour(tan)
+rslider bounds(80, 11, 70, 70),  text("Num.Osc.s"),  channel("noscs"),     range(1, 1024, 256,1,1),  fontcolour("white"), colour(200,100,50,250), trackercolour(tan)
+rslider bounds(150, 11, 70, 70), text("Bin Offset"), channel("binoffset"), range(0, 256, 1,1,1),     fontcolour("white"), colour(200,100,50,250), trackercolour(tan)
+rslider bounds(220, 11, 70, 70), text("Bin Incr."),  channel("binincr"),   range(1, 32, 1,1,1),      fontcolour("white"), colour(200,100,50,250), trackercolour(tan)
+rslider bounds(290, 11, 70, 70), text("FFT Size"),   channel("att_table"), range(1, 8, 5, 1,1),      fontcolour("white"), colour(200,100,50,250), trackercolour(tan)
+rslider bounds(360, 11, 70, 70), text("Feedback"),   channel("feedback"),  range(0, 0.99, 0),        fontcolour("white"), colour(200,100,50,250), trackercolour(tan)
+rslider bounds(430, 11, 70, 70), text("Mix"),        channel("mix"),       range(0, 1.00, 1),        fontcolour("white"), colour(200,100,50,250), trackercolour(tan)
+rslider bounds(500, 11, 70, 70), text("Level"),      channel("lev"),       range(0, 5.00, 0.5, 0.5), fontcolour("white"), colour(200,100,50,250), trackercolour(tan)
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>

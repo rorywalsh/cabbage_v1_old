@@ -20,8 +20,6 @@
   
 #include "CabbageGUIClass.h"
 
-
-
 CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 								debugMessage(""), 
 								plant(""), 

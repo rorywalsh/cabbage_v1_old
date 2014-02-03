@@ -1375,7 +1375,7 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
 		tokes.addTokens(csdText[i].trimEnd(), ", ", "\"");
 		if(tokes[0].equalsIgnoreCase(String("form"))){
 			CabbageGUIClass cAttr(csdText[i].trimEnd(), 0);		
-			if(cAttr.getStringProp("pluginID").length()!=4){
+			if(cAttr.getStringProp(CabbageIDs::pluginid).length()!=4){
 				showMessage(String("Your plugin ID is not the right size. It MUST be 4 characters long. Some hosts may not be able to load your plugin"), lookAndFeel);
 				return 0;
 			}

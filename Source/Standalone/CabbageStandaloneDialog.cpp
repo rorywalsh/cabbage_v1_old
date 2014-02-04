@@ -411,7 +411,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 {
 //first we check that the audio device is up and running ok
 stopTimer();
-
+  
 filter->suspendProcessing(true);
 
 
@@ -1031,7 +1031,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		else
 			setPreference(appProperties, "DisableGUIEditModeWarning", 0);
 	}
-	//------- enable GUI edito mode------
+	//------- enable GUI edit mode------
 	else if(options==100){
 		if(getPreference(appProperties, "DisableGUIEditModeWarning"))
 			showMessage("", "Warning!! This feature is bleeding edge! (that's programmer speak for totally untested and likely to crash hard!). If you like to live on the edge, disable this warning under the 'Preferences' menu command and try 'Edit Mode' again, otherwise just let it be...", lookAndFeel);
@@ -1041,12 +1041,14 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	if(isAFileOpen == true)
 		if(filter->isGuiEnabled()){
 		startTimer(100);
+		filter->suspendProcessing(false);
 		((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
 		filter->setGuiEnabled(false);
 		}
 		else{
 		((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(true);
 		filter->setGuiEnabled(true);
+		filter->suspendProcessing(true);
 		stopTimer();
 		//setPreference(appProperties, "ExternalEditor", 0);
 		}
@@ -1194,7 +1196,7 @@ File thisFile(File::getSpecialLocation(File::currentExecutableFile));
 
 if(!csdFile.exists()){
 					showMessage("", "You need to open a Cabbage instrument before you can export one as a plugin!", lookAndFeel, this);
-					return 0;
+					return 0; 
 				}
 #ifdef LINUX
 	FileChooser saveFC(String("Save as..."), File::nonexistent, String(""));
@@ -1375,7 +1377,7 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
 		tokes.addTokens(csdText[i].trimEnd(), ", ", "\"");
 		if(tokes[0].equalsIgnoreCase(String("form"))){
 			CabbageGUIClass cAttr(csdText[i].trimEnd(), 0);		
-			if(cAttr.getStringProp("pluginID").length()!=4){
+			if(cAttr.getStringProp(CabbageIDs::pluginid).length()!=4){
 				showMessage(String("Your plugin ID is not the right size. It MUST be 4 characters long. Some hosts may not be able to load your plugin"), lookAndFeel);
 				return 0;
 			}

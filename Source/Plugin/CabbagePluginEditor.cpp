@@ -2372,7 +2372,7 @@ if(!getFilter()->isGuiEnabled()){
 								if(fc.browseForFileToOpen()){
 									selectedFile = fc.getResult();
 									getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel), 
-																								selectedFile.getFullPathName(),
+																								selectedFile.getFullPathName().replace("\\", "\\\\"),
 																								"string");
 										}
 										Logger::writeToLog(selectedFile.getFullPathName());

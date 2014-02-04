@@ -148,8 +148,11 @@ if(csCompileResult==0){
         csound->PerformKsmps();
         csound->SetScoreOffsetSeconds(0);
         csound->RewindScore();
+		#ifdef WIN32
+		csound->SetChannel("CABBAGE_CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());	
+		#else
 		csound->SetChannel("CABBAGE_CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().toUTF8().getAddress());	
-
+		#endif
         Logger::writeToLog("Csound compiled your file");
   
 		//csound->SetYieldCallback(CabbagePluginAudioProcessor::yieldCallback);
@@ -296,7 +299,11 @@ if(csCompileResult==0){
         csoundStatus = true;
         debugMessageArray.add(VERSION);
         debugMessageArray.add(String("\n"));
-		csound->SetChannel("CABBAGE_CSD_PATH", csdFile.getParentDirectory().getFullPathName().toUTF8().getAddress());	
+		#ifdef WIN32
+		csound->SetChannel("CABBAGE_CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());	
+		#else
+		csound->SetChannel("CABBAGE_CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());	
+		#endif	
 
 }
 else{
@@ -383,7 +390,7 @@ soundFileIndex = 0;
 midiOutputBuffer.clear();
 getCallbackLock().enter();
 csound->DeleteChannelList(csoundChanList);
-//csound->SetHostImplementedMIDIIO(true);
+csound->SetHostImplementedMIDIIO(true);
 
 csound->Reset();
 xyAutosCreated = false;
@@ -427,7 +434,12 @@ if(csCompileResult==0){
 												guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
 		}
 
-		csound->SetChannel("CABBAGE_CSD_PATH", file.getParentDirectory().getFullPathName().toUTF8().getAddress());
+		#ifdef WIN32
+		csound->SetChannel("CABBAGE_CSD_PATH", file.getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());	
+		#else
+		csound->SetChannel("CABBAGE_CSD_PATH", file.getParentDirectory().getFullPathName().toUTF8().getAddress());	
+		#endif
+		
 		this->suspendProcessing(false);
 		
 		return;

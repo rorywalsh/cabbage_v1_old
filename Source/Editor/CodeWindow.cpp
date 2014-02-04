@@ -677,7 +677,7 @@ untitledCSD=
 "a2 inch 2\n"
 "\n"
 "\n"
-"outs a1, a2\n"
+";outs a1, a2\n"
 "endin\n"
 "\n"
 "</CsInstruments>  \n"

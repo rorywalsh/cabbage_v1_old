@@ -81,6 +81,7 @@ protected:
 		bool updateTable;
 		Array<int> tableNumbers;
 		AudioSourceChannelInfo soundfilerChannelData;
+		AudioPlayHead::CurrentPositionInfo hostInfo;
 		int soundFileIndex;
 		//ScopedPointer<FileLogger> fileLogger;
 

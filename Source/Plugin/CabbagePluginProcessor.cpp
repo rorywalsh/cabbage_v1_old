@@ -109,7 +109,6 @@ csound->SetExternalMidiReadCallback(ReadMidiData);
 csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
 csound->SetExternalMidiWriteCallback(WriteMidiData);
 
-
 #ifndef Cabbage_Plugin_Host
 if(!getPreference(appProperties, "UseCabbageIO")){
 	csoundPerfThread = new CsoundPerformanceThread(csound);
@@ -167,6 +166,8 @@ if(csCompileResult==0){
         csoundStatus = true;
         debugMessageArray.add(CABBAGE_VERSION);
         debugMessageArray.add(String("\n"));
+		this->setLatencySamples(csound->GetKsmps());
+		updateHostDisplay();
 	
 }
 else{
@@ -295,6 +296,8 @@ if(csCompileResult==0){
         cs_scale = csound->Get0dBFS();
         numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
         csndIndex = csound->GetKsmps();
+		this->setLatencySamples(csound->GetKsmps());
+		updateHostDisplay();
 		//soundFilerVector = new MYFLT[csdKsmps];
         csoundStatus = true;
         debugMessageArray.add(VERSION);
@@ -1070,7 +1073,24 @@ sendChangeMessage();
 void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
 {
 #ifndef Cabbage_No_Csound
-if(!CSCompResult){
+if(!csCompileResult){
+#ifndef Cabbage_Build_Standalone
+
+                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+                        csound->SetChannel(CabbageIDs::hostbpm.toUTF8(), hostInfo.bpm);
+                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+                        csound->SetChannel(CabbageIDs::timeinseconds.toUTF8(), hostInfo.timeInSeconds);
+                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+                        csound->SetChannel(CabbageIDs::isplaying.toUTF8(), hostInfo.isPlaying);
+                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+                        csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
+                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+                        csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
+
+#endif
+
+
+
 for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 		{
 		//Logger::writeToLog("MessageType:"+messageQueue.getOutgoingChannelMessageFromQueue(i).type);
@@ -1295,35 +1315,6 @@ void CabbagePluginAudioProcessor::releaseResources()
 //host widgets are being used
 void CabbagePluginAudioProcessor::timerCallback(){
 #ifndef Cabbage_No_Csound
-
-if(!isGuiEnabled()){
-        //initiliase any channels send host information to Csound
-        AudioPlayHead::CurrentPositionInfo hostInfo;
-        for(int i=0;i<(int)getGUILayoutCtrlsSize();i++){
-                if(getGUILayoutCtrls(i).getStringProp("type")==String("hostbpm")){
-                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.bpm);
-                }
-                else if(getGUILayoutCtrls(i).getStringProp("type")==String("hosttime")){
-                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.timeInSeconds);
-                }
-                else if(getGUILayoutCtrls(i).getStringProp("type")==String("hostplaying")){
-                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.isPlaying);
-                }
-                else if(getGUILayoutCtrls(i).getStringProp("type")==String("hostrecording")){
-                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.isRecording);
-                }
-                else if(getGUILayoutCtrls(i).getStringProp("type")==String("hostppqpos")){
-                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), hostInfo.ppqPosition);
-                }
-        }
-
-}// end of GUI enabled check
-
 for(int y=0;y<xyAutomation.size();y++){
 	if(xyAutomation[y])
 	xyAutomation[y]->update();
@@ -1368,18 +1359,14 @@ if(!isSuspended() && !isGuiEnabled()){
 				if(audioSourcesArray.size()>0)
 				sendAudioToCsoundFromSoundFilers(csound->GetKsmps());
 
-				CSCompResult = csound->PerformKsmps();
-				if(CSCompResult!=0)
+				csCompileResult = csound->PerformKsmps();
+				if(csCompileResult!=0)
 					suspendProcessing(true);
-				else{
-					
-					
-					
-				}
+
 				getCallbackLock().exit();
 				csndIndex = 0;
 			}
-			if(!CSCompResult)
+			if(!csCompileResult)
 				{
 				for(int channel = 0; channel < getNumOutputChannels(); channel++ )
 					{

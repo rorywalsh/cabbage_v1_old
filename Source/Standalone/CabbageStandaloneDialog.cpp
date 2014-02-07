@@ -662,6 +662,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		subMenu.addItem(5, TRANS("Plugin Synth"));
 		subMenu.addItem(6, TRANS("Plugin Effect"));
 		m.addSubMenu(TRANS("Export As..."), subMenu);
+		subMenu.clear();
+		subMenu.addItem(11, TRANS("Effects"));
+		subMenu.addItem(12, TRANS("Synths"));
+		m.addSubMenu("Batch Convert", subMenu);
 #endif
 		m.addSeparator();
 	}
@@ -675,11 +679,6 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	else
 	m.addItem(9, TRANS("Show MIDI Debug Information"));
 	*/
-		subMenu.clear();
-		subMenu.addItem(11, TRANS("Effects"));
-		subMenu.addItem(12, TRANS("Synths"));
-		//m.addSubMenu(TRANS("Batch Convert"), subMenu);
-		m.addSeparator();
 
 /*
 	m.addSeparator();
@@ -734,7 +733,6 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 #endif
 //END of commented section for Windows Csound installer
 		m.addSubMenu("Preferences", subMenu);
-		
 		m.addItem(2000, "About");
 		//m.addItem(2345, "Test button");
 	}
@@ -920,10 +918,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
 	//----- batch process ------
 	else if(options==11)
-		BatchProcess(String("VST"));
+		batchProcess(String("VST"));
 
 	else if(options==12)
-		BatchProcess(String("VSTi"));
+		batchProcess(String("VSTi"));
 
 	//----- auto-update file when saved remotely ------
 	else if(options==299){
@@ -1452,10 +1450,10 @@ return 1;
 //==============================================================================
 // Batch process multiple csd files to convert them to plugins libs. 
 //==============================================================================
-void StandaloneFilterWindow::BatchProcess(String type){
+void StandaloneFilterWindow::batchProcess(String type){
 File thisFile(File::getSpecialLocation(File::currentApplicationFile));
 #ifdef WIN32  
-FileChooser saveFC(String("Select files..."), File::nonexistent, String(""));
+FileChooser saveFC(String("Select files..."), File::nonexistent, String("*.csd;"));
 String VST;
 	if (saveFC.browseForMultipleFilesToOpen()){
 		if(type.contains("VSTi"))
@@ -1480,7 +1478,7 @@ String VST;
 		//loc_csdFile.replaceWithText(csdFile.loadFileAsString());
 		}
 		}
-		showMessage("Batch Convertion Complete");
+		showMessage("Batch Convertion Complete", &getLookAndFeel());
 	}
 	}
 #endif

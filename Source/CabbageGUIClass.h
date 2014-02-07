@@ -100,7 +100,7 @@ namespace CabbageIDs
 	static const Identifier xychannel = "xychannel";
 	static const Identifier guirefresh = "guirefresh";
 	
-	//type of widgets
+	//type of widgets/controls/messages
 	static const String combobox = "combobox";
 	static const String rslider = "rslider";
 	static const String hslider = "hslider";
@@ -114,6 +114,11 @@ namespace CabbageIDs
 	static const String form = "form";
 	static const String xypad = "xypad";
 	static const String stringchannel = "string";
+	static const String hostbpm = "HOST_BPM";
+	static const String timeinseconds = "TIME_IN_SECONDS";
+	static const String isplaying = "IS_PLAYING";
+	static const String isrecording = "IS_RECORDING";
+	static const String hostppqpos = "HOST_PPQ_POS";
 	static const String csoundoutput = "csoundoutput";
 
 };

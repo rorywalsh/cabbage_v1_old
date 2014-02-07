@@ -141,7 +141,7 @@ private:
     ScopedPointer<AudioDeviceManager> deviceManager;
 	void sendMessageToWinXound(String messageType, String message);
 	void sendMessageToWinXound(String messageType, int value);
-	void batchProcess(String pluginType);
+	void batchProcess(String pluginType, bool dir);
 	AudioProcessorPlayer player;
     TextButton optionsButton;
     void deleteFilter();

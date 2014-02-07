@@ -148,9 +148,9 @@ if(csCompileResult==0){
         csound->SetScoreOffsetSeconds(0);
         csound->RewindScore();
 		#ifdef WIN32
-		csound->SetChannel("CABBAGE_CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());	
+		csound->SetChannel("CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());	
 		#else
-		csound->SetChannel("CABBAGE_CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().toUTF8().getAddress());	
+		csound->SetChannel("CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().toUTF8().getAddress());	
 		#endif
         Logger::writeToLog("Csound compiled your file");
   
@@ -303,9 +303,9 @@ if(csCompileResult==0){
         debugMessageArray.add(VERSION);
         debugMessageArray.add(String("\n"));
 		#ifdef WIN32
-		csound->SetChannel("CABBAGE_CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());	
+		csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());	
 		#else
-		csound->SetChannel("CABBAGE_CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());	
+		csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());	
 		#endif	
 		
 		//send host info before performance.. 
@@ -450,9 +450,9 @@ if(csCompileResult==0){
 		}
 
 		#ifdef WIN32
-		csound->SetChannel("CABBAGE_CSD_PATH", file.getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());	
+		csound->SetChannel("CSD_PATH", file.getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());	
 		#else
-		csound->SetChannel("CABBAGE_CSD_PATH", file.getParentDirectory().getFullPathName().toUTF8().getAddress());	
+		csound->SetChannel("CSD_PATH", file.getParentDirectory().getFullPathName().toUTF8().getAddress());	
 		#endif
 		
 		this->suspendProcessing(false);

@@ -665,7 +665,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		subMenu.clear();
 		subMenu.addItem(11, TRANS("Effects"));
 		subMenu.addItem(12, TRANS("Synths"));
-		m.addSubMenu("Batch Convert", subMenu);
+		m.addSubMenu("Batch Convert (Multiple)", subMenu);
+		subMenu.clear();
+		subMenu.addItem(13, TRANS("Effects"));
+		subMenu.addItem(14, TRANS("Synths"));
+		m.addSubMenu("Batch Convert (Directory)", subMenu);
 #endif
 		m.addSeparator();
 	}
@@ -918,10 +922,16 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
 	//----- batch process ------
 	else if(options==11)
-		batchProcess(String("VST"));
+		batchProcess(String("VST"), false);
 
 	else if(options==12)
-		batchProcess(String("VSTi"));
+		batchProcess(String("VSTi"), false);
+	//----- batch process ------
+	else if(options==13)
+		batchProcess(String("VST"), true);
+
+	else if(options==14)
+		batchProcess(String("VSTi"), true);
 
 	//----- auto-update file when saved remotely ------
 	else if(options==299){
@@ -1450,11 +1460,23 @@ return 1;
 //==============================================================================
 // Batch process multiple csd files to convert them to plugins libs. 
 //==============================================================================
-void StandaloneFilterWindow::batchProcess(String type){
+void StandaloneFilterWindow::batchProcess(String type, bool dir){
 File thisFile(File::getSpecialLocation(File::currentApplicationFile));
 #ifdef WIN32  
 FileChooser saveFC(String("Select files..."), File::nonexistent, String("*.csd;"));
 String VST;
+
+Array<File> files;
+if(dir){
+		if (saveFC.browseForDirectory()){
+		if(type.contains("VSTi"))
+			VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbagePluginSynth.dat");
+		else if(type.contains(String("VST")))
+			VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbagePluginEffect.dat");
+		saveFC.getResult().findChildFiles(files, 2, true, "*.csd;");		
+		}	
+}
+else{
 	if (saveFC.browseForMultipleFilesToOpen()){
 		if(type.contains("VSTi"))
 			VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbagePluginSynth.dat");
@@ -1463,13 +1485,18 @@ String VST;
 		else if(type.contains(String("AU"))){
 			showMessage("This feature only works on computers running OSX");
 			}
-	//showMessage(VST);
+			files = saveFC.getResults();
+	}
+}
 	File VSTData(VST);
 	if(!VSTData.exists())  
-		showMessage("problem with plugin lib");
+		showMessage("Cannot find plugin libs", &getLookAndFeel());
 	else{
-		for(int i=0;i<saveFC.getResults().size();i++){
-			File dll(saveFC.getResults().getReference(i).withFileExtension(".dll").getFullPathName());
+		
+		
+		
+		for(int i=0;i<files.size();i++){
+			File dll(files.getReference(i).withFileExtension(".dll").getFullPathName());
 		//showMessage(dll.getFullPathName());
 		if(!VSTData.copyFileTo(dll))	
 			showMessage("problem moving plugin lib");
@@ -1480,6 +1507,6 @@ String VST;
 		}
 		showMessage("Batch Convertion Complete", &getLookAndFeel());
 	}
-	}
+	
 #endif
 }

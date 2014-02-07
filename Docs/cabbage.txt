@@ -795,6 +795,24 @@ The values passed to bounds() for the child controls can be either fractions pro
 
 The major advantage to using plant abstractions is that you can easily move and resize them without needing to modify the dimensions of the child components contained within. You can also save your plants and recall them later from a plant repository. Plants are intended to be reused across instruments so users don't have to keep rebuilding GUIs from scratch. They can also be used to give your plugins a unique look and feel. 
 
+[[x46]]
+Reserved Channels
+-----------------
+Cabbage reserves several channels which are used to send information to Csound from either the host application, or from Cabbage itself. To retrieve info from any of these channels just use a chnget opcode.
+
+'CSD_PATH': This string channel will retrieve the full path to the current csd file.
+
+'HOST_BPM': Retrieve the currents host bpm. This will be updated whenever the host BPM changes.
+
+'IS_PLAYING': Pressing play on the host transport dialogue will cause this channel to send a 1. Hitting stop will send a 0.
+
+'IS_RECORDING': As above only for monitoring the record status of a session.
+
+'TIME_IN_SECONDS': Return the current time in seconds from the start of the track.
+
+'HOST_PPQ_POS': Return the position of the start of the last bar, in pulses-per-quarter-note.
+
+
 [[x41]]
 Preset Snapshots
 ----------------
@@ -848,8 +866,7 @@ generated automatically by the DocBook toolchain.
 ////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////
-C:\MyDocuments\SourceCode\cabbage\cabbage\doc>python ../../../asciidoc/asciidoc.
-py -d book -a toc -a icons cabbage.txt
+C:\MyDocuments\SourceCode\cabbage\cabbage\doc>python ../../../asciidoc/asciidoc.py -d book -a toc -a icons cabbage.txt
 python ../../asciidoc/asciidoc.py -d book -a toc -a icons cabbage.txt
 ////////////////////////////////////////////////////////////////
 

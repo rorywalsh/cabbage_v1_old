@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.6.8" />
+<meta name="generator" content="AsciiDoc 8.6.7" />
 <title><span class="image">
 <img src="images/hlogo_blue_text.PNG" alt="Cabbage" />
 </span></title>
@@ -28,7 +28,7 @@ thead, p.table.header,
 
 body {
   margin: 1em 5% 1em 5%;
-  background-color: rgb(30, 30, 30);
+  background-color:black;
 }
 
 a {
@@ -425,7 +425,7 @@ tt {
   font-family: "Courier New", Courier, monospace;
   font-size: inherit;
   font-weight: bold;
-  color: black;
+  color: white;
 }
 
 div.tableblock {
@@ -546,8 +546,6 @@ body.manpage div.sectionbody {
 @media print {
   body.manpage div#toc { display: none; }
 }
-
-
 </style>
 <script type="text/javascript">
 /*<![CDATA[*/
@@ -887,7 +885,7 @@ asciidoc.install(2);
 <div class="paragraph"><p>Each and every Cabbage widget has 4 common parameters: position on screen(x, y) and size(width, height). Apart from position and size all other parameters are optional and if left out default values will be assigned. To set control parameters you will need to use an appropriate identifier after the control name. In the following example, <em>form</em> is the Cabbage specific control, while size() and caption() are two identifiers used to control it how it appears.</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>control size(400, 400), caption(“Hello World”)</code></pre>
+<pre><tt>control size(400, 400), caption(“Hello World”)</tt></pre>
 </div></div>
 <div class="admonitionblock">
 <table><tr>
@@ -902,7 +900,7 @@ asciidoc.install(2);
 <div class="paragraph"><p>Code to create the most basic of Cabbage synthesisers is presented below. This instrument uses the MIDI interop command line flags to pipe MIDI data directly to p-fields in instrument 1. In this case all MIDI pitch data is sent directly to p4, and all MIDI amplitude data is sent to p5. MIDI data being sent on channel 1 will cause instrument 1 to play. Data being sent on channel 2 will cause instrument 2 to play. If you wish to assign an instrument to a unique MIDI channel you can use the <em>massign</em> opcode.</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>&lt;Cabbage&gt;
+<pre><tt>&lt;Cabbage&gt;
 form size(400, 120), caption("Simple Synth"), pluginID("plu1")
 keyboard bounds(0, 0, 380, 100)
 &lt;/Cabbage&gt;
@@ -927,7 +925,7 @@ endin
 f1 0 1024 10 1
 f0 3600
 &lt;/CsScore&gt;
-&lt;/CsoundSynthesizer&gt;</code></pre>
+&lt;/CsoundSynthesizer&gt;</tt></pre>
 </div></div>
 <div class="admonitionblock">
 <table><tr>
@@ -944,12 +942,12 @@ f0 3600
 <div class="paragraph"><p>When one supplies a channel name to the channel() identifier Csound will listen for data being sent on that channel through the use of the named channel opcodes. There are a few ways of retrieving data from the named channel bus in Csound, the most straightforward one being the chnget opcode. It&#8217;s defined in the Csound reference manual as:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>kval chnget Sname</code></pre>
+<pre><tt>kval chnget Sname</tt></pre>
 </div></div>
 <div class="paragraph"><p><em>Sname</em> is the name of the channel. This same name must be passed to the <em>channel()</em> identifier in the corresponding &lt;Cabbage&gt; section. Our previous example can be modified so that a slider now controls the volume of our oscillator.</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>&lt;Cabbage&gt;
+<pre><tt>&lt;Cabbage&gt;
 form size(400, 170), caption("Simple Synth"), pluginID("plu1")
 hslider bounds(0, 110, 380, 50), channel("gain"), range(0, 1, .5), textBox(1)
 keyboard bounds(0, 0, 380, 100)
@@ -976,7 +974,7 @@ endin
 f1 0 1024 10 1
 f0 3600
 &lt;/CsScore&gt;
-&lt;/CsoundSynthesizer&gt;</code></pre>
+&lt;/CsoundSynthesizer&gt;</tt></pre>
 </div></div>
 <div class="paragraph"><p>In the example above we use a <em>hslider</em> control which is a horizontal slider. The bounds() identifier sets up the position and size of the widget on screen. The most important identifier is channel(). It is passed a string called <em>gain". This is the same string we pass to 'chnget</em> in our Csound code. When a user moves the slider, the current position of the slider is sent to Csound on a channel named "gain". Without the channel() identifier no communication would take place between the Cabbage control and Csound. The above example also uses a MIDI keyboard that can be used en lieu of a real MIDI keyboard.</p></div>
 <div class="paragraph"><p><span class="image">
@@ -988,7 +986,7 @@ f0 3600
 <div class="paragraph"><p>Cabbage effects are used to process incoming audio. To do this we make use of the signal input opcodes. One can use either <em>ins</em> or <em>inch</em>. The following code is for a simple reverb unit. It accepts a stereo input and outputs a stereo signal.</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>&lt;Cabbage&gt;
+<pre><tt>&lt;Cabbage&gt;
 form caption("Reverb") size(230, 130)
 groupbox text("Stereo Reverb"), bounds(0, 0, 200, 100)
 rslider channel("size"), bounds(10, 25, 70, 70), text("Size"), range(0, 2, 0.2)
@@ -1019,7 +1017,7 @@ endin
 f1 0 4096 10 1
 i1 0 1000
 &lt;/CsScore&gt;
-&lt;/CsoundSynthesizer&gt;</code></pre>
+&lt;/CsoundSynthesizer&gt;</tt></pre>
 </div></div>
 <div class="paragraph"><p>The above instrument uses 3 sliders to control the reverb size, the cut-off frequency (for the internal low-pass filters set up on the different delay lines), and overall gain. The range() identifier is used with each slider to specify the min, max and starting value of the sliders.</p></div>
 <div class="paragraph"><p><span class="image">
@@ -1082,12 +1080,12 @@ i1 0 1000
 <h3 id="x26">Form</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>form caption("title"), size(Width, Height), pluginID("plug"), colour("colour")</code></pre>
+<pre><tt>form caption("title"), size(Width, Height), pluginID("plug"), colour("colour")</tt></pre>
 </div></div>
 <div class="paragraph"><p>Form creates the main application window. pluginID() is the only required identifier. The default values for size are 600x300.</p></div>
-<div class="paragraph"><p><code>caption</code>: The string passed to caption will be the string that appears on the main application window.</p></div>
-<div class="paragraph"><p><code>size(Width, Height)</code>: integer values denoted the width and height of the form.</p></div>
-<div class="paragraph"><p><code>pluginID("plug")</code>: this unique string must be four characters long. It is the ID given to your plugin when loaded by plugin hosts.</p></div>
+<div class="paragraph"><p><tt>caption</tt>: The string passed to caption will be the string that appears on the main application window.</p></div>
+<div class="paragraph"><p><tt>size(Width, Height)</tt>: integer values denoted the width and height of the form.</p></div>
+<div class="paragraph"><p><tt>pluginID("plug")</tt>: this unique string must be four characters long. It is the ID given to your plugin when loaded by plugin hosts.</p></div>
 <div class="paragraph"><p><em>colour("colour")</em>: This sets the background colour of the instrument. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p></div>
 <div class="admonitionblock">
 <table><tr>
@@ -1100,14 +1098,14 @@ i1 0 1000
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>form  caption("Simple Synth"), pluginID("plu1")</code></pre>
+<pre><tt>form  caption("Simple Synth"), pluginID("plu1")</tt></pre>
 </div></div>
 </div>
 <div class="sect2">
 <h3 id="x27">GroupBox</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>groupbox bounds(x, y, width, height)[, text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), popup(val)]</code></pre>
+<pre><tt>groupbox bounds(x, y, width, height)[, text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), popup(val)]</tt></pre>
 </div></div>
 <div class="paragraph"><p>Groupbox creates a container for other GUI controls. They do not communicate with Csound but can be useful for organising widgets into panels.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels)</p></div>
@@ -1120,7 +1118,7 @@ i1 0 1000
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>groupbox bounds(0, 0, 200, 100), text("Group box")</code></pre>
+<pre><tt>groupbox bounds(0, 0, 200, 100), text("Group box")</tt></pre>
 </div></div>
 <div class="paragraph"><p><span class="image">
 <img src="images/groupbox.PNG" alt="groupbox" />
@@ -1130,7 +1128,7 @@ i1 0 1000
 <h3 id="x28">Keyboard</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>keyboard bounds(x, y, width, height), value(note)</code></pre>
+<pre><tt>keyboard bounds(x, y, width, height), value(note)</tt></pre>
 </div></div>
 <div class="paragraph"><p>Keyboard create a piano keyboard that will send MIDI information to your Csound instrument. This component can be used together with a hardware controller. Pressing keys on the actual MIDI keyboard will cause the on-screen keys to light up.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels)</p></div>
@@ -1146,7 +1144,7 @@ i1 0 1000
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>keyboard bounds(0, 0, 200, 100), value(30)</code></pre>
+<pre><tt>keyboard bounds(0, 0, 200, 100), value(30)</tt></pre>
 </div></div>
 <div class="paragraph"><p><span class="image">
 <img src="images/keyboard.PNG" alt="keyboard" />
@@ -1156,7 +1154,7 @@ i1 0 1000
 <h3 id="x29">CsoundOutput</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>csoundoutput bounds(x, y, width, height), text("name")</code></pre>
+<pre><tt>csoundoutput bounds(x, y, width, height), text("name")</tt></pre>
 </div></div>
 <div class="paragraph"><p>csoundoutput will let you view the Csound output console within your instrument&#8217;s GUI, useful when <em>de-slugging</em> Cabbage instruments.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels)</p></div>
@@ -1164,7 +1162,7 @@ i1 0 1000
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>csoundoutput bounds(210, 00, 340, 145), text("Csound Output")</code></pre>
+<pre><tt>csoundoutput bounds(210, 00, 340, 145), text("Csound Output")</tt></pre>
 </div></div>
 <div class="paragraph"><p><span class="image">
 <img src="images/csoundoutput.PNG" alt="csound output" />
@@ -1174,8 +1172,8 @@ i1 0 1000
 <h3 id="x30">InfoButton</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>infobutton bounds(x, y, width, height), text("name")[, colour("colour"), fontcolour("colour") \
-file("file name")]</code></pre>
+<pre><tt>infobutton bounds(x, y, width, height), text("name")[, colour("colour"), fontcolour("colour") \
+file("file name")]</tt></pre>
 </div></div>
 <div class="paragraph"><p>When users click an info button a web-browser will open showing the file passed to the file() identifier. This is useful for providing help files or any other additional information about your instruments. Currently there are no navigation buttons but users can move back and forward using links, or by right-clicking on a page.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels)</p></div>
@@ -1186,7 +1184,7 @@ file("file name")]</code></pre>
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>infobutton bounds(210, 00, 340, 145), text("Help"), file("help.html")</code></pre>
+<pre><tt>infobutton bounds(210, 00, 340, 145), text("Help"), file("help.html")</tt></pre>
 </div></div>
 <div class="admonitionblock">
 <table><tr>
@@ -1201,8 +1199,8 @@ file("file name")]</code></pre>
 <h3 id="x31">Image</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>image bounds(x, y, width, height), colour("colour")[, file("file name"), shape("type"), outline("colour"), line(thickness), 'plant("name"),
-popup(val)]</code></pre>
+<pre><tt>image bounds(x, y, width, height), colour("colour")[, file("file name"), shape("type"), outline("colour"), line(thickness), 'plant("name"),
+popup(val)]</tt></pre>
 </div></div>
 <div class="paragraph"><p>Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. The file must be in the same directory as your Cabbage instrument. If you simply wish to draw a shape you can choose a background colour with colour() and an outline colour with outline(). line() will let you determine the thickness of the outline.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels). If widget is part of a plant these values should be between 0 and 1. See PLANTS</p></div>
@@ -1216,9 +1214,9 @@ popup(val)]</code></pre>
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>image bounds(0, 10, 260, 190), colour("white")
+<pre><tt>image bounds(0, 10, 260, 190), colour("white")
 image bounds(5, 15, 250, 180), colour("brown")
-image bounds(30, 30, 200, 150), file("logo_cabbage_sw_no_text.PNG")</code></pre>
+image bounds(30, 30, 200, 150), file("logo_cabbage_sw_no_text.PNG")</tt></pre>
 </div></div>
 <div class="paragraph"><p><span class="image">
 <img src="images/images.PNG" alt="image" />
@@ -1228,7 +1226,7 @@ image bounds(30, 30, 200, 150), file("logo_cabbage_sw_no_text.PNG")</code></pre>
 <h3 id="x32">Line</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>line bounds(x, y, width, height)[, colour("colour")]</code></pre>
+<pre><tt>line bounds(x, y, width, height)[, colour("colour")]</tt></pre>
 </div></div>
 <div class="paragraph"><p>line is a very simple widget that lets you create a vertical line separator(or box). It is useful for placing on group components and images to help with layout design.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels). If widget is part of a plant these values should be between 0 and 1. See PLANTS</p></div>
@@ -1236,7 +1234,7 @@ image bounds(30, 30, 200, 150), file("logo_cabbage_sw_no_text.PNG")</code></pre>
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>groupbox bounds(5, 0, 200, 80), line(0), text("Formant Parameters One"), plant("formant1"){
+<pre><tt>groupbox bounds(5, 0, 200, 80), line(0), text("Formant Parameters One"), plant("formant1"){
 rslider bounds(.06, .32, .6), text("Amp"), colour("grey"), channel("amp1"), range(0, .5, .5)
 rslider bounds(.29, .33, .6), text("BW"), colour("grey"), channel("bw1"), range(10, 120, 60)
 rslider bounds(.52, .33, .6), text("Rise"), colour("grey"), ,channel("rise1"), range(0.001, 0.01, 0.001)
@@ -1246,7 +1244,7 @@ line bounds(0.1, .25, .8, .03), colour("lime")
 line bounds(.5, .3, .01, .5), colour("lime")
 line bounds(.73, .3, .01, .5), colour("lime")
 line bounds(.27, .3, .01, .5), colour("lime")
-}</code></pre>
+}</tt></pre>
 </div></div>
 <div class="paragraph"><p><span class="image">
 <img src="images/line.PNG" alt="csound output" />
@@ -1256,7 +1254,7 @@ line bounds(.27, .3, .01, .5), colour("lime")
 <h3 id="x33">Label</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>label bounds(x, y, width, height), text("text")[, fontcolour("colour")]</code></pre>
+<pre><tt>label bounds(x, y, width, height), text("text")[, fontcolour("colour")]</tt></pre>
 </div></div>
 <div class="paragraph"><p>Label is useful for placing text on-screen.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels). If widget is part of a plant these values should be between 0 and 1. See PLANTS</p></div>
@@ -1265,15 +1263,15 @@ line bounds(.27, .3, .01, .5), colour("lime")
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>label bounds(0, 0, 3, 10), text("Label"), fontcolour("white")</code></pre>
+<pre><tt>label bounds(0, 0, 3, 10), text("Label"), fontcolour("white")</tt></pre>
 </div></div>
 </div>
 <div class="sect2">
 <h3 id="x34">Button</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>button bounds(x, y, width, height), channel("chanName")[, text("offCaption","onCaption"), caption("caption"), \
-        value(val), colour("colour"), fontcolour("colour"), latched(val)]</code></pre>
+<pre><tt>button bounds(x, y, width, height), channel("chanName")[, text("offCaption","onCaption"), caption("caption"), \
+        value(val), colour("colour"), fontcolour("colour"), latched(val)]</tt></pre>
 </div></div>
 <div class="paragraph"><p>Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels). If widget is part of a plant these values should be between 0 and 1. See PLANTS</p></div>
@@ -1284,11 +1282,11 @@ line bounds(.27, .3, .01, .5), colour("lime")
 <div class="paragraph"><p><em>colour("colour")</em>: This sets the colour of the image if a file name is not passed to file. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p></div>
 <div class="paragraph"><p><em>fontcolour("colour")</em>: Sets the colour of the text that appears with the slider. See above for details on "colour".</p></div>
 <div class="paragraph"><p><em>latched(val)</em>: where val will be a 0 or a 1. With latched turned off the button will send a message to Csound on the initial mouse press, and as soon as the user releases the button. Therefore the button will toggle between 0 and 1 on each click rather than needing two separate mouse clicks.</p></div>
-<div class="paragraph"><p><code>Example:</code></p></div>
+<div class="paragraph"><p><tt>Example:</tt></p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>button bounds(0, 110, 120, 70), caption("Freq1"), text("On", "Off"), channel("freq2"), value(1)
-button bounds(150, 110, 120, 70), text("On", "Off"), channel("freq2"), value(0)</code></pre>
+<pre><tt>button bounds(0, 110, 120, 70), caption("Freq1"), text("On", "Off"), channel("freq2"), value(1)
+button bounds(150, 110, 120, 70), text("On", "Off"), channel("freq2"), value(0)</tt></pre>
 </div></div>
 <div class="paragraph"><p><span class="image">
 <img src="images/buttons.PNG" alt="Buttons" />
@@ -1298,8 +1296,8 @@ button bounds(150, 110, 120, 70), text("On", "Off"), channel("freq2"), value(0)<
 <h3 id="x35">Sliders</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>hslider bounds(x, y, width, height), channel("chanName")[, caption("caption"), text("name"), textBox(on/off), range(min, max, value, skew, incr),
-midCtrl(Channel, Ctrlnum), colour("colour"), fontcolour("colour"), tracker("colour")]</code></pre>
+<pre><tt>hslider bounds(x, y, width, height), channel("chanName")[, caption("caption"), text("name"), textBox(on/off), range(min, max, value, skew, incr),
+midCtrl(Channel, Ctrlnum), colour("colour"), fontcolour("colour"), tracker("colour")]</tt></pre>
 </div></div>
 <div class="paragraph"><p>Slider can be used to create an on-screen slider. Data can be sent to Csound on the channel specified through the chanName string. Presented above is the syntax for a horizontal slider, i.e., <em>hslider</em>. In order to change it to another slider type simple substitute hslider with the appropriate identifier as outlined below.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels). If widget is part of a plant these values should be between 0 and 1. See PLANTS</p></div>
@@ -1319,12 +1317,12 @@ midCtrl(Channel, Ctrlnum), colour("colour"), fontcolour("colour"), tracker("colo
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>rslider bounds(0, 110, 90, 90), caption("Freq1"), channel("freq2"), colour("cornflowerblue")\
+<pre><tt>rslider bounds(0, 110, 90, 90), caption("Freq1"), channel("freq2"), colour("cornflowerblue")\
         range(0, 1, .5), midictrl(0, 1)
 rslider bounds(100, 120, 70, 70), text("Freq2"), channel("freq2"), colour("red")\
          range(0, 1, .5), midictrl(0, 1)
 rslider bounds(190, 120, 70, 70), text("Freq3"), channel("freq2"), colour("green")\
-        text("Freq3"), textbox(1)</code></pre>
+        text("Freq3"), textbox(1)</tt></pre>
 </div></div>
 <div class="paragraph"><p><span class="image">
 <img src="images/sliders.PNG" alt="Sliders" />
@@ -1334,9 +1332,9 @@ rslider bounds(190, 120, 70, 70), text("Freq3"), channel("freq2"), colour("green
 <h3 id="x36">FileButton</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>filebutton bounds(x, y, width, height), channel("chanName")[, mode("mode"), \
+<pre><tt>filebutton bounds(x, y, width, height), channel("chanName")[, mode("mode"), \
         text("offCaption","onCaption"), populate("filetype", "dir"), caption("caption"), \
-        value(val), colour("colour"), fontcolour("colour")]</code></pre>
+        value(val), colour("colour"), fontcolour("colour")]</tt></pre>
 </div></div>
 <div class="paragraph"><p>A filebutton can be used to select files from disk. The filename selected, or created will be sent to Csound on the named channel as a string message. Filebuttons can also be used to select snapshot files for Cabbage to save parameter presets. See the populate identifier below.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels). If widget is part of a plant these values should be between 0 and 1. See PLANTS</p></div>
@@ -1348,11 +1346,11 @@ rslider bounds(190, 120, 70, 70), text("Freq3"), channel("freq2"), colour("green
 <div class="paragraph"><p><em>value(val)</em>: val sets the initial state of the control</p></div>
 <div class="paragraph"><p><em>colour("colour")</em>: This sets the colour of the image if a file name is not passed to file. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p></div>
 <div class="paragraph"><p><em>fontcolour("colour")</em>: Sets the colour of the text that appears with the slider. See above for details on "colour".</p></div>
-<div class="paragraph"><p><code>Example:</code></p></div>
+<div class="paragraph"><p><tt>Example:</tt></p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>button bounds(0, 110, 120, 70), caption("Freq1"), text("On", "Off"), channel("freq2"), value(1)
-button bounds(150, 110, 120, 70), text("On", "Off"), channel("freq2"), value(0)</code></pre>
+<pre><tt>button bounds(0, 110, 120, 70), caption("Freq1"), text("On", "Off"), channel("freq2"), value(1)
+button bounds(150, 110, 120, 70), text("On", "Off"), channel("freq2"), value(0)</tt></pre>
 </div></div>
 <div class="paragraph"><p><span class="image">
 <img src="images/buttons.PNG" alt="Buttons" />
@@ -1362,8 +1360,8 @@ button bounds(150, 110, 120, 70), text("On", "Off"), channel("freq2"), value(0)<
 <h3 id="x37">CheckBox</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>checkbox bounds(x, y, width, height), channel("chanName")[, text("name"), value(val), caption("Caption")], colour("colour"), shape("shape"),
-fontcolour("colour")</code></pre>
+<pre><tt>checkbox bounds(x, y, width, height), channel("chanName")[, text("name"), value(val), caption("Caption")], colour("colour"), shape("shape"),
+fontcolour("colour")</tt></pre>
 </div></div>
 <div class="paragraph"><p>Checkbox creates a checkbox which functions like a button, only the associated caption will not change when the user checks it. As with all controls capable of sending data to an instance of Csound the channel string is the channel on which the control will communicate with Csound.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels). If widget is part of a plant these values should be between 0 and 1. See PLANTS</p></div>
@@ -1377,8 +1375,8 @@ fontcolour("colour")</code></pre>
 <div class="paragraph"><p>Example</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>checkbox bounds(0, 110, 120, 70), caption("Freq1"), text("On"), channel("freq2")
-checkbox bounds(130, 110, 120, 70), text("Mute"), channel("freq2"), value(1)</code></pre>
+<pre><tt>checkbox bounds(0, 110, 120, 70), caption("Freq1"), text("On"), channel("freq2")
+checkbox bounds(130, 110, 120, 70), text("Mute"), channel("freq2"), value(1)</tt></pre>
 </div></div>
 <div class="paragraph"><p><span class="image">
 <img src="images/checkboxes.PNG" alt="Checkboxes" />
@@ -1388,8 +1386,8 @@ checkbox bounds(130, 110, 120, 70), text("Mute"), channel("freq2"), value(1)</co
 <h3 id="x38">ComboBox</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>combobox bounds(x, y, width, height), channel("chanName")[, value(val), items("item1", "item2", ...), \n
-        populate("filetype", "dir"), channeltype("type"), caption("caption"), colour("colour")]</code></pre>
+<pre><tt>combobox bounds(x, y, width, height), channel("chanName")[, value(val), items("item1", "item2", ...), \n
+        populate("filetype", "dir"), channeltype("type"), caption("caption"), colour("colour")]</tt></pre>
 </div></div>
 <div class="paragraph"><p>Combobox creates a drop-down list of items which users can choose from. Once the user selects an item, the index of their selection will be sent to Csound on a channel named by the channel string. The default value is 0.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels). If widget is part of a plant these values should be between 0 and 1. See PLANTS</p></div>
@@ -1403,7 +1401,7 @@ checkbox bounds(130, 110, 120, 70), text("Mute"), channel("freq2"), value(1)</co
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>combobox bounds(0, 110, 120, 70), channel"freq"), caption("Freq"), items("200Hz", "400Hz", "800Hz"), value(2)</code></pre>
+<pre><tt>combobox bounds(0, 110, 120, 70), channel"freq"), caption("Freq"), items("200Hz", "400Hz", "800Hz"), value(2)</tt></pre>
 </div></div>
 <div class="paragraph"><p><span class="image">
 <img src="images/combobox.PNG" alt="Combo" />
@@ -1413,7 +1411,7 @@ checkbox bounds(130, 110, 120, 70), text("Mute"), channel("freq2"), value(1)</co
 <h3 id="x39">XYPad</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>xypad bounds(x, y, width, height), channel("chanName1", "chanName2")[, rangex(min, max, val), rangey(min, max, val), text("name")]</code></pre>
+<pre><tt>xypad bounds(x, y, width, height), channel("chanName1", "chanName2")[, rangex(min, max, val), rangey(min, max, val), text("name")]</tt></pre>
 </div></div>
 <div class="paragraph"><p>xypad is an x/y controller that sends data to Csound on two named channels. The first channel transmits the current position of the ball on the X axis, while the second transmits the position of the ball on the Y axis. The XY pad can operate two modes of automation, free and path based. They can be turned on by clicking on the corresponding icon on the bottom left of the xypad control. With either mode selected you can right-click the xypad and create a trajectory or path for the balls movement. Release the mouse and the ball will start moving. Once the ball is in full flight you can control the speed of the ball using the XYpad slider that will appear once you hover over it with the mouse. To stop the ball simple left click anywhere on the xy pad canvas.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels)</p></div>
@@ -1426,7 +1424,7 @@ checkbox bounds(130, 110, 120, 70), text("Mute"), channel("freq2"), value(1)</co
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>xypad bounds(5, 5, 250, 250), channel("xpad", "ypad"), rangex(0, 2, 0), rangey(0, 20, 0), colour("cornflowerblue"), text("XY Bother"), fontColour("lime")</code></pre>
+<pre><tt>xypad bounds(5, 5, 250, 250), channel("xpad", "ypad"), rangex(0, 2, 0), rangey(0, 20, 0), colour("cornflowerblue"), text("XY Bother"), fontColour("lime")</tt></pre>
 </div></div>
 <div class="paragraph"><p><span class="image">
 <img src="images/xypad.PNG" alt="xypad" />
@@ -1436,7 +1434,7 @@ checkbox bounds(130, 110, 120, 70), text("Mute"), channel("freq2"), value(1)</co
 <h3 id="x40">Table</h3>
 <div class="listingblock">
 <div class="content">
-<pre><code>table bounds(x, y, width, height), channel("chan1", "chan2", ...), tableNumbers(1, 2, ...), colour("colour1", "colour2", ...), drawMode(m1, m2, ...), amprange(min, max), resizeMode(val), readonly(val)</code></pre>
+<pre><tt>table bounds(x, y, width, height), channel("chan1", "chan2", ...), tableNumbers(1, 2, ...), colour("colour1", "colour2", ...), drawMode(m1, m2, ...), amprange(min, max), resizeMode(val), readonly(val)</tt></pre>
 </div></div>
 <div class="paragraph"><p>table is a new and experimental control which creates a function table editor capable of displaying any number of tables at once. If multiple tables are specified the tables will be superimposed on top of each other. To edit a table one must right click the table and select <em>edit</em>. You mst choose the number of points that will be used to represent the table. Note that this leads to some decimation or tables (If you wish to create a high resolution table just use a Csound GEN routine).</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels)</p></div>
@@ -1456,7 +1454,7 @@ checkbox bounds(130, 110, 120, 70), text("Mute"), channel("freq2"), value(1)</co
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>table bounds(10, 10, 271, 121), channel("adsrTable1", "adsrTable2", "adsrTable3"), tableNumbers(2, 3, 4), colour("yellow", "red", "blue")</code></pre>
+<pre><tt>table bounds(10, 10, 271, 121), channel("adsrTable1", "adsrTable2", "adsrTable3"), tableNumbers(2, 3, 4), colour("yellow", "red", "blue")</tt></pre>
 </div></div>
 <div class="paragraph"><p><span class="image">
 <img src="images/table.PNG" alt="table" />
@@ -1470,17 +1468,29 @@ checkbox bounds(130, 110, 120, 70), text("Mute"), channel("freq2"), value(1)</co
 <div class="paragraph"><p>Cabbage plants are GUI abstractions that contain one or more controls. These abstractions are used as anchors to the child widgets contained within. All widgets contained within a plant have top and left positions which are relative the the top left position of the parent. While all widgets can be children of a plant, only group boxes and images can be used as plants themselves. Adding a plant identifier to an image or group box definition will cause them to act as containers. The plant() identifier takes a string that denotes the name of the plant. Plant names must be unique within an instrument or plants will end up being placed on top of each other. When using an image or a group box as a plant, you must enclose the code from the controls that follow in curly brackets, to indicate which controls belong to the plant. In the code below a group box control is set up as a plant, and three child sliders are placed within it.</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>groupbox bounds(12, 115, 170, 100), text("Output Filter -k-rate-"), plant("filter"){
+<pre><tt>groupbox bounds(12, 115, 170, 100), text("Output Filter -k-rate-"), plant("filter"){
 rslider bounds(.01, .3, .6, .6), text("Freq"), channel("filtFreq"), range(0, 22050, 10000)
 rslider bounds(.32, .3, .6, .6), text("Res"), channel("filtRes"), range(0, 1, 0)
 rslider bounds(.64, .3, .6, .6), text("Dist"), channel("filtDist"), range(0, 4, 0)
-}</code></pre>
+}</tt></pre>
 </div></div>
 <div class="paragraph"><p><span class="image">
 <img src="images/plant.PNG" alt="xypad" />
 </span></p></div>
 <div class="paragraph"><p>The values passed to bounds() for the child controls can be either fractions proportional to the plants overall size and position, or absolute pixel values. For example, <em>bounds(0, .5, .5, 1)</em> will cause a child widget to appear half way across the plant, and half way down. While <em>bounds(10, 10, 200, 200)</em> will cause the child control to be 10 pixels from the top/left, and have a size of 200x200 pixels.</p></div>
 <div class="paragraph"><p>The major advantage to using plant abstractions is that you can easily move and resize them without needing to modify the dimensions of the child components contained within. You can also save your plants and recall them later from a plant repository. Plants are intended to be reused across instruments so users don&#8217;t have to keep rebuilding GUIs from scratch. They can also be used to give your plugins a unique look and feel.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="x46">Reserved Channels</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Cabbage reserves several channels which are used to send information to Csound from either the host application, or from Cabbage itself. To retrieve info from any of these channels just use a chnget opcode.</p></div>
+<div class="paragraph"><p><em>CSD_PATH</em>: This string channel will retrieve the full path to the current csd file.</p></div>
+<div class="paragraph"><p><em>HOST_BPM</em>: Retrieve the currents host bpm. This will be updated whenever the host BPM changes.</p></div>
+<div class="paragraph"><p><em>IS_PLAYING</em>: Pressing play on the host transport dialogue will cause this channel to send a 1. Hitting stop will send a 0.</p></div>
+<div class="paragraph"><p><em>IS_RECORDING</em>: As above only for monitoring the record status of a session.</p></div>
+<div class="paragraph"><p><em>TIME_IN_SECONDS</em>: Return the current time in seconds from the start of the track.</p></div>
+<div class="paragraph"><p><em>HOST_PPQ_POS</em>: Return the position of the start of the last bar, in pulses-per-quarter-note.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1491,8 +1501,8 @@ If no directory is given Cabbage will look in the current working directory.</p>
 <div class="paragraph"><p>The final and perhaps most powerful mechanism for saving preset data is to use Csound&#8217;s file opcodes. Using Csound to manage the reading and writing of the files opens up a host of further options. Presets could for example be morphed from one state to another.</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>filebutton bounds(16, 332, 60, 25), text("Open", "Open"), populate(".snaps", "/usr/"), colour("red"), mode("create"), channel("filechooser")
-combobox bounds(376, 86, 268, 30), channel("combobox"), populate("*.snaps", "/home/rory/Desktop"),  colour(0, 0, 0, 255)</code></pre>
+<pre><tt>filebutton bounds(16, 332, 60, 25), text("Open", "Open"), populate(".snaps", "/usr/"), colour("red"), mode("create"), channel("filechooser")
+combobox bounds(376, 86, 268, 30), channel("combobox"), populate("*.snaps", "/home/rory/Desktop"),  colour(0, 0, 0, 255)</tt></pre>
 </div></div>
 </div>
 </div>
@@ -1923,7 +1933,7 @@ cellspacing="0" cellpadding="4">
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-01-26 16:38:57 GMT
+Last updated 2014-02-07 10:38:19 GMT Standard Time
 </div>
 </div>
 </body>

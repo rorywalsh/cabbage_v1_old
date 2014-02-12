@@ -74,8 +74,7 @@ class CabbagePluginAudioProcessorEditor  : public AudioProcessorEditor,
                                                                 public KeyListener,
                                                                 public ChangeBroadcaster,
                                                                 public ChangeListener,
-                                                                public ActionListener, 
-																public Timer
+                                                                public ActionListener
 																
 {
 public:
@@ -96,7 +95,7 @@ public:
 	ScopedPointer<CabbageTable> cabTable;
 	ScopedPointer<CabbageCornerResizer> resizer;
 private:
-        
+        void setPositionOfComponent(float x, float y, float width, float height, Component* comp, String reltoplant);
 		void createfTableData(Table* table);
         bool keyPressed(const juce::KeyPress &,Component *);
 		void updateSizesAndPositionsOfComponents(int newLine = 0);
@@ -115,8 +114,6 @@ private:
         void InsertSlider(CabbageGUIClass &cAttr);
 		void sliderValueChanged (Slider*);
         void InsertButton(CabbageGUIClass &cAttr);
-        void InsertSourceButton(CabbageGUIClass &cAttr);
-        void InsertVUMeter(CabbageGUIClass &cAttr);
         void InsertCheckBox(CabbageGUIClass &cAttr);
         void InsertCsoundOutput(CabbageGUIClass &cAttr);
         void InsertMIDIKeyboard(CabbageGUIClass &cAttr);
@@ -130,7 +127,6 @@ private:
         void InsertLineSeparator(CabbageGUIClass &cAttr);
         void InsertPatternMatrix(CabbageGUIClass &cAttr);
         void InsertSnapshot(CabbageGUIClass &cAttr);
-        void InsertPVSViewer(CabbageGUIClass &cAttr);
 		void InsertTransport(CabbageGUIClass &cAttr);
         void buttonClicked(Button*);
 		void buttonStateChanged(Button*);
@@ -142,7 +138,6 @@ private:
 		void refreshDiskReadingGUIControls(String typeOfControl);
 		void updateGUIControls();
 
-		void timerCallback();
         bool LOCKED;
         void insertComponentsFromCabbageText(StringArray text, bool useOffset);
 //		void insertComponentsFromCabbageTextArray(StringArray text, bool plant);
@@ -171,7 +166,7 @@ private:
 	    }
 		bool keyIsPressed;
 		bool isMouseDown;
-		void positionComponentWithinPlant(String type, int idx, float left, float top, float width, float height, Component *layout, Component *control);
+		void positionComponentWithinPlant(String type, float left, float top, float width, float height, Component *layout, Component *control);
         //ScopedPointer<CabbagePlantWindow> subPatch;
         OwnedArray<CabbageButton> plantButton;
         OwnedArray<CabbagePlantWindow> subPatch;

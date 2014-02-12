@@ -33,6 +33,8 @@
 CabbageLookAndFeel* lookAndFeel;
 CabbageLookAndFeelBasic* lookAndFeelBasic;
 
+juce_ImplementSingleton (IdentArray);
+
 //==============================================================================
 // There are two different CabbagePluginAudioProcessor constructors. One for the
 // standalone application and the other for the plugin library
@@ -81,11 +83,7 @@ fileLogger = new FileLogger(logFile, String("Cabbage Log.."));
 Logger::setCurrentLogger(fileLogger);
 #endif
 
-//reset patMatrix. If this has more than one we know that
-//pattern matrix object is being used
-patStepMatrix.clear();
 
-patPfieldMatrix.clear();
 setPlayConfigDetails(2, 2, 44100, 512);
 
 #ifndef Cabbage_No_Csound
@@ -342,11 +340,10 @@ Logger::setCurrentLogger (nullptr);
 suspendProcessing(true);
 removeAllChangeListeners();
 #ifndef Cabbage_No_Csound
-patStepMatrix.clear();
-patternNames.clear();
-patPfieldMatrix.clear();
+
 xyAutomation.clear();
 
+IdentArray::deleteInstance();
         //const MessageManagerLock mmLock;
         if(csound){
 			if(csoundPerfThread){
@@ -752,6 +749,19 @@ bool multiLine = false;
 #endif
 		}
 
+		//init all channels with their init val, and set parameters
+		for(int i=0;i<guiLayoutCtrls.size();i++)
+		{
+//		Logger::writeToLog(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel)+": "+String(guiCtrls[i].getNumProp(CabbageIDs::value)));
+#ifndef Cabbage_No_Csound
+		if(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::identchannel).isNotEmpty())
+		//deal with combobox strings..
+		csound->SetChannel(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::identchannel).toUTF8(), "");
+//									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
+#endif
+		}		
+
+
 		#ifdef Cabbage_Build_Standalone
 
 		if(this->getActiveEditor()){
@@ -1036,7 +1046,7 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
 
 //==============================================================================
 //this method gets called after a performKsmps() to update our GUI controls
-//with messages from Csound. For instance, a user might wish to change the position
+//with messages from Csound. For instance, a user might wish to change the value
 //of a GUI slider from Csound by using a chnset opcode. The speed at which this is
 //updated can be teaked, so as not to hog resources. It might be worth allowing users
 //the option of setting how fast this update...
@@ -1044,14 +1054,14 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
 {
 #ifndef Cabbage_No_Csound
 String chanName;
-if(!CSCompResult)
+if(!csCompileResult)
 	{
 	MYFLT* val=0;
 	//update all control widgets
 	for(int index=0;index<getGUICtrlsSize();index++)
 		{
 		if(guiCtrls[index].getStringProp(CabbageIDs::channeltype).equalsIgnoreCase(CabbageIDs::stringchannel)){
-		//argghhh!! THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE!	
+		//THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE..	
 		}
 		else{	
 			float value = csound->GetChannel(guiCtrls[index].getStringProp(CabbageIDs::channel).getCharPointer());
@@ -1059,6 +1069,21 @@ if(!CSCompResult)
 			//Logger::writeToLog("value:"+String(value));
 			guiCtrls.getReference(index).setNumProp(CabbageIDs::value, value);
 			}
+			
+		if(guiCtrls[index].getStringProp(CabbageIDs::identchannel).isNotEmpty())
+			{
+			//if controls has an identifier channel send data from Csound to control
+			char string[1024] = {0};
+			csound->GetStringChannel(guiCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), string);	
+			if(String(string)!=""){
+			guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, String(string));
+			}		
+			else
+				guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
+			//zero channel message so that we don't keep sending the same string 
+			csound->SetChannel(guiCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
+			}			
+			
 		}
 //update all layout control widgets
 //currently this is only needed for table widgets as other layout controls
@@ -1073,7 +1098,23 @@ if(!CSCompResult)
 				guiLayoutCtrls[index].setTableChannelValues(y, value);
 				}
 			}
+
+		if(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).isNotEmpty())
+			{
+			//if controls has an identifier channel send data from Csound to control
+			char string[1024] = {0};
+			//guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress()
+			csound->GetStringChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), string);	
+			if(String(string)!=""){
+			guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, String(string));
+			}	
+			else
+				guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
+			//zero channel message so that we don't keep sending the same string 
+			csound->SetChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
+			}
 		}
+
 	}
 sendChangeMessage();
 #endif

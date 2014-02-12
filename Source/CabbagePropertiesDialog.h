@@ -109,8 +109,10 @@ public:
 			attributeNames[i].equalsIgnoreCase("scaley") ||
 			attributeNames[i].equalsIgnoreCase("scalex") ||
 			attributeNames[i].equalsIgnoreCase("range") ||
+			attributeNames[i].equalsIgnoreCase("popup") ||
 			attributeNames[i].equalsIgnoreCase("comborange") ||
 			attributeNames[i].equalsIgnoreCase("basetype") ||
+			attributeNames[i].equalsIgnoreCase("visible") ||
 			attributeNames[i].equalsIgnoreCase("decimalplaces")){
 			comps[i]->setPreferredHeight(0);
 			hiddenComponents++;

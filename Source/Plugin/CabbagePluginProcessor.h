@@ -149,6 +149,7 @@ protected:
 		OwnedArray<XYPadAutomation, CriticalSection> xyAutomation;
 		void updateGUIControlsKsmps(int speed);
 		int guiRefreshRate;
+	
 public:
 
     //==============================================================================
@@ -199,9 +200,6 @@ public:
     bool isOutputChannelStereoPair (int index) const;
     bool acceptsMidi() const;
     bool producesMidi() const;
-	Array<CabbagePatternMatrixStepData> patStepMatrix;
-	StringArray patternNames;
-	Array<CabbagePatternMatrixPfieldData> patPfieldMatrix;
 	//Array<int> pField4, pField5, pField6, pField7;
 	int noSteps;
 	int noPatterns;

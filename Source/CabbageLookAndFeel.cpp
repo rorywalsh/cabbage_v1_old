@@ -979,7 +979,7 @@ void CabbageLookAndFeel::drawToggleButton (Graphics &g, ToggleButton &button, bo
     else
 		col = Colour::fromString(button.getProperties().getWithDefault("colour", "lime").toString());
 	
-	if (button.getProperties().getWithDefault("fontcolour", "").toString().length()<2){
+	if (button.getProperties().getWithDefault("fontcolour", "").toString().isEmpty()){
 		fcol = CabbageUtils::getComponentFontColour();
     }
     else
@@ -996,9 +996,9 @@ void CabbageLookAndFeel::drawToggleButton (Graphics &g, ToggleButton &button, bo
 	//----- Text
 	if (button.getButtonText().length() > 0) {
 		Justification just (1); //left
-		g.setFont (CabbageUtils::getComponentFont());
+		//g.setFont (CabbageUtils::getComponentFont());
 		g.setColour (fcol);
-
+		//g.setColour(Colours::white);
 		String name;
 		name << button.getButtonText();
 		name = CabbageUtils::cabbageString (name, CabbageUtils::getComponentFont(), (button.getWidth()-(destWidth+5))); //shortening string if too long

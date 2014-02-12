@@ -32,6 +32,109 @@
 
 #include "CabbageUtils.h"
 
+//creating this as a singleton as I don't wish to create
+//this array over and oer again when dealing with the CabbageGUIClass
+//objects. 
+class IdentArray : public StringArray
+{
+public:
+IdentArray() : StringArray("")
+{
+    add(",colour(");
+	add("tablecolour(");
+	add(" colour(");
+    add(",colours(");
+	add(" colours(");
+    add("fontcolour(");
+	add("size(");
+	add("items(");
+    add("pos(");
+    add("min(");
+    add("max(");
+    add("value(");
+	add("tabpage(");
+	add("guirefresh(");
+	add("midictrl(");
+	add(" line(");
+	add(",line(");
+	add("bounds(");
+	add("populate(");
+	add(",range(");
+	add(" range(");
+	add("amprange(");
+	add("rangex(");
+	add("rangey(");
+	add("plant(");
+	add("alpha(");
+    add(",channel(");
+	add("channel(");
+	add("channeltype(");
+	add(" chan(");
+    add("channels(");
+	add(" chans(");
+    add("name(");
+    add("textbox(");
+	add("instrs(");
+    add("caption(");
+    add("topitem(");
+    add("menuitem(");
+    add("stdout(");
+	add("native(");
+    add("exit(");
+    add("cssetup(");
+    add("kind(");
+	add("config(");
+    add("beveltype(");
+	add("text(");
+    add("runcsound(");
+	add("tabs(");
+	add("tab(");
+	add(" mode(");
+	add(",mode(");
+	add("tablenumber(");
+	add("tablenum(");
+	add("tablenumbers(");
+	add("tablenums(");
+	add("fill(");
+	add("file(");
+	add("outlinecolour(");
+	add("master(");
+	add("shape("); 
+	add("textcolour("); 
+	add("scale(");
+	add("chan(");
+	add("key(");
+	add("steps(");
+	add("pluginid(");
+	add("rctrls(");
+	add("trackercolour(");
+	add("preset(");
+	add("popup(");
+	add("fftsize(");
+	add("overlap(");
+	add("framesize(");
+	add("pvschan(");
+	add("author(");
+	add("tabpage(");
+	add("drawmode(");
+	add("resizemode(");
+	add("readonly(");
+	add("latched(");
+	add("identchannel(");
+	add("visible(");
+	add("");
+	add("");
+	add("");		
+}
+~IdentArray()
+{
+// this ensures that no dangling pointers are left when the
+// singleton is deleted.
+clearSingletonInstance();
+}
+juce_DeclareSingleton (IdentArray, false)
+};
+
 namespace CabbageIDs
 {
     static const Identifier top = "top";
@@ -67,7 +170,7 @@ namespace CabbageIDs
 	static const Identifier channeltype = "channeltype";
 	static const Identifier comborange = "comborange";
 	static const Identifier populate = "populate";
-	static const Identifier outline = "outline";
+	static const Identifier outlinecolour = "outlinecolour";
 	static const Identifier popup = "popup";
 	static const Identifier plant = "plant";
 	static const Identifier line = "line";
@@ -85,7 +188,7 @@ namespace CabbageIDs
 	static const Identifier maxx = "maxx";
 	static const Identifier maxy = "maxy";
 	static const Identifier valuex = "valuex";
-	static const Identifier fill = "fill";
+	static const Identifier fillcolour = "fillcolour";
 	static const Identifier valuey = "valuey";
 	static const Identifier textcolour = "textcolour";
 	static const Identifier pluginid = "pluginid";
@@ -99,6 +202,10 @@ namespace CabbageIDs
 	static const Identifier author = "author";
 	static const Identifier xychannel = "xychannel";
 	static const Identifier guirefresh = "guirefresh";
+	static const Identifier identchannel = "identchannel";
+	static const Identifier identchannelmessage = "identchannelmessage";
+	static const Identifier visible = "visible";
+	
 	
 	//type of widgets/controls/messages
 	static const String combobox = "combobox";
@@ -120,7 +227,7 @@ namespace CabbageIDs
 	static const String isrecording = "IS_RECORDING";
 	static const String hostppqpos = "HOST_PPQ_POS";
 	static const String csoundoutput = "csoundoutput";
-
+	
 };
 
 class CabbageGUIClass : public CabbageUtils
@@ -129,12 +236,13 @@ class CabbageGUIClass : public CabbageUtils
 		noOfMenus, onoff, midiChan, midiCtrl, sliderRange, xypadRangeY, xypadRangeX, noSteps, noPatterns, pvsChannel, alpha,
 		line, anchor, linkTo, scaleX, scaleY, value, valueX, valueY, maxItems, sliderIncr, sliderSkew, decimalPlaces, rCtrls, lineIsVertical;
         StringArray items, onoffcaptions, key, channels, snapshotData, colours;
-
+/*
         String channel, name, sizeText, posText, boundsText, text, type, plant, reltoplant, bounds, range, fileType, workingDir,
         shape, beveltype, caption, kind, topitem, yChannel, xChannel, author, native, basetype,
         exit, csstdout, cssetup, file, debugMessage, xyChannel, pluginID, tabpage, preset;
 		Colour outline, fill, fontcolour, textcolour, colour, trackerFill;
 		int tableNum, textBox, numPresets, masterSnap, plantButton, xyAutoIndex, paramIndex, numTables, soundfilerIndex;
+*/
 		Array<int> vuConfig;
 		Array<int> tableNumbers;
 		Array<float> tableChannelValues;
@@ -169,6 +277,14 @@ public:
 	Rectangle<int> bounds(left, top, width, height);
 	return bounds;	
 	}
+	
+	//static methods used for updating look and pos of GUI controls
+	static Rectangle<int> getBounds(String text);
+	static Colour getColour(String colourType, String text);
+	static String getText(String text);
+	
+	
+	
 	
 	void setBounds(Rectangle<int> bounds){
 	left = bounds.getX();

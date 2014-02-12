@@ -59,53 +59,71 @@ public:
 //==============================================================================
 class CabbageButton : public Component
 {
-int offX, offY, offWidth, offHeight;
-String buttonType;
+	int offX, offY, offWidth, offHeight;
+	String buttonType;
+	String name, caption, buttonText, colour, fontcolour;
+	public:
+	ScopedPointer<GroupComponent> groupbox;
+	ScopedPointer<Button> button;
+		//---- constructor -----
+	//---- constructor -----
+	CabbageButton(CabbageGUIClass &cAttr) :
+							name(cAttr.getStringProp(CabbageIDs::name)),
+							caption(cAttr.getStringProp(CabbageIDs::caption)),
+							buttonText(cAttr.getStringProp(CabbageIDs::text)),
+							colour(cAttr.getStringProp(CabbageIDs::colour)),
+							fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour))
+	{
+		setName(name);
+		offX=offY=offWidth=offHeight=0;
+		groupbox = new GroupComponent(String("groupbox_")+name);
+		button = new TextButton(name);
+		addAndMakeVisible(groupbox);
+		addAndMakeVisible(button);
+		groupbox->setVisible(false);
+		groupbox->getProperties().set("groupLine", var(1));
+		Logger::writeToLog(buttonText);
+		button->setButtonText(buttonText);
+		if(caption.length()>0){
+			offX=10;
+			offY=35;
+			offWidth=-20;
+			offHeight=-45;
+			groupbox->setVisible(true);
+			groupbox->setText(caption);
+		}
 
-public:
-ScopedPointer<GroupComponent> groupbox;
-ScopedPointer<Button> button;
-//---- constructor -----
-CabbageButton(String name, String caption, String buttonText, String colour, String fontcolour)
-{
-	setName(name);
-	offX=offY=offWidth=offHeight=0;
-	groupbox = new GroupComponent(String("groupbox_")+name);
-	button = new TextButton(name);
-	addAndMakeVisible(groupbox);
-	addAndMakeVisible(button);
-	groupbox->setVisible(false);
-	groupbox->getProperties().set("groupLine", var(1));
-	Logger::writeToLog(buttonText);
-	button->setButtonText(buttonText);
-	if(caption.length()>0){
-		offX=10;
-		offY=35;
-		offWidth=-20;
-		offHeight=-45;
-		groupbox->setVisible(true);
-		groupbox->setText(caption);
+		if(fontcolour.length()>0)
+		button->getProperties().set("fontcolour", fontcolour);
+		if(colour.length()>0)
+		button->getProperties().set("colour", colour);
+		button->setButtonText(cAttr.getStringArrayPropValue(CabbageIDs::text, cAttr.getNumProp(CabbageIDs::value)));
+	}
+	//---------------------------------------------
+	~CabbageButton(){
+
 	}
 
-	if(fontcolour.length()>0)
-	button->getProperties().set("fontcolour", fontcolour);
-	if(colour.length()>0)
-	button->getProperties().set("colour", colour);
-}
-//---------------------------------------------
-~CabbageButton(){
+	//update control
+	void update(String identifiers){
+		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
+			button->getProperties().set("colour", CabbageGUIClass::getColour("colour", identifiers).toString());
+		if(identifiers.indexOfWholeWord(CabbageIDs::fontcolour)>=0)
+			button->getProperties().set("fontcolour", CabbageGUIClass::getColour("fontcolour", identifiers).toString());
+		if(identifiers.indexOfWholeWord("bounds")>=0)
+			setBounds(CabbageGUIClass::getBounds(identifiers));
+		repaint();
+	}
 
-}
+	//---------------------------------------------
+	void resized()
+	{
+	groupbox->setBounds(0, 0, getWidth(), getHeight()); 
+	button->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight); 
+	this->setWantsKeyboardFocus(false);
+	}
 
-//---------------------------------------------
-void resized()
-{
-groupbox->setBounds(0, 0, getWidth(), getHeight()); 
-button->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight); 
-this->setWantsKeyboardFocus(false);
-}
-
-JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageButton);
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageButton);
 };
 
 //==============================================================================
@@ -114,151 +132,178 @@ JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageButton);
 class CabbageSlider : public Component,
 					  public ChangeBroadcaster
 {
-int offX, offY, offWidth, offHeight, plantX, plantY;
-String sliderType, compName, cl;
-int resizeCount;
-String tracker;
+	int offX, offY, offWidth, offHeight, plantX, plantY;
+	String sliderType, compName, cl;
+	int resizeCount;
+	String tracker;
 
-//subclass slider here to expose mouse listener method
-		class cSlider : public Slider
-		{
-		public:
-			cSlider(String text, CabbageSlider* _slider):Slider(text), 
-														slider(_slider){}
-			~cSlider(){};
-			
-		private:
-			void mouseMove(const MouseEvent& event){
-				slider->sendChangeMessage();
-			}	
-			
+	//subclass slider here to expose mouse listener method
+			class cSlider : public Slider
+			{
+			public:
+				cSlider(String text, CabbageSlider* _slider):Slider(text), 
+															slider(_slider){}
+				~cSlider(){};
+				
+			private:
+				void mouseMove(const MouseEvent& event){
+					slider->sendChangeMessage();
+				}	
+				
 
-		CabbageSlider* slider;
-		};
+			CabbageSlider* slider;
+			};
 
+
+	String name, text, caption, kind, colour, fontColour, trackerFill;
+	int textBox, decPlaces;
 public:
-ScopedPointer<GroupComponent> groupbox;
-ScopedPointer<Slider> slider;
-//---- constructor -----
-CabbageSlider(String name, String text, String caption, String kind, String colour, String fontColour, int textBox, String trackerFill, int decPlaces)
-	: plantX(-99), plantY(-99), sliderType(kind), compName(caption), cl(colour), tracker(trackerFill)
-{
-	setName(name);
-	offX=offY=offWidth=offHeight=0;
-	groupbox = new GroupComponent(String("groupbox_")+name);
-	slider = new Slider(text);
-	slider->toFront(true);
-	addAndMakeVisible(slider);
-	addAndMakeVisible(groupbox);
-	groupbox->setVisible(false);
-	groupbox->getProperties().set("groupLine", var(1));
-	if(tracker.length()>0)
-	slider->getProperties().set("tracker", tracker);
+	
+	ScopedPointer<GroupComponent> groupbox;
+	ScopedPointer<Slider> slider;
+	//---- constructor -----
+	CabbageSlider(CabbageGUIClass &cAttr) : plantX(-99), plantY(-99),
+					  name(cAttr.getStringProp(CabbageIDs::name)),
+					  caption(cAttr.getStringProp(CabbageIDs::caption)),
+					  colour(cAttr.getStringProp(CabbageIDs::colour)),
+					  sliderType(cAttr.getStringProp(CabbageIDs::kind)), 
+					  compName(cAttr.getStringProp(CabbageIDs::caption)), 
+					  cl(cAttr.getStringProp(CabbageIDs::colour)), 
+					  tracker(cAttr.getStringProp(CabbageIDs::trackercolour)),
+					  decPlaces(cAttr.getNumProp(CabbageIDs::decimalplaces)),
+					  textBox(cAttr.getNumProp(CabbageIDs::textbox)),
+					  text(cAttr.getStringProp(CabbageIDs::text))
+	{
+		setName(name);
+		offX=offY=offWidth=offHeight=0;
+		groupbox = new GroupComponent(String("groupbox_")+name);
+		slider = new Slider(text);
+		slider->toFront(true);
+		addAndMakeVisible(slider);
+		addAndMakeVisible(groupbox);
+		groupbox->setVisible(false);
+		groupbox->getProperties().set("groupLine", var(1));
+		if(tracker.length()>0)
+		slider->getProperties().set("tracker", tracker);
+		slider->getProperties().set("decimalPlaces", decPlaces);
+		//Logger::writeToLog(fontColour);
+		slider->getProperties().set("fontcolour", fontColour);
+		//slider->getProperties().set("valueFontColour", Colour::fromString(cl).contrasting().toString()); 
+		if(textBox<1) 
+			slider->setTextBoxStyle (Slider::NoTextBox, true, 0, 0);
+		this->setWantsKeyboardFocus(false);
+		resizeCount = 0;
+		
+        slider->setSkewFactor(cAttr.getNumProp("sliderskew"));
+        slider->setRange(cAttr.getNumProp("min"), cAttr.getNumProp("max"), cAttr.getNumProp("sliderincr"));
+        slider->setValue(cAttr.getNumProp(CabbageIDs::value));		
+	}//--- end of constructor ----
+
+	//---------------------------------------------
+	~CabbageSlider()
+	{
+	}
 
 
-    slider->getProperties().set("decimalPlaces", decPlaces);
-	//Logger::writeToLog(fontColour);
-	slider->getProperties().set("fontcolour", fontColour);
-	//slider->getProperties().set("valueFontColour", Colour::fromString(cl).contrasting().toString()); 
+	//update control
+	void update(String identifiers){
+	
+		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
+			slider->setColour(0x1001200, Colour::fromString(CabbageGUIClass::getColour("colour", identifiers).toString()));
+		if(identifiers.indexOfWholeWord(CabbageIDs::fontcolour)>=0)
+			slider->getProperties().set("fontcolour", CabbageGUIClass::getColour("fontcolour", identifiers).toString());
+		if(identifiers.indexOfWholeWord(CabbageIDs::trackercolour)>=0)
+			slider->getProperties().set("tracker", CabbageGUIClass::getColour("trackercolour", identifiers).toString());
+		if(identifiers.indexOfWholeWord("bounds"))
+			setBounds(CabbageGUIClass::getBounds(identifiers));
+		repaint();
+	}
 
-	if(textBox<1) 
-		slider->setTextBoxStyle (Slider::NoTextBox, true, 0, 0);
-
-	this->setWantsKeyboardFocus(false);
-
-	resizeCount = 0;
-}//--- end of constructor ----
-
-//---------------------------------------------
-~CabbageSlider()
-{
-}
-
-//---------------------------------------------
-void resized()
-{
-	//if rotary
-	if (sliderType.contains("rotary")) {
-		if(cl.length() > 0)
-			slider->setColour(0x1001200, Colour::fromString(cl));
-		slider->setSliderStyle(Slider::Rotary);
-		getProperties().set("type", var("rslider"));
-		slider->setSliderStyle(Slider::RotaryVerticalDrag);
-		slider->setRotaryParameters(float_Pi * 1.2f, float_Pi * 2.8f, false);
-		//if using group caption
-		if (compName.length() > 0) {  
-			groupbox->setBounds(0, 0, getWidth(), getHeight());
-			int textHeight = 20;
-			int availableHeight = getHeight()-textHeight;
-			offY = textHeight + 5;
-			int sliderHeight = availableHeight - 10;
-			int sliderWidth = sliderHeight;
-			offX = (getWidth()/2) - (sliderWidth/2);
-			slider->setBounds(offX, offY, sliderWidth, sliderHeight); 
-			groupbox->setText (compName);
-			groupbox->setVisible(true);
-			slider->toFront(true);
+	//---------------------------------------------
+	void resized()
+	{
+		//if rotary
+		if (sliderType.contains("rotary")) {
+			if(cl.length() > 0)
+				slider->setColour(0x1001200, Colour::fromString(cl));
+			slider->setSliderStyle(Slider::Rotary);
+			getProperties().set("type", var("rslider"));
+			slider->setSliderStyle(Slider::RotaryVerticalDrag);
+			slider->setRotaryParameters(float_Pi * 1.2f, float_Pi * 2.8f, false);
+			//if using group caption
+			if (compName.length() > 0) {  
+				groupbox->setBounds(0, 0, getWidth(), getHeight());
+				int textHeight = 20;
+				int availableHeight = getHeight()-textHeight;
+				offY = textHeight + 5;
+				int sliderHeight = availableHeight - 10;
+				int sliderWidth = sliderHeight;
+				offX = (getWidth()/2) - (sliderWidth/2);
+				slider->setBounds(offX, offY, sliderWidth, sliderHeight); 
+				groupbox->setText (compName);
+				groupbox->setVisible(true);
+				slider->toFront(true);
+			}
+			//else if no group caption then the slider takes the whole area available
+			else 
+				slider->setBounds(0, 0, getWidth(), getHeight());
 		}
-		//else if no group caption then the slider takes the whole area available
-		else 
-			slider->setBounds(0, 0, getWidth(), getHeight());
-	}
-	//else if vertical
-	else if (sliderType.contains("vertical")) {
-		slider->setSliderStyle(Slider::LinearVertical);
-		if(cl.length() > 0)
-			slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
-		if (compName.length() > 0) {
-			groupbox->setBounds(0, 0, getWidth(), getHeight());
-			int textHeight = 20;
-			int availableHeight = getHeight()-textHeight;
-			offY = textHeight + 5;
-			int sliderHeight = availableHeight - 10;
-			int sliderWidth = getWidth() - 20;
-			offX = (getWidth()/2) - (sliderWidth/2);
-			slider->setBounds(offX, offY, sliderWidth, sliderHeight); 
-			groupbox->setVisible(true);
-			groupbox->setText(compName);
-			slider->toFront(true);
+		//else if vertical
+		else if (sliderType.contains("vertical")) {
+			slider->setSliderStyle(Slider::LinearVertical);
+			if(cl.length() > 0)
+				slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
+			if (compName.length() > 0) {
+				groupbox->setBounds(0, 0, getWidth(), getHeight());
+				int textHeight = 20;
+				int availableHeight = getHeight()-textHeight;
+				offY = textHeight + 5;
+				int sliderHeight = availableHeight - 10;
+				int sliderWidth = getWidth() - 20;
+				offX = (getWidth()/2) - (sliderWidth/2);
+				slider->setBounds(offX, offY, sliderWidth, sliderHeight); 
+				groupbox->setVisible(true);
+				groupbox->setText(compName);
+				slider->toFront(true);
+			}
+			else 
+				slider->setBounds(0, 0, getWidth(), getHeight());
 		}
-		else 
-			slider->setBounds(0, 0, getWidth(), getHeight());
-	}
-	//else if horizontal
-	else {
-		slider->setSliderStyle(Slider::LinearHorizontal);
-		if(cl.length() > 0)
-			slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
-		if (compName.length() > 0) {
-			groupbox->setBounds(0, 0, getWidth(), getHeight());
-			int textHeight = 20;
-			int availableHeight = getHeight()-textHeight;
-			offY = textHeight + 5;
-			int sliderHeight = availableHeight - 10;
-			int sliderWidth = getWidth() - 20;
-			offX = (getWidth()/2) - (sliderWidth/2);
-			slider->setBounds(offX, offY, sliderWidth, sliderHeight); 
-			groupbox->setText(compName);
-			groupbox->setVisible(true);
-			slider->toFront(true);
+		//else if horizontal
+		else {
+			slider->setSliderStyle(Slider::LinearHorizontal);
+			if(cl.length() > 0)
+				slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
+			if (compName.length() > 0) {
+				groupbox->setBounds(0, 0, getWidth(), getHeight());
+				int textHeight = 20;
+				int availableHeight = getHeight()-textHeight;
+				offY = textHeight + 5;
+				int sliderHeight = availableHeight - 10;
+				int sliderWidth = getWidth() - 20;
+				offX = (getWidth()/2) - (sliderWidth/2);
+				slider->setBounds(offX, offY, sliderWidth, sliderHeight); 
+				groupbox->setText(compName);
+				groupbox->setVisible(true);
+				slider->toFront(true);
+			}
+			else 
+				slider->setBounds(0, 0, getWidth(), getHeight());
 		}
-		else 
-			slider->setBounds(0, 0, getWidth(), getHeight());
+
+		//We only store the original dimensions the first time resized() is called.
+		//Otherwise we would be passing incorrect values to the slider l+f methods...
+		if (resizeCount == 0) {
+			slider->getProperties().set(String("origHeight"), getHeight());
+			slider->getProperties().set(String("origWidth"), getWidth());
+			slider->getProperties().set(String("origX"), getX());
+			slider->getProperties().set(String("origY"), getY());
+		}
+		resizeCount++;
+		this->setWantsKeyboardFocus(false);
 	}
 
-	//We only store the original dimensions the first time resized() is called.
-	//Otherwise we would be passing incorrect values to the slider l+f methods...
-	if (resizeCount == 0) {
-		slider->getProperties().set(String("origHeight"), getHeight());
-		slider->getProperties().set(String("origWidth"), getWidth());
-		slider->getProperties().set(String("origX"), getX());
-		slider->getProperties().set(String("origY"), getY());
-	}
-	resizeCount++;
-	this->setWantsKeyboardFocus(false);
-}
-
-JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageSlider);
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageSlider);
 };
 
 //==============================================================================
@@ -266,64 +311,92 @@ JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageSlider);
 //==============================================================================
 class CabbageCheckbox : public Component
 {
-int offX, offY, offWidth, offHeight;
+	int offX, offY, offWidth, offHeight;
 
-public:
-ScopedPointer<GroupComponent> groupbox;
-ScopedPointer<ToggleButton> button;
-//---- constructor -----
-CabbageCheckbox(String name, String caption, String buttonText, String colour, String fontcolour, bool isRect)
-{
-	setName(name);
-	offX=offY=offWidth=offHeight=0;
-	groupbox = new GroupComponent(String("groupbox_")+name);
-	button = new ToggleButton(name);
+	public:
+	ScopedPointer<GroupComponent> groupbox;
+	ScopedPointer<ToggleButton> button;
+	bool isRect;
+	String name, caption, buttonText, colour, fontcolour; 	
+	//---- constructor -----
+	CabbageCheckbox(CabbageGUIClass &cAttr) :
+							name(cAttr.getStringProp(CabbageIDs::name)),
+							caption(cAttr.getStringProp(CabbageIDs::caption)),
+							buttonText(cAttr.getStringProp(CabbageIDs::text)),
+							colour(cAttr.getStringProp(CabbageIDs::colour)),
+							fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
+							isRect(cAttr.getStringProp(CabbageIDs::shape).equalsIgnoreCase("square"))	
+		{
+		setName(name);
+		offX=offY=offWidth=offHeight=0;
+		groupbox = new GroupComponent(String("groupbox_")+name);
+		button = new ToggleButton(name);
 
-	addAndMakeVisible(groupbox);
-	addAndMakeVisible(button);
-	groupbox->setVisible(false);
-	groupbox->getProperties().set("groupLine", var(1));
-	
-	//outline colour ID
-	groupbox->setColour(0x1005400,
-		Colour::fromString(colour));
-	//text colour ID
-	groupbox->setColour(0x1005410,
-		Colour::fromString(colour));
+		addAndMakeVisible(groupbox);
+		addAndMakeVisible(button);
+		groupbox->setVisible(false);
+		groupbox->getProperties().set("groupLine", var(1));
+		
+		//outline colour ID
+		groupbox->setColour(0x1005400,
+			Colour::fromString(colour));
+		//text colour ID
+		groupbox->setColour(0x1005410,
+			Colour::fromString(colour));
 
-	button->setButtonText(buttonText);
-	if(caption.length()>0){
-		offX=10;
-		offY=20;
-		offWidth=-20;
-		offHeight=-30;
-		groupbox->setVisible(true);
-		groupbox->setText(caption);
+		button->setButtonText(buttonText);
+		if(caption.length()>0){
+			offX=10;
+			offY=20;
+			offWidth=-20;
+			offHeight=-30;
+			groupbox->setVisible(true);
+			groupbox->setText(caption);
+		}
+
+		button->getProperties().set("isRect", isRect);
+		button->getProperties().set("colour", colour);
+		button->getProperties().set("fontcolour", fontcolour);
+		button->setButtonText(buttonText);
+		//text colour id
+		button->setColour(0x1006501,
+				Colour::fromString(colour));
+		button->setButtonText(buttonText);
+		
+        //set initial value if given
+        if(cAttr.getNumProp(CabbageIDs::value)==1)
+                button->setToggleState(true, sendNotification);
+        else
+                button->setToggleState(false, sendNotification);		
+		
+		this->setWantsKeyboardFocus(false);
+	}
+	//---------------------------------------------
+	~CabbageCheckbox(){
+
 	}
 
-	button->getProperties().set("isRect", isRect);
-	button->getProperties().set("colour", colour);
-	button->getProperties().set("fontcolour", fontcolour);
-	//text colour id
-	button->setColour(0x1006501,
-			Colour::fromString(colour));
-	button->setButtonText(buttonText);
+	//update control
+	void update(String identifiers){
+
+		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
+			button->getProperties().set("colour", CabbageGUIClass::getColour("colour", identifiers).toString());
+		if(identifiers.indexOfWholeWord(CabbageIDs::fontcolour)>=0)
+			button->getProperties().set("fontcolour", CabbageGUIClass::getColour("fontcolour", identifiers).toString());
+		if(identifiers.indexOfWholeWord("bounds")>=0)
+			setBounds(CabbageGUIClass::getBounds(identifiers));
+		repaint();
+	}
+
+	//---------------------------------------------
+	void resized()
+	{
+	groupbox->setBounds(0, 0, getWidth(), getHeight()); 
+	button->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight); 
 	this->setWantsKeyboardFocus(false);
-}
-//---------------------------------------------
-~CabbageCheckbox(){
+	}
 
-}
-
-//---------------------------------------------
-void resized()
-{
-groupbox->setBounds(0, 0, getWidth(), getHeight()); 
-button->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight); 
-this->setWantsKeyboardFocus(false);
-}
-
-JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageCheckbox);
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageCheckbox);
 };
 
 
@@ -332,68 +405,113 @@ JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageCheckbox);
 //==============================================================================
 class CabbageComboBox : public Component
 {
-//ScopedPointer<LookAndFeel> lookFeel;
-int offX, offY, offWidth, offHeight;
-public:
-ScopedPointer<GroupComponent> groupbox;
-ScopedPointer<ComboBox> combo;
-//---- constructor -----
-CabbageComboBox(String name, String caption, String text, String colour, String fontColour)
-{
-	setName(name);
-	offX=offY=offWidth=offHeight=0;
+	//ScopedPointer<LookAndFeel> lookFeel;
+	int offX, offY, offWidth, offHeight;
+	String name, caption, text, colour, fontcolour;
+	public:
+	ScopedPointer<GroupComponent> groupbox;
+	ScopedPointer<ComboBox> combo;
+	//---- constructor -----
+	CabbageComboBox(CabbageGUIClass &cAttr):
+							name(cAttr.getStringProp(CabbageIDs::name)),
+							caption(cAttr.getStringProp(CabbageIDs::caption)),
+							colour(cAttr.getStringProp(CabbageIDs::colour)),
+							fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour))
+	{
+		setName(name);
+		offX=offY=offWidth=offHeight=0;
+		
+		groupbox = new GroupComponent(String("groupbox_")+name);
+		combo = new ComboBox(name);
+		
+		addAndMakeVisible(groupbox);
+		addAndMakeVisible(combo);
+		groupbox->setVisible(false);
+		groupbox->getProperties().set("groupLine", var(1));
+		combo->setColour(ComboBox::textColourId, Colour::fromString(fontcolour));
+		combo->getProperties().set("colour", colour);
+		combo->getProperties().set("fontcolour", fontcolour);
+		//combo->setColour(ComboBox::ColourIds::textColourId, Colour::fromString(fontColour));
+		//outline colour IDE
+		groupbox->setColour(0x1005400,
+			Colour::fromString(colour));
+		//text colour ID
+		groupbox->setColour(0x1005410,
+			Colour::fromString(colour));
+		
+		if(caption.length()>0){
+			offX=10;
+			offY=35;
+			offWidth=-20;
+			offHeight=-45;
+			groupbox->setVisible(true);
+			groupbox->setText(caption);
+		}
+		//text colour ID
+		combo->setColour(0x1000a00,
+				Colours::findColourForName("white", Colours::grey));
+
+
+		combo->setEditableText (false);
+		combo->setJustificationType (Justification::centredLeft);
+		combo->setTextWhenNothingSelected(text);
+		this->setWantsKeyboardFocus(false);
+		
+		//populate combo with files
+		Array<File> dirFiles;
+		if(cAttr.getStringProp("fileType").length()<1)
+		for(int i=0;i<cAttr.getStringArrayProp("text").size();i++){
+                String item  = cAttr.getStringArrayPropValue("text", i);
+				combo->addItem(item, i+1);
+        }
+		else{
+			//appProperties->getUserSettings()->getValue("CsoundPluginDirectory");
+			File pluginDir;
 	
-	groupbox = new GroupComponent(String("groupbox_")+name);
-	combo = new ComboBox(name);
-	
-	addAndMakeVisible(groupbox);
-	addAndMakeVisible(combo);
-	groupbox->setVisible(false);
-	groupbox->getProperties().set("groupLine", var(1));
-	combo->setColour(ComboBox::textColourId, Colour::fromString(fontColour));
-	combo->getProperties().set("colour", colour);
-	combo->getProperties().set("fontcolour", fontColour);
-	//combo->setColour(ComboBox::ColourIds::textColourId, Colour::fromString(fontColour));
-	//outline colour IDE
-	groupbox->setColour(0x1005400,
-		Colour::fromString(colour));
-	//text colour ID
-	groupbox->setColour(0x1005410,
-		Colour::fromString(colour));
-	
-	if(caption.length()>0){
-		offX=10;
-		offY=35;
-		offWidth=-20;
-		offHeight=-45;
-		groupbox->setVisible(true);
-		groupbox->setText(caption);
+			const String filetype = cAttr.getStringProp("filetype");
+
+			pluginDir.findChildFiles(dirFiles, 2, false, filetype);
+
+			for (int i = 0; i < dirFiles.size(); ++i){
+				//m.addItem (i + menuSize, cabbageFiles[i].getFileNameWithoutExtension());
+                //String test  = String(i+1)+": "+dirFiles[i].getFileName();
+				String filename;
+				if(filetype.contains("snaps"))
+					filename = dirFiles[i].getFileNameWithoutExtension();
+				else
+					filename = dirFiles[i].getFileName();
+				combo->addItem(filename, i+1);
+			}
+		}
+		combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);
+
 	}
-	//text colour ID
-	combo->setColour(0x1000a00,
-			Colours::findColourForName("white", Colours::grey));
+	//---------------------------------------------
+	~CabbageComboBox(){
 
+	}
 
-	combo->setEditableText (false);
-    combo->setJustificationType (Justification::centredLeft);
-	combo->setTextWhenNothingSelected(text);
+	//update control
+	void update(String identifiers){
+		identifiers = " "+identifiers;
+		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
+			combo->getProperties().set("colour", CabbageGUIClass::getColour("colour", identifiers).toString());
+		if(identifiers.indexOfWholeWord(CabbageIDs::fontcolour)>=0)
+			combo->getProperties().set("fontcolour", CabbageGUIClass::getColour("fontcolour", identifiers).toString());
+		if(identifiers.indexOfWholeWord("bounds")>=0)
+			setBounds(CabbageGUIClass::getBounds(identifiers));
+		repaint();
+	}
+
+	//---------------------------------------------
+	void resized()
+	{
+	groupbox->setBounds(0, 0, getWidth(), getHeight()); 
+	combo->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight); 
 	this->setWantsKeyboardFocus(false);
+	}
 
-}
-//---------------------------------------------
-~CabbageComboBox(){
-
-}
-
-//---------------------------------------------
-void resized()
-{
-groupbox->setBounds(0, 0, getWidth(), getHeight()); 
-combo->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight); 
-this->setWantsKeyboardFocus(false);
-}
-
-JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageComboBox);
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageComboBox);
 };
 
 //==============================================================================
@@ -413,6 +531,19 @@ public:
 	~CabbageImage(){
 	}
 
+
+	//update control
+	void update(String identifiers){
+		identifiers = " "+identifiers;
+		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
+			fill = CabbageGUIClass::getColour("colour", identifiers).toString();
+		if(identifiers.indexOfWholeWord(CabbageIDs::outlinecolour)>=0)
+			outline = CabbageGUIClass::getColour("outlinecolour", identifiers).toString();
+		if(identifiers.indexOfWholeWord("bounds")>=0)
+			setBounds(CabbageGUIClass::getBounds(identifiers));
+		repaint();
+	}
+	
 private:
 	Image img;
 	int top, left, width, height, line;
@@ -460,12 +591,12 @@ private:
 //==============================================================================
 class CabbageGroupbox : public GroupComponent
 {
-OwnedArray<Component> comps;
-int offX, offY, offWidth, offHeight;
-public:
-//---- constructor -----
-CabbageGroupbox(String name, String caption, String text, String colour, String fontColour, int line):GroupComponent(name)
-{
+	OwnedArray<Component> comps;
+	int offX, offY, offWidth, offHeight;
+	public:
+	//---- constructor -----
+	CabbageGroupbox(String name, String caption, String text, String colour, String fontColour, int line):GroupComponent(name)
+	{
 		toBack();
         offX=offY=offWidth=offHeight=0;
         if(colour.length()>0){
@@ -490,17 +621,32 @@ CabbageGroupbox(String name, String caption, String text, String colour, String 
 
 		setName(name);
 
-}
-//---------------------------------------------
-~CabbageGroupbox(){
+	}
+	//---------------------------------------------
+	~CabbageGroupbox(){
 
-}
+	}
 
-//---------------------------------------------
-void resized()
-{
-this->setWantsKeyboardFocus(false);
-}
+
+	//update control
+	void update(String identifiers){
+		identifiers = " "+identifiers;
+		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
+			this->getProperties().set("colour", CabbageGUIClass::getColour("colour", identifiers).toString());
+		if(identifiers.indexOfWholeWord(CabbageIDs::fontcolour)>=0)
+			this->getProperties().set("fontcolour", CabbageGUIClass::getColour("fontcolour", identifiers).toString());
+		if(identifiers.indexOfWholeWord("bounds")>=0)
+			setBounds(CabbageGUIClass::getBounds(identifiers));
+		if(identifiers.indexOfWholeWord("text"))
+			setText(CabbageGUIClass::getText(identifiers));
+		repaint();
+	}
+
+	//---------------------------------------------
+	void resized()
+	{
+	this->setWantsKeyboardFocus(false);
+	}
 
 JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGroupbox);
 };
@@ -585,66 +731,74 @@ private:
 //==============================================================================
 class CabbageXYController : public Component
 {
-//ScopedPointer<LookAndFeel> lookFeel;
-int offX, offY, offWidth, offHeight;
-public:
-ScopedPointer<GroupComponent> groupbox;
-ScopedPointer<XYPad> xypad;
-int XYAutoIndex;
-//---- constructor -----
-CabbageXYController(XYPadAutomation* xyAuto, 
-					String name, 	
-					String text, 
-					String caption, 
-					int minX, int maxX, int minY, int maxY, int index, int dec, 
-					String colour, 
-					String fontcolour,
-					float xValue, 
-					float yValue)
-{
-	setName(name);
-	XYAutoIndex = index;
-	offX=offY=offWidth=offHeight=0;
-	caption="";
-	groupbox = new GroupComponent(String("groupbox_")+name);
-	groupbox->setWantsKeyboardFocus(false);
-	xypad = new XYPad(xyAuto, text, minX, maxX, minY, maxY, dec, Colour::fromString(colour), Colour::fromString(fontcolour), xValue, yValue);
-	xypad->setWantsKeyboardFocus(false);
-	addAndMakeVisible(xypad);
-	addAndMakeVisible(groupbox);
+	//ScopedPointer<LookAndFeel> lookFeel;
+	int offX, offY, offWidth, offHeight;
+	public:
+	ScopedPointer<GroupComponent> groupbox;
+	ScopedPointer<XYPad> xypad;
+	int XYAutoIndex;
+	//---- constructor -----
+	CabbageXYController(XYPadAutomation* xyAuto, 
+						String name, 	
+						String text, 
+						String caption, 
+						int minX, int maxX, int minY, int maxY, int index, int dec, 
+						String colour, 
+						String fontcolour,
+						float xValue, 
+						float yValue)
+	{
+		setName(name);
+		XYAutoIndex = index;
+		offX=offY=offWidth=offHeight=0;
+		caption="";
+		groupbox = new GroupComponent(String("groupbox_")+name);
+		groupbox->setWantsKeyboardFocus(false);
+		xypad = new XYPad(xyAuto, text, minX, maxX, minY, maxY, dec, Colour::fromString(colour), Colour::fromString(fontcolour), xValue, yValue);
+		xypad->setWantsKeyboardFocus(false);
+		addAndMakeVisible(xypad);
+		addAndMakeVisible(groupbox);
 
-	groupbox->setVisible(false);
-	//outline colour ID
-	groupbox->setColour(0x1005400,
-		Colours::findColourForName("white", Colours::white));
-	//outline text ID
-	groupbox->setColour(0x1005410,
-		Colours::findColourForName("white", Colours::white));
-	
-	if(caption.length()>0){
-		offX=10;
-		offY=15;
-		offWidth=-20;
-		offHeight=-25;
-		groupbox->setVisible(true);
-		groupbox->setText(caption);
+		groupbox->setVisible(false);
+		//outline colour ID
+		groupbox->setColour(0x1005400,
+			Colours::findColourForName("white", Colours::white));
+		//outline text ID
+		groupbox->setColour(0x1005410,
+			Colours::findColourForName("white", Colours::white));
+		
+		if(caption.length()>0){
+			offX=10;
+			offY=15;
+			offWidth=-20;
+			offHeight=-25;
+			groupbox->setVisible(true);
+			groupbox->setText(caption);
+		}
+		this->setWantsKeyboardFocus(false);
 	}
+	//---------------------------------------------
+	~CabbageXYController(){
+
+	}
+
+	//update control
+	void update(String identifiers){
+		identifiers = " "+identifiers;
+		if(identifiers.indexOfWholeWord("bounds")>=0)
+			setBounds(CabbageGUIClass::getBounds(identifiers));
+		repaint();
+	}
+
+	//---------------------------------------------
+	void resized()
+	{
+	groupbox->setBounds(0, 0, getWidth(), getHeight()); 
+	xypad->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight); 
 	this->setWantsKeyboardFocus(false);
-}
-//---------------------------------------------
-~CabbageXYController(){
+	}
 
-}
-
-//---------------------------------------------
-void resized()
-{
-groupbox->setBounds(0, 0, getWidth(), getHeight()); 
-xypad->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight); 
-this->setWantsKeyboardFocus(false);
-}
-
-JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageXYController);
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageXYController);
 };
 
 
@@ -653,74 +807,86 @@ JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageXYController);
 //==============================================================================
 class CabbageMessageConsole : public Component
 {
-ScopedPointer<GroupComponent> groupbox;
-ScopedPointer<LookAndFeel_V1> lookAndFeel;
-String text;
-int offX, offY, offWidth, offHeight;
-public:
-	ScopedPointer<TextEditor> editor;
-//---- constructor -----
-CabbageMessageConsole(String name, String caption, String text):
-		  editor(new TextEditor(String("editor_")+name)), 
-		  groupbox(new GroupComponent(String("groupbox_")+name)),
-		  lookAndFeel(new LookAndFeel_V1()),
-		  offX(0), 
-		  offY(0), 
-		  offWidth(0), 
-		  offHeight(0),
-		  text(text)
-{	
-	editor->setLookAndFeel(lookAndFeel);
-	addAndMakeVisible(editor);
-	editor->setMultiLine(true);
-	editor->setScrollbarsShown(true);
-	editor->setReturnKeyStartsNewLine(true);
-	editor->setReadOnly(true);
-	//background colour ID
-	editor->setColour(0x1000200, Colours::black);
-	//text colour ID
-	editor->setColour(0x1000201, Colours::green);
+	ScopedPointer<GroupComponent> groupbox;
+	ScopedPointer<LookAndFeel_V1> lookAndFeel;
+	String text;
+	int offX, offY, offWidth, offHeight;
+	public:
+		ScopedPointer<TextEditor> editor;
+	//---- constructor -----
+	CabbageMessageConsole(String name, String caption, String colour, String fontcolour, String text):
+			  editor(new TextEditor(String("editor_")+name)), 
+			  groupbox(new GroupComponent(String("groupbox_")+name)),
+			  lookAndFeel(new LookAndFeel_V1()),
+			  offX(0), 
+			  offY(0), 
+			  offWidth(0), 
+			  offHeight(0),
+			  text(text)
+	{	
+		editor->setLookAndFeel(lookAndFeel);
+		addAndMakeVisible(editor);
+		editor->setMultiLine(true);
+		editor->setScrollbarsShown(true);
+		editor->setReturnKeyStartsNewLine(true);
+		editor->setReadOnly(true);
+		//background colour ID
+		editor->setColour(0x1000200, Colour::fromString(colour));
+		//text colour ID
+		editor->setColour(0x1000201, Colour::fromString(fontcolour));
 
-	if(caption.length()>0){
-		offX=10;
-		offY=15;
-		offWidth=-20;
-		offHeight=-25;
-		groupbox->setVisible(true);
-		groupbox->setText(caption);
+		if(caption.length()>0){
+			offX=10;
+			offY=15;
+			offWidth=-20;
+			offHeight=-25;
+			groupbox->setVisible(true);
+			groupbox->setText(caption);
+		}
+		this->setWantsKeyboardFocus(false);
 	}
+	//---------------------------------------------
+	~CabbageMessageConsole(){
+
+	}
+
+	//update control
+	void update(String identifiers){
+		identifiers = " "+identifiers;
+		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
+			editor->setColour(0x1000200, Colour::fromString(CabbageGUIClass::getColour("colour", identifiers).toString()));
+		if(identifiers.indexOfWholeWord(CabbageIDs::fontcolour)>=0)
+			editor->setColour(0x1000201, Colour::fromString(CabbageGUIClass::getColour("fontcolour", identifiers).toString()));
+		if(identifiers.indexOfWholeWord("bounds")>=0)
+			setBounds(CabbageGUIClass::getBounds(identifiers));
+		repaint();
+	}
+
+	void paint(Graphics &g){
+		//----- For drawing the border 
+		g.setColour(CabbageUtils::getComponentSkin());
+		g.fillRoundedRectangle (0, -3, getWidth(), getHeight(), 8.f);
+		g.setColour(Colours::black);
+		g.fillRoundedRectangle (5, getHeight()-35, getWidth()-10, 20, 8.f);
+
+		//----- For drawing the title
+		g.setColour (Colours::whitesmoke);
+		g.setOpacity (0.8);
+		g.setFont (15);
+		Justification just(1);
+		g.drawText(text, 10, -5, getWidth()-20, 35, just, false); 
+
+	}
+
+	//---------------------------------------------
+	void resized()
+	{
+	groupbox->setBounds(0, 0, getWidth(), getHeight()); 
+	editor->setBounds(offX+5, offY+20, (getWidth()+offWidth)-10, (getHeight()+offHeight)-45); 
 	this->setWantsKeyboardFocus(false);
-}
-//---------------------------------------------
-~CabbageMessageConsole(){
+	}
 
-}
-
-void paint(Graphics &g){
-	//----- For drawing the border 
-	g.setColour(CabbageUtils::getComponentSkin());
-	g.fillRoundedRectangle (0, -3, getWidth(), getHeight(), 8.f);
-	g.setColour(Colours::black);
-	g.fillRoundedRectangle (5, getHeight()-35, getWidth()-10, 20, 8.f);
-
-	//----- For drawing the title
-	g.setColour (Colours::whitesmoke);
-	g.setOpacity (0.8);
-	g.setFont (15);
-	Justification just(1);
-	g.drawText(text, 10, -5, getWidth()-20, 35, just, false); 
-
-}
-
-//---------------------------------------------
-void resized()
-{
-groupbox->setBounds(0, 0, getWidth(), getHeight()); 
-editor->setBounds(offX+5, offY+20, (getWidth()+offWidth)-10, (getHeight()+offHeight)-45); 
-this->setWantsKeyboardFocus(false);
-}
-
-JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageMessageConsole);
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageMessageConsole);
 };
 
 //==============================================================================
@@ -1207,188 +1373,197 @@ JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageVUMeter);
 //==============================================================================
 class CabbageTable : public Component
 {
-//ScopedPointer<LookAndFeel> lookFeel;
-int offX, offY, offWidth, offHeight, tableSize;
-StringArray colours, channels;
-Array<int> tableSizes, tableNumbers, drawingModes, resizingModes;
-Array< Point<float> > minMax;
-float alpha;
-public:
-bool readOnly;
-ScopedPointer<GroupComponent> groupbox;
-ScopedPointer<CabbageTableManager> table;
-ScopedPointer<TextButton> button;
-ScopedPointer<ChangeListener> listener;
-//---- constructor -----
-CabbageTable(String name, String text, String caption, StringArray chans, 
-													   Array<int> tblNumbers, 
-													   Array<int> tblSize, 
-													   Array<int> drawingModes,
-													   Array<int> resizingModes,
-													   Array<float> ampRanges,
-													   StringArray Colours, 
-													   bool readOnly, 
-													   ChangeListener* listen)
-: tableSizes(tblSize), 
-  colours(Colours), 
-  channels(chans),
-  readOnly(readOnly),
-  listener(listen),
-  tableNumbers(tblNumbers),
-  drawingModes(drawingModes),
-  resizingModes(resizingModes)
-{
-	setName(name);
+	//ScopedPointer<LookAndFeel> lookFeel;
+	int offX, offY, offWidth, offHeight, tableSize;
+	StringArray colours, channels;
+	Array<int> tableSizes, tableNumbers, drawingModes, resizingModes;
+	Array< Point<float> > minMax;
+	float alpha;
+	public:
+	bool readOnly;
+	ScopedPointer<GroupComponent> groupbox;
+	ScopedPointer<CabbageTableManager> table;
+	ScopedPointer<TextButton> button;
+	ScopedPointer<ChangeListener> listener;
+	//---- constructor -----
+	CabbageTable(String name, String text, String caption, StringArray chans, 
+														   Array<int> tblNumbers, 
+														   Array<int> tblSize, 
+														   Array<int> drawingModes,
+														   Array<int> resizingModes,
+														   Array<float> ampRanges,
+														   StringArray Colours, 
+														   bool readOnly, 
+														   ChangeListener* listen)
+	: tableSizes(tblSize), 
+	  colours(Colours), 
+	  channels(chans),
+	  readOnly(readOnly),
+	  listener(listen),
+	  tableNumbers(tblNumbers),
+	  drawingModes(drawingModes),
+	  resizingModes(resizingModes)
+	{
+		setName(name);
 
-	for(int i=0;i<ampRanges.size();i+=2){
-		minMax.add(Point<float>(ampRanges[i], ampRanges[i+1]));
+		for(int i=0;i<ampRanges.size();i+=2){
+			minMax.add(Point<float>(ampRanges[i], ampRanges[i+1]));
+		}
+
+
+		offX=offY=offWidth=offHeight=0;
+		
+		groupbox = new GroupComponent(String("groupbox_")+name);
+		groupbox->setWantsKeyboardFocus(false);
+		tableSize = tableSizes[0];
+		table = new CabbageTableManager(tableSize);
+		
+		//add extra colours if user never specified them
+		//for(int i=colours.size();i<=tableSizes.size();i++)
+				//colours.add(Colour::fromString(colours[0]).withBrightness(1).toString());
+		//		colours.add(Colours::lime.withBrightness(float(i)/tableSizes.size()).toString());
+		
+		
+		// set up drawing modes for each table
+		// 0: default mode, draws everything normally
+		// 1: drawHoriztonalSegments
+		// 2: make fixed point envelope
+		// 3: fixed points and horizontal
+		// 4: fixed points and horizontal and toggle max/min, editable from the onst
+		// ....varous fill variations...
+
+		for(int i=drawingModes.size();i<tableSizes.size();i++)
+			drawingModes.add(0);
+		
+		addAndMakeVisible(table);
+		addAndMakeVisible(groupbox);
+
+		groupbox->setVisible(false);
+		//outline colour ID
+		groupbox->setColour(0x1005400,
+			Colours::findColourForName("white", Colours::white));
+		//text colour ID
+		groupbox->setColour(0x1005410,
+			Colours::findColourForName("white", Colours::white));
+		
+		if(caption.length()>0){
+			offX=10;
+			offY=15;
+			offWidth=-20;
+			offHeight=-25;
+			groupbox->setVisible(true);
+			groupbox->setText(caption);
+		}
+		this->setWantsKeyboardFocus(false);
+
 	}
 
 
-	offX=offY=offWidth=offHeight=0;
-	
-	groupbox = new GroupComponent(String("groupbox_")+name);
-	groupbox->setWantsKeyboardFocus(false);
-	tableSize = tableSizes[0];
-	table = new CabbageTableManager(tableSize);
-	
-	//add extra colours if user never specified them
-	//for(int i=colours.size();i<=tableSizes.size();i++)
-			//colours.add(Colour::fromString(colours[0]).withBrightness(1).toString());
-	//		colours.add(Colours::lime.withBrightness(float(i)/tableSizes.size()).toString());
-	
-	
-	// set up drawing modes for each table
-	// 0: default mode, draws everything normally
-	// 1: drawHoriztonalSegments
-	// 2: make fixed point envelope
-	// 3: fixed points and horizontal
-	// 4: fixed points and horizontal and toggle max/min, editable from the onst
-	// ....varous fill variations...
+	void setDrawingModeBooleans(bool &fixedEnv, bool &drawHorizontal, bool &toggleMaxMin, bool &drawOriginal, bool &drawFill, int mode)
+	{
+	if(mode==1){
+		drawHorizontal = true;
+		fixedEnv = false;
+		toggleMaxMin= false;
+		drawOriginal = true;
+		drawFill = false;
+		}
+	else if(mode==2){
+		drawHorizontal = false;
+		fixedEnv = true;	
+		toggleMaxMin= false;
+		drawOriginal = true;
+		drawFill = false;
+		}
+	else if(mode==3){
+		drawHorizontal = true;
+		fixedEnv = true;
+		toggleMaxMin= false;
+		drawOriginal = true;
+		drawFill = false;
+		}
+	else if(mode==4){
+		drawHorizontal = true;
+		fixedEnv = true;
+		toggleMaxMin= true;	
+		drawOriginal = false;
+		drawFill = true;
+		}
+	else{
+		drawHorizontal = false;
+		fixedEnv = false;
+		toggleMaxMin= false;
+		drawOriginal = true;
+		drawFill = false;
+		}
+	} 
 
-	for(int i=drawingModes.size();i<tableSizes.size();i++)
-		drawingModes.add(0);
-	
-	addAndMakeVisible(table);
-	addAndMakeVisible(groupbox);
-
-	groupbox->setVisible(false);
-	//outline colour ID
-	groupbox->setColour(0x1005400,
-		Colours::findColourForName("white", Colours::white));
-	//text colour ID
-	groupbox->setColour(0x1005410,
-		Colours::findColourForName("white", Colours::white));
-	
-	if(caption.length()>0){
-		offX=10;
-		offY=15;
-		offWidth=-20;
-		offHeight=-25;
-		groupbox->setVisible(true);
-		groupbox->setText(caption);
+	//---------------------------------------------
+	~CabbageTable(){
+	listener.release();
 	}
+
+	void paint(Graphics& g){
+	//Logger::writeToLog("test");	
+	}
+
+
+	void addTables(){
+	bool fixed, horizontal, toggleMaxMin, 	drawOriginal, drawFill;
+	if(table->getNumberOfTables()<tableNumbers.size())
+	if(tableNumbers.size()>1)
+		for(int i=0;i<tableNumbers.size();i++){
+			String name = "table"+String(tableNumbers[i]);
+			setDrawingModeBooleans(fixed, horizontal, toggleMaxMin, drawOriginal, drawFill, drawingModes[i]);
+			table->addTable(name, channels[i], tableNumbers[i], tableSizes[i], fixed, 
+							horizontal, drawOriginal, toggleMaxMin, drawFill, 
+							resizingModes[i], minMax[i], Colours::findColourForName(colours[i], Colours::white), readOnly, listener);
+		}
+	else{	
+		setDrawingModeBooleans(fixed, horizontal, toggleMaxMin, drawOriginal, drawFill, drawingModes[0]);
+		String name = "table"+String(tableNumbers[0]);
+		Logger::writeToLog(name);
+		table->addTable("table0", channels[0], tableNumbers[0], tableSizes[0], fixed, 
+						horizontal, drawOriginal, toggleMaxMin, drawFill, 
+						resizingModes[0], minMax[0],
+						Colours::findColourForName(colours[0], Colours::white), readOnly, listener);
+	}	
+		
+	}
+	//---------------------------------------------
+	void fillTable(int ID, Array<double, CriticalSection> yValues){
+		if(yValues.size()>1)
+		table->fillTable(ID, yValues);
+		table->repaint();
+	}
+
+	void setScrubberPosition(int ID, float position){
+		//if(position>0)
+		//table->setScrubberPosition(ID, position);
+	}
+	//---------------------------------------------
+	void resized()
+	{	
+
+	groupbox->setBounds(0, 0, getWidth(), getHeight()); 
+	table->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight);
+	//check that we have drawn enough tables
+
+
 	this->setWantsKeyboardFocus(false);
 
-}
-
-
-void setDrawingModeBooleans(bool &fixedEnv, bool &drawHorizontal, bool &toggleMaxMin, bool &drawOriginal, bool &drawFill, int mode)
-{
-if(mode==1){
-	drawHorizontal = true;
-	fixedEnv = false;
-	toggleMaxMin= false;
-	drawOriginal = true;
-	drawFill = false;
 	}
-else if(mode==2){
-	drawHorizontal = false;
-	fixedEnv = true;	
-	toggleMaxMin= false;
-	drawOriginal = true;
-	drawFill = false;
+
+
+	//update control
+	void update(String identifiers){
+		identifiers = " "+identifiers;
+		if(identifiers.indexOfWholeWord("bounds")>=0)
+			setBounds(CabbageGUIClass::getBounds(identifiers));
+		repaint();
 	}
-else if(mode==3){
-	drawHorizontal = true;
-	fixedEnv = true;
-	toggleMaxMin= false;
-	drawOriginal = true;
-	drawFill = false;
-	}
-else if(mode==4){
-	drawHorizontal = true;
-	fixedEnv = true;
-	toggleMaxMin= true;	
-	drawOriginal = false;
-	drawFill = true;
-	}
-else{
-	drawHorizontal = false;
-	fixedEnv = false;
-	toggleMaxMin= false;
-	drawOriginal = true;
-	drawFill = false;
-	}
-} 
 
-//---------------------------------------------
-~CabbageTable(){
-listener.release();
-}
-
-void paint(Graphics& g){
-//Logger::writeToLog("test");	
-}
-
-
-void addTables(){
-bool fixed, horizontal, toggleMaxMin, 	drawOriginal, drawFill;
-if(table->getNumberOfTables()<tableNumbers.size())
-if(tableNumbers.size()>1)
-	for(int i=0;i<tableNumbers.size();i++){
-		String name = "table"+String(tableNumbers[i]);
-		setDrawingModeBooleans(fixed, horizontal, toggleMaxMin, drawOriginal, drawFill, drawingModes[i]);
-		table->addTable(name, channels[i], tableNumbers[i], tableSizes[i], fixed, 
-						horizontal, drawOriginal, toggleMaxMin, drawFill, 
-						resizingModes[i], minMax[i], Colours::findColourForName(colours[i], Colours::white), readOnly, listener);
-	}
-else{	
-	setDrawingModeBooleans(fixed, horizontal, toggleMaxMin, drawOriginal, drawFill, drawingModes[0]);
-	String name = "table"+String(tableNumbers[0]);
-	Logger::writeToLog(name);
-	table->addTable("table0", channels[0], tableNumbers[0], tableSizes[0], fixed, 
-					horizontal, drawOriginal, toggleMaxMin, drawFill, 
-					resizingModes[0], minMax[0],
-					Colours::findColourForName(colours[0], Colours::white), readOnly, listener);
-}	
-	
-}
-//---------------------------------------------
-void fillTable(int ID, Array<double, CriticalSection> yValues){
-	if(yValues.size()>1)
-	table->fillTable(ID, yValues);
-	table->repaint();
-}
-
-void setScrubberPosition(int ID, float position){
-	//if(position>0)
-	//table->setScrubberPosition(ID, position);
-}
-//---------------------------------------------
-void resized()
-{	
-
-groupbox->setBounds(0, 0, getWidth(), getHeight()); 
-table->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight);
-//check that we have drawn enough tables
-
-
-this->setWantsKeyboardFocus(false);
-
-}
-
-JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageTable);
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageTable);
 };
 
 //==============================================================================
@@ -1760,269 +1935,6 @@ public:
 
 };
 
-//==============================================================================
-// custom PatternMatrix
-//==============================================================================
-class PatternMatrix : public Component, 
-					  public Timer,
-					  public ButtonListener,
-					  public SliderListener,
-					  public ActionListener
-{
-ScopedPointer<CabbageCheckbox> onoffButton;
-ScopedPointer<Slider> bpm;
-OwnedArray<Slider> pSliders;
-float buttonIndex, updateVar, offX, offY, offWidth, offHeight, 
-noPatterns, noSteps, beat, currentStepButton, rCtrls;
-bool timerActive;
-
-public:
-OwnedArray<CabbageNumToggle> stepButton;
-CabbagePluginAudioProcessor* myFilter;
-//---- constructor -----
-	PatternMatrix(String caption, int width, int height, StringArray patterns, int steps, int rctrls, CabbagePluginAudioProcessor* filter)
-							: timerActive(false), noSteps(steps), 
-								noPatterns(patterns.size()), beat(0), myFilter(filter),
-								currentStepButton(0),
-								buttonIndex(0),
-								updateVar(0),
-								rCtrls(rctrls)
-	{
-		onoffButton = new CabbageCheckbox("Active", "", "", Colours::red.toString(), CabbageUtils::getComponentFontColour().toString(), true);
-
-		onoffButton->button->setButtonText("");
-		onoffButton->button->addListener(this);
-		//onoffButton->getProperties().set(Colours, "red");
-		onoffButton->setBounds(60, 25, 20, 20);
-
-		if(myFilter->patMatrixActive)
-			onoffButton->button->setToggleState(true, sendNotification);
-
-		addAndMakeVisible(onoffButton);
-
-		bpm = new Slider("bpm");
-		bpm->setSliderStyle(Slider::LinearBar);
-		bpm->setBounds(185, 27, 180, 15);
-		bpm->setRange(0, 1000, 1);
-		bpm->setValue(120);
-		bpm->addListener(this);
-		addAndMakeVisible(bpm);
-
-		myFilter->noSteps = noSteps;
-		myFilter->noPatterns = noPatterns;
-		myFilter->patternNames = patterns;
-		Rectangle<int> pattRect;
-		//set bounds for pattern rectangle
-		pattRect.setBounds(60, 50, width-(rCtrls*40)-60, (height-50)*.95);	
-		//set bounds for slider rectangle
-		Rectangle<int> slidersRect;
-		slidersRect.setBounds(pattRect.getWidth()+60, 50, width-pattRect.getWidth()+60, (height-50)*.95); 
-
-		//populate matrix with step buttons
-		if(myFilter->patStepMatrix.size()==0)
-		{
-		for(int pats=0;pats<patterns.size();pats++)
-			for(int beats=0;beats<steps;beats++){
-				stepButton.add(new CabbageNumToggle("", (pattRect.getWidth()/noSteps), (pattRect.getHeight()/patterns.size())));
-				stepButton[stepButton.size()-1]->addActionListener(this);
-				stepButton[stepButton.size()-1]->setName(String(stepButton.size()-1));
-//				stepButton[stepButton.size()-1]->setToggleState(myFilter->patStepMatrix[stepButton.size()-1].state);			
-				CabbagePatternMatrixStepData patMat;
-				myFilter->patStepMatrix.add(patMat);
-				stepButton[stepButton.size()-1]->setTopLeftPosition(pattRect.getX()+(beats*(pattRect.getWidth()/noSteps)), pats*(pattRect.getHeight())/patterns.size()+pattRect.getY());
-				addAndMakeVisible(stepButton[stepButton.size()-1]);
-			}
-		}
-		else{
-		for(int pats=0;pats<patterns.size();pats++)
-			for(int beats=0;beats<steps;beats++){
-				stepButton.add(new CabbageNumToggle("", (pattRect.getWidth()/noSteps), (pattRect.getHeight()/patterns.size())));
-				stepButton[stepButton.size()-1]->addActionListener(this);
-				stepButton[stepButton.size()-1]->setName(String(stepButton.size()-1));
-				stepButton[stepButton.size()-1]->setToggleState(myFilter->patStepMatrix[stepButton.size()-1].state);			
-				//CabbagePatternMatrixStepData patMat;
-				//myFilter->patStepMatrix.add(patMat);
-				stepButton[stepButton.size()-1]->setTopLeftPosition(pattRect.getX()+(beats*(pattRect.getWidth()/noSteps)), pats*(pattRect.getHeight())/patterns.size()+pattRect.getY());
-				addAndMakeVisible(stepButton[stepButton.size()-1]);
-			}
-		}
-		//add p-field controls if needed
-	   for(int pats=0;pats<patterns.size();pats++){
-			for(int i=0;i<rCtrls;i++){
-				pSliders.add(new Slider());
-				pSliders[pSliders.size()-1]->setSliderStyle(Slider::RotaryVerticalDrag);	
-				pSliders[pSliders.size()-1]->addListener(this);
-				pSliders[pSliders.size()-1]->setRange(0, 127, 1);
-				pSliders[pSliders.size()-1]->setTextBoxIsEditable(true);
-				pSliders[pSliders.size()-1]->showTextBox();
-				String sliderName("row:"+String(pats)+"|ctrl:"+String(i));
-				CabbagePatternMatrixPfieldData patMat;
-				myFilter->patPfieldMatrix.add(patMat);
-				pSliders[pSliders.size()-1]->getProperties().set("data", var(sliderName));
-				pSliders[pSliders.size()-1]->setBounds(slidersRect.getX()+(i*40), (((pats*(slidersRect.getHeight())/patterns.size())))+slidersRect.getY(), 40, 40);
-				addAndMakeVisible(pSliders[pSliders.size()-1]);
-				}
-			}
-			
-		}
-
-	~PatternMatrix(){
-		}
-
-
-	void actionListenerCallback(const juce::String &value)
-		{
-			//button:1|state:1|value:127
-			//sort out buttons first
-			if(value.contains("button")){
-			String buttonNum(value.substring(value.indexOf("button:")+7, value.indexOf("|st")));
-			String buttonState(value.substring(value.indexOf("|state:")+7, value.indexOf("|val")));
-			String buttonValue(value.substring(value.indexOf("|value:")+7, value.length()));
-			if(buttonState.getIntValue()==1){
-				myFilter->patStepMatrix.getReference(buttonNum.getIntValue()).state = buttonState.getIntValue();
-				myFilter->patStepMatrix.getReference(buttonNum.getIntValue()).p4 = buttonValue.getIntValue();
-			}
-			else
-				myFilter->patStepMatrix.getReference(buttonNum.getIntValue()).state = buttonState.getIntValue();
-			}
-			//and now sliders
-		}
-		
-	void sliderValueChanged(juce::Slider *slider){
-		String data = slider->getProperties().getWithDefault("data", String("").contains("row"));
-		if(data.contains("row")){
-		String sliderRow(data.substring(data.indexOf("row:")+4, data.indexOf("|ctr")));
-		String sliderCtrl(data.substring(data.indexOf("|ctrl:")+6, data.length()));		
-		if(sliderCtrl=="0")
-		myFilter->patPfieldMatrix.getReference(sliderRow.getIntValue()).p5 = slider->getValue();
-		else if(sliderCtrl=="1")
-		myFilter->patPfieldMatrix.getReference(sliderRow.getIntValue()).p6 = slider->getValue();
-		else if(sliderCtrl=="2")
-		myFilter->patPfieldMatrix.getReference(sliderRow.getIntValue()).p7 = slider->getValue();
-		else if(sliderCtrl=="3")
-		myFilter->patPfieldMatrix.getReference(sliderRow.getIntValue()).p8 = slider->getValue();
-		else if(sliderCtrl=="4")
-		myFilter->patPfieldMatrix.getReference(sliderRow.getIntValue()).p9 = slider->getValue();
-		}
-
-	}
-
-	void sliderDragEnded(Slider* slider)
-		{
-			if(slider->getName()=="bpm"){
-			myFilter->bpm = slider->getValue();
-			myFilter->timeCounter = 0;
-			this->startTimer(15);
-			}
-		}
-
-	void buttonClicked(Button *button)
-		{
-			if(button->getName()=="Active"){
-				if(button->getToggleState()){
-				this->startTimer(15);
-				myFilter->patMatrixActive=1;
-				}
-				else{
-				this->stopTimer();
-				timerActive = false;
-				myFilter->patMatrixActive=0;
-				}
-			}
-		}
-
-	void timerCallback(){
-			for(int u=0;u<stepButton.size();u++){
-			if(stepButton[u]->getToggleState()==1){
-			stepButton[u]->setActiveColour("lime");
-			stepButton[u]->repaint();
-			}
-			}
-	
-			for(int y=0;y<noPatterns;y++){
-			//Logger::writeToLog(String(myFilter->beat+(y*noSteps)));
-			if(stepButton[myFilter->beat+(y*noSteps)]->getToggleState()==1){			
-			stepButton[myFilter->beat+(y*noSteps)]->setActiveColour("yellow");
-			stepButton[myFilter->beat+(y*noSteps)]->repaint();
-			}
-			}
-
-	}
-JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PatternMatrix);
-};
-
-//==============================================================================
-// CabbagePatternMatrix
-//==============================================================================
-class CabbagePatternMatrix : public Component
-{
-int offX, offY, offWidth, offHeight, tableSize, width, height, rCtrls;
-String caption;
-StringArray patterns;
-public:
-ScopedPointer<PatternMatrix> patternMatrix;
-CabbagePluginAudioProcessor* myFilter;
-//---- constructor -----
-CabbagePatternMatrix(CabbagePluginAudioProcessor* filter, String name, int width, int height, String caption, StringArray patterns, int steps, int rctrls)
-	: myFilter(filter), height(height), width(width), caption(caption), patterns(patterns), rCtrls(rctrls)
-{
-	setName(name);
-	offX=offY=offWidth=offHeight=0;
-
-	
-	patternMatrix = new PatternMatrix(caption, width, height, patterns, steps, rCtrls, myFilter);
-
-	addAndMakeVisible(patternMatrix);
-	this->setWantsKeyboardFocus(false);
-}
-//---------------------------------------------
-~CabbagePatternMatrix(){
-
-}
-
-void paint(Graphics& g){
-	//----- Background
-	Colour bg = Colours::white;
-	g.setColour (bg);
-	g.fillRoundedRectangle (0, 0, width, height, 5);
-
-	//----- Outline
-	g.setColour (CabbageUtils::getComponentFontColour());
-	g.setOpacity (0.1);
-	g.drawRoundedRectangle (0.5, 0.5, width-1, height-1, 5, 1);
-
-	Font font (String("Impact"), 14, 0);
-	font.setFallbackFontName (String("Verdana")); //in case the user doesn't have the first font installed
-	g.setFont (font);
-	Justification just (4);
-	g.setColour (Colours::black);
-	String name = CabbageUtils::cabbageString (caption, font, width);
-	g.drawText (name, 0, 5, width, 13, just, false);
-	g.drawLine (10, 20, width-10, 20, 0.3);
-
-	for(int i=0;i<patterns.size();i++){
-	Justification just (4);
-	g.setColour (Colours::black);
-	String name = CabbageUtils::cabbageString (patterns[i], font, 60);
-	
-	g.drawText(name, 0, (i*((height-50)/patterns.size()*.90))+50, 60, (height/patterns.size())*.90, just, false);
-	}
-
-	g.drawText("Active", 70, 25, 60, 20, just, false);
-	g.drawText("BPM", 140, 25, 60, 20, just, false);
-
-
-}
-
-//---------------------------------------------
-void resized()
-{
-patternMatrix->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight); 
-this->setWantsKeyboardFocus(false);
-}
-
-JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePatternMatrix);
-};
 
 //==============================================================================
 // custom soundfiler
@@ -2055,7 +1967,14 @@ public:
 
 	}
 
-
+	//update control
+	void update(String identifiers){
+		identifiers = " "+identifiers;
+		if(identifiers.indexOfWholeWord("bounds")>=0)
+			setBounds(CabbageGUIClass::getBounds(identifiers));
+		repaint();
+	}
+	
 private:
 	String text, colour;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageSoundfiler);
@@ -2069,8 +1988,8 @@ class CabbageLabel	:	public Component
 {
 
 public:
-	CabbageLabel (String text, String colour)
-		: text(text), colour(colour)
+	CabbageLabel (String text, String colour, String fontcolour)
+		: text(text), colour(colour), fontcolour(fontcolour)
 	{
 	}
 
@@ -2085,15 +2004,34 @@ public:
 
 	void paint(Graphics& g)
 	{
-		g.setColour(Colour::fromString(colour));
+		//g.fillAll(Colour::fromString(colour));
+		g.setColour(Colour::fromString(fontcolour));
 		g.setFont(CabbageUtils::getComponentFont());
 		g.setFont(getHeight());
 		g.drawFittedText(text, 0, 0, getWidth(), getHeight(), Justification::left, 1, 1);
 	}
 
+	void setText(String _text){
+		text = _text;
+		repaint();
+	}
+
+	//update control
+	void update(String identifiers){
+		identifiers = " "+identifiers;
+		if(identifiers.indexOfWholeWord("colour")>=0)	
+			colour = CabbageGUIClass::getColour("colour", identifiers).toString();
+		if(identifiers.indexOfWholeWord("fontcolour")>=0)
+			fontcolour = CabbageGUIClass::getColour("fontcolour", identifiers).toString();
+		if(identifiers.indexOfWholeWord("bounds")>=0)
+			setBounds(CabbageGUIClass::getBounds(identifiers));
+		if(identifiers.indexOfWholeWord("text")>=0)
+			setText(CabbageGUIClass::getText(identifiers));
+		repaint();
+	}
 
 private:
-	String text, colour;
+	String text, colour, fontcolour;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageLabel);
 };
 

@@ -1993,6 +1993,7 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 			cAttr.setStringProp("workingDir", currentFileLocation);	
 			
         comps.add(new CabbageComboBox(cAttr));
+
         int idx = comps.size()-1;        
         float left = cAttr.getNumProp(CabbageIDs::left);
         float top = cAttr.getNumProp(CabbageIDs::top);
@@ -2051,40 +2052,89 @@ void CabbagePluginAudioProcessorEditor::InsertXYPad(CabbageGUIClass &cAttr)
 /*
 Our filters control vector contains two xypads, one for the X channel and one for the Y
 channel. Our editor only needs to display one so the xypad with 'dummy' appended to the name
-will be created but not shown. 
+will be created but not shown.
 
-We also need to check to see whether the processor editor has been 're-opened'. If so we 
+We also need to check to see whether the processor editor has been 're-opened'. If so we
 don't need to recreate the automation
 */
 int idx;
 
 if(getFilter()->haveXYAutosBeenCreated()){	
-		comps.add(new CabbageXYController(getFilter()->getXYAutomater(xyPadIndex), cAttr, xyPadIndex)); 
-		xyPadIndex++;  
-		idx = comps.size()-1;
+comps.add(new CabbageXYController(getFilter()->getXYAutomater(xyPadIndex),
+cAttr.getStringProp(CabbageIDs::name),
+                cAttr.getStringProp("text"),
+"",
+                cAttr.getNumProp("minx"),
+                cAttr.getNumProp("maxx"),
+                cAttr.getNumProp("miny"),
+                cAttr.getNumProp("maxy"),
+xyPadIndex,
+cAttr.getNumProp("decimalplaces"),
+cAttr.getStringProp(CabbageIDs::colour),
+cAttr.getStringProp(CabbageIDs::fontcolour),
+cAttr.getNumProp("valuex"),
+cAttr.getNumProp("valuey")));
+xyPadIndex++;
+idx = comps.size()-1;
 }
 else{
 
-	getFilter()->addXYAutomater(new XYPadAutomation());
-	getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->addChangeListener(getFilter());
-	getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->xChannel = cAttr.getStringProp("xchannel");
-	getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->yChannel = cAttr.getStringProp("ychannel");
-	cAttr.setNumProp("xyautoindex", getFilter()->getXYAutomaterSize()-1);
+getFilter()->addXYAutomater(new XYPadAutomation());
+getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->addChangeListener(getFilter());
+getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->xChannel = cAttr.getStringProp("xchannel");
+getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->yChannel = cAttr.getStringProp("ychannel");
+cAttr.setNumProp("xyautoindex", getFilter()->getXYAutomaterSize()-1);
 
-	comps.add(new CabbageXYController(getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1), 
-																				cAttr,
-																				getFilter()->getXYAutomaterSize()-1));   
-	idx = comps.size()-1;
-	getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->paramIndex = idx;
-	Logger::writeToLog("Number of XYAutos:"+String(getFilter()->getXYAutomaterSize()));
-	
+comps.add(new CabbageXYController(getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1),
+cAttr.getStringProp(CabbageIDs::name),
+                cAttr.getStringProp("text"),
+"",
+                cAttr.getNumProp("minx"),
+                cAttr.getNumProp("maxx"),
+                cAttr.getNumProp("miny"),
+                cAttr.getNumProp("maxy"),
+getFilter()->getXYAutomaterSize()-1,
+cAttr.getNumProp("decimalPlaces"),
+cAttr.getStringProp(CabbageIDs::colour),
+cAttr.getStringProp(CabbageIDs::fontcolour),
+cAttr.getNumProp("valuex"),
+cAttr.getNumProp("valuey")));
+idx = comps.size()-1;
+getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->paramIndex = idx;
+Logger::writeToLog("Number of XYAutos:"+String(getFilter()->getXYAutomaterSize()));
+
 }
 
-        float left = cAttr.getNumProp(CabbageIDs::left);    
+        float left = cAttr.getNumProp(CabbageIDs::left);
         float top = cAttr.getNumProp(CabbageIDs::top);
         float width = cAttr.getNumProp(CabbageIDs::width);
         float height = cAttr.getNumProp(CabbageIDs::height);
-		setPositionOfComponent(left, top, width, height, comps[idx], cAttr.getStringProp("reltoplant"));
+
+
+
+        //check to see if widgets is anchored
+        //if it is offset its position accordingly.
+        int relY=0,relX=0;
+        if(layoutComps.size()>0){
+if(comps[idx])
+        for(int y=0;y<layoutComps.size();y++)
+        if(cAttr.getStringProp("reltoplant").length()>0){
+        if(layoutComps[y]->getProperties().getWithDefault(String("plant"), -99).toString().equalsIgnoreCase(cAttr.getStringProp("reltoplant")))
+                {
+positionComponentWithinPlant("", left, top, width, height, layoutComps[y], comps[idx]);
+                }
+        }
+                else{
+            comps[idx]->setBounds(left+relX, top+relY, width, height);
+                if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
+                componentPanel->addAndMakeVisible(comps[idx]);
+                }
+        }
+        else{
+            comps[idx]->setBounds(left+relX, top+relY, width, height);
+                if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
+                componentPanel->addAndMakeVisible(comps[idx]);
+        }
 
 
         float max = cAttr.getNumProp("maxx");
@@ -2095,26 +2145,25 @@ else{
         min = cAttr.getNumProp("miny");
         float valueY = cabbageABS(min-cAttr.getNumProp("valuey"))/cabbageABS(min-max);
         //Logger::writeToLog(String("Y:")+String(valueY));
-        //((CabbageXYController*)comps[idx])->xypad->setXYValues(cAttr.getNumProp("valueX"), 
-		//															cAttr.getNumProp("valueY"));
-		getFilter()->setParameter(idx, cAttr.getNumProp("valuey"));
-		getFilter()->setParameter(idx+1, cAttr.getNumProp("valuey"));
-		
-		//add initial values to incomingValues array
-		if(!cAttr.getStringProp(CabbageIDs::name).contains("dummy")){
-		incomingValues.add(cAttr.getNumProp("valuex"));
-		incomingValues.add(cAttr.getNumProp("valuey"));		
-		}
-		
-		
-//	getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->setXValue(cAttr.getNumProp("valueX"));
-//	getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->setYValue(cAttr.getNumProp("valueY"));		
-		
-#ifdef Cabbage_Build_Standalone 
+        //((CabbageXYController*)comps[idx])->xypad->setXYValues(cAttr.getNumProp("valueX"),
+// cAttr.getNumProp("valueY"));
+getFilter()->setParameter(idx, cAttr.getNumProp("valuey"));
+getFilter()->setParameter(idx+1, cAttr.getNumProp("valuey"));
+
+//add initial values to incomingValues array
+if(!cAttr.getStringProp(CabbageIDs::name).contains("dummy")){
+incomingValues.add(cAttr.getNumProp("valuex"));
+incomingValues.add(cAttr.getNumProp("valuey"));	
+}
+
+
+// getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->setXValue(cAttr.getNumProp("valueX"));
+// getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->setYValue(cAttr.getNumProp("valueY"));
+#ifdef Cabbage_Build_Standalone
         comps[idx]->setWantsKeyboardFocus(false);
 #endif
-	//if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
-    //    actionListenerCallback(cAttr.getStringProp(CabbageIDs::name));
+//if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
+    // actionListenerCallback(cAttr.getStringProp(CabbageIDs::name));
 }
 
 

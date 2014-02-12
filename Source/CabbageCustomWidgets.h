@@ -593,9 +593,17 @@ class CabbageGroupbox : public GroupComponent
 {
 	OwnedArray<Component> comps;
 	int offX, offY, offWidth, offHeight;
+	String name, caption, text, colour, fontcolour;
+	int line;
 	public:
 	//---- constructor -----
-	CabbageGroupbox(String name, String caption, String text, String colour, String fontColour, int line):GroupComponent(name)
+	CabbageGroupbox(CabbageGUIClass &cAttr):		name(cAttr.getStringProp(CabbageIDs::name)),
+							caption(cAttr.getStringProp(CabbageIDs::caption)),
+							text(cAttr.getStringProp(CabbageIDs::text)),
+							colour(cAttr.getStringProp(CabbageIDs::colour)),
+							fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
+							GroupComponent(cAttr.getStringProp(CabbageIDs::name)),
+							line(cAttr.getNumProp(CabbageIDs::line))
 	{
 		toBack();
         offX=offY=offWidth=offHeight=0;
@@ -609,7 +617,7 @@ class CabbageGroupbox : public GroupComponent
         }
 		this->getProperties().set("colour", colour);
 		
-		this->getProperties().set("fontcolour", fontColour);
+		this->getProperties().set("fontcolour", fontcolour);
 
         this->setText(text);
 		this->setWantsKeyboardFocus(false);

@@ -1186,12 +1186,7 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 {
-        layoutComps.add(new CabbageGroupbox(cAttr.getStringProp(CabbageIDs::name), 
-                                                                                 cAttr.getStringProp(CabbageIDs::caption), 
-                                                                                 cAttr.getStringProp(CabbageIDs::text), 
-                                                                                 cAttr.getStringProp(CabbageIDs::colour),
-                                                                                 cAttr.getStringProp(CabbageIDs::fontcolour),
-                                                                                 cAttr.getNumProp(CabbageIDs::line)));
+        layoutComps.add(new CabbageGroupbox(cAttr));
         
 		int idx = layoutComps.size()-1;
         float left = cAttr.getNumProp(CabbageIDs::left);
@@ -2121,7 +2116,7 @@ if(comps[idx])
         if(cAttr.getStringProp("reltoplant").length()>0){
         if(layoutComps[y]->getProperties().getWithDefault(String("plant"), -99).toString().equalsIgnoreCase(cAttr.getStringProp("reltoplant")))
                 {
-positionComponentWithinPlant("", left, top, width, height, layoutComps[y], comps[idx]);
+			positionComponentWithinPlant("", left, top, width, height, layoutComps[y], comps[idx]);
                 }
         }
                 else{

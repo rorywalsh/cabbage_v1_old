@@ -942,15 +942,7 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 void CabbagePluginAudioProcessorEditor::positionComponentWithinPlant(String type, float left, float top, float width, float height, Component *layout, Component *control)
 {			
 //if dimensions are < 1 then the user is using the decimal proportional of positioning
-if(width>1 && height>1){
-//Logger::writeToLog(layout->getName());
-//Logger::writeToLog(control->getName());
-width = width*layout->getProperties().getWithDefault(String("scalex"), 1).toString().getFloatValue();
-height = height*layout->getProperties().getWithDefault(String("scaley"), 1).toString().getFloatValue();
-top = top*layout->getProperties().getWithDefault(String("scaley"), 1).toString().getFloatValue();
-left = left*layout->getProperties().getWithDefault(String("scalex"), 1).toString().getFloatValue();
-}
-else{    
+if(width<=1 && height<=1){
 	width = (width>1 ? .5 : width*layout->getWidth());
     height = (height>1 ? .5 : height*layout->getHeight());
 	top = (top*layout->getHeight());
@@ -960,7 +952,6 @@ else{
 	if(type.equalsIgnoreCase("rslider"))
 		if(width<height) height = width;
 		else if(height<width) width = height;
-
 
 if(layout->getName().containsIgnoreCase("groupbox")||
         layout->getName().containsIgnoreCase("image"))
@@ -1245,35 +1236,17 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 {
-	String pic;
-		
-	if(cAttr.getStringProp(CabbageIDs::file).length()<2)
-		pic="";
-	else{
-		#ifdef MACOSX
-			#ifndef Cabbage_Build_Standalone
-			pic.append(String("/Contents/")+String(cAttr.getStringProp(CabbageIDs::file)), 1024);
-			#else 
-			pic = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName()+String("//")+String(cAttr.getStringProp(CabbageIDs::file));
-			#endif
-		#endif
-		#ifdef LINUX
-		pic = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName()+String("//")+String(cAttr.getStringProp(CabbageIDs::file));;
-		#endif
-		#ifdef WIN32
-		pic = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName()+String("\\")+String(cAttr.getStringProp(CabbageIDs::file));;
-		#endif
-		Logger::writeToLog(pic);
-	}
-		layoutComps.add(new CabbageImage(cAttr.getStringProp(CabbageIDs::name),
-									 pic, cAttr.getStringProp("outline"), cAttr.getStringProp(CabbageIDs::colour),
-									 cAttr.getStringProp("shape"), cAttr.getNumProp(CabbageIDs::line)));
+		String pic = returnFullPathForFile(cAttr.getStringProp(CabbageIDs::file), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());	
+		cAttr.setStringProp(CabbageIDs::file, pic);
+		layoutComps.add(new CabbageImage(cAttr));
 	
         int idx = layoutComps.size()-1;
         float left = cAttr.getNumProp(CabbageIDs::left);
         float top = cAttr.getNumProp(CabbageIDs::top);
         float width = cAttr.getNumProp(CabbageIDs::width);
-        float height = cAttr.getNumProp(CabbageIDs::height);
+        float height = cAttr.getNumProp(CabbageIDs::height);		
+		
+		
         int relY=0,relX=0;
         if(layoutComps.size()>0){
         for(int y=0;y<layoutComps.size();y++)
@@ -1327,12 +1300,7 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 			}
 	}
 	
-	
-	layoutComps[idx]->getProperties().set(String("scaleY"), cAttr.getNumProp("scaleY"));
-	layoutComps[idx]->getProperties().set(String("scaleX"), cAttr.getNumProp("scaleX"));
 	layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
-	//layoutComps[idx]->toBack();
-    cAttr.setStringProp(CabbageIDs::type, "image");
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -1400,21 +1368,19 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
         setSize(width, height);
         componentPanel->setBounds(left, top, width, height);
 
-        if(cAttr.getStringProp(CabbageIDs::colour).length()>2)
+        if(cAttr.getStringProp(CabbageIDs::colour).isNotEmpty())
         formColour = Colour::fromString(cAttr.getStringProp(CabbageIDs::colour));
         else
         formColour = CabbageUtils::getBackgroundSkin();
 
-        if(cAttr.getStringProp(CabbageIDs::fontcolour).length()>2)
+        if(cAttr.getStringProp(CabbageIDs::fontcolour).isNotEmpty())
         fontColour = Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour));
         else
         fontColour = CabbageUtils::getComponentFontColour();
-
         authorText = cAttr.getStringProp("author");
 
 #ifdef Cabbage_Build_Standalone
         formPic = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
-
 #else
         File thisFile(File::getSpecialLocation(File::currentApplicationFile)); 
                 formPic = thisFile.getParentDirectory().getFullPathName();
@@ -1441,23 +1407,19 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
 void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIClass &cAttr)
 {
 
-        layoutComps.add(new CabbageMessageConsole(cAttr.getStringProp(CabbageIDs::name), 
-												  cAttr.getStringProp(CabbageIDs::colour),
-												  cAttr.getStringProp(CabbageIDs::fontcolour),
-												  cAttr.getStringProp(CabbageIDs::caption), 
-												  cAttr.getStringProp("text"))); 
+        layoutComps.add(new CabbageMessageConsole(cAttr.getStringProp(CabbageIDs::name),
+                                                                                 cAttr.getStringProp(CabbageIDs::caption),
+                                                                                 cAttr.getStringProp("text")));
         int idx = layoutComps.size()-1;
 
         float left = cAttr.getNumProp(CabbageIDs::left);
         float top = cAttr.getNumProp(CabbageIDs::top);
         float width = cAttr.getNumProp(CabbageIDs::width);
         float height = cAttr.getNumProp(CabbageIDs::height);
-		setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));		
+		setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));	
         layoutComps[idx]->setName("csoundoutput");
         layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
 }
-
-
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //      Info button. 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -869,7 +869,7 @@ int CabbageGUIClass::parse(String inStr)
 			} 
 			else if(identArray[indx].equalsIgnoreCase("outlinecolour(")){
 					String colour = "outinecolour("+strTokens.joinIntoString("")+")";
-					cabbageIdentifiers.set(CabbageIDs::outlinecolour, getColour("fontcolour", colour).toString());	
+					cabbageIdentifiers.set(CabbageIDs::outlinecolour, getColour("outlinecolour", colour).toString());	
 			}
 			else if(identArray[indx].equalsIgnoreCase("textcolour(")){
 				Colour textcolour;

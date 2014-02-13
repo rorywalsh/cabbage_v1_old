@@ -44,7 +44,6 @@ public:
 	for(int i=0;xmlData->getNumAttributes();i++){
 		if(xmlData->getAttributeName(i)==name)
 				return xmlData->getAttributeValue(i);
-
 		}
 	}
 	
@@ -175,8 +174,7 @@ public:
 			return false;	
 			} 
 			
-	}
-	
+	}	
 	
 	BufferingAudioSource* audioSourceBuffer;
 	PositionableAudioSource* audioSource;
@@ -379,7 +377,7 @@ int index = 0;
 		}		
 	}
 	
-if(array[index].indexOf(".")>0){
+if(array[index].indexOf(".")>=0){
 	String subTemp = array[index].substring(array[index].indexOf("."), 10);
 	return subTemp.length()-1;
 	}	
@@ -746,10 +744,32 @@ static Image drawSoundfilerButton(String type, String colour)
 		return img;
 	}
 
-	else return img;	
+	else return img;	 
 }
 
-
+String returnFullPathForFile(String file, String fullPath)
+{
+	String pic;
+	if(file.isNotEmpty())
+	{
+		#ifdef MACOSX
+			#ifndef Cabbage_Build_Standalone
+			pic.append(String("/Contents/")+file), 1024);
+			#else 
+			pic = fullPath+String("//")+file;
+			#endif
+		#endif
+		#ifdef LINUX
+		pic = file;
+		#endif
+		#ifdef WIN32
+		pic = fullPath+String("\\")+file;;
+		#endif
+		return pic;
+	}
+	else return "";
+}
+	
 };
 
 //===========================================================================================

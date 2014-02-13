@@ -185,6 +185,7 @@ public:
 		groupbox->getProperties().set("groupLine", var(1));
 		if(tracker.length()>0)
 		slider->getProperties().set("tracker", tracker);
+		//Logger::writeToLog("sliderIncr:"+String(cAttr.getNumProp(CabbageIDs::sliderincr)));		
 		slider->getProperties().set("decimalPlaces", decPlaces);
 		//Logger::writeToLog(fontColour);
 		slider->getProperties().set("fontcolour", fontColour);
@@ -194,8 +195,9 @@ public:
 		this->setWantsKeyboardFocus(false);
 		resizeCount = 0;
 		
-        slider->setSkewFactor(cAttr.getNumProp("sliderskew"));
-        slider->setRange(cAttr.getNumProp("min"), cAttr.getNumProp("max"), cAttr.getNumProp("sliderincr"));
+		
+        slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
+        slider->setRange(cAttr.getNumProp("min"), cAttr.getNumProp("max"), cAttr.getNumProp(CabbageIDs::sliderincr));
         slider->setValue(cAttr.getNumProp(CabbageIDs::value));		
 	}//--- end of constructor ----
 
@@ -519,14 +521,26 @@ class CabbageComboBox : public Component
 //==============================================================================
 class CabbageImage : public Component
 {
+String name, outline, fill, shape, file;
+Image img;
+int top, left, width, height, line;
+File picFile;	
+
 public:
-	CabbageImage(String name, String file, String outline, String fill, String shape, int line):
-	Component(name), picFile(file), file(file), fill(fill), outline(outline), shape(shape), line(line){
+	CabbageImage(CabbageGUIClass &cAttr):
+							name(cAttr.getStringProp(CabbageIDs::name)),
+							file(cAttr.getStringProp(CabbageIDs::file)), 
+							outline(cAttr.getStringProp(CabbageIDs::outlinecolour)), 
+							fill(cAttr.getStringProp(CabbageIDs::colour)),
+							shape(cAttr.getStringProp("shape")), 
+							line(cAttr.getNumProp(CabbageIDs::line))
+	{
 		setName(name);
 		//toBack();
 		img = ImageCache::getFromFile (File (file));
 		this->setWantsKeyboardFocus(false);
 		//this->setInterceptsMouseClicks(false, true);
+		Logger::writeToLog(outline);
 	}
 	~CabbageImage(){
 	}
@@ -544,12 +558,6 @@ public:
 		repaint();
 	}
 	
-private:
-	Image img;
-	int top, left, width, height, line;
-	String fill, outline, shape, file;
-	File picFile;	
-
 	void paint (Graphics& g){
 		if(file.length()>5){
 		g.drawImage(img, 0, 0, width, height, 0, 0, img.getWidth(), img.getHeight());
@@ -820,44 +828,43 @@ class CabbageMessageConsole : public Component
 	String text;
 	int offX, offY, offWidth, offHeight;
 	public:
-		ScopedPointer<TextEditor> editor;
+	ScopedPointer<TextEditor> editor;
 	//---- constructor -----
-	CabbageMessageConsole(String name, String caption, String colour, String fontcolour, String text):
-			  editor(new TextEditor(String("editor_")+name)), 
-			  groupbox(new GroupComponent(String("groupbox_")+name)),
-			  lookAndFeel(new LookAndFeel_V1()),
-			  offX(0), 
-			  offY(0), 
-			  offWidth(0), 
-			  offHeight(0),
-			  text(text)
+	CabbageMessageConsole(String name, String caption, String text):
+	editor(new TextEditor(String("editor_")+name)),
+	groupbox(new GroupComponent(String("groupbox_")+name)),
+	lookAndFeel(new LookAndFeel_V1()),
+	offX(0),
+	offY(0),
+	offWidth(0),
+	offHeight(0),
+	text(text)
 	{	
-		editor->setLookAndFeel(lookAndFeel);
-		addAndMakeVisible(editor);
-		editor->setMultiLine(true);
-		editor->setScrollbarsShown(true);
-		editor->setReturnKeyStartsNewLine(true);
-		editor->setReadOnly(true);
-		//background colour ID
-		editor->setColour(0x1000200, Colour::fromString(colour));
-		//text colour ID
-		editor->setColour(0x1000201, Colour::fromString(fontcolour));
+	editor->setLookAndFeel(lookAndFeel);
+	addAndMakeVisible(editor);
+	editor->setMultiLine(true);
+	editor->setScrollbarsShown(true);
+	editor->setReturnKeyStartsNewLine(true);
+	editor->setReadOnly(true);
+	//background colour ID
+	editor->setColour(0x1000200, Colours::black);
+	//text colour ID
+	editor->setColour(0x1000201, Colours::green);
 
-		if(caption.length()>0){
-			offX=10;
-			offY=15;
-			offWidth=-20;
-			offHeight=-25;
-			groupbox->setVisible(true);
-			groupbox->setText(caption);
-		}
-		this->setWantsKeyboardFocus(false);
+	if(caption.length()>0){
+	offX=10;
+	offY=15;
+	offWidth=-20;
+	offHeight=-25;
+	groupbox->setVisible(true);
+	groupbox->setText(caption);
+	}
+	this->setWantsKeyboardFocus(false);
 	}
 	//---------------------------------------------
 	~CabbageMessageConsole(){
 
 	}
-
 	//update control
 	void update(String identifiers){
 		identifiers = " "+identifiers;
@@ -871,7 +878,7 @@ class CabbageMessageConsole : public Component
 	}
 
 	void paint(Graphics &g){
-		//----- For drawing the border 
+		//----- For drawing the border
 		g.setColour(CabbageUtils::getComponentSkin());
 		g.fillRoundedRectangle (0, -3, getWidth(), getHeight(), 8.f);
 		g.setColour(Colours::black);
@@ -882,8 +889,7 @@ class CabbageMessageConsole : public Component
 		g.setOpacity (0.8);
 		g.setFont (15);
 		Justification just(1);
-		g.drawText(text, 10, -5, getWidth()-20, 35, just, false); 
-
+		g.drawText(text, 10, -5, getWidth()-20, 35, just, false);
 	}
 
 	//---------------------------------------------

@@ -744,6 +744,10 @@ CabbageGUIClass::~CabbageGUIClass()
 
 }
 //===========================================================================================
+// this method parsing the Cabbage text and set each of the Cabbage indentifers
+// it's a little slow as it must trraverse through all possible identifiers, 
+//but it's only called on startup so it's not a problem
+//===========================================================================================
 int CabbageGUIClass::parse(String inStr)
 {
 	//Logger::writeToLog(str);
@@ -830,13 +834,13 @@ int CabbageGUIClass::parse(String inStr)
 				identArray[indx].equalsIgnoreCase(" colours(")||
 				identArray[indx].equalsIgnoreCase(", colours(")){
 					String colour = "colour("+strTokens.joinIntoString("")+")";
-					cabbageIdentifiers.set(CabbageIDs::colour, getColour("colour", colour).toString());									
+					cabbageIdentifiers.set(CabbageIDs::colour, getColourFromText("colour", colour).toString());									
 			}
 
 
             else if(identArray[indx].equalsIgnoreCase("fontcolour(")){
 					String colour = "fontcolour("+strTokens.joinIntoString("")+")";
-					cabbageIdentifiers.set(CabbageIDs::fontcolour, getColour("fontcolour", colour).toString());			
+					cabbageIdentifiers.set(CabbageIDs::fontcolour, getColourFromText("fontcolour", colour).toString());			
 			}
 
             else if(identArray[indx].equalsIgnoreCase("tablecolour(")){
@@ -850,7 +854,7 @@ int CabbageGUIClass::parse(String inStr)
             else if(identArray[indx].equalsIgnoreCase("trackercolour(")){
 					String colour = "trackercolour("+strTokens.joinIntoString("")+")";
 					Logger::writeToLog(colour);
-					cabbageIdentifiers.set(CabbageIDs::trackercolour, getColour("trackercolour", colour).toString());				
+					cabbageIdentifiers.set(CabbageIDs::trackercolour, getColourFromText("trackercolour", colour).toString());				
 			}
 
 			else if(identArray[indx].equalsIgnoreCase("kind(")){
@@ -861,7 +865,7 @@ int CabbageGUIClass::parse(String inStr)
 			} 
 			else if(identArray[indx].equalsIgnoreCase("fillcolour(")){
 					String colour = "fillcolour("+strTokens.joinIntoString("")+")";
-					cabbageIdentifiers.set(CabbageIDs::fillcolour, getColour("fillcolour", colour).toString());	
+					cabbageIdentifiers.set(CabbageIDs::fillcolour, getColourFromText("fillcolour", colour).toString());	
 
 			}
 			else if(identArray[indx].equalsIgnoreCase("shape(")){
@@ -869,7 +873,7 @@ int CabbageGUIClass::parse(String inStr)
 			} 
 			else if(identArray[indx].equalsIgnoreCase("outlinecolour(")){
 					String colour = "outinecolour("+strTokens.joinIntoString("")+")";
-					cabbageIdentifiers.set(CabbageIDs::outlinecolour, getColour("outlinecolour", colour).toString());	
+					cabbageIdentifiers.set(CabbageIDs::outlinecolour, getColourFromText("outlinecolour", colour).toString());	
 			}
 			else if(identArray[indx].equalsIgnoreCase("textcolour(")){
 				Colour textcolour;
@@ -1161,6 +1165,14 @@ int CabbageGUIClass::parse(String inStr)
 				cabbageIdentifiers.set(CabbageIDs::max, strTokens[0].trim().getFloatValue());	
 			}
 
+            else if(identArray[indx].equalsIgnoreCase("sliderincr(")){
+				cabbageIdentifiers.set(CabbageIDs::sliderincr, strTokens[0].trim().getFloatValue());	
+			}
+
+            else if(identArray[indx].equalsIgnoreCase("sliderskew(")){
+				cabbageIdentifiers.set(CabbageIDs::sliderskew, strTokens[0].trim().getFloatValue());	
+			}
+
             else if(identArray[indx].equalsIgnoreCase("visible(")){ 
 				cabbageIdentifiers.set(CabbageIDs::visible, strTokens[0].trim().getFloatValue());	
 			}
@@ -1268,16 +1280,18 @@ float CabbageGUIClass::getNumProp(Identifier prop)
 {	
 	return cabbageIdentifiers.getWithDefault(prop, -9999.f);
 }
-
+//==================================================================
 float CabbageGUIClass::getNumProp(Identifier prop, int index)
 {
 	//this method should never be called...
 	jassert(1);	
 }
 
-
-
-Rectangle<int> CabbageGUIClass::getBounds(String text)
+//================================================================================================
+// these mthods can be used to find the values of indentifiers
+// by passing a single line of text to them. 
+//================================================================================================
+Rectangle<int> CabbageGUIClass::getBoundsFromText(String text)
 {
 	text = " "+text;
 	String subString = text.substring(text.indexOfWholeWord("bounds"));
@@ -1287,7 +1301,8 @@ Rectangle<int> CabbageGUIClass::getBounds(String text)
 	return Rectangle<int>(strTokens[0].getIntValue(), strTokens[1].getIntValue(), strTokens[2].getIntValue(), strTokens[3].getIntValue());
 }
 
-Colour CabbageGUIClass::getColour(String colourType, String text)
+//===================================================================
+Colour CabbageGUIClass::getColourFromText(String colourType, String text)
 {
 	text = " "+text;
 	String subString = text.substring(text.indexOfWholeWord(colourType));
@@ -1295,38 +1310,64 @@ Colour CabbageGUIClass::getColour(String colourType, String text)
 	Colour colour;
 	StringArray strTokens;
 	strTokens.addTokens(subString, ",() ", "");
-
-		
-		if(strTokens.size()<2)
-			colour = Colours::findColourForName(strTokens[0].trim(), Colours::white);
-		else if(strTokens.size()==4)
-			colour = Colour::fromRGBA (strTokens[0].getIntValue(),
-												strTokens[1].getIntValue(), 
-												strTokens[2].getIntValue(),
-												strTokens[3].getIntValue());
-		else if(strTokens.size()==3)
-			colour = Colour::fromRGB (strTokens[0].getIntValue(),
-						strTokens[1].getIntValue(), 
-						strTokens[2].getIntValue());
-		return colour;
+	
+	if(strTokens.size()<2)
+		colour = Colours::findColourForName(strTokens[0].trim(), Colours::white);
+	else if(strTokens.size()==4)
+		colour = Colour::fromRGBA (strTokens[0].getIntValue(),
+											strTokens[1].getIntValue(), 
+											strTokens[2].getIntValue(),
+											strTokens[3].getIntValue());
+	else if(strTokens.size()==3)
+		colour = Colour::fromRGB (strTokens[0].getIntValue(),
+					strTokens[1].getIntValue(), 
+					strTokens[2].getIntValue());
+	return colour;
 }
-
-String CabbageGUIClass::getText(String text)
+//==================================================================
+String CabbageGUIClass::getTextFromText(String text)
 {
 	text = " "+text;
 	String subString = text.substring(text.indexOfWholeWord("text"));
 	subString = subString.substring(5, subString.indexOf(")"));
 	return subString;
 }
-	
+//==================================================================
+Point<int> CabbageGUIClass::getPosFromText(String text)
+{
+	text = " "+text;
+	String subString = text.substring(text.indexOfWholeWord("pos"));
+	subString = subString.substring(4, subString.indexOf(")"));
+	StringArray strTokens;
+	strTokens.addTokens(subString, ",()", "");
+	return Point<int>(strTokens[0].getIntValue(), strTokens[1].getIntValue());
+}
+//==================================================================
+Point<int> CabbageGUIClass::getSizeFromText(String text)
+{
+	text = " "+text;
+	String subString = text.substring(text.indexOfWholeWord("size"));
+	subString = subString.substring(5, subString.indexOf(")"));
+	StringArray strTokens;
+	strTokens.addTokens(subString, ",()", "");
+	return Point<int>(strTokens[0].getIntValue(), strTokens[1].getIntValue());
+}
+//==================================================================
+float CabbageGUIClass::getSkewFromText(String text)
+{	
+	text = " "+text;
+	String subString = text.substring(text.indexOfWholeWord("sliderskew"));
+	subString = subString.substring(11, subString.indexOf(")"));
+	return subString.getFloatValue();	
+}
 
+//===================================================================
 //set numerical attributes
 void CabbageGUIClass::setNumProp(Identifier prop, float val)
 {
 	cabbageIdentifiers.set(prop, val);
 }
-
-
+//===================================================================
 float CabbageGUIClass::getTableChannelValues(int index)
 {
 	if(index<tableChannelValues.size())
@@ -1334,19 +1375,18 @@ float CabbageGUIClass::getTableChannelValues(int index)
 	else
 		return 0.f;	
 }
-
+//===================================================================
 void CabbageGUIClass::addTableChannelValues()
 {
 	tableChannelValues.add(-1.f);
 }
-
+//===================================================================
 void CabbageGUIClass::setTableChannelValues(int index, float val)
 {
 	if(index<tableChannelValues.size())
 	tableChannelValues.set(index, val);		
 }
-
-
+//===================================================================
 String CabbageGUIClass::getPropsString()
 {
 /*	String type;
@@ -1356,7 +1396,7 @@ String CabbageGUIClass::getPropsString()
 				<< String("), range(\"") << String(min) << String(", ") << String(max) << String(", ") << String(value) << String("\")");
 */
 }
-
+//===================================================================
 String CabbageGUIClass::getStringProp(Identifier prop, int index)
 {
 	jassert(1);
@@ -1368,14 +1408,14 @@ String CabbageGUIClass::getStringProp(Identifier prop, int index)
 		else*/	
 		return "";
 }
-
+//===================================================================
 Rectangle<int> CabbageGUIClass::getComponentBounds()
 {
 	Rectangle<int> rect;
 	rect.setBounds(getNumProp("left"), getNumProp("top"), getNumProp("width"), getNumProp("height"));
 	return rect;
 }
-
+//===================================================================
 String CabbageGUIClass::getStringProp(Identifier prop)
 {
 	var strings = cabbageIdentifiers.getWithDefault(prop, "");
@@ -1391,9 +1431,7 @@ String CabbageGUIClass::getStringProp(Identifier prop)
 		return strings.toString();
 	}
 }
-
-
-
+//===================================================================
 StringArray CabbageGUIClass::getStringArrayProp(Identifier prop)
 {
 	StringArray returnArray;
@@ -1402,7 +1440,7 @@ StringArray CabbageGUIClass::getStringArrayProp(Identifier prop)
 		returnArray.add(strings[i].toString());
 	return returnArray;
 }
-
+//===================================================================
 String CabbageGUIClass::getStringArrayPropValue(Identifier prop, int index)
 {
 	StringArray returnArray;
@@ -1412,11 +1450,18 @@ String CabbageGUIClass::getStringArrayPropValue(Identifier prop, int index)
 	if(isPositiveAndBelow(index,strings.size()))
 	return returnArray[index];
 	else
-	return returnArray[strings.size()-1];
-		
-	
+	return returnArray[strings.size()-1];		
 }
-
+//===================================================================
+String CabbageGUIClass::setStringArrayPropValue(Identifier prop, int index, String value)
+{
+	/*
+	var strings = cabbageIdentifiers.getWithDefault(prop, "");
+	if(strings.size()>0)
+	if(isPositiveAndBelow(index,strings.size()))
+	strings[index] = value;*/
+}
+//===================================================================
 Array<int> CabbageGUIClass::getIntArrayProp(Identifier prop)
 {
 	Array<int> returnArray;
@@ -1425,7 +1470,7 @@ Array<int> CabbageGUIClass::getIntArrayProp(Identifier prop)
 		returnArray.add(ints[i]);
 	return returnArray;
 }
-
+//===================================================================
 int CabbageGUIClass::getIntArrayPropValue(Identifier prop, int index)
 {
 	Array<int> returnArray;
@@ -1437,7 +1482,7 @@ int CabbageGUIClass::getIntArrayPropValue(Identifier prop, int index)
 	else
 	return returnArray[ints.size()-1];
 }
-
+//===================================================================
 Array<float> CabbageGUIClass::getFloatArrayProp(Identifier prop)
 {
 	Array<float> returnArray;
@@ -1446,7 +1491,7 @@ Array<float> CabbageGUIClass::getFloatArrayProp(Identifier prop)
 		returnArray.add(ints[i]);
 	return returnArray;
 }
-
+//===================================================================
 float CabbageGUIClass::getFloatArrayPropValue(Identifier prop, int index)
 {
 	Array<float> returnArray;
@@ -1458,22 +1503,22 @@ float CabbageGUIClass::getFloatArrayPropValue(Identifier prop, int index)
 	else
 	return returnArray[ints.size()-1];
 }
-
+//===================================================================
 void CabbageGUIClass::setStringProp(Identifier prop, int index, String value)
 {		
 	jassert(1)
 }
-
+//===================================================================
 void CabbageGUIClass::setStringProp(Identifier prop, String val)
 {
 		cabbageIdentifiers.set(prop, val);
 }
-
+//===================================================================
 String CabbageGUIClass::getColourProp(Identifier prop)
 {
 	jassert(1)
 }
-
+//===================================================================
 String CabbageGUIClass::getStringForIdentifier(var propsArray, String identifier, String type)
 {
 	String str;
@@ -1505,7 +1550,7 @@ String CabbageGUIClass::getStringForIdentifier(var propsArray, String identifier
 	else
 	return "";
 }
-
+//===================================================================
 String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
 {
 	//Logger::writeToLog("::::getCabbageCodeFromIdentifiers::::");

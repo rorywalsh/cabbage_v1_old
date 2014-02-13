@@ -160,7 +160,7 @@ namespace CabbageIDs
 	static const Identifier type = "type";
 	static const Identifier trackercolour = "trackercolour";
 	static const Identifier sliderskew = "sliderskew";
-	static const Identifier sliderincr = "sliderince";
+	static const Identifier sliderincr = "sliderincr";
 	static const Identifier midichan = "midichan";
 	static const Identifier midictrl = "midictrl";
 	static const Identifier kind = "kind";
@@ -279,12 +279,12 @@ public:
 	}
 	
 	//static methods used for updating look and pos of GUI controls
-	static Rectangle<int> getBounds(String text);
-	static Colour getColour(String colourType, String text);
-	static String getText(String text);
-	
-	
-	
+	static Rectangle<int> getBoundsFromText(String text);
+	static Colour getColourFromText(String colourType, String text);
+	static String getTextFromText(String text);
+	static Point<int> getSizeFromText(String text);
+	static Point<int> getPosFromText(String text);
+	static float getSkewFromText(String text);
 	
 	void setBounds(Rectangle<int> bounds){
 	left = bounds.getX();
@@ -310,7 +310,7 @@ public:
 	float getFloatArrayPropValue(Identifier prop, int index);
 	Array<float> getFloatArrayProp(Identifier prop);
 	
-	
+	String setStringArrayPropValue(Identifier prop, int index, String value);
 	
 	
 	StringArray getChannels(){

@@ -256,11 +256,6 @@ csound->SetExternalMidiReadCallback(ReadMidiData);
 csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
 csound->SetExternalMidiWriteCallback(WriteMidiData);
 
-
-patStepMatrix.clear();
-patternNames.clear();
-patPfieldMatrix.clear();
-
 csoundChanList = NULL;
 numCsoundChannels = 0;
 csndIndex = 32;
@@ -1074,10 +1069,11 @@ if(!csCompileResult)
 			{
 			//if controls has an identifier channel send data from Csound to control
 			char string[1024] = {0};
+			//guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress()
 			csound->GetStringChannel(guiCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), string);	
 			if(String(string)!=""){
 			guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, String(string));
-			}		
+			}	
 			else
 				guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
 			//zero channel message so that we don't keep sending the same string 

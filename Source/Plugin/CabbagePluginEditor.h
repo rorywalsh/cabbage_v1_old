@@ -179,7 +179,6 @@ private:
 #endif
         ScopedPointer<MidiKeyboardComponent> midiKeyboard;
         ScopedPointer<LookAndFeel> feely;
-		Array<float> incomingValues;
 		ComponentBoundsConstrainer resizeLimits;
 
         AudioPlayHead::CurrentPositionInfo hostInfo;

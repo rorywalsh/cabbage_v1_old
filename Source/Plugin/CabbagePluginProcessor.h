@@ -64,8 +64,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 																		 public ChangeListener
 {
     //==============================================================================
-protected:
-       File csdFile;
+        File csdFile;
 		int masterCounter;
         String filename;
         String pluginName;
@@ -149,9 +148,9 @@ protected:
 		OwnedArray<XYPadAutomation, CriticalSection> xyAutomation;
 		void updateGUIControlsKsmps(int speed);
 		int guiRefreshRate;
-	
+		
 public:
-
+		Array<int> dirtyControls;
     //==============================================================================
 
 #if defined(Cabbage_Build_Standalone) || (Cabbage_Plugin_Host)

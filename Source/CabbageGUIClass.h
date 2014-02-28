@@ -255,7 +255,7 @@ public:
 	CabbageGUIClass(String str, int ID);
 	CabbageGUIClass(){};
     ~CabbageGUIClass();
-	int parse(String str);
+	int parse(String str, String identifier);
 	float getNumProp(Identifier prop);
 	float getNumProp(Identifier prop, int index);
 	void setNumProp(Identifier prop, float val);
@@ -285,6 +285,10 @@ public:
 	static Point<int> getSizeFromText(String text);
 	static Point<int> getPosFromText(String text);
 	static float getSkewFromText(String text);
+	static var getVarArrayFromText(String text);	
+	
+	
+	
 	
 	void setBounds(Rectangle<int> bounds){
 	left = bounds.getX();
@@ -311,6 +315,7 @@ public:
 	Array<float> getFloatArrayProp(Identifier prop);
 	
 	String setStringArrayPropValue(Identifier prop, int index, String value);
+	String setStringArrayProp(Identifier prop, var value);
 	
 	
 	StringArray getChannels(){

@@ -991,6 +991,8 @@ will constantly update with the values that have been set here.
 We don't actually change any parameters here, we simply add the messages
 to a queue. See next method. The updates will only happen when it's safe to do. */
 float range, min, max, comboRange;
+//add index of control that was changed to dirty control vector
+dirtyControls.addIfNotAlreadyThere(index);
 //Logger::writeToLog("parameterSet:"+String(newValue));
 if(index<(int)guiCtrls.size())//make sure index isn't out of range
    {
@@ -1011,14 +1013,7 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
 	else
 		newValue = (newValue*range)+min;
 
-	//guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
-	//messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel).toUTF8(),  newValue,
-	//guiCtrls.getReference(index).getStringProp("type"));
-	//Logger::writeToLog(String("parameterSet:"+String(newValue)));
 	#endif
-	//Logger::writeToLog(String("parameterSet:"+String(newValue)));
-	//no need to scale here when in standalone mode
-	
 	if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox &&
 								getGUICtrls(index).getStringProp(CabbageIDs::channeltype)==CabbageIDs::stringchannel)
 	  {
@@ -1043,12 +1038,11 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
 //this method gets called after a performKsmps() to update our GUI controls
 //with messages from Csound. For instance, a user might wish to change the value
 //of a GUI slider from Csound by using a chnset opcode. The speed at which this is
-//updated can be teaked, so as not to hog resources. It might be worth allowing users
-//the option of setting how fast this update...
+//updated can be teaked, so as not to hog resources...
 void CabbagePluginAudioProcessor::updateCabbageControls()
 {
 #ifndef Cabbage_No_Csound
-String chanName;
+String chanName, channelMessage;
 if(!csCompileResult)
 	{
 	MYFLT* val=0;
@@ -1069,17 +1063,18 @@ if(!csCompileResult)
 			{
 			//if controls has an identifier channel send data from Csound to control
 			char string[1024] = {0};
-			//guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress()
 			csound->GetStringChannel(guiCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), string);	
-			if(String(string)!=""){
-			guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, String(string));
+			channelMessage = String(string);
+			if(channelMessage!=""){
+			guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
+			guiCtrls.getReference(index).parse(channelMessage, "");	
+			dirtyControls.addIfNotAlreadyThere(index);
 			}	
 			else
 				guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
 			//zero channel message so that we don't keep sending the same string 
 			csound->SetChannel(guiCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
 			}			
-			
 		}
 //update all layout control widgets
 //currently this is only needed for table widgets as other layout controls
@@ -1097,20 +1092,21 @@ if(!csCompileResult)
 
 		if(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).isNotEmpty())
 			{
-			//if controls has an identifier channel send data from Csound to control
 			char string[1024] = {0};
 			//guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress()
 			csound->GetStringChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), string);	
-			if(String(string)!=""){
-			guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, String(string));
+			channelMessage = String(string);
+			if(channelMessage!=""){
+			guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
+			guiLayoutCtrls.getReference(index).parse(channelMessage, "");		
 			}	
-			else
-				guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
+			//else
+				//guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
 			//zero channel message so that we don't keep sending the same string 
 			csound->SetChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
 			}
 		}
-
+	
 	}
 sendChangeMessage();
 #endif
@@ -1125,16 +1121,16 @@ void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
 if(!csCompileResult){
 #ifndef Cabbage_Build_Standalone
 
-                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(CabbageIDs::hostbpm.toUTF8(), hostInfo.bpm);
-                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(CabbageIDs::timeinseconds.toUTF8(), hostInfo.timeInSeconds);
-                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(CabbageIDs::isplaying.toUTF8(), hostInfo.isPlaying);
-                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
-                if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-                        csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
+	if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+			csound->SetChannel(CabbageIDs::hostbpm.toUTF8(), hostInfo.bpm);
+	if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+			csound->SetChannel(CabbageIDs::timeinseconds.toUTF8(), hostInfo.timeInSeconds);
+	if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+			csound->SetChannel(CabbageIDs::isplaying.toUTF8(), hostInfo.isPlaying);
+	if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+			csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
+	if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+			csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
 
 #endif
 
@@ -1155,6 +1151,8 @@ for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 		}
 		//catch string messags
 		else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type==CabbageIDs::stringchannel){	
+			Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName);
+			Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);
 		csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
 						   messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal.toUTF8().getAddress());
 		}

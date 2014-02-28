@@ -62,13 +62,12 @@ class CabbageButton : public Component
 	int offX, offY, offWidth, offHeight;
 	String buttonType;
 	String name, caption, buttonText, colour, fontcolour;
-	CabbageGUIClass m_cAttr;
 	public:
 	ScopedPointer<GroupComponent> groupbox;
 	ScopedPointer<Button> button;
 		//---- constructor -----
 	//---- constructor -----
-	CabbageButton(CabbageGUIClass &cAttr) : m_cAttr(cAttr),
+	CabbageButton(CabbageGUIClass &cAttr) : 
 							name(cAttr.getStringProp(CabbageIDs::name)),
 							caption(cAttr.getStringProp(CabbageIDs::caption)),
 							buttonText(cAttr.getStringProp(CabbageIDs::text)),
@@ -105,18 +104,12 @@ class CabbageButton : public Component
 
 	}
 
-	//update control
-	void update(String identifiers){
-		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
-			button->getProperties().set("colour", CabbageGUIClass::getColourFromText("colour", identifiers).toString());
-		if(identifiers.indexOfWholeWord(CabbageIDs::fontcolour)>=0)
-			button->getProperties().set("fontcolour", CabbageGUIClass::getColourFromText("fontcolour", identifiers).toString());
-		if(identifiers.indexOfWholeWord("bounds")>=0)
-			setBounds(CabbageGUIClass::getBoundsFromText(identifiers));
-		if(identifiers.indexOfWholeWord("size")>=0)
-			setSize(CabbageGUIClass::getSizeFromText(identifiers).getX(), CabbageGUIClass::getSizeFromText(identifiers).getY());
-		if(identifiers.indexOfWholeWord("pos")>=0)
-			setTopLeftPosition(CabbageGUIClass::getPosFromText(identifiers));
+	//update controls
+	void update(CabbageGUIClass m_cAttr){
+		const MessageManagerLock mmLock;
+		button->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
+		button->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+		setBounds(m_cAttr.getBounds());
 		repaint();
 	}
 
@@ -216,27 +209,15 @@ public:
 	{
 	}
 
-
-	//update control
-	void update(String identifiers){
-		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
-			slider->setColour(0x1001200, Colour::fromString(CabbageGUIClass::getColourFromText("colour", identifiers).toString()));
-		if(identifiers.indexOfWholeWord(CabbageIDs::fontcolour)>=0)
-			slider->getProperties().set("fontcolour", CabbageGUIClass::getColourFromText("fontcolour", identifiers).toString());
-		if(identifiers.indexOfWholeWord(CabbageIDs::trackercolour)>=0)
-			slider->getProperties().set("tracker", CabbageGUIClass::getColourFromText("trackercolour", identifiers).toString());
-		if(identifiers.indexOfWholeWord("bounds")>=0)
-			setBounds(CabbageGUIClass::getBoundsFromText(identifiers));
-		if(identifiers.indexOfWholeWord("size")>=0)
-			setSize(CabbageGUIClass::getSizeFromText(identifiers).getX(), CabbageGUIClass::getSizeFromText(identifiers).getY());
-		if(identifiers.indexOfWholeWord("pos")>=0)
-			setTopLeftPosition(CabbageGUIClass::getPosFromText(identifiers));
-		if(identifiers.indexOfWholeWord("text")>=0)
-			slider->setName(CabbageGUIClass::getTextFromText(identifiers));
-		if(identifiers.indexOfWholeWord(CabbageIDs::sliderskew)>=0)
-			slider->setSkewFactor(CabbageGUIClass::getSkewFromText(identifiers));
-
-
+	//update controls	
+	void update(CabbageGUIClass m_cAttr){
+		const MessageManagerLock mmLock;
+		slider->setColour(0x1001200, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
+		slider->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+		slider->getProperties().set("tracker", m_cAttr.getStringProp(CabbageIDs::trackercolour));
+		setBounds(m_cAttr.getBounds());
+		slider->setName(m_cAttr.getStringProp(CabbageIDs::name));
+		slider->setSkewFactor(m_cAttr.getNumProp(CabbageIDs::sliderskew));
 		repaint();
 	}
 
@@ -397,19 +378,14 @@ class CabbageCheckbox : public Component
 
 	}
 
-	//update control
-	void update(String identifiers){
-
-		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
-			button->getProperties().set("colour", CabbageGUIClass::getColourFromText("colour", identifiers).toString());
-		if(identifiers.indexOfWholeWord(CabbageIDs::fontcolour)>=0)
-			button->getProperties().set("fontcolour", CabbageGUIClass::getColourFromText("fontcolour", identifiers).toString());
-		if(identifiers.indexOfWholeWord("bounds")>=0)
-			setBounds(CabbageGUIClass::getBoundsFromText(identifiers));
-		if(identifiers.indexOfWholeWord("size")>=0)
-			setSize(CabbageGUIClass::getSizeFromText(identifiers).getX(), CabbageGUIClass::getSizeFromText(identifiers).getY());
-		if(identifiers.indexOfWholeWord("pos")>=0)
-			setTopLeftPosition(CabbageGUIClass::getPosFromText(identifiers));
+	//update controls	
+	void update(CabbageGUIClass m_cAttr){
+		const MessageManagerLock mmLock;
+		button->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
+		button->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+		setBounds(m_cAttr.getBounds());
+		button->getProperties().set("isRect", m_cAttr.getStringProp(CabbageIDs::shape).equalsIgnoreCase("square"));
+		button->setButtonText(m_cAttr.getStringProp(CabbageIDs::text));
 		repaint();
 	}
 
@@ -516,21 +492,15 @@ class CabbageComboBox : public Component
 
 	}
 
-	//update control
-	void update(String identifiers){
-		identifiers = " "+identifiers;
-		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
-			combo->getProperties().set("colour", CabbageGUIClass::getColourFromText("colour", identifiers).toString());
-		if(identifiers.indexOfWholeWord(CabbageIDs::fontcolour)>=0)
-			combo->getProperties().set("fontcolour", CabbageGUIClass::getColourFromText("fontcolour", identifiers).toString());
-		if(identifiers.indexOfWholeWord("bounds")>=0)
-			setBounds(CabbageGUIClass::getBoundsFromText(identifiers));
-		if(identifiers.indexOfWholeWord("size")>=0)
-			setSize(CabbageGUIClass::getSizeFromText(identifiers).getX(), CabbageGUIClass::getSizeFromText(identifiers).getY());
-		if(identifiers.indexOfWholeWord("pos")>=0)
-			setTopLeftPosition(CabbageGUIClass::getPosFromText(identifiers));
+	//update controls	
+	void update(CabbageGUIClass m_cAttr){
+		const MessageManagerLock mmLock;
+		combo->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
+		combo->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+		setBounds(m_cAttr.getBounds());
 		repaint();
 	}
+
 
 	//---------------------------------------------
 	void resized()
@@ -573,19 +543,13 @@ public:
 	}
 
 
+
 	//update control
-	void update(String identifiers){
-		identifiers = " "+identifiers;
-		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
-			colour = CabbageGUIClass::getColourFromText("colour", identifiers).toString();
-		if(identifiers.indexOfWholeWord(CabbageIDs::outlinecolour)>=0)
-			outline = CabbageGUIClass::getColourFromText("outlinecolour", identifiers).toString();
-		if(identifiers.indexOfWholeWord("bounds")>=0)
-			setBounds(CabbageGUIClass::getBoundsFromText(identifiers));
-		if(identifiers.indexOfWholeWord("size")>=0)
-			setSize(CabbageGUIClass::getSizeFromText(identifiers).getX(), CabbageGUIClass::getSizeFromText(identifiers).getY());
-		if(identifiers.indexOfWholeWord("pos")>=0)
-			setTopLeftPosition(CabbageGUIClass::getPosFromText(identifiers));
+	void update(CabbageGUIClass m_cAttr){
+		colour = m_cAttr.getStringProp(CabbageIDs::colour);
+		outline = m_cAttr.getStringProp(CabbageIDs::outlinecolour);
+		shape = m_cAttr.getStringProp(CabbageIDs::shape);
+		setBounds(m_cAttr.getBounds());
 		repaint();
 	}
 	
@@ -674,22 +638,12 @@ class CabbageGroupbox : public GroupComponent
 
 	}
 
-
 	//update control
-	void update(String identifiers){
-		identifiers = " "+identifiers;
-		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
-			this->getProperties().set("colour", CabbageGUIClass::getColourFromText("colour", identifiers).toString());
-		if(identifiers.indexOfWholeWord(CabbageIDs::fontcolour)>=0)
-			this->getProperties().set("fontcolour", CabbageGUIClass::getColourFromText("fontcolour", identifiers).toString());
-		if(identifiers.indexOfWholeWord("bounds")>=0)
-			setBounds(CabbageGUIClass::getBoundsFromText(identifiers));
-		if(identifiers.indexOfWholeWord("size")>=0)
-			setSize(CabbageGUIClass::getSizeFromText(identifiers).getX(), CabbageGUIClass::getSizeFromText(identifiers).getY());
-		if(identifiers.indexOfWholeWord("pos")>=0)
-			setTopLeftPosition(CabbageGUIClass::getPosFromText(identifiers));
-		if(identifiers.indexOfWholeWord("text"))
-			setText(CabbageGUIClass::getTextFromText(identifiers));
+	void update(CabbageGUIClass m_cAttr){
+		getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
+		getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+		setBounds(m_cAttr.getBounds());
+		setText(m_cAttr.getStringProp(CabbageIDs::text));
 		repaint();
 	}
 
@@ -833,15 +787,10 @@ class CabbageXYController : public Component
 
 	}
 
+
 	//update control
-	void update(String identifiers){
-		identifiers = " "+identifiers;
-		if(identifiers.indexOfWholeWord("bounds")>=0)
-			setBounds(CabbageGUIClass::getBoundsFromText(identifiers));
-		if(identifiers.indexOfWholeWord("size")>=0)
-			setSize(CabbageGUIClass::getSizeFromText(identifiers).getX(), CabbageGUIClass::getSizeFromText(identifiers).getY());
-		if(identifiers.indexOfWholeWord("pos")>=0)
-			setTopLeftPosition(CabbageGUIClass::getPosFromText(identifiers));
+	void update(CabbageGUIClass m_cAttr){
+		setBounds(m_cAttr.getBounds());
 		repaint();
 	}
 
@@ -904,21 +853,14 @@ class CabbageMessageConsole : public Component
 	~CabbageMessageConsole(){
 
 	}
+	
 	//update control
-	void update(String identifiers){
-		identifiers = " "+identifiers;
-		if(identifiers.indexOfWholeWord(CabbageIDs::colour)>=0)	
-			editor->setColour(0x1000200, Colour::fromString(CabbageGUIClass::getColourFromText("colour", identifiers).toString()));
-		if(identifiers.indexOfWholeWord(CabbageIDs::fontcolour)>=0)
-			editor->setColour(0x1000201, Colour::fromString(CabbageGUIClass::getColourFromText("fontcolour", identifiers).toString()));
-		if(identifiers.indexOfWholeWord("bounds")>=0)
-			setBounds(CabbageGUIClass::getBoundsFromText(identifiers));
-		if(identifiers.indexOfWholeWord("size")>=0)
-			setSize(CabbageGUIClass::getSizeFromText(identifiers).getX(), CabbageGUIClass::getSizeFromText(identifiers).getY());
-		if(identifiers.indexOfWholeWord("pos")>=0)
-			setTopLeftPosition(CabbageGUIClass::getPosFromText(identifiers));
+	void update(CabbageGUIClass m_cAttr){
+		editor->setColour(0x1000200, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
+		editor->setColour(0x1000201, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
+		setBounds(m_cAttr.getBounds());
 		repaint();
-	}
+	}	
 
 	void paint(Graphics &g){
 		//----- For drawing the border
@@ -1611,18 +1553,12 @@ class CabbageTable : public Component
 
 	}
 
-
 	//update control
-	void update(String identifiers){
-		identifiers = " "+identifiers;
-		if(identifiers.indexOfWholeWord("bounds")>=0)
-			setBounds(CabbageGUIClass::getBoundsFromText(identifiers));
-		if(identifiers.indexOfWholeWord("size")>=0)
-			setSize(CabbageGUIClass::getSizeFromText(identifiers).getX(), CabbageGUIClass::getSizeFromText(identifiers).getY());
-		if(identifiers.indexOfWholeWord("pos")>=0)
-			setTopLeftPosition(CabbageGUIClass::getPosFromText(identifiers));
+	void update(CabbageGUIClass m_cAttr){
+		setBounds(m_cAttr.getBounds());
 		repaint();
 	}
+
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageTable);
 };
@@ -2029,14 +1965,8 @@ public:
 	}
 
 	//update control
-	void update(String identifiers){
-		identifiers = " "+identifiers;
-		if(identifiers.indexOfWholeWord("bounds")>=0)
-			setBounds(CabbageGUIClass::getBoundsFromText(identifiers));
-		if(identifiers.indexOfWholeWord("size")>=0)
-			setSize(CabbageGUIClass::getSizeFromText(identifiers).getX(), CabbageGUIClass::getSizeFromText(identifiers).getY());
-		if(identifiers.indexOfWholeWord("pos")>=0)
-			setTopLeftPosition(CabbageGUIClass::getPosFromText(identifiers));
+	void update(CabbageGUIClass m_cAttr){
+		setBounds(m_cAttr.getBounds());
 		repaint();
 	}
 	
@@ -2081,23 +2011,16 @@ public:
 		repaint();
 	}
 
+
 	//update control
-	void update(String identifiers){
-		identifiers = " "+identifiers;
-		if(identifiers.indexOfWholeWord("colour")>=0)	
-			colour = CabbageGUIClass::getColourFromText("colour", identifiers).toString();
-		if(identifiers.indexOfWholeWord("fontcolour")>=0)
-			fontcolour = CabbageGUIClass::getColourFromText("fontcolour", identifiers).toString();
-		if(identifiers.indexOfWholeWord("bounds")>=0)
-			setBounds(CabbageGUIClass::getBoundsFromText(identifiers));
-		if(identifiers.indexOfWholeWord("size")>=0)
-			setSize(CabbageGUIClass::getSizeFromText(identifiers).getX(), CabbageGUIClass::getSizeFromText(identifiers).getY());
-		if(identifiers.indexOfWholeWord("pos")>=0)
-			setTopLeftPosition(CabbageGUIClass::getPosFromText(identifiers));
-		if(identifiers.indexOfWholeWord("text")>=0)
-			setText(CabbageGUIClass::getTextFromText(identifiers));
+	void update(CabbageGUIClass m_cAttr){
+		getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
+		getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+		setBounds(m_cAttr.getBounds());
+		setText(m_cAttr.getStringProp(CabbageIDs::text));
 		repaint();
 	}
+
 
 private:
 	String text, colour, fontcolour;

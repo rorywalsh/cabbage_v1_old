@@ -736,7 +736,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 	}
 
 //parse the text now that all default values ahve been assigned
-parse(compStr);
+parse(compStr, "");
 }
 
 CabbageGUIClass::~CabbageGUIClass()
@@ -745,19 +745,25 @@ CabbageGUIClass::~CabbageGUIClass()
 }
 //===========================================================================================
 // this method parsing the Cabbage text and set each of the Cabbage indentifers
-// it's a little slow as it must trraverse through all possible identifiers, 
-//but it's only called on startup so it's not a problem
 //===========================================================================================
-int CabbageGUIClass::parse(String inStr)
+int CabbageGUIClass::parse(String inStr, String identifier)
 {
+	IdentArray identArray;
 	//Logger::writeToLog(str);
 	//remove any text after a semicolon and take out tabs..
 	String str = inStr.removeCharacters("\t");
 	if(str.indexOf(0, ";")!=-1)
 		str = str.substring(0, str.indexOf(0, ";"));
 
-	IdentArray identArray = *IdentArray::getInstance(); // creates the singleton if there isn't already one.
-	//making this static would also speed things up!!
+	//if identifier string is not empty, use that, otherwise
+	//search through identArray list of known identifiers
+	if(identifier.isNotEmpty())
+		identArray.add(identifier);
+	else
+	identArray = *IdentArray::getInstance(); // creates the singleton if there isn't already one.
+
+
+
 	String typeOfWidget="";
 
 
@@ -853,7 +859,7 @@ int CabbageGUIClass::parse(String inStr)
 
             else if(identArray[indx].equalsIgnoreCase("trackercolour(")){
 					String colour = "trackercolour("+strTokens.joinIntoString("")+")";
-					Logger::writeToLog(colour);
+					//Logger::writeToLog(colour);
 					cabbageIdentifiers.set(CabbageIDs::trackercolour, getColourFromText("trackercolour", colour).toString());				
 			}
 
@@ -1130,8 +1136,7 @@ int CabbageGUIClass::parse(String inStr)
 				else{
 				minY = strTokens[0].trim().getFloatValue();  
 				maxY = strTokens[1].trim().getFloatValue();  
-				valueY = strTokens[2].trim().getFloatValue();
-				
+				valueY = strTokens[2].trim().getFloatValue();				
 
 				cabbageIdentifiers.set(CabbageIDs::miny, strTokens[0].trim().getDoubleValue());	
 				cabbageIdentifiers.set(CabbageIDs::maxy, strTokens[1].trim().getDoubleValue());
@@ -1333,6 +1338,19 @@ String CabbageGUIClass::getTextFromText(String text)
 	return subString;
 }
 //==================================================================
+var CabbageGUIClass::getVarArrayFromText(String text)
+{
+	text = " "+text.replace("\"", "");
+	String subString = text.substring(text.indexOfWholeWord("text"));
+	subString = subString.substring(5, subString.indexOf(")"));
+	StringArray array;
+	var varArray;
+	array.addTokens(subString, ",", "");
+	for(int i=0;i<array.size();i++)
+		varArray.append(array[i].trim());
+	return varArray;
+}
+//==================================================================
 Point<int> CabbageGUIClass::getPosFromText(String text)
 {
 	text = " "+text;
@@ -1453,13 +1471,21 @@ String CabbageGUIClass::getStringArrayPropValue(Identifier prop, int index)
 	return returnArray[strings.size()-1];		
 }
 //===================================================================
+String CabbageGUIClass::setStringArrayProp(Identifier prop, var value)
+{
+	cabbageIdentifiers.set(prop, "");
+	//cabbageIdentifiers.set(prop, value);
+}
+//===================================================================
 String CabbageGUIClass::setStringArrayPropValue(Identifier prop, int index, String value)
 {
-	/*
 	var strings = cabbageIdentifiers.getWithDefault(prop, "");
 	if(strings.size()>0)
-	if(isPositiveAndBelow(index,strings.size()))
-	strings[index] = value;*/
+	if(isPositiveAndBelow(index,strings.size())){
+	strings.getArray()->set(index, value);
+	cabbageIdentifiers.set(prop, strings);
+	}
+	
 }
 //===================================================================
 Array<int> CabbageGUIClass::getIntArrayProp(Identifier prop)

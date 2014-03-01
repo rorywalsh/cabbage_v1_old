@@ -131,6 +131,8 @@ private:
 		void InsertTransport(CabbageGUIClass &cAttr);
         void buttonClicked(Button*);
 		void mouseMove(const MouseEvent& event);
+		void mouseDown(const MouseEvent& event);
+		void mouseUp(const MouseEvent& event);
 		void buttonStateChanged(Button*);
         void showInsertControlsMenu(int x, int y);
 		void actionListenerCallbackForWidgets(const String message);

@@ -798,14 +798,34 @@ ComponentLayoutEditor* le = layoutEditor;
 #endif	
 }
 
-
-
+//==============================================================================
+// these functions update filter info with the current state of a mouse
+//=============================================================================
 void CabbagePluginAudioProcessorEditor::mouseMove(const MouseEvent& event)
 {
-	getFilter()->mouseX = event.getPosition().getX();
-	getFilter()->mouseY = event.getPosition().getY();	
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseX", event.getPosition().getX(), "");
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseX", event.getPosition().getY(), "");
 }
 
+void CabbagePluginAudioProcessorEditor::mouseDown(const MouseEvent& event)
+{
+	if(event.mods.isLeftButtonDown())
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseDownLeft", 1, "");
+	else if(event.mods.isRightButtonDown())
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseDownRight", 1, "");
+	else if(event.mods.isMiddleButtonDown())
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseDownMiddle", 1, "");
+}
+
+void CabbagePluginAudioProcessorEditor::mouseUp(const MouseEvent& event)
+{
+	if(event.mods.isLeftButtonDown())
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseDownLeft", 0, "");
+	else if(event.mods.isRightButtonDown())
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseDownRight", 0, "");
+	else if(event.mods.isMiddleButtonDown())
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseDownMiddle", 0, "");
+}
 //==============================================================================
 // this function will display a context menu on right mouse click. The menu 
 // is populated by all a list of all GUI controls and GUI abstractions stored in the CabbagePlant folder.  
@@ -1358,7 +1378,7 @@ void CabbagePluginAudioProcessorEditor::InsertLabel(CabbageGUIClass &cAttr)
         float width = cAttr.getNumProp(CabbageIDs::width);
         float height = cAttr.getNumProp(CabbageIDs::height);
         setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
-
+		layoutComps[idx]->addMouseListener(this, true);
         cAttr.setStringProp(CabbageIDs::type, "label");
 }
 
@@ -1427,6 +1447,7 @@ void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIClass &cAtt
 		setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));	
         layoutComps[idx]->setName("csoundoutput");
         layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
+		layoutComps[idx]->addMouseListener(this, true);
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //      Info button. 
@@ -1448,6 +1469,7 @@ void CabbagePluginAudioProcessorEditor::InsertInfoButton(CabbageGUIClass &cAttr)
         ((CabbageButton*)layoutComps[idx])->button->addListener(this);
         ((CabbageButton*)layoutComps[idx])->button->setButtonText(cAttr.getStringProp(CabbageIDs::text));
 		((CabbageButton*)layoutComps[idx])->button->getProperties().set(String("index"), idx);
+		layoutComps[idx]->addMouseListener(this, true);
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -1471,7 +1493,7 @@ void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
         ((CabbageButton*)layoutComps[idx])->button->setWantsKeyboardFocus(true);
 #endif
 		((CabbageButton*)layoutComps[idx])->button->getProperties().set(String("index"), idx);
-
+		layoutComps[idx]->addMouseListener(this, true);
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1496,6 +1518,7 @@ void CabbagePluginAudioProcessorEditor::InsertSoundfiler(CabbageGUIClass &cAttr)
         int idx = layoutComps.size()-1;
 		setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));        
         layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
+		layoutComps[idx]->addMouseListener(this, true);
 	}
 
 
@@ -1614,6 +1637,7 @@ void CabbagePluginAudioProcessorEditor::InsertSlider(CabbageGUIClass &cAttr)
         comps[idx]->getProperties().set(String("midiChan"), cAttr.getNumProp("midichan"));
         comps[idx]->getProperties().set(String("midiCtrl"), cAttr.getNumProp("midictrl"));
 		((CabbageSlider*)comps[idx])->slider->getProperties().set(String("index"), idx);
+		comps[idx]->addMouseListener(this, true);
 }
 
                                         /******************************************/
@@ -1670,6 +1694,7 @@ void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
 		((CabbageButton*)comps[idx])->button->getProperties().set(String("index"), idx);
 		if(!cAttr.getNumProp(CabbageIDs::visible))
 		comps[idx]->setVisible(false);
+		comps[idx]->addMouseListener(this, true);
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -1691,7 +1716,7 @@ void CabbagePluginAudioProcessorEditor::InsertCheckBox(CabbageGUIClass &cAttr)
 		((CabbageCheckbox*)comps[idx])->button->getProperties().set(String("index"), idx);
 		if(!cAttr.getNumProp(CabbageIDs::visible))
 		comps[idx]->setVisible(false);
-		
+		comps[idx]->addMouseListener(this, true);
 }
 
                                                 /*****************************************************/
@@ -1973,6 +1998,7 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 		((CabbageComboBox*)comps[idx])->combo->getProperties().set(String("index"), idx);
 		if(!cAttr.getNumProp(CabbageIDs::visible))
 		comps[idx]->setVisible(false);
+		comps[idx]->addMouseListener(this, true);
 }
 
                                         /******************************************/
@@ -2199,7 +2225,7 @@ Array<int> tableSizes;
 		((CabbageTable*)layoutComps[idx])->addTables();
 		if(!cAttr.getNumProp(CabbageIDs::visible))
 		layoutComps[idx]->setVisible(false);		
-		
+		comps[idx]->addMouseListener(this, true);
 
 }
 
@@ -2451,29 +2477,25 @@ for(int y=0;y<getFilter()->getXYAutomaterSize();y++){
 //don't check the whole vector here, only ones that have been updated
 for(int index=0;index<(int)getFilter()->dirtyControls.size();index++)
 	{
-    int i = getFilter()->dirtyControls[index];  
-	
-		inValue = getFilter()->getParameter(i);
-		 
-        if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::hslider||
-                        getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::rslider||
-                        getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::vslider){
-        CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(comps[i]);
-		if(cabSlider){
-
-			
-		#ifndef Cabbage_Build_Standalone
-                float val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i)+
-											getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::min);
-                cabSlider->slider->setValue(val, dontSendNotification);
-				incomingValues.set(i, val);
-				
-		#else
-		//Logger::writeToLog(String(inValue));
-		cabSlider->slider->setValue(inValue, sendNotification);  	
-		#endif
-        }
-        }
+    int i = getFilter()->dirtyControls[index];  	
+	inValue = getFilter()->getParameter(i);		 
+	if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::hslider||
+					getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::rslider||
+					getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::vslider)
+		{
+		CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(comps[i]);
+		if(cabSlider)
+			{			
+			#ifndef Cabbage_Build_Standalone
+					float val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i)+
+												getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::min);
+					cabSlider->slider->setValue(val, dontSendNotification);				
+			#else
+			//Logger::writeToLog(String(inValue));
+			cabSlider->slider->setValue(inValue, sendNotification);  	
+			#endif
+			}
+		}
         
         else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::button){
         CabbageButton* cabButton = dynamic_cast<CabbageButton*>(comps[i]);

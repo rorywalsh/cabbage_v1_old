@@ -235,7 +235,7 @@ public:
 	int pluginType;
 	float automationAmp;
 	int automationParamID;
-	int pluginCalls, csoundCalls;
+	int mouseX, mouseY;
 
 
 	//==============================================================================

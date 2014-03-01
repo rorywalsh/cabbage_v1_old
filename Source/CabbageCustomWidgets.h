@@ -109,6 +109,10 @@ class CabbageButton : public Component
 		const MessageManagerLock mmLock;
 		button->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
 		button->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
 		setBounds(m_cAttr.getBounds());
 		repaint();
 	}
@@ -218,6 +222,10 @@ public:
 		setBounds(m_cAttr.getBounds());
 		slider->setName(m_cAttr.getStringProp(CabbageIDs::name));
 		slider->setSkewFactor(m_cAttr.getNumProp(CabbageIDs::sliderskew));
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
 		repaint();
 	}
 
@@ -386,6 +394,10 @@ class CabbageCheckbox : public Component
 		setBounds(m_cAttr.getBounds());
 		button->getProperties().set("isRect", m_cAttr.getStringProp(CabbageIDs::shape).equalsIgnoreCase("square"));
 		button->setButtonText(m_cAttr.getStringProp(CabbageIDs::text));
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
 		repaint();
 	}
 
@@ -498,6 +510,10 @@ class CabbageComboBox : public Component
 		combo->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
 		combo->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
 		setBounds(m_cAttr.getBounds());
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
 		repaint();
 	}
 
@@ -536,7 +552,7 @@ public:
 		//toBack();
 		img = ImageCache::getFromFile (File (file));
 		this->setWantsKeyboardFocus(false);
-		//this->setInterceptsMouseClicks(false, true);
+		this->setInterceptsMouseClicks(false, true);
 		//Logger::writeToLog(outline);
 	}
 	~CabbageImage(){
@@ -550,6 +566,10 @@ public:
 		outline = m_cAttr.getStringProp(CabbageIDs::outlinecolour);
 		shape = m_cAttr.getStringProp(CabbageIDs::shape);
 		setBounds(m_cAttr.getBounds());
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
 		repaint();
 	}
 	
@@ -585,6 +605,7 @@ public:
 	left = getX();
 	width = getWidth();
 	height = getHeight();
+	this->setWantsKeyboardFocus(false);
 	}
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageImage);
 };
@@ -644,6 +665,10 @@ class CabbageGroupbox : public GroupComponent
 		getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
 		setBounds(m_cAttr.getBounds());
 		setText(m_cAttr.getStringProp(CabbageIDs::text));
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
 		repaint();
 	}
 
@@ -791,6 +816,10 @@ class CabbageXYController : public Component
 	//update control
 	void update(CabbageGUIClass m_cAttr){
 		setBounds(m_cAttr.getBounds());
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
 		repaint();
 	}
 
@@ -859,6 +888,10 @@ class CabbageMessageConsole : public Component
 		editor->setColour(0x1000200, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
 		editor->setColour(0x1000201, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
 		setBounds(m_cAttr.getBounds());
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
 		repaint();
 	}	
 
@@ -888,484 +921,6 @@ class CabbageMessageConsole : public Component
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageMessageConsole);
 };
 
-//==============================================================================
-// custom VUComponent
-//==============================================================================
-class VUComponent	:	public Component
-{
-public:
-
-
-	//=================================================================================
-	//		 Nested class VU Meter
-	//=================================================================================
-	class VUMeter	:	public Component
-	{
-	public:
-		//=============================================================================
-		VUMeter(int input1, bool input2)
-		{
-			//-----1 = Mono, 2 = Left Ch., 3 = Right Ch.
-			type = input1;	
-
-			//----- Horizontal or Vertical
-			style = input2;	
-
-			clipFlag = 0;	//0 is off, 1 is on
-
-			//----- Declarations for each db value. The range will go logarithmically from -infinity to +3db. 
-			//A level of 0.9 is being assigned to 0db. 
-			plus3DB = 1;
-			zeroDB = 0.9;
-			minus3DB = 0.71 * zeroDB; //0.639
-			minus10DB = 0.3162 * zeroDB; //0.285
-			minus20DB = 0.1 * zeroDB; //0.09
-			minus40DB = 0.01 * zeroDB; //0.009
-		}
-
-		//====================================================================================
-		~VUMeter(){}
-
-		//========== Resizing method =========================================================
-		void resized ()
-		{
-			//----- Declaring dimensional properties
-			top = 5;
-			clipZone = 2;									//Leaving a gap for the clip marker at the top
-			bottom = getHeight() - 5;
-
-			if (type == 1)
-				levelWidth = getWidth()/5;					//width of mono level				
-			else if ((type == 2) || (type == 3))
-				levelWidth = (getWidth()/1.25) / 5;			//width of stereo level should be the same as if it were mono
-
-			levelHeight = bottom - (top + clipZone);		//height available to the VU part
-			xOffset = getWidth()/5;							//Mono and Left Ch. VU's will be drawn 1/5 of totalWidth from left
-			yOffset = 0;
-			prevLevel = bottom;
-			currentLevel = bottom;
-
-			//----- Setting the location of the db markers
-			plus3Mark = bottom - levelHeight;
-			zeroMark = bottom - (0.9 * levelHeight);
-			minus3Mark = bottom - (0.8 * levelHeight);
-			minus10Mark = bottom - (0.5 * levelHeight);
-			minus20Mark = bottom - (0.25 * levelHeight);
-			minus40Mark = bottom - (0.1 * levelHeight);
-
-			//----- Setting up the gradient fill for the meter level
-			cg = ColourGradient (Colours::transparentBlack, 0, bottom, 
-								Colours::transparentBlack, 0, top, false);
-			cg.addColour (0.07, Colours::aqua);
-			cg.addColour (0.2, Colours::lime);
-			cg.addColour (0.5, Colours::lime);
-			cg.addColour (0.6, Colours::yellow);
-			cg.addColour (0.75, Colours::yellow);
-			cg.addColour (0.85, Colours::orange);
-			cg.addColour (0.999, Colours::orangered);
-
-			clClip = (Colours::red);
-
-			//----- Calling function to draw image background. This only applies if the VU is mono or the 
-			//left channel of a stereo meter. Right channel meters will not use a background as they can just
-			//draw over the left channel background image. 
-			if ((type == 1) || (type == 2))
-					verticalBackground();
-		}
-
-
-		//===== Vertical Background =======================================================================
-		void verticalBackground ()
-		{
-			//----- This function draws the background onto a blank image and then loads it into cache. The 
-			//cached image is then reused in the paint() method. This is a more efficient way to redrawing something
-			//that is static. 
-
-			// Creating a blank canvas
-			img = Image(Image::ARGB, getWidth(), getHeight(), true);
-			
-			Graphics g (img);
-			Colour bg = Colour::fromRGBA (10, 10, 15, 255);
-			g.fillRoundedRectangle (0, 0, getWidth(), getHeight(), 2);
-		
-			//----- Painting the db level markers
-			g.setColour (Colours::white);
-
-			int fontSize = getHeight()*0.05;
-			if (fontSize > 15)
-				fontSize = 15;
-			g.setFont (fontSize);
-
-			int startText;	//starting x value
-			if (type == 1)
-				startText = getWidth() * 0.4;
-			else if (type == 2)
-				startText = (getWidth() * 0.4) * 1.25; //stereo VU's are 1.25 times the size of a mono VU
-
-			Justification just (4);			//Centered
-			g.drawText ("+3", startText, plus3Mark-5, getWidth()*.4, 10, just, false);
-			g.drawText ("0", startText, zeroMark-5, getWidth()*.4, 10, just, false);
-			g.drawText ("-3", startText, minus3Mark-5, getWidth()*.4, 10, just, false);
-			g.drawText ("-10", startText, minus10Mark-5, getWidth()*.4, 10, just, false);
-			g.drawText ("-20", startText, minus20Mark-5, getWidth()*.4, 10, just, false);
-			g.drawText ("-40", startText, minus40Mark-5, getWidth()*.4, 10, just, false);
-
-			//----- Painting the level background
-			g.setGradientFill (cg);
-			g.setOpacity (0.1);
-			g.fillRect (xOffset, clipZone, levelWidth, levelHeight);
-
-			if (type == 2)   //if stereo we need another meter level
-				g.fillRect (xOffset+levelWidth+1, clipZone, levelWidth, levelHeight);
-
-			//---- For the clip zone
-			g.setColour (clClip);
-			g.setOpacity (0.2);
-			g.fillRect (xOffset, top, levelWidth, clipZone);
-
-			if (type == 2)   //if stereo we need another clip zone
-				g.fillRect (xOffset+levelWidth+1, top, levelWidth, clipZone);
-
-			//----- Loading image into cache
-			if (type == 1)
-				ImageCache::addImageToCache (img, 11);
-			else if (type == 2)
-				ImageCache::addImageToCache (img, 12);
-		}
-
-				
-		//========= Paint Method ====================================================================
-		void paint (Graphics &g)
-		{
-			Image bg;
-			//----- Drawing the background from the imagecache
-			if (type == 1)
-				bg = ImageCache::getFromHashCode(11);
-			if (type == 2)
-				bg = ImageCache::getFromHashCode(12);
-
-			g.drawImage (bg, 0, 0, getWidth(), getHeight(), 0, 0, bg.getWidth(), bg.getHeight(), false);
-			
-
-			//----- Drawing the meter level. When paintFlag is 1 the meter level is to be increased. This
-			//new bit of the level is painted using the gradient fill cg. If paintFlag is 0, the level is 
-			//to be decreased. Because there is no colour or drawing tool used for paintFlag=0, this bit of 
-			//the level is cleared. 
-			if (paintFlag == 1) {
-				g.setGradientFill (cg);
-				g.setOpacity (0.7);
-				if ((type == 1) || (type == 2))
-					g.fillRect (xOffset, currentLevel, levelWidth, diff);
-				else
-					g.fillRect ((xOffset+levelWidth+1), currentLevel, levelWidth, diff);
-			}
-			
-
-			//----- Determining if the clipmarker should be shown. It is set back to 0 immediately as it
-			//does not need to repainted over and over. If the clipFlag is 0, the marker will stay on if 
-			//the repaint() bounds are not inclusive of the clipZone. When the user clicks on the VU meter
-			//the clipFlag will be 0 and the repaint() bounds will include the clipZone (see mouseDown()), 
-			//therefore turning off the clipmarker. This happens because there is no colour or draw function 
-			//used for clipFlag = 0, and therefore this zone is cleared exposing the background again. 
-			if (clipFlag == 1) {
-				g.setColour (clClip);
-				if (type == 1)
-					g.fillRect (xOffset, top, levelWidth, clipZone);
-				else
-					g.fillRect(xOffset, top, (levelWidth*2) + 1, clipZone);
-
-				clipFlag = 0;
-			}	
-		}
-
-		
-		//========= Set Level =========================================================================
-		void setLevel (float value)
-		{
-			level = value;
-
-			// If level is 1 or more...
-			if (level >= 1) {
-				clipFlag = 1;
-				level = 1;
-			}
-
-			//----- The following if statements determine the offset on the y axis. Each zone 
-			//itself has to be treated independently to the rest of the level range.
-			if ((level >= 0) && (level < minus40DB)){
-				currentLevel = (bottom - minus40Mark) * (level / minus40DB);
-				currentLevel = bottom - currentLevel;
-			}
-			//----- If level is between 0.009 and 0.09
-			else if ((level >= minus40DB) && (level < minus20DB)){
-				currentLevel = (minus40Mark-minus20Mark) * ((level - minus40DB) / (minus20DB - minus40DB));
-				currentLevel = minus40Mark - currentLevel;
-			}
-			//----- If level is between 0.285 and 0.09
-			else if ((level >= minus20DB) && (level < minus10DB)){
-				currentLevel = (minus20Mark-minus10Mark) * ((level - minus20DB) / (minus10DB - minus20DB));
-				currentLevel = minus20Mark - currentLevel;
-			}
-			//----- If level is between 0.285 and 0.639
-			else if ((level >= minus10DB) && (level < minus3DB)){
-				currentLevel = (minus10Mark-minus3Mark) * ((level - minus10DB) / (minus3DB - minus10DB)); 
-				currentLevel = minus10Mark - currentLevel;
-			}
-			//----- If level is between 0.639 and 0.9
-			else if ((level >= minus3DB) && (level < zeroDB)){
-				currentLevel = (minus3Mark-zeroMark) * ((level - minus3DB) / (zeroDB - minus3DB));
-				currentLevel = minus3Mark - currentLevel;
-			}
-			//----- If level is 0.9 or over
-			else if (level >= zeroDB) {
-				currentLevel = (zeroMark-plus3Mark) * ((level*10)-9);
-				currentLevel = zeroMark - currentLevel;
-			}
-
-			//----- We only need to repaint the level difference between this value and the previous.
-			//This is much more efficient than repainting the entire component each time. 
-			diff = prevLevel - currentLevel;
-
-			if (diff > 0) {
-				paintFlag = 1; // to indicate that we are adding to the current meter level
-				if ((type == 1) || (type == 2))
-					repaint(xOffset, currentLevel, levelWidth, diff);
-				else
-					repaint((xOffset+levelWidth+1), currentLevel, levelWidth, diff);
-			}
-			else if (diff < 0) {
-				diff *= -1;
-				paintFlag = 0;	//to  indicate that we are subtracting from the current meter level
-				if ((type == 1) || (type == 2))
-					repaint(xOffset, prevLevel, levelWidth, diff);
-				else
-					repaint((xOffset+levelWidth+1), prevLevel, levelWidth, diff);
-			}
-			//else if diff = 0 then do nothing!
-
-			//----- To see if clip marker should be shown.....
-			if (clipFlag == 1) {
-				if ((type == 1) || (type == 2))
-					repaint (xOffset, top, levelWidth, clipZone);
-				else
-					repaint((xOffset+levelWidth+1), top, levelWidth, clipZone);
-			}
-			
-			
-			// Making the current level the previous level, for the next pass through....
-			prevLevel = currentLevel;
-		}
-
-
-		//======== If mouse is clicked ================================================================
-		void mouseDown (const MouseEvent& e)
-		{
-			//----- Getting (x,y) of the mouse click
-			int x = e.getPosition().getX();
-			int y = e.getPosition().getY();
-
-			//----- If the mouse is clicked over the VU, then the clip marker will be
-			//turned off. 
-			if ((x >= getWidth()/5) && (x <= getWidth()*0.8) &&
-				(y >= 0) && (y <= getHeight())) { 
-					clipFlag = 0;
-					// Only need to repaint the clipzone. Stereo VU's just repaint both
-					//clip zones as it will not make much difference in terms of CPU usage.
-					
-					if (type == 1) //mono
-						repaint (xOffset, top, levelWidth, clipZone);
-					else	//stereo
-						repaint(xOffset, top, (levelWidth*2) + 1, clipZone);
-			}
-		}
-
-	private:
-		bool style;
-		int type, widthMeter, heightMeter;
-		float level;
-		int clipFlag, clipZone;
-		int top, bottom, xOffset, yOffset, levelWidth, levelHeight;
-		float plus3DB, zeroDB, minus3DB, minus10DB, minus20DB, minus40DB;
-		int plus3Mark, zeroMark, minus3Mark, minus10Mark, minus20Mark, minus40Mark;
-		Colour clClip;
-		ColourGradient cg;
-		Image img;
-
-		int paintFlag;
-		int currentLevel, prevLevel;
-		int diff;
-
-		JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VUMeter);
-
-	};
-	//====== End of VUMeter class ===========================================
-
-
-	//===== VU Component Constructor ========================================
-	VUComponent (Array<int> conArr, bool useVertical)
-	{
-		style = useVertical;
-		numArrElements = 0;
-		totalNumLevels = 0;
-		numMeters = 0;
-
-		for (int i=0; i<conArr.size(); i++) {
-			//Ignoring anything that is not either 1 or 2...
-			if ((conArr[i] == 1) || (conArr[i] == 2)) {
-				config.add (conArr[i]);
-				numArrElements++;
-				totalNumLevels += conArr[i]; //needed for indexing
-				//numMeters allows us to get the correct width of each meter, as stereo
-				//meters are 1.25 times as wide as mono ones...
-				if (conArr[i] == 1)
-					numMeters += 1;
-				else
-					numMeters += 1.25;
-			}
-		}	
-	}
-
-	//===== Destructor ====================================================
-	~VUComponent()
-	{
-	}
-
-	//===== Resize ========================================================
-	void resized()
-	{
-		float gap = getWidth() * 0.07; //gap between meters
-		float totalGap = gap * (numArrElements-1);	//all gaps added up
-		float availableWidth = getWidth() - totalGap;
-		float widthMonoMeter = availableWidth / numMeters;
-		float widthStereoMeter;
-		
-		//If there is only 1 element in the array it should take up the whole width
-		if ((numArrElements == 1) && (totalNumLevels ==2))
-			widthStereoMeter = availableWidth;
-		else
-			widthStereoMeter = widthMonoMeter * 1.25;
-
-		//----- The following for loop adds each level with a unique index. xOffset is the 
-		//x coordinate at which they are drawn. 
-		int arrElement = 0;
-		float xOffset = 0;
-		for (int i=0; i<totalNumLevels; i++) {
-			//----- Adding a mono meter
-			if (config[arrElement] == 1 ) {
-				meters.add (new VUMeter(1, style));
-				meters[i]->setBounds (xOffset, 0, widthMonoMeter, getHeight());
-				addAndMakeVisible (meters[i]);
-				xOffset += widthMonoMeter;
-				if (arrElement != numArrElements) //if not the last element then add a gap
-					xOffset += gap;
-				arrElement++;
-			}
-			//----- Adding a stereo meter
-			else if (config[arrElement] == 2 ) {
-				//Left side
-				meters.add (new VUMeter(2, style));
-				meters[i]->setBounds (xOffset, 0, widthStereoMeter, getHeight());
-				addAndMakeVisible (meters[i]);
-
-				//Right side
-				i++; //i needs to be incremented again to make sure that the index numbers are correct
-				meters.add (new VUMeter(3, style));
-				meters[i]->setBounds (xOffset, 0, widthStereoMeter, getHeight());
-				addAndMakeVisible (meters[i]);
-
-				xOffset += widthStereoMeter;
-				if (arrElement != numArrElements) //if not the last element then add a gap
-					xOffset += gap;
-				arrElement++;
-			}			
-		}
-		
-	}
-
-	//===== Set VU Level Function =========================================
-	void setVULevel (int VUIndex, float value)
-	{
-		meters[VUIndex]->setLevel (value);
-	}
-
-private:
-	OwnedArray<VUMeter> meters;
-	bool style;
-	int widthMeter, heightMeter;
-	int totalNumLevels;
-	float numMeters;
-	Array<int> config;
-	int numArrElements;
-
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VUComponent);
-};
-
-
-
-//==============================================================================
-// custom CabbageVUMeter
-//==============================================================================
-class CabbageVUMeter : public Component
-{
-//ScopedPointer<LookAndFeel> lookFeel;
-int offX, offY, offWidth, offHeight, numMeters, width, height;
-String name;
-public:
-ScopedPointer<GroupComponent> groupbox;
-ScopedPointer<VUComponent> vuMeter;
-//---- constructor -----
-CabbageVUMeter(String name, String text, String caption, Array<int> config):
-numMeters(0)
-{
-	setName(name);
-	offX=offY=offWidth=offHeight=0;
-	
-	groupbox = new GroupComponent(String("groupbox_")+name);
-	numMeters = 0;
-	for(int i =0;i<config.size();i++)
-		numMeters = numMeters+config[i];
-
-	vuMeter = new VUComponent(config, true);
-	addAndMakeVisible(vuMeter);
-	addAndMakeVisible(groupbox);
-
-	groupbox->setVisible(false);
-	//outline colour ID
-	groupbox->setColour(0x1005400,
-		Colours::findColourForName("white", Colours::white));
-	//text colour ID
-	groupbox->setColour(0x1005410,
-		Colours::findColourForName("white", Colours::white));
-	
-	if(caption.length()>0){
-		offX=10;
-		offY=15;
-		offWidth=-20;
-		offHeight=-25;
-		groupbox->setVisible(true);
-		groupbox->setText(caption);
-	}
-	this->setWantsKeyboardFocus(false);
-}
-//---------------------------------------------
-~CabbageVUMeter(){
-
-}
-
-int getNoMeters(){
-	return numMeters;
-}
-
-//---------------------------------------------
-void resized()
-{
-groupbox->setBounds(0, 0, getWidth(), getHeight()); 
-vuMeter->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight); 
-this->setWantsKeyboardFocus(false);
-}
-
-JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageVUMeter);
-};
 
 //==============================================================================
 // custom CabbageTable, uses the Table class
@@ -1556,6 +1111,10 @@ class CabbageTable : public Component
 	//update control
 	void update(CabbageGUIClass m_cAttr){
 		setBounds(m_cAttr.getBounds());
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
 		repaint();
 	}
 
@@ -1563,284 +1122,6 @@ class CabbageTable : public Component
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageTable);
 };
 
-//==============================================================================
-// custom PVSView, for viewing pvs
-//==============================================================================
-#ifndef Cabbage_No_Csound
-class CabbagePVSTableData       :       public Component
-{
-public:
-        CabbagePVSTableData(int frameSize, int fftsize, int overlap, PVSDATEXT* inSpecData, int minFreq, int maxFreq) :
-                                                                                                                                                                                        specData(inSpecData),
-                                                                                                                                                                                        frameSize(frameSize),
-                                                                                                                                                                         minFreq(minFreq),
-                                                                                                                                                                                        maxFreq(maxFreq)
-        {
-                freqRange = (maxFreq-minFreq);
-        }
-
-        ~CabbagePVSTableData()
-        {
-        }
-
-        void resized()
-        {
-                if (freqRange >= getWidth())
-                        lineThickness = 1;
-                else
-                        lineThickness = getWidth() / (float)freqRange;
-
-                cg = ColourGradient (Colours::transparentBlack, 0, getHeight(), 
-                                                                Colours::transparentBlack, 0, 0, false);
-                cg.addColour (0.07, Colours::aqua);
-                cg.addColour (0.2, Colours::lime);
-                cg.addColour (0.5, Colours::lime);
-                cg.addColour (0.6, Colours::yellow);
-                cg.addColour (0.75, Colours::yellow);
-                cg.addColour (0.85, Colours::orange);
-                cg.addColour (0.999, Colours::orangered);
-
-                cacheGridImage();
-
-                currPoint.setXY(0, getHeight());
-
-                frameSize = maxFreq/getWidth();
-        }
-
-        void cacheGridImage()
-        {
-                //----- This method stores the grid in cache
-                grid = Image(Image::ARGB, getWidth(), getHeight(), true);
-                        
-                Graphics g (grid);
-                g.setColour(CabbageUtils::getComponentFontColour());
-                for (float i=0.0; i<=1.0; i+=0.125) {
-                        g.drawLine(getWidth()*i, 0, getWidth()*i, getHeight(), .1);
-                        g.drawLine(0, getHeight()*i, getWidth(), getHeight()*i, .1);
-                }
-
-                ImageCache::addImageToCache(grid, 19);
-        }
-
-        void paint(Graphics& g)
-        {
-                Image bgGrid = ImageCache::getFromHashCode(19);
-                g.drawImage(bgGrid, 0, 0, getWidth(), getHeight(), 0, 0, bgGrid.getWidth(), bgGrid.getHeight(), false);
-
-                g.setGradientFill(cg);
-
-                //draw PVS data
-                for (int i=0; i<specData->N*2; i+=2) {
-                        if (specData->frame[i]) {
-                                amp = specData->frame[i];
-                                freq = int(specData->frame[i+1]);
-                        
-                                if ((amp > 0) && (amp <= 1) && (freq >= minFreq) && (freq <= maxFreq)) {
-                                        //      g.fillEllipse ((((freq-minFreq)/(float)freqRange)*getWidth())-1, 
-                                        //      (getHeight()-(amp*getHeight()))-1, 2, 2);
-
-                                        g.drawLine(((freq-minFreq)/(float)freqRange)*getWidth(), getHeight()-(amp*getHeight()), 
-                                                ((freq-minFreq)/(float)freqRange)*getWidth(), getHeight(), 1);
-
-                                        //prevPoint = currPoint;
-                                        //currPoint.setXY(((freq-minFreq)/(float)freqRange)*getWidth(), getHeight()-(amp*getHeight()));
-                                        //if (currPoint.getX() > prevPoint.getX())
-                                        //      g.drawLine(prevPoint.getX(), prevPoint.getY(), currPoint.getX(), currPoint.getY(), 2);
-
-                                }
-
-                        }
-                }
-        }
-
-private:
-        PVSDATEXT* specData;
-        Array<int> freqValues;
-        Array<MYFLT> ampValues;
-        int frameSize, minFreq, maxFreq, freqRange;
-        float lineThickness;
-        ColourGradient cg;
-        Image grid;
-        float amp, maxAmp, freq;
-        Point<float> currPoint, prevPoint;
-
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePVSTableData);
-};
-
-//---------------------------------------------------------------------
-class CabbagePVSView    :       public Component
-{
-public:
-        CabbagePVSView(String name, String caption, String text, int frameSize, int fftsize, int overlap, 
-                                                                                                                                                                PVSDATEXT* inSpecData): 
-                                                                                                                                                                text(text)
-
-        {
-                setName(name);
-                maxFreq = 2000;
-                minFreq = 0;
-                maxAmp = 1.0;
-                pvsTableData = new CabbagePVSTableData (frameSize, fftsize, overlap, inSpecData, minFreq, maxFreq);             
-        }
-
-        ~CabbagePVSView()
-        {
-        }
-
-        void resized()
-        {
-                this->setWantsKeyboardFocus(false);
-                pvsTableData->setBounds(getWidth()*0.2, getHeight()*0.1, getWidth()*0.7, getHeight()*0.7);
-                addAndMakeVisible(pvsTableData);
-
-                cacheBackground();
-        }
-
-        void updatePVSStruct()
-        {
-                pvsTableData->repaint();
-        }
-
-        void cacheBackground()
-        {
-                bg = Image(Image::ARGB, getWidth(), getHeight(), true);
-                Graphics g (bg);
-
-                //background
-                g.setColour(CabbageUtils::getDarkerBackgroundSkin());
-                g.fillRoundedRectangle (0, 0, getWidth(), getHeight(), 5);
-
-                //border
-                g.setColour (CabbageUtils::getComponentSkin());
-                g.drawRoundedRectangle (.5, .5, getWidth()-1, getHeight()-1, 5, 1);
-
-                //Markers etc...
-                g.setColour (Colours::lime);
-                Font font = CabbageUtils::getSmallerValueFont();
-                g.setFont(font);
-                String strX, strY;
-                float strWidth;
-                for (float i=0.0; i<=1.0; i+=0.25) {
-                        //x-axis markers
-                        strX = String(maxFreq*i);
-                        strWidth = font.getStringWidthFloat(strX);
-                        g.drawText(strX, pvsTableData->getX()+((pvsTableData->getWidth()*i)-(strWidth/2)), pvsTableData->getBottom()+10,
-                                strWidth, font.getHeight(), 36, false);
-
-                        //y-axis markers
-                        strY = String(maxAmp*i);
-                        strWidth = font.getStringWidthFloat(strY); 
-                        g.drawText(strY, pvsTableData->getX()-(strWidth+10), 
-                                (pvsTableData->getBottom()-(pvsTableData->getHeight()*i)) - (font.getHeight()/2),
-                                strWidth, font.getHeight(), 36, false);
-                }               
-
-                g.setColour (CabbageUtils::getComponentFontColour());
-                Font labelFont = CabbageUtils::getComponentFont();
-                String xLabel = "Frequency (Hz)";
-                strWidth = labelFont.getStringWidthFloat(xLabel);
-                g.setFont(labelFont);
-                g.drawText(xLabel, pvsTableData->getX()+((pvsTableData->getWidth()/2)-strWidth/2), getHeight()-(labelFont.getHeight()+10), 
-                        strWidth, labelFont.getHeight(), 36, false);
-
-                String yLabel = "Amplitude";
-                strWidth = labelFont.getStringWidthFloat(yLabel);
-                //g.drawTextAsPath(yLabel, AffineTransform::identity.rotated(4.7, 150, pvsTableData->getHeight()*0.66));
-
-                ImageCache::addImageToCache(bg, 20);
-        }
-
-        void paint(Graphics &g)
-        { 
-                Image img = ImageCache::getFromHashCode(20);
-                g.drawImage(img, 0, 0, getWidth(), getHeight(), 0, 0, img.getWidth(), img.getHeight(), false);
-        }
-
-        
-private:
-        ScopedPointer<CabbagePVSTableData> pvsTableData;
-        String text;
-        int minFreq, maxFreq;
-        float maxAmp;
-        Image bg;
-
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePVSView);
-};
-
-#endif
-
-//==============================================================================
-// custom SnapshotControl, used for saving and recalling presets
-//==============================================================================
-class CabbageSnapshot : public Component,
-						public Button::Listener,
-						public ActionBroadcaster,
-						public ComboBox::Listener
-{
-
-ScopedPointer<TextButton> button;
-ScopedPointer<GroupComponent> groupbox;
-String name, preset, presetFileText;
-int offX, offY, offWidth, offHeight;
-bool masterSnapshot;
-
-public:
-ScopedPointer<ComboBox> combobox;
-		
-	CabbageSnapshot(String compName, String caption, String presetName, bool master):masterSnapshot(master), name(compName), preset(presetName){
-	name << "|snapshot:";
-	preset << "|snapshot:";
-	setName(name);
-	offX=offY=offWidth=offHeight=0;
-	
-	groupbox = new GroupComponent(String("groupbox_")+name);
-	combobox = new ComboBox(name);
-	combobox->addListener(this);
-	button = new TextButton("Snapshot");
-	button->addListener(this);
-	
-
-
-	addAndMakeVisible(combobox);
-	addAndMakeVisible(groupbox);
-	addAndMakeVisible(button);
-
-	groupbox->setVisible(false);
-	//outline colour ID
-	groupbox->setColour(0x1005400,
-		Colours::findColourForName("white", Colours::white));
-	//text colour ID
-	groupbox->setColour(0x1005410,
-		Colours::findColourForName("white", Colours::white));
-	
-	if(caption.length()>0){
-		offX=10;
-		offY=15;
-		offWidth=-20;
-		offHeight=-25;
-		groupbox->setVisible(true);
-		groupbox->setText(caption);
-	}
-	}
-	~CabbageSnapshot(){}
-
-	void buttonClicked(Button* button){
-	//CabbageUtils::showMessage(name+"save;"+String(combobox->getText().trim()));
-		sendActionMessage(preset+"save;"+String(combobox->getText().trim())+String("?")+String(masterSnapshot));
-	}
-
-	void comboBoxChanged(ComboBox* combo){
-		sendActionMessage(preset+"load;"+String(combobox->getText().trim())+String("?")+String(masterSnapshot));
-	}
-	//---------------------------------------------
-	void resized()
-	{
-	groupbox->setBounds(0, 0, getWidth(), getHeight()); 
-	combobox->setBounds(offX, offY+2, (getWidth()+offWidth)*.60, (getHeight()+offHeight)*.8); 
-	button->setBounds(offX+(getWidth()+offWidth)*.60+5, offY, (getWidth()+offWidth)*.35, getHeight()+offHeight);
-	}
-
-};
 //==============================================================================
 // custom NumToggleButton
 //==============================================================================
@@ -1967,6 +1248,10 @@ public:
 	//update control
 	void update(CabbageGUIClass m_cAttr){
 		setBounds(m_cAttr.getBounds());
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
 		repaint();
 	}
 	
@@ -2017,6 +1302,10 @@ public:
 		getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
 		getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
 		setBounds(m_cAttr.getBounds());
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
 		setText(m_cAttr.getStringProp(CabbageIDs::text));
 		repaint();
 	}
@@ -2134,52 +1423,4 @@ private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageLine);
 };
 
-
-//==============================================================================
-// custom Cabbage display widget
-//==============================================================================
-class CabbageDisplay	:	public Component
-{
-
-public:
-	CabbageDisplay ()
-	{
-#ifndef Cabbage_No_Csound
-	winData = nullptr;
-#endif
-	}
-
-	~CabbageDisplay()
-	{
-	}
-
-	void resized()
-	{
-
-	}
-#ifndef Cabbage_No_Csound
-	void updateData(WINDAT* windat)
-	{
-	winData = windat;
-	}
-
-	void paint(Graphics& g)
-	{
-	g.setColour (Colours::white);
-	//draw PVS data
-	if(winData!=nullptr)
-	for (int i=0; i<winData->npts; i++) {
-			if (winData->fdata[i]) {
-				int amp = winData->fdata[i];
-				g.drawLine((i/winData->npts)*getWidth(), getHeight()-(amp*getHeight()), 
-				(i/winData->npts)*getWidth(), getHeight(), 1);
-			}
-		}
-	}
-
-	WINDAT* winData;
-#endif
-private:
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageDisplay);
-};
 #endif

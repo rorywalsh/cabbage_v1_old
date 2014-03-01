@@ -94,6 +94,7 @@ public:
 	void updateLayoutEditorFrames();
 	ScopedPointer<CabbageTable> cabTable;
 	ScopedPointer<CabbageCornerResizer> resizer;
+	Point<int> getMousePos();
 private:
         void setPositionOfComponent(float x, float y, float width, float height, Component* comp, String reltoplant);
 		void createfTableData(Table* table);
@@ -129,6 +130,7 @@ private:
         void InsertSnapshot(CabbageGUIClass &cAttr);
 		void InsertTransport(CabbageGUIClass &cAttr);
         void buttonClicked(Button*);
+		void mouseMove(const MouseEvent& event);
 		void buttonStateChanged(Button*);
         void showInsertControlsMenu(int x, int y);
 		void actionListenerCallbackForWidgets(const String message);
@@ -137,7 +139,8 @@ private:
 		void savePresetsFromParameters(File selectedFile, String mode);
 		void refreshDiskReadingGUIControls(String typeOfControl);
 		void updateGUIControls();
-
+		
+		int mouseX, mouseY;
         bool LOCKED;
         void insertComponentsFromCabbageText(StringArray text, bool useOffset);
 //		void insertComponentsFromCabbageTextArray(StringArray text, bool plant);

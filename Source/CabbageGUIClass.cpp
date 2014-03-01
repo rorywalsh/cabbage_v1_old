@@ -839,28 +839,23 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 				identArray[indx].equalsIgnoreCase(",colour(")||
 				identArray[indx].equalsIgnoreCase(" colours(")||
 				identArray[indx].equalsIgnoreCase(", colours(")){
-					String colour = "colour("+strTokens.joinIntoString("")+")";
-					cabbageIdentifiers.set(CabbageIDs::colour, getColourFromText("colour", colour).toString());									
+					cabbageIdentifiers.set(CabbageIDs::colour, getColourFromText(strTokens.joinIntoString(",")).toString());									
 			}
 
 
             else if(identArray[indx].equalsIgnoreCase("fontcolour(")){
-					String colour = "fontcolour("+strTokens.joinIntoString("")+")";
-					cabbageIdentifiers.set(CabbageIDs::fontcolour, getColourFromText("fontcolour", colour).toString());			
+					cabbageIdentifiers.set(CabbageIDs::fontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());			
 			}
 
             else if(identArray[indx].equalsIgnoreCase("tablecolour(")){
 					var colours;
 					for(int i=0;i<strTokens.size();i++)
-						colours.append(strTokens[i].trim());
-						
+						colours.append(strTokens[i].trim());						
 					cabbageIdentifiers.set(CabbageIDs::tablecolour, colours);	
 					}
 
             else if(identArray[indx].equalsIgnoreCase("trackercolour(")){
-					String colour = "trackercolour("+strTokens.joinIntoString("")+")";
-					//Logger::writeToLog(colour);
-					cabbageIdentifiers.set(CabbageIDs::trackercolour, getColourFromText("trackercolour", colour).toString());				
+					cabbageIdentifiers.set(CabbageIDs::trackercolour, getColourFromText(strTokens.joinIntoString(",")).toString());				
 			}
 
 			else if(identArray[indx].equalsIgnoreCase("kind(")){
@@ -870,16 +865,14 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 				cabbageIdentifiers.set(CabbageIDs::file, strTokens[0].trim());	
 			} 
 			else if(identArray[indx].equalsIgnoreCase("fillcolour(")){
-					String colour = "fillcolour("+strTokens.joinIntoString("")+")";
-					cabbageIdentifiers.set(CabbageIDs::fillcolour, getColourFromText("fillcolour", colour).toString());	
+					cabbageIdentifiers.set(CabbageIDs::fillcolour, getColourFromText(strTokens.joinIntoString(",")).toString());	
 
 			}
 			else if(identArray[indx].equalsIgnoreCase("shape(")){
 				cabbageIdentifiers.set(CabbageIDs::shape, strTokens[0].trim());	
 			} 
 			else if(identArray[indx].equalsIgnoreCase("outlinecolour(")){
-					String colour = "outinecolour("+strTokens.joinIntoString("")+")";
-					cabbageIdentifiers.set(CabbageIDs::outlinecolour, getColourFromText("outlinecolour", colour).toString());	
+					cabbageIdentifiers.set(CabbageIDs::outlinecolour, getColourFromText(strTokens.joinIntoString(",")).toString());	
 			}
 			else if(identArray[indx].equalsIgnoreCase("textcolour(")){
 				Colour textcolour;
@@ -1307,15 +1300,11 @@ Rectangle<int> CabbageGUIClass::getBoundsFromText(String text)
 }
 
 //===================================================================
-Colour CabbageGUIClass::getColourFromText(String colourType, String text)
+Colour CabbageGUIClass::getColourFromText(String text)
 {
-	text = " "+text;
-	String subString = text.substring(text.indexOfWholeWord(colourType));
-	subString = subString.substring(colourType.length()+1, subString.indexOf(")"));
-	Colour colour;
 	StringArray strTokens;
-	strTokens.addTokens(subString, ",() ", "");
-	
+	strTokens.addTokens(text, ",", "");
+	Colour colour;
 	if(strTokens.size()<2)
 		colour = Colours::findColourForName(strTokens[0].trim(), Colours::white);
 	else if(strTokens.size()==4)

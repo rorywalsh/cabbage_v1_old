@@ -280,7 +280,7 @@ public:
 	
 	//static methods used for updating look and pos of GUI controls
 	static Rectangle<int> getBoundsFromText(String text);
-	static Colour getColourFromText(String colourType, String text);
+	static Colour getColourFromText(String text);
 	static String getTextFromText(String text);
 	static Point<int> getSizeFromText(String text);
 	static Point<int> getPosFromText(String text);

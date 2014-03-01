@@ -73,7 +73,9 @@ automationAmp(0),
 isAutomator(false),
 automationParamID(-1),
 debugMessage(""),
-guiRefreshRate(20)
+guiRefreshRate(20),
+mouseY(0),
+mouseX(0)
 {
 //suspendProcessing(true);
 codeEditor = nullptr;
@@ -1112,6 +1114,7 @@ sendChangeMessage();
 #endif
 }
 
+
 //==============================================================================
 //this method only gets called when it's safe to do so, i.e., between calls to performKsmps()
 //this method sends any channel messages that are in the queue to from Cabbage to Csound
@@ -1120,7 +1123,6 @@ void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
 #ifndef Cabbage_No_Csound
 if(!csCompileResult){
 #ifndef Cabbage_Build_Standalone
-
 	if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
 			csound->SetChannel(CabbageIDs::hostbpm.toUTF8(), hostInfo.bpm);
 	if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
@@ -1131,10 +1133,10 @@ if(!csCompileResult){
 			csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
 	if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
 			csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
-
 #endif
 
-
+	csound->SetChannel("mouseX", mouseX);
+	csound->SetChannel("mouseY", mouseY);
 
 for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 		{

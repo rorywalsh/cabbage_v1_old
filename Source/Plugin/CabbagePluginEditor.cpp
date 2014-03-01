@@ -798,6 +798,14 @@ ComponentLayoutEditor* le = layoutEditor;
 #endif	
 }
 
+
+
+void CabbagePluginAudioProcessorEditor::mouseMove(const MouseEvent& event)
+{
+	getFilter()->mouseX = event.getPosition().getX();
+	getFilter()->mouseY = event.getPosition().getY();	
+}
+
 //==============================================================================
 // this function will display a context menu on right mouse click. The menu 
 // is populated by all a list of all GUI controls and GUI abstractions stored in the CabbagePlant folder.  
@@ -1438,7 +1446,7 @@ void CabbagePluginAudioProcessorEditor::InsertInfoButton(CabbageGUIClass &cAttr)
         ((CabbageButton*)layoutComps[idx])->button->getProperties().set(String("filename"), cAttr.getStringProp(CabbageIDs::file));
         layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
         ((CabbageButton*)layoutComps[idx])->button->addListener(this);
-        ((CabbageButton*)layoutComps[idx])->button->setButtonText(cAttr.getItems(0));
+        ((CabbageButton*)layoutComps[idx])->button->setButtonText(cAttr.getStringProp(CabbageIDs::text));
 		((CabbageButton*)layoutComps[idx])->button->getProperties().set(String("index"), idx);
 }
 
@@ -1457,7 +1465,7 @@ void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
 		setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
         ((CabbageButton*)layoutComps[idx])->button->addListener(this);
         //((CabbageButton*)layoutComps[idx])->button->setName("button");
-        if(cAttr.getItemsSize()>0)
+        if(cAttr.getStringArrayProp(CabbageIDs::text).size()>0)
         ((CabbageButton*)layoutComps[idx])->button->setButtonText(cAttr.getStringArrayPropValue("text", cAttr.getNumProp(CabbageIDs::value)));
 #ifdef Cabbage_Build_Standalone
         ((CabbageButton*)layoutComps[idx])->button->setWantsKeyboardFocus(true);
@@ -1648,7 +1656,7 @@ if(i==-9999)jassert(1);
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
 {
-        comps.add(new CabbageButton(cAttr));    
+		comps.add(new CabbageButton(cAttr));    
         int idx = comps.size()-1;
         float left = cAttr.getNumProp(CabbageIDs::left);
         float top = cAttr.getNumProp(CabbageIDs::top);
@@ -1660,6 +1668,8 @@ void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
         ((CabbageButton*)comps[idx])->button->setWantsKeyboardFocus(true);
 #endif
 		((CabbageButton*)comps[idx])->button->getProperties().set(String("index"), idx);
+		if(!cAttr.getNumProp(CabbageIDs::visible))
+		comps[idx]->setVisible(false);
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -1678,7 +1688,10 @@ void CabbagePluginAudioProcessorEditor::InsertCheckBox(CabbageGUIClass &cAttr)
 #ifdef Cabbage_Build_Standalone
         ((CabbageCheckbox*)comps[idx])->button->setWantsKeyboardFocus(true);
 #endif
-		((CabbageButton*)comps[idx])->button->getProperties().set(String("index"), idx);
+		((CabbageCheckbox*)comps[idx])->button->getProperties().set(String("index"), idx);
+		if(!cAttr.getNumProp(CabbageIDs::visible))
+		comps[idx]->setVisible(false);
+		
 }
 
                                                 /*****************************************************/
@@ -1958,6 +1971,8 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 		setPositionOfComponent(left, top, width, height, comps[idx], cAttr.getStringProp("reltoplant"));
 		((CabbageComboBox*)comps[idx])->combo->addListener(this);
 		((CabbageComboBox*)comps[idx])->combo->getProperties().set(String("index"), idx);
+		if(!cAttr.getNumProp(CabbageIDs::visible))
+		comps[idx]->setVisible(false);
 }
 
                                         /******************************************/
@@ -2015,109 +2030,114 @@ will be created but not shown.
 We also need to check to see whether the processor editor has been 're-opened'. If so we
 don't need to recreate the automation
 */
-int idx;
+		int idx;
 
-if(getFilter()->haveXYAutosBeenCreated()){	
-comps.add(new CabbageXYController(getFilter()->getXYAutomater(xyPadIndex),
-cAttr.getStringProp(CabbageIDs::name),
-                cAttr.getStringProp("text"),
-"",
-                cAttr.getNumProp("minx"),
-                cAttr.getNumProp("maxx"),
-                cAttr.getNumProp("miny"),
-                cAttr.getNumProp("maxy"),
-xyPadIndex,
-cAttr.getNumProp("decimalplaces"),
-cAttr.getStringProp(CabbageIDs::colour),
-cAttr.getStringProp(CabbageIDs::fontcolour),
-cAttr.getNumProp("valuex"),
-cAttr.getNumProp("valuey")));
-xyPadIndex++;
-idx = comps.size()-1;
-}
-else{
+		if(getFilter()->haveXYAutosBeenCreated()){	
+		comps.add(new CabbageXYController(getFilter()->getXYAutomater(xyPadIndex),
+		cAttr.getStringProp(CabbageIDs::name),
+						cAttr.getStringProp("text"),
+		"",
+						cAttr.getNumProp("minx"),
+						cAttr.getNumProp("maxx"),
+						cAttr.getNumProp("miny"),
+						cAttr.getNumProp("maxy"),
+		xyPadIndex,
+		cAttr.getNumProp("decimalplaces"),
+		cAttr.getStringProp(CabbageIDs::colour),
+		cAttr.getStringProp(CabbageIDs::fontcolour),
+		cAttr.getNumProp("valuex"),
+		cAttr.getNumProp("valuey")));
+		xyPadIndex++;
+		idx = comps.size()-1;
+		
+		if(!cAttr.getNumProp(CabbageIDs::visible))
+		comps[idx]->setVisible(false);		
+		
+		}
+		else{
 
-getFilter()->addXYAutomater(new XYPadAutomation());
-getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->addChangeListener(getFilter());
-getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->xChannel = cAttr.getStringProp("xchannel");
-getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->yChannel = cAttr.getStringProp("ychannel");
-cAttr.setNumProp("xyautoindex", getFilter()->getXYAutomaterSize()-1);
+		getFilter()->addXYAutomater(new XYPadAutomation());
+		getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->addChangeListener(getFilter());
+		getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->xChannel = cAttr.getStringProp("xchannel");
+		getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->yChannel = cAttr.getStringProp("ychannel");
+		cAttr.setNumProp("xyautoindex", getFilter()->getXYAutomaterSize()-1);
 
-comps.add(new CabbageXYController(getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1),
-cAttr.getStringProp(CabbageIDs::name),
-                cAttr.getStringProp("text"),
-"",
-                cAttr.getNumProp("minx"),
-                cAttr.getNumProp("maxx"),
-                cAttr.getNumProp("miny"),
-                cAttr.getNumProp("maxy"),
-getFilter()->getXYAutomaterSize()-1,
-cAttr.getNumProp("decimalPlaces"),
-cAttr.getStringProp(CabbageIDs::colour),
-cAttr.getStringProp(CabbageIDs::fontcolour),
-cAttr.getNumProp("valuex"),
-cAttr.getNumProp("valuey")));
-idx = comps.size()-1;
-getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->paramIndex = idx;
-Logger::writeToLog("Number of XYAutos:"+String(getFilter()->getXYAutomaterSize()));
+		comps.add(new CabbageXYController(getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1),
+		cAttr.getStringProp(CabbageIDs::name),
+						cAttr.getStringProp("text"),
+		"",
+						cAttr.getNumProp("minx"),
+						cAttr.getNumProp("maxx"),
+						cAttr.getNumProp("miny"),
+						cAttr.getNumProp("maxy"),
+		getFilter()->getXYAutomaterSize()-1,
+		cAttr.getNumProp("decimalPlaces"),
+		cAttr.getStringProp(CabbageIDs::colour),
+		cAttr.getStringProp(CabbageIDs::fontcolour),
+		cAttr.getNumProp("valuex"),
+		cAttr.getNumProp("valuey")));
+		idx = comps.size()-1;
+		getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->paramIndex = idx;
+		Logger::writeToLog("Number of XYAutos:"+String(getFilter()->getXYAutomaterSize()));
+		if(!cAttr.getNumProp(CabbageIDs::visible))
+		comps[idx]->setVisible(false);
+		}
 
-}
-
-        float left = cAttr.getNumProp(CabbageIDs::left);
-        float top = cAttr.getNumProp(CabbageIDs::top);
-        float width = cAttr.getNumProp(CabbageIDs::width);
-        float height = cAttr.getNumProp(CabbageIDs::height);
-
-
-
-        //check to see if widgets is anchored
-        //if it is offset its position accordingly.
-        int relY=0,relX=0;
-        if(layoutComps.size()>0){
-if(comps[idx])
-        for(int y=0;y<layoutComps.size();y++)
-        if(cAttr.getStringProp("reltoplant").length()>0){
-        if(layoutComps[y]->getProperties().getWithDefault(String("plant"), -99).toString().equalsIgnoreCase(cAttr.getStringProp("reltoplant")))
-                {
-			positionComponentWithinPlant("", left, top, width, height, layoutComps[y], comps[idx]);
-                }
-        }
-                else{
-            comps[idx]->setBounds(left+relX, top+relY, width, height);
-                if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
-                componentPanel->addAndMakeVisible(comps[idx]);
-                }
-        }
-        else{
-            comps[idx]->setBounds(left+relX, top+relY, width, height);
-                if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
-                componentPanel->addAndMakeVisible(comps[idx]);
-        }
-
-
-        float max = cAttr.getNumProp("maxx");
-        float min = cAttr.getNumProp("minx");
-        float valueX = cabbageABS(min-cAttr.getNumProp("valuex"))/cabbageABS(min-max);
-        //Logger::writeToLog(String("X:")+String(valueX));
-        max = cAttr.getNumProp("maxy");
-        min = cAttr.getNumProp("miny");
-        float valueY = cabbageABS(min-cAttr.getNumProp("valuey"))/cabbageABS(min-max);
-        //Logger::writeToLog(String("Y:")+String(valueY));
-        //((CabbageXYController*)comps[idx])->xypad->setXYValues(cAttr.getNumProp("valueX"),
-// cAttr.getNumProp("valueY"));
-getFilter()->setParameter(idx, cAttr.getNumProp("valuey"));
-getFilter()->setParameter(idx+1, cAttr.getNumProp("valuey"));
+				float left = cAttr.getNumProp(CabbageIDs::left);
+				float top = cAttr.getNumProp(CabbageIDs::top);
+				float width = cAttr.getNumProp(CabbageIDs::width);
+				float height = cAttr.getNumProp(CabbageIDs::height);
 
 
 
-// getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->setXValue(cAttr.getNumProp("valueX"));
-// getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->setYValue(cAttr.getNumProp("valueY"));
-#ifdef Cabbage_Build_Standalone
-        comps[idx]->setWantsKeyboardFocus(false);
-#endif
-//if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
-    // actionListenerCallback(cAttr.getStringProp(CabbageIDs::name));
-}
+				//check to see if widgets is anchored
+				//if it is offset its position accordingly.
+				int relY=0,relX=0;
+				if(layoutComps.size()>0){
+		if(comps[idx])
+				for(int y=0;y<layoutComps.size();y++)
+				if(cAttr.getStringProp("reltoplant").length()>0){
+				if(layoutComps[y]->getProperties().getWithDefault(String("plant"), -99).toString().equalsIgnoreCase(cAttr.getStringProp("reltoplant")))
+						{
+					positionComponentWithinPlant("", left, top, width, height, layoutComps[y], comps[idx]);
+						}
+				}
+						else{
+					comps[idx]->setBounds(left+relX, top+relY, width, height);
+						if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
+						componentPanel->addAndMakeVisible(comps[idx]);
+						}
+				}
+				else{
+					comps[idx]->setBounds(left+relX, top+relY, width, height);
+						if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
+						componentPanel->addAndMakeVisible(comps[idx]);
+				}
+
+
+				float max = cAttr.getNumProp("maxx");
+				float min = cAttr.getNumProp("minx");
+				float valueX = cabbageABS(min-cAttr.getNumProp("valuex"))/cabbageABS(min-max);
+				//Logger::writeToLog(String("X:")+String(valueX));
+				max = cAttr.getNumProp("maxy");
+				min = cAttr.getNumProp("miny");
+				float valueY = cabbageABS(min-cAttr.getNumProp("valuey"))/cabbageABS(min-max);
+				//Logger::writeToLog(String("Y:")+String(valueY));
+				//((CabbageXYController*)comps[idx])->xypad->setXYValues(cAttr.getNumProp("valueX"),
+		// cAttr.getNumProp("valueY"));
+		getFilter()->setParameter(idx, cAttr.getNumProp("valuey"));
+		getFilter()->setParameter(idx+1, cAttr.getNumProp("valuey"));
+
+
+
+		// getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->setXValue(cAttr.getNumProp("valueX"));
+		// getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->setYValue(cAttr.getNumProp("valueY"));
+		#ifdef Cabbage_Build_Standalone
+				comps[idx]->setWantsKeyboardFocus(false);
+		#endif
+		//if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
+			// actionListenerCallback(cAttr.getStringProp(CabbageIDs::name));
+		}
 
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -2177,6 +2197,9 @@ Array<int> tableSizes;
 			
 		//finally, add tables to widget
 		((CabbageTable*)layoutComps[idx])->addTables();
+		if(!cAttr.getNumProp(CabbageIDs::visible))
+		layoutComps[idx]->setVisible(false);		
+		
 
 }
 
@@ -2586,14 +2609,6 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 					((CabbageImage*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
         }
 	
-        else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).containsIgnoreCase("vumeter")){
-                //Logger::writeToLog(layoutComps[i]->getName());
-                for(int y=0;y<((CabbageVUMeter*)layoutComps[i])->getNoMeters();y++)
-                //String chann = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel, y);
-                //float val = getFilter()->getCsound()->GetChannel(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel, y).toUTF8());
-                ((CabbageVUMeter*)layoutComps[i])->vuMeter->setVULevel(y, 10);
-                //}
-        }
         else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::table){
 				//int tableNumber = getFilter()->getGUILayoutCtrls(i).getNumProp("tableNum");
 				//update look of control...

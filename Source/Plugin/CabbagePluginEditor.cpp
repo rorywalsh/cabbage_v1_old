@@ -803,28 +803,28 @@ ComponentLayoutEditor* le = layoutEditor;
 //=============================================================================
 void CabbagePluginAudioProcessorEditor::mouseMove(const MouseEvent& event)
 {
-	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseX", event.getPosition().getX(), "");
-	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseX", event.getPosition().getY(), "");
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("MOUSE_X", event.getPosition().getX(), "");
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("MOUSE_Y", event.getPosition().getY(), "");
 }
 
 void CabbagePluginAudioProcessorEditor::mouseDown(const MouseEvent& event)
 {
 	if(event.mods.isLeftButtonDown())
-	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseDownLeft", 1, "");
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("MOUSE_DOWN_LEFT", 1, "");
 	else if(event.mods.isRightButtonDown())
-	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseDownRight", 1, "");
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("MOUSE_DOWN_RIGHT", 1, "");
 	else if(event.mods.isMiddleButtonDown())
-	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseDownMiddle", 1, "");
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("MOUSE_DOWN_MIDDLE", 1, "");
 }
 
 void CabbagePluginAudioProcessorEditor::mouseUp(const MouseEvent& event)
 {
 	if(event.mods.isLeftButtonDown())
-	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseDownLeft", 0, "");
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("MOUSE_DOWN_LEFT", 0, "");
 	else if(event.mods.isRightButtonDown())
-	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseDownRight", 0, "");
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("MOUSE_DOWN_RIGHT", 0, "");
 	else if(event.mods.isMiddleButtonDown())
-	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("mouseDownMiddle", 0, "");
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue("MOUSE_DOWN_MIDDLE", 0, "");
 }
 //==============================================================================
 // this function will display a context menu on right mouse click. The menu 

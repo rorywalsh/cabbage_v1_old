@@ -1136,9 +1136,6 @@ if(!csCompileResult){
 			csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
 #endif
 
-//	csound->SetChannel("mouseX", mouseX);
-//	csound->SetChannel("mouseY", mouseY);
-
 for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 		{
 		//Logger::writeToLog("MessageType:"+messageQueue.getOutgoingChannelMessageFromQueue(i).type);

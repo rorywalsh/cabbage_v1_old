@@ -1059,6 +1059,7 @@ if(!csCompileResult)
 			//Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));
 			//Logger::writeToLog("value:"+String(value));
 			guiCtrls.getReference(index).setNumProp(CabbageIDs::value, value);
+			dirtyControls.addIfNotAlreadyThere(index);
 			}
 			
 		if(guiCtrls[index].getStringProp(CabbageIDs::identchannel).isNotEmpty())

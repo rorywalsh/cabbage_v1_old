@@ -1018,18 +1018,19 @@ if(index<(int)guiCtrls.size())//make sure index isn't out of range
 	#endif
 	if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox &&
 								getGUICtrls(index).getStringProp(CabbageIDs::channeltype)==CabbageIDs::stringchannel)
-	  {
+		{
 		stringMessage = getGUICtrls(index).getStringArrayPropValue(CabbageIDs::text, newValue-1);
 		//Logger::writeToLog(stringMessage);
 		messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel), 
 												  stringMessage,
 												  CabbageIDs::stringchannel);
-	  }
+		}
 	else
+		{
 		messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel), 
 												  newValue,
 												  guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
-	
+		}
 	
 	guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);	
    }
@@ -1058,8 +1059,11 @@ if(!csCompileResult)
 			float value = csound->GetChannel(guiCtrls[index].getStringProp(CabbageIDs::channel).getCharPointer());
 			//Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));
 			//Logger::writeToLog("value:"+String(value));
-			guiCtrls.getReference(index).setNumProp(CabbageIDs::value, value);
-			dirtyControls.addIfNotAlreadyThere(index);
+			if(value!=guiCtrls.getReference(index).getNumProp(CabbageIDs::value))
+				{
+				guiCtrls.getReference(index).setNumProp(CabbageIDs::value, value);
+				dirtyControls.addIfNotAlreadyThere(index);
+				}
 			}
 			
 		if(guiCtrls[index].getStringProp(CabbageIDs::identchannel).isNotEmpty())

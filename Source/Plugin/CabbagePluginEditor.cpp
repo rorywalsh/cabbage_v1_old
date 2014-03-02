@@ -161,8 +161,6 @@ xyPadIndex(0)
 			}	
 		}
 
-	//start timer. Timer callback updates our GUI control states/positions, etc. with data from Csound
-	//startTimer(20);
 	getFilter()->addChangeListener(this);
 	resized();
 }
@@ -1998,7 +1996,7 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 		((CabbageComboBox*)comps[idx])->combo->getProperties().set(String("index"), idx);
 		if(!cAttr.getNumProp(CabbageIDs::visible))
 		comps[idx]->setVisible(false);
-		comps[idx]->addMouseListener(this, true);
+		//comps[idx]->addMouseListener(this, true);
 }
 
                                         /******************************************/
@@ -2522,16 +2520,14 @@ for(int index=0;index<(int)getFilter()->dirtyControls.size();index++)
 		
 
         else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::combobox){		
-			
 			float val;
 			NotificationType notify;
 			if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::filetype).contains("snaps"))
 				notify = sendNotification;
 			else
 				notify = dontSendNotification;
-			
 		#ifdef Cabbage_Build_Standalone
-			val = getFilter()->getParameter(i);
+			int val = getFilter()->getParameter(i);	
 			((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)val-1, notify);
 			//Logger::writeToLog(String("timerCallback():")+String(val));
 		#else

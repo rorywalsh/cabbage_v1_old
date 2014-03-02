@@ -66,6 +66,7 @@ class ComponentLayoutEditor   :   public Component,
 	void mouseUp(const MouseEvent& e);
 	LassoComponent <ChildAlias*> lassoComp;
 	SelectedComponents selectedFilters;
+	Array<int> selectedLineNumbers;
 	Array<Rectangle < int > > selectedCompsOrigCoordinates;
 	Array<Rectangle < int > > selectedCompsNewCoordinates;
 

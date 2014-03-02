@@ -205,6 +205,8 @@ namespace CabbageIDs
 	static const Identifier identchannel = "identchannel";
 	static const Identifier identchannelmessage = "identchannelmessage";
 	static const Identifier visible = "visible";
+	static const Identifier lineNumber = "linenumber";
+	
 	
 	
 	//type of widgets/controls/messages
@@ -226,6 +228,13 @@ namespace CabbageIDs
 	static const String isplaying = "IS_PLAYING";
 	static const String isrecording = "IS_RECORDING";
 	static const String hostppqpos = "HOST_PPQ_POS";
+	static const String mousex = "MOUSE_X";
+	static const String mousey = "MOUSE_Y";
+	static const String mousedownleft = "MOUSE_DOWN_LEFT";
+	static const String mousedownright = "MOUSE_DOWN_RIGHT";
+	static const String mousedownlmiddle = "MOUSE_DOWN_MIDDLE";
+
+	
 	static const String csoundoutput = "csoundoutput";
 	
 };

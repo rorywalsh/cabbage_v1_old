@@ -497,37 +497,40 @@ int checkGUI = isGuiEnabled();
 //setGuiEnabled((false));
 int guiID=0;
 StringArray csdText;
+
 int lines=1;
 String csdLine("");
 csdText.addLines(source);
 bool multiComment = false;
 bool multiLine = false;
 //check for minimal Cabbage GUI
+
+
+
     for(int i=0;i<csdText.size();i++)
         {
+		int csdLineNumber=0;
+		/*
+		if(!refresh){
+			StringArray fullText;
+			if(codeEditor)
+			fullText.addLines(codeEditor->getAllText());
+			else
+			fullText.addLines(csdFile.loadFileAsString());
+			for(int u=0;u<fullText.size();u++)
+				if(csdText[i].equalsIgnoreCase(fullText[u])){
+				csdLineNumber = u;	
+				Logger::writeToLog("LineNumber:"+String(csdLineNumber)+"\n"+csdText[i]);
+				u=fullText.size();
+				}
+		}
+			*/
 		if(csdText[i].indexOfWholeWordIgnoreCase(String("</Cabbage>"))==-1)
 		{
-		if(!csdText[i].contains("multitab "))//we don't enter for multitab, plants need to be created first
 			if(csdText[i].trim().isNotEmpty()){
-					if(csdText[i].contains("), \\")||
-						csdText[i].contains("),\\")||
-						csdText[i].contains(") \\")){
-							multiLine = true;
-							csdLine="";
-							lines=0;
-							while(multiLine){
-							if(csdText[i+lines].contains("), \\")||
-								csdText[i+lines].contains("),\\")||
-								csdText[i+lines].contains(") \\"))
-									lines++;
-							else multiLine=false;
-							}
-							for(int y=0;y<=lines;y++)
-							csdLine = csdLine + " "+ csdText[i+y].trim()+" ";
-							i=i+lines;
-					}
-					else
 					csdLine = csdText[i];
+					if(csdLineNumber==0)
+					csdLineNumber = i;
 					//tidy up string
 					csdLine = csdLine.trimStart();
 					//csdLine = csdLine.removeCharacters(" \\");
@@ -581,6 +584,7 @@ bool multiLine = false;
 									||tokes[0].equalsIgnoreCase(String("groupbox")))
 					{
 							CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
+							cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
 							if(cAttr.getStringProp("native").length()>0){
 								//create generic plugin editor and break..
 								setupNativePluginEditor();
@@ -652,6 +656,7 @@ bool multiLine = false;
 									||tokes[0].equalsIgnoreCase(String("xypad"))
 									||tokes[0].equalsIgnoreCase(String("button"))){
 							CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
+							cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
 							//Logger::writeToLog(csdLine.trimEnd());
 							csdLine = "";
 							//Logger::writeToLog(tokes[0]);
@@ -704,32 +709,6 @@ bool multiLine = false;
 		}
                 else break;
         } //end of scan through entire csd text, control vectors are now populated
-
-		//create multitabs now that plants have been inserted to control vector..
-		for(int i=0;i<csdText.size();i++)
-			{
-			if(csdText[i].contains("multitab ") && !csdText[i].contains(";"))
-			{
-				csdLine = csdText[i];
-				csdLine = csdLine.trimStart();
-				StringArray tokes;
-				tokes.addTokens(csdLine.trimEnd(), ", ", "\"");
-				if(tokes[0].equalsIgnoreCase(String("multitab"))){
-					CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
-					//showMessage(cAttr.getStringProp("type"));
-					csdLine = "";
-					//set up plant flag if needed for other widgets
-					if(cAttr.getStringProp(String("plant")).isNotEmpty()){
-					plantFlag = cAttr.getStringProp(String("plant"));
-					presetFlag = cAttr.getStringProp(String("preset"));
-					}
-					else if(cAttr.getStringProp(String("reltoplant")).equalsIgnoreCase(String("")))
-					cAttr.setStringProp(String("reltoplant"), plantFlag);
-					guiLayoutCtrls.add(cAttr);
-					guiID++;
-				}
-			}
-		}//end of multitab check
 
 
 		//init all channels with their init val, and set parameters

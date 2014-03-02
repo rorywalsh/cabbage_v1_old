@@ -611,7 +611,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	if(!standaloneMode){
 		m.addItem(1, String("Open Cabbage Instrument | Ctrl+o"));
 	
-		recentFiles.createPopupMenuItems (recentFilesMenu, 9000, true, true);
+		recentFiles.createPopupMenuItems (recentFilesMenu, 9000, false, true);
 		m.addSubMenu ("Open recent file", recentFilesMenu);	
 		
 		String examplesDir = appProperties->getUserSettings()->getValue("ExamplesDir", "");	

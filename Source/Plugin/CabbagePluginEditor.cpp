@@ -1424,7 +1424,7 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
                 formPic = "";
 
         this->resized();
-        //add a dummy control to our layoutComps vector so that our filters layout vector 
+        //add a dummy control to our layoutComps vector so that our filters abstract layout vector 
         //is the same size as our editors one. 
         layoutComps.add(new Component());
 }
@@ -1894,9 +1894,9 @@ if(!getFilter()->isGuiEnabled()){
 
 		//for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++){//find correct control from vector                        
 		i = button->getProperties().getWithDefault("index", -9999);	  
+		
 				//+++++++++++++button+++++++++++++
-						//Logger::writeToLog(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name));
-						//Logger::writeToLog(button->getName());
+			if(isPositiveAndBelow(i, getFilter()->getGUICtrlsSize()))
 				 if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==button->getName())
 					 {
 						if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("button"))

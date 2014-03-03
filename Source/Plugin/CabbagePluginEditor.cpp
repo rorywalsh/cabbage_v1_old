@@ -764,11 +764,12 @@ ComponentLayoutEditor* le = layoutEditor;
 			currentLineNumber = lineNumbers[0];
 			}
 		
-		//resize all elements that are contained in a plant....
+		//resize all elements that are contained in a plant, but only 
+		//if it is a non-popup plant
 		String tempPlantText, temp;
 		int endLine;
-		if(csdArray[currentLineNumber].contains("plant(\"")){
-			tempPlantText=csdArray[currentLineNumber]+"\n";
+		if((csdArray[currentLineNumber].contains("plant(\"")) && (!csdArray[currentLineNumber].contains("popup(1)"))){
+			 tempPlantText=csdArray[currentLineNumber]+"\n";
 			for(int y=1, off=0;y<componentPanel->childBounds.size()+1;y++){	
 			//stops things from getting messed up if there are line
 			if((csdArray[currentLineNumber+y+off].length()<2) || csdArray[currentLineNumber+y+off].indexOf(";")==0){
@@ -1225,17 +1226,22 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
         }
         }
 		else{
-       if(cAttr.getNumProp("popup")==0){
-		   //Logger::writeToLog(layoutComps[idx]->getName());
-			layoutComps[idx]->setBounds(left+relX, top+relY, width, height);
-            componentPanel->addAndMakeVisible(layoutComps[idx]);       
-        }
-        else{
+		   if(cAttr.getNumProp("popup")==0){
+			   //Logger::writeToLog(layoutComps[idx]->getName());
+				layoutComps[idx]->setBounds(left+relX, top+relY, width, height);
+				componentPanel->addAndMakeVisible(layoutComps[idx]);       
+			}
+		}
+		
+		//if dealing with a ppoup plant 
+		if(cAttr.getNumProp("popup")==1){
                 plantButton.add(new CabbageButton(cAttr));
-				plantButton[plantButton.size()-1]->setBounds(left+relX, top+relY, 100, 30);
+				plantButton[plantButton.size()-1]->setBounds(left+relX, top+relY, 100, 25);
 				layoutComps[idx]->setBounds(left+relX, top+relY, width, height);
 
                 plantButton[plantButton.size()-1]->button->addListener(this);
+				plantButton[plantButton.size()-1]->button->setName(cAttr.getStringProp(CabbageIDs::plant));
+				plantButton[plantButton.size()-1]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 				//plantButton[plantButton.size()-1]->button->setLookAndFeel(basicLookAndFeel);
 				plantButton[plantButton.size()-1]->button->setColour(TextButton::buttonColourId, Colour::fromString(cAttr.getStringProp("fill")));
 				plantButton[plantButton.size()-1]->button->setColour(TextButton::textColourOffId, Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour)));
@@ -1252,10 +1258,8 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
                 subPatch[subPatch.size()-1]->setContentNonOwned(layoutComps[idx], true);
                 subPatch[subPatch.size()-1]->setTitleBarHeight(18);
 				}			          
-			
-			}
-		
 		}
+
 		cAttr.setStringProp(CabbageIDs::type, "groupbox");
         layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
         layoutComps[idx]->getProperties().set(String("groupLine"), cAttr.getNumProp(CabbageIDs::line));
@@ -1289,13 +1293,14 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 			}
         }
 		else{
-       if(cAttr.getNumProp("popup")==0){
-		   //Logger::writeToLog(layoutComps[idx]->getName());
-			layoutComps[idx]->setBounds(left+relX, top+relY, width, height);
-            componentPanel->addAndMakeVisible(layoutComps[idx]);       
-        }
+		   if(cAttr.getNumProp("popup")==0){
+			   //Logger::writeToLog(layoutComps[idx]->getName());
+				layoutComps[idx]->setBounds(left+relX, top+relY, width, height);
+				componentPanel->addAndMakeVisible(layoutComps[idx]);       
+			}
+		}
 		
-	   else{
+	   if(cAttr.getNumProp("popup")==1){
 					plantButton.add(new	CabbageButton(cAttr));
 					plantButton[plantButton.size()-1]->setBounds(left+relX, top+relY, 100, 25);
 					layoutComps[idx]->setBounds(left+relX, top+relY, width, height);
@@ -1308,7 +1313,7 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 					plantButton[plantButton.size()-1]->button->setColour(TextButton::textColourOnId,
 																		 Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour)));
 					
-					
+					plantButton[plantButton.size()-1]->button->setName(cAttr.getStringProp(CabbageIDs::plant));
 					componentPanel->addAndMakeVisible(plantButton[plantButton.size()-1]);
 					
 					plantButton[plantButton.size()-1]->button->getProperties().set(String("index"),
@@ -1328,8 +1333,7 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 																	true);
 					subPatch[subPatch.size()-1]->setTitleBarHeight(18);
 				}
-				
-			}
+
 	}
 	
 	layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
@@ -1946,8 +1950,7 @@ if(!getFilter()->isGuiEnabled()){
 					}
 
 				//show plants as popup window
-				else{
-						for(int p=0;p<getFilter()->getGUILayoutCtrlsSize();p++){
+				for(int p=0;p<getFilter()->getGUILayoutCtrlsSize();p++){
 						if(getFilter()->getGUILayoutCtrls(p).getStringProp("plant") ==button->getName()){
 						int index = button->getProperties().getWithDefault(String("index"), 0);
 						subPatch[index]->setVisible(true);
@@ -1957,7 +1960,7 @@ if(!getFilter()->isGuiEnabled()){
 						break;
 						}
 					}
-				}
+
         }
         
         else if(dynamic_cast<ToggleButton*>(button)){

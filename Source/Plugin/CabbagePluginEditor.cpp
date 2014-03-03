@@ -639,6 +639,9 @@ ComponentLayoutEditor* le = layoutEditor;
 		plantDefs.clear();		
 		getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
 		
+		getFilter()->createGUI(csdArray.joinIntoString("\n"), true);
+		
+		
 		//getFilter()->sendActionMessage("GUI Updated, controls deleted");
 		//update frames to reflect changes made to GUI
 		this->updateLayoutEditorFrames();
@@ -737,26 +740,13 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 ComponentLayoutEditor* le = layoutEditor;
 
 		lineNumbers.clear();
-		//check to see if any of the selcted components match those in our Cabbage code 
-		/*for(int i=0; i<csdArray.size(); i++){
-			CabbageGUIClass CAttr(csdArray[i], i-99);
-			if(csdArray[i].contains("</Cabbage>"))
-				i=csdArray.size();
-				
-			
-			
-			if(CAttr.getNumProp(CabbageIDs::width)>0)
-			
-			 */
-			 int numSelected = le->selectedLineNumbers.size();		
-			  for(int y=0;y<numSelected;y++){		
-				//if(CAttr.getStringProp(CabbageIDs::type)=="groupbox")		
-				//Logger::writeToLog("SelectedCompBounds:"+getBoundsString(le->selectedCompsOrigCoordinates[y]));
-					lineNumbers.add(le->selectedLineNumbers[y]);
-					boundsForSelectComps.add(getBoundsString(le->selectedCompsNewCoordinates[y]));
-					}
-				//}
-			//}
+		int numSelected = le->selectedLineNumbers.size();		
+		for(int y=0;y<numSelected;y++){		
+		//if(CAttr.getStringProp(CabbageIDs::type)=="groupbox")		
+		//Logger::writeToLog("SelectedCompBounds:"+getBoundsString(le->selectedCompsOrigCoordinates[y]));
+			lineNumbers.add(le->selectedLineNumbers[y]);
+			boundsForSelectComps.add(getBoundsString(le->selectedCompsNewCoordinates[y]));
+			}
 
 		//Logger::writeToLog(String(lineNumbers.size()));
 		for(int i=0;i<lineNumbers.size();i++){

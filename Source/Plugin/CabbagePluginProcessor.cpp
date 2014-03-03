@@ -510,7 +510,7 @@ bool multiLine = false;
     for(int i=0;i<csdText.size();i++)
         {
 		int csdLineNumber=0;
-		/*
+
 		if(!refresh){
 			StringArray fullText;
 			if(codeEditor)
@@ -524,12 +524,12 @@ bool multiLine = false;
 				u=fullText.size();
 				}
 		}
-			*/
+
 		if(csdText[i].indexOfWholeWordIgnoreCase(String("</Cabbage>"))==-1)
 		{
 			if(csdText[i].trim().isNotEmpty()){
 					csdLine = csdText[i];
-					if(csdLineNumber==0)
+					if(refresh)
 					csdLineNumber = i;
 					//tidy up string
 					csdLine = csdLine.trimStart();

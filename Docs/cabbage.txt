@@ -329,7 +329,7 @@ GroupBox
 ~~~~~~~~
 ----------------------------------------------------------------------
 groupbox bounds(x, y, width, height)[, text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), 
-			popup(val), identchannel("channel")]
+			identchannel("channel")]
 ----------------------------------------------------------------------
 
 Groupbox creates a container for other GUI controls. They do not communicate with Csound but can be useful for organising widgets into panels.
@@ -346,12 +346,7 @@ Groupbox creates a container for other GUI controls. They do not communicate wit
 
 'plant("name")': Sets the name of the plant. No two plants can have the same name. See 'PLANTS'
 
-'popup("name")': Sets whether the plant is to behave as a 'popup' plant or not. If a '1' is passed to popup, i.e., popup(1) then a button of fixed size 100x30 will appear on screen in position x,y as set by bounds. When a user clicks the button their controls will appear in a separate window. This can be useful for saving space in the main instrument's GUI. 
-
 'identchannel("channel")': Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
-
-[icon="images/smallLogo.PNG"]
-NOTE: Popups can only be added through text.
 
 
 Example:
@@ -441,7 +436,7 @@ Image
 ~~~~~
 ---------------------------------------
 image bounds(x, y, width, height), colour("colour")[, file("file name"), shape("type"), outline("colour"), line(thickness), 'plant("name"), 
-popup(val), identchannel("channel")] 
+identchannel("channel")] 
 ---------------------------------------
 Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. The file must be in the same directory as your Cabbage instrument. If you simply wish to draw a shape you can choose a background colour with colour() and an outline colour with outline(). line() will let you determine the thickness of the outline. 
 
@@ -458,8 +453,6 @@ Image creates a static shape or graphic. It can be used to show pictures or it c
 'line(thickness)': This sets the line thickness in pixels.
 
 'plant("name")': Sets the name of the plant. No two plants can have the same name. See 'PLANTS'
-
-'popup("name")': Sets whether the plant is to behave as a 'popup' plant or not. If  a one is passed to popup, i.e., popup(1) then a button of fixed size 100x30 will on screen in position x,y as set by bounds. When a user clicks the button their controls will appear in a separate window. This can be useful for saving space in the main instrument's GUI. 
 
 'identchannel("channel")': Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
 

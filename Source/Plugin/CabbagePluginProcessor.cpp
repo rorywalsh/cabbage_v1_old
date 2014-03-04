@@ -1121,8 +1121,8 @@ for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 		csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
 						   messageQueue.getOutgoingChannelMessageFromQueue(i).value);
 		}
-
-	messageQueue.flushOutgoingChannelMessages();
+		
+		messageQueue.flushOutgoingChannelMessages();
 
 	if(isAutomator){
 		//sendChangeMessage();

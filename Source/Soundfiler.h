@@ -29,8 +29,9 @@
 // display a sound file as a waveform..
 //=================================================================
 class WaveformDisplay : public Component,
-						public Timer,
-						public ChangeBroadcaster
+						public ChangeBroadcaster,
+						private ScrollBar::Listener,
+						public ChangeListener
 {
 public:
 	WaveformDisplay(int sr, Colour col);	
@@ -67,14 +68,18 @@ public:
 	void setFile (const File& file, bool firstTime);
 	
 private:
+	Range<double> visibleRange;
+	ScopedPointer<ScrollBar> scrollbar;
+	void setRange(Range<double> newRange);
 	void resized();	    
     void paint (Graphics& g);
-    void timerCallback();
     void mouseDown (const MouseEvent& e);
 	void mouseUp(const MouseEvent& e);
     void mouseDrag(const MouseEvent& e);
 	bool reDraw;
 	double scrubberPosition;
+	void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
+	void changeListenerCallback(ChangeBroadcaster *source);
 
 	AudioFormatManager formatManager;
 	float sampleRate;
@@ -103,11 +108,12 @@ class Soundfiler :  public Component,
 					public ChangeListener
 {
 	ScopedPointer<WaveformDisplay> waveformDisplay;
-	ScopedPointer<Viewport> viewport;
+	//ScopedPointer<Viewport> viewport;
 	int position;
 	int endPosition;
+	
 public:
-	Soundfiler(String fileName, int sr, Colour colour, Colour fontcolour);
+	Soundfiler(String fileName, int sr, Colour colour, Colour fontcolour, int zoom);
 	~Soundfiler(){
 	};
 	
@@ -128,6 +134,10 @@ public:
 	
 	void setFile(String filename){
 		waveformDisplay->setFile(File(filename), false);
+	}
+	
+	void setZoom(float zoom){
+	waveformDisplay->setZoomFactor(zoom);
 	}
 	
     float timeToX (const double time) const

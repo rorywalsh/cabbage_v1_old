@@ -94,6 +94,7 @@ public:
 	}
 
 	void flushOutgoingChannelMessages(){
+		//const MessageManagerLock mmLock;
 		outgoingChannelMessages.clear();
 	}
 

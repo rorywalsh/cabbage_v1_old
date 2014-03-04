@@ -123,6 +123,7 @@ IdentArray() : StringArray("")
 	add("identchannel(");
 	add("visible(");
 	add("scrubberposition(");
+	add("zoom(");
 	add("");
 	add("");
 	add("");		
@@ -211,6 +212,7 @@ namespace CabbageIDs
 	static const Identifier scrubberposition = "scrubberposition";
 	static const Identifier startpoint = "startpoint";
 	static const Identifier endpoint = "endpoint";
+	static const Identifier zoom = "zoom";
 	
 	
 	

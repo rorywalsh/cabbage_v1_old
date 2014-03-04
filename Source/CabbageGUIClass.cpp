@@ -446,6 +446,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::identchannel, "");
 		cabbageIdentifiers.set(CabbageIDs::visible, 1);
 		cabbageIdentifiers.set(CabbageIDs::scrubberposition, 0);
+		cabbageIdentifiers.set(CabbageIDs::zoom, 1);
 	}	
 	//===============snapshot==================//	
     else if(strTokens[0].trim() == "snapshot"){
@@ -1193,6 +1194,10 @@ int CabbageGUIClass::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("scrubberposition(")){
 				cabbageIdentifiers.set(CabbageIDs::scrubberposition, strTokens[0].trim().getIntValue());		
 			}			
+
+            else if(identArray[indx].equalsIgnoreCase("zoom(")){
+				cabbageIdentifiers.set(CabbageIDs::zoom, strTokens[0].trim().getFloatValue());		
+			}	
 
             else if(identArray[indx].equalsIgnoreCase("readonly(")){
 				cabbageIdentifiers.set(CabbageIDs::readonly, strTokens[0].trim().getFloatValue());		

@@ -775,23 +775,29 @@ class CabbageSoundfiler	:	public Component,
 String colour;
 String fontcolour;
 String file;
+int zoom;
 double sampleRate;
+float scrubberPos;
 ScopedPointer<CabbageLine> lineComp;
 
 //---- constructor -----
 public:
 	CabbageSoundfiler (CabbageGUIClass &cAttr) : colour(cAttr.getStringProp(CabbageIDs::colour)),
 												 fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
-												 file(cAttr.getStringProp(CabbageIDs::file))
+												 file(cAttr.getStringProp(CabbageIDs::file)),
+												 zoom(cAttr.getNumProp(CabbageIDs::zoom)),
+												 scrubberPos(cAttr.getNumProp(CabbageIDs::scrubberposition))
 	{
 	lineComp = new CabbageLine(false, Colours::red.toString());
 	setName(cAttr.getStringProp(CabbageIDs::name));	
-	soundFiler = new Soundfiler(file, 44100, Colour::fromString(colour), Colour::fromString(fontcolour));
+	soundFiler = new Soundfiler(cAttr.getStringProp(CabbageIDs::file), 44100, Colour::fromString(colour), Colour::fromString(fontcolour), zoom);
 	addAndMakeVisible(soundFiler);
 	addAndMakeVisible(lineComp);
-	setScrubberPosition(cAttr.getNumProp(CabbageIDs::scrubberposition));
+
 	soundFiler->addChangeListener(this);
 	sampleRate = 44100;
+	setScrubberPosition(scrubberPos);
+	soundFiler->setZoom(cAttr.getNumProp(CabbageIDs::zoom));
 	}
 
 	~CabbageSoundfiler()
@@ -812,7 +818,10 @@ public:
 	//update control
 	void update(CabbageGUIClass m_cAttr){
 		setBounds(m_cAttr.getBounds());
-		setScrubberPosition(m_cAttr.getNumProp(CabbageIDs::scrubberposition));
+		if(scrubberPos!=m_cAttr.getNumProp(CabbageIDs::scrubberposition)){
+			scrubberPos = m_cAttr.getNumProp(CabbageIDs::scrubberposition);
+			setScrubberPosition(scrubberPos);
+		}
 		if(!m_cAttr.getNumProp(CabbageIDs::visible))
 			setVisible(false);
 		else
@@ -823,7 +832,9 @@ public:
 			file = m_cAttr.getStringProp(CabbageIDs::file);
 			Logger::writeToLog(file);
 			Logger::writeToLog(m_cAttr.getStringProp(CabbageIDs::file));
-			
+			soundFiler->setZoom(m_cAttr.getNumProp(CabbageIDs::zoom));
+			getTopLevelComponent()->repaint();
+			setScrubberPosition(-10);
 		}
 	
 	}

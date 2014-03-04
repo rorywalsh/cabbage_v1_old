@@ -35,19 +35,38 @@ WaveformDisplay::WaveformDisplay(int sr, Colour col):	thumbnailCache (5),
 {	
     formatManager.registerBasicFormats();  
 	thumbnail = new AudioThumbnail(512, formatManager, thumbnailCache); 
-	setSize(100, 100);
+	thumbnail->addChangeListener (this);
+	setSize(400, 200);
 	sampleRate = sr;
+	addAndMakeVisible(scrollbar = new ScrollBar(false));
+	scrollbar->setRangeLimits (visibleRange);
+	scrollbar->setAutoHide (false);
+	scrollbar->addListener(this);
 }
 //==============================================================================	
 WaveformDisplay::~WaveformDisplay()
-{	
+{
+	scrollbar->removeListener (this);
+	thumbnail->removeChangeListener (this);
 }
 //==============================================================================	
-void WaveformDisplay::resized()
+void WaveformDisplay::changeListenerCallback(ChangeBroadcaster *source)
 {
 	repaint();
 }
-//==============================================================================	
+//==============================================================================
+void WaveformDisplay::resized()
+{
+	if(scrollbar)
+		scrollbar->setBounds (getLocalBounds().removeFromBottom (20).reduced (2));
+}
+//==============================================================================	    
+void WaveformDisplay::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
+{
+	if (scrollBarThatHasMoved == scrollbar)
+		setRange (visibleRange.movedToStartAt (newRangeStart));
+}
+	
 void WaveformDisplay::setFile (const File& file, bool firstTime)
 {
 	if(file.existsAsFile()){
@@ -59,7 +78,9 @@ void WaveformDisplay::setFile (const File& file, bool firstTime)
 		thumbnail = nullptr;
 		thumbnail = new AudioThumbnail(512, formatManager, thumbnailCache); 
 		thumbnail->setSource (new FileInputSource(file));
-		//delete inFileStream;
+		const Range<double> newRange (0.0, thumbnail->getTotalLength());
+		scrollbar->setRangeLimits (newRange);
+		setRange (newRange);
 		}
 		drawWaveform=true;
 	}
@@ -68,33 +89,41 @@ void WaveformDisplay::setFile (const File& file, bool firstTime)
 
 	startTime = 0;
 	endTime = thumbnail->getTotalLength();
-	reDraw = true;
 	repaint();
 }
 //==============================================================================
 void WaveformDisplay::setZoomFactor (double amount)
 {
-	if (thumbnail->getTotalLength() > 0)
-	{
-		const double newScale = jmax (0.001, thumbnail->getTotalLength() * (1.0 - jlimit (0.0, 0.99, amount)));
-		const double timeAtCentre = xToTime (getWidth() / 2.0f);
-		//startTime = timeAtCentre - newScale * 0.5;
-		//endTime = timeAtCentre + newScale * 0.5;
+        if (thumbnail->getTotalLength() > 0)
+        {
+            const double newScale = jmax (0.001, thumbnail->getTotalLength() * (1.0 - jlimit (0.0, 0.99, amount)));
+            const double timeAtCentre = xToTime (getWidth() / 2.0f);
+            setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
+        }
 		repaint();
-	}
+}
+//==============================================================================
+void WaveformDisplay::setRange(Range<double> newRange)
+{
+	visibleRange = newRange;
+	scrollbar->setCurrentRange (visibleRange);
+	repaint();
 }
 //==============================================================================
 void WaveformDisplay::paint (Graphics& g)
 {
+	g.fillAll (Colours::black);
 	if(drawWaveform)
 		{
-		g.fillAll (Colours::black);
+		
 		g.setColour (colour);
-		if (thumbnail->getTotalLength() > 0)
-			{
-				thumbnail->drawChannels (g, getLocalBounds(),
-				startTime, endTime, 2.0f);
-			}
+        if (thumbnail->getTotalLength() > 0.0)
+        {
+            Rectangle<int> thumbArea (getLocalBounds());
+            thumbArea.removeFromBottom (scrollbar->getHeight() + 4);
+            thumbnail->drawChannels (g, thumbArea.reduced (2),
+                                    visibleRange.getStart(), visibleRange.getEnd(), 1.0f);
+        }
 	
 		if(regionWidth>1){
 		g.setColour(colour.contrasting(.5f).withAlpha(.7f));
@@ -109,14 +138,7 @@ void WaveformDisplay::paint (Graphics& g)
 			g.drawFittedText ("(No audio file selected)", getLocalBounds(), Justification::centred, 2);
 		}
 }
-//==============================================================================
-void WaveformDisplay::timerCallback()
-{
-	Viewport* const viewport = findParentComponentOfClass <Viewport> (); //Get the parent viewport
-	if(viewport != nullptr) //Check for nullness
-	viewport->setViewPosition(jmax(0.f, timeToX(currentPlayPosition)-100), 0);
-	repaint();
-}
+
 //==============================================================================
 void WaveformDisplay::mouseDown (const MouseEvent& e)
 {
@@ -160,19 +182,15 @@ void WaveformDisplay::mouseUp(const MouseEvent& e)
 //==============================================================================
 // soundfiler component
 //==============================================================================
-Soundfiler::Soundfiler(String fileName, int sr, Colour colour, Colour fontColour)
+Soundfiler::Soundfiler(String fileName, int sr, Colour colour, Colour fontColour, int zoom)
 {
-	viewport = new Viewport();
 	Logger::writeToLog("sample Rate:"+String(sr));
 	waveformDisplay = new WaveformDisplay(sr, colour);
-	//register a listener callback so that we know when to update our audioSource object
 	waveformDisplay->addChangeListener(this);
-	addAndMakeVisible(viewport);
+	addAndMakeVisible(waveformDisplay);
     setSize (400, 300);
 	waveformDisplay->setFile(File(fileName), true);
-	waveformDisplay->setZoomFactor(1);
-	viewport->setViewedComponent(waveformDisplay, false);
-	viewport->setScrollBarsShown(true, true);
+	waveformDisplay->setZoomFactor(zoom);
 }
 
 //==============================================================================
@@ -186,8 +204,7 @@ void Soundfiler::changeListenerCallback(ChangeBroadcaster *source)
 //==============================================================================
 void Soundfiler::resized()
 {
-waveformDisplay->setSize(800, getHeight()-20);
-viewport->setBounds(0, 0, getWidth(), getHeight());
+waveformDisplay->setSize(getWidth(), getHeight());
 }
 
 //==============================================================================
@@ -198,6 +215,6 @@ waveformDisplay->setScrubberPos(pos);
 //==============================================================================
 void Soundfiler::paint (Graphics& g)
 {
-g.fillAll(Colour(20, 20, 20));
+//g.fillAll(Colour(20, 20, 20));
 }
 

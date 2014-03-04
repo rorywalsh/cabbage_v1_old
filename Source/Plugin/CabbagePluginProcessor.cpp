@@ -64,7 +64,6 @@ updateTable(false),
 yieldCallbackBool(false),
 yieldCounter(10),
 isNativeThreadRunning(false),
-soundFileIndex(0),
 scoreEvents(),
 nativePluginEditor(false),
 averageSampleIndex(0),
@@ -161,7 +160,6 @@ if(csCompileResult==0){
         numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
         csndIndex = csound->GetKsmps();
 		csdKsmps = csound->GetKsmps();
-		soundFilerTempVector = new MYFLT[csdKsmps];
         cs_scale = csound->Get0dBFS();
         csoundStatus = true;
         debugMessageArray.add(CABBAGE_VERSION);
@@ -357,16 +355,8 @@ IdentArray::deleteInstance();
 
                 csound = nullptr;
                 Logger::writeToLog("Csound cleaned up");
-				if(audioSourcesArray.size()>0){
-				for(int i=0;i<audioSourcesArray.size();i++){
-					audioSourcesArray[i]->sourceChannelInfo.buffer = nullptr;
-					audioSourcesArray[i]->audioSourceBuffer = nullptr;
-				}
-				audioSourcesArray.clear();
-				}
         }
 
-		soundFilerTempVector = nullptr;
 
 #endif
 }
@@ -395,7 +385,6 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
 {
 #ifndef Cabbage_No_Csound
 suspendProcessing(true);
-soundFileIndex = 0;
 getCallbackLock().enter();
 midiOutputBuffer.clear();
 csound->DeleteChannelList(csoundChanList);
@@ -482,15 +471,6 @@ if(refresh==true){
 		editor->comps.clear();
 		editor->layoutComps.clear();
 	}
-	//if rebuilding the entire plugin, reset soundfilers, if present
-	if(audioSourcesArray.size()>0){
-		for(int i=0;i<audioSourcesArray.size();i++){
-			audioSourcesArray[i]->sourceChannelInfo.buffer = nullptr;
-			audioSourcesArray[i]->audioSourceBuffer = nullptr;
-		}
-		audioSourcesArray.clear();
-	}
-
 }
 
 int indexOfLastGUICtrl = guiCtrls.size();
@@ -514,7 +494,7 @@ bool multiLine = false;
     for(int i=0;i<csdText.size();i++)
         {
 		int csdLineNumber=0;
-
+#ifdef Cabbage_Build_Standalone
 		if(!refresh){
 			StringArray fullText;
 			if(codeEditor)
@@ -528,6 +508,7 @@ bool multiLine = false;
 				u=fullText.size();
 				}
 		}
+#endif
 
 		if(csdText[i].indexOfWholeWordIgnoreCase(String("</Cabbage>"))==-1)
 		{
@@ -600,12 +581,6 @@ bool multiLine = false;
 
 							//showMessage(cAttr.getStringProp("type"));
 							csdLine = "";
-							//add soundfiler buffering sources
-							if(tokes[0].equalsIgnoreCase(String("soundfiler"))){
-								addSoundfilerSource(cAttr.getStringProp(("file")), cAttr.getChannels());
-								Logger::writeToLog("createGUI, soundfiler size:"+String(audioSourcesArray.size()-1));
-								cAttr.setNumProp("soundfilerIndex", audioSourcesArray.size()-1);
-							}
 
 
 							//set up stuff for tables
@@ -1160,61 +1135,6 @@ for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
 #endif
 }
 
-//==============================================================================
-//set up buffered audio source for each sound file object. The method below this one
-//fills Csound channels with sampler from our soundfiler controls..
-void CabbagePluginAudioProcessor::addSoundfilerSource(String filename, StringArray channels)
-{
-#ifndef Cabbage_No_Csound
-	audioSourcesArray.add(new CabbageAudioSource(filename, csound->GetKsmps()));
-	Logger::writeToLog("Number of soundfilers:"+String(audioSourcesArray.size()));
-	audioSourcesArray[audioSourcesArray.size()-1]->channels = channels;
-
-
-	if(File(filename).exists())Logger::writeToLog("File exists");
-	else{
-		Logger::writeToLog("Soundfiler can't find file");
-		//set default sampling rate in case of no file name given
-		audioSourcesArray[audioSourcesArray.size()-1]->isValidFile = false;
-		audioSourcesArray[audioSourcesArray.size()-1]->sampleRate = 44100;
-	}
-#endif
-}
-
-
-//gets sample data from any soundfiler controls and passes it to Csound
-void CabbagePluginAudioProcessor::sendAudioToCsoundFromSoundFilers(int numSamples)
-{
-#ifndef Cabbage_No_Csound
-if(this->isSuspended()==false){
-for(int i=0;i<audioSourcesArray.size();i++){
-	AudioSampleBuffer output (2, numSamples);
-	audioSourcesArray[i]->sourceChannelInfo.buffer = &output;
-	audioSourcesArray[i]->sourceChannelInfo.startSample = 0;
-	audioSourcesArray[i]->sourceChannelInfo.numSamples = output.getNumSamples();
-
-	if(audioSourcesArray[i]->isSourcePlaying && audioSourcesArray[i]->isValidFile)
-	audioSourcesArray[i]->audioSourceBuffer->getNextAudioBlock(audioSourcesArray[i]->sourceChannelInfo);
-	else
-		output.clear();
-
-	for(int index=0;index<audioSourcesArray[i]->channels.size();index++)
-		{
-		float* samples = output.getSampleData(index);
-
-		for(int y=0;y<numSamples;y+=2)
-			soundFilerTempVector[y] = samples[y];
-
-			//Logger::writeToLog(audioSourcesArray[i]->channels[index]);
-
-			if(csoundGetChannelPtr(csound->GetCsound(), &soundFilerTempVector, audioSourcesArray[i]->channels[index].toUTF8(),
-							CSOUND_INPUT_CHANNEL | CSOUND_AUDIO_CHANNEL) != 0)
-							Logger::writeToLog("error sending audio to Csound");
-		}
-	}
-}
-#endif
-}
 
 //========================================================================
 // Standard plugin methods, getName, getNumParameters, setParamterName, get ProgramName, etc....
@@ -1333,9 +1253,6 @@ void CabbagePluginAudioProcessor::prepareToPlay (double sampleRate, int samplesP
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     keyboardState.reset();
-	for(int i=0;i<audioSourcesArray.size();i++)
-		if(audioSourcesArray[i]->isValidFile)
-			audioSourcesArray[i]->audioSourceBuffer->prepareToPlay(samplesPerBlock, sampleRate);
 }
 //==============================================================================
 void CabbagePluginAudioProcessor::releaseResources()
@@ -1390,8 +1307,7 @@ if(!isSuspended() && !isGuiEnabled()){
 				sendOutgoingMessagesToCsound();
 				updateCabbageControls();
 				}
-				if(audioSourcesArray.size()>0)
-				sendAudioToCsoundFromSoundFilers(csound->GetKsmps());
+
 
 				csCompileResult = csound->PerformKsmps();
 				if(csCompileResult!=0)

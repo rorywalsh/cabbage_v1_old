@@ -28,6 +28,7 @@
 #include "Soundfiler.h"
 #include "DirectoryContentsComponent.h"
 
+
 class InfoWindow   : public DocumentWindow
 {
 ScopedPointer<WebBrowserComponent> htmlInfo;
@@ -722,6 +723,197 @@ private:
 };
 
 //==============================================================================
+// custom CabbageLine
+//==============================================================================
+class CabbageLine	:	public Component
+{
+Colour col;
+public:
+	CabbageLine (bool isHorizontal, String colour)
+		: isHorizontal(isHorizontal)
+	{
+		col = Colour::fromString(colour);
+	}
+
+	~CabbageLine()
+	{
+	}
+
+	void resized()
+	{
+		if (isHorizontal == true)
+			this->setBounds(getX(), getY(), getWidth(), getHeight());
+		else
+			this->setBounds(getX(), getY(), getWidth(), getHeight());	
+
+		this->setAlpha(0.7);
+	}
+
+	void paint(Graphics& g)
+	{
+		g.setColour (col);
+		g.fillRoundedRectangle(0, 0, getWidth(), getHeight(), 1);
+
+		g.setColour (CabbageUtils::getBackgroundSkin());
+		g.fillRoundedRectangle (0, 0, getWidth()-1, getHeight()-1, 1);
+	}
+
+
+private:
+	bool isHorizontal;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageLine);
+};
+
+//==============================================================================
+// custom soundfiler
+//==============================================================================
+class CabbageSoundfiler	:	public Component,
+							public ChangeBroadcaster,
+							public ChangeListener
+{
+String colour;
+String fontcolour;
+String file;
+double sampleRate;
+ScopedPointer<CabbageLine> lineComp;
+
+//---- constructor -----
+public:
+	CabbageSoundfiler (CabbageGUIClass &cAttr) : colour(cAttr.getStringProp(CabbageIDs::colour)),
+												 fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
+												 file(cAttr.getStringProp(CabbageIDs::file))
+	{
+	lineComp = new CabbageLine(false, Colours::red.toString());
+	setName(cAttr.getStringProp(CabbageIDs::name));	
+	soundFiler = new Soundfiler(file, 44100, Colour::fromString(colour), Colour::fromString(fontcolour));
+	addAndMakeVisible(soundFiler);
+	addAndMakeVisible(lineComp);
+	setScrubberPosition(cAttr.getNumProp(CabbageIDs::scrubberposition));
+	soundFiler->addChangeListener(this);
+	sampleRate = 44100;
+	}
+
+	~CabbageSoundfiler()
+	{
+	}
+
+	void resized()
+	{
+	soundFiler->setBounds(0, 0, getWidth(), getHeight());
+	lineComp->setBounds(-10, 0, 2, getHeight()-20);
+	}
+
+	void paint(Graphics& g)
+	{
+
+	}
+
+	//update control
+	void update(CabbageGUIClass m_cAttr){
+		setBounds(m_cAttr.getBounds());
+		setScrubberPosition(m_cAttr.getNumProp(CabbageIDs::scrubberposition));
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
+			
+		if(!file.equalsIgnoreCase(m_cAttr.getStringProp(CabbageIDs::file))){
+			soundFiler->setFile(m_cAttr.getStringProp(CabbageIDs::file));
+			file = m_cAttr.getStringProp(CabbageIDs::file);
+			Logger::writeToLog(file);
+			Logger::writeToLog(m_cAttr.getStringProp(CabbageIDs::file));
+			
+		}
+	
+	}
+	
+	int getPosition(){
+		return soundFiler->getPosition();
+	}
+	
+	int getEndPosition(){
+		return soundFiler->getEndPosition();
+	}	
+
+	void setScrubberPosition(int pos){
+		//Logger::writeToLog(String(soundFiler->timeToX(pos/sampleRate)));
+		lineComp->setTopLeftPosition(soundFiler->timeToX(pos/sampleRate), 0);
+		repaint(soundFiler->timeToX(pos/sampleRate), 0, 2, getHeight());
+	}
+	
+	
+	ScopedPointer<Soundfiler> soundFiler;
+private:
+	int scrubberPosition;
+	
+	void changeListenerCallback(ChangeBroadcaster *source)
+	{
+		//send change message when users interact with waveform
+		
+		sendChangeMessage();
+	}
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageSoundfiler);
+};
+
+
+//==============================================================================
+// custom CabbageLabel
+//==============================================================================
+class CabbageLabel	:	public Component
+{
+
+public:
+	CabbageLabel (String text, String colour, String fontcolour)
+		: text(text), colour(colour), fontcolour(fontcolour)
+	{
+	}
+
+	~CabbageLabel()
+	{
+	}
+
+	void resized()
+	{
+
+	}
+
+	void paint(Graphics& g)
+	{
+		//g.fillAll(Colour::fromString(colour));
+		g.setColour(Colour::fromString(fontcolour));
+		g.setFont(CabbageUtils::getComponentFont());
+		g.setFont(getHeight());
+		g.drawFittedText(text, 0, 0, getWidth(), getHeight(), Justification::left, 1, 1);
+	}
+
+	void setText(String _text){
+		text = _text;
+		repaint();
+	}
+
+
+	//update control
+	void update(CabbageGUIClass m_cAttr){
+		getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
+		getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+		setBounds(m_cAttr.getBounds());
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
+		setText(m_cAttr.getStringProp(CabbageIDs::text));
+		repaint();
+	}
+
+
+private:
+	String text, colour, fontcolour;
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageLabel);
+};
+
+//==============================================================================
 // custom multitab
 //==============================================================================
 class CabbageMultiTab	:	public Component
@@ -1213,110 +1405,6 @@ public:
 
 };
 
-
-//==============================================================================
-// custom soundfiler
-//==============================================================================
-class CabbageSoundfiler	:	public Component
-{
-ScopedPointer<Soundfiler> soundFiler;
-
-//---- constructor -----
-public:
-	CabbageSoundfiler (String name, String file, String colour, String fontcolour, CabbageAudioSource &audioSource, int sr)
-	{
-	setName(name);
-	
-	soundFiler = new Soundfiler(audioSource, file, sr, Colour::fromString(colour), Colour::fromString(fontcolour));
-	addAndMakeVisible(soundFiler);
-	}
-
-	~CabbageSoundfiler()
-	{
-	}
-
-	void resized()
-	{
-	soundFiler->setBounds(0, 0, getWidth(), getHeight());
-	}
-
-	void paint(Graphics& g)
-	{
-
-	}
-
-	//update control
-	void update(CabbageGUIClass m_cAttr){
-		setBounds(m_cAttr.getBounds());
-		if(!m_cAttr.getNumProp(CabbageIDs::visible))
-			setVisible(false);
-		else
-			setVisible(true);
-		repaint();
-	}
-	
-private:
-	String text, colour;
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageSoundfiler);
-};
-
-
-//==============================================================================
-// custom CabbageLabel
-//==============================================================================
-class CabbageLabel	:	public Component
-{
-
-public:
-	CabbageLabel (String text, String colour, String fontcolour)
-		: text(text), colour(colour), fontcolour(fontcolour)
-	{
-	}
-
-	~CabbageLabel()
-	{
-	}
-
-	void resized()
-	{
-
-	}
-
-	void paint(Graphics& g)
-	{
-		//g.fillAll(Colour::fromString(colour));
-		g.setColour(Colour::fromString(fontcolour));
-		g.setFont(CabbageUtils::getComponentFont());
-		g.setFont(getHeight());
-		g.drawFittedText(text, 0, 0, getWidth(), getHeight(), Justification::left, 1, 1);
-	}
-
-	void setText(String _text){
-		text = _text;
-		repaint();
-	}
-
-
-	//update control
-	void update(CabbageGUIClass m_cAttr){
-		getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
-		getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
-		setBounds(m_cAttr.getBounds());
-		if(!m_cAttr.getNumProp(CabbageIDs::visible))
-			setVisible(false);
-		else
-			setVisible(true);
-		setText(m_cAttr.getStringProp(CabbageIDs::text));
-		repaint();
-	}
-
-
-private:
-	String text, colour, fontcolour;
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageLabel);
-};
-
-
 //==============================================================================
 // custom CabbageTransportControl
 //==============================================================================
@@ -1379,48 +1467,6 @@ public:
 		g.setColour(Colours::lightgrey);
 		g.fillAll();
 	}
-};
-//==============================================================================
-// custom CabbageLine
-//==============================================================================
-class CabbageLine	:	public Component
-{
-Colour col;
-public:
-	CabbageLine (bool isHorizontal, String colour)
-		: isHorizontal(isHorizontal)
-	{
-		col = Colour::fromString(colour);
-	}
-
-	~CabbageLine()
-	{
-	}
-
-	void resized()
-	{
-		if (isHorizontal == true)
-			this->setBounds(getX(), getY(), getWidth(), getHeight());
-		else
-			this->setBounds(getX(), getY(), getWidth(), getHeight());	
-
-		this->setAlpha(0.7);
-	}
-
-	void paint(Graphics& g)
-	{
-		g.setColour (col);
-		g.fillRoundedRectangle(0, 0, getWidth(), getHeight(), 1);
-
-		g.setColour (CabbageUtils::getBackgroundSkin());
-		g.fillRoundedRectangle (0, 0, getWidth()-1, getHeight()-1, 1);
-	}
-
-
-private:
-	bool isHorizontal;
-
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageLine);
 };
 
 #endif

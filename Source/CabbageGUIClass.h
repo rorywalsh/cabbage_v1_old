@@ -122,6 +122,7 @@ IdentArray() : StringArray("")
 	add("latched(");
 	add("identchannel(");
 	add("visible(");
+	add("scrubberposition(");
 	add("");
 	add("");
 	add("");		
@@ -137,6 +138,7 @@ juce_DeclareSingleton (IdentArray, false)
 
 namespace CabbageIDs
 {
+	//identifiers
     static const Identifier top = "top";
     static const Identifier left = "left";
     static const Identifier width = "width";
@@ -206,6 +208,10 @@ namespace CabbageIDs
 	static const Identifier identchannelmessage = "identchannelmessage";
 	static const Identifier visible = "visible";
 	static const Identifier lineNumber = "linenumber";
+	static const Identifier scrubberposition = "scrubberposition";
+	static const Identifier startpoint = "startpoint";
+	static const Identifier endpoint = "endpoint";
+	
 	
 	
 	
@@ -215,12 +221,14 @@ namespace CabbageIDs
 	static const String hslider = "hslider";
 	static const String vslider = "vslider";
 	static const String checkbox = "checkbox";
+	static const String soundfiler = "sounfiler";
 	static const String button = "button";
 	static const String filebutton = "filebutton";
 	static const String table = "table";
 	static const String groupbox = "groupbox";
 	static const String image = "image";
 	static const String form = "form";
+	static const String index = "index";
 	static const String xypad = "xypad";
 	static const String stringchannel = "string";
 	static const String hostbpm = "HOST_BPM";

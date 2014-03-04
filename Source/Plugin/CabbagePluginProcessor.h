@@ -79,9 +79,8 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 		bool xyAutosCreated;
 		bool updateTable;
 		Array<int> tableNumbers;
-		AudioSourceChannelInfo soundfilerChannelData;
 		AudioPlayHead::CurrentPositionInfo hostInfo;
-		int soundFileIndex;
+
 		//ScopedPointer<FileLogger> fileLogger;
 
 
@@ -99,7 +98,6 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
         MYFLT *CSspin, *CSspout;        //Csound audio IO pointers
         int csndIndex;                          //Csound sample counter
 		int csdKsmps;
-		MYFLT *soundFilerTempVector;
         int CSCompResult;                       //result of Csound performKsmps
 		controlChannelInfo_s* csoundChanList;
         int numCsoundChannels;          //number of Csound channels
@@ -130,7 +128,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 		static void YieldCallback(void* data);
 		void updateCabbageControls();
 		void sendOutgoingMessagesToCsound();
-		void sendAudioToCsoundFromSoundFilers(int numSamples);
+
 
 
         StringArray debugInfo;
@@ -231,8 +229,6 @@ public:
 	int yieldCounter;
 	bool nativePluginEditor;
 	CabbageMessageQueue messageQueue;
-	OwnedArray<CabbageAudioSource, CriticalSection> audioSourcesArray;
-	void addSoundfilerSource(String filename, StringArray channels);
 	StringArray scoreEvents;
 	int averageSampleIndex;
 	float outputNo1;

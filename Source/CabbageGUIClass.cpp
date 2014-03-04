@@ -434,8 +434,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::width, 300);
 		cabbageIdentifiers.set(CabbageIDs::height, 200);	
 		var channels;
-		channels.append("soundfiler1");
-		channels.append("soundfiler2");
+		channels.append("pos");
+		channels.append("end");
 		cabbageIdentifiers.set(CabbageIDs::channel, channels);	  
 		cabbageIdentifiers.set(CabbageIDs::colour, CabbageUtils::getComponentFontColour().toString());
 		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
@@ -445,6 +445,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
 		cabbageIdentifiers.set(CabbageIDs::identchannel, "");
 		cabbageIdentifiers.set(CabbageIDs::visible, 1);
+		cabbageIdentifiers.set(CabbageIDs::scrubberposition, 0);
 	}	
 	//===============snapshot==================//	
     else if(strTokens[0].trim() == "snapshot"){
@@ -1189,9 +1190,13 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 				cabbageIdentifiers.set(CabbageIDs::textbox, strTokens[0].trim().getFloatValue());				
 			}
 			
+            else if(identArray[indx].equalsIgnoreCase("scrubberposition(")){
+				cabbageIdentifiers.set(CabbageIDs::scrubberposition, strTokens[0].trim().getIntValue());		
+			}			
+
             else if(identArray[indx].equalsIgnoreCase("readonly(")){
 				cabbageIdentifiers.set(CabbageIDs::readonly, strTokens[0].trim().getFloatValue());		
-			}			
+			}
 			
             else if(identArray[indx].equalsIgnoreCase("tablenum(")||
 			(identArray[indx].equalsIgnoreCase("tablenumber("))||
@@ -1597,6 +1602,7 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
 					identifier=="name" ||
 					identifier=="scalex" ||
 					identifier=="scaley" ||
+					identifier=="mode" ||
 					identifier=="basetype" ||
 					identifier=="kind" ||
 					identifier=="visible" ||

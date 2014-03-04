@@ -204,7 +204,6 @@ xyAutosCreated(false),
 updateTable(false),
 yieldCallbackBool(false),
 yieldCounter(10),
-soundFileIndex(0),
 nativePluginEditor(false),
 averageSampleIndex(0)
 {
@@ -282,7 +281,7 @@ if(csCompileResult==0){
         //set up PVS struct
 		dataout = new PVSDATEXT;
 		csdKsmps = csound->GetKsmps();
-        soundFilerTempVector = new MYFLT[csdKsmps];
+
 		if(csound->GetSpout()==nullptr);
         CSspout = csound->GetSpout();
         CSspin  = csound->GetSpin();
@@ -504,7 +503,7 @@ bool multiLine = false;
 			for(int u=0;u<fullText.size();u++)
 				if(csdText[i].equalsIgnoreCase(fullText[u])){
 				csdLineNumber = u;	
-				Logger::writeToLog("LineNumber:"+String(csdLineNumber)+"\n"+csdText[i]);
+				//Logger::writeToLog("LineNumber:"+String(csdLineNumber)+"\n"+csdText[i]);
 				u=fullText.size();
 				}
 		}

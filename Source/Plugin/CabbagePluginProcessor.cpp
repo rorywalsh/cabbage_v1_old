@@ -396,12 +396,13 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
 #ifndef Cabbage_No_Csound
 suspendProcessing(true);
 soundFileIndex = 0;
-midiOutputBuffer.clear();
 getCallbackLock().enter();
+midiOutputBuffer.clear();
 csound->DeleteChannelList(csoundChanList);
-csound->SetHostImplementedMIDIIO(true);
 
 csound->Reset();
+
+csound->SetHostImplementedMIDIIO(true);
 xyAutosCreated = false;
 //csound->SetMessageCallback(CabbagePluginAudioProcessor::messageCallback);
 numCsoundChannels = 0;
@@ -418,9 +419,12 @@ CSspin = nullptr;
 csCompileResult = csound->Compile(const_cast<char*>(file.getFullPathName().toUTF8().getAddress()));
 
 if(csCompileResult==0){
-        //simple hack to allow tables to be set up correctly.
 		keyboardState.allNotesOff(0);
 		keyboardState.reset();
+        //simple hack to allow tables to be set up correctly.
+        csound->PerformKsmps();
+        csound->SetScoreOffsetSeconds(0);
+        csound->RewindScore();
 		csndIndex = 0;
         CSspout = csound->GetSpout();
         CSspin  = csound->GetSpin();

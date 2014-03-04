@@ -220,7 +220,7 @@ public:
 		slider->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
 		slider->getProperties().set("tracker", m_cAttr.getStringProp(CabbageIDs::trackercolour));
 		setBounds(m_cAttr.getBounds());
-		slider->setName(m_cAttr.getStringProp(CabbageIDs::name));
+		slider->setName(m_cAttr.getStringProp(CabbageIDs::text));
 		slider->setSkewFactor(m_cAttr.getNumProp(CabbageIDs::sliderskew));
 		if(!m_cAttr.getNumProp(CabbageIDs::visible))
 			setVisible(false);

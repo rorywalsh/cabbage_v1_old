@@ -1085,7 +1085,7 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
                 }
         }
 #ifdef Cabbage_Build_Standalone
-        if(getFilter()->getCsoundInputFile().loadFileAsString().isEmpty()){
+        if(getFilter()->compiledOk()){
                 g.setColour (Colours::black);
                 //g.setColour (CabbageUtils::getBackgroundSkin());
                 g.fillAll();

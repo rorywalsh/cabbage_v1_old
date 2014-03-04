@@ -164,6 +164,10 @@ public:
 	CsoundCodeEditor* codeEditor;
     #endif
 
+	bool compiledOk(){
+		return csCompileResult;
+	}
+
 	bool haveXYAutosBeenCreated(){
 		return xyAutosCreated;
 	}

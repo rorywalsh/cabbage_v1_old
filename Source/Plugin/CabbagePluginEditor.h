@@ -198,8 +198,6 @@ private:
         ScopedPointer<Label> debugLabel;
 		StringArray scoreEvents;
 
-
-
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePluginAudioProcessorEditor);
 
 };

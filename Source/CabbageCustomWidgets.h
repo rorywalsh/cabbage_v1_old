@@ -775,11 +775,9 @@ class CabbageSoundfiler	:	public Component,
 String colour;
 String fontcolour;
 String file;
-int zoom;
+float zoom;
 double sampleRate;
 float scrubberPos;
-ScopedPointer<CabbageLine> lineComp;
-
 //---- constructor -----
 public:
 	CabbageSoundfiler (CabbageGUIClass &cAttr) : colour(cAttr.getStringProp(CabbageIDs::colour)),
@@ -788,15 +786,11 @@ public:
 												 zoom(cAttr.getNumProp(CabbageIDs::zoom)),
 												 scrubberPos(cAttr.getNumProp(CabbageIDs::scrubberposition))
 	{
-	lineComp = new CabbageLine(false, Colours::red.toString());
 	setName(cAttr.getStringProp(CabbageIDs::name));	
 	soundFiler = new Soundfiler(cAttr.getStringProp(CabbageIDs::file), 44100, Colour::fromString(colour), Colour::fromString(fontcolour), zoom);
 	addAndMakeVisible(soundFiler);
-	addAndMakeVisible(lineComp);
-
 	soundFiler->addChangeListener(this);
 	sampleRate = 44100;
-	setScrubberPosition(scrubberPos);
 	soundFiler->setZoom(cAttr.getNumProp(CabbageIDs::zoom));
 	}
 
@@ -807,34 +801,36 @@ public:
 	void resized()
 	{
 	soundFiler->setBounds(0, 0, getWidth(), getHeight());
-	lineComp->setBounds(-10, 0, 2, getHeight()-20);
 	}
 
-	void paint(Graphics& g)
-	{
-
-	}
 
 	//update control
-	void update(CabbageGUIClass m_cAttr){
+	void update(CabbageGUIClass m_cAttr)
+	{
 		setBounds(m_cAttr.getBounds());
-		if(scrubberPos!=m_cAttr.getNumProp(CabbageIDs::scrubberposition)){
+		if(scrubberPos!=m_cAttr.getNumProp(CabbageIDs::scrubberposition))
+			{
 			scrubberPos = m_cAttr.getNumProp(CabbageIDs::scrubberposition);
-			setScrubberPosition(scrubberPos);
-		}
+			soundFiler->setScrubberPosition(scrubberPos);			
+			}
+		
 		if(!m_cAttr.getNumProp(CabbageIDs::visible))
 			setVisible(false);
 		else
 			setVisible(true);
 			
+		if(zoom!=m_cAttr.getNumProp(CabbageIDs::zoom))
+		{
+		zoom = m_cAttr.getNumProp(CabbageIDs::zoom);
+		soundFiler->setZoom(zoom);			
+		}
+			
 		if(!file.equalsIgnoreCase(m_cAttr.getStringProp(CabbageIDs::file))){
 			soundFiler->setFile(m_cAttr.getStringProp(CabbageIDs::file));
 			file = m_cAttr.getStringProp(CabbageIDs::file);
-			Logger::writeToLog(file);
-			Logger::writeToLog(m_cAttr.getStringProp(CabbageIDs::file));
+			soundFiler->setZoom(.5);
 			soundFiler->setZoom(m_cAttr.getNumProp(CabbageIDs::zoom));
-			getTopLevelComponent()->repaint();
-			setScrubberPosition(-10);
+			soundFiler->setScrubberPosition(0);
 		}
 	
 	}
@@ -847,16 +843,10 @@ public:
 		return soundFiler->getEndPosition();
 	}	
 
-	void setScrubberPosition(int pos){
-		//Logger::writeToLog(String(soundFiler->timeToX(pos/sampleRate)));
-		lineComp->setTopLeftPosition(soundFiler->timeToX(pos/sampleRate), 0);
-		repaint(soundFiler->timeToX(pos/sampleRate), 0, 2, getHeight());
-	}
-	
 	
 	ScopedPointer<Soundfiler> soundFiler;
 private:
-	int scrubberPosition;
+	float scrubberPosition;
 	
 	void changeListenerCallback(ChangeBroadcaster *source)
 	{

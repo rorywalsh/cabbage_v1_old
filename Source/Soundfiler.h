@@ -45,30 +45,31 @@ public:
 		return currentPlayPosition*sampleRate;
 	}
 	
-	int getLoopEndInSamples(){
-		return loopEnd*sampleRate;
+	int getLoopLengthInSamples(){
+		return loopLength*sampleRate;
 	}	
 	
-	void setScrubberPos(double pos){
-		scrubberPosition = pos/sampleRate;
-		repaint();
-	}
+	void setScrubberPos(double pos);
 	
     float timeToX (const double time) const
     {
-        return getWidth() * (float) ((time - startTime) / (endTime - startTime));
+        return getWidth() * (float) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
     }
 
     double xToTime (const float x) const
     {
-        return (x / getWidth()) * (endTime - startTime) + startTime;
-    }	
+        return (x / getWidth()) * (visibleRange.getLength()) + visibleRange.getStart();
+    }
+
 	
 	void setZoomFactor (double amount);
-	void setFile (const File& file, bool firstTime);
+	void setFile (const File& file);
+	void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
 	
 private:
 	Range<double> visibleRange;
+	double zoom;
+	ScopedPointer<DrawableRectangle> currentPositionMarker;
 	ScopedPointer<ScrollBar> scrollbar;
 	void setRange(Range<double> newRange);
 	void resized();	    
@@ -89,14 +90,11 @@ private:
     ScopedPointer<AudioThumbnail> thumbnail;
 	Colour colour;
 	int mouseDownX, mouseUpX;
-    double startTime, endTime;
 	Rectangle<int> localBounds;
-	double loopEnd;
+	double loopLength;
+	double loopStart;
 	double currentPlayPosition;
 	bool drawWaveform;
-
-    DrawableRectangle currentPositionMarker;
-	
 };
 
 
@@ -133,7 +131,7 @@ public:
 	}
 	
 	void setFile(String filename){
-		waveformDisplay->setFile(File(filename), false);
+		waveformDisplay->setFile(File(filename));
 	}
 	
 	void setZoom(float zoom){

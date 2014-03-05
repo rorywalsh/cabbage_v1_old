@@ -736,6 +736,7 @@ bool multiLine = false;
 
 			if(refresh)
 			editor->setEditMode(checkGUI);
+			
 		}
 
 #endif
@@ -1064,8 +1065,8 @@ if(!csCompileResult)
 			guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
 			guiLayoutCtrls.getReference(index).parse(channelMessage, "");		
 			}	
-			//else
-				//guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
+			else
+				guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
 			//zero channel message so that we don't keep sending the same string 
 			csound->SetChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
 			}

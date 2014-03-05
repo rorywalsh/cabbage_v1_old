@@ -30,18 +30,21 @@ WaveformDisplay::WaveformDisplay(int sr, Colour col):	thumbnailCache (5),
 														mouseUpX(0),
 														drawWaveform(false),
 														regionWidth(1),
-														loopEnd(0),
-														scrubberPosition(0)
+														loopLength(0),
+														scrubberPosition(0),
+														currentPositionMarker(new DrawableRectangle())
 {	
     formatManager.registerBasicFormats();  
 	thumbnail = new AudioThumbnail(512, formatManager, thumbnailCache); 
 	thumbnail->addChangeListener (this);
-	setSize(400, 200);
+	//setSize(400, 200);
 	sampleRate = sr;
 	addAndMakeVisible(scrollbar = new ScrollBar(false));
 	scrollbar->setRangeLimits (visibleRange);
 	scrollbar->setAutoHide (false);
 	scrollbar->addListener(this);
+	currentPositionMarker->setFill (Colours::white.withAlpha (0.85f));
+	addAndMakeVisible(currentPositionMarker);
 }
 //==============================================================================	
 WaveformDisplay::~WaveformDisplay()
@@ -67,28 +70,16 @@ void WaveformDisplay::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double n
 		setRange (visibleRange.movedToStartAt (newRangeStart));
 }
 	
-void WaveformDisplay::setFile (const File& file, bool firstTime)
+void WaveformDisplay::setFile (const File& file)
 {
-	if(file.existsAsFile()){
-		if(firstTime){
-		thumbnail->setSource (new FileInputSource(file));
-		}
-		else{
-		//FileInputStream* inFileStream = new FileInputStream(file); // jatFile is the saved thumbnail file
-		thumbnail = nullptr;
-		thumbnail = new AudioThumbnail(512, formatManager, thumbnailCache); 
-		thumbnail->setSource (new FileInputSource(file));
-		const Range<double> newRange (0.0, thumbnail->getTotalLength());
-		scrollbar->setRangeLimits (newRange);
-		setRange (newRange);
-		}
-		drawWaveform=true;
-	}
-	else
-		drawWaveform = false;
+   if (! file.isDirectory())
+     {
+            thumbnail->setSource (new FileInputSource (file));
+            const Range<double> newRange (0.0, thumbnail->getTotalLength());
+            scrollbar->setRangeLimits (newRange);
+            setRange (newRange);
+      }
 
-	startTime = 0;
-	endTime = thumbnail->getTotalLength();
 	repaint();
 }
 //==============================================================================
@@ -100,6 +91,7 @@ void WaveformDisplay::setZoomFactor (double amount)
             const double timeAtCentre = xToTime (getWidth() / 2.0f);
             setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
         }
+		zoom = amount;
 		repaint();
 }
 //==============================================================================
@@ -111,23 +103,24 @@ void WaveformDisplay::setRange(Range<double> newRange)
 }
 //==============================================================================
 void WaveformDisplay::paint (Graphics& g)
-{
-	g.fillAll (Colours::black);
-	if(drawWaveform)
-		{
-		
-		g.setColour (colour);
+{	
         if (thumbnail->getTotalLength() > 0.0)
         {
+			g.fillAll (Colours::black);
+			g.setColour (colour);			
             Rectangle<int> thumbArea (getLocalBounds());
             thumbArea.removeFromBottom (scrollbar->getHeight() + 4);
-            thumbnail->drawChannels (g, thumbArea.reduced (2),
-                                    visibleRange.getStart(), visibleRange.getEnd(), 1.0f);
-        }
+            thumbnail->drawChannels(g, thumbArea.reduced (2),
+                                    visibleRange.getStart(), visibleRange.getEnd(), .8f);
+			//Logger::writeToLog("drawing waveform");
+			//Logger::writeToLog(CabbageUtils::getBoundsString(getLocalBounds()));
+        
 	
 		if(regionWidth>1){
 		g.setColour(colour.contrasting(.5f).withAlpha(.7f));
-		g.fillRect(timeToX(currentPlayPosition), 0.f, regionWidth, (float)getHeight());	
+		float zoomFactor = thumbnail->getTotalLength()/visibleRange.getLength();
+		//regionWidth = (regionWidth=2 ? 2 : regionWidth*zoomFactor)
+		g.fillRect(timeToX(currentPlayPosition), 0.f, (regionWidth==2 ? 2 : regionWidth*zoomFactor), (float)getHeight()-16.f);	
 		}
 
 		}
@@ -139,6 +132,19 @@ void WaveformDisplay::paint (Graphics& g)
 		}
 }
 
+//==============================================================================
+void WaveformDisplay::mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel)
+{
+	if (thumbnail->getTotalLength() > 0.0)
+	{
+		double newStart = visibleRange.getStart() - wheel.deltaX * (visibleRange.getLength()) / 10.0;
+		newStart = jlimit (0.0, jmax (0.0, thumbnail->getTotalLength() - (visibleRange.getLength())), newStart);
+
+		setRange (Range<double> (newStart, newStart + visibleRange.getLength()));
+
+		repaint();
+	}
+}
 //==============================================================================
 void WaveformDisplay::mouseDown (const MouseEvent& e)
 {
@@ -152,7 +158,7 @@ void WaveformDisplay::mouseDown (const MouseEvent& e)
 	regionWidth = 2;
 	
 	currentPlayPosition = jmax (0.0, xToTime ((float) e.x));
-	loopEnd =  0;//getCurrentPlayPosInSamples();
+	loopLength =  0;//getCurrentPlayPosInSamples();
 	mouseDownX = e.x;
 	reDraw = true;
 	repaint();
@@ -161,24 +167,29 @@ void WaveformDisplay::mouseDown (const MouseEvent& e)
 //==============================================================================
 void WaveformDisplay::mouseDrag(const MouseEvent& e)
 {
-	//mouseUpX = e.x;
-	//currentPlayPosition = jmax (0.0, xToTime ((float) e.x));
 	if(e.mods.isRightButtonDown())
 		{
-		regionWidth = e.getDistanceFromDragStartX();
-		loopEnd = jmax (0.0, xToTime ((float) e.getDistanceFromDragStartX()));
+		double zoomFactor = visibleRange.getLength()/thumbnail->getTotalLength();
+		regionWidth = e.getDistanceFromDragStartX()*zoomFactor;
+		float widthInTime = ((float)e.getDistanceFromDragStartX() / (float)getWidth()) * (float)thumbnail->getTotalLength();
+		loopLength = jmax (0.0, widthInTime*zoomFactor);	
 		}	
 	reDraw = true;
 	repaint();
 }
-
+//==============================================================================
+void WaveformDisplay::setScrubberPos(double pos){
+currentPositionMarker->setVisible (true);
+pos = (pos/(thumbnail->getTotalLength()*sampleRate))*thumbnail->getTotalLength();
+currentPositionMarker->setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 0,
+                                                              1.5f, (float) (getHeight() - scrollbar->getHeight())));
+}
 //==============================================================================
 void WaveformDisplay::mouseUp(const MouseEvent& e)
 {
 	sendChangeMessage();
 }
-
-
+													  
 //==============================================================================
 // soundfiler component
 //==============================================================================
@@ -189,7 +200,7 @@ Soundfiler::Soundfiler(String fileName, int sr, Colour colour, Colour fontColour
 	waveformDisplay->addChangeListener(this);
 	addAndMakeVisible(waveformDisplay);
     setSize (400, 300);
-	waveformDisplay->setFile(File(fileName), true);
+	waveformDisplay->setFile(File(fileName));
 	waveformDisplay->setZoomFactor(zoom);
 }
 
@@ -197,7 +208,7 @@ Soundfiler::Soundfiler(String fileName, int sr, Colour colour, Colour fontColour
 void Soundfiler::changeListenerCallback(ChangeBroadcaster *source)
 {
 	position = waveformDisplay->getCurrentPlayPosInSamples();
-	endPosition = waveformDisplay->getLoopEndInSamples();
+	endPosition = waveformDisplay->getLoopLengthInSamples();
 	sendChangeMessage();
 }
 

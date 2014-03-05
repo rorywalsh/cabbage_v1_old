@@ -1545,7 +1545,6 @@ void CabbagePluginAudioProcessorEditor::InsertSoundfiler(CabbageGUIClass &cAttr)
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
 		((CabbageSoundfiler*)layoutComps[idx])->addChangeListener(this);
-
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

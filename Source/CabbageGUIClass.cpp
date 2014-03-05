@@ -446,7 +446,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::identchannel, "");
 		cabbageIdentifiers.set(CabbageIDs::visible, 1);
 		cabbageIdentifiers.set(CabbageIDs::scrubberposition, 0);
-		cabbageIdentifiers.set(CabbageIDs::zoom, 1);
+		cabbageIdentifiers.set(CabbageIDs::zoom, 0);
 	}	
 	//===============snapshot==================//	
     else if(strTokens[0].trim() == "snapshot"){

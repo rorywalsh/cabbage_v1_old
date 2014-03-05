@@ -65,7 +65,7 @@ float value;
 //message queue class
 class CabbageMessageQueue : public CabbageUtils
 {
-	Array<CabbageChannelMessage> outgoingChannelMessages;
+	Array<CabbageChannelMessage, CriticalSection> outgoingChannelMessages;
 
 public:
 	CabbageMessageQueue(){}

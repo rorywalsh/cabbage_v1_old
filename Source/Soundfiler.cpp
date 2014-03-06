@@ -177,6 +177,7 @@ void Soundfiler::mouseWheelMove (const MouseEvent&, const MouseWheelDetails& whe
 //==============================================================================
 void Soundfiler::mouseDown (const MouseEvent& e)
 {
+	Logger::writeToLog("mouseDown soundfiler");
 	if(e.mods.isLeftButtonDown())
 		{
 		regionWidth = 2;	

@@ -895,12 +895,13 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 //==============================================================================
 // getTable data from Csound so table editor can draw table
 //==============================================================================
-const Array<double, CriticalSection> CabbagePluginAudioProcessor::getTable(int tableNum){
+const Array<double, CriticalSection> CabbagePluginAudioProcessor::getTable(int tableNum)
+{
 		Array<double, CriticalSection> points;
 
 		int tableSize=0;
 #ifndef Cabbage_No_Csound
-        MYFLT* temp;
+		MYFLT* temp;
 		tableSize = csound->GetTable(temp, tableNum);
 #else
         float *temp;
@@ -910,7 +911,21 @@ const Array<double, CriticalSection> CabbagePluginAudioProcessor::getTable(int t
 		return points;
 }
 
+const Array<float, CriticalSection> CabbagePluginAudioProcessor::getTableFloats(int tableNum)
+{
+		Array<float, CriticalSection> points;
 
+		int tableSize=0;
+#ifndef Cabbage_No_Csound
+		MYFLT* temp;
+		tableSize = csound->GetTable(temp, tableNum);
+#else
+        float *temp;
+#endif
+		if(tableSize>0)
+		points = Array<float, CriticalSection>(temp, tableSize);
+		return points;
+}
 //=================================================================================
 // Get and Set Parameter methods, called by our editor, and the plugin host...
 //=================================================================================

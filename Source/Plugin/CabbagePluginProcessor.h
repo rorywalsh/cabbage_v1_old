@@ -218,6 +218,7 @@ public:
     void getStateInformation (MemoryBlock& destData);
     void setStateInformation (const void* data, int sizeInBytes);
 	const Array<double, CriticalSection> getTable(int tableNum);
+	const Array<float, CriticalSection> getTableFloats(int tableNum);
 	void createGUI(String source, bool refresh);
 	MidiKeyboardState keyboardState;
 	//midiBuffers

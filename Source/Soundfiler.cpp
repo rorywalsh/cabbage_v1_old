@@ -20,10 +20,10 @@
 #include "Soundfiler.h"
 
 //==============================================================================
-// waveform display  component
+// soundfiler display  component
 //==============================================================================
 
-WaveformDisplay::WaveformDisplay(int sr, Colour col):	thumbnailCache (5), 
+Soundfiler::Soundfiler(int sr, Colour col, Colour fcol):	thumbnailCache (5), 
 														colour(col),														sampleRate(sr),
 														currentPlayPosition(0),
 														mouseDownX(0),
@@ -32,6 +32,7 @@ WaveformDisplay::WaveformDisplay(int sr, Colour col):	thumbnailCache (5),
 														regionWidth(1),
 														loopLength(0),
 														scrubberPosition(0),
+														fontcolour(fcol),
 														currentPositionMarker(new DrawableRectangle())
 {	
     formatManager.registerBasicFormats();  
@@ -47,30 +48,30 @@ WaveformDisplay::WaveformDisplay(int sr, Colour col):	thumbnailCache (5),
 	addAndMakeVisible(currentPositionMarker);
 }
 //==============================================================================	
-WaveformDisplay::~WaveformDisplay()
+Soundfiler::~Soundfiler()
 {
 	scrollbar->removeListener (this);
 	thumbnail->removeChangeListener (this);
 }
 //==============================================================================	
-void WaveformDisplay::changeListenerCallback(ChangeBroadcaster *source)
+void Soundfiler::changeListenerCallback(ChangeBroadcaster *source)
 {
 	repaint();
 }
 //==============================================================================
-void WaveformDisplay::resized()
+void Soundfiler::resized()
 {
 	if(scrollbar)
 		scrollbar->setBounds (getLocalBounds().removeFromBottom (20).reduced (2));
 }
 //==============================================================================	    
-void WaveformDisplay::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
+void Soundfiler::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
 {
 	if (scrollBarThatHasMoved == scrollbar)
 		setRange (visibleRange.movedToStartAt (newRangeStart));
 }
 	
-void WaveformDisplay::setFile (const File& file)
+void Soundfiler::setFile (const File& file)
 {
    if (! file.isDirectory())
      {
@@ -79,48 +80,76 @@ void WaveformDisplay::setFile (const File& file)
             scrollbar->setRangeLimits (newRange);
             setRange (newRange);
       }
+	repaint();
+}
 
+//==============================================================================
+void Soundfiler::setWaveform(AudioSampleBuffer buffer)
+{            
+	thumbnail->clear();
+	thumbnail->reset(2, 44100, buffer.getNumSamples());	
+	thumbnail->addBlock(0, buffer, 0, buffer.getNumSamples());
+	const Range<double> newRange (0.0, thumbnail->getTotalLength());
+	scrollbar->setRangeLimits (newRange);
+	setRange (newRange);
+	repaint();
+}
+
+//==============================================================================
+void Soundfiler::setZoomFactor (double amount)
+{
+	if (thumbnail->getTotalLength() > 0)
+	{
+		const double newScale = jmax (0.001, thumbnail->getTotalLength() * (1.0 - jlimit (0.0, 0.99, amount)));
+		const double timeAtCentre = xToTime (getWidth() / 2.0f);
+		setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
+	}
+	zoom = amount;
 	repaint();
 }
 //==============================================================================
-void WaveformDisplay::setZoomFactor (double amount)
-{
-        if (thumbnail->getTotalLength() > 0)
-        {
-            const double newScale = jmax (0.001, thumbnail->getTotalLength() * (1.0 - jlimit (0.0, 0.99, amount)));
-            const double timeAtCentre = xToTime (getWidth() / 2.0f);
-            setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
-        }
-		zoom = amount;
-		repaint();
-}
-//==============================================================================
-void WaveformDisplay::setRange(Range<double> newRange)
+void Soundfiler::setRange(Range<double> newRange)
 {
 	visibleRange = newRange;
 	scrollbar->setCurrentRange (visibleRange);
 	repaint();
 }
 //==============================================================================
-void WaveformDisplay::paint (Graphics& g)
-{	
+void Soundfiler::paint (Graphics& g)
+{
+		g.fillAll (Colours::black);
+		g.setColour (colour);	
         if (thumbnail->getTotalLength() > 0.0)
-        {
-			g.fillAll (Colours::black);
-			g.setColour (colour);			
+        {			
             Rectangle<int> thumbArea (getLocalBounds());
-            thumbArea.removeFromBottom (scrollbar->getHeight() + 4);
+            thumbArea.setHeight(getHeight()-14);
+			thumbArea.setTop(10.f);
             thumbnail->drawChannels(g, thumbArea.reduced (2),
                                     visibleRange.getStart(), visibleRange.getEnd(), .8f);
-			//Logger::writeToLog("drawing waveform");
-			//Logger::writeToLog(CabbageUtils::getBoundsString(getLocalBounds()));
+			
+			/*
+			for(int i=0, offset=0;i<getWidth();i+=(getWidth()/visibleRange.getLength()/4), offset++){
+			g.setColour (fontcolour);
+			//float pos = visibleRange.getStart()+i;	
+			//float xPos = (jmax(1, i)/visibleRange.getStart()) / (visibleRange.getLength() * getWidth());
+			if(offset%2==0)
+			{
+				String test = CabbageUtils::setDecimalPlaces(xToTime(i), 1);
+				g.setFont(8);
+				g.drawFittedText(test, i, 0, 20, 5, Justification::left, 1);
+				g.drawVerticalLine(i+1, 5, 10);
+			}	
+			
+			g.drawVerticalLine(i, 5, 10);
+			}
+			*/
         
 	
 		if(regionWidth>1){
 		g.setColour(colour.contrasting(.5f).withAlpha(.7f));
 		float zoomFactor = thumbnail->getTotalLength()/visibleRange.getLength();
 		//regionWidth = (regionWidth=2 ? 2 : regionWidth*zoomFactor)
-		g.fillRect(timeToX(currentPlayPosition), 0.f, (regionWidth==2 ? 2 : regionWidth*zoomFactor), (float)getHeight()-16.f);	
+		g.fillRect(timeToX(currentPlayPosition), 10.f, (regionWidth==2 ? 2 : regionWidth*zoomFactor), (float)getHeight()-26.f);	
 		}
 
 		}
@@ -128,12 +157,12 @@ void WaveformDisplay::paint (Graphics& g)
 		{
 			g.setColour(Colours::whitesmoke);
 			g.setFont (14.0f);
-			g.drawFittedText ("(No audio file selected)", getLocalBounds(), Justification::centred, 2);
+			g.drawFittedText ("(No audio file loaded)", getLocalBounds(), Justification::centred, 2);
 		}
 }
 
 //==============================================================================
-void WaveformDisplay::mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel)
+void Soundfiler::mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel)
 {
 	if (thumbnail->getTotalLength() > 0.0)
 	{
@@ -146,86 +175,38 @@ void WaveformDisplay::mouseWheelMove (const MouseEvent&, const MouseWheelDetails
 	}
 }
 //==============================================================================
-void WaveformDisplay::mouseDown (const MouseEvent& e)
+void Soundfiler::mouseDown (const MouseEvent& e)
 {
-	if(e.mods.isCommandDown()){
 	if(e.mods.isLeftButtonDown())
-		this->setSize(jmin(1000, this->getWidth()+100), getHeight());
-	else
-		this->setSize(jmax(400, this->getWidth()-100), getHeight());
-		Logger::writeToLog("command down");
-	}
-	regionWidth = 2;
-	
-	currentPlayPosition = jmax (0.0, xToTime ((float) e.x));
-	loopLength =  0;//getCurrentPlayPosInSamples();
-	mouseDownX = e.x;
-	reDraw = true;
-	repaint();
-	sendChangeMessage();
+		{
+		regionWidth = 2;	
+		currentPlayPosition = jmax (0.0, xToTime ((float) e.x));
+		loopLength =  0;
+		repaint();
+		sendChangeMessage();
+		}
 }
 //==============================================================================
-void WaveformDisplay::mouseDrag(const MouseEvent& e)
+void Soundfiler::mouseDrag(const MouseEvent& e)
 {
-	if(e.mods.isRightButtonDown())
+	if(e.mods.isLeftButtonDown())
 		{
 		double zoomFactor = visibleRange.getLength()/thumbnail->getTotalLength();
 		regionWidth = e.getDistanceFromDragStartX()*zoomFactor;
 		float widthInTime = ((float)e.getDistanceFromDragStartX() / (float)getWidth()) * (float)thumbnail->getTotalLength();
 		loopLength = jmax (0.0, widthInTime*zoomFactor);	
 		}	
-	reDraw = true;
 	repaint();
 }
 //==============================================================================
-void WaveformDisplay::setScrubberPos(double pos){
+void Soundfiler::setScrubberPos(double pos){
 currentPositionMarker->setVisible (true);
 pos = (pos/(thumbnail->getTotalLength()*sampleRate))*thumbnail->getTotalLength();
-currentPositionMarker->setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 0,
-                                                              1.5f, (float) (getHeight() - scrollbar->getHeight())));
+currentPositionMarker->setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 10,
+                                                              1.5f, (float) (getHeight() - scrollbar->getHeight()-10)));
 }
 //==============================================================================
-void WaveformDisplay::mouseUp(const MouseEvent& e)
+void Soundfiler::mouseUp(const MouseEvent& e)
 {
 	sendChangeMessage();
 }
-													  
-//==============================================================================
-// soundfiler component
-//==============================================================================
-Soundfiler::Soundfiler(String fileName, int sr, Colour colour, Colour fontColour, int zoom)
-{
-	Logger::writeToLog("sample Rate:"+String(sr));
-	waveformDisplay = new WaveformDisplay(sr, colour);
-	waveformDisplay->addChangeListener(this);
-	addAndMakeVisible(waveformDisplay);
-    setSize (400, 300);
-	waveformDisplay->setFile(File(fileName));
-	waveformDisplay->setZoomFactor(zoom);
-}
-
-//==============================================================================
-void Soundfiler::changeListenerCallback(ChangeBroadcaster *source)
-{
-	position = waveformDisplay->getCurrentPlayPosInSamples();
-	endPosition = waveformDisplay->getLoopLengthInSamples();
-	sendChangeMessage();
-}
-
-//==============================================================================
-void Soundfiler::resized()
-{
-waveformDisplay->setSize(getWidth(), getHeight());
-}
-
-//==============================================================================
-void Soundfiler::setScrubberPosition(int pos)
-{
-waveformDisplay->setScrubberPos(pos);
-}
-//==============================================================================
-void Soundfiler::paint (Graphics& g)
-{
-//g.fillAll(Colour(20, 20, 20));
-}
-

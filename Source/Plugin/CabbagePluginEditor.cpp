@@ -249,7 +249,7 @@ else{
 			if(getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel).size()>1)
 				{
 				channel = getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel)[1];
-				val = soundfiler->getEndPosition();
+				val = soundfiler->getLoopLength();
 				getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, val, ""); 
 				}
 		}
@@ -2621,7 +2621,7 @@ getFilter()->dirtyControls.clear();
 //the following code looks after updating any objects that don't get recognised as plugin parameters, 
 //for example, table objects don't get listed by the host as a paramters. Likewise the csoundoutput widget.. 
 for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
-        //String test = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type);
+        //String type = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type);
         //Logger::writeToLog(test);
         if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).containsIgnoreCase("csoundoutput")){
 			((CabbageMessageConsole*)layoutComps[i])->editor->setText(getFilter()->getCsoundOutput());
@@ -2648,6 +2648,18 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 		else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("soundfiler") &&
 			getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
 			{
+			String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
+			if(message.contains("tablenumber")){
+				int tableNumber = getFilter()->getGUILayoutCtrls(i).getNumProp(CabbageIDs::tablenumber);
+				Array <float, CriticalSection> tableValues = getFilter()->getTableFloats(tableNumber);
+				Logger::writeToLog(String(tableNumber));
+				Logger::writeToLog(String(tableValues.size()));
+				AudioSampleBuffer tableBuffer(2, tableValues.size());
+				tableBuffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());
+				tableBuffer.addFrom(1, 0, tableValues.getRawDataPointer(), tableValues.size());
+				//update waveform with sample data from function table...
+				((CabbageSoundfiler*)layoutComps[i])->setWaveform(tableBuffer);
+			}
 			((CabbageSoundfiler*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
 			getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
 			}

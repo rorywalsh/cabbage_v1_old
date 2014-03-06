@@ -28,14 +28,14 @@
 //=================================================================
 // display a sound file as a waveform..
 //=================================================================
-class WaveformDisplay : public Component,
+class Soundfiler : public Component,
 						public ChangeBroadcaster,
 						private ScrollBar::Listener,
 						public ChangeListener
 {
 public:
-	WaveformDisplay(int sr, Colour col);	
-	~WaveformDisplay();	
+	Soundfiler(int sr, Colour col, Colour fcol);	
+	~Soundfiler();	
 	
 	double getCurrentPlayPos(){
 		return currentPlayPosition;
@@ -65,6 +65,7 @@ public:
 	void setZoomFactor (double amount);
 	void setFile (const File& file);
 	void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
+	void setWaveform(AudioSampleBuffer buffer);
 	
 private:
 	Range<double> visibleRange;
@@ -88,62 +89,13 @@ private:
 	Image waveformImage;
     AudioThumbnailCache thumbnailCache;
     ScopedPointer<AudioThumbnail> thumbnail;
-	Colour colour;
+	Colour colour, fontcolour;
 	int mouseDownX, mouseUpX;
 	Rectangle<int> localBounds;
 	double loopLength;
 	double loopStart;
 	double currentPlayPosition;
 	bool drawWaveform;
-};
-
-
-//=================================================================
-// holds a wavefor display components. needed because of viewport..
-//=================================================================
-class Soundfiler :  public Component,
-					public ChangeBroadcaster,
-					public ChangeListener
-{
-	ScopedPointer<WaveformDisplay> waveformDisplay;
-	//ScopedPointer<Viewport> viewport;
-	int position;
-	int endPosition;
-	
-public:
-	Soundfiler(String fileName, int sr, Colour colour, Colour fontcolour, int zoom);
-	~Soundfiler(){
-	};
-	
-    // This is just a standard Juce paint method...
-    void paint (Graphics& g);
-	void changeListenerCallback(ChangeBroadcaster *source);
-	void resized();
-	void buttonClicked(Button *button);
-	void setScrubberPosition(int pos);
-	
-	int getPosition(){
-		return position;
-	}
-	
-	int getEndPosition(){
-		return endPosition;
-	}
-	
-	void setFile(String filename){
-		waveformDisplay->setFile(File(filename));
-	}
-	
-	void setZoom(float zoom){
-	waveformDisplay->setZoomFactor(zoom);
-	}
-	
-    float timeToX (const double time) const
-    {
-        return waveformDisplay->timeToX(time);
-    }
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Soundfiler);
-	
 };
 
 #endif // SOUNDFILEWAVEFORM_H

@@ -229,6 +229,7 @@ namespace CabbageIDs
 	static const String table = "table";
 	static const String groupbox = "groupbox";
 	static const String image = "image";
+	static const String label = "label";
 	static const String form = "form";
 	static const String index = "index";
 	static const String xypad = "xypad";

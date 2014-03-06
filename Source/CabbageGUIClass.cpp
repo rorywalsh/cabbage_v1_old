@@ -447,6 +447,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::visible, 1);
 		cabbageIdentifiers.set(CabbageIDs::scrubberposition, 0);
 		cabbageIdentifiers.set(CabbageIDs::zoom, 0);
+		cabbageIdentifiers.set(CabbageIDs::tablenumber, -1);
 	}	
 	//===============snapshot==================//	
     else if(strTokens[0].trim() == "snapshot"){
@@ -1207,7 +1208,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 			(identArray[indx].equalsIgnoreCase("tablenumber("))||
 			identArray[indx].equalsIgnoreCase("tablenumbers(")||
 			identArray[indx].equalsIgnoreCase("tablenumbs(")){
-				int tableNum = strTokens[0].trim().getFloatValue();  
+				int tableNum = strTokens[0].trim().getIntValue();
 				var value;
 				value.append(tableNum);
 				tableNumbers.add(tableNum);
@@ -1216,6 +1217,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 						tableNumbers.add(strTokens[i].trim().getFloatValue());
 						value.append(strTokens[i].trim().getFloatValue());					
 					}
+				Logger::writeToLog(value[0].toString());
 				cabbageIdentifiers.set(CabbageIDs::tablenumber, value);
 				//cabbageIdentifiers.set("tablenum", tableNum);
 			}
@@ -1286,7 +1288,11 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 //retrieve numerical attributes
 float CabbageGUIClass::getNumProp(Identifier prop)
 {	
-	return cabbageIdentifiers.getWithDefault(prop, -9999.f);
+	var props = cabbageIdentifiers.getWithDefault(prop, -9999.f);
+	if(props.size()>0)
+	return props[0];
+	else
+	return cabbageIdentifiers.getWithDefault(prop, -9999.f);	
 }
 //==================================================================
 float CabbageGUIClass::getNumProp(Identifier prop, int index)

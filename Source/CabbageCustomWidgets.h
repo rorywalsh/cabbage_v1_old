@@ -787,11 +787,11 @@ public:
 												 scrubberPos(cAttr.getNumProp(CabbageIDs::scrubberposition))
 	{
 	setName(cAttr.getStringProp(CabbageIDs::name));	
-	soundFiler = new Soundfiler(cAttr.getStringProp(CabbageIDs::file), 44100, Colour::fromString(colour), Colour::fromString(fontcolour), zoom);
+	soundFiler = new Soundfiler(44100, Colour::fromString(colour), Colour::fromString(fontcolour));
 	addAndMakeVisible(soundFiler);
 	soundFiler->addChangeListener(this);
 	sampleRate = 44100;
-	soundFiler->setZoom(cAttr.getNumProp(CabbageIDs::zoom));
+	soundFiler->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
 	}
 
 	~CabbageSoundfiler()
@@ -811,7 +811,7 @@ public:
 		if(scrubberPos!=m_cAttr.getNumProp(CabbageIDs::scrubberposition))
 			{
 			scrubberPos = m_cAttr.getNumProp(CabbageIDs::scrubberposition);
-			soundFiler->setScrubberPosition(scrubberPos);			
+			soundFiler->setScrubberPos(scrubberPos);			
 			}
 		
 		if(!m_cAttr.getNumProp(CabbageIDs::visible))
@@ -822,25 +822,29 @@ public:
 		if(zoom!=m_cAttr.getNumProp(CabbageIDs::zoom))
 		{
 		zoom = m_cAttr.getNumProp(CabbageIDs::zoom);
-		soundFiler->setZoom(zoom);			
+		soundFiler->setZoomFactor(zoom);			
 		}
 			
 		if(!file.equalsIgnoreCase(m_cAttr.getStringProp(CabbageIDs::file))){
 			soundFiler->setFile(m_cAttr.getStringProp(CabbageIDs::file));
 			file = m_cAttr.getStringProp(CabbageIDs::file);
-			soundFiler->setZoom(.5);
-			soundFiler->setZoom(m_cAttr.getNumProp(CabbageIDs::zoom));
-			soundFiler->setScrubberPosition(0);
+			soundFiler->setZoomFactor(m_cAttr.getNumProp(CabbageIDs::zoom));
+			soundFiler->setScrubberPos(0);
 		}
 	
 	}
 	
-	int getPosition(){
-		return soundFiler->getPosition();
+	int setWaveform(AudioSampleBuffer buffer){
+		soundFiler->setWaveform(buffer);
 	}
 	
-	int getEndPosition(){
-		return soundFiler->getEndPosition();
+	
+	int getPosition(){
+		return soundFiler->getCurrentPlayPosInSamples();
+	}
+	
+	int getLoopLength(){
+		return soundFiler->getLoopLengthInSamples();
 	}	
 
 	

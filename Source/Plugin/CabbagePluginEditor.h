@@ -141,7 +141,7 @@ private:
 		void savePresetsFromParameters(File selectedFile, String mode);
 		void refreshDiskReadingGUIControls(String typeOfControl);
 		void updateGUIControls();
-		
+		//AudioSampleBuffer tableBuffer;
 		int mouseX, mouseY;
         bool LOCKED;
         void insertComponentsFromCabbageText(StringArray text, bool useOffset);

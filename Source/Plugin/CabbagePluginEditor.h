@@ -95,6 +95,7 @@ public:
 	ScopedPointer<CabbageTable> cabTable;
 	ScopedPointer<CabbageCornerResizer> resizer;
 	Point<int> getMousePos();
+	Array<int> popupMenus;
 private:
         void setPositionOfComponent(float x, float y, float width, float height, Component* comp, String reltoplant);
 		void createfTableData(Table* table);
@@ -177,7 +178,6 @@ private:
         OwnedArray<CabbageButton> plantButton;
         OwnedArray<CabbagePlantWindow> subPatch;
         ScopedPointer<InfoWindow> infoWindow;
-		Array<int> popupMenus;
 #ifdef Cabbage_GUI_Editor
         ScopedPointer<CabbageMainPanel> componentPanel;
         ScopedPointer<ComponentLayoutEditor> layoutEditor;

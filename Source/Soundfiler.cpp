@@ -119,7 +119,7 @@ void Soundfiler::paint (Graphics& g)
 {
 		g.fillAll (Colours::black);
 		g.setColour (colour);	
-        if (thumbnail->getTotalLength() > 0.0)
+        if (thumbnail->getTotalLength() > 0.5)
         {			
             Rectangle<int> thumbArea (getLocalBounds());
             thumbArea.setHeight(getHeight()-14);
@@ -164,7 +164,7 @@ void Soundfiler::paint (Graphics& g)
 //==============================================================================
 void Soundfiler::mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel)
 {
-	if (thumbnail->getTotalLength() > 0.0)
+	if (thumbnail->getTotalLength() > 0.5)
 	{
 		double newStart = visibleRange.getStart() - wheel.deltaX * (visibleRange.getLength()) / 10.0;
 		newStart = jlimit (0.0, jmax (0.0, thumbnail->getTotalLength() - (visibleRange.getLength())), newStart);

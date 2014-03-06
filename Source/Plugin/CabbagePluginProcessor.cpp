@@ -469,6 +469,7 @@ if(refresh==true){
 	if(editor){
 		editor->comps.clear();
 		editor->layoutComps.clear();
+		editor->popupMenus.clear();
 	}
 }
 

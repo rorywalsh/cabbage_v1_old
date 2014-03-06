@@ -891,7 +891,7 @@ void CabbagePluginAudioProcessorEditor::mouseMove(const MouseEvent& event)
 }
 
 void CabbagePluginAudioProcessorEditor::mouseDown(const MouseEvent& event)
-{
+{	
 	if(event.mods.isPopupMenu())
 	{
 		for(int i=0;i<popupMenus.size();i++)
@@ -913,8 +913,6 @@ void CabbagePluginAudioProcessorEditor::mouseDown(const MouseEvent& event)
 			
 		}
 	}
-		
-		
 		
 	if(event.mods.isLeftButtonDown())
 	getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousedownleft, 1, "");
@@ -1719,8 +1717,6 @@ void CabbagePluginAudioProcessorEditor::InsertPopupMenu(CabbageGUIClass &cAttr)
         int idx = layoutComps.size()-1;
 		popupMenus.add(idx);
 		//setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));        
-		layoutComps[idx]->setLookAndFeel(lookAndFeel);
-		layoutComps[idx]->sendLookAndFeelChange();
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
 }

@@ -559,6 +559,7 @@ bool multiLine = false;
 									||tokes[0].equalsIgnoreCase(String("infobutton"))
 									||tokes[0].equalsIgnoreCase(String("filebutton"))
 									||tokes[0].equalsIgnoreCase(String("soundfiler"))
+									||tokes[0].equalsIgnoreCase(String("popupmenu"))
 									||tokes[0].equalsIgnoreCase(String("snapshot"))
 									||tokes[0].equalsIgnoreCase(String("table"))
 									||tokes[0].equalsIgnoreCase(String("pvsview"))

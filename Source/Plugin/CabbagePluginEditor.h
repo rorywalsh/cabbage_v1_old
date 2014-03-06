@@ -129,6 +129,7 @@ private:
         void InsertPatternMatrix(CabbageGUIClass &cAttr);
         void InsertSnapshot(CabbageGUIClass &cAttr);
 		void InsertTransport(CabbageGUIClass &cAttr);
+		void InsertPopupMenu(CabbageGUIClass &cAttr);
         void buttonClicked(Button*);
 		void mouseMove(const MouseEvent& event);
 		void mouseDown(const MouseEvent& event);
@@ -176,6 +177,7 @@ private:
         OwnedArray<CabbageButton> plantButton;
         OwnedArray<CabbagePlantWindow> subPatch;
         ScopedPointer<InfoWindow> infoWindow;
+		Array<int> popupMenus;
 #ifdef Cabbage_GUI_Editor
         ScopedPointer<CabbageMainPanel> componentPanel;
         ScopedPointer<ComponentLayoutEditor> layoutEditor;

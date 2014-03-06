@@ -338,6 +338,48 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::identchannel, "");
 		cabbageIdentifiers.set(CabbageIDs::visible, 1);	  
 	}
+	//===============popupmenu==================//
+    else if(strTokens[0].trim() == "popupmenu"){
+		cabbageIdentifiers.set("basetype", "layout");
+		items.clear();
+		top = 10;
+		left = 10;
+		width = 80;
+		height = 22;
+		//add one item by befault, will be overwritten by users values
+		var array;
+		array.append("Item 1");
+		array.append("Item 2");
+		array.append("Item 3");
+		array.append("Item 4");
+
+		min=1;
+		value = 1;
+
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 80);
+		cabbageIdentifiers.set(CabbageIDs::height, 20);	
+		var channels;
+		channels.append("popupchan");
+		cabbageIdentifiers.set(CabbageIDs::channel, channels);
+		cabbageIdentifiers.set(CabbageIDs::channeltype, "number");
+		cabbageIdentifiers.set(CabbageIDs::text, array);
+		cabbageIdentifiers.set(CabbageIDs::value, 1);	
+
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::type, "popupmenu");
+		cabbageIdentifiers.set(CabbageIDs::name, "popupmenu");		
+
+		var populate;
+		populate.append("");
+		populate.append("");
+		cabbageIdentifiers.set(CabbageIDs::populate, populate);
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::identchannel, ""); 
+		cabbageIdentifiers.set(CabbageIDs::visible, 1);
+	} 
 	//===============combobox==================//
     else if(strTokens[0].trim() == "combobox"){
 		cabbageIdentifiers.set("basetype", "interactive");

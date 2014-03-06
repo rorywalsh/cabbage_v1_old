@@ -417,6 +417,77 @@ class CabbageCheckbox : public Component
 //==============================================================================
 // custom checkbox component with optional surrounding groupbox
 //==============================================================================
+class CabbagePopupMenu : public Component
+{
+	//ScopedPointer<LookAndFeel> lookFeel;
+	int offX, offY, offWidth, offHeight;
+	String name, caption, text, colour, fontcolour;
+	StringArray items;
+	public:
+	//---- constructor -----
+	CabbagePopupMenu(CabbageGUIClass &cAttr):
+							name(cAttr.getStringProp(CabbageIDs::name)),
+							caption(cAttr.getStringProp(CabbageIDs::caption)),
+							colour(cAttr.getStringProp(CabbageIDs::colour)),
+							fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour))
+	{
+		//populate combo with files
+		Array<File> dirFiles;
+		if(cAttr.getStringProp("fileType").length()<1)
+		for(int i=0;i<cAttr.getStringArrayProp("text").size();i++){
+                String item  = cAttr.getStringArrayPropValue("text", i);
+				items.add(item);
+        }
+		else{
+			//appProperties->getUserSettings()->getValue("CsoundPluginDirectory");
+			File pluginDir;
+	
+			const String filetype = cAttr.getStringProp("filetype");
+
+			pluginDir.findChildFiles(dirFiles, 2, false, filetype);
+
+			for (int i = 0; i < dirFiles.size(); ++i){
+				//m.addItem (i + menuSize, cabbageFiles[i].getFileNameWithoutExtension());
+                //String test  = String(i+1)+": "+dirFiles[i].getFileName();
+				String filename;
+				if(filetype.contains("snaps"))
+					filename = dirFiles[i].getFileNameWithoutExtension();
+				else
+					filename = dirFiles[i].getFileName();
+				items.add(filename);
+			}
+		}
+
+	}
+	//---------------------------------------------
+	~CabbagePopupMenu(){
+
+	}
+
+	void addItemsToPopup(PopupMenu &m){
+		for(int i=0;i<items.size();i++)
+			m.addItem(i+1, items[i]);
+	}
+
+	//update controls	
+	void update(CabbageGUIClass m_cAttr){
+		//const MessageManagerLock mmLock;
+		//combo->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
+		//combo->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+		//setBounds(m_cAttr.getBounds());
+		//if(!m_cAttr.getNumProp(CabbageIDs::visible))
+		//	setVisible(false);
+		//else
+		//	setVisible(true);
+		//repaint();
+	}
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePopupMenu);
+};
+
+//==============================================================================
+// custom checkbox component with optional surrounding groupbox
+//==============================================================================
 class CabbageComboBox : public Component
 {
 	//ScopedPointer<LookAndFeel> lookFeel;
@@ -529,7 +600,6 @@ class CabbageComboBox : public Component
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageComboBox);
 };
-
 //==============================================================================
 // custom image component
 //==============================================================================

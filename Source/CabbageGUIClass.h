@@ -225,12 +225,16 @@ namespace CabbageIDs
 	static const String checkbox = "checkbox";
 	static const String soundfiler = "sounfiler";
 	static const String button = "button";
+	static const String infobutton = "infobutton";
 	static const String filebutton = "filebutton";
 	static const String table = "table";
 	static const String groupbox = "groupbox";
 	static const String image = "image";
+	static const String popupmenu = "popupmenu";
 	static const String label = "label";
+	static const String keyboard = "keyboard";
 	static const String form = "form";
+	static const String directorylist = "directorylist";
 	static const String index = "index";
 	static const String xypad = "xypad";
 	static const String stringchannel = "string";

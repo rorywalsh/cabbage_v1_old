@@ -183,6 +183,78 @@ if(presetFileText.length()>1)
 
 }
 
+//==============================================================================
+void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
+{
+        if(cAttr.getStringProp(CabbageIDs::type)==String("form")){
+                SetupWindow(cAttr);   //set main application
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("groupbox")){
+                InsertGroupBox(cAttr);  
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("image")){
+                InsertImage(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("keyboard")){
+                InsertMIDIKeyboard(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("label")){
+                InsertLabel(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("popupmenu")){
+                InsertPopupMenu(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("csoundoutput")){
+                InsertCsoundOutput(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("snapshot")){
+                InsertSnapshot(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("infobutton")){
+                InsertInfoButton(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("filebutton")){
+                InsertFileButton(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("transport")){
+                InsertTransport(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("soundfiler")){
+                InsertSoundfiler(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("directorylist")){
+                InsertDirectoryList(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("multitab")){
+                InsertMultiTab(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String(CabbageIDs::line)){
+                InsertLineSeparator(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("table")){      
+                InsertTable(cAttr);       
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("hslider")
+                ||cAttr.getStringProp(CabbageIDs::type)==String("vslider")
+                ||cAttr.getStringProp(CabbageIDs::type)==String("rslider")){                                
+                InsertSlider(cAttr);       //insert slider                        
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("button")){                           
+                InsertButton(cAttr);       //insert button           
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("checkbox")){                         
+                InsertCheckBox(cAttr);       //insert checkbox
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("combobox")){                         
+                InsertComboBox(cAttr);       //insert combobox    
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("xypad")){    
+                InsertXYPad(cAttr);       //insert xypad  
+                }
+        //}
+}
+
+
 //===========================================================================
 //WHEN IN GUI EDITOR MODE THIS CALLBACK WILL NOTIFIY THE HOST OF EVENTS
 //===========================================================================
@@ -820,6 +892,30 @@ void CabbagePluginAudioProcessorEditor::mouseMove(const MouseEvent& event)
 
 void CabbagePluginAudioProcessorEditor::mouseDown(const MouseEvent& event)
 {
+	if(event.mods.isPopupMenu())
+	{
+		for(int i=0;i<popupMenus.size();i++)
+		{		
+			if(getFilter()->getGUILayoutCtrls(popupMenus[i]).getBounds().contains(event.getPosition()))
+			{
+				int index = popupMenus[i];
+				layoutComps[popupMenus[i]]->setLookAndFeel(lookAndFeel);
+				PopupMenu m;
+				m.setLookAndFeel(lookAndFeel);
+				static_cast<CabbagePopupMenu*>(layoutComps[index])->addItemsToPopup(m);
+				int result = m.show();
+				if(result>0)
+				getFilter()->messageQueue.addOutgoingChannelMessageToQueue(
+													getFilter()->getGUILayoutCtrls(index).getStringProp(CabbageIDs::channel),
+													result,
+													"popup");
+			}
+			
+		}
+	}
+		
+		
+		
 	if(event.mods.isLeftButtonDown())
 	getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousedownleft, 1, "");
 	else if(event.mods.isRightButtonDown())
@@ -1140,75 +1236,6 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 		#endif
 #endif
 }
-
-//==============================================================================
-void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
-{
-        if(cAttr.getStringProp(CabbageIDs::type)==String("form")){
-                SetupWindow(cAttr);   //set main application
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("groupbox")){
-                InsertGroupBox(cAttr);  
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("image")){
-                InsertImage(cAttr);   
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("keyboard")){
-                InsertMIDIKeyboard(cAttr);   
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("label")){
-                InsertLabel(cAttr);   
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("csoundoutput")){
-                InsertCsoundOutput(cAttr);   
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("snapshot")){
-                InsertSnapshot(cAttr);   
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("infobutton")){
-                InsertInfoButton(cAttr);   
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("filebutton")){
-                InsertFileButton(cAttr);   
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("transport")){
-                InsertTransport(cAttr);   
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("soundfiler")){
-                InsertSoundfiler(cAttr);   
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("directorylist")){
-                InsertDirectoryList(cAttr);   
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("multitab")){
-                InsertMultiTab(cAttr);   
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String(CabbageIDs::line)){
-                InsertLineSeparator(cAttr);   
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("table")){      
-                InsertTable(cAttr);       
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("hslider")
-                ||cAttr.getStringProp(CabbageIDs::type)==String("vslider")
-                ||cAttr.getStringProp(CabbageIDs::type)==String("rslider")){                                
-                InsertSlider(cAttr);       //insert slider                        
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("button")){                           
-                InsertButton(cAttr);       //insert button           
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("checkbox")){                         
-                InsertCheckBox(cAttr);       //insert checkbox
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("combobox")){                         
-                InsertComboBox(cAttr);       //insert combobox    
-                }
-        else if(cAttr.getStringProp(CabbageIDs::type)==String("xypad")){    
-                InsertXYPad(cAttr);       //insert xypad  
-                }
-        //}
-}
-
 
 //=======================================================================================
 //      non-interactive components
@@ -1677,6 +1704,26 @@ if(i==-9999)jassert(1);
 #endif
 }
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//     Popup menu 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+void CabbagePluginAudioProcessorEditor::InsertPopupMenu(CabbageGUIClass &cAttr)
+{
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
+		
+        layoutComps.add(new CabbagePopupMenu(cAttr));
+    
+        int idx = layoutComps.size()-1;
+		popupMenus.add(idx);
+		//setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));        
+		layoutComps[idx]->setLookAndFeel(lookAndFeel);
+		layoutComps[idx]->sendLookAndFeelChange();
+		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+}
 
 //+++++++++++++++++++++++++++++++++++++++++++
 //                                      button

@@ -36,7 +36,7 @@ Soundfiler::Soundfiler(int sr, Colour col, Colour fcol):	thumbnailCache (5),
 														currentPositionMarker(new DrawableRectangle())
 {	
     formatManager.registerBasicFormats();  
-	thumbnail = new AudioThumbnail(512, formatManager, thumbnailCache); 
+	thumbnail = new AudioThumbnail(2, formatManager, thumbnailCache); 
 	thumbnail->addChangeListener (this);
 	//setSize(400, 200);
 	sampleRate = sr;
@@ -92,7 +92,9 @@ void Soundfiler::setWaveform(AudioSampleBuffer buffer)
 	const Range<double> newRange (0.0, thumbnail->getTotalLength());
 	scrollbar->setRangeLimits (newRange);
 	setRange (newRange);
+	setZoomFactor(zoom);
 	repaint();
+	Logger::writeToLog("updating waveform");
 }
 
 //==============================================================================
@@ -119,7 +121,7 @@ void Soundfiler::paint (Graphics& g)
 {
 		g.fillAll (Colours::black);
 		g.setColour (colour);	
-        if (thumbnail->getTotalLength() > 0.5)
+        if (thumbnail->getTotalLength() > 0.01)
         {			
             Rectangle<int> thumbArea (getLocalBounds());
             thumbArea.setHeight(getHeight()-14);
@@ -182,6 +184,7 @@ void Soundfiler::mouseDown (const MouseEvent& e)
 		{
 		regionWidth = 2;	
 		currentPlayPosition = jmax (0.0, xToTime ((float) e.x));
+		loopStart = e.x;
 		loopLength =  0;
 		repaint();
 		sendChangeMessage();
@@ -190,14 +193,20 @@ void Soundfiler::mouseDown (const MouseEvent& e)
 //==============================================================================
 void Soundfiler::mouseDrag(const MouseEvent& e)
 {
+	if(this->getLocalBounds().contains(e.getPosition()))
+	{
 	if(e.mods.isLeftButtonDown())
 		{
 		double zoomFactor = visibleRange.getLength()/thumbnail->getTotalLength();
-		regionWidth = e.getDistanceFromDragStartX()*zoomFactor;
+		regionWidth = abs(e.getDistanceFromDragStartX())*zoomFactor;
+		Logger::writeToLog(String(e.getDistanceFromDragStartX()));
+		if(e.getDistanceFromDragStartX()<0)
+		currentPlayPosition = jmax (0.0, xToTime (loopStart+(float)e.getDistanceFromDragStartX()));
 		float widthInTime = ((float)e.getDistanceFromDragStartX() / (float)getWidth()) * (float)thumbnail->getTotalLength();
 		loopLength = jmax (0.0, widthInTime*zoomFactor);	
 		}	
-	repaint();
+	repaint();	
+	}
 }
 //==============================================================================
 void Soundfiler::setScrubberPos(double pos){

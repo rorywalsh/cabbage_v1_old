@@ -666,6 +666,7 @@ void ComponentLayoutEditor::mouseDown (const MouseEvent& e)
 {
 //deselect all grouped filters and set alpha to normal
 selectedFilters.deselectAll();
+boundsForDuplicatedCtrls.clear();
 for(int i=0;i<getNumChildComponents();i++){
 	getChildComponent(i)->getProperties().set("interest", "none");
 	getChildComponent(i)->repaint();

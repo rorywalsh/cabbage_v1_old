@@ -73,6 +73,7 @@ class ComponentLayoutEditor   :   public Component,
       void enablementChanged ();
       const Component* getTarget ();
 	  void resetAllBorders();
+	  Array<Rectangle <int> > boundsForDuplicatedCtrls; 
       
     private:
       virtual ChildAlias* createAlias (Component* child, String type, int index);

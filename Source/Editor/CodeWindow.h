@@ -105,10 +105,17 @@ public:
 	//==============================================================================
 	void setFontSize(String zoom)
 	{
+		
+		#ifdef WIN32
+		String font = "Consolas";			
+		#else
+		String font = "Droid Sans Mono";
+		#endif			
+		
 		if(zoom==String("in"))
-		textEditor->setFont(Font(String("Courier New"), ++fontSize, 1));
+		textEditor->setFont(Font(font, ++fontSize, 1));
 		else
-		textEditor->setFont(Font(String("Courier New"), --fontSize, 1));
+		textEditor->setFont(Font(font, --fontSize, 1));
 	}	
 	
 	

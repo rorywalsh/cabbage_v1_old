@@ -158,7 +158,7 @@ private:
         int zero_dbfs;
 		StringArray tempArray;
 		StringArray pastEvents;
-		Array<Rectangle <int> > boundsForDuplicatedCtrls; 
+		
 
 
         //CabbagePluginAudioProcessor* filter;

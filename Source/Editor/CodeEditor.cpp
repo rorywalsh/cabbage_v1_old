@@ -35,7 +35,11 @@ CsoundCodeEditor::CsoundCodeEditor(String type, CodeDocument &document, CodeToke
 	setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue); 
 	setColour(CodeEditorComponent::lineNumberTextId, Colours::whitesmoke);
 	setLineNumbersShown(true);
-	setFont(Font(String("Courier New"), 14, 1));			
+	#ifdef WIN32
+	setFont(Font(String("Consolas"), 13, 1));			
+	#else
+	setFont(Font(String("Droid Sans Mono"), 13, 1));
+	#endif	
 }
 
 CsoundCodeEditor::~CsoundCodeEditor()

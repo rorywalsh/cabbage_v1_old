@@ -654,10 +654,8 @@ ComponentLayoutEditor* le = layoutEditor;
 	
 		populateLineNumberArray(csdArray);
 
-		for(int i=0;i<lineNumbers.size();i++){
-			csdArray.set(lineNumbers[i], replaceIdentifier(csdArray[lineNumbers[i]], "bounds", boundsForSelectComps[i]));
-			currentLineNumber = lineNumbers[0];
-			}	
+		currentLineNumber = lineNumbers[0];
+
 			
 		//deselect all the items before deleting them..
 		le->getLassoSelection().deselectAll();	
@@ -811,7 +809,7 @@ ComponentLayoutEditor* le = layoutEditor;
 			duplicatedPlants.clear();
 			
 			//clear array containing bounds for duplicated controls
-			boundsForDuplicatedCtrls.clear();
+			layoutEditor->boundsForDuplicatedCtrls.clear();
 			getFilter()->sendActionMessage("GUI Updated, controls added, resized");	
 #endif
 }
@@ -1128,14 +1126,14 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 			text.getReference(i) = replaceIdentifier(text[i], "plant", "plant(\""+plantName+"\")");
 			Rectangle<int> bounds(cAttr.getNumProp(CabbageIDs::left)+offset, cAttr.getNumProp(CabbageIDs::top)+offset, cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));			
 			text.getReference(i) = replaceIdentifier(text[i], "bounds", getBoundsString(bounds));				
-			boundsForDuplicatedCtrls.add(bounds); 
+			layoutEditor->boundsForDuplicatedCtrls.add(bounds); 
 			}
 		}
 		else{
 		CabbageGUIClass cAttr(text[i], i-99);			
 		Rectangle<int> bounds(cAttr.getNumProp(CabbageIDs::left)+offset, cAttr.getNumProp(CabbageIDs::top)+offset, cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));			
 		text.getReference(i) = replaceIdentifier(text[i], "bounds", getBoundsString(bounds));				
-		boundsForDuplicatedCtrls.add(bounds); 			
+		layoutEditor->boundsForDuplicatedCtrls.add(bounds); 			
 		}
 		
 	String currentText;
@@ -1156,6 +1154,7 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 		layoutEditor->selectedFilters.deselectAll();
 	getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
 	getFilter()->highlightLine(currentText);
+	//currentLineNumber = getFilter()->getCurrentLine();
 	getFilter()->createGUI(text.joinIntoString("\n"), false);
 	CabbageGUIClass cAttr(currentText, -99);
 	propsWindow->updateProps(cAttr);
@@ -1163,7 +1162,7 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 
 
 	updateLayoutEditorFrames();
-	layoutEditor->selectDuplicatedComponents(boundsForDuplicatedCtrls);
+	layoutEditor->selectDuplicatedComponents(layoutEditor->boundsForDuplicatedCtrls);
 
 #endif
 }
@@ -1389,7 +1388,6 @@ void CabbagePluginAudioProcessorEditor::InsertLineSeparator(CabbageGUIClass &cAt
         setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
         layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
-		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -1407,7 +1405,6 @@ void CabbagePluginAudioProcessorEditor::InsertTransport(CabbageGUIClass &cAttr)
 		setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
         layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
-		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -1428,7 +1425,6 @@ void CabbagePluginAudioProcessorEditor::InsertLabel(CabbageGUIClass &cAttr)
 		layoutComps[idx]->addMouseListener(this, true);
         cAttr.setStringProp(CabbageIDs::type, "label");
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
-		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -2337,6 +2333,7 @@ if(message == "Message sent from PropertiesDialog"){
 	//Logger::writeToLog(csdArray[currentLineNumber]);
 	getFilter()->setGuiEnabled(true);
 	getFilter()->createGUI(csdArray.joinIntoString("\n"), true);
+	layoutEditor->selectedFilters.deselectAll();
 	//getFilter()->sendActionMessage("GUI Updated, controls added");	
 	//Logger::writeToLog(getCodeFromIdentifiers(propsWindow->updatedIdentifiers));
 #endif

@@ -34,12 +34,12 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 	commandManager.registerAllCommandsForTarget(this);
 	addKeyListener(commandManager.getKeyMappings());
 	
-	textEditor = new CsoundCodeEditor("csound", csoundDoc, &csoundToker);
+	textEditor = new CsoundCodeEditor(csoundDoc, &csoundToker);
 
 	restoreWindowStateFromString (appProperties->getUserSettings()->getValue ("mainWindowPos"));
 
 
-	textEditor->addActionListener(this);
+	textEditor->editor->addActionListener(this);
 
 	
 	this->setTitleBarHeight(20);
@@ -74,7 +74,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 	Logger::writeToLog(opcodeFile);
 
 	if(File(opcodeFile).existsAsFile())
-		textEditor->setOpcodeStrings(File(opcodeFile).loadFileAsString());
+		textEditor->editor->setOpcodeStrings(File(opcodeFile).loadFileAsString());
 	//else csound->Message("Could not open opcodes.txt file, parameter display disabled..");
 
 	//set up popup for displaying info regarding opcodes..
@@ -101,10 +101,8 @@ CodeWindow::~CodeWindow(){
 void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandInfo& result)
 {	
 	KeyboardShortcutKeys shortcuts(appProperties->getUserSettings()->getXmlValue("KeyboardShortcutXmlData"));
-
 	switch (commandID)
 	{
-	
 	//file commands
 	case CommandIDs::fileNew:
 		result.setInfo (String("New"), String("Create a new file"), CommandCategories::file, 0);
@@ -353,7 +351,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		
 	else if(info.commandID==CommandIDs::editUndo)
 		{			
-			textEditor->undo();
+			textEditor->editor->undo();
 		}
 		
 	else if(info.commandID==CommandIDs::fileKeyboardShorts)
@@ -371,24 +369,24 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		
 	else if(info.commandID==CommandIDs::editCut)
 		{			
-			textEditor->cutToClipboard();
+			textEditor->editor->cutToClipboard();
 		}
 	else if(info.commandID==CommandIDs::editCopy)
 		{			
-			textEditor->copyToClipboard();
+			textEditor->editor->copyToClipboard();
 		}
 	else if(info.commandID==CommandIDs::editPaste)
 		{			
-			textEditor->pasteFromClipboard();
+			textEditor->editor->pasteFromClipboard();
 		}
 
 	else if(info.commandID==CommandIDs::editRedo)
 		{			
-			textEditor->redo();
+			textEditor->editor->redo();
 		}
 	else if(info.commandID==CommandIDs::editToggleComments)
 		{			
-		textEditor->toggleComments();
+		textEditor->editor->toggleComments();
 		}
 		
 	else if(info.commandID==CommandIDs::editZoomIn)
@@ -440,7 +438,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		
 	else if(info.commandID==CommandIDs::addFromRepo)
 		{	
-		textEditor->addToRepository();
+		textEditor->editor->addToRepository();
 		}	
 
 	else if(info.commandID==CommandIDs::viewCsoundHelp)
@@ -476,8 +474,8 @@ if(manual=="Csound")
 					CabbageUtils::showMessage("Please set the Csound manual directory in the Preference menu", &getLookAndFeel());                
 			else{                        
 				CodeDocument::Position pos1, pos2;
-				pos1 = textEditor->getDocument().findWordBreakBefore(textEditor->getCaretPos());
-				pos2 = textEditor->getDocument().findWordBreakAfter(textEditor->getCaretPos());
+				pos1 = textEditor->editor->getDocument().findWordBreakBefore(textEditor->editor->getCaretPos());
+				pos2 = textEditor->editor->getDocument().findWordBreakAfter(textEditor->editor->getCaretPos());
 				String opcode = csoundDoc.getTextBetween(pos1, pos2);
 				URL urlCsound(helpDir+"/"+opcode.trim()+String(".html"));
 				String urlCabbage;
@@ -590,9 +588,9 @@ void CodeWindow::actionListenerCallback(const String &message){
 	}
 	else if(message.contains("popupDisplay")){
 			
-	int width = (font.getStringWidth(textEditor->getOpcodeToken(2)) > font.getStringWidth(textEditor->getOpcodeToken(3)) ? 
-											font.getStringWidth(textEditor->getOpcodeToken(2)) : 
-											font.getStringWidth(textEditor->getOpcodeToken(3)));
+	int width = (font.getStringWidth(textEditor->editor->getOpcodeToken(2)) > font.getStringWidth(textEditor->editor->getOpcodeToken(3)) ? 
+											font.getStringWidth(textEditor->editor->getOpcodeToken(2)) : 
+											font.getStringWidth(textEditor->editor->getOpcodeToken(3)));
 	//popupDisplay->killSplash();
 	popupDisplay->setSize(width, 50);
 	popupDisplay->box->setSize(width, 50);
@@ -606,8 +604,8 @@ void CodeWindow::actionListenerCallback(const String &message){
 	//						this->getCaretScreenPosition().getY()+18.f,
 	//						width, 50);
 	//popupDisplay->setWantsKeyboardFocus(false);
-	popupDisplay->setText(textEditor->getOpcodeToken(2).removeCharacters("\""), 
-								   textEditor->getOpcodeToken(3).removeCharacters("\""));
+	popupDisplay->setText(textEditor->editor->getOpcodeToken(2).removeCharacters("\""), 
+								   textEditor->editor->getOpcodeToken(3).removeCharacters("\""));
 		
 	textEditor->toFront(true);
 	//cabbageTimer->startTimedEvent(1, "return focus to editor");
@@ -647,7 +645,7 @@ int repoIndex = 1;
 		forEachXmlChildElement (*xmlElement, e)
 			{
 			if(e->getTagName()==repoEntries[result-1])
-			textEditor->insertText(e->getAllSubText());
+			textEditor->editor->insertText(e->getAllSubText());
 			}
 		xmlElement = nullptr;			
 }

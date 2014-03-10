@@ -30,15 +30,17 @@
 extern ApplicationProperties* appProperties;
 extern CabbageTimer* cabbageTimer;
 
-class CsoundCodeEditor : public CodeEditorComponent,
+class FlatButton;
+
+class CsoundCodeEditorComponenet : public CodeEditorComponent,
 						 public ActionBroadcaster,
 						 public CodeDocument::Listener
 	{
 	public:
 			CodeDocument::Position positionInCode;
-			CsoundCodeEditor(String type, CodeDocument &document, CodeTokeniser *codeTokeniser);
+			CsoundCodeEditorComponenet(String type, CodeDocument &document, CodeTokeniser *codeTokeniser);
 
-			~CsoundCodeEditor();
+			~CsoundCodeEditorComponenet();
 
 
 	bool keyPressed (const KeyPress& key);
@@ -94,4 +96,86 @@ class CsoundCodeEditor : public CodeEditorComponent,
 		StringArray opcodeTokens;
 	};
 
+//=================================================================
+class CsoundCodeEditor : public Component,
+						 public ActionListener
+{
+	bool showTabButtons;
+	bool showInstrumentButtons;
+	
+public:	
+	CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTokeniser);
+	~CsoundCodeEditor(){};
+
+
+	String getAllText(){
+		return editor->getDocument().getAllContent();
+	}	
+
+	void setAllText(String text){
+		editor->getDocument().replaceAllContent(text);
+	}
+	
+	void highlightLine(String line){
+			String temp = editor->getDocument().getAllContent();
+			Range<int> range;
+			editor->moveCaretTo(CodeDocument::Position (editor->getDocument(), temp.indexOf(line)+line.length()), false);
+			editor->moveCaretTo(CodeDocument::Position (editor->getDocument(), temp.indexOf(line)), true);
+	}	
+	
+	void showTabs();
+	void showInstrs();
+	void actionListenerCallback(const String &message);
+	
+	OwnedArray<FlatButton> tabButtons;
+	OwnedArray<FlatButton> instrButtons;
+	
+	bool textChanged;	
+	ScopedPointer<CsoundCodeEditorComponenet> editor;
+	void resized();
+};
+
+
+class FlatButton : public Component,
+					public ActionBroadcaster
+{
+	String name;
+	int currentTab;
+	
+	public:
+		FlatButton(String name, int currentTab): name(name), currentTab(currentTab)
+		{
+		setName(name);
+		}
+		~FlatButton(){}
+		
+	void mouseDown(const MouseEvent& event){
+		Logger::writeToLog("mouse down");
+	}
+		
+	void paint(Graphics &g){
+		if(name.contains("code")){
+			if(currentTab==1)
+				g.setColour(Colours::cornflowerblue.darker(.4f));		
+			else
+				g.setColour(Colours::cornflowerblue.darker(.9f));	
+		
+			g.fillRoundedRectangle(getLocalBounds().toFloat(), 5.f);
+			if(currentTab==1)
+				g.setColour(Colours::white);
+			else
+				g.setColour(Colours::white.darker(.9f));
+				
+			g.drawRoundedRectangle(getLocalBounds().toFloat(), 5.f, 2);
+			g.drawFittedText(name, getLocalBounds(), Justification::centred, 1, 1.f);
+			}	
+		else{
+			g.setColour(Colours::brown.darker(.4f));		
+			g.fillRoundedRectangle(getLocalBounds().toFloat(), 5.f);
+			g.setColour(Colours::white);
+			g.drawRoundedRectangle(getLocalBounds().toFloat(), 5.f, 2);
+			g.drawFittedText(name, getLocalBounds(), Justification::centred, 1, 1.f);
+			}
+		}
+};
 #endif

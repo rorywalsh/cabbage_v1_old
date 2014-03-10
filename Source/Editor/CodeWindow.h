@@ -97,7 +97,7 @@ public:
 												->getValue ("recentlyOpenedFiles"));
 
 			csdFile = recentFiles.getFile (menuItemID - 100);
-			textEditor->getDocument().replaceAllContent(csdFile.loadFileAsString());
+			textEditor->editor->getDocument().replaceAllContent(csdFile.loadFileAsString());
 			setName(csdFile.getFullPathName());
 			}		
 	}
@@ -113,9 +113,9 @@ public:
 		#endif			
 		
 		if(zoom==String("in"))
-		textEditor->setFont(Font(font, ++fontSize, 1));
+		textEditor->editor->setFont(Font(font, ++fontSize, 1));
 		else
-		textEditor->setFont(Font(font, --fontSize, 1));
+		textEditor->editor->setFont(Font(font, --fontSize, 1));
 	}	
 	
 	
@@ -136,7 +136,7 @@ public:
 	void toggleTextWindows();
 	
 	Rectangle<int> getCaretScreenPosition(){
-		Rectangle<int> rect(textEditor->getCaretPoisition());
+		Rectangle<int> rect(textEditor->editor->getCaretPoisition());
 		rect.setLeft(rect.getX()+this->getTopLevelComponent()->getX()+100);
 		rect.setTop(rect.getY()+this->getTopLevelComponent()->getY()+45);
 		return rect;		
@@ -165,14 +165,14 @@ public:
 	
 	void setColourScheme(String theme){
 	if(theme=="white"){
-			textEditor->setColourScheme(csoundToker.getDefaultColourScheme());
+			textEditor->editor->setColourScheme(csoundToker.getDefaultColourScheme());
 			textEditor->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
 			textEditor->setColour(CaretComponent::caretColourId, Colours::black);
 			textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue);
 			appProperties->getUserSettings()->setValue("EditorColourScheme", 0); 			
 			}
 	else if(theme=="dark"){
-			textEditor->setColourScheme(csoundToker.getDarkColourScheme());
+			textEditor->editor->setColourScheme(csoundToker.getDarkColourScheme());
 			textEditor->setColour(CaretComponent::caretColourId, Colours::white);
 			textEditor->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
 			textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f)); 
@@ -204,220 +204,6 @@ public:
 	bool showingHelp;
 };
 
-
-//============================================================
-// window for Python editor
-//============================================================
-class PythonEditor: public DocumentWindow,
-					public ActionListener,
-					public ActionBroadcaster
-{
-public:
-	PythonEditor(String name):DocumentWindow (name, Colours::black,
-							  DocumentWindow::closeButton)
-	{
-		textEditor = new CsoundCodeEditor("python", csoundDocu, &csoundToker);
-		textEditor->setColour(TextEditor::textColourId, Colours::white);
-		textEditor->setFont(Font(String("Courier New"), 15, 1));
-		textEditor->addActionListener(this);
-		textEditor->setSize(600, 400);
-
-		if(!appProperties->getUserSettings()->getValue("EditorColourScheme", var(0)).getIntValue())
-			setEditorColourScheme("white");
-		else if(appProperties->getUserSettings()->getValue("EditorColourScheme", var(0)).getIntValue())
-			setEditorColourScheme("dark");		
-		
-		centreWithSize(600, 400);
-		setContentNonOwned(textEditor, true);
-		setResizable(true, false);
-	}
-	
-	~PythonEditor()
-	{
-		 delete textEditor;
-	} 
-	 
-	void codeDocumentChanged (const CodeDocument::Position &affectedTextStart, const CodeDocument::Position &affectedTextEnd)
-	{
-	}	 
-	 
-	void actionListenerCallback(const String &message)
-	{
-	if(message=="make invisible"){
-		//this->setVisible(false);
-		sendActionMessage("sendPythonEvent");
-		//if(textEditor->getm)
-	}	
-	}
-	
-	void closeButtonPressed(){
-	setVisible(false);
-	}	
-	
-
-	
-	void setEditorColourScheme(String theme){
-		if(theme=="white"){
-				textEditor->setColourScheme(csoundToker.getDefaultColourScheme());
-				textEditor->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
-				textEditor->setColour(CaretComponent::caretColourId, Colours::black);
-				textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue);
-				appProperties->getUserSettings()->setValue("EditorColourScheme", 0); 			
-				}
-		else if(theme=="dark"){
-				textEditor->setColourScheme(csoundToker.getDarkColourScheme());
-				textEditor->setColour(CaretComponent::caretColourId, Colours::white);
-				textEditor->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
-				textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f)); 
-				appProperties->getUserSettings()->setValue("EditorColourScheme", 1);
-				}	
-	}
-	
-	void codeDocumentTextDeleted(int,int){}
-	void codeDocumentTextInserted(const juce::String &,int){}	
-	
-	CsoundCodeEditor* textEditor;
-
-	CodeDocument csoundDocu;
-	PythonTokeniser csoundToker;
-	  
-};
-
-//============================================================
-// audio settings class (not currently used...)
-//============================================================
-class AudioSettings: public Component,
-					public ActionListener,
-					public ActionBroadcaster
-{
-public:
-	AudioSettings(StringArray deviceStrings)
-	{
-    addAndMakeVisible (label = new Label ("new label",
-                                          "Sampling Rate"));
-    label->setFont (Font (15.00f, Font::bold));
-    label->setJustificationType (Justification::centredLeft);
-    label->setEditable (false, false, false);
-    label->setColour (TextEditor::textColourId, Colours::lime);
-    label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-
-    addAndMakeVisible (samplingRate = new ComboBox ("new combo box"));
-	samplingRate->addItem("44100", 1);
-	samplingRate->addItem("48000", 2);
-	samplingRate->setSelectedId(1, dontSendNotification );
-    samplingRate->setEditableText (false);
-    samplingRate->setJustificationType (Justification::centredLeft);
-    samplingRate->setTextWhenNothingSelected (String::empty);
-    samplingRate->setTextWhenNoChoicesAvailable ("(no choices)");
-    //samplingRate->addListener (this);
-
-    addAndMakeVisible (label2 = new Label ("new label",
-                                           "Ksmps"));
-    label2->setFont (Font (20.00f, Font::bold));
-    label2->setJustificationType (Justification::centredLeft);
-    label2->setEditable (false, false, false);
-    label2->setColour (TextEditor::textColourId, Colours::lime);
-    label2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-
-    addAndMakeVisible (ksmps = new ComboBox ("new combo box"));
-	ksmps->addItem("32", 1);
-	ksmps->addItem("64", 2);
-	ksmps->addItem("128", 3);
-	ksmps->addItem("512", 4);
-	ksmps->addItem("1024", 5);
-	ksmps->addItem("2048", 6);
-	ksmps->addItem("4096", 7);
-	ksmps->setSelectedId(2, dontSendNotification );
-    ksmps->setEditableText (false);
-    ksmps->setJustificationType (Justification::centredLeft);
-    ksmps->setTextWhenNothingSelected (String::empty);
-    ksmps->setTextWhenNoChoicesAvailable ("(no choices)");
-   // ksmps->addListener (this);
-
-    addAndMakeVisible (label3 = new Label ("new label",
-                                           "Audio Device"));
-    label3->setFont (Font (15.00f, Font::bold));
-    label3->setJustificationType (Justification::centredLeft);
-    label3->setEditable (false, false, false);
-    label3->setColour (TextEditor::textColourId, Colours::lime);
-    label3->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-
-    addAndMakeVisible (audioDevice = new ComboBox ("new combo box"));
-    audioDevice->setEditableText (false);
-	for(int i=0;i<deviceStrings.size();i++)
-		audioDevice->addItem(deviceStrings[i], i+1);
-		
-	audioDevice->setSelectedId(deviceStrings.size(), dontSendNotification );	
-	
-    audioDevice->setJustificationType (Justification::centredLeft);
-    audioDevice->setTextWhenNothingSelected (String::empty);
-    audioDevice->setTextWhenNoChoicesAvailable ("(no choices)");
-    //audioDevice->addListener (this);
-
-    addAndMakeVisible (label4 = new Label ("new label",
-                                           "MIDI Device"));
-    label4->setFont (Font (15.00f, Font::bold));
-    label4->setJustificationType (Justification::centredLeft);
-    label4->setEditable (false, false, false);
-    label4->setColour (TextEditor::textColourId, Colours::lime);
-    label4->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-
-    addAndMakeVisible (midiDevice = new ComboBox ("new combo box"));
-    midiDevice->setEditableText (false);
-    midiDevice->setJustificationType (Justification::centredLeft);
-    midiDevice->setTextWhenNothingSelected (String::empty);
-    midiDevice->setTextWhenNoChoicesAvailable ("(no choices)");
-    //midiDevice->addListener (this);
-
-	setSize(300, 200);
-
-	}
-
-	void actionListenerCallback(const String &message)
-	{
-	if(message=="make invisible"){
-		//this->setVisible(false);
-		sendActionMessage("sendPythonEvent");
-		}	
-	}
-	
-	void resized(){
-    label->setBounds (28, 16, 96, 24);
-    samplingRate->setBounds (130, 16, 118, 24);
-    label2->setBounds (58, 52, 80, 24);
-    ksmps->setBounds (130, 52, 117, 24);
-    label3->setBounds (41, 87, 80, 24);
-    audioDevice->setBounds (130, 88, 117, 24);
-    label4->setBounds (42, 122, 80, 24);
-    midiDevice->setBounds (130, 121, 118, 24);	
-	}
-	
-	void paint(Graphics& g){
-		g.fillAll(Colours::black);
-	}
-	
-	~AudioSettings(){
-    label = nullptr;
-    samplingRate = nullptr;
-    label2 = nullptr;
-    ksmps = nullptr;
-    label3 = nullptr;
-    audioDevice = nullptr;
-    label4 = nullptr;
-    midiDevice = nullptr;	
-	}
-	
-private:
-    ScopedPointer<Label> label;
-    ScopedPointer<ComboBox> samplingRate;
-    ScopedPointer<Label> label2;
-    ScopedPointer<ComboBox> ksmps;
-    ScopedPointer<Label> label3;
-    ScopedPointer<ComboBox> audioDevice;
-    ScopedPointer<Label> label4;
-    ScopedPointer<ComboBox> midiDevice;
-	
-};
 
 
 //============================================================

@@ -102,6 +102,7 @@ class CsoundCodeEditor : public Component,
 {
 	bool showTabButtons;
 	bool showInstrumentButtons;
+	int instrWidth;
 	
 public:	
 	CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTokeniser);
@@ -109,7 +110,8 @@ public:
 
 
 	String getAllText(){
-		return editor->getDocument().getAllContent();
+		String text = editor->getDocument().getAllContent();
+		return text; 	
 	}	
 
 	void setAllText(String text){
@@ -123,8 +125,8 @@ public:
 			editor->moveCaretTo(CodeDocument::Position (editor->getDocument(), temp.indexOf(line)), true);
 	}	
 	
-	void showTabs();
-	void showInstrs();
+	void showTabs(bool show);
+	void showInstrs(bool show);
 	void actionListenerCallback(const String &message);
 	
 	OwnedArray<FlatButton> tabButtons;
@@ -141,27 +143,52 @@ class FlatButton : public Component,
 {
 	String name;
 	int currentTab;
+	bool active;
+	bool isMouseDown;
 	
 	public:
-		FlatButton(String name, int currentTab): name(name), currentTab(currentTab)
+		FlatButton(String name, int currentTab): 	name(name), 
+													currentTab(currentTab),
+													isMouseDown(false)
 		{
 		setName(name);
+		if(name=="Csound code")
+			active = true;
+		else 
+			active=false;
+		
 		}
 		~FlatButton(){}
 		
 	void mouseDown(const MouseEvent& event){
-		Logger::writeToLog("mouse down");
+		sendActionMessage(name);
+		Logger::writeToLog("mouseDown");
+		isMouseDown = true;
+		repaint();		
 	}
+	
+	void mouseUp(const MouseEvent& event){
+		Logger::writeToLog("mouseUp");
+		isMouseDown = false;
+		repaint();		
+	}	
+		
+	void isActive(bool isActive){
+		active = isActive;
+		repaint();
+	}	
 		
 	void paint(Graphics &g){
+		g.fillAll(Colour(20, 20, 20));
 		if(name.contains("code")){
-			if(currentTab==1)
+			Logger::writeToLog("changing code paint, currentTab:"+String(currentTab));
+			if(active)
 				g.setColour(Colours::cornflowerblue.darker(.4f));		
 			else
 				g.setColour(Colours::cornflowerblue.darker(.9f));	
 		
 			g.fillRoundedRectangle(getLocalBounds().toFloat(), 5.f);
-			if(currentTab==1)
+			if(active)
 				g.setColour(Colours::white);
 			else
 				g.setColour(Colours::white.darker(.9f));
@@ -170,7 +197,12 @@ class FlatButton : public Component,
 			g.drawFittedText(name, getLocalBounds(), Justification::centred, 1, 1.f);
 			}	
 		else{
-			g.setColour(Colours::brown.darker(.4f));		
+			float number = name.substring(6, 5).getDoubleValue();
+			if(isMouseDown)
+				g.setColour(Colours::brown.darker(.2f));
+			else
+				g.setColour(Colours::brown.darker(.6f));
+
 			g.fillRoundedRectangle(getLocalBounds().toFloat(), 5.f);
 			g.setColour(Colours::white);
 			g.drawRoundedRectangle(getLocalBounds().toFloat(), 5.f, 2);

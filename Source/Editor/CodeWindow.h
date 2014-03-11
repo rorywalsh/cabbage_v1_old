@@ -154,12 +154,12 @@ public:
 	void insertFromRepo();
 	
 	void setText(String file){
-	csoundDoc.replaceAllContent(file);
+	textEditor->setAllText(file);
 	}
 
 
 	String getText(){
-	 return csoundDoc.getAllContent();	
+	return textEditor->getAllText();	
 	}
 	
 	

@@ -51,6 +51,7 @@ class CabbageStandalone : public JUCEApplication
 			defaultPropSet->setValue("SetAlwaysOnTop", 1);	
 			defaultPropSet->setValue("PlantRepository", xml);
 			defaultPropSet->setValue("EditorColourScheme", 1);
+			defaultPropSet->setValue("showTabs", 1);
 			
 			appProperties->getUserSettings()->setFallbackPropertySet(defaultPropSet);
 			filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black);

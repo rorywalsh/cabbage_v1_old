@@ -468,6 +468,11 @@ filter->reCompileCsound(csdFile);
 	cabbageCsoundEditor->setText(csdFile.loadFileAsString());
 	cabbageCsoundEditor->textEditor->textChanged = false;
 	filter->codeEditor = cabbageCsoundEditor->textEditor;
+	if(getPreference(appProperties, "showTabs")==1)
+		{
+		cabbageCsoundEditor->textEditor->showTabs(true);
+		cabbageCsoundEditor->textEditor->showInstrs(true);
+		}
 //	if(Component::getCurrentlyFocusedComponent()->getName().contains("Panel"))
 //		Component::getCurrentlyFocusedComponent()->setWantsKeyboardFocus(false);
 	}
@@ -711,6 +716,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		subMenu.addItem(299, String("Use external editor"), true, false);
 		else
 		subMenu.addItem(299, String("Use external editor"), true, true);
+		
+		if(!getPreference(appProperties, "showTabs"))
+		subMenu.addItem(298, String("Show tabs in editor"), true, false);
+		else
+		subMenu.addItem(298, String("Show tabs in editor"), true, true);		
 
 		if(!getPreference(appProperties, "DisableGUIEditModeWarning"))
 		subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, true);
@@ -973,14 +983,33 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 			setPreference(appProperties, "PlantFileDir", browser.getResult().getFullPathName());
 		}	
 	}
-	//--------preference Csound IO
+	//--------preference Show tabs
+	else if(options==298){
+		if(getPreference(appProperties, "showTabs")==0)
+		{ 
+			setPreference(appProperties, "showTabs", 1);
+			//if(!cabbageCsoundEditor){
+				cabbageCsoundEditor->textEditor->showTabs(true);
+				cabbageCsoundEditor->textEditor->showInstrs(true);
+			//}
+		}
+		else
+		{
+			setPreference(appProperties, "showTabs", 0);
+			//if(!cabbageCsoundEditor){
+				cabbageCsoundEditor->textEditor->showTabs(false);
+				cabbageCsoundEditor->textEditor->showInstrs(false);
+			//}				
+		}
+	}
+	
 	else if(options==204){
 		if(getPreference(appProperties, "UseCabbageIO")==0) 
 			setPreference(appProperties, "UseCabbageIO", 1);
 		else
 			setPreference(appProperties, "UseCabbageIO", 0);
-	}
-	
+	}	
+
 	//--------using Cabbage-Csound
 	else if(options==206){
 		String homeFolder = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName();

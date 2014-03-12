@@ -174,8 +174,8 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
 					: CodeEditorComponent(document, codeTokeniser), type(type), textChanged(false)
 {
 	document.addListener(this);
-	setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
-	setColour(CodeEditorComponent::lineNumberBackgroundId, Colour::fromRGB(20, 20, 20));
+	setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(35, 35, 35));
+	setColour(CodeEditorComponent::lineNumberBackgroundId, Colour::fromRGB(35, 35, 35));
 	setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f)); 
 	setColour(CaretComponent::caretColourId, Colours::white);
 	setColour(TextEditor::backgroundColourId, Colours::black);

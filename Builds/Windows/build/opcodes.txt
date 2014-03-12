@@ -1790,3 +1790,6 @@
 "temposcal";"Uncategorized";"(Description not available)";"(Syntax not available)"
 "vdel_k";"Uncategorized";"(Description not available)";"(Syntax not available)"
 "xor";"Uncategorized";"(Description not available)";"(Syntax not available)"
+"until";"Uncategorized";"(Description not available)";"(Syntax not available)"
+"enduntil";"Uncategorized";"(Description not available)";"(Syntax not available)"
+"do";"Uncategorized";"(Description not available)";"(Syntax not available)"

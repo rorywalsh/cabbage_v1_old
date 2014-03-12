@@ -126,7 +126,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
 		
 	}
-	else deviceManager->closeAudioDevice();
+	deviceManager->closeAudioDevice();
 
 	setContentOwned (filter->createEditorIfNeeded(), true);
 
@@ -201,8 +201,10 @@ StandaloneFilterWindow::~StandaloneFilterWindow()
 
         globalSettings->setValue ("filterState", data.toBase64Encoding());
     }
+	
+	deleteFilter();
 	filter->suspendProcessing(true);
-    deleteFilter();
+   
 }
 
 //==============================================================================

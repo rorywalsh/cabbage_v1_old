@@ -77,12 +77,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 		textEditor->editor->setOpcodeStrings(File(opcodeFile).loadFileAsString());
 	//else csound->Message("Could not open opcodes.txt file, parameter display disabled..");
 
-	//set up popup for displaying info regarding opcodes..
-	popupDisplay = new PopupDisplay("Poppy");
-	popupDisplay->addActionListener(this);
-	popupDisplay->setTitleBarHeight(0);
-	popupDisplay->addToDesktop(0);
-	popupDisplay->setVisible(false);
+
 	
 	
 htmlHelp = new WebBrowserComponent(false);
@@ -565,12 +560,6 @@ void CodeWindow::actionListenerCallback(const String &message){
 	Logger::writeToLog(message);
 	if(message=="splash")
 		toggleTextWindows();
-	//else if(message=="pythonFocus")
-	//	pythonEditor->textEditor->grabKeyboardFocus();
-	else if(message=="make popup invisible"){
-		popupDisplay->setTopLeftPosition(1000, 1000);
-		popupDisplay->setVisible(false);
-	}
 	else if(message=="sendPythonEvent"){
 	/*	String text = pythonEditor->textEditor->getSelectedText();
 		String event = "pyruni {{\n";
@@ -586,35 +575,9 @@ void CodeWindow::actionListenerCallback(const String &message){
 	else if(message=="return focus to editor"){
 	textEditor->grabKeyboardFocus();		
 	}
-	else if(message.contains("popupDisplay")){
-			
-	int width = (font.getStringWidth(textEditor->editor->getOpcodeToken(2)) > font.getStringWidth(textEditor->editor->getOpcodeToken(3)) ? 
-											font.getStringWidth(textEditor->editor->getOpcodeToken(2)) : 
-											font.getStringWidth(textEditor->editor->getOpcodeToken(3)));
-	//popupDisplay->killSplash();
-	popupDisplay->setSize(width, 50);
-	popupDisplay->box->setSize(width, 50);
-
-	popupDisplay->setVisible(true);
-	popupDisplay->setAlwaysOnTop(true);
-	popupDisplay->addToDesktop(0);
-
-	popupDisplay->setTopLeftPosition(this->getCaretScreenPosition().getTopLeft());
-	//popupDisplay->setBounds(this->getCaretScreenPosition().getX(),
-	//						this->getCaretScreenPosition().getY()+18.f,
-	//						width, 50);
-	//popupDisplay->setWantsKeyboardFocus(false);
-	popupDisplay->setText(textEditor->editor->getOpcodeToken(2).removeCharacters("\""), 
-								   textEditor->editor->getOpcodeToken(3).removeCharacters("\""));
-		
-	textEditor->toFront(true);
-	//cabbageTimer->startTimedEvent(1, "return focus to editor");
-	textEditor->grabKeyboardFocus();
-
-	}
-	
-		
 }
+	
+
 
 
 void CodeWindow::timerCallback(){

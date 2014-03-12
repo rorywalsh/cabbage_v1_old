@@ -27,7 +27,10 @@ showTabButtons(false),
 instrWidth(60),
 showInstrumentButtons(false)
 {
-	addAndMakeVisible(editor = new CsoundCodeEditorComponenet("", document, codeTokeniser));
+	addAndMakeVisible(editor = new CsoundCodeEditorComponenet("csound", document, codeTokeniser));
+	
+	addAndMakeVisible(helpComp = new HelpComp());
+	editor->addActionListener(this);
 	
 	if(CabbageUtils::getPreference(appProperties, "showTabs")==1)
 	{
@@ -39,15 +42,24 @@ showInstrumentButtons(false)
 
 void CsoundCodeEditor::resized()
 {
-	if(showTabButtons&&showInstrumentButtons)
-		editor->setBounds(instrWidth+20, 20, getWidth(), getHeight());	
-	else if(showTabButtons && !showInstrumentButtons)
-		editor->setBounds(0, 20, getWidth(), getHeight());	
-	else if(showInstrumentButtons && !showTabButtons)
-		editor->setBounds(instrWidth+5, 0, getWidth(), getHeight());	
-	else
-		editor->setBounds(0, 0, getWidth(), getHeight());
-		
+	if(showTabButtons&&showInstrumentButtons){
+		editor->setBounds(instrWidth+20, 20, getWidth()-instrWidth-20, (getHeight()-20)-60);
+		helpComp->setBounds(instrWidth+20, getHeight()-60, getWidth()-instrWidth-20, 30);	
+	}	
+	else if(showTabButtons && !showInstrumentButtons){
+		editor->setBounds(0, 20, getWidth(), (getHeight()-60));	
+		helpComp->setBounds(0, getHeight()-60, getWidth(), 30);
+	}
+	else if(showInstrumentButtons && !showTabButtons){
+		editor->setBounds(instrWidth+5, 0, getWidth()-instrWidth-5, getHeight()-60);	
+		helpComp->setBounds(instrWidth+5, getHeight()-60, getWidth()-instrWidth-5, 30);
+	}
+	else{
+		editor->setBounds(0, 0, getWidth(), getHeight()-60);
+		helpComp->setBounds(0, getHeight()-60, getWidth(), 30);
+	}
+	
+	
 		
 	if(showTabButtons)
 	{
@@ -140,7 +152,14 @@ void CsoundCodeEditor::actionListenerCallback(const String &message)
 		
 		editor->scrollToLine(editor->getCaretPos().getLineNumber());
 		}
-		else{		
+		else if(message.contains("helpDisplay")){
+		//CodeDocument::Position newPos = editor->getCaretPos();
+		//editor->setCaretPos(editor->getCharacterBounds(editor->getCaretPos()));
+		helpComp->setText(String(" --- ")+editor->getOpcodeToken(2).removeCharacters("\""), 
+								   editor->getOpcodeToken(3).removeCharacters("\""));
+		//editor->setCaretPos(editor->getCharacterBounds(editor->getCaretPos()));
+		}
+		else{
 		String instrument = "instr "+message;
 		editor->moveCaretTo(CodeDocument::Position(editor->getDocument(), 
 												editor->getAllText().indexOf(instrument)),
@@ -192,9 +211,9 @@ void CsoundCodeEditorComponenet::highlightLine(String line){
 bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
 {
 	//Logger::writeToLog(String(key.getKeyCode()));	
-	if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down") 
-        || key.getTextDescription().contains("cursor left") || key.getTextDescription().contains("cursor right"))  
-	handleEscapeKey();
+	//if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down") 
+    //    || key.getTextDescription().contains("cursor left") || key.getTextDescription().contains("cursor right"))  
+	//handleEscapeKey();
 
 	if (! TextEditorKeyMapper<CodeEditorComponent>::invokeKeyFunction (*this, key))
     {
@@ -224,10 +243,8 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
 }
 //==============================================================================
 void CsoundCodeEditorComponenet::handleReturnKey (){
-if(type=="csound"){
 	insertNewLine("\n");
-	sendActionMessage("make popup invisible");		
-}		
+	//sendActionMessage("make popup invisible");				
 }	
 //==============================================================================
 void CsoundCodeEditorComponenet::insertText(String text){
@@ -252,7 +269,7 @@ void CsoundCodeEditorComponenet::insertNewLine(String text){
 //==============================================================================
 void CsoundCodeEditorComponenet::insertMultiTextAtCaret (String text)
 {
-	sendActionMessage("make popup invisible");
+	//sendActionMessage("make popup invisible");
 	StringArray csdArray;
 	csdArray.addLines(getAllText());
 	String curLine;	
@@ -279,7 +296,7 @@ void CsoundCodeEditorComponenet::insertMultiTextAtCaret (String text)
 		getDocument().insertText(newPos, text);	
 		newPos = newPos.movedByLines(1);
 		}
-	sendActionMessage("make popup invisible");
+	//sendActionMessage("make popup invisible");
 }
 //==============================================================================
 void CsoundCodeEditorComponenet::handleTabKey(String direction)
@@ -344,7 +361,7 @@ void CsoundCodeEditorComponenet::handleTabKey(String direction)
 	else
 		moveCaretTo(CodeDocument::Position (getDocument(), getAllText().indexOf(currentLine.substring(1))), false);
 
-	sendActionMessage("make popup invisible");	
+	//sendActionMessage("make popup invisible");	
 }
 //==============================================================================
 void CsoundCodeEditorComponenet::toggleComments()
@@ -580,7 +597,7 @@ if(CabbageUtils::getPreference(appProperties, "EnablePopupDisplay"))
 				if(syntaxTokens[0].removeCharacters("\"")==csdLineTokens[x].trim()){
 					if(syntaxTokens[0].length()>3){
 							//Logger::writeToLog(syntaxTokens[0]);
-							sendActionMessage("popupDisplay"+syntaxTokens[2]);
+							sendActionMessage("helpDisplay"+syntaxTokens[2]);
 							opcodeTokens = syntaxTokens;
 							x=csdLineTokens.size();
 							i=opcodeStrings.size();	
@@ -595,5 +612,5 @@ if(CabbageUtils::getPreference(appProperties, "EnablePopupDisplay"))
 //==============================================================================
 void CsoundCodeEditorComponenet::codeDocumentTextDeleted(int,int){
 textChanged = true;
-sendActionMessage("make popup invisible");	
+//sendActionMessage("make popup invisible");	
 }

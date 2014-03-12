@@ -66,8 +66,12 @@ public:
 	void setFile (const File& file);
 	void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
 	void setWaveform(AudioSampleBuffer buffer);
+	void createImage(String filename);
 	
 private:
+	Image img;
+	//Graphics& graphics;
+	int imgCount;
 	Range<double> visibleRange;
 	double zoom;
 	ScopedPointer<DrawableRectangle> currentPositionMarker;

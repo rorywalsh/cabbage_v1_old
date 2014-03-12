@@ -31,6 +31,7 @@ extern ApplicationProperties* appProperties;
 extern CabbageTimer* cabbageTimer;
 
 class FlatButton;
+class HelpComp;
 
 class CsoundCodeEditorComponenet : public CodeEditorComponent,
 						 public ActionBroadcaster,
@@ -131,6 +132,7 @@ public:
 	
 	OwnedArray<FlatButton> tabButtons;
 	OwnedArray<FlatButton> instrButtons;
+	ScopedPointer<HelpComp> helpComp;
 	
 	bool textChanged;	
 	ScopedPointer<CsoundCodeEditorComponenet> editor;
@@ -210,4 +212,49 @@ class FlatButton : public Component,
 			}
 		}
 };
+
+//============================================================
+// class for displaying popup text
+//============================================================
+class HelpComp : public Component
+{
+public:
+	HelpComp():firstTime(true)
+	{
+		this->setInterceptsMouseClicks(false, false);
+		setSize(10, 50);
+	}	
+	
+	~HelpComp(){};
+	
+	void setText(String _info, String _syntax){
+		syntax=_syntax;
+		info=_info;
+		repaint();
+	}
+
+	void paint(Graphics& g)
+	{
+		g.fillAll(Colour::fromRGB(40,40,40));
+		g.setColour(Colours::yellow);
+		g.drawRect(0, 0, getWidth()-1, getHeight()-1, 1);
+		g.setFont(14);
+		g.setColour(Colours::cornflowerblue);
+		g.drawFittedText(syntax, 10, 5, getWidth(), getHeight(), Justification::topLeft, 100, 1);
+		int width = Font(14).getStringWidth(syntax);
+		g.setColour(Colours::white);				
+		g.drawFittedText(info, width+30, 5, getWidth(), getHeight(), Justification::topLeft, 100, 1);
+	}
+	
+	void resized(){
+		setSize(getWidth(), getHeight());	
+	}
+	
+bool firstTime;
+private:
+
+String syntax, info;
+
+};
+
 #endif

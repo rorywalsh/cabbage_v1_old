@@ -57,6 +57,7 @@ Soundfiler::~Soundfiler()
 void Soundfiler::changeListenerCallback(ChangeBroadcaster *source)
 {
 	repaint();
+	Logger::writeToLog("Change listener");
 }
 //==============================================================================
 void Soundfiler::resized()
@@ -80,14 +81,16 @@ void Soundfiler::setFile (const File& file)
             scrollbar->setRangeLimits (newRange);
             setRange (newRange);
       }
-	repaint();
+	repaint(0, 0, getWidth(), getHeight());
 }
 
 //==============================================================================
 void Soundfiler::setWaveform(AudioSampleBuffer buffer)
 {            
-	thumbnail->clear();
+	thumbnail->clear();	
+	repaint();
 	thumbnail->reset(2, 44100, buffer.getNumSamples());	
+	//thumbnail->clear();
 	thumbnail->addBlock(0, buffer, 0, buffer.getNumSamples());
 	const Range<double> newRange (0.0, thumbnail->getTotalLength());
 	scrollbar->setRangeLimits (newRange);

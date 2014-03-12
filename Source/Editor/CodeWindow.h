@@ -106,7 +106,7 @@ public:
 	void setFontSize(String zoom)
 	{
 		
-		#ifdef WIN32
+		#if defined(WIN32) || defined(MACOSX)
 		String font = "Consolas";			
 		#else
 		String font = "Droid Sans Mono";

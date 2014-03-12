@@ -97,7 +97,6 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
 
     deviceManager = new AudioDeviceManager();
-	deviceManager->addAudioCallback (&player);
 	deviceManager->addMidiInputCallback (String::empty, &player);
 	deviceManager->closeAudioDevice();
 
@@ -415,7 +414,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 stopTimer();
   
 filter->suspendProcessing(true);
-
+deviceManager->addAudioCallback (&player);
 
 if(shouldResetFilter){
 	deviceManager->closeAudioDevice();

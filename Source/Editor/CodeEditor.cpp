@@ -184,7 +184,7 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
 	setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue); 
 	setColour(CodeEditorComponent::lineNumberTextId, Colours::whitesmoke);
 	setLineNumbersShown(true);
-	#ifdef WIN32
+	#if defined(WIN32) || defined(MACOSX)
 	setFont(Font(String("Consolas"), 13, 1));			
 	#else
 	setFont(Font(String("Droid Sans Mono"), 13, 1));

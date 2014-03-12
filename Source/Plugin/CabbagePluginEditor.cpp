@@ -2691,7 +2691,9 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 			String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
 			if(message.contains("tablenumber")){
 				int tableNumber = getFilter()->getGUILayoutCtrls(i).getNumProp(CabbageIDs::tablenumber);
-				Array <float, CriticalSection> tableValues = getFilter()->getTableFloats(tableNumber);
+				Array <float, CriticalSection> tableValues;
+				tableValues.clear();
+				tableValues = getFilter()->getTableFloats(tableNumber);
 				Logger::writeToLog(String(tableNumber));
 				Logger::writeToLog(String(tableValues.size()));
 				AudioSampleBuffer tableBuffer(2, tableValues.size());

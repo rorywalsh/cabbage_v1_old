@@ -24,7 +24,7 @@
 #include "CabbageUtils.h"
 #include "CabbageLookAndFeel.h"
 
-
+class ZoomButton;
 //=================================================================
 // display a sound file as a waveform..
 //=================================================================
@@ -81,11 +81,14 @@ private:
     void paint (Graphics& g);
     void mouseDown (const MouseEvent& e);
 	void mouseUp(const MouseEvent& e);
+	void mouseEnter(const MouseEvent& e);
     void mouseDrag(const MouseEvent& e);
+	void mouseExit(const MouseEvent& e);
 	bool reDraw;
 	double scrubberPosition;
 	void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
 	void changeListenerCallback(ChangeBroadcaster *source);
+	ScopedPointer<ZoomButton> zoomIn, zoomOut;
 
 	AudioFormatManager formatManager;
 	float sampleRate;
@@ -101,5 +104,6 @@ private:
 	double currentPlayPosition;
 	bool drawWaveform;
 };
+
 
 #endif // SOUNDFILEWAVEFORM_H

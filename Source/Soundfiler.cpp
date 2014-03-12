@@ -20,6 +20,35 @@
 #include "Soundfiler.h"
 
 //==============================================================================
+// zooming button
+//==============================================================================
+class ZoomButton : public Component,
+					public ChangeBroadcaster
+					
+{
+public:
+	ZoomButton(String type):Component()
+	{
+	setName(type);	
+	}
+	~ZoomButton(){}
+	
+	void mouseDown(const MouseEvent& e){
+		sendChangeMessage();
+	}
+	
+	void paint(Graphics& g){
+		g.fillAll(Colours::transparentBlack);
+		g.setColour(Colours::white.withAlpha(.8f));
+		g.fillEllipse(0, 0, getWidth(), getHeight());
+		g.setColour(Colours::black);
+		g.fillRoundedRectangle(getWidth()*.18, getHeight()*.4f, getWidth()*.65, getHeight()*.25, 2);
+		if(getName()=="zoomIn")
+			g.fillRoundedRectangle(getWidth()*.38f, getHeight()*.20, getWidth()*.25, getHeight()*.65, 2);
+	}
+	
+};
+//==============================================================================
 // soundfiler display  component
 //==============================================================================
 
@@ -46,6 +75,10 @@ Soundfiler::Soundfiler(int sr, Colour col, Colour fcol):	thumbnailCache (5),
 	scrollbar->addListener(this);
 	currentPositionMarker->setFill (Colours::white.withAlpha (0.85f));
 	addAndMakeVisible(currentPositionMarker);
+	addAndMakeVisible(zoomIn = new ZoomButton("zoomIn"));
+	addAndMakeVisible(zoomOut = new ZoomButton("zoomOut"));
+	zoomIn->addChangeListener(this);
+	zoomOut->addChangeListener(this);
 }
 //==============================================================================	
 Soundfiler::~Soundfiler()
@@ -56,12 +89,21 @@ Soundfiler::~Soundfiler()
 //==============================================================================	
 void Soundfiler::changeListenerCallback(ChangeBroadcaster *source)
 {
+	ZoomButton* button = dynamic_cast<ZoomButton*>(source);
+	if(button){
+		if(button->getName()=="zoomIn")
+			setZoomFactor(jmin(1.0, zoom+=0.1));
+		else
+			setZoomFactor(jmax(0.0, zoom-=0.1));
+	}
 	repaint();
 	Logger::writeToLog("Change listener");
 }
 //==============================================================================
 void Soundfiler::resized()
 {
+	zoomIn->setBounds(getWidth()-43, getHeight()-40, 20, 20);
+	zoomOut->setBounds(getWidth()-20, getHeight()-40, 20, 20);
 	if(scrollbar)
 		scrollbar->setBounds (getLocalBounds().removeFromBottom (20).reduced (2));
 }
@@ -150,12 +192,12 @@ void Soundfiler::paint (Graphics& g)
 			*/
         
 	
-		if(regionWidth>1){
+		//if(regionWidth>1){
 		g.setColour(colour.contrasting(.5f).withAlpha(.7f));
 		float zoomFactor = thumbnail->getTotalLength()/visibleRange.getLength();
 		//regionWidth = (regionWidth=2 ? 2 : regionWidth*zoomFactor)
 		g.fillRect(timeToX(currentPlayPosition), 10.f, (regionWidth==2 ? 2 : regionWidth*zoomFactor), (float)getHeight()-26.f);	
-		}
+		//}
 
 		}
 	else
@@ -186,13 +228,28 @@ void Soundfiler::mouseDown (const MouseEvent& e)
 	
 	if(!e.mods.isPopupMenu())
 		{
-		regionWidth = 2;	
+		regionWidth = (1.01-zoom)*1.5;	
 		currentPlayPosition = jmax (0.0, xToTime ((float) e.x));
 		loopStart = e.x;
 		loopLength =  0;
 		repaint();
 		sendChangeMessage();
 		}
+}
+//==============================================================================
+void Soundfiler::mouseEnter(const MouseEvent& e)
+{
+	//Logger::writeToLog("mouseOver soundfiler");
+	//if(thumbnail->getTotalLength()>0.01){
+	//	zoomIn->setVisible(true);
+	//	zoomOut->setVisible(true);
+	//}
+}
+//==============================================================================
+void Soundfiler::mouseExit(const MouseEvent& e)
+{
+	//	zoomIn->setVisible(false);
+	//	zoomOut->setVisible(false);
 }
 //==============================================================================
 void Soundfiler::mouseDrag(const MouseEvent& e)

@@ -95,10 +95,12 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
 
 
-
+	
     deviceManager = new AudioDeviceManager();
 	deviceManager->addMidiInputCallback (String::empty, &player);
 	deviceManager->closeAudioDevice();
+
+    
 
 	ScopedPointer<XmlElement> savedState;
 	if (globalSettings != nullptr)
@@ -202,7 +204,6 @@ StandaloneFilterWindow::~StandaloneFilterWindow()
     }
 	
 	deleteFilter();
-	filter->suspendProcessing(true);
    
 }
 
@@ -415,7 +416,7 @@ stopTimer();
   
 filter->suspendProcessing(true);
 deviceManager->addAudioCallback (&player);
-
+	
 if(shouldResetFilter){
 	deviceManager->closeAudioDevice();
 	deleteFilter();

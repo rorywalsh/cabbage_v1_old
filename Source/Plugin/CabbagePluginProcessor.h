@@ -147,6 +147,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 		void updateGUIControlsKsmps(int speed);
 		int guiRefreshRate;
 		
+		
 public:
 		Array<int> dirtyControls;
     //==============================================================================

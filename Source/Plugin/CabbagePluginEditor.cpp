@@ -41,7 +41,8 @@ currentLineNumber(0),
 #ifdef Cabbage_Build_Standalone
 propsWindow(new CabbagePropertiesDialog("Properties")),
 #endif
-xyPadIndex(0)
+xyPadIndex(0),
+tableBuffer(2, 44100)
 {
 	//setup swatches for colour selector. 
 	swatchColours.set(0, Colour(0xFF000000));
@@ -2691,12 +2692,12 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 			String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
 			if(message.contains("tablenumber")){
 				int tableNumber = getFilter()->getGUILayoutCtrls(i).getNumProp(CabbageIDs::tablenumber);
-				Array <float, CriticalSection> tableValues;
 				tableValues.clear();
 				tableValues = getFilter()->getTableFloats(tableNumber);
 				Logger::writeToLog(String(tableNumber));
 				Logger::writeToLog(String(tableValues.size()));
-				AudioSampleBuffer tableBuffer(2, tableValues.size());
+				tableBuffer.clear();
+				tableBuffer.setSize(2, tableValues.size());
 				tableBuffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());
 				tableBuffer.addFrom(1, 0, tableValues.getRawDataPointer(), tableValues.size());
 				//update waveform with sample data from function table...

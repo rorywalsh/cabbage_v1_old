@@ -1054,8 +1054,8 @@ if(!csCompileResult)
 			guiCtrls.getReference(index).parse(channelMessage, "");	
 			dirtyControls.addIfNotAlreadyThere(index);
 			}	
-			else
-				guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
+			//else
+				//guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
 			//zero channel message so that we don't keep sending the same string 
 			csound->SetChannel(guiCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
 			}			
@@ -1081,11 +1081,11 @@ if(!csCompileResult)
 			csound->GetStringChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), string);	
 			channelMessage = String(string);
 			if(channelMessage!=""){
+			guiLayoutCtrls.getReference(index).parse(channelMessage, "");
 			guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
-			guiLayoutCtrls.getReference(index).parse(channelMessage, "");		
 			}	
-			else
-				guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
+			//else
+			//	guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
 			//zero channel message so that we don't keep sending the same string 
 			csound->SetChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
 			}

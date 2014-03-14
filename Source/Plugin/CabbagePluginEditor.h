@@ -158,6 +158,8 @@ private:
         int zero_dbfs;
 		StringArray tempArray;
 		StringArray pastEvents;
+		Array <float, CriticalSection> tableValues;
+		AudioSampleBuffer tableBuffer;
 		
 
 

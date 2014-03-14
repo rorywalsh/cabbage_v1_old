@@ -108,6 +108,7 @@ csound->SetExternalMidiReadCallback(ReadMidiData);
 csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
 csound->SetExternalMidiWriteCallback(WriteMidiData);
 
+csound->SetIsGraphable(0);
 #ifndef Cabbage_Plugin_Host
 if(!getPreference(appProperties, "UseCabbageIO")){
 	csoundPerfThread = new CsoundPerformanceThread(csound);
@@ -157,7 +158,7 @@ if(csCompileResult==0){
         if(csound->GetSpout()==nullptr);
         CSspout = csound->GetSpout();
         CSspin  = csound->GetSpin();
-        numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
+       // numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
         csndIndex = csound->GetKsmps();
 		csdKsmps = csound->GetKsmps();
         cs_scale = csound->Get0dBFS();
@@ -286,7 +287,7 @@ if(csCompileResult==0){
         CSspout = csound->GetSpout();
         CSspin  = csound->GetSpin();
         cs_scale = csound->Get0dBFS();
-        numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
+        //numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
         csndIndex = csound->GetKsmps();
 		this->setLatencySamples(csound->GetKsmps());
 		updateHostDisplay();
@@ -386,7 +387,7 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
 suspendProcessing(true);
 getCallbackLock().enter();
 midiOutputBuffer.clear();
-csound->DeleteChannelList(csoundChanList);
+//csound->DeleteChannelList(csoundChanList);
 
 csound->Reset();
 
@@ -420,7 +421,7 @@ if(csCompileResult==0){
         csound->SetScoreOffsetSeconds(0);
         csound->RewindScore();
         Logger::writeToLog("Csound compiled your file");
-        numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
+        //numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
         cs_scale = csound->Get0dBFS();
         csoundStatus = true;
         debugMessageArray.add(CABBAGE_VERSION);
@@ -916,10 +917,11 @@ const Array<double, CriticalSection> CabbagePluginAudioProcessor::getTable(int t
 const Array<float, CriticalSection> CabbagePluginAudioProcessor::getTableFloats(int tableNum)
 {
 		Array<float, CriticalSection> points;
+		points.clear();
 
 		int tableSize=0;
 #ifndef Cabbage_No_Csound
-		MYFLT* temp;
+		MYFLT* temp = {0};
 		tableSize = csound->GetTable(temp, tableNum);
 #else
         float *temp;

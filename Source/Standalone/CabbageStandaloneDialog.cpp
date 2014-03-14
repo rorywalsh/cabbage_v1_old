@@ -925,7 +925,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	
 	//----- update instrument  ------
     else if(options==8){
-        resetFilter(false);
+        resetFilter(true);
 		//filter->reCompileCsound();
 	}
 	//----- update GUI only -----

@@ -408,7 +408,6 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		}
 	else if(info.commandID==CommandIDs::insertFromRepo)
 		{			
-		popupDisplay->setVisible(false);
 		CodeWindow::insertFromRepo();
 		}
 
@@ -531,25 +530,7 @@ else{
 
 void CodeWindow::toggleTextWindows()
 {
-/*
-if(showOutput){
-		setContentNonOwned(textEditor, false);
-		setMenuBar(this, 25);
-		stopTimer();
-		if(firstTime)
-		outputTextEditor->setText("");
-		firstTime==false;
-		repaint();
-}
-else{
-	startTimer(100);	
-	setContentNonOwned(outputTextEditor, false);
-	setMenuBar(this, 25);
-	outputTextEditor->setFont(Font(String("Courier New"), 15, 1));
-		repaint();
-}				
-showOutput=!showOutput;
-*/	
+
 }
 
 void CodeWindow::setEditorColourScheme(String theme){
@@ -560,18 +541,6 @@ void CodeWindow::actionListenerCallback(const String &message){
 	Logger::writeToLog(message);
 	if(message=="splash")
 		toggleTextWindows();
-	else if(message=="sendPythonEvent"){
-	/*	String text = pythonEditor->textEditor->getSelectedText();
-		String event = "pyruni {{\n";
-		if(text.length()>0)
-		event << text;
-		event << "\n}}";
-		Logger::writeToLog(event);
-//		csound->CompileOrc(event.toUTF8());
-		this->grabKeyboardFocus();
-	
-	 */
-	}
 	else if(message=="return focus to editor"){
 	textEditor->grabKeyboardFocus();		
 	}
@@ -581,10 +550,7 @@ void CodeWindow::actionListenerCallback(const String &message){
 
 
 void CodeWindow::timerCallback(){
-//		if(showOutput){
-//			outputTextEditor->setText(csoundOutputText);
-//			outputTextEditor->setCaretPosition(outputTextEditor->getText().length());
-//		}
+
 }
 
 void CodeWindow::insertFromRepo(){

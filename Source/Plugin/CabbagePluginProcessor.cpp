@@ -1080,6 +1080,7 @@ if(!csCompileResult)
 			//guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress()
 			csound->GetStringChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), string);	
 			channelMessage = String(string);
+			//Logger::writeToLog(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel));
 			if(channelMessage!=""){
 			guiLayoutCtrls.getReference(index).parse(channelMessage, "");
 			guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());

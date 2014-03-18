@@ -882,6 +882,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 
             else if(identArray[indx].equalsIgnoreCase(" colour(")||
 				identArray[indx].equalsIgnoreCase(",colour(")||
+				identArray[indx].equalsIgnoreCase("colour(")||
 				identArray[indx].equalsIgnoreCase(" colours(")||
 				identArray[indx].equalsIgnoreCase(", colours(")){
 					cabbageIdentifiers.set(CabbageIDs::colour, getColourFromText(strTokens.joinIntoString(",")).toString());									
@@ -1374,6 +1375,9 @@ Colour CabbageGUIClass::getColourFromText(String text)
 		colour = Colour::fromRGB (strTokens[0].getIntValue(),
 					strTokens[1].getIntValue(), 
 					strTokens[2].getIntValue());
+	
+	//Logger::writeToLog(text);
+	//Logger::writeToLog(colour.toString());
 	return colour;
 }
 //==================================================================

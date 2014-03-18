@@ -43,6 +43,7 @@ IdentArray() : StringArray("")
     add(",colour(");
 	add("tablecolour(");
 	add(" colour(");
+	add("colour(");
     add(",colours(");
 	add(" colours(");
     add("fontcolour(");

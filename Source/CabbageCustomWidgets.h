@@ -645,7 +645,7 @@ public:
 	}
 	
 	void paint (Graphics& g){
-		if(file.length()>5){
+		if(File(file).existsAsFile()){
 		g.drawImage(img, 0, 0, width, height, 0, 0, img.getWidth(), img.getHeight());
 		}
 		else{
@@ -658,6 +658,7 @@ public:
 			else if(shape.contains("ellipse")){
 				g.setColour(Colour::fromString(outline));
 				g.drawEllipse(0,0, width, height, line);
+				Logger::writeToLog("Repaint:"+colour);
 				g.setColour(Colour::fromString(colour));
 				g.fillEllipse(line,line, width-(line*2), height-(line*2));				
 			}

@@ -126,111 +126,6 @@ private:
 	String text;
 	
 };
-//class for our audio source, used by soundfilers
-class CabbageAudioSource : public ChangeBroadcaster
-{
-TimeSliceThread thread;
-public:
-	CabbageAudioSource(String audioFile, int _numSamples, int channels=2)
-	:thread("audio source"), isSourcePlaying(false), index(0), numSamples(_numSamples), isValidFile(false)
-	{
-	setFile(audioFile, channels);
-	}
-	
-	~CabbageAudioSource()
-	{
-		thread.stopThread(10);
-		delete audioSourceBuffer;
-		audioSource= nullptr;
-	}	
-	
-	bool setFile(String audioFile , int channels)
-	{
-		isSourcePlaying = false;
-		AudioFormatManager formatManager;
-		formatManager.registerBasicFormats(); 
-		AudioFormatReader* reader;
-		audioSource = nullptr;
-		audioSourceBuffer = nullptr;
-		//check for valid file
-		if(audioFile.length()>2){ 
-		isValidFile = true;
-		reader = formatManager.createReaderFor (File(audioFile));  
-			if(reader!=0){
-			sampleRate = reader->sampleRate;
-			audioSource = new AudioFormatReaderSource (reader, true);
-			audioSourceBuffer = new BufferingAudioSource(audioSource, thread, true, 32768, channels);		
-			sampleRate = reader->sampleRate;
-			thread.startThread();
-			audioSourceBuffer->prepareToPlay(sampleRate, numSamples);
-			//send message so our soundfilers knows to update
-			sendChangeMessage();
-			return true;
-			}
-			
-		}
-			else{
-			isValidFile = false;
-			return false;	
-			} 
-			
-	}	
-	
-	BufferingAudioSource* audioSourceBuffer;
-	PositionableAudioSource* audioSource;
-	int sampleRate, index, numSamples;	
-	bool isSourcePlaying;
-	bool isValidFile;
-	AudioSourceChannelInfo sourceChannelInfo;
-	StringArray channels;
-	
-	void stopThread(){
-		thread.stopThread(0);
-	}	
-	
-
-private:
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageAudioSource);	
-
-};
-//===========================================================================================
-//some utility functions used across classes...
-//===========================================================================================
-
-
-class CabbagePatternMatrixStepData
-{
-public:
-	int state, p4; 
-
-	CabbagePatternMatrixStepData():
-		state(0), p4(0){
-	}
-};
-
-class CabbagePatternMatrixPfieldData
-{
-public:
-	int p5, p6, p7, p8, p9, p10; 
-
-	CabbagePatternMatrixPfieldData():
-		p5(0), p6(0), p7(0), p8(0), p9(0), p10(0){
-	}
-};
-
-
-class Gen1ScoreEvent 
-{
-public:
-int ftableNumber;
-String filename; 
-	Gen1ScoreEvent(int _ftableNumber, String _filename): ftableNumber(_ftableNumber), filename(_filename){}
-	
-	String getGen1ScoreEvent(){
-		String temp = "f "+String(ftableNumber)+" 0 0 1 \""+filename+"\" 0 4 1"; 
-		return temp;
-	}
-};
 
 //===========================================================================================
 //some utility functions used across classes...
@@ -764,7 +659,7 @@ String returnFullPathForFile(String file, String fullPath)
 			#endif
 		#endif
 		#ifdef LINUX
-		pic = file;
+		pic = fullPath+String("/")+file;;
 		#endif
 		#ifdef WIN32
 		pic = fullPath+String("\\")+file;;

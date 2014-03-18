@@ -1306,10 +1306,12 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 {
-		String pic = returnFullPathForFile(cAttr.getStringProp(CabbageIDs::file), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());	
-		cAttr.setStringProp(CabbageIDs::file, pic);
+	if(!File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::file)))	
+	{
+	String pic = returnFullPathForFile(cAttr.getStringProp(CabbageIDs::file), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());	
+	cAttr.setStringProp(CabbageIDs::file, pic);
+	}	
 		layoutComps.add(new CabbageImage(cAttr));
-	
         int idx = layoutComps.size()-1;
         float left = cAttr.getNumProp(CabbageIDs::left);
         float top = cAttr.getNumProp(CabbageIDs::top);
@@ -2712,6 +2714,7 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 			{
 			((CabbageImage*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
 			getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
+			repaint();
 			}
 	
         else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::table){

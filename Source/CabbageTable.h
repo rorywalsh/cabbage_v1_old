@@ -60,7 +60,7 @@ private:
 class TableData
 {
 public:
-	Array<double, CriticalSection> amps, x, y;
+	Array<float, CriticalSection> amps, x, y;
 };
 
 class OverviewData
@@ -87,7 +87,7 @@ public:
 	void resized();
 	void setOriginalWidth(int w);
 	void setGlobalAmpRange (float globalMax, float globalMin, float globalRange);
-	void createAmpOverviews (Array<double, CriticalSection> csndInputData);
+	void createAmpOverviews (Array<float, CriticalSection> csndInputData);
 	void setDataSource (int zoomValue);
 	float convertAmpToPixel (float ampValue);
 	float convertPixelToAmp(float pixelYValue);
@@ -182,7 +182,7 @@ public:
 	               Colour colour,
 				   bool readOnly,
 	               ChangeListener* listener);
-	void fillTable (int tableID, Array<double, CriticalSection> csndInputData);
+	void fillTable (int tableID, Array<float, CriticalSection> csndInputData);
 	void tableToTop (int tableOnTop);
 	void mouseDown (const MouseEvent& e);
 	void mouseDrag(const MouseEvent& e);

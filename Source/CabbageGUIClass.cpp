@@ -1260,7 +1260,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 						tableNumbers.add(strTokens[i].trim().getFloatValue());
 						value.append(strTokens[i].trim().getFloatValue());					
 					}
-				Logger::writeToLog(value[0].toString());
+				//Logger::writeToLog(value[0].toString());
 				cabbageIdentifiers.set(CabbageIDs::tablenumber, value);
 				//cabbageIdentifiers.set("tablenum", tableNum);
 			}

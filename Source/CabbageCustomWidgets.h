@@ -1353,7 +1353,7 @@ class CabbageTable : public Component
 		
 	}
 	//---------------------------------------------
-	void fillTable(int ID, Array<double, CriticalSection> yValues){
+	void fillTable(int ID, Array<float, CriticalSection> yValues){
 		if(yValues.size()>1)
 		table->fillTable(ID, yValues);
 		table->repaint();

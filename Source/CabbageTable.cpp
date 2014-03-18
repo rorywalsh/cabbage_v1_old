@@ -188,7 +188,7 @@ void Table::setGlobalAmpRange(float globalMaxAmp, float globalMinAmp, float glob
 }
 
 //====================================================
-void Table::createAmpOverviews (Array<double, CriticalSection> csndInputData)
+void Table::createAmpOverviews (Array<float, CriticalSection> csndInputData)
 {
 	//This method creates smaller amp overview arrays using the
 	//original table data...
@@ -885,7 +885,7 @@ void CabbageTableManager::tableToTop (int tableIndex)
 
 }
 
-void CabbageTableManager::fillTable (int tableIndex, Array<double, CriticalSection> csndInputData)
+void CabbageTableManager::fillTable (int tableIndex, Array<float, CriticalSection> csndInputData)
 {
 	if(isPositiveAndBelow(tableIndex, tables.size()))
 	{
@@ -932,7 +932,7 @@ void CabbageTableManager::fillTable (int tableIndex, Array<double, CriticalSecti
 	for (int i=0; i<tables.size(); ++i)
 		tables[i]->setGlobalAmpRange(globalMaxAmp, globalMinAmp, globalAmpRange);
 
-	tables[tableIndex]->createAmpOverviews(csndInputData);
+	tables[tableIndex]->createAmpOverviews((csndInputData));
 	
 	if(tables[tableIndex]->drawHorizontalSegments &&
 		tables[tableIndex]->fixedEnvelope &&

@@ -2717,12 +2717,23 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 			repaint();
 			}
 	
-        else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::table){
-				//int tableNumber = getFilter()->getGUILayoutCtrls(i).getNumProp("tableNum");
-				//update look of control...
-				if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+        else if((getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::table) &&
+				getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+				{
+				String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
+				if(message.contains("tablenumber")){
+				int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();				
+				for(int y=0;y<numberOfTables;y++)
+					{
+					int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
+					Array <float, CriticalSection> tableValues = getFilter()->getTableFloats(tableNumber);
+					((CabbageTable*)layoutComps[i])->fillTable(y, tableValues);		
+					}			
+				}
+					
+					/*
 					((CabbageTable*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
-				
+					{
                 int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();				
 				//for(int y=0;y<getFilter()->getGUILayoutCtrls(i).getNumberOfTableChannels();y++)
 				for(int y=0;y<numberOfTables;y++)
@@ -2732,7 +2743,7 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 					if(val<0)
 						{
 						int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
-						Array <double, CriticalSection> tableValues = getFilter()->getTable(tableNumber);
+						Array <float, CriticalSection> tableValues = getFilter()->getTableFloats(tableNumber);
 						((CabbageTable*)layoutComps[i])->fillTable(y, tableValues);
 						getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringArrayPropValue(CabbageIDs::channel, y).toUTF8(), 0,
 																				getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type));
@@ -2742,7 +2753,7 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 						((CabbageTable*)layoutComps[i])->setScrubberPosition(y, val);	
 						}
 					
-				}
+				}*/
 				  
         }
 }

@@ -1492,7 +1492,7 @@ void CabbagePluginAudioProcessor::getStateInformation (MemoryBlock& destData)
     XmlElement xml ("CABBAGE_PLUGIN_SETTINGS");
 	
 	for(int i=0;i<guiCtrls.size();i++)
-			xml.setAttribute (guiCtrls[i].getStringProp(CabbageIDs::channel), guiCtrls[i].getNumProp(CabbageIDs::value));
+			xml.setAttribute (guiCtrls[i].getStringProp(CabbageIDs::channel),getParameter(i));
 
 
     // then use this helper function to stuff it into the binary blob and return it..

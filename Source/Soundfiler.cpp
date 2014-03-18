@@ -277,7 +277,9 @@ currentPositionMarker->setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 10
                                                               1.5f, (float) (getHeight() - scrollbar->getHeight()-10)));
 if(pos<0.5)
 	setRange (visibleRange.movedToStartAt(0));
-if(visibleRange.getEnd()!=thumbnail->getTotalLength())
+	
+	
+if(visibleRange.getEnd()<=thumbnail->getTotalLength())
 setRange (visibleRange.movedToStartAt (jmax(0.0, pos - (visibleRange.getLength() / 2.0))));
 }
 //==============================================================================

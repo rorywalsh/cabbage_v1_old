@@ -1526,17 +1526,15 @@ else{
 		
 		
 		
-		for(int i=0;i<files.size();i++){
+		for(int i=0;i<files.size();i++)
+			{
 			File dll(files.getReference(i).withFileExtension(".dll").getFullPathName());
-		//showMessage(dll.getFullPathName());
-		if(!VSTData.copyFileTo(dll))	
-			showMessage("problem moving plugin lib");
-		else{
-		//File loc_csdFile(saveFC.getResults().getReference(i).withFileExtension(".csd").getFullPathName());
-		//loc_csdFile.replaceWithText(csdFile.loadFileAsString());
-		}
-		}
-		showMessage("Batch Convertion Complete", &getLookAndFeel());
+			//showMessage(dll.getFullPathName());
+			if(!VSTData.copyFileTo(dll))	
+				showMessage("problem moving plugin lib");
+			setUniquePluginID(dll, files.getReference(i), false);
+			}
+			showMessage("Batch Convertion Complete", &getLookAndFeel());
 	}
 	
 #endif

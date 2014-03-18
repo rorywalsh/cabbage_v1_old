@@ -1407,19 +1407,19 @@ unsigned char *mbuf, int nbytes)
            while (i.getNextEvent (message, messageFrameRelativeTothisProcess))
            {
                    if(message.isNoteOn()){
-                        *mbuf++ = (unsigned char)0x90 + message.getChannel();
+                        *mbuf++ = (unsigned char)0x90 + message.getChannel()-1;
                    *mbuf++ = (unsigned char)message.getNoteNumber();
                    *mbuf++ = (unsigned char)message.getVelocity();
                    cnt += 3;
                    }
                    else if(message.isNoteOff()){
-                        *mbuf++ = (unsigned char)0x80 + message.getChannel();
+                        *mbuf++ = (unsigned char)0x80 + message.getChannel()-1;
                    *mbuf++ = (unsigned char)message.getNoteNumber();
                    *mbuf++ = (unsigned char)message.getVelocity();
                    cnt += 3;
                    }
 				   else if(message.isAllSoundOff()){
-                        *mbuf++ = (unsigned char)0x7B + message.getChannel();
+                        *mbuf++ = (unsigned char)0x7B + message.getChannel()-1;
                    *mbuf++ = (unsigned char)message.getNoteNumber();
                    *mbuf++ = (unsigned char)message.getVelocity();
                    cnt += 3;
@@ -1428,6 +1428,16 @@ unsigned char *mbuf, int nbytes)
 						*mbuf++ = (unsigned char)0xB0 + message.getChannel()-1;
 				   *mbuf++ = (unsigned char)message.getControllerNumber();
 				   *mbuf++ = (unsigned char)message.getControllerValue();
+				   cnt += 3;
+				   }
+				   else if(message.isProgramChange()){
+						*mbuf++ = (unsigned char)0xC0 + message.getChannel()-1;
+				   *mbuf++ = (unsigned char)message.getProgramChangeNumber();
+				   cnt += 2;
+				   }
+				   else if(message.isPitchWheel()){
+						*mbuf++ = (unsigned char)0xE0 + message.getChannel()-1;
+				   *mbuf++ = (unsigned char)message.getPitchWheelValue();
 				   cnt += 3;
 				   }
 

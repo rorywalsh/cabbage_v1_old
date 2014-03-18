@@ -895,7 +895,7 @@ void CabbagePluginAudioProcessorEditor::mouseDown(const MouseEvent& event)
 	{
 		for(int i=0;i<popupMenus.size();i++)
 		{		
-			if(getFilter()->getGUILayoutCtrls(popupMenus[i]).getBounds().contains(event.getPosition()))
+			if(getFilter()->getGUILayoutCtrls(popupMenus[i]).getBounds().contains(event.getEventRelativeTo(this).getPosition()))
 			{
 				int index = popupMenus[i];
 				layoutComps[popupMenus[i]]->setLookAndFeel(lookAndFeel);

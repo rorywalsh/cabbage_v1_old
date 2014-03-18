@@ -174,22 +174,26 @@ void Soundfiler::paint (Graphics& g)
             thumbnail->drawChannels(g, thumbArea.reduced (2),
                                     visibleRange.getStart(), visibleRange.getEnd(), .8f);
 			
-			/*
-			for(int i=0, offset=0;i<getWidth();i+=(getWidth()/visibleRange.getLength()/4), offset++){
+			
+			for(int i=0.f;i<getWidth();i++){
 			g.setColour (fontcolour);
 			//float pos = visibleRange.getStart()+i;	
 			//float xPos = (jmax(1, i)/visibleRange.getStart()) / (visibleRange.getLength() * getWidth());
-			if(offset%2==0)
+			//double round = xToTime(i);
+			
+			double round = fabs(xToTime(i));
+			//Logger::writeToLog(String(round-abs((int)round)));
+			if(round-abs((int)round)<(0.05*(1-zoom)))
 			{
 				String test = CabbageUtils::setDecimalPlaces(xToTime(i), 1);
-				g.setFont(8);
-				g.drawFittedText(test, i, 0, 20, 5, Justification::left, 1);
-				g.drawVerticalLine(i+1, 5, 10);
+				g.setFont(10);
+				g.drawFittedText(test, i, 0, 20, 11, Justification::left, 1);
+				//g.drawVerticalLine(i+1, 5, 10);
 			}	
 			
-			g.drawVerticalLine(i, 5, 10);
+			//g.drawVerticalLine(i, 5, 10);
 			}
-			*/
+			
         
 	
 		//if(regionWidth>1){

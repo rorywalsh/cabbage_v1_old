@@ -81,7 +81,8 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 		Array<int> tableNumbers;
 		AudioPlayHead::CurrentPositionInfo hostInfo;
 
-		//ScopedPointer<FileLogger> fileLogger;
+		ScopedPointer<FileLogger> fileLogger;
+		bool createLog;
 
 
 		File logFile;
@@ -284,11 +285,15 @@ public:
 		#ifdef WIN32		
 		//showMessage(getenv("OPCODE6DIR64"));
 		String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\CsoundPlugins";
+		if(!File(opcodeDir).exists())
+			opcodeDir = String(getenv("CABBAGE_OPCODE_PATH"));
+		
+		Logger::writeToLog("\n================================\nCabbage opcode plugins are located at:"+opcodeDir);
 		//showMessage(opcodeDir);
 			if(File(opcodeDir).exists()){
 			String env = "OPCODE6DIR64="+opcodeDir;
 			_putenv(env.toUTF8().getAddress());
-			//showMessage(getenv("OPCODE6DIR64"));
+			Logger::writeToLog("Current opcodeDir is:"+String(getenv("OPCODE6DIR64")));
 			}
 		#endif
 		}

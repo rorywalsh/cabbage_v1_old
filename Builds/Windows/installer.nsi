@@ -69,13 +69,11 @@ section "install"
 	File "build\CabbagePluginEffect.dat"
 	File "build\opcodes.txt"
 	File "..\..\..\CsoundLibs\csound64.dll"
-	File "..\..\..\CsoundLibs\csound.exe"
+	File "..\..\..\CsoundLibs\csnd6.dll"
+	File "..\..\..\CsoundLibs\ipmidi.dll"
 	File "..\..\..\CsoundLibs\libsndfile-1.dll"
 	File "..\..\..\CsoundLibs\liblo-7.dll"
 	File "..\..\..\CsoundLibs\py.dll"
-	File "..\..\..\CsoundLibs\rtwinmm.dll"
-	File "..\..\..\CsoundLibs\portaudio_x86.dll"
-	File "..\..\..\CsoundLibs\rtpa.dll"
 	File "..\..\..\MingwLibs\libwinpthread-1.dll"
 	File "..\..\..\MingwLibs\libgomp-1.dll"
 	File "..\..\..\MingwLibs\libgcc_s_dw2-1.dll"
@@ -91,6 +89,7 @@ section "install"
 
 
 	${EnvVarUpdate} $0 "PATH" "P" "HKLM" "$INSTDIR"  ;Prepend path so we don't confuse a previously installed Csound 
+	${EnvVarUpdate} $0 "CABBAGE_OPCODE_PATH" "P" "HKLM" "$INSTDIR\CsoundPlugins"  ;Prepend path so we don't confuse a previously installed Csound 
  
 sectionEnd
  

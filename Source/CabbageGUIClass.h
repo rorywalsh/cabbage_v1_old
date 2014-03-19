@@ -97,6 +97,7 @@ IdentArray() : StringArray("")
 	add("tablenumbers(");
 	add("tablenums(");
 	add("fill(");
+	add("logger(");
 	add("file(");
 	add("outlinecolour(");
 	add("master(");
@@ -191,6 +192,7 @@ namespace CabbageIDs
 	static const Identifier miny = "miny";
 	static const Identifier maxx = "maxx";
 	static const Identifier maxy = "maxy";
+	static const Identifier logger = "logger";
 	static const Identifier valuex = "valuex";
 	static const Identifier fillcolour = "fillcolour";
 	static const Identifier valuey = "valuey";

@@ -70,6 +70,7 @@ averageSampleIndex(0),
 pluginType(_pluginType),
 automationAmp(0),
 isAutomator(false),
+createLog(false),
 automationParamID(-1),
 debugMessage(""),
 guiRefreshRate(20),
@@ -78,14 +79,30 @@ mouseX(0)
 {
 //suspendProcessing(true);
 codeEditor = nullptr;
-#ifdef Cabbage_Logger
-logFile = File((appProperties->getCommonSettings(true)->getFile().getParentDirectory().getFullPathName()+"/CabbageLog.txt"));
-fileLogger = new FileLogger(logFile, String("Cabbage Log.."));
-Logger::setCurrentLogger(fileLogger);
-#endif
 
 
 setPlayConfigDetails(2, 2, 44100, 512);
+
+
+//set up file logger if needed..
+StringArray tmpArray;
+CabbageGUIClass cAttr;
+
+tmpArray.addLines(File(inputfile).loadFileAsString());
+for(int i=0;i<tmpArray.size() || tmpArray[i].contains("</Cabbage>");i++)
+	if(tmpArray[i].contains("logger("))
+	{
+		CabbageGUIClass cAttr(tmpArray[i], -99);
+		createLog = cAttr.getNumProp(CabbageIDs::logger);
+		if(createLog)
+		{
+		String logFileName = File(inputfile).getParentDirectory().getFullPathName()+String("/")+File(inputfile).getFileNameWithoutExtension()+String("_Log.txt");
+		logFile = File(logFileName);
+		fileLogger = new FileLogger(logFile, String("Cabbage Log.."));
+		Logger::setCurrentLogger(fileLogger);			
+		}			
+	}
+
 
 #ifndef Cabbage_No_Csound
 //don't start of run Csound in edit mode
@@ -128,6 +145,7 @@ dataout = new PVSDATEXT;
 
 if(inputfile.isNotEmpty()){
 File(inputfile).setAsCurrentWorkingDirectory();
+
 #ifdef CSOUND6
 csoundParams = new CSOUND_PARAMS();
 csoundParams->nchnls_override =2;
@@ -177,7 +195,7 @@ else{
 }
 }
 else
-Logger::writeToLog("Welcome to Cabbage");
+Logger::writeToLog("Welcome to Cabbage, problems with input file...");
 
 #endif
 lookAndFeel = new CabbageLookAndFeel();
@@ -203,6 +221,7 @@ bpm(120),
 patMatrixActive(0),
 masterCounter(0),
 xyAutosCreated(false),
+createLog(false),
 updateTable(false),
 yieldCallbackBool(false),
 yieldCounter(10),
@@ -233,10 +252,29 @@ File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
 
 //set logger
 #ifdef Cabbage_Logger
-logFile = File(File(csdFile.getFullPathName()).getParentDirectory().getFullPathName()+"/CabbageLog.txt");
-fileLogger = new FileLogger(logFile, String("Cabbage Log.."));
-Logger::setCurrentLogger(fileLogger);
+
 #endif
+
+
+csdFile.setAsCurrentWorkingDirectory();
+
+StringArray tmpArray;
+CabbageGUIClass cAttr;
+
+tmpArray.addLines(csdFile.loadFileAsString());
+for(int i=0;i<tmpArray.size() || tmpArray[i].contains("</Cabbage>");i++)
+	if(tmpArray[i].contains("logger("))
+	{
+		CabbageGUIClass cAttr(tmpArray[i], -99);
+		createLog = cAttr.getNumProp(CabbageIDs::logger);
+		if(createLog)
+		{
+		String logFileName = csdFile.getParentDirectory().getFullPathName()+String("/")+csdFile.getFileNameWithoutExtension()+String("_Log.txt");
+		logFile = File(logFileName);
+		fileLogger = new FileLogger(logFile, String("Cabbage Log.."));
+		Logger::setCurrentLogger(fileLogger);			
+		}			
+	}
 
 setOpcodeDirEnv();
 
@@ -267,8 +305,6 @@ csoundParams->nchnls_override =2;
 csoundParams->displays = 0;
 csound->SetParams(csoundParams);
 #endif
-
-csdFile.setAsCurrentWorkingDirectory();
 
 csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
 csdFile.setAsCurrentWorkingDirectory();
@@ -839,13 +875,13 @@ void CabbagePluginAudioProcessor::messageCallback(CSOUND* csound, int /*attr*/, 
   CabbagePluginAudioProcessor* ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
   char msg[MAX_BUFFER_SIZE];
   vsnprintf(msg, MAX_BUFFER_SIZE, fmt, args);
-// MOD - Stefano Bonetti
+
   ud->debugMessage += String(msg); //We have to append the incoming msg
   ud->csoundOutput += ud->debugMessage;
   ud->debugMessageArray.add(ud->debugMessage);
-  //Logger::writeToLog(String(msg).trim());
+  if(ud->createLog)
+	  Logger::writeToLog(String(msg).trim());
   ud->sendChangeMessage();
-// MOD - End
   ud->debugMessage = "";
   ud = nullptr;
 }

@@ -131,6 +131,7 @@ File(inputfile).setAsCurrentWorkingDirectory();
 #ifdef CSOUND6
 csoundParams = new CSOUND_PARAMS();
 csoundParams->nchnls_override =2;
+csoundParams->displays = 0;
 csound->SetParams(csoundParams);
 #endif
 csCompileResult = csound->Compile(const_cast<char*>(inputfile.toUTF8().getAddress()));
@@ -263,6 +264,7 @@ startTimer(20);
 #ifdef CSOUND6
 csoundParams = new CSOUND_PARAMS();
 csoundParams->nchnls_override =2;
+csoundParams->displays = 0;
 csound->SetParams(csoundParams);
 #endif
 

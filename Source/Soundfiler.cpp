@@ -174,7 +174,7 @@ void Soundfiler::paint (Graphics& g)
             thumbnail->drawChannels(g, thumbArea.reduced (2),
                                     visibleRange.getStart(), visibleRange.getEnd(), .8f);
 			
-			
+			/*
 			for(int i=0.f;i<getWidth();i++){
 			g.setColour (fontcolour);
 			//float pos = visibleRange.getStart()+i;	
@@ -192,7 +192,7 @@ void Soundfiler::paint (Graphics& g)
 			}	
 			
 			//g.drawVerticalLine(i, 5, 10);
-			}
+			}*/
 			
         
 	

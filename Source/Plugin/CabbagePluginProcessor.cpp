@@ -429,6 +429,13 @@ midiOutputBuffer.clear();
 
 csound->Reset();
 
+#ifdef CSOUND6
+csoundParams = new CSOUND_PARAMS();
+csoundParams->nchnls_override =2;
+csoundParams->displays = 0;
+csound->SetParams(csoundParams);
+#endif
+
 csound->SetHostImplementedMIDIIO(true);
 xyAutosCreated = false;
 //csound->SetMessageCallback(CabbagePluginAudioProcessor::messageCallback);
@@ -959,13 +966,15 @@ const Array<float, CriticalSection> CabbagePluginAudioProcessor::getTableFloats(
 
 		int tableSize=0;
 #ifndef Cabbage_No_Csound
-		MYFLT* temp = {0};
-		tableSize = csound->GetTable(temp, tableNum);
+		
+		tableSize = csound->TableLength(tableNum);
+		std::vector<MYFLT> temp (tableSize);
+		csound->TableCopyOut(tableNum, &temp[0]);
 #else
         float *temp;
 #endif
 		if(tableSize>0)
-		points = Array<float, CriticalSection>(temp, tableSize);
+		points = Array<float, CriticalSection>(&temp[0], tableSize);
 		return points;
 }
 //=================================================================================
@@ -1128,8 +1137,7 @@ if(!csCompileResult)
 			//zero channel message so that we don't keep sending the same string 
 			csound->SetChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
 			}
-		}
-	
+		}	
 	}
 sendChangeMessage();
 #endif

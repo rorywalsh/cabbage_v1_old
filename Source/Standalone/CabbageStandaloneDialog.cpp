@@ -554,7 +554,6 @@ const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutpu
     CabbageAudioDeviceSelectorComponent selectorComp (*deviceManager,
                                                numIns, numIns, numOuts, numOuts,
                                                true, false, true, false);
-
     selectorComp.setSize (400, 250);
 	setAlwaysOnTop(false);
 	lookAndFeel->setColour(Label::textColourId, Colours::white);
@@ -577,7 +576,8 @@ if(filter->hasTextChanged()){
 	else
 		return;
 	}
-		
+filter->getCallbackLock().enter();
+deleteFilter();
 JUCEApplication::quit();
 }
 

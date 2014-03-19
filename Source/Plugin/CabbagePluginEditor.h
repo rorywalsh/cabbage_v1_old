@@ -96,6 +96,7 @@ public:
 	ScopedPointer<CabbageCornerResizer> resizer;
 	Point<int> getMousePos();
 	Array<int> popupMenus;
+	void updateGUIControls();
 private:
         void setPositionOfComponent(float x, float y, float width, float height, Component* comp, String reltoplant);
 		void createfTableData(Table* table);
@@ -142,7 +143,7 @@ private:
 		void restoreParametersFromPresets(XmlElement* xmlData);
 		void savePresetsFromParameters(File selectedFile, String mode);
 		void refreshDiskReadingGUIControls(String typeOfControl);
-		void updateGUIControls();
+		
 		//AudioSampleBuffer tableBuffer;
 		int mouseX, mouseY;
         bool LOCKED;

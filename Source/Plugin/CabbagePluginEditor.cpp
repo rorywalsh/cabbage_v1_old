@@ -1269,28 +1269,37 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 		
 		//if dealing with a ppoup plant 
 		if(cAttr.getNumProp("popup")==1){
-                plantButton.add(new CabbageButton(cAttr));
-				plantButton[plantButton.size()-1]->setBounds(left+relX, top+relY, 100, 25);
+			
+                //plantButton.add(new CabbageButton(cAttr));
+				//plantButton[plantButton.size()-1]->setBounds(left+relX, top+relY, 100, 25);
+				 
 				layoutComps[idx]->setBounds(left+relX, top+relY, width, height);
 
-                plantButton[plantButton.size()-1]->button->addListener(this);
-				plantButton[plantButton.size()-1]->button->setName(cAttr.getStringProp(CabbageIDs::plant));
-				plantButton[plantButton.size()-1]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+                //plantButton[plantButton.size()-1]->button->addListener(this);
+				//plantButton[plantButton.size()-1]->button->setName(cAttr.getStringProp(CabbageIDs::plant));
+				//plantButton[plantButton.size()-1]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 				//plantButton[plantButton.size()-1]->button->setLookAndFeel(basicLookAndFeel);
-				plantButton[plantButton.size()-1]->button->setColour(TextButton::buttonColourId, Colour::fromString(cAttr.getStringProp("fill")));
-				plantButton[plantButton.size()-1]->button->setColour(TextButton::textColourOffId, Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour)));
-				plantButton[plantButton.size()-1]->button->setColour(TextButton::textColourOnId, Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour)));
+				//plantButton[plantButton.size()-1]->button->setColour(TextButton::buttonColourId, Colour::fromString(cAttr.getStringProp("fill")));
+				//plantButton[plantButton.size()-1]->button->setColour(TextButton::textColourOffId, Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour)));
+				//plantButton[plantButton.size()-1]->button->setColour(TextButton::textColourOnId, Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour)));
 				//layoutComps.add(plantButton[plantButton.size()-1]);
                 componentPanel->addAndMakeVisible(plantButton[plantButton.size()-1]);
-                plantButton[plantButton.size()-1]->button->getProperties().set(String("index"), plantButton.size()-1); 
+							
+				
+                //plantButton[plantButton.size()-1]->button->getProperties().set(String("index"), plantButton.size()-1); 
 
                 layoutComps[idx]->setLookAndFeel(lookAndFeel);
-                subPatch.add(new CabbagePlantWindow(getFilter()->getGUILayoutCtrls(idx).getStringProp("plant"), Colours::black));
+              
+				subPatch.add(new CabbagePlantWindow(getFilter()->getGUILayoutCtrls(idx).getStringProp("plant"), Colours::black));
                 subPatch[subPatch.size()-1]->setAlwaysOnTop(true);
 
                 subPatch[subPatch.size()-1]->centreWithSize(layoutComps[idx]->getWidth(), layoutComps[idx]->getHeight()+18);
                 subPatch[subPatch.size()-1]->setContentNonOwned(layoutComps[idx], true);
                 subPatch[subPatch.size()-1]->setTitleBarHeight(18);
+				subPatch[subPatch.size()-1]->setVisible(false);
+				layoutComps[idx]->getProperties().set("popupPlantIndex", subPatch.size()-1);
+				componentPanel->addAndMakeVisible(subPatch[subPatch.size()-1]);				
+				
 				}			          
 		}
 
@@ -1975,7 +1984,7 @@ if(!getFilter()->isGuiEnabled()){
 						}
 						
 					}
-
+/*
 				//show plants as popup window
 				for(int p=0;p<getFilter()->getGUILayoutCtrlsSize();p++){
 						if(getFilter()->getGUILayoutCtrls(p).getStringProp("plant") ==button->getName()){
@@ -1987,7 +1996,7 @@ if(!getFilter()->isGuiEnabled()){
 						break;
 						}
 					}
-
+*/
         }
         
         else if(dynamic_cast<ToggleButton*>(button)){
@@ -2684,6 +2693,17 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 		else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("groupbox") &&
 			getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
 			{
+			String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
+			if(message.contains("show(1)"))
+				{
+				int index = ((CabbageGroupbox*)layoutComps[i])->getProperties().getWithDefault(String("index"), 0);
+				if(subPatch[index])
+					{
+					subPatch[index]->setVisible(true);	
+					subPatch[index]->setAlwaysOnTop(true);
+					subPatch[index]->toFront(true);					
+					}
+				}
 				((CabbageGroupbox*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
 				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
 			}
@@ -2705,6 +2725,9 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 				//update waveform with sample data from function table...
 				((CabbageSoundfiler*)layoutComps[i])->setWaveform(tableBuffer);
 			}
+			else if(message.contains("file("))
+				((CabbageSoundfiler*)layoutComps[i])->setFile(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::file));
+
 			((CabbageSoundfiler*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
 			getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
 			}

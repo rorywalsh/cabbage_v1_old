@@ -112,6 +112,7 @@ IdentArray() : StringArray("")
 	add("trackercolour(");
 	add("preset(");
 	add("popup(");
+	add("show(");
 	add("fftsize(");
 	add("overlap(");
 	add("framesize(");
@@ -216,6 +217,7 @@ namespace CabbageIDs
 	static const Identifier startpoint = "startpoint";
 	static const Identifier endpoint = "endpoint";
 	static const Identifier zoom = "zoom";
+	static const Identifier show = "show";
 	
 	
 	

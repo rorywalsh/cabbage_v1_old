@@ -863,6 +863,8 @@ public:
 	soundFiler->addChangeListener(this);
 	sampleRate = 44100;
 	soundFiler->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
+	if(File(file).existsAsFile())
+		setFile(file);
 	}
 
 	~CabbageSoundfiler()
@@ -895,16 +897,13 @@ public:
 		zoom = m_cAttr.getNumProp(CabbageIDs::zoom);
 		soundFiler->setZoomFactor(zoom);			
 		}
-			
-		if(!file.equalsIgnoreCase(m_cAttr.getStringProp(CabbageIDs::file))){
-			soundFiler->setFile(m_cAttr.getStringProp(CabbageIDs::file));
-			file = m_cAttr.getStringProp(CabbageIDs::file);
-			soundFiler->setZoomFactor(m_cAttr.getNumProp(CabbageIDs::zoom));
-			soundFiler->setScrubberPos(0);
-		}
+
 	
 	}
 	
+	void setFile(String newFile){
+		soundFiler->setFile(File(newFile));	
+	}
 	int setWaveform(AudioSampleBuffer buffer){
 		soundFiler->setWaveform(buffer);
 	}

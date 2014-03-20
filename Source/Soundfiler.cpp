@@ -97,7 +97,7 @@ void Soundfiler::changeListenerCallback(ChangeBroadcaster *source)
 			setZoomFactor(jmax(0.0, zoom-=0.1));
 	}
 	repaint();
-	Logger::writeToLog("Change listener");
+	Logger::writeToLog("soundfiler Change listener:"+String(thumbnail->getTotalLength()));
 }
 //==============================================================================
 void Soundfiler::resized()
@@ -118,10 +118,32 @@ void Soundfiler::setFile (const File& file)
 {
    if (! file.isDirectory())
      {
-            thumbnail->setSource (new FileInputSource (file));
-            const Range<double> newRange (0.0, thumbnail->getTotalLength());
-            scrollbar->setRangeLimits (newRange);
-            setRange (newRange);
+	
+	//buffer.clear();
+	//
+	//buffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());
+	//buffer.addFrom(1, 0, tableValues.getRawDataPointer(), tableValues.size());
+		AudioFormatManager format;
+		format.registerBasicFormats();	
+		//registers wav and aif format (just nescearry one time if you alays use the "getInstance()" method)
+		AudioFormatReader* reader = format.createReaderFor(file);
+		//creates a reader for the result file (may file, if the result/opened file is no wav or aif)
+		if(reader) //if a reader got created
+		{
+			AudioSampleBuffer buffer(2, reader->lengthInSamples);
+			buffer.clear();
+			buffer.setSize(2, reader->lengthInSamples);
+			reader->read(&buffer,0, buffer.getNumSamples(), 0, true, true);
+			setWaveform(buffer);
+		}		 
+		 
+		//delete reader; 
+		 
+		 
+		// thumbnail->setSource (new FileInputSource (file));
+        //    const Range<double> newRange (0.0, thumbnail->getTotalLength());
+        //    scrollbar->setRangeLimits (newRange);
+        //    setRange (newRange);
       }
 	repaint(0, 0, getWidth(), getHeight());
 }
@@ -129,7 +151,7 @@ void Soundfiler::setFile (const File& file)
 //==============================================================================
 void Soundfiler::setWaveform(AudioSampleBuffer buffer)
 {            
-	thumbnail->clear();	
+	thumbnail->clear();
 	repaint();
 	thumbnail->reset(2, 44100, buffer.getNumSamples());	
 	//thumbnail->clear();

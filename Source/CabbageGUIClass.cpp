@@ -1242,6 +1242,10 @@ int CabbageGUIClass::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("logger(")){
 				cabbageIdentifiers.set(CabbageIDs::logger, strTokens[0].trim().getIntValue());		
 			}
+
+            else if(identArray[indx].equalsIgnoreCase("show(")){
+				cabbageIdentifiers.set(CabbageIDs::show, strTokens[0].trim().getIntValue());		
+			}
 			
             else if(identArray[indx].equalsIgnoreCase("zoom(")){
 				cabbageIdentifiers.set(CabbageIDs::zoom, strTokens[0].trim().getFloatValue());		

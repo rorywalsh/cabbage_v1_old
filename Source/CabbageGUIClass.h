@@ -105,6 +105,7 @@ IdentArray() : StringArray("")
 	add("textcolour("); 
 	add("scale(");
 	add("chan(");
+	add("child(");
 	add("key(");
 	add("steps(");
 	add("pluginid(");
@@ -218,6 +219,7 @@ namespace CabbageIDs
 	static const Identifier endpoint = "endpoint";
 	static const Identifier zoom = "zoom";
 	static const Identifier show = "show";
+	static const Identifier child = "child";
 	
 	
 	

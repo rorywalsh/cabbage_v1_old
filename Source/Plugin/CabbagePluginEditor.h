@@ -46,7 +46,9 @@ public:
         void closeButtonPressed(){
         setVisible(false);
 		setAlwaysOnTop(false);
+		this->setResizable(true, false);
         };
+
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePlantWindow);
 };
@@ -97,6 +99,7 @@ public:
 	Point<int> getMousePos();
 	Array<int> popupMenus;
 	void updateGUIControls();
+	OwnedArray<CabbagePlantWindow> subPatches;
 private:
         void setPositionOfComponent(float x, float y, float width, float height, Component* comp, String reltoplant);
 		void createfTableData(Table* table);
@@ -179,7 +182,6 @@ private:
 		void positionComponentWithinPlant(String type, float left, float top, float width, float height, Component *layout, Component *control);
         //ScopedPointer<CabbagePlantWindow> subPatch;
         OwnedArray<CabbageButton> plantButton;
-        OwnedArray<CabbagePlantWindow> subPatch;
         ScopedPointer<InfoWindow> infoWindow;
 #ifdef Cabbage_GUI_Editor
         ScopedPointer<CabbageMainPanel> componentPanel;

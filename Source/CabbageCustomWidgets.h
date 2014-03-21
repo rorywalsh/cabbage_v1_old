@@ -171,6 +171,7 @@ public:
 					  name(cAttr.getStringProp(CabbageIDs::name)),
 					  caption(cAttr.getStringProp(CabbageIDs::caption)),
 					  colour(cAttr.getStringProp(CabbageIDs::colour)),
+					  fontColour(cAttr.getStringProp(CabbageIDs::fontcolour)),
 					  sliderType(cAttr.getStringProp(CabbageIDs::kind)), 
 					  compName(cAttr.getStringProp(CabbageIDs::caption)), 
 					  cl(cAttr.getStringProp(CabbageIDs::colour)), 

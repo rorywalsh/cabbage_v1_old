@@ -515,6 +515,7 @@ if(refresh==true){
 	if(editor){
 		editor->comps.clear();
 		editor->layoutComps.clear();
+		editor->subPatches.clear();
 		editor->popupMenus.clear();
 	}
 }

@@ -147,6 +147,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 		OwnedArray<XYPadAutomation, CriticalSection> xyAutomation;
 		void updateGUIControlsKsmps(int speed);
 		int guiRefreshRate;
+		std::vector<MYFLT> temp;
 		
 		
 public:

@@ -42,6 +42,7 @@ IdentArray() : StringArray("")
 {
     add(",colour(");
 	add("tablecolour(");
+	add("tablecolours(");
 	add(" colour(");
     add(",colours(");
 	add(" colours(");
@@ -67,7 +68,7 @@ IdentArray() : StringArray("")
 	add("plant(");
 	add("alpha(");
     add(",channel(");
-	add("channel(");
+	add(" channel(");
 	add("channeltype(");
 	add(" chan(");
     add("channels(");

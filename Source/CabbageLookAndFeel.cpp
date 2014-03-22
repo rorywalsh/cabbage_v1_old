@@ -11,8 +11,8 @@ CabbageLookAndFeel::CabbageLookAndFeel()
 	setColour(Label::textColourId, CabbageUtils::getComponentFontColour());
 	setColour(TextButton::textColourOnId, CabbageUtils::getComponentFontColour());
 	setColour(TextButton::buttonColourId, Colour(20, 20, 20));
-	setColour(ComboBox::ColourIds::textColourId, CabbageUtils::getComponentFontColour());
-	
+	setColour(ComboBox::textColourId, CabbageUtils::getComponentFontColour());
+	setColour(ComboBox::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());	
 }
 
 CabbageLookAndFeel::~CabbageLookAndFeel()
@@ -585,7 +585,7 @@ void CabbageLookAndFeel::drawRotarySlider(Graphics& g, int /*x*/, int /*y*/, int
 
 	// Creating slider image
 	bool useTracker = true;
-	Image newSlider = drawRotaryImage(jmax(1.f, destWidth), slider.findColour(0x1001200, false), slider.findColour(Slider::trackColourId), sliderPosProportional, 
+	Image newSlider = drawRotaryImage(jmax(1.f, destWidth), slider.findColour(Slider::rotarySliderFillColourId), slider.findColour(Slider::trackColourId), sliderPosProportional, 
 		zeroPosProportional, useTracker, markerOpacity);
 	g.drawImage (newSlider, destX, destY, destWidth, destHeight, 0, 0, newSlider.getWidth(), newSlider.getHeight(), false);
 
@@ -602,7 +602,7 @@ void CabbageLookAndFeel::drawRotarySlider(Graphics& g, int /*x*/, int /*y*/, int
 		g.fillRoundedRectangle ((slider.getWidth()/2) - (strWidth/2), destHeight/2 - valueFont.getHeight()/2, 
 			strWidth, valueFont.getHeight(), valueFont.getHeight()/5);	
 
-		g.setColour(slider.findColour(0x1001200, false));
+		g.setColour(slider.findColour(0x1001200).contrasting(1.f));
 		g.setFont (valueFont);
 		g.drawText (sliderValue, (slider.getWidth()/2) - (strWidth/2), destHeight/2 - valueFont.getHeight()/2, 
 			(int)strWidth, valueFont.getHeight(), Justification::centred, false);
@@ -1008,20 +1008,6 @@ void CabbageLookAndFeel::drawComboBox(Graphics& g, int width, int height, bool /
 																	int /*buttonH*/,
 																	ComboBox& box)
 {
-	// Colour
-	String bgColour = box.getProperties().getWithDefault(String("colour"), "");
-	String fontColour = box.getProperties().getWithDefault(String("fontcolour"), "");
-	Colour bgCol, fCol;
-	if (bgColour.length()>2)
-		bgCol = Colour::fromString(bgColour);
-	else
-		bgCol = CabbageUtils::getDarkerBackgroundSkin();
-
-	if (fontColour.length()>2)
-		fCol = Colour::fromString(fontColour);
-	else
-		fCol = CabbageUtils::getComponentFontColour();
-
 	// The box that contains the arrow
 	g.setColour(CabbageUtils::getComponentFontColour());
 	float arrowBoxWidth;
@@ -1031,7 +1017,7 @@ void CabbageLookAndFeel::drawComboBox(Graphics& g, int width, int height, bool /
 		arrowBoxWidth = width/2;
 
 	// Main bg
-	g.setColour(bgCol);
+	g.setColour(box.findColour(ComboBox::backgroundColourId));
 	g.fillRoundedRectangle (0, 0, width, height, height*0.1);
 
 	// Border outline
@@ -1041,9 +1027,28 @@ void CabbageLookAndFeel::drawComboBox(Graphics& g, int width, int height, bool /
 		height-borderWidth, height*0.1, borderWidth);
 
 	// Arrow
-	g.setColour(fCol);
+	g.setColour(box.findColour(ComboBox::textColourId));
 	const Line<float> line(width-(arrowBoxWidth/2), height*0.3, width-(arrowBoxWidth/2), height*0.7); 
 	g.drawArrow(line, 0, arrowBoxWidth*0.4, height*0.4);	
+}
+
+Font CabbageLookAndFeel::getComboBoxFont (ComboBox& box)
+{
+    return Font(jmin (15.0f, box.getHeight() * 0.85f), 1);
+}
+
+Label* CabbageLookAndFeel::createComboBoxTextBox (ComboBox&)
+{
+    return new Label (String::empty, String::empty);
+}
+
+void CabbageLookAndFeel::positionComboBoxText (ComboBox& box, Label& label)
+{
+    label.setBounds (1, 1,
+                     box.getWidth() + 3 - box.getHeight(),
+                     box.getHeight() - 2);
+
+    label.setFont (getComboBoxFont (box));
 }
 
 

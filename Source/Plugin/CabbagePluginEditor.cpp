@@ -2239,9 +2239,9 @@ Array<int> tableSizes;
 		//if table is not valid fill our array with at least one dummy point
 		}
 #endif
-	tableSizes.clear();
-	for(int i=0;i<cAttr.getStringArrayProp(CabbageIDs::channel).size();i++)
-	 tableSizes.add(tableSize);
+	//tableSizes.clear();
+	//for(int i=0;i<cAttr.getStringArrayProp(CabbageIDs::channel).size();i++)
+	// tableSizes.add(tableSize);
 
 
 			 layoutComps.add(new CabbageTable(cAttr.getStringProp(CabbageIDs::name),
@@ -2253,7 +2253,7 @@ Array<int> tableSizes;
 					cAttr.getIntArrayProp("drawmode"),
 					cAttr.getIntArrayProp("resizemode"),
 					cAttr.getFloatArrayProp("amprange"),
-					cAttr.getStringArrayProp("tablecolour"),
+					cAttr.getStringArrayProp(CabbageIDs::tablecolour),
 					cAttr.getNumProp("readonly"),
 					this)); 
 			
@@ -2263,6 +2263,7 @@ Array<int> tableSizes;
 			float width = cAttr.getNumProp(CabbageIDs::width);
 			float height = cAttr.getNumProp(CabbageIDs::height);
 			setPositionOfComponent(left, top, width, height,layoutComps[idx], cAttr.getStringProp("reltoplant"));
+				
 			
 		//finally, add tables to widget
 		((CabbageTable*)layoutComps[idx])->addTables();
@@ -2271,6 +2272,15 @@ Array<int> tableSizes;
 		layoutComps[idx]->addMouseListener(this, true);
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+		
+		int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();				
+		for(int y=0;y<numberOfTables;y++)
+			{
+			int tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, y);
+			Array <float, CriticalSection> tableValues = getFilter()->getTableFloats(tableNumber);
+			((CabbageTable*)layoutComps[idx])->fillTable(y, tableValues);		
+			}			
+		
 }
 
 	/*********************************************************/
@@ -2724,7 +2734,7 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 				getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
 				{
 				String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
-				if(message.contains("tablenumber")){
+				if(message.contains("tablenumber")||message.contains("tablenumbers")){
 				int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();				
 				for(int y=0;y<numberOfTables;y++)
 					{
@@ -2733,32 +2743,8 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 					((CabbageTable*)layoutComps[i])->fillTable(y, tableValues);		
 					}			
 				}
-					
-					/*
-					((CabbageTable*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
-					{
-                int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();				
-				//for(int y=0;y<getFilter()->getGUILayoutCtrls(i).getNumberOfTableChannels();y++)
-				for(int y=0;y<numberOfTables;y++)
-					{
-					float val = getFilter()->getGUILayoutCtrls(i).getTableChannelValues(y);				
-			
-					if(val<0)
-						{
-						int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
-						Array <float, CriticalSection> tableValues = getFilter()->getTableFloats(tableNumber);
-						((CabbageTable*)layoutComps[i])->fillTable(y, tableValues);
-						getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringArrayPropValue(CabbageIDs::channel, y).toUTF8(), 0,
-																				getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type));
-						}
-					else
-						{
-						((CabbageTable*)layoutComps[i])->setScrubberPosition(y, val);	
-						}
-					
-				}*/
-				  
-        }
+				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");				  
+			}
 }
 
 

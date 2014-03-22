@@ -5,7 +5,7 @@
 <Cabbage>
 form caption("GEN10"), size(410, 340), pluginID("gn10"), colour("20,70,170,150")
 
-table bounds(  5,  5, 400, 120), channel("table1"), tableNumbers(1), tablecolour("yellow")
+table bounds(  5,  5, 400, 120), identchannel("table1"), tableNumbers(1), tablecolour("yellow")
 
 rslider bounds(  5,130, 50, 70), channel("str1"), text("Str.1"), textBox(1), range(-1.00, 1.00, 1), colour(100,100,250,200)
 rslider bounds( 55,130, 50, 70), channel("str2"), text("Str.2"), textBox(1), range(-1.00, 1.00, 0), colour(100,100,250,200)
@@ -128,7 +128,7 @@ instr	1
 	UPDATE:
 	giwave	ftgen	1,0, 4096,10, i(gkstr1)*i(kstatus1),i(gkstr2)*i(kstatus2),i(gkstr3)*i(kstatus3),i(gkstr4)*i(kstatus4),i(gkstr5)*i(kstatus5),i(gkstr6)*i(kstatus6),i(gkstr7)*i(kstatus7),i(gkstr8)*i(kstatus8)
 	ktrigr	=	-1		; trigger to update table display widget (-1 = update) 
-	chnset	ktrigr, "table1"	; update table display	
+	chnset	"tablenumber(1)", "table1"	; update table display	
 endin
 
 instr	3

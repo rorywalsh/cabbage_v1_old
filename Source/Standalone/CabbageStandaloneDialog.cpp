@@ -1178,7 +1178,11 @@ else{
 			setAlwaysOnTop(false);
 #endif
 	}
-
+		RecentlyOpenedFilesList recentFiles;
+		recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
+																					recentFiles.addFile (csdFile);
+		appProperties->getUserSettings()->setValue ("recentlyOpenedFiles", 
+													recentFiles.toString());
 }
 
 void StandaloneFilterWindow::saveFile()
@@ -1186,8 +1190,6 @@ void StandaloneFilterWindow::saveFile()
 if(csdFile.hasWriteAccess())
 csdFile.replaceWithText(cabbageCsoundEditor->getText());
 resetFilter(false);
-//cabbageCsoundEditor->grabKeyboardFocus();
-//cabbageCsoundEditor->csoundEditor->grabKeyboardFocus();
 RecentlyOpenedFilesList recentFiles;
 recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
 																			recentFiles.addFile (csdFile);

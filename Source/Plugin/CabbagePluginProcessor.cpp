@@ -969,7 +969,8 @@ const Array<float, CriticalSection> CabbagePluginAudioProcessor::getTableFloats(
 #ifndef Cabbage_No_Csound
 		
 		tableSize = csound->TableLength(tableNum);
-		std::vector<MYFLT> temp (tableSize);
+		temp.clear();
+		temp.resize(tableSize);
 		csound->TableCopyOut(tableNum, &temp[0]);
 #else
         float *temp;

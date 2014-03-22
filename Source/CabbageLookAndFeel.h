@@ -56,6 +56,9 @@ public:
 									  
 	virtual void drawLabel (Graphics &g, Label &label);
 	virtual void drawComboBox (Graphics&, int, int, bool, int, int, int, int, ComboBox&);
+	virtual Font getComboBoxFont (ComboBox& box);
+	virtual Label* createComboBoxTextBox (ComboBox&);
+	void positionComboBoxText (ComboBox& box, Label& label);
 	virtual void drawToggleButton (Graphics &g, ToggleButton &button, bool isMouseOverButton, bool isButtonDown);
 	virtual void drawTextEditorOutline (Graphics &g, int width, int height, TextEditor &textEditor);
 	virtual void fillTextEditorBackground (Graphics &g, int width, int height, TextEditor &textEditor);

@@ -75,7 +75,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::text, "");
 		cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
 		cabbageIdentifiers.set(CabbageIDs::caption, "");
-		cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::whitesmoke.toString());
 		cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
 		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());	
 		cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
@@ -108,7 +108,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::text, "");
 		cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
 		cabbageIdentifiers.set(CabbageIDs::caption, "");
-		cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::whitesmoke.toString());
 		cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
 		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());	
 		cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
@@ -140,7 +140,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::text, "");
 		cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
 		cabbageIdentifiers.set(CabbageIDs::caption, "");
-		cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::whitesmoke.toString());
 		cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
 		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());	
 		cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
@@ -647,6 +647,11 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		width = 400;
 		height = 200;
 		
+		var tableColours;
+		tableColours.append("white");
+		tableColours.append("cornflowerblue");
+		tableColours.append("yellow");
+		
 		cabbageIdentifiers.set(CabbageIDs::top, 10);
 		cabbageIdentifiers.set(CabbageIDs::left, 10);
 		cabbageIdentifiers.set(CabbageIDs::width, 400);
@@ -655,7 +660,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::drawmode, 0);
 		cabbageIdentifiers.set(CabbageIDs::resizemode, 0);
 		cabbageIdentifiers.set(CabbageIDs::readonly, 0);
-		cabbageIdentifiers.set(CabbageIDs::tablecolour, Colours::lime.toString());
+		cabbageIdentifiers.set(CabbageIDs::tablecolour, tableColours);
 		cabbageIdentifiers.set(CabbageIDs::amprange, 0);
 		cabbageIdentifiers.set(CabbageIDs::type, "table");
 		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
@@ -852,10 +857,9 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 			cabbageIdentifiers.set(CabbageIDs::caption, strTokens[0].trim());
 			} 
 			
-            else if(identArray[indx].equalsIgnoreCase("channel(")||
+            else if(identArray[indx].equalsIgnoreCase(" channel(")||
 				identArray[indx].equalsIgnoreCase(",channel(")||
 				identArray[indx].equalsIgnoreCase(" chans(") ||
-				identArray[indx].equalsIgnoreCase("channel(") ||
 				identArray[indx].equalsIgnoreCase(" channels("))
 				{
 					var array;
@@ -900,7 +904,8 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 					cabbageIdentifiers.set(CabbageIDs::fontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());			
 			}
 
-            else if(identArray[indx].equalsIgnoreCase("tablecolour(")){
+            else if(identArray[indx].equalsIgnoreCase("tablecolour(") ||
+					identArray[indx].equalsIgnoreCase("tablecolours(")){
 					var colours;
 					for(int i=0;i<strTokens.size();i++)
 						colours.append(strTokens[i].trim());						

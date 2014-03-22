@@ -188,6 +188,9 @@ public:
 		addAndMakeVisible(groupbox);
 		groupbox->setVisible(false);
 		groupbox->getProperties().set("groupLine", var(1));
+		groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontColour));
+		groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
+		
 		slider->setColour(Slider::rotarySliderFillColourId, Colour::fromString(cl));
 		slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
 		slider->setColour(Slider::textBoxTextColourId, Colour::fromString(fontColour));
@@ -237,8 +240,7 @@ public:
 	{
 		//if rotary
 		if (sliderType.contains("rotary")) {
-			if(cl.length() > 0)
-				slider->setColour(Slider::rotarySliderFillColourId, Colour::fromString(cl));
+			slider->setColour(Slider::rotarySliderFillColourId, Colour::fromString(cl));
 			slider->setSliderStyle(Slider::Rotary);
 			getProperties().set("type", var("rslider"));
 			slider->setSliderStyle(Slider::RotaryVerticalDrag);
@@ -349,13 +351,8 @@ class CabbageCheckbox : public Component
 		addAndMakeVisible(button);
 		groupbox->setVisible(false);
 		groupbox->getProperties().set("groupLine", var(1));
-		
-		//outline colour ID
-		groupbox->setColour(0x1005400,
-			Colour::fromString(colour));
-		//text colour ID
-		groupbox->setColour(0x1005410,
-			Colour::fromString(colour));
+		groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
+		groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
 
 		button->setButtonText(buttonText);
 		if(caption.length()>0){
@@ -512,16 +509,12 @@ class CabbageComboBox : public Component
 		groupbox->setVisible(false);
 		groupbox->getProperties().set("groupLine", var(1));
 		combo->setColour(ComboBox::textColourId, Colour::fromString(fontcolour));
+		combo->setColour(ComboBox::backgroundColourId, Colour::fromString(colour));
+		combo->lookAndFeelChanged();
+		combo->getLookAndFeel().createComboBoxTextBox(*combo);
 		
-		combo->getProperties().set("colour", colour);
-		combo->getProperties().set("fontcolour", fontcolour);
-		//combo->setColour(ComboBox::ColourIds::textColourId, Colour::fromString(fontColour));
-		//outline colour IDE
-		groupbox->setColour(0x1005400,
-			Colour::fromString(colour));
-		//text colour ID
-		groupbox->setColour(0x1005410,
-			Colour::fromString(colour));
+		groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
+		groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
 		
 		if(caption.length()>0){
 			offX=10;
@@ -1056,11 +1049,8 @@ class CabbageXYController : public Component
 
 		groupbox->setVisible(false);
 		//outline colour ID
-		groupbox->setColour(0x1005400,
-			Colours::findColourForName("white", Colours::white));
-		//outline text ID
-		groupbox->setColour(0x1005410,
-			Colours::findColourForName("white", Colours::white));
+		groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
+		groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
 		
 		if(caption.length()>0){
 			offX=10;
@@ -1194,7 +1184,7 @@ class CabbageTable : public Component
 {
 	//ScopedPointer<LookAndFeel> lookFeel;
 	int offX, offY, offWidth, offHeight, tableSize;
-	StringArray colours, channels;
+	StringArray tableColours, channels;
 	Array<int> tableSizes, tableNumbers, drawingModes, resizingModes;
 	Array< Point<float> > minMax;
 	float alpha;
@@ -1211,11 +1201,11 @@ class CabbageTable : public Component
 														   Array<int> drawingModes,
 														   Array<int> resizingModes,
 														   Array<float> ampRanges,
-														   StringArray Colours, 
+														   StringArray colours, 
 														   bool readOnly, 
 														   ChangeListener* listen)
 	: tableSizes(tblSize), 
-	  colours(Colours), 
+	  tableColours(colours), 
 	  channels(chans),
 	  readOnly(readOnly),
 	  listener(listen),
@@ -1237,12 +1227,6 @@ class CabbageTable : public Component
 		tableSize = tableSizes[0];
 		table = new CabbageTableManager(tableSize);
 		
-		//add extra colours if user never specified them
-		//for(int i=colours.size();i<=tableSizes.size();i++)
-				//colours.add(Colour::fromString(colours[0]).withBrightness(1).toString());
-		//		colours.add(Colours::lime.withBrightness(float(i)/tableSizes.size()).toString());
-		
-		
 		// set up drawing modes for each table
 		// 0: default mode, draws everything normally
 		// 1: drawHoriztonalSegments
@@ -1259,11 +1243,8 @@ class CabbageTable : public Component
 
 		groupbox->setVisible(false);
 		//outline colour ID
-		groupbox->setColour(0x1005400,
-			Colours::findColourForName("white", Colours::white));
-		//text colour ID
-		groupbox->setColour(0x1005410,
-			Colours::findColourForName("white", Colours::white));
+		groupbox->setColour(GroupComponent::textColourId, Colours::white);
+		groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
 		
 		if(caption.length()>0){
 			offX=10;
@@ -1336,7 +1317,7 @@ class CabbageTable : public Component
 			setDrawingModeBooleans(fixed, horizontal, toggleMaxMin, drawOriginal, drawFill, drawingModes[i]);
 			table->addTable(name, channels[i], tableNumbers[i], tableSizes[i], fixed, 
 							horizontal, drawOriginal, toggleMaxMin, drawFill, 
-							resizingModes[i], minMax[i], Colours::findColourForName(colours[i], Colours::white), readOnly, listener);
+							resizingModes[i], minMax[i], Colours::findColourForName(tableColours[i], Colours::white), readOnly, listener);
 		}
 	else{	
 		setDrawingModeBooleans(fixed, horizontal, toggleMaxMin, drawOriginal, drawFill, drawingModes[0]);
@@ -1345,7 +1326,7 @@ class CabbageTable : public Component
 		table->addTable("table0", channels[0], tableNumbers[0], tableSizes[0], fixed, 
 						horizontal, drawOriginal, toggleMaxMin, drawFill, 
 						resizingModes[0], minMax[0],
-						Colours::findColourForName(colours[0], Colours::white), readOnly, listener);
+						Colours::findColourForName(tableColours[0], Colours::white), readOnly, listener);
 	}	
 		
 	}

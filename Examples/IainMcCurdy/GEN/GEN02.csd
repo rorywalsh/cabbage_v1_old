@@ -26,7 +26,7 @@ checkbox bounds(250,  0,  10, 10), channel("Act6"),  value(0), colour("white"), 
 checkbox bounds(300,  0,  10, 10), channel("Act7"),  value(0), colour("white"), shape("ellipse")
 checkbox bounds(350,  0,  10, 10), channel("Act8"),  value(0), colour("white"), shape("ellipse")
                                                                                   
-table bounds(  5, 10, 400, 115), channel("notetable","amptable","speedtable"), tableNumbers(1,2,3), tablecolour("yellow","green","blue")
+table bounds(  5, 10, 400, 115), identchannel("table"), tablenumbers(1,2,3), tablecolour("yellow","green","blue"), amprange(0, 1)
 
 rslider bounds(  5,130, 50, 50), channel("note1"), text("Note.1"), range(0, 108, 48, 1, 1),colour("yellow")  
 rslider bounds( 55,130, 50, 50), channel("note2"), text("Note.2"), range(0, 108, 50, 1, 1),colour("yellow")
@@ -122,7 +122,9 @@ instr	1						; update function tables and send to Cabbage table display
 	k$NAME8	chnget	"$NAME8"
 	ktrig	changed	k$NAME1,k$NAME2,k$NAME3,k$NAME4,k$NAME5,k$NAME6,k$NAME7,k$NAME8	; if any of the input args change, generate a trigger
 	if ktrig==1 then       								; if trigger created...
-	 reinit Update$NAME								; reinit from label
+	 reinit Update$NAME
+	 chnset	"tablenumbers(1, 2, 3)", "table"							; update table display
+	 ; reinit from label
 	endif                                                         
 	Update$NAME:									; label
 	 i$NAME1	init	(i(k$NAME1)-($MIN))/($MAX-$MIN)				; rescale widget variable to be within the range 0 - 1 (needed for well displayed tables)
@@ -134,8 +136,6 @@ instr	1						; update function tables and send to Cabbage table display
 	 i$NAME7	init	(i(k$NAME7)-($MIN))/($MAX-$MIN)
 	 i$NAME8	init	(i(k$NAME8)-($MIN))/($MAX-$MIN)
 	 gi$NAMEs	ftgen	$NUM,0, 8,-2, i$NAME1, i$NAME2, i$NAME3, i$NAME4, i$NAME5, i$NAME6, i$NAME7, i$NAME8	; update function table
-	 ktrigr	=	-1								; table update trigger
-	 chnset	ktrigr, "$NAMEtable"							; update table display
 	rireturn									; return from reinit
 	#
 	$AttributeSet(note'1'0'108)							; expand macro (args: name label, table number, minimum and maximum) 
@@ -201,10 +201,6 @@ instr	3
 	 chnset	1,"Act8"                                        ; set indicator 'on' 
 	 chnset	0,"Act1"                                        ; set indicator 'off'
 	endif	  
-
-	/* PRINT SCRUBBER (Doesn't work on OSX)*/
-	ktrig	init	gindx/ftlen(ginotes)
-	chnset	ktrig,"notetable"
 	
 	/* SHIFT INDEX FOR NEXT NOTE */
 	if(idir==0) then					; FWD

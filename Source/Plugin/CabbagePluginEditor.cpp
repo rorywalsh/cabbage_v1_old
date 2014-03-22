@@ -1270,13 +1270,10 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 		
 		//if dealing with a ppoup plant 
 		if(cAttr.getNumProp("popup")==1){
-				cAttr.setNumProp(CabbageIDs::left, 0);
-			    cAttr.setNumProp(CabbageIDs::top, 18);
-				layoutComps[idx]->setBounds(0, 0, width, height);
+				layoutComps[idx]->centreWithSize(width, height);
                 layoutComps[idx]->setLookAndFeel(lookAndFeel);              
 				subPatches.add(new CabbagePlantWindow(getFilter()->getGUILayoutCtrls(idx).getStringProp(CabbageIDs::plant), Colours::black));
-                int patchIndex = subPatches.size()-1;
-				Logger::writeToLog("SubPatch index:"+String(patchIndex));
+				int patchIndex = subPatches.size()-1;
 				subPatches[patchIndex]->setAlwaysOnTop(true);
                 subPatches[patchIndex]->setTitleBarHeight(18);
 				layoutComps[idx]->getProperties().set("popupPlantIndex", patchIndex);
@@ -1293,7 +1290,7 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 				else
 					subPatches[patchIndex]->centreWithSize(layoutComps[idx]->getWidth(), layoutComps[idx]->getHeight()+18);
 
-				subPatches[patchIndex]->setContentNonOwned(layoutComps[idx], false);	
+				subPatches[patchIndex]->setContentNonOwned(layoutComps[idx], true);	
 				}
 				
 		}
@@ -1341,7 +1338,7 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 		}
 		
 		if(cAttr.getNumProp("popup")==1){
-				layoutComps[idx]->setBounds(left+relX, top+relY, width, height);
+				layoutComps[idx]->setBounds(0, 18, width, height);
                 componentPanel->addAndMakeVisible(plantButton[plantButton.size()-1]);
                 layoutComps[idx]->setLookAndFeel(lookAndFeel);              
 				subPatches.add(new CabbagePlantWindow(getFilter()->getGUILayoutCtrls(idx).getStringProp(CabbageIDs::plant), Colours::black));
@@ -2697,8 +2694,10 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 				int index = ((CabbageGroupbox*)layoutComps[i])->getProperties().getWithDefault(String("popupPlantIndex"), 0);
 				if(subPatches[index])
 					{
+					//getFilter()->getGUILayoutCtrls(i).setNumProp(CabbageIDs::left, 0);
+					//getFilter()->getGUILayoutCtrls(i).setNumProp(CabbageIDs::top, 0);
 					subPatches[index]->setVisible(true);	
-					subPatches[index]->setAlwaysOnTop(true);
+					subPatches[index]->setAlwaysOnTop(true); 
 					subPatches[index]->toFront(true);	
 					}
 				}

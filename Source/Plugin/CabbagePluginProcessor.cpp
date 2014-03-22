@@ -646,13 +646,11 @@ bool multiLine = false;
 							//set up plant flag if needed for other widgets
 							if(cAttr.getStringProp(String("plant")).isNotEmpty()){
 									plantFlag = cAttr.getStringProp(String("plant"));
-									presetFlag = cAttr.getStringProp(String("preset"));
 							}
 							else if(cAttr.getStringProp(String("reltoplant")).equalsIgnoreCase(String("")))
 									cAttr.setStringProp(String("reltoplant"), plantFlag);
+							
 							guiLayoutCtrls.add(cAttr);
-
-
 							guiID++;
 
 							if(cAttr.getStringProp("type").containsIgnoreCase("form"))

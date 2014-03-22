@@ -675,7 +675,6 @@ public:
 //==============================================================================
 class CabbageGroupbox : public GroupComponent
 {
-	OwnedArray<Component> comps;
 	int offX, offY, offWidth, offHeight;
 	String name, caption, text, colour, fontcolour;
 	int line;
@@ -726,10 +725,13 @@ class CabbageGroupbox : public GroupComponent
 	}
 
 	//---------------------------------------------
-	void resized()
-	{
-	this->setWantsKeyboardFocus(false);
-	}
+	//void resized()
+	//{
+	//this->setBounds(0, 18, getWidth(), getHeight());
+	//Logger::writeToLog("resizing plant");
+	//this->setWantsKeyboardFocus(false);
+	//}
+
 
 JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGroupbox);
 };

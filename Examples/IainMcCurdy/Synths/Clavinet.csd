@@ -319,21 +319,21 @@ kLaunch init 0				; prevent fall-through on init-pass
 ksetup chnget "setupButton"		
 ksetupPressed changed ksetup
 if ksetupPressed==1 then
-  Smsg sprintfk "show(%d)", kLaunch
+  Smsg sprintfk "show(%d), pos(0, 18)", kLaunch
   chnset Smsg, "setupPlant"
 endif
 
 ksetup chnget "releaseButton"		
 kreleasePressed changed ksetup
 if kreleasePressed==1 then
-  Smsg sprintfk "show(%d)", kLaunch
+  Smsg sprintfk "show(%d), pos(0, 18)", kLaunch
   chnset Smsg, "releasePlant"
 endif
 
 ksetup chnget "filtersButton"		
 kfiltersPressed changed ksetup
 if kfiltersPressed==1 then
-  Smsg sprintfk "show(%d)", kLaunch
+  Smsg sprintfk "show(%d), pos(0, 18)", kLaunch
   chnset Smsg, "filtersPlant"
 endif
 

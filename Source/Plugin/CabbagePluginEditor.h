@@ -39,15 +39,20 @@ class CabbagePlantWindow  : public DocumentWindow
 
 public:
         CabbagePlantWindow(const String& title, const Colour& backgroundColour)
-                : DocumentWindow (title, backgroundColour, DocumentWindow::closeButton){};
+                : DocumentWindow (title, backgroundColour, DocumentWindow::closeButton)
+		{
+			//this->setResizable(true, false);
+		};
+		
         ~CabbagePlantWindow(){
         };
 
         void closeButtonPressed(){
         setVisible(false);
 		setAlwaysOnTop(false);
-		this->setResizable(true, false);
+		
         };
+
 
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePlantWindow);

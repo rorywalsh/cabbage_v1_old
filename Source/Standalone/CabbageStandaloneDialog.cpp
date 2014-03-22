@@ -35,7 +35,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     : DocumentWindow (title, backgroundColour,
                       DocumentWindow::minimiseButton
                        | DocumentWindow::closeButton),
-      optionsButton ("options"), 
+      optionsButton ("Options"), 
 	  isGUIOn(false), 
 	  pipeOpenedOk(false), 
 	  AudioEnabled(true), 
@@ -47,12 +47,18 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	consoleMessages = "";
 	cabbageDance = 0;
 	setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
+	optionsButton.setColour(TextButton::buttonColourId, Colour(20, 20, 20));
+
+	optionsButton.setColour(TextButton::textColourOnId, Colours::whitesmoke);
+	
+
     Component::addAndMakeVisible (&optionsButton);
     optionsButton.addListener (this);
 	timerRunning = false;
 	yAxis = 0;
 	this->addKeyListener(this);
 	optionsButton.setTriggeredOnMouseDown (true);
+
 	bool alwaysontop = getPreference(appProperties, "SetAlwaysOnTop");
 	setAlwaysOnTop(alwaysontop);
 	this->setResizable(false, false);

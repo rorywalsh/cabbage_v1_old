@@ -1404,7 +1404,8 @@ void CabbagePluginAudioProcessorEditor::InsertLabel(CabbageGUIClass &cAttr)
 {
         layoutComps.add(new CabbageLabel(cAttr.getStringProp(CabbageIDs::text), 
 										cAttr.getStringProp(CabbageIDs::colour),
-										cAttr.getStringProp(CabbageIDs::fontcolour)));      
+										cAttr.getStringProp(CabbageIDs::fontcolour),
+										cAttr.getStringProp(CabbageIDs::align)));      
         int idx = layoutComps.size()-1;
 
         float left = cAttr.getNumProp(CabbageIDs::left);

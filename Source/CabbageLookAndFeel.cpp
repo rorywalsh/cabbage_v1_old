@@ -519,23 +519,6 @@ void CabbageLookAndFeel::drawRotarySlider(Graphics& g, int /*x*/, int /*y*/, int
 																	float /*endAngle*/,
 																	Slider& slider)
 {
-	// Font colour
-	String fontColour = slider.getProperties().getWithDefault("fontcolour", "").toString();
-	Colour fontcolour;
-	if(fontColour.length()>1)
-		fontcolour = Colour::fromString(fontColour);
-	else
-		fontcolour = CabbageUtils::getComponentFontColour();
-
-	// Slider colour
-	Colour sliderColour = slider.findColour(0x1001200, false);
-
-
-	// Value font colour
-	String valueFontColour = slider.getProperties().getWithDefault(String("valueFontColour"), ""); //using same colour as tracker
-	if (valueFontColour.length()<2)
-		valueFontColour = sliderColour.contrasting(1.0f).toString();
-
 	// Name
 	String name(slider.getName());
 	Font nameFont = CabbageUtils::getComponentFont();
@@ -562,7 +545,7 @@ void CabbageLookAndFeel::drawRotarySlider(Graphics& g, int /*x*/, int /*y*/, int
 
 		//Name label goes at bottom
 		if (slider.getName().length() > 0) {
-			g.setColour (fontcolour);
+			g.setColour (slider.findColour(Slider::textBoxTextColourId));
 			g.setFont (nameFont);
 			g.drawText (name, (slider.getWidth()/2) - (nameWidth/2), slider.getHeight() - nameFont.getHeight(), 
 				(int)nameWidth, nameFont.getHeight(), Justification::centred, false);
@@ -575,7 +558,7 @@ void CabbageLookAndFeel::drawRotarySlider(Graphics& g, int /*x*/, int /*y*/, int
 		sliderBottom -= slider.getTextBoxHeight();
 		//Name label goes at top...
 		if (slider.getName().length() > 0) {
-			g.setColour (fontcolour);
+			g.setColour (slider.findColour(Slider::textBoxTextColourId));
 			g.setFont (nameFont);
 			g.drawText (name, (slider.getWidth()/2) - (nameWidth/2), 0, (int)nameWidth, nameFont.getHeight(), 
 				Justification::centred, false);
@@ -592,20 +575,13 @@ void CabbageLookAndFeel::drawRotarySlider(Graphics& g, int /*x*/, int /*y*/, int
 	if (slider.getMinimum() < 0)
 		zeroPosProportional = (slider.getMinimum()*-1) / (slider.getMaximum() - slider.getMinimum());
 
-	// If using a tracker fill
-	bool useTracker = true;
-	String trackColour = slider.getProperties().getWithDefault(String("tracker"), "");
-	if(trackColour.length()<2){
-		trackColour = Colours::lime.toString();
-		useTracker = false;
-	}
-
 	float markerOpacity = 1;
 	if (slider.isMouseOverOrDragging())
 		markerOpacity = 0.4;
 
 	// Creating slider image
-	Image newSlider = drawRotaryImage(jmax(1.f, destWidth), sliderColour, Colour::fromString(trackColour), sliderPosProportional, 
+	bool useTracker = true;
+	Image newSlider = drawRotaryImage(jmax(1.f, destWidth), slider.findColour(0x1001200, false), slider.findColour(Slider::trackColourId), sliderPosProportional, 
 		zeroPosProportional, useTracker, markerOpacity);
 	g.drawImage (newSlider, destX, destY, destWidth, destHeight, 0, 0, newSlider.getWidth(), newSlider.getHeight(), false);
 
@@ -618,11 +594,11 @@ void CabbageLookAndFeel::drawRotarySlider(Graphics& g, int /*x*/, int /*y*/, int
 			valueAlwaysOn) {
 
 		// Background box
-		g.setColour(sliderColour);
+		g.setColour(slider.findColour(0x1001200, false));
 		g.fillRoundedRectangle ((slider.getWidth()/2) - (strWidth/2), destHeight/2 - valueFont.getHeight()/2, 
 			strWidth, valueFont.getHeight(), valueFont.getHeight()/5);	
 
-		g.setColour(Colour::fromString(valueFontColour));
+		g.setColour(slider.findColour(0x1001200, false));
 		g.setFont (valueFont);
 		g.drawText (sliderValue, (slider.getWidth()/2) - (strWidth/2), destHeight/2 - valueFont.getHeight()/2, 
 			(int)strWidth, valueFont.getHeight(), Justification::centred, false);
@@ -637,14 +613,6 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int /*y
                                                                                                 const Slider::SliderStyle style, 
                                                                                                 Slider &slider)
 {
-	// Colour
-    String fontColour = slider.getProperties().getWithDefault("fontcolour", "").toString();
-	Colour fontcolour;
-	if(fontColour.length()>1)
-		fontcolour = Colour::fromString(fontColour);
-	else
-		fontcolour = CabbageUtils::getComponentFontColour();
-    
     // Getting the zero position.  The tracker fill starts at 0, not the minimum...
     float zeroPosProportional = 0; 
     if (slider.getMinimum() < 0)
@@ -665,15 +633,7 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int /*y
     float nameLabelWidth;
     if (slider.getName().length() > 0) 
         showNameLabel = true; 
-    
 
-	// Tracker fill
-	bool useTracker = true;
-	String trackColour = slider.getProperties().getWithDefault(String("tracker"), "");
-	if(trackColour.length()<2){
-		trackColour = Colours::lime.toString();
-		useTracker = false;
-	}
 
 	// Setting up textbox variables
 	Font valueFont(CabbageUtils::getValueFont());
@@ -715,7 +675,7 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int /*y
         if (showNameLabel) {
             nameLabel = CabbageUtils::cabbageString (nameLabel, CabbageUtils::getComponentFont(), nameLabelWidth);
 			g.setFont(nameLabelFont);
-			g.setColour(fontcolour);
+			g.setColour(slider.findColour(Slider::textBoxTextColourId));
 			g.drawText (nameLabel, 0, (height/2) - (CabbageUtils::getComponentFont().getHeight()/2), 
 				(int)nameLabelWidth, CabbageUtils::getComponentFont().getHeight(), just, false);
             destX += nameLabelWidth; 
@@ -746,9 +706,10 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int /*y
 		// Final slider position in proportion to length...
         sliderPosProp = slider.valueToProportionOfLength(slider.getValue());
 		
+		bool useTracker = true;		
 		// Getting image
 		newBackground = drawLinearBgImage (destWidth, destHeight, sliderPosProp, zeroPosProportional, 
-			useTracker, false, Colour::fromString(trackColour));	
+			useTracker, false, slider.findColour(Slider::trackColourId));	
     }
 
     //=========================== Else if Vertical Slider =======================================
@@ -767,7 +728,7 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int /*y
         sliderEndPosition = slider.getHeight() - destY;
 
 		g.setFont(nameLabelFont);
-		g.setColour(fontcolour);
+		g.setColour(slider.findColour(Slider::textBoxTextColourId));
 
         // If no textbox.....Name label goes at top, value goes at bottom.
         if (slider.getTextBoxPosition() == Slider::NoTextBox) {
@@ -809,10 +770,10 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int /*y
 
 		// Final slider position in proportion to length
 		sliderPosProp = slider.valueToProportionOfLength(slider.getValue());
-
+	bool useTracker = true;
         // Getting image
 		newBackground = drawLinearBgImage (destWidth, destHeight, sliderPosProp, zeroPosProportional, 
-			useTracker, true, Colour::fromString(trackColour));
+			useTracker, true, slider.findColour(Slider::trackColourId));
     }
     
     // Drawing Image. 
@@ -970,25 +931,10 @@ void CabbageLookAndFeel::drawToggleButton (Graphics &g, ToggleButton &button, bo
 	else
 		isToggleOn = false;
 
-	//----- Getting the colours...
-	Colour col, fcol;
-	if (button.getProperties().getWithDefault("colour", "").toString().length()<1){
-        for (float i=0.01; i<0.03; i+=0.01)
-			col = Colour::fromRGBA (0, 0, 0, 255/(i*100));
-    }
-    else
-		col = Colour::fromString(button.getProperties().getWithDefault("colour", "lime").toString());
-	
-	if (button.getProperties().getWithDefault("fontcolour", "").toString().isEmpty()){
-		fcol = CabbageUtils::getComponentFontColour();
-    }
-    else
-		fcol = Colour::fromString(button.getProperties().getWithDefault("fontcolour", "lime").toString());
-
 	bool isRECT = button.getProperties().getWithDefault("isRect", 0);
 
 	//----- Creating the image
-	Image newButton = drawToggleImage (destWidth, destHeight, isToggleOn, col, isRECT);
+	Image newButton = drawToggleImage (destWidth, destHeight, isToggleOn, button.findColour(TextButton::buttonColourId), isRECT);
 
 	//----- Drawing image
 	g.drawImage (newButton, destX, destY, destWidth, destHeight, 0, 0, destWidth, destHeight, false);
@@ -997,7 +943,7 @@ void CabbageLookAndFeel::drawToggleButton (Graphics &g, ToggleButton &button, bo
 	if (button.getButtonText().length() > 0) {
 		Justification just (1); //left
 		//g.setFont (CabbageUtils::getComponentFont());
-		g.setColour (fcol);
+		g.setColour (button.findColour(ToggleButton::textColourId));
 		//g.setColour(Colours::white);
 		String name;
 		name << button.getButtonText();
@@ -1014,8 +960,7 @@ void CabbageLookAndFeel::drawButtonBackground (Graphics& g, Button& button, cons
 {
 	float width = button.getWidth();
 	float height = button.getHeight();
-	String colour = button.getProperties().getWithDefault("colour", "");
-	Image newButton = drawTextButtonImage (width, height, isButtonDown, Colour::fromString(colour));
+	Image newButton = drawTextButtonImage (width, height, isButtonDown, button.findColour(TextButton::buttonColourId));
 	g.drawImage (newButton, 0, 0, width, height, 0, 0, width, height, false);
 }
 
@@ -1034,12 +979,7 @@ void CabbageLookAndFeel::drawButtonText (Graphics &g, TextButton &button, bool i
 	Justification just (36); //centered
 	float destY = (height*0.5) - (font.getHeight()*0.5);
 	
-	Colour textColour;
-	String col = button.getProperties().getWithDefault("fontcolour", "");
-	if(col.length()>2)
-		textColour = Colour::fromString(col);
-	else
-		textColour = CabbageUtils::getComponentFontColour();
+	Colour textColour = button.findColour(TextButton::textColourOnId);
 
 	//----- The text colour and start position change if the button is down or up....
 	if (isButtonDown == true) {
@@ -1170,16 +1110,8 @@ void CabbageLookAndFeel::drawGroupComponentOutline (Graphics &g, int w, int h, c
 	Colour col;
 	String bgColour = group.getProperties().getWithDefault("colour", "").toString();
 	String fontColour = group.getProperties().getWithDefault("fontcolour", "").toString();
-	//Logger::writeToLog(bgColour);
-	//Logger::writeToLog(fontColour);
 
-	if (bgColour.length()>1){
-		col = Colour::fromString(bgColour);
-		g.setColour (col);
-	}
-	else
-		g.setColour (CabbageUtils::getComponentSkin());
-
+	g.setColour (group.findColour(TextButton::ColourIds::buttonColourId));
 	g.fillRoundedRectangle (0, 0, w, h, 5);
 
 	//----- Outline
@@ -1193,15 +1125,9 @@ void CabbageLookAndFeel::drawGroupComponentOutline (Graphics &g, int w, int h, c
 #ifndef MACOSX
 	font.setFallbackFontName("Verdana"); 
 #endif	
-g.setFont (font);
+	g.setFont (font);
 
-	if (fontColour.length()>1){
-		col = Colour::fromString(fontColour);
-		g.setColour (col);
-	}
-	else 
-		g.setColour (CabbageUtils::getComponentFontColour());
-
+	g.setColour (group.findColour(GroupComponent::textColourId));
 	name = CabbageUtils::cabbageString (name, font, group.getWidth());
 	g.drawText (name, 0, 5, w, font.getHeight(), 36, false);
 	if(!group.getProperties().getWithDefault("groupLine", 0).equals(var(0))){

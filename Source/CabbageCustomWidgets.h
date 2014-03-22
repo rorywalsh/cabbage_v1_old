@@ -94,10 +94,9 @@ class CabbageButton : public Component
 			groupbox->setText(caption);
 		}
 
-		if(fontcolour.length()>0)
-		button->getProperties().set("fontcolour", fontcolour);
-		if(colour.length()>0)
-		button->getProperties().set("colour", colour);
+
+		button->setColour(TextButton::textColourOnId, Colour::fromString(fontcolour));
+		button->setColour(TextButton::buttonColourId, Colour::fromString(colour));
 		button->setButtonText(cAttr.getStringArrayPropValue(CabbageIDs::text, cAttr.getNumProp(CabbageIDs::value)));
 	}
 	//---------------------------------------------
@@ -108,8 +107,8 @@ class CabbageButton : public Component
 	//update controls
 	void update(CabbageGUIClass m_cAttr){
 		const MessageManagerLock mmLock;
-		button->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
-		button->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+		button->setColour(TextButton::textColourOnId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
+		button->setColour(TextButton::buttonColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
 		if(!m_cAttr.getNumProp(CabbageIDs::visible))
 			setVisible(false);
 		else
@@ -189,13 +188,14 @@ public:
 		addAndMakeVisible(groupbox);
 		groupbox->setVisible(false);
 		groupbox->getProperties().set("groupLine", var(1));
-		if(tracker.length()>0)
-		slider->getProperties().set("tracker", tracker);
-		//Logger::writeToLog("sliderIncr:"+String(cAttr.getNumProp(CabbageIDs::sliderincr)));		
+		slider->setColour(Slider::rotarySliderFillColourId, Colour::fromString(cl));
+		slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
+		slider->setColour(Slider::textBoxTextColourId, Colour::fromString(fontColour));
+		slider->setColour(Slider::trackColourId, Colour::fromString(tracker));
+		
 		slider->getProperties().set("decimalPlaces", decPlaces);
-		//Logger::writeToLog(fontColour);
-		slider->getProperties().set("fontcolour", fontColour);
-		//slider->getProperties().set("valueFontColour", Colour::fromString(cl).contrasting().toString()); 
+
+
 		if(textBox<1) 
 			slider->setTextBoxStyle (Slider::NoTextBox, true, 0, 0);
 		this->setWantsKeyboardFocus(false);
@@ -218,9 +218,10 @@ public:
 	//update controls	
 	void update(CabbageGUIClass m_cAttr){
 		const MessageManagerLock mmLock;
-		slider->setColour(0x1001200, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
-		slider->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
-		slider->getProperties().set("tracker", m_cAttr.getStringProp(CabbageIDs::trackercolour));
+		slider->setColour(Slider::rotarySliderFillColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
+		slider->setColour(Slider::thumbColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
+		slider->setColour(Slider::textBoxTextColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
+		slider->setColour(Slider::trackColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::trackercolour)));
 		setBounds(m_cAttr.getBounds());
 		slider->setName(m_cAttr.getStringProp(CabbageIDs::text));
 		slider->setSkewFactor(m_cAttr.getNumProp(CabbageIDs::sliderskew));
@@ -237,7 +238,7 @@ public:
 		//if rotary
 		if (sliderType.contains("rotary")) {
 			if(cl.length() > 0)
-				slider->setColour(0x1001200, Colour::fromString(cl));
+				slider->setColour(Slider::rotarySliderFillColourId, Colour::fromString(cl));
 			slider->setSliderStyle(Slider::Rotary);
 			getProperties().set("type", var("rslider"));
 			slider->setSliderStyle(Slider::RotaryVerticalDrag);
@@ -367,12 +368,8 @@ class CabbageCheckbox : public Component
 		}
 
 		button->getProperties().set("isRect", isRect);
-		button->getProperties().set("colour", colour);
-		button->getProperties().set("fontcolour", fontcolour);
-		button->setButtonText(buttonText);
-		//text colour id
-		button->setColour(0x1006501,
-				Colour::fromString(colour));
+		button->setColour(ToggleButton::textColourId, Colour::fromString(fontcolour));
+		button->setColour(TextButton::buttonColourId, Colour::fromString(colour));
 		button->setButtonText(buttonText);
 		
         //set initial value if given
@@ -391,8 +388,8 @@ class CabbageCheckbox : public Component
 	//update controls	
 	void update(CabbageGUIClass m_cAttr){
 		const MessageManagerLock mmLock;
-		button->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
-		button->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+		button->setColour(ToggleButton::textColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
+		button->setColour(TextButton::buttonColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
 		setBounds(m_cAttr.getBounds());
 		button->getProperties().set("isRect", m_cAttr.getStringProp(CabbageIDs::shape).equalsIgnoreCase("square"));
 		button->setButtonText(m_cAttr.getStringProp(CabbageIDs::text));
@@ -515,6 +512,7 @@ class CabbageComboBox : public Component
 		groupbox->setVisible(false);
 		groupbox->getProperties().set("groupLine", var(1));
 		combo->setColour(ComboBox::textColourId, Colour::fromString(fontcolour));
+		
 		combo->getProperties().set("colour", colour);
 		combo->getProperties().set("fontcolour", fontcolour);
 		//combo->setColour(ComboBox::ColourIds::textColourId, Colour::fromString(fontColour));
@@ -533,9 +531,6 @@ class CabbageComboBox : public Component
 			groupbox->setVisible(true);
 			groupbox->setText(caption);
 		}
-		//text colour ID
-		combo->setColour(0x1000a00,
-				Colours::findColourForName("white", Colours::grey));
 
 
 		combo->setEditableText (false);
@@ -694,7 +689,8 @@ class CabbageGroupbox : public GroupComponent
 	int line;
 	public:
 	//---- constructor -----
-	CabbageGroupbox(CabbageGUIClass &cAttr):		name(cAttr.getStringProp(CabbageIDs::name)),
+	CabbageGroupbox(CabbageGUIClass &cAttr):		
+							name(cAttr.getStringProp(CabbageIDs::name)),
 							caption(cAttr.getStringProp(CabbageIDs::caption)),
 							text(cAttr.getStringProp(CabbageIDs::text)),
 							colour(cAttr.getStringProp(CabbageIDs::colour)),
@@ -704,17 +700,9 @@ class CabbageGroupbox : public GroupComponent
 	{
 		toBack();
         offX=offY=offWidth=offHeight=0;
-        if(colour.length()>0){
-		//outline colour iD
-        setColour(0x1005400,
-                Colour::fromString(colour));
-		//text colour iD
-        setColour(0x1005410,
-                Colour::fromString(colour));
-        }
-		this->getProperties().set("colour", colour);
-		
-		this->getProperties().set("fontcolour", fontcolour);
+        setColour(TextButton::buttonColourId, Colour::fromString(colour));
+		setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
+		//this->getProperties().set("colour", colour);
 
         this->setText(text);
 		this->setWantsKeyboardFocus(false);
@@ -734,8 +722,8 @@ class CabbageGroupbox : public GroupComponent
 
 	//update control
 	void update(CabbageGUIClass m_cAttr){
-		getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
-		getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+        setColour(TextButton::buttonColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
+		setColour(GroupComponent::textColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
 		setBounds(m_cAttr.getBounds());
 		setText(m_cAttr.getStringProp(CabbageIDs::text));
 		if(!m_cAttr.getNumProp(CabbageIDs::visible))
@@ -941,9 +929,16 @@ class CabbageLabel	:	public Component
 {
 
 public:
-	CabbageLabel (String text, String colour, String fontcolour)
-		: text(text), colour(colour), fontcolour(fontcolour)
+	CabbageLabel (String text, String colour, String fontcolour, String textAlign)
+		: text(text), colour(colour), fontcolour(fontcolour), align(Justification::centred)
 	{
+	if(textAlign=="centre")
+		align = Justification::centred;
+	else if(textAlign=="left")
+		align = Justification::left;
+	else
+		align = Justification::right;
+		
 	}
 
 	~CabbageLabel()
@@ -957,11 +952,12 @@ public:
 
 	void paint(Graphics& g)
 	{
-		//g.fillAll(Colour::fromString(colour));
+		g.setColour(Colour::fromString(colour));
+		g.fillRoundedRectangle(getLocalBounds().toFloat(), 3.f);
 		g.setColour(Colour::fromString(fontcolour));
 		g.setFont(CabbageUtils::getComponentFont());
 		g.setFont(getHeight());
-		g.drawFittedText(text, 0, 0, getWidth(), getHeight(), Justification::left, 1, 1);
+		g.drawFittedText(text, 0, 0, getWidth(), getHeight(), align, 1, 1);
 	}
 
 	void setText(String _text){
@@ -972,8 +968,8 @@ public:
 
 	//update control
 	void update(CabbageGUIClass m_cAttr){
-		getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
-		getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+		colour = m_cAttr.getStringProp(CabbageIDs::colour);
+		fontcolour = m_cAttr.getStringProp(CabbageIDs::fontcolour);
 		setBounds(m_cAttr.getBounds());
 		if(!m_cAttr.getNumProp(CabbageIDs::visible))
 			setVisible(false);
@@ -986,6 +982,7 @@ public:
 
 private:
 	String text, colour, fontcolour;
+    Justification align;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageLabel);
 };
 

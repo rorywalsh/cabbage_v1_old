@@ -43,7 +43,6 @@ IdentArray() : StringArray("")
     add(",colour(");
 	add("tablecolour(");
 	add(" colour(");
-	add("colour(");
     add(",colours(");
 	add(" colours(");
     add("fontcolour(");
@@ -85,6 +84,7 @@ IdentArray() : StringArray("")
     add("cssetup(");
     add("kind(");
 	add("config(");
+	add("align(");
     add("beveltype(");
 	add("text(");
     add("runcsound(");
@@ -201,6 +201,7 @@ namespace CabbageIDs
 	static const Identifier textcolour = "textcolour";
 	static const Identifier pluginid = "pluginid";
 	static const Identifier tabs = "tabs";
+	static const Identifier align = "align";
 	static const Identifier tabbed = "tabbed";
 	static const Identifier rangey = "rangey";
 	static const Identifier rangex = "rangex";

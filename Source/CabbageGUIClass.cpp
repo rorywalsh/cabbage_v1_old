@@ -443,6 +443,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
 		cabbageIdentifiers.set(CabbageIDs::colour, Colours::transparentBlack.toString());
 		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::align, "centre");
 		cabbageIdentifiers.set(CabbageIDs::identchannel, "");
 		cabbageIdentifiers.set(CabbageIDs::visible, 1);
 	}
@@ -820,6 +821,10 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 	{
 		//check to see if identifier is part of input string..turn to lowercase first..
 		//Logger::writeToLog("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
+		
+		
+		//shouldn't really be checking for index off, it must exist in it's full form or now!
+		//OK for now, but might cause issues in the future..
 		int identPos = str.toLowerCase().indexOf(identArray.getReference(indx));
           if(identPos!=-1){
 			StringArray strTokens, fillStrTokens;
@@ -1022,6 +1027,10 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 			else if(identArray[indx].equalsIgnoreCase("author(")){
 				cabbageIdentifiers.set(CabbageIDs::author, strTokens[0].trim());	
 			}
+			
+			else if(identArray[indx].equalsIgnoreCase("align(")){
+				cabbageIdentifiers.set(CabbageIDs::align, strTokens[0].trim());	
+			}			
 
 		
 			else if(identArray[indx].equalsIgnoreCase("tabs(")){

@@ -120,7 +120,8 @@ public:
 			
 		}
 	
-		setSize(200, (comps.size()-hiddenComponents)*22);	
+		//adding 30 to show update text message
+		setSize(200, (30+(comps.size()-hiddenComponents)*22));	
 		Logger::writeToLog(String(this->getHeight()));
 		addProperties(comps);
 		repaint();
@@ -237,7 +238,6 @@ public:
 		
 	   }
 
-
 		void updateIdentifiers(){
 				updatedIdentifiers.clear();
 				for(int i=0;i<propsPanel->getNumberOfProps();i++){
@@ -251,11 +251,16 @@ public:
 	
 		bool keyPressed(const KeyPress &key)
 		{
-//				if(key == KeyPress::escapeKey){
-//				updateIdentifiers();					
-//				}
 				return false;
 		}	   
+		
+		void paint(Graphics& g){
+		g.fillAll(Colours::black);
+		g.setColour(Colour(40, 40, 40));
+		g.fillRoundedRectangle(10,  getHeight()-26, getWidth()-20, 20, 2);
+		g.setColour(Colours::white);		
+		g.drawFittedText("Press ESC to update", 0, getHeight()-25, getWidth(), 16, Justification::centred, 1, 1);
+		}
 
 	   ScopedPointer<CabbagePropertiesPanel> propsPanel;
 	   ScopedPointer<CabbageLookAndFeel> lookAndFeel;

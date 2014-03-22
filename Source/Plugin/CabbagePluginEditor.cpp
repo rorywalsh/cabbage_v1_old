@@ -173,6 +173,7 @@ tableBuffer(2, 44100)
 CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
 {
 comps.clear(true);
+subPatches.clear(true);
 layoutComps.clear(true);
 getFilter()->removeChangeListener(this);
 removeAllChangeListeners();
@@ -1269,28 +1270,32 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 		
 		//if dealing with a ppoup plant 
 		if(cAttr.getNumProp("popup")==1){
-				layoutComps[idx]->setBounds(left+relX, top+relY, width, height);
-                componentPanel->addAndMakeVisible(plantButton[plantButton.size()-1]);
+				cAttr.setNumProp(CabbageIDs::left, 0);
+			    cAttr.setNumProp(CabbageIDs::top, 18);
+				layoutComps[idx]->setBounds(0, 0, width, height);
                 layoutComps[idx]->setLookAndFeel(lookAndFeel);              
 				subPatches.add(new CabbagePlantWindow(getFilter()->getGUILayoutCtrls(idx).getStringProp(CabbageIDs::plant), Colours::black));
                 int patchIndex = subPatches.size()-1;
 				Logger::writeToLog("SubPatch index:"+String(patchIndex));
 				subPatches[patchIndex]->setAlwaysOnTop(true);
-                				
-                subPatches[patchIndex]->setContentNonOwned(layoutComps[idx], true);
                 subPatches[patchIndex]->setTitleBarHeight(18);
 				layoutComps[idx]->getProperties().set("popupPlantIndex", patchIndex);
-				if(cAttr.getNumProp(CabbageIDs::child)==1){
-				subPatches[patchIndex]->setSize(layoutComps[idx]->getWidth(), layoutComps[idx]->getHeight()+18);
-				int x = getScreenPosition().getX()+getWidth()/2-(layoutComps[idx]->getWidth()/2);
-				int y = getScreenPosition().getY()+getHeight()/2-(layoutComps[idx]->getHeight()/2);
-				subPatches[patchIndex]->setTopLeftPosition(x, y);
-				subPatches[patchIndex]->setVisible(false);
-				componentPanel->addChildComponent(subPatches[patchIndex]);	
-				}	
+				
+				if(cAttr.getNumProp(CabbageIDs::child)==1)
+					{
+					subPatches[patchIndex]->setSize(layoutComps[idx]->getWidth(), layoutComps[idx]->getHeight()+18);
+					int x = getScreenPosition().getX()+getWidth()/2-(layoutComps[idx]->getWidth()/2);
+					int y = getScreenPosition().getY()+getHeight()/2-(layoutComps[idx]->getHeight()/2);
+					subPatches[patchIndex]->setTopLeftPosition(x, y);
+					subPatches[patchIndex]->setVisible(false);
+					componentPanel->addChildComponent(subPatches[patchIndex]);	
+					}	
 				else
 					subPatches[patchIndex]->centreWithSize(layoutComps[idx]->getWidth(), layoutComps[idx]->getHeight()+18);
-				}			          
+
+				subPatches[patchIndex]->setContentNonOwned(layoutComps[idx], false);	
+				}
+				
 		}
 
 		cAttr.setStringProp(CabbageIDs::type, "groupbox");
@@ -2095,7 +2100,7 @@ will be created but not shown.
 We also need to check to see whether the processor editor has been 're-opened'. If so we
 don't need to recreate the automation
 */
-		int idx;
+		int idx=0;
 
 		if(getFilter()->haveXYAutosBeenCreated())
 			{	
@@ -2161,25 +2166,25 @@ don't need to recreate the automation
 				//if it is offset its position accordingly.
 				int relY=0,relX=0;
 				if(layoutComps.size()>0){
-		if(comps[idx])
+				if(comps[idx])
 				for(int y=0;y<layoutComps.size();y++)
-				if(cAttr.getStringProp("reltoplant").length()>0){
-				if(layoutComps[y]->getProperties().getWithDefault(String("plant"), -99).toString().equalsIgnoreCase(cAttr.getStringProp("reltoplant")))
-						{
-					positionComponentWithinPlant("", left, top, width, height, layoutComps[y], comps[idx]);
-						}
-				}
-						else{
-					comps[idx]->setBounds(left+relX, top+relY, width, height);
+					if(cAttr.getStringProp("reltoplant").length()>0){
+					if(layoutComps[y]->getProperties().getWithDefault(String("plant"), -99).toString().equalsIgnoreCase(cAttr.getStringProp("reltoplant")))
+							{
+							positionComponentWithinPlant("", left, top, width, height, layoutComps[y], comps[idx]);
+							}
+					}
+					else{
+						comps[idx]->setBounds(left+relX, top+relY, width, height);
 						if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
 						componentPanel->addAndMakeVisible(comps[idx]);
 						}
-				}
-				else{
-					comps[idx]->setBounds(left+relX, top+relY, width, height);
+					}
+					else{
+						comps[idx]->setBounds(left+relX, top+relY, width, height);
 						if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
 						componentPanel->addAndMakeVisible(comps[idx]);
-				}
+					}
 
 
 				float max = cAttr.getNumProp("maxx");
@@ -2191,9 +2196,13 @@ don't need to recreate the automation
 				float valueY = cabbageABS(min-cAttr.getNumProp("valuey"))/cabbageABS(min-max);
 				//Logger::writeToLog(String("Y:")+String(valueY));
 				//((CabbageXYController*)comps[idx])->xypad->setXYValues(cAttr.getNumProp("valueX"),
-		// cAttr.getNumProp("valueY"));
-		getFilter()->setParameter(idx, cAttr.getNumProp("valuey"));
-		getFilter()->setParameter(idx+1, cAttr.getNumProp("valuey"));
+				// cAttr.getNumProp("valueY"));
+				
+				if(!cAttr.getStringProp(CabbageIDs::name).containsIgnoreCase("dummy"))
+					{
+					getFilter()->setParameter(idx, cAttr.getNumProp("valuey"));
+					getFilter()->setParameter(idx+1, cAttr.getNumProp("valuey"));
+					}
 
 
 
@@ -2530,7 +2539,7 @@ for(int y=0;y<getFilter()->getXYAutomaterSize();y++){
 				}
 
 //don't check the whole vector here, only ones that have been updated
-for(int index=0;index<(int)getFilter()->dirtyControls.size();index++)
+for(int index=0;index<getFilter()->dirtyControls.size();index++)
 	{
     int i = getFilter()->dirtyControls[index];  	
 	inValue = getFilter()->getParameter(i);		 
@@ -2691,7 +2700,6 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 					subPatches[index]->setVisible(true);	
 					subPatches[index]->setAlwaysOnTop(true);
 					subPatches[index]->toFront(true);	
-					subPatches[index]->resized();
 					}
 				}
 				((CabbageGroupbox*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));

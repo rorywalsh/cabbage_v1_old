@@ -511,7 +511,6 @@ class CabbageComboBox : public Component
 		combo->setColour(ComboBox::textColourId, Colour::fromString(fontcolour));
 		combo->setColour(ComboBox::backgroundColourId, Colour::fromString(colour));
 		combo->lookAndFeelChanged();
-		combo->getLookAndFeel().createComboBoxTextBox(*combo);
 		
 		groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
 		groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());

@@ -602,7 +602,7 @@ void CabbageLookAndFeel::drawRotarySlider(Graphics& g, int /*x*/, int /*y*/, int
 		g.fillRoundedRectangle ((slider.getWidth()/2) - (strWidth/2), destHeight/2 - valueFont.getHeight()/2, 
 			strWidth, valueFont.getHeight(), valueFont.getHeight()/5);	
 
-		g.setColour(slider.findColour(0x1001200).contrasting(1.f));
+		g.setColour(slider.findColour(Slider::rotarySliderFillColourId).contrasting(1.f));
 		g.setFont (valueFont);
 		g.drawText (sliderValue, (slider.getWidth()/2) - (strWidth/2), destHeight/2 - valueFont.getHeight()/2, 
 			(int)strWidth, valueFont.getHeight(), Justification::centred, false);

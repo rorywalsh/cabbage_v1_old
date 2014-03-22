@@ -984,25 +984,30 @@ const Array<float, CriticalSection> CabbagePluginAudioProcessor::getTableFloats(
 //=================================================================================
 float CabbagePluginAudioProcessor::getParameter (int index)
 {
-float range = getGUICtrls(index).getNumProp(CabbageIDs::range);
-float min = getGUICtrls(index).getNumProp(CabbageIDs::min);
-//Logger::writeToLog("parameterGet-"+String(index)+String("-Min:")+String(min)+" Range:"+String(range)+ " Val:"+String(getGUICtrls(index).getNumProp(CabbageIDs::value)));
-//Logger::writeToLog("parameterGet:"+String(index)+String(":")+String(guiCtrls[index].getNumProp(CabbageIDs::value)));
+if(isPositiveAndBelow(index, getGUICtrlsSize()))
+	{
+	float range = getGUICtrls(index).getNumProp(CabbageIDs::range);
+	float min = getGUICtrls(index).getNumProp(CabbageIDs::min);
+	//Logger::writeToLog("parameterGet-"+String(index)+String("-Min:")+String(min)+" Range:"+String(range)+ " Val:"+String(getGUICtrls(index).getNumProp(CabbageIDs::value)));
+	//Logger::writeToLog("parameterGet:"+String(index)+String(":")+String(guiCtrls[index].getNumProp(CabbageIDs::value)));
 
-/* this gets called at any time by our host or out GUI editor */
-if(index<(int)guiCtrls.size()){//make sure index isn't out of range
-	#ifndef Cabbage_Build_Standalone
-	float val = (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
-	if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox)
-	return (getGUICtrls(index).getNumProp(CabbageIDs::value)/getGUICtrls(index).getNumProp(CabbageIDs::comborange));
-	else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::checkbox ||
-			getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::button)
-	return getGUICtrls(index).getNumProp(CabbageIDs::value);			
+	/* this gets called at any time by our host or out GUI editor */
+	if(index<(int)guiCtrls.size()){//make sure index isn't out of range
+		#ifndef Cabbage_Build_Standalone
+		float val = (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
+		if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox)
+		return (getGUICtrls(index).getNumProp(CabbageIDs::value)/getGUICtrls(index).getNumProp(CabbageIDs::comborange));
+		else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::checkbox ||
+				getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::button)
+		return getGUICtrls(index).getNumProp(CabbageIDs::value);			
+		else
+		return (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
+		#else
+		return guiCtrls[index].getNumProp(CabbageIDs::value);
+		#endif
+		}
 	else
-	return (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
-	#else
-	return guiCtrls[index].getNumProp(CabbageIDs::value);
-	#endif
+		return 0.0f;
 	}
 else
 	return 0.0f;

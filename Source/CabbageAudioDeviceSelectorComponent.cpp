@@ -150,9 +150,7 @@ public:
     {
         const int extra = getOutlineThickness() * 2;
 
-        return jmax (getRowHeight() + extra,
-                     jmin (getRowHeight() * getNumRows() + extra,
-                           preferredHeight));
+        return getRowHeight() * (getNumRows())+extra;
     }
 
 private:
@@ -622,6 +620,7 @@ private:
             addAndMakeVisible (bufferSizeDropDown = new ComboBox (String::empty));
 
             bufferSizeLabel = new Label (String::empty, TRANS ("audio buffer size:"));
+			
             bufferSizeLabel->attachToComponent (bufferSizeDropDown, true);
         }
         else

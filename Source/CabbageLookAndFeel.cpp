@@ -5,9 +5,13 @@ CabbageLookAndFeel::CabbageLookAndFeel()
 {
 	setColour(AlertWindow::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
 	setColour(AlertWindow::textColourId, Colour(200, 200, 200));
-	setColour(AlertWindow::outlineColourId, Colours::white);
+	setColour(AlertWindow::outlineColourId, Colours::whitesmoke);
 	setColour(DirectoryContentsDisplayComponent::textColourId, Colours::whitesmoke);
 	setColour(DirectoryContentsDisplayComponent::highlightColourId, Colours::red);
+	setColour(Label::textColourId, CabbageUtils::getComponentFontColour());
+	setColour(TextButton::textColourOnId, CabbageUtils::getComponentFontColour());
+	setColour(TextButton::buttonColourId, Colour(20, 20, 20));
+	setColour(ComboBox::ColourIds::textColourId, CabbageUtils::getComponentFontColour());
 	
 }
 
@@ -1085,17 +1089,9 @@ void CabbageLookAndFeel::drawLabel (Graphics &g, Label &label)
 	}
 	// Else If not a slider
 	else { 
-		g.setColour (Colours::transparentBlack);
+		g.setColour (label.findColour(Label::backgroundColourId));
 		g.fillRoundedRectangle (0, 0, label.getWidth(), label.getHeight(), label.getHeight()/5);
-
-		// For the text
-		g.setFont (CabbageUtils::getComponentFont());
-		String col = label.getProperties().getWithDefault("textColour", "");
-		if (col.length()>0)
-			g.setColour(Colour::fromString(col));
-		else
-			g.setColour (CabbageUtils::getComponentFontColour());
-
+		g.setColour (label.findColour(Label::textColourId));
 		g.drawText (label.getText(), 0, 0, label.getWidth(), label.getHeight(), Justification::centred, false);
 	}
 }

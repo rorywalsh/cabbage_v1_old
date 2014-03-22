@@ -47,11 +47,6 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	consoleMessages = "";
 	cabbageDance = 0;
 	setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
-	optionsButton.setColour(TextButton::buttonColourId, Colour(20, 20, 20));
-
-	optionsButton.setColour(TextButton::textColourOnId, Colours::whitesmoke);
-	
-
     Component::addAndMakeVisible (&optionsButton);
     optionsButton.addListener (this);
 	timerRunning = false;
@@ -223,7 +218,7 @@ void StandaloneFilterWindow::timerCallback()
 		int64 diskTime = csdFile.getLastModificationTime().toMilliseconds();
 		int64 tempTime = lastSaveTime.toMilliseconds();
 		if(diskTime>tempTime){
-			resetFilter(true);
+			resetFilter(false);
 			lastSaveTime = csdFile.getLastModificationTime();
 		}
 	}
@@ -562,7 +557,6 @@ const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutpu
                                                true, false, true, false);
     selectorComp.setSize (400, 250);
 	setAlwaysOnTop(false);
-	lookAndFeel->setColour(Label::textColourId, Colours::white);
 	selectorComp.setLookAndFeel(lookAndFeel);
 	Colour col(24, 24, 24);
 	DialogWindow::showModalDialog(TRANS("Audio Settings"), &selectorComp, this, col, true, false, false);
@@ -688,8 +682,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	}
 
 	if(!standaloneMode){
-		m.addItem(8, String("Rebuild Instrument | Ctrl+b"));
-		m.addItem(9, String("Rebuild GUI | Ctrl+u"));
+		m.addItem(8, String("Reload Instrument"));
+		//m.addItem(9, String("Rebuild GUI | Ctrl+u"));
 	/*
 	if(filter->getMidiDebug())
     m.addItem(9, TRANS("Show MIDI Debug Information"), true, true);

@@ -489,7 +489,7 @@ void CodeWindow::toggleManuals(String manual)
 				else{
 					if(File(homePage).existsAsFile()){
 				#ifdef LINUX        
-					if(!process.start("xdg-open "+homePage) 
+					if(!process.start("xdg-open "+homePage))
 						CabbageUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
 				#else
 					URL(homePage).launchInDefaultBrowser(); 

@@ -189,12 +189,12 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
 	document.addListener(this);
 	setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(35, 35, 35));
 	setColour(CodeEditorComponent::lineNumberBackgroundId, Colour::fromRGB(10, 10, 10));
-	setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f)); 
+	setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue.withAlpha(.2f)); 
 	setColour(CaretComponent::caretColourId, Colours::white);
 	setColour(TextEditor::backgroundColourId, Colours::black);
 	setColour(TextEditor::textColourId, Colours::white);
 	setLineNumbersShown(40);
-	setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue); 
+	//setColour(CodeEditorComponent::highlightColourId, Colours::yellow); 
 	setColour(CodeEditorComponent::lineNumberTextId, Colours::whitesmoke);
 	setLineNumbersShown(true);
 	#if defined(WIN32) || defined(MACOSX)
@@ -211,14 +211,14 @@ CsoundCodeEditorComponenet::~CsoundCodeEditorComponenet()
 //==============================================================================
 void CsoundCodeEditorComponenet::highlightLine(String line){
 		String temp = getDocument().getAllContent();
-		Range<int> range;
 		moveCaretTo(CodeDocument::Position (getDocument(), temp.indexOf(line)+line.length()), false);
 		moveCaretTo(CodeDocument::Position (getDocument(), temp.indexOf(line)), true);
-		//range.setStart(temp.indexOf(line)+line.length());
-		//range.setEnd(temp.indexOf(line));	
-		//range.setStart(1);
-		//range.setEnd(100);		
-		//setHighlightedRegion(range);
+}
+
+//==============================================================================
+void CsoundCodeEditorComponenet::highlightLines(int firstLine, int lastLine){
+		moveCaretTo(CodeDocument::Position (getDocument(), firstLine, 0), false);
+		moveCaretTo(CodeDocument::Position (getDocument(), lastLine, 5000), true);
 }
 //==============================================================================
 bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
@@ -271,11 +271,18 @@ void CsoundCodeEditorComponenet::insertNewLine(String text){
 	csdArray.addLines(getAllText());
 	String curLine = csdArray[pos1.getLineNumber()];	
 	int numberOfTabs=0;
+	int numberOfSpaces=0;
 	String tabs;
 	while(curLine.substring(numberOfTabs, numberOfTabs+1).equalsIgnoreCase("\t")){
 		tabs.append("\t", 8);
 		numberOfTabs++;
 	}
+	
+	while(curLine.substring(numberOfSpaces, numberOfSpaces+1).equalsIgnoreCase(" ")){
+		tabs.append(" ", 8);
+		numberOfSpaces++;
+	}
+	
 	Logger::writeToLog("Number of tabs:"+String(numberOfTabs));
 	getDocument().insertText(pos1, text+tabs);
 }
@@ -314,67 +321,50 @@ void CsoundCodeEditorComponenet::insertMultiTextAtCaret (String text)
 //==============================================================================
 void CsoundCodeEditorComponenet::handleTabKey(String direction)
 {	
-	/*multi line action, get highlited text, find the position of
+	/* multi line action, get highlited text, find the position of
 	 * it within the text editor, remove it from editor and reinsert it with
 	 * formatting
 	 */
 	 
 	StringArray selectedText, csdArray;
-	selectedText.addLines(getSelectedText());
+	//selectedText.addLines(getSelectedText());
 	csdArray.addLines(getAllText());
 	String csdText;
 	String currentLine;	
+	CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
+	CodeDocument::Position endPos(this->getDocument(), getHighlightedRegion().getEnd());
+	pos1 = getCaretPos();
 
 	if(direction.equalsIgnoreCase("forwards")){
 		//single line tab
-		if(selectedText.size()<1){
+		if(getHighlightedRegion().getLength()==0){
 			insertTabAtCaret();
 			return;
 		}
 		else{ 
 		//multiline tab
-		int indexOfText = getAllText().indexOf(getSelectedText());
-		csdText = getAllText().replace(getSelectedText(), "");
-		for(int i=0;i<selectedText.size();i++)
-						selectedText.set(i, "\t"+selectedText[i]);	
-
-		csdText = csdText.replaceSection(indexOfText, 0, selectedText.joinIntoString("\n"));
+		for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
+						csdArray.set(i, "\t"+csdArray[i]);	
 		}
+		setAllText(csdArray.joinIntoString("\n"));	
+		highlightLines(startPos.getLineNumber(), endPos.getLineNumber());
 		
 	}
 	else if(direction.equalsIgnoreCase("backwards"))
 	//single line back tab
-	if(selectedText.size()<1){
-		pos1 = getCaretPos();
-		//Logger::writeToLog(csdArray[pos1.getLineNumber()]);
-		currentLine = csdArray[pos1.getLineNumber()];
-		if(csdArray[pos1.getLineNumber()].substring(0, 1).contains("\t")){
-			csdArray.set(pos1.getLineNumber(), currentLine.substring(1));
-			csdText = csdArray.joinIntoString("\n");
+	if(getHighlightedRegion().getLength()<1)
+		{
+		//no need for shift tab, just hit backspace
 		}
-		else
-			return;
-	}
-	//multiline back tab
+		//multiline back tab
 		else{ 
-		//multiline tab
-		int indexOfText = getAllText().indexOf(getSelectedText());
-		csdText = getAllText().replace(getSelectedText(), "");
-		for(int i=0;i<selectedText.size();i++)
-			if(selectedText[i].substring(0, 1).equalsIgnoreCase("\t"))
-						selectedText.set(i, selectedText[i].substring(1));	
+			for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
+				if(csdArray[i].substring(0, 1).equalsIgnoreCase("\t"))
+							csdArray.set(i, csdArray[i].substring(1));	
 
-		csdText = csdText.replaceSection(indexOfText, 0, selectedText.joinIntoString("\n"));
+			setAllText(csdArray.joinIntoString("\n"));	
+			highlightLines(startPos.getLineNumber(), endPos.getLineNumber());
 		}
-
-	//Logger::writeToLog(newTextArray.joinIntoString("\n"));
-	setAllText(csdText);	
-	if(selectedText.size()>0)
-		highlightLine(selectedText.joinIntoString("\n"));
-	else
-		moveCaretTo(CodeDocument::Position (getDocument(), getAllText().indexOf(currentLine.substring(1))), false);
-
-	//sendActionMessage("make popup invisible");	
 }
 //==============================================================================
 void CsoundCodeEditorComponenet::toggleComments()

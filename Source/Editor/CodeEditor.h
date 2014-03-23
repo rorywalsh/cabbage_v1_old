@@ -74,6 +74,7 @@ class CsoundCodeEditorComponenet : public CodeEditorComponent,
 	String getAllText();
 	void setAllText(String text);
 	void highlightLine(String line);
+	void highlightLines(int firstLine, int lastLine);
 	void codeDocumentTextDeleted(int,int);
 	void codeDocumentTextInserted(const juce::String &,int);
 	bool textChanged;

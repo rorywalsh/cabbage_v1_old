@@ -1143,6 +1143,7 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 			 //always insert text on the last line of GUI code...
                  if(csdArray[i].containsIgnoreCase("</Cabbage>")){
 					csdArray.insert(i, text.joinIntoString("\n")); 
+					currentLineNumber = i;
 					currentText = csdArray[i];
 					i=csdArray.size();
 				 }
@@ -2332,6 +2333,7 @@ StringArray csdArray;
 if(message == "Message sent from PropertiesDialog"){
 #ifdef Cabbage_Build_Standalone
 	csdArray.clear();
+	showMessage(currentLineNumber);
 	//Logger::writeToLog("LineNumber:"+String(lineNumber));
 	csdArray.addLines(getFilter()->getCsoundInputFileText());
 	csdArray.set(currentLineNumber, CabbageGUIClass::getCabbageCodeFromIdentifiers(propsWindow->updatedIdentifiers));

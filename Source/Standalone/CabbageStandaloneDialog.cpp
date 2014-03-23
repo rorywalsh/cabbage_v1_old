@@ -337,8 +337,8 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message){
 		
 	else if(message.contains("MENU COMMAND: toggle edit")){
 		int val = getPreference(appProperties, "DisableGUIEditModeWarning");
-		if(val)
-			showMessage("", "Warning!! This feature is bleeding edge! (that's programmer speak for totally untested and likely to crash hard!). If you like to live on the edge, disable this warning under the 'Preferences' menu command and try 'Edit Mode' again, otherwise just let it be...", lookAndFeel, this);
+		if(!val)
+			showMessage("", "Warning!! This feature is still under development! Whilst every effort has been made to make it as usable as possible, there might still be some teething problems that need sorting out. If you find a problem, please try to recreate it, note the steps involved, and report it to the Cabbage users forum (www.TheCabbageFoundation.org). Thank you. ge, disable this warning under the 'Preferences' menu command and try 'Edit Mode' again, otherwise just let it be...", lookAndFeel, this);
 		else{
 			if(isAFileOpen == true)
 			if(filter->isGuiEnabled()){
@@ -727,9 +727,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		subMenu.addItem(298, String("Show tabs in editor"), true, true);		
 
 		if(!getPreference(appProperties, "DisableGUIEditModeWarning"))
-		subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, true);
-		else
 		subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, false);
+		else
+		subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, true);
 
 		//if(!getPreference(appProperties, "EnablePopupDisplay"))
 		//subMenu.addItem(207, String("Enable opcode popup help display"), true, false);
@@ -1074,8 +1074,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	}
 	//------- enable GUI edit mode------
 	else if(options==100){
-		if(getPreference(appProperties, "DisableGUIEditModeWarning"))
-			showMessage("", "Warning!! This feature is bleeding edge! (that's programmer speak for totally untested and likely to crash hard!). If you like to live on the edge, disable this warning under the 'Preferences' menu command and try 'Edit Mode' again, otherwise just let it be...", lookAndFeel);
+		if(!getPreference(appProperties, "DisableGUIEditModeWarning"))
+			showMessage("", "Warning!! This feature is still under development! Whilst every effort has been made to make it as usable as possible, there might still be some teething problems that need sorting out. If you find a problem, please try to recreate it, note the steps involved, and report it to the Cabbage users forum (www.TheCabbageFoundation.org). Thank you. You may disable this warning in 'Options->Preferences'", lookAndFeel);
 		else{
 			if(getPreference(appProperties, "ExternalEditor")==0)
 			openTextEditor();

@@ -149,6 +149,7 @@ public:
 	}
 
 	void codeDocumentTextDeleted(int,int){}
+	void showCabbageHelp();
 	void codeDocumentTextInserted(const juce::String &,int){}
 	void codeDocumentChanged (const CodeDocument::Position &affectedTextStart, const CodeDocument::Position &affectedTextEnd);
 	void insertFromRepo();
@@ -199,8 +200,6 @@ public:
 	CsoundCodeEditor* textEditor;
 	CsoundTokeniser csoundToker;
 	Font font;
-	ScopedPointer<WebBrowserComponent> htmlHelp;
-	bool showingHelp;
 };
 
 

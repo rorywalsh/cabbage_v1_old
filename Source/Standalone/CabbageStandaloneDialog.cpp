@@ -301,6 +301,7 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message){
 	}
 	
 	else if(message.contains("hideOutputWindow")){
+	if(outputConsole)
 	outputConsole->setVisible(false);
 	}	
 	
@@ -567,6 +568,7 @@ const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutpu
 //==============================================================================
 void StandaloneFilterWindow::closeButtonPressed()
 {
+stopTimer();
 if(filter)
 if(filter->hasTextChanged()){
 	int result = showYesNoMessage("You would like to save your changes?", lookAndFeel, 1);
@@ -729,10 +731,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		else
 		subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, false);
 
-		if(!getPreference(appProperties, "EnablePopupDisplay"))
-		subMenu.addItem(207, String("Enable opcode popup help display"), true, false);
-		else
-		subMenu.addItem(207, String("Enable opcode popup help display"), true, true);
+		//if(!getPreference(appProperties, "EnablePopupDisplay"))
+		//subMenu.addItem(207, String("Enable opcode popup help display"), true, false);
+		//else
+		//subMenu.addItem(207, String("Enable opcode popup help display"), true, true);
 
 
 		if(!getPreference(appProperties, "UseCabbageIO"))

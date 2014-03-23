@@ -27,8 +27,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 							  csoundOutputText(""),
 							  debugMessage(""),
 							  firstTime(true),
-							  font(String("Courier New"), 15, 1),
-							  showingHelp(false)
+							  font(String("Courier New"), 15, 1)
 {  
 	setApplicationCommandManagerToWatch(&commandManager);
 	commandManager.registerAllCommandsForTarget(this);
@@ -77,10 +76,6 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 		textEditor->editor->setOpcodeStrings(File(opcodeFile).loadFileAsString());
 	//else csound->Message("Could not open opcodes.txt file, parameter display disabled..");
 
-
-	
-	
-htmlHelp = new WebBrowserComponent(false);
 
 setContentNonOwned(textEditor, false);
 }
@@ -457,9 +452,6 @@ return true;
 //=======================================================
 void CodeWindow::toggleManuals(String manual)
 {
-if(!showingHelp)
-if(manual=="Csound")
-{       
 			String helpDir;
 			if(manual=="Csound")	
 			helpDir = appProperties->getUserSettings()->getValue("CsoundHelpDir", "");
@@ -471,62 +463,75 @@ if(manual=="Csound")
 				pos1 = textEditor->editor->getDocument().findWordBreakBefore(textEditor->editor->getCaretPos());
 				pos2 = textEditor->editor->getDocument().findWordBreakAfter(textEditor->editor->getCaretPos());
 				String opcode = csoundDoc.getTextBetween(pos1, pos2);
+				int lineIndex = textEditor->editor->getCaretPos().getLineNumber();
+				if(textEditor->getCabbageSectionRange().contains(lineIndex)){
+					showCabbageHelp();
+					return;
+				}
+				#if defined(LINUX) || defined(MACOSX)
 				URL urlCsound(helpDir+"/"+opcode.trim()+String(".html"));
+				String homePage = helpDir+"/index.html";
+				#else
+				URL urlCsound(helpDir+"\\"+opcode.trim()+String(".html"));
+				String homePage = helpDir+"\\index.html";
+				#endif
 				String urlCabbage;
-
-
 				ChildProcess process;
 				File temp1(urlCsound.toString(false));
 				if(temp1.exists()){
 				#ifdef LINUX        
 					if(!process.start("xdg-open "+urlCsound.toString(false).toUTF8())) 
-						CabbageUtils::showMessage("couldn't show file", &getLookAndFeel());
+						CabbageUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
 				#else
-					htmlHelp->goToURL(urlCsound.toString(false));
-					showingHelp = true;
-					setContentNonOwned(nullptr, false);
-					setContentNonOwned(htmlHelp, false);
+					 urlCsound.launchInDefaultBrowser();
 				#endif
 				}
+				else{
+					if(File(homePage).existsAsFile()){
+				#ifdef LINUX        
+					if(!process.start("xdg-open "+homePage) 
+						CabbageUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
+				#else
+					URL(homePage).launchInDefaultBrowser(); 
+				#endif				
+					}
+					else
+						CabbageUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());	
+
+				}
+					
 
 			}
-		}
-else{
-		String path;
-#if defined(LINUX) || defined(MACOSX)
-	path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/cabbage.html";
-#else
-	path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\cabbage.html";
-#endif	
-	
-	
-	if(!File(path).existsAsFile())
-			CabbageUtils::showMessage(
-"Could not find Cabbage manual. Make sure\n\
-it is located in the Docs folder in the same\n\
-directory as the main Cabbage executable", &getLookAndFeel());
-		else{
-				ChildProcess process;
-				File temp1(path);
-				if(temp1.exists()){
-				#ifdef LINUX        
-					if(!process.start("xdg-open "+path)) 
-						CabbageUtils::showMessage("couldn't show file", &getLookAndFeel());
-				#else
-					htmlHelp->goToURL(path);
-					showingHelp = true;
-					setContentNonOwned(nullptr, false);
-					setContentNonOwned(htmlHelp, false);
-				#endif
-				}
-		}
-	}
-else{
-	setContentNonOwned(nullptr, false);
-	setContentNonOwned(textEditor, false);
-	showingHelp = false;
 }
-}
+
+void CodeWindow::showCabbageHelp()
+{
+	String path;
+	#if defined(LINUX) || defined(MACOSX)
+		path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/cabbage.html";
+	#else
+		path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\cabbage.html";
+	#endif	
+		
+		
+		if(!File(path).existsAsFile())
+				CabbageUtils::showMessage(
+	"Could not find Cabbage manual. Make sure\n\
+	it is located in the Docs folder in the same\n\
+	directory as the main Cabbage executable", &getLookAndFeel());
+			else{
+					ChildProcess process;
+					File temp1(path);
+					if(temp1.exists()){
+					#ifdef LINUX        
+						if(!process.start("xdg-open "+path)) 
+							CabbageUtils::showMessage("Couldn't show file", &getLookAndFeel());
+					#else
+						URL(path).launchInDefaultBrowser(); 
+					#endif
+					}
+			}
+}	
 
 void CodeWindow::toggleTextWindows()
 {

@@ -134,6 +134,19 @@ void CsoundCodeEditor::showInstrs(bool show)
 resized();	
 }
 
+Range<int> CsoundCodeEditor::getCabbageSectionRange()
+{
+	Range<int> range;
+	range.setStart(0);
+	range.setEnd(0);
+	StringArray array;
+	array.addLines(editor->getAllText());
+	for(int i=0;i<array.size();i++)
+		if(array[i]=="</Cabbage>")
+			range.setEnd(i);
+	return range;	
+}
+
 void CsoundCodeEditor::actionListenerCallback(const String &message)
 {
 		Logger::writeToLog("Change editor text:"+message);

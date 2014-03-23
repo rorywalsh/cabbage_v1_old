@@ -137,6 +137,7 @@ public:
 	bool textChanged;	
 	ScopedPointer<CsoundCodeEditorComponenet> editor;
 	void resized();
+	Range<int> getCabbageSectionRange();
 };
 
 

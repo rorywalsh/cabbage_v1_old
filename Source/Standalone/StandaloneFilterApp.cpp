@@ -38,7 +38,14 @@ class CabbageStandalone : public JUCEApplication
 			ScopedPointer<XmlElement> xml;
 			xml = new XmlElement("PLANTS");
 			String homeDir = appProperties->getCommonSettings(true)->getFile().getParentDirectory().getFullPathName();
-			Logger::writeToLog(homeDir);
+			String manualPath;
+#if defined(LINUX) || defined(MACOSX)
+	manualPath = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/CsoundDocs/index.html";
+#else
+	manualPath = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\CsoundDocs\\index.html";
+#endif	
+
+			defaultPropSet->setValue("CsoundHelpDir", manualPath);
 			defaultPropSet->setValue("PlantFileDir", homeDir+"/Plants");
 			defaultPropSet->setValue("ExamplesDir", homeDir+"/Examples");
 			defaultPropSet->setValue("DisablePluginInfo", 0);
@@ -46,7 +53,6 @@ class CabbageStandalone : public JUCEApplication
 			defaultPropSet->setValue("UseCabbageIO", 1);
 			defaultPropSet->setValue("UsingCabbageCsound", 1);
 			defaultPropSet->setValue("AudioEnabled", 1);
-			defaultPropSet->setValue("EnablePopupDisplay", 1);
 			defaultPropSet->setValue("DisableGUIEditModeWarning", 0);
 			defaultPropSet->setValue("SetAlwaysOnTop", 1);	
 			defaultPropSet->setValue("PlantRepository", xml);

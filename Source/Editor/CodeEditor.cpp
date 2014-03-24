@@ -28,15 +28,20 @@ instrWidth(60),
 showInstrumentButtons(false),
 currentEditor(0)
 {
-	editor.add(new CsoundCodeEditorComponenet("csound", currentDoc, codeTokeniser));
+	editor.add(new CsoundCodeEditorComponenet("csound", document, codeTokeniser));
 	addAndMakeVisible(editor[currentEditor]);
 	
+	openFiles.add("CABBAGE_CSOUND_FILE");
+	
 	addAndMakeVisible(helpComp = new HelpComp());
+	editor[currentEditor]->addChangeListener(this);
 	editor[currentEditor]->addActionListener(this);
 	
 	if(CabbageUtils::getPreference(appProperties, "showTabs")==1)
 	{
-	showTabs(true);
+
+	showTab("Cabbage code");
+	showTab("Csound code");
 	showInstrs(true);
 	}
 
@@ -44,20 +49,22 @@ currentEditor(0)
 //==============================================================================
 void CsoundCodeEditor::resized()
 {
+	editor[currentEditor]->toFront(true);
+
 	if(showTabButtons&&showInstrumentButtons){
-		editor[currentEditor]->setBounds(instrWidth+20, 20, getWidth()-instrWidth-20, (getHeight()-20)-60);
+		editor[currentEditor]->setBounds(instrWidth+20, 20, getWidth()-instrWidth-20, (getHeight()-30)-75);
 		helpComp->setBounds(instrWidth+20, getHeight()-60, getWidth()-instrWidth-20, 30);	
 	}	
 	else if(showTabButtons && !showInstrumentButtons){
-		editor[currentEditor]->setBounds(0, 20, getWidth(), (getHeight()-60));	
+		editor[currentEditor]->setBounds(0, 20, getWidth(), (getHeight()-85));	
 		helpComp->setBounds(33, getHeight()-60, getWidth()-33, 30);
 	}
 	else if(showInstrumentButtons && !showTabButtons){
-		editor[currentEditor]->setBounds(instrWidth+5, 0, getWidth()-instrWidth-5, getHeight()-60);	
+		editor[currentEditor]->setBounds(instrWidth+5, 0, getWidth()-instrWidth-5, getHeight()-85);	
 		helpComp->setBounds(instrWidth+5, getHeight()-60, getWidth()-instrWidth-5, 30);
 	}
 	else{
-		editor[currentEditor]->setBounds(0, 0, getWidth(), getHeight()-60);
+		editor[currentEditor]->setBounds(0, 0, getWidth(), getHeight()-85);
 		helpComp->setBounds(33, getHeight()-60, getWidth()-33, 30);
 	}
 	
@@ -78,29 +85,31 @@ void CsoundCodeEditor::resized()
 	}	
 	
 }
-//==============================================================================
-void CsoundCodeEditor::showTabs(bool show)
-{
-	if(show)
-		{
-		tabButtons.clear(true);
-		StringArray array;
-		array.add("Cabbage code");
-		array.add("Csound code");
-		for(int i=0;i<2;i++)
-			{
-			tabButtons.add(new FlatButton(array[i], i));
-			addAndMakeVisible(tabButtons[tabButtons.size()-1]);
-			tabButtons[tabButtons.size()-1]->isActive(bool(1-i));
-			tabButtons[tabButtons.size()-1]->addActionListener(this);
-			}
 
-			showTabButtons = true;
-		}
-	else{
+//==============================================================================
+void CsoundCodeEditor::paint(Graphics& g)
+{
+	g.fillAll(CabbageUtils::getBackgroundSkin());
+	g.setColour(Colour(10, 10, 10));
+	g.fillRect(0, 200, getWidth(), getHeight()-200);
+}
+	
+//==============================================================================
+void CsoundCodeEditor::showTab(String name)
+{
+	String type;
+	if(name=="Cabbage code")
 		tabButtons.clear(true);
-		showTabButtons = false;
-	}
+	StringArray array;
+	if(tabButtons.size()>=2)
+		tabButtons.add(new FlatButton(name, tabButtons.size()-1, "Aux"));
+	else
+		tabButtons.add(new FlatButton(name, tabButtons.size()-1, "Native"));
+		
+	addAndMakeVisible(tabButtons[tabButtons.size()-1]);
+	tabButtons[tabButtons.size()-1]->isActive(bool(1-tabButtons.size()));
+	tabButtons[tabButtons.size()-1]->addChangeListener(this);
+	showTabButtons = true;
 	resized();
 }
 //==============================================================================
@@ -114,9 +123,9 @@ void CsoundCodeEditor::showInstrs(bool show)
 	for(int i=0;i<tmpArray.size();i++)
 	if(tmpArray[i].contains("instr ")){
 		noInstruments++;
-		instrButtons.add(new FlatButton(tmpArray[i].substring(tmpArray[i].indexOf("instr ")+6), i));
+		instrButtons.add(new FlatButton(tmpArray[i].substring(tmpArray[i].indexOf("instr ")+6), i, "instr"));
 		addAndMakeVisible(instrButtons[instrButtons.size()-1]);
-		instrButtons[instrButtons.size()-1]->addActionListener(this);
+		instrButtons[instrButtons.size()-1]->addChangeListener(this);
 		if(Font(13).getStringWidth(tmpArray[i])>instrWidth)
 			instrWidth = Font(13).getStringWidth(tmpArray[i]);
 			
@@ -133,6 +142,8 @@ void CsoundCodeEditor::showInstrs(bool show)
 		showInstrumentButtons = false;		
 	}
 
+//nt showing instruments buttons just yet
+showInstrumentButtons = false;	
 resized();	
 }
 //==============================================================================
@@ -150,53 +161,112 @@ Range<int> CsoundCodeEditor::getCabbageSectionRange()
 }
 //==============================================================================
 void CsoundCodeEditor::addNewFile(File newFile)
-{
-	editor.add(new CsoundCodeEditorComponenet("csound", currentDoc, &codeToker));
-	//editor[currentEditor]->setEnabled(false);
-	editor[currentEditor]->setVisible(false);
+{	
+	editor.add(new CsoundCodeEditorComponenet("csound", currentDoc[editor.size()], &codeToker));
 	currentEditor = editor.size()-1;	
+	for(int i=0;i<tabButtons.size();i++)
+		if(i!=currentEditor+1)
+		tabButtons[i]->isActive(false);
+	
+	editor[currentEditor]->addActionListener(this);
 	addAndMakeVisible(editor[currentEditor]);
-	editor[currentEditor]->setAllText(newFile.loadFileAsString());
+	editor[currentEditor]->toFront(true);
+	editor[currentEditor]->getDocument().replaceAllContent(newFile.loadFileAsString());
+	openFiles.add(newFile.getFullPathName());	
 	resized();
 }
 //==============================================================================
-void CsoundCodeEditor::actionListenerCallback(const String &message)
+String CsoundCodeEditor::getAllText(){
+	String text = editor[0]->getDocument().getAllContent();
+	return text; 	
+}	
+//==============================================================================
+void CsoundCodeEditor::setAllText(String text){
+	editor[0]->getDocument().replaceAllContent(text);
+}
+//==============================================================================
+void CsoundCodeEditor::highlightLine(String line){
+		String temp = editor[currentEditor]->getDocument().getAllContent();
+		Range<int> range;
+		editor[currentEditor]->moveCaretTo(CodeDocument::Position (editor[currentEditor]->getDocument(), temp.indexOf(line)+line.length()), false);
+		editor[currentEditor]->moveCaretTo(CodeDocument::Position (editor[currentEditor]->getDocument(), temp.indexOf(line)), true);
+}
+//==============================================================================
+void CsoundCodeEditor::saveAuxFile()
 {
-		Logger::writeToLog("Change editor text:"+message);
-		if(message=="Cabbage code"){
-		tabButtons[0]->isActive(true);
-		tabButtons[1]->isActive(false);
-		editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 0), false);	
-		editor[currentEditor]->scrollToLine(0);	
+	File file(openFiles[currentEditor]);;
+	file.replaceWithText(editor[currentEditor]->getAllText());
+}
+//==============================================================================
+void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+		FlatButton* button = dynamic_cast<FlatButton*>(source);
+		if(button)
+			{
+			if(button->type=="Native")
+				{
+				//editor[currentEditor]->setVisible(false);
+				currentEditor=0;
+				//editor[currentEditor]->setVisible(true);
+				editor[currentEditor]->toFront(true);	
+				if(button->getName()=="Cabbage code")
+					{
+					showInstrs(true);
+					tabButtons[0]->isActive(true);
+					editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 0), false);	
+					editor[currentEditor]->scrollToLine(0);	
+					for(int i=0;i<tabButtons.size();i++)
+						if(i!=0)
+						tabButtons[i]->isActive(false);
+					//resized();
+					repaint();
+					}
+				else if(button->getName()=="Csound code")
+					{
+					tabButtons[1]->isActive(true);			
+					editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 
+															editor[currentEditor]->getAllText().indexOf("</Cabbage>")+10),
+															false);					
+					editor[currentEditor]->scrollToLine(editor[currentEditor]->getCaretPos().getLineNumber());
+					for(int i=0;i<tabButtons.size();i++)
+						if(i!=1)
+						tabButtons[i]->isActive(false);		
+					}		
+				}
+		else if(button->type=="Aux")
+			{	
+				currentEditor = button->currentTab;	
+				//CabbageUtils::showMessage(currentEditor);
+				editor[currentEditor]->toFront(true);	
+				button->isActive(true);
+				for(int i=0;i<tabButtons.size();i++)
+					if(i!=currentEditor+1)
+					tabButtons[i]->isActive(false);
+				showInstrs(false);
+			}
 		}
-		else if(message=="Csound code"){
-		tabButtons[0]->isActive(false);
-		tabButtons[1]->isActive(true);			
-		editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 
-												editor[currentEditor]->getAllText().indexOf("</Cabbage>")+10),
-												false);	
-		
-		editor[currentEditor]->scrollToLine(editor[currentEditor]->getCaretPos().getLineNumber());
-		}
-		else if(message.contains("helpDisplay")){
-		//CodeDocument::Position newPos = editor->getCaretPos();
-		//editor->setCaretPos(editor->getCharacterBounds(editor->getCaretPos()));
-		helpComp->setText(String(" --- ")+editor[currentEditor]->getOpcodeToken(2).removeCharacters("\""), 
-								   editor[currentEditor]->getOpcodeToken(3).removeCharacters("\""));
-		//editor->setCaretPos(editor->getCharacterBounds(editor->getCaretPos()));
-		}
-		else{
-		String instrument = "instr "+message;
-		editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 
-												editor[currentEditor]->getAllText().indexOf(instrument)),
-												false);	
-		
-		editor[currentEditor]->scrollToLine(editor[currentEditor]->getCaretPos().getLineNumber());
-		}
-	
 }
 
-
+void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
+{
+if(message.contains("helpDisplay"))
+	{
+	//CodeDocument::Position newPos = editor->getCaretPos();
+	//editor->setCaretPos(editor->getCharacterBounds(editor->getCaretPos()));
+	helpComp->setText(String(" --- ")+editor[currentEditor]->getOpcodeToken(2).removeCharacters("\""), 
+							   editor[currentEditor]->getOpcodeToken(3).removeCharacters("\""));
+	//editor->setCaretPos(editor->getCharacterBounds(editor->getCaretPos()));
+	}
+	else{
+	String instrument = "instr "+message;
+	editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 
+											editor[currentEditor]->getAllText().indexOf(instrument)),
+											false);	
+	
+	editor[currentEditor]->scrollToLine(editor[currentEditor]->getCaretPos().getLineNumber());
+	}	
+	
+}
 
 
 //==============================================================================

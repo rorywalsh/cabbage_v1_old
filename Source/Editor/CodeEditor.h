@@ -35,6 +35,7 @@ class HelpComp;
 
 class CsoundCodeEditorComponenet : public CodeEditorComponent,
 						 public ActionBroadcaster,
+						 public ChangeBroadcaster,
 						 public CodeDocument::Listener
 {
 public:
@@ -74,6 +75,7 @@ public:
 	void codeDocumentTextInserted(const juce::String &,int);
 	bool textChanged;
 	void insertNewLine(String text);
+	void changeListenerCallback(juce::ChangeBroadcaster* source);
 	void setOpcodeStrings(String opcodes){
 	opcodeStrings.addLines(opcodes);
 	}
@@ -95,6 +97,7 @@ public:
 
 //=================================================================
 class CsoundCodeEditor : public Component,
+						 public ChangeListener,
 						 public ActionListener
 {
 	bool showTabButtons;
@@ -107,52 +110,37 @@ public:
 	editor.clear();	
 	};
 
-
-	String getAllText(){
-		String text = editor[currentEditor]->getDocument().getAllContent();
-		return text; 	
-	}	
-
-	void setAllText(String text){
-		editor[currentEditor]->getDocument().replaceAllContent(text);
-	}
-	
-	void highlightLine(String line){
-			String temp = editor[currentEditor]->getDocument().getAllContent();
-			Range<int> range;
-			editor[currentEditor]->moveCaretTo(CodeDocument::Position (editor[currentEditor]->getDocument(), temp.indexOf(line)+line.length()), false);
-			editor[currentEditor]->moveCaretTo(CodeDocument::Position (editor[currentEditor]->getDocument(), temp.indexOf(line)), true);
-	}	
-	
-	void showTabs(bool show);
+	void changeListenerCallback(juce::ChangeBroadcaster* source);
+	String getAllText();
+	void setAllText(String text);	
+	void highlightLine(String line);	
+	void showTab(String name);
 	void showInstrs(bool show);
-	void actionListenerCallback(const String &message);
-	
+	void actionListenerCallback(const juce::String&);
+
+	void saveAuxFile();	
 	OwnedArray<FlatButton> tabButtons;
 	OwnedArray<FlatButton> instrButtons;
-	ScopedPointer<HelpComp> helpComp;
-	
+	ScopedPointer<HelpComp> helpComp;	
 	bool textChanged;	
 	OwnedArray<CsoundCodeEditorComponenet> editor;
 	int currentEditor;
-	void addNewFile(File newFile);
+	void addNewFile(File newFile);	
+	void paint(Graphics& g);	
 	void resized();
 	Range<int> getCabbageSectionRange();
-	CodeDocument currentDoc;
+	CodeDocument currentDoc[20];;
 	CsoundTokeniser codeToker;
+	StringArray openFiles;
 };
 
 
 class FlatButton : public Component,
-					public ActionBroadcaster
+					public ChangeBroadcaster
 {
-	String name;
-	int currentTab;
-	bool active;
-	bool isMouseDown;
-	
-	public:
-		FlatButton(String name, int currentTab): 	name(name), 
+public:
+		FlatButton(String name, int currentTab, String type): 	name(name),
+													type(type),
 													currentTab(currentTab),
 													isMouseDown(false)
 		{
@@ -166,7 +154,7 @@ class FlatButton : public Component,
 		~FlatButton(){}
 		
 	void mouseDown(const MouseEvent& event){
-		sendActionMessage(name);
+		sendChangeMessage();
 		Logger::writeToLog("mouseDown");
 		isMouseDown = true;
 		repaint();		
@@ -185,6 +173,8 @@ class FlatButton : public Component,
 		
 	void paint(Graphics &g){
 		g.fillAll(Colour(20, 20, 20));
+		if(type=="Native")
+		{
 		if(name.contains("code")){
 			Logger::writeToLog("changing code paint, currentTab:"+String(currentTab));
 			if(active)
@@ -200,7 +190,26 @@ class FlatButton : public Component,
 				
 			g.drawRoundedRectangle(getLocalBounds().toFloat(), 5.f, 2);
 			g.drawFittedText(name, getLocalBounds(), Justification::centred, 1, 1.f);
-			}	
+			}
+			
+		}	
+		else if(type=="Aux"){
+			Logger::writeToLog("Painting Aux");
+			if(!active)
+				g.setColour(Colours::brown.darker(.9f));
+			else
+				g.setColour(Colours::brown.darker(.2f));
+			g.fillRoundedRectangle(getLocalBounds().toFloat(), 5.f);
+			
+			if(!active)
+				g.setColour(Colours::white.darker(.9f));	
+			else
+				g.setColour(Colours::white);
+					
+			g.drawRoundedRectangle(getLocalBounds().toFloat(), 5.f, 2);
+			g.drawFittedText(name, getLocalBounds(), Justification::centred, 1, 1.f);			
+			
+		}
 		else{
 			float number = name.substring(6, 5).getDoubleValue();
 			if(isMouseDown)
@@ -214,6 +223,12 @@ class FlatButton : public Component,
 			g.drawFittedText(name, getLocalBounds(), Justification::centred, 1, 1.f);
 			}
 		}
+	String name;
+	int currentTab;
+	bool active;
+	bool isMouseDown;
+	String type;
+
 };
 
 //============================================================
@@ -238,7 +253,7 @@ public:
 
 	void paint(Graphics& g)
 	{
-		g.fillAll(Colour::fromRGB(20,20,20));
+		g.fillAll(Colour::fromRGB(10, 10, 10));
 		g.setColour(Colours::yellow);
 		g.drawRect(0, 0, getWidth()-1, getHeight()-1, 1);
 		g.setFont(14);
@@ -246,7 +261,7 @@ public:
 		g.drawFittedText(syntax, 10, 5, getWidth(), getHeight(), Justification::topLeft, 100, 1);
 		int width = Font(14).getStringWidth(syntax);
 		g.setColour(Colours::white);				
-		g.drawFittedText(info, width+30, 5, getWidth(), getHeight(), Justification::topLeft, 100, 1);
+		g.drawFittedText(info, width+30, 4, getWidth(), getHeight(), Justification::topLeft, 100, 1);
 	}
 	
 	void resized(){

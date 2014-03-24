@@ -366,6 +366,11 @@ bool CodeWindow::perform (const InvocationInfo& info)
 	else if(info.commandID==CommandIDs::fileSave)
 		{
 			Logger::writeToLog("fileSaved");
+			if(textEditor->currentEditor!=0){
+			CabbageUtils::showMessage("Saving an auxillary file!");
+			textEditor->saveAuxFile();
+			}
+			else
 			sendActionMessage("fileSaved");
 		}
 	else if(info.commandID==CommandIDs::fileSaveAs)
@@ -376,10 +381,13 @@ bool CodeWindow::perform (const InvocationInfo& info)
 	else if(info.commandID==CommandIDs::fileOpen)
 		{			
 		FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.csd;*.py;*.txt"));
-		if(openFC.browseForFileToOpen()){
+		if(openFC.browseForFileToOpen())
+			{
 			textEditor->addNewFile(openFC.getResult());
 			setColourScheme("dark");
-		}
+			this->setName(openFC.getResult().getFullPathName());
+			textEditor->showTab(openFC.getResult().getFileName());
+			}
 			
 		}
 	else if(info.commandID==CommandIDs::fileQuit)

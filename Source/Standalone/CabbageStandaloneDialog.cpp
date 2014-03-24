@@ -474,7 +474,8 @@ filter->reCompileCsound(csdFile);
 	filter->codeEditor = cabbageCsoundEditor->textEditor;
 	if(getPreference(appProperties, "showTabs")==1)
 		{
-		cabbageCsoundEditor->textEditor->showTabs(true);
+		cabbageCsoundEditor->textEditor->showTab("Cabbage code");
+		cabbageCsoundEditor->textEditor->showTab("Csound code");
 		cabbageCsoundEditor->textEditor->showInstrs(true);
 		}
 //	if(Component::getCurrentlyFocusedComponent()->getName().contains("Panel"))
@@ -989,6 +990,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	}
 	//--------preference Show tabs
 	else if(options==298){
+		/*
 		if(getPreference(appProperties, "showTabs")==0)
 		{ 
 			setPreference(appProperties, "showTabs", 1);
@@ -1004,7 +1006,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 				cabbageCsoundEditor->textEditor->showTabs(false);
 				cabbageCsoundEditor->textEditor->showInstrs(false);
 			//}				
-		}
+		}*/
 	}
 	
 	else if(options==204){

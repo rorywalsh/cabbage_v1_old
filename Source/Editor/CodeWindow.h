@@ -42,81 +42,11 @@ class CodeWindow : public DocumentWindow,
 public:
 	CodeWindow(String name);
 	~CodeWindow();
-		CodeDocument csoundDoc;
-	//==============================================================================
-	StringArray getMenuBarNames()
-	{
-		const char* const names[] = { "File", "Edit", "Help", 0 };
-		return StringArray (names);
-	}
-	
-	//==============================================================================
-	void getAllCommands (Array <CommandID>& commands)
-	{
-		const CommandID ids[] = {
-									CommandIDs::fileNew,
-									CommandIDs::fileOpen,
-									CommandIDs::fileSave,
-									CommandIDs::fileSaveAs,	
-									CommandIDs::fileQuit,
-									CommandIDs::fileKeyboardShorts,	
-									CommandIDs::editUndo,
-									CommandIDs::editCopy,
-									CommandIDs::editCut,
-									CommandIDs::editPaste,
-									CommandIDs::editRedo,
-									CommandIDs::editToggleComments,
-									CommandIDs::editZoomIn,
-									CommandIDs::editZoomOut,
-									CommandIDs::whiteBackground,
-									CommandIDs::blackBackground,
-									CommandIDs::startSession,
-									CommandIDs::insertFromRepo,
-									CommandIDs::AudioSettings,
-									CommandIDs::addFromRepo,
-									CommandIDs::insertRecentEvent,
-									CommandIDs::openPythonEditor,
-									CommandIDs::commOrchUpdateInstrument,
-									CommandIDs::commOrchUpdateMultiLine,
-									CommandIDs::commOrchUpdateSingleLine,
-									CommandIDs::commScoUpdateMultiLine,
-									CommandIDs::commScoUpdateSingleLine,
-									CommandIDs::commOrcUpdateChannel,
-									CommandIDs::viewCsoundHelp,	
-									CommandIDs::viewCabbageHelp	
-									};
-		commands.addArray (ids, sizeof (ids) / sizeof (ids [0]));
-	}
-	
-	//==============================================================================
-	void menuItemSelected (int menuItemID, int topLevelMenuIndex){
-		if (menuItemID >= 100 && menuItemID < 200)
-			{
-			RecentlyOpenedFilesList recentFiles;
-			recentFiles.restoreFromString (appProperties->getUserSettings()
-												->getValue ("recentlyOpenedFiles"));
-
-			csdFile = recentFiles.getFile (menuItemID - 100);
-			textEditor->editor->getDocument().replaceAllContent(csdFile.loadFileAsString());
-			setName(csdFile.getFullPathName());
-			}		
-	}
-	
-	//==============================================================================
-	void setFontSize(String zoom)
-	{
-		
-		#if defined(WIN32) || defined(MACOSX)
-		String font = "Consolas";			
-		#else
-		String font = "Droid Sans Mono";
-		#endif			
-		
-		if(zoom==String("in"))
-		textEditor->editor->setFont(Font(font, ++fontSize, 1));
-		else
-		textEditor->editor->setFont(Font(font, --fontSize, 1));
-	}	
+	CodeDocument csoundDoc;
+	StringArray getMenuBarNames();
+	void getAllCommands (Array <CommandID>& commands);
+	void menuItemSelected (int menuItemID, int topLevelMenuIndex);
+	void setFontSize(String zoom);
 	
 	
 	//================= command methods ====================
@@ -136,7 +66,7 @@ public:
 	void toggleTextWindows();
 	
 	Rectangle<int> getCaretScreenPosition(){
-		Rectangle<int> rect(textEditor->editor->getCaretPoisition());
+		Rectangle<int> rect(textEditor->editor[textEditor->currentEditor]->getCaretPoisition());
 		rect.setLeft(rect.getX()+this->getTopLevelComponent()->getX()+100);
 		rect.setTop(rect.getY()+this->getTopLevelComponent()->getY()+45);
 		return rect;		
@@ -164,23 +94,7 @@ public:
 	}
 	
 	
-	void setColourScheme(String theme){
-	if(theme=="white"){
-			textEditor->editor->setColourScheme(csoundToker.getDefaultColourScheme());
-			textEditor->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
-			textEditor->setColour(CaretComponent::caretColourId, Colours::black);
-			textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue);
-			appProperties->getUserSettings()->setValue("EditorColourScheme", 0); 			
-			}
-	else if(theme=="dark"){
-			textEditor->editor->setColourScheme(csoundToker.getDarkColourScheme());
-			textEditor->setColour(CaretComponent::caretColourId, Colours::white);
-			textEditor->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
-			textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f)); 
-			appProperties->getUserSettings()->setValue("EditorColourScheme", 1);
-			}	
-	}
-	
+	void setColourScheme(String theme);	
 	void newFile(String type);
 	bool unSaved;
 

@@ -25,12 +25,14 @@
 CsoundCodeEditor::CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTokeniser):
 showTabButtons(false),
 instrWidth(60),
-showInstrumentButtons(false)
+showInstrumentButtons(false),
+currentEditor(0)
 {
-	addAndMakeVisible(editor = new CsoundCodeEditorComponenet("csound", document, codeTokeniser));
+	editor.add(new CsoundCodeEditorComponenet("csound", currentDoc, codeTokeniser));
+	addAndMakeVisible(editor[currentEditor]);
 	
 	addAndMakeVisible(helpComp = new HelpComp());
-	editor->addActionListener(this);
+	editor[currentEditor]->addActionListener(this);
 	
 	if(CabbageUtils::getPreference(appProperties, "showTabs")==1)
 	{
@@ -39,24 +41,24 @@ showInstrumentButtons(false)
 	}
 
 }
-
+//==============================================================================
 void CsoundCodeEditor::resized()
 {
 	if(showTabButtons&&showInstrumentButtons){
-		editor->setBounds(instrWidth+20, 20, getWidth()-instrWidth-20, (getHeight()-20)-60);
+		editor[currentEditor]->setBounds(instrWidth+20, 20, getWidth()-instrWidth-20, (getHeight()-20)-60);
 		helpComp->setBounds(instrWidth+20, getHeight()-60, getWidth()-instrWidth-20, 30);	
 	}	
 	else if(showTabButtons && !showInstrumentButtons){
-		editor->setBounds(0, 20, getWidth(), (getHeight()-60));	
-		helpComp->setBounds(0, getHeight()-60, getWidth(), 30);
+		editor[currentEditor]->setBounds(0, 20, getWidth(), (getHeight()-60));	
+		helpComp->setBounds(33, getHeight()-60, getWidth()-33, 30);
 	}
 	else if(showInstrumentButtons && !showTabButtons){
-		editor->setBounds(instrWidth+5, 0, getWidth()-instrWidth-5, getHeight()-60);	
+		editor[currentEditor]->setBounds(instrWidth+5, 0, getWidth()-instrWidth-5, getHeight()-60);	
 		helpComp->setBounds(instrWidth+5, getHeight()-60, getWidth()-instrWidth-5, 30);
 	}
 	else{
-		editor->setBounds(0, 0, getWidth(), getHeight()-60);
-		helpComp->setBounds(0, getHeight()-60, getWidth(), 30);
+		editor[currentEditor]->setBounds(0, 0, getWidth(), getHeight()-60);
+		helpComp->setBounds(33, getHeight()-60, getWidth()-33, 30);
 	}
 	
 	
@@ -76,7 +78,7 @@ void CsoundCodeEditor::resized()
 	}	
 	
 }
-
+//==============================================================================
 void CsoundCodeEditor::showTabs(bool show)
 {
 	if(show)
@@ -101,7 +103,7 @@ void CsoundCodeEditor::showTabs(bool show)
 	}
 	resized();
 }
-
+//==============================================================================
 void CsoundCodeEditor::showInstrs(bool show)
 {
 	if(show){
@@ -133,55 +135,70 @@ void CsoundCodeEditor::showInstrs(bool show)
 
 resized();	
 }
-
+//==============================================================================
 Range<int> CsoundCodeEditor::getCabbageSectionRange()
 {
 	Range<int> range;
 	range.setStart(0);
 	range.setEnd(0);
 	StringArray array;
-	array.addLines(editor->getAllText());
+	array.addLines(editor[currentEditor]->getAllText());
 	for(int i=0;i<array.size();i++)
 		if(array[i]=="</Cabbage>")
 			range.setEnd(i);
 	return range;	
 }
-
+//==============================================================================
+void CsoundCodeEditor::addNewFile(File newFile)
+{
+	editor.add(new CsoundCodeEditorComponenet("csound", currentDoc, &codeToker));
+	//editor[currentEditor]->setEnabled(false);
+	editor[currentEditor]->setVisible(false);
+	currentEditor = editor.size()-1;	
+	addAndMakeVisible(editor[currentEditor]);
+	editor[currentEditor]->setAllText(newFile.loadFileAsString());
+	resized();
+}
+//==============================================================================
 void CsoundCodeEditor::actionListenerCallback(const String &message)
 {
 		Logger::writeToLog("Change editor text:"+message);
 		if(message=="Cabbage code"){
 		tabButtons[0]->isActive(true);
 		tabButtons[1]->isActive(false);
-		editor->moveCaretTo(CodeDocument::Position(editor->getDocument(), 0), false);	
-		editor->scrollToLine(0);	
+		editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 0), false);	
+		editor[currentEditor]->scrollToLine(0);	
 		}
 		else if(message=="Csound code"){
 		tabButtons[0]->isActive(false);
 		tabButtons[1]->isActive(true);			
-		editor->moveCaretTo(CodeDocument::Position(editor->getDocument(), 
-												editor->getAllText().indexOf("</Cabbage>")+10),
+		editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 
+												editor[currentEditor]->getAllText().indexOf("</Cabbage>")+10),
 												false);	
 		
-		editor->scrollToLine(editor->getCaretPos().getLineNumber());
+		editor[currentEditor]->scrollToLine(editor[currentEditor]->getCaretPos().getLineNumber());
 		}
 		else if(message.contains("helpDisplay")){
 		//CodeDocument::Position newPos = editor->getCaretPos();
 		//editor->setCaretPos(editor->getCharacterBounds(editor->getCaretPos()));
-		helpComp->setText(String(" --- ")+editor->getOpcodeToken(2).removeCharacters("\""), 
-								   editor->getOpcodeToken(3).removeCharacters("\""));
+		helpComp->setText(String(" --- ")+editor[currentEditor]->getOpcodeToken(2).removeCharacters("\""), 
+								   editor[currentEditor]->getOpcodeToken(3).removeCharacters("\""));
 		//editor->setCaretPos(editor->getCharacterBounds(editor->getCaretPos()));
 		}
 		else{
 		String instrument = "instr "+message;
-		editor->moveCaretTo(CodeDocument::Position(editor->getDocument(), 
-												editor->getAllText().indexOf(instrument)),
+		editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 
+												editor[currentEditor]->getAllText().indexOf(instrument)),
 												false);	
 		
-		editor->scrollToLine(editor->getCaretPos().getLineNumber());
+		editor[currentEditor]->scrollToLine(editor[currentEditor]->getCaretPos().getLineNumber());
 		}
 	
 }
+
+
+
+
 //==============================================================================
 CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument &document, CodeTokeniser *codeTokeniser)
 					: CodeEditorComponent(document, codeTokeniser), type(type), textChanged(false)
@@ -189,10 +206,11 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
 	document.addListener(this);
 	setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(35, 35, 35));
 	setColour(CodeEditorComponent::lineNumberBackgroundId, Colour::fromRGB(10, 10, 10));
+	//toggle this when in column-edit mode
 	setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue.withAlpha(.2f)); 
 	setColour(CaretComponent::caretColourId, Colours::white);
 	setColour(TextEditor::backgroundColourId, Colours::black);
-	setColour(TextEditor::textColourId, Colours::white);
+	setColour(CodeEditorComponent::ColourIds::defaultTextColourId, Colours::white);
 	setLineNumbersShown(40);
 	//setColour(CodeEditorComponent::highlightColourId, Colours::yellow); 
 	setColour(CodeEditorComponent::lineNumberTextId, Colours::whitesmoke);
@@ -240,7 +258,7 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
         //else if (key == KeyPress (']', ModifierKeys::commandModifier, 0))   indentSelection();
         else if (key.getTextCharacter() >= ' ')                            
 		insertTextAtCaret (String::charToString (key.getTextCharacter()));
-		//insertMultiTextAtCaret(String::charToString (key.getTextCharacter()));
+		//insertMultiLineTextAtCaret(String::charToString (key.getTextCharacter()));
 
 		else if(key.getKeyCode() ==  268435488)
 			handleTabKey("backwards");
@@ -287,26 +305,25 @@ void CsoundCodeEditorComponenet::insertNewLine(String text){
 	getDocument().insertText(pos1, text+tabs);
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::insertMultiTextAtCaret (String text)
+void CsoundCodeEditorComponenet::insertMultiLineTextAtCaret (String text)
 {
 	//sendActionMessage("make popup invisible");
 	StringArray csdArray;
 	csdArray.addLines(getAllText());
 	String curLine;	
 	CodeDocument::Position newPos, indexPos;
-	newPos = getCaretPos();//getSelectionStartCaretPos();
-	int currentLine = getCaretPos().getLineNumber();
-	int index = newPos.getIndexInLine();
-	Logger::writeToLog(String(index));
+	int indexInLine = getCaretPos().getIndexInLine();//getSelectionStartCaretPos();
+
+	CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
+	CodeDocument::Position endPos(this->getDocument(), getHighlightedRegion().getEnd());
 	
-	StringArray selectedText;
-	selectedText.addLines(getTextInRange(this->getHighlightedRegion()));
-	
-	
+	for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
+					csdArray.set(i, csdArray[i].replaceSection(indexInLine, 0, text));	
+	/*
 	for(int i=0;i<selectedText.size();i++){
 		curLine = newPos.getLineText();
 		Logger::writeToLog(String(curLine.length()));
-		/* need to check for tabs and add four spaces!!*/		
+		/* need to check for tabs and add four spaces!!		
 		for(int y=curLine.length();y<index+2;y++){
 			getDocument().insertText(CodeDocument::Position(getDocument(), newPos.getLineNumber(), curLine.length()), " ");
 			newPos = newPos.movedBy(1);
@@ -316,6 +333,9 @@ void CsoundCodeEditorComponenet::insertMultiTextAtCaret (String text)
 		getDocument().insertText(newPos, text);	
 		newPos = newPos.movedByLines(1);
 		}
+		*/
+		setAllText(csdArray.joinIntoString("\n"));
+		
 	//sendActionMessage("make popup invisible");
 }
 //==============================================================================
@@ -462,18 +482,19 @@ void CsoundCodeEditorComponenet::addRepoToSettings()
 //==============================================================================
 void CsoundCodeEditorComponenet::updateCaretPosition()
 {
-	/*
+
 	Logger::writeToLog("Updating caret position");
-	int columnEdit = 1;
+	int columnEdit = 0;
 	
 	if(columnEdit==1){
 	StringArray selectedText;
 	selectedText.addLines(getTextInRange(this->getHighlightedRegion()));
-	Rectangle<int> newCaretPosition(getCharacterBounds(getSelectionStartCaretPosition()));
+	CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
+	Rectangle<int> newCaretPosition(getCharacterBounds(startPos));
 	newCaretPosition.setHeight(getCharacterBounds (getCaretPos()).getHeight()*selectedText.size());
-	caret->setCaretPosition (newCaretPosition);
+	setCaretPos(newCaretPosition);
 	}
-	else*/
+	else
 	setCaretPos(getCharacterBounds (getCaretPos()));
 }
 //==============================================================================

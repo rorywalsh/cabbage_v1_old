@@ -38,7 +38,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 	restoreWindowStateFromString (appProperties->getUserSettings()->getValue ("mainWindowPos"));
 
 
-	textEditor->editor->addActionListener(this);
+	textEditor->editor[textEditor->currentEditor]->addActionListener(this);
 
 	
 	this->setTitleBarHeight(20);
@@ -73,7 +73,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 	Logger::writeToLog(opcodeFile);
 
 	if(File(opcodeFile).existsAsFile())
-		textEditor->editor->setOpcodeStrings(File(opcodeFile).loadFileAsString());
+		textEditor->editor[textEditor->currentEditor]->setOpcodeStrings(File(opcodeFile).loadFileAsString());
 	//else csound->Message("Could not open opcodes.txt file, parameter display disabled..");
 
 
@@ -87,7 +87,77 @@ CodeWindow::~CodeWindow(){
 	deleteAndZero(textEditor);
 }
 
+//==============================================================================
+StringArray CodeWindow::getMenuBarNames()
+{
+	const char* const names[] = { "File", "Edit", "View", "Help", 0 };
+	return StringArray (names);
+}
 
+//==============================================================================
+void CodeWindow::getAllCommands (Array <CommandID>& commands)
+{
+	const CommandID ids[] = {
+								CommandIDs::fileNew,
+								CommandIDs::fileOpen,
+								CommandIDs::fileSave,
+								CommandIDs::fileSaveAs,	
+								CommandIDs::fileQuit,
+								CommandIDs::fileKeyboardShorts,	
+								CommandIDs::editUndo,
+								CommandIDs::editCopy,
+								CommandIDs::editCut,
+								CommandIDs::editPaste,
+								CommandIDs::editRedo,
+								CommandIDs::editToggleComments,
+								CommandIDs::editZoomIn,
+								CommandIDs::editZoomOut,
+								CommandIDs::whiteBackground,
+								CommandIDs::blackBackground,
+								CommandIDs::insertFromRepo,
+								CommandIDs::addFromRepo,
+								CommandIDs::insertRecentEvent,
+								CommandIDs::openPythonEditor,
+								CommandIDs::viewInstrumentsTabs,
+								CommandIDs::viewLinesNumbers,
+								CommandIDs::viewOpcodeHelp,
+								CommandIDs::viewCsoundHelp,	
+								CommandIDs::viewCabbageHelp	
+								};
+	commands.addArray (ids, sizeof (ids) / sizeof (ids [0]));
+}
+
+//==============================================================================
+void CodeWindow::menuItemSelected (int menuItemID, int topLevelMenuIndex){
+	if (menuItemID >= 100 && menuItemID < 200)
+		{
+		RecentlyOpenedFilesList recentFiles;
+		recentFiles.restoreFromString (appProperties->getUserSettings()
+											->getValue ("recentlyOpenedFiles"));
+
+		csdFile = recentFiles.getFile (menuItemID - 100);
+		textEditor->editor[textEditor->currentEditor]->getDocument().replaceAllContent(csdFile.loadFileAsString());
+		setName(csdFile.getFullPathName());
+		}		
+}
+
+//==============================================================================
+void CodeWindow::setFontSize(String zoom)
+{
+	
+	#if defined(WIN32) || defined(MACOSX)
+	String font = "Consolas";			
+	#else
+	String font = "Droid Sans Mono";
+	#endif			
+	
+	if(zoom==String("in"))
+	textEditor->editor[textEditor->currentEditor]->setFont(Font(font, ++fontSize, 1));
+	else
+	textEditor->editor[textEditor->currentEditor]->setFont(Font(font, --fontSize, 1));
+}	
+	
+//==============================================================================	
 void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandInfo& result)
 {	
 	KeyboardShortcutKeys shortcuts(appProperties->getUserSettings()->getXmlValue("KeyboardShortcutXmlData"));
@@ -99,7 +169,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		result.addDefaultKeypress ('n', ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::fileOpen:
-		result.setInfo (String("Open"), String("Open a file"), CommandCategories::file, 0);
+		result.setInfo (String("Open Auxiliary file"), String("Open a file"), CommandCategories::file, 0);
 		result.addDefaultKeypress ('o', ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::fileSave:
@@ -177,39 +247,16 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		result.setInfo (String("Insert Python code"), String("Insert Python code"), CommandCategories::edit, 0);
 		result.addDefaultKeypress ('p', ModifierKeys::commandModifier | ModifierKeys::altModifier);
 		break;	
-	case CommandIDs::AudioSettings:
-		result.setInfo (String("Audio Settings"), String("Edit audio settings"), CommandCategories::edit, 0);
-		break;			
 		
-	//interactive commands	
-	case CommandIDs::commOrchUpdateInstrument:
-		result.setInfo (String("Update entire instr"), String("Update entire instr"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('u', ModifierKeys::commandModifier);
-		break;	
-	case CommandIDs::startSession:
-		result.setInfo (String("Restart Session"), String("Restart Session"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('r', ModifierKeys::commandModifier);
-		break;	
-	case CommandIDs::commOrchUpdateMultiLine:
-		result.setInfo (String("Update orc multi-line"), String("Update orch mutli-line"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('m', ModifierKeys::commandModifier);
-		break;	
-	case CommandIDs::commOrchUpdateSingleLine:
-		result.setInfo (String("Update orc single-line"), String("Update orch single-line"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('l', ModifierKeys::commandModifier);
-		break;	
-	case CommandIDs::commScoUpdateMultiLine:
-		result.setInfo (String("Update sco multi-line"), String("Update orch multi-line"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('p', ModifierKeys::commandModifier);
-		break;	
-	case CommandIDs::commScoUpdateSingleLine:
-		result.setInfo (String("Update sco single-line"), String("Update orch multi-line"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('e', ModifierKeys::commandModifier);
-		break;	
-	case CommandIDs::commOrcUpdateChannel:
-		result.setInfo (String("Update channel"), String("Update channel"), CommandCategories::command, 0);
-		result.addDefaultKeypress ('c', ModifierKeys::altModifier | ModifierKeys::commandModifier);
-		break;	
+	case CommandIDs::viewInstrumentsTabs:
+		result.setInfo (String("Show instruments tabs"), String("Show Instruments tabs"), CommandCategories::view, 0);
+		break;		
+	case CommandIDs::viewLinesNumbers:
+		result.setInfo (String("Show line numbers"), String("Show line numbers"), CommandCategories::view, 0);
+		break;		
+	case CommandIDs::viewOpcodeHelp:
+		result.setInfo (String("Show opcode help"), String("Show opcode help"), CommandCategories::view, 0);
+		break;		
 		
 	case CommandIDs::viewCsoundHelp:
 #ifndef MACOSX
@@ -237,7 +284,7 @@ m2.setLookAndFeel(&getLookAndFeel());
 if(topLevelMenuIndex==0)
 	{		
 	 //m1.addCommandItem(&commandManager, CommandIDs::fileNew);	 
-	 //m1.addCommandItem(&commandManager, CommandIDs::fileOpen);
+	 m1.addCommandItem(&commandManager, CommandIDs::fileOpen);
 	 
 	 //RecentlyOpenedFilesList recentFiles;
      //recentFiles.restoreFromString (appProperties->getUserSettings()
@@ -271,7 +318,6 @@ else if(topLevelMenuIndex==1)
 	m2.addCommandItem(&commandManager, CommandIDs::whiteBackground);
 	m2.addCommandItem(&commandManager, CommandIDs::blackBackground);
 	m1.addSubMenu("Change editor theme", m2);
-	m1.addCommandItem(&commandManager, CommandIDs::AudioSettings);
 	//m1.addCommandItem(&commandManager, CommandIDs::insertFromRepo);
 	//m1.addCommandItem(&commandManager, CommandIDs::addFromRepo);
 	//m1.addCommandItem(&commandManager, CommandIDs::insertRecentEvent);
@@ -279,21 +325,22 @@ else if(topLevelMenuIndex==1)
 	return m1;
 	}
 
-//else if(topLevelMenuIndex==2)
-//	{
-	//m1.addCommandItem(&commandManager, CommandIDs::startSession);
-	//m1.addCommandItem(&commandManager, CommandIDs::commOrchUpdateInstrument);
+else if(topLevelMenuIndex==2)
+	{
+	m1.addCommandItem(&commandManager, CommandIDs::viewInstrumentsTabs);
+	m1.addCommandItem(&commandManager, CommandIDs::viewLinesNumbers);
+	m1.addCommandItem(&commandManager, CommandIDs::viewOpcodeHelp);
 	//m1.addCommandItem(&commandManager, CommandIDs::commOrcUpdateChannel);	
 	//m1.addCommandItem(&commandManager, CommandIDs::commOrchUpdateMultiLine);
 	//m1.addCommandItem(&commandManager, CommandIDs::commOrchUpdateSingleLine);
 	//m1.addCommandItem(&commandManager, CommandIDs::commScoUpdateMultiLine);
 	//m1.addCommandItem(&commandManager, CommandIDs::commScoUpdateSingleLine);
 	
-//	return m1;
-//	}
+	return m1;
+	}
  
 	
-else if(topLevelMenuIndex==2)
+else if(topLevelMenuIndex==3)
 	{
 	m1.addCommandItem(&commandManager, CommandIDs::viewCsoundHelp);
 	m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
@@ -303,6 +350,7 @@ else if(topLevelMenuIndex==2)
 else return m1;
 }
 
+//==============================================================================
 bool CodeWindow::perform (const InvocationInfo& info)
 {
 	Logger::writeToLog(String(info.commandID));
@@ -327,12 +375,12 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		}
 	else if(info.commandID==CommandIDs::fileOpen)
 		{			
-			Logger::writeToLog("fileOpen");
-			sendActionMessage("fileOpen");
+		FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.csd;*.py;*.txt"));
+		if(openFC.browseForFileToOpen()){
+			textEditor->addNewFile(openFC.getResult());
+			setColourScheme("dark");
 		}
-	else if(info.commandID==CommandIDs::AudioSettings)
-		{			
-			sendActionMessage("audioSettings");
+			
 		}
 	else if(info.commandID==CommandIDs::fileQuit)
 		{			
@@ -341,7 +389,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		
 	else if(info.commandID==CommandIDs::editUndo)
 		{			
-			textEditor->editor->undo();
+			textEditor->editor[textEditor->currentEditor]->undo();
 		}
 		
 	else if(info.commandID==CommandIDs::fileKeyboardShorts)
@@ -359,24 +407,24 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		
 	else if(info.commandID==CommandIDs::editCut)
 		{			
-			textEditor->editor->cutToClipboard();
+			textEditor->editor[textEditor->currentEditor]->cutToClipboard();
 		}
 	else if(info.commandID==CommandIDs::editCopy)
 		{			
-			textEditor->editor->copyToClipboard();
+			textEditor->editor[textEditor->currentEditor]->copyToClipboard();
 		}
 	else if(info.commandID==CommandIDs::editPaste)
 		{			
-			textEditor->editor->pasteFromClipboard();
+			textEditor->editor[textEditor->currentEditor]->pasteFromClipboard();
 		}
 
 	else if(info.commandID==CommandIDs::editRedo)
 		{			
-			textEditor->editor->redo();
+			textEditor->editor[textEditor->currentEditor]->redo();
 		}
 	else if(info.commandID==CommandIDs::editToggleComments)
 		{			
-		textEditor->editor->toggleComments();
+			textEditor->editor[textEditor->currentEditor]->toggleComments();
 		}
 		
 	else if(info.commandID==CommandIDs::editZoomIn)
@@ -425,9 +473,19 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		 */
 		}	
 		
+	else if(info.commandID==CommandIDs::viewInstrumentsTabs)
+		{
+		Logger::writeToLog("show instruments");
+		}		
+
+	else if(info.commandID==CommandIDs::viewLinesNumbers)
+		{
+		Logger::writeToLog("show line numbers");
+		}		
+		
 	else if(info.commandID==CommandIDs::addFromRepo)
 		{	
-		textEditor->editor->addToRepository();
+		textEditor->editor[textEditor->currentEditor]->addToRepository();
 		}	
 
 	else if(info.commandID==CommandIDs::viewCsoundHelp)
@@ -460,10 +518,10 @@ void CodeWindow::toggleManuals(String manual)
 					CabbageUtils::showMessage("Please set the Csound manual directory in the Preference menu", &getLookAndFeel());                
 			else{                        
 				CodeDocument::Position pos1, pos2;
-				pos1 = textEditor->editor->getDocument().findWordBreakBefore(textEditor->editor->getCaretPos());
-				pos2 = textEditor->editor->getDocument().findWordBreakAfter(textEditor->editor->getCaretPos());
+				pos1 = textEditor->editor[textEditor->currentEditor]->getDocument().findWordBreakBefore(textEditor->editor[textEditor->currentEditor]->getCaretPos());
+				pos2 = textEditor->editor[textEditor->currentEditor]->getDocument().findWordBreakAfter(textEditor->editor[textEditor->currentEditor]->getCaretPos());
 				String opcode = csoundDoc.getTextBetween(pos1, pos2);
-				int lineIndex = textEditor->editor->getCaretPos().getLineNumber();
+				int lineIndex = textEditor->editor[textEditor->currentEditor]->getCaretPos().getLineNumber();
 				if(textEditor->getCabbageSectionRange().contains(lineIndex)){
 					showCabbageHelp();
 					return;
@@ -503,7 +561,7 @@ void CodeWindow::toggleManuals(String manual)
 
 			}
 }
-
+//==============================================================================
 void CodeWindow::showCabbageHelp()
 {
 	String path;
@@ -532,16 +590,16 @@ void CodeWindow::showCabbageHelp()
 					}
 			}
 }	
-
+//==============================================================================
 void CodeWindow::toggleTextWindows()
 {
 
 }
-
+//==============================================================================
 void CodeWindow::setEditorColourScheme(String theme){
 	setColourScheme(theme);
 }
-
+//==============================================================================
 void CodeWindow::actionListenerCallback(const String &message){
 	Logger::writeToLog(message);
 	if(message=="splash")
@@ -550,14 +608,29 @@ void CodeWindow::actionListenerCallback(const String &message){
 	textEditor->grabKeyboardFocus();		
 	}
 }
-	
+//==============================================================================	
+void CodeWindow::setColourScheme(String theme){
+if(theme=="white"){
+		textEditor->editor[textEditor->currentEditor]->setColourScheme(csoundToker.getDefaultColourScheme());
+		textEditor->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
+		textEditor->setColour(CaretComponent::caretColourId, Colours::black);
+		textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue);
+		appProperties->getUserSettings()->setValue("EditorColourScheme", 0); 			
+		}
+else if(theme=="dark"){
+		textEditor->editor[textEditor->currentEditor]->setColourScheme(csoundToker.getDarkColourScheme());
+		textEditor->setColour(CaretComponent::caretColourId, Colours::white);
+		textEditor->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
+		textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f)); 
+		appProperties->getUserSettings()->setValue("EditorColourScheme", 1);
+		}	
+}
 
-
-
+//==============================================================================
 void CodeWindow::timerCallback(){
 
 }
-
+//==============================================================================
 void CodeWindow::insertFromRepo(){
 int repoIndex = 1;
 		PopupMenu m;
@@ -579,7 +652,7 @@ int repoIndex = 1;
 		forEachXmlChildElement (*xmlElement, e)
 			{
 			if(e->getTagName()==repoEntries[result-1])
-			textEditor->editor->insertText(e->getAllSubText());
+			textEditor->editor[textEditor->currentEditor]->insertText(e->getAllSubText());
 			}
 		xmlElement = nullptr;			
 }

@@ -36,19 +36,14 @@ class HelpComp;
 class CsoundCodeEditorComponenet : public CodeEditorComponent,
 						 public ActionBroadcaster,
 						 public CodeDocument::Listener
-	{
-	public:
-			CodeDocument::Position positionInCode;
-			CsoundCodeEditorComponenet(String type, CodeDocument &document, CodeTokeniser *codeTokeniser);
-
-			~CsoundCodeEditorComponenet();
-
-
+{
+public:
+	CodeDocument::Position positionInCode;
+	CsoundCodeEditorComponenet(String type, CodeDocument &document, CodeTokeniser *codeTokeniser);
+	~CsoundCodeEditorComponenet();
 	bool keyPressed (const KeyPress& key);
 	void handleTabKey(String direction);
 	void toggleComments();
-
-
 	void handleDirectionKey(){}
 
 	void handleEscapeKey(){
@@ -84,7 +79,7 @@ class CsoundCodeEditorComponenet : public CodeEditorComponent,
 	}
 	
 	void updateCaretPosition();
-	void insertMultiTextAtCaret(String text);
+	void insertMultiLineTextAtCaret(String text);
 	String getOpcodeToken(int index){
 	return opcodeTokens[index];	
 	}	
@@ -108,23 +103,25 @@ class CsoundCodeEditor : public Component,
 	
 public:	
 	CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTokeniser);
-	~CsoundCodeEditor(){};
+	~CsoundCodeEditor(){
+	editor.clear();	
+	};
 
 
 	String getAllText(){
-		String text = editor->getDocument().getAllContent();
+		String text = editor[currentEditor]->getDocument().getAllContent();
 		return text; 	
 	}	
 
 	void setAllText(String text){
-		editor->getDocument().replaceAllContent(text);
+		editor[currentEditor]->getDocument().replaceAllContent(text);
 	}
 	
 	void highlightLine(String line){
-			String temp = editor->getDocument().getAllContent();
+			String temp = editor[currentEditor]->getDocument().getAllContent();
 			Range<int> range;
-			editor->moveCaretTo(CodeDocument::Position (editor->getDocument(), temp.indexOf(line)+line.length()), false);
-			editor->moveCaretTo(CodeDocument::Position (editor->getDocument(), temp.indexOf(line)), true);
+			editor[currentEditor]->moveCaretTo(CodeDocument::Position (editor[currentEditor]->getDocument(), temp.indexOf(line)+line.length()), false);
+			editor[currentEditor]->moveCaretTo(CodeDocument::Position (editor[currentEditor]->getDocument(), temp.indexOf(line)), true);
 	}	
 	
 	void showTabs(bool show);
@@ -136,9 +133,13 @@ public:
 	ScopedPointer<HelpComp> helpComp;
 	
 	bool textChanged;	
-	ScopedPointer<CsoundCodeEditorComponenet> editor;
+	OwnedArray<CsoundCodeEditorComponenet> editor;
+	int currentEditor;
+	void addNewFile(File newFile);
 	void resized();
 	Range<int> getCabbageSectionRange();
+	CodeDocument currentDoc;
+	CsoundTokeniser codeToker;
 };
 
 
@@ -237,7 +238,7 @@ public:
 
 	void paint(Graphics& g)
 	{
-		g.fillAll(Colour::fromRGB(40,40,40));
+		g.fillAll(Colour::fromRGB(20,20,20));
 		g.setColour(Colours::yellow);
 		g.drawRect(0, 0, getWidth()-1, getHeight()-1, 1);
 		g.setFont(14);

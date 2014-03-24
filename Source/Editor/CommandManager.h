@@ -52,18 +52,9 @@ namespace CommandIDs
 	static const int viewCsoundHelp		= 4025;
 	static const int viewCabbageHelp	= 4026;
 	static const int viewSource			= 4027;
-	static const int AudioSettings		= 4028;
-	
-	static const int startSession				= 3023;
-	static const int commOrchUpdateInstrument	= 3024;
-	static const int commOrchUpdateSingleLine	= 3025;
-	static const int commOrchUpdateMultiLine	= 3026;
-	static const int commScoUpdateMultiLine		= 3027;
-	static const int commScoUpdateSingleLine	= 3028;
-	static const int commOrcUpdateChannel		= 3029;
-	
-
-
+	static const int viewOpcodeHelp			= 4028;
+	static const int viewLinesNumbers		 = 4029;
+	static const int viewInstrumentsTabs	 = 4030;
 };
 
 //==============================================================================
@@ -71,8 +62,8 @@ namespace CommandCategories
 {
     static const char* const file = "File";
     static const char* const edit = "Edit";
-	static const char* const command = "Command";
-	static const char* const help = "View";
+	static const char* const view = "View";
+	static const char* const help = "Help";
 }
 
 //==============================================================================

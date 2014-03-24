@@ -7,13 +7,13 @@ ECHO * setup the correct directories and provide paths *
 ECHO * to the Csound library                           *
 ECHO ===================================================
 ECHO 
-set JUCE_LIBRARY_CODE=C:\Users\Rory\Documents\SourceCode\cabbageaudio\cabbage\JuceLibraryCode
+set JUCE_LIBRARY_CODE=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\cabbage\JuceLibraryCode
 set PREPROCESSOR_DEFS=-D__MINGW__=1 -DJUCE_MINGW -DWIN32 -D__MINGW_EXTENSION= -DCSOUND6=1 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
-set CSOUND_INCLUDE_DIR=C:\Users\Rory\Documents\SourceCode\cabbageaudio\csound6-git\include
+set CSOUND_INCLUDE_DIR=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound6-git\include
 set ASIOSDK2Dir=C:\SDKs\ASIOSDK2.3\common
 set VSTSDKDir=C:\SDKs\vstsdk2.4
-set CABBAGE_SOURCE_DIR=C:\Users\Rory\Documents\SourceCode\cabbageaudio\cabbage\Source
-set CSOUND_LIBRARY=C:\Users\Rory\Documents\SourceCode\cabbageaudio\csound6-git\build\libcsound64.dll.a
+set CABBAGE_SOURCE_DIR=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\cabbage\Source
+set CSOUND_LIBRARY=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound6-git\build\libcsound64.dll.a
 set COMPILER_FLAGS=-Wall -Wno-strict-aliasing -Wno-strict-overflow  -march=pentium4 -g -ggdb -O0 -std=gnu++0x -g -ggdb -O0 -static-libgcc -static-libstdc++ -mstackrealign
 set OUTPUT_TARGET=CabbagePluginEffect.dll
 
@@ -61,12 +61,6 @@ g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%C
 
 g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %CABBAGE_SOURCE_DIR%\csPerfThread.cpp -o build\intermediate\Debug\csPerfThread.o
 
-g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c C:\Users\Rory\Documents\SourceCode\cabbageaudio\cabbage\Source\CabbageCallOutBox.cpp -o build\intermediate\Debug\CabbageCallOutBox.o
-
-g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c C:\Users\Rory\Documents\SourceCode\cabbageaudio\cabbage\Source\ComponentLayoutEditor.cpp -o build\intermediate\Debug\ComponentLayoutEditor.o
-
-g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c C:\Users\Rory\Documents\SourceCode\cabbageaudio\cabbage\Source\CabbagePropertiesDialog.cpp -o build\intermediate\Debug\CabbagePropertiesDialog.o
-
 g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %CABBAGE_SOURCE_DIR%\DirectoryContentsComponent.cpp -o build\intermediate\Debug\DirectoryContentsComponent.o
 
 g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %CABBAGE_SOURCE_DIR%\Plugin\CabbagePluginProcessor.cpp -o build\intermediate\Debug\CabbagePluginProcessor.o
@@ -83,4 +77,4 @@ g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%C
 
 g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %JUCE_LIBRARY_CODE%\modules\juce_audio_plugin_client\VST\juce_VST_Wrapper.cpp -o build\intermediate\Debug\juce_VST_Wrapper.o
 
-g++.exe -shared -Wl,--dll -o build\%OUTPUT_TARGET% build\intermediate\Debug\juce_audio_basics.o build\intermediate\Debug\juce_audio_devices.o build\intermediate\Debug\juce_audio_formats.o build\intermediate\Debug\juce_audio_processors.o build\intermediate\Debug\juce_audio_utils.o build\intermediate\Debug\juce_core.o build\intermediate\Debug\juce_cryptography.o build\intermediate\Debug\juce_data_structures.o build\intermediate\Debug\juce_events.o build\intermediate\Debug\juce_graphics.o build\intermediate\Debug\juce_gui_basics.o build\intermediate\Debug\juce_gui_extra.o build\intermediate\Debug\juce_PluginUtilities.o build\intermediate\Debug\juce_VST_Wrapper.o build\intermediate\Debug\BinaryData.o build\intermediate\Debug\CabbageCallOutBox.o build\intermediate\Debug\CabbagePluginEditor.o build\intermediate\Debug\CabbageGUIClass.o build\intermediate\Debug\CabbageLookAndFeel.o build\intermediate\Debug\CabbageMainPanel.o build\intermediate\Debug\CabbageTable.o build\intermediate\Debug\csPerfThread.o build\intermediate\Debug\DirectoryContentsComponent.o build\intermediate\Debug\CabbagePropertiesDialog.o build\intermediate\Debug\ComponentLayoutEditor.o build\intermediate\Debug\CabbagePluginProcessor.o build\intermediate\Debug\Soundfiler.o build\intermediate\Debug\XYPad.o build\intermediate\Debug\XYPadAutomation.o -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 %CSOUND_LIBRARY%  -mwindows cabbage.res
+g++.exe -shared -Wl,--dll -o build\%OUTPUT_TARGET% build\intermediate\Debug\juce_audio_basics.o build\intermediate\Debug\juce_audio_devices.o build\intermediate\Debug\juce_audio_formats.o build\intermediate\Debug\juce_audio_processors.o build\intermediate\Debug\juce_audio_utils.o build\intermediate\Debug\juce_core.o build\intermediate\Debug\juce_cryptography.o build\intermediate\Debug\juce_data_structures.o build\intermediate\Debug\juce_events.o build\intermediate\Debug\juce_graphics.o build\intermediate\Debug\juce_gui_basics.o build\intermediate\Debug\juce_gui_extra.o build\intermediate\Debug\juce_PluginUtilities.o build\intermediate\Debug\juce_VST_Wrapper.o build\intermediate\Debug\BinaryData.o build\intermediate\Debug\CabbagePluginEditor.o build\intermediate\Debug\CabbageGUIClass.o build\intermediate\Debug\CabbageLookAndFeel.o build\intermediate\Debug\CabbageMainPanel.o build\intermediate\Debug\CabbageTable.o build\intermediate\Debug\csPerfThread.o build\intermediate\Debug\DirectoryContentsComponent.o  build\intermediate\Debug\CabbagePluginProcessor.o build\intermediate\Debug\Soundfiler.o build\intermediate\Debug\XYPad.o build\intermediate\Debug\XYPadAutomation.o -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 %CSOUND_LIBRARY%  -mwindows cabbage.res

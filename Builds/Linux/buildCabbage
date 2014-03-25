@@ -6,6 +6,10 @@ make -f MakefilePluginEffect clean
 make -f MakefilePluginEffect
 make -f MakefilePluginSynth clean 
 make -f MakefilePluginSynth 
+make -f MakefilePluginSynthLV2 clean 
+make -f MakefilePluginSynthLV2 
+make -f MakefilePluginEffectLV2 clean 
+make -f MakefilePluginEffectLV2 
 elif [ $1 = "standalone" ]; then
 echo "Building Cabbage standalone! "
 make -f MakefileStandalone clean 
@@ -18,4 +22,8 @@ make -f MakefilePluginEffect clean
 make -f MakefilePluginEffect 
 make -f MakefilePluginSynth clean 
 make -f MakefilePluginSynth 
+make -f MakefilePluginSynthLV2 clean 
+make -f MakefilePluginSynthLV2 
+make -f MakefilePluginEffectLV2 clean 
+make -f MakefilePluginEffectLV2 
 fi

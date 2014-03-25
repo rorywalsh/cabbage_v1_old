@@ -115,6 +115,7 @@ void CodeWindow::getAllCommands (Array <CommandID>& commands)
 								CommandIDs::whiteBackground,
 								CommandIDs::blackBackground,
 								CommandIDs::insertFromRepo,
+								CommandIDs::editSearchReplace,
 								CommandIDs::addFromRepo,
 								CommandIDs::insertRecentEvent,
 								CommandIDs::openPythonEditor,
@@ -216,6 +217,10 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		result.setInfo (String("Toggle comments"), String("Toggle comments"), CommandCategories::edit, 0);
 		result.addDefaultKeypress ('t', ModifierKeys::commandModifier);
 		break;
+	case CommandIDs::editSearchReplace:
+		result.setInfo(String("Search or Replace"), String("Search Replace"), CommandCategories::edit, 0);
+		result.addDefaultKeypress ('f', ModifierKeys::commandModifier);
+		break;
 	case CommandIDs::editZoomIn:
 		result.setInfo (String("Zoom in"), String("Zoom in"), CommandCategories::edit, 0);
 		result.addDefaultKeypress ('=', ModifierKeys::commandModifier);
@@ -310,6 +315,7 @@ else if(topLevelMenuIndex==1)
 	m1.addCommandItem(&commandManager, CommandIDs::editCopy);
 	m1.addCommandItem(&commandManager, CommandIDs::editPaste);
 	m1.addCommandItem(&commandManager, CommandIDs::editToggleComments);
+	m1.addCommandItem(&commandManager, CommandIDs::editSearchReplace);
 	m1.addSeparator();
 	m2.addCommandItem(&commandManager, CommandIDs::editZoomIn);
 	m2.addCommandItem(&commandManager, CommandIDs::editZoomOut);
@@ -434,7 +440,13 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		{			
 			textEditor->editor[textEditor->currentEditor]->toggleComments();
 		}
-		
+	else if(info.commandID==CommandIDs::editSearchReplace)
+		{			
+			textEditor->searchReplaceComp->setSearchText(textEditor->getCurrentSelectedText());
+			textEditor->searchReplaceComp->setVisible(true);
+			textEditor->helpComp->setVisible(false);
+			textEditor->searchReplaceComp->grabKeyboardFocus();
+		}		
 	else if(info.commandID==CommandIDs::editZoomIn)
 		{			
 			setFontSize("in");

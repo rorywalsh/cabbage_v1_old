@@ -32,6 +32,7 @@ extern CabbageTimer* cabbageTimer;
 
 class FlatButton;
 class HelpComp;
+class SearchReplaceComp;
 
 class CsoundCodeEditorComponenet : public CodeEditorComponent,
 						 public ActionBroadcaster,
@@ -93,6 +94,7 @@ public:
 		String type;
 		StringArray opcodeStrings;
 		StringArray opcodeTokens;
+		
 	};
 
 //=================================================================
@@ -103,6 +105,8 @@ class CsoundCodeEditor : public Component,
 	bool showTabButtons;
 	bool showInstrumentButtons;
 	int instrWidth;
+	int searchStartIndex;
+	bool highlightedWord;
 	
 public:	
 	CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTokeniser);
@@ -116,12 +120,16 @@ public:
 	void highlightLine(String line);	
 	void showTab(String name);
 	void showInstrs(bool show);
+	int findText(String text);
+	String getCurrentSelectedText();
+	int replaceText(String text, String replaceWith);
 	void actionListenerCallback(const juce::String&);
 
 	void saveAuxFile();	
 	OwnedArray<FlatButton> tabButtons;
 	OwnedArray<FlatButton> instrButtons;
 	ScopedPointer<HelpComp> helpComp;	
+	ScopedPointer<SearchReplaceComp> searchReplaceComp;	
 	bool textChanged;	
 	OwnedArray<CsoundCodeEditorComponenet> editor;
 	int currentEditor;
@@ -142,7 +150,8 @@ public:
 		FlatButton(String name, int currentTab, String type): 	name(name),
 													type(type),
 													currentTab(currentTab),
-													isMouseDown(false)
+													isMouseDown(false),
+													genericColour(Colours::brown)
 		{
 		setName(name);
 		if(name=="Csound code")
@@ -196,9 +205,9 @@ public:
 		else if(type=="Aux"){
 			Logger::writeToLog("Painting Aux");
 			if(!active)
-				g.setColour(Colours::brown.darker(.9f));
+				g.setColour(genericColour.darker(.9f));
 			else
-				g.setColour(Colours::brown.darker(.2f));
+				g.setColour(genericColour.darker(.2f));
 			g.fillRoundedRectangle(getLocalBounds().toFloat(), 5.f);
 			
 			if(!active)
@@ -210,12 +219,13 @@ public:
 			g.drawFittedText(name, getLocalBounds(), Justification::centred, 1, 1.f);			
 			
 		}
-		else{
+		//if(type=="Instr")
+		else {
 			float number = name.substring(6, 5).getDoubleValue();
 			if(isMouseDown)
-				g.setColour(Colours::brown.darker(.2f));
+				g.setColour(genericColour.darker(.2f));
 			else
-				g.setColour(Colours::brown.darker(.6f));
+				g.setColour(genericColour.darker(.6f));
 
 			g.fillRoundedRectangle(getLocalBounds().toFloat(), 5.f);
 			g.setColour(Colours::white);
@@ -228,6 +238,7 @@ public:
 	bool active;
 	bool isMouseDown;
 	String type;
+	Colour genericColour;
 
 };
 
@@ -275,4 +286,96 @@ String syntax, info;
 
 };
 
+//============================================================
+// class for displaying popup text
+//============================================================
+class SearchReplaceComp : public Component,
+						  public TextEditor::Listener,
+						  public ChangeBroadcaster
+{
+public:
+ScopedPointer<FlatButton> searchButton, replaceAllButton, replaceOnceButton;
+
+	SearchReplaceComp()
+	{
+		addAndMakeVisible(searchEditor = new TextEditor("SearchEditor"));
+		searchEditor->addListener(this);
+		addAndMakeVisible(replaceEditor = new TextEditor("ReplaceWithEditor"));
+		replaceEditor->addListener(this);
+		addAndMakeVisible(searchButton = new FlatButton("Search", 0, ""));
+		searchButton->setName("SearchButton");
+		addAndMakeVisible(replaceOnceButton = new FlatButton("Replace Once", 0, ""));
+		replaceOnceButton->setName("ReplaceOnceButton");		
+		replaceOnceButton->genericColour = Colours::cornflowerblue;
+		addAndMakeVisible(replaceAllButton = new FlatButton("Replace All", 0, ""));
+		replaceAllButton->genericColour = Colours::cornflowerblue;
+		replaceAllButton->setName("ReplaceAllButton");
+		addAndMakeVisible(findLabel = new Label("FindLabel"));
+		addAndMakeVisible(replaceLabel = new Label("ReplaceLabel"));
+		
+		replaceLabel->setText("Replace with:", dontSendNotification);
+		replaceLabel->setColour(Label::textColourId, Colours::whitesmoke);
+		findLabel->setText("Find:", dontSendNotification);
+		findLabel->setColour(Label::textColourId, Colours::whitesmoke);
+		
+		replaceEditor->setColour(TextEditor::backgroundColourId, Colours::whitesmoke);
+		replaceEditor->setColour(TextEditor::textColourId, Colours::black);
+		replaceEditor->setColour(CaretComponent::caretColourId, Colours::black);	
+		
+		searchEditor->setColour(TextEditor::backgroundColourId, Colours::whitesmoke);
+		searchEditor->setColour(TextEditor::textColourId, Colours::black);
+		searchEditor->setColour(CaretComponent::caretColourId, Colours::black);		
+	}	
+	
+	~SearchReplaceComp(){};
+	
+	void paint(Graphics& g)
+	{
+		g.fillAll(Colour::fromRGB(10, 10, 10));
+	}
+	
+	void resized(){
+		findLabel->setBounds(0, 4, 30, 20);
+		searchEditor->setBounds(35, 4, 150, 20);
+		searchButton->setBounds(190, 4, 100, 20);
+		replaceLabel->setBounds(295, 4, 50, 20);
+		replaceEditor->setBounds(350, 4, 150, 20);
+		replaceOnceButton->setBounds(505, 4, 100, 20);
+		replaceAllButton->setBounds(610 , 4, 100, 20);
+	}
+	
+	String getSearchText()
+	{
+		return searchEditor->getText();
+	}
+
+	void setSearchText(String text)
+	{
+		searchEditor->setText(text);
+	}
+	
+	String getReplaceText()
+	{
+		return replaceEditor->getText();
+	}
+	
+	void textEditorReturnKeyPressed (TextEditor &editor)
+	{
+		currentEditorName = editor.getName();
+		sendChangeMessage();
+	}
+	
+	String getCurrentTextEditor()
+	{
+		return currentEditorName;
+	}
+	
+private:
+
+	String currentEditorName;
+	ScopedPointer<TextEditor> searchEditor, replaceEditor;
+	ScopedPointer<Label> findLabel, replaceLabel;
+	String syntax, info;
+
+};
 #endif

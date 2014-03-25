@@ -40,6 +40,7 @@ namespace CommandIDs
 	static const int editCut			= 2013;
 	static const int editCopy			= 2014;
 	static const int editPaste			= 2015;
+	static const int editSearchReplace	= 2080;
 	static const int editZoomIn			= 2016;
 	static const int editZoomOut		= 2017;
 	static const int whiteBackground	= 2018;

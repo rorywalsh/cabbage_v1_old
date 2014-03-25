@@ -266,6 +266,8 @@ void ChildAlias::mouseDown (const MouseEvent& e)
 				CabbageLookAndFeel basicLookAndFeel;
 				alert.setLookAndFeel(&basicLookAndFeel);
 				alert.setColour(TextEditor::textColourId, Colours::white);
+				alert.setColour(TextEditor::backgroundColourId, Colour(20, 20, 20));
+				alert.setColour(TextEditor::highlightColourId, Colour(20, 20, 20));
 				//alert.addTextBlock("Enter a name and hit 'escape'(The following symbols not premitted in names:"" $ % ^ & * ( ) - + )");
 				alert.addTextEditor("textEditor", "name", "");
 				alert.runModalLoop();

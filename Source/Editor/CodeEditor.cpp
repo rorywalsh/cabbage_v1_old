@@ -26,7 +26,9 @@ CsoundCodeEditor::CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTo
 showTabButtons(false),
 instrWidth(60),
 showInstrumentButtons(false),
-currentEditor(0)
+currentEditor(0),
+searchStartIndex(0),
+highlightedWord(false)
 {
 	editor.add(new CsoundCodeEditorComponenet("csound", document, codeTokeniser));
 	addAndMakeVisible(editor[currentEditor]);
@@ -34,8 +36,16 @@ currentEditor(0)
 	openFiles.add("CABBAGE_CSOUND_FILE");
 	
 	addAndMakeVisible(helpComp = new HelpComp());
+	helpComp->setVisible(false);
+	addAndMakeVisible(searchReplaceComp = new SearchReplaceComp());
+	searchReplaceComp->addChangeListener(this);
+	searchReplaceComp->setVisible(true);
+	
 	editor[currentEditor]->addChangeListener(this);
 	editor[currentEditor]->addActionListener(this);
+	searchReplaceComp->searchButton->addChangeListener(this);
+	searchReplaceComp->replaceOnceButton->addChangeListener(this);
+	searchReplaceComp->replaceAllButton->addChangeListener(this);
 	
 	if(CabbageUtils::getPreference(appProperties, "showTabs")==1)
 	{
@@ -54,22 +64,27 @@ void CsoundCodeEditor::resized()
 	if(showTabButtons&&showInstrumentButtons){
 		editor[currentEditor]->setBounds(instrWidth+20, 20, getWidth()-instrWidth-20, (getHeight()-30)-75);
 		helpComp->setBounds(instrWidth+20, getHeight()-60, getWidth()-instrWidth-20, 30);	
+		searchReplaceComp->setBounds(instrWidth+20, getHeight()-60, getWidth()-instrWidth-20, 30);	
 	}	
 	else if(showTabButtons && !showInstrumentButtons){
 		editor[currentEditor]->setBounds(0, 20, getWidth(), (getHeight()-85));	
+		searchReplaceComp->setBounds(33, getHeight()-60, getWidth()-33, 30);
 		helpComp->setBounds(33, getHeight()-60, getWidth()-33, 30);
+		
 	}
 	else if(showInstrumentButtons && !showTabButtons){
 		editor[currentEditor]->setBounds(instrWidth+5, 0, getWidth()-instrWidth-5, getHeight()-85);	
+		searchReplaceComp->setBounds(instrWidth+5, getHeight()-60, getWidth()-instrWidth-5, 30);
 		helpComp->setBounds(instrWidth+5, getHeight()-60, getWidth()-instrWidth-5, 30);
+
 	}
 	else{
 		editor[currentEditor]->setBounds(0, 0, getWidth(), getHeight()-85);
+		searchReplaceComp->setBounds(33, getHeight()-60, getWidth()-33, 30);
 		helpComp->setBounds(33, getHeight()-60, getWidth()-33, 30);
+
 	}
 	
-	
-		
 	if(showTabButtons)
 	{
 		for(int i=0;i<tabButtons.size();i++)
@@ -123,7 +138,7 @@ void CsoundCodeEditor::showInstrs(bool show)
 	for(int i=0;i<tmpArray.size();i++)
 	if(tmpArray[i].contains("instr ")){
 		noInstruments++;
-		instrButtons.add(new FlatButton(tmpArray[i].substring(tmpArray[i].indexOf("instr ")+6), i, "instr"));
+		instrButtons.add(new FlatButton(tmpArray[i].substring(tmpArray[i].indexOf("instr ")+6), i, "Instr"));
 		addAndMakeVisible(instrButtons[instrButtons.size()-1]);
 		instrButtons[instrButtons.size()-1]->addChangeListener(this);
 		if(Font(13).getStringWidth(tmpArray[i])>instrWidth)
@@ -200,9 +215,9 @@ void CsoundCodeEditor::saveAuxFile()
 //==============================================================================
 void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-		FlatButton* button = dynamic_cast<FlatButton*>(source);
-		if(button)
+		if(dynamic_cast<FlatButton*>(source))
 			{
+			FlatButton* button = dynamic_cast<FlatButton*>(source);
 			if(button->type=="Native")
 				{
 				//editor[currentEditor]->setVisible(false);
@@ -244,16 +259,99 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
 					tabButtons[i]->isActive(false);
 				showInstrs(false);
 			}
-		}
+		else if(button->getName()=="SearchButton")
+			{
+			findText(searchReplaceComp->getSearchText());
+			}
+		else if(button->getName()=="ReplaceOnceButton")
+			{
+			replaceText(searchReplaceComp->getSearchText(), searchReplaceComp->getReplaceText());
+			searchReplaceComp->setVisible(true);
+			helpComp->setVisible(false);
+			}
+		else if(button->getName()=="ReplaceAllButton")
+			{
+			while(replaceText(searchReplaceComp->getSearchText(), searchReplaceComp->getReplaceText())!=-1);
+			searchReplaceComp->setVisible(true);
+			helpComp->setVisible(false);
+			}
+	}
+	else if(dynamic_cast<SearchReplaceComp*>(source))
+			{
+			if(searchReplaceComp->getCurrentTextEditor()=="SearchEditor")
+			findText(searchReplaceComp->getSearchText().trim());		
+			else
+				replaceText(searchReplaceComp->getSearchText(), searchReplaceComp->getReplaceText());
+			}
+	
 }
 
+//=========================================================================
+int CsoundCodeEditor::findText(String text)
+{
+if(searchReplaceComp->getSearchText().isNotEmpty())
+	{
+	String fullText = editor[currentEditor]->getAllText();
+	String searchTerm = text;
+	searchStartIndex = fullText.indexOf(searchStartIndex, searchTerm);
+	if(searchStartIndex==-1)return -1;
+	editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 
+							editor[currentEditor]->getAllText().indexOf(searchStartIndex, searchTerm)),
+							false);
+	editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 
+							editor[currentEditor]->getAllText().indexOf(searchStartIndex, searchTerm)+searchTerm.length()),
+							true);	
+	searchStartIndex=searchStartIndex+searchTerm.length();
+	if(fullText.indexOf(searchStartIndex, searchTerm)<searchStartIndex)
+		searchStartIndex=0;
+	}
+	return searchStartIndex;		
+}
+
+//=========================================================================
+String CsoundCodeEditor::getCurrentSelectedText()
+{
+Range<int> range = editor[currentEditor]->getHighlightedRegion();
+if(range.getLength()>0)
+		return editor[currentEditor]->getAllText().substring(range.getStart(), range.getEnd());
+else
+	return "";
+}
+//=========================================================================
+int CsoundCodeEditor::replaceText(String text, String replaceWith)
+{
+	String fullText = editor[currentEditor]->getAllText();
+	Range<int> range = editor[currentEditor]->getHighlightedRegion();
+	if(range.getLength()==0)
+		{
+			if(findText(text)>0)
+			{
+			range = editor[currentEditor]->getHighlightedRegion();
+			editor[currentEditor]->getDocument().replaceSection(range.getStart(), range.getEnd(), replaceWith);
+			findText(text);
+			}
+		}
+	else{
+		editor[currentEditor]->getDocument().replaceSection(range.getStart(), range.getEnd(), replaceWith);
+		findText(text);
+		}
+	return searchStartIndex;
+}
+
+//=========================================================================
 void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
 {
 if(message.contains("helpDisplay"))
 	{
+	if(!helpComp->isVisible()){
+		searchReplaceComp->setVisible(false);
+		helpComp->setVisible(true);
+		resized();
+	}
 	//CodeDocument::Position newPos = editor->getCaretPos();
 	//editor->setCaretPos(editor->getCharacterBounds(editor->getCaretPos()));
-	helpComp->setText(String(" --- ")+editor[currentEditor]->getOpcodeToken(2).removeCharacters("\""), 
+	if(helpComp->isVisible())
+	helpComp->setText(editor[currentEditor]->getOpcodeToken(2).removeCharacters("\""), 
 							   editor[currentEditor]->getOpcodeToken(3).removeCharacters("\""));
 	//editor->setCaretPos(editor->getCharacterBounds(editor->getCaretPos()));
 	}
@@ -315,7 +413,8 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
 	//if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down") 
     //    || key.getTextDescription().contains("cursor left") || key.getTextDescription().contains("cursor right"))  
 	//handleEscapeKey();
-
+	
+	
 	if (! TextEditorKeyMapper<CodeEditorComponent>::invokeKeyFunction (*this, key))
     {
 			
@@ -668,8 +767,7 @@ String CsoundCodeEditorComponenet::getInstrumentText(){
 }
 //==============================================================================
 void CsoundCodeEditorComponenet::codeDocumentTextInserted(const juce::String &,int)
-{
-	
+{	
 textChanged = true;
 pos1 = getDocument().findWordBreakBefore(getCaretPos());
 String lineFromCsd = getDocument().getLine(pos1.getLineNumber());

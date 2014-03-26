@@ -69,16 +69,25 @@ CsoundCodeEditor::~CsoundCodeEditor()
 int CsoundCodeEditor::saveAllFiles()
 {
 	int result=0;
+	int returnVal=1;
 	for(int i=0;i<editor.size();i++)
-		if(editor[i]->getDocument().hasChangedSinceSavePoint())
 		{
-		String message = openFiles[i]+String(" has changed. Would like to save your changes?");		
-		result = CabbageUtils::showYesNoMessage(message, &this->getLookAndFeel(), 1);	
+			if(editor[i]->getDocument().hasChangedSinceSavePoint())
+			{
+			String message = File(openFiles[i]).getFileName()+String(" has changed. Would like to save your changes?");		
+			result = CabbageUtils::showYesNoMessage(message, &this->getLookAndFeel(), 1);	
+			if(result==0)
+			{
+				File(openFiles[i]).replaceWithText(editor[i]->getAllText());
+				returnVal = 1;
+			}
+			else if(result==1)
+				returnVal = 1;
+			else if(result==2)
+				returnVal = 0;
+			}
 		}
-	if(result==2)
-		return 0;
-	else 
-		return 1;
+	return returnVal;
 }
 //==============================================================================
 void CsoundCodeEditor::setSavePoint()

@@ -469,12 +469,12 @@ filter->reCompileCsound(csdFile);
 	
 	if(cabbageCsoundEditor){
 	cabbageCsoundEditor->setName(csdFile.getFileName());
-	cabbageCsoundEditor->setText(csdFile.loadFileAsString());
+	cabbageCsoundEditor->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
+	
 	cabbageCsoundEditor->textEditor->textChanged = false;
 	filter->codeEditor = cabbageCsoundEditor->textEditor;
 	cabbageCsoundEditor->textEditor->setSavePoint();
-	}
-	
+	}	
 }
 
 //==============================================================================
@@ -1094,7 +1094,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 void StandaloneFilterWindow::openTextEditor()
 {
 		if(csdFile.getFileName().length()>0){
-			cabbageCsoundEditor->setText(filter->getCsoundInputFileText());
+			cabbageCsoundEditor->setText(filter->getCsoundInputFileText(), filter->getCsoundInputFile().getFullPathName());
 			this->toBehind(cabbageCsoundEditor);
 			cabbageCsoundEditor->setVisible(true);
 #ifndef MACOSX
@@ -1146,7 +1146,7 @@ else{
 				csdFile = File(csd);
 			}
 			
-			cabbageCsoundEditor->setText(csdFile.loadFileAsString());
+			cabbageCsoundEditor->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
 			cabbageCsoundEditor->textEditor->setAllText(csdFile.loadFileAsString());
 			isAFileOpen = true;
 			resetFilter(true);
@@ -1159,7 +1159,7 @@ else{
 			csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
 			lastSaveTime = csdFile.getLastModificationTime();
 			resetFilter(true);
-			cabbageCsoundEditor->setText(csdFile.loadFileAsString());
+			cabbageCsoundEditor->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
 			cabbageCsoundEditor->textEditor->setAllText(csdFile.loadFileAsString());
 			isAFileOpen = true;
 		}
@@ -1197,7 +1197,7 @@ FileChooser saveFC(String("Save Cabbage file as..."), File::nonexistent, String(
 	if(saveFC.browseForFileToSave(true)){
 		csdFile = saveFC.getResult().withFileExtension(String(".csd"));
 		csdFile.replaceWithText(cabbageCsoundEditor->getText());
-		cabbageCsoundEditor->setText(csdFile.loadFileAsString());
+		cabbageCsoundEditor->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
 		resetFilter(true);
 	}
 	if(getPreference(appProperties, "SetAlwaysOnTop"))

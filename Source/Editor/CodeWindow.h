@@ -84,8 +84,9 @@ public:
 	void codeDocumentChanged (const CodeDocument::Position &affectedTextStart, const CodeDocument::Position &affectedTextEnd);
 	void insertFromRepo();
 	
-	void setText(String file){
-	textEditor->setAllText(file);
+	void setText(String text, String file){
+	textEditor->setAllText(text);
+	textEditor->openFiles.getReference(0) = file;
 	}
 
 

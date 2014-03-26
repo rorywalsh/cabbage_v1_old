@@ -1506,18 +1506,6 @@ void CabbageLookAndFeel::drawAlertBox (Graphics& g,
 
         }
 
-//        GlyphArrangement ga;
-//        ga.addFittedText (Font (iconRect.getHeight() * 0.9f, Font::bold),
-//                          String::charToString ((juce_wchar) (uint8) character),
-//                          (float) iconRect.getX(), (float) iconRect.getY(),
-//                          (float) iconRect.getWidth(), (float) iconRect.getHeight(),
-//                          Justification::centred, false);
-//        ga.createPath (icon);
-//
-//        icon.setUsingNonZeroWinding (false);
-//        g.setColour (Colour (colour));
-//        g.fillPath (icon);
-
         iconSpaceUsed = iconWidth;
     }
 

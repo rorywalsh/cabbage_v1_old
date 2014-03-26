@@ -213,7 +213,7 @@ static void showMessage(String title, String message, LookAndFeel* feel)
 //===========================================================================================
 static int showYesNoMessage(String message, LookAndFeel* feel, int cancel=0)
 {
-    AlertWindow alert("Cabbage Message", message, AlertWindow::NoIcon, 0);
+    AlertWindow alert("Cabbage Message", message, AlertWindow::WarningIcon, 0);
     alert.setLookAndFeel(feel);
 	alert.addButton("Yes", 0);
 	alert.addButton("No", 1);

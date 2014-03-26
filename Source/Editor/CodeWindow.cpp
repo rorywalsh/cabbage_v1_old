@@ -291,6 +291,7 @@ if(topLevelMenuIndex==0)
 	{		
 	 //m1.addCommandItem(&commandManager, CommandIDs::fileNew);	 
 	 m1.addCommandItem(&commandManager, CommandIDs::fileOpen);
+	 m1.addCommandItem(&commandManager, CommandIDs::fileCloseAux);
 	 
 	 //RecentlyOpenedFilesList recentFiles;
      //recentFiles.restoreFromString (appProperties->getUserSettings()
@@ -303,7 +304,7 @@ if(topLevelMenuIndex==0)
 	 m1.addCommandItem(&commandManager, CommandIDs::fileSave);
 	 m1.addCommandItem(&commandManager, CommandIDs::fileSaveAs);
 	 m1.addCommandItem(&commandManager, CommandIDs::fileQuit);
-	 m1.addCommandItem(&commandManager, CommandIDs::fileCloseAux);
+	 
 	 
 	 return m1;
 	}

@@ -102,6 +102,7 @@ void CodeWindow::getAllCommands (Array <CommandID>& commands)
 								CommandIDs::fileOpen,
 								CommandIDs::fileSave,
 								CommandIDs::fileSaveAs,	
+								CommandIDs::fileCloseAux,									
 								CommandIDs::fileQuit,
 								CommandIDs::fileKeyboardShorts,	
 								CommandIDs::editUndo,
@@ -185,9 +186,9 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		result.setInfo (String("Quit"), String("Quit"), CommandCategories::file, 0);
 		result.addDefaultKeypress ('s', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
 		break;
-	case CommandIDs::fileUpdateGUI:
-		result.setInfo (String("Update GUI"), String("Update GUI"), CommandCategories::file, 0);
-		result.addDefaultKeypress ('#', ModifierKeys::commandModifier);
+	case CommandIDs::fileCloseAux:
+		result.setInfo (String("Close Auxiliary file"), String("Close file"), CommandCategories::file, 0);
+		result.addDefaultKeypress ('w', ModifierKeys::commandModifier);
 		break;		
 	case CommandIDs::fileKeyboardShorts:
 		result.setInfo (String("Keyboard Shortcuts"), String("Update GUI"), CommandCategories::file, 0);
@@ -302,7 +303,7 @@ if(topLevelMenuIndex==0)
 	 m1.addCommandItem(&commandManager, CommandIDs::fileSave);
 	 m1.addCommandItem(&commandManager, CommandIDs::fileSaveAs);
 	 m1.addCommandItem(&commandManager, CommandIDs::fileQuit);
-	 //m1.addCommandItem(&commandManager, CommandIDs::fileKeyboardShorts);
+	 m1.addCommandItem(&commandManager, CommandIDs::fileCloseAux);
 	 
 	 return m1;
 	}
@@ -418,6 +419,11 @@ bool CodeWindow::perform (const InvocationInfo& info)
 			//o.content->setLookAndFeel(&this->getLookAndFeel());
 			o.launchAsync();			
 		}
+
+	else if(info.commandID==CommandIDs::fileCloseAux)
+		{		
+		textEditor->closeCurrentFile();
+		}	
 		
 	else if(info.commandID==CommandIDs::editCut)
 		{			

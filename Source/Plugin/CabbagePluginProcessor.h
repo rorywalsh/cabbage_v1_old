@@ -266,13 +266,10 @@ public:
         #endif
         }
         
-		bool hasTextChanged(){
+		int saveEditorFiles(){
 		#ifdef Cabbage_Build_Standalone	
 		if(codeEditor)
-		return codeEditor->textChanged;	
-		else return false;
-		#else
-		return false;
+			return codeEditor->saveAllFiles();	
 		#endif
 		}
 		

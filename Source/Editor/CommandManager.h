@@ -33,6 +33,7 @@ namespace CommandIDs
 	static const int fileExportEffect	= 1006;
 	static const int fileUpdateGUI		= 1007;
 	static const int fileQuit			= 1008;
+	static const int fileCloseAux		= 2081;
 	static const int fileKeyboardShorts	= 1009;
 
 	static const int editUndo			= 2011;

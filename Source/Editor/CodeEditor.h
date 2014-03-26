@@ -74,7 +74,7 @@ public:
 	void highlightLines(int firstLine, int lastLine);
 	void codeDocumentTextDeleted(int,int);
 	void codeDocumentTextInserted(const juce::String &,int);
-	bool textChanged;
+	//bool textChanged;
 	void insertNewLine(String text);
 	void changeListenerCallback(juce::ChangeBroadcaster* source);
 	void setOpcodeStrings(String opcodes){
@@ -110,10 +110,10 @@ class CsoundCodeEditor : public Component,
 	
 public:	
 	CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTokeniser);
-	~CsoundCodeEditor(){
-	editor.clear();	
-	};
+	~CsoundCodeEditor();
 
+	int saveAllFiles();
+	void setSavePoint();
 	void changeListenerCallback(juce::ChangeBroadcaster* source);
 	String getAllText();
 	void setAllText(String text);	
@@ -124,7 +124,8 @@ public:
 	String getCurrentSelectedText();
 	int replaceText(String text, String replaceWith);
 	void actionListenerCallback(const juce::String&);
-
+	void closeCurrentFile();
+	void setActiveTab(int index);
 	void saveAuxFile();	
 	OwnedArray<FlatButton> tabButtons;
 	OwnedArray<FlatButton> instrButtons;
@@ -137,9 +138,11 @@ public:
 	void paint(Graphics& g);	
 	void resized();
 	Range<int> getCabbageSectionRange();
-	CodeDocument currentDoc[20];;
+	OwnedArray<CodeDocument> codeDocuments;
 	CsoundTokeniser codeToker;
 	StringArray openFiles;
+	int documentIndex;
+	
 };
 
 
@@ -159,6 +162,7 @@ public:
 		else 
 			active=false;
 		
+
 		}
 		~FlatButton(){}
 		
@@ -173,12 +177,13 @@ public:
 		Logger::writeToLog("mouseUp");
 		isMouseDown = false;
 		repaint();		
-	}	
+	}
 		
 	void isActive(bool isActive){
 		active = isActive;
 		repaint();
 	}	
+		
 		
 	void paint(Graphics &g){
 		g.fillAll(Colour(20, 20, 20));
@@ -208,15 +213,15 @@ public:
 				g.setColour(genericColour.darker(.9f));
 			else
 				g.setColour(genericColour.darker(.2f));
-			g.fillRoundedRectangle(getLocalBounds().toFloat(), 5.f);
+			g.fillRoundedRectangle(0, 0, getWidth(), getHeight(), 5.f);
 			
 			if(!active)
 				g.setColour(Colours::white.darker(.9f));	
 			else
 				g.setColour(Colours::white);
 					
-			g.drawRoundedRectangle(getLocalBounds().toFloat(), 5.f, 2);
-			g.drawFittedText(name, getLocalBounds(), Justification::centred, 1, 1.f);			
+			g.drawRoundedRectangle(0, 0, getWidth(), getHeight(), 5.f, 2);
+			g.drawFittedText(name, 0, 0, getWidth(), getHeight(), Justification::centred, 1, 1.f);			
 			
 		}
 		//if(type=="Instr")
@@ -233,6 +238,7 @@ public:
 			g.drawFittedText(name, getLocalBounds(), Justification::centred, 1, 1.f);
 			}
 		}
+		
 	String name;
 	int currentTab;
 	bool active;

@@ -472,18 +472,9 @@ filter->reCompileCsound(csdFile);
 	cabbageCsoundEditor->setText(csdFile.loadFileAsString());
 	cabbageCsoundEditor->textEditor->textChanged = false;
 	filter->codeEditor = cabbageCsoundEditor->textEditor;
-	if(getPreference(appProperties, "showTabs")==1)
-		{
-		cabbageCsoundEditor->textEditor->showTab("Cabbage code");
-		cabbageCsoundEditor->textEditor->showTab("Csound code");
-		cabbageCsoundEditor->textEditor->showInstrs(true);
-		}
-//	if(Component::getCurrentlyFocusedComponent()->getName().contains("Panel"))
-//		Component::getCurrentlyFocusedComponent()->setWantsKeyboardFocus(false);
+	cabbageCsoundEditor->textEditor->setSavePoint();
 	}
 	
-	//filter->suspendProcessing(false);
-	//filter->getCallbackLock().exit();
 }
 
 //==============================================================================
@@ -569,19 +560,15 @@ const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutpu
 //==============================================================================
 void StandaloneFilterWindow::closeButtonPressed()
 {
-stopTimer();
-if(filter)
-if(filter->hasTextChanged()){
-	int result = showYesNoMessage("You would like to save your changes?", lookAndFeel, 1);
-	if(result==0)saveFile();
-	else if(result==1)
-	JUCEApplication::quit();
-	else
-		return;
+	stopTimer();
+	if(filter)
+	{
+		if(!filter->saveEditorFiles())
+			return;
+		filter->getCallbackLock().enter();
+		deleteFilter();
 	}
-filter->getCallbackLock().enter();
-deleteFilter();
-JUCEApplication::quit();
+	JUCEApplication::quit();
 }
 
 void StandaloneFilterWindow::resized()

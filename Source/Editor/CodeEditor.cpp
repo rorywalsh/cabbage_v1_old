@@ -225,7 +225,8 @@ void CsoundCodeEditor::addNewFile(File newFile)
 	editor[currentEditor]->addActionListener(this);
 	addAndMakeVisible(editor[currentEditor]);
 	editor[currentEditor]->toFront(true);
-	editor[currentEditor]->getDocument().replaceAllContent(newFile.loadFileAsString());
+	editor[currentEditor]->loadContent(newFile.loadFileAsString());
+	//editor[currentEditor]->getDocument().replaceAllContent(newFile.loadFileAsString());
 	editor[currentEditor]->getDocument().setSavePoint();
 	openFiles.add(newFile.getFullPathName());	
 	resized();
@@ -237,7 +238,7 @@ String CsoundCodeEditor::getAllText(){
 }	
 //==============================================================================
 void CsoundCodeEditor::setAllText(String text){
-	editor[0]->getDocument().replaceAllContent(text);
+	editor[0]->loadContent(text);
 }
 //==============================================================================
 void CsoundCodeEditor::highlightLine(String line){

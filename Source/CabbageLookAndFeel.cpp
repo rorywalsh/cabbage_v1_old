@@ -1112,7 +1112,7 @@ void CabbageLookAndFeel::drawGroupComponentOutline (Graphics &g, int w, int h, c
 	String bgColour = group.getProperties().getWithDefault("colour", "").toString();
 	String fontColour = group.getProperties().getWithDefault("fontcolour", "").toString();
 
-	g.setColour (group.findColour(TextButton::ColourIds::buttonColourId));
+	g.setColour (group.findColour(TextButton::buttonColourId));
 	g.fillRoundedRectangle (0, 0, w, h, 5);
 
 	//----- Outline

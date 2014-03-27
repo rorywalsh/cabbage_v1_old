@@ -453,7 +453,7 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
 	setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue.withAlpha(.2f)); 
 	setColour(CaretComponent::caretColourId, Colours::white);
 	setColour(TextEditor::backgroundColourId, Colours::black);
-	setColour(CodeEditorComponent::ColourIds::defaultTextColourId, Colours::white);
+	setColour(CodeEditorComponent::defaultTextColourId, Colours::white);
 	setLineNumbersShown(40);
 	//setColour(CodeEditorComponent::highlightColourId, Colours::yellow); 
 	setColour(CodeEditorComponent::lineNumberTextId, Colours::whitesmoke);

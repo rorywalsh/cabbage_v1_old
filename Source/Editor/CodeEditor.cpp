@@ -250,10 +250,11 @@ void CsoundCodeEditor::highlightLine(String line){
 //==============================================================================
 void CsoundCodeEditor::closeCurrentFile()
 {
-	if(openFiles.size()>2)
+	if(openFiles.size()>1)
 	{	
 		String file = openFiles[currentEditor];
 		openFiles.remove(currentEditor);
+		editor[currentEditor]->enableColumnEditMode(false);
 		editor.remove(currentEditor);
 		
 		for(int i=0;i<tabButtons.size();i++)
@@ -266,7 +267,6 @@ void CsoundCodeEditor::closeCurrentFile()
 		}
 		
 		setActiveTab(currentEditor);
-		editor[currentEditor]->enableColumnEditMode(false);
 		currentEditor--;
 		resized();
 		

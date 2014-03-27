@@ -177,7 +177,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		result.addDefaultKeypress ('o', ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::fileSave:
-		result.setInfo (String("Save"), String("Save a file"), CommandCategories::file, 0);
+		result.setInfo (String("Save(Update Instrument)"), String("Save a file"), CommandCategories::file, 0);
 		result.addDefaultKeypress ('s', ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::fileSaveAs:
@@ -185,8 +185,8 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		result.addDefaultKeypress ('s', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::fileQuit:
-		result.setInfo (String("Quit"), String("Quit"), CommandCategories::file, 0);
-		result.addDefaultKeypress ('s', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
+		result.setInfo (String("Close editor"), String("Close"), CommandCategories::file, 0);
+		result.addDefaultKeypress ('q', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::fileCloseAux:
 		result.setInfo (String("Close Auxiliary file"), String("Close file"), CommandCategories::file, 0);
@@ -407,7 +407,9 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		}
 	else if(info.commandID==CommandIDs::fileQuit)
 		{			
-		JUCEApplication::getInstance()->systemRequestedQuit();	
+		//JUCEApplication::getInstance()->systemRequestedQuit();
+		textEditor->saveAllFiles();
+		this->setVisible(false);
 		}
 		
 	else if(info.commandID==CommandIDs::editUndo)

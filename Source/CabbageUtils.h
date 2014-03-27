@@ -653,7 +653,7 @@ String returnFullPathForFile(String file, String fullPath)
 	{
 		#ifdef MACOSX
 			#ifndef Cabbage_Build_Standalone
-			pic.append(String("/Contents/")+file), 1024);
+			pic.append(String("/Contents/")+file, 1024);
 			#else 
 			pic = fullPath+String("//")+file;
 			#endif

@@ -70,6 +70,11 @@ int CsoundCodeEditor::saveAllFiles()
 {
 	int result=0;
 	int returnVal=1;
+	
+	if(openFiles[0]=="CABBAGE_CSOUND_FILE")
+		return 1;
+	
+	
 	for(int i=0;i<editor.size();i++)
 		{
 			if(editor[i]->getDocument().hasChangedSinceSavePoint())

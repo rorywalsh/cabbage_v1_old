@@ -219,7 +219,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 	case CommandIDs::editColumnEdit:
 		result.setInfo (String("Column Edit mode"), String("Column Edit"), CommandCategories::edit, 0);
 		result.setTicked(isColumnModeEnabled);
-		result.addDefaultKeypress (KeyPress::spaceKey, ModifierKeys::commandModifier);
+		result.addDefaultKeypress ('b', ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::editToggleComments:
 		result.setInfo (String("Toggle comments"), String("Toggle comments"), CommandCategories::edit, 0);
@@ -273,10 +273,10 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		
 	case CommandIDs::viewCsoundHelp:
 #ifndef MACOSX
-		result.setInfo (String("View Csound Manual F1"), String("View Csound Manual"), CommandCategories::help, 0);
+		result.setInfo (String("View Csound Manual"), String("View Csound Manual"), CommandCategories::help, 0);
 		result.defaultKeypresses.add(KeyPress(KeyPress::F1Key));
 #else
-		result.setInfo (String("View Csound Manual Ctrl+1"), String("View Csound Manual"), CommandCategories::help, 0);
+		result.setInfo (String("View Csound Manual"), String("View Csound Manual"), CommandCategories::help, 0);
 		result.addDefaultKeypress ('1', ModifierKeys::commandModifier);		
 #endif
 		break;

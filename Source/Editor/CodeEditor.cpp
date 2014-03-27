@@ -493,7 +493,7 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
 	//if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down") 
     //    || key.getTextDescription().contains("cursor left") || key.getTextDescription().contains("cursor right"))  
 	//handleEscapeKey();
-	
+
 	
 	if (! TextEditorKeyMapper<CodeEditorComponent>::invokeKeyFunction (*this, key))
     {
@@ -505,12 +505,13 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
 			handleEscapeKey();
         //else if (key == KeyPress ('[', ModifierKeys::commandModifier, 0))   unindentSelection();
         //else if (key == KeyPress (']', ModifierKeys::commandModifier, 0))   indentSelection();
-        else if (key.getTextCharacter() >= ' ')    
-		if(!columnEditMode)                        
-		insertTextAtCaret (String::charToString (key.getTextCharacter()));
-		else
-		insertMultiLineTextAtCaret(String::charToString (key.getTextCharacter()));
-
+        else if (key.getTextCharacter() >= ' ') 
+		{
+			if(!columnEditMode)                        
+					insertTextAtCaret (String::charToString (key.getTextCharacter()));
+			else
+					insertMultiLineTextAtCaret(String::charToString (key.getTextCharacter()));
+		}
 		else if(key.getKeyCode() ==  268435488)
 			handleTabKey("backwards");
 		else if(key ==  KeyPress::tabKey)
@@ -529,10 +530,9 @@ void CsoundCodeEditorComponenet::handleReturnKey (){
 	//sendActionMessage("make popup invisible");				
 }	
 //==============================================================================
-void CsoundCodeEditorComponenet::insertText(String text){
-	
-	pos1 = getCaretPos();
-	getDocument().insertText(pos1, text);
+void CsoundCodeEditorComponenet::insertText(String text)
+{
+	getDocument().insertText(getCaretPos(), text);
 }
 //==============================================================================
 void CsoundCodeEditorComponenet::insertNewLine(String text){
@@ -796,6 +796,7 @@ String CsoundCodeEditorComponenet::getInstrumentText(){
 //==============================================================================
 void CsoundCodeEditorComponenet::codeDocumentTextInserted(const juce::String &,int)
 {	
+
 pos1 = getDocument().findWordBreakBefore(getCaretPos());
 String lineFromCsd = getDocument().getLine(pos1.getLineNumber());
 
@@ -934,6 +935,15 @@ bool CsoundCodeEditorComponenet::deleteForwards (const bool moveInWholeWordSteps
     return true;
 }
 //==============================================================================
+/*
+void CsoundCodeEditorComponenet::insertTextAtCaret (const String &textToInsert)
+{
+	if(!columnEditMode)                        
+		insertTextAtCaret (textToInsert);
+	else
+		insertMultiLineTextAtCaret(textToInsert);
+}*/
+//==============================================================================
 void CsoundCodeEditorComponenet::insertMultiLineTextAtCaret (String text)
 {
 	//sendActionMessage("make popup invisible");
@@ -946,7 +956,6 @@ void CsoundCodeEditorComponenet::insertMultiLineTextAtCaret (String text)
 	CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
 	int indexInLine = startPos.getIndexInLine();
 	
-	setAllText(csdArray.joinIntoString("\n"));
 	
 	for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
 	{

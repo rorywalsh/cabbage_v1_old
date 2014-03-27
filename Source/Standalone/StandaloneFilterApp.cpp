@@ -42,7 +42,7 @@ class CabbageStandalone : public JUCEApplication
 #if defined(LINUX) || defined(MACOSX)
 	manualPath = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/CsoundDocs/index.html";
 #else
-	manualPath = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\CsoundDocs\\index.html";
+	manualPath = "Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual/index.html";
 #endif	
 
 			defaultPropSet->setValue("CsoundHelpDir", manualPath);

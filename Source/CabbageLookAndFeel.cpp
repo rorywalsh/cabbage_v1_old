@@ -1066,9 +1066,12 @@ void CabbageLookAndFeel::fillTextEditorBackground (Graphics &g, int width, int h
 {
 	textEditor.setColour (0x1000200, textEditor.findColour(TextEditor::backgroundColourId)); //this gets rid of the square rectangle background
 	textEditor.setColour(TextEditor::textColourId, textEditor.findColour(TextEditor::textColourId));
-	textEditor.setColour(0x1000203, Colours::white);
+	
 	g.setColour (textEditor.findColour(TextEditor::backgroundColourId));
-	g.fillRoundedRectangle (0, 0, width, height, height/3);
+	if(textEditor.findColour(Label::outlineColourId)==Colours::white)
+		g.fillRect(0, 0, width, height);
+	else
+		g.fillRoundedRectangle (0, 0, width, height, 5);
 }
 
 

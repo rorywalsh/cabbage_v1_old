@@ -962,7 +962,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	//------- preference Csound manual dir ------
 	else if(options==200){
 		String dir = getPreference(appProperties, "CsoundHelpDir", "");
-		FileChooser browser(String("Please select the Csound manual directory...\n(Windows: Program Files\\Csound)\n(OSX /Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual)"), File(dir), String("*.csd"));
+#ifdef MACOSX
+			dir = "Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual";
+#endif
+		FileChooser browser(String("Please select the Csound manual directory...\n"), File(dir), String("*.csd"));
 		if(browser.browseForDirectory()){
 			setPreference(appProperties, "CsoundHelpDir", browser.getResult().getFullPathName());
 		}	

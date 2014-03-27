@@ -40,6 +40,7 @@ ScopedPointer<TextEditor> textEditor;
 public:
 	CsoundMessageConsole(String title, Colour bgcolour, int top, int left): DocumentWindow(title, bgcolour, DocumentWindow::allButtons, true){
 	textEditor = new TextEditor();
+	textEditor->setColour(Label::outlineColourId, Colours::white);
 	textEditor->setColour(TextEditor::backgroundColourId, Colours::black);
 	textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
 	textEditor->setMultiLine(true);
@@ -60,6 +61,11 @@ public:
 		setVisible(false);
 	}
 
+	void resized()
+	{
+		
+	}
+	
 	void setText(String text){
 		textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
 		textEditor->setText(text);
@@ -69,6 +75,7 @@ public:
 	String getText(){
 		return textEditor->getText();
 	}
+	
 };  
 
 //==============================================================================

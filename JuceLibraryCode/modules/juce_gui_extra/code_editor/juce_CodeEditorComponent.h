@@ -122,8 +122,8 @@ public:
     void setLineNumbersShown (bool shouldBeShown);
 
     //==============================================================================
-    bool moveCaretLeft (bool moveInWholeWordSteps, bool selecting);
-    bool moveCaretRight (bool moveInWholeWordSteps, bool selecting);
+    virtual bool moveCaretLeft (bool moveInWholeWordSteps, bool selecting);
+    virtual bool moveCaretRight (bool moveInWholeWordSteps, bool selecting);
     bool moveCaretUp (bool selecting);
     bool moveCaretDown (bool selecting);
     bool scrollDown();
@@ -134,12 +134,12 @@ public:
     bool moveCaretToStartOfLine (bool selecting);
     bool moveCaretToEnd (bool selecting);
     bool moveCaretToEndOfLine (bool selecting);
-    bool deleteBackwards (bool moveInWholeWordSteps);
-    bool deleteForwards (bool moveInWholeWordSteps);
+    virtual bool deleteBackwards (bool moveInWholeWordSteps);
+    virtual bool deleteForwards (bool moveInWholeWordSteps);
     bool deleteWhitespaceBackwardsToTabStop();
     bool copyToClipboard();
     bool cutToClipboard();
-    bool pasteFromClipboard();
+    virtual bool pasteFromClipboard();
     bool undo();
     bool redo();
 

@@ -565,92 +565,6 @@ bool CsoundCodeEditorComponenet::pasteFromClipboard()
     return true;
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::insertMultiLineTextAtCaret (String text)
-{
-	//sendActionMessage("make popup invisible");
-	StringArray csdArray;
-	csdArray.addLines(getAllText());
-	String curLine;	
-	CodeDocument::Position newPos, indexPos;
-
-	CodeDocument::Position startPos(getDocument(), getHighlightedRegion().getStart());
-	CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
-	int indexInLine = startPos.getIndexInLine();
-
-	//remove tabs when in column edit mode
-	while(csdArray[startPos.getLineNumber()].indexOf("\t")!=-1)
-	{
-		String line = csdArray[startPos.getLineNumber()];
-		int index = csdArray[startPos.getLineNumber()].indexOf("\t");
-		csdArray.set(startPos.getLineNumber(), line.replaceSection(index, 1, "    "));
-		indexInLine+=4;
-	}		
-		
-	for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
-	{
-		csdArray.set(i, csdArray[i].replace("\t", "    "));
-		while(csdArray[i].length()<indexInLine)
-			{
-			csdArray.getReference(i).append(" ", 1);
-			}
-		csdArray.set(i, csdArray[i].replaceSection(indexInLine, 0, text));	
-	}
-	setAllText(csdArray.joinIntoString("\n"));
-	
-	CodeDocument::Position newStartPos(getDocument(), startPos.getLineNumber(), indexInLine+text.length());
-	CodeDocument::Position newEndPos(getDocument(), endPos.getLineNumber(), indexInLine+text.length());
-	moveCaretTo(newStartPos, false);
-	moveCaretTo(newEndPos, true);	
-}
-//==============================================================================
-void CsoundCodeEditorComponenet::handleTabKey(String direction)
-{	
-	/* multi line action, get highlited text, find the position of
-	 * it within the text editor, remove it from editor and reinsert it with
-	 * formatting
-	 */
-	 
-	StringArray selectedText, csdArray;
-	//selectedText.addLines(getSelectedText());
-	csdArray.addLines(getAllText());
-	String csdText;
-	String currentLine;	
-	CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
-	CodeDocument::Position endPos(this->getDocument(), getHighlightedRegion().getEnd());
-	pos1 = getCaretPos();
-
-	if(direction.equalsIgnoreCase("forwards")){
-		//single line tab
-		if(getHighlightedRegion().getLength()==0){
-			insertTabAtCaret();
-			return;
-		}
-		else{ 
-		//multiline tab
-		for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
-						csdArray.set(i, "\t"+csdArray[i]);	
-		}
-		setAllText(csdArray.joinIntoString("\n"));	
-		highlightLines(startPos.getLineNumber(), endPos.getLineNumber());
-		
-	}
-	else if(direction.equalsIgnoreCase("backwards"))
-	//single line back tab
-	if(getHighlightedRegion().getLength()<1)
-		{
-		//no need for shift tab, just hit backspace
-		}
-		//multiline back tab
-		else{ 
-			for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
-				if(csdArray[i].substring(0, 1).equalsIgnoreCase("\t"))
-							csdArray.set(i, csdArray[i].substring(1));	
-
-			setAllText(csdArray.joinIntoString("\n"));	
-			highlightLines(startPos.getLineNumber(), endPos.getLineNumber());
-		}
-}
-//==============================================================================
 void CsoundCodeEditorComponenet::toggleComments()
 {
 	StringArray selectedText;
@@ -767,6 +681,7 @@ void CsoundCodeEditorComponenet::updateCaretPosition()
 	StringArray selectedText;
 	selectedText.addLines(getTextInRange(this->getHighlightedRegion()));
 	CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
+	CodeDocument::Position endPos(this->getDocument(), getHighlightedRegion().getEnd());
 	Rectangle<int> newCaretPosition(getCharacterBounds(startPos));
 	newCaretPosition.setHeight(getCharacterBounds (getCaretPos()).getHeight()*selectedText.size());
 	setCaretPos(newCaretPosition);
@@ -922,20 +837,10 @@ bool CsoundCodeEditorComponenet::deleteBackwards (const bool moveInWholeWordStep
 		String curLine;	
 		CodeDocument::Position newPos, indexPos;
 
-		int indexInLine = startPos.getIndexInLine();
-
-		//remove tabs when in column edit mode
-		while(csdArray[startPos.getLineNumber()].indexOf("\t")!=-1)
-		{
-			String line = csdArray[startPos.getLineNumber()];
-			int index = csdArray[startPos.getLineNumber()].indexOf("\t");
-			csdArray.set(startPos.getLineNumber(), line.replaceSection(index, 1, "    "));
-			indexInLine+=4;
-		}		
+		int indexInLine = startPos.getIndexInLine();		
 			
 		for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
 		{
-			csdArray.set(i, csdArray[i].replace("\t", "    "));
 			while(csdArray[i].length()<indexInLine)
 				{
 				csdArray.getReference(i).append(" ", 1);
@@ -986,20 +891,10 @@ bool CsoundCodeEditorComponenet::deleteForwards (const bool moveInWholeWordSteps
 		String curLine;	
 		CodeDocument::Position newPos, indexPos;
 
-		int indexInLine = startPos.getIndexInLine();
-
-		//remove tabs when in column edit mode
-		while(csdArray[startPos.getLineNumber()].indexOf("\t")!=-1)
-		{
-			String line = csdArray[startPos.getLineNumber()];
-			int index = csdArray[startPos.getLineNumber()].indexOf("\t");
-			csdArray.set(startPos.getLineNumber(), line.replaceSection(index, 1, "    "));
-			indexInLine+=4;
-		}		
+		int indexInLine = startPos.getIndexInLine();		
 			
 		for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
 		{
-			csdArray.set(i, csdArray[i].replace("\t", "    "));
 			while(csdArray[i].length()<indexInLine)
 				{
 				csdArray.getReference(i).append(" ", 1);
@@ -1032,6 +927,84 @@ bool CsoundCodeEditorComponenet::deleteForwards (const bool moveInWholeWordSteps
 		}
 	}
     return true;
+}
+//==============================================================================
+void CsoundCodeEditorComponenet::insertMultiLineTextAtCaret (String text)
+{
+	//sendActionMessage("make popup invisible");
+	StringArray csdArray;
+	csdArray.addLines(getAllText());
+	String curLine;	
+	CodeDocument::Position newPos, indexPos;
+
+	CodeDocument::Position startPos(getDocument(), getHighlightedRegion().getStart());
+	CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
+	int indexInLine = startPos.getIndexInLine();
+	
+	setAllText(csdArray.joinIntoString("\n"));
+	
+	for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
+	{
+		while(csdArray[i].length()<indexInLine)
+			{
+			csdArray.getReference(i).append(" ", 1);
+			}
+		csdArray.set(i, csdArray[i].replaceSection(indexInLine, 0, text));	
+	}
+	setAllText(csdArray.joinIntoString("\n"));
+	
+	CodeDocument::Position newStartPos(getDocument(), startPos.getLineNumber(), indexInLine+text.length());
+	CodeDocument::Position newEndPos(getDocument(), endPos.getLineNumber(), indexInLine+text.length());
+	moveCaretTo(newStartPos, false);
+	moveCaretTo(newEndPos, true);	
+}
+//==============================================================================
+void CsoundCodeEditorComponenet::handleTabKey(String direction)
+{	
+	/* multi line action, get highlited text, find the position of
+	 * it within the text editor, remove it from editor and reinsert it with
+	 * formatting
+	 */
+	 
+	StringArray selectedText, csdArray;
+	//selectedText.addLines(getSelectedText());
+	csdArray.addLines(getAllText());
+	String csdText;
+	String currentLine;	
+	CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
+	CodeDocument::Position endPos(this->getDocument(), getHighlightedRegion().getEnd());
+	pos1 = getCaretPos();
+
+	if(direction.equalsIgnoreCase("forwards")){
+		//single line tab
+		if(getHighlightedRegion().getLength()==0){
+			insertTabAtCaret();
+			return;
+		}
+		else{ 
+		//multiline tab
+		for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
+						csdArray.set(i, "\t"+csdArray[i]);	
+		}
+		setAllText(csdArray.joinIntoString("\n"));	
+		highlightLines(startPos.getLineNumber(), endPos.getLineNumber());
+		
+	}
+	else if(direction.equalsIgnoreCase("backwards"))
+	//single line back tab
+	if(getHighlightedRegion().getLength()<1)
+		{
+		//no need for shift tab, just hit backspace
+		}
+		//multiline back tab
+		else{ 
+			for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
+				if(csdArray[i].substring(0, 1).equalsIgnoreCase("\t"))
+							csdArray.set(i, csdArray[i].substring(1));	
+
+			setAllText(csdArray.joinIntoString("\n"));	
+			highlightLines(startPos.getLineNumber(), endPos.getLineNumber());
+		}
 }
 //==============================================================================
 bool CsoundCodeEditorComponenet::moveCaretLeft (const bool moveInWholeWordSteps, const bool selecting)

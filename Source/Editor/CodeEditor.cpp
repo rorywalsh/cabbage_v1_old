@@ -107,26 +107,26 @@ void CsoundCodeEditor::resized()
 	editor[currentEditor]->toFront(true);
 
 	if(showTabButtons&&showInstrumentButtons){
-		editor[currentEditor]->setBounds(instrWidth+20, 20, getWidth()-instrWidth-20, (getHeight()-30)-75);
-		helpComp->setBounds(instrWidth+20, getHeight()-60, getWidth()-instrWidth-20, 30);	
-		searchReplaceComp->setBounds(instrWidth+20, getHeight()-60, getWidth()-instrWidth-20, 30);	
+		editor[currentEditor]->setBounds(instrWidth+20, 20, getWidth()-instrWidth-20, (getHeight()-55));
+		helpComp->setBounds(instrWidth+20, getHeight()-30, getWidth()-instrWidth-20, 30);	
+		searchReplaceComp->setBounds(instrWidth+20, getHeight()-30, getWidth()-instrWidth-20, 30);	
 	}	
 	else if(showTabButtons && !showInstrumentButtons){
-		editor[currentEditor]->setBounds(0, 20, getWidth(), (getHeight()-85));	
-		searchReplaceComp->setBounds(33, getHeight()-60, getWidth()-33, 30);
-		helpComp->setBounds(33, getHeight()-60, getWidth()-33, 30);
+		editor[currentEditor]->setBounds(0, 20, getWidth(), (getHeight()-55));	
+		searchReplaceComp->setBounds(33, getHeight()-30, getWidth()-33, 30);
+		helpComp->setBounds(33, getHeight()-30, getWidth()-33, 30);
 		
 	}
 	else if(showInstrumentButtons && !showTabButtons){
-		editor[currentEditor]->setBounds(instrWidth+5, 0, getWidth()-instrWidth-5, getHeight()-85);	
-		searchReplaceComp->setBounds(instrWidth+5, getHeight()-60, getWidth()-instrWidth-5, 30);
-		helpComp->setBounds(instrWidth+5, getHeight()-60, getWidth()-instrWidth-5, 30);
+		editor[currentEditor]->setBounds(instrWidth+5, 0, getWidth()-instrWidth-5, getHeight()-55);	
+		searchReplaceComp->setBounds(instrWidth+5, getHeight()-30, getWidth()-instrWidth-5, 30);
+		helpComp->setBounds(instrWidth+5, getHeight()-30, getWidth()-instrWidth-5, 30);
 
 	}
 	else{
-		editor[currentEditor]->setBounds(0, 0, getWidth(), getHeight()-85);
-		searchReplaceComp->setBounds(33, getHeight()-60, getWidth()-33, 30);
-		helpComp->setBounds(33, getHeight()-60, getWidth()-33, 30);
+		editor[currentEditor]->setBounds(0, 0, getWidth(), getHeight()-55);
+		searchReplaceComp->setBounds(33, getHeight()-30, getWidth()-33, 30);
+		helpComp->setBounds(33, getHeight()-30, getWidth()-33, 30);
 
 	}
 	

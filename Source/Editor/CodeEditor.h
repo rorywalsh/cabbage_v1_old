@@ -55,6 +55,20 @@ public:
 		sendActionMessage("make popup invisible");	
 	}
 	
+    enum DragType
+    {
+        notDragging,
+        draggingSelectionStart,
+        draggingSelectionEnd
+    };
+
+    DragType dragType;	
+	
+	bool skipBackwardsToPreviousTab();
+	bool moveCaretLeft (const bool moveInWholeWordSteps, const bool selecting);
+	bool moveCaretRight (const bool moveInWholeWordSteps, const bool selecting);
+	bool deleteBackwards (const bool moveInWholeWordSteps);
+	bool deleteForwards (const bool moveInWholeWordSteps);
 	void handleReturnKey ();	
 	void addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEvent *mouseClickEvent);
 	void performPopupMenuAction (int menuItemID);
@@ -74,9 +88,10 @@ public:
 	void highlightLines(int firstLine, int lastLine);
 	void codeDocumentTextDeleted(int,int);
 	void codeDocumentTextInserted(const juce::String &,int);
-	//bool textChanged;
+	bool pasteFromClipboard();
 	void insertNewLine(String text);
 	void changeListenerCallback(juce::ChangeBroadcaster* source);
+	void enableColumnEditMode(bool enable);
 	void setOpcodeStrings(String opcodes){
 	opcodeStrings.addLines(opcodes);
 	}
@@ -87,6 +102,8 @@ public:
 	return opcodeTokens[index];	
 	}	
 	
+	bool columnEditMode;
+		
 	private:
 		int xPos, yPos, prevXpos;
 		CodeDocument::Position pos1, pos2;
@@ -142,6 +159,7 @@ public:
 	CsoundTokeniser codeToker;
 	StringArray openFiles;
 	int documentIndex;
+	void enableColumnEdit(bool enable);
 	
 };
 
@@ -357,7 +375,10 @@ ScopedPointer<FlatButton> searchButton, replaceAllButton, replaceOnceButton;
 
 	void setSearchText(String text)
 	{
+		if(! text.containsAnyOf ("\r\n"))
 		searchEditor->setText(text);
+		else
+			searchEditor->setText("");
 	}
 	
 	String getReplaceText()

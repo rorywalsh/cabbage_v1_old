@@ -93,8 +93,14 @@ int CsoundCodeEditor::saveAllFiles()
 void CsoundCodeEditor::setSavePoint()
 {
 editor[currentEditor]->getDocument().setSavePoint();	
-	
 }
+
+//==============================================================================
+void CsoundCodeEditor::enableColumnEdit(bool enable)
+{
+	editor[currentEditor]->enableColumnEditMode(enable);
+}
+
 //==============================================================================
 void CsoundCodeEditor::resized()
 {
@@ -243,6 +249,8 @@ void CsoundCodeEditor::highlightLine(String line){
 //==============================================================================
 void CsoundCodeEditor::closeCurrentFile()
 {
+	if(openFiles.size()>2)
+	{	
 		String file = openFiles[currentEditor];
 		openFiles.remove(currentEditor);
 		editor.remove(currentEditor);
@@ -257,8 +265,11 @@ void CsoundCodeEditor::closeCurrentFile()
 		}
 		
 		setActiveTab(currentEditor);
+		editor[currentEditor]->enableColumnEditMode(false);
 		currentEditor--;
 		resized();
+		
+	}
 }
 //==============================================================================
 void CsoundCodeEditor::setActiveTab(int index)
@@ -314,7 +325,8 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
 			{	
 				currentEditor = button->currentTab;	
 				//CabbageUtils::showMessage(currentEditor);
-				editor[currentEditor]->toFront(true);	
+				editor[currentEditor]->toFront(true);
+				editor[currentEditor]->enableColumnEditMode(false);
 				button->isActive(true);
 				for(int i=0;i<tabButtons.size();i++)
 					if(i!=currentEditor+1)
@@ -431,7 +443,7 @@ if(message.contains("helpDisplay"))
 
 //==============================================================================
 CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument &document, CodeTokeniser *codeTokeniser)
-					: CodeEditorComponent(document, codeTokeniser), type(type)
+					: CodeEditorComponent(document, codeTokeniser), type(type), columnEditMode(false)
 {
 	document.addListener(this);
 	setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(35, 35, 35));
@@ -487,9 +499,11 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
 			handleEscapeKey();
         //else if (key == KeyPress ('[', ModifierKeys::commandModifier, 0))   unindentSelection();
         //else if (key == KeyPress (']', ModifierKeys::commandModifier, 0))   indentSelection();
-        else if (key.getTextCharacter() >= ' ')                            
+        else if (key.getTextCharacter() >= ' ')    
+		if(!columnEditMode)                        
 		insertTextAtCaret (String::charToString (key.getTextCharacter()));
-		//insertMultiLineTextAtCaret(String::charToString (key.getTextCharacter()));
+		else
+		insertMultiLineTextAtCaret(String::charToString (key.getTextCharacter()));
 
 		else if(key.getKeyCode() ==  268435488)
 			handleTabKey("backwards");
@@ -510,6 +524,7 @@ void CsoundCodeEditorComponenet::handleReturnKey (){
 }	
 //==============================================================================
 void CsoundCodeEditorComponenet::insertText(String text){
+	
 	pos1 = getCaretPos();
 	getDocument().insertText(pos1, text);
 }
@@ -535,6 +550,19 @@ void CsoundCodeEditorComponenet::insertNewLine(String text){
 	Logger::writeToLog("Number of tabs:"+String(numberOfTabs));
 	getDocument().insertText(pos1, text+tabs);
 }
+
+//==============================================================================
+bool CsoundCodeEditorComponenet::pasteFromClipboard()
+{
+    const String clip (SystemClipboard::getTextFromClipboard());
+    if (clip.isNotEmpty())
+		if(!columnEditMode)
+        insertText (clip);
+		else
+		insertMultiLineTextAtCaret(clip);		
+
+    return true;
+}
 //==============================================================================
 void CsoundCodeEditorComponenet::insertMultiLineTextAtCaret (String text)
 {
@@ -543,31 +571,35 @@ void CsoundCodeEditorComponenet::insertMultiLineTextAtCaret (String text)
 	csdArray.addLines(getAllText());
 	String curLine;	
 	CodeDocument::Position newPos, indexPos;
-	int indexInLine = getCaretPos().getIndexInLine();//getSelectionStartCaretPos();
 
-	CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
-	CodeDocument::Position endPos(this->getDocument(), getHighlightedRegion().getEnd());
-	
-	for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
-					csdArray.set(i, csdArray[i].replaceSection(indexInLine, 0, text));	
-	/*
-	for(int i=0;i<selectedText.size();i++){
-		curLine = newPos.getLineText();
-		Logger::writeToLog(String(curLine.length()));
-		/* need to check for tabs and add four spaces!!		
-		for(int y=curLine.length();y<index+2;y++){
-			getDocument().insertText(CodeDocument::Position(getDocument(), newPos.getLineNumber(), curLine.length()), " ");
-			newPos = newPos.movedBy(1);
-			//curLine = csdArray[currentLine+i];
-		}
+	CodeDocument::Position startPos(getDocument(), getHighlightedRegion().getStart());
+	CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
+	int indexInLine = startPos.getIndexInLine();
 
-		getDocument().insertText(newPos, text);	
-		newPos = newPos.movedByLines(1);
-		}
-		*/
-		setAllText(csdArray.joinIntoString("\n"));
+	//remove tabs when in column edit mode
+	while(csdArray[startPos.getLineNumber()].indexOf("\t")!=-1)
+	{
+		String line = csdArray[startPos.getLineNumber()];
+		int index = csdArray[startPos.getLineNumber()].indexOf("\t");
+		csdArray.set(startPos.getLineNumber(), line.replaceSection(index, 1, "    "));
+		indexInLine+=4;
+	}		
 		
-	//sendActionMessage("make popup invisible");
+	for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
+	{
+		csdArray.set(i, csdArray[i].replace("\t", "    "));
+		while(csdArray[i].length()<indexInLine)
+			{
+			csdArray.getReference(i).append(" ", 1);
+			}
+		csdArray.set(i, csdArray[i].replaceSection(indexInLine, 0, text));	
+	}
+	setAllText(csdArray.joinIntoString("\n"));
+	
+	CodeDocument::Position newStartPos(getDocument(), startPos.getLineNumber(), indexInLine+text.length());
+	CodeDocument::Position newEndPos(getDocument(), endPos.getLineNumber(), indexInLine+text.length());
+	moveCaretTo(newStartPos, false);
+	moveCaretTo(newEndPos, true);	
 }
 //==============================================================================
 void CsoundCodeEditorComponenet::handleTabKey(String direction)
@@ -710,14 +742,27 @@ void CsoundCodeEditorComponenet::addRepoToSettings()
 {
 
 }
+
+//==============================================================================
+void CsoundCodeEditorComponenet::enableColumnEditMode(bool enable)
+{
+if(enable)
+	{
+	setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue.withAlpha(.0f)); 
+	columnEditMode=true;
+	}
+else{
+	setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue.withAlpha(.2f)); 
+	columnEditMode=false;
+	}
+}
+
+
 //==============================================================================
 void CsoundCodeEditorComponenet::updateCaretPosition()
 {
-
-	Logger::writeToLog("Updating caret position");
-	int columnEdit = 0;
-	
-	if(columnEdit==1){
+	//Logger::writeToLog("Updating caret position");
+	if(columnEditMode==1){
 	StringArray selectedText;
 	selectedText.addLines(getTextInRange(this->getHighlightedRegion()));
 	CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
@@ -863,6 +908,192 @@ if(CabbageUtils::getPreference(appProperties, "EnablePopupDisplay"))
 	}
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::codeDocumentTextDeleted(int,int){
+bool CsoundCodeEditorComponenet::deleteBackwards (const bool moveInWholeWordSteps)
+{
+	CodeDocument::Position startPos(getDocument(), getHighlightedRegion().getStart());
+	CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
 	
+	if(columnEditMode)
+	{
+		//sendActionMessage("make popup invisible");
+		StringArray csdArray;
+		csdArray.addLines(getAllText());
+		String curLine;	
+		CodeDocument::Position newPos, indexPos;
+
+		int indexInLine = startPos.getIndexInLine();
+
+		//remove tabs when in column edit mode
+		while(csdArray[startPos.getLineNumber()].indexOf("\t")!=-1)
+		{
+			String line = csdArray[startPos.getLineNumber()];
+			int index = csdArray[startPos.getLineNumber()].indexOf("\t");
+			csdArray.set(startPos.getLineNumber(), line.replaceSection(index, 1, "    "));
+			indexInLine+=4;
+		}		
+			
+		for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
+		{
+			csdArray.set(i, csdArray[i].replace("\t", "    "));
+			while(csdArray[i].length()<indexInLine)
+				{
+				csdArray.getReference(i).append(" ", 1);
+				}
+			csdArray.set(i, csdArray[i].replaceSection(indexInLine-1, 1, ""));	
+		}
+		setAllText(csdArray.joinIntoString("\n"));
+		
+		CodeDocument::Position newStartPos(getDocument(), startPos.getLineNumber(), indexInLine-1);
+		CodeDocument::Position newEndPos(getDocument(), endPos.getLineNumber(), indexInLine-1);
+		moveCaretTo(newStartPos, false);
+		moveCaretTo(newEndPos, true);			
+	}
+	else
+	{	
+		
+		if (moveInWholeWordSteps)
+		{
+			getDocument().deleteSection(getCaretPos().getPosition(), getCaretPos().getPosition()+1);
+			moveCaretTo (getDocument().findWordBreakBefore (getCaretPos()), true);
+		}
+		else if ( !isHighlightActive() )
+		{
+			startPos = getCaretPos();
+			startPos.moveBy (-1);
+			getDocument().deleteSection(startPos.getPosition(), getCaretPos().getPosition());
+		}
+		else
+		{
+			getDocument().deleteSection(startPos.getPosition(), endPos.getPosition());
+		}
+
+    
+	}
+    return true;
+}
+//==============================================================================
+bool CsoundCodeEditorComponenet::deleteForwards (const bool moveInWholeWordSteps)
+{
+	CodeDocument::Position startPos(getDocument(), getHighlightedRegion().getStart());
+	CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
+	
+	if(columnEditMode)
+	{
+		//sendActionMessage("make popup invisible");
+		StringArray csdArray;
+		csdArray.addLines(getAllText());
+		String curLine;	
+		CodeDocument::Position newPos, indexPos;
+
+		int indexInLine = startPos.getIndexInLine();
+
+		//remove tabs when in column edit mode
+		while(csdArray[startPos.getLineNumber()].indexOf("\t")!=-1)
+		{
+			String line = csdArray[startPos.getLineNumber()];
+			int index = csdArray[startPos.getLineNumber()].indexOf("\t");
+			csdArray.set(startPos.getLineNumber(), line.replaceSection(index, 1, "    "));
+			indexInLine+=4;
+		}		
+			
+		for(int i=startPos.getLineNumber();i<endPos.getLineNumber()+1;i++)
+		{
+			csdArray.set(i, csdArray[i].replace("\t", "    "));
+			while(csdArray[i].length()<indexInLine)
+				{
+				csdArray.getReference(i).append(" ", 1);
+				}
+			csdArray.set(i, csdArray[i].replaceSection(indexInLine, 1, ""));	
+		}
+		setAllText(csdArray.joinIntoString("\n"));
+		
+		CodeDocument::Position newStartPos(getDocument(), startPos.getLineNumber(), indexInLine);
+		CodeDocument::Position newEndPos(getDocument(), endPos.getLineNumber(), indexInLine);
+		moveCaretTo(newStartPos, false);
+		moveCaretTo(newEndPos, true);			
+	}	
+	
+	else
+	{
+		if (moveInWholeWordSteps)
+		{
+			getDocument().deleteSection(getCaretPos().getPosition(), getCaretPos().getPosition()+1);
+			moveCaretTo (getDocument().findWordBreakBefore (getCaretPos()), true);
+		}
+		else if ( !isHighlightActive() )
+		{
+			startPos.moveBy (+1);
+			getDocument().deleteSection(getCaretPos().getPosition(), startPos.getPosition());
+		}
+		else
+		{
+			getDocument().deleteSection(startPos.getPosition(), endPos.getPosition());
+		}
+	}
+    return true;
+}
+//==============================================================================
+bool CsoundCodeEditorComponenet::moveCaretLeft (const bool moveInWholeWordSteps, const bool selecting)
+{
+	CodeDocument::Position startPos(getDocument(), getHighlightedRegion().getStart());
+	CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
+	
+		if (isHighlightActive() && ! (selecting || moveInWholeWordSteps))
+		{
+			moveCaretTo (startPos, false);
+			if(!columnEditMode)
+			return true;
+		}
+
+		if (moveInWholeWordSteps)
+			moveCaretTo (getDocument().findWordBreakBefore (getCaretPos()), selecting);
+
+		else
+			moveCaretTo (startPos.movedBy (-1), selecting);
+
+
+	if(columnEditMode)
+	{
+		CodeDocument::Position newStartPos(getDocument(), startPos.getLineNumber(), getCaretPos().getIndexInLine());
+		CodeDocument::Position newEndPos(getDocument(), endPos.getLineNumber(), getCaretPos().getIndexInLine());	
+		moveCaretTo(newStartPos, false);
+		moveCaretTo(newEndPos, true);			
+	}
+	
+    return true;
+}
+//==============================================================================
+bool CsoundCodeEditorComponenet::moveCaretRight (const bool moveInWholeWordSteps, const bool selecting)
+{
+	CodeDocument::Position startPos(getDocument(), getHighlightedRegion().getStart());
+	CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
+	
+
+    if (isHighlightActive() && ! (selecting || moveInWholeWordSteps))
+    {
+        moveCaretTo (endPos, false);
+		if(!columnEditMode)
+        return true;
+    }
+
+    if (moveInWholeWordSteps)
+        moveCaretTo (getDocument().findWordBreakAfter (getCaretPos()), selecting);
+    else
+        moveCaretTo (endPos.movedBy (1), selecting);
+
+	if(columnEditMode)
+	{
+		CodeDocument::Position newStartPos(getDocument(), startPos.getLineNumber(), getCaretPos().getIndexInLine());
+		CodeDocument::Position newEndPos(getDocument(), endPos.getLineNumber(), getCaretPos().getIndexInLine());	
+		moveCaretTo(newStartPos, false);
+		moveCaretTo(newEndPos, true);			
+	}
+
+
+    return true;
+}
+//==============================================================================
+void CsoundCodeEditorComponenet::codeDocumentTextDeleted(int start,int end)
+{	
+
 }

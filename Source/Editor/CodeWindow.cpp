@@ -27,7 +27,8 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 							  csoundOutputText(""),
 							  debugMessage(""),
 							  firstTime(true),
-							  font(String("Courier New"), 15, 1)
+							  font(String("Courier New"), 15, 1),
+							  isColumnModeEnabled(false)
 {  
 	setApplicationCommandManagerToWatch(&commandManager);
 	commandManager.registerAllCommandsForTarget(this);
@@ -81,7 +82,7 @@ setContentNonOwned(textEditor, false);
 }
 
 CodeWindow::~CodeWindow(){
-	setMenuBar(0);
+	setMenuBar(nullptr);
 	setApplicationCommandManagerToWatch(nullptr);
 	commandManager.deleteInstance();
 	deleteAndZero(textEditor);
@@ -90,7 +91,7 @@ CodeWindow::~CodeWindow(){
 //==============================================================================
 StringArray CodeWindow::getMenuBarNames()
 {
-	const char* const names[] = { "File", "Edit", "View", "Help", 0 };
+	const char* const names[] = { "File", "Edit", "Help", 0 };
 	return StringArray (names);
 }
 
@@ -110,6 +111,7 @@ void CodeWindow::getAllCommands (Array <CommandID>& commands)
 								CommandIDs::editCut,
 								CommandIDs::editPaste,
 								CommandIDs::editRedo,
+								CommandIDs::editColumnEdit,
 								CommandIDs::editToggleComments,
 								CommandIDs::editZoomIn,
 								CommandIDs::editZoomOut,
@@ -214,6 +216,11 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		result.setInfo (String("Paste"), String("Paste selection"), CommandCategories::edit, 0);
 		result.addDefaultKeypress ('v', ModifierKeys::commandModifier);
 		break;
+	case CommandIDs::editColumnEdit:
+		result.setInfo (String("Column Edit mode"), String("Column Edit"), CommandCategories::edit, 0);
+		result.setTicked(isColumnModeEnabled);
+		result.addDefaultKeypress (KeyPress::spaceKey, ModifierKeys::commandModifier);
+		break;
 	case CommandIDs::editToggleComments:
 		result.setInfo (String("Toggle comments"), String("Toggle comments"), CommandCategories::edit, 0);
 		result.addDefaultKeypress ('t', ModifierKeys::commandModifier);
@@ -224,7 +231,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		break;
 	case CommandIDs::editZoomIn:
 		result.setInfo (String("Zoom in"), String("Zoom in"), CommandCategories::edit, 0);
-		result.addDefaultKeypress ('=', ModifierKeys::commandModifier);
+		result.addDefaultKeypress('=', ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::editZoomOut:
 		result.setInfo (String("Zoom out"), String("Zoom out"), CommandCategories::edit, 0);
@@ -266,16 +273,16 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		
 	case CommandIDs::viewCsoundHelp:
 #ifndef MACOSX
-		result.setInfo (String("Toggle Csound Manual F1"), String("Toggle Csound Manual"), CommandCategories::help, 0);
+		result.setInfo (String("View Csound Manual F1"), String("View Csound Manual"), CommandCategories::help, 0);
 		result.defaultKeypresses.add(KeyPress(KeyPress::F1Key));
 #else
-		result.setInfo (String("Toggle Csound Manual Ctrl+1"), String("Toggle Csound Manual"), CommandCategories::help, 0);
+		result.setInfo (String("View Csound Manual Ctrl+1"), String("View Csound Manual"), CommandCategories::help, 0);
 		result.addDefaultKeypress ('1', ModifierKeys::commandModifier);		
 #endif
 		break;
 
 	case CommandIDs::viewCabbageHelp:
-		result.setInfo (String("Toggle Cabbage Manual"), String("Toggle Cabbage Manual"), CommandCategories::help, 0);
+		result.setInfo (String("View Cabbage Manual"), String("View Cabbage Manual"), CommandCategories::help, 0);
 		break;
 	}
 }
@@ -303,9 +310,7 @@ if(topLevelMenuIndex==0)
 	 
 	 m1.addCommandItem(&commandManager, CommandIDs::fileSave);
 	 m1.addCommandItem(&commandManager, CommandIDs::fileSaveAs);
-	 m1.addCommandItem(&commandManager, CommandIDs::fileQuit);
-	 
-	 
+	 m1.addCommandItem(&commandManager, CommandIDs::fileQuit);	 
 	 return m1;
 	}
 
@@ -316,8 +321,10 @@ else if(topLevelMenuIndex==1)
 	m1.addCommandItem(&commandManager, CommandIDs::editCut);
 	m1.addCommandItem(&commandManager, CommandIDs::editCopy);
 	m1.addCommandItem(&commandManager, CommandIDs::editPaste);
+	m1.addSeparator();
 	m1.addCommandItem(&commandManager, CommandIDs::editToggleComments);
 	m1.addCommandItem(&commandManager, CommandIDs::editSearchReplace);
+	m1.addCommandItem(&commandManager, CommandIDs::editColumnEdit);
 	m1.addSeparator();
 	m2.addCommandItem(&commandManager, CommandIDs::editZoomIn);
 	m2.addCommandItem(&commandManager, CommandIDs::editZoomOut);
@@ -333,7 +340,7 @@ else if(topLevelMenuIndex==1)
 	return m1;
 	}
 
-else if(topLevelMenuIndex==2)
+else if(topLevelMenuIndex==3)
 	{
 	m1.addCommandItem(&commandManager, CommandIDs::viewInstrumentsTabs);
 	m1.addCommandItem(&commandManager, CommandIDs::viewLinesNumbers);
@@ -348,7 +355,7 @@ else if(topLevelMenuIndex==2)
 	}
  
 	
-else if(topLevelMenuIndex==3)
+else if(topLevelMenuIndex==2)
 	{
 	m1.addCommandItem(&commandManager, CommandIDs::viewCsoundHelp);
 	m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
@@ -436,7 +443,8 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		}
 	else if(info.commandID==CommandIDs::editPaste)
 		{			
-			textEditor->editor[textEditor->currentEditor]->pasteFromClipboard();
+			textEditor->editor[textEditor->currentEditor]->insertText(SystemClipboard::getTextFromClipboard());
+			//textEditor->editor[textEditor->currentEditor]->pasteFromClipboard();
 		}
 
 	else if(info.commandID==CommandIDs::editRedo)
@@ -449,6 +457,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		}
 	else if(info.commandID==CommandIDs::editSearchReplace)
 		{			
+			textEditor->enableColumnEdit(false);
 			textEditor->searchReplaceComp->setSearchText(textEditor->getCurrentSelectedText());
 			textEditor->searchReplaceComp->setVisible(true);
 			textEditor->helpComp->setVisible(false);
@@ -457,6 +466,18 @@ bool CodeWindow::perform (const InvocationInfo& info)
 	else if(info.commandID==CommandIDs::editZoomIn)
 		{			
 			setFontSize("in");
+		}
+	else if(info.commandID==CommandIDs::editColumnEdit)
+		{			
+			if(isColumnModeEnabled)
+			{
+			textEditor->enableColumnEdit(false);
+			isColumnModeEnabled=false;
+			}
+			else{
+			textEditor->enableColumnEdit(true);
+			isColumnModeEnabled=true;				
+			}
 		}
 	else if(info.commandID==CommandIDs::editZoomOut)
 		{			

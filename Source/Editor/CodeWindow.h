@@ -94,14 +94,10 @@ public:
 	return textEditor->getAllText();	
 	}
 	
-	
 	void setColourScheme(String theme);	
 	void newFile(String type);
 	bool unSaved;
-
 	StringArray recentEvents;
-	//ScopedPointer<CabbageLookAndFeel> lookAndFeel;
-
 	String csoundOutputText;
 	bool firstTime;
 	String debugMessage;
@@ -115,6 +111,7 @@ public:
 	CsoundCodeEditor* textEditor;
 	CsoundTokeniser csoundToker;
 	Font font;
+	bool isColumnModeEnabled;
 };
 
 

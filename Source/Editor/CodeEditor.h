@@ -96,7 +96,7 @@ public:
 	opcodeStrings.addLines(opcodes);
 	}
 
-	//void insertTextAtCaret (const String &textToInsert);
+	void insertTextAtCaret (const String &textToInsert);
 	void updateCaretPosition();
 	void insertMultiLineTextAtCaret(String text);
 	String getOpcodeToken(int index){

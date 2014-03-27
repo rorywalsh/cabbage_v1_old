@@ -505,13 +505,8 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
 			handleEscapeKey();
         //else if (key == KeyPress ('[', ModifierKeys::commandModifier, 0))   unindentSelection();
         //else if (key == KeyPress (']', ModifierKeys::commandModifier, 0))   indentSelection();
-        else if (key.getTextCharacter() >= ' ') 
-		{
-			if(!columnEditMode)                        
-					insertTextAtCaret (String::charToString (key.getTextCharacter()));
-			else
-					insertMultiLineTextAtCaret(String::charToString (key.getTextCharacter()));
-		}
+		else if (key.getTextCharacter() >= ' ') 
+			insertTextAtCaret (String::charToString (key.getTextCharacter()));
 		else if(key.getKeyCode() ==  268435488)
 			handleTabKey("backwards");
 		else if(key ==  KeyPress::tabKey)
@@ -935,14 +930,13 @@ bool CsoundCodeEditorComponenet::deleteForwards (const bool moveInWholeWordSteps
     return true;
 }
 //==============================================================================
-/*
 void CsoundCodeEditorComponenet::insertTextAtCaret (const String &textToInsert)
 {
 	if(!columnEditMode)                        
-		insertTextAtCaret (textToInsert);
+		insertText(textToInsert);
 	else
 		insertMultiLineTextAtCaret(textToInsert);
-}*/
+}
 //==============================================================================
 void CsoundCodeEditorComponenet::insertMultiLineTextAtCaret (String text)
 {

@@ -94,6 +94,7 @@ public:
 	return textEditor->getAllText();	
 	}
 	
+
 	void setColourScheme(String theme);	
 	void newFile(String type);
 	bool unSaved;

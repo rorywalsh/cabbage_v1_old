@@ -38,7 +38,7 @@ class CsoundMessageConsole : public DocumentWindow
 {
 ScopedPointer<TextEditor> textEditor;
 public:
-	CsoundMessageConsole(String title, Colour bgcolour, int top, int left): DocumentWindow(title, bgcolour, DocumentWindow::allButtons, true){
+	CsoundMessageConsole(String title, Colour bgcolour, int top, int left): DocumentWindow("Csound output console", bgcolour, DocumentWindow::allButtons, true){
 	textEditor = new TextEditor();
 	textEditor->setColour(Label::outlineColourId, Colours::white);
 	textEditor->setColour(TextEditor::backgroundColourId, Colours::black);
@@ -59,11 +59,6 @@ public:
 	
 	void closeButtonPressed(){
 		setVisible(false);
-	}
-
-	void resized()
-	{
-		
 	}
 	
 	void setText(String text){

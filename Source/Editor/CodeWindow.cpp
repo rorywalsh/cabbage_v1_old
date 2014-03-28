@@ -28,7 +28,8 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 							  debugMessage(""),
 							  firstTime(true),
 							  font(String("Courier New"), 15, 1),
-							  isColumnModeEnabled(false)
+							  isColumnModeEnabled(false),
+							  isInstrTabEnabled(false)
 {  
 	setApplicationCommandManagerToWatch(&commandManager);
 	commandManager.registerAllCommandsForTarget(this);
@@ -263,6 +264,8 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		
 	case CommandIDs::viewInstrumentsTabs:
 		result.setInfo (String("Show instruments tabs"), String("Show Instruments tabs"), CommandCategories::view, 0);
+		result.addDefaultKeypress ('i', ModifierKeys::commandModifier);
+		result.setTicked(isInstrTabEnabled);
 		break;		
 	case CommandIDs::viewLinesNumbers:
 		result.setInfo (String("Show line numbers"), String("Show line numbers"), CommandCategories::view, 0);
@@ -343,8 +346,8 @@ else if(topLevelMenuIndex==1)
 else if(topLevelMenuIndex==3)
 	{
 	m1.addCommandItem(&commandManager, CommandIDs::viewInstrumentsTabs);
-	m1.addCommandItem(&commandManager, CommandIDs::viewLinesNumbers);
-	m1.addCommandItem(&commandManager, CommandIDs::viewOpcodeHelp);
+	//m1.addCommandItem(&commandManager, CommandIDs::viewLinesNumbers);
+	//m1.addCommandItem(&commandManager, CommandIDs::viewOpcodeHelp);
 	//m1.addCommandItem(&commandManager, CommandIDs::commOrcUpdateChannel);	
 	//m1.addCommandItem(&commandManager, CommandIDs::commOrchUpdateMultiLine);
 	//m1.addCommandItem(&commandManager, CommandIDs::commOrchUpdateSingleLine);
@@ -472,14 +475,12 @@ bool CodeWindow::perform (const InvocationInfo& info)
 	else if(info.commandID==CommandIDs::editColumnEdit)
 		{			
 			if(isColumnModeEnabled)
-			{
 			textEditor->enableColumnEdit(false);
-			isColumnModeEnabled=false;
-			}
-			else{
+			else
 			textEditor->enableColumnEdit(true);
-			isColumnModeEnabled=true;				
-			}
+			
+			isColumnModeEnabled=!isColumnModeEnabled;				
+	
 		}
 	else if(info.commandID==CommandIDs::editZoomOut)
 		{			
@@ -525,7 +526,12 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		
 	else if(info.commandID==CommandIDs::viewInstrumentsTabs)
 		{
-		Logger::writeToLog("show instruments");
+		if(isInstrTabEnabled)
+		textEditor->showInstrs(false);
+		else
+			textEditor->showInstrs(true);
+			
+		isInstrTabEnabled=!isInstrTabEnabled;
 		}		
 
 	else if(info.commandID==CommandIDs::viewLinesNumbers)

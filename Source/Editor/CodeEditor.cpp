@@ -112,21 +112,15 @@ void CsoundCodeEditor::resized()
 	editor[currentEditor]->toFront(true);
 
 	if(showTabButtons&&showInstrumentButtons){
-		editor[currentEditor]->setBounds(instrWidth+20, 20, getWidth()-instrWidth-20, (getHeight()-55));
-		helpComp->setBounds(instrWidth+20, getHeight()-30, getWidth()-instrWidth-20, 30);	
-		searchReplaceComp->setBounds(instrWidth+20, getHeight()-30, getWidth()-instrWidth-20, 30);	
+		editor[currentEditor]->setBounds(instrWidth-10, 20, getWidth()-instrWidth-10, (getHeight()-55));
+		helpComp->setBounds(instrWidth+10, getHeight()-30, getWidth()-instrWidth, 30);	
+		searchReplaceComp->setBounds(instrWidth+10, getHeight()-30, getWidth()-instrWidth, 30);	
 	}	
 	else if(showTabButtons && !showInstrumentButtons){
 		editor[currentEditor]->setBounds(0, 20, getWidth(), (getHeight()-55));	
 		searchReplaceComp->setBounds(33, getHeight()-30, getWidth()-33, 30);
 		helpComp->setBounds(33, getHeight()-30, getWidth()-33, 30);
 		
-	}
-	else if(showInstrumentButtons && !showTabButtons){
-		editor[currentEditor]->setBounds(instrWidth+5, 0, getWidth()-instrWidth-5, getHeight()-55);	
-		searchReplaceComp->setBounds(instrWidth+5, getHeight()-30, getWidth()-instrWidth-5, 30);
-		helpComp->setBounds(instrWidth+5, getHeight()-30, getWidth()-instrWidth-5, 30);
-
 	}
 	else{
 		editor[currentEditor]->setBounds(0, 0, getWidth(), getHeight()-55);
@@ -146,7 +140,10 @@ void CsoundCodeEditor::resized()
 	if(showInstrumentButtons)
 	{
 		for(int i=0;i<instrButtons.size();i++)
+		{
 		instrButtons[i]->setBounds(2, 20+(i*18), instrWidth, 15);	
+		instrButtons[i]->toFront(true);
+		}
 	}	
 	
 }
@@ -154,9 +151,9 @@ void CsoundCodeEditor::resized()
 //==============================================================================
 void CsoundCodeEditor::paint(Graphics& g)
 {
-	g.fillAll(CabbageUtils::getBackgroundSkin());
-	g.setColour(Colour(10, 10, 10));
-	g.fillRect(0, 200, getWidth(), getHeight()-200);
+	g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
+	//g.setColour(Colour(10, 10, 10));
+	//g.fillRect(0, 200, getWidth(), getHeight()-200);
 }
 	
 //==============================================================================
@@ -184,14 +181,13 @@ void CsoundCodeEditor::showInstrs(bool show)
 		addAndMakeVisible(instrButtons[instrButtons.size()-1]);
 		instrButtons[instrButtons.size()-1]->addChangeListener(this);
 		if(Font(13).getStringWidth(tmpArray[i])>instrWidth)
-			instrWidth = Font(13).getStringWidth(tmpArray[i]);
-			
+			instrWidth = Font(13).getStringWidth(tmpArray[i]);			
 		}		
 		
-		if(noInstruments>3)
+		//if(noInstruments>3)
+		//	showInstrumentButtons = true;
+		//else
 			showInstrumentButtons = true;
-		else
-			showInstrumentButtons = false;
 				
 	}
 	else{
@@ -355,6 +351,15 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
 			searchReplaceComp->setVisible(true);
 			helpComp->setVisible(false);
 			}
+		else if(button->type=="Instr")
+			{
+			String instrument = "instr "+button->getName();
+			editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 
+											editor[currentEditor]->getAllText().indexOf(instrument)),
+											false);	
+	
+			editor[currentEditor]->scrollToLine(editor[currentEditor]->getCaretPos().getLineNumber());
+			}
 	}
 	else if(dynamic_cast<SearchReplaceComp*>(source))
 			{
@@ -434,14 +439,6 @@ if(message.contains("helpDisplay"))
 	helpComp->setText(editor[currentEditor]->getOpcodeToken(2).removeCharacters("\""), 
 							   editor[currentEditor]->getOpcodeToken(3).removeCharacters("\""));
 	//editor->setCaretPos(editor->getCharacterBounds(editor->getCaretPos()));
-	}
-	else{
-	String instrument = "instr "+message;
-	editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 
-											editor[currentEditor]->getAllText().indexOf(instrument)),
-											false);	
-	
-	editor[currentEditor]->scrollToLine(editor[currentEditor]->getCaretPos().getLineNumber());
 	}	
 	
 }
@@ -453,7 +450,7 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
 {
 	document.addListener(this);
 	setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(35, 35, 35));
-	setColour(CodeEditorComponent::lineNumberBackgroundId, Colour::fromRGB(10, 10, 10));
+	setColour(CodeEditorComponent::lineNumberBackgroundId, CabbageUtils::getDarkerBackgroundSkin());
 	//toggle this when in column-edit mode
 	setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue.withAlpha(.2f)); 
 	setColour(CaretComponent::caretColourId, Colours::white);

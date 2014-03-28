@@ -113,6 +113,7 @@ public:
 	CsoundTokeniser csoundToker;
 	Font font;
 	bool isColumnModeEnabled;
+	bool isInstrTabEnabled;
 };
 
 

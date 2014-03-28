@@ -145,8 +145,16 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	//create editor but don't display it yet...
 	cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
 	cabbageCsoundEditor->setVisible(false);
-	cabbageCsoundEditor->setSize(800, 500);
-	//cabbageCsoundEditor->setFullScreen(true);
+	//cabbageCsoundEditor->setSize(800, 500);
+#ifdef LINUX
+			Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+			rect.setHeight(rect.getHeight()-25);
+			cabbageCsoundEditor->setBounds(rect);
+#elif WIN32
+			cabbageCsoundEditor->setFulScreen(true);
+#endif
+
+
 	cabbageCsoundEditor->addActionListener(this);
 	cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
 	
@@ -782,8 +790,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 			if(!cabbageCsoundEditor){
 			cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
 			cabbageCsoundEditor->setVisible(false);
-#ifndef MACOSX
-			cabbageCsoundEditor->setFullScreen(true);
+#ifdef LINUX
+			Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+			rect.setHeight(rect.getHeight()-25);
+			cabbageCsoundEditor->setBounds(rect);
+#elif WIN32
+			cabbageCsoundEditor->setFulScreen(true);
 #endif
 			cabbageCsoundEditor->addActionListener(this);
 			cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
@@ -792,9 +804,13 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 			//cabbageCsoundEditor->setText(csdFile.loadFileAsString());
 			this->toBehind(cabbageCsoundEditor);
 			cabbageCsoundEditor->setVisible(true);
-#ifndef MACOSX
-			cabbageCsoundEditor->setFullScreen(true);
-#endif
+#ifdef LINUX
+			Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+			rect.setHeight(rect.getHeight()-25);
+			cabbageCsoundEditor->setBounds(rect);
+#elif WIN32
+			cabbageCsoundEditor->setFulScreen(true);
+#endif	
 			cabbageCsoundEditor->toFront(true);
 			
 			
@@ -946,7 +962,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 			stopTimer();
 		}
 		}
-/*
+	/*
 	//------- cabbage dance ------
 	else if(options==99){
 		if(!cabbageDance){
@@ -1100,8 +1116,12 @@ void StandaloneFilterWindow::openTextEditor()
 			cabbageCsoundEditor->setText(filter->getCsoundInputFileText(), filter->getCsoundInputFile().getFullPathName());
 			this->toBehind(cabbageCsoundEditor);
 			cabbageCsoundEditor->setVisible(true);
-#ifndef MACOSX
-//			cabbageCsoundEditor->setFullScreen(true);
+#ifdef LINUX
+			Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+			rect.setHeight(rect.getHeight()-25);
+			cabbageCsoundEditor->setBounds(rect);
+#elif WIN32
+			cabbageCsoundEditor->setFulScreen(true);
 #endif
 			cabbageCsoundEditor->toFront(true);			
 			

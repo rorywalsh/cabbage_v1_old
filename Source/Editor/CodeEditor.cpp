@@ -524,6 +524,10 @@ void CsoundCodeEditorComponenet::handleReturnKey (){
 //==============================================================================
 void CsoundCodeEditorComponenet::insertText(String text)
 {
+	if(this->isHighlightActive())
+	{
+		getDocument().replaceSection(getHighlightedRegion().getStart(), getHighlightedRegion().getEnd(), "");		
+	}
 	getDocument().insertText(getCaretPos(), text);
 }
 //==============================================================================

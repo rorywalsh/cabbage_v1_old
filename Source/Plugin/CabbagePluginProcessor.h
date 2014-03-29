@@ -40,7 +40,7 @@
 //#include "../Editor/CabbageEditorWindow.h"
 //#endif
 
-#define CABBAGE_VERSION "Cabbage v0.5.08 Alpha"
+#define CABBAGE_VERSION "Cabbage v0.5.09 Alpha"
 
 #define AUDIO_PLUGIN 1
 #define EXTERNAL_PLUGIN 2

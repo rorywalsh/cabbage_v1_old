@@ -591,7 +591,8 @@ class CabbageComboBox : public Component
 //==============================================================================
 // custom image component
 //==============================================================================
-class CabbageImage : public Component
+class CabbageImage : public Component,
+						public ChangeBroadcaster
 {
 String name, outline, colour, shape, file;
 Image img;
@@ -611,13 +612,18 @@ public:
 		//toBack();
 		img = ImageCache::getFromFile (File (file));
 		this->setWantsKeyboardFocus(false);
-		this->setInterceptsMouseClicks(false, true);
-		//Logger::writeToLog(outline);
+		//if widget is a plant intercept mouse events
+		if(cAttr.getStringProp(CabbageIDs::plant).isNotEmpty())
+		this->setInterceptsMouseClicks(true, true);
 	}
 	~CabbageImage(){
 	}
 
-
+	void mouseDown(const MouseEvent& event)
+	{
+	if(event.mods.isPopupMenu())
+		sendChangeMessage();
+	}
 
 	//update control
 	void update(CabbageGUIClass m_cAttr){
@@ -673,7 +679,8 @@ public:
 //==============================================================================
 // custom groupbox component, this can act as a plant for other components 
 //==============================================================================
-class CabbageGroupbox : public GroupComponent
+class CabbageGroupbox : public GroupComponent,
+						public ChangeBroadcaster
 {
 	int offX, offY, offWidth, offHeight;
 	String name, caption, text, colour, fontcolour;
@@ -692,23 +699,30 @@ class CabbageGroupbox : public GroupComponent
 		toBack();
         offX=offY=offWidth=offHeight=0;
         setColour(TextButton::buttonColourId, Colour::fromString(colour));
-		setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
-		//this->getProperties().set("colour", colour);
-
+		setName(cAttr.getStringProp(CabbageIDs::name));		
+        setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
+		
         this->setText(text);
 		this->setWantsKeyboardFocus(false);
 		if(line==0)
-		this->getProperties().set("groupLine", var(0));
+			this->getProperties().set("groupLine", var(0));
 		else
-		this->getProperties().set("groupLine", var(1));
+			this->getProperties().set("groupLine", var(1));
 		this->repaint();
-
-		setName(name);
-
+		
+		//if widget is a plant intercept mouse events
+		if(cAttr.getStringProp(CabbageIDs::plant).isNotEmpty())
+		this->setInterceptsMouseClicks(true, true);
 	}
 	//---------------------------------------------
 	~CabbageGroupbox(){
-
+	
+	}
+	
+	void mouseDown(const MouseEvent& event)
+	{
+	if(event.mods.isPopupMenu())
+		sendChangeMessage();
 	}
 
 	//update control

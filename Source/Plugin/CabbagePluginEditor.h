@@ -41,13 +41,15 @@ public:
         CabbagePlantWindow(const String& title, const Colour& backgroundColour)
                 : DocumentWindow (title, backgroundColour, DocumentWindow::closeButton)
 		{
-			//this->setResizable(true, false);
+			this->setInterceptsMouseClicks(true, false);
+			setName("plantWindow");
 		};
 		
         ~CabbagePlantWindow(){
         };
-
+		
         void closeButtonPressed(){
+		setMinimised(true);
         setVisible(false);
 		setAlwaysOnTop(false);
 		

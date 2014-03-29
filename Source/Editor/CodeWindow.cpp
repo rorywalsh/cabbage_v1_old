@@ -65,9 +65,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 
 	csdFile = recentFiles.getFile (0);
 	csoundDoc.replaceAllContent(csdFile.loadFileAsString());
-	
-	//cabbageTimer->addActionListener(this);
-	//cabbageTimer->startTimedEvent(10, "splash");
+
 	setResizable(true, false);
 
 	String opcodeFile = File(File::getSpecialLocation(File::currentExecutableFile)).getParentDirectory().getFullPathName(); 
@@ -92,7 +90,7 @@ CodeWindow::~CodeWindow(){
 //==============================================================================
 StringArray CodeWindow::getMenuBarNames()
 {
-	const char* const names[] = { "File", "Edit", "Help", 0 };
+	const char* const names[] = { "File", "Edit", "View", "Help", 0 };
 	return StringArray (names);
 }
 
@@ -343,7 +341,7 @@ else if(topLevelMenuIndex==1)
 	return m1;
 	}
 
-else if(topLevelMenuIndex==3)
+else if(topLevelMenuIndex==2)
 	{
 	m1.addCommandItem(&commandManager, CommandIDs::viewInstrumentsTabs);
 	//m1.addCommandItem(&commandManager, CommandIDs::viewLinesNumbers);
@@ -358,7 +356,7 @@ else if(topLevelMenuIndex==3)
 	}
  
 	
-else if(topLevelMenuIndex==2)
+else if(topLevelMenuIndex==3)
 	{
 	m1.addCommandItem(&commandManager, CommandIDs::viewCsoundHelp);
 	m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
@@ -388,8 +386,9 @@ bool CodeWindow::perform (const InvocationInfo& info)
 			CabbageUtils::showMessage("Saving an auxillary file!");
 			textEditor->saveAuxFile();
 			}
-			else
-			sendActionMessage("fileSaved");
+			else{
+			sendActionMessage("fileSaved");		
+			}
 		}
 	else if(info.commandID==CommandIDs::fileSaveAs)
 		{

@@ -196,7 +196,7 @@ void CsoundCodeEditor::showInstrs(bool show)
 	}
 
 //nt showing instruments buttons just yet
-showInstrumentButtons = false;	
+//showInstrumentButtons = false;	
 resized();	
 }
 //==============================================================================
@@ -239,7 +239,9 @@ String CsoundCodeEditor::getAllText(){
 }	
 //==============================================================================
 void CsoundCodeEditor::setAllText(String text){
+	int lineNumber = editor[0]->getFirstLineOnScreen();		
 	editor[0]->loadContent(text);
+	editor[0]->scrollToLine(lineNumber);
 }
 //==============================================================================
 void CsoundCodeEditor::highlightLine(String line){

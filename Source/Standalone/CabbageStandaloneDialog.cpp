@@ -702,6 +702,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		subMenu.addItem(7, String("Always on Top"), true, true);
 		else
 		subMenu.addItem(7, String("Always on Top"), true, false);
+		if(getPreference(appProperties, "ShowConsoleWithEditor"))
+		subMenu.addItem(20, String("Auto-launch Csound Console with Editor"), true, true);
+		else
+		subMenu.addItem(20, String("Auto-launch Csound Console with Editor"), true, false);
 		//preferences....
 		subMenu.addItem(203, "Set Cabbage Plant Directory");
 		subMenu.addItem(200, "Set Csound Manual Directory");
@@ -784,53 +788,60 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		
 	}
 	//----- view text editor ------
-	else if(options==2){
-		if(!getPreference(appProperties, "ExternalEditor")){
-		if(csdFile.getFileName().length()>0){
-			if(!cabbageCsoundEditor){
-			cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
-			cabbageCsoundEditor->setVisible(false);
-#ifdef LINUX
-			Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-			rect.setHeight(rect.getHeight()-25);
-			cabbageCsoundEditor->setBounds(rect);
-#elif WIN32
-			cabbageCsoundEditor->setFulScreen(true);
-#endif
-			cabbageCsoundEditor->addActionListener(this);
-			cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
-			filter->codeEditor = cabbageCsoundEditor->textEditor;
-			}
-			//cabbageCsoundEditor->setText(csdFile.loadFileAsString());
-			this->toBehind(cabbageCsoundEditor);
-			cabbageCsoundEditor->setVisible(true);
-#ifdef LINUX
-			Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-			rect.setHeight(rect.getHeight()-25);
-			cabbageCsoundEditor->setBounds(rect);
-#elif WIN32
-			cabbageCsoundEditor->setFulScreen(true);
-#endif	
-			cabbageCsoundEditor->toFront(true);
-			
-			
-			if(!outputConsole){
-			outputConsole = new CsoundMessageConsole("Csound Output Messages", 
-														Colours::black, 
-														getPosition().getY()+getHeight(),
-														getPosition().getX());												
-			outputConsole->setLookAndFeel(lookAndFeel);
-			outputConsole->setText(filter->getCsoundOutput());
-			outputConsole->setAlwaysOnTop(true);
-			outputConsole->toFront(true);
-			outputConsole->setVisible(true);
-			}
+	else if(options==2)
+		{
+			if(!getPreference(appProperties, "ExternalEditor"))
+				{
+				if(csdFile.getFileName().length()>0)
+					{
+						if(!cabbageCsoundEditor){
+						cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
+						cabbageCsoundEditor->setVisible(false);
+				#ifdef LINUX
+						Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+						rect.setHeight(rect.getHeight()-25);
+						cabbageCsoundEditor->setBounds(rect);
+				#elif WIN32
+						cabbageCsoundEditor->setFulScreen(true);
+				#endif
+						cabbageCsoundEditor->addActionListener(this);
+						cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
+						filter->codeEditor = cabbageCsoundEditor->textEditor;
+						}
+						//cabbageCsoundEditor->setText(csdFile.loadFileAsString());
+						this->toBehind(cabbageCsoundEditor);
+						cabbageCsoundEditor->setVisible(true);
+				#ifdef LINUX
+						Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+						rect.setHeight(rect.getHeight()-25);
+						cabbageCsoundEditor->setBounds(rect);
+				#elif WIN32
+						cabbageCsoundEditor->setFulScreen(true);
+				#endif	
+						cabbageCsoundEditor->toFront(true);
+						
+						
+						if(!outputConsole){
+						outputConsole = new CsoundMessageConsole("Csound Output Messages", 
+																	Colours::black, 
+																	getPosition().getY()+getHeight(),
+																	getPosition().getX());												
+						outputConsole->setLookAndFeel(lookAndFeel);
+						outputConsole->setText(filter->getCsoundOutput());
+						if(getPreference(appProperties, "ShowConsoleWithEditor"))
+							{
+							outputConsole->setAlwaysOnTop(true);
+							outputConsole->toFront(true);			
+							outputConsole->setVisible(true);
+							}
+						else outputConsole->setVisible(false);
+						}
+					}
+				else showMessage("Please open or create a file first", lookAndFeel);
+				}
+			else
+				showMessage("Please disable \'Use external editor\' from preferences first", lookAndFeel);
 		}
-		else showMessage("Please open or create a file first", lookAndFeel);
-		}
-		else
-			showMessage("Please disable \'Use external editor\' from preferences first", lookAndFeel);
-	}
 	//-------Csound output console-----
 	else if(options==3){
 	if(csdFile.getFullPathName().length()>0){
@@ -962,6 +973,15 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 			stopTimer();
 		}
 		}
+
+	//----- show console with editor -------------
+	else if(options==20){		
+	if(getPreference(appProperties, "ShowConsoleWithEditor"))
+		setPreference(appProperties, "ShowConsoleWithEditor", 0);
+	
+	else
+		setPreference(appProperties, "ShowConsoleWithEditor", 1);
+	}
 	/*
 	//------- cabbage dance ------
 	else if(options==99){
@@ -1201,8 +1221,13 @@ else{
 
 void StandaloneFilterWindow::saveFile()
 {
-if(csdFile.hasWriteAccess())
+if(csdFile.hasWriteAccess()){
 csdFile.replaceWithText(cabbageCsoundEditor->getText());
+}
+else{
+	showMessage("no write access..");
+	return;
+}
 resetFilter(false);
 RecentlyOpenedFilesList recentFiles;
 recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));

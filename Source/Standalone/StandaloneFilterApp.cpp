@@ -51,6 +51,7 @@ class CabbageStandalone : public JUCEApplication
 			defaultPropSet->setValue("DisablePluginInfo", 0);
 			defaultPropSet->setValue("ExternalEditor", 0);
 			defaultPropSet->setValue("UseCabbageIO", 1);
+			defaultPropSet->setValue("ShowConsoleWithEditor", 1);
 			defaultPropSet->setValue("UsingCabbageCsound", 1);
 			defaultPropSet->setValue("AudioEnabled", 1);
 			defaultPropSet->setValue("DisableGUIEditModeWarning", 0);

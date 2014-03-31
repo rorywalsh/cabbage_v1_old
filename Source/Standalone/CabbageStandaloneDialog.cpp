@@ -228,6 +228,7 @@ void StandaloneFilterWindow::timerCallback()
 		if(diskTime>tempTime){
 			resetFilter(false);
 			lastSaveTime = csdFile.getLastModificationTime();
+			csdFile = File(csdFile.getFullPathName());
 		}
 	}
 	

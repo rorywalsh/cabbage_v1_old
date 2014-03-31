@@ -114,6 +114,7 @@ IdentArray() : StringArray("")
 	add("trackercolour(");
 	add("preset(");
 	add("popup(");
+	add("include(");
 	add("show(");
 	add("fftsize(");
 	add("overlap(");
@@ -206,6 +207,7 @@ namespace CabbageIDs
 	static const Identifier tabbed = "tabbed";
 	static const Identifier rangey = "rangey";
 	static const Identifier rangex = "rangex";
+	static const Identifier include = "include";
 	static const Identifier tabpage = "tabpage";
 	static const Identifier filetype = "filetype";
 	static const Identifier workingdir = "workingdir";

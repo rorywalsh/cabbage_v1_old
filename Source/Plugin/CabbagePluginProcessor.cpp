@@ -152,11 +152,35 @@ csoundParams->nchnls_override =2;
 csoundParams->displays = 0;
 csound->SetParams(csoundParams);
 #endif
+
+
+StringArray lines, includeFiles;
+lines.addLines(File(inputfile).loadFileAsString());
+
+for(int i=0;i<lines.size();i++)
+	if(lines[i].contains("include(")){
+		CabbageGUIClass cAttr(lines[i], -99);
+		for(int y=0;y<cAttr.getStringArrayProp(CabbageIDs::include).size(); y++)
+			{
+			String infile = cAttr.getStringArrayPropValue(CabbageIDs::include, y);
+			if(!File::isAbsolutePath(infile))	
+			{
+			String file = returnFullPathForFile(infile, File(inputfile).getParentDirectory().getFullPathName());	
+			includeFiles.add(file);
+			}
+			else
+				includeFiles.add(infile);
+			}
+		break;
+	}
+		
+includeFiles.removeDuplicates(0);
+
 csCompileResult = csound->Compile(const_cast<char*>(inputfile.toUTF8().getAddress()));
 
 if(csCompileResult==0){
 
-//send root directory path to Csound.	
+	//send root directory path to Csound.	
 	setPlayConfigDetails(getNumberCsoundOutChannels(),
 						getNumberCsoundOutChannels(),
 						getCsoundSamplingRate(),
@@ -164,6 +188,10 @@ if(csCompileResult==0){
 
         //simple hack to allow tables to be set up correctly.
         csound->PerformKsmps();
+	for(int i=0;i<includeFiles.size();i++){
+	//	csound->CompileOrc(File(includeFiles[i]).loadFileAsString().toUTF8().getAddress());
+	//	csound->InputMessage("i\"PROCESSOR\" 0 3600 1");
+	}
         csound->SetScoreOffsetSeconds(0);
         csound->RewindScore();
 		#ifdef WIN32
@@ -452,13 +480,40 @@ CSspin = nullptr;
 
 csCompileResult = csound->Compile(const_cast<char*>(file.getFullPathName().toUTF8().getAddress()));
 
-if(csCompileResult==0){
+StringArray lines, includeFiles;
+lines.addLines(file.loadFileAsString());
+
+for(int i=0;i<lines.size();i++)
+	if(lines[i].contains("include(")){
+		CabbageGUIClass cAttr(lines[i], -99);
+		for(int y=0;y<cAttr.getStringArrayProp(CabbageIDs::include).size(); y++)
+			{
+			String infile = cAttr.getStringArrayPropValue(CabbageIDs::include, y);
+			if(!File::isAbsolutePath(infile))	
+			{
+			String ifile = returnFullPathForFile(infile, file.getParentDirectory().getFullPathName());	
+			includeFiles.add(ifile);
+			}
+			else
+				includeFiles.add(infile);
+			}
+		break;
+	}
+		
+includeFiles.removeDuplicates(0);
+
+	
+if(csCompileResult==0){		
 		keyboardState.allNotesOff(0);
 		keyboardState.reset();
         //simple hack to allow tables to be set up correctly.
         csound->PerformKsmps();
         csound->SetScoreOffsetSeconds(0);
         csound->RewindScore();
+	for(int i=0;i<includeFiles.size();i++){
+	//	csound->CompileOrc(File(includeFiles[i]).loadFileAsString().toUTF8().getAddress());
+	//	csound->InputMessage("i\"PROCESSOR\" 0 3600 1");
+	}
 		csndIndex = 0;
         CSspout = csound->GetSpout();
         CSspin  = csound->GetSpin();

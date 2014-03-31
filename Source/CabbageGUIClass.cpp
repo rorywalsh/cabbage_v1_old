@@ -1052,6 +1052,16 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 				cabbageIdentifiers.set(CabbageIDs::tabpage, strTokens[0].trim());	
 			} 
 
+			else if(identArray[indx].equalsIgnoreCase("include(")){ 
+				var array;
+				for(int i=0;i<strTokens.size();i++)
+					{
+					channels.add(strTokens[i].trim());
+					array.append(strTokens[i].trim());						
+					}
+
+				cabbageIdentifiers.set(CabbageIDs::include, array);	
+			} 
 			//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 			//numeric paramters
 			//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

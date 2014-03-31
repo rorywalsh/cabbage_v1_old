@@ -90,7 +90,7 @@ CodeWindow::~CodeWindow(){
 //==============================================================================
 StringArray CodeWindow::getMenuBarNames()
 {
-	const char* const names[] = { "File", "Edit", "View", "Help", 0 };
+	const char* const names[] = { "File", "Edit", "Help", 0 };
 	return StringArray (names);
 }
 
@@ -341,7 +341,7 @@ else if(topLevelMenuIndex==1)
 	return m1;
 	}
 
-else if(topLevelMenuIndex==2)
+else if(topLevelMenuIndex==3)
 	{
 	m1.addCommandItem(&commandManager, CommandIDs::viewInstrumentsTabs);
 	//m1.addCommandItem(&commandManager, CommandIDs::viewLinesNumbers);
@@ -356,7 +356,7 @@ else if(topLevelMenuIndex==2)
 	}
  
 	
-else if(topLevelMenuIndex==3)
+else if(topLevelMenuIndex==2)
 	{
 	m1.addCommandItem(&commandManager, CommandIDs::viewCsoundHelp);
 	m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
@@ -667,16 +667,17 @@ void CodeWindow::actionListenerCallback(const String &message){
 void CodeWindow::setColourScheme(String theme){
 if(theme=="white"){
 		textEditor->editor[textEditor->currentEditor]->setColourScheme(csoundToker.getDefaultColourScheme());
-		textEditor->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
-		textEditor->setColour(CaretComponent::caretColourId, Colours::black);
-		textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue);
-		appProperties->getUserSettings()->setValue("EditorColourScheme", 0); 			
+		textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
+		textEditor->editor[textEditor->currentEditor]->setColour(CaretComponent::caretColourId, Colours::black);
+		textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue);
+		appProperties->getUserSettings()->setValue("EditorColourScheme", 0); 
+		repaint();
 		}
 else if(theme=="dark"){
 		textEditor->editor[textEditor->currentEditor]->setColourScheme(csoundToker.getDarkColourScheme());
-		textEditor->setColour(CaretComponent::caretColourId, Colours::white);
-		textEditor->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
-		textEditor->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f)); 
+		textEditor->editor[textEditor->currentEditor]->setColour(CaretComponent::caretColourId, Colours::white);
+		textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
+		textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f)); 
 		appProperties->getUserSettings()->setValue("EditorColourScheme", 1);
 		}	
 }

@@ -196,7 +196,7 @@ void CsoundCodeEditor::showInstrs(bool show)
 	}
 
 //nt showing instruments buttons just yet
-//showInstrumentButtons = false;	
+showInstrumentButtons = false;	
 resized();	
 }
 //==============================================================================
@@ -240,7 +240,7 @@ String CsoundCodeEditor::getAllText(){
 //==============================================================================
 void CsoundCodeEditor::setAllText(String text){
 	int lineNumber = editor[0]->getFirstLineOnScreen();		
-	editor[0]->loadContent(text);
+	editor[0]->getDocument().replaceAllContent(text);
 	editor[0]->scrollToLine(lineNumber);
 }
 //==============================================================================
@@ -305,8 +305,10 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
 					{
 					showInstrs(true);
 					tabButtons[0]->isActive(true);
-					editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 0), false);	
-					editor[currentEditor]->scrollToLine(0);	
+					editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(), 
+															editor[currentEditor]->getAllText().indexOf("<Cabbage>")+16),
+															false);					
+					editor[currentEditor]->scrollToLine(editor[currentEditor]->getCaretPos().getLineNumber());
 					for(int i=0;i<tabButtons.size();i++)
 						if(i!=0)
 						tabButtons[i]->isActive(false);
@@ -454,7 +456,7 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
 	setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(35, 35, 35));
 	setColour(CodeEditorComponent::lineNumberBackgroundId, CabbageUtils::getDarkerBackgroundSkin());
 	//toggle this when in column-edit mode
-	setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue.withAlpha(.2f)); 
+	setColour(CodeEditorComponent::highlightColourId, Colours::lime.withAlpha(.3f)); 
 	setColour(CaretComponent::caretColourId, Colours::white);
 	setColour(TextEditor::backgroundColourId, Colours::black);
 	setColour(CodeEditorComponent::defaultTextColourId, Colours::white);
@@ -683,6 +685,11 @@ void CsoundCodeEditorComponenet::updateCaretPosition()
 	if(columnEditMode==1){
 	StringArray selectedText;
 	selectedText.addLines(getTextInRange(this->getHighlightedRegion()));
+	if(this->getHighlightedRegion().getLength()==0)
+		{
+		setCaretPos(getCharacterBounds (getCaretPos()));
+		return;
+		}
 	CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
 	CodeDocument::Position endPos(this->getDocument(), getHighlightedRegion().getEnd());
 	Rectangle<int> newCaretPosition(getCharacterBounds(startPos));

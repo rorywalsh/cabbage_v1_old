@@ -434,6 +434,11 @@ if(shouldResetFilter){
 	filter = createCabbagePluginFilter(csdFile.getFullPathName(), false, AUDIO_PLUGIN);	
 	filter->addChangeListener(this);
 	filter->addActionListener(this);	
+	if(cabbageCsoundEditor){
+	cabbageCsoundEditor->setName(csdFile.getFileName());
+	cabbageCsoundEditor->textEditor->editor[0]->loadContent(csdFile.loadFileAsString());	
+	}
+	
 }
 else{
 deviceManager->closeAudioDevice();
@@ -482,7 +487,7 @@ filter->reCompileCsound(csdFile);
 	
 	cabbageCsoundEditor->textEditor->textChanged = false;
 	filter->codeEditor = cabbageCsoundEditor->textEditor;
-	cabbageCsoundEditor->textEditor->setSavePoint();
+	//cabbageCsoundEditor->textEditor->setSavePoint();
 	}	
 }
 

@@ -591,8 +591,6 @@ bool multiComment = false;
 bool multiLine = false;
 //check for minimal Cabbage GUI
 
-
-
     for(int i=0;i<csdText.size();i++)
         {
 		int csdLineNumber=0;
@@ -838,7 +836,7 @@ bool multiLine = false;
 			for(int i=indexOfLastGUICtrl;i<guiCtrls.size();i++)
 			editor->InsertGUIControls(guiCtrls[i]);
 
-			if(refresh)
+			if(!getPreference(appProperties, "ExternalEditor") && refresh)
 			editor->setEditMode(checkGUI);
 			
 		}
@@ -1342,8 +1340,7 @@ void CabbagePluginAudioProcessor::setGuiEnabled(bool val){
 	CabbagePluginAudioProcessorEditor* editor = dynamic_cast< CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
 	if(editor){
 	if(val==false){
-		int val = getPreference(appProperties, "ExternalEditor");
-		if(val)
+		if(getPreference(appProperties, "ExternalEditor"))
 		csdFile.replaceWithText(codeEditor->getAllText());
 		//editor->resizer->setVisible(false);
 		//editor->propsWindow->setVisible(false);

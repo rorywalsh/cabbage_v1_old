@@ -1115,6 +1115,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 			openTextEditor();
 	if(isAFileOpen == true)
 		if(filter->isGuiEnabled()){
+			
+		if(getPreference(appProperties, "ExternalEditor")==1)
+		csdFile = File(csdFile.getFullPathName());	
+			
 		startTimer(100);
 		filter->suspendProcessing(false);
 		((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);

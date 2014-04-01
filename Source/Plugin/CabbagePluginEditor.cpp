@@ -164,6 +164,7 @@ tableBuffer(2, 44100)
 
 	getFilter()->addChangeListener(this);
 	resized();
+	//startTimer(20);
 }
 
 
@@ -2590,6 +2591,9 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
 //==========================================================================================
 //Gets called periodically to update GUI controls with values coming from Csound
 //==========================================================================================
+
+
+
 void CabbagePluginAudioProcessorEditor::updateGUIControls(){
 // update our GUI so that whenever a VST parameter is changed in the 
 // host the corresponding GUI control gets updated. 
@@ -2734,7 +2738,7 @@ for(int index=0;index<(int)getFilter()->dirtyControls.size();index++)
 	
 }
 
-getFilter()->dirtyControls.clear();
+//getFilter()->dirtyControls.clear();
 //the following code looks after updating any objects that don't get recognised as plugin parameters, 
 //for example, table objects don't get listed by the host as a paramters. Likewise the csoundoutput widget.. 
 for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){

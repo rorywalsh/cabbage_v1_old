@@ -753,7 +753,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::caption, "");
 		cabbageIdentifiers.set(CabbageIDs::name, "form");
 		cabbageIdentifiers.set(CabbageIDs::type, "form");
-		cabbageIdentifiers.set(CabbageIDs::guirefresh, 40);
+		cabbageIdentifiers.set(CabbageIDs::guirefresh, 100);
 		cabbageIdentifiers.set(CabbageIDs::identchannel, "");
 		cabbageIdentifiers.set(CabbageIDs::visible, 1);
 	}
@@ -825,7 +825,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 	for(int indx=0;indx<identArray.size();indx++)
 	{
 		//check to see if identifier is part of input string..turn to lowercase first..
-		//Logger::writeToLog("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
+		Logger::writeToLog("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
 		
 		
 		//shouldn't really be checking for index off, it must exist in it's full form or now!

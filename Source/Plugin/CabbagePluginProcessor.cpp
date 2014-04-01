@@ -672,6 +672,7 @@ bool multiLine = false;
 									||tokes[0].equalsIgnoreCase(String("groupbox")))
 					{
 							CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
+							//showMessage(csdLine);
 							cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
 							if(cAttr.getStringProp("native").length()>0){
 								//create generic plugin editor and break..
@@ -679,9 +680,10 @@ bool multiLine = false;
 								nativePluginEditor = true;
 								return;
 							}
+
+
 							if(cAttr.getNumProp(CabbageIDs::guirefresh)>1)
 								guiRefreshRate = cAttr.getNumProp(CabbageIDs::guirefresh);
-
 							//showMessage(cAttr.getStringProp("type"));
 							csdLine = "";
 
@@ -1134,8 +1136,10 @@ if(!csCompileResult)
 	{
 	MYFLT* val=0;
 	//update all control widgets
+	
 	for(int index=0;index<getGUICtrlsSize();index++)
 		{
+		
 		if(guiCtrls[index].getStringProp(CabbageIDs::channeltype).equalsIgnoreCase(CabbageIDs::stringchannel)){
 		//THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE..	
 		}
@@ -1167,6 +1171,7 @@ if(!csCompileResult)
 			csound->SetChannel(guiCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
 			}			
 		}
+		 
 //update all layout control widgets
 //currently this is only needed for table widgets as other layout controls
 //don't use channel messages...

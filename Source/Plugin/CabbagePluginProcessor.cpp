@@ -445,7 +445,7 @@ IdentArray::deleteInstance();
                 //csound->Cleanup();
 				//csound->SetHostImplementedMIDIIO(false);
 
-                csound->Reset();
+                //csound->Reset();
 
                 csound = nullptr;
                 Logger::writeToLog("Csound cleaned up");

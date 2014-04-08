@@ -577,6 +577,7 @@ void StandaloneFilterWindow::closeButtonPressed()
 	stopTimer();
 	if(filter)
 	{
+		if(!getPreference(appProperties, "ExternalEditor"))	
 		if(!filter->saveEditorFiles())
 			return;
 		filter->getCallbackLock().enter();

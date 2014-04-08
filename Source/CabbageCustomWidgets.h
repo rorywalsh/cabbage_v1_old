@@ -532,14 +532,16 @@ class CabbageComboBox : public Component
 		
 		//populate combo with files
 		Array<File> dirFiles;
-		if(cAttr.getStringProp("fileType").length()<1)
+		
+		if(cAttr.getStringProp(CabbageIDs::filetype).length()<1)
 		for(int i=0;i<cAttr.getStringArrayProp("text").size();i++){
                 String item  = cAttr.getStringArrayPropValue("text", i);
 				combo->addItem(item, i+1);
         }
 		else{
 			//appProperties->getUserSettings()->getValue("CsoundPluginDirectory");
-			File pluginDir;
+			CabbageUtils::showMessage(cAttr.getStringProp(CabbageIDs::workingdir));
+			File pluginDir(cAttr.getStringProp(CabbageIDs::workingdir));
 	
 			const String filetype = cAttr.getStringProp("filetype");
 

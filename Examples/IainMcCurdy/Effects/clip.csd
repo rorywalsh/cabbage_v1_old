@@ -1,10 +1,10 @@
 <Cabbage>
 form caption("clip") size(315, 90), pluginID("clip")
-image        bounds(0, 0, 315, 90), colour(  0, 10, 20), shape("rounded"), outline("white"), line(4) 
+image        bounds(0, 0, 315, 90), colour(  0, 10, 20), shape("rounded"), outlinecolour("white"), line(4) 
 rslider  bounds( 10, 11, 70, 70), text("Limit"), channel("limit"), range(0.001, 1, 1, 0.5,0.001)     , colour(0,10,20), fontcolour(silver), trackercolour(lightblue)
 rslider  bounds( 75, 11, 70, 70), text("Argument"), channel("arg"), range(0, 1.00, 0.5)              , colour(0,10,20), fontcolour(silver), trackercolour(lightblue)
 combobox bounds(150, 15, 80,20), channel("method"), size(80,50), value(1), text("B.D.J.", "Sine", "Tanh")
-checkbox bounds(150, 45, 100, 20), channel("clip_light"), text("clip") fontcolour("white"), shape("rounded"), colour("red")
+checkbox bounds(150, 45, 100, 20), channel("clip_light"), text("clip"), colour("red"), fontcolour("white"), shape("rounded")
 rslider  bounds(235, 11, 70, 70), text("Level"), channel("level"), range(0, 10.00, 0.7)              , colour(0,10,20), fontcolour(silver), trackercolour(lightblue)
 }
 </Cabbage>

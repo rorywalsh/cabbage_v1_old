@@ -1,6 +1,6 @@
 <Cabbage>
 form caption("Inharmonic Synth"), size(445, 320), pluginID("InSy")
-image pos(0, 0), size(445, 290), colour("black"), shape("rounded"), outline("brown"), line(4)
+image pos(0, 0), size(445, 290), colour("black"), shape("rounded"), oulinecolour("brown"), line(4)
 combobox caption("Instrument"), channel("Instr"),  pos(275, 10), size(160, 90), value(4), text("Bass Guitar", "Dahina", "Banyan", "Xylophone", "Tibetan Bowl 180mm", "Spinel Sphere", "Pot Lid", "Red Cedar Wood Plate", "Tubular Bell", "Redwood Wood Plate", "Douglas Fir Wood Plate", "Uniform Wooden Bar", "Uniform Aluminium Bar", "Vibraphone 1", "Vibraphone 2", "Chalandi Plates", "Tibetan Bowl 152mm", "Tibetan Bowl 140mm", "Wine Glass", "Small Handbell", "Albert Clock Bell", "Wood Block")
 
 groupbox bounds(10, 10, 260, 90), text("Filter Envelope"){
@@ -20,7 +20,7 @@ rslider bounds(160,130,60,60), text("Rel"), channel("ARel"), colour("red"),range
 
 groupbox bounds(225, 105, 210, 90), text("Chorus"){
 checkbox channel("ChoOnOff"), pos(235,135), size(40, 43), value(1)
-label    bounds(235,178, 40, 11), text("On/Off"), colour("black")
+label    bounds(235,178, 38, 11), text("On/Off"), fontcolour("white")
 rslider  bounds(275,130,60,60), text("Mix"), channel("ChoMix"), range(0, 1, 0.5)
 rslider  bounds(325,130,60,60), text("Depth"), channel("ChoDep"), range(0, 0.1, 0.01,0.5, 0.001)
 rslider  bounds(375,130,60,60), text("Rate"), channel("ChoRte"), range(0, 20, 0.96, 0.5)
@@ -28,7 +28,7 @@ rslider  bounds(375,130,60,60), text("Rate"), channel("ChoRte"), range(0, 20, 0.
 
 keyboard pos(10, 200), size(425, 80)
 image bounds(5, 295, 240, 22), colour(75, 85, 90, 100), plant("credit"){
-label bounds(0.03, 0.15, .9, .7), text("Author: Iain McCurdy |2012|"), colour("white")
+label bounds(0.03, 0.15, .9, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white")
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -43,7 +43,7 @@ sr 		= 	44100
 ksmps 		= 	64
 nchnls 		= 	2
 0dbfs		=	1	;MAXIMUM AMPLITUDE
-massign	3,2
+massign	0,2
 
 ;Author: Iain McCurdy (2012)
 

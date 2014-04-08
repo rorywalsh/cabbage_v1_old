@@ -27,47 +27,47 @@ form caption("Delay Grain") size(410, 540), pluginID("DGrn")
 
 hslider  bounds(  5,  5, 400, 25), channel("GSize1"), range(0.005, 2, 0.01, 0.5, 0.0001)
 hslider  bounds(  5, 20, 400, 25), channel("GSize2"), range(0.005, 2, 0.09, 0.5, 0.0001)
-label    bounds(161, 39, 120, 11), text("G R A I N   S I Z E"), fontcolour(105,105,255)
+label    bounds(161, 39,  90, 11), text("G R A I N   S I Z E"), fontcolour(105,105,255)
 
 hslider  bounds(  5, 60, 400, 25), channel("Dens"), range(0.2, 2000, 50,0.5,0.001)
-label    bounds(172, 79, 120, 11), text("D E N S I T Y"), fontcolour(105,105,255)
+label    bounds(172, 79,  65, 11), text("D E N S I T Y"), fontcolour(105,105,255)
 
 hslider  bounds(  5,100, 400, 25), channel("Dly1"), range(0, 5, 0.01, 0.5, 0.0001)
 hslider  bounds(  5,115, 400, 25), channel("Dly2"), range(0, 5, 0.5,  0.5, 0.0001)
-label    bounds(180,134, 120, 11), text("D E L A Y"), fontcolour(105,105,255)
+label    bounds(180,134,  50, 11), text("D E L A Y"), fontcolour(105,105,255)
 
 hslider  bounds(  5,160, 400, 25), channel("Trns1"), range(-12, 12, 0, 1, 0.001)
 hslider  bounds(  5,175, 400, 25), channel("Trns2"), range(-12, 12, 0, 1, 0.001)
-label    bounds(162,194, 120, 11), text("T R A N S P O S E"), fontcolour(105,105,255)
+label    bounds(162,194,  88, 11), text("T R A N S P O S E"), fontcolour(105,105,255)
 
 hslider  bounds(  5,215, 400, 25), channel("PanSpread"), range(0, 1.00, 0.5,1,0.001)
-label    bounds(158,234, 120, 11), text("P A N   S P R E A D"), fontcolour(105,105,255)
+label    bounds(158,234,  95, 11), text("P A N   S P R E A D"), fontcolour(105,105,255)
 
 hslider  bounds(  5,260, 400, 25), channel("AmpSpread"), range(0, 1.00, 0.5,1,0.001)
-label    bounds(158,279, 120, 11), text("A M P   S P R E A D"), fontcolour(105,105,255)
+label    bounds(158,279,  95, 11), text("A M P   S P R E A D"), fontcolour(105,105,255)
 
 hslider  bounds(  5,300, 400, 25), channel("FiltSpread"), range(0, 1.00, 0.5,1,0.001)
 label    bounds(147,319, 120, 11), text("F I L T E R   S P R E A D"), fontcolour(105,105,255)
 
 hslider  bounds(  5,340, 400, 25), channel("ampdecay"), range(0, 1.00, 0.5,1,0.001)
-label    bounds(134,359, 220, 11), text("A M P L I T U D E   D E C A Y"), fontcolour(105,105,255)
+label    bounds(131,359, 150, 11), text("A M P L I T U D E   D E C A Y"), fontcolour(105,105,255)
 
 hslider  bounds(  5,380, 400, 25), channel("reverse"), range(0, 1.00, 0,1,0.001)
-label    bounds(112,399, 220, 11), text("R E V E R S A L   P R O B A B I L I T Y"), fontcolour(105,105,255)
+label    bounds(112,399, 190, 11), text("R E V E R S A L   P R O B A B I L I T Y"), fontcolour(105,105,255)
 
 hslider  bounds(  5,420, 400, 25), channel("mix"), range(0, 1.00, 1,1,0.001)
-label    bounds(191,439, 120, 11), text("M I X"), fontcolour(105,105,255)
+label    bounds(189,439,  30, 11), text("M I X"), fontcolour(105,105,255)
 
 hslider  bounds(  5,460, 400, 25), channel("level"), range(0, 2.00, 1, 0.5, 0.001)
-label    bounds(183,479, 120, 11), text("L E V E L"), fontcolour(105,105,255)
+label    bounds(180,479,  50, 11), text("L E V E L"), fontcolour(105,105,255)
 
+label    bounds( 19,495,  70, 11), text("GRAIN ENV."), fontcolour(105,105,255)
 combobox bounds( 10,506,  90, 17), channel("window"), value(1), text("Hanning","Half Sine","Decay 1","Decay 2","Gate")
-label    bounds( 19,495,  90, 11), text("GRAIN ENV."), fontcolour(105,105,255)
 
+label    bounds(117,495,  75, 11), text("DELAY DISTR."), fontcolour(105,105,255)
 combobox bounds(110,506,  90, 17), channel("DlyDst"), value(1), text("Exp.","Lin.","Log")
-label    bounds(119,495,  90, 11), text("DELAY DISTR."), fontcolour(105,105,255)
 
-label    bounds( 10,528, 200, 11), text("Author: Iain McCurdy |2013|"), FontColour("grey")
+label    bounds(  5,528, 160, 11), text("Author: Iain McCurdy |2013|"), FontColour("grey")
 </Cabbage>
 
 <CsoundSynthesizer>

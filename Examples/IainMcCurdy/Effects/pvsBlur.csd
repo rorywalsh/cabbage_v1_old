@@ -1,6 +1,6 @@
 <Cabbage>
 form caption("pvsBlur"), size(235,125) colour( 70, 90,100), pluginID("blur")
-image             bounds(0, 0,235,125), colour( 70, 90,100), shape("rounded"), outline("white"), line(5) 
+image             bounds(0, 0,235,125), colour( 70, 90,100), shape("rounded"), outlinecolour("white"), line(5) 
 rslider bounds( 10, 10, 70, 70), text("FFT Size"),  channel("att_table"), range(1, 7, 4, 1,1),              fontcolour("white"),colour( 70, 90,100),trackercolour("white")
 rslider bounds( 80, 10, 70, 70), text("Mix"),       channel("mix"),       range(0, 1.00, 1),                fontcolour("white"),colour( 70, 90,100),trackercolour("white")
 rslider bounds(150, 10, 70, 70), text("Level"),     channel("lev"),       range(0, 1.00, 0.5, 0.5),         fontcolour("white"),colour( 70, 90,100),trackercolour("white")

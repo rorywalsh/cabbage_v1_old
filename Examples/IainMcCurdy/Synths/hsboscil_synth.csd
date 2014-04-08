@@ -66,8 +66,6 @@ Rate	-	Rate of modulation used in the chorus effect
 <Cabbage>
 form caption("hsboscil Synth") size(590, 480), pluginID("hsbo")
 
-snapshot bounds( 5,455,200, 20), preset("hsboscil"), master(1), items("Preset 1", "Preset 2", "Preset 3", "Preset 4", "Preset 5", "Preset 6", "Preset 7", "Preset 8", "Preset 9", "Preset 10")
-
 ;AMPLITUDE
 groupbox bounds(0, 0, 590, 100), colour( 10, 15, 30, 100) text("Amplitude"), fontcolour(255,0,0){
 rslider  bounds(  5, 30, 60, 60), text("Amp."), channel("amp"), range(0, 1, 0.3)
@@ -77,7 +75,7 @@ rslider  bounds(120, 30, 60, 60), text("Dec."), channel("ADec"), range(   0, 8.0
 rslider  bounds(170, 30, 60, 60), text("Sus."), channel("ASus"), range(   0, 1.00,  0.5,0.5)
 rslider  bounds(220, 30, 60, 60), text("Rel."), channel("ARel"), range(0.01, 8,  0.3,0.5)
 line     bounds(285, 30, 2, 60), colour("DarkSlateGrey")
-label    bounds(305, 35, 70, 12), text("Mod.Shape")
+label    bounds(303, 35, 65, 12), text("Mod.Shape")
 combobox bounds(300, 50, 70, 20), channel("amplfo"), value(2), text("sine", "splines", "S+H", "square")
 rslider bounds(375, 30, 60, 60), text("Rate"), channel("ARte"), range(0, 16.0, 4)
 rslider bounds(425, 30, 60, 60), text("Depth"), channel("ADep"), range(0, 1.00, 1)
@@ -98,7 +96,7 @@ rslider bounds(285,135, 60, 60), text("Sus."), channel("BSus"), range(-6, 6.00, 
 rslider bounds(335,135, 60, 60), text("Rel."), channel("BRel"), range(0, 8.00, 0.01,0.5)
 rslider bounds(385,135, 60, 60), text("Rel.Lev."), channel("BRelLev"), range(-4.00, 4, 0)
 line    bounds( 90,200, 2, 60), colour("DarkSlateGrey")
-label    bounds(120,205, 70, 12), text("Mod.Shape")
+label    bounds(118,205, 65, 12), text("Mod.Shape")
 combobox bounds(115,220, 70, 20), channel("britelfo"), value(2), text("sine", "splines", "S+H", "square")
 rslider bounds(185,200, 60, 60), text("Rate"), channel("BRte"), range(0, 30.0, 4)
 rslider bounds(235,200, 60, 60), text("Depth"), channel("BDep"), range(0, 6.00, 2)
@@ -120,7 +118,7 @@ rslider  bounds(525,200, 60, 60), text("Size"), channel("RvbSize"), range(0, 1.0
 
 ;PITCH MOD.
 groupbox bounds(  0,270,350,100), colour( 20, 25, 40, 100), text("Pitch Modulation"), fontcolour(255,100,0){
-label    bounds( 15,305, 65, 12), text("Mod.Shape")
+label    bounds( 10,305, 65, 12), text("Mod.Shape")
 combobox bounds( 10,320, 65, 20), channel("pitchlfo"), value(1), text("sine", "splines", "S+H", "square")
 rslider  bounds( 80,300, 60, 60), text("Rate"), channel("PRte"), range(0, 16.00, 0, 0.5)
 rslider  bounds(130,300, 60, 60), text("Depth"), channel("PDep"), range(0, 1.00, 0)
@@ -143,8 +141,8 @@ rslider  bounds(525,300, 60, 60), text("Rate"), channel("ChoRte"), range(0, 20.0
 
 keyboard pos(0, 370), size(590, 80)
 }
-image bounds(290, 455, 210, 20), colour(75, 85, 90, 100), plant("credit"){
-label bounds(0.03, 0.15, .9, .7), text("Author: Iain McCurdy |2012|"), colour("white")
+image bounds(  5, 455, 210, 20), colour(75, 85, 90, 100), plant("credit"){
+label bounds(0.03, 0.15, .9, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white")
 </Cabbage>
 
 

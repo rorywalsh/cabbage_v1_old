@@ -2,10 +2,10 @@
 form caption("Band Filter"), colour("DarkSlateGrey"), size(470, 360), pluginID("band")  
 xypad bounds(5, 5, 350, 350), channel("cf", "bw"), rangex(0, 1, 0.5), rangey(0, 1, 0.3), text("x:cutoff | y:bandwidth"), colour("white")
 
-checkbox bounds(370, 10, 25, 25), channel("balance"), FontColour("white"),  value(0)
-label    bounds(400, 15, 80, 14), text("Balance"), FontColour("white")
+checkbox bounds(370, 10, 20, 20), channel("balance"), FontColour("white"),  value(0)
+label    bounds(395, 15, 55, 15), text("Balance"), FontColour("white")
 
-label   bounds(375,  43, 85, 15), text("Filter Type"), FontColour("white")
+label   bounds(375,  43, 75, 15), text("Filter Type"), FontColour("white")
 combobox bounds(370,  60,85, 20), channel("type"), value(1), text("reson", "butterbp", "areson", "butterbr")
 
 rslider bounds(368, 93, 90, 90), text("Mix"),		fontcolour("white"), 		channel("mix"), 	range(0, 1.00, 1), trackercolour("white")
@@ -17,56 +17,13 @@ rslider bounds(415,283, 50, 30), text("BW"),		fontcolour("white"), TextBox(1),		
 image bounds(75, 343, 315, 18), colour(75, 85, 90, 100), plant("credit"), line(0){
 }
 </Cabbage>
+
 <CsoundSynthesizer>
+
 <CsOptions>
 -dm0 -n -+rtmidi=null -M0
 </CsOptions>
-<CsInstruments>
-sr 	= 	44100
-ksmps 	= 	32
-nchnls 	= 	2
-0dbfs	=	1
 
-;Author: Iain McCurdy (2012)
-
-instr	1
-	kcf		chnget	"cf"
-	kbw		chnget	"bw"
-	kbalance	chnget	"balance"
-
-rslider bounds(360,283, 50, 30), text("CF"),		fontcolour("white"), TextBox(1),		channel("cfDisp"), 	range(1, 20000, 1)
-rslider bounds(415,283, 50, 30), text("BW"),		fontcolour("white"), TextBox(1),		channel("bwDisp"), 	range(1, 20000, 1)
-
-image bounds(75, 343, 315, 18), colour(75, 85, 90, 100), plant("credit"), line(0){
-}
-</Cabbage>
-<CsoundSynthesizer>
-<CsOptions>
--dm0 -n -+rtmidi=null -M0
-</CsOptions>
-<CsInstruments>
-sr 	= 	44100
-ksmps 	= 	32
-nchnls 	= 	2
-0dbfs	=	1
-
-;Author: Iain McCurdy (2012)
-
-instr	1
-	kcf		chnget	"cf"
-	kbw		chnget	"bw"
-	kbalance	chnget	"balance"
-
-rslider bounds(360,283, 50, 30), text("CF"),		fontcolour("white"), TextBox(1),		channel("cfDisp"), 	range(1, 20000, 1)
-rslider bounds(415,283, 50, 30), text("BW"),		fontcolour("white"), TextBox(1),		channel("bwDisp"), 	range(1, 20000, 1)
-
-image bounds(75, 343, 315, 18), colour(75, 85, 90, 100), plant("credit"), line(0){
-}
-</Cabbage>
-<CsoundSynthesizer>
-<CsOptions>
--dm0 -n -+rtmidi=null -M0
-</CsOptions>
 <CsInstruments>
 sr 	= 	44100
 ksmps 	= 	32

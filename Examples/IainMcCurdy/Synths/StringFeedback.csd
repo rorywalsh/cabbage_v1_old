@@ -63,8 +63,8 @@ rslider bounds(710, 25, 60, 60), text("Level"),   colour(195,126,  0), FontColou
 }
 
 keyboard bounds(0,  95,775,80)
-image bounds(5, 180, 420, 20), colour(75, 85, 90, 50), plant("credit"){
-label bounds(0.03, 0.1, .6, .7), text("Author: Iain McCurdy |2013|"), colour("white"), FontColour(195,126,  0)
+image bounds(5, 180, 230, 20), colour(75, 85, 90, 50), plant("credit"){
+label bounds(0.01, 0.1, .95, .7), text("Author: Iain McCurdy |2013|"), FontColour(195,126,  0)
 }
 
 </Cabbage>

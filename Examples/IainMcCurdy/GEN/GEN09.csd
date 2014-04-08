@@ -21,7 +21,7 @@
 <Cabbage>
 form caption("GEN09"), size(420, 555), pluginID("gn09")
 
-table bounds( 10,  5, 400, 120), identchannel("table"), tableNumbers(8), tablecolour("LightBlue")
+table bounds( 10,  5, 400, 120), channel("table"), tableNumbers(8), tablecolour("LightBlue"), identchannel("table")
 
 rslider bounds( 13,130, 43, 43), channel("pn1"), range(1, 200, 1,1,1), colour(230,230,230,200)
 rslider bounds( 63,130, 43, 43), channel("pn2"), range(1, 200, 2,1,1), colour(230,230,230,200)
@@ -219,8 +219,7 @@ instr	1
 	gi8	ftgen	8, 0, 4096,9, i(gkbase)+i(gkpn1),i(gkstr1)*i(kstatus1),i(gkph1), i(gkbase)+i(gkpn2)+i(gkint),i(gkstr2)*i(kstatus2),i(gkph2), i(gkbase)+i(gkpn3)+(i(gkint)*2),i(gkstr3)*i(kstatus3),i(gkph3), i(gkbase)+i(gkpn4)+(i(gkint)*3),i(gkstr4)*i(kstatus4),i(gkph4), i(gkbase)+i(gkpn5)+(i(gkint)*4),i(gkstr5)*i(kstatus5),i(gkph5), i(gkbase)+i(gkpn6)+(i(gkint)*5),i(gkstr6)*i(kstatus6),i(gkph6), i(gkbase)+i(gkpn7)+(i(gkint)*6),i(gkstr7)*i(kstatus7),i(gkph7), i(gkbase)+i(gkpn8)+(i(gkint)*7),i(gkstr8)*i(kstatus8),i(gkph8)
 	gi9	ftgen	9, 0, 8192,9, i(gkbase)+i(gkpn1),i(gkstr1)*i(kstatus1),i(gkph1), i(gkbase)+i(gkpn2)+i(gkint),i(gkstr2)*i(kstatus2),i(gkph2), i(gkbase)+i(gkpn3)+(i(gkint)*2),i(gkstr3)*i(kstatus3),i(gkph3), i(gkbase)+i(gkpn4)+(i(gkint)*3),i(gkstr4)*i(kstatus4),i(gkph4), i(gkbase)+i(gkpn5)+(i(gkint)*4),i(gkstr5)*i(kstatus5),i(gkph5), i(gkbase)+i(gkpn6)+(i(gkint)*5),i(gkstr6)*i(kstatus6),i(gkph6), i(gkbase)+i(gkpn7)+(i(gkint)*6),i(gkstr7)*i(kstatus7),i(gkph7), i(gkbase)+i(gkpn8)+(i(gkint)*7),i(gkstr8)*i(kstatus8),i(gkph8)
 	ktrigr	=	-1		; trigger for table widget update. The complete table will always be updated but a k-rate variable needs to be given.
-	chnset	"tablenumber(8)", "table"		; update table widget
-
+	chnset	"tablenumber(8)", "table"	; update table display	
 	; update "P.N.1-8" (partial numbers) value display boxes.
 	chnset	i(gkbase)+i(gkpn1),"pn1_out"
 	chnset	i(gkbase)+i(gkpn2)+i(gkint),"pn2_out"

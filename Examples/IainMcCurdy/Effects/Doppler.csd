@@ -21,10 +21,10 @@ Written by Iain McCurdy, 2013
 
 <Cabbage>
 form caption("-oOo-"), size(610, 180), pluginID("dopp")  
-label    bounds(23, 10, 60,11), text("Input")
-combobox bounds(10, 23, 60,20), channel("input"), value(4), text("left","right","mixed","test")
-label    bounds(23, 50, 60,11), text("Shape")
-combobox bounds(10, 63, 60,20), channel("shape"), value(1), text("sine","triangle","random","manual")
+label    bounds(20, 10, 35,11), text("Input:")
+combobox bounds(10, 22, 60,18), channel("input"), value(4), text("left","right","mixed","test")
+label    bounds(20, 50, 35,11), text("Shape:")
+combobox bounds(10, 62, 60,18), channel("shape"), value(1), text("sine","triangle","random","manual")
 
 rslider bounds( 75, 10, 80, 80), channel("RoomSize"), range(0.1,100,40,0.5,0.5), text("Room Size"), TextBox(1), colour( 45, 45, 45), trackercolour(200,200,200)
 rslider bounds(140, 10, 80, 80), channel("speed"), range(0,10,0.08,0.5,0.01), text("Speed"), TextBox(1),        colour( 45, 45, 45), trackercolour(200,200,200)
@@ -38,10 +38,10 @@ rslider bounds(530, 10, 80, 80), channel("OutAmp"), range(0,1,0.5), text("Level"
 hslider bounds( 10, 86,590, 40), channel("microphone"), range(0,1.00,0.5), text("Mic. Position"),   TextBox(1), colour(100,100,100), trackercolour(200,200,200)
 hslider bounds( 10,111,590, 40), channel("source"),     range(0,1.00,0.5), text("Source Position"), TextBox(1), colour(100,100,100), trackercolour(200,200,200)
 
-label    bounds(22, 155,200,18), text("D O P P L E R"),  fontcolour(100,100,100)
-label    bounds(20, 153,200,18), text("D O P P L E R"),  fontcolour(180,180,180)
+label    bounds( 7, 155,120,18), text("D O P P L E R"),  fontcolour(100,100,100)
+label    bounds( 5, 153,120,18), text("D O P P L E R"),  fontcolour(180,180,180)
 
-label   bounds(232,160, 200, 12), text("Author: Iain McCurdy |2013|"), FontColour("grey")
+label   bounds(232,160, 165, 12), text("Author: Iain McCurdy |2013|"), FontColour("grey")
 
 </Cabbage>
 

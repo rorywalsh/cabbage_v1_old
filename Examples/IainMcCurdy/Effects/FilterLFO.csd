@@ -37,42 +37,45 @@
 
 <Cabbage>
 form caption("Filter LFO") size(790,170), pluginID("FLFO")
-image pos(0, 0),           size(790,170), colour(0,0,0,170), shape("rounded"), outline("white"), line(4) 
+image pos(0, 0),           size(790,170), colour(0,0,0,170), shape("rounded"), outlinecolour("white"), line(4) 
 rslider bounds( 10, 11, 70, 70), text("Freq."), colour( 30, 30, 30),	trackercolour("black"),	fontcolour("white"), 		channel("cf"), 		range(1, 20000, 300, 0.333)
 rslider bounds( 75, 11, 70, 70), text("Res."),  colour( 30, 30, 30),	trackercolour("black"),	fontcolour("white"), 		channel("res"),		range(0,1.00,0.75)
 rslider bounds(140, 11, 70, 70), text("Mix"),   colour( 30, 30, 30),	trackercolour("black"),	fontcolour("white"), 		channel("mix"), 	range(0,1.00,1)
 rslider bounds(205, 11, 70, 70), text("Level"), colour( 30, 30, 30),	trackercolour("black"),	fontcolour("white"), 		channel("level"), 	range(0, 1.00, 0.2)
 
-combobox bounds( 20, 90, 100, 18), channel("model"), value(6), text("Tone","Butterworth","Moogladder","cl-Butterworth","cl-Chebychev I","resonz","phaser2","resony")
-label    bounds( 44,108, 80, 12), text("MODEL"), fontcolour("white")
+label    bounds( 40, 90, 50, 12), text("MODEL"), fontcolour("white")
+combobox bounds( 20,102, 100, 18), channel("model"), value(6), text("Tone","Butterworth","Moogladder","cl-Butterworth","cl-Chebychev I","resonz","phaser2","resony")
 
-combobox bounds(140, 90, 100, 18), channel("type"), value(1), text("Low-pass","High-pass")
-label    bounds(169,108, 80, 12), text("TYPE"),  fontcolour("white")
+label    bounds(160, 90, 50, 12), text("TYPE"),  fontcolour("white")
+combobox bounds(140,102, 100, 18), channel("type"), value(1), text("Low-pass","High-pass")
 
-combobox bounds( 20,127,100, 18), channel("input"), value(2), text("Live","Tone","Noise")
-label    bounds( 46,145,100, 12), text("INPUT"), fontcolour("white")
+label    bounds( 40,127, 50, 12), text("INPUT"), fontcolour("white")
+combobox bounds( 20,139,100, 18), channel("input"), value(2), text("Live","Tone","Noise")
 
-button   bounds(140,127, 80, 18), colour("Green"), text("RESYNC.", "RESYNC."), channel("resync"), value(1)
+button   bounds(140,139, 80, 18), colour("Green"), text("RESYNC.", "RESYNC."), channel("resync"), value(1)
 
 ; controls pertaining to the setup of clfilt accessed in a pop-up panel.
-groupbox bounds(280, 15,150, 90),  colour("black"), plant("clfilt"), line(0), popup(1);, fontcolour("white")
+button   bounds(280, 15,100, 30), channel("clfiltButton"), text("clfilt")
+groupbox bounds(280, 15,150, 90),  colour("black"), plant("clfilt"), line(0), popup(1), identchannel("clfiltPlant");, fontcolour("white")
 {
 rslider bounds(  5, 16, 70, 70), text("N.Poles"), colour( 30 , 30, 30),	trackercolour("black"), FontColour("white"), channel("npol"),   range(2, 80, 2, 1, 2)
 rslider bounds( 75, 16, 70, 70), text("Ripple"),  colour( 30 , 30, 30),	trackercolour("black"), FontColour("white"), channel("pbr"),    range(0.1, 50.00, 1, 0.5, 0.001)
 }
 
 ; controls pertaining to the setup of phaser2 accessed in a pop-up panel.
-groupbox bounds(280, 55,315, 90),  colour("black"), plant("phaser2"), line(0), popup(1);, fontcolour(white)
+button   bounds(280, 55,100, 30), channel("phaser2Button"), text("phaser2")
+groupbox bounds(280, 55,315, 90),  colour("black"), plant("phaser2"), line(0), popup(1), identchannel("phaser2Plant");, fontcolour(white)
 {
 rslider  bounds(  5, 16, 70, 70), text("Q"),       channel("q"),   range(0.0001,4,3),       colour( 30 , 30, 30),	trackercolour("black"), FontColour("white")
 rslider  bounds( 75, 16, 70, 70), text("N.Ords."), channel("ord"), range(1, 256, 8, 0.5,1), colour( 30 , 30, 30),	trackercolour("black"), FontColour("white")
-label    bounds(160, 20, 60,12), text("Sep. Mode")
+label    bounds(155, 20, 60,12), text("Sep. Mode:")
 combobox bounds(150, 34, 80,25), channel("mode"), size(100,50), value(1), text("Equal", "Power"), colour( 30 , 30, 30),	trackercolour("black"), FontColour("white")
 rslider  bounds(240, 16, 70, 70), text("Separation"), channel("sep"), range(-3, 3.00, 0.9), colour( 30 , 30, 30),	trackercolour("black"), FontColour("white")
 }
 
 ; controls pertaining to the setup of resony accessed in a pop-up panel.
-groupbox bounds(280, 95,565, 90),  colour("black"), plant("resony"), line(0), popup(1);, fontcolour(white)
+button   bounds(280, 95,100, 30), channel("resonyButton"), text("resony")
+groupbox bounds(280, 95,565, 90),  colour("black"), plant("resony"), line(0), popup(1), identchannel("resonyPlant");, fontcolour(white)
 {
 rslider  bounds(  5, 16, 70, 70), text("BW."),           fontcolour("white"), channel("bw"),    range(0.01, 1000, 13, 0.5), colour( 30 , 30, 30),	trackercolour("black")
 rslider  bounds( 75, 16, 70, 70), text("Num."),          fontcolour("white"), channel("num"),   range(1, 80, 10, 1,1),      colour( 30 , 30, 30),	trackercolour("black")
@@ -107,7 +110,7 @@ rslider  bounds(645, 91, 70, 70), text("Rate Div."),colour( 30, 30 ,30),	tracker
 rslider  bounds(710, 91, 70, 70), text("Smoothing"),colour( 30, 30 ,30),	trackercolour("black"), fontcolour("white"), channel("LFOport2"), range(0, 0.1, 0.001, 0.25, 0.000001)
 checkbox bounds(405,111, 80, 12), text("Link Rates"), channel("RateLink"),colour(yellow), fontcolour("white"),  value(0)
 
-label   bounds(220,150, 200, 12), text("Author: Iain McCurdy |2013|"), FontColour("grey")
+label   bounds(220,150, 170, 12), text("Author: Iain McCurdy |2013|"), FontColour("grey")
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -340,12 +343,34 @@ instr	UpdateWidgets
 	 chnset	ksepR2/12, "sepR"
 	endif
 endin
+
+instr 1000				; launches plant popups
+
+klaunch	init	0
+
+#define LAUNCH_PLANT(name)
+#
+kpressed	chnget "$nameButton"
+if changed(kpressed)==1 then
+  Smsg sprintfk "show(%d), pos(1, 19)", klaunch
+  chnset Smsg, "$namePlant"
+endif
+#
+
+$LAUNCH_PLANT(clfilt)
+$LAUNCH_PLANT(phaser2)
+$LAUNCH_PLANT(resony)
+
+klaunch	=	1
+
+endin
 	
 </CsInstruments>
 
 <CsScore>
 i 1 0 [3600*24*7]
 i "UpdateWidgets" 0 [3600*24*7]
+i 1000 0 [60*60*24*7]	; plant pop-ups
 </CsScore>
 
 </CsoundSynthesizer>

@@ -1,6 +1,6 @@
 <Cabbage>
 form caption("Envelope Follower") size(440, 100), pluginID("envf")
-image pos(0, 0), size(440, 100), colour("brown"), shape("rounded"), outline("white"), line(4)
+image pos(0, 0), size(440, 100), colour("brown"), shape("rounded"), outlinecolour("white"), line(4)
 checkbox bounds(15, 70, 15, 15), channel("lev1"), value(0), colour(200,220,0,255),shape("ellipse")
 checkbox bounds(15, 55, 15, 15), channel("lev2"), value(0), colour(250,190,0,255),shape("ellipse")
 checkbox bounds(15, 40, 15, 15), channel("lev3"), value(0), colour(255,120,0,255),shape("ellipse")

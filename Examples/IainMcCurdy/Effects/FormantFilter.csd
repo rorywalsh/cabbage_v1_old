@@ -27,7 +27,7 @@ rslider bounds(480,140, 60, 60), text("Mix"), channel("mix"), range(0, 1.00, 1),
 rslider bounds(480,210, 60, 60), text("Gain"), channel("gain"), range(0, 5.00, 1, 0.5), fontcolour("white")
 
 image bounds( 5, 275, 350, 18), colour(75, 85, 90, 100), plant("credit"), line(0){
-label bounds(0.03, 0.1, .6, .8), text("Author: Iain McCurdy |2012|"), colour("white")
+label bounds(0.03, 0.1, .6, .8), text("Author: Iain McCurdy |2012|"), fontcolour("white")
 }
 </Cabbage>
 <CsoundSynthesizer>
@@ -280,7 +280,7 @@ endin
 <CsScore>
 i 1 0 [3600*24*7]
 i 2 0 [3600*24*7]
-i 99 0 0.01			; fix for cabbage bug
+;i 99 0 0.03			; fix for cabbage bug
 </CsScore>
 
 </CsoundSynthesizer>

@@ -21,24 +21,24 @@
 
 <Cabbage>
 form caption("Wavetable Synth") size(675, 320), pluginID("wtsy")
-image pos(0, 0), size(675, 290), colour("brown"), shape("rounded"), outline("maroon"), line(4)	
-image   bounds(160,  6,240, 88), colour("brown"), shape("rounded"), outline("white"), line(1)	;modulation
-image   bounds(405,  6,140, 88), colour("brown"), shape("rounded"), outline("white"), line(1)	;polyphony
-image   bounds(550,  6,110, 88), colour("brown"), shape("rounded"), outline("white"), line(1)	;pitch bend
-image   bounds( 15,103,110, 88), colour("brown"), shape("rounded"), outline("white"), line(1)	;noise attack
-image   bounds(130,103,155, 88), colour("brown"), shape("rounded"), outline("white"), line(1)	;quality
-image   bounds(290,103,110, 88), colour("brown"), shape("rounded"), outline("white"), line(1)	;reverb
-image   bounds(405,103,260, 88), colour("brown"), shape("rounded"), outline("white"), line(1)	;output
+image pos(0, 0), size(675, 290), colour("brown"), shape("rounded"), oulinecolour("maroon"), line(4)	
+image   bounds(160,  6,240, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;modulation
+image   bounds(405,  6,140, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;polyphony
+image   bounds(550,  6,110, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;pitch bend
+image   bounds( 15,103,110, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;noise attack
+image   bounds(130,103,155, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;quality
+image   bounds(290,103,110, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;reverb
+image   bounds(405,103,260, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;output
 combobox caption("Instrument"), channel("Instr"),  bounds(10, 10, 140, 80)  value(1), text("Clarinet", "Bass Clarinet", "C.bass Clarinet", "Oboe", "Bassoon", "C.bassoon", "Violin", "Cello", "Piccolo", "Flute", "Alto Flute", "Bass Flute", "Ahh", "Horn P", "Horn F", "B.Trb.Harmon Mute", "B.Trb.Cup Mute", "B.Trb.Open")
 label   bounds(170, 80, 40, 12), text("Mod.")
-label   bounds(245, 11,100, 15), text("Modulation")
-label   bounds(440, 11,100, 15), text("Polyphony")
-label   bounds(567, 11,100, 15), text("Pitch Bend")
-label   bounds( 50,107,100, 15), text("Attack")
-label   bounds(185,107,100, 15), text("Quality")
-label   bounds(200,175,100, 11), text("EQ")
-label   bounds(325,107,100, 15), text("Reverb")
-label   bounds(510,107,100, 15), text("Output")
+label   bounds(250, 11, 80, 15), text("Modulation")
+label   bounds(438, 11, 75, 15), text("Polyphony")
+label   bounds(566, 11, 75, 15), text("Pitch Bend")
+label   bounds( 43,107, 60, 15), text("Attack")
+label   bounds(178,107, 60, 15), text("Quality")
+label   bounds(200,175, 16, 11), text("EQ")
+label   bounds(314,107, 60, 15), text("Reverb")
+label   bounds(502,107, 60, 15), text("Output")
 
 ;MODULATION
 vslider bounds(160,-10, 40, 90), channel("moddep"), range(0, 1, 0.4),midCtrl(1, 1)
@@ -77,8 +77,8 @@ rslider bounds(555,127, 60, 60), text("Pan"),    channel("pan"),     range(0, 1.
 rslider bounds(605,127, 60, 60), text("Level"),  channel("level"),   range(0, 2.00, 1)
 
 keyboard pos(10, 200), size(655, 80)
-image bounds(5, 295, 250, 20), colour(75, 85, 90, 100), plant("credit"){
-label bounds(0.03, 0.2, .9, .6), text("Author: Iain McCurdy |2012|"), colour("white")
+image bounds(5, 295, 180, 20), colour(75, 85, 90, 100), plant("credit"){
+label bounds(0.03, 0.2, .9, .6), text("Author: Iain McCurdy |2012|"), fontcolour("white")
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -425,7 +425,6 @@ gitabs4morfUnmuted	ftgen	0,0,64,-2, giUnmuted22,giUnmuted23,giUnmuted24,giUnmute
 
 
 
-
 ;INITIAL INSTRUMENT SETTING WILL BE 'CLARINET'
 giwavemap	init	giwavemapClar
 gitabs4morf	init	gitabs4morfClar
@@ -703,6 +702,7 @@ endin
 <CsScore>
 i "UpdateTableNumbers" 0 3600
 i 5 0 3600			;reverb
+f 0 300
 </CsScore>
 
 </CsoundSynthesizer>

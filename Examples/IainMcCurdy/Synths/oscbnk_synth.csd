@@ -49,7 +49,7 @@ Size		--	room size
 <Cabbage>
 form caption("Oscillator Bank Synth") size(525, 330), pluginID("oscb")
 
-image bounds(  0,  0,525, 330), colour( 0, 0, 50), shape("sharp"), outline("white"), line(0)
+image bounds(  0,  0,525, 330), colour( 0, 0, 50), shape("sharp"), oulinecolour("white"), line(0)
 
 ;OSCILLATOR
 groupbox bounds(  0,  0,525, 85), text("Oscillators"), fontcolour("white") plant("oscillators"){

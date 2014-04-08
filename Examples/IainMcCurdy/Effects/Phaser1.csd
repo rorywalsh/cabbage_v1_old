@@ -3,7 +3,7 @@
 
 <Cabbage>
 form caption("phaser1") size(350, 90), pluginID("phs1")
-image pos(0, 0), size(350, 90), colour(80,20,20), shape("rounded"), outline("white"), line(4) 
+image pos(0, 0), size(350, 90), colour(80,20,20), shape("rounded"), outlinecolour("white"), line(4) 
 rslider bounds(10, 11, 70, 70),  text("Frequency"), channel("freq"),     range(20.0, 5000, 160, 0.25), colour(80,20,20), fontcolour("white"), trackercolour(180,120,120)
 rslider bounds(75, 11, 70, 70),  text("Feedback"),  channel("feedback"), range(-0.99, 0.99, 0.9),      colour(80,20,20), fontcolour("white"), trackercolour(180,120,120)
 rslider bounds(140, 11, 70, 70), text("N.Ords."),   channel("ord"),      range(1, 256, 32, 0.5,1),     colour(80,20,20), fontcolour("white"), trackercolour(180,120,120)

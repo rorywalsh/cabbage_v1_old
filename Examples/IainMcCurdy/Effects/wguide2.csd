@@ -1,6 +1,6 @@
 <Cabbage>
 form caption("wguide2") size(545, 90)
-image pos(0, 0), size(545, 90), colour(25,0,25), shape("rounded"), outline("white"), line(4) 
+image pos(0, 0), size(545, 90), colour(25,0,25), shape("rounded"), outlinecolour("white"), line(4) 
 rslider bounds(10, 11, 70, 70), text("Freq. 1"),   channel("freq1"),     range(20, 8000, 160, 0.25), colour(150,110,110), trackercolour(white)
 rslider bounds(75, 11, 70, 70), text("Freq. 2"),   channel("freq2"),     range(20, 8000, 160, 0.25), colour(150,110,110), trackercolour(white)
 rslider bounds(140, 11, 70, 70), text("Cutoff 1"), channel("cutoff1"),   range(20,20000,8000,0.25),  colour(150,110,110), trackercolour(white)

@@ -20,7 +20,7 @@
 
 <Cabbage>
 form caption("Reverse") size(455, 95), pluginID("rvrs")
-image           bounds(0, 0, 455, 95), colour("darkslategrey"), shape("rounded"), outline("white"), line(4)
+image           bounds(0, 0, 455, 95), colour("darkslategrey"), shape("rounded"), outlinecolour("white"), line(4)
 rslider  bounds( 10, 10,  75, 75), text("Time L"),    channel("timeL"),   range(0.010, 4, 1, 0.5,0.001),colour(darkslategrey)   fontcolour(255,255,200), trackercolour(lightblue)
 rslider  bounds( 80, 10,  75, 75), text("Time R"),    channel("timeR"),   range(0.010, 4, 1, 0.5,0.001),colour(darkslategrey)   fontcolour(255,255,200), trackercolour(lightblue)
 rslider  bounds(150, 10, 75, 75),  text("Spread"),    channel("spread"),  range(0, 1.00, 1),            colour(darkslategrey)   fontcolour(255,255,200), trackercolour(lightblue)

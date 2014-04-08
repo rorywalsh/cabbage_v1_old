@@ -49,26 +49,24 @@ the buffered audio. The feedback loop will also be deactivated when 'freeze' is 
 <Cabbage>
 form caption("Live Sndwarp") size(530, 465), pluginID("lwrp")
 
-groupbox bounds(  0,  0, 300,100), text("Master"), colour(30, 30, 40), fontcolour(255,125,125){
+groupbox bounds(  0,  0, 300,100), text("Master"), colour(30, 30, 40), fontcolour(255,125,125)
 checkbox bounds( 10, 28, 110, 20), colour("yellow"), channel("OnOff"),  value(1), text("On/Off [MIDI]"), trackercolour("red")
 label    bounds( 22, 53,  80, 13), text("In/Out Mode")
 combobox bounds( 10, 69, 100, 20), channel("monostereo"), value(2), text("mono","stereo out","stereo in/out")
 rslider  bounds(115, 30,  60, 60), text("In Gain"), channel("InGain"), range(0, 2.00, 1, 0.5), trackercolour("red")
 rslider  bounds(175, 30,  60, 60), text("Out Gain"), channel("amp"), range(0, 2.00, 1, 0.5), trackercolour("red")
 rslider  bounds(235, 30,  60, 60), text("Mix"), channel("mix"), range(0, 1.00, 1), trackercolour("red")
-}
 
-groupbox bounds(300,  0, 230,100), text("Feedback - CAUTION!"), colour(25, 25, 35), fontcolour(250,120,120){
+groupbox bounds(300,  0, 230,100), text("Feedback - CAUTION!"), colour(25, 25, 35), fontcolour(250,120,120)
 rslider  bounds(305, 30,  60, 60), text("Amount"), channel("feedback"), range(0, 1.00, 0), trackercolour("red")
 checkbox bounds(365, 35,  70, 20), colour("yellow"), channel("clip"),  value(1), text("Clip"), trackercolour("red")
 checkbox bounds(365, 65,  70, 20), colour("yellow"), channel("LPF_On"),  value(0), text("LPF"), trackercolour("red")
 rslider  bounds(410, 30,  60, 60), text("Clip Lev."), channel("ClipLev"), range(0.01, 1, 0.5, 0.5), trackercolour("red")
 rslider  bounds(465, 30,  60, 60), text("LPF"), channel("Cutoff"), range(20, 20000,  4000, 0.5), trackercolour("red")
-}
 
 groupbox bounds(  0,100, 530,100), text("Grains"), colour(35, 35, 45), fontcolour(255,130,130){
-rslider  bounds(  5,130,  60, 60), text("Size"), channel("wsize"), range(1, 88200, 7000, 0.25), trackercolour("red")
-rslider  bounds( 65,130,  60, 60), text("Size Rnd."), channel("rnd"), range(0, 30000, 1000, 0.375), trackercolour("red")
+rslider  bounds(  5,130,  60, 60), text("Size"), channel("wsize"), range(1, 88200, 7000, 0.25, 1), trackercolour("red")
+rslider  bounds( 65,130,  60, 60), text("Size Rnd."), channel("rnd"), range(0, 30000, 1000, 0.375, 1), trackercolour("red")
 rslider  bounds(125,130,  60, 60), text("Pitch"), channel("pch"), range(0.01, 8, 1, 0.5), trackercolour("red")
 rslider  bounds(185,130,  60, 60), text("Semis"), channel("semis"), range(-48, 48, 0,1,1), trackercolour("red")
 rslider  bounds(245,130,  60, 60), text("Density"), channel("olaps"), range(1, 100, 10, 1, 1), trackercolour("red")
@@ -77,31 +75,27 @@ combobox bounds(305,141, 100, 20), channel("wfn"), value(1), text("Half Sine","P
 checkbox bounds(315,170, 100, 20), colour("yellow"), channel("balance"),  value(0), text("Balance")
 rslider  bounds(405,130,  60, 60), text("Delay"), channel("dly"), range(0, 5, 0.01, 0.5), trackercolour("red")
 rslider  bounds(465,130,  60, 60), text("Distr."), channel("beta"), range(1, 16.0, 1, 0.5), trackercolour("red")
-}
 
-groupbox bounds(  0,200,530,135), text("Freeze"), colour(45, 45, 55), fontcolour(255,100,100){
-label    bounds(234,230, 80, 17), text("FREEZE"), fontcolour("LightBlue")
-label    bounds(233,231, 80, 17), text("FREEZE"), fontcolour(105,105,255)
+groupbox bounds(  0,200,530,135), text("Freeze"), colour(45, 45, 55), fontcolour(255,100,100)
+label    bounds(235,230, 59, 17), text("FREEZE"), fontcolour("LightBlue")
+label    bounds(234,231, 59, 17), text("FREEZE"), fontcolour(105,105,255)
 checkbox bounds(225,249, 80, 30), colour(115,115,255), channel("freeze"),  value(0)
 rslider  bounds( 10,227, 60, 60), text("Port.Time"), channel("ManPtrPort"), range(0, 1.00, 0.5), trackercolour("red")
 hslider  bounds( 10,280,510, 40), channel("ManPtr"), range(-1.00, 0, 0, 1, 0.001), trackercolour("red")
 label    bounds(220,315,100, 13), text("Manual Pointer")
-}
 
-groupbox bounds(  0,335, 80,100), text("MIDI"), colour(30, 30, 40), fontcolour(255,100,100){
+groupbox bounds(  0,335, 80,100), text("MIDI"), colour(30, 30, 40), fontcolour(255,100,100)
 rslider  bounds( 10,365, 60, 60), text("Uni.Note"), channel("UniNote"), range(0, 127, 72,1,1), trackercolour("red")
 keyboard bounds( 80,335,450,100)
-}
 
 image bounds( 5, 440, 215, 20), colour(75, 85, 90, 100), plant("credit"), line(0){
-label bounds(0.03, 0.1, .9, .7), text("Author: Iain McCurdy |2012|"), colour("white")
-
+label bounds(0.03, 0.1, .9, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white")
+}
 </Cabbage>
 
 <CsoundSynthesizer>
 
 <CsOptions>
-;-d -n
 -dm0 -n -+rtmidi=null -M0
 </CsOptions>
 
@@ -143,8 +137,11 @@ instr	1
 	gkpch		chnget	"pch"
 	gkLPF_On  	chnget	"LPF_On"
 	gkwsize		chnget	"wsize"
+	gkwsize		=	int(gkwsize)	; workaround
 	gkrnd		chnget	"rnd"
+	gkornd		=	int(gkrnd)	; workaround
 	gkolap		chnget	"olaps"
+	gkolap		=	int(gkolap)	; workaround
 	gkwfn		chnget	"wfn"
 	gkdly		chnget	"dly"
 	gkbeta		chnget	"beta"
@@ -226,14 +223,17 @@ instr	2
 	else
 	 kpch		=	gkpch
 	endif	
-	
+
 	kporttime	linseg	0,0.001,0.03				;portamento time. Rises quickly from zero to a held value.
 	kpch		portk	kpch,kporttime				;Apply portamento smoothing to changes made to the pitch multiplier
 	apch	interp	kpch						;interpolate pitch multiplier variable to create an a-rate version. This will produce higher quality results when pitch is modulated.
 	
 	kManPtr	portk	gkManPtr,kporttime*10*gkfreeze*gkManPtrPort
 
-	ktrig	changed	gkwsize,gkrnd,gkolap,gkwfn			;if any of the list of input args. change, generate a trigger impulse (momentary '1'). The input args are all i-rate in sndwarp so reinitialisation will be required for their changes to register.
+	kmetro	metro	5						;peg rate of reinits
+	if kmetro==1 then
+	 ktrig	changed	gkwsize,gkrnd,gkolap,gkwfn			;if any of the list of input args. change, generate a trigger impulse (momentary '1'). The input args are all i-rate in sndwarp so reinitialisation will be required for their changes to register.
+	endif
 	if ktrig==1 then						;if a trigger hass been generated... 
 	 reinit	UPDATE_SNDWARP						;... begin a reinitialisation pass from the given label
 	endif

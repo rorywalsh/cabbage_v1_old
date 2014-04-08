@@ -8,7 +8,7 @@ The 'bandwidth' and 'scaling mode' parameters are as they are in the reson opcod
 
 <Cabbage>
 form caption("resony") size(810, 90), pluginID("rsny"), colour(255,100,0)
-image    bounds(  0,  0,810, 90), colour("black"), shape("rounded"), outline(255,100,0), line(2) 
+image    bounds(  0,  0,810, 90), colour("black"), shape("rounded"), outlinecolour(255,100,0), line(2) 
 button   bounds( 10, 20, 80, 50), text("Live","Noise"), channel("input"), value(0), fontcolour(yellow)
 rslider  bounds( 90, 10, 70, 70), text("BF."),             fontcolour("white"), channel("bf"),   range(20, 20000, 909, 0.5), colour(255,100,0,255), trackercolour(255,250,100)
 rslider  bounds(160, 10, 70, 70), text("BW."),             fontcolour("white"), channel("bw"),   range(0.01, 1000, 13, 0.5), colour(255,100,0,255), trackercolour(255,250,100)

@@ -4,7 +4,7 @@ Written by Iain McCurdy |2013|
 <Cabbage>
 form caption("Stutter Filter") size(800, 510), pluginID("stfl")
 
-image            bounds(290, 475,225, 30), colour(100,100,100), shape("rounded"), outline("white"), line(4) 
+image            bounds(290, 475,225, 30), colour(100,100,100), shape("rounded"), outlinecolour("white"), line(4) 
 snapshot bounds(305,480,200, 20), preset("StutterFilter"), master(1), items("Preset 1", "Preset 2", "Preset 3", "Preset 4", "Preset 5", "Preset 6", "Preset 7", "Preset 8", "Preset 9", "Preset 10")
 label   bounds(  8, 496, 200, 12), text("Iain McCurdy [2013]"), FontColour("grey")
 

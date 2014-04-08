@@ -1,6 +1,6 @@
 <Cabbage>
 form caption("pvsAdsyn") size(580, 90), pluginID("adsy")
-image pos(0, 0), size(580, 90), colour(200,100,50,150), shape("rounded"), outline("white"), line(5) 
+image pos(0, 0), size(580, 90), colour(200,100,50,150), shape("rounded"), outlinecolour("white"), line(5) 
 rslider bounds(10, 11, 70, 70),  text("Freq.Mod."),  channel("fmod"),      range(0.25, 4, 1),        fontcolour("white"), colour(200,100,50,250), trackercolour(tan)
 rslider bounds(80, 11, 70, 70),  text("Num.Osc.s"),  channel("noscs"),     range(1, 1024, 256,1,1),  fontcolour("white"), colour(200,100,50,250), trackercolour(tan)
 rslider bounds(150, 11, 70, 70), text("Bin Offset"), channel("binoffset"), range(0, 256, 1,1,1),     fontcolour("white"), colour(200,100,50,250), trackercolour(tan)

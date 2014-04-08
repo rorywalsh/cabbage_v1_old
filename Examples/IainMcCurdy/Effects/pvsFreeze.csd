@@ -8,15 +8,15 @@
 
 <Cabbage>
 form caption("pvsfreeze"), size(670, 80) colour(  0,140,40,170), pluginID("frez")
-image bounds(  0,  0,270, 80), colour(  0,200,100,100), shape("rounded"), outline("white"), line(4)
+image bounds(  0,  0,270, 80), colour(  0,200,100,100), shape("rounded"), outlinecolour("white"), line(4)
 checkbox bounds( 15, 10, 180, 25), channel("freezb"), text("Freeze Both"), fontcolour("white"), shape("rounded"), colour("red")
 checkbox bounds(120, 10, 180, 25), channel("freeza"), text("Freeze Amplitudes"), fontcolour("white"), shape("rounded"), colour("yellow")
 checkbox bounds(120, 45, 180, 25), channel("freezf"), text("Freeze Frequencies"), fontcolour("white"), shape("rounded"), colour("orange")
-image bounds(270,  0,200, 80), colour(  0,200,100,100), shape("rounded"), outline("white"), line(4)
+image bounds(270,  0,200, 80), colour(  0,200,100,100), shape("rounded"), outlinecolour("white"), line(4)
 rslider bounds(280, 10, 60, 60), text("FFT Size"), channel("att_table"), range(1, 8, 5, 1,1),      fontcolour("white"), colour(  0,100, 50,255), trackercolour("white")
 rslider bounds(340, 10, 60, 60), text("Mix"),      channel("mix"),       range(0, 1.00, 1),        fontcolour("white"), colour(  0,100, 50,255), trackercolour("white")
 rslider bounds(400, 10, 60, 60), text("Level"),    channel("lev"),       range(0, 1.00, 0.5, 0.5), fontcolour("white"), colour(  0,100, 50,255), trackercolour("white")
-image bounds(470,  0,200, 80), colour(  0,200,100,100), shape("rounded"), outline("white"), line(4)
+image bounds(470,  0,200, 80), colour(  0,200,100,100), shape("rounded"), outlinecolour("white"), line(4)
 checkbox bounds(480, 10, 180, 25), channel("auto"), text("Auto"), fontcolour("white"), shape("rounded"), colour("red")
 rslider bounds(540, 10, 60, 60), text("Delay"),     channel("delay"),  fontcolour("white"), range(0.0001, 0.5, 0.1, 1,0.001), colour(  0,100, 50,255), trackercolour("white")
 rslider bounds(600, 10, 60, 60), text("Threshold"), channel("thresh"), fontcolour("white"), range(0.001, 0.5, 0.1,1,0.001),   colour(  0,100, 50,255), trackercolour("white")

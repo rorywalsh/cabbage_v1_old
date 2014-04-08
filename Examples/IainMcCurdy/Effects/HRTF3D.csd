@@ -1,6 +1,6 @@
 <Cabbage>
 form caption("HRTF 3D") size(365, 275)
-image pos(0, 0), size(365, 236), colour(50, 20,  0), shape("rounded"), outline("white"), line(4) 
+image pos(0, 0), size(365, 236), colour(50, 20,  0), shape("rounded"), outlinecolour("white"), line(4) 
 xypad bounds(6,  6, 250, 224), channel("Az", "Elev"), text("X=Azimuth : Y=Elev."), rangex(-180,  180,   0), rangey(-40, 90, 0)
 
 checkbox bounds(265, 6, 80, 12), channel("TestSound"), FontColour("white"),  value(1), text("Test Sound"), colour(yellow)

@@ -127,14 +127,14 @@ image bounds(552,  5, 31,130), colour("tan"), line(0)	; 12th fret
 image bounds( 80,  0,624,140), colour("white"), line(0)	; neck
 
 button   bounds( 80,150,100, 30), text("strum"), channel("strum"), value(0), FontColour("yellow")
-combobox bounds( 80,185, 95, 17), channel("GuitarType"), value(0), text("6 String","12 String")
+combobox bounds( 80,185, 95, 17), channel("GuitarType"), value(1), text("6 String","12 String")
 checkbox bounds(185,150,100, 20), channel("ReverseStrum"), text("Reverse") colour("lime")
 hslider bounds(280,143,270, 40), text("Gap"),    colour("tan"), FontColour(195,126,  0), channel("gap"),   range(0,0.5,0.05,0.5,0.0001)
 hslider bounds(280,168,270, 40), text("Damp"),   colour("tan"), FontColour(195,126,  0), channel("damp"),   range(0.01,0.99,0.17)
 hslider bounds(280,193,270, 40), text("Pos."),   colour("tan"), FontColour(195,126,  0), channel("pos"),   range(0.0001, 0.5, 0.02, 0.5, 0.001)
 
 image bounds(5, 235, 470, 20), colour(75, 85, 90, 50), plant("credit"){
-label bounds(0.03, 0.1, .6, .7), text("Author: Iain McCurdy |2013|"), colour("white"), FontColour(195,126,  0)
+label bounds(0.005, 0.1, .4, .7), text("Author: Iain McCurdy |2013|"), FontColour(195,126,  0)
 }
 </Cabbage>
 

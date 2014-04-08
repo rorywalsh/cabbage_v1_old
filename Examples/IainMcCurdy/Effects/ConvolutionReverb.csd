@@ -17,11 +17,11 @@ Increase 'iplen' (must be a power of 2) if experiencing performance problems, or
 
 <Cabbage>
 form caption("Convolution Reverb") size(505, 90), pluginID("Conv")
-image bounds(0, 0, 505, 90), colour(135, 30, 30,220), shape("rounded"), outline(255,255,150), line(4) 
-button  bounds( 10,  10, 90, 20),       text("forward","backward"),                            channel("FwdBwd"), value(0), fontcolour(250,250,250)
-label   bounds( 30,  30, 60, 12),       text("direction"), fontcolour(250,250,250)
-button  bounds( 10,  50, 90, 20),       text("normal","compressed"),                           channel("resize"), value(0), fontcolour(250,250,250)
-label   bounds( 35,  70, 60, 12),       text("resize"), fontcolour(250,250,250)
+image bounds(0, 0, 505, 90), colour(135, 30, 30,220), shape("rounded"), outlinecolour(255,255,150), line(4) 
+label   bounds( 29,  10, 55, 12),       text("direction:"), fontcolour(250,250,250)
+button  bounds( 10,  22, 90, 20),       text("forward","backward"),                            channel("FwdBwd"), value(0), fontcolour(250,250,250)
+label   bounds( 33,  43, 45, 12),       text("resize:"), fontcolour(250,250,250)
+button  bounds( 10,  55, 90, 20),       text("normal","compressed"),                           channel("resize"), value(0), fontcolour(250,250,250)
 rslider bounds(105, 11, 70, 70),        text("Size Ratio"),     colour(135, 30, 30), trackercolour(255,255,150), fontcolour(250,250,250),  channel("CompRat"),     range(0, 1.00, 1)
 rslider bounds(170, 11, 70, 70),        text("Curve"),          colour(135, 30, 30), trackercolour(255,255,150), fontcolour(250,250,250),  channel("Curve"),       range(-8.00, 8.00, 0)
 rslider bounds(235, 11, 70, 70),        text("In Skip"),        colour(135, 30, 30), trackercolour(255,255,150), fontcolour(250,250,250),  channel("skipsamples"), range(0, 1.00, 0)

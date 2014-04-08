@@ -1,6 +1,6 @@
 <Cabbage>
 form caption("pvsWarp") size(440, 90), pluginID("warp")
-image pos(0, 0), size(440, 90), colour( 50, 50,75,220), shape("rounded"), outline("white"), line(4) 
+image pos(0, 0), size(440, 90), colour( 50, 50,75,220), shape("rounded"), outlinecolour("white"), line(4) 
 rslider bounds( 10, 11, 70, 70), text("Scale"),    channel("scal"),      range(0.1, 4, 1, 0.5, 0.001), colour("LightSlateGrey"), fontcolour("white"), trackercolour("white")
 rslider bounds( 80, 11, 70, 70), text("Shift"),    channel("shift"),     range(-5000, 5000, 0),        colour("LightSlateGrey"), fontcolour("white"), trackercolour("white")
 rslider bounds(150, 11, 70, 70), text("Feedback"), channel("FB"),        range(0, 0.99, 0),            colour("LightSlateGrey"), fontcolour("white"), trackercolour("white")

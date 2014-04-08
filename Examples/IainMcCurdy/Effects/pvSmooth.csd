@@ -3,8 +3,8 @@ FFT feedback is disabled if amplitude smoothing is increased beyond zero. If thi
 
 <Cabbage>
 form caption("pvSmooth") size(505, 90), pluginID("smoo")
-image bounds(0, 0, 505, 90), colour("Cream"), outline("silver"), line(5)
-label pos(-5, -30), size(815, 150), fontcolour(210,105, 30, 80), text("smooth"), shape("rounded"), outline("white"), line(4)
+image bounds(0, 0, 505, 90), colour("Cream"), outlinecolour("silver"), line(5)
+label pos(-52, -30), size(615, 150), fontcolour(210,105, 30, 80), text("smooth"), shape("rounded"), outlinecolour("white"), line(4)
 rslider bounds( 10, 8, 75, 75), text("Amp.Smooth"), channel("acf"),       range(0, 1.00, 0, 0.75, 0.001),fontcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
 rslider bounds( 90, 8, 75, 75), text("Frq.Smooth"), channel("fcf"),       range(0, 1.00, 0, 0.5, 0.0001),fontcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
 rslider bounds(170, 8, 75, 75), text("Feedback"),   channel("FB"),        range(0, 0.999, 0, 1,0.001),   fontcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)

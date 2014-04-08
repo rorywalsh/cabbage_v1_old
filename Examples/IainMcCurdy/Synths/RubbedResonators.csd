@@ -11,7 +11,7 @@ Number of partials in the chosen algorithm is printed to the GUI for the user's 
 
 <Cabbage>
 form caption("Rubbed Resonators"), size(440, 320), pluginID("RubR")
-image pos(0, 0), size(440, 290), colour("Sienna"), shape("rounded"), outline("brown"), line(4)
+image pos(0, 0), size(440, 290), colour("Sienna"), shape("rounded"), oulinecolour("brown"), line(4)
 
 ;IMPULSE
 groupbox bounds(10, 10, 260, 90), text("Impulse"), fontcolour("white"){
@@ -24,7 +24,7 @@ rslider bounds(210, 35,60,60), text("Jit. Rate"), channel("JitRte"), colour("Cho
 
 ;RESONATORS
 groupbox bounds(270, 10,160,180), text("Resonators"), fontcolour("white"){
-label    bounds(320, 40,120, 12), text("Instrument"), colour("white")
+label    bounds(310, 40, 70, 12), text("Instrument"), fontcolour("white")
 combobox bounds(280, 55,140, 25), channel("sound"), value(4), text("Single", "Dahina", "Banyan", "Xylophone", "Tibetan Bowl 180mm", "Spinel Sphere", "Pot Lid", "Red Cedar Wood Plate", "Tubular Bell", "Redwood Wood Plate", "Douglas Fir Wood Plate", "Uniform Wooden Bar", "Uniform Aluminium Bar", "Vibraphone 1", "Vibraphone 2", "Chalandi Plates", "Tibetan Bowl 152mm", "Tibetan Bowl 140mm", "Wine Glass", "Small Handbell", "Albert Clock Bell", "Wood Block","Harmonic 10","Harmonic 20","Harmonic 30","Harmonic Odd 10","Harmonic Odd 20")
 rslider  bounds(315, 85, 70, 30), text("N.Partials"), TextBox(1), channel("npartials"), range(1, 10000, 1, 1, 1)
 rslider  bounds(270,125, 60, 60), text("Q"), colour("orange"), channel("Q"), range(50, 10000, 2000, 0.5)
@@ -36,7 +36,7 @@ rslider  bounds(370,125, 60, 60), text("Gain"), colour("orange"), channel("gain"
 groupbox bounds( 10,100,100, 90), text("Polyphony"), fontcolour("white"){
 button   bounds( 20,125, 80, 20), text("poly","mono"), channel("monopoly"), value(0), fontcolour("lime")
 hslider  bounds( 15,143, 90, 38), colour("chocolate"), channel("GlissTime"), range(0.005, 0.3, 0.1, 0.25, 0.001)
-label    bounds( 32,174, 90, 12), text("Gliss Time")
+label    bounds( 32,174, 58, 12), text("Gliss Time")
 }
 
 ;CHORUS
@@ -49,7 +49,7 @@ rslider  bounds(210,125, 60, 60), text("Rate"), channel("ChoRte"), range(0, 20, 
 keyboard bounds(10, 195, 420, 85)
 
 image bounds(5, 295, 240, 22), colour(75, 85, 90, 100), plant("credit"){
-label bounds(0.03, 0.15, .9, .7), text("Author: Iain McCurdy |2012|"), colour("white")
+label bounds(0.03, 0.15, .9, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white")
 }
 
 </Cabbage>
@@ -288,7 +288,7 @@ instr	3				;impulse and modal resonators instrument
 	amodes			ModeVoice	aSineMix,kbase,gkQ,gkbright,icount,invoices,irtos	;call sine oscillator udo (it will be recursively recalled within the udo the appropriate number of times according to invoices)
 	amodes		=		(amodes*gkgain*0.2)/invoices					;scale the amplitude of the sound according to the number of modes in the chosen algorithm
 	krms		rms		amodes								;track the amplitude of the sound as an rms value
-	ithreshold	=	0.0001
+	ithreshold	=	0.00001
 	if krms<ithreshold&&kactive=0 then			;if sound has died away and key is inactive...
 	 turnoff						;turn instrument off
 	endif

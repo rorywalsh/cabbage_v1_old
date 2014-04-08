@@ -1,7 +1,7 @@
 <Cabbage>
 form caption("Ring Modulator") size(435, 90), pluginID("rmod")
 ;label   bounds(7, 3, 200, 11), text("Iain McCurdy [2013]"), FontColour("grey")
-image pos(0, 0), size(435, 90), colour("black"), shape("rounded"), outline("lime"), line(5) 
+image pos(0, 0), size(435, 90), colour("black"), shape("rounded"), outlinecolour("lime"), line(5) 
 rslider bounds(  5, 12, 70, 70), text("Freq."), channel("freq"), range(0, 15000, 800, 0.25), colour("yellow")
 rslider bounds( 75, 12, 70, 70), text("Sine/Sq."), channel("wave"), range(0, 1.00, 0),       colour("yellow")
 line    bounds(150,  2, 3, 86), colour("lime")

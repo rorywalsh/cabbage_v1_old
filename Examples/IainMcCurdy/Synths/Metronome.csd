@@ -16,7 +16,7 @@ A simple Cabbage metronome
 
 <Cabbage>
 form caption("Metronome"), size(770,140), pluginID("mtro")
-image            bounds(  0,  0,770,140), colour(160, 70,20,100), shape("rounded"), outline("white"), line(4) 
+image            bounds(  0,  0,770,140), colour(160, 70,20,100), shape("rounded"), oulinecolour("white"), line(4) 
 checkbox bounds( 15, 20,130, 40), text("Start/Stop") channel("OnOff"), FontColour("White"), colour(250,250,100)  value(0)
 
 rslider  bounds(120, 13, 65, 65), text("Level 1"),     colour(160, 70,20,100), trackercolour(250,250,200), FontColour("White"), channel("level1"), range(0, 1.00, 0.4, 0.5, 0.001)
@@ -32,12 +32,15 @@ checkbox bounds(600, 18, 45, 45) channel("indicator2"), FontColour("White"), col
 hslider  bounds( 10, 75,750, 40), colour(160, 70,20,100), trackercolour(160, 70, 20,100), FontColour("White"), channel("tempo"), range(10,1000, 90, 1, 1) textBox(1)
 label    bounds(345, 110, 80, 12), text("Tempo [BPM]"), fontcolour("white")
 
-groupbox bounds(655, 25,1030, 520), colour(160, 70,20,100), line(0), popup(1), plant("Large LEDs"){
+; big indicators
+button   bounds(655, 25, 100, 30), channel("bigButton"), text("Large LEDs")
+groupbox bounds(655, 25,1030, 520), colour(160, 70,20,100), line(0), popup(1), plant("Large LEDs"), identchannel("bigPlant")
+{
 checkbox bounds( 10, 10,500,500) channel("indicator"), FontColour("White"), colour(255, 50, 50)  value(0), shape("ellipse")
 checkbox bounds(520, 10,500,500) channel("indicator2"), FontColour("White"), colour(100,255,100)  value(0), shape("ellipse")
 }
 
-label   bounds( 10,120, 200, 12), text("Author: Iain McCurdy |2013|"), FontColour("silvers")
+label   bounds( 10,120, 180, 12), text("Author: Iain McCurdy |2013|"), FontColour("silvers")
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -131,10 +134,33 @@ instr	5	; flash green indicator
 	gkrelease	release			; krelease=0 while note is active, =1 when note ends (final k-cycle)
 	chnset	1-gkrelease,"indicator2"		; turn indicator on or off
 endin
+
+
+instr 1000				; launches plant popups
+
+klaunch	init	0
+
+#define LAUNCH_PLANT(name)
+#
+kpressed	chnget "$nameButton"
+if changed(kpressed)==1 then
+  Smsg sprintfk "show(%d), pos(1, 19)", klaunch
+  chnset Smsg, "$namePlant"
+endif
+#
+
+$LAUNCH_PLANT(big)
+
+klaunch	=	1
+
+endin
+
+
 </CsInstruments>
 
 <CsScore>
 i 1 0 [60*60*24*7]
 i 3 0 [60*60*24*7]
+i 1000 0 [60*60*24*7]
 </CsScore>
 </CsoundSynthesizer>

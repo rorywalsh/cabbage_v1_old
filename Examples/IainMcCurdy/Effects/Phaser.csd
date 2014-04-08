@@ -1,9 +1,9 @@
 <Cabbage>
 form caption("Phaser") size(580, 90), pluginID("phsr")
-image          bounds(0, 0, 580, 90), colour( 100, 110, 130), shape("rounded"), outline(black), line(4)
-label    bounds(29,  8, 60, 10), text("INPUT"), fontcolour(0,10,30)
+image          bounds(0, 0, 580, 90), colour( 100, 110, 130), shape("rounded"), outlinecolour(black), line(4)
+label    bounds(20,  8, 38, 10), text("INPUT"), fontcolour(0,10,30)
 combobox bounds(10, 18, 70, 20), channel("input"), value(1), text("Live","Tone","Noise")
-label    bounds(19, 43, 60, 10), text("LFO SHAPE"), fontcolour(0,10,30)
+label    bounds(15, 43, 55, 10), text("LFO SHAPE"), fontcolour(0,10,30)
 combobox bounds(10, 53, 70, 20), channel("shape"), value(1), text("Triangle","Sine","Square","Saw","Saw","Rand.Int","Rand.S&H")
 rslider bounds( 85, 10, 70, 70), text("Rate"), 		channel("rate"), 	range(0,14.00,0.5,0.5, 0.0001),    colour(100,100,110), fontcolour(0,10,30), trackercolour(255,255,200), midiCtrl(1,1)
 rslider bounds(155, 10, 70, 70), text("Depth"), 	channel("depth"), 	range(0, 1.00, 0.5, 1, .01),       colour(100,100,110), fontcolour(0,10,30), trackercolour(255,255,200)

@@ -1,7 +1,7 @@
 <Cabbage>
 form caption("pdclip") size(315, 90), pluginID("pdcl")
-label        bounds(  0, -8,315, 90), colour(20,100,100,200), fontcolour(70,150,150,200), text("pdclip"), shape("rounded"), outline("white"), line(4) 
-image        bounds(  0,  0,315, 90), colour(10,100,200,200), shape("rounded"), outline("white"), line(4) 
+label        bounds(-30, -4,315, 90), colour(20,100,100, 0), fontcolour(70,150,150,200), text("pdclip"), shape("rounded"), outlinecolour("white"), line(4) 
+image        bounds(  0,  0,315, 90), colour(10,100,200,200), shape("rounded"), outlinecolour("white"), line(4) 
 rslider      bounds( 10, 11, 70, 70), text("Width"), channel("width"), range(0, 1.00, 0),fontcolour("white"),       colour(20, 70,120), trackercolour(255,255,25)
 rslider      bounds( 75, 11, 70, 70), text("Centre"), channel("center"), range(-1.00, 1.00, 0),fontcolour("white"), colour(20, 70,120), trackercolour(255,255,25)
 combobox     bounds(150, 20, 80, 20), channel("bipolar"), size(80,50), value(2), text("Unipolar", "Bipolar")

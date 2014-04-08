@@ -1,6 +1,6 @@
 <Cabbage>
 form caption("Pink Noise"), size(230, 80), pluginID("pnse")
-image bounds(  0,  0,230, 80), colour("pink"), shape("rounded"), outline("red"), line(4) 
+image bounds(  0,  0,230, 80), colour("pink"), shape("rounded"), oulinecolour("red"), line(4) 
 checkbox bounds( 20, 10, 80, 15), text("On/Off"), channel("onoff"), value(1), fontcolour("black"), colour("yellow")
 combobox bounds( 20, 40, 70, 20), channel("method"), value(1), text("Gardner", "Kellet", "Kellet 2")
 rslider  bounds(100, 10, 60, 60), text("Amplitude"), channel("amp"), range(0, 1, 0.5, 0.5, 0.001), fontcolour("black"), trackercolour("red")

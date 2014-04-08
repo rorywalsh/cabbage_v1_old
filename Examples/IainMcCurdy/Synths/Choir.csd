@@ -13,7 +13,7 @@ N.Voices value is not strictly speaking accurate: 	1 = 1 voice
 <Cabbage>
 form caption("Choir") size(770, 335), pluginID("choi")
 ; main container
-image bounds(  0,  0,770, 360), colour(255,100,  0, 40), shape("rounded"), outline("white"), line(3)
+image bounds(  0,  0,770, 360), colour(255,100,  0, 40), shape("rounded"), oulinecolour("white"), line(3)
 ; horizontal stripes
 image bounds(  0, 40,770,  75), colour(100,100,  0, 60), shape("sharp")
 image bounds(  0,130,770,  35), colour(  0,  0,255, 60), shape("sharp")
@@ -25,7 +25,7 @@ image bounds(560,  0, 40, 360), colour(100, 55,200, 60), shape("sharp")
 image bounds(620,  0, 20, 360), colour(255, 55,  0, 60), shape("sharp")
 image bounds(660,  0, 90, 360), colour(  5,255,100, 60), shape("sharp")
 
-xypad bounds(10, 10, 250, 210), channel("vowel", "oct"), text("X = Vowel 'AEIOU' : Y = Octave Division"), rangex(0, 1, 0), rangey(0, 4, 0)
+xypad bounds(10, 10, 250, 210), channel("vowel", "oct"), text("X:Vowel Y:Oct.Div."), rangex(0, 1, 0), rangey(0, 4, 0)
 combobox bounds(265, 10, 110, 25), channel("voice"), value(5), text("Bass", "Tenor", "Countertenor", "Alto", "Soprano")
 button   bounds(265, 40, 110, 25), text("polyphonic","monophonic"), channel("monopoly"), value(1), fontcolour("lime")
 rslider  bounds(385, 10, 60, 60), text("Leg.Time"),     channel("LegTim"),  range(0.005, 0.3, 0.025, 0.5, 0.005),colour("green"), trackercolour("white")
@@ -44,9 +44,9 @@ rslider  bounds(505,150, 60, 60), text("Rvb.Size"),     channel("RvbSize"), rang
 checkbox bounds(570, 10,190, 20), text("Filter On/Off") channel("FiltOnOff"), colour("lime")  value(0)
 xypad bounds(570, 35, 190, 185), channel("cf", "bw"), text("x:c.off/y:b.width"), rangex(5, 13, 8), rangey(0.1, 5, 0.3)
 
-keyboard pos(10, 225), size(760, 80)
+keyboard pos(10, 225), size(750, 80)
 image bounds(10, 309, 250, 22), colour(75, 85, 90, 100), plant("credit"){
-label bounds(0.03, 0.15, .99, .7), text("Author: Iain McCurdy |2012|"), colour("white")
+label bounds(0.03, 0.15, .99, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white")
 }
 </Cabbage>
 

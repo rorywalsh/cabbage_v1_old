@@ -1,10 +1,10 @@
 <Cabbage>
 form caption("phaser2") size(565, 90), pluginID("phs2")
-image pos(0, 0), size(565, 90), colour(0,0,25), shape("rounded"), outline("white"), line(4) 
+image pos(0, 0), size(565, 90), colour(0,0,25), shape("rounded"), outlinecolour("white"), line(4) 
 rslider bounds(10, 11, 70, 70),  text("Frequency"),  channel("freq"),     range(20.0, 5000, 160, 0.25), colour(100,100,200), trackercolour(silver)
 rslider bounds(75, 11, 70, 70),  text("Q"),          channel("q"),        range(0.0001,4,3),            colour(100,100,200), trackercolour(silver)
 rslider bounds(140, 11, 70, 70), text("N.Ords."),    channel("ord"),      range(1, 256, 8, 0.5,1),      colour(100,100,200), trackercolour(silver)
-label   bounds(220, 20, 60,12),  text("Sep. Mode")
+label   bounds(215, 20, 61,12),  text("Sep. Mode:")
 rslider bounds(290, 11, 70, 70), text("Separation"), channel("sep"),      range(-3, 3.00, 0.9),         colour(100,100,200), trackercolour(silver)
 rslider bounds(355, 11, 70, 70), text("Feedback"),   channel("feedback"), range(-0.99, 0.99, 0.9),      colour(100,100,200), trackercolour(silver)
 rslider bounds(420, 11, 70, 70), text("Mix"),        channel("mix"),      range(0, 1.00, 1),            colour(100,100,200), trackercolour(silver)

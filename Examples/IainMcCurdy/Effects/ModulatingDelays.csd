@@ -36,7 +36,7 @@
 form size(960, 340), caption("Modulating Delays"), pluginID("mdel")
 
 label    bounds(200,  5, 80, 11), text("G A T E"), fontcolour("white")
-checkbox bounds( 10, 35,100, 20), text("Gate On/Off") channel("GateActive"), FontColour("White"), colour("lime")  value(1)
+checkbox bounds( 10, 35,100, 15), text("Gate On/Off") channel("GateActive"), FontColour("White"), colour("lime")  value(1)
 rslider  bounds(100, 20, 60, 60), channel("OnThreshold"),  text("On Thrsh."),  range(0, 1, 0.05, 0.5, 0.001),  colour(30,30,30) trackercolour(100,100,100)
 rslider  bounds(160, 20, 60, 60), channel("OffThreshold"), text("Off Thrsh."), range(0, 1, 0.01, 0.5, 0.001),  colour(30,30,30) trackercolour(100,100,100)
 rslider  bounds(220, 20, 60, 60), channel("RiseTime"),     text("Rise Time"),  range(0, 10, 1, 0.5, 0.001),    colour(30,30,30) trackercolour(100,100,100)
@@ -69,7 +69,7 @@ hslider bounds(10,230, 940, 30), channel("MaxFB"),   text(Delay Feedback Maximum
 hslider bounds(10,260, 940, 30), channel("MinTone"), text(Tone Cutoff Frequency Minimum), range(4, 14, 11),               colour(purple),   trackercolour(purple)
 hslider bounds(10,280, 940, 30), channel("MaxTone"), text(Tone Cutoff Frequency Maximum), range(4, 14, 14),               colour(purple),   trackercolour(purple)
 
-label   bounds( 10,320, 200, 12), text("Author: Iain McCurdy |2013|"), FontColour("grey")
+label   bounds(  5,320, 170, 12), text("Author: Iain McCurdy |2013|"), FontColour("grey")
 
 </Cabbage>
 

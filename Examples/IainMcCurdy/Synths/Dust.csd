@@ -1,6 +1,6 @@
 <Cabbage>
 form caption("Dust"), size(300, 80), pluginID("dust")
-image bounds(  0,  0,300, 80), colour("brown"), shape("rounded"), outline("white"), line(4) 
+image bounds(  0,  0,300, 80), colour("brown"), shape("rounded"), oulinecolour("white"), line(4) 
 checkbox bounds( 10, 10, 80, 15), text("On/Off"), channel("onoff"), value(1), fontcolour("white")
 rslider  bounds( 70, 10, 60, 60), text("Amplitude"), channel("amp"), range(0, 1.00, 0.5, 0.5, 0.001), fontcolour("white")
 rslider  bounds(125, 10, 60, 60), text("Freq."), channel("freq"), range(0.1, 10000, 500, 0.5, 0.01), fontcolour("white")

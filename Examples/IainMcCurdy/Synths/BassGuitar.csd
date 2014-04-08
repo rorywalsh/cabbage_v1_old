@@ -3,14 +3,14 @@ A bandpass filter is employed within the delay buffer used to implement the pluc
 
 <Cabbage>
 form caption("Bass Guitar"), size(550, 250), pluginID("basg")
-image bounds(  0,  0,550,220), colour("DarkGreen"), shape("rounded"), outline("white"), line(4)
+image bounds(  0,  0,550,220), colour("DarkGreen"), shape("rounded"), oulinecolour("white"), line(4)
 groupbox bounds(5, 5, 540,120), colour( 150,255,150,10){
 rslider bounds( 10, 25,60,60), text("Sustain"), colour("Olive"), FontColour("LightGreen"), channel("feedback"), range(0.9,1, 0.999, 2, 0.001)
 rslider bounds( 70, 25,60,60), text("Filt. Ratio"), colour("Olive"), FontColour("LightGreen"), channel("FiltRatio"), range(0.5, 32, 1, 0.5)
 rslider bounds(130, 25,60,60), text("B.width"), colour("Olive"), FontColour("LightGreen"), channel("bw"), range(1, 32, 16)
 rslider bounds(190, 25,60,60), text("Att"), colour("Olive"), FontColour("LightGreen"), channel("att"), range(0, 3, 1,0.5)
 checkbox bounds(260, 35, 30, 30), text("Legato") channel("legato"),FontColour("LightGreen"), colour("yellow")  value(1)
-label    bounds(255, 72, 40, 12), text("Legato"), FontColour("LightGreen")
+label    bounds(255, 72, 38, 12), text("Legato"), FontColour("LightGreen")
 rslider bounds(300, 25,60,60), text("Leg.Speed"), colour("Olive"), FontColour("LightGreen"), channel("LegSpeed"), range(0.01,1,0.05,0.5)
 rslider bounds(360, 25,60,60), text("Vib.Depth"), colour("Olive"), FontColour("LightGreen"), channel("VibDep"), range(0, 1, 0.25, 0.75, 0.001)
 rslider bounds(420, 25,60,60), text("Vib.Rate"), colour("Olive"), FontColour("LightGreen"), channel("VibRte"), range(0.5, 20, 3, 0.5)
@@ -19,7 +19,7 @@ hslider bounds(15,85,525,40), text("Pickup Position"), colour("Olive"), FontColo
 }
 keyboard bounds(10, 130, 530,80)
 image bounds(5, 225, 420, 20), colour(75, 85, 90, 50), plant("credit"){
-label bounds(0.03, 0.1, .6, .7), text("Author: Iain McCurdy |2012|"), colour("white"), FontColour("LightGreen")
+label bounds(0.0, 0.1, .5, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white"), FontColour("LightGreen")
 }
 
 </Cabbage>

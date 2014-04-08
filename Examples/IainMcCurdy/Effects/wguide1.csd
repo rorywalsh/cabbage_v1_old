@@ -12,12 +12,12 @@
 
 <Cabbage>
 form caption("wguide1") size(415,210), pluginID("WGu1")
-image           bounds(0, 0, 415,125), colour(125, 95, 55), shape("sharp"), outline(225,195,155), line(2) 
+image           bounds(0, 0, 415,125), colour(125, 95, 55), shape("sharp"), outlinecolour(225,195,155), line(2) 
 label   bounds(227,  4,180, 22), text("W A V E G U I D E"), fontcolour(silver)
-image   bounds(228,  8,175,  1), colour(200,170,130), shape("sharp"), outline(silver), line(1)
-image   bounds(231, 22,172,  1), colour(200,170,130), shape("sharp"), outline(silver), line(1)
+image   bounds(228,  8,175,  1), colour(200,170,130), shape("sharp"), outlinecolour(silver), line(1)
+image   bounds(231, 22,172,  1), colour(200,170,130), shape("sharp"), outlinecolour(silver), line(1)
 checkbox bounds( 20, 10,120, 17), text("Keyboard Input"), channel("input") fontcolour("white") colour(yellow) value(0)
-label    bounds(153,  5, 40, 11), text("Source"), fontcolour("white")
+label    bounds(149,  5, 35, 11), text("Source"), fontcolour("white")
 combobox bounds(140, 16, 62, 16), channel("source"), value(1), text("Live","Gravel","Dust","Air")
 rslider  bounds( 10, 41, 70, 70),  text("Frequency"),  channel("freq"),      trackercolour(225,195,155), range(8.2, 12542, 160, 0.25), colour( 85, 55,15), fontcolour(white)
 rslider  bounds( 75, 41, 70, 70),  text("Note Num."),  channel("notnum"),    trackercolour(225,195,155), range(0, 127, 51, 1,1),     colour( 85, 55,15), fontcolour(white)

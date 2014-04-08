@@ -3,9 +3,9 @@ Pitch Mod. is only used by reverbsc.
 
 <Cabbage>
 form caption("Multi Reverb") size(415, 90), pluginID("Rvrb")
-image  bounds(  7, 22, 73, 45), colour( 39, 31, 20), shape("rounded"), outline(white), line(1) 
-image                bounds(0, 0, 415, 90), colour( 39, 31, 20), shape("rounded"), outline("white"), line(4) 
-label  bounds( 29, 26, 60, 12), text("Type"), fontColour(white)
+image  bounds(  7, 22, 73, 45), colour( 39, 31, 20), shape("rounded"), outlinecolour(white), line(1) 
+image                bounds(0, 0, 415, 90), colour( 39, 31, 20), shape("rounded"), outlinecolour("white"), line(4) 
+label  bounds( 24, 26, 40, 12), text("Type:"), fontColour(white)
 button bounds( 11, 40, 66, 20), text("screverb","freeverb"), channel("type"), value(0), fontcolour("lime")
 rslider bounds( 80, 11, 70, 70), text("Size"), 		fontcolour(white), 		channel("fblvl"), 	range(0, 1.00, 0.8), colour( 79, 81, 70), trackercolour(240,210,170)
 rslider bounds(145, 11, 70, 70), text("Damping"), 	fontcolour(white), 		channel("fco"), 	range(0, 1.00, 0.6), colour( 79, 81, 70), trackercolour(240,210,170)

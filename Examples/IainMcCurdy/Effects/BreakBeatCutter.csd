@@ -62,9 +62,8 @@ Similar to the above except using a frequency shifter effect.
 <Cabbage>
 form          size(440,485), caption("Break Beat Cutter"), pluginID("bbct")
 
-snapshot bounds(  5,450,200, 25), preset("BreakBeatCutter"), master(1), items("Preset 1", "Preset 2", "Preset 3", "Preset 4", "Preset 5", "Preset 6", "Preset 7", "Preset 8", "Preset 9", "Preset 10")
 
-groupbox bounds( 0,  0,440,145), text("CUTTER"), plant("cutter"), FontColour(silver),colour(20,20,20){
+groupbox bounds( 0,  0,440,145), text("CUTTER"), plant("cutter"),colour(20,20,20), FontColour(silver){
 rslider bounds( 10, 25, 70, 70), colour("Tan"), trackercolour("Tan"), fontcolour("silver"), text("Sub-div."),       channel("subdiv"),  range(1,  512,  8, 1, 1)
 rslider bounds( 80, 25, 70, 70), colour("Tan"), trackercolour("Tan"), fontcolour("silver"), text("Bar Length"),     channel("barlen"),  range(1,   16,  2, 1, 1)
 rslider bounds(150, 25, 70, 70), colour("Tan"), trackercolour("Tan"), fontcolour("silver"), text("Phrase"),         channel("phrase"),  range(1, 512, 8, 1, 1)
@@ -113,7 +112,7 @@ rslider bounds( 10, 25, 70, 70), colour("Tan"), trackercolour("Tan"), fontcolour
 rslider bounds( 80, 25, 70, 70), colour("Tan"), trackercolour("Tan"), fontcolour("silver"), text("Dry/Wet"),      channel("DryWet"), range(0, 1.00, 0.6)
 rslider bounds(150, 25, 70, 70), colour("Tan"), trackercolour("Tan"), fontcolour("silver"), text("Level"),        channel("gain"),   range(0, 1.00, 0.75)
 }
-label   bounds(10,472, 200, 12), text("Iain McCurdy [2013]"), FontColour("grey")
+label   bounds(5,472, 120, 12), text("Iain McCurdy [2013]"), FontColour("grey")
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -177,9 +176,12 @@ instr 1	; read widgets
 endin
 
 instr	2
- 
- kSwitch	changed		gkBPM, gkrepeats, gkphrase, gkstutspd, gkstutchnc, gkbarlen, gksubdiv, gkfltdiv, gklayers	;GENERATE A MOMENTARY '1' PULSE IN OUTPUT 'kSwitch' IF ANY OF THE SCANNED INPUT VARIABLES CHANGE. (OUTPUT 'kSwitch' IS NORMALLY ZERO)
- if	kSwitch=1	then		;IF I-RATE VARIABLE CHANGE TRIGGER IS '1'...
+ kmetro		metro		4
+ kSwitch	init	0
+ if kmetro==1 then
+  kSwitch	changed		gkBPM, gkrepeats, gkphrase, gkstutspd, gkstutchnc, gkbarlen, gksubdiv, gkfltdiv, gklayers	;GENERATE A MOMENTARY '1' PULSE IN OUTPUT 'kSwitch' IF ANY OF THE SCANNED INPUT VARIABLES CHANGE. (OUTPUT 'kSwitch' IS NORMALLY ZERO)
+ endif
+ if	kSwitch==1	then		;IF I-RATE VARIABLE CHANGE TRIGGER IS '1'...
  	reinit	UPDATE			;BEGIN A REINITIALISATION PASS FROM LABEL 'UPDATE'
  endif
  UPDATE:

@@ -1,6 +1,6 @@
 <Cabbage>
 form caption("pvscale Pitch Shifter") size(510,  90), pluginID("scal")
-image bounds(0, 0, 510, 90), colour("SlateGrey"), outline("silver"), line(4)
+image bounds(0, 0, 510, 90), colour("SlateGrey"), outlinecolour("silver"), line(4)
 image bounds(  6, 23,498, 30), colour("silver"), shape("ellipse"), line(3)
 image bounds( 15,  9, 60, 60), colour(30,30,30), shape("ellipse"), line(0)	; circles around rsliders
 image bounds( 85,  9, 60, 60), colour(30,30,30), shape("ellipse"), line(0)
@@ -11,12 +11,18 @@ image bounds(435,  9, 60, 60), colour(30,30,30), shape("ellipse"), line(0)
 rslider bounds(10, 10, 70, 70),  text("Semitones"), channel("semis"), range(-24, 24, 7, 1, 1),   fontcolour("black"),colour("DarkSlateGrey"), trackercolour("LightBlue")
 rslider bounds(80, 10, 70, 70),  text("Cents"),     channel("cents"), range(-100, 100, 0, 1, 1), fontcolour("black"),colour("DarkSlateGrey"), trackercolour("LightBlue")
 rslider bounds(150, 10, 70, 70), text("Feedback"),  channel("FB"), range(0.00, 0.99, 0),         fontcolour("black"),colour("DarkSlateGrey"), trackercolour("LightBlue")
-combobox bounds(220, 28,  70,20), channel("FB_mode"), value(0), text("F Sig.", "Audio")
-label   bounds(220, 54, 70, 12), text("F.back Mode"), FontColour("black")
+
+label    bounds(220,  8, 70, 12), text("F.back Mode"), FontColour("black")
+combobox bounds(220, 20,  70,20), channel("FB_mode"), value(1), text("F Sig.", "Audio")
+
+label    bounds(228, 40, 55, 12), text("Formants"), FontColour("black")
+combobox bounds(220, 52,  70,20), channel("formants"), value(1), text("Ignore", "Keep 1", "Keep 2")
+
 rslider bounds(290, 10, 70, 70), text("FFT Size"),  channel("att_table"), range(1, 8, 5, 1,1),      fontcolour("black"),colour("DarkSlateGrey"), trackercolour("LightBlue")
 rslider bounds(360, 10, 70, 70), text("Mix"),       channel("mix"),       range(0, 1.00, 0.5),      fontcolour("black"),colour("DarkSlateGrey"), trackercolour("LightBlue")
 rslider bounds(430, 10, 70, 70), text("Level"),     channel("lev"),       range(0, 1.00, 0.5, 0.5), fontcolour("black"),colour("DarkSlateGrey"), trackercolour("LightBlue")
 </Cabbage>
+
 <CsoundSynthesizer>
 <CsOptions>
 -d -n
@@ -42,8 +48,8 @@ giFFTattributes6	ftgen	0, 0, 4, -2, 2048, 512, 2048, 1
 giFFTattributes7	ftgen	0, 0, 4, -2, 4096,1024, 4096, 1
 giFFTattributes8	ftgen	0, 0, 4, -2, 8192,2048, 8192, 1
 
-opcode	pvscale_module,a,akkkkkiiii
-	ain,kscale,kfeedback,kFB_mode,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype	xin
+opcode	pvscale_module,a,akkkkkkiiii
+	ain,kscale,kformants,kfeedback,kFB_mode,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype	xin
 	if(kFB_mode==0) then
 	 f_FB		pvsinit iFFTsize,ioverlap,iwinsize,iwintype, 0			;INITIALISE FEEDBACK FSIG
 	 f_anal  	pvsanal	ain, iFFTsize, ioverlap, iwinsize, iwintype		;ANALYSE AUDIO INPUT SIGNAL AND OUTPUT AN FSIG
@@ -54,7 +60,7 @@ opcode	pvscale_module,a,akkkkkiiii
 	else
 	 aFB		init	0
 	 f_anal  	pvsanal	ain+aFB, iFFTsize, ioverlap, iwinsize, iwintype		;ANALYSE AUDIO INPUT SIGNAL AND OUTPUT AN FSIG
-	 f_scale		pvscale f_anal, kscale					;RESCALE FREQUENCIES
+	 f_scale		pvscale f_anal, kscale, kformants-1					;RESCALE FREQUENCIES
 	 aout		pvsynth f_scale                      				;RESYNTHESIZE THE f-SIGNAL AS AN AUDIO SIGNAL
 	 aFB		=	aout*kfeedback
 	endif	
@@ -68,11 +74,12 @@ instr	1
 	kmix	chnget	"mix"
 	kFB	chnget	"FB"
 	kFB_mode	chnget	"FB_mode"
-
+	kformants	chnget	"formants"
+	
 	/* SET FFT ATTRIBUTES */
 	katt_table	chnget	"att_table"	; FFT atribute table
 	katt_table	init	5
-	ktrig		changed	katt_table
+	ktrig		changed	katt_table,kformants
 	if ktrig==1 then
 	 reinit update
 	endif
@@ -90,8 +97,8 @@ instr	1
 	klev		chnget	"lev"
 	kporttime	linseg	0,0.001,0.02
 	kscale		=	semitone(ksemis)*cent(kcents)
-	aoutL		pvscale_module	ainL,kscale,kfeedback,kFB_mode,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype
-	aoutR		pvscale_module	ainR,kscale,kfeedback,kFB_mode,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype
+	aoutL		pvscale_module	ainL,kscale,kformants,kfeedback,kFB_mode,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype
+	aoutR		pvscale_module	ainR,kscale,kformants,kfeedback,kFB_mode,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype
 			outs	aoutR,aoutR
 endin
 

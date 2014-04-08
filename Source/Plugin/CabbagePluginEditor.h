@@ -60,6 +60,15 @@ public:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePlantWindow);
 };
 
+class CabbageViewportComponent : public Component
+{
+
+public:
+	CabbageViewportComponent() : Component("CabbageViewportComponent")
+	{}
+	~CabbageViewportComponent(){}	
+};
+
 //==============================================================================
 // pointData class for holding info about each segment of a line
 class PointData 
@@ -106,7 +115,9 @@ public:
 	Point<int> getMousePos();
 	Array<int> popupMenus;
 	void updateGUIControls();
-	OwnedArray<CabbagePlantWindow> subPatches;
+	OwnedArray<CabbagePlantWindow> subPatches; 
+
+	
 private:
         void setPositionOfComponent(float x, float y, float width, float height, Component* comp, String reltoplant);
 		void createfTableData(Table* table);
@@ -132,6 +143,7 @@ private:
         void InsertMIDIKeyboard(CabbageGUIClass &cAttr);
         void InsertXYPad(CabbageGUIClass &cAttr);
 		void InsertFileButton(CabbageGUIClass &cAttr);
+		void InsertRecordButton(CabbageGUIClass &cAttr);
         void InsertImage(CabbageGUIClass &cAttr);
         void InsertLabel(CabbageGUIClass &cAttr);
         void InsertTable(CabbageGUIClass &cAttr);
@@ -172,7 +184,8 @@ private:
 		Array <float, CriticalSection> tableValues;
 		AudioSampleBuffer tableBuffer;
 		
-
+		//ScopedPointer<Viewport> viewport;
+		//ScopedPointer<CabbageViewportComponent> viewportComponent;
 
         //CabbagePluginAudioProcessor* filter;
         CabbagePluginAudioProcessor* getFilter() const

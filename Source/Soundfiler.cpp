@@ -71,7 +71,7 @@ Soundfiler::Soundfiler(int sr, Colour col, Colour fcol):	thumbnailCache (5),
 	sampleRate = sr;
 	addAndMakeVisible(scrollbar = new ScrollBar(false));
 	scrollbar->setRangeLimits (visibleRange);
-	scrollbar->setAutoHide (false);
+	//scrollbar->setAutoHide (false);
 	scrollbar->addListener(this);
 	currentPositionMarker->setFill (Colours::white.withAlpha (0.85f));
 	addAndMakeVisible(currentPositionMarker);

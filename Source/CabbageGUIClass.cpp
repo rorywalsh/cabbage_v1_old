@@ -229,7 +229,44 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 	
 	 */ 
 	 }
-
+	//===============record button==================//
+    else if(strTokens[0].trim() == "recordbutton"){
+		cabbageIdentifiers.set("basetype", "layout");
+		top = 10;
+		left = 10;
+		width = 80;
+		height = 40;
+		var array;
+		array.append("Record");
+		array.append("Record");
+		items.add("");
+		items.add("");
+		max = 1;
+		min = 0;
+		
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 80);
+		cabbageIdentifiers.set(CabbageIDs::height, 40);	
+		var channels;
+		channels.append("recordbutton");
+		cabbageIdentifiers.set(CabbageIDs::channel, channels);
+		cabbageIdentifiers.set(CabbageIDs::value, 1);	
+		cabbageIdentifiers.set(CabbageIDs::text, array);
+		cabbageIdentifiers.set(CabbageIDs::caption, "");
+		cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());	
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());	
+		cabbageIdentifiers.set(CabbageIDs::type, "recordbutton");
+		cabbageIdentifiers.set(CabbageIDs::name, "recordbutton");
+		cabbageIdentifiers.set(CabbageIDs::mode, "file");		
+		cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));	
+		var populate;
+		populate.append("");
+		populate.append("");
+		cabbageIdentifiers.set("populate", populate);  
+		cabbageIdentifiers.set(CabbageIDs::visible, 1);
+	}
 	//===============file button==================//
     else if(strTokens[0].trim() == "filebutton"){
 		cabbageIdentifiers.set("basetype", "layout");
@@ -259,7 +296,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());	
 		cabbageIdentifiers.set(CabbageIDs::type, "filebutton");
 		cabbageIdentifiers.set(CabbageIDs::name, "filebutton");
-		cabbageIdentifiers.set(CabbageIDs::mode, "open");		
+		cabbageIdentifiers.set(CabbageIDs::mode, "file");		
 		cabbageIdentifiers.set(CabbageIDs::identchannel, "");
 		cabbageIdentifiers.set("name", cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));	
 		var populate;

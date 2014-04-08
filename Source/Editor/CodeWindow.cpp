@@ -565,10 +565,16 @@ return true;
 //=======================================================
 void CodeWindow::toggleManuals(String manual)
 {
-			String helpDir;
-			if(manual=="Csound")	
-			helpDir = appProperties->getUserSettings()->getValue("CsoundHelpDir", "");
+			
+	if(manual=="Cabbage"){
+		showCabbageHelp();
+		return;				
+	}
+	
+	String helpDir;				
+	helpDir = appProperties->getUserSettings()->getValue("CsoundHelpDir", "");
 		
+
 			if(helpDir.length()<2)
 					CabbageUtils::showMessage("Please set the Csound manual directory in the Preference menu", &getLookAndFeel());                
 			else{                        

@@ -1155,6 +1155,7 @@ void StandaloneFilterWindow::openTextEditor()
 #endif
 			cabbageCsoundEditor->toFront(true);			
 			
+			if(getPreference(appProperties, "ShowConsoleWithEditor"))
 			if(!outputConsole){
 			outputConsole = new CsoundMessageConsole("Csound Output Messages", 
 														Colours::black, 
@@ -1163,7 +1164,7 @@ void StandaloneFilterWindow::openTextEditor()
 			outputConsole->setLookAndFeel(lookAndFeel);
 			outputConsole->setText(filter->getCsoundOutput());
 			outputConsole->setAlwaysOnTop(true);
-			outputConsole->toFront(true);
+			outputConsole->toFront(true);			
 			outputConsole->setVisible(true);
 			}
 		}

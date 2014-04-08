@@ -45,7 +45,9 @@ juce_ImplementSingleton (IdentArray);
 // STANDALONE - CONSTRUCTOR
 //===========================================================
 CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool guiOnOff, int _pluginType)
-:csoundStatus(false),
+:backgroundThread ("Audio Recorder Thread"),
+activeWriter (nullptr),
+csoundStatus(false),
 csdFile(File(inputfile)),
 showMIDI(false),
 csCompileResult(1),
@@ -76,10 +78,11 @@ debugMessage(""),
 guiRefreshRate(20),
 mouseY(0),
 mouseX(0)
-{
+{	
+	
 //suspendProcessing(true);
 codeEditor = nullptr;
-
+backgroundThread.startThread();
 
 setPlayConfigDetails(2, 2, 44100, 512);
 
@@ -225,6 +228,16 @@ else{
 else
 Logger::writeToLog("Welcome to Cabbage, problems with input file...");
 
+
+String path = File(inputfile).getParentDirectory().getFullPathName();
+String fullFileName;
+#ifdef LINUX 
+fullFileName = path+"/CabbageTemp.wav";
+#else
+fullFileName = path+"\\CabbageTemp.wav";
+#endif
+tempAudioFile = fullFileName;
+
 #endif
 lookAndFeel = new CabbageLookAndFeel();
 lookAndFeelBasic = new CabbageLookAndFeelBasic();
@@ -282,8 +295,11 @@ File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
 #ifdef Cabbage_Logger
 
 #endif
-
-
+#ifdef LINUX
+tempAudioFile = File(csdFile.getParentDirectory()->getFullPathName())+"/Cabbage_tempAudio.wav";
+#else
+tempAudioFile = File(csdFile.getParentDirectory()->getFullPathName())+"\Cabbage_tempAudio.wav";
+#endif
 csdFile.setAsCurrentWorkingDirectory();
 
 StringArray tmpArray;
@@ -385,6 +401,18 @@ else{
         csoundStatus=false;
 }
 #endif
+
+
+String path = csdFile.getParentDirectory().getFullPathName();
+String fullFileName;
+#ifdef LINUX 
+fullFileName = path+"/CabbageTemp.wav";
+#else
+fullFileName = path+"\\CabbageTemp.wav";
+#endif
+tempAudioFile = File(fullFileName);
+tempAudioFile.replaceWithData(0 ,0);
+
 createGUI(csdFile.loadFileAsString(), true);
 }
 #endif
@@ -648,6 +676,7 @@ bool multiLine = false;
 									||tokes[0].equalsIgnoreCase(String("keyboard"))
 									||tokes[0].equalsIgnoreCase(String("csoundoutput"))
 									||tokes[0].equalsIgnoreCase(String("line"))
+									||tokes[0].equalsIgnoreCase(String("recordbutton"))
 									||tokes[0].equalsIgnoreCase(String("label"))
 									||tokes[0].equalsIgnoreCase(String("hostbpm"))
 									||tokes[0].equalsIgnoreCase(String("hosttime"))
@@ -864,6 +893,66 @@ CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProce
 		editor->repaint();
 }
 
+//============================================================================
+// start/stop recording of file
+//============================================================================
+void CabbagePluginAudioProcessor::startRecording ()
+{
+	//stopRecording();
+	if (sampleRate > 0)
+		{
+			// Create an OutputStream to write to our destination file...
+			tempAudioFile.deleteFile();
+			ScopedPointer<FileOutputStream> fileStream (tempAudioFile.createOutputStream());
+
+			if (fileStream != nullptr)
+			{
+				// Now create a WAV writer object that writes to our output stream...
+				WavAudioFormat wavFormat;
+				AudioFormatWriter* writer = wavFormat.createWriterFor(fileStream, sampleRate, 2, 16, StringPairArray(), 0);
+
+				if (writer != nullptr)
+				{
+					fileStream.release(); // (passes responsibility for deleting the stream to the writer object that is now using it)
+
+					// Now we'll create one of these helper objects which will act as a FIFO buffer, and will
+					// write the data to disk on our background thread.
+					threadedWriter = new AudioFormatWriter::ThreadedWriter (writer, backgroundThread, 32768);
+
+					// Reset our recording thumbnail
+					//thumbnail.reset (writer->getNumChannels(), writer->getSampleRate());
+					nextSampleNum = 0;
+
+					// And now, swap over our active writer pointer so that the audio callback will start using it..
+					const ScopedLock sl (writerLock);
+					activeWriter = threadedWriter;
+				}
+			}
+		}
+}
+
+void CabbagePluginAudioProcessor::stopRecording()
+{
+	// First, clear this pointer to stop the audio callback from using our writer object..
+	{
+		const ScopedLock sl (writerLock);
+		activeWriter = nullptr;
+	}
+
+	threadedWriter = nullptr;
+	
+	// Now we can delete the writer object. It's done in this order because the deletion could
+	// take a little time while remaining data gets flushed to disk, so it's best to avoid blocking
+	// the audio callback while this happens.
+	
+	FileChooser fc("Save", tempAudioFile.getFullPathName(), "*.wav", true);
+	//determine whether to poen file or directory
+	if(fc.browseForFileToSave(true)){
+		File selectedFile = fc.getResult();
+		tempAudioFile.moveFileTo(selectedFile);
+		}
+}	
+	
 //============================================================================
 //SETS UP A GENERIC PLUGIN EDITOR
 //============================================================================
@@ -1376,11 +1465,12 @@ void CabbagePluginAudioProcessor::changeProgramName (int /*index*/, const String
 }
 
 //==============================================================================
-void CabbagePluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void CabbagePluginAudioProcessor::prepareToPlay (double sampRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     keyboardState.reset();
+	sampleRate = sampRate;
 }
 //==============================================================================
 void CabbagePluginAudioProcessor::releaseResources()
@@ -1411,6 +1501,9 @@ if(!isSuspended() && !isGuiEnabled()){
 	int numSamples = buffer.getNumSamples();
 
 	if(csCompileResult==0){
+		
+	
+		
 	keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
 	midiBuffer = midiMessages;
 	ccBuffer = midiMessages;
@@ -1423,6 +1516,9 @@ if(!isSuspended() && !isGuiEnabled()){
 	if(!midiOutputBuffer.isEmpty())
 		midiMessages.swapWith(midiOutputBuffer);
 #endif
+
+
+
 
 	for(int i=0;i<numSamples;i++, csndIndex++)
 	   {
@@ -1459,6 +1555,11 @@ if(!isSuspended() && !isGuiEnabled()){
 
 
 		}
+		
+	if (activeWriter != 0)
+        activeWriter->write ((const float**)buffer.getArrayOfChannels(), buffer.getNumSamples());			
+		
+		
 	}//if not compiled just mute output
 	else{
 		for(int channel = 0; channel < getNumInputChannels(); channel++)

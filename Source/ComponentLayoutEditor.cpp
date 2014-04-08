@@ -246,12 +246,13 @@ void ChildAlias::mouseDown (const MouseEvent& e)
 	   //get the bounds of each of the child components if we are dealing with a plant
 	   Component* c = (Component*) target.getComponent ();
 	   origBounds.clear();
+
 	   for(int i=0;i<c->getNumChildComponents();i++){
 	   origBounds.add(c->getChildComponent(i)->getBounds());
 	   }
 
 	#ifdef Cabbage_Build_Standalone
-		if(e.mods.isRightButtonDown()){
+		if(e.mods.isPopupMenu()){
 			PopupMenu m;
 			m.setLookAndFeel(&getParentComponent()->getLookAndFeel());
 			m.addItem(2, "Delete");

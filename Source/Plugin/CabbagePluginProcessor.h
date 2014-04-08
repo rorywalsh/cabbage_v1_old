@@ -148,6 +148,14 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 		void updateGUIControlsKsmps(int speed);
 		int guiRefreshRate;
 		std::vector<MYFLT> temp;
+
+		TimeSliceThread backgroundThread; // the thread that will write our audio data to disk
+		ScopedPointer<AudioFormatWriter::ThreadedWriter> threadedWriter; // the FIFO used to buffer the incoming data
+		double sampleRate;
+		int64 nextSampleNum;
+		File tempAudioFile;
+		CriticalSection writerLock;
+		AudioFormatWriter::ThreadedWriter* volatile activeWriter;
 		
 		
 public:
@@ -182,6 +190,8 @@ public:
 	}
 
 	int performEntireScore();
+	void startRecording();
+	void stopRecording();
 	void reCompileCsound(File file);
 	void setupNativePluginEditor();
     //==============================================================================

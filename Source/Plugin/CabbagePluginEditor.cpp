@@ -62,6 +62,7 @@ tableBuffer(2, 44100)
 	swatchColours.set(14, Colour(0x80FF00FF));
 	swatchColours.set(15, Colour(0x8000FFFF));
 
+
 	
 	setWantsKeyboardFocus(false);
 	//set custom skin yo use
@@ -77,7 +78,6 @@ tableBuffer(2, 44100)
 	propsWindow->setTitleBarHeight(20);
 	#endif
 
-
 	Component::setLookAndFeel(lookAndFeel);
 	//oldSchoolLook = new OldSchoolLookAndFeel();
 	#ifdef Cabbage_Build_Standalone
@@ -89,8 +89,12 @@ tableBuffer(2, 44100)
 	layoutEditor->setLookAndFeel(lookAndFeel);
 	layoutEditor->addChangeListener(this);
 	layoutEditor->setBounds(0, 0, getWidth(), getHeight());
+	
+	
+	
 	addAndMakeVisible(layoutEditor);
 	addAndMakeVisible(componentPanel);
+	
 	layoutEditor->setTargetComponent(componentPanel);
 	layoutEditor->setInterceptsMouseClicks(true, true);
 	#else
@@ -104,20 +108,18 @@ tableBuffer(2, 44100)
 	componentPanel->addKeyListener(this);
 	componentPanel->setInterceptsMouseClicks(false, true); 
 
+	setSize(400, 400);
+
 	#ifndef Cabbage_No_Csound
 	if(getFilter()->getCsound())
 	zero_dbfs = getFilter()->getCsound()->Get0dBFS();
 	#endif
-	 
-	setSize (400, 400);
-
-
 
 	for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++)
 		InsertGUIControls(getFilter()->getGUILayoutCtrls(i));
 	for(int i=0;i<getFilter()->getGUICtrlsSize();i++)
 		InsertGUIControls(getFilter()->getGUICtrls(i));
-	//InsertGUIControls();
+
 
 	//this will prevent editors from creating xyAutos if they have already been crated. 
 	getFilter()->setHaveXYAutoBeenCreated(true);
@@ -162,6 +164,7 @@ tableBuffer(2, 44100)
 			}	
 		}
 
+	
 	getFilter()->addChangeListener(this);
 	resized();
 	//startTimer(20);
@@ -180,10 +183,21 @@ getFilter()->removeChangeListener(this);
 removeAllChangeListeners();
 //getFilter()->editorBeingDeleted(this);
 if(presetFileText.length()>1)
-{
         SnapShotFile.replaceWithText(presetFileText);
 }
 
+//==============================================================================
+void CabbagePluginAudioProcessorEditor::resized()
+{
+//Logger::writeToLog("width:"+String(getWidth()));
+//Logger::writeToLog("height:"+String(getHeight()));
+resizer->setBounds (getWidth() - 16, getHeight() - 16, 16, 16);
+this->setSize(this->getWidth(), this->getHeight());	
+//viewportComponent->setBounds(0, 0, this->getWidth(), this->getHeight());
+if(componentPanel)componentPanel->setBounds(0, 0, this->getWidth(), this->getHeight());
+#ifdef Cabbage_Build_Standalone
+if(layoutEditor)layoutEditor->setBounds(0, 0, this->getWidth(), this->getHeight());
+#endif
 }
 
 //==============================================================================
@@ -218,6 +232,9 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
                 }
         else if(cAttr.getStringProp(CabbageIDs::type)==String("filebutton")){
                 InsertFileButton(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("recordbutton")){
+                InsertRecordButton(cAttr);   
                 }
         else if(cAttr.getStringProp(CabbageIDs::type)==String("transport")){
                 InsertTransport(cAttr);   
@@ -1059,7 +1076,7 @@ void CabbagePluginAudioProcessorEditor::setEditMode(bool on){
 			getFilter()->setGuiEnabled(true);
 			layoutEditor->setEnabled(true);
 			layoutEditor->updateFrames();
-			layoutEditor->toFront(true); 
+			layoutEditor->toFront(true);
 		}
 		else{
 			layoutEditor->setEnabled(false);
@@ -1078,24 +1095,36 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 	String type;
 	if(comp->getName().contains("rslider"))
 		type = "rslider";
-	Logger::writeToLog(comp->getName());
+	
+/*
+	if(width+left>componentPanel->getWidth()){
+		componentPanel->setBounds(0, 0, width+left, componentPanel->getHeight());
+		layoutEditor->setBounds(componentPanel->getBounds());
+	}
+	if(top+height>componentPanel->getHeight()){
+		componentPanel->setBounds(0, 0, componentPanel->getWidth(), top+height);
+		layoutEditor->setBounds(componentPanel->getBounds());
+	}
+	*/
 	if(layoutComps.size()>0){
 	for(int y=0;y<layoutComps.size();y++)
-	if(reltoplant.isNotEmpty()){
-	if(layoutComps[y]->getProperties().getWithDefault(String("plant"), -99).toString().equalsIgnoreCase(reltoplant))
-			{
+	if(reltoplant.isNotEmpty())
+	{
+		if(layoutComps[y]->getProperties().getWithDefault(String("plant"), -99).toString().equalsIgnoreCase(reltoplant))
+		{
 			positionComponentWithinPlant(type, left, top, width, height, layoutComps[y], comp);
-			}
+		}
 	}
-			else{
+		else{
 			comp->setBounds(left, top, width, height);
 			componentPanel->addAndMakeVisible(comp);               
-			}
+		}
 	}
 	else{
 		comp->setBounds(left, top, width, height);
 			componentPanel->addAndMakeVisible(comp);               
 	}
+
 }
 
 void CabbagePluginAudioProcessorEditor::positionComponentWithinPlant(String type, float left, float top, float width, float height, Component *layout, Component *control)
@@ -1194,19 +1223,6 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 	layoutEditor->selectDuplicatedComponents(layoutEditor->boundsForDuplicatedCtrls);
 
 #endif
-}
-//==============================================================================
-void CabbagePluginAudioProcessorEditor::resized()
-{
-//Logger::writeToLog("width:"+String(getWidth()));
-//Logger::writeToLog("height:"+String(getHeight()));
-resizer->setBounds (getWidth() - 16, getHeight() - 16, 16, 16);
-this->setSize(this->getWidth(), this->getHeight());	
-if(componentPanel)componentPanel->setBounds(0, 0, this->getWidth(), this->getHeight());
-#ifdef Cabbage_Build_Standalone
-if(layoutEditor)layoutEditor->setBounds(0, 0, this->getWidth(), this->getHeight());
-#endif
-
 }
 
 //==============================================================================
@@ -1593,6 +1609,34 @@ void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
 		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
 }
 
+//+++++++++++++++++++++++++++++++++++++++++++
+//                       insert record button
+//+++++++++++++++++++++++++++++++++++++++++++
+void CabbagePluginAudioProcessorEditor::InsertRecordButton(CabbageGUIClass &cAttr)
+{
+        layoutComps.add(new CabbageButton(cAttr));    
+        int idx = layoutComps.size()-1;
+
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
+		setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
+        ((CabbageButton*)layoutComps[idx])->button->addListener(this);
+		//only one record button can be use on each instrument
+        ((CabbageButton*)layoutComps[idx])->button->setName("recordbutton");
+        if(cAttr.getStringArrayProp(CabbageIDs::text).size()>0)
+        ((CabbageButton*)layoutComps[idx])->button->setButtonText("Start Recording");
+#ifdef Cabbage_Build_Standalone
+        ((CabbageButton*)layoutComps[idx])->button->setWantsKeyboardFocus(true);
+#endif
+		((CabbageButton*)layoutComps[idx])->button->getProperties().set(String("index"), idx);
+		//if control is embedded into a plant don't add mouse listener
+		if(cAttr.getStringProp("reltoplant").isEmpty())
+		layoutComps[idx]->addMouseListener(this, true);
+		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+}
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //     Soundfiler 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1902,6 +1946,20 @@ if(!getFilter()->isGuiEnabled()){
 								infoWindow->setVisible(true);
 					#endif
 				}
+				else if(button->getName()=="recordbutton")
+						{
+						
+							if(button->getButtonText()=="Start Recording")
+							{
+								button->setButtonText("Stop Recording");
+								getFilter()->startRecording();								
+							}
+							else
+								{
+								button->setButtonText("Start Recording");
+								getFilter()->stopRecording();
+								}
+						}
 
 
 		//check layoutControls for fileButtons, these are once off buttons....
@@ -1926,7 +1984,7 @@ if(!getFilter()->isGuiEnabled()){
 						
 
 						 File selectedFile;
-						 
+						 //check for snapshot mode
 						 if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode").equalsIgnoreCase("snapshot") &&
 							getFilter()->getGUILayoutCtrls(i).getStringProp("filetype").contains("snaps"))
 						 {
@@ -1967,18 +2025,31 @@ if(!getFilter()->isGuiEnabled()){
 						 }
 						 //else let the user specify the filename for the snapshot
 						 else{
-							 if(!getFilter()->getGUILayoutCtrls(i).getStringProp("filetype").contains("snaps")){
-								FileChooser fc("Select a file", directory.getFullPathName(), filetype, true);
-								if(fc.browseForFileToOpen()){
-									selectedFile = fc.getResult();
-									getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel), 
-																								selectedFile.getFullPathName().replace("\\", "\\\\"),
-																								"string");
+							 if(!getFilter()->getGUILayoutCtrls(i).getStringProp("filetype").contains("snaps"))
+								 {
+									FileChooser fc("Open", directory.getFullPathName(), filetype, true);
+									//determine whether to poen file or directory
+									if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="file")
+									{
+										if(fc.browseForFileToOpen()){
+										selectedFile = fc.getResult();
+										getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel), 
+																									selectedFile.getFullPathName().replace("\\", "\\\\"),
+																									"string");
 										}
+									}
+									
+									else if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="directory")
+									{
+										if(fc.browseForDirectory()){
+										selectedFile = fc.getResult();
 										Logger::writeToLog(selectedFile.getFullPathName());
-										Logger::writeToLog(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel));
-								
-							 }
+										getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel), 
+																									selectedFile.getFullPathName().replace("\\", "\\\\"),
+																									"string");										
+										}
+									}
+								}
 							 else{
 								FileChooser fc("Select a file to save", directory.getFullPathName(), filetype, true);
 								if(fc.browseForFileToSave(true)){
@@ -2402,7 +2473,7 @@ StringArray csdArray;
 if(message == "Message sent from PropertiesDialog"){
 #ifdef Cabbage_Build_Standalone
 	csdArray.clear();
-	showMessage(currentLineNumber);
+	//showMessage(currentLineNumber);
 	//Logger::writeToLog("LineNumber:"+String(lineNumber));
 	csdArray.addLines(getFilter()->getCsoundInputFileText());
 	csdArray.set(currentLineNumber, CabbageGUIClass::getCabbageCodeFromIdentifiers(propsWindow->updatedIdentifiers));

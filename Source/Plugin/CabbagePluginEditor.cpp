@@ -2155,12 +2155,8 @@ if(!getFilter()->isGuiEnabled()){
 void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 {
 		String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
-		//Logger::writeToLog(currentFileLocation);
-		if(cAttr.getStringProp(CabbageIDs::workingdir).isEmpty())
+		if(File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::workingdir))!=true)
 			cAttr.setStringProp(CabbageIDs::workingdir, currentFileLocation);
-		else
-			if(!File(cAttr.getStringProp(CabbageIDs::workingdir)).exists())
-			cAttr.setStringProp(CabbageIDs::workingdir, currentFileLocation);	
 			
         comps.add(new CabbageComboBox(cAttr));
 

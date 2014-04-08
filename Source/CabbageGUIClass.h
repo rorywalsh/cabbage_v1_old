@@ -40,12 +40,13 @@ class IdentArray : public StringArray
 public:
 IdentArray() : StringArray("")
 {
-    add(",colour(");
+    //add(",colour(");
 	add("tablecolour(");
 	add("tablecolours(");
-	add(" colour(");
-    add(",colours(");
-	add(" colours(");
+	add("colour(");
+	//add(" colour(");
+    //add(",colours(");
+	//add(" colours(");
     add("fontcolour(");
 	add("size(");
 	add("items(");
@@ -56,23 +57,25 @@ IdentArray() : StringArray("")
 	add("tabpage(");
 	add("guirefresh(");
 	add("midictrl(");
-	add(" line(");
-	add(",line(");
+	//add(" line(");
+	//add(",line(");
+	add("line(");
 	add("bounds(");
 	add("populate(");
-	add(",range(");
-	add(" range(");
+	//add(",range(");
+	//add(" range(");
+	add("range(");
 	add("amprange(");
 	add("rangex(");
 	add("rangey(");
 	add("plant(");
 	add("alpha(");
-    add(",channel(");
-	add(" channel(");
+    //add(",channel(");
+	add("channel(");
 	add("channeltype(");
-	add(" chan(");
+	//add(" chan(");
     add("channels(");
-	add(" chans(");
+	//add(" chans(");
     add("name(");
     add("textbox(");
 	add("instrs(");
@@ -90,9 +93,11 @@ IdentArray() : StringArray("")
 	add("text(");
     add("runcsound(");
 	add("tabs(");
+	add("wrap(");
 	add("tab(");
-	add(" mode(");
-	add(",mode(");
+	//add(" mode(");
+	//add(",mode(");
+	add("mode");
 	add("tablenumber(");
 	add("tablenum(");
 	add("tablenumbers(");
@@ -203,6 +208,7 @@ namespace CabbageIDs
 	static const Identifier textcolour = "textcolour";
 	static const Identifier pluginid = "pluginid";
 	static const Identifier tabs = "tabs";
+	static const Identifier wrap = "wrap";
 	static const Identifier align = "align";
 	static const Identifier tabbed = "tabbed";
 	static const Identifier rangey = "rangey";

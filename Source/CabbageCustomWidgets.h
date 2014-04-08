@@ -632,11 +632,13 @@ public:
 		colour = m_cAttr.getStringProp(CabbageIDs::colour);
 		outline = m_cAttr.getStringProp(CabbageIDs::outlinecolour);
 		shape = m_cAttr.getStringProp(CabbageIDs::shape);
+		line = m_cAttr.getNumProp(CabbageIDs::line);
 		setBounds(m_cAttr.getBounds());
 		if(!m_cAttr.getNumProp(CabbageIDs::visible))
 			setVisible(false);
 		else
 			setVisible(true);
+		Logger::writeToLog(shape);
 		repaint();
 	}
 	
@@ -645,6 +647,7 @@ public:
 		g.drawImage(img, 0, 0, width, height, 0, 0, img.getWidth(), img.getHeight());
 		}
 		else{
+			
 			if(shape.contains("rounded")){
 				g.setColour(Colour::fromString(outline));
 				g.drawRoundedRectangle(0,0, width, height, width*.02, line);
@@ -654,7 +657,6 @@ public:
 			else if(shape.contains("ellipse")){
 				g.setColour(Colour::fromString(outline));
 				g.drawEllipse(0,0, width, height, line);
-				Logger::writeToLog("Repaint:"+colour);
 				g.setColour(Colour::fromString(colour));
 				g.fillEllipse(line,line, width-(line*2), height-(line*2));				
 			}
@@ -1110,50 +1112,61 @@ class CabbageXYController : public Component
 //==============================================================================
 // custom Csound message console
 //==============================================================================
-class CabbageMessageConsole : public Component
+class CabbageTextbox : public Component
 {
 	ScopedPointer<GroupComponent> groupbox;
 	ScopedPointer<LookAndFeel_V1> lookAndFeel;
-	String text;
+	String text, name, caption;
+	Colour colour, fontcolour;
 	int offX, offY, offWidth, offHeight;
 	public:
 	ScopedPointer<TextEditor> editor;
 	//---- constructor -----
-	CabbageMessageConsole(String name, String caption, String text):
-	editor(new TextEditor(String("editor_")+name)),
-	groupbox(new GroupComponent(String("groupbox_")+name)),
-	lookAndFeel(new LookAndFeel_V1()),
-	offX(0),
-	offY(0),
-	offWidth(0),
-	offHeight(0),
-	text(text)
+	CabbageTextbox(CabbageGUIClass &cAttr) :
+								name(cAttr.getStringProp(CabbageIDs::name)),
+								caption(cAttr.getStringProp(CabbageIDs::caption)), 
+								text(cAttr.getStringProp(CabbageIDs::text)),
+								editor(new TextEditor(String("editor_"))),
+								groupbox(new GroupComponent(String("groupbox_"))),
+								lookAndFeel(new LookAndFeel_V1()),
+								fontcolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
+								colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::colour))),
+								offX(0),
+								offY(0),
+								offWidth(0),
+								offHeight(0)
 	{	
 	editor->setLookAndFeel(lookAndFeel);
 	addAndMakeVisible(editor);
-	editor->setMultiLine(true);
+	if(cAttr.getNumProp(CabbageIDs::wrap)==0)
+	editor->setMultiLine(true, false);
+	else
+		editor->setMultiLine(true);
 	editor->setScrollbarsShown(true);
 	editor->setReturnKeyStartsNewLine(true);
 	editor->setReadOnly(true);
 	//background colour ID
-	editor->setColour(0x1000200, Colours::black);
+	editor->setColour(0x1000200, colour);
 	//text colour ID
-	editor->setColour(0x1000201, Colours::green);
+	editor->setColour(0x1000201, fontcolour);
+
+
+	editor->setText(File(cAttr.getStringProp(CabbageIDs::file)).loadFileAsString(), false);
 
 	if(caption.length()>0){
-	offX=10;
-	offY=15;
-	offWidth=-20;
-	offHeight=-25;
-	groupbox->setVisible(true);
-	groupbox->setText(caption);
-	}
+		offX=10;
+		offY=15;
+		offWidth=-20;
+		offHeight=-25;
+		groupbox->setVisible(true);
+		groupbox->setText(caption);
+		}
+		
 	this->setWantsKeyboardFocus(false);
 	}
+	
 	//---------------------------------------------
-	~CabbageMessageConsole(){
-
-	}
+	~CabbageTextbox(){}
 	
 	//update control
 	void update(CabbageGUIClass m_cAttr){
@@ -1190,7 +1203,7 @@ class CabbageMessageConsole : public Component
 	this->setWantsKeyboardFocus(false);
 	}
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageMessageConsole);
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageTextbox);
 };
 
 

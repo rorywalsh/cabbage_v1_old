@@ -236,6 +236,9 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
         else if(cAttr.getStringProp(CabbageIDs::type)==String("recordbutton")){
                 InsertRecordButton(cAttr);   
                 }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("textbox")){
+                InsertTextbox(cAttr);   
+                }
         else if(cAttr.getStringProp(CabbageIDs::type)==String("transport")){
                 InsertTransport(cAttr);   
                 }
@@ -1537,9 +1540,33 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
 void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIClass &cAttr)
 {
 
-        layoutComps.add(new CabbageMessageConsole(cAttr.getStringProp(CabbageIDs::name),
-                                                                                 cAttr.getStringProp(CabbageIDs::caption),
-                                                                                 cAttr.getStringProp("text")));
+        layoutComps.add(new CabbageTextbox(cAttr));
+        int idx = layoutComps.size()-1;
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
+		setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));	
+        layoutComps[idx]->setName("csoundoutput");
+        layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
+		//if control is embedded into a plant don't add mouse listener
+		if(cAttr.getStringProp("plant").isEmpty())
+		layoutComps[idx]->addMouseListener(this, true);
+		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+}
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//      Textbox widget. 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+void CabbagePluginAudioProcessorEditor::InsertTextbox(CabbageGUIClass &cAttr)
+{
+	if(!File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::file)))	
+	{
+	String pic = returnFullPathForFile(cAttr.getStringProp(CabbageIDs::file), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());	
+	cAttr.setStringProp(CabbageIDs::file, pic);
+	}
+	
+        layoutComps.add(new CabbageTextbox(cAttr));
         int idx = layoutComps.size()-1;
         float left = cAttr.getNumProp(CabbageIDs::left);
         float top = cAttr.getNumProp(CabbageIDs::top);
@@ -2812,10 +2839,10 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
         //String type = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type);
         //Logger::writeToLog(test);
         if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).containsIgnoreCase("csoundoutput")){
-			((CabbageMessageConsole*)layoutComps[i])->editor->setText(getFilter()->getCsoundOutput());
-			((CabbageMessageConsole*)layoutComps[i])->editor->setCaretPosition(getFilter()->getCsoundOutput().length());
+			((CabbageTextbox*)layoutComps[i])->editor->setText(getFilter()->getCsoundOutput());
+			((CabbageTextbox*)layoutComps[i])->editor->setCaretPosition(getFilter()->getCsoundOutput().length());
 			if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
-				((CabbageMessageConsole*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
+				((CabbageTextbox*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
 			getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
 		}
 		

@@ -675,6 +675,7 @@ bool multiLine = false;
 									||tokes[0].equalsIgnoreCase(String("image"))
 									||tokes[0].equalsIgnoreCase(String("keyboard"))
 									||tokes[0].equalsIgnoreCase(String("csoundoutput"))
+									||tokes[0].equalsIgnoreCase(String("textbox"))
 									||tokes[0].equalsIgnoreCase(String("line"))
 									||tokes[0].equalsIgnoreCase(String("recordbutton"))
 									||tokes[0].equalsIgnoreCase(String("label"))

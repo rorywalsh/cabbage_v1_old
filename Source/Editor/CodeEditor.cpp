@@ -242,6 +242,7 @@ void CsoundCodeEditor::setAllText(String text){
 	int lineNumber = editor[0]->getFirstLineOnScreen();		
 	editor[0]->getDocument().replaceAllContent(text);
 	editor[0]->scrollToLine(lineNumber);
+	editor[0]->getDocument().setSavePoint();
 }
 //==============================================================================
 void CsoundCodeEditor::highlightLine(String line){

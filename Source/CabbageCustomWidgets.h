@@ -1142,6 +1142,7 @@ class CabbageTextbox : public Component
 	editor->setMultiLine(true, false);
 	else
 		editor->setMultiLine(true);
+		
 	editor->setScrollbarsShown(true);
 	editor->setReturnKeyStartsNewLine(true);
 	editor->setReadOnly(true);
@@ -1150,8 +1151,10 @@ class CabbageTextbox : public Component
 	//text colour ID
 	editor->setColour(0x1000201, fontcolour);
 
-
+	if(File(cAttr.getStringProp(CabbageIDs::file)).exists())
 	editor->setText(File(cAttr.getStringProp(CabbageIDs::file)).loadFileAsString(), false);
+	else
+		editor->setText("Could not open file: "+String(cAttr.getStringProp(CabbageIDs::file)));
 
 	if(caption.length()>0){
 		offX=10;

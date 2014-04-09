@@ -155,6 +155,7 @@ private:
 		void InsertTransport(CabbageGUIClass &cAttr);
 		void InsertPopupMenu(CabbageGUIClass &cAttr);
 		void InsertTextbox(CabbageGUIClass &cAttr);
+		void InsertNumberBox(CabbageGUIClass &cAttr);
         void buttonClicked(Button*);
 		void mouseMove(const MouseEvent& event);
 		void mouseDown(const MouseEvent& event);

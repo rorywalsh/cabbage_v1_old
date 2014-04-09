@@ -1461,6 +1461,8 @@ Label* LookAndFeel_V2::createSliderTextBox (Slider& slider)
 
     l->setColour (TextEditor::outlineColourId, slider.findColour (Slider::textBoxOutlineColourId));
 
+    l->setColour (TextEditor::highlightColourId, slider.findColour (Slider::textBoxHighlightColourId));
+
     return l;
 }
 

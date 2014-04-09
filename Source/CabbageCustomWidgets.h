@@ -1404,91 +1404,73 @@ class CabbageTable : public Component
 //==============================================================================
 // custom NumToggleButton
 //==============================================================================
-class CabbageNumToggle : public Component,
-						 public ActionBroadcaster
+class CabbageNumberBox :  public Component
 {
 String name;
-Colour colour;
-ScopedPointer<Label> label;
-int width, height, value, lastValue;
+Colour colour, outlinecolour, fontcolour;
+ScopedPointer<GroupComponent> groupbox;
+int offX, offY, offWidth, offHeight, width, height, value, lastValue, decPlaces;
+String text, caption;
+float min, max, skew, incr;
 bool buttonState, mouseButtonState;
 public:
-	  CabbageNumToggle(String name, int width, int height): 
-					width(width),
-					height(height),
-					value(0),
-					lastValue(0),
-					buttonState(false),
-					mouseButtonState(false),
-					colour(Colours::lime)
+ScopedPointer<Slider> slider;
+					CabbageNumberBox(CabbageGUIClass &cAttr) :
+					colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::colour))),
+					outlinecolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::outlinecolour))),
+					fontcolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
+					text(cAttr.getStringProp(CabbageIDs::text)),
+					decPlaces(cAttr.getNumProp(CabbageIDs::decimalplaces)),
+					caption(cAttr.getStringProp(CabbageIDs::caption))
+		
 	  {
-		setBounds(0, 0, width, height);
-		label = new Label();
-		label->setText("", dontSendNotification);
-		label->getProperties().set("textColour", "black");
-		label->setBounds(0, 0, width, height);
-		label->setEditable(false, true);
-		label->setInterceptsMouseClicks(false, true);
-		addAndMakeVisible(label);
-		label->toFront(true);  
-	  }
+		setName(name);
+		offX=offY=offWidth=offHeight=0;
+		groupbox = new GroupComponent(String("groupbox_")+name);
+		slider = new Slider(text);
+		slider->toFront(true);
+		addAndMakeVisible(slider);
+		addAndMakeVisible(groupbox);
+		groupbox->setVisible(false);
+		groupbox->getProperties().set("groupLine", var(1));
+		groupbox->setColour(GroupComponent::textColourId, fontcolour);
+		groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
+		
+		slider->setSliderStyle(Slider::LinearBarVertical);
+		//slider->setColour(Slider::trackColourId, colour);
+		//slider->setColour(Slider::thumbColourId, colour);
+		slider->setColour(Slider::textBoxHighlightColourId, slider->findColour(Slider::textBoxBackgroundColourId));
+		slider->setColour(Slider::textBoxTextColourId, fontcolour.contrasting());
+		slider->setVelocityBasedMode(true);
+		slider->setVelocityModeParameters(80);
+		slider->getProperties().set("decimalPlaces", decPlaces);
+	
 
-	  void mouseDrag (const MouseEvent &e){
-		  if(e.mods.isRightButtonDown()&&buttonState)
-		  if(e.getOffsetFromDragStart().getY()<0){
-			  label->setText(String(value+(e.getDistanceFromDragStart()/2)), dontSendNotification);
-			  lastValue = e.getDistanceFromDragStart()/2;
-			  sendActionMessage(String("button:")+getName()+String("|state:")+String(buttonState)+String("|value:")+label->getText());
-		  }
-		  else{
-			  label->setText(String(value-(e.getDistanceFromDragStart()/2)), dontSendNotification);
-			  lastValue = value-(e.getDistanceFromDragStart()/2);
-			  //send a message with the button number and its value
-			  sendActionMessage(String("button:")+getName()+String("|state:")+String(buttonState)+String("|value:")+label->getText());
-		  }
-
-	  }
-
-	  void mouseExit (const MouseEvent &e){
-		if(e.mods.isRightButtonDown())	  
-			value = lastValue;
-	  }
-
-	void mouseDown(const MouseEvent &e){
-		if(e.mods.isLeftButtonDown())
-		if(getToggleState()){
-			buttonState=false;
-			repaint();
-			//send a message with the button number and its state
-			  sendActionMessage(String("button:")+getName()+String("|state:")+String(buttonState)+String("|value:")+label->getText());
+		if(caption.length()>0){
+			offX=10;
+			offY=35;
+			offWidth=-20;
+			offHeight=-45;
+			groupbox->setVisible(true);
+			groupbox->setText(caption);
 		}
-		else{
-			buttonState=true;
-			repaint();
-			  sendActionMessage(String("button:")+getName()+String("|state:")+String(buttonState)+String("|value:")+label->getText());
-		}
-	}
-
-	bool getToggleState(){
-		return buttonState;
-	}
-
-	void setToggleState(bool val){
-		buttonState = val;
-	}
-
-	int getCurrentValue(){
-		  return label->getText().getIntValue();
+		
+		min = cAttr.getNumProp(CabbageIDs::min);
+		max = cAttr.getNumProp(CabbageIDs::max);
+		incr = cAttr.getNumProp(CabbageIDs::sliderincr);
+		skew = cAttr.getNumProp(CabbageIDs::sliderskew);
+        slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
+        slider->setRange(cAttr.getNumProp("min"), cAttr.getNumProp("max"), cAttr.getNumProp(CabbageIDs::sliderincr));
+        slider->setValue(cAttr.getNumProp(CabbageIDs::value));	
 	  }
 
-	void setActiveColour(String inColour){
-		  colour = Colours::findColourForName(inColour, Colours::lime);
-	  }
-
-	void paint(Graphics &g){
-		Image newButton = CabbageLookAndFeel::drawToggleImage (width, height, buttonState, colour, true);
-		g.drawImage(newButton, 0, 0, width, height, 0, 0, width, height);
-	}
+	 ~CabbageNumberBox(){}
+	 
+	 void resized(){
+		groupbox->setBounds(0, 0, getWidth(), getHeight()); 
+		slider->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight); 
+		this->setWantsKeyboardFocus(false);
+	 }
 
 };
 

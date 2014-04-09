@@ -766,6 +766,7 @@ bool multiLine = false;
 									||tokes[0].equalsIgnoreCase(String("rslider"))
 									||tokes[0].equalsIgnoreCase(String("combobox"))
 									||tokes[0].equalsIgnoreCase(String("checkbox"))
+									||tokes[0].equalsIgnoreCase(String("numberbox"))
 									||tokes[0].equalsIgnoreCase(String("xypad"))
 									||tokes[0].equalsIgnoreCase(String("button"))){
 							CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);

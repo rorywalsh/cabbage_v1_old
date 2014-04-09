@@ -245,6 +245,9 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
         else if(cAttr.getStringProp(CabbageIDs::type)==String("soundfiler")){
                 InsertSoundfiler(cAttr);   
                 }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("numberbox")){
+                InsertNumberBox(cAttr);   
+                }
         else if(cAttr.getStringProp(CabbageIDs::type)==String("directorylist")){
                 InsertDirectoryList(cAttr);   
                 }
@@ -1783,6 +1786,28 @@ void CabbagePluginAudioProcessorEditor::InsertSlider(CabbageGUIClass &cAttr)
         comps[idx]->getProperties().set(String("midiChan"), cAttr.getNumProp("midichan"));
         comps[idx]->getProperties().set(String("midiCtrl"), cAttr.getNumProp("midictrl"));
 		((CabbageSlider*)comps[idx])->slider->getProperties().set(String("index"), idx);
+		//if control is embedded into a plant don't add mouse listener
+		if(cAttr.getStringProp("reltoplant").isEmpty())
+		comps[idx]->addMouseListener(this, true);
+		comps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+		comps[idx]->getProperties().set(CabbageIDs::index, idx);
+}
+//+++++++++++++++++++++++++++++++++++++++++++
+//                                     numberbox/slider
+//+++++++++++++++++++++++++++++++++++++++++++
+void CabbagePluginAudioProcessorEditor::InsertNumberBox(CabbageGUIClass &cAttr)
+{
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);     
+        comps.add(new CabbageNumberBox(cAttr));   
+        int idx = comps.size()-1;
+		setPositionOfComponent(left, top, width, height, comps[idx], cAttr.getStringProp("reltoplant"));		
+        ((CabbageNumberBox*)comps[idx])->slider->addListener(this);
+        comps[idx]->getProperties().set(String("midiChan"), cAttr.getNumProp("midichan"));
+        comps[idx]->getProperties().set(String("midiCtrl"), cAttr.getNumProp("midictrl"));
+		((CabbageNumberBox*)comps[idx])->slider->getProperties().set(String("index"), idx);
 		//if control is embedded into a plant don't add mouse listener
 		if(cAttr.getStringProp("reltoplant").isEmpty())
 		comps[idx]->addMouseListener(this, true);

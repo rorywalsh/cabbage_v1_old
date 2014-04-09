@@ -134,6 +134,11 @@ public:
 	void drawTreeviewPlusMinusBox (Graphics& g, int x, int y, int w, int h, bool isPlus, bool /*isMouseOver*/);
     void drawLevelMeter(Graphics &g, int width, int	height,	float level);
 	Button* createTabBarExtrasButton();
+
+    void drawLinearSlider (Graphics&, int x, int y, int width, int height,
+                           float sliderPos, float minSliderPos, float maxSliderPos,
+                           const Slider::SliderStyle, Slider&);
+	
 	
 	juce_UseDebuggingNewOperator
 

@@ -340,6 +340,23 @@ Image CabbageLookAndFeel::drawLinearBgImage (float width, float height, float sl
 	return img;
 }
 
+//========= linear slider ================================================================================
+void CabbageLookAndFeel::drawLinearSlider (Graphics& g, int x, int y, int width, int height,
+                                       float sliderPos, float minSliderPos, float maxSliderPos,
+                                       const Slider::SliderStyle style, Slider& slider)
+{
+    g.fillAll (slider.findColour (Slider::backgroundColourId));
+
+    if (style == Slider::LinearBar || style == Slider::LinearBarVertical)
+    {
+
+    }
+    else
+    {
+        drawLinearSliderBackground (g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
+        drawLinearSliderThumb (g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
+    }
+}
 //========= Linear slider thumb image ====================================================================
 Image CabbageLookAndFeel::drawLinearThumbImage (float width, float height, const Colour thumbFill, 
 																					bool isVertical)

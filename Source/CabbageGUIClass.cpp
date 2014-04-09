@@ -899,7 +899,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 		{
 			//Logger::writeToLog(tempTokens[tempCount]);
 			//Logger::writeToLog(tempTokens[tempCount].substring(0, tempTokens[tempCount].indexOf("(")+1));
-			if(tempTokens[tempCount].substring(0, tempTokens[tempCount].indexOf("(")+1)==identArray.getReference(indx))
+			if(tempTokens[tempCount].substring(0, tempTokens[tempCount].indexOf("(")+1).equalsIgnoreCase(identArray.getReference(indx)))
 			{
 			int identPos = str.toLowerCase().indexOf(identArray.getReference(indx));
 			String newString = str.substring(identPos+identArray.getReference(indx).length());

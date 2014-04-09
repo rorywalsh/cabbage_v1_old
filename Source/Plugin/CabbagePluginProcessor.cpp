@@ -77,7 +77,8 @@ automationParamID(-1),
 debugMessage(""),
 guiRefreshRate(20),
 mouseY(0),
-mouseX(0)
+mouseX(0),
+isWinXP(false)
 {	
 	
 //suspendProcessing(true);
@@ -228,17 +229,21 @@ else{
 else
 Logger::writeToLog("Welcome to Cabbage, problems with input file...");
 
+if(SystemStats::getOperatingSystemType()!=SystemStats::WinXP)
+	{
+	isWinXP = true;
+	String path = File(inputfile).getParentDirectory().getFullPathName();
+	String fullFileName;
+	#ifdef LINUX 
+	fullFileName = path+"/CabbageTemp.wav";
+	#else
+	fullFileName = path+"\\CabbageTemp.wav";
+	#endif
+	tempAudioFile = fullFileName;
+	tempAudioFile.replaceWithData(0 ,0);
+	#endif
+	}
 
-String path = File(inputfile).getParentDirectory().getFullPathName();
-String fullFileName;
-#ifdef LINUX 
-fullFileName = path+"/CabbageTemp.wav";
-#else
-fullFileName = path+"\\CabbageTemp.wav";
-#endif
-tempAudioFile = fullFileName;
-
-#endif
 lookAndFeel = new CabbageLookAndFeel();
 lookAndFeelBasic = new CabbageLookAndFeelBasic();
 }
@@ -248,6 +253,8 @@ lookAndFeelBasic = new CabbageLookAndFeelBasic();
 // PLUGIN - CONSTRUCTOR
 //===========================================================
 CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
+backgroundThread ("Audio Recorder Thread"),
+activeWriter (nullptr),
 csoundStatus(false),
 showMIDI(false),
 csCompileResult(1),
@@ -291,15 +298,6 @@ Logger::writeToLog("File doesn't exist"+String(csdFile.getFullPathName()));
 
 File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
 
-//set logger
-#ifdef Cabbage_Logger
-
-#endif
-#ifdef LINUX
-tempAudioFile = File(csdFile.getParentDirectory()->getFullPathName())+"/Cabbage_tempAudio.wav";
-#else
-tempAudioFile = File(csdFile.getParentDirectory()->getFullPathName())+"\Cabbage_tempAudio.wav";
-#endif
 csdFile.setAsCurrentWorkingDirectory();
 
 StringArray tmpArray;
@@ -403,15 +401,20 @@ else{
 #endif
 
 
-String path = csdFile.getParentDirectory().getFullPathName();
-String fullFileName;
-#ifdef LINUX 
-fullFileName = path+"/CabbageTemp.wav";
-#else
-fullFileName = path+"\\CabbageTemp.wav";
-#endif
-tempAudioFile = File(fullFileName);
-tempAudioFile.replaceWithData(0 ,0);
+if(SystemStats::getOperatingSystemType()!=SystemStats::WinXP)
+	{
+	isWinXP = true;
+	String path = csdFile.getParentDirectory().getFullPathName();
+	String fullFileName;
+	#ifdef LINUX 
+	fullFileName = path+"/CabbageTemp.wav";
+	#else
+	fullFileName = path+"\\CabbageTemp.wav";
+	#endif
+	tempAudioFile = fullFileName;
+	tempAudioFile.replaceWithData(0 ,0);
+	}
+
 
 createGUI(csdFile.loadFileAsString(), true);
 }
@@ -899,7 +902,7 @@ CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProce
 //============================================================================
 void CabbagePluginAudioProcessor::startRecording ()
 {
-	//stopRecording();
+	if(isWinXP)
 	if (sampleRate > 0)
 		{
 			// Create an OutputStream to write to our destination file...
@@ -934,6 +937,7 @@ void CabbagePluginAudioProcessor::startRecording ()
 
 void CabbagePluginAudioProcessor::stopRecording()
 {
+	if(isWinXP){
 	// First, clear this pointer to stop the audio callback from using our writer object..
 	{
 		const ScopedLock sl (writerLock);
@@ -952,6 +956,8 @@ void CabbagePluginAudioProcessor::stopRecording()
 		File selectedFile = fc.getResult();
 		tempAudioFile.moveFileTo(selectedFile);
 		}
+		
+	}
 }	
 	
 //============================================================================
@@ -1557,7 +1563,7 @@ if(!isSuspended() && !isGuiEnabled()){
 
 		}
 		
-	if (activeWriter != 0)
+	if (activeWriter != 0 && !isWinXP)
         activeWriter->write ((const float**)buffer.getArrayOfChannels(), buffer.getNumSamples());			
 		
 		

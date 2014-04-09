@@ -87,6 +87,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 
 		File logFile;
 		bool isAutomator;
+		bool isWinXP;
 		bool isNativeThreadRunning;
 
         //============== Csound related variables/methods ==============================

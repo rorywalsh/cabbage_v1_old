@@ -1581,6 +1581,7 @@ void CabbagePluginAudioProcessorEditor::InsertTextbox(CabbageGUIClass &cAttr)
 		//if control is embedded into a plant don't add mouse listener
 		if(cAttr.getStringProp("plant").isEmpty())
 		layoutComps[idx]->addMouseListener(this, true);
+		dynamic_cast<CabbageTextbox*>(layoutComps[idx])->editor->setLookAndFeel(lookAndFeel);
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
 }
@@ -2875,6 +2876,13 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 			getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
 			{
 				((CabbageLabel*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
+				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
+			}
+
+		else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("textbox") &&
+			getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+			{
+				((CabbageTextbox*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
 				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
 			}
 			

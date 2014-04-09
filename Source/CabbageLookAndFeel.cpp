@@ -13,6 +13,8 @@ CabbageLookAndFeel::CabbageLookAndFeel()
 	setColour(TextButton::buttonColourId, Colour(20, 20, 20));
 	setColour(ComboBox::textColourId, CabbageUtils::getComponentFontColour());
 	setColour(ComboBox::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());	
+	setColour(ScrollBar::trackColourId, Colours::transparentBlack);
+	setColour(ScrollBar::thumbColourId, CabbageUtils::getComponentSkin());
 }
 
 CabbageLookAndFeel::~CabbageLookAndFeel()
@@ -1072,8 +1074,10 @@ void CabbageLookAndFeel::positionComboBoxText (ComboBox& box, Label& label)
 //============= TextEditor Outline ======================================================================
 void CabbageLookAndFeel::drawTextEditorOutline (Graphics &g, int width, int height, TextEditor &/*textEditor*/)
 {
+	
 	g.setColour (Colours::transparentBlack);
-	g.drawRoundedRectangle (0, 0, width, height, height/3, 1);
+	g.fillAll();
+	//g.drawRoundedRectangle (0, 0, width, height, height/3, 1);
 }
 
 
@@ -1097,6 +1101,7 @@ void CabbageLookAndFeel::drawLabel (Graphics &g, Label &label)
 {	
 	// Getting parent component of label
 	Component* comp = label.getParentComponent();
+	g.fillAll(Colours::transparentBlack);
 	
 	// If slider
 	if (dynamic_cast<Slider*>(comp)) { 
@@ -1173,11 +1178,11 @@ void CabbageLookAndFeel::drawScrollbar (Graphics &g, ScrollBar &scrollbar, int x
 																						bool isMouseOver, 
 																						bool isMouseDown)
 {
-	g.setColour (Colours::transparentBlack);
+	g.setColour (Colours::transparentBlack.withAlpha(0.f));
 	g.fillAll();
 
-	g.setColour (CabbageUtils::getComponentSkin());
-	g.drawRoundedRectangle (x, y, width, height, 5, 1);
+	g.setColour (CabbageUtils::getComponentSkin().withAlpha(.5f));
+	g.drawRect (x, y, width, height);
 
 	if (isScrollbarVertical == false) //horizontal
 		g.fillRoundedRectangle (thumbStartPosition+3, 3, thumbSize-6, height-6, 5);
@@ -1198,7 +1203,7 @@ void CabbageLookAndFeel::drawScrollbarButton (Graphics &g, ScrollBar &scrollbar,
 																					bool isMouseOverButton, 
 																					bool isButtonDown)
 {
-	g.setColour (Colours::transparentBlack);
+	g.setColour (Colours::transparentBlack.withAlpha(0.f));
 	g.fillAll();
 
 	if (isButtonDown == true)

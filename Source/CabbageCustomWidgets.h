@@ -1116,7 +1116,7 @@ class CabbageTextbox : public Component
 {
 	ScopedPointer<GroupComponent> groupbox;
 	ScopedPointer<LookAndFeel_V1> lookAndFeel;
-	String text, name, caption;
+	String text, name, caption, type;
 	Colour colour, fontcolour;
 	int offX, offY, offWidth, offHeight;
 	public:
@@ -1126,6 +1126,7 @@ class CabbageTextbox : public Component
 								name(cAttr.getStringProp(CabbageIDs::name)),
 								caption(cAttr.getStringProp(CabbageIDs::caption)), 
 								text(cAttr.getStringProp(CabbageIDs::text)),
+								type(cAttr.getStringProp(CabbageIDs::type)),
 								editor(new TextEditor(String("editor_"))),
 								groupbox(new GroupComponent(String("groupbox_"))),
 								lookAndFeel(new LookAndFeel_V1()),
@@ -1151,10 +1152,10 @@ class CabbageTextbox : public Component
 	//text colour ID
 	editor->setColour(0x1000201, fontcolour);
 
-	if(File(cAttr.getStringProp(CabbageIDs::file)).exists())
-	editor->setText(File(cAttr.getStringProp(CabbageIDs::file)).loadFileAsString(), false);
-	else
-		editor->setText("Could not open file: "+String(cAttr.getStringProp(CabbageIDs::file)));
+	if(type==CabbageIDs::textbox.toString()){
+		editor->setColour(Label::outlineColourId, Colours::white);
+		setFile(cAttr.getStringProp(CabbageIDs::file));
+	}
 
 	if(caption.length()>0){
 		offX=10;
@@ -1165,17 +1166,28 @@ class CabbageTextbox : public Component
 		groupbox->setText(caption);
 		}
 		
+		//groupbox->setColour(GroupComponent::ColourIds::outlineColourId, Colours::red);
 	this->setWantsKeyboardFocus(false);
 	}
 	
 	//---------------------------------------------
 	~CabbageTextbox(){}
 	
+	void setFile(String filename)
+	{
+	if(File(filename).exists())
+	editor->setText(File(filename).loadFileAsString(), false);
+	else
+		editor->setText("Could not open file: "+String(filename));		
+	}
+	
 	//update control
 	void update(CabbageGUIClass m_cAttr){
 		editor->setColour(0x1000200, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
 		editor->setColour(0x1000201, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
 		setBounds(m_cAttr.getBounds());
+		if(type==CabbageIDs::textbox.toString())
+			setFile(m_cAttr.getStringProp(CabbageIDs::file));
 		if(!m_cAttr.getNumProp(CabbageIDs::visible))
 			setVisible(false);
 		else
@@ -1185,10 +1197,11 @@ class CabbageTextbox : public Component
 
 	void paint(Graphics &g){
 		//----- For drawing the border
+		if(type==CabbageIDs::csoundoutput){
 		g.setColour(CabbageUtils::getComponentSkin());
-		g.fillRoundedRectangle (0, -3, getWidth(), getHeight(), 8.f);
-		g.setColour(Colours::black);
-		g.fillRoundedRectangle (5, getHeight()-35, getWidth()-10, 20, 8.f);
+		g.fillRoundedRectangle (0, -3, getWidth(), getHeight(), 5.f);
+		//g.setColour(Colours::black);
+		//g.fillRoundedRectangle(5, getHeight()-35, getWidth()-10, 20, 5.f);
 
 		//----- For drawing the title
 		g.setColour (Colours::whitesmoke);
@@ -1196,13 +1209,20 @@ class CabbageTextbox : public Component
 		g.setFont (15);
 		Justification just(1);
 		g.drawText(text, 10, -5, getWidth()-20, 35, just, false);
+		}
+		else{
+			g.fillAll(colour);
+		}
 	}
 
 	//---------------------------------------------
 	void resized()
 	{
 	groupbox->setBounds(0, 0, getWidth(), getHeight()); 
-	editor->setBounds(offX+5, offY+20, (getWidth()+offWidth)-10, (getHeight()+offHeight)-45); 
+	if(type==CabbageIDs::textbox.toString())
+		editor->setBounds(0, 0, getWidth(), getHeight()); 		
+		else
+		editor->setBounds(offX+5, offY+20, (getWidth()+offWidth-10), (getHeight()+offHeight)-30); 
 	this->setWantsKeyboardFocus(false);
 	}
 

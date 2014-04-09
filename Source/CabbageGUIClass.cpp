@@ -905,7 +905,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 	{
 		//check to see if identifier is part of input string..turn to lowercase first..
 		//Logger::writeToLog("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
-			int identPos = str.toLowerCase().replaceCharacters("()", "  ").indexOfWholeWord(identArray[indx]);
+			int identPos = str.toLowerCase().replaceCharacters("()", "  ").indexOfWholeWordIgnoreCase(identArray[indx]);
 			if(identPos>-1)
 			{
 			String newString = str.substring(identPos+identArray[indx].length());
@@ -1361,10 +1361,10 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 				cabbageIdentifiers.set(CabbageIDs::readonly, strTokens[0].trim().getFloatValue());					
 				}
 			
-            else if(identArray[indx].equalsIgnoreCase("tablenum(")||
-			(identArray[indx].equalsIgnoreCase("tablenumber("))||
-			identArray[indx].equalsIgnoreCase("tablenumbers(")||
-			identArray[indx].equalsIgnoreCase("tablenumbs(")){
+            else if(identArray[indx].equalsIgnoreCase("tablenum")||
+			(identArray[indx].equalsIgnoreCase("tablenumber")||
+			identArray[indx].equalsIgnoreCase("tablenumbers")||
+			identArray[indx].equalsIgnoreCase("tablenumbs"))){
 				int tableNum = strTokens[0].trim().getIntValue();
 				var value;
 				value.append(tableNum);

@@ -186,8 +186,8 @@ private:
 		Array <float, CriticalSection> tableValues;
 		AudioSampleBuffer tableBuffer;
 		
-		//ScopedPointer<Viewport> viewport;
-		//ScopedPointer<CabbageViewportComponent> viewportComponent;
+		ScopedPointer<Viewport> viewport;
+		ScopedPointer<CabbageViewportComponent> viewportComponent;
 
         //CabbagePluginAudioProcessor* filter;
         CabbagePluginAudioProcessor* getFilter() const

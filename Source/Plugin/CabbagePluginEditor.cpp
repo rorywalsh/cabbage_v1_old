@@ -90,16 +90,17 @@ tableBuffer(2, 44100)
 	layoutEditor->addChangeListener(this);
 	layoutEditor->setBounds(0, 0, getWidth(), getHeight());
 	
+	viewport = new Viewport("mainViewport");
+	viewportComponent = new CabbageViewportComponent();
 	
-	
-	addAndMakeVisible(layoutEditor);
-	addAndMakeVisible(componentPanel);
+	viewportComponent->addAndMakeVisible(layoutEditor);
+	viewportComponent->addAndMakeVisible(componentPanel);
 	
 	layoutEditor->setTargetComponent(componentPanel);
 	layoutEditor->setInterceptsMouseClicks(true, true);
 	#else
 	componentPanel = new Component();
-	addAndMakeVisible(componentPanel);
+	viewportComponent->addAndMakeVisible(componentPanel);
 	#endif
 
 	resizeLimits.setSizeLimits (150, 150, 3800, 3800);
@@ -164,7 +165,10 @@ tableBuffer(2, 44100)
 			}	
 		}
 
-	
+	//addAndMakeVisible(viewportComponent);
+	viewport->setScrollBarsShown(true, true);
+	addAndMakeVisible(viewport);
+	viewport->setViewedComponent(viewportComponent);
 	getFilter()->addChangeListener(this);
 	resized();
 	//startTimer(20);
@@ -193,10 +197,11 @@ void CabbagePluginAudioProcessorEditor::resized()
 //Logger::writeToLog("height:"+String(getHeight()));
 resizer->setBounds (getWidth() - 16, getHeight() - 16, 16, 16);
 this->setSize(this->getWidth(), this->getHeight());	
+viewport->setBounds(0, 0, this->getWidth(), this->getHeight());
 //viewportComponent->setBounds(0, 0, this->getWidth(), this->getHeight());
-if(componentPanel)componentPanel->setBounds(0, 0, this->getWidth(), this->getHeight());
+//if(componentPanel)componentPanel->setBounds(0, 0, this->getWidth(), this->getHeight());
 #ifdef Cabbage_Build_Standalone
-if(layoutEditor)layoutEditor->setBounds(0, 0, this->getWidth(), this->getHeight());
+//if(layoutEditor)layoutEditor->setBounds(0, 0, this->getWidth(), this->getHeight());
 #endif
 }
 
@@ -1102,16 +1107,22 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 	if(comp->getName().contains("rslider"))
 		type = "rslider";
 	
-/*
 	if(width+left>componentPanel->getWidth()){
 		componentPanel->setBounds(0, 0, width+left, componentPanel->getHeight());
+		viewportComponent->setBounds(0, 0, width+left, componentPanel->getHeight());
 		layoutEditor->setBounds(componentPanel->getBounds());
 	}
+	else
+		viewportComponent->setBounds(0, 0, componentPanel->getWidth(), componentPanel->getHeight());
+		
 	if(top+height>componentPanel->getHeight()){
 		componentPanel->setBounds(0, 0, componentPanel->getWidth(), top+height);
+		viewportComponent->setBounds(0, 0, componentPanel->getWidth(), top+height);
 		layoutEditor->setBounds(componentPanel->getBounds());
 	}
-	*/
+	else
+		viewportComponent->setBounds(0, 0, componentPanel->getWidth(), componentPanel->getHeight());
+
 	if(layoutComps.size()>0){
 	for(int y=0;y<layoutComps.size();y++)
 	if(reltoplant.isNotEmpty())
@@ -3011,7 +3022,6 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
    getFilter()->ccBuffer.clear();
   #endif
 }   
-
 
 #endif
 

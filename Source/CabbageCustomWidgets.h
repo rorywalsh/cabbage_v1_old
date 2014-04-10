@@ -1484,13 +1484,30 @@ ScopedPointer<Slider> slider;
         slider->setValue(cAttr.getNumProp(CabbageIDs::value));	
 	  }
 
-	 ~CabbageNumberBox(){}
+	~CabbageNumberBox(){}
 	 
-	 void resized(){
+	void resized(){
 		groupbox->setBounds(0, 0, getWidth(), getHeight()); 
 		slider->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight); 
 		this->setWantsKeyboardFocus(false);
-	 }
+	}
+	 
+	//update controls	
+	void update(CabbageGUIClass m_cAttr){
+		const MessageManagerLock mmLock;
+		slider->setColour(Slider::rotarySliderFillColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
+		slider->setColour(Slider::thumbColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
+		slider->setColour(Slider::textBoxTextColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
+		slider->setColour(Slider::trackColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::trackercolour)));
+		setBounds(m_cAttr.getBounds());
+		slider->setName(m_cAttr.getStringProp(CabbageIDs::text));
+		slider->setSkewFactor(m_cAttr.getNumProp(CabbageIDs::sliderskew));
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
+		repaint();
+	}	 
 
 };
 

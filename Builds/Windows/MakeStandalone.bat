@@ -8,11 +8,11 @@ ECHO ===================================================
 ECHO 
 set JUCE_LIBRARY_CODE=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\cabbage\JuceLibraryCode
 set PREPROCESSOR_DEFS=-D__MINGW__=1 -DWIN32 -D__MINGW_EXTENSION= -DCabbage_Build_Standalone=1 -DUSE_DOUBLE=1 -DCSOUND6=1 -DCabbage_GUI_Editor=1 -DJUCER_CODEBLOCKS_20734A5D=1
-set CSOUND_INCLUDE_DIR=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound6-git\include
+set CSOUND_INCLUDE_DIR=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound\include
 set ASIOSDK2Dir=C:\SDKs\ASIOSDK2.3\common
 set VSTSDKDir=C:\SDKs\vstsdk2.4
 set CABBAGE_SOURCE_DIR=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\cabbage\Source
-set CSOUND_LIBRARY=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound6-git\build\libcsound64.dll.a
+set CSOUND_LIBRARY=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound\build\libcsound64.dll.a
 set COMPILER_FLAGS= -Wall -Wreorder -Wno-strict-aliasing -ggdb -Wno-strict-overflow -static-libgcc -static-libstdc++  -march=pentium4 -g -O0 -std=gnu++0x -mstackrealign
 set OUTPUT_TARGET=Cabbage.exe
 

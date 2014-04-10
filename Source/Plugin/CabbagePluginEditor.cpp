@@ -1017,6 +1017,7 @@ subm.addItem(9, "keyboard");
 subm.addItem(10, "xypad");
 subm.addItem(11, "label");
 subm.addItem(16, "filebutton");
+subm.addItem(17, "numberbox");
 //subm.addItem(13, "soundfiler");
 subm.addItem(14, "table");
 subm.addItem(15, "Csound message console");
@@ -1063,7 +1064,9 @@ int choice = m.show();
 			 insertComponentsFromCabbageText(StringArray(String("table bounds(")+String(x)+(", ")+String(y)+String(", 260, 160)")), false);
 	 else if(choice==15)
 			 insertComponentsFromCabbageText(StringArray(String("csoundoutput bounds(")+String(x)+(", ")+String(y)+String(", 360, 200)")), false);
-
+	 else if(choice==17)
+			 insertComponentsFromCabbageText(StringArray(String("numberbox bounds(")+String(x)+(", ")+String(y)+String(", 40, 20), channel(\"numberbox\"), range(0, 100, 0), colour(\"white\")")), false);
+ 	 
 
 	 else if(choice>=100){
 	 //showMessage(xml->getAttributeValue(choice-100));

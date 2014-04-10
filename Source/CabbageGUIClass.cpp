@@ -906,6 +906,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 		//check to see if identifier is part of input string..turn to lowercase first..
 		//Logger::writeToLog("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
 			int identPos = str.toLowerCase().replaceCharacters("()", "  ").indexOfWholeWordIgnoreCase(identArray[indx]);
+			if(str.substring(identPos).contains(identArray[indx]+"("))
 			if(identPos>-1)
 			{
 			String newString = str.substring(identPos+identArray[indx].length());

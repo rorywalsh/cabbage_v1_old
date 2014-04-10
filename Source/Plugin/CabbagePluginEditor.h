@@ -55,8 +55,6 @@ public:
 		
         };
 
-
-
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePlantWindow);
 };
 
@@ -66,7 +64,16 @@ class CabbageViewportComponent : public Component
 public:
 	CabbageViewportComponent() : Component("CabbageViewportComponent")
 	{}
-	~CabbageViewportComponent(){}	
+	~CabbageViewportComponent(){}
+
+	void paint(Graphics &g)
+	{
+	Viewport* const viewport = findParentComponentOfClass<Viewport>(); //Get the parent viewport
+		if(viewport != nullptr) //Check for nullness
+			{
+			Rectangle<int> viewRect(viewport->getViewPositionX(), viewport->getViewPositionY(), viewport->getViewWidth(), viewport->getViewHeight()); //Get the current displayed area in the viewport
+			}
+	}	
 };
 
 //==============================================================================

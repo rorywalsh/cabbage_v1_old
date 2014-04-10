@@ -1255,6 +1255,7 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 //==============================================================================
 void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 {
+//Inside the paint callback in your Component
         for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
                 if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("keyboard")){
 #ifdef Cabbage_Build_Standalone

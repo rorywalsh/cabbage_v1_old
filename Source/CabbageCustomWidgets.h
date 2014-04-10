@@ -1457,10 +1457,10 @@ ScopedPointer<Slider> slider;
 		groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
 		
 		slider->setSliderStyle(Slider::LinearBarVertical);
-		//slider->setColour(Slider::trackColourId, colour);
-		//slider->setColour(Slider::thumbColourId, colour);
+		slider->setColour(Slider::trackColourId, colour);
+		slider->setColour(Slider::thumbColourId, colour);
 		slider->setColour(Slider::textBoxHighlightColourId, slider->findColour(Slider::textBoxBackgroundColourId));
-		slider->setColour(Slider::textBoxTextColourId, fontcolour.contrasting());
+		slider->setColour(Slider::textBoxTextColourId, fontcolour);
 		slider->setVelocityBasedMode(true);
 		slider->setVelocityModeParameters(80);
 		slider->getProperties().set("decimalPlaces", decPlaces);

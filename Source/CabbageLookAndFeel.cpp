@@ -347,11 +347,12 @@ void CabbageLookAndFeel::drawLinearSlider (Graphics& g, int x, int y, int width,
                                        float sliderPos, float minSliderPos, float maxSliderPos,
                                        const Slider::SliderStyle style, Slider& slider)
 {
-    g.fillAll (slider.findColour (Slider::backgroundColourId));
+   // g.fillAll (slider.findColour (Slider::backgroundColourId));
 
     if (style == Slider::LinearBar || style == Slider::LinearBarVertical)
     {
-
+		g.setColour(slider.findColour (Slider::thumbColourId));
+		g.fillRoundedRectangle(x, y, width, height, 3);
     }
     else
     {

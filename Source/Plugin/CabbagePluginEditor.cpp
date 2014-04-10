@@ -122,7 +122,7 @@ tableBuffer(2, 44100)
 	if(getFilter()->getCsound())
 	zero_dbfs = getFilter()->getCsound()->Get0dBFS();
 	#endif
-
+	setSize(400, 400);
 	for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++)
 		InsertGUIControls(getFilter()->getGUILayoutCtrls(i));
 	for(int i=0;i<getFilter()->getGUICtrlsSize();i++)

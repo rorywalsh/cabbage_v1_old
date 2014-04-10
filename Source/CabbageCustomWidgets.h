@@ -1429,7 +1429,8 @@ class CabbageNumberBox :  public Component
 String name;
 Colour colour, outlinecolour, fontcolour;
 ScopedPointer<GroupComponent> groupbox;
-int offX, offY, offWidth, offHeight, width, height, value, lastValue, decPlaces;
+ScopedPointer<Label> label;
+int offX, offY, offWidth, offHeight, width, height, value, lastValue, decPlaces, textbox;
 String text, caption;
 float min, max, skew, incr;
 bool buttonState, mouseButtonState;
@@ -1440,6 +1441,7 @@ ScopedPointer<Slider> slider;
 					outlinecolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::outlinecolour))),
 					fontcolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
 					text(cAttr.getStringProp(CabbageIDs::text)),
+					textbox(cAttr.getNumProp(CabbageIDs::textbox)),
 					decPlaces(cAttr.getNumProp(CabbageIDs::decimalplaces)),
 					caption(cAttr.getStringProp(CabbageIDs::caption))
 		
@@ -1448,7 +1450,13 @@ ScopedPointer<Slider> slider;
 		offX=offY=offWidth=offHeight=0;
 		groupbox = new GroupComponent(String("groupbox_")+name);
 		slider = new Slider(text);
+		//slider->setName(text);
 		slider->toFront(true);
+		label = new Label();
+		label->setText(text, dontSendNotification);
+		label->setColour(Label::textColourId, fontcolour);
+		
+		addAndMakeVisible(label);
 		addAndMakeVisible(slider);
 		addAndMakeVisible(groupbox);
 		groupbox->setVisible(false);
@@ -1488,6 +1496,11 @@ ScopedPointer<Slider> slider;
 	 
 	void resized(){
 		groupbox->setBounds(0, 0, getWidth(), getHeight()); 
+		if(text.isNotEmpty()){
+			label->setBounds(offX, offY, getWidth()+offWidth, ((getHeight()+offHeight)/2)-2); 
+			slider->setBounds(offX, offY+(getHeight()/2), getWidth()+offWidth, getHeight()+offHeight-(getHeight()/2)); 
+		}
+		else
 		slider->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight); 
 		this->setWantsKeyboardFocus(false);
 	}

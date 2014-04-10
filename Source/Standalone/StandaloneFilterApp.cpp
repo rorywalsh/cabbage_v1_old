@@ -65,7 +65,7 @@ class CabbageStandalone : public JUCEApplication
             filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
             filterWindow->setVisible (true);
             //turn off resizeable...
-			//filterWindow->setResizable (true, true);
+			filterWindow->setResizable(true, true);
             juce::Thread::setCurrentThreadName("cabbage");
           }
 

@@ -78,6 +78,11 @@ tableBuffer(2, 44100)
 	propsWindow->setTitleBarHeight(20);
 	#endif
 
+	
+	viewport = new Viewport("mainViewport");
+	viewportComponent = new CabbageViewportComponent();
+	viewport->addMouseListener(this, true);
+	
 	Component::setLookAndFeel(lookAndFeel);
 	//oldSchoolLook = new OldSchoolLookAndFeel();
 	#ifdef Cabbage_Build_Standalone
@@ -90,26 +95,28 @@ tableBuffer(2, 44100)
 	layoutEditor->addChangeListener(this);
 	layoutEditor->setBounds(0, 0, getWidth(), getHeight());
 	
-	//viewport = new Viewport("mainViewport");
-	//viewportComponent = new CabbageViewportComponent();
+
 	
-	addAndMakeVisible(layoutEditor);
-	addAndMakeVisible(componentPanel);
+	viewportComponent->addAndMakeVisible(layoutEditor);
+	viewportComponent->addAndMakeVisible(componentPanel);
 	
 	layoutEditor->setTargetComponent(componentPanel);
 	layoutEditor->setInterceptsMouseClicks(true, true);
-	#else
-	componentPanel = new Component();
-	addAndMakeVisible(componentPanel);
-	#endif
-
 	resizeLimits.setSizeLimits (150, 150, 3800, 3800);
 	resizer = new CabbageCornerResizer(this, this, &resizeLimits);
+	
+	#else
+	componentPanel = new Component();
+	viewportComponent->addAndMakeVisible(componentPanel);
+	#endif
+
+
+
 
 	componentPanel->addKeyListener(this);
 	componentPanel->setInterceptsMouseClicks(false, true); 
 
-	setSize(400, 400);
+
 
 	#ifndef Cabbage_No_Csound
 	if(getFilter()->getCsound())
@@ -128,7 +135,7 @@ tableBuffer(2, 44100)
 
 	#ifdef Cabbage_Build_Standalone
 	componentPanel->addActionListener(this);
-	if(!ownerFilter->isGuiEnabled()){
+
 	layoutEditor->addAndMakeVisible(resizer);	
 	layoutEditor->setEnabled(false);
 	layoutEditor->toFront(false); 
@@ -139,12 +146,7 @@ tableBuffer(2, 44100)
 			componentPanel->toFront(true);
 			componentPanel->grabKeyboardFocus();
 	#endif
-	}
-	else{
-	layoutEditor->setEnabled(true);
-	layoutEditor->toFront(true); 
-	layoutEditor->updateFrames();
-	}
+
 	#endif
 
 	#ifdef Cabbage_Build_Standalone
@@ -166,9 +168,9 @@ tableBuffer(2, 44100)
 		}
 
 	//addAndMakeVisible(viewportComponent);
-	//viewport->setScrollBarsShown(true, true);
-	//addAndMakeVisible(viewport);
-	//viewport->setViewedComponent(viewportComponent);
+	viewport->setScrollBarsShown(true, true);
+	addAndMakeVisible(viewport);
+	viewport->setViewedComponent(viewportComponent);
 	getFilter()->addChangeListener(this);
 	resized();
 	//startTimer(20);
@@ -195,13 +197,14 @@ void CabbagePluginAudioProcessorEditor::resized()
 {
 //Logger::writeToLog("width:"+String(getWidth()));
 //Logger::writeToLog("height:"+String(getHeight()));
-resizer->setBounds (getWidth() - 16, getHeight() - 16, 16, 16);
+
 this->setSize(this->getWidth(), this->getHeight());	
-//viewport->setBounds(0, 0, this->getWidth(), this->getHeight());
+viewport->setBounds(0, 0, this->getWidth(), this->getHeight());
 //viewportComponent->setBounds(0, 0, this->getWidth(), this->getHeight());
-if(componentPanel)componentPanel->setBounds(0, 0, this->getWidth(), this->getHeight());
+//if(componentPanel)componentPanel->setBounds(0, 0, this->getWidth(), this->getHeight());
 #ifdef Cabbage_Build_Standalone
-if(layoutEditor)layoutEditor->setBounds(0, 0, this->getWidth(), this->getHeight());
+resizer->setBounds (getWidth() - 16, getHeight() - 16, 16, 16);
+//if(layoutEditor)layoutEditor->setBounds(0, 0, this->getWidth(), this->getHeight());
 #endif
 }
 
@@ -1087,7 +1090,7 @@ void CabbagePluginAudioProcessorEditor::setEditMode(bool on){
 			getFilter()->setGuiEnabled(true);
 			layoutEditor->setEnabled(true);
 			layoutEditor->updateFrames();
-			layoutEditor->toFront(true);
+			layoutEditor->toFront(true);			
 		}
 		else{
 			layoutEditor->setEnabled(false);
@@ -1107,11 +1110,12 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 	if(comp->getName().contains("rslider"))
 		type = "rslider";
 	
-	/*
 	if(width+left>componentPanel->getWidth()){
 		componentPanel->setBounds(0, 0, width+left, componentPanel->getHeight());
 		viewportComponent->setBounds(0, 0, width+left, componentPanel->getHeight());
+		#ifdef Cabbage_Build_Stanalone
 		layoutEditor->setBounds(componentPanel->getBounds());
+		#endif
 	}
 	else
 		viewportComponent->setBounds(0, 0, componentPanel->getWidth(), componentPanel->getHeight());
@@ -1119,11 +1123,13 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 	if(top+height>componentPanel->getHeight()){
 		componentPanel->setBounds(0, 0, componentPanel->getWidth(), top+height);
 		viewportComponent->setBounds(0, 0, componentPanel->getWidth(), top+height);
+		#ifdef Cabbage_Build_Stanalone
 		layoutEditor->setBounds(componentPanel->getBounds());
+		#endif
 	}
 	else
 		viewportComponent->setBounds(0, 0, componentPanel->getWidth(), componentPanel->getHeight());
-*/
+
 	if(layoutComps.size()>0){
 	for(int y=0;y<layoutComps.size();y++)
 	if(reltoplant.isNotEmpty())
@@ -1515,7 +1521,6 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
         int height = cAttr.getNumProp(CabbageIDs::height);
         setSize(width, height);
         componentPanel->setBounds(left, top, width, height);
-
         if(cAttr.getStringProp(CabbageIDs::colour).isNotEmpty())
         formColour = Colour::fromString(cAttr.getStringProp(CabbageIDs::colour));
         else
@@ -1528,6 +1533,7 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
         authorText = cAttr.getStringProp("author");
 
 #ifdef Cabbage_Build_Standalone
+		layoutEditor->setBounds(left, top, width, height);
         formPic = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
 #else
         File thisFile(File::getSpecialLocation(File::currentApplicationFile)); 

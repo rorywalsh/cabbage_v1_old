@@ -8,7 +8,7 @@ DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 CSOUND_INCLUDE ?= "/usr/local/include/csound"
 
 # Default Csound library path
-CSOUND_LIBRARY ?= "/home/rory/sourcecode/csound-csound6-git/build"
+CSOUND_LIBRARY ?= "/home/rory/sourcecode/csound/build"
 
 ifndef CONFIG
   CONFIG=Debug
@@ -72,6 +72,7 @@ OBJECTS := \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
+  $(OBJDIR)/SplitComponent_35ae1cd2.o \
   $(OBJDIR)/CabbageStandaloneDialog_72d272cd.o \
   $(OBJDIR)/StandaloneFilterApp_d9ee3663.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
@@ -146,6 +147,11 @@ $(OBJDIR)/CabbageTable_d003e736.o: ../../Source/CabbageTable.cpp
 $(OBJDIR)/ComponentLayoutEditor_aa38c835.o: ../../Source/ComponentLayoutEditor.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling ComponentLayoutEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/SplitComponent_35ae1cd2.o: ../../Source/Editor/SplitComponent.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling SplitComponent.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o: ../../Source/CabbageAudioDeviceSelectorComponent.cpp

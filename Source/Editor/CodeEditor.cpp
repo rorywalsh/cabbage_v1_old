@@ -465,8 +465,10 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
 	//setColour(CodeEditorComponent::highlightColourId, Colours::yellow); 
 	setColour(CodeEditorComponent::lineNumberTextId, Colours::whitesmoke);
 	setLineNumbersShown(true);
-	#if defined(WIN32) || defined(MACOSX)
+	#if defined(WIN32) 
 	setFont(Font(String("Consolas"), 13, 1));			
+	#elif defined(MACOSX)
+	setFont(Font(String("Courier New"), 13, 1));
 	#else
 	setFont(Font(String("Droid Sans Mono"), 13, 1));
 	#endif	

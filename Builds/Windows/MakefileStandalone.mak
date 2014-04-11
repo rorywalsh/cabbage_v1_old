@@ -83,6 +83,7 @@ OBJECTS := \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
   $(OBJDIR)/CabbageStandaloneDialog_72d272cd.o \
   $(OBJDIR)/StandaloneFilterApp_d9ee3663.o \
+  $(OBJDIR)/SplitComponent_d9ee366f.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
@@ -180,6 +181,11 @@ $(OBJDIR)/CodeEditor_bb1e171d.o: ../../Source/Editor/CodeEditor.cpp
 $(OBJDIR)/CodeWindow_86e6d820.o: ../../Source/Editor/CodeWindow.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CodeWindow.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/SplitComponent_d9ee366f.o: ../../Source/Editor/SplitComponent.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling SplitWindow.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/CommandManager_f4ac7445.o: ../../Source/Editor/CommandManager.cpp

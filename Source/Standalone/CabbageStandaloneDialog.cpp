@@ -678,7 +678,13 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		subMenu.clear();
 		subMenu.addItem(15, TRANS("Plugin Synth"));
 		subMenu.addItem(16, TRANS("Plugin Effect"));
+#ifdef MACOSX
+		subMenu.addItem(150, TRANS("Plugin Synth(Csound bundle)"));
+		subMenu.addItem(160, TRANS("Plugin Effect(Csound bundle)"));
+#endif
 		m.addSubMenu(TRANS("Export..."), subMenu);
+
+
 #ifndef MACOSX
 		subMenu.clear();
 		subMenu.addItem(5, TRANS("Plugin Synth"));
@@ -947,7 +953,13 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	else if(options==16)
 	exportPlugin(String("VST"), false);
 
-
+	//----- export ------
+	else if(options==150)
+	exportPlugin(String("CsoundVSTi"), false);
+	
+	else if(options==160)
+	exportPlugin(String("CsoundVST"), false);
+	
 	//----- export as ------
 	else if(options==5)
 	exportPlugin(String("VSTi"), true);
@@ -1406,11 +1418,13 @@ if(!csdFile.exists()){
 		//showMessage(saveFC.getResult().withFileExtension(".vst").getFullPathName());
 				
 		if(type.contains("VSTi"))
-			//VST = thisFile.getParentDirectory().getFullPathName() + String("//CabbagePluginSynth.dat");
 			VST = thisFile.getFullPathName()+"/Contents/CabbagePluginSynth.component";
 		else if(type.contains(String("VST")))
-			//VST = thisFile.getParentDirectory().getFullPathName() + String("//CabbagePluginEffect.dat");
 			VST = thisFile.getFullPathName()+"/Contents/CabbagePluginEffect.component";
+		else if(type.contains("CsoundVSTi"))
+			VST = thisFile.getFullPathName()+"/Contents/CabbageCsoundPluginSynth.component";
+		else if(type.contains(String("CsoundVST")))
+			VST = thisFile.getFullPathName()+"/Contents/CabbageCsoundPluginEffect.component";
 		else if(type.contains(String("AU"))){
 			showMessage("this feature is coming soon");
 			//VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbageVSTfx.component");

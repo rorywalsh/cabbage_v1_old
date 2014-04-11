@@ -1164,7 +1164,13 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 
 }
 
-void CabbagePluginAudioProcessorEditor::positionComponentWithinPlant(String type, float left, float top, float width, float height, Component *layout, Component *control)
+void CabbagePluginAudioProcessorEditor::positionComponentWithinPlant(String type, 
+																	float left, 
+																	float top, 
+																	float width, 
+																	float height, 
+																	Component *layout, 
+																	Component *control)
 {			
 //if dimensions are < 1 then the user is using the decimal proportional of positioning
 if(width<=1 && height<=1){
@@ -1344,8 +1350,7 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 		else{
 		   if(cAttr.getNumProp("popup")==0){
 			   //Logger::writeToLog(layoutComps[idx]->getName());
-				layoutComps[idx]->setBounds(left+relX, top+relY, width, height);
-				componentPanel->addAndMakeVisible(layoutComps[idx]);       
+				setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));      
 			}
 		}
 		
@@ -1401,11 +1406,12 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 {
-	if(!File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::file)))	
+	if((!File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::file))&&(cAttr.getStringProp(CabbageIDs::file).isNotEmpty())))	
 	{
 	String pic = returnFullPathForFile(cAttr.getStringProp(CabbageIDs::file), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());	
 	cAttr.setStringProp(CabbageIDs::file, pic);
-	}	
+	}
+	
 		layoutComps.add(new CabbageImage(cAttr));
         int idx = layoutComps.size()-1;
         float left = cAttr.getNumProp(CabbageIDs::left);
@@ -1425,8 +1431,7 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 		else{
 		   if(cAttr.getNumProp("popup")==0){
 			   //Logger::writeToLog(layoutComps[idx]->getName());
-				layoutComps[idx]->setBounds(left+relX, top+relY, width, height);
-				componentPanel->addAndMakeVisible(layoutComps[idx]);       
+				setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));      
 			}
 		}
 		

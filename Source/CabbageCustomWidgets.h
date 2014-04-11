@@ -611,12 +611,14 @@ public:
 							line(cAttr.getNumProp(CabbageIDs::line))
 	{
 		setName(name);
+		Logger::writeToLog("image constructor");
 		//toBack();
 		img = ImageCache::getFromFile (File (file));
 		this->setWantsKeyboardFocus(false);
 		//if widget is a plant intercept mouse events
 		if(cAttr.getStringProp(CabbageIDs::plant).isNotEmpty())
 		this->setInterceptsMouseClicks(true, true);
+		repaint();
 	}
 	~CabbageImage(){
 	}
@@ -643,6 +645,7 @@ public:
 	}
 	
 	void paint (Graphics& g){
+		Logger::writeToLog("in paint routine");
 		if(File(file).existsAsFile()){
 		g.drawImage(img, 0, 0, width, height, 0, 0, img.getWidth(), img.getHeight());
 		}
@@ -717,6 +720,7 @@ class CabbageGroupbox : public GroupComponent,
 		//if widget is a plant intercept mouse events
 		if(cAttr.getStringProp(CabbageIDs::plant).isNotEmpty())
 		this->setInterceptsMouseClicks(true, true);
+		this->toFront(true);
 	}
 	//---------------------------------------------
 	~CabbageGroupbox(){
@@ -725,6 +729,7 @@ class CabbageGroupbox : public GroupComponent,
 	
 	void mouseDown(const MouseEvent& event)
 	{
+	Logger::writeToLog("mouse down in groupbox");
 	if(event.mods.isPopupMenu())
 		sendChangeMessage();
 	}

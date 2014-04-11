@@ -357,6 +357,7 @@ SplitComponent::SplitBar::SplitBar(SplitComponent& splitComponent, bool isVertic
 
 void SplitComponent::SplitBar::paint(Graphics& g)
 {
+	
 	getLookAndFeel().drawStretchableLayoutResizerBar(g,
 		getWidth(), getHeight(),
 		m_isVertical,

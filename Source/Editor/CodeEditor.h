@@ -356,7 +356,7 @@ ScopedPointer<FlatButton> searchButton, replaceAllButton, replaceOnceButton;
 	
 	void paint(Graphics& g)
 	{
-		g.fillAll(Colour::fromRGB(10, 10, 10));
+		g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
 	}
 	
 	void resized(){

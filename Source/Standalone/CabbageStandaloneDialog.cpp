@@ -154,7 +154,10 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 			cabbageCsoundEditor->setFullScreen(true);
 #endif
 
-
+	if(getPreference(appProperties, "ShowEditorConsole")==1)		
+	cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
+	else
+	cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight());
 	cabbageCsoundEditor->addActionListener(this);
 	cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
 	
@@ -245,6 +248,11 @@ void StandaloneFilterWindow::timerCallback()
 	if(outputConsole)
 		if(outputConsole->getText()!=filter->getCsoundOutput())
 			outputConsole->setText(filter->getCsoundOutput());	
+			
+	if(cabbageCsoundEditor){
+		if(cabbageCsoundEditor->csoundOutputComponent->getText()!=filter->getCsoundOutput())
+			cabbageCsoundEditor->csoundOutputComponent->setText(filter->getCsoundOutput());
+	}
 		
 //	updateEditorOutputConsole=false;
 //	}
@@ -827,6 +835,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 				#endif	
 						cabbageCsoundEditor->toFront(true);
 						
+						if(getPreference(appProperties, "ShowEditorConsole")==1)		
+						cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
+						else
+						cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight());
 						
 						if(!outputConsole){
 						outputConsole = new CsoundMessageConsole("Csound Output Messages", 
@@ -1154,7 +1166,12 @@ void StandaloneFilterWindow::openTextEditor()
 #elif WIN32
 			cabbageCsoundEditor->setFullScreen(true);
 #endif
-			cabbageCsoundEditor->toFront(true);			
+			cabbageCsoundEditor->toFront(true);	
+			if(getPreference(appProperties, "ShowEditorConsole")==1)		
+			cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
+			else
+			cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight());
+				
 			
 			if(getPreference(appProperties, "ShowConsoleWithEditor"))
 			if(!outputConsole){

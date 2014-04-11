@@ -139,7 +139,10 @@ public:
                            float sliderPos, float minSliderPos, float maxSliderPos,
                            const Slider::SliderStyle, Slider&);
 	
-	
+	void drawStretchableLayoutResizerBar (Graphics& g, int w, int h,
+                                                      bool /*isVerticalBar*/,
+                                                      bool isMouseOver,
+                                                      bool isMouseDragging);
 	juce_UseDebuggingNewOperator
 
 

@@ -38,8 +38,8 @@ public:
 	textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
 	textEditor->setMultiLine(true);
 	textEditor->setFont(Font("Arial", 14, 0));
-	textEditor->setBounds(0, 30, getWidth(), getHeight());
 	addAndMakeVisible(textEditor, true);
+	setText("hewe;roiuew asdfhsa ldkjfhsd lfauskdhf lsadiufh dslifuhsadlifu hdsaflisaud hflidsau hflidsa uf");
 	};
 	
 	~CsoundOutputComponent(){};
@@ -53,6 +53,16 @@ public:
 
 	String getText(){
 		return textEditor->getText();
+	}
+
+	void resized()
+	{
+	textEditor->setBounds(20, 0, getWidth(), getHeight());
+	}
+	
+	void paint(Graphics& g)
+	{	
+	g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
 	}
 	
 }; 
@@ -76,7 +86,7 @@ public:
 	void getAllCommands (Array <CommandID>& commands);
 	void menuItemSelected (int menuItemID, int topLevelMenuIndex);
 	void setFontSize(String zoom);
-	
+
 	
 	//================= command methods ====================
 	ApplicationCommandTarget* getNextCommandTarget(){
@@ -145,6 +155,7 @@ public:
 	Font font;
 	bool isColumnModeEnabled;
 	bool isInstrTabEnabled;
+	bool isCsoundOutputEnabled;
 };
 
 

@@ -201,11 +201,12 @@ void CabbagePluginAudioProcessorEditor::resized()
 
 this->setSize(this->getWidth(), this->getHeight());	
 viewport->setBounds(0, 0, this->getWidth(), this->getHeight());
-layoutEditor->setTopLeftPosition(0, 0);
+
 componentPanel->setTopLeftPosition(0, 0);
 //viewportComponent->setBounds(0, 0, this->getWidth(), this->getHeight());
 //if(componentPanel)componentPanel->setBounds(0, 0, this->getWidth(), this->getHeight());
 #ifdef Cabbage_Build_Standalone
+layoutEditor->setTopLeftPosition(0, 0);
 resizer->setBounds (getWidth() - 16, getHeight() - 16, 16, 16);
 //if(layoutEditor)layoutEditor->setBounds(0, 0, this->getWidth(), this->getHeight());
 #endif

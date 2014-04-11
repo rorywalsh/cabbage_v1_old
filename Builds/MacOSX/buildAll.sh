@@ -28,6 +28,21 @@ then
 	rm -rf ~/Library/Audio/Plug-Ins/VST/CabbagePlugin.vst
 fi
 
+if [ $1 == "csound plugins" ]
+then
+	echo "Building Csound Plugins Only"	
+	xcodebuild -project CabbagePluginCsound.xcodeproj/ GCC_PREPROCESSOR_DEFINITIONS="Cabbage_Plugin_Synth=1 USE_DOUBLE=1 MACOSX=1 CSOUND6=1 Debug=1"
+	rm -rf ./build/Debug/Cabbage.app/Contents/CabbageCsoundPluginSynth.component
+	cp -rf ./build/Debug/CabbagePlugin.component/ ./build/Debug/Cabbage.app/Contents/CabbageCsoundPluginSynth.component
+
+
+	xcodebuild -project CabbagePluginCsound.xcodeproj/ GCC_PREPROCESSOR_DEFINITIONS="MACOSX=1 Debug=1 USE_DOUBLE=1"
+	rm -rf ./build/Debug/Cabbage.app/Contents/CabbageCsoundPluginEffect.component
+	cp -rf ./build/Debug/CabbagePlugin.component/ ./build/Debug/Cabbage.app/Contents/CabbageCsoundPluginEffect.component
+	rm -rf ./build/Debug/CabbagePluginEffect.component
+	rm -rf ~/Library/Audio/Plug-Ins/VST/CabbagePlugin.vst
+fi
+
 if [ $1 == "all" ]
 then
 	echo "Building All"

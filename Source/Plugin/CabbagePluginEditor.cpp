@@ -201,6 +201,8 @@ void CabbagePluginAudioProcessorEditor::resized()
 
 this->setSize(this->getWidth(), this->getHeight());	
 viewport->setBounds(0, 0, this->getWidth(), this->getHeight());
+layoutEditor->setTopLeftPosition(0, 0);
+componentPanel->setTopLeftPosition(0, 0);
 //viewportComponent->setBounds(0, 0, this->getWidth(), this->getHeight());
 //if(componentPanel)componentPanel->setBounds(0, 0, this->getWidth(), this->getHeight());
 #ifdef Cabbage_Build_Standalone
@@ -1162,7 +1164,13 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 
 }
 
-void CabbagePluginAudioProcessorEditor::positionComponentWithinPlant(String type, float left, float top, float width, float height, Component *layout, Component *control)
+void CabbagePluginAudioProcessorEditor::positionComponentWithinPlant(String type, 
+																	float left, 
+																	float top, 
+																	float width, 
+																	float height, 
+																	Component *layout, 
+																	Component *control)
 {			
 //if dimensions are < 1 then the user is using the decimal proportional of positioning
 if(width<=1 && height<=1){
@@ -1342,8 +1350,7 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 		else{
 		   if(cAttr.getNumProp("popup")==0){
 			   //Logger::writeToLog(layoutComps[idx]->getName());
-				layoutComps[idx]->setBounds(left+relX, top+relY, width, height);
-				componentPanel->addAndMakeVisible(layoutComps[idx]);       
+				setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));      
 			}
 		}
 		
@@ -1399,11 +1406,12 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 {
-	if(!File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::file)))	
+	if((!File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::file))&&(cAttr.getStringProp(CabbageIDs::file).isNotEmpty())))	
 	{
 	String pic = returnFullPathForFile(cAttr.getStringProp(CabbageIDs::file), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());	
 	cAttr.setStringProp(CabbageIDs::file, pic);
-	}	
+	}
+	
 		layoutComps.add(new CabbageImage(cAttr));
         int idx = layoutComps.size()-1;
         float left = cAttr.getNumProp(CabbageIDs::left);
@@ -1423,8 +1431,7 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 		else{
 		   if(cAttr.getNumProp("popup")==0){
 			   //Logger::writeToLog(layoutComps[idx]->getName());
-				layoutComps[idx]->setBounds(left+relX, top+relY, width, height);
-				componentPanel->addAndMakeVisible(layoutComps[idx]);       
+				setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));      
 			}
 		}
 		
@@ -2502,9 +2509,9 @@ Array<int> tableSizes;
 		int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();				
 		for(int y=0;y<numberOfTables;y++)
 			{
-			int tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, y);
+			tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, 0);
 			Array <float, CriticalSection> tableValues = getFilter()->getTableFloats(tableNumber);
-			((CabbageTable*)layoutComps[idx])->fillTable(y, tableValues);		
+			((CabbageTable*)layoutComps[idx])->fillTable(0, tableValues);		
 			}			
 		
 }
@@ -2977,10 +2984,11 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 				int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();				
 				for(int y=0;y<numberOfTables;y++)
 					{
-					int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
-					Array <float, CriticalSection> tableValues = getFilter()->getTableFloats(tableNumber);
+					int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, 0);
+					tableValues.clear();
+					tableValues = getFilter()->getTableFloats(tableNumber);					
 					((CabbageTable*)layoutComps[i])->fillTable(y, tableValues);		
-					}			
+					}				
 				}
 				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");				  
 			}

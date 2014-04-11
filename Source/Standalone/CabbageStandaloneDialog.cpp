@@ -285,7 +285,7 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message){
 	
 	else if(message == "Score Updated"){
 	if(cabbageCsoundEditor){
-		cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
+		//cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
 		cabbageCsoundEditor->textEditor->highlightLine(filter->getCurrentLineText());
 		}
 	}	

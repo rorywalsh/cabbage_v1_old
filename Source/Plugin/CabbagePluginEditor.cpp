@@ -2504,9 +2504,9 @@ Array<int> tableSizes;
 		int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();				
 		for(int y=0;y<numberOfTables;y++)
 			{
-			int tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, y);
+			tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, 0);
 			Array <float, CriticalSection> tableValues = getFilter()->getTableFloats(tableNumber);
-			((CabbageTable*)layoutComps[idx])->fillTable(y, tableValues);		
+			((CabbageTable*)layoutComps[idx])->fillTable(0, tableValues);		
 			}			
 		
 }
@@ -2979,10 +2979,11 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 				int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();				
 				for(int y=0;y<numberOfTables;y++)
 					{
-					int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
-					Array <float, CriticalSection> tableValues = getFilter()->getTableFloats(tableNumber);
+					int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, 0);
+					tableValues.clear();
+					tableValues = getFilter()->getTableFloats(tableNumber);					
 					((CabbageTable*)layoutComps[i])->fillTable(y, tableValues);		
-					}			
+					}				
 				}
 				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");				  
 			}

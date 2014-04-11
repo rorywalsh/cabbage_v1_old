@@ -2938,12 +2938,13 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 			getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
 			{
 			String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
-			if(message.contains("tablenumber")){
+			if(message.contains("tablenumber")||message.contains("tablenumbers"))
+				{
 				int tableNumber = getFilter()->getGUILayoutCtrls(i).getNumProp(CabbageIDs::tablenumber);
 				tableValues.clear();
 				tableValues = getFilter()->getTableFloats(tableNumber);
-				Logger::writeToLog(String(tableNumber));
-				Logger::writeToLog(String(tableValues.size()));
+				//Logger::writeToLog(String(tableNumber));
+				//Logger::writeToLog(String(tableValues.size()));
 				tableBuffer.clear();
 				tableBuffer.setSize(2, tableValues.size());
 				tableBuffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());

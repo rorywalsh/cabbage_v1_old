@@ -1197,6 +1197,28 @@ int CabbageLookAndFeel::getDefaultScrollbarWidth()
 {
 return 18;	
 }
+//==============================================================================
+void CabbageLookAndFeel::drawStretchableLayoutResizerBar (Graphics& g, int w, int h,
+                                                      bool /*isVerticalBar*/,
+                                                      bool isMouseOver,
+                                                      bool isMouseDragging)
+{
+    float alpha = 0.5f;
+	g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
+    if (isMouseOver || isMouseDragging)
+    {
+        g.fillAll (Colour (40, 40, 40));
+        alpha = 1.0f;
+    }
+
+    const float cx = w * 0.5f;
+    const float cy = h * 0.5f;
+    const float cr = jmin (w, h) * 0.4f;
+
+    g.setColour(Colours::whitesmoke);
+
+    g.fillEllipse (cx - cr, cy - cr, cr * 2.0f, cr * 2.0f);
+}
 //======= Scrollbar buttons =======================================================================
 void CabbageLookAndFeel::drawScrollbarButton (Graphics &g, ScrollBar &scrollbar, int width, int height, 
 																					int buttonDirection, 

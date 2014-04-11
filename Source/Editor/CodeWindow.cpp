@@ -36,15 +36,14 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 	addKeyListener(commandManager.getKeyMappings());
 	
 	textEditor = new CsoundCodeEditor(csoundDoc, &csoundToker);
-
+	csoundOutputComponent = new CsoundOutputComponent("Output");
 	restoreWindowStateFromString (appProperties->getUserSettings()->getValue ("mainWindowPos"));
 
-
-	csoundOutputComponent = new CsoundOutputComponent("Output");
-	//splitWindow = new SplitComponent(*textEditor, *csoundOutputComponent, false);
+	setSize(1200, 800);
+	
+	splitWindow = new SplitComponent(*textEditor, *csoundOutputComponent, false);
+	splitWindow->SetFitToParent(false);
 	textEditor->editor[textEditor->currentEditor]->addActionListener(this);
-
-	//splitWindow->SetSplitBarPosition(getWidth() / 2);
 	
 	this->setTitleBarHeight(20);
 	this->setColour(DocumentWindow::backgroundColourId, CabbageUtils::getBackgroundSkin());
@@ -80,9 +79,11 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 	//else csound->Message("Could not open opcodes.txt file, parameter display disabled..");
 
 
-setContentNonOwned(textEditor, false);
+setContentNonOwned(splitWindow, false);
+
 }
 
+//==============================================================================
 CodeWindow::~CodeWindow(){
 	setMenuBar(nullptr);
 	setApplicationCommandManagerToWatch(nullptr);
@@ -93,7 +94,7 @@ CodeWindow::~CodeWindow(){
 //==============================================================================
 StringArray CodeWindow::getMenuBarNames()
 {
-	const char* const names[] = { "File", "Edit", "Help", 0 };
+	const char* const names[] = { "File", "Edit", "View", "Help", 0 };
 	return StringArray (names);
 }
 
@@ -128,7 +129,8 @@ void CodeWindow::getAllCommands (Array <CommandID>& commands)
 								CommandIDs::viewLinesNumbers,
 								CommandIDs::viewOpcodeHelp,
 								CommandIDs::viewCsoundHelp,	
-								CommandIDs::viewCabbageHelp	
+								CommandIDs::viewCabbageHelp,
+								CommandIDs::viewCsoundOutput		
 								};
 	commands.addArray (ids, sizeof (ids) / sizeof (ids [0]));
 }
@@ -287,6 +289,12 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 
 	case CommandIDs::viewCabbageHelp:
 		result.setInfo (String("View Cabbage Manual"), String("View Cabbage Manual"), CommandCategories::help, 0);
+		result.defaultKeypresses.add(KeyPress(KeyPress::F1Key));
+		break;
+	case CommandIDs::viewCsoundOutput:
+		result.setInfo (String("View Csoud Output"), String("View Csound Output"), CommandCategories::help, 0);
+		result.addDefaultKeypress ('p', ModifierKeys::commandModifier);
+		result.setTicked(appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue());
 		break;
 	}
 }
@@ -344,9 +352,10 @@ else if(topLevelMenuIndex==1)
 	return m1;
 	}
 
-else if(topLevelMenuIndex==3)
+else if(topLevelMenuIndex==2)
 	{
 	m1.addCommandItem(&commandManager, CommandIDs::viewInstrumentsTabs);
+	m1.addCommandItem(&commandManager, CommandIDs::viewCsoundOutput);
 	//m1.addCommandItem(&commandManager, CommandIDs::viewLinesNumbers);
 	//m1.addCommandItem(&commandManager, CommandIDs::viewOpcodeHelp);
 	//m1.addCommandItem(&commandManager, CommandIDs::commOrcUpdateChannel);	
@@ -359,7 +368,7 @@ else if(topLevelMenuIndex==3)
 	}
  
 	
-else if(topLevelMenuIndex==2)
+else if(topLevelMenuIndex==3)
 	{
 	m1.addCommandItem(&commandManager, CommandIDs::viewCsoundHelp);
 	m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
@@ -546,6 +555,20 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		textEditor->editor[textEditor->currentEditor]->addToRepository();
 		}	
 
+	else if(info.commandID==CommandIDs::viewCsoundOutput)
+		{	
+			if(appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1)
+			{
+			splitWindow->SetSplitBarPosition(this->getHeight());	
+			appProperties->getUserSettings()->setValue("ShowEditorConsole", 0);
+			}
+			
+			else{
+				splitWindow->SetSplitBarPosition(this->getHeight()-(this->getHeight()/4));
+				appProperties->getUserSettings()->setValue("ShowEditorConsole", 1);
+			}			
+		}	
+		
 	else if(info.commandID==CommandIDs::viewCsoundHelp)
 		{
 		sendActionMessage("toggleCsoundOutput");

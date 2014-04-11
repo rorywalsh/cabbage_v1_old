@@ -151,7 +151,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 			rect.setHeight(rect.getHeight()-25);
 			cabbageCsoundEditor->setBounds(rect);
 #elif WIN32
-			cabbageCsoundEditor->setFulScreen(true);
+			cabbageCsoundEditor->setFullScreen(true);
 #endif
 
 
@@ -809,7 +809,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 						rect.setHeight(rect.getHeight()-25);
 						cabbageCsoundEditor->setBounds(rect);
 				#elif WIN32
-						cabbageCsoundEditor->setFulScreen(true);
+						cabbageCsoundEditor->setFullScreen(true);
 				#endif
 						cabbageCsoundEditor->addActionListener(this);
 						cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
@@ -823,7 +823,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 						rect.setHeight(rect.getHeight()-25);
 						cabbageCsoundEditor->setBounds(rect);
 				#elif WIN32
-						cabbageCsoundEditor->setFulScreen(true);
+						cabbageCsoundEditor->setFullScreen(true);
 				#endif	
 						cabbageCsoundEditor->toFront(true);
 						
@@ -1152,7 +1152,7 @@ void StandaloneFilterWindow::openTextEditor()
 			rect.setHeight(rect.getHeight()-25);
 			cabbageCsoundEditor->setBounds(rect);
 #elif WIN32
-			cabbageCsoundEditor->setFulScreen(true);
+			cabbageCsoundEditor->setFullScreen(true);
 #endif
 			cabbageCsoundEditor->toFront(true);			
 			

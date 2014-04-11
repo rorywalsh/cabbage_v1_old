@@ -1137,7 +1137,9 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 		viewportComponent->setBounds(0, 0, componentPanel->getWidth(), componentPanel->getHeight());
 
 	componentPanel->setTopLeftPosition(0, 0);
+	#ifdef Cabbage_Build_Stanalone
 	layoutEditor->setTopLeftPosition(0, 0);
+	#endif
 
 	if(layoutComps.size()>0){
 	for(int y=0;y<layoutComps.size();y++)

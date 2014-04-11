@@ -33,7 +33,6 @@ extern StringArray undoHistory;
 
 
 //==============================================================================
-// This is the main host window. It gets instatiated in StandaloneFilterApp.cpp
 class CsoundMessageConsole : public DocumentWindow
 {
 ScopedPointer<TextEditor> textEditor;

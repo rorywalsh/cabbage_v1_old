@@ -107,6 +107,7 @@ tableBuffer(2, 44100)
 	
 	#else
 	componentPanel = new Component();
+	componentPanel->setTopLeftPosition(0, 0);
 	viewportComponent->addAndMakeVisible(componentPanel);
 	#endif
 
@@ -168,7 +169,7 @@ tableBuffer(2, 44100)
 		}
 
 	//addAndMakeVisible(viewportComponent);
-	viewport->setScrollBarsShown(true, true);
+	//viewport->setScrollBarsShown(true, true);
 	addAndMakeVisible(viewport);
 	viewport->setViewedComponent(viewportComponent);
 	getFilter()->addChangeListener(this);
@@ -1113,6 +1114,8 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 	if(comp->getName().contains("rslider"))
 		type = "rslider";
 	
+	
+	
 	if(width+left>componentPanel->getWidth()){
 		componentPanel->setBounds(0, 0, width+left, componentPanel->getHeight());
 		viewportComponent->setBounds(0, 0, width+left, componentPanel->getHeight());
@@ -1127,11 +1130,14 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 		componentPanel->setBounds(0, 0, componentPanel->getWidth(), top+height);
 		viewportComponent->setBounds(0, 0, componentPanel->getWidth(), top+height);
 		#ifdef Cabbage_Build_Stanalone
-		layoutEditor->setBounds(componentPanel->getBounds());
+		layoutEditor->setBounds(0, 0, componentPanel->getWidth(), componentPanel->getHeight());
 		#endif
 	}
 	else
 		viewportComponent->setBounds(0, 0, componentPanel->getWidth(), componentPanel->getHeight());
+
+	componentPanel->setTopLeftPosition(0, 0);
+	layoutEditor->setTopLeftPosition(0, 0);
 
 	if(layoutComps.size()>0){
 	for(int y=0;y<layoutComps.size();y++)

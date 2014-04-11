@@ -40,8 +40,11 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 	restoreWindowStateFromString (appProperties->getUserSettings()->getValue ("mainWindowPos"));
 
 
+	csoundOutputComponent = new CsoundOutputComponent("Output");
+	//splitWindow = new SplitComponent(*textEditor, *csoundOutputComponent, false);
 	textEditor->editor[textEditor->currentEditor]->addActionListener(this);
 
+	//splitWindow->SetSplitBarPosition(getWidth() / 2);
 	
 	this->setTitleBarHeight(20);
 	this->setColour(DocumentWindow::backgroundColourId, CabbageUtils::getBackgroundSkin());

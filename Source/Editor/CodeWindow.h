@@ -22,11 +22,40 @@
 
 #include "CodeEditor.h"
 #include "KeyboardShortcuts.h"
+#include "SplitComponent.h"
 #include "../Plugin/CabbagePluginProcessor.h"
 //class LiveCsound;
 class PythonEditor;
 
+class CsoundOutputComponent : public Component
+{
+ScopedPointer<TextEditor> textEditor;
+public:
+	CsoundOutputComponent(String title): Component(){
+	textEditor = new TextEditor();
+	textEditor->setColour(Label::outlineColourId, Colours::white);
+	textEditor->setColour(TextEditor::backgroundColourId, Colours::black);
+	textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
+	textEditor->setMultiLine(true);
+	textEditor->setFont(Font("Arial", 14, 0));
+	textEditor->setBounds(0, 30, getWidth(), getHeight());
+	addAndMakeVisible(textEditor, true);
+	};
+	
+	~CsoundOutputComponent(){};
+	
+	
+	void setText(String text){
+		textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
+		textEditor->setText(text);
+		textEditor->setCaretPosition(textEditor->getText().length());
+	}
 
+	String getText(){
+		return textEditor->getText();
+	}
+	
+}; 
 //==============================================================================
 //Main window. This window holds a 2 textEditors. One for the code, and the other for
 //displaying Csound output messages
@@ -107,6 +136,8 @@ public:
 	File csdFile;
 	int fontSize;
 	String ASCIICabbage;
+	ScopedPointer<SplitComponent> splitWindow;
+	ScopedPointer<CsoundOutputComponent> csoundOutputComponent;
 
 	StringArray opcodeStrings;
 	CsoundCodeEditor* textEditor;

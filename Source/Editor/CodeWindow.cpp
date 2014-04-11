@@ -151,11 +151,13 @@ void CodeWindow::menuItemSelected (int menuItemID, int topLevelMenuIndex){
 void CodeWindow::setFontSize(String zoom)
 {
 	
-	#if defined(WIN32) || defined(MACOSX)
+#if defined(WIN32) 
 	String font = "Consolas";			
-	#else
+#elif defined(MACOSX)
+	String font = "Courier New";
+#else
 	String font = "Droid Sans Mono";
-	#endif			
+#endif			
 	
 	if(zoom==String("in"))
 	textEditor->editor[textEditor->currentEditor]->setFont(Font(font, ++fontSize, 1));

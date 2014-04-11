@@ -152,11 +152,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 			cabbageCsoundEditor->setBounds(rect);
 #elif WIN32
 			cabbageCsoundEditor->setFullScreen(true);
-<<<<<<< HEAD
-=======
 #else
-	cabbageCsoundEditor->setSize(800, 600);
->>>>>>> 9a4e3350e2a10c05be958b90534fa7d5949e4969
+	cabbageCsoundEditor->setSize(1000, 800);
 #endif
 
 	if(getPreference(appProperties, "ShowEditorConsole")==1)		
@@ -823,11 +820,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 						cabbageCsoundEditor->setBounds(rect);
 				#elif WIN32
 						cabbageCsoundEditor->setFullScreen(true);
-<<<<<<< HEAD
-=======
 				#else
-							cabbageCsoundEditor->setSize(800, 600);
->>>>>>> 9a4e3350e2a10c05be958b90534fa7d5949e4969
+							cabbageCsoundEditor->setSize(1000, 800);
 				#endif
 						cabbageCsoundEditor->addActionListener(this);
 						cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
@@ -842,11 +836,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 						cabbageCsoundEditor->setBounds(rect);
 				#elif WIN32
 						cabbageCsoundEditor->setFullScreen(true);
-<<<<<<< HEAD
-=======
+
 				#else
-						cabbageCsoundEditor->setSize(800, 600);
->>>>>>> 9a4e3350e2a10c05be958b90534fa7d5949e4969
+						cabbageCsoundEditor->setSize(1000, 800);
 				#endif	
 
 						cabbageCsoundEditor->toFront(true);
@@ -1181,11 +1173,9 @@ void StandaloneFilterWindow::openTextEditor()
 			cabbageCsoundEditor->setBounds(rect);
 #elif WIN32
 			cabbageCsoundEditor->setFullScreen(true);
-<<<<<<< HEAD
-=======
+
 #else
-			cabbageCsoundEditor->setSize(800, 600);
->>>>>>> 9a4e3350e2a10c05be958b90534fa7d5949e4969
+			cabbageCsoundEditor->setSize(1000, 800);
 #endif
 			cabbageCsoundEditor->toFront(true);	
 			if(getPreference(appProperties, "ShowEditorConsole")==1)		

@@ -32,7 +32,6 @@
 
 #ifndef Cabbage_No_Csound
 #include <csound.hpp>
-#include <csdebug.h>
 #include "cwindow.h"
 #include "../csPerfThread.hpp"
 #endif
@@ -48,6 +47,7 @@
 #define AUTOMATION_PLUGIN 3
 
 #ifdef Cabbage_Build_Standalone
+#include <csdebug.h>
 class CsoundCodeEditor;
 #endif
 

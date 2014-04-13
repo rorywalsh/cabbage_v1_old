@@ -1215,7 +1215,7 @@ void CabbageLookAndFeel::drawStretchableLayoutResizerBar (Graphics& g, int w, in
     const float cy = h * 0.5f;
     const float cr = jmin (w, h) * 0.4f;
 
-    g.setColour(Colours::whitesmoke);
+    g.setColour(Colours::brown);
 
     g.fillEllipse (cx - cr, cy - cr, cr * 2.0f, cr * 2.0f);
 }

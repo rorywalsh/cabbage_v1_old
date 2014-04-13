@@ -618,6 +618,14 @@ public:
 		//if widget is a plant intercept mouse events
 		if(cAttr.getStringProp(CabbageIDs::plant).isNotEmpty())
 		this->setInterceptsMouseClicks(true, true);
+		
+		if(!cAttr.getNumProp(CabbageIDs::visible))
+		{
+			setVisible(false);
+			CabbageUtils::showMessage("visible");
+		}
+		else
+			setVisible(true);
 		repaint();
 	}
 	~CabbageImage(){
@@ -645,7 +653,7 @@ public:
 	}
 	
 	void paint (Graphics& g){
-		Logger::writeToLog("in paint routine");
+		//Logger::writeToLog("in paint routine");
 		if(File(file).existsAsFile()){
 		g.drawImage(img, 0, 0, width, height, 0, 0, img.getWidth(), img.getHeight());
 		}
@@ -946,15 +954,30 @@ class CabbageLabel	:	public Component
 {
 
 public:
-	CabbageLabel (String text, String colour, String fontcolour, String textAlign)
-		: text(text), colour(colour), fontcolour(fontcolour), align(Justification::centred)
+	CabbageLabel (CabbageGUIClass &cAttr)
+								: text(cAttr.getStringProp(CabbageIDs::text)),
+								colour(cAttr.getStringProp(CabbageIDs::colour)), 
+								fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)), 
+								align(cAttr.getStringProp(CabbageIDs::align)),
+								textAlign(Justification::centred)
 	{
-	if(textAlign=="centre")
-		align = Justification::centred;
-	else if(textAlign=="left")
-		align = Justification::left;
+		if(!cAttr.getNumProp(CabbageIDs::visible)){
+			setVisible(false);
+			Logger::writeToLog("visivle");
+		}
+		else{
+			setVisible(true);
+			Logger::writeToLog("visivle");
+		}
+			
+		setText(cAttr.getStringProp(CabbageIDs::text));
+		
+	if(align=="centre")
+		textAlign = Justification::centred;
+	else if(align=="left")
+		textAlign = Justification::left;
 	else
-		align = Justification::right;
+		textAlign = Justification::right;
 		
 	}
 
@@ -974,7 +997,7 @@ public:
 		g.setColour(Colour::fromString(fontcolour));
 		g.setFont(CabbageUtils::getComponentFont());
 		g.setFont(getHeight());
-		g.drawFittedText(text, 0, 0, getWidth(), getHeight(), align, 1, 1);
+		g.drawFittedText(text, 0, 0, getWidth(), getHeight(), textAlign, 1, 1);
 	}
 
 	void setText(String _text){
@@ -998,8 +1021,8 @@ public:
 
 
 private:
-	String text, colour, fontcolour;
-    Justification align;
+	String text, colour, fontcolour, align;
+    Justification textAlign;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageLabel);
 };
 

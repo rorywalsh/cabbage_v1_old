@@ -27,6 +27,7 @@
 //class LiveCsound;
 class PythonEditor;
 
+//========== csound output console class =================
 class CsoundOutputComponent : public Component
 {
 ScopedPointer<TextEditor> textEditor;
@@ -34,7 +35,7 @@ public:
 	CsoundOutputComponent(String title): Component(){
 	textEditor = new TextEditor();
 	textEditor->setColour(Label::outlineColourId, Colours::white);
-	textEditor->setColour(TextEditor::backgroundColourId, Colours::black);
+	textEditor->setColour(TextEditor::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
 	textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
 	textEditor->setMultiLine(true);
 	textEditor->setFont(Font("Arial", 14, 0));
@@ -57,12 +58,83 @@ public:
 
 	void resized()
 	{
-	textEditor->setBounds(20, 0, getWidth(), getHeight());
+	textEditor->setBounds(20, 21, getWidth()-25, getHeight()-30);
 	}
 	
 	void paint(Graphics& g)
 	{	
 	g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
+	g.setColour(Colours::white);
+	g.drawRoundedRectangle(getLocalBounds().toFloat(), 2, 2);
+	g.drawFittedText("Csound output", getLocalBounds().withHeight(18), Justification::centred, 1, 1.f);
+	}
+	
+}; 
+
+//========== csound debugger output console class =================
+class CsoundDebuggerComponent : public Component
+{
+ScopedPointer<TextEditor> textEditor;
+public:
+	CsoundDebuggerComponent(String title): Component(){
+	textEditor = new TextEditor();
+	textEditor->setColour(Label::outlineColourId, Colours::white);
+	textEditor->setColour(TextEditor::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
+	textEditor->setColour(TextEditor::textColourId, Colours::white);
+	textEditor->setMultiLine(true);
+	#if defined(WIN32) 
+	textEditor->setFont(Font(String("Consolas"), 13, 1));			
+	#elif defined(MACOSX)
+	textEditor->setFont(Font(String("Courier New"), 13, 1));
+	#else
+	textEditor->setFont(Font(String("Droid Sans Mono"), 13, 1));
+	#endif	
+	addAndMakeVisible(textEditor, true);
+	};
+	
+	~CsoundDebuggerComponent(){};
+	
+	
+	void setText(String text){
+		StringArray textArray;
+		textArray.addLines(text);
+		
+		textArray.removeEmptyStrings(true);
+		for(int i=2;i<textArray.size();i++)
+		{
+			StringArray tempArray;
+			String formattedLine="";
+			tempArray.addTokens(textArray[i], " ");
+			tempArray.removeDuplicates(true);
+			tempArray.removeEmptyStrings();
+			
+			for(int j=0;j<tempArray.size();j++){
+				formattedLine+=tempArray[j].removeCharacters(" ").paddedRight(' ', 20);
+				textArray.set(i, formattedLine);
+			}
+			
+			
+		}
+	
+		textEditor->setColour(TextEditor::textColourId, Colours::lime);
+		textEditor->setText(textArray.joinIntoString("\n"));
+	}
+
+	String getText(){
+		return textEditor->getText();
+	}
+
+	void resized()
+	{
+	textEditor->setBounds(20, 21, getWidth()-25, getHeight()-30);
+	}
+	
+	void paint(Graphics& g)
+	{	
+	g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
+	g.setColour(Colours::white);
+	g.drawRoundedRectangle(getLocalBounds().toFloat(), 2, 2);
+	g.drawFittedText("Debugger output", getLocalBounds().withHeight(18), Justification::centred, 1, 1.f);
 	}
 	
 }; 
@@ -147,7 +219,9 @@ public:
 	int fontSize;
 	String ASCIICabbage;
 	ScopedPointer<SplitComponent> splitWindow;
+	ScopedPointer<SplitComponent> splitBottomWindow;
 	ScopedPointer<CsoundOutputComponent> csoundOutputComponent;
+	ScopedPointer<CsoundDebuggerComponent> csoundDebuggerComponent;
 
 	StringArray opcodeStrings;
 	CsoundCodeEditor* textEditor;

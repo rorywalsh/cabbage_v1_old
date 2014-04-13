@@ -108,6 +108,7 @@ public:
 	void openFile(String _csdfile);
 	void saveFile();
 	void saveFileAs();
+	void showEditorConsole(bool show);
 
 	bool isGuiEnabled(){
 		return isGUIOn;

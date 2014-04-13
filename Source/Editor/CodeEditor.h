@@ -64,6 +64,7 @@ public:
 
     DragType dragType;	
 	
+	void editorHasScrolled();
 	bool skipBackwardsToPreviousTab();
 	bool moveCaretLeft (const bool moveInWholeWordSteps, const bool selecting);
 	bool moveCaretRight (const bool moveInWholeWordSteps, const bool selecting);
@@ -72,6 +73,7 @@ public:
 	void handleReturnKey ();	
 	void addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEvent *mouseClickEvent);
 	void performPopupMenuAction (int menuItemID);
+	void modifyInstrumentBreakpoint(bool remove);
 	String getLineText();
 	String getTempChannelInstr();
 	String getSelectedText();
@@ -102,7 +104,7 @@ public:
 	String getOpcodeToken(int index){
 	return opcodeTokens[index];	
 	}	
-	
+
 	bool columnEditMode;
 		
 	private:
@@ -118,13 +120,15 @@ public:
 //=================================================================
 class CsoundCodeEditor : public Component,
 						 public ChangeListener,
-						 public ActionListener
+						 public ActionListener,
+						 public ActionBroadcaster
 {
 	bool showTabButtons;
 	bool showInstrumentButtons;
 	int instrWidth;
 	int searchStartIndex;
 	bool highlightedWord;
+	Array<int> breakpointLines;
 	
 public:	
 	CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTokeniser);

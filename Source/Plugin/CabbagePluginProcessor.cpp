@@ -78,7 +78,10 @@ debugMessage(""),
 guiRefreshRate(20),
 mouseY(0),
 mouseX(0),
-isWinXP(false)
+isWinXP(false),
+CS_DEBUG_MODE(false),
+ksmpsOffset(0),
+breakCount(0)
 {	
 	
 //suspendProcessing(true);
@@ -111,11 +114,13 @@ for(int i=0;i<tmpArray.size() || tmpArray[i].contains("</Cabbage>");i++)
 #ifndef Cabbage_No_Csound
 //don't start of run Csound in edit mode
 setOpcodeDirEnv();
-
+csound = nullptr;
 csound = new Csound();
 
 #ifdef CSOUND6
 csound->SetHostImplementedMIDIIO(true);
+
+
 #endif
 csound->Reset();
 //Logger::writeToLog(csound->GetEnv("OPCODEDIR64"));
@@ -181,6 +186,7 @@ for(int i=0;i<lines.size();i++)
 includeFiles.removeDuplicates(0);
 
 csCompileResult = csound->Compile(const_cast<char*>(inputfile.toUTF8().getAddress()));
+//csound->Start();
 
 if(csCompileResult==0){
 
@@ -196,6 +202,7 @@ if(csCompileResult==0){
 	//	csound->CompileOrc(File(includeFiles[i]).loadFileAsString().toUTF8().getAddress());
 	//	csound->InputMessage("i\"PROCESSOR\" 0 3600 1");
 	}
+
         csound->SetScoreOffsetSeconds(0);
         csound->RewindScore();
 		#ifdef WIN32
@@ -349,6 +356,7 @@ csound->SetParams(csoundParams);
 #endif
 
 csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
+//csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
 csdFile.setAsCurrentWorkingDirectory();
 if(csCompileResult==0){
 	
@@ -445,11 +453,14 @@ IdentArray::deleteInstance();
 				//csound->SetHostImplementedMIDIIO(false);
                 csound->DeleteChannelList(csoundChanList);
                 Logger::writeToLog("about to cleanup Csound");
+				csoundDebuggerInit(csound->GetCsound());	
+				csoundRemoveInstrumentBreakpoint(csound->GetCsound(), 1);
+				//csoundDebugContinue(csound);				
                 //csound->Cleanup();
 				//csound->SetHostImplementedMIDIIO(false);
 
                 //csound->Reset();
-
+				//csoundDebuggerClean(csound->GetCsound());
                 csound = nullptr;
                 Logger::writeToLog("Csound cleaned up");
         }
@@ -487,7 +498,8 @@ midiOutputBuffer.clear();
 //csound->DeleteChannelList(csoundChanList);
 
 csound->Reset();
-
+ksmpsOffset = 0;
+breakCount = 0;
 #ifdef CSOUND6
 csoundParams = new CSOUND_PARAMS();
 csoundParams->nchnls_override =2;
@@ -510,6 +522,18 @@ CSspout = nullptr;
 CSspin = nullptr;
 
 csCompileResult = csound->Compile(const_cast<char*>(file.getFullPathName().toUTF8().getAddress()));
+
+#ifdef BUILD_DEBUGGER
+for(int i=0;i<breakpointInstruments.size();i++)
+	{
+	getCallbackLock().enter();
+	if(i==0)
+	csoundDebuggerInit(csound->GetCsound());	
+	csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
+	csoundSetInstrumentBreakpoint(csound->GetCsound(), breakpointInstruments[i], 0);
+	getCallbackLock().exit();		
+	}
+#endif	
 
 StringArray lines, includeFiles;
 lines.addLines(file.loadFileAsString());
@@ -1045,7 +1069,81 @@ void CabbagePluginAudioProcessor::messageCallback(CSOUND* csound, int /*attr*/, 
 }
 #endif
 
+void CabbagePluginAudioProcessor::breakpointCallback(CSOUND *csound, int line, double instr, void *userdata)
+{
+    CabbagePluginAudioProcessor* ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
+	ud->getCallbackLock().enter();
+	int ksmpOffset = ud->ksmpsOffset;;
+    INSDS *insds = csoundDebugGetInstrument(csound);
+	
+	if(ud->breakCount==0)
+		ud->breakCount=ud->csound->GetCsound()->GetKcounter(ud->csound->GetCsound());
+	else ud->breakCount++;
+    String output;
+	
+	output << "\nBreakpoint at instr " << instr << "\tNumber of k-cycles into performance: " << ud->breakCount << "\n------------------------------------------------------";;
 
+	
+    // Copy variable list
+    CS_VARIABLE *vp = insds->instr->varPool->head;
+    while (vp) 
+    {
+            output << " \n";
+            if (vp->varName[0] != '#')
+            {
+                output << " VarName:"<< vp->varName << "\t";;
+                if (strcmp(vp->varType->varTypeName, "i") == 0
+                    || strcmp(vp->varType->varTypeName, "k") == 0) 
+                {
+                    if (vp->memBlock) {
+                        output << "---" << *((MYFLT *)vp->memBlock);
+                    } else 
+                    {
+                    MYFLT *varmem = insds->lclbas + vp->memBlockIndex;
+                    output << " value=" << *varmem;;
+                    }
+                } 
+                else if(strcmp(vp->varType->varTypeName, "S") == 0) 
+                {
+                    STRINGDAT *varmem;
+                    if (vp->memBlock) {
+                        varmem = (STRINGDAT *)vp->memBlock;
+                    } else {
+                        varmem = (STRINGDAT *) (insds->lclbas + vp->memBlockIndex);
+                    }
+                    output << " value=" << std::string(varmem->data) ;;//, varmem->size));
+                } 
+                else if (strcmp(vp->varType->varTypeName, "a") == 0)
+                {
+                    if (vp->memBlock) 
+                    {
+                        output << " =======" << *((MYFLT *)vp->memBlock) << *((MYFLT *)vp->memBlock + 1)
+                        << *((MYFLT *)vp->memBlock + 2)<< *((MYFLT *)vp->memBlock + 3);
+                    } 
+                    else
+                    {
+                    MYFLT *varmem = insds->lclbas + vp->memBlockIndex;
+                    output <<" value="<< *varmem;
+                    }
+                    } else {
+
+                }
+                output << " varType[" << vp->varType->varTypeName << "]";
+        }
+        vp = vp->next;
+		ud->csoundDebuggerOutput = output;
+
+		ud->getCallbackLock().exit(); 
+		
+	}
+
+    //Copy active instrument list
+
+    INSDS *in = insds;
+    while (in->prvact) {
+        in = in->prvact;
+    }
+}
 //==============================================================================
 #if defined(Cabbage_Build_Standalone) || defined(Cabbage_Plugin_Host)
 CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int pluginType)
@@ -1537,13 +1635,18 @@ if(!isSuspended() && !isGuiEnabled()){
 				yieldCounter = (yieldCounter>guiRefreshRate) ? 0 : yieldCounter+1;
 				if(yieldCounter==0){
 				sendOutgoingMessagesToCsound();
-				updateCabbageControls();
+				updateCabbageControls();				
 				}
 
 
 				csCompileResult = csound->PerformKsmps();
+				
+				
+				//csoundSetInstrumentBreakpoint(csound->GetCsound(), 1, 0);
 				if(csCompileResult!=0)
 					suspendProcessing(true);
+				else
+					ksmpsOffset++;
 
 				getCallbackLock().exit();
 				csndIndex = 0;
@@ -1563,7 +1666,8 @@ if(!isSuspended() && !isGuiEnabled()){
 
 
 		}
-		
+
+		//CS_DEBUG_MODE=true;		
 	if (activeWriter != 0 && !isWinXP)
         activeWriter->write ((const float**)buffer.getArrayOfChannels(), buffer.getNumSamples());			
 		
@@ -1589,8 +1693,69 @@ if(!isSuspended() && !isGuiEnabled()){
 #endif
 }
 
+//==============================================================================
+// breakpoint functions
+//==============================================================================
+void CabbagePluginAudioProcessor::setCsoundInstrumentBreakpoint(int instr, int line=0)
+{
+#ifdef BUILD_DEBUGGER
+	getCallbackLock().enter();
+	if(breakpointInstruments.size()==0)
+	csoundDebuggerInit(csound->GetCsound());	
+	csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
+	csoundSetInstrumentBreakpoint(csound->GetCsound(), instr, 0);
+	breakpointInstruments.add(instr);
+	getCallbackLock().exit();
+#endif
+}
 
+void CabbagePluginAudioProcessor::removeCsoundInstrumentBreakpoint(int instr)
+{
+#ifdef BUILD_DEBUGGER
+	getCallbackLock().enter();
+	breakpointInstruments.removeAllInstancesOf(instr);
+	if(breakpointInstruments.size()==0)
+		breakCount=0;
+	csoundDebuggerInit(csound->GetCsound());	
+	csoundRemoveInstrumentBreakpoint(csound->GetCsound(), instr);
+	getCallbackLock().exit();
+#endif
+}
 
+void CabbagePluginAudioProcessor::continueCsoundDebug()
+{
+#ifdef BUILD_DEBUGGER
+
+	if(breakpointInstruments.size()>0)
+	{
+		getCallbackLock().enter();
+		csoundDebugContinue(csound->GetCsound());
+		getCallbackLock().exit();
+	}
+
+#endif
+}
+
+void CabbagePluginAudioProcessor::nextCsoundDebug()
+{
+#ifdef BUILD_DEBUGGER
+	
+	if(breakpointInstruments.size()>0)
+	{
+		getCallbackLock().enter();
+		csoundDebugNext(csound->GetCsound());
+		getCallbackLock().exit();	
+	}
+	
+#endif
+}
+
+void CabbagePluginAudioProcessor::cleanCsoundDebug()
+{
+#ifdef BUILD_DEBUGGER
+	csoundClearBreakpoints(csound->GetCsound());
+#endif	
+}
 //==============================================================================
 // MIDI functions
 //==============================================================================

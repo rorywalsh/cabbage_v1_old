@@ -111,13 +111,14 @@ void CsoundCodeEditor::resized()
 {
 	editor[currentEditor]->toFront(true);
 
+
 	if(showTabButtons&&showInstrumentButtons){
 		editor[currentEditor]->setBounds(instrWidth-10, 20, getWidth()-instrWidth-10, (getHeight()-55));
 		helpComp->setBounds(instrWidth+10, getHeight()-30, getWidth()-instrWidth, 30);	
 		searchReplaceComp->setBounds(instrWidth+10, getHeight()-30, getWidth()-instrWidth, 30);	
 	}	
 	else if(showTabButtons && !showInstrumentButtons){
-		editor[currentEditor]->setBounds(0, 20, getWidth(), (getHeight()-55));	
+		editor[currentEditor]->setBounds(33, 20, getWidth()-33, (getHeight()-55));	
 		searchReplaceComp->setBounds(33, getHeight()-30, getWidth()-33, 30);
 		helpComp->setBounds(33, getHeight()-30, getWidth()-33, 30);
 		
@@ -152,9 +153,49 @@ void CsoundCodeEditor::resized()
 void CsoundCodeEditor::paint(Graphics& g)
 {
 	g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
+	if(editor[currentEditor] != 0)
+        {
+            g.setColour(juce::Colours::white);
+            g.setFont(editor[currentEditor]->getFont());
+			bool highlightedLine = false;
+            int firstLineToDraw = editor[currentEditor]->getFirstLineOnScreen();
+            int lastLineToDraw = firstLineToDraw + editor[currentEditor]->getNumLinesOnScreen() + 2;
+
+            int index = 0;
+            for (int j = firstLineToDraw; j < lastLineToDraw; ++j)
+            {
+				for(int i=0;i<breakpointLines.size();i++){
+					CodeDocument::Position startPos(editor[currentEditor]->getDocument(), editor[currentEditor]->getCaretPos().getPosition());
+						if(j+1==breakpointLines[i])
+						{
+							g.setColour(Colours::brown);
+							g.fillRoundedRectangle(10, (editor[currentEditor]->getLineHeight() * index)+20, 28, editor[currentEditor]->getLineHeight(), 4);
+							g.setColour(Colours::white);
+							highlightedLine = true;
+						}					
+					}				
+				if(highlightedLine == true)
+				{
+					g.setColour(Colours::black);
+					g.drawText(String(j+1), 0, (editor[currentEditor]->getLineHeight() * index)+20, 33, editor[currentEditor]->getLineHeight(),
+							   juce::Justification::centredRight, false);
+					g.setColour(Colours::white);
+					highlightedLine = false;						   
+				}
+				else if(highlightedLine == false)
+				{
+					g.drawText(String(j+1), 0, (editor[currentEditor]->getLineHeight() * index)+20, 33, editor[currentEditor]->getLineHeight(),
+							   juce::Justification::centredRight, false);
+				}				
+				
+                index += 1;				
+					
+            }
+        }
 	//g.setColour(Colour(10, 10, 10));
 	//g.fillRect(0, 200, getWidth(), getHeight()-200);
 }
+
 	
 //==============================================================================
 void CsoundCodeEditor::showTab(String name)
@@ -437,14 +478,30 @@ if(message.contains("helpDisplay"))
 		searchReplaceComp->setVisible(false);
 		helpComp->setVisible(true);
 		resized();
+		}
 	}
-	//CodeDocument::Position newPos = editor->getCaretPos();
-	//editor->setCaretPos(editor->getCharacterBounds(editor->getCaretPos()));
+else if(message.contains("InstrumentBreakpoint"))
+	{	
+	String info = message;
+	int instrNumber = message.substring(24).getIntValue();
+	int lineNumber = message.substring(message.indexOf("_")+1).getIntValue();
+	if(breakpointLines.size()>=0)
+	if(message.contains("Set"))
+	breakpointLines.add(lineNumber+1);
+	else
+		breakpointLines.removeAllInstancesOf(lineNumber+1);
+		
+	//CabbageUtils::showMessage(breakpointLines.size());	
+		
+	sendActionMessage(message);
+	repaint();
+	}
+
 	if(helpComp->isVisible())
 	helpComp->setText(editor[currentEditor]->getOpcodeToken(2).removeCharacters("\""), 
 							   editor[currentEditor]->getOpcodeToken(3).removeCharacters("\""));
-	//editor->setCaretPos(editor->getCharacterBounds(editor->getCaretPos()));
-	}	
+
+	
 	
 }
 
@@ -453,7 +510,7 @@ if(message.contains("helpDisplay"))
 CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument &document, CodeTokeniser *codeTokeniser)
 					: CodeEditorComponent(document, codeTokeniser), type(type), columnEditMode(false)
 {
-	document.addListener(this);
+	document.addListener(this);		
 	setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(35, 35, 35));
 	setColour(CodeEditorComponent::lineNumberBackgroundId, CabbageUtils::getDarkerBackgroundSkin());
 	//toggle this when in column-edit mode
@@ -461,10 +518,10 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
 	setColour(CaretComponent::caretColourId, Colours::white);
 	setColour(TextEditor::backgroundColourId, Colours::black);
 	setColour(CodeEditorComponent::defaultTextColourId, Colours::white);
-	setLineNumbersShown(40);
+	//setLineNumbersShown(40);
 	//setColour(CodeEditorComponent::highlightColourId, Colours::yellow); 
 	setColour(CodeEditorComponent::lineNumberTextId, Colours::whitesmoke);
-	setLineNumbersShown(true);
+	setLineNumbersShown(false);
 	#if defined(WIN32) 
 	setFont(Font(String("Consolas"), 13, 1));			
 	#elif defined(MACOSX)
@@ -494,9 +551,9 @@ void CsoundCodeEditorComponenet::highlightLines(int firstLine, int lastLine){
 bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
 {
 	//Logger::writeToLog(String(key.getKeyCode()));	
-	//if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down") 
-    //    || key.getTextDescription().contains("cursor left") || key.getTextDescription().contains("cursor right"))  
-	//handleEscapeKey();
+	if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down") 
+        || key.getTextDescription().contains("cursor left") || key.getTextDescription().contains("cursor right"))  
+	this->getParentComponent()->repaint();
 
 	
 	if (! TextEditorKeyMapper<CodeEditorComponent>::invokeKeyFunction (*this, key))
@@ -528,6 +585,12 @@ void CsoundCodeEditorComponenet::handleReturnKey (){
 	insertNewLine("\n");
 	//sendActionMessage("make popup invisible");				
 }	
+
+void CsoundCodeEditorComponenet::editorHasScrolled()
+{
+	if(getParentComponent())
+	this->getParentComponent()->repaint();
+}
 //==============================================================================
 void CsoundCodeEditorComponenet::insertText(String text)
 {
@@ -605,6 +668,9 @@ void CsoundCodeEditorComponenet::addPopupMenuItems (PopupMenu &menuToAddTo, cons
 	menuToAddTo.addItem(1, "Paste");
 	menuToAddTo.addItem(1, "Select All");
 	menuToAddTo.addSeparator();
+	menuToAddTo.addItem(11, "Add instrument breakpoint");	
+	menuToAddTo.addItem(12, "Remove instrument breakpoint");
+	menuToAddTo.addSeparator();
 	menuToAddTo.addItem(1, "Undo");
 	menuToAddTo.addItem(1, "Redo");
 	menuToAddTo.addItem(10, "Add to repo");
@@ -659,7 +725,37 @@ void CsoundCodeEditorComponenet::performPopupMenuAction (int menuItemID){
 	xmlElement = nullptr;
 	}	
 	
+	else if(menuItemID==11)
+		modifyInstrumentBreakpoint(false);
+
+	else if(menuItemID==12)
+		modifyInstrumentBreakpoint(true);
+	
 };
+
+//==============================================================================
+void CsoundCodeEditorComponenet::modifyInstrumentBreakpoint(bool remove)
+{
+		int index=0;
+		CodeDocument::Position startPos(getDocument(), getCaretPos().getPosition());
+		StringArray csdArray;
+		csdArray.addLines(getAllText());
+		while(!(csdArray[startPos.getLineNumber()-index].contains("instr ")) &&
+						(startPos.getLineNumber()-index>0))
+			index++;
+			
+		String instrumentLine = csdArray[startPos.getLineNumber()-index];
+		String instrumentNumber = instrumentLine.substring(instrumentLine.indexOf("instr")+5, 
+									(instrumentLine.indexOf(";")>0 ? instrumentLine.indexOf(";") : 1000));
+		if(!remove){
+		//this->highlightLines(startPos.getLineNumber()-index, startPos.getLineNumber()-index);
+		sendActionMessage("SetInstrumentBreakpoint:"+String(instrumentNumber)+"_"+String(startPos.getLineNumber()-index));
+		}
+		else
+			sendActionMessage("RemoveInstrumentBreakpoint:"+String(instrumentNumber)+"_"+String(startPos.getLineNumber()-index));
+		
+}
+
 //==============================================================================
 void CsoundCodeEditorComponenet::addRepoToSettings()
 {
@@ -672,10 +768,12 @@ void CsoundCodeEditorComponenet::enableColumnEditMode(bool enable)
 if(enable)
 	{
 	setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue.withAlpha(.0f)); 
+	setColour(CaretComponent::caretColourId, Colours::yellow); 
 	columnEditMode=true;
 	}
 else{
 	setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue.withAlpha(.2f)); 
+	setColour(CaretComponent::caretColourId, Colours::white); 
 	columnEditMode=false;
 	}
 }
@@ -738,6 +836,7 @@ String CsoundCodeEditorComponenet::getLineText(){
 	Logger::writeToLog(csdLines[pos1.getLineNumber()]);	
 	return csdLines[pos1.getLineNumber()];
 }	
+
 //==============================================================================
 String CsoundCodeEditorComponenet::getAllText(){
 	return getDocument().getAllContent();

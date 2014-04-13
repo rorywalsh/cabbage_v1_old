@@ -673,7 +673,7 @@ boundsForDuplicatedCtrls.clear();
 for(int i=0;i<getNumChildComponents();i++){
 	getChildComponent(i)->getProperties().set("interest", "none");
 	getChildComponent(i)->repaint();
-	}
+	} 
 //clear vector containing child positions before movement
 selectedCompsOrigCoordinates.clear();
 selectedLineNumbers.clear();	

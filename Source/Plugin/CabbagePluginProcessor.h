@@ -32,6 +32,7 @@
 
 #ifndef Cabbage_No_Csound
 #include <csound.hpp>
+#include <csdebug.h>
 #include "cwindow.h"
 #include "../csPerfThread.hpp"
 #endif
@@ -72,6 +73,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
         int csCompileResult;
         void timerCallback();
         String csoundOutput;
+		String debuggerMessage;
         void changeListenerCallback(ChangeBroadcaster *source);
         String changeMessageType;
         bool guiON;
@@ -89,6 +91,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 		bool isAutomator;
 		bool isWinXP;
 		bool isNativeThreadRunning;
+		String csoundDebuggerOutput;
 
         //============== Csound related variables/methods ==============================
 #ifndef Cabbage_No_Csound
@@ -104,7 +107,10 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 		controlChannelInfo_s* csoundChanList;
         int numCsoundChannels;          //number of Csound channels
         static void messageCallback(CSOUND *csound, int attr, const char *fmt, va_list args);  //message callback function
-        int pos;
+        static void breakpointCallback(CSOUND *csound, int line, double instr, void *userdata);
+		int ksmpsOffset;
+		bool CS_DEBUG_MODE;
+		int pos;
         //Csound API functions for deailing with midi input
         static int OpenMidiInputDevice(CSOUND * csnd, void **userData, const char *devName);
         static int OpenMidiOutputDevice(CSOUND * csnd, void **userData, const char *devName);
@@ -161,6 +167,12 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 		
 public:
 		Array<int> dirtyControls;
+		bool CSOUND_DEBUG_MODE;
+		void setCsoundInstrumentBreakpoint(int instr, int line);
+		void removeCsoundInstrumentBreakpoint(int instr);
+		void continueCsoundDebug();		
+		void nextCsoundDebug();	
+		void cleanCsoundDebug();
     //==============================================================================
 
 #if defined(Cabbage_Build_Standalone) || (Cabbage_Plugin_Host)
@@ -251,6 +263,8 @@ public:
 	float automationAmp;
 	int automationParamID;
 	int mouseX, mouseY;
+	int breakCount;
+	Array<int> breakpointInstruments;
 
 
 	//==============================================================================
@@ -402,6 +416,10 @@ public:
                 return csoundOutput;
         }
 
+        inline String getDebuggerOutput(){
+                return csoundDebuggerOutput;
+        }
+		
         inline void setChangeMessageType(String text){
                 changeMessageType = text;
         }

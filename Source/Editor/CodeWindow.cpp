@@ -37,11 +37,18 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 	
 	textEditor = new CsoundCodeEditor(csoundDoc, &csoundToker);
 	csoundOutputComponent = new CsoundOutputComponent("Output");
+	csoundDebuggerComponent = new CsoundDebuggerComponent("Output");
 	restoreWindowStateFromString (appProperties->getUserSettings()->getValue ("mainWindowPos"));
 
 	setSize(1200, 800);
 	
+	#ifdef BUILD_DEBUGGER
+	splitBottomWindow = new SplitComponent(*csoundOutputComponent, *csoundDebuggerComponent, true);
+	splitBottomWindow->SetSplitBarPosition(getWidth()/2);
+	splitWindow = new SplitComponent(*textEditor, *splitBottomWindow, false);
+	#else
 	splitWindow = new SplitComponent(*textEditor, *csoundOutputComponent, false);
+	#endif
 	splitWindow->SetFitToParent(false);
 	textEditor->editor[textEditor->currentEditor]->addActionListener(this);
 	
@@ -94,7 +101,11 @@ CodeWindow::~CodeWindow(){
 //==============================================================================
 StringArray CodeWindow::getMenuBarNames()
 {
-	const char* const names[] = { "File", "Edit", "View", "Help", 0 };
+	#ifdef BUILD_DEBUGGER
+	const char* const names[] = { "File", "Edit", "View", "Debug", "Help", 0 };
+	#else
+	const char* const names[] = { "File", "Edit", "View", "Help", "Debug", 0 };
+	#endif
 	return StringArray (names);
 }
 
@@ -130,7 +141,11 @@ void CodeWindow::getAllCommands (Array <CommandID>& commands)
 								CommandIDs::viewOpcodeHelp,
 								CommandIDs::viewCsoundHelp,	
 								CommandIDs::viewCabbageHelp,
-								CommandIDs::viewCsoundOutput		
+								CommandIDs::viewCsoundOutput,
+								CommandIDs::setBreakpoint,
+								CommandIDs::removeBreakpoint,
+								CommandIDs::continueDebug,
+								CommandIDs::nextDebug
 								};
 	commands.addArray (ids, sizeof (ids) / sizeof (ids [0]));
 }
@@ -225,7 +240,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 	case CommandIDs::editColumnEdit:
 		result.setInfo (String("Column Edit mode"), String("Column Edit"), CommandCategories::edit, 0);
 		result.setTicked(isColumnModeEnabled);
-		result.addDefaultKeypress ('b', ModifierKeys::commandModifier);
+		result.addDefaultKeypress ('l', ModifierKeys::commandModifier);
 		break;
 	case CommandIDs::editToggleComments:
 		result.setInfo (String("Toggle comments"), String("Toggle comments"), CommandCategories::edit, 0);
@@ -289,6 +304,37 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 #endif
 		break;
 
+
+	case CommandIDs::setBreakpoint:
+		result.setInfo (String("Add Breakpoint"), String("Add Breakpoint"), CommandCategories::debug, 0);
+		result.addDefaultKeypress ('b', ModifierKeys::commandModifier);
+		break;
+		
+	case CommandIDs::removeBreakpoint:
+		result.setInfo (String("Remove Breakpoint"), String("Remove Breakpoint"), CommandCategories::debug, 0);
+		result.addDefaultKeypress ('b', ModifierKeys::commandModifier | ModifierKeys::shiftModifier);
+		break;
+		
+	case CommandIDs::continueDebug:
+#ifndef MACOSX
+		result.setInfo (String("Continue"), String("Continue"), CommandCategories::debug, 0);
+		result.defaultKeypresses.add(KeyPress(KeyPress::F5Key));
+#else
+		result.setInfo (String("Continue"), String("Continue"), CommandCategories::debug, 0);
+		result.addDefaultKeypress ('5', ModifierKeys::commandModifier);		
+#endif
+		break;
+
+	case CommandIDs::nextDebug:
+#ifndef MACOSX
+		result.setInfo (String("Next"), String("Next"), CommandCategories::debug, 0);
+		result.defaultKeypresses.add(KeyPress(KeyPress::F10Key));
+#else
+		result.setInfo (String("Next"), String("Next"), CommandCategories::debug, 0);
+		result.addDefaultKeypress ('7', ModifierKeys::commandModifier);		
+#endif
+		break;
+		
 	case CommandIDs::viewCabbageHelp:
 		result.setInfo (String("View Cabbage Manual"), String("View Cabbage Manual"), CommandCategories::help, 0);
 		result.defaultKeypresses.add(KeyPress(KeyPress::F1Key));
@@ -356,7 +402,7 @@ else if(topLevelMenuIndex==1)
 
 else if(topLevelMenuIndex==2)
 	{
-	m1.addCommandItem(&commandManager, CommandIDs::viewInstrumentsTabs);
+	//m1.addCommandItem(&commandManager, CommandIDs::viewInstrumentsTabs);
 	m1.addCommandItem(&commandManager, CommandIDs::viewCsoundOutput);
 	//m1.addCommandItem(&commandManager, CommandIDs::viewLinesNumbers);
 	//m1.addCommandItem(&commandManager, CommandIDs::viewOpcodeHelp);
@@ -368,15 +414,32 @@ else if(topLevelMenuIndex==2)
 	
 	return m1;
 	}
- 
+#ifdef BUILD_DEBUGGER
+else if(topLevelMenuIndex==3)
+	{
+	m1.addCommandItem(&commandManager, CommandIDs::setBreakpoint);
+	m1.addCommandItem(&commandManager, CommandIDs::removeBreakpoint);
+	m1.addCommandItem(&commandManager, CommandIDs::continueDebug);
+	m1.addCommandItem(&commandManager, CommandIDs::nextDebug);
+	return m1;
+	}
+	
+else if(topLevelMenuIndex==4)
+	{
+	m1.addCommandItem(&commandManager, CommandIDs::viewCsoundHelp);
+	m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
+	return m1;
+	}
+#else
+
 	
 else if(topLevelMenuIndex==3)
 	{
 	m1.addCommandItem(&commandManager, CommandIDs::viewCsoundHelp);
 	m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
 	return m1;
-	}
-
+	}	
+	#endif
 else return m1;
 }
 
@@ -551,7 +614,26 @@ bool CodeWindow::perform (const InvocationInfo& info)
 		{
 		Logger::writeToLog("show line numbers");
 		}		
+	
+	else if(info.commandID==CommandIDs::continueDebug)
+		{
+		sendActionMessage("ContinueDebug");
+		}
+
+	else if(info.commandID==CommandIDs::setBreakpoint)
+		{
+		textEditor->editor[0]->modifyInstrumentBreakpoint(false);
+		}
+	else if(info.commandID==CommandIDs::removeBreakpoint)
+		{
+		textEditor->editor[0]->modifyInstrumentBreakpoint(true);
+		}
 		
+	else if(info.commandID==CommandIDs::nextDebug)
+		{
+		sendActionMessage("NextDebug");
+		}
+	
 	else if(info.commandID==CommandIDs::addFromRepo)
 		{	
 		textEditor->editor[textEditor->currentEditor]->addToRepository();
@@ -690,12 +772,8 @@ void CodeWindow::setEditorColourScheme(String theme){
 }
 //==============================================================================
 void CodeWindow::actionListenerCallback(const String &message){
-	Logger::writeToLog(message);
-	if(message=="splash")
-		toggleTextWindows();
-	else if(message=="return focus to editor"){
-	textEditor->grabKeyboardFocus();		
-	}
+	sendActionMessage(message);
+	
 }
 //==============================================================================	
 void CodeWindow::setColourScheme(String theme){

@@ -156,10 +156,11 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	cabbageCsoundEditor->setSize(1000, 800);
 #endif
 
-	if(getPreference(appProperties, "ShowEditorConsole")==1)		
-	cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
-	else
-	cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight());
+			if(getPreference(appProperties, "ShowEditorConsole")==1)		
+			showEditorConsole(1);
+			else
+			showEditorConsole(0);
+			
 	cabbageCsoundEditor->addActionListener(this);
 	cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
 	
@@ -254,6 +255,9 @@ void StandaloneFilterWindow::timerCallback()
 	if(cabbageCsoundEditor){
 		if(cabbageCsoundEditor->csoundOutputComponent->getText()!=filter->getCsoundOutput())
 			cabbageCsoundEditor->csoundOutputComponent->setText(filter->getCsoundOutput());
+			#ifdef BUILD_DEBUGGER
+			cabbageCsoundEditor->csoundDebuggerComponent->setText(filter->getDebuggerOutput());
+			#endif
 	}
 		
 //	updateEditorOutputConsole=false;
@@ -317,6 +321,31 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message){
 
 	else if(message.contains("audioSettings")){
 	showAudioSettingsDialog();
+	}
+	
+	else if(message.contains("ContinueDebug")){
+	filter->continueCsoundDebug();
+	}
+	
+	else if(message.contains("RemoveAllBreakpoints")){
+	filter->cleanCsoundDebug();
+	}	
+	
+	else if(message.contains("NextDebug")){
+	filter->nextCsoundDebug();
+	}
+	
+	else if(message.contains("InstrumentBreakpoint")){
+	if(message.contains("Set"))
+		{
+		int instrNumber = message.substring(24).getIntValue();
+		filter->setCsoundInstrumentBreakpoint(instrNumber, 0);
+		}
+	else{
+		int instrNumber = message.substring(27).getIntValue();
+		filter->removeCsoundInstrumentBreakpoint(instrNumber);		
+		
+		}
 	}
 	
 	else if(message.contains("hideOutputWindow")){
@@ -704,7 +733,6 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
 	if(!standaloneMode){
 		m.addItem(8, String("Reload Instrument"));
-		//m.addItem(9, String("Rebuild GUI | Ctrl+u"));
 	/*
 	if(filter->getMidiDebug())
     m.addItem(9, TRANS("Show MIDI Debug Information"), true, true);
@@ -820,6 +848,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 						if(!cabbageCsoundEditor){
 						cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
 						cabbageCsoundEditor->setVisible(false);
+						
 				#ifdef LINUX
 						Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
 						rect.setHeight(rect.getHeight()-25);
@@ -849,10 +878,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
 						cabbageCsoundEditor->toFront(true);
 						
-						if(getPreference(appProperties, "ShowEditorConsole")==1)		
-						cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
-						else
-						cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight());
+			if(getPreference(appProperties, "ShowEditorConsole")==1)		
+			showEditorConsole(1);
+			else
+			showEditorConsole(0);
+						
 						
 						if(!outputConsole){
 						outputConsole = new CsoundMessageConsole("Csound Output Messages", 
@@ -1147,27 +1177,42 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 			if(getPreference(appProperties, "ExternalEditor")==0)
 			openTextEditor();
 	if(isAFileOpen == true)
-		if(filter->isGuiEnabled()){
-			
-		if(getPreference(appProperties, "ExternalEditor")==1)
-		csdFile = File(csdFile.getFullPathName());	
-			
-		startTimer(100);
-		filter->suspendProcessing(false);
-		((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
-		filter->setGuiEnabled(false);
+		if(filter->isGuiEnabled())
+			{
+			if(getPreference(appProperties, "ExternalEditor")==1)
+			csdFile = File(csdFile.getFullPathName());	
+			startTimer(100);
+			filter->suspendProcessing(false);
+			((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
+			filter->setGuiEnabled(false);
 		}
-		else{
-		((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(true);
-		filter->setGuiEnabled(true);
-		filter->suspendProcessing(true);
-		stopTimer();
-		//setPreference(appProperties, "ExternalEditor", 0);
+		else
+			{
+			((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(true);
+			filter->setGuiEnabled(true);
+			filter->suspendProcessing(true);
+			stopTimer();
+			//setPreference(appProperties, "ExternalEditor", 0);
 		}
 	else showMessage("", "Open or create a file first", &getLookAndFeel(), this);
 		}
 	}
 	repaint();
+}
+
+//==============================================================================
+// open text editor
+//==============================================================================
+void StandaloneFilterWindow::showEditorConsole(bool show)
+{
+if(getPreference(appProperties, "ShowEditorConsole")==(int)show){		
+	cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
+	#ifdef BUILD_DEBUGGER
+	cabbageCsoundEditor->splitBottomWindow->SetSplitBarPosition(cabbageCsoundEditor->getWidth()/2);
+	#endif
+	}
+	else
+	cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight());
 }
 
 //==============================================================================
@@ -1191,9 +1236,9 @@ void StandaloneFilterWindow::openTextEditor()
 #endif
 			cabbageCsoundEditor->toFront(true);	
 			if(getPreference(appProperties, "ShowEditorConsole")==1)		
-			cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
+			showEditorConsole(1);
 			else
-			cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight());
+			showEditorConsole(0);
 				
 			
 			if(getPreference(appProperties, "ShowConsoleWithEditor"))

@@ -52,6 +52,13 @@ namespace CommandIDs
 	static const int addFromRepo		= 2022;
 	static const int insertRecentEvent	= 2023;
 	static const int openPythonEditor	= 2024;
+	
+	static const int setBreakpoint		= 3000;
+	static const int removeBreakpoint	= 3001;
+	static const int continueDebug		= 3002;
+	static const int nextDebug			= 3003;
+	
+	
 	static const int viewCsoundHelp		= 4025;
 	static const int viewCabbageHelp	= 4026;
 	static const int viewCsoundOutput	= 4032;
@@ -67,6 +74,7 @@ namespace CommandCategories
     static const char* const file = "File";
     static const char* const edit = "Edit";
 	static const char* const view = "View";
+	static const char* const debug = "Debug";
 	static const char* const help = "Help";
 }
 

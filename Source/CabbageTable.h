@@ -182,6 +182,7 @@ public:
 	               Colour colour,
 				   bool readOnly,
 				   bool stackMode,
+				   int numberOfTables,
 	               ChangeListener* listener);
 	void fillTable (int tableID, Array<float, CriticalSection> csndInputData);
 	void tableToTop (int tableOnTop);

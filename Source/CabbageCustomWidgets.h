@@ -1287,7 +1287,7 @@ class CabbageTable : public Component
 	  tableNumbers(tblNumbers),
 	  drawingModes(drawingModes),
 	  resizingModes(resizingModes),
-	  stackMode(false)
+	  stackMode(true)
 	{
 		setName(name);
 
@@ -1396,7 +1396,7 @@ class CabbageTable : public Component
 	//Logger::writeToLog("test");	
 	}
 
-	// add tables to widget
+	// add tables to widgets
 	void addTables()
 	{
 	bool fixed, horizontal, toggleMaxMin, 	drawOriginal, drawFill;
@@ -1407,8 +1407,8 @@ class CabbageTable : public Component
 			setDrawingModeBooleans(fixed, horizontal, toggleMaxMin, drawOriginal, drawFill, drawingModes[i]);
 			table->addTable(name, channels[i], tableNumbers[i], tableSizes[i], fixed, 
 												horizontal, drawOriginal, toggleMaxMin, drawFill, 
-												resizingModes[i], minMax[i], Colours::findColourForName(tableColours[i], 
-												Colours::white), readOnly, stackMode, listener);
+												resizingModes[i], minMax[0], Colours::findColourForName(tableColours[i], 
+												Colours::white), readOnly, stackMode, tableNumbers.size(), listener);
 		}
 	else{	
 		setDrawingModeBooleans(fixed, horizontal, toggleMaxMin, drawOriginal, drawFill, drawingModes[0]);
@@ -1417,7 +1417,7 @@ class CabbageTable : public Component
 		table->addTable("table0", channels[0], tableNumbers[0], tableSizes[0], fixed, 
 												horizontal, drawOriginal, toggleMaxMin, drawFill, 
 												resizingModes[0], minMax[0], Colours::findColourForName(tableColours[0], 
-												Colours::white), readOnly, stackMode, listener);
+												Colours::white), readOnly, stackMode, tableNumbers.size(), listener);
 	}	
 		
 	}

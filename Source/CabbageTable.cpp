@@ -798,6 +798,7 @@ void CabbageTableManager::paint(Graphics& g)
 {
 	g.setColour(CabbageUtils::getDarkerBackgroundSkin());
 	g.fillAll();
+	//this needs to be updated so that we can stack tables on top of each other
 
 	// Amp horizontal markers...
 	if(getHeight()>40){
@@ -848,11 +849,16 @@ void CabbageTableManager::addTable (String name,
 									Colour colour, 
 									bool readonly,
 									bool stackMode,
+									int numberOfTables,
 									ChangeListener* listener)
 {
 	int i = tables.size();
 	tables.add (new Table(channel, tableNumber, tableSize, fixedEnv, drawHoriz, drawOrig, colour));
-	tables[i]->setBounds (0, 0, getWidth(), getHeight());
+	if(stackMode==true)
+		tables[i]->setBounds (0, i*(getHeight()/(numberOfTables)), getWidth(), (getHeight()/(numberOfTables)));
+	else
+		tables[i]->setBounds (0, 0, getWidth(), getHeight());
+
 	tables[i]->addChangeListener(listener);
 	tables[i]->setOriginalWidth (getWidth());
 	tables[i]->setViewWidth(getWidth());
@@ -1044,15 +1050,21 @@ void CabbageTableManager::mouseDown (const MouseEvent& e)
 		else{
 				for(int i=0;i<tables.size();i++)
 					{
-					if(tables[i]->isCurrentlyOnTop)
+					if(tables[i]->toggleMaxMin)
 						{
-						if(tables[i]->toggleMaxMin)
+						if(tables[i]->getBounds().contains(Point<int>(e.getMouseDownX(), e.getMouseDownY())))
 							{
 							tables[i]->toggleMinMaxAmp(e.getMouseDownX());
 							tables[i]->changeMessage = "updateFunctionTable";
 							tables[i]->sendChangeMessage();
 							}
-						//tables[i]->setYValueOfHandle(e.getMouseDownX(), e.getMouseDownY());
+						}
+
+					else if(tables[i]->isCurrentlyOnTop)
+						{
+							tables[i]->toggleMinMaxAmp(e.getMouseDownX());
+							tables[i]->changeMessage = "updateFunctionTable";
+							tables[i]->sendChangeMessage();
 						}
 					}
 			

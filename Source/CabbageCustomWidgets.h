@@ -618,14 +618,6 @@ public:
 		//if widget is a plant intercept mouse events
 		if(cAttr.getStringProp(CabbageIDs::plant).isNotEmpty())
 		this->setInterceptsMouseClicks(true, true);
-		
-		if(!cAttr.getNumProp(CabbageIDs::visible))
-		{
-			setVisible(false);
-			CabbageUtils::showMessage("visible");
-		}
-		else
-			setVisible(true);
 		repaint();
 	}
 	~CabbageImage(){
@@ -648,30 +640,35 @@ public:
 			setVisible(false);
 		else
 			setVisible(true);
-		Logger::writeToLog(shape);
 		repaint();
 	}
 	
 	void paint (Graphics& g){
 		//Logger::writeToLog("in paint routine");
 		if(File(file).existsAsFile()){
+			Logger::writeToLog("drawing file");
 		g.drawImage(img, 0, 0, width, height, 0, 0, img.getWidth(), img.getHeight());
 		}
 		else{
-			
-			if(shape.contains("rounded")){
+			if(shape=="rounded"){
+				g.fillAll(Colours::transparentBlack);
+				Logger::writeToLog("rounded");
 				g.setColour(Colour::fromString(outline));
-				g.drawRoundedRectangle(0,0, width, height, width*.02, line);
+				g.drawRoundedRectangle(0,0, width, height, width*.2, line);
 				g.setColour(Colour::fromString(colour));
 				g.fillRoundedRectangle(line,line, width-(line*2), height-(line*2), width*.02);				
 			}
-			else if(shape.contains("ellipse")){
+			if(shape=="ellipse"){
+				g.fillAll(Colours::transparentBlack);
+				Logger::writeToLog("inside ellispe");
 				g.setColour(Colour::fromString(outline));
 				g.drawEllipse(0,0, width, height, line);
 				g.setColour(Colour::fromString(colour));
 				g.fillEllipse(line,line, width-(line*2), height-(line*2));				
 			}
-			else if(shape.contains("sharp")){
+			else if(shape=="sharp"){
+				g.fillAll(Colours::transparentBlack);
+				Logger::writeToLog("sharp");
 				g.setColour(Colour::fromString(outline));
 				g.drawRect(0,0, width, height, line);
 				g.setColour(Colour::fromString(colour));

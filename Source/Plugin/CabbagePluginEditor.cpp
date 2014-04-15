@@ -957,8 +957,10 @@ void CabbagePluginAudioProcessorEditor::mouseMove(const MouseEvent& event)
 {
 	//if(!dynamic_cast<CabbageImage*>(event.eventComponent))
 	//{
-	getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousex, event.getPosition().getX(), "");
-	getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, event.getPosition().getY(), "");
+	int X = event.eventComponent->getPosition().getX();
+	int Y = event.eventComponent->getPosition().getY();
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousex, event.getPosition().getX()+X, "");
+	getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, event.getPosition().getY()+Y, "");
 	//}
 }
 
@@ -985,10 +987,7 @@ void CabbagePluginAudioProcessorEditor::mouseDown(const MouseEvent& event)
 			}
 			
 		}
-	}
-
-	getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousex, event.getPosition().getX(), "");
-	getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, event.getPosition().getY(), "");		
+	}		
 	if(event.mods.isLeftButtonDown())
 	getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousedownleft, 1, "");
 	else if(event.mods.isRightButtonDown())
@@ -1417,12 +1416,14 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 		//if control is embedded into a plant don't add mouse listener
 		if(cAttr.getStringProp("plant").isEmpty())
 		layoutComps[idx]->addMouseListener(this, true);
-		
+
 		dynamic_cast<CabbageGroupbox*>(layoutComps[idx])->addChangeListener(this);
 		
+		//set visiblilty
+		layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));		
 		cAttr.setStringProp(CabbageIDs::type, "groupbox");
-        layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
-        layoutComps[idx]->getProperties().set(String("groupLine"), cAttr.getNumProp(CabbageIDs::line));
+		layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
+		layoutComps[idx]->getProperties().set(String("groupLine"), cAttr.getNumProp(CabbageIDs::line));
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
 
@@ -1486,9 +1487,13 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 
 	}
 
+	//set visiblilty
+	layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+	
 	//if control is embedded into a plant don't add mouse listener
 	if(cAttr.getStringProp("plant").isEmpty())
-	layoutComps[idx]->addMouseListener(this, true);	
+	layoutComps[idx]->addMouseListener(this, true);
+	dynamic_cast<CabbageImage*>(layoutComps[idx])->addChangeListener(this);
 	layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
 	layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 	layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
@@ -1499,17 +1504,19 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertLineSeparator(CabbageGUIClass &cAttr)
 {
-        layoutComps.add(new CabbageLine(true, cAttr.getStringProp(CabbageIDs::colour)));
-        int idx = layoutComps.size()-1;
+	layoutComps.add(new CabbageLine(true, cAttr.getStringProp(CabbageIDs::colour)));
+	int idx = layoutComps.size()-1;
 
-        float left = cAttr.getNumProp(CabbageIDs::left);
-        float top = cAttr.getNumProp(CabbageIDs::top);
-        float width = cAttr.getNumProp(CabbageIDs::width);
-        float height = cAttr.getNumProp(CabbageIDs::height);
-        setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
-        layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
-		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
-		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+	float left = cAttr.getNumProp(CabbageIDs::left);
+	float top = cAttr.getNumProp(CabbageIDs::top);
+	float width = cAttr.getNumProp(CabbageIDs::width);
+	float height = cAttr.getNumProp(CabbageIDs::height);
+	setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
+	layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
+	layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+	layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+		//set visiblilty
+	layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -1517,17 +1524,7 @@ void CabbagePluginAudioProcessorEditor::InsertLineSeparator(CabbageGUIClass &cAt
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertTransport(CabbageGUIClass &cAttr)
 {
-        float left = cAttr.getNumProp(CabbageIDs::left);
-        float top = cAttr.getNumProp(CabbageIDs::top);
-        float width = cAttr.getNumProp(CabbageIDs::width);
-        float height = cAttr.getNumProp(CabbageIDs::height);
-		
-        layoutComps.add(new CabbageTransportControl(width, height));
-        int idx = layoutComps.size()-1;
-		setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
-        layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
-		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
-		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+		jassert(1);
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -1535,20 +1532,22 @@ void CabbagePluginAudioProcessorEditor::InsertTransport(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertLabel(CabbageGUIClass &cAttr)
 {
-        layoutComps.add(new CabbageLabel(cAttr));      
-        int idx = layoutComps.size()-1;
+	layoutComps.add(new CabbageLabel(cAttr));      
+	int idx = layoutComps.size()-1;
 
-        float left = cAttr.getNumProp(CabbageIDs::left);
-        float top = cAttr.getNumProp(CabbageIDs::top);
-        float width = cAttr.getNumProp(CabbageIDs::width);
-        float height = cAttr.getNumProp(CabbageIDs::height);
-        setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
-		//if control is embedded into a plant don't add mouse listener
-		if(cAttr.getStringProp("plant").isEmpty())
-		layoutComps[idx]->addMouseListener(this, true);
-        cAttr.setStringProp(CabbageIDs::type, "label");
-		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
-		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+	float left = cAttr.getNumProp(CabbageIDs::left);
+	float top = cAttr.getNumProp(CabbageIDs::top);
+	float width = cAttr.getNumProp(CabbageIDs::width);
+	float height = cAttr.getNumProp(CabbageIDs::height);
+	setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
+	//if control is embedded into a plant don't add mouse listener
+	if(cAttr.getStringProp("plant").isEmpty())
+	layoutComps[idx]->addMouseListener(this, true);
+	cAttr.setStringProp(CabbageIDs::type, "label");
+	layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+	layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+	//set visiblilty
+	layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -1600,6 +1599,8 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
         //add a dummy control to our layoutComps vector so that our filters abstract layout vector 
         //is the same size as our editors one. 
         layoutComps.add(new Component());
+		//set visiblilty
+		layoutComps[layoutComps.size()-1]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1607,7 +1608,6 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIClass &cAttr)
 {
-
         layoutComps.add(new CabbageTextbox(cAttr));
         int idx = layoutComps.size()-1;
         float left = cAttr.getNumProp(CabbageIDs::left);
@@ -1622,6 +1622,8 @@ void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIClass &cAtt
 		layoutComps[idx]->addMouseListener(this, true);
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+		//set visiblilty
+		layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //      Textbox widget. 
@@ -1649,6 +1651,8 @@ void CabbagePluginAudioProcessorEditor::InsertTextbox(CabbageGUIClass &cAttr)
 		dynamic_cast<CabbageTextbox*>(layoutComps[idx])->editor->setLookAndFeel(lookAndFeel);
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+		//set visiblilty
+		layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //      Info button. 
@@ -1670,6 +1674,10 @@ void CabbagePluginAudioProcessorEditor::InsertInfoButton(CabbageGUIClass &cAttr)
         ((CabbageButton*)layoutComps[idx])->button->addListener(this);
         ((CabbageButton*)layoutComps[idx])->button->setButtonText(cAttr.getStringProp(CabbageIDs::text));
 		((CabbageButton*)layoutComps[idx])->button->getProperties().set(String("index"), idx);
+			
+		//set visiblilty
+		layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));		
+
 		//if control is embedded into a plant don't add mouse listener
 		if(cAttr.getStringProp("plant").isEmpty())
 		layoutComps[idx]->addMouseListener(this, true);
@@ -1703,6 +1711,9 @@ void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
 		layoutComps[idx]->addMouseListener(this, true);
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+
+		//set visiblilty
+		layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -1732,6 +1743,8 @@ void CabbagePluginAudioProcessorEditor::InsertRecordButton(CabbageGUIClass &cAtt
 		layoutComps[idx]->addMouseListener(this, true);
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+		//set visiblilty
+		layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //     Soundfiler 
@@ -1754,6 +1767,9 @@ void CabbagePluginAudioProcessorEditor::InsertSoundfiler(CabbageGUIClass &cAttr)
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
 		((CabbageSoundfiler*)layoutComps[idx])->addChangeListener(this);
+		//set visiblilty
+		layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1783,6 +1799,8 @@ void CabbagePluginAudioProcessorEditor::InsertDirectoryList(CabbageGUIClass &cAt
 		//if control is embedded into a plant don't add mouse listener
 		if(cAttr.getStringProp("retoplant").isEmpty())
 		layoutComps[idx]->addMouseListener(this, true);
+		//set visiblilty
+		layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 
 }
 
@@ -1831,6 +1849,8 @@ void CabbagePluginAudioProcessorEditor::InsertMIDIKeyboard(CabbageGUIClass &cAtt
         layoutComps[idx]->setName("midiKeyboard");
 		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+		//set visiblilty
+		layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 
 //=======================================================================================
@@ -1857,6 +1877,8 @@ void CabbagePluginAudioProcessorEditor::InsertSlider(CabbageGUIClass &cAttr)
 		comps[idx]->addMouseListener(this, true);
 		comps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		comps[idx]->getProperties().set(CabbageIDs::index, idx);
+		//set visiblilty
+		comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 //+++++++++++++++++++++++++++++++++++++++++++
 //                                     numberbox/slider
@@ -1879,6 +1901,8 @@ void CabbagePluginAudioProcessorEditor::InsertNumberBox(CabbageGUIClass &cAttr)
 		comps[idx]->addMouseListener(this, true);
 		comps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		comps[idx]->getProperties().set(CabbageIDs::index, idx);
+		//set visiblilty
+		comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 
                                         /******************************************/
@@ -1958,6 +1982,8 @@ void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
 		comps[idx]->addMouseListener(this, true);
 		comps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		comps[idx]->getProperties().set(CabbageIDs::index, idx);
+		//set visiblilty
+		comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -1984,6 +2010,8 @@ void CabbagePluginAudioProcessorEditor::InsertCheckBox(CabbageGUIClass &cAttr)
 		comps[idx]->addMouseListener(this, true);
 		comps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		comps[idx]->getProperties().set(CabbageIDs::index, idx);
+		//set visiblilty
+		comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 
                                                 /*****************************************************/
@@ -2293,6 +2321,8 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 		comps[idx]->addMouseListener(this, true);
 		comps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
 		comps[idx]->getProperties().set(CabbageIDs::index, idx);
+		//set visiblilty
+		comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 
                                         /******************************************/
@@ -2400,8 +2430,8 @@ don't need to recreate the automation
 		idx = comps.size()-1;
 		getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->paramIndex = idx;
 		Logger::writeToLog("Number of XYAutos:"+String(getFilter()->getXYAutomaterSize()));
-		if(!cAttr.getNumProp(CabbageIDs::visible))
-		comps[idx]->setVisible(false);
+		//set visiblilty
+		comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));	
 
 		}
 
@@ -2409,9 +2439,6 @@ don't need to recreate the automation
 				float top = cAttr.getNumProp(CabbageIDs::top);
 				float width = cAttr.getNumProp(CabbageIDs::width);
 				float height = cAttr.getNumProp(CabbageIDs::height);
-
-
-
 				//check to see if widgets is anchored
 				//if it is offset its position accordingly.
 				int relY=0,relX=0;
@@ -2526,8 +2553,9 @@ Array<int> tableSizes;
 			
 		//finally, add tables to widget
 		((CabbageTable*)layoutComps[idx])->addTables();
-		if(!cAttr.getNumProp(CabbageIDs::visible))
-		layoutComps[idx]->setVisible(false);		
+
+		//set visiblilty
+		comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));		
 		//if control is embedded into a plant don't add mouse listener
 		if(cAttr.getStringProp("reltoplant").isEmpty())
 		layoutComps[idx]->addMouseListener(this, true);

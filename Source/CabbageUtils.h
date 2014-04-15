@@ -480,6 +480,14 @@ static String getPreference(ApplicationProperties* appPrefs, String pref, String
 	return appPrefs->getUserSettings()->getValue(pref, "");
 }
 
+//================================================================================
+static void toggleOnOffPreference(ApplicationProperties* appPrefs, String pref){	
+		if(getPreference(appPrefs, pref)==0)
+			appPrefs->getUserSettings()->setValue(pref, var(1));
+		else
+			appPrefs->getUserSettings()->setValue(pref, var(0));
+}
+//====================================================================================================
 static void setPreference(ApplicationProperties* appPrefs, String pref, int value){	
 	appPrefs->getUserSettings()->setValue(pref, var(value));
 }

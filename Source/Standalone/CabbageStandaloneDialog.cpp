@@ -848,7 +848,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 						if(!cabbageCsoundEditor){
 						cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
 						cabbageCsoundEditor->setVisible(false);
-						
+			
 				#ifdef LINUX
 						Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
 						rect.setHeight(rect.getHeight()-25);
@@ -856,7 +856,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 				#elif WIN32
 						cabbageCsoundEditor->setFullScreen(true);
 				#else
-							cabbageCsoundEditor->setSize(1000, 800);
+						cabbageCsoundEditor->setSize(1000, 800);
 				#endif
 						cabbageCsoundEditor->addActionListener(this);
 						cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
@@ -1045,25 +1045,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
 	//----- show console with editor -------------
 	else if(options==20){		
-	if(getPreference(appProperties, "ShowConsoleWithEditor"))
-		setPreference(appProperties, "ShowConsoleWithEditor", 0);
-	
-	else
-		setPreference(appProperties, "ShowConsoleWithEditor", 1);
+	toggleOnOffPreference(appProperties, "ShowConsoleWithEditor");
 	}
-	/*
-	//------- cabbage dance ------
-	else if(options==99){
-		if(!cabbageDance){
-		startTimer(20);
-		cabbageDance = true;
-		}
-		else{
-		stopTimer();
-		cabbageDance = false;
-		}
-	}
-	*/
+
 	//------- preference Csound manual dir ------
 	else if(options==200){
 		String dir = getPreference(appProperties, "CsoundHelpDir", "");
@@ -1105,10 +1089,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	}
 	
 	else if(options==204){
-		if(getPreference(appProperties, "UseCabbageIO")==0) 
-			setPreference(appProperties, "UseCabbageIO", 1);
-		else
-			setPreference(appProperties, "UseCabbageIO", 0);
+	toggleOnOffPreference(appProperties, "UseCabbageIO");
 	}	
 
 	//--------using Cabbage-Csound
@@ -1148,26 +1129,17 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	
 	//------- preference plugin info ------
 	else if(options==201){
-		if(getPreference(appProperties, "DisablePluginInfo")==0)
-			appProperties->getUserSettings()->setValue("DisablePluginInfo", var(1));
-		else
-			appProperties->getUserSettings()->setValue("DisablePluginInfo", var(0));
+	toggleOnOffPreference(appProperties, "DisablePluginInfo");
 	}
 	
 	//------- preference popup display ------
 	else if(options==207){
-		if(getPreference(appProperties, "EnablePopupDisplay")==0)
-			appProperties->getUserSettings()->setValue("EnablePopupDisplay", var(1));
-		else
-			appProperties->getUserSettings()->setValue("EnablePopupDisplay", var(0));
+	toggleOnOffPreference(appProperties, "EnablePopupDisplay");
 	}
 	
 	//------- preference disable gui edit warning ------
 	else if(options==202){
-		if(getPreference(appProperties, "DisableGUIEditModeWarning")==0) 
-			setPreference(appProperties, "DisableGUIEditModeWarning", 1);
-		else
-			setPreference(appProperties, "DisableGUIEditModeWarning", 0);
+	toggleOnOffPreference(appProperties, "DisableGUIEditModeWarning");
 	}
 	//------- enable GUI edit mode------
 	else if(options==100){

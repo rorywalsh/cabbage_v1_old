@@ -58,11 +58,11 @@ extern CabbageLookAndFeelBasic* lookAndFeelBasic;
 // CabbagePluginAudioProcessor definition
 //==============================================================================
 class CabbagePluginAudioProcessor  : public AudioProcessor,
-                                                                         public CabbageUtils,
-                                                                         public ChangeBroadcaster,
-                                                                         public Timer,
-																		 public ActionBroadcaster,
-																		 public ChangeListener
+									 public CabbageUtils,
+									 public ChangeBroadcaster,
+									 public Timer,
+									 public ActionBroadcaster,
+									 public ChangeListener
 {
     //==============================================================================
         File csdFile;

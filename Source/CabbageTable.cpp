@@ -411,58 +411,78 @@ void Table::paint (Graphics& g)
 		if((int)handle->getProperties().getWithDefault("curveType", 1)==0)
 		{	
 		//for linear envelopes
-		if(i==0){
-			envPath.startNewSubPath((handle->getX() + handle->getRight()) / 2,
-									 (handle->getY() + handle->getBottom()) / 2);
-		    if(toggleMaxMin)
-			 g.setColour(currColour);
-			else	
-			 g.setColour(currColour.darker(.7f));
-				 
-			if(drawHorizontalSegments==true && fixedEnvelope == true)
-			if(drawFill==true)
-			g.fillRect(0, jmax(handle->getY(), 0),  jmax(handle->getWidth(), 0), jmax(0, getHeight()));	
-			if(toggleMaxMin){
-			g.setColour(Colours::black);	
-			g.drawRect(0, jmax(handle->getY(), 0),  jmax(handle->getWidth(), 0), jmax(0, getHeight()), 1);
-			g.setColour(currColour);	
-			}
-			prevX = handle->getX();
-			prevY = handle->getY();
+		if(i==0)
+			{
+				envPath.startNewSubPath((handle->getX() + handle->getRight()) / 2,
+										 (handle->getY() + handle->getBottom()) / 2);
+				if(toggleMaxMin)
+					g.setColour(currColour);
+				else	
+					g.setColour(currColour.darker(.9f));
+					 
+				if(drawHorizontalSegments==true && fixedEnvelope == true)
+				if(drawFill==true && !toggleMaxMin)
+					g.fillRect(0, jmax(handle->getY(), 0),  jmax(handle->getWidth()-1, 0), jmax(0, getHeight()));	
+				else if(drawFill==true && toggleMaxMin)
+					{
+						//g.setColour(Colours::red);
+						g.fillRect(0, jmax(handle->getY(), 0),  jmax(handle->getWidth(), 0), jmax(0, getHeight()));		
+						g.drawRect(0, jmax(handle->getY(), 0),  jmax(handle->getWidth(), 0), jmax(0, getHeight()), 2);
+						g.setColour(currColour);	
+					}
+					
+				prevX = handle->getX();
+				prevY = handle->getY();
 			}
 		else 
 			{
-			if(drawHorizontalSegments==true && fixedEnvelope == false){
-			if(drawFill==true)
-			g.fillRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth(), 0), jmax(0, getHeight()));
-			if(toggleMaxMin){
-			g.setColour(Colours::black);	
-			g.drawRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth(), 0), jmax(0, getHeight()), 1);
-			g.setColour(currColour);	
-			}
-			envPath.lineTo((handle->getX() + handle->getRight()) / 2, (prevY+(handle->getHeight()/2)));				
-			envPath.lineTo((handle->getX() + handle->getRight()) / 2, (handle->getY() + handle->getBottom()) / 2);
-			
-			}
-			else if(drawHorizontalSegments==true && fixedEnvelope==true){
-			if(drawFill==true)
-			g.fillRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth(), 0), jmax(0, getHeight()));
-			if(toggleMaxMin){
-			g.setColour(Colours::black);	
-			g.drawRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth(), 0), jmax(0, getHeight()), 1);
-			g.setColour(currColour);	
-			}
+			if(drawHorizontalSegments==true && fixedEnvelope == false)
+				{
+					if(drawFill==true)
+					g.fillRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth()-1, 0), jmax(0, getHeight()));
+					
+					if(toggleMaxMin)
+						g.setColour(currColour);
+					else	
+						g.setColour(currColour.darker(.9f));					
+					
+					if(toggleMaxMin)
+						{
+							//g.setColour(Colours::yellow);	
+							g.drawRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth()-1, 0), jmax(0, getHeight()), 2);
+							g.setColour(currColour);	
+						}
+						
+					envPath.lineTo((handle->getX() + handle->getRight()) / 2, (prevY+(handle->getHeight()/2)));				
+					envPath.lineTo((handle->getX() + handle->getRight()) / 2, (handle->getY() + handle->getBottom()) / 2);
+					
+				}
+			else if(drawHorizontalSegments==true && fixedEnvelope==true)
+				{
+					if(drawFill==true)
+					g.fillRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth()-1, 0), jmax(0, getHeight()));
 				
-			envPath.lineTo((handle->getX()+1),
+					if(toggleMaxMin)
+						g.setColour(currColour);
+					else	
+						g.setColour(currColour.darker(.9f));
+	
+					if(toggleMaxMin)
+						{	
+						g.drawRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth()-1, 0), jmax(0, getHeight()), 2);
+						g.setColour(currColour);	
+						}
+				
+					envPath.lineTo((handle->getX()+1),
 								(prevY+(handle->getHeight()/2)));	
-			envPath.lineTo((handle->getX()+1),
+					envPath.lineTo((handle->getX()+1),
 								(handle->getY() + handle->getBottom()) / 2);				
 				
-			}
+				}
 			else{
-			envPath.lineTo((handle->getX() + handle->getRight()) / 2,
-								(handle->getY() + handle->getBottom()) / 2);					
-			}
+					envPath.lineTo((handle->getX() + handle->getRight()) / 2,
+									(handle->getY() + handle->getBottom()) / 2);					
+				}
 			prevY = handle->getY();
 			prevX = handle->getX();
 		}
@@ -546,7 +566,7 @@ void Table::paint (Graphics& g)
 //====================================================
 void Table::mouseDown (const MouseEvent& e)
 {
-	/* With shift button down a new envelope handle is added. No zoom. */
+	
 	if(editMode==true)
 	if(fixedEnvelope==false)
 	if(e.mods.isShiftDown() == true)
@@ -603,7 +623,7 @@ void Table::createHandlesFromTable(int points)
 	Colour col;
 	editMode=true;
 	int x;
-	float end = getWidth()*.99;
+	float end = getWidth();
 	float scaleX = .99;
 
 	if(points>tableSize){
@@ -620,7 +640,7 @@ void Table::createHandlesFromTable(int points)
 	else
 		col = activeColour.contrasting(.5);
 
-	addHandle(-4, convertAmpToPixel(tableData.amps[0]), true, handleWidth, col); 
+	addHandle(0, convertAmpToPixel(tableData.amps[0]), true, handleWidth-2, col); 
 	
 	for(int i=segmentIncr;i<tableSize;i+=segmentIncr){
 			int x = int((float(i)/(float)tableSize)*getWidth()*scaleX);
@@ -634,9 +654,9 @@ void Table::toggleMinMaxAmp(int x)
 for(int i=0;i<handles.size();i++)
 		if((x> handles[i]->getX()) && (x<handles[i]->getRight())){
 			if(handles[i]->getPosition().getY()>1)
-			handles[i]->setTopLeftPosition(handles[i]->getX(), 0);
+			handles[i]->setTopLeftPosition((i==0 ? handles[i]->getX() : handles[i]->getX()), 0);
 			else
-			handles[i]->setTopLeftPosition(handles[i]->getX(), getHeight());
+			handles[i]->setTopLeftPosition((i==0 ? handles[i]->getX() : handles[i]->getX()), getHeight());
 			
 			repaint();
 		}
@@ -661,8 +681,6 @@ if(hand){
 	//PathFlatteningIterator flatpath(envPath);
 	Logger::writeToLog("Table Length in Pixels:"+String(getWidth()));
 	Logger::writeToLog("Table Length in samples:"+String(tableSize));
-	//while(flatpath.next())
-		//Logger::writeToLog("Next pos:"+String(flatpath.x2));
 	
 	
 	if(hand->changeMessage=="removeHandle"){
@@ -678,8 +696,6 @@ if(hand){
 	else
 	sendChangeMessage();		
 }
-
-
 
 CabbageEnvelopeHandleComponent* Table::addHandle(int x, int y, bool fixedPos, int width, Colour col)
 {
@@ -794,13 +810,15 @@ void CabbageTableManager::paint(Graphics& g)
 		g.drawLine (0, convertAmpToPixel(0), getWidth(), convertAmpToPixel(0), 0.3);
 	}
 	else{
+	//draw vertical markers
+/*	
 	float incr = (float)getWidth()/(float)tableSize;
 	g.setColour (Colour::fromRGBA (220, 220, 240, 255));
 	for(int i=0;i<getWidth();i+=(incr))	
 			g.drawLine(i, 0, i, getHeight()-.1, 0.1);
 	g.drawLine (0, getHeight()-.1, getWidth(), getHeight()-.1, 0.1);
 	g.drawLine (0, 0, getWidth(), 0, 0.1);		
-		
+	*/	
 	}
 	// update tables
 	for (int i=0; i<tables.size(); ++i) 
@@ -829,6 +847,7 @@ void CabbageTableManager::addTable (String name,
 									Point<float> minMax,
 									Colour colour, 
 									bool readonly,
+									bool stackMode,
 									ChangeListener* listener)
 {
 	int i = tables.size();
@@ -937,7 +956,7 @@ void CabbageTableManager::fillTable (int tableIndex, Array<float, CriticalSectio
 	if(tables[tableIndex]->drawHorizontalSegments &&
 		tables[tableIndex]->fixedEnvelope &&
 		tables[tableIndex]->toggleMaxMin){
-		tables[tableIndex]->createHandlesFromTable(32);
+		tables[tableIndex]->createHandlesFromTable(16);
 		tables[tableIndex]->setInterceptsMouseClicks(false,false);
 	}	
 	

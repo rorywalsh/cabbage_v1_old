@@ -2555,7 +2555,7 @@ Array<int> tableSizes;
 		((CabbageTable*)layoutComps[idx])->addTables();
 
 		//set visiblilty
-		comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));		
+		layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));		
 		//if control is embedded into a plant don't add mouse listener
 		if(cAttr.getStringProp("reltoplant").isEmpty())
 		layoutComps[idx]->addMouseListener(this, true);
@@ -2565,9 +2565,9 @@ Array<int> tableSizes;
 		int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();				
 		for(int y=0;y<numberOfTables;y++)
 			{
-			tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, 0);
+			tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, y);
 			Array <float, CriticalSection> tableValues = getFilter()->getTableFloats(tableNumber);
-			((CabbageTable*)layoutComps[idx])->fillTable(0, tableValues);		
+			((CabbageTable*)layoutComps[idx])->fillTable(y, tableValues);		
 			}			
 		
 }
@@ -3046,7 +3046,7 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 				int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();				
 				for(int y=0;y<numberOfTables;y++)
 					{
-					int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, 0);
+					int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
 					tableValues.clear();
 					tableValues = getFilter()->getTableFloats(tableNumber);					
 					((CabbageTable*)layoutComps[i])->fillTable(y, tableValues);		

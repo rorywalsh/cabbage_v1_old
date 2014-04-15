@@ -181,6 +181,7 @@ public:
 				   Point<float> maxMin,
 	               Colour colour,
 				   bool readOnly,
+				   bool stackMode,
 	               ChangeListener* listener);
 	void fillTable (int tableID, Array<float, CriticalSection> csndInputData);
 	void tableToTop (int tableOnTop);

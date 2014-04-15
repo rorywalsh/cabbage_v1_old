@@ -594,6 +594,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::shape, "rounded");		
 		cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
 		cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::line, 0);
 		cabbageIdentifiers.set(CabbageIDs::popup, 0);
 		cabbageIdentifiers.set(CabbageIDs::plant, "");
 		cabbageIdentifiers.set(CabbageIDs::type, "image");

@@ -611,8 +611,6 @@ public:
 							line(cAttr.getNumProp(CabbageIDs::line))
 	{
 		setName(name);
-		Logger::writeToLog("image constructor");
-		//toBack();
 		img = ImageCache::getFromFile (File (file));
 		this->setWantsKeyboardFocus(false);
 		//if widget is a plant intercept mouse events
@@ -659,14 +657,13 @@ public:
 				g.fillRoundedRectangle(line,line, width-(line*2), height-(line*2), width*.02);				
 			}
 			if(shape=="ellipse"){
-				g.fillAll(Colours::transparentBlack);
 				Logger::writeToLog("inside ellispe");
 				g.setColour(Colour::fromString(outline));
 				g.drawEllipse(0,0, width, height, line);
 				g.setColour(Colour::fromString(colour));
 				g.fillEllipse(line,line, width-(line*2), height-(line*2));				
 			}
-			else if(shape=="sharp"){
+			if(shape=="sharp"){
 				g.fillAll(Colours::transparentBlack);
 				Logger::writeToLog("sharp");
 				g.setColour(Colour::fromString(outline));
@@ -1267,7 +1264,7 @@ class CabbageTable : public Component
 	Array< Point<float> > minMax;
 	float alpha;
 	public:
-	bool readOnly;
+	bool readOnly, stackMode;
 	ScopedPointer<GroupComponent> groupbox;
 	ScopedPointer<CabbageTableManager> table;
 	ScopedPointer<TextButton> button;
@@ -1289,7 +1286,8 @@ class CabbageTable : public Component
 	  listener(listen),
 	  tableNumbers(tblNumbers),
 	  drawingModes(drawingModes),
-	  resizingModes(resizingModes)
+	  resizingModes(resizingModes),
+	  stackMode(false)
 	{
 		setName(name);
 
@@ -1340,6 +1338,7 @@ class CabbageTable : public Component
 	void setDrawingModeBooleans(bool &fixedEnv, bool &drawHorizontal, bool &toggleMaxMin, bool &drawOriginal, bool &drawFill, int mode)
 	{
 	if(mode==1){
+		//horizontal draw mode, no fill
 		drawHorizontal = true;
 		fixedEnv = false;
 		toggleMaxMin= false;
@@ -1347,6 +1346,7 @@ class CabbageTable : public Component
 		drawFill = false;
 		}
 	else if(mode==2){
+		//normal but fixed points
 		drawHorizontal = false;
 		fixedEnv = true;	
 		toggleMaxMin= false;
@@ -1354,6 +1354,7 @@ class CabbageTable : public Component
 		drawFill = false;
 		}
 	else if(mode==3){
+		//horizontal but with fixed points
 		drawHorizontal = true;
 		fixedEnv = true;
 		toggleMaxMin= false;
@@ -1361,6 +1362,15 @@ class CabbageTable : public Component
 		drawFill = false;
 		}
 	else if(mode==4){
+		//horizontal with fill
+		drawHorizontal = true;
+		fixedEnv = true;
+		toggleMaxMin= false;	
+		drawOriginal = true;
+		drawFill = true;
+		}
+	else if(mode==5){
+		//on/off horizontal with fill 
 		drawHorizontal = true;
 		fixedEnv = true;
 		toggleMaxMin= true;	
@@ -1368,6 +1378,7 @@ class CabbageTable : public Component
 		drawFill = true;
 		}
 	else{
+		//normal drawing mode
 		drawHorizontal = false;
 		fixedEnv = false;
 		toggleMaxMin= false;
@@ -1385,8 +1396,9 @@ class CabbageTable : public Component
 	//Logger::writeToLog("test");	
 	}
 
-
-	void addTables(){
+	// add tables to widget
+	void addTables()
+	{
 	bool fixed, horizontal, toggleMaxMin, 	drawOriginal, drawFill;
 	if(table->getNumberOfTables()<tableNumbers.size())
 	if(tableNumbers.size()>1)
@@ -1394,17 +1406,18 @@ class CabbageTable : public Component
 			String name = "table"+String(tableNumbers[i]);
 			setDrawingModeBooleans(fixed, horizontal, toggleMaxMin, drawOriginal, drawFill, drawingModes[i]);
 			table->addTable(name, channels[i], tableNumbers[i], tableSizes[i], fixed, 
-							horizontal, drawOriginal, toggleMaxMin, drawFill, 
-							resizingModes[i], minMax[i], Colours::findColourForName(tableColours[i], Colours::white), readOnly, listener);
+												horizontal, drawOriginal, toggleMaxMin, drawFill, 
+												resizingModes[i], minMax[i], Colours::findColourForName(tableColours[i], 
+												Colours::white), readOnly, stackMode, listener);
 		}
 	else{	
 		setDrawingModeBooleans(fixed, horizontal, toggleMaxMin, drawOriginal, drawFill, drawingModes[0]);
 		String name = "table"+String(tableNumbers[0]);
 		Logger::writeToLog(name);
 		table->addTable("table0", channels[0], tableNumbers[0], tableSizes[0], fixed, 
-						horizontal, drawOriginal, toggleMaxMin, drawFill, 
-						resizingModes[0], minMax[0],
-						Colours::findColourForName(tableColours[0], Colours::white), readOnly, listener);
+												horizontal, drawOriginal, toggleMaxMin, drawFill, 
+												resizingModes[0], minMax[0], Colours::findColourForName(tableColours[0], 
+												Colours::white), readOnly, stackMode, listener);
 	}	
 		
 	}

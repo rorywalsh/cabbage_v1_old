@@ -469,44 +469,50 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table)
 	int prevXPos=0;
 	int prevYPos = 0;
 	signed int curve=0;
-	String fStatement = "f"+String(table->tableNumber)+" 0 "+String(table->tableSize)+" -16 "; 
-	String pFields = "";
-	Logger::writeToLog(fStatement);
+	
+	StringArray pFields;
+	
 	float xAxisRescaleFactor = (float)table->tableSize/(float)table->getWidth();
-	Logger::writeToLog("end XPos:"+String(table->getWidth()*xAxisRescaleFactor));
-	for(int i=0;i<points.size()-1;i++){
-		int handleYPos1 = points.getReference(i).point.getY();
-		int handleYPos2 = points.getReference(i+1).point.getY(); 
-		//expon curves
-		if(points.getReference(i+1).curveType==1)
-			if(handleYPos2>handleYPos1)
-			curve=-3;
+	//Logger::writeToLog("end XPos:"+String(table->getWidth()*xAxisRescaleFactor));
+	for(int i=0;i<points.size()-1;i++)
+		{
+			int handleYPos1 = points.getReference(i).point.getY();
+			int handleYPos2 = points.getReference(i+1).point.getY(); 
+			//expon curves
+			if(points.getReference(i+1).curveType==1)
+				if(handleYPos2>handleYPos1)
+				curve=-3;
+				else
+				curve=3;
+			if(points.getReference(i+1).curveType==2)
+				if(handleYPos2<handleYPos1)
+				curve=-3;
+				else
+				curve=3;
 			else
-			curve=3;
-		if(points.getReference(i+1).curveType==2)
-			if(handleYPos2<handleYPos1)
-			curve=-3;
+				curve = 0;
+			
+			
+			if(handleYPos1<table->getHeight()/2) 
+				handleYPos1 = handleYPos1-1;
 			else
-			curve=3;
-		else
-			curve = 0;
-		
-		
-		if(handleYPos1<table->getHeight()/2) handleYPos1 = handleYPos1-1;
-		else
-		if(handleYPos1>table->getHeight()/2) handleYPos1 = handleYPos1+1;
-		
-		float yAmp = table->convertPixelToAmp(handleYPos1);
-		if(i+1==points.size()-1)
-		xPos = (table->getWidth()*xAxisRescaleFactor)-prevXPos;
-		else	
-		xPos = (points.getReference(i+1).point.getX()*xAxisRescaleFactor-prevXPos);
-		pFields = pFields+String(float(yAmp))+" "+String(xPos)+" "+String(curve)+" ";
-		//Logger::writeToLog("y:"+String(yAmp));
-		//Logger::writeToLog("x:"+String(xPos));
-		//Logger::writeToLog("Type:"+String(yAmp));
-		prevXPos += xPos;
-	}
+			if(handleYPos1>table->getHeight()/2) 
+				handleYPos1 = handleYPos1+1;
+			
+			float yAmp = table->convertPixelToAmp(handleYPos1);
+			if(i+1==points.size()-1)
+				xPos = (table->getWidth()*xAxisRescaleFactor)-prevXPos;
+			else	
+				xPos = jmax(points.getReference(i+1).point.getX()*xAxisRescaleFactor-prevXPos, 1.f);
+			
+			pFields.add(String(float(yAmp)));
+			pFields.add(String(xPos));
+			pFields.add(String(curve));
+			//Logger::writeToLog("y:"+String(yAmp));
+			//Logger::writeToLog("x:"+String(xPos));
+			//Logger::writeToLog("Type:"+String(yAmp));
+			prevXPos += xPos;
+		}
 	
 	int handleYPos;
 	if(isPositiveAndBelow(points.size()-1, points.size()))
@@ -515,8 +521,9 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table)
 		handleYPos = 0;
 	float yAmp = table->convertPixelToAmp(handleYPos);
 	
-	pFields = pFields + String(yAmp);
-	fStatement = fStatement+pFields;
+	pFields.add(String(yAmp));
+	String fStatement = "f"+String(table->tableNumber)+" 0 "+String(table->tableSize)+" -16 "; 
+	fStatement = fStatement+pFields.joinIntoString(" ");
 	Logger::writeToLog(fStatement);
 	table->currentfStatement = fStatement;
 	getFilter()->messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement);

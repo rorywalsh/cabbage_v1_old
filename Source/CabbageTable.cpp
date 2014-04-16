@@ -422,12 +422,12 @@ void Table::paint (Graphics& g)
 					 
 				if(drawHorizontalSegments==true && fixedEnvelope == true)
 				if(drawFill==true && !toggleMaxMin)
-					g.fillRect(0, jmax(handle->getY(), 0),  jmax(handle->getWidth()-1, 0), jmax(0, getHeight()));	
+					g.fillRect(0, jmax(handle->getY(), 0),  jmax(handle->getWidth(), 0), jmax(0, getHeight()-1));	
 				else if(drawFill==true && toggleMaxMin)
 					{
 						//g.setColour(Colours::red);
-						g.fillRect(0, jmax(handle->getY(), 0),  jmax(handle->getWidth(), 0), jmax(0, getHeight()));		
-						g.drawRect(0, jmax(handle->getY(), 0),  jmax(handle->getWidth(), 0), jmax(0, getHeight()), 2);
+						g.fillRect(0, jmax(handle->getY(), 0),  jmax(handle->getWidth(), 0), jmax(0, getHeight()-1));		
+						//g.drawRect(0, jmax(handle->getY(), 0),  jmax(handle->getWidth(), 0), jmax(0, getHeight()-1), 2);
 						g.setColour(currColour);	
 					}
 					
@@ -436,48 +436,29 @@ void Table::paint (Graphics& g)
 			}
 		else 
 			{
+			if(drawFill==true)
+			g.fillRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth()-1, 0), jmax(0, getHeight()-1));
+			
+				if(toggleMaxMin)
+					g.setColour(currColour);
+				else	
+					g.setColour(currColour.darker(.9f));					
+				
+				if(toggleMaxMin)
+					{
+						g.drawRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth()-1, 0), jmax(0, getHeight()-1), 2);
+						g.setColour(currColour);	
+					}
+
 			if(drawHorizontalSegments==true && fixedEnvelope == false)
-				{
-					if(drawFill==true)
-					g.fillRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth()-1, 0), jmax(0, getHeight()));
-					
-					if(toggleMaxMin)
-						g.setColour(currColour);
-					else	
-						g.setColour(currColour.darker(.9f));					
-					
-					if(toggleMaxMin)
-						{
-							//g.setColour(Colours::yellow);	
-							g.drawRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth()-1, 0), jmax(0, getHeight()), 2);
-							g.setColour(currColour);	
-						}
-						
+				{					
 					envPath.lineTo((handle->getX() + handle->getRight()) / 2, (prevY+(handle->getHeight()/2)));				
 					envPath.lineTo((handle->getX() + handle->getRight()) / 2, (handle->getY() + handle->getBottom()) / 2);
-					
 				}
 			else if(drawHorizontalSegments==true && fixedEnvelope==true)
 				{
-					if(drawFill==true)
-					g.fillRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth()-1, 0), jmax(0, getHeight()));
-				
-					if(toggleMaxMin)
-						g.setColour(currColour);
-					else	
-						g.setColour(currColour.darker(.9f));
-	
-					if(toggleMaxMin)
-						{	
-						g.drawRect(jmax(handle->getX(), 0), jmax(handle->getY(), 0), jmax(handle->getWidth()-1, 0), jmax(0, getHeight()), 2);
-						g.setColour(currColour);	
-						}
-				
-					envPath.lineTo((handle->getX()+1),
-								(prevY+(handle->getHeight()/2)));	
-					envPath.lineTo((handle->getX()+1),
-								(handle->getY() + handle->getBottom()) / 2);				
-				
+					envPath.lineTo((handle->getX()+1), (prevY+(handle->getHeight()/2)));	
+					envPath.lineTo((handle->getX()+1),  (handle->getY() + handle->getBottom()) / 2);				
 				}
 			else{
 					envPath.lineTo((handle->getX() + handle->getRight()) / 2,
@@ -798,28 +779,42 @@ void CabbageTableManager::paint(Graphics& g)
 {
 	g.setColour(CabbageUtils::getDarkerBackgroundSkin());
 	g.fillAll();
-	//this needs to be updated so that we can stack tables on top of each other
+	//this needs to be updated so that we can stables on top of each other
+	if(toggleMode){
+			float incr = (float)getWidth()/(float)tableSize;
+			g.setColour (Colours::whitesmoke.withAlpha(.5f));
+			for(float i=0;i<getWidth()+1;i+=(incr))	
+				g.drawLine((i==0 ? 0 : i-1), 0, (i==0 ? 0 : i-1), getHeight()-.1, .5);	
+				
+			int rowHeight = getHeight()/(getNumberOfTables());
 
-	// Amp horizontal markers...
-	if(getHeight()>40){
-	g.setColour (Colour::fromRGBA (220, 220, 240, 255));
-	g.drawLine (0, convertAmpToPixel(globalMaxAmp), getWidth(), convertAmpToPixel(globalMaxAmp), 0.1);
-	g.drawLine (0, convertAmpToPixel(globalMinAmp), getWidth(), convertAmpToPixel(globalMinAmp), 0.1);
-	g.drawLine (0, convertAmpToPixel(globalMaxAmp*0.5), getWidth(), convertAmpToPixel(globalMaxAmp*0.5), 0.1);
-	g.drawLine (0, convertAmpToPixel(globalMinAmp*0.5), getWidth(), convertAmpToPixel(globalMinAmp*0.5), 0.1);
-	if (globalMinAmp < 0) 
-		g.drawLine (0, convertAmpToPixel(0), getWidth(), convertAmpToPixel(0), 0.3);
+			for(int i=0;i<getNumberOfTables()+1;i++)
+				g.drawLine(0, i*rowHeight, getWidth(), i*rowHeight, .5);
 	}
+	// Amp horizontal markers...
 	else{
-	//draw vertical markers
-/*	
-	float incr = (float)getWidth()/(float)tableSize;
-	g.setColour (Colour::fromRGBA (220, 220, 240, 255));
-	for(int i=0;i<getWidth();i+=(incr))	
-			g.drawLine(i, 0, i, getHeight()-.1, 0.1);
-	g.drawLine (0, getHeight()-.1, getWidth(), getHeight()-.1, 0.1);
-	g.drawLine (0, 0, getWidth(), 0, 0.1);		
-	*/	
+		if(getHeight()>40)
+			{
+			g.setColour (Colour::fromRGBA (220, 220, 240, 255));
+			g.drawLine (0, convertAmpToPixel(globalMaxAmp), getWidth(), convertAmpToPixel(globalMaxAmp), 0.1);
+			g.drawLine (0, convertAmpToPixel(globalMinAmp), getWidth(), convertAmpToPixel(globalMinAmp), 0.1);
+			g.drawLine (0, convertAmpToPixel(globalMaxAmp*0.5), getWidth(), convertAmpToPixel(globalMaxAmp*0.5), 0.1);
+			g.drawLine (0, convertAmpToPixel(globalMinAmp*0.5), getWidth(), convertAmpToPixel(globalMinAmp*0.5), 0.1);
+			if (globalMinAmp < 0) 
+			g.drawLine (0, convertAmpToPixel(0), getWidth(), convertAmpToPixel(0), 0.3);
+			}
+		else{
+		//draw vertical markers
+			/*	
+			float incr = (float)getWidth()/(float)tableSize;
+			g.setColour (Colour::fromRGBA (220, 220, 240, 255));
+			for(int i=0;i<getWidth();i+=(incr))	
+				g.drawLine(i, 0, i, getHeight()-.1, 0.1);
+			g.drawLine (0, getHeight()-.1, getWidth(), getHeight()-.1, 0.1);
+			g.drawLine (0, 0, getWidth(), 0, 0.1);		
+			*/	
+			}
+	
 	}
 	// update tables
 	for (int i=0; i<tables.size(); ++i) 
@@ -863,6 +858,7 @@ void CabbageTableManager::addTable (String name,
 	tables[i]->setOriginalWidth (getWidth());
 	tables[i]->setViewWidth(getWidth());
 	tables[i]->toggleMaxMin = toggleMaxMin;
+	toggleMode = toggleMaxMin;
 	tables[i]->drawFill = drawFill;
 	readOnly = readonly;
 	addAndMakeVisible (tables[i]);
@@ -974,7 +970,25 @@ void CabbageTableManager::fillTable (int tableIndex, Array<float, CriticalSectio
 
 void CabbageTableManager::mouseDrag(const MouseEvent& e)
 {
+//if in toggle mode, draw on mouse move
+if(e.mods.isLeftButtonDown())
+for(int i=0;i<tables.size();i++)
+	{
+	if(tables[i]->toggleMaxMin)
+		{
+		if(tables[i]->getBounds().contains(Point<int>(e.getPosition().getX(), e.getPosition().getY())))
+			{
+			tables[i]->toggleMinMaxAmp(e.getPosition().getX());
+			tables[i]->changeMessage = "updateFunctionTable";
+			tables[i]->sendChangeMessage();
+			}
+		}
+	}	
+}
 	
+void CabbageTableManager::mouseMove(const MouseEvent& e)
+{
+
 }
 
 void CabbageTableManager::mouseDown (const MouseEvent& e)

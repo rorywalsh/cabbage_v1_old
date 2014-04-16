@@ -126,12 +126,12 @@ public:
 	bool useAmpRanges;
 	Point<float> minMaxAmps;
 	bool editMode;
+	int gen;
 	
 private:
 	Viewport* viewport;
 
 	Image img;
-	int gen;
 	int handleWidth;
 	float tableTop, tableBottom, tableLeft, tableHeight;
 	float zoom;
@@ -187,6 +187,7 @@ public:
 	void fillTable (int tableID, Array<float, CriticalSection> csndInputData);
 	void tableToTop (int tableOnTop);
 	void mouseDown (const MouseEvent& e);
+	void mouseMove (const MouseEvent& e);
 	void mouseDrag(const MouseEvent& e);
 	Table* getTable(int index);
 	
@@ -198,6 +199,7 @@ private:
 	OwnedArray<Table, CriticalSection> tables;
 	float originalWidth;
 	float alpha;
+	bool toggleMode;
 	bool readOnly;
 	int zoom, maxZoom;
 	float globalMaxAmp, globalMinAmp, globalAmpRange;

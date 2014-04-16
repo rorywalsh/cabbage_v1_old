@@ -1278,6 +1278,7 @@ class CabbageTable : public Component
 														   Array<float> ampRanges,
 														   StringArray colours, 
 														   bool readOnly, 
+														   bool stackMode,
 														   ChangeListener* listen)
 	: tableSizes(tblSize), 
 	  tableColours(colours), 
@@ -1287,7 +1288,7 @@ class CabbageTable : public Component
 	  tableNumbers(tblNumbers),
 	  drawingModes(drawingModes),
 	  resizingModes(resizingModes),
-	  stackMode(true)
+	  stackMode(stackMode)
 	{
 		setName(name);
 

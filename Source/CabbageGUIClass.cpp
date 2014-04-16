@@ -739,6 +739,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::tablecolour, tableColours);
 		cabbageIdentifiers.set(CabbageIDs::amprange, 0);
 		cabbageIdentifiers.set(CabbageIDs::type, "table");
+		cabbageIdentifiers.set(CabbageIDs::stack, 0);
 		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
 		cabbageIdentifiers.set(CabbageIDs::identchannel, "");  
 		cabbageIdentifiers.set(CabbageIDs::visible, 1);
@@ -1305,6 +1306,10 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 
             else if(identArray[indx].equalsIgnoreCase("visible")){ 
 				cabbageIdentifiers.set(CabbageIDs::visible, strTokens[0].trim().getFloatValue());					
+				}
+
+            else if(identArray[indx].equalsIgnoreCase("stack")){ 
+				cabbageIdentifiers.set(CabbageIDs::stack, strTokens[0].trim().getFloatValue());					
 				}
 			
             else if(identArray[indx].equalsIgnoreCase("tab"))

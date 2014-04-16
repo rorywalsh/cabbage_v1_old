@@ -57,6 +57,7 @@ IdentArray() : StringArray("tablecolour")
 	add("tabpage");
 	add("guirefresh");
 	add("midictrl");
+	add("stack");
 	//add(" line(");
 	//add(",line(");
 	add("line");
@@ -179,6 +180,7 @@ namespace CabbageIDs
 	static const Identifier maxx = "maxx";
 	static const Identifier maxy = "maxy";
 	static const Identifier logger = "logger";
+	static const Identifier stack = "stack";
 	static const Identifier valuex = "valuex";
 	static const Identifier fillcolour = "fillcolour";
 	static const Identifier valuey = "valuey";

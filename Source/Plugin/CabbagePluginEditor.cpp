@@ -527,7 +527,6 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table)
 	Logger::writeToLog(fStatement);
 	table->currentfStatement = fStatement;
 	getFilter()->messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement);
-
 }
 		
 
@@ -2548,6 +2547,7 @@ Array<int> tableSizes;
 					cAttr.getFloatArrayProp("amprange"),
 					cAttr.getStringArrayProp(CabbageIDs::tablecolour),
 					cAttr.getNumProp("readonly"),
+					(bool)cAttr.getNumProp("stack"),
 					this)); 
 			
 			int idx = layoutComps.size()-1;

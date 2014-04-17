@@ -453,8 +453,6 @@ IdentArray::deleteInstance();
 				//csound->SetHostImplementedMIDIIO(false);
                 csound->DeleteChannelList(csoundChanList);
                 Logger::writeToLog("about to cleanup Csound");
-				csoundDebuggerInit(csound->GetCsound());	
-				csoundRemoveInstrumentBreakpoint(csound->GetCsound(), 1);
 				//csoundDebugContinue(csound);				
                 //csound->Cleanup();
 				//csound->SetHostImplementedMIDIIO(false);
@@ -1071,6 +1069,7 @@ void CabbagePluginAudioProcessor::messageCallback(CSOUND* csound, int /*attr*/, 
 
 void CabbagePluginAudioProcessor::breakpointCallback(CSOUND *csound, int line, double instr, void *userdata)
 {
+#ifdef BUILD_DEBUGGER
     CabbagePluginAudioProcessor* ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
 	ud->getCallbackLock().enter();
 	int ksmpOffset = ud->ksmpsOffset;;
@@ -1143,7 +1142,8 @@ void CabbagePluginAudioProcessor::breakpointCallback(CSOUND *csound, int line, d
     while (in->prvact) {
         in = in->prvact;
     }
-}
+#endif
+}    
 //==============================================================================
 #if defined(Cabbage_Build_Standalone) || defined(Cabbage_Plugin_Host)
 CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int pluginType)

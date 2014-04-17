@@ -47,8 +47,11 @@
 #define AUTOMATION_PLUGIN 3
 
 #ifdef Cabbage_Build_Standalone
-#include <csdebug.h>
 class CsoundCodeEditor;
+#endif
+
+#ifdef BUILD_DEBUGGER
+#include <csdebug.h>
 #endif
 
 extern CabbageLookAndFeel* lookAndFeel;

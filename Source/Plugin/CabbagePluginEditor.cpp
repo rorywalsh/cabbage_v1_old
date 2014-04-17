@@ -126,8 +126,11 @@ tableBuffer(2, 44100)
 	
 	setSize(400, 400);
 	componentPanel->setSize(400, 400);
+#ifdef Cabbage_Build_Stanalone
 	layoutEditor->setSize(400, 400);
 	layoutEditor->updateFrames();
+#endif
+
 	
 	for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++)
 		InsertGUIControls(getFilter()->getGUILayoutCtrls(i));

@@ -1064,6 +1064,7 @@ void CabbageTableManager::mouseDown (const MouseEvent& e)
 		else{
 				for(int i=0;i<tables.size();i++)
 					{
+					if(tables[i]->editMode)	
 					if(tables[i]->toggleMaxMin)
 						{
 						if(tables[i]->getBounds().contains(Point<int>(e.getMouseDownX(), e.getMouseDownY())))

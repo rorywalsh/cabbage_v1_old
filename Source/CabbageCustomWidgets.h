@@ -650,14 +650,12 @@ public:
 		else{
 			if(shape=="rounded"){
 				g.fillAll(Colours::transparentBlack);
-				Logger::writeToLog("rounded");
 				g.setColour(Colour::fromString(outline));
 				g.drawRoundedRectangle(0,0, width, height, width*.2, line);
 				g.setColour(Colour::fromString(colour));
 				g.fillRoundedRectangle(line,line, width-(line*2), height-(line*2), width*.02);				
 			}
 			if(shape=="ellipse"){
-				Logger::writeToLog("inside ellispe");
 				g.setColour(Colour::fromString(outline));
 				g.drawEllipse(0,0, width, height, line);
 				g.setColour(Colour::fromString(colour));
@@ -665,7 +663,6 @@ public:
 			}
 			if(shape=="sharp"){
 				g.fillAll(Colours::transparentBlack);
-				Logger::writeToLog("sharp");
 				g.setColour(Colour::fromString(outline));
 				g.drawRect(0,0, width, height, line);
 				g.setColour(Colour::fromString(colour));

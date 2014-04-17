@@ -2681,10 +2681,13 @@ if(key.getTextDescription()=="ctrl + O")
 
 if(key.getTextDescription()=="ctrl + U")
 	getFilter()->sendActionMessage("MENU COMMAND: manual update GUI");
-
+#ifdef MACOSX
+if(key.getTextDescription()=="cmd + M")
+	getFilter()->sendActionMessage("MENU COMMAND: suspend audio");
+#else
 if(key.getTextDescription()=="ctrl + M")
 	getFilter()->sendActionMessage("MENU COMMAND: suspend audio");
-	
+#endif
 if(key.getTextDescription()=="ctrl + E"){
 	getFilter()->sendActionMessage("MENU COMMAND: toggle edit");
 	}	

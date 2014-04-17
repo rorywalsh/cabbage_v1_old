@@ -746,7 +746,7 @@ void CsoundCodeEditorComponenet::modifyInstrumentBreakpoint(bool remove)
 			
 		String instrumentLine = csdArray[startPos.getLineNumber()-index];
 		String instrumentNumber = instrumentLine.substring(instrumentLine.indexOf("instr")+5, 
-									(instrumentLine.indexOf(";")>0 ? instrumentLine.indexOf(";") : 1000));
+									(instrumentLine.indexOf(";")>0 ? instrumentLine.indexOf(";") : 1000)).trim();
 		if(!remove){
 		//this->highlightLines(startPos.getLineNumber()-index, startPos.getLineNumber()-index);
 		sendActionMessage("SetInstrumentBreakpoint:"+String(instrumentNumber)+"_"+String(startPos.getLineNumber()-index));

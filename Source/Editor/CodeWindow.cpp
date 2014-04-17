@@ -340,7 +340,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 		result.defaultKeypresses.add(KeyPress(KeyPress::F1Key));
 		break;
 	case CommandIDs::viewCsoundOutput:
-		result.setInfo (String("View Csoud Output"), String("View Csound Output"), CommandCategories::help, 0);
+		result.setInfo (String("View Csound Output"), String("View Csound Output"), CommandCategories::help, 0);
 		result.addDefaultKeypress ('p', ModifierKeys::commandModifier);
 		result.setTicked(appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue());
 		break;

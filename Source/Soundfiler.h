@@ -65,7 +65,7 @@ public:
 	void setZoomFactor (double amount);
 	void setFile (const File& file);
 	void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
-	void setWaveform(AudioSampleBuffer buffer);
+	void setWaveform(AudioSampleBuffer buffer, int channels);
 	void createImage(String filename);
 	
 private:

@@ -912,8 +912,8 @@ public:
 	void setFile(String newFile){
 		soundFiler->setFile(File(newFile));	
 	}
-	int setWaveform(AudioSampleBuffer buffer){
-		soundFiler->setWaveform(buffer);
+	int setWaveform(AudioSampleBuffer buffer, int channels){
+		soundFiler->setWaveform(buffer, channels);
 	}
 	
 	

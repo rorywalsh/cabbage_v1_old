@@ -130,14 +130,14 @@ void Soundfiler::setFile (const File& file)
 		//creates a reader for the result file (may file, if the result/opened file is no wav or aif)
 		if(reader) //if a reader got created
 		{
-			AudioSampleBuffer buffer(2, reader->lengthInSamples);
+			AudioSampleBuffer buffer(reader->numChannels, reader->lengthInSamples);
 			buffer.clear();
-			buffer.setSize(2, reader->lengthInSamples);
+			buffer.setSize(reader->numChannels, reader->lengthInSamples);
 			reader->read(&buffer,0, buffer.getNumSamples(), 0, true, true);
-			setWaveform(buffer);
+			setWaveform(buffer, reader->numChannels);
 		}		 
 		 
-		//delete reader; 
+		delete reader; 
 		 
 		 
 		// thumbnail->setSource (new FileInputSource (file));
@@ -149,11 +149,11 @@ void Soundfiler::setFile (const File& file)
 }
 
 //==============================================================================
-void Soundfiler::setWaveform(AudioSampleBuffer buffer)
+void Soundfiler::setWaveform(AudioSampleBuffer buffer, int channels)
 {            
 	thumbnail->clear();
 	repaint();
-	thumbnail->reset(2, 44100, buffer.getNumSamples());	
+	thumbnail->reset(channels, 44100, buffer.getNumSamples());	
 	//thumbnail->clear();
 	thumbnail->addBlock(0, buffer, 0, buffer.getNumSamples());
 	const Range<double> newRange (0.0, thumbnail->getTotalLength());

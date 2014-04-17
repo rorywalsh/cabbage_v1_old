@@ -2684,10 +2684,13 @@ if(key.getTextDescription()=="ctrl + O")
 
 if(key.getTextDescription()=="ctrl + U")
 	getFilter()->sendActionMessage("MENU COMMAND: manual update GUI");
-
+#ifdef MACOSX
+if(key.getTextDescription()=="cmd + M")
+	getFilter()->sendActionMessage("MENU COMMAND: suspend audio");
+#else
 if(key.getTextDescription()=="ctrl + M")
 	getFilter()->sendActionMessage("MENU COMMAND: suspend audio");
-	
+#endif
 if(key.getTextDescription()=="ctrl + E"){
 	getFilter()->sendActionMessage("MENU COMMAND: toggle edit");
 	}	
@@ -3021,17 +3024,19 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 			String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
 			if(message.contains("tablenumber")||message.contains("tablenumbers"))
 				{
-				int tableNumber = getFilter()->getGUILayoutCtrls(i).getNumProp(CabbageIDs::tablenumber);
-				tableValues.clear();
-				tableValues = getFilter()->getTableFloats(tableNumber);
-				//Logger::writeToLog(String(tableNumber));
-				//Logger::writeToLog(String(tableValues.size()));
+				int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();
 				tableBuffer.clear();
-				tableBuffer.setSize(2, tableValues.size());
-				tableBuffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());
-				tableBuffer.addFrom(1, 0, tableValues.getRawDataPointer(), tableValues.size());
-				//update waveform with sample data from function table...
-				((CabbageSoundfiler*)layoutComps[i])->setWaveform(tableBuffer);
+				for(int y=0;y<numberOfTables;y++)
+					{
+					int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
+					tableValues.clear();
+					tableValues = getFilter()->getTableFloats(tableNumber);		
+					if(tableBuffer.getNumSamples()<tableValues.size())
+					tableBuffer.setSize(numberOfTables, tableValues.size());
+					tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());
+					}				
+				((CabbageSoundfiler*)layoutComps[i])->setWaveform(tableBuffer, numberOfTables);
+				
 			}
 			else if(message.contains("file("))
 				((CabbageSoundfiler*)layoutComps[i])->setFile(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::file));

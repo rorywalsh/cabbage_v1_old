@@ -1218,7 +1218,11 @@ const Array<float, CriticalSection> CabbagePluginAudioProcessor::getTableFloats(
 		
 		tableSize = csound->TableLength(tableNum);
 		temp.clear();
-		temp.resize(tableSize);
+		//not good if table size is -1!
+		if(tableSize<0)
+			jassert(0)
+		
+		temp.reserve(tableSize);
 		csound->TableCopyOut(tableNum, &temp[0]);
 #else
         float *temp;

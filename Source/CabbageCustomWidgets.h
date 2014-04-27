@@ -1428,7 +1428,7 @@ class CabbageTable : public Component
 
 	//---------------------------------------------
 	void setTableEvtCode(int ID, StringArray fdata){
-		table->setEvtCode(ID, fdata);
+		//table->setEvtCode(ID, fdata);
 	}
 
 	void setScrubberPosition(int ID, float position){

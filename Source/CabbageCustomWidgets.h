@@ -1426,6 +1426,11 @@ class CabbageTable : public Component
 		table->repaint();
 	}
 
+	//---------------------------------------------
+	void setTableEvtCode(int ID, StringArray fdata){
+		table->setEvtCode(ID, fdata);
+	}
+
 	void setScrubberPosition(int ID, float position){
 		//if(position>0)
 		//table->setScrubberPosition(ID, position);

@@ -155,12 +155,15 @@ dataout = new PVSDATEXT;
 if(inputfile.isNotEmpty()){
 File(inputfile).setAsCurrentWorkingDirectory();
 
+
 #ifdef CSOUND6
 csoundParams = new CSOUND_PARAMS();
 csoundParams->nchnls_override =2;
 csoundParams->displays = 0;
 csound->SetParams(csoundParams);
 #endif
+
+//ftpp->ftable;
 
 
 StringArray lines, includeFiles;
@@ -1192,6 +1195,17 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 //==============================================================================
 // getTable data from Csound so table editor can draw table
 //==============================================================================
+StringArray CabbagePluginAudioProcessor::getTableEvtCode(int tableNum)
+{
+StringArray fdata;
+	/*
+EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
+for(int i=0;i<e->pcnt;i++)
+	fdata.add(String(e->p[i]));
+return fdata;*/
+return fdata;	
+}
+//==============================================================================
 const Array<double, CriticalSection> CabbagePluginAudioProcessor::getTable(int tableNum)
 {
 		Array<double, CriticalSection> points;
@@ -1221,7 +1235,7 @@ const Array<float, CriticalSection> CabbagePluginAudioProcessor::getTableFloats(
 		//not good if table size is -1!
 		if(tableSize<0)
 			jassert(0)
-		
+	
 		temp.reserve(tableSize);
 		csound->TableCopyOut(tableNum, &temp[0]);
 #else

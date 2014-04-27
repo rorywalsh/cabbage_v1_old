@@ -146,16 +146,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
 	cabbageCsoundEditor->setVisible(false);
 	//cabbageCsoundEditor->setSize(800, 500);
-#ifdef LINUX
-			Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-			rect.setHeight(rect.getHeight()-25);
-			cabbageCsoundEditor->setBounds(rect);
-#elif WIN32
-			cabbageCsoundEditor->setFullScreen(true);
-#else
-	cabbageCsoundEditor->setSize(1000, 800);
-#endif
-
+	setupWindowDimensions();
 			if(getPreference(appProperties, "ShowEditorConsole")==1)		
 			showEditorConsole(1);
 			else
@@ -848,16 +839,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 						if(!cabbageCsoundEditor){
 						cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
 						cabbageCsoundEditor->setVisible(false);
-			
-				#ifdef LINUX
-						Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-						rect.setHeight(rect.getHeight()-25);
-						cabbageCsoundEditor->setBounds(rect);
-				#elif WIN32
-						cabbageCsoundEditor->setFullScreen(true);
-				#else
-						cabbageCsoundEditor->setSize(1000, 800);
-				#endif
+						setupWindowDimensions();
 						cabbageCsoundEditor->addActionListener(this);
 						cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
 						filter->codeEditor = cabbageCsoundEditor->textEditor;
@@ -865,16 +847,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 						//cabbageCsoundEditor->setText(csdFile.loadFileAsString());
 						this->toBehind(cabbageCsoundEditor);
 						cabbageCsoundEditor->setVisible(true);
-				#ifdef LINUX
-						Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-						rect.setHeight(rect.getHeight()-25);
-						cabbageCsoundEditor->setBounds(rect);
-				#elif WIN32
-						cabbageCsoundEditor->setFullScreen(true);
-
-				#else
-						cabbageCsoundEditor->setSize(1000, 800);
-				#endif	
+						setupWindowDimensions();
 
 						cabbageCsoundEditor->toFront(true);
 						
@@ -938,8 +911,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		cabbageCsoundEditor->setVisible(true);
 		cabbageCsoundEditor->newFile("effect");
 		saveFileAs();
+		setupWindowDimensions();
+		showEditorConsole(true);
 		//cabbageCsoundEditor->csoundEditor->textEditor->grabKeyboardFocus();
-		isAFileOpen = true;
+		isAFileOpen = true;		
 	}
 	//----- new instrument ------
 	else if(options==31){
@@ -949,9 +924,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 		cabbageCsoundEditor->addActionListener(this);
 		filter->codeEditor = cabbageCsoundEditor->textEditor;
 		}
+		
 	cabbageCsoundEditor->setVisible(true);
 	cabbageCsoundEditor->newFile("instrument");
 	saveFileAs();
+	setupWindowDimensions();
+	showEditorConsole(true);
 	//cabbageCsoundEditor->csoundEditor->textEditor->grabKeyboardFocus();
 	isAFileOpen = true;
 	}
@@ -1172,6 +1150,22 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	repaint();
 }
 
+
+//=================
+// setup window dimensions etc..
+//==================
+void StandaloneFilterWindow::setupWindowDimensions()
+{
+#ifdef LINUX
+			Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+			rect.setHeight(rect.getHeight()-25);
+			cabbageCsoundEditor->setBounds(rect);
+#elif WIN32
+			cabbageCsoundEditor->setFullScreen(true);
+#else
+	cabbageCsoundEditor->setSize(1000, 800);
+#endif	
+}
 //==============================================================================
 // open text editor
 //==============================================================================
@@ -1196,16 +1190,7 @@ void StandaloneFilterWindow::openTextEditor()
 			cabbageCsoundEditor->setText(filter->getCsoundInputFileText(), filter->getCsoundInputFile().getFullPathName());
 			this->toBehind(cabbageCsoundEditor);
 			cabbageCsoundEditor->setVisible(true);
-#ifdef LINUX
-			Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-			rect.setHeight(rect.getHeight()-25);
-			cabbageCsoundEditor->setBounds(rect);
-#elif WIN32
-			cabbageCsoundEditor->setFullScreen(true);
-
-#else
-			cabbageCsoundEditor->setSize(1000, 800);
-#endif
+			setupWindowDimensions();
 			cabbageCsoundEditor->toFront(true);	
 			if(getPreference(appProperties, "ShowEditorConsole")==1)		
 			showEditorConsole(1);

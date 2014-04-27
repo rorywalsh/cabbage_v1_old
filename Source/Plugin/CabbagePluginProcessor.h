@@ -166,9 +166,10 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 		File tempAudioFile;
 		CriticalSection writerLock;
 		AudioFormatWriter::ThreadedWriter* volatile activeWriter;
-		
+
 		
 public:
+		String changeMessage;
 		Array<int> dirtyControls;
 		bool CSOUND_DEBUG_MODE;
 		void setCsoundInstrumentBreakpoint(int instr, int line);
@@ -246,6 +247,7 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData);
     void setStateInformation (const void* data, int sizeInBytes);
+	StringArray getTableEvtCode(int tableNum);
 	const Array<double, CriticalSection> getTable(int tableNum);
 	const Array<float, CriticalSection> getTableFloats(int tableNum);
 	void createGUI(String source, bool refresh);

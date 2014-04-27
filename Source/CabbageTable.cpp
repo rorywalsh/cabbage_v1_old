@@ -46,7 +46,7 @@ void CabbageEnvelopeHandleComponent::mouseEnter (const MouseEvent& e)
 
 void CabbageEnvelopeHandleComponent::mouseUp (const MouseEvent& e)
 {
-changeMessage = "updateOnMouseUp";
+changeMessage = "handlePositionChanged";
 sendChangeMessage();	
 }
 
@@ -127,7 +127,9 @@ void CabbageEnvelopeHandleComponent::mouseDrag (const MouseEvent& e)
 		
 	this->setTopLeftPosition(dragX, dragY);
 
-	getParentComponent()->repaint();
+	//getParentComponent()->repaint();
+	changeMessage = "handlePositionChanged";
+	sendChangeMessage();
 }
 
 
@@ -401,7 +403,7 @@ void Table::paint (Graphics& g)
 //	envPath.letoleToFit (0, tableTop, getWidth(), tableHeight, false);
 //	g.strokePath (envPath, PathStrokeType(2.0f));
 	//----- For handles....
-	
+/*	
 	else if(!drawOriginalTableData){
 	envPath.clear();
 	
@@ -522,7 +524,7 @@ void Table::paint (Graphics& g)
 		g.strokePath (envPath, PathStrokeType(2.0f));
 		}
 	}
-	
+	*/
 	//if current table is on top, place text on widget to indicate so..
 	/*
 	if(onTop){
@@ -669,7 +671,7 @@ if(hand){
 		sendChangeMessage();
 		}
 		
-	else if(hand->changeMessage=="updateOnMouseUp"){
+	else if(hand->changeMessage=="handlePositionChanged"){
 		sendChangeMessage();
 		}
 	}
@@ -677,7 +679,7 @@ if(hand){
 	else
 	sendChangeMessage();		
 }
-
+//==================================================================================
 CabbageEnvelopeHandleComponent* Table::addHandle(int x, int y, bool fixedPos, int width, Colour col)
 {
 	int i;
@@ -701,12 +703,12 @@ CabbageEnvelopeHandleComponent* Table::addHandle(int x, int y, bool fixedPos, in
 	repaint();
 	return handle;
 }
-
+//==================================================================================
 int Table::getHandleIndex(CabbageEnvelopeHandleComponent* thisHandle)
 {
 	return handles.indexOf(thisHandle);
 }
-
+//==================================================================================
 CabbageEnvelopeHandleComponent* Table::getPreviousHandle(CabbageEnvelopeHandleComponent* thisHandle)
 {
 	int thisHandleIndex = handles.indexOf(thisHandle);
@@ -716,7 +718,7 @@ CabbageEnvelopeHandleComponent* Table::getPreviousHandle(CabbageEnvelopeHandleCo
 	else 
 		return handles.getUnchecked(thisHandleIndex-1);
 }
-
+//==================================================================================
 CabbageEnvelopeHandleComponent* Table::getNextHandle(CabbageEnvelopeHandleComponent* thisHandle)
 {
 	int thisHandleIndex = handles.indexOf(thisHandle);
@@ -726,7 +728,7 @@ CabbageEnvelopeHandleComponent* Table::getNextHandle(CabbageEnvelopeHandleCompon
 	else
 		return handles.getUnchecked(thisHandleIndex+1);
 }
-
+//==================================================================================
 void Table::removeHandle (CabbageEnvelopeHandleComponent* thisHandle)
 {
 	if (handles.size() > 0) {
@@ -735,46 +737,41 @@ void Table::removeHandle (CabbageEnvelopeHandleComponent* thisHandle)
 	}
 }
 
-
-/*
-  ====================================================================================
-
-	Table Manager class
-
-  ====================================================================================
-*/
+//==================================================================================
+//	Table Manager class
+//==================================================================================
 CabbageTableManager::CabbageTableManager(int tableSize)
 	: alpha(1.0f), zoom(1), maxZoom(1), maxNumPixelsPerIndex(1),
 	globalMaxAmp(0.f), globalMinAmp(0.f), tableSize(tableSize), readOnly(false)
 {
 }
-
+//==================================================================================
 CabbageTableManager::~CabbageTableManager()
 {
 	tables.clear();
 }
-
+//==================================================================================
 void CabbageTableManager::resized()
 {
 	//We need to make room for the h scrollbar, therefore table data
 	//can't use the full height of the canvas
-	tableTop = getHeight()*0.15;
-	tableBottom = getHeight()*0.85;
+	tableTop = 0;//getHeight()*0.15;
+	tableBottom = getHeight();//*0.85;
 	tableHeight = tableBottom - tableTop;
 }
-
+//==================================================================================
 void CabbageTableManager::setOriginalWidth(float width)
 {
 	originalWidth = width;
 }
-
+//==================================================================================
 Table* CabbageTableManager::getTable(int index)
 {
 	if(index > 0 && index < tables.size());
 	return tables[index];
 }
 
-
+//==================================================================================
 void CabbageTableManager::paint(Graphics& g)
 {
 	g.setColour(CabbageUtils::getDarkerBackgroundSkin());
@@ -822,14 +819,14 @@ void CabbageTableManager::paint(Graphics& g)
 	
 	
 }
-
+//==================================================================================
 float CabbageTableManager::convertAmpToPixel (float ampValue)
 {
 	// This method converts amps to y pixel values
 	float normalisedAmp = (ampValue-globalMinAmp) / globalAmpRange; //first change to normalised value
 	return jmax(0.f, ((1-normalisedAmp) * tableHeight) + tableTop);
 }
-
+//==================================================================================
 void CabbageTableManager::addTable (String name, 
 									String channel, 
 									int tableNumber, 
@@ -884,7 +881,7 @@ void CabbageTableManager::addTable (String name,
 		maxZoom = sqrt(maxNumPixelsPerIndex);
 	}
 }
-
+//==================================================================================
 void CabbageTableManager::tableToTop (int tableIndex)
 {
 	jassert(tables[tableIndex])
@@ -905,7 +902,37 @@ void CabbageTableManager::tableToTop (int tableIndex)
 	tables.getLast()->setAlpha(1.0);
 
 }
+//==================================================================================
+void CabbageTableManager::setEvtCode(int ID, StringArray fdata)
+{
+//tables[ID]->fStatement = fdata;	
+if(fdata.size()>4)
+	{
+	tables[ID]->editMode = true;
+	tables[ID]->drawOriginalTableData = true;	
+	tables[ID]->gen = fdata[4].getIntValue();
+	//if dealing with GEN07
+	if(fdata[4].getIntValue()==7 || fdata[4].getIntValue()==5)
+		{
+			float xPos = 0;
+			tables[ID]->fixedEnvelope = false;
+			tables[ID]->addHandle(xPos, convertAmpToPixel(fdata[5].getFloatValue()), true, 10, Colours::blue);
+			for(int i=6;i<fdata.size();i+=2)
+			{
+				Logger::writeToLog(fdata[i]);
+				Logger::writeToLog(fdata[i+1]);
+				Logger::writeToLog(String(tables[ID]->getWidth()));
+				xPos += (tables[ID]->getWidth()*(fdata[i].getFloatValue()/(float)tables[ID]->tableSize)-1);
+				tables[ID]->addHandle((xPos>=tables[ID]->getWidth() ? tables[ID]->getWidth()-5 : xPos), 
+									  convertAmpToPixel(fdata[i+1].getFloatValue()), 
+									  false, 10, Colours::blue);
+			}
 
+		}
+	}
+
+}
+//==================================================================================
 void CabbageTableManager::fillTable (int tableIndex, Array<float, CriticalSection> csndInputData)
 {
 	if(isPositiveAndBelow(tableIndex, tables.size()))

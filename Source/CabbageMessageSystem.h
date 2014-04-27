@@ -41,6 +41,7 @@ float value;
 #endif
 	String type;
 	String fStatement;
+	int tableNumber;
 	String stringVal;
 
 	CabbageChannelMessage(String chan, double val, String _type)
@@ -79,9 +80,10 @@ public:
 	outgoingChannelMessages.add(CabbageChannelMessage(_chan, _val, _type));
 	}
 	
-	void addOutgoingTableUpdateMessageToQueue(String fStatement){
+	void addOutgoingTableUpdateMessageToQueue(String fStatement, int tableNumber){
 	CabbageChannelMessage tableMessage("", 0.f, "updateTable");
 	tableMessage.fStatement = fStatement;
+	tableMessage.tableNumber = tableNumber;
 	outgoingChannelMessages.add(tableMessage);
 	}
 

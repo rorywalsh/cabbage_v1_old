@@ -109,6 +109,7 @@ public:
 	void saveFile();
 	void saveFileAs();
 	void showEditorConsole(bool show);
+	void setupWindowDimensions();
 
 	bool isGuiEnabled(){
 		return isGUIOn;

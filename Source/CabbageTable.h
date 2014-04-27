@@ -3,6 +3,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "CabbageUtils.h"
+#include "./Plugin/CabbagePluginProcessor.h"
 
 #define HANDLESIZE 8
 #define LINEAR 0
@@ -127,6 +128,7 @@ public:
 	Point<float> minMaxAmps;
 	bool editMode;
 	int gen;
+	StringArray fStatement;
 	
 private:
 	Viewport* viewport;
@@ -185,6 +187,7 @@ public:
 				   int numberOfTables,
 	               ChangeListener* listener);
 	void fillTable (int tableID, Array<float, CriticalSection> csndInputData);
+	void setEvtCode(int ID, StringArray fdata);
 	void tableToTop (int tableOnTop);
 	void mouseDown (const MouseEvent& e);
 	void mouseMove (const MouseEvent& e);

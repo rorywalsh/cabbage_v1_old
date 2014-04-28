@@ -24,6 +24,7 @@
 #include "CabbageLookAndFeel.h"
 #include "CabbageUtils.h"
 #include "CabbageTable.h"
+#include "Table.h"
 #include "XYPad.h"
 #include "Soundfiler.h"
 #include "DirectoryContentsComponent.h"
@@ -840,6 +841,104 @@ private:
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageLine);
 };
+
+//==============================================================================
+// custom table widget
+//==============================================================================
+
+class CabbageGenTable	:	public Component,
+							public ChangeBroadcaster,
+							public ChangeListener
+{
+String colour;
+String fontcolour;
+String file;
+float zoom;
+double sampleRate;
+float scrubberPos;
+//---- constructor -----
+public:
+	CabbageGenTable (CabbageGUIClass &cAttr) : colour(cAttr.getStringProp(CabbageIDs::colour)),
+												 fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
+												 file(cAttr.getStringProp(CabbageIDs::file)),
+												 zoom(cAttr.getNumProp(CabbageIDs::zoom)),
+												 scrubberPos(cAttr.getNumProp(CabbageIDs::scrubberposition))
+	{
+	setName(cAttr.getStringProp(CabbageIDs::name));	
+	table = new GenTable(44100, Colour::fromString(colour), Colour::fromString(fontcolour));
+	addAndMakeVisible(table);
+	table->addChangeListener(this);
+	sampleRate = 44100;
+	table->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
+	if(File(file).existsAsFile())
+		setFile(file);
+	}
+
+	~CabbageGenTable()
+	{
+	}
+
+	void resized()
+	{
+	table->setBounds(0, 0, getWidth(), getHeight());
+	}
+
+
+	//update control
+	void update(CabbageGUIClass m_cAttr)
+	{
+		setBounds(m_cAttr.getBounds());
+		if(scrubberPos!=m_cAttr.getNumProp(CabbageIDs::scrubberposition))
+			{
+			scrubberPos = m_cAttr.getNumProp(CabbageIDs::scrubberposition);
+			table->setScrubberPos(scrubberPos);			
+			}
+		
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
+			setVisible(false);
+		else
+			setVisible(true);
+			
+		if(zoom!=m_cAttr.getNumProp(CabbageIDs::zoom))
+		{
+		zoom = m_cAttr.getNumProp(CabbageIDs::zoom);
+		table->setZoomFactor(zoom);			
+		}
+
+	
+	}
+	
+	void setFile(String newFile){
+		table->setFile(File(newFile));	
+	}
+	int setWaveform(AudioSampleBuffer buffer, int channels){
+		table->setWaveform(buffer, channels);
+	}
+	
+	
+	int getPosition(){
+		return table->getCurrentPlayPosInSamples();
+	}
+	
+	int getLoopLength(){
+		return table->getLoopLengthInSamples();
+	}	
+
+	
+	ScopedPointer<GenTable> table;
+private:
+	float scrubberPosition;
+	
+	void changeListenerCallback(ChangeBroadcaster *source)
+	{
+		//send change message when users interact with waveform
+		
+		sendChangeMessage();
+	}
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGenTable);
+};
+
 
 //==============================================================================
 // custom soundfiler

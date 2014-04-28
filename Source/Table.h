@@ -17,14 +17,15 @@
   02111-1307 USA
 */
 
-#ifndef SOUNDFILEWAVEFORM_H
-#define SOUNDFILEWAVEFORM_H
+#ifndef GENTABLE_H
+#define GENTABLE_H
 
 #include "../JuceLibraryCode/JuceHeader.h" 
 #include "CabbageUtils.h"
 #include "CabbageLookAndFeel.h"
 
 class ZoomButton;
+class GenThumbnail;
 //=================================================================
 // display a sound file as a waveform..
 //=================================================================
@@ -67,6 +68,7 @@ public:
 	void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
 	void setWaveform(AudioSampleBuffer buffer, int channels);
 	void createImage(String filename);
+	void addTable(int sr, Colour colour, int gen, int tableNumber);
 	
 private:
 	Image img;
@@ -91,7 +93,7 @@ private:
 	ScopedPointer<ZoomButton> zoomIn, zoomOut;
 
 	AudioFormatManager formatManager;
-	float sampleRate;
+	double sampleRate;
 	float regionWidth;
 	Image waveformImage;
     AudioThumbnailCache thumbnailCache;
@@ -103,7 +105,48 @@ private:
 	double loopStart;
 	double currentPlayPosition;
 	bool drawWaveform;
+	int gen;
 };
 
-
+//==============================================================================
+// GenThumbnail class
+//==============================================================================
+class GenThumbnail : public Component
+{
+	
+public:
+	GenThumbnail(int gen, Colour colour);
+	~GenThumbnail();
+	void paint(Graphics &g);
+};
+					
+//==============================================================================
+// zooming button
+//==============================================================================
+class ZoomButton : public Component,
+					public ChangeBroadcaster
+					
+{
+public:
+	ZoomButton(String type):Component()
+	{
+	setName(type);	
+	}
+	~ZoomButton(){}
+	
+	void mouseDown(const MouseEvent& e){
+		sendChangeMessage();
+	}
+	
+	void paint(Graphics& g){
+		g.fillAll(Colours::transparentBlack);
+		g.setColour(Colours::white.withAlpha(.8f));
+		g.fillEllipse(0, 0, getWidth(), getHeight());
+		g.setColour(Colours::black);
+		g.fillRoundedRectangle(getWidth()*.18, getHeight()*.4f, getWidth()*.65, getHeight()*.25, 2);
+		if(getName()=="zoomIn")
+			g.fillRoundedRectangle(getWidth()*.38f, getHeight()*.20, getWidth()*.25, getHeight()*.65, 2);
+	}
+	
+};
 #endif // SOUNDFILEWAVEFORM_H

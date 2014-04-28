@@ -19,41 +19,13 @@
 
 #include "Table.h"
 
-//==============================================================================
-// zooming button
-//==============================================================================
-class ZoomButton : public Component,
-					public ChangeBroadcaster
-					
-{
-public:
-	ZoomButton(String type):Component()
-	{
-	setName(type);	
-	}
-	~ZoomButton(){}
-	
-	void mouseDown(const MouseEvent& e){
-		sendChangeMessage();
-	}
-	
-	void paint(Graphics& g){
-		g.fillAll(Colours::transparentBlack);
-		g.setColour(Colours::white.withAlpha(.8f));
-		g.fillEllipse(0, 0, getWidth(), getHeight());
-		g.setColour(Colours::black);
-		g.fillRoundedRectangle(getWidth()*.18, getHeight()*.4f, getWidth()*.65, getHeight()*.25, 2);
-		if(getName()=="zoomIn")
-			g.fillRoundedRectangle(getWidth()*.38f, getHeight()*.20, getWidth()*.25, getHeight()*.65, 2);
-	}
-	
-};
+
 //==============================================================================
 // GenTable display  component
 //==============================================================================
 
 GenTable::GenTable(int sr, Colour col, Colour fcol):	thumbnailCache (5), 
-														colour(col),														sampleRate(sr),
+														colour(col),
 														currentPlayPosition(0),
 														mouseDownX(0),
 														mouseUpX(0),
@@ -62,13 +34,10 @@ GenTable::GenTable(int sr, Colour col, Colour fcol):	thumbnailCache (5),
 														loopLength(0),
 														scrubberPosition(0),
 														fontcolour(fcol),
-														currentPositionMarker(new DrawableRectangle())
+														currentPositionMarker(new DrawableRectangle()),
+														sampleRate(sr),
+														gen(1)
 {	
-    formatManager.registerBasicFormats();  
-	thumbnail = new AudioThumbnail(2, formatManager, thumbnailCache); 
-	thumbnail->addChangeListener (this);
-	//setSize(400, 200);
-	sampleRate = sr;
 	addAndMakeVisible(scrollbar = new ScrollBar(false));
 	scrollbar->setRangeLimits (visibleRange);
 	//scrollbar->setAutoHide (false);
@@ -79,12 +48,24 @@ GenTable::GenTable(int sr, Colour col, Colour fcol):	thumbnailCache (5),
 	addAndMakeVisible(zoomOut = new ZoomButton("zoomOut"));
 	zoomIn->addChangeListener(this);
 	zoomOut->addChangeListener(this);
+		
+	
 }
 //==============================================================================	
 GenTable::~GenTable()
 {
 	scrollbar->removeListener (this);
 	thumbnail->removeChangeListener (this);
+}
+//==============================================================================	
+void GenTable::addTable(int sr, Colour colour, int gen, int tableNumber)
+{
+	if(gen==1)
+	{
+	formatManager.registerBasicFormats();  
+	thumbnail = new AudioThumbnail(2, formatManager, thumbnailCache); 
+	thumbnail->addChangeListener (this);
+	}		
 }
 //==============================================================================	
 void GenTable::changeListenerCallback(ChangeBroadcaster *source)
@@ -118,11 +99,7 @@ void GenTable::setFile (const File& file)
 {
    if (! file.isDirectory())
      {
-	
-	//buffer.clear();
-	//
-	//buffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());
-	//buffer.addFrom(1, 0, tableValues.getRawDataPointer(), tableValues.size());
+		gen==1;
 		AudioFormatManager format;
 		format.registerBasicFormats();	
 		//registers wav and aif format (just nescearry one time if you alays use the "getInstance()" method)
@@ -136,14 +113,7 @@ void GenTable::setFile (const File& file)
 			reader->read(&buffer,0, buffer.getNumSamples(), 0, true, true);
 			setWaveform(buffer, reader->numChannels);
 		}		 
-		 
 		delete reader; 
-		 
-		 
-		// thumbnail->setSource (new FileInputSource (file));
-        //    const Range<double> newRange (0.0, thumbnail->getTotalLength());
-        //    scrollbar->setRangeLimits (newRange);
-        //    setRange (newRange);
       }
 	repaint(0, 0, getWidth(), getHeight());
 }
@@ -154,7 +124,6 @@ void GenTable::setWaveform(AudioSampleBuffer buffer, int channels)
 	thumbnail->clear();
 	repaint();
 	thumbnail->reset(channels, 44100, buffer.getNumSamples());	
-	//thumbnail->clear();
 	thumbnail->addBlock(0, buffer, 0, buffer.getNumSamples());
 	const Range<double> newRange (0.0, thumbnail->getTotalLength());
 	scrollbar->setRangeLimits (newRange);
@@ -167,6 +136,10 @@ void GenTable::setWaveform(AudioSampleBuffer buffer, int channels)
 //==============================================================================
 void GenTable::setZoomFactor (double amount)
 {
+	//instead of using thumbnail length, just use table lenght
+	//will probably have to update code so that it uses samples intead of 
+	//time...	
+	
 	if (thumbnail->getTotalLength() > 0)
 	{
 		const double newScale = jmax (0.001, thumbnail->getTotalLength() * (1.0 - jlimit (0.0, 0.99, amount)));
@@ -186,51 +159,23 @@ void GenTable::setRange(Range<double> newRange)
 //==============================================================================
 void GenTable::paint (Graphics& g)
 {
-		g.fillAll (Colours::black);
-		g.setColour (colour);	
-        if (thumbnail->getTotalLength() > 0.01)
+		g.fillAll (Colours::transparentBlack);
+		g.setColour (colour);
+	
+        if(gen==1)
         {			
             Rectangle<int> thumbArea (getLocalBounds());
             thumbArea.setHeight(getHeight()-14);
 			thumbArea.setTop(10.f);
             thumbnail->drawChannels(g, thumbArea.reduced (2),
                                     visibleRange.getStart(), visibleRange.getEnd(), .8f);
-			
-			/*
-			for(int i=0.f;i<getWidth();i++){
-			g.setColour (fontcolour);
-			//float pos = visibleRange.getStart()+i;	
-			//float xPos = (jmax(1, i)/visibleRange.getStart()) / (visibleRange.getLength() * getWidth());
-			//double round = xToTime(i);
-			
-			double round = fabs(xToTime(i));
-			//Logger::writeToLog(String(round-abs((int)round)));
-			if(round-abs((int)round)<(0.05*(1-zoom)))
-			{
-				String test = CabbageUtils::setDecimalPlaces(xToTime(i), 1);
-				g.setFont(10);
-				g.drawFittedText(test, i, 0, 20, 11, Justification::left, 1);
-				//g.drawVerticalLine(i+1, 5, 10);
-			}	
-			
-			//g.drawVerticalLine(i, 5, 10);
-			}*/
-			
-        
-	
-		//if(regionWidth>1){
+		//if(GEN05 then draw envelope data)	
+      
+
 		g.setColour(colour.contrasting(.5f).withAlpha(.7f));
 		float zoomFactor = thumbnail->getTotalLength()/visibleRange.getLength();
 		//regionWidth = (regionWidth=2 ? 2 : regionWidth*zoomFactor)
 		g.fillRect(timeToX(currentPlayPosition), 10.f, (regionWidth==2 ? 2 : regionWidth*zoomFactor), (float)getHeight()-26.f);	
-		//}
-
-		}
-	else
-		{
-			g.setColour(Colours::whitesmoke);
-			g.setFont (14.0f);
-			g.drawFittedText ("(No audio file loaded)", getLocalBounds(), Justification::centred, 2);
 		}
 }
 
@@ -251,7 +196,7 @@ void GenTable::mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel
 void GenTable::mouseDown (const MouseEvent& e)
 {
 	Logger::writeToLog("mouseDown GenTable");
-	
+	//will need to add handles here..and only select region if gen01
 	if(!e.mods.isPopupMenu())
 		{
 		regionWidth = (1.01-zoom)*1.5;	
@@ -280,6 +225,7 @@ void GenTable::mouseExit(const MouseEvent& e)
 //==============================================================================
 void GenTable::mouseDrag(const MouseEvent& e)
 {
+	//if(GEN01 then provide access to highlighted regions, otherwise it will be too messy)
 	if(this->getLocalBounds().contains(e.getPosition()))
 	{
 	if(e.mods.isLeftButtonDown())
@@ -296,20 +242,40 @@ void GenTable::mouseDrag(const MouseEvent& e)
 	}
 }
 //==============================================================================
-void GenTable::setScrubberPos(double pos){
-currentPositionMarker->setVisible (true);
-pos = (pos/(thumbnail->getTotalLength()*sampleRate))*thumbnail->getTotalLength();
-currentPositionMarker->setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 10,
-                                                              1.5f, (float) (getHeight() - scrollbar->getHeight()-10)));
-if(pos<0.5)
-	setRange (visibleRange.movedToStartAt(0));
-	
-	
-if(visibleRange.getEnd()<=thumbnail->getTotalLength())
-setRange (visibleRange.movedToStartAt (jmax(0.0, pos - (visibleRange.getLength() / 2.0))));
+void GenTable::setScrubberPos(double pos)
+{
+	//might need to be taken care of on a higher level
+	currentPositionMarker->setVisible (true);
+	pos = (pos/(thumbnail->getTotalLength()*sampleRate))*thumbnail->getTotalLength();
+	currentPositionMarker->setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 10,
+																  1.5f, (float) (getHeight() - scrollbar->getHeight()-10)));
+	if(pos<0.5)
+		setRange (visibleRange.movedToStartAt(0));
+		
+		
+	if(visibleRange.getEnd()<=thumbnail->getTotalLength())
+	setRange (visibleRange.movedToStartAt (jmax(0.0, pos - (visibleRange.getLength() / 2.0))));
 }
 //==============================================================================
 void GenTable::mouseUp(const MouseEvent& e)
 {
 	sendChangeMessage();
+}
+
+//==============================================================================
+//GenThumbnail class
+//==============================================================================
+GenThumbnail::GenThumbnail(int gen, Colour colour)
+{
+	
+}
+//==============================================================================
+GenThumbnail::~GenThumbnail()
+{
+	
+}
+//==============================================================================
+void GenThumbnail::paint(Graphics &g)
+{
+	
 }

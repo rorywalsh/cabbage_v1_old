@@ -702,6 +702,7 @@ bool multiLine = false;
 					if(tokes[0].equalsIgnoreCase(String("form"))
 									||tokes[0].equalsIgnoreCase(String("image"))
 									||tokes[0].equalsIgnoreCase(String("keyboard"))
+									||tokes[0].equalsIgnoreCase(String("gentable"))
 									||tokes[0].equalsIgnoreCase(String("csoundoutput"))
 									||tokes[0].equalsIgnoreCase(String("textbox"))
 									||tokes[0].equalsIgnoreCase(String("line"))

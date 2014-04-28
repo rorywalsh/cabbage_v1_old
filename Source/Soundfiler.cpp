@@ -64,7 +64,7 @@ Soundfiler::Soundfiler(int sr, Colour col, Colour fcol):	thumbnailCache (5),
 														fontcolour(fcol),
 														currentPositionMarker(new DrawableRectangle())
 {	
-    formatManager.registerBasicFormats();  
+	formatManager.registerBasicFormats();  
 	thumbnail = new AudioThumbnail(2, formatManager, thumbnailCache); 
 	thumbnail->addChangeListener (this);
 	//setSize(400, 200);
@@ -190,6 +190,7 @@ void Soundfiler::paint (Graphics& g)
 		g.setColour (colour);	
         if (thumbnail->getTotalLength() > 0.01)
         {			
+			//if(GEN01 then draw thumbnail)
             Rectangle<int> thumbArea (getLocalBounds());
             thumbArea.setHeight(getHeight()-14);
 			thumbArea.setTop(10.f);
@@ -280,6 +281,7 @@ void Soundfiler::mouseExit(const MouseEvent& e)
 //==============================================================================
 void Soundfiler::mouseDrag(const MouseEvent& e)
 {
+	
 	if(this->getLocalBounds().contains(e.getPosition()))
 	{
 	if(e.mods.isLeftButtonDown())
@@ -296,7 +298,8 @@ void Soundfiler::mouseDrag(const MouseEvent& e)
 	}
 }
 //==============================================================================
-void Soundfiler::setScrubberPos(double pos){
+void Soundfiler::setScrubberPos(double pos)
+{
 currentPositionMarker->setVisible (true);
 pos = (pos/(thumbnail->getTotalLength()*sampleRate))*thumbnail->getTotalLength();
 currentPositionMarker->setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 10,

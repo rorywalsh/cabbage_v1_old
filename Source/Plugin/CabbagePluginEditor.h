@@ -161,6 +161,7 @@ private:
         void InsertSnapshot(CabbageGUIClass &cAttr);
 		void InsertTransport(CabbageGUIClass &cAttr);
 		void InsertPopupMenu(CabbageGUIClass &cAttr);
+		void InsertGenTable(CabbageGUIClass &cAttr);
 		void InsertTextbox(CabbageGUIClass &cAttr);
 		void InsertNumberBox(CabbageGUIClass &cAttr);
         void buttonClicked(Button*);

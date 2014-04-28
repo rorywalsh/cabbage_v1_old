@@ -209,22 +209,18 @@ if(presetFileText.length()>1)
 //==============================================================================
 void CabbagePluginAudioProcessorEditor::resized()
 {
-//Logger::writeToLog("width:"+String(getWidth()));
-//Logger::writeToLog("height:"+String(getHeight()));
-
-this->setSize(this->getWidth(), this->getHeight());	
+//this->setSize(this->getWidth(), this->getHeight());	
 viewport->setBounds(0, 0, this->getWidth(), this->getHeight());
 
 componentPanel->setTopLeftPosition(0, 0);
-//if(componentPanel)componentPanel->setBounds(0, 0, this->getWidth(), this->getHeight());
+
 #ifdef Cabbage_Build_Standalone
 layoutEditor->setTopLeftPosition(0, 0);
 if(componentPanel->getWidth()<this->getWidth()+18 && componentPanel->getHeight()<this->getHeight()+18)
 viewport->setScrollBarsShown(false, false);
 else
 	viewport->setScrollBarsShown(true, true);
-//resizer->setBounds (getWidth() - 16, getHeight() - 16, 16, 16);
-//if(layoutEditor)layoutEditor->setBounds(0, 0, this->getWidth(), this->getHeight());
+
 #endif
 }
 

@@ -248,7 +248,7 @@ void Table::setDataSource (int zoomValue)
 		
 			overview.maxY.add (convertAmpToPixel(maxBlockValue));
 			overview.minY.add (convertAmpToPixel(minBlockValue));
-			useOverview = false;
+			useOverview = true;
 		}
 	}
 	// Else we use original table data for painting

@@ -158,9 +158,6 @@ public:
 
     void indentSelection();
     void unindentSelection();
-	virtual void editorHasScrolled(){
-		
-	}
 
     //==============================================================================
     Range<int> getHighlightedRegion() const override;
@@ -304,7 +301,7 @@ public:
     */
     virtual void addPopupMenuItems (PopupMenu& menuToAddTo,
                                     const MouseEvent* mouseClickEvent);
-
+									
     /** This is called to perform one of the items that was shown on the popup menu.
 
         If you've overridden addPopupMenuItems(), you should also override this

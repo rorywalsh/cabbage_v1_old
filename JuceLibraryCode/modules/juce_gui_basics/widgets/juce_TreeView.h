@@ -557,7 +557,7 @@ private:
     TreeViewItem* getDeepestOpenParentItem() noexcept;
     int getNumRows() const noexcept;
     TreeViewItem* getItemOnRow (int index) noexcept;
-    void deselectAllRecursively();
+    void deselectAllRecursively (TreeViewItem* itemToIgnore);
     int countSelectedItemsRecursively (int depth) const noexcept;
     TreeViewItem* getSelectedItemWithIndex (int index) noexcept;
     TreeViewItem* getNextVisibleItem (bool recurse) const noexcept;
@@ -875,7 +875,7 @@ private:
     void hideDragHighlight() noexcept;
     void handleDrag (const StringArray&, const SourceDetails&);
     void handleDrop (const StringArray&, const SourceDetails&);
-    void toggleOpenSelectedItem();
+    bool toggleOpenSelectedItem();
     void moveOutOfSelectedItem();
     void moveIntoSelectedItem();
     void moveByPages (int numPages);

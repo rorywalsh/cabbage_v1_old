@@ -42,6 +42,7 @@
  #pragma clang diagnostic ignored "-Wdeprecated-declarations"
  #pragma clang diagnostic ignored "-Wsign-conversion"
  #pragma clang diagnostic ignored "-Wconversion"
+ #pragma clang diagnostic ignored "-Woverloaded-virtual"
 #endif
 
 #include "../utility/juce_IncludeSystemHeaders.h"
@@ -56,6 +57,13 @@
  #define Component CarbonDummyCompName
 #endif
 
+/*
+    Got an include error here?
+
+    You probably need to install Apple's AU classes - see the
+    juce website for more info on how to get them:
+    http://www.juce.com/forum/topic/aus-xcode
+*/
 #include "AUMIDIEffectBase.h"
 #include "MusicDeviceBase.h"
 #undef Point
@@ -528,7 +536,7 @@ public:
    #if BUILD_AU_CARBON_UI
     int GetNumCustomUIComponents() override
     {
-        return PluginHostType().isDigitalPerformer() ? 0 : 1;
+        return getHostType().isDigitalPerformer() ? 0 : 1;
     }
 
     void GetUIComponentDescs (ComponentDescription* inDescArray) override
@@ -772,7 +780,7 @@ public:
                     needToReinterleave = true;
 
                     for (unsigned int subChan = 0; subChan < buf.mNumberChannels && numOutChans < numOut; ++subChan)
-                        channels [numOutChans++] = bufferSpace.getSampleData (nextSpareBufferChan++);
+                        channels [numOutChans++] = bufferSpace.getWritePointer (nextSpareBufferChan++);
                 }
 
                 if (numOutChans >= numOut)
@@ -807,7 +815,7 @@ public:
                         }
                         else
                         {
-                            dest = bufferSpace.getSampleData (nextSpareBufferChan++);
+                            dest = bufferSpace.getWritePointer (nextSpareBufferChan++);
                             channels [numInChans++] = dest;
                         }
 
@@ -908,7 +916,7 @@ public:
                     {
                         for (unsigned int subChan = 0; subChan < buf.mNumberChannels; ++subChan)
                         {
-                            const float* src = bufferSpace.getSampleData (nextSpareBufferChan++);
+                            const float* src = bufferSpace.getReadPointer (nextSpareBufferChan++);
                             float* dest = ((float*) buf.mData) + subChan;
 
                             for (int j = (int) numSamples; --j >= 0;)
@@ -938,9 +946,11 @@ public:
                                      (juce::uint8) inData2 };
 
         incomingEvents.addEvent (data, 3, (int) inStartFrame);
-       #endif
-
         return noErr;
+       #else
+        (void) nStatus; (void) inChannel; (void) inData1; (void) inData2; (void) inStartFrame;
+        return kAudioUnitErr_PropertyNotInUse;
+       #endif
     }
 
     OSStatus HandleSysEx (const UInt8* inData, UInt32 inLength) override
@@ -948,8 +958,11 @@ public:
        #if JucePlugin_WantsMidiInput
         const ScopedLock sl (incomingMidiLock);
         incomingEvents.addEvent (inData, (int) inLength, 0);
-       #endif
         return noErr;
+       #else
+        (void) inData; (void) inLength;
+        return kAudioUnitErr_PropertyNotInUse;
+       #endif
     }
 
     //==============================================================================
@@ -1083,7 +1096,7 @@ public:
 
         bool keyPressed (const KeyPress&) override
         {
-            if (PluginHostType().isAbletonLive())
+            if (getHostType().isAbletonLive())
             {
                 static NSTimeInterval lastEventTime = 0; // check we're not recursively sending the same event
                 NSTimeInterval eventTime = [[NSApp currentEvent] timestamp];
@@ -1362,7 +1375,7 @@ private:
             JUCE_AUTORELEASEPOOL
             {
                 jassert (ed != nullptr);
-                addAndMakeVisible (&editor);
+                addAndMakeVisible (editor);
                 setOpaque (true);
                 setVisible (true);
                 setBroughtToFrontOnMouseClick (true);

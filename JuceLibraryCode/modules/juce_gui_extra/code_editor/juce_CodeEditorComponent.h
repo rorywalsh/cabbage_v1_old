@@ -158,6 +158,9 @@ public:
 
     void indentSelection();
     void unindentSelection();
+	virtual void editorHasScrolled(){
+		
+	}
 
     //==============================================================================
     Range<int> getHighlightedRegion() const override;

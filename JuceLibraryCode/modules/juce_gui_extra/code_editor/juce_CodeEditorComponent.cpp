@@ -654,6 +654,7 @@ void CodeEditorComponent::updateScrollBars()
 
     horizontalScrollBar.setRangeLimits (0, jmax ((double) document.getMaximumLineLength(), xOffset + columnsOnScreen));
     horizontalScrollBar.setCurrentRange (xOffset, columnsOnScreen);
+	Logger::writeToLog("updateScrollBars");
 }
 
 void CodeEditorComponent::scrollToLineInternal (int newFirstLineOnScreen)
@@ -670,6 +671,7 @@ void CodeEditorComponent::scrollToLineInternal (int newFirstLineOnScreen)
         rebuildLineTokensAsync();
         pimpl->handleUpdateNowIfNeeded();
     }
+	editorHasScrolled();
 }
 
 void CodeEditorComponent::scrollToColumnInternal (double column)
@@ -682,6 +684,7 @@ void CodeEditorComponent::scrollToColumnInternal (double column)
         updateCaretPosition();
         repaint();
     }
+	editorHasScrolled();
 }
 
 void CodeEditorComponent::scrollToLine (int newFirstLineOnScreen)
@@ -699,6 +702,7 @@ void CodeEditorComponent::scrollToColumn (int newFirstColumnOnScreen)
 void CodeEditorComponent::scrollBy (int deltaLines)
 {
     scrollToLine (firstLineOnScreen + deltaLines);
+	Logger::writeToLog("scrollBy");
 }
 
 void CodeEditorComponent::scrollToKeepLinesOnScreen (Range<int> rangeToShow)
@@ -707,6 +711,7 @@ void CodeEditorComponent::scrollToKeepLinesOnScreen (Range<int> rangeToShow)
         scrollBy (rangeToShow.getStart() - firstLineOnScreen);
     else if (rangeToShow.getEnd() >= firstLineOnScreen + linesOnScreen)
         scrollBy (rangeToShow.getEnd() - (firstLineOnScreen + linesOnScreen - 1));
+	Logger::writeToLog("scrollToKeepLinesOnScreen");
 }
 
 void CodeEditorComponent::scrollToKeepCaretOnScreen()

@@ -24,19 +24,16 @@
 // GenTable display  component
 //==============================================================================
 
-GenTable::GenTable(int sr, Colour col, Colour fcol):	thumbnailCache (5), 
-														colour(col),
-														currentPlayPosition(0),
-														mouseDownX(0),
-														mouseUpX(0),
-														drawWaveform(false),
-														regionWidth(1),
-														loopLength(0),
-														scrubberPosition(0),
-														fontcolour(fcol),
-														currentPositionMarker(new DrawableRectangle()),
-														sampleRate(sr),
-														gen(1)
+GenTable::GenTable():	thumbnailCache (5), 
+									currentPlayPosition(0),
+									mouseDownX(0),
+									mouseUpX(0),
+									drawWaveform(false),
+									regionWidth(1),
+									loopLength(0),
+									scrubberPosition(0),
+									currentPositionMarker(new DrawableRectangle()),
+									gen(1)
 {	
 	addAndMakeVisible(scrollbar = new ScrollBar(false));
 	scrollbar->setRangeLimits (visibleRange);
@@ -58,14 +55,17 @@ GenTable::~GenTable()
 	thumbnail->removeChangeListener (this);
 }
 //==============================================================================	
-void GenTable::addTable(int sr, Colour colour, int gen, int tableNumber)
+void GenTable::addTable(int sr, Colour col, StringArray fstatement)
 {
-	if(gen==1)
-	{
+	sampleRate = sr;
+	colour = col;
+	//tableNumber = tableNumer
+	//if(gen==1)
+	//{
 	formatManager.registerBasicFormats();  
 	thumbnail = new AudioThumbnail(2, formatManager, thumbnailCache); 
 	thumbnail->addChangeListener (this);
-	}		
+	//}		
 }
 //==============================================================================	
 void GenTable::changeListenerCallback(ChangeBroadcaster *source)

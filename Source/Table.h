@@ -35,7 +35,7 @@ class GenTable : public Component,
 						public ChangeListener
 {
 public:
-	GenTable(int sr, Colour col, Colour fcol);	
+	GenTable();	
 	~GenTable();	
 	
 	double getCurrentPlayPos(){
@@ -68,7 +68,7 @@ public:
 	void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
 	void setWaveform(AudioSampleBuffer buffer, int channels);
 	void createImage(String filename);
-	void addTable(int sr, Colour colour, int gen, int tableNumber);
+	void addTable(int sr, Colour colour, StringArray fstatement);
 	
 private:
 	Image img;

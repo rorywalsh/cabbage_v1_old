@@ -37,7 +37,7 @@ nchnls = 2
 ;Author: Giorgio Zucco (2012)
 
 
-instr	1
+instr 1
 
 ;channel
 kdetune	chnget	"detune"

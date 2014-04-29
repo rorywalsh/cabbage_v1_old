@@ -52,9 +52,8 @@ Filters
  The four filters are in a parallel arrangement as opposed to being in series.
 
 <Cabbage>
-form caption("Clavinet"), size(550, 170), pluginID("clav"), colour(228,156,28)
+form caption("Clavinet"), size(550, 195), pluginID("clav"), colour(228,156,28)
 
-image bounds(0,0,550,165), colour(228,156,28)
 ; filter switches
 checkbox bounds( 10,  5, 70, 15), text("Brilliant") channel("brilliant"), FontColour(50,50,50), colour("lime")
 checkbox bounds( 10, 25, 70, 15), text("Treble") channel("treble"), FontColour(50,50,50), colour("lime"), value(1)
@@ -66,8 +65,8 @@ checkbox bounds( 80,  5, 70, 15), text("C/D") channel("C_D"), FontColour(50,50,5
 checkbox bounds( 80, 25, 70, 15), text("A/B") channel("A_B"), FontColour(50,50,50), colour("lime"), value(1)
 
 ; controls pertaining to the setup of the instrument (pickup positions, pluck position, damping etc.) accessed in a pop-up panel
-button bounds(140, 25, 100, 30), channel("setupButton"), text("Setup")
-groupbox bounds(140, 25, 172, 305),  colour(228,156,28), plant("Setup), line(0), popup(1), identchannel("setupPlant")
+button bounds(150, 8, 100, 30), channel("setupButton"), text("Setup")
+groupbox bounds(150,  8, 172, 305),  colour(228,156,28), plant("Setup"), line(0), popup(1), identchannel("setupPlant")
 {
 rslider bounds(  5,  8, 55, 55), text("Pick A"), colour(195,126,  0), FontColour(50,50,50), channel("pickA"),   range(0, 1.00, 0.25, 1, 0.001)
 rslider bounds( 55,  8, 55, 55), text("Pick B"), colour(195,126,  0), FontColour(50,50,50), channel("pickB"),   range(0, 1.00, 0.07, 1, 0.001)
@@ -88,8 +87,8 @@ rslider bounds(112,248, 55, 55), text("Inharm."),colour(255,216, 88), FontColour
 }
 
 ; controls pertaining to the release stage of a note accessed in a pop-up panel
-button bounds(250,  25, 100, 30), channel("releaseButton"), text("Release")
-groupbox bounds(250, 25, 265, 65),  colour(228,156,28), plant("Release"), line(0), popup(1), identchannel("releasePlant")
+button bounds(260,  8, 100, 30), channel("releaseButton"), text("Release")
+groupbox bounds(260,  8, 265, 65),  colour(228,156,28), plant("Release"), line(0), popup(1), identchannel("releasePlant")
 {
 rslider bounds(  5,  8, 55, 55), text("Ampl."),  colour(255,186,58), FontColour(50,50,50), channel("RelAmpl"),  range(0, 20.00, 2)
 rslider bounds( 55,  8, 55, 55), text("Tone"),   colour(255,186,58), FontColour(50,50,50), channel("RelTone"),  range(100, 8000, 1000)
@@ -99,13 +98,13 @@ rslider bounds(205,  8, 55, 55), text("A.Time"), colour(255,186,58), FontColour(
 }
 
 ; controls pertaining to the setup of the instrument's bandpass filters accessed in a pop-up panel
-button bounds(360, 25, 100, 30), channel("filtersButton"), text("Filters")
-groupbox bounds(360, 25, 230, 195),  colour(228,156,28), plant("Filters"), line(0), popup(1), identchannel("filtersPlant")
+button bounds(150, 46, 100, 30), channel("filtersButton"), text("Filters")
+groupbox bounds(150, 46, 230, 195),  colour(228,156,28), plant("Filters"), line(0), popup(1), identchannel("filtersPlant")
 {
-label    bounds( 10,  5, 45, 12), text("Brilliant"), colour(228,156,28), FontColour(50,50,50)
-label    bounds( 64,  5, 45, 12), text("Treble"),    colour(228,156,28), FontColour(50,50,50)
-label    bounds(121,  5, 45, 12), text("Medium"),    colour(228,156,28), FontColour(50,50,50)
-label    bounds(174,  5, 45, 12), text("Soft"),      colour(228,156,28), FontColour(50,50,50)
+label    bounds( 10,  5, 60, 12), text("Brilliant"), colour("white"), FontColour(50,50,50)
+label    bounds( 69,  5, 60, 12), text("Treble"),    colour("white"), FontColour(50,50,50)
+label    bounds(121,  5, 60, 12), text("Medium"),    colour("white"), FontColour(50,50,50)
+label    bounds(185,  5, 60, 12), text("Soft"),      colour("white"), FontColour(50,50,50)
 checkbox bounds( 26, 18, 10, 10), channel("brilliant"), colour("lime"), value(0), shape("ellipse")
 checkbox bounds( 81, 18, 10, 10), channel("treble"),    colour("lime"), value(0), shape("ellipse")
 checkbox bounds(136, 18, 10, 10), channel("medium"),    colour("lime"), value(0), shape("ellipse")
@@ -127,10 +126,12 @@ line bounds(114, 25,  1, 150), colour(50,50,50)
 line bounds(169, 25,  1, 150), colour(50,50,50)
 }
 
-rslider  bounds(470,  5, 65, 65), text("Level"), colour(255,186,58), FontColour(50,50,50), channel("level"), range(0, 8.00, 0.5, 0.5)
+rslider  bounds(470,  5, 75, 75), text("Level"), colour(255,186,58), FontColour(50,50,50), channel("level"), range(0, 8.00, 0.5, 0.5)
 
-keyboard bounds(  5, 85,540, 80)
-label bounds(376, 73,  200, 11), text("Author: Iain McCurdy |2013|"), FontColour(50,50,50)
+keyboard bounds(10,  85, 530,80)
+image bounds(5, 170, 420, 20), colour(75, 85, 90, 50), plant("credit"){
+label bounds(0.03, 0.1, .6, .7), text("Author: Iain McCurdy |2013|"), colour("white"), FontColour(50,50,50)
+}
 
 </Cabbage>
 
@@ -177,6 +178,7 @@ gklevel	chnget	"level"			; output volume control
 icps	cpsmidi			; cps read from midi
 inum	notnum			; note number read from midi
 ivel	veloc		0,1	; velocity read from midi
+
 
 ; pluck position is an i-rate variable so a mechanism is created to re-initialise the instrument if it is changed in realtime
 kplk	chnget	"plk"		; pluck position
@@ -312,25 +314,30 @@ aout	=	amix * aenv * gklevel	; apply release envelope and level control
 	outs	aout, aout		; send audio to outputs
 endin
 
-
 instr 1000				; launches plant popups
-
-klaunch	init	0
-
-#define LAUNCH_PLANT(name)
-#
-kpressed	chnget "$nameButton"
-if changed(kpressed)==1 then
-  Smsg sprintfk "show(%d), pos(1, 19)", klaunch
-  chnset Smsg, "$namePlant"
+kLaunch init 0				; prevent fall-through on init-pass
+ksetup chnget "setupButton"		
+ksetupPressed changed ksetup
+if ksetupPressed==1 then
+  Smsg sprintfk "show(%d), pos(0, 18)", kLaunch
+  chnset Smsg, "setupPlant"
 endif
-#
 
-$LAUNCH_PLANT(setup)
-$LAUNCH_PLANT(release)
-$LAUNCH_PLANT(filters)
+ksetup chnget "releaseButton"		
+kreleasePressed changed ksetup
+if kreleasePressed==1 then
+  Smsg sprintfk "show(%d), pos(0, 18)", kLaunch
+  chnset Smsg, "releasePlant"
+endif
 
-klaunch	=	1
+ksetup chnget "filtersButton"		
+kfiltersPressed changed ksetup
+if kfiltersPressed==1 then
+  Smsg sprintfk "show(%d), pos(0, 18)", kLaunch
+  chnset Smsg, "filtersPlant"
+endif
+
+kLaunch = 1
 
 endin
 
@@ -338,7 +345,7 @@ endin
 
 <CsScore>
 f 0 [60*60*24*7]	; keep performance going for up to a week
-i 1000 0 [60*60*24*7]	; plant pop-ups
+i1000 0 [60*60*24*7]
 </CsScore>
 
 </CsoundSynthesizer>

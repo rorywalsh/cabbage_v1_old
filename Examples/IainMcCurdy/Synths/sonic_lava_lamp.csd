@@ -68,7 +68,7 @@ $SET_XYPAD_INIT(DelTim'0.5)
 $SET_XYPAD_INIT(DelSnd'0.5)
 endin
 
-instr	1
+instr 1
 	kLFOspeed	chnget	"LFOspeed"
 	kLFO_OS		chnget	"LFO_OS"
 	kLFOshape	chnget	"LFOshape"

@@ -551,6 +551,14 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		width = 300;
 		height = 200;
 		
+		var tableColours;
+		tableColours.append("white");
+		tableColours.append("cornflowerblue");
+		tableColours.append("yellow");
+		tableColours.append("lime");
+		tableColours.append("green");
+		tableColours.append("pink");		
+		
 		cabbageIdentifiers.set(CabbageIDs::top, 10);
 		cabbageIdentifiers.set(CabbageIDs::left, 10);
 		cabbageIdentifiers.set(CabbageIDs::width, 300);
@@ -562,6 +570,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::colour, CabbageUtils::getComponentFontColour().toString());
 		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
 		cabbageIdentifiers.set(CabbageIDs::type, "gentable");
+		cabbageIdentifiers.set(CabbageIDs::tablecolour, tableColours);
 		cabbageIdentifiers.set(CabbageIDs::name, "gentable");
 		cabbageIdentifiers.set(CabbageIDs::file, "");
 		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
@@ -755,6 +764,9 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		tableColours.append("white");
 		tableColours.append("cornflowerblue");
 		tableColours.append("yellow");
+		tableColours.append("lime");
+		tableColours.append("green");
+		tableColours.append("pink");
 		
 		cabbageIdentifiers.set(CabbageIDs::top, 10);
 		cabbageIdentifiers.set(CabbageIDs::left, 10);

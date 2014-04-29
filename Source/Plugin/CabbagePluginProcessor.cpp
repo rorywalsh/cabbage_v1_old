@@ -1071,81 +1071,60 @@ void CabbagePluginAudioProcessor::messageCallback(CSOUND* csound, int /*attr*/, 
 }
 #endif
 
-void CabbagePluginAudioProcessor::breakpointCallback(CSOUND *csound, int line, double instr, void *userdata)
+void CabbagePluginAudioProcessor::breakpointCallback(CSOUND *csound, debug_bkpt_info_t *bkpt_info, void *userdata)
 {
 #ifdef BUILD_DEBUGGER
-    CabbagePluginAudioProcessor* ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
+    CabbagePluginAudioProcessor* ud = (CabbagePluginAudioProcessor *) userdata;
 	ud->getCallbackLock().enter();
 	int ksmpOffset = ud->ksmpsOffset;;
-    INSDS *insds = csoundDebugGetInstrument(csound);
+	
+	//code based on Andres implementation in CsoundQT...
+	
+	debug_instr_t *debug_instr = bkpt_info->breakpointInstr;
+	
+	
+	// Copy variable list
+	debug_variable_t* vp = bkpt_info->instrVarList; 
+
 	
 	if(ud->breakCount==0)
-		ud->breakCount=ud->csound->GetCsound()->GetKcounter(ud->csound->GetCsound());
+		ud->breakCount=debug_instr->kcounter;
 	else ud->breakCount++;
     String output;
 	
-	output << "\nBreakpoint at instr " << instr << "\tNumber of k-cycles into performance: " << ud->breakCount << "\n------------------------------------------------------";;
+	output << "\nBreakpoint at instr " << debug_instr->p1 << "\tNumber of k-cycles into performance: " << ud->breakCount << "\n------------------------------------------------------";;
 
-	
-    // Copy variable list
-    CS_VARIABLE *vp = insds->instr->varPool->head;
-    while (vp) 
+	while (vp) 
     {
             output << " \n";
-            if (vp->varName[0] != '#')
+            if (vp->name[0] != '#')
             {
-                output << " VarName:"<< vp->varName << "\t";;
-                if (strcmp(vp->varType->varTypeName, "i") == 0
-                    || strcmp(vp->varType->varTypeName, "k") == 0) 
-                {
-                    if (vp->memBlock) {
-                        output << "---" << *((MYFLT *)vp->memBlock);
-                    } else 
-                    {
-                    MYFLT *varmem = insds->lclbas + vp->memBlockIndex;
-                    output << " value=" << *varmem;;
-                    }
-                } 
-                else if(strcmp(vp->varType->varTypeName, "S") == 0) 
-                {
-                    STRINGDAT *varmem;
-                    if (vp->memBlock) {
-                        varmem = (STRINGDAT *)vp->memBlock;
-                    } else {
-                        varmem = (STRINGDAT *) (insds->lclbas + vp->memBlockIndex);
-                    }
-                    output << " value=" << std::string(varmem->data) ;;//, varmem->size));
-                } 
-                else if (strcmp(vp->varType->varTypeName, "a") == 0)
-                {
-                    if (vp->memBlock) 
-                    {
-                        output << " =======" << *((MYFLT *)vp->memBlock) << *((MYFLT *)vp->memBlock + 1)
-                        << *((MYFLT *)vp->memBlock + 2)<< *((MYFLT *)vp->memBlock + 3);
-                    } 
-                    else
-                    {
-                    MYFLT *varmem = insds->lclbas + vp->memBlockIndex;
-                    output <<" value="<< *varmem;
-                    }
-                    } else {
-
-                }
-                output << " varType[" << vp->varType->varTypeName << "]";
-        }
-        vp = vp->next;
-		ud->csoundDebuggerOutput = output;
-
-		ud->getCallbackLock().exit(); 
-		
+                output << " VarName:"<< vp->name << "\t";;
+				if (strcmp(vp->typeName, "i") == 0 || strcmp(vp->typeName, "k") == 0) 
+					{
+					output << " value=" << *((MYFLT *) vp->data);
+					}
+				else if(strcmp(vp->typeName, "S") == 0) 
+					{
+					output << " value=" << (char*)(vp->data);
+					} 
+				else if (strcmp(vp->typeName, "a") == 0) 
+					{
+					MYFLT *data = (MYFLT *) vp->data;
+					output << " value="<< *data;// << *(data + 1) << *(data + 2)<< *(data + 3);				
+				
+					}
+				output << " varType[" << vp->typeName << "]";
+				
+			}
+			vp = vp->next;
 	}
+	
+	ud->csoundDebuggerOutput = output;
+    csoundDebugFreeVariables(csound, vp);
+    //csoundDebugFreeInstrInstances(csound, debug_instr);
+	ud->getCallbackLock().exit(); 
 
-    //Copy active instrument list
-
-    INSDS *in = insds;
-    while (in->prvact) {
-        in = in->prvact;
-    }
 #endif
 }    
 //==============================================================================
@@ -1758,11 +1737,11 @@ void CabbagePluginAudioProcessor::continueCsoundDebug()
 void CabbagePluginAudioProcessor::nextCsoundDebug()
 {
 #ifdef BUILD_DEBUGGER
-	
+	//not yet implemented....
 	if(breakpointInstruments.size()>0)
 	{
 		getCallbackLock().enter();
-		csoundDebugNext(csound->GetCsound());
+		//csoundDebugNext(csound->GetCsound());
 		getCallbackLock().exit();	
 	}
 	

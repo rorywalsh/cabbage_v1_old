@@ -652,7 +652,7 @@ public:
 			if(shape=="rounded"){
 				g.fillAll(Colours::transparentBlack);
 				g.setColour(Colour::fromString(outline));
-				g.drawRoundedRectangle(0,0, width, height, width*.2, line);
+				g.drawRoundedRectangle(0,0, width, height, width*.02, line);
 				g.setColour(Colour::fromString(colour));
 				g.fillRoundedRectangle(line,line, width-(line*2), height-(line*2), width*.02);				
 			}
@@ -865,7 +865,7 @@ public:
 												 scrubberPos(cAttr.getNumProp(CabbageIDs::scrubberposition))
 	{
 	setName(cAttr.getStringProp(CabbageIDs::name));	
-	table = new GenTable(44100, Colour::fromString(colour), Colour::fromString(fontcolour));
+	table = new GenTable();
 	addAndMakeVisible(table);
 	table->addChangeListener(this);
 	sampleRate = 44100;

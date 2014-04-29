@@ -110,7 +110,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 		controlChannelInfo_s* csoundChanList;
         int numCsoundChannels;          //number of Csound channels
         static void messageCallback(CSOUND *csound, int attr, const char *fmt, va_list args);  //message callback function
-        static void breakpointCallback(CSOUND *csound, int line, double instr, void *userdata);
+        static void breakpointCallback(CSOUND *csound, debug_bkpt_info_t *bkpt_info, void *udata);
 		int ksmpsOffset;
 		bool CS_DEBUG_MODE;
 		int pos;

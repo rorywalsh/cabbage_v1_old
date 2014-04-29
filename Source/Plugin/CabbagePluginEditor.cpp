@@ -1847,29 +1847,21 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 		
 		//load initial files/tables if any are set
 		int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();
-		tableBuffer.clear();
 		for(int y=0;y<numberOfTables;y++)
 			{
+			tableBuffer.clear();
 			int tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, y);
 			tableValues.clear();
 			tableValues = getFilter()->getTableFloats(tableNumber);		
-			if(tableBuffer.getNumSamples()<tableValues.size())
 			tableBuffer.setSize(numberOfTables, tableValues.size());
 			tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());
+			//GenTable* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
+			//table->addTable(44100, tableBuffer);
 			}
-/*
-		int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();				
-		for(int y=0;y<numberOfTables;y++)
-			{
-			tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, y);
-			Array <float, CriticalSection> tableValues = getFilter()->getTableFloats(tableNumber);
-			((CabbageTable*)layoutComps[idx])->fillTable(y, tableValues);	
-			//StringArray statement = getFilter()->getTableEvtCode(tableNumber);		
-			//((CabbageTable*)layoutComps[idx])->setTableEvtCode(y, statement);		
-			}
+
 				
-		dynamic_cast<CabbageGenTable*>(layoutComps[idx])->fillTable(tableBuffer, numberOfTables);	
-*/
+			
+
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

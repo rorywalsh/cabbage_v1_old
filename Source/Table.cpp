@@ -33,8 +33,9 @@ GenTable::GenTable():	thumbnailCache (5),
 									loopLength(0),
 									scrubberPosition(0),
 									currentPositionMarker(new DrawableRectangle()),
-									gen(1)
+									gen(0)
 {	
+	thumbnail=nullptr;
 	addAndMakeVisible(scrollbar = new ScrollBar(false));
 	scrollbar->setRangeLimits (visibleRange);
 	//scrollbar->setAutoHide (false);
@@ -45,27 +46,30 @@ GenTable::GenTable():	thumbnailCache (5),
 	addAndMakeVisible(zoomOut = new ZoomButton("zoomOut"));
 	zoomIn->addChangeListener(this);
 	zoomOut->addChangeListener(this);
-		
 	
 }
 //==============================================================================	
 GenTable::~GenTable()
 {
 	scrollbar->removeListener (this);
+	if(thumbnail)
 	thumbnail->removeChangeListener (this);
 }
 //==============================================================================	
-void GenTable::addTable(int sr, Colour col, StringArray fstatement)
+void GenTable::addTable(int sr, String col, StringArray fstatement)
 {
+	if(fstatement.size()<4)
+		jassert(0)
+		
 	sampleRate = sr;
-	colour = col;
-	//tableNumber = tableNumer
-	//if(gen==1)
-	//{
-	formatManager.registerBasicFormats();  
-	thumbnail = new AudioThumbnail(2, formatManager, thumbnailCache); 
-	thumbnail->addChangeListener (this);
-	//}		
+	colour = Colour::fromString(col);
+
+	if(gen==1)
+	{
+		formatManager.registerBasicFormats();  
+		thumbnail = new AudioThumbnail(2, formatManager, thumbnailCache); 
+		thumbnail->addChangeListener (this);
+	}		
 }
 //==============================================================================	
 void GenTable::changeListenerCallback(ChangeBroadcaster *source)
@@ -78,7 +82,7 @@ void GenTable::changeListenerCallback(ChangeBroadcaster *source)
 			setZoomFactor(jmax(0.0, zoom-=0.1));
 	}
 	repaint();
-	Logger::writeToLog("GenTable Change listener:"+String(thumbnail->getTotalLength()));
+	Logger::writeToLog("GenTable Change listener");
 }
 //==============================================================================
 void GenTable::resized()
@@ -139,14 +143,16 @@ void GenTable::setZoomFactor (double amount)
 	//instead of using thumbnail length, just use table lenght
 	//will probably have to update code so that it uses samples intead of 
 	//time...	
-	
-	if (thumbnail->getTotalLength() > 0)
+	if(gen==1)
 	{
-		const double newScale = jmax (0.001, thumbnail->getTotalLength() * (1.0 - jlimit (0.0, 0.99, amount)));
-		const double timeAtCentre = xToTime (getWidth() / 2.0f);
-		setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
+		if (thumbnail->getTotalLength() > 0)
+		{
+			const double newScale = jmax (0.001, thumbnail->getTotalLength() * (1.0 - jlimit (0.0, 0.99, amount)));
+			const double timeAtCentre = xToTime (getWidth() / 2.0f);
+			setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
+		}
+		zoom = amount;
 	}
-	zoom = amount;
 	repaint();
 }
 //==============================================================================
@@ -225,20 +231,22 @@ void GenTable::mouseExit(const MouseEvent& e)
 //==============================================================================
 void GenTable::mouseDrag(const MouseEvent& e)
 {
-	//if(GEN01 then provide access to highlighted regions, otherwise it will be too messy)
-	if(this->getLocalBounds().contains(e.getPosition()))
+	if(gen==1)
 	{
-	if(e.mods.isLeftButtonDown())
+		if(this->getLocalBounds().contains(e.getPosition()))
 		{
-		double zoomFactor = visibleRange.getLength()/thumbnail->getTotalLength();
-		regionWidth = abs(e.getDistanceFromDragStartX())*zoomFactor;
-		Logger::writeToLog(String(e.getDistanceFromDragStartX()));
-		if(e.getDistanceFromDragStartX()<0)
-		currentPlayPosition = jmax (0.0, xToTime (loopStart+(float)e.getDistanceFromDragStartX()));
-		float widthInTime = ((float)e.getDistanceFromDragStartX() / (float)getWidth()) * (float)thumbnail->getTotalLength();
-		loopLength = jmax (0.0, widthInTime*zoomFactor);	
+		if(e.mods.isLeftButtonDown())
+			{
+			double zoomFactor = visibleRange.getLength()/thumbnail->getTotalLength();
+			regionWidth = abs(e.getDistanceFromDragStartX())*zoomFactor;
+			Logger::writeToLog(String(e.getDistanceFromDragStartX()));
+			if(e.getDistanceFromDragStartX()<0)
+			currentPlayPosition = jmax (0.0, xToTime (loopStart+(float)e.getDistanceFromDragStartX()));
+			float widthInTime = ((float)e.getDistanceFromDragStartX() / (float)getWidth()) * (float)thumbnail->getTotalLength();
+			loopLength = jmax (0.0, widthInTime*zoomFactor);	
+			}	
+		repaint();
 		}	
-	repaint();	
 	}
 }
 //==============================================================================

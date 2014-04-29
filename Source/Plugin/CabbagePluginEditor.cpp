@@ -1368,8 +1368,7 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
                 g.drawFittedText(authorText, 10, getHeight()-35, getWidth()*.65, logo.getHeight(), 1, 1);   
                 //g.drawLine(10, getHeight()-27, getWidth()-10, getHeight()-27, 0.2);
         }
-//componentPanel->toFront(true);
-//componentPanel->grabKeyboardFocus();
+
 #else
                 g.setColour(formColour);
                 g.fillAll();
@@ -1849,19 +1848,13 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 		int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();
 		for(int y=0;y<numberOfTables;y++)
 			{
-			tableBuffer.clear();
+			/*	
 			int tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, y);
-			tableValues.clear();
-			tableValues = getFilter()->getTableFloats(tableNumber);		
-			tableBuffer.setSize(numberOfTables, tableValues.size());
-			tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());
-			//GenTable* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
-			//table->addTable(44100, tableBuffer);
+			GenTable* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
+			StringArray pFields = getFilter()->getTableStatement(tableNumber);
+			table->addTable(44100, cAttr.getStringArrayProp(CabbageIDs::tablecolour)[y], pFields);
+			*/
 			}
-
-				
-			
-
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -3148,9 +3141,7 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 					int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
 					tableValues.clear();
 					tableValues = getFilter()->getTableFloats(tableNumber);					
-					((CabbageTable*)layoutComps[i])->fillTable(y, tableValues);	
-					StringArray statement = getFilter()->getTableEvtCode(tableNumber);		
-					((CabbageTable*)layoutComps[i])->setTableEvtCode(y, statement);		
+					((CabbageTable*)layoutComps[i])->fillTable(y, tableValues);		
 					}				
 				}
 				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");				  

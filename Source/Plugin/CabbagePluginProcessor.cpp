@@ -1071,6 +1071,7 @@ void CabbagePluginAudioProcessor::messageCallback(CSOUND* csound, int /*attr*/, 
 }
 #endif
 
+#ifdef BUILD_DEBUGGER
 void CabbagePluginAudioProcessor::breakpointCallback(CSOUND *csound, debug_bkpt_info_t *bkpt_info, void *userdata)
 {
 #ifdef BUILD_DEBUGGER
@@ -1088,7 +1089,7 @@ void CabbagePluginAudioProcessor::breakpointCallback(CSOUND *csound, debug_bkpt_
 
 	
 	if(ud->breakCount==0)
-		ud->breakCount=debug_instr->kcounter;
+		ud->breakCount= debug_instr->kcounter;
 	else ud->breakCount++;
     String output;
 	
@@ -1126,7 +1127,8 @@ void CabbagePluginAudioProcessor::breakpointCallback(CSOUND *csound, debug_bkpt_
 	ud->getCallbackLock().exit(); 
 
 #endif
-}    
+} 
+#endif   
 //==============================================================================
 #if defined(Cabbage_Build_Standalone) || defined(Cabbage_Plugin_Host)
 CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int pluginType)
@@ -1175,15 +1177,17 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 //==============================================================================
 // getTable data from Csound so table editor can draw table
 //==============================================================================
-StringArray CabbagePluginAudioProcessor::getTableEvtCode(int tableNum)
+StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 {
 StringArray fdata;
-	/*
+/*
 EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
-for(int i=0;i<e->pcnt;i++)
+for(int i=0;i<e->pcnt;i++){
 	fdata.add(String(e->p[i]));
-return fdata;*/
-return fdata;	
+	Logger::writeToLog(String(e->p[i]));
+}
+ */ 
+return fdata;
 }
 //==============================================================================
 const Array<double, CriticalSection> CabbagePluginAudioProcessor::getTable(int tableNum)

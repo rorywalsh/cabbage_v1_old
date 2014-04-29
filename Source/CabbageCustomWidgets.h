@@ -869,7 +869,6 @@ public:
 	addAndMakeVisible(table);
 	table->addChangeListener(this);
 	sampleRate = 44100;
-	table->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
 	if(File(file).existsAsFile())
 		setFile(file);
 	}

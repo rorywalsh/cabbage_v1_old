@@ -68,7 +68,7 @@ public:
 	void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
 	void setWaveform(AudioSampleBuffer buffer, int channels);
 	void createImage(String filename);
-	void addTable(int sr, Colour colour, StringArray fstatement);
+	void addTable(int sr, String colour, StringArray fstatement);
 	
 private:
 	Image img;

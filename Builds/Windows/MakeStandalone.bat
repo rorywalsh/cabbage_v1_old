@@ -7,7 +7,7 @@ ECHO * to the Csound library                           *
 ECHO ===================================================
 ECHO 
 set JUCE_LIBRARY_CODE=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\cabbage\JuceLibraryCode
-set PREPROCESSOR_DEFS=-D__MINGW__=1 -DWIN32 -D__MINGW_EXTENSION= -DCabbage_Build_Standalone=1 -DUSE_DOUBLE=1 -DCSOUND6=1 -DCabbage_GUI_Editor=1 -DJUCER_CODEBLOCKS_20734A5D=1
+set PREPROCESSOR_DEFS=-D__MINGW__=1 -DWIN32 -D__MINGW_EXTENSION=1 -DBUILD_DEBUGGER=1 -DCabbage_Build_Standalone=1 -DUSE_DOUBLE=1 -DCSOUND6=1 -DCabbage_GUI_Editor=1 -DJUCER_CODEBLOCKS_20734A5D=1
 set CSOUND_INCLUDE_DIR=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound\include
 set ASIOSDK2Dir=C:\SDKs\ASIOSDK2.3\common
 set VSTSDKDir=C:\SDKs\vstsdk2.4

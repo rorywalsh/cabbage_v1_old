@@ -33,7 +33,9 @@ GenTable::GenTable():	thumbnailCache (5),
 									loopLength(0),
 									scrubberPosition(0),
 									currentPositionMarker(new DrawableRectangle()),
-									gen(0)
+									genRoutine(0),
+									waveformBuffer(1, 1),
+									zoom(0)
 {	
 	thumbnail=nullptr;
 	addAndMakeVisible(scrollbar = new ScrollBar(false));
@@ -56,19 +58,18 @@ GenTable::~GenTable()
 	thumbnail->removeChangeListener (this);
 }
 //==============================================================================	
-void GenTable::addTable(int sr, String col, StringArray fstatement)
+void GenTable::addTable(int sr, const String col, int gen)
 {
-	if(fstatement.size()<4)
-		jassert(0)
-		
 	sampleRate = sr;
-	colour = Colour::fromString(col);
-
-	if(gen==1)
+	colour = Colours::findColourForName(col, Colours::white);
+	genRoutine = gen;
+	//set up table according to type of GEN used to create it
+	if(genRoutine==1)
 	{
 		formatManager.registerBasicFormats();  
 		thumbnail = new AudioThumbnail(2, formatManager, thumbnailCache); 
 		thumbnail->addChangeListener (this);
+		setZoomFactor (0.0);
 	}		
 }
 //==============================================================================	
@@ -101,9 +102,9 @@ void GenTable::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRange
 	
 void GenTable::setFile (const File& file)
 {
-   if (! file.isDirectory())
+   if (!file.isDirectory())
      {
-		gen==1;
+		genRoutine==1;
 		AudioFormatManager format;
 		format.registerBasicFormats();	
 		//registers wav and aif format (just nescearry one time if you alays use the "getInstance()" method)
@@ -115,7 +116,7 @@ void GenTable::setFile (const File& file)
 			buffer.clear();
 			buffer.setSize(reader->numChannels, reader->lengthInSamples);
 			reader->read(&buffer,0, buffer.getNumSamples(), 0, true, true);
-			setWaveform(buffer, reader->numChannels);
+			setWaveform(buffer);
 		}		 
 		delete reader; 
       }
@@ -123,18 +124,34 @@ void GenTable::setFile (const File& file)
 }
 
 //==============================================================================
-void GenTable::setWaveform(AudioSampleBuffer buffer, int channels)
-{            
-	thumbnail->clear();
-	repaint();
-	thumbnail->reset(channels, 44100, buffer.getNumSamples());	
-	thumbnail->addBlock(0, buffer, 0, buffer.getNumSamples());
-	const Range<double> newRange (0.0, thumbnail->getTotalLength());
-	scrollbar->setRangeLimits (newRange);
-	setRange (newRange);
-	setZoomFactor(zoom);
-	repaint();
-	Logger::writeToLog("updating waveform");
+void GenTable::setWaveform(AudioSampleBuffer buffer)
+{         
+	waveformBuffer.clear();
+	waveformBuffer = buffer;
+	if(genRoutine==1)
+	{
+		thumbnail->clear();
+		repaint();
+		thumbnail->reset(buffer.getNumChannels(), 44100, buffer.getNumSamples());	
+		thumbnail->addBlock(0, buffer, 0, buffer.getNumSamples());
+		const Range<double> newRange (0.0, thumbnail->getTotalLength());
+		scrollbar->setRangeLimits (newRange);
+		setRange (newRange);
+		setZoomFactor(zoom);
+		Logger::writeToLog("updating waveform:Length "+String(thumbnail->getTotalLength()));
+		repaint();
+	}
+	else{
+		if(buffer.getNumSamples()>22050)
+			CabbageUtils::showMessage("Tables of sizes over 22050 samples should be created using GEN01", &this->getLookAndFeel());
+	
+		const Range<double> newRange (0.0, buffer.getNumSamples()/sampleRate);
+		scrollbar->setRangeLimits (newRange);
+		setRange (newRange);
+		//setZoomFactor(zoom);	
+		minMax = buffer.findMinMax(0, 0, buffer.getNumSamples());
+	}
+	
 }
 
 //==============================================================================
@@ -143,23 +160,55 @@ void GenTable::setZoomFactor (double amount)
 	//instead of using thumbnail length, just use table lenght
 	//will probably have to update code so that it uses samples intead of 
 	//time...	
-	if(gen==1)
+	if(genRoutine==1)
 	{
 		if (thumbnail->getTotalLength() > 0)
 		{
 			const double newScale = jmax (0.001, thumbnail->getTotalLength() * (1.0 - jlimit (0.0, 0.99, amount)));
 			const double timeAtCentre = xToTime (getWidth() / 2.0f);
 			setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
-		}
-		zoom = amount;
+		}		
 	}
+	else{
+			const double newScale = jmax (0.001, waveformBuffer.getNumSamples()/sampleRate * (1.0 - jlimit (0.0, 0.99, amount)));
+			const double timeAtCentre = xToTime (getWidth() / 2.0f);
+			setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
+	}
+	zoom = amount;
 	repaint();
 }
+
+//==============================================================================
+void GenTable::mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel)
+{
+	if(genRoutine==1)
+	{
+		if (thumbnail->getTotalLength() > 0.0)
+		{
+			double newStart = visibleRange.getStart() - wheel.deltaX * (visibleRange.getLength()) / 10.0;
+			newStart = jlimit (0.0, jmax (0.0, thumbnail->getTotalLength() - (visibleRange.getLength())), newStart);
+			setRange (Range<double> (newStart, newStart + visibleRange.getLength()));
+			repaint();
+		}
+	}
+	else
+	{
+			double newStart = visibleRange.getStart() - wheel.deltaX * (visibleRange.getLength()) / 10.0;
+			newStart = jlimit (0.0, jmax (0.0, thumbnail->getTotalLength() - (visibleRange.getLength())), newStart);
+			setRange (Range<double> (newStart, newStart + visibleRange.getLength()));
+			repaint();
+	}
+}
+
 //==============================================================================
 void GenTable::setRange(Range<double> newRange)
 {
 	visibleRange = newRange;
 	scrollbar->setCurrentRange (visibleRange);
+	//set visible ranges in samples...
+	visibleStart = visibleRange.getStart()*sampleRate;
+	visibleEnd = visibleRange.getEnd()*sampleRate;
+	visibleLength = visibleRange.getLength()*sampleRate;
 	repaint();
 }
 //==============================================================================
@@ -167,37 +216,47 @@ void GenTable::paint (Graphics& g)
 {
 		g.fillAll (Colours::transparentBlack);
 		g.setColour (colour);
-	
-        if(gen==1)
+		Rectangle<int> thumbArea (getLocalBounds());
+		thumbArea.setHeight(getHeight()-14);
+		thumbArea.setTop(10.f);
+		float prevY=0, prevX=0, currY=0, currX=0;
+		
+		//if gen01 then use an audio thumbnail class
+        if(genRoutine==1)
         {			
-            Rectangle<int> thumbArea (getLocalBounds());
-            thumbArea.setHeight(getHeight()-14);
-			thumbArea.setTop(10.f);
-            thumbnail->drawChannels(g, thumbArea.reduced (2),
-                                    visibleRange.getStart(), visibleRange.getEnd(), .8f);
-		//if(GEN05 then draw envelope data)	
-      
-
-		g.setColour(colour.contrasting(.5f).withAlpha(.7f));
-		float zoomFactor = thumbnail->getTotalLength()/visibleRange.getLength();
-		//regionWidth = (regionWidth=2 ? 2 : regionWidth*zoomFactor)
-		g.fillRect(timeToX(currentPlayPosition), 10.f, (regionWidth==2 ? 2 : regionWidth*zoomFactor), (float)getHeight()-26.f);	
+            thumbnail->drawChannels(g, thumbArea.reduced (2), visibleRange.getStart(), visibleRange.getEnd(), .8f); 
+			g.setColour(colour.contrasting(.5f).withAlpha(.7f));
+			float zoomFactor = thumbnail->getTotalLength()/visibleRange.getLength();
+			regionWidth = (regionWidth=2 ? 2 : regionWidth*zoomFactor);
+			g.fillRect(timeToX(currentPlayPosition), 10.f, (regionWidth==2 ? 2 : regionWidth*zoomFactor), (float)getHeight()-26.f);	
+		}
+		//else draw the waveform directly
+		else
+		{
+			float numPixelsPerIndex = (float)thumbArea.getWidth() / visibleLength;
+			float waveformThickness = 4;
+			//prevY = ampToPixel(thumbArea, minMax, waveformBuffer.getSample(0, 0));
+			for(int i=visibleStart;i<visibleEnd;i++)
+			{
+				//currY = thumbArea.reduced(2).getHeight()-waveformBuffer.getSample(0, jmax(0,i))*thumbArea.reduced(2).getHeight();
+				currY = ampToPixel(thumbArea, minMax, waveformBuffer.getSample(0, jmax(0,i)));
+				g.drawLine(prevX, prevY, prevX+numPixelsPerIndex, prevY, 4);
+				prevX = jmax(0.f, prevX + numPixelsPerIndex);
+				prevY = currY;
+			}		
 		}
 }
 
 //==============================================================================
-void GenTable::mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel)
+float GenTable::ampToPixel(Rectangle<int> thumbArea, Range<float> minMax, float sampleVal)
 {
-	if (thumbnail->getTotalLength() > 0.5)
-	{
-		double newStart = visibleRange.getStart() - wheel.deltaX * (visibleRange.getLength()) / 10.0;
-		newStart = jlimit (0.0, jmax (0.0, thumbnail->getTotalLength() - (visibleRange.getLength())), newStart);
-
-		setRange (Range<double> (newStart, newStart + visibleRange.getLength()));
-
-		repaint();
-	}
+	//Logger::writeToLog("MinVal:"+String(minMax.getStart()));
+	//Logger::writeToLog("MaxVal:"+String(minMax.getEnd()));
+	float amp = (sampleVal+minMax.getStart())/minMax.getLength();
+	float pixValue = (abs(amp)*thumbArea.reduced(2).getHeight());					
+	return pixValue;
 }
+
 //==============================================================================
 void GenTable::mouseDown (const MouseEvent& e)
 {
@@ -231,7 +290,7 @@ void GenTable::mouseExit(const MouseEvent& e)
 //==============================================================================
 void GenTable::mouseDrag(const MouseEvent& e)
 {
-	if(gen==1)
+	if(genRoutine==1)
 	{
 		if(this->getLocalBounds().contains(e.getPosition()))
 		{
@@ -268,22 +327,4 @@ void GenTable::setScrubberPos(double pos)
 void GenTable::mouseUp(const MouseEvent& e)
 {
 	sendChangeMessage();
-}
-
-//==============================================================================
-//GenThumbnail class
-//==============================================================================
-GenThumbnail::GenThumbnail(int gen, Colour colour)
-{
-	
-}
-//==============================================================================
-GenThumbnail::~GenThumbnail()
-{
-	
-}
-//==============================================================================
-void GenThumbnail::paint(Graphics &g)
-{
-	
 }

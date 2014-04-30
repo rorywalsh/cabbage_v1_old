@@ -196,32 +196,32 @@ tableBuffer(2, 44100)
 //============================================================================
 CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
 {
-comps.clear(true);
-subPatches.clear(true);
-layoutComps.clear(true);
-getFilter()->removeChangeListener(this);
-removeAllChangeListeners();
-//getFilter()->editorBeingDeleted(this);
-if(presetFileText.length()>1)
-        SnapShotFile.replaceWithText(presetFileText);
+	comps.clear(true);
+	subPatches.clear(true);
+	layoutComps.clear(true);
+	getFilter()->removeChangeListener(this);
+	removeAllChangeListeners();
+	//getFilter()->editorBeingDeleted(this);
+	if(presetFileText.length()>1)
+			SnapShotFile.replaceWithText(presetFileText);
 }
 
 //==============================================================================
 void CabbagePluginAudioProcessorEditor::resized()
 {
-//this->setSize(this->getWidth(), this->getHeight());	
-viewport->setBounds(0, 0, this->getWidth(), this->getHeight());
+	//this->setSize(this->getWidth(), this->getHeight());	
+	viewport->setBounds(0, 0, this->getWidth(), this->getHeight());
 
-componentPanel->setTopLeftPosition(0, 0);
+	componentPanel->setTopLeftPosition(0, 0);
 
-#ifdef Cabbage_Build_Standalone
-layoutEditor->setTopLeftPosition(0, 0);
-if(componentPanel->getWidth()<this->getWidth()+18 && componentPanel->getHeight()<this->getHeight()+18)
-viewport->setScrollBarsShown(false, false);
-else
-	viewport->setScrollBarsShown(true, true);
+	#ifdef Cabbage_Build_Standalone
+	layoutEditor->setTopLeftPosition(0, 0);
+	if(componentPanel->getWidth()<this->getWidth()+18 && componentPanel->getHeight()<this->getHeight()+18)
+	viewport->setScrollBarsShown(false, false);
+	else
+		viewport->setScrollBarsShown(true, true);
 
-#endif
+	#endif
 }
 
 //==============================================================================
@@ -1847,13 +1847,21 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 		//load initial files/tables if any are set
 		int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();
 		for(int y=0;y<numberOfTables;y++)
-			{
-			/*	
+			{	
+			tableBuffer.clear();
 			int tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, y);
 			GenTable* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
 			StringArray pFields = getFilter()->getTableStatement(tableNumber);
-			table->addTable(44100, cAttr.getStringArrayProp(CabbageIDs::tablecolour)[y], pFields);
-			*/
+			int genRoutine = abs(pFields[4].getIntValue());
+
+			tableValues.clear();
+			tableValues = getFilter()->getTableFloats(tableNumber);				
+			tableBuffer.setSize(numberOfTables, tableValues.size());
+			tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());			
+			//create table and set colours
+			table->addTable(44100, cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), genRoutine);
+			//now fill table with data, tables can only be created on startup..
+			table->setWaveform(tableBuffer);	
 			}
 }
 

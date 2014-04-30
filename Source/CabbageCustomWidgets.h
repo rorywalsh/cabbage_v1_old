@@ -911,7 +911,7 @@ public:
 		table->setFile(File(newFile));	
 	}
 	int setWaveform(AudioSampleBuffer buffer, int channels){
-		table->setWaveform(buffer, channels);
+		table->setWaveform(buffer);
 	}
 	
 	

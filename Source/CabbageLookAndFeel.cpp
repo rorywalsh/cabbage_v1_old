@@ -1275,20 +1275,18 @@ Image CabbageLookAndFeel::drawCheckMark()
 	path.lineTo(5, 10);
 	path.lineTo(10, 0);
 	g.setColour (Colours::cornflowerblue);
-	g.strokePath(path, 2.0f);
+	g.strokePath(path, PathStrokeType(2.0f));
 
 	return img;
 }
 
 //======== Popup Menu Items ===========================================================================
-void CabbageLookAndFeel::drawPopupMenuItem (Graphics &g, int width, int height, bool isSeparator, bool /*isActive*/, 
-																								bool isHighlighted, 
-																								bool isTicked, 
-																								bool hasSubMenu, 
-																								const String &text, 
-																								const String &shortcutKeyText, 
-																								Image */*image*/, 
-																								const Colour* textColourToUse)
+void CabbageLookAndFeel::drawPopupMenuItem (Graphics& g, const Rectangle<int>& area,
+                                        const bool isSeparator, const bool isActive,
+                                        const bool isHighlighted, const bool isTicked,
+                                        const bool hasSubMenu, const String& text,
+                                        const String& shortcutKeyText,
+                                        const Drawable* icon, const Colour* const textColourToUse)
 {
 	Colour textColour;		
 	if ((isHighlighted == true) && (isSeparator == false)) {
@@ -1307,30 +1305,30 @@ void CabbageLookAndFeel::drawPopupMenuItem (Graphics &g, int width, int height, 
 	
 	
 	g.setFont (CabbageUtils::getComponentFont());
-	g.drawText (CabbageUtils::cabbageString(text, CabbageUtils::getComponentFont(), width*0.8), 20, 0, width*0.8, height, 1, false);
+	g.drawText (CabbageUtils::cabbageString(text, CabbageUtils::getComponentFont(), area.getWidth()*0.8), 20, 0, area.getWidth()*0.8, area.getHeight(), 1, false);
 
 	if (isSeparator == true) {
         g.setColour(CabbageUtils::getComponentSkin());
-        g.drawLine(0, height/2, width, 3);
+        g.drawLine(0, area.getHeight()/2,  area.getWidth(), 3);
     }
 
 	if (isTicked) {
 		Image checkMark = drawCheckMark();
 		g.setColour(Colours::cornflowerblue);
-		g.drawImage(checkMark, 5, (height/2)-5, 10, 10, 0, 0, 10, 10, false);	
+		g.drawImage(checkMark, 5, (area.getHeight()/2)-5, 10, 10, 0, 0, 10, 10, false);	
 	}
 	if (hasSubMenu) {
 		g.setColour(Colours::cornflowerblue);
-		const Line<float> line(width-15, height*.5, width-5, height*.5);
-		g.drawArrow(line, 0, height*.3, height*.3);
+		const Line<float> line( area.getWidth()-15, area.getHeight()*.5,  area.getWidth()-5, area.getHeight()*.5);
+		g.drawArrow(line, 0, area.getHeight()*.3, area.getHeight()*.3);
 	}
         if (shortcutKeyText.isNotEmpty())
         {
-			const int leftBorder = (height * 5) / 4;
+			const int leftBorder = (area.getHeight() * 5) / 4;
 			const int rightBorder = 4;
 
             g.drawText (shortcutKeyText,
-                        leftBorder, 0, width - (leftBorder + rightBorder + 4), height,
+                        leftBorder, 0,  area.getWidth() - (leftBorder + rightBorder + 4), area.getHeight(),
                         Justification::centredRight,
                         true);
         }
@@ -2203,7 +2201,7 @@ Image CabbageLookAndFeelBasic::drawCheckMark()
 	path.lineTo(5, 10);
 	path.lineTo(10, 0);
 	g.setColour (Colours::cornflowerblue);
-	g.strokePath(path, 2.0f);
+	g.strokePath(path, PathStrokeType(2.0f));
 
 	return img;
 }

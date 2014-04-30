@@ -33,7 +33,7 @@
 CabbageLookAndFeel* lookAndFeel;
 CabbageLookAndFeelBasic* lookAndFeelBasic;
 
-juce_ImplementSingleton (IdentArray);
+juce_ImplementSingleton (IdentArray); 
 
 //==============================================================================
 // There are two different CabbagePluginAudioProcessor constructors. One for the
@@ -1179,15 +1179,15 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 //==============================================================================
 StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 {
-StringArray fdata;
-/*
-EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
-for(int i=0;i<e->pcnt;i++){
-	fdata.add(String(e->p[i]));
-	Logger::writeToLog(String(e->p[i]));
-}
- */ 
-return fdata;
+	StringArray fdata;
+
+	EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
+
+	for(int i=0;i<e->pcnt;i++){
+		fdata.add(String(e->p[i]));
+		Logger::writeToLog(String(e->p[i]));
+	}
+	return fdata;
 }
 //==============================================================================
 const Array<double, CriticalSection> CabbagePluginAudioProcessor::getTable(int tableNum)
@@ -1657,7 +1657,7 @@ if(!isSuspended() && !isGuiEnabled()){
 				{
 				for(int channel = 0; channel < getNumOutputChannels(); channel++ )
 					{
-					audioBuffer = buffer.getSampleData(channel,0);
+					audioBuffer = buffer.getWritePointer(channel,0);
 					pos = csndIndex*getNumOutputChannels();
 					CSspin[channel+pos] = audioBuffer[i]*cs_scale;
 					audioBuffer[i] = (CSspout[channel+pos]/cs_scale);
@@ -1671,14 +1671,14 @@ if(!isSuspended() && !isGuiEnabled()){
 
 		//CS_DEBUG_MODE=true;		
 	if (activeWriter != 0 && !isWinXP)
-        activeWriter->write ((const float**)buffer.getArrayOfChannels(), buffer.getNumSamples());			
+        activeWriter->write (buffer.getArrayOfReadPointers(), buffer.getNumSamples());			
 		
 		
 	}//if not compiled just mute output
 	else{
 		for(int channel = 0; channel < getNumInputChannels(); channel++)
 		{
-			audioBuffer = buffer.getSampleData(channel,0);
+			audioBuffer = buffer.getWritePointer(channel,0);
 			for(int i=0; i<numSamples;i++, csndIndex++)
 			{
 				audioBuffer[i]=0;

@@ -66,9 +66,10 @@ public:
 	void setZoomFactor (double amount);
 	void setFile (const File& file);
 	void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
-	void setWaveform(AudioSampleBuffer buffer, int channels);
+	void setWaveform(AudioSampleBuffer buffer);
 	void createImage(String filename);
-	void addTable(int sr, String colour, StringArray fstatement);
+	void addTable(int sr, const String colour, int gen);
+	float ampToPixel(Rectangle<int> thumbArea, Range<float> minMax, float sampleVal);
 	
 private:
 	Image img;
@@ -105,19 +106,22 @@ private:
 	double loopStart;
 	double currentPlayPosition;
 	bool drawWaveform;
-	int gen;
+	int genRoutine;
+	AudioSampleBuffer waveformBuffer;
+	float visibleLength, visibleStart, visibleEnd, maxAmp;
+	Range<float> minMax;
 };
 
 //==============================================================================
 // GenThumbnail class
 //==============================================================================
-class GenThumbnail : public Component
+class GenThumbnail : public Drawable
 {
 	
 public:
 	GenThumbnail(int gen, Colour colour);
 	~GenThumbnail();
-	void paint(Graphics &g);
+
 };
 					
 //==============================================================================

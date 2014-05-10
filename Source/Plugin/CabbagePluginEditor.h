@@ -34,6 +34,8 @@ class CabbageMainPanel;
 class ComponentLayoutEditor;
 class CabbageCornerResizer;
 //==============================================================================
+// window used to display popup plants
+//==============================================================================
 class CabbagePlantWindow  : public DocumentWindow
 {
 
@@ -57,7 +59,9 @@ public:
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePlantWindow);
 };
-
+//==============================================================================
+// component that sits inside of main viewport class
+//==============================================================================
 class CabbageViewportComponent : public Component
 {
 
@@ -78,6 +82,7 @@ public:
 
 //==============================================================================
 // pointData class for holding info about each segment of a line
+//==============================================================================
 class PointData 
 {
 public:
@@ -170,17 +175,14 @@ private:
 		void mouseUp(const MouseEvent& event);
 		void buttonStateChanged(Button*);
         void showInsertControlsMenu(int x, int y);
-		void actionListenerCallbackForWidgets(const String message);
 		void insertScoreStatementText(Table *table, bool overwrite);
 		void restoreParametersFromPresets(XmlElement* xmlData);
 		void savePresetsFromParameters(File selectedFile, String mode);
 		void refreshDiskReadingGUIControls(String typeOfControl);
-		
-		//AudioSampleBuffer tableBuffer;
+		void updatefTableData(GenTable* table);
 		int mouseX, mouseY;
         bool LOCKED;
         void insertComponentsFromCabbageText(StringArray text, bool useOffset);
-//		void insertComponentsFromCabbageTextArray(StringArray text, bool plant);
         Array<int> lineNumbers;
 		Array<int> plantLineNumbers;
 		int currentLineNumber;

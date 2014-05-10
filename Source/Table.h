@@ -25,7 +25,8 @@
 #include "CabbageLookAndFeel.h"
 
 class ZoomButton;
-class GenThumbnail;
+class HandleViewer;
+class HandleComponent;
 //=================================================================
 // display a sound file as a waveform..
 //=================================================================
@@ -67,20 +68,29 @@ public:
 	void setFile (const File& file);
 	void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
 	void setWaveform(AudioSampleBuffer buffer);
+	void setWaveform(Array<float, CriticalSection> buffer, int tableNumber, StringArray pFields);
 	void createImage(String filename);
 	void addTable(int sr, const String colour, int gen);
-	float ampToPixel(Rectangle<int> thumbArea, Range<float> minMax, float sampleVal);
+    float ampToPixel(int height, Range<float> minMax, float sampleVal);
+	float pixelToAmp(int height, Range<float> minMax, float sampleVal);
+	void enableEditMode(bool enable);
+	Array<float> getPfields();
+	String changeMessage;
+	int tableNumber, tableSize, genRoutine;;
 	
 private:
 	Image img;
+	int normalised;
 	//Graphics& graphics;
 	int imgCount;
 	Range<double> visibleRange;
+	float currentWidth;
 	double zoom;
 	ScopedPointer<DrawableRectangle> currentPositionMarker;
 	ScopedPointer<ScrollBar> scrollbar;
-	void setRange(Range<double> newRange);
+	void setRange(Range<double> newRange, bool isScrolling = false);
 	void resized();	    
+	Rectangle<int> handleViewerRect;
     void paint (Graphics& g);
     void mouseDown (const MouseEvent& e);
 	void mouseUp(const MouseEvent& e);
@@ -92,6 +102,7 @@ private:
 	void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
 	void changeListenerCallback(ChangeBroadcaster *source);
 	ScopedPointer<ZoomButton> zoomIn, zoomOut;
+	ScopedPointer<HandleViewer> handleViewer;
 
 	AudioFormatManager formatManager;
 	double sampleRate;
@@ -106,24 +117,88 @@ private:
 	double loopStart;
 	double currentPlayPosition;
 	bool drawWaveform;
-	int genRoutine;
-	AudioSampleBuffer waveformBuffer;
+	
+	Array<float, CriticalSection> waveformBuffer;
 	float visibleLength, visibleStart, visibleEnd, maxAmp;
 	Range<float> minMax;
-};
-
-//==============================================================================
-// GenThumbnail class
-//==============================================================================
-class GenThumbnail : public Drawable
-{
 	
+	Range<float> findMinMax(Array<float, CriticalSection> buffer)
+	{
+		float min=buffer[0],max=buffer[0];
+		for(int i=0;i<buffer.size();i++)
+		{
+			if(buffer[i]>max)
+				max=buffer[i];
+			if(buffer[i]<min)
+				min=buffer[i];
+		}
+		return Range<float>(min, max);
+	}
+	
+};
+
+//==============================================================================
+// HandleViewer class, holds breakpoint handles
+//==============================================================================
+class HandleViewer : public Component,
+					 public ChangeBroadcaster,
+					 public ChangeListener
+{
+	void changeListenerCallback(ChangeBroadcaster *source);
 public:
-	GenThumbnail(int gen, Colour colour);
-	~GenThumbnail();
+	HandleViewer();
+	~HandleViewer();
+	ScopedPointer<TextButton> button1;
+	ScopedPointer<TextButton> button2;
+	void mouseDown(const MouseEvent& e);
+	void repaint(Graphics &g);
+	void resized(); 
+	HandleComponent* addHandle(float x, float y);
+	HandleComponent* getPreviousHandle(HandleComponent* thisHandle);
+	HandleComponent* getNextHandle(HandleComponent* thisHandle);
+	int getHandleIndex(HandleComponent* thisHandle);
+	void removeHandle (HandleComponent* thisHandle);
+	OwnedArray<HandleComponent, CriticalSection> handles;
+	void fixEdgePoints();
 
 };
-					
+
+//==============================================================================
+// Handle class
+//==============================================================================		
+class HandleComponent : public Component,
+						public ChangeBroadcaster
+{
+public:
+	HandleComponent(float xPos, int index, bool fixed);
+	~HandleComponent();
+
+	HandleViewer* getParentComponent();
+	void paint (Graphics& g);
+	void removeThisHandle();
+	void mouseEnter (const MouseEvent& e);
+	void mouseDown (const MouseEvent& e);
+	void mouseDrag (const MouseEvent& e);
+	void mouseUp (const MouseEvent& e);
+	int index;
+	int height, width;
+	int x,y;
+
+	HandleComponent* getPreviousHandle();
+	HandleComponent* getNextHandle();
+	float xPosRelative;
+	String changeMessage;
+
+private:
+	Colour colour;
+	bool fixed;
+	ComponentDragger dragger;
+	int lastX, lastY;
+	int offsetX, offsetY;
+	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HandleComponent);
+};
+			
 //==============================================================================
 // zooming button
 //==============================================================================
@@ -153,4 +228,5 @@ public:
 	}
 	
 };
+
 #endif // SOUNDFILEWAVEFORM_H

@@ -225,6 +225,7 @@ namespace CabbageIDs
 	static const String infobutton = "infobutton";
 	static const String filebutton = "filebutton";
 	static const String table = "table";
+	static const String gentable = "gentable";
 	static const String groupbox = "groupbox";
 	static const String image = "image";
 	static const String popupmenu = "popupmenu";

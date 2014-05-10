@@ -1183,9 +1183,8 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 
 	EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
 
-	for(int i=0;i<e->pcnt;i++){
+	for(int i=0;i<=e->pcnt;i++){
 		fdata.add(String(e->p[i]));
-		Logger::writeToLog(String(e->p[i]));
 	}
 	return fdata;
 }

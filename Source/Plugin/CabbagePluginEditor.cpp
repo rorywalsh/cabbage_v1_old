@@ -364,6 +364,12 @@ else{
 			return;
 			}
 
+		GenTable* gentable = dynamic_cast<GenTable*>(source);
+		if(gentable){
+		if(gentable->changeMessage == "updateFunctionTable")
+			updatefTableData(gentable);
+		}		
+
 		CabbageSoundfiler* soundfiler = dynamic_cast<CabbageSoundfiler*>(source);
 		if(soundfiler){
 			String channel;
@@ -466,7 +472,7 @@ else{
 //==================================================================
 //create function table data from our breakpoint envelopes
 //==================================================================
-void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool sendToCsound)
+void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
 {
 	Array< PointData > points;
 	for(int i=0;i<table->handles.size();i++)
@@ -529,36 +535,46 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool send
 	table->currentfStatement = fStatement;
 	getFilter()->messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement, table->tableNumber);	
 
-/*
-FUNC *ftpp;
-EVTBLK  evt;
-memset(&evt, 0, sizeof(EVTBLK));
-evt.pcnt = 5+pFields.size();
-evt.opcod = 'f';
-evt.p[0]=0;
-evt.p[1]=table->tableNumber;
-evt.p[2]=0;
-evt.p[3]=table->tableSize;
-evt.p[4]=table->gen;
-for(int i=0;i<pFields.size();i++){
-evt.p[5+i]= (pFields[i].getFloatValue()==0.f ? 0.001 : pFields[i].getFloatValue());
-Logger::writeToLog(pFields[i]);
-}
-
-CSOUND* csound = dynamic_cast<CSOUND*>(getFilter()->getCsound()->GetCsound());
-csound->hfgens(csound, &ftpp, &evt, 0);
-
-Array<float, CriticalSection> points;		
-points = Array<float, CriticalSection>(ftpp->ftable, ftpp->flen);
-
-//for(int i=0;i<points.size();i++)
-//	Logger::writeToLog(String(points[i]));
-table->createAmpOverviews(points);
-table->repaint();
-*/
 }
 		
+void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
+{
+	Array<float> pFields = table->getPfields();
+	for(int i=1;i<pFields.size();i++)
+		Logger::writeToLog("P"+String(i)+":"+String(pFields[i]));
 
+	if( table->genRoutine==5 || table->genRoutine==7)
+	{
+		FUNC *ftpp;
+		EVTBLK  evt;
+		memset(&evt, 0, sizeof(EVTBLK));
+		evt.pcnt = 5+pFields.size()-1;
+		evt.opcod = 'f';
+		evt.p[0]=0;
+		evt.p[1]=table->tableNumber;
+		evt.p[2]=0;
+		evt.p[3]=table->tableSize;
+		evt.p[4]=table->genRoutine;
+		for(int i=0;i<pFields.size()-1;i++)
+		evt.p[5+i]= pFields[i+1];
+
+		for(int i=0;i<evt.pcnt;i++)	
+			Logger::writeToLog(String(evt.p[i]));
+		
+		
+		getFilter()->getCsound()->GetCsound()->hfgens(getFilter()->getCsound()->GetCsound(), &ftpp, &evt, 0);
+
+		Array<float, CriticalSection> points;		
+		points = Array<float, CriticalSection>(ftpp->ftable, ftpp->flen);
+
+		//for(int i=0;i<points.size();i++)
+		//	Logger::writeToLog(String(points[i]));
+		StringArray dummyFields;
+		table->setWaveform(points, table->tableNumber, dummyFields);
+		//table->repaint();	
+	}
+ 
+}
 //=======================================================
 //adds a plant to the plant repository
 //=======================================================
@@ -1848,20 +1864,21 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 		int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();
 		for(int y=0;y<numberOfTables;y++)
 			{	
-			tableBuffer.clear();
+			//tableBuffer.clear();
 			int tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, y);
 			GenTable* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
+			table->addChangeListener(this);
 			StringArray pFields = getFilter()->getTableStatement(tableNumber);
 			int genRoutine = abs(pFields[4].getIntValue());
 
 			tableValues.clear();
 			tableValues = getFilter()->getTableFloats(tableNumber);				
-			tableBuffer.setSize(numberOfTables, tableValues.size());
-			tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());			
+			//tableBuffer.setSize(numberOfTables, tableValues.size());
+			//tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());			
 			//create table and set colours
 			table->addTable(44100, cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), genRoutine);
 			//now fill table with data, tables can only be created on startup..
-			table->setWaveform(tableBuffer);	
+			table->setWaveform(tableValues, tableNumber, pFields);	
 			}
 }
 
@@ -2667,37 +2684,7 @@ Array<int> tableSizes;
 			}			
 		
 }
-
-	/*********************************************************/
-	/*     actionlistener method for widgets (xypad/table/snapshot)      */
-	/*********************************************************/
-void CabbagePluginAudioProcessorEditor::actionListenerCallbackForWidgets(const String message){
-String name = message.substring(0, message.indexOf(String("|"))); 
-String type = message.substring(message.indexOf(String("|"))+1, message.indexOf(String(":")));
-String action = message.substring(message.indexOf(String(":"))+1, message.indexOf(String(";")));
-String preset = message.substring(message.indexOf(String(";"))+1, message.indexOf(String("?"))); 
-int masterSnap = message.substring(message.indexOf(String("?"))+1, 100).getIntValue(); 
-
-//notify processer to update tables with score events. 
-if(message.equalsIgnoreCase(String("updatingDirectoryTables"))){
-for(int i=0;i<(int)getFilter()->getGUILayoutCtrlsSize();i++)//find correct control from vector
-		//if message came from a directorylist
-		if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).containsIgnoreCase("directorylist"))	
-		{
-			//Logger::writeToLog("update tables now please...");
-			StringArray events = ((CabbageDirectoryList*)layoutComps[i])->getListContents();
-			for(int p=0;p<events.size();p++)
-				for(int u=0;u<pastEvents.size();u++)
-					if(events[p]==pastEvents[u])
-						events.remove(p);
-			//Logger::writeToLog(events.joinIntoString("\n"));
-			pastEvents.addArray(events);
-			getFilter()->scoreEvents = events;
-			getFilter()->messageQueue.addOutgoingChannelMessageToQueue("", 0, "directoryList");
-		}
-	}
-       
-}										
+										
 										
 /*********************************************************/
 /*     actionlistener method 							 */
@@ -2731,7 +2718,7 @@ else if(message.contains("Message sent from CabbageMainPanel:delete:"))
 
 //CALL LISTENER METHOD FOR CUSTOM COMPONENTS THAT USE ACTION BROADCASTERS
 else{
-actionListenerCallbackForWidgets(message);
+Logger::writeToLog("Unknwn message:"+message);
 }
 }
 
@@ -3153,6 +3140,27 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 					}				
 				}
 				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");				  
+			}
+		//gentable
+        else if((getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::gentable) &&
+				getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+				{
+				String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
+				if(message.contains("tablenumber")||message.contains("tablenumbers"))
+					{
+					int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();
+					for(int y=0;y<numberOfTables;y++)
+						{	
+						tableBuffer.clear();
+						int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
+						GenTable* table = dynamic_cast<CabbageGenTable*>(layoutComps[i])->table;
+						StringArray pFields = getFilter()->getTableStatement(tableNumber);
+						//tableValues.clear();
+						tableValues = getFilter()->getTableFloats(tableNumber);				
+						table->setWaveform(tableValues, tableNumber, pFields);	
+						}
+				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");				  
+				}
 			}
 }
 

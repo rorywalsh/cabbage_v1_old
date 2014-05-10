@@ -158,10 +158,10 @@ Array<float> GenTable::getPfields()
 	
 	for(int i=0; i<handleViewer->handles.size(); i++)
 	{
-		currXPos = handleViewer->handles[i]->xPosRelative*waveformBuffer.size();
-		values.add(currXPos-prevXPos);
+		currXPos = round(handleViewer->handles[i]->xPosRelative*waveformBuffer.size());
+		values.add(jmax(0.f, currXPos-prevXPos));
 		values.add(pixelToAmp(handleViewer->getHeight(), minMax, handleViewer->handles[i]->getPosition().getY()+5));
-		prevXPos = handleViewer->handles[i]->xPosRelative*waveformBuffer.size();
+		prevXPos = round(handleViewer->handles[i]->xPosRelative*waveformBuffer.size());
 	}
 	return values;
 }
@@ -185,7 +185,7 @@ void GenTable::setWaveform(AudioSampleBuffer buffer)
 	}
 }
 
-void GenTable::setWaveform(Array<float, CriticalSection> buffer, int ftNumber,  StringArray pField)
+void GenTable::setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange)
 { 
 	if(genRoutine != 1)
 	{
@@ -196,53 +196,57 @@ void GenTable::setWaveform(Array<float, CriticalSection> buffer, int ftNumber,  
 		if(buffer.size() > 22050)
 			CabbageUtils::showMessage("Tables of sizes over 22050 samples should be created using GEN01", &this->getLookAndFeel());
 		
-		const Range<double> newRange (0.0, buffer.size()/sampleRate);
-		scrollbar->setRangeLimits (newRange);
-		setRange (newRange);		
-		setZoomFactor (zoom);	
-		minMax = findMinMax(buffer);
-		normalised = pField[4].getIntValue();
+		if(updateRange == true)
+		{
+			const Range<double> newRange (0.0, buffer.size()/sampleRate);
+			scrollbar->setRangeLimits (newRange);
+			setRange (newRange);		
+			setZoomFactor (zoom);	
+			
+		}
 		
+		minMax = findMinMax(buffer);
+		repaint();
+	}
+	
+}
+//==============================================================================
+void GenTable::enableEditMode(StringArray pFields)
+{
 		//if dealing with normalised table check pfield amps..
 		Array<float, CriticalSection> pFieldAmps;
-		pFieldAmps.add (pField[5].getFloatValue());
+		pFieldAmps.add (pFields[5].getFloatValue());
 		
-		for(int i=6;i<pField.size();i+=2)
-			pFieldAmps.add(pField[i+1].getFloatValue());
+		for(int i=6;i<pFields.size();i+=2)
+			pFieldAmps.add(pFields[i+1].getFloatValue());
 
 		Range<float> pFieldMinMax = findMinMax(pFieldAmps);
-		
+		normalised = pFields[4].getIntValue();
 		float xPos = 0;		
-		if(pField.size()>0)
+		if(pFields.size()>0)
 		{
 			if(genRoutine==7 || genRoutine==5)
 			{
-				float pFieldAmpValue = (normalised<0 ? pField[5].getFloatValue() : pField[5].getFloatValue()/pFieldMinMax.getEnd());
+				float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
 				handleViewer->addHandle(0, ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue));
 				
 				Logger::writeToLog("Coordinates:("+String(xPos)+", "+String(ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue))+")");
 				
-				for(int i=6;i<pField.size();i+=2)
+				for(int i=6;i<pFields.size();i+=2)
 				{
-					xPos = xPos + pField[i].getFloatValue();
-					pFieldAmpValue = (normalised<0 ? pField[i+1].getFloatValue() : pField[i+1].getFloatValue()/pFieldMinMax.getEnd());
-					handleViewer->addHandle(xPos/(float)buffer.size(), ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue));	
+					xPos = xPos + pFields[i].getFloatValue();
+					pFieldAmpValue = (normalised<0 ? pFields[i+1].getFloatValue() : pFields[i+1].getFloatValue()/pFieldMinMax.getEnd());
+					handleViewer->addHandle(xPos/(float)waveformBuffer.size(), ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue));	
 					Logger::writeToLog("Coordinates:("+String(xPos)+", "+String(ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue))+")");
 				}
 
 			}
 			handleViewer->fixEdgePoints();	
 			
-		}
- 
-	}
+		}	
 	
 }
-//==============================================================================
-void GenTable::enableEditMode(bool enable)
-{
 
-}
 //==============================================================================
 void GenTable::setZoomFactor (double amount)
 {
@@ -624,8 +628,8 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
 	int rightLimit = nextHandle == 0 ? getParentWidth()-previousHandle->getHeight() : nextHandle->getX()-1;
 	int topLimit = previousHandle == 0 ? 0 : previousHandle->getX()+1;
 
-	int dragX = x+e.getDistanceFromDragStartX();
-	int dragY = y+e.getDistanceFromDragStartY();
+	float dragX = x+e.getDistanceFromDragStartX();
+	float dragY = y+e.getDistanceFromDragStartY();
 		
 	//dragger.dragComponent(this, e, &resizeLimits);
 	if(dragX < leftLimit) 
@@ -640,6 +644,8 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
 		dragX = x;
 		
 	this->setTopLeftPosition(dragX, dragY);
+	xPosRelative = dragX/this->getParentComponent()->getWidth();
+	Logger::writeToLog("xPosRelative:"+String(xPosRelative));
 
 	sendChangeMessage();
 }

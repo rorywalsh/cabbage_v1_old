@@ -68,12 +68,12 @@ public:
 	void setFile (const File& file);
 	void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
 	void setWaveform(AudioSampleBuffer buffer);
-	void setWaveform(Array<float, CriticalSection> buffer, int tableNumber, StringArray pFields);
+	void enableEditMode(StringArray pFields);
+	void setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange=true);
 	void createImage(String filename);
 	void addTable(int sr, const String colour, int gen);
     float ampToPixel(int height, Range<float> minMax, float sampleVal);
 	float pixelToAmp(int height, Range<float> minMax, float sampleVal);
-	void enableEditMode(bool enable);
 	Array<float> getPfields();
 	String changeMessage;
 	int tableNumber, tableSize, genRoutine;;

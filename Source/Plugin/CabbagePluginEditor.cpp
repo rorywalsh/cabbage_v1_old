@@ -540,8 +540,8 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
 void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 {
 	Array<float> pFields = table->getPfields();
-	for(int i=1;i<pFields.size();i++)
-		Logger::writeToLog("P"+String(i)+":"+String(pFields[i]));
+	//for(int i=1;i<pFields.size();i++)
+	//	Logger::writeToLog("P"+String(i)+":"+String(pFields[i]));
 
 	if( table->genRoutine==5 || table->genRoutine==7)
 	{
@@ -558,20 +558,15 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 		for(int i=0;i<pFields.size()-1;i++)
 		evt.p[5+i]= pFields[i+1];
 
+	Logger::writeToLog("===================");
 		for(int i=0;i<evt.pcnt;i++)	
 			Logger::writeToLog(String(evt.p[i]));
-		
-		
+	Logger::writeToLog("===================");	
 		getFilter()->getCsound()->GetCsound()->hfgens(getFilter()->getCsound()->GetCsound(), &ftpp, &evt, 0);
-
 		Array<float, CriticalSection> points;		
 		points = Array<float, CriticalSection>(ftpp->ftable, ftpp->flen);
-
-		//for(int i=0;i<points.size();i++)
-		//	Logger::writeToLog(String(points[i]));
 		StringArray dummyFields;
-		table->setWaveform(points, table->tableNumber, dummyFields);
-		//table->repaint();	
+		table->setWaveform(points, table->tableNumber, false);
 	}
  
 }
@@ -1878,7 +1873,8 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 			//create table and set colours
 			table->addTable(44100, cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), genRoutine);
 			//now fill table with data, tables can only be created on startup..
-			table->setWaveform(tableValues, tableNumber, pFields);	
+			table->setWaveform(tableValues, tableNumber);
+			table->enableEditMode(pFields);
 			}
 }
 
@@ -3157,7 +3153,7 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 						StringArray pFields = getFilter()->getTableStatement(tableNumber);
 						//tableValues.clear();
 						tableValues = getFilter()->getTableFloats(tableNumber);				
-						table->setWaveform(tableValues, tableNumber, pFields);	
+						table->setWaveform(tableValues, tableNumber);	
 						}
 				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");				  
 				}

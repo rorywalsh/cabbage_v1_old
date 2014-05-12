@@ -1182,7 +1182,7 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 {
 	StringArray fdata;
 
-	if(csCompileResult==OK)
+/*	if(csCompileResult==OK)
 	{
 		MYFLT* temp;
 		int tableSize = csound->GetTable(temp, tableNum);
@@ -1192,7 +1192,7 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 			for(int i=0;i<=e->pcnt;i++)
 				fdata.add(String(e->p[i]));
 		}
-	}
+	}*/
 	return fdata;
 }
 //==============================================================================
@@ -1620,9 +1620,7 @@ if(!isSuspended() && !isGuiEnabled()){
 	#ifndef Cabbage_No_Csound
 	int numSamples = buffer.getNumSamples();
 
-	if(csCompileResult==OK){
-		
-	
+	if(csCompileResult==OK){	
 		
 	keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
 	midiBuffer = midiMessages;
@@ -1665,7 +1663,7 @@ if(!isSuspended() && !isGuiEnabled()){
 				getCallbackLock().exit();
 				csndIndex = 0;
 			}
-			if(csCompileResult!=OK)
+			if(csCompileResult==OK)
 				{
 				for(int channel = 0; channel < getNumOutputChannels(); channel++ )
 					{

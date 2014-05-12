@@ -179,7 +179,7 @@ private:
 		void restoreParametersFromPresets(XmlElement* xmlData);
 		void savePresetsFromParameters(File selectedFile, String mode);
 		void refreshDiskReadingGUIControls(String typeOfControl);
-		void updatefTableData(GenTable* table);
+		//void updatefTableData(GenTable* table);
 		int mouseX, mouseY;
         bool LOCKED;
         void insertComponentsFromCabbageText(StringArray text, bool useOffset);

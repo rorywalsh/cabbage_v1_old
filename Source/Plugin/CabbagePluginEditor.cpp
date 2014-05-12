@@ -363,13 +363,13 @@ else{
 				createfTableData(table, true);
 			return;
 			}
-
+/*
 		GenTable* gentable = dynamic_cast<GenTable*>(source);
 		if(gentable){
 		if(gentable->changeMessage == "updateFunctionTable")
 			updatefTableData(gentable);
 		}		
-
+*/
 		CabbageSoundfiler* soundfiler = dynamic_cast<CabbageSoundfiler*>(source);
 		if(soundfiler){
 			String channel;
@@ -536,7 +536,7 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
 	getFilter()->messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement, table->tableNumber);	
 
 }
-		
+/*		
 void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 {
 	Array<float> pFields = table->getPfields();
@@ -570,6 +570,7 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 	}
  
 }
+ * */
 //=======================================================
 //adds a plant to the plant repository
 //=======================================================
@@ -1836,6 +1837,7 @@ void CabbagePluginAudioProcessorEditor::InsertSoundfiler(CabbageGUIClass &cAttr)
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 {
+	/*
         float left = cAttr.getNumProp(CabbageIDs::left);
         float top = cAttr.getNumProp(CabbageIDs::top);
         float width = cAttr.getNumProp(CabbageIDs::width);
@@ -1876,6 +1878,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 			table->setWaveform(tableValues, tableNumber);
 			table->enableEditMode(pFields);
 			}
+			 * */
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -3138,6 +3141,7 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");				  
 			}
 		//gentable
+		/*
         else if((getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::gentable) &&
 				getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
 				{
@@ -3158,6 +3162,7 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");				  
 				}
 			}
+			 * */
 }
 
 

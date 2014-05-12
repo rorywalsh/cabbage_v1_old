@@ -24,7 +24,7 @@
 #include "CabbageLookAndFeel.h"
 #include "CabbageUtils.h"
 #include "CabbageTable.h"
-#include "Table.h"
+//#include "Table.h"
 #include "XYPad.h"
 #include "Soundfiler.h"
 #include "DirectoryContentsComponent.h"
@@ -845,7 +845,7 @@ private:
 //==============================================================================
 // custom table widget
 //==============================================================================
-
+/*
 class CabbageGenTable	:	public Component,
 							public ChangeBroadcaster,
 							public ChangeListener
@@ -938,7 +938,7 @@ private:
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGenTable);
 };
-
+*/
 
 //==============================================================================
 // custom soundfiler

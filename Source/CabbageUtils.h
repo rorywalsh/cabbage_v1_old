@@ -298,7 +298,24 @@ static Font getValueFont()
 	Font font = Font ("Helvetica", 11.5, 1);
 	return font;
 }
+//======= get minMax numerical value from stringarray ================================
+static Range<float> getMinMax(StringArray array)
+{
+	if(array.size()==0)
+		jassert(1);
+	float min = array[0].getFloatValue();
+	float max = array[0].getFloatValue();
+	for(int i=1;i<array.size();i++)
+	{
+		if(array[i].getFloatValue()>max)
+			max = array[i].getFloatValue();
+		if(array[i].getFloatValue()<min)
+			min = array[i].getFloatValue();
+	}
+	
+	return Range<float>(min, max);
 
+}
 //======= For spectrograms and tables etc ============================================
 static Font getSmallerValueFont()
 {

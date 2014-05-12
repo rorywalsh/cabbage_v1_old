@@ -617,15 +617,19 @@ public:
 
     LowLevelGraphicsContext* createLowLevelContext() override
     {
+        sendDataChangeMessage();
         return new LowLevelGraphicsSoftwareRenderer (Image (this));
     }
 
-    void initialiseBitmapData (Image::BitmapData& bitmap, int x, int y, Image::BitmapData::ReadWriteMode) override
+    void initialiseBitmapData (Image::BitmapData& bitmap, int x, int y, Image::BitmapData::ReadWriteMode mode) override
     {
         bitmap.data = imageData + x * pixelStride + y * lineStride;
         bitmap.pixelFormat = pixelFormat;
         bitmap.lineStride = lineStride;
         bitmap.pixelStride = pixelStride;
+
+        if (mode != Image::BitmapData::readOnly)
+            sendDataChangeMessage();
     }
 
     ImagePixelData* clone() override
@@ -1213,7 +1217,7 @@ public:
         }
     }
 
-    void textInputRequired (const Point<int>&) override {}
+    void textInputRequired (Point<int>, TextInputTarget&) override {}
 
     void repaint (const Rectangle<int>& area) override
     {
@@ -1323,6 +1327,7 @@ public:
 
             default:
                #if JUCE_USE_XSHM
+                if (XSHMHelpers::isShmAvailable())
                 {
                     ScopedXLock xlock;
                     if (event.xany.type == XShmGetEventBase (display))
@@ -1364,10 +1369,7 @@ public:
         const ModifierKeys oldMods (currentModifiers);
         bool keyPressed = false;
 
-
-
-
-        if ((sym & 0xff00) == 0xff00 || sym==XK_ISO_Left_Tab)
+        if ((sym & 0xff00) == 0xff00 || sym == XK_ISO_Left_Tab)
         {
             switch (sym)  // Translate keypad
             {
@@ -1413,11 +1415,11 @@ public:
                 case XK_End:
                 case XK_Home:
                 case XK_Delete:
-				case XK_ISO_Left_Tab:
                 case XK_Insert:
                     keyPressed = true;
                     keyCode = (keyCode & 0xff) | Keys::extendedKeyModifier;
                     break;
+
                 case XK_Tab:
                 case XK_Return:
                 case XK_Escape:
@@ -1427,7 +1429,6 @@ public:
                     break;
 
                 default:
-
                     if (sym >= XK_F1 && sym <= XK_F16)
                     {
                         keyPressed = true;
@@ -1902,7 +1903,8 @@ private:
                 for (const Rectangle<int>* i = originalRepaintRegion.begin(), * const e = originalRepaintRegion.end(); i != e; ++i)
                 {
                    #if JUCE_USE_XSHM
-                    ++shmPaintsPending;
+                    if (XSHMHelpers::isShmAvailable())
+                        ++shmPaintsPending;
                    #endif
 
                     static_cast<XBitmapImage*> (image.getPixelData())
@@ -3045,7 +3047,7 @@ void Desktop::Displays::findDisplays (float masterScale)
                                                                        screens[j].height) * masterScale;
                             d.isMain = (index == 0);
                             d.scale = masterScale;
-                            d.dpi = getDisplayDPI (index);
+                            d.dpi = getDisplayDPI (0); // (all screens share the same DPI)
 
                             displays.add (d);
                         }
@@ -3471,7 +3473,6 @@ const int KeyPress::endKey                  = (XK_End & 0xff) | Keys::extendedKe
 const int KeyPress::homeKey                 = (XK_Home & 0xff) | Keys::extendedKeyModifier;
 const int KeyPress::insertKey               = (XK_Insert & 0xff) | Keys::extendedKeyModifier;
 const int KeyPress::deleteKey               = (XK_Delete & 0xff) | Keys::extendedKeyModifier;
-const int KeyPress::tabLeft                 = (XK_ISO_Left_Tab & 0xff) | Keys::extendedKeyModifier;
 const int KeyPress::tabKey                  = XK_Tab & 0xff;
 const int KeyPress::F1Key                   = (XK_F1 & 0xff) | Keys::extendedKeyModifier;
 const int KeyPress::F2Key                   = (XK_F2 & 0xff) | Keys::extendedKeyModifier;

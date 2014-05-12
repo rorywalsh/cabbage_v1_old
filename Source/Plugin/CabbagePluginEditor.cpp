@@ -196,32 +196,32 @@ tableBuffer(2, 44100)
 //============================================================================
 CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
 {
-comps.clear(true);
-subPatches.clear(true);
-layoutComps.clear(true);
-getFilter()->removeChangeListener(this);
-removeAllChangeListeners();
-//getFilter()->editorBeingDeleted(this);
-if(presetFileText.length()>1)
-        SnapShotFile.replaceWithText(presetFileText);
+	comps.clear(true);
+	subPatches.clear(true);
+	layoutComps.clear(true);
+	getFilter()->removeChangeListener(this);
+	removeAllChangeListeners();
+	//getFilter()->editorBeingDeleted(this);
+	if(presetFileText.length()>1)
+			SnapShotFile.replaceWithText(presetFileText);
 }
 
 //==============================================================================
 void CabbagePluginAudioProcessorEditor::resized()
 {
-//Logger::writeToLog("width:"+String(getWidth()));
-//Logger::writeToLog("height:"+String(getHeight()));
+	//this->setSize(this->getWidth(), this->getHeight());	
+	viewport->setBounds(0, 0, this->getWidth(), this->getHeight());
 
-this->setSize(this->getWidth(), this->getHeight());	
-viewport->setBounds(0, 0, this->getWidth(), this->getHeight());
+	componentPanel->setTopLeftPosition(0, 0);
 
-componentPanel->setTopLeftPosition(0, 0);
-//if(componentPanel)componentPanel->setBounds(0, 0, this->getWidth(), this->getHeight());
-#ifdef Cabbage_Build_Standalone
-layoutEditor->setTopLeftPosition(0, 0);
-//resizer->setBounds (getWidth() - 16, getHeight() - 16, 16, 16);
-//if(layoutEditor)layoutEditor->setBounds(0, 0, this->getWidth(), this->getHeight());
-#endif
+	#ifdef Cabbage_Build_Standalone
+	layoutEditor->setTopLeftPosition(0, 0);
+	if(componentPanel->getWidth()<this->getWidth()+18 && componentPanel->getHeight()<this->getHeight()+18)
+	viewport->setScrollBarsShown(false, false);
+	else
+		viewport->setScrollBarsShown(true, true);
+
+	#endif
 }
 
 //==============================================================================
@@ -250,6 +250,9 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
                 }
         else if(cAttr.getStringProp(CabbageIDs::type)==String("snapshot")){
                 InsertSnapshot(cAttr);   
+                }
+        else if(cAttr.getStringProp(CabbageIDs::type)==String("gentable")){
+                InsertGenTable(cAttr);   
                 }
         else if(cAttr.getStringProp(CabbageIDs::type)==String("infobutton")){
                 InsertInfoButton(cAttr);   
@@ -361,6 +364,12 @@ else{
 			return;
 			}
 
+		GenTable* gentable = dynamic_cast<GenTable*>(source);
+		if(gentable){
+		if(gentable->changeMessage == "updateFunctionTable")
+			updatefTableData(gentable);
+		}		
+
 		CabbageSoundfiler* soundfiler = dynamic_cast<CabbageSoundfiler*>(source);
 		if(soundfiler){
 			String channel;
@@ -463,7 +472,7 @@ else{
 //==================================================================
 //create function table data from our breakpoint envelopes
 //==================================================================
-void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool sendToCsound)
+void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
 {
 	Array< PointData > points;
 	for(int i=0;i<table->handles.size();i++)
@@ -474,105 +483,44 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool send
 	int prevXPos=0;
 	int prevYPos = 0;
 	signed int curve=0;
-	
-	StringArray pFields;
-	
+	String fStatement = "f"+String(table->tableNumber)+" 0 "+String(table->tableSize)+" -16 "; 
+	String pFields = "";
+	Logger::writeToLog(fStatement);
 	float xAxisRescaleFactor = (float)table->tableSize/(float)table->getWidth();
-	//Logger::writeToLog("end XPos:"+String(table->getWidth()*xAxisRescaleFactor));
-	
-	if(table->gen==7 || table->gen==5)
-			{
-			//set first points here
-			float xPos = 0;
-			pFields.add(String(table->convertPixelToAmp(points.getReference(0).point.getY())));
-			for(int i=1;i<points.size();i++)
-				{
-				xPos = points.getReference(i).point.getX()*xAxisRescaleFactor-xPos;
-				pFields.add(String(xPos));
-				pFields.add(String(table->convertPixelToAmp(points.getReference(i).point.getY())));
-				}					
-			//set last point here
-			xPos = points.getReference(points.size()-1).point.getX()*xAxisRescaleFactor-xPos;
-			pFields.add(String(xPos));
-			pFields.add(String(table->convertPixelToAmp(points.getReference(points.size()-1).point.getY())));
-			String fStatement = "f"+String(table->tableNumber)+" 0 "+String(table->tableSize)+" 7 "; 
-			fStatement = fStatement+pFields.joinIntoString(" ");
-			Logger::writeToLog(fStatement);
-			table->currentfStatement = fStatement;
-			if(sendToCsound)
-			getFilter()->messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement, table->tableNumber);	
-
-FUNC *ftpp;
-EVTBLK  evt;
-memset(&evt, 0, sizeof(EVTBLK));
-evt.pcnt = 5+pFields.size();
-evt.opcod = 'f';
-evt.p[0]=0;
-evt.p[1]=table->tableNumber;
-evt.p[2]=0;
-evt.p[3]=table->tableSize;
-evt.p[4]=table->gen;
-for(int i=0;i<pFields.size();i++){
-evt.p[5+i]= (pFields[i].getFloatValue()==0.f ? 0.001 : pFields[i].getFloatValue());
-Logger::writeToLog(pFields[i]);
-}
-
-CSOUND* csound = dynamic_cast<CSOUND*>(getFilter()->getCsound()->GetCsound());
-csound->hfgens(csound, &ftpp, &evt, 0);
-
-Array<float, CriticalSection> points;		
-points = Array<float, CriticalSection>(ftpp->ftable, ftpp->flen);
-
-//for(int i=0;i<points.size();i++)
-//	Logger::writeToLog(String(points[i]));
-table->createAmpOverviews(points);
-table->repaint();
-
+	Logger::writeToLog("end XPos:"+String(table->getWidth()*xAxisRescaleFactor));
+	for(int i=0;i<points.size()-1;i++){
+		int handleYPos1 = points.getReference(i).point.getY();
+		int handleYPos2 = points.getReference(i+1).point.getY(); 
+		//expon curves
+		if(points.getReference(i+1).curveType==1)
+			if(handleYPos2>handleYPos1)
+			curve=-3;
+			else
+			curve=3;
+		if(points.getReference(i+1).curveType==2)
+			if(handleYPos2<handleYPos1)
+			curve=-3;
+			else
+			curve=3;
+		else
+			curve = 0;
 		
-			}
-	
-	
-	/*
-	for(int i=0;i<points.size()-1;i++)
-		{
-			
-			int handleYPos1 = points.getReference(i).point.getY();
-			int handleYPos2 = points.getReference(i+1).point.getY(); 
-			//expon curves
-			if(points.getReference(i+1).curveType==1)
-				if(handleYPos2>handleYPos1)
-				curve=-3;
-				else
-				curve=3;
-			if(points.getReference(i+1).curveType==2)
-				if(handleYPos2<handleYPos1)
-				curve=-3;
-				else
-				curve=3;
-			else
-				curve = 0;
-			
-			
-			if(handleYPos1<table->getHeight()/2) 
-				handleYPos1 = handleYPos1-1;
-			else
-			if(handleYPos1>table->getHeight()/2) 
-				handleYPos1 = handleYPos1+1;
-			
-			float yAmp = table->convertPixelToAmp(handleYPos1);
-			if(i+1==points.size()-1)
-				xPos = (table->getWidth()*xAxisRescaleFactor)-prevXPos;
-			else	
-				xPos = jmax(points.getReference(i+1).point.getX()*xAxisRescaleFactor-prevXPos, 1.f);
-			
-			pFields.add(String(float(yAmp)));
-			pFields.add(String(xPos));
-			pFields.add(String(curve));
-			//Logger::writeToLog("y:"+String(yAmp));
-			//Logger::writeToLog("x:"+String(xPos));
-			//Logger::writeToLog("Type:"+String(yAmp));
-			prevXPos += xPos;
-		}
+		
+		if(handleYPos1<table->getHeight()/2) handleYPos1 = handleYPos1-1;
+		else
+		if(handleYPos1>table->getHeight()/2) handleYPos1 = handleYPos1+1;
+		
+		float yAmp = table->convertPixelToAmp(handleYPos1);
+		if(i+1==points.size()-1)
+		xPos = (table->getWidth()*xAxisRescaleFactor)-prevXPos;
+		else	
+		xPos = (points.getReference(i+1).point.getX()*xAxisRescaleFactor-prevXPos);
+		pFields = pFields+String(float(yAmp))+" "+String(xPos)+" "+String(curve)+" ";
+		//Logger::writeToLog("y:"+String(yAmp));
+		//Logger::writeToLog("x:"+String(xPos));
+		//Logger::writeToLog("Type:"+String(yAmp));
+		prevXPos += xPos;
+	}
 	
 	int handleYPos;
 	if(isPositiveAndBelow(points.size()-1, points.size()))
@@ -581,16 +529,47 @@ table->repaint();
 		handleYPos = 0;
 	float yAmp = table->convertPixelToAmp(handleYPos);
 	
-	pFields.add(String(yAmp));
-	String fStatement = "f"+String(table->tableNumber)+" 0 "+String(table->tableSize)+" -16 "; 
-	fStatement = fStatement+pFields.joinIntoString(" ");
+	pFields = pFields + String(yAmp);
+	fStatement = fStatement+pFields;
 	Logger::writeToLog(fStatement);
 	table->currentfStatement = fStatement;
-	getFilter()->messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement);
-	*/
+	getFilter()->messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement, table->tableNumber);	
+
 }
 		
+void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
+{
+	Array<float> pFields = table->getPfields();
+	//for(int i=1;i<pFields.size();i++)
+	//	Logger::writeToLog("P"+String(i)+":"+String(pFields[i]));
 
+	if( table->genRoutine==5 || table->genRoutine==7)
+	{
+		FUNC *ftpp;
+		EVTBLK  evt;
+		memset(&evt, 0, sizeof(EVTBLK));
+		evt.pcnt = 5+pFields.size()-1;
+		evt.opcod = 'f';
+		evt.p[0]=0;
+		evt.p[1]=table->tableNumber;
+		evt.p[2]=0;
+		evt.p[3]=table->tableSize;
+		evt.p[4]=table->genRoutine;
+		for(int i=0;i<pFields.size()-1;i++)
+		evt.p[5+i]= pFields[i+1];
+
+	Logger::writeToLog("===================");
+		for(int i=0;i<evt.pcnt;i++)	
+			Logger::writeToLog(String(evt.p[i]));
+	Logger::writeToLog("===================");	
+		getFilter()->getCsound()->GetCsound()->hfgens(getFilter()->getCsound()->GetCsound(), &ftpp, &evt, 0);
+		Array<float, CriticalSection> points;		
+		points = Array<float, CriticalSection>(ftpp->ftable, ftpp->flen);
+		StringArray dummyFields;
+		table->setWaveform(points, table->tableNumber, false);
+	}
+ 
+}
 //=======================================================
 //adds a plant to the plant repository
 //=======================================================
@@ -1365,16 +1344,6 @@ csdArray.addLines(getFilter()->getCsoundInputFileText());
 void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 {
 
-//Inside the paint callback in your Component
-Viewport* const viewport = findParentComponentOfClass<Viewport>(); //Get the parent viewport
-if(viewport != nullptr) //Check for nullness
-{
-    Rectangle<int> viewRect(viewport->getViewPositionX(), viewport->getViewPositionY(), viewport->getViewWidth(), viewport->getViewHeight()); //Get the current displayed area in the viewport
-
-// ... based on the displayed area, paint just what's visible ... //
-}
-	
-	
         for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
                 if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("keyboard")){
 #ifdef Cabbage_Build_Standalone
@@ -1410,8 +1379,7 @@ if(viewport != nullptr) //Check for nullness
                 g.drawFittedText(authorText, 10, getHeight()-35, getWidth()*.65, logo.getHeight(), 1, 1);   
                 //g.drawLine(10, getHeight()-27, getWidth()-10, getHeight()-27, 0.2);
         }
-//componentPanel->toFront(true);
-//componentPanel->grabKeyboardFocus();
+
 #else
                 g.setColour(formColour);
                 g.fillAll();
@@ -1846,7 +1814,68 @@ void CabbagePluginAudioProcessorEditor::InsertSoundfiler(CabbageGUIClass &cAttr)
 		((CabbageSoundfiler*)layoutComps[idx])->addChangeListener(this);
 		//set visiblilty
 		layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+		
+		//load initial files/tables if any are set
+		int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();
+		tableBuffer.clear();
+		for(int y=0;y<numberOfTables;y++)
+			{
+			int tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, y);
+			tableValues.clear();
+			tableValues = getFilter()->getTableFloats(tableNumber);		
+			if(tableBuffer.getNumSamples()<tableValues.size())
+			tableBuffer.setSize(numberOfTables, tableValues.size());
+			tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());
+			}				
+		dynamic_cast<CabbageSoundfiler*>(layoutComps[idx])->setWaveform(tableBuffer, numberOfTables);			
+		
+}
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//     GenTable
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
+{
+        float left = cAttr.getNumProp(CabbageIDs::left);
+        float top = cAttr.getNumProp(CabbageIDs::top);
+        float width = cAttr.getNumProp(CabbageIDs::width);
+        float height = cAttr.getNumProp(CabbageIDs::height);
+		
+        layoutComps.add(new CabbageGenTable(cAttr));
+    
+        int idx = layoutComps.size()-1;
+		setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));        
+        layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
+		//if control is embedded into a plant don't add mouse listener
+		if(cAttr.getStringProp("reltoplant").isEmpty())
+		layoutComps[idx]->addMouseListener(this, true);
+		layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+		layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+		((CabbageSoundfiler*)layoutComps[idx])->addChangeListener(this);
+		//set visiblilty
+		layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));	
+		
+		//load initial files/tables if any are set
+		int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();
+		for(int y=0;y<numberOfTables;y++)
+			{	
+			//tableBuffer.clear();
+			int tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, y);
+			GenTable* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
+			table->addChangeListener(this);
+			StringArray pFields = getFilter()->getTableStatement(tableNumber);
+			int genRoutine = abs(pFields[4].getIntValue());
+
+			tableValues.clear();
+			tableValues = getFilter()->getTableFloats(tableNumber);				
+			//tableBuffer.setSize(numberOfTables, tableValues.size());
+			//tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());			
+			//create table and set colours
+			table->addTable(44100, cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), genRoutine);
+			//now fill table with data, tables can only be created on startup..
+			table->setWaveform(tableValues, tableNumber);
+			table->enableEditMode(pFields);
+			}
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2651,37 +2680,7 @@ Array<int> tableSizes;
 			}			
 		
 }
-
-	/*********************************************************/
-	/*     actionlistener method for widgets (xypad/table/snapshot)      */
-	/*********************************************************/
-void CabbagePluginAudioProcessorEditor::actionListenerCallbackForWidgets(const String message){
-String name = message.substring(0, message.indexOf(String("|"))); 
-String type = message.substring(message.indexOf(String("|"))+1, message.indexOf(String(":")));
-String action = message.substring(message.indexOf(String(":"))+1, message.indexOf(String(";")));
-String preset = message.substring(message.indexOf(String(";"))+1, message.indexOf(String("?"))); 
-int masterSnap = message.substring(message.indexOf(String("?"))+1, 100).getIntValue(); 
-
-//notify processer to update tables with score events. 
-if(message.equalsIgnoreCase(String("updatingDirectoryTables"))){
-for(int i=0;i<(int)getFilter()->getGUILayoutCtrlsSize();i++)//find correct control from vector
-		//if message came from a directorylist
-		if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).containsIgnoreCase("directorylist"))	
-		{
-			//Logger::writeToLog("update tables now please...");
-			StringArray events = ((CabbageDirectoryList*)layoutComps[i])->getListContents();
-			for(int p=0;p<events.size();p++)
-				for(int u=0;u<pastEvents.size();u++)
-					if(events[p]==pastEvents[u])
-						events.remove(p);
-			//Logger::writeToLog(events.joinIntoString("\n"));
-			pastEvents.addArray(events);
-			getFilter()->scoreEvents = events;
-			getFilter()->messageQueue.addOutgoingChannelMessageToQueue("", 0, "directoryList");
-		}
-	}
-       
-}										
+										
 										
 /*********************************************************/
 /*     actionlistener method 							 */
@@ -2715,7 +2714,7 @@ else if(message.contains("Message sent from CabbageMainPanel:delete:"))
 
 //CALL LISTENER METHOD FOR CUSTOM COMPONENTS THAT USE ACTION BROADCASTERS
 else{
-actionListenerCallbackForWidgets(message);
+Logger::writeToLog("Unknwn message:"+message);
 }
 }
 
@@ -3133,12 +3132,31 @@ for(int i=0;i<getFilter()->getGUILayoutCtrlsSize();i++){
 					int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
 					tableValues.clear();
 					tableValues = getFilter()->getTableFloats(tableNumber);					
-					((CabbageTable*)layoutComps[i])->fillTable(y, tableValues);	
-					StringArray statement = getFilter()->getTableEvtCode(tableNumber);		
-					((CabbageTable*)layoutComps[i])->setTableEvtCode(y, statement);		
+					((CabbageTable*)layoutComps[i])->fillTable(y, tableValues);		
 					}				
 				}
 				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");				  
+			}
+		//gentable
+        else if((getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::gentable) &&
+				getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+				{
+				String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
+				if(message.contains("tablenumber")||message.contains("tablenumbers"))
+					{
+					int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();
+					for(int y=0;y<numberOfTables;y++)
+						{	
+						tableBuffer.clear();
+						int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
+						GenTable* table = dynamic_cast<CabbageGenTable*>(layoutComps[i])->table;
+						StringArray pFields = getFilter()->getTableStatement(tableNumber);
+						//tableValues.clear();
+						tableValues = getFilter()->getTableFloats(tableNumber);				
+						table->setWaveform(tableValues, tableNumber);	
+						}
+				getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");				  
+				}
 			}
 }
 

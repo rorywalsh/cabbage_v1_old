@@ -47,6 +47,8 @@ public:
     bool areLinesDrawnForTreeView (TreeView&) override;
     int getTreeViewIndentSize (TreeView&) override;
 
+    Button* createDocumentWindowButton (int buttonType) override;
+
     void drawComboBox (Graphics&, int width, int height, bool isButtonDown,
                        int buttonX, int buttonY, int buttonW, int buttonH, ComboBox& box) override;
 
@@ -80,6 +82,9 @@ public:
     void drawConcertinaPanelHeader (Graphics&, const Rectangle<int>& area, bool isMouseOver, bool isMouseDown,
                                     ConcertinaPanel&, Component&) override;
 
+    Path getTickShape (float height) override;
+    Path getCrossShape (float height) override;
+
     static void createTabTextLayout (const TabBarButton& button, float length, float depth, Colour colour, TextLayout&);
 
 private:
@@ -88,4 +93,4 @@ private:
 };
 
 
-#endif   // JUCE_LOOKANDFEEL_H_INCLUDED
+#endif   // JUCE_LOOKANDFEEL_V3_H_INCLUDED

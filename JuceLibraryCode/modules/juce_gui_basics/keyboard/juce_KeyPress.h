@@ -185,7 +185,6 @@ public:
     static const int escapeKey;     /**< key-code for the escape key */
     static const int returnKey;     /**< key-code for the return key*/
     static const int tabKey;        /**< key-code for the tab key*/
-	static const int tabLeft;        /**< key-code for the tab key*/
 
     static const int deleteKey;     /**< key-code for the delete key (not backspace) */
     static const int backspaceKey;  /**< key-code for the backspace key */

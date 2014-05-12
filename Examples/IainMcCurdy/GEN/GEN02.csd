@@ -26,9 +26,9 @@ checkbox bounds(250,  0,  10, 10), channel("Act6"),  value(0), colour("white"), 
 checkbox bounds(300,  0,  10, 10), channel("Act7"),  value(0), colour("white"), shape("ellipse")
 checkbox bounds(350,  0,  10, 10), channel("Act8"),  value(0), colour("white"), shape("ellipse")
                                                                                   
-table bounds(  5, 10, 400, 70), channel("notetable"),  tableNumbers(1), tablecolour("yellow"), identchannel("table1"), drawmode(4), amprange(0,1)
-table bounds(  5, 80, 400, 70), channel("amptable"),   tableNumbers(2), tablecolour("green"),  identchannel("table2"), drawmode(4), amprange(0,1)
-table bounds(  5,150, 400, 70), channel("speedtable"), tableNumbers(3), tablecolour("blue"),   identchannel("table3"), drawmode(4), amprange(0,1)
+table bounds(  5, 10, 400, 70), channel("notetable"),  tableNumbers(1), tablecolour("yellow"), identchannel("table1"), readonly(1), drawmode(4), amprange(0,1)
+table bounds(  5, 80, 400, 70), channel("amptable"),   tableNumbers(2), tablecolour("green"),  identchannel("table2"), readonly(1), drawmode(4), amprange(0,1)
+table bounds(  5,150, 400, 70), channel("speedtable"), tableNumbers(3), tablecolour("blue"),   identchannel("table3"), readonly(1), drawmode(4), amprange(0,1)
 
 image   bounds(  0,230,400,400), colour( 50, 50, 50), oulinecolour("white"), line(0), shape("sharp"), plant("controls"){
 rslider bounds(  5,  0, 50, 50), channel("note1"), text("Note.1"), range(0, 108, 48, 1, 1),colour("yellow"),trackercolour("yellow")  

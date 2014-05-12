@@ -52,15 +52,19 @@ public:
 
     LowLevelGraphicsContext* createLowLevelContext() override
     {
+        sendDataChangeMessage();
         return new CoreGraphicsContext (context, height, 1.0f);
     }
 
-    void initialiseBitmapData (Image::BitmapData& bitmap, int x, int y, Image::BitmapData::ReadWriteMode) override
+    void initialiseBitmapData (Image::BitmapData& bitmap, int x, int y, Image::BitmapData::ReadWriteMode mode) override
     {
         bitmap.data = imageData + x * pixelStride + y * lineStride;
         bitmap.pixelFormat = pixelFormat;
         bitmap.lineStride = lineStride;
         bitmap.pixelStride = pixelStride;
+
+        if (mode != Image::BitmapData::readOnly)
+            sendDataChangeMessage();
     }
 
     ImagePixelData* clone() override
@@ -582,6 +586,11 @@ void CoreGraphicsContext::drawGlyph (int glyphNumber, const AffineTransform& tra
 {
     if (state->fontRef != 0 && state->fillType.isColour())
     {
+       #if JUCE_CLANG
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+       #endif
+
         if (transform.isOnlyTranslation())
         {
             CGContextSetTextMatrix (context, state->fontTransform); // have to set this each time, as it's not saved as part of the state
@@ -605,6 +614,10 @@ void CoreGraphicsContext::drawGlyph (int glyphNumber, const AffineTransform& tra
 
             CGContextRestoreGState (context);
         }
+
+       #if JUCE_CLANG
+        #pragma clang diagnostic pop
+       #endif
     }
     else
     {

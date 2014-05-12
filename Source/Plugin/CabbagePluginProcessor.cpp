@@ -23,7 +23,8 @@
 
 
 #define MAX_BUFFER_SIZE 1024
-
+//Csound functions like to return 0 when everything is ok..
+#define OK 0
 #define LOGGER 0
 
 //these two lines may need to be copied to top part of csound.h
@@ -33,7 +34,7 @@
 CabbageLookAndFeel* lookAndFeel;
 CabbageLookAndFeelBasic* lookAndFeelBasic;
 
-juce_ImplementSingleton (IdentArray);
+juce_ImplementSingleton (IdentArray); 
 
 //==============================================================================
 // There are two different CabbagePluginAudioProcessor constructors. One for the
@@ -190,8 +191,8 @@ includeFiles.removeDuplicates(0);
 
 csCompileResult = csound->Compile(const_cast<char*>(inputfile.toUTF8().getAddress()));
 //csound->Start();
-
-if(csCompileResult==0){
+Logger::writeToLog(inputfile);
+if(csCompileResult==OK){
 
 	//send root directory path to Csound.	
 	setPlayConfigDetails(getNumberCsoundOutChannels(),
@@ -361,7 +362,7 @@ csound->SetParams(csoundParams);
 csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
 //csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
 csdFile.setAsCurrentWorkingDirectory();
-if(csCompileResult==0){
+if(csCompileResult==OK){
 	
 	Logger::writeToLog("compiled Ok");
 		keyboardState.allNotesOff(0);
@@ -559,7 +560,7 @@ for(int i=0;i<lines.size();i++)
 includeFiles.removeDuplicates(0);
 
 	
-if(csCompileResult==0){		
+if(csCompileResult==OK){		
 		keyboardState.allNotesOff(0);
 		keyboardState.reset();
         //simple hack to allow tables to be set up correctly.
@@ -702,6 +703,7 @@ bool multiLine = false;
 					if(tokes[0].equalsIgnoreCase(String("form"))
 									||tokes[0].equalsIgnoreCase(String("image"))
 									||tokes[0].equalsIgnoreCase(String("keyboard"))
+									||tokes[0].equalsIgnoreCase(String("gentable"))
 									||tokes[0].equalsIgnoreCase(String("csoundoutput"))
 									||tokes[0].equalsIgnoreCase(String("textbox"))
 									||tokes[0].equalsIgnoreCase(String("line"))
@@ -1070,83 +1072,64 @@ void CabbagePluginAudioProcessor::messageCallback(CSOUND* csound, int /*attr*/, 
 }
 #endif
 
-void CabbagePluginAudioProcessor::breakpointCallback(CSOUND *csound, int line, double instr, void *userdata)
+#ifdef BUILD_DEBUGGER
+void CabbagePluginAudioProcessor::breakpointCallback(CSOUND *csound, debug_bkpt_info_t *bkpt_info, void *userdata)
 {
 #ifdef BUILD_DEBUGGER
-    CabbagePluginAudioProcessor* ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
+    CabbagePluginAudioProcessor* ud = (CabbagePluginAudioProcessor *) userdata;
 	ud->getCallbackLock().enter();
 	int ksmpOffset = ud->ksmpsOffset;;
-    INSDS *insds = csoundDebugGetInstrument(csound);
+	
+	//code based on Andres implementation in CsoundQT...
+	
+	debug_instr_t *debug_instr = bkpt_info->breakpointInstr;
+	
+	
+	// Copy variable list
+	debug_variable_t* vp = bkpt_info->instrVarList; 
+
 	
 	if(ud->breakCount==0)
-		ud->breakCount=ud->csound->GetCsound()->GetKcounter(ud->csound->GetCsound());
+		ud->breakCount= debug_instr->kcounter;
 	else ud->breakCount++;
     String output;
 	
-	output << "\nBreakpoint at instr " << instr << "\tNumber of k-cycles into performance: " << ud->breakCount << "\n------------------------------------------------------";;
+	output << "\nBreakpoint at instr " << debug_instr->p1 << "\tNumber of k-cycles into performance: " << ud->breakCount << "\n------------------------------------------------------";;
 
-	
-    // Copy variable list
-    CS_VARIABLE *vp = insds->instr->varPool->head;
-    while (vp) 
+	while (vp) 
     {
             output << " \n";
-            if (vp->varName[0] != '#')
+            if (vp->name[0] != '#')
             {
-                output << " VarName:"<< vp->varName << "\t";;
-                if (strcmp(vp->varType->varTypeName, "i") == 0
-                    || strcmp(vp->varType->varTypeName, "k") == 0) 
-                {
-                    if (vp->memBlock) {
-                        output << "---" << *((MYFLT *)vp->memBlock);
-                    } else 
-                    {
-                    MYFLT *varmem = insds->lclbas + vp->memBlockIndex;
-                    output << " value=" << *varmem;;
-                    }
-                } 
-                else if(strcmp(vp->varType->varTypeName, "S") == 0) 
-                {
-                    STRINGDAT *varmem;
-                    if (vp->memBlock) {
-                        varmem = (STRINGDAT *)vp->memBlock;
-                    } else {
-                        varmem = (STRINGDAT *) (insds->lclbas + vp->memBlockIndex);
-                    }
-                    output << " value=" << std::string(varmem->data) ;;//, varmem->size));
-                } 
-                else if (strcmp(vp->varType->varTypeName, "a") == 0)
-                {
-                    if (vp->memBlock) 
-                    {
-                        output << " =======" << *((MYFLT *)vp->memBlock) << *((MYFLT *)vp->memBlock + 1)
-                        << *((MYFLT *)vp->memBlock + 2)<< *((MYFLT *)vp->memBlock + 3);
-                    } 
-                    else
-                    {
-                    MYFLT *varmem = insds->lclbas + vp->memBlockIndex;
-                    output <<" value="<< *varmem;
-                    }
-                    } else {
-
-                }
-                output << " varType[" << vp->varType->varTypeName << "]";
-        }
-        vp = vp->next;
-		ud->csoundDebuggerOutput = output;
-
-		ud->getCallbackLock().exit(); 
-		
+                output << " VarName:"<< vp->name << "\t";;
+				if (strcmp(vp->typeName, "i") == 0 || strcmp(vp->typeName, "k") == 0) 
+					{
+					output << " value=" << *((MYFLT *) vp->data);
+					}
+				else if(strcmp(vp->typeName, "S") == 0) 
+					{
+					output << " value=" << (char*)(vp->data);
+					} 
+				else if (strcmp(vp->typeName, "a") == 0) 
+					{
+					MYFLT *data = (MYFLT *) vp->data;
+					output << " value="<< *data;// << *(data + 1) << *(data + 2)<< *(data + 3);				
+				
+					}
+				output << " varType[" << vp->typeName << "]";
+				
+			}
+			vp = vp->next;
 	}
+	
+	ud->csoundDebuggerOutput = output;
+    csoundDebugFreeVariables(csound, vp);
+    //csoundDebugFreeInstrInstances(csound, debug_instr);
+	ud->getCallbackLock().exit(); 
 
-    //Copy active instrument list
-
-    INSDS *in = insds;
-    while (in->prvact) {
-        in = in->prvact;
-    }
 #endif
-}    
+} 
+#endif   
 //==============================================================================
 #if defined(Cabbage_Build_Standalone) || defined(Cabbage_Plugin_Host)
 CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int pluginType)
@@ -1195,54 +1178,66 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 //==============================================================================
 // getTable data from Csound so table editor can draw table
 //==============================================================================
-StringArray CabbagePluginAudioProcessor::getTableEvtCode(int tableNum)
+StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 {
-StringArray fdata;
-	/*
-EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
-for(int i=0;i<e->pcnt;i++)
-	fdata.add(String(e->p[i]));
-return fdata;*/
-return fdata;	
+	StringArray fdata;
+
+	if(csCompileResult==OK)
+	{
+		MYFLT* temp;
+		int tableSize = csound->GetTable(temp, tableNum);
+		if(tableSize>0)
+		{
+			EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
+			for(int i=0;i<=e->pcnt;i++)
+				fdata.add(String(e->p[i]));
+		}
+	}
+	return fdata;
 }
 //==============================================================================
 const Array<double, CriticalSection> CabbagePluginAudioProcessor::getTable(int tableNum)
 {
-		Array<double, CriticalSection> points;
-
+	Array<double, CriticalSection> points;
+	if(csCompileResult==OK)
+	{
 		int tableSize=0;
-#ifndef Cabbage_No_Csound
+	#ifndef Cabbage_No_Csound
 		MYFLT* temp;
 		tableSize = csound->GetTable(temp, tableNum);
-#else
+	#else
         float *temp;
-#endif
+	#endif
 		if(tableSize>0)
 		points = Array<double, CriticalSection>(temp, tableSize);
-		return points;
+	}
+	return points;
 }
 
 const Array<float, CriticalSection> CabbagePluginAudioProcessor::getTableFloats(int tableNum)
 {
-		Array<float, CriticalSection> points;
+	Array<float, CriticalSection> points;
+	if(csCompileResult==OK)
+		{
 		points.clear();
 
 		int tableSize=0;
-#ifndef Cabbage_No_Csound
+	#ifndef Cabbage_No_Csound
 		
 		tableSize = csound->TableLength(tableNum);
 		temp.clear();
 		//not good if table size is -1!
 		if(tableSize<0)
-			jassert(0)
+			return points;
 	
 		temp.reserve(tableSize);
 		csound->TableCopyOut(tableNum, &temp[0]);
-#else
+	#else
         float *temp;
-#endif
+	#endif
 		if(tableSize>0)
 		points = Array<float, CriticalSection>(&temp[0], tableSize);
+	}
 		return points;
 }
 //=================================================================================
@@ -1343,7 +1338,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
 {
 #ifndef Cabbage_No_Csound
 String chanName, channelMessage;
-if(!csCompileResult)
+if(csCompileResult==OK)
 	{
 	MYFLT* val=0;
 	//update all control widgets
@@ -1383,37 +1378,37 @@ if(!csCompileResult)
 			}			
 		}
 		 
-//update all layout control widgets
-//currently this is only needed for table widgets as other layout controls
-//don't use channel messages...
-	for(int index=0;index<getGUILayoutCtrlsSize();index++)
-		{
-		if(guiLayoutCtrls[index].getStringProp(CabbageIDs::type)==CabbageIDs::table)
+	//update all layout control widgets
+	//currently this is only needed for table widgets as other layout controls
+	//don't use channel messages...
+		for(int index=0;index<getGUILayoutCtrlsSize();index++)
 			{
-			for(int y=0;y<guiLayoutCtrls[index].getStringArrayProp(CabbageIDs::channel).size();y++){
-				//String test = getGUILayoutCtrls(index).getStringArrayPropValue(CabbageIDs::channel, y);
-				float value = csound->GetChannel(guiLayoutCtrls[index].getStringArrayPropValue(CabbageIDs::channel, y).getCharPointer());
-				guiLayoutCtrls[index].setTableChannelValues(y, value);
+			if(guiLayoutCtrls[index].getStringProp(CabbageIDs::type)==CabbageIDs::table)
+				{
+				for(int y=0;y<guiLayoutCtrls[index].getStringArrayProp(CabbageIDs::channel).size();y++){
+					//String test = getGUILayoutCtrls(index).getStringArrayPropValue(CabbageIDs::channel, y);
+					float value = csound->GetChannel(guiLayoutCtrls[index].getStringArrayPropValue(CabbageIDs::channel, y).getCharPointer());
+					guiLayoutCtrls[index].setTableChannelValues(y, value);
+					}
 				}
-			}
 
-		if(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).isNotEmpty())
-			{
-			char string[1024] = {0};
-			//guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress()
-			csound->GetStringChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), string);	
-			channelMessage = String(string);
-			//Logger::writeToLog(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel));
-			if(channelMessage!=""){
-			guiLayoutCtrls.getReference(index).parse(channelMessage, "");
-			guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
+			if(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).isNotEmpty())
+				{
+				char string[1024] = {0};
+				//guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress()
+				csound->GetStringChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), string);	
+				channelMessage = String(string);
+				//Logger::writeToLog(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel));
+				if(channelMessage!=""){
+				guiLayoutCtrls.getReference(index).parse(channelMessage, "");
+				guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
+				}	
+				//else
+				//	guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
+				//zero channel message so that we don't keep sending the same string 
+				csound->SetChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
+				}
 			}	
-			//else
-			//	guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
-			//zero channel message so that we don't keep sending the same string 
-			csound->SetChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
-			}
-		}	
 	}
 sendChangeMessage();
 #endif
@@ -1426,52 +1421,53 @@ sendChangeMessage();
 void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
 {
 #ifndef Cabbage_No_Csound
-if(!csCompileResult){
-#ifndef Cabbage_Build_Standalone
-	if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-			csound->SetChannel(CabbageIDs::hostbpm.toUTF8(), hostInfo.bpm);
-	if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-			csound->SetChannel(CabbageIDs::timeinseconds.toUTF8(), hostInfo.timeInSeconds);
-	if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-			csound->SetChannel(CabbageIDs::isplaying.toUTF8(), hostInfo.isPlaying);
-	if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-			csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
-	if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
-			csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
-#endif
+if(csCompileResult==OK)
+	{
+	#ifndef Cabbage_Build_Standalone
+		if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+				csound->SetChannel(CabbageIDs::hostbpm.toUTF8(), hostInfo.bpm);
+		if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+				csound->SetChannel(CabbageIDs::timeinseconds.toUTF8(), hostInfo.timeInSeconds);
+		if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+				csound->SetChannel(CabbageIDs::isplaying.toUTF8(), hostInfo.isPlaying);
+		if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+				csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
+		if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+				csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
+	#endif
 
-for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
-		{
-		//Logger::writeToLog("MessageType:"+messageQueue.getOutgoingChannelMessageFromQueue(i).type);
-		if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="directoryList"){
-			for(int y=0;y<scoreEvents.size();y++)
-			csound->InputMessage(scoreEvents[y].toUTF8());
-			//scoreEvents.clear();
-		}
-		//update Csound function tables with values from table widget
-		else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="updateTable"){
-			//Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.toUTF8());
-			csound->InputMessage(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.getCharPointer());
-		}
-		//catch string messags
-		else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type==CabbageIDs::stringchannel){	
-			Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName);
-			Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);
-		csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
-						   messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal.toUTF8().getAddress());
-		}
-		else
-		csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
-						   messageQueue.getOutgoingChannelMessageFromQueue(i).value);
-		}
-		
-		messageQueue.flushOutgoingChannelMessages();
+	for(int i=0;i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue();i++)
+			{
+			//Logger::writeToLog("MessageType:"+messageQueue.getOutgoingChannelMessageFromQueue(i).type);
+			if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="directoryList"){
+				for(int y=0;y<scoreEvents.size();y++)
+				csound->InputMessage(scoreEvents[y].toUTF8());
+				//scoreEvents.clear();
+			}
+			//update Csound function tables with values from table widget
+			else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="updateTable"){
+				//Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.toUTF8());
+				csound->InputMessage(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.getCharPointer());
+			}
+			//catch string messags
+			else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type==CabbageIDs::stringchannel){	
+				Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName);
+				Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);
+			csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
+							   messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal.toUTF8().getAddress());
+			}
+			else
+			csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
+							   messageQueue.getOutgoingChannelMessageFromQueue(i).value);
+			}
+			
+			messageQueue.flushOutgoingChannelMessages();
 
-	if(isAutomator){
-		//sendChangeMessage();
-		//sendActionMessage("update automation:"+String(automationParamID)+"|"+String(automationAmp));
-		//Logger::writeToLog("update automation:"+String(automationAmp));
-		}
+		if(isAutomator){
+			//sendChangeMessage();
+			//sendActionMessage("update automation:"+String(automationParamID)+"|"+String(automationAmp));
+			//Logger::writeToLog("update automation:"+String(automationAmp));
+			}
 	}
 
 #endif
@@ -1624,7 +1620,7 @@ if(!isSuspended() && !isGuiEnabled()){
 	#ifndef Cabbage_No_Csound
 	int numSamples = buffer.getNumSamples();
 
-	if(csCompileResult==0){
+	if(csCompileResult==OK){
 		
 	
 		
@@ -1661,7 +1657,7 @@ if(!isSuspended() && !isGuiEnabled()){
 				
 				
 				//csoundSetInstrumentBreakpoint(csound->GetCsound(), 1, 0);
-				if(csCompileResult!=0)
+				if(csCompileResult!=OK)
 					suspendProcessing(true);
 				else
 					ksmpsOffset++;
@@ -1669,11 +1665,11 @@ if(!isSuspended() && !isGuiEnabled()){
 				getCallbackLock().exit();
 				csndIndex = 0;
 			}
-			if(!csCompileResult)
+			if(csCompileResult!=OK)
 				{
 				for(int channel = 0; channel < getNumOutputChannels(); channel++ )
 					{
-					audioBuffer = buffer.getSampleData(channel,0);
+					audioBuffer = buffer.getWritePointer(channel,0);
 					pos = csndIndex*getNumOutputChannels();
 					CSspin[channel+pos] = audioBuffer[i]*cs_scale;
 					audioBuffer[i] = (CSspout[channel+pos]/cs_scale);
@@ -1687,14 +1683,14 @@ if(!isSuspended() && !isGuiEnabled()){
 
 		//CS_DEBUG_MODE=true;		
 	if (activeWriter != 0 && !isWinXP)
-        activeWriter->write ((const float**)buffer.getArrayOfChannels(), buffer.getNumSamples());			
+        activeWriter->write (buffer.getArrayOfReadPointers(), buffer.getNumSamples());			
 		
 		
 	}//if not compiled just mute output
 	else{
 		for(int channel = 0; channel < getNumInputChannels(); channel++)
 		{
-			audioBuffer = buffer.getSampleData(channel,0);
+			audioBuffer = buffer.getWritePointer(channel,0);
 			for(int i=0; i<numSamples;i++, csndIndex++)
 			{
 				audioBuffer[i]=0;
@@ -1757,11 +1753,11 @@ void CabbagePluginAudioProcessor::continueCsoundDebug()
 void CabbagePluginAudioProcessor::nextCsoundDebug()
 {
 #ifdef BUILD_DEBUGGER
-	
+	//not yet implemented....
 	if(breakpointInstruments.size()>0)
 	{
 		getCallbackLock().enter();
-		csoundDebugNext(csound->GetCsound());
+		//csoundDebugNext(csound->GetCsound());
 		getCallbackLock().exit();	
 	}
 	

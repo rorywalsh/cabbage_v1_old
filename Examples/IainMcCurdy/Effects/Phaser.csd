@@ -73,7 +73,7 @@ opcode	PhaserSt,aa,aakkkKki
 		xout	aoutL,aoutR							;SEND AUDIO BACK TO CALLER INSTRUMENT
 endop
 
-		instr 1
+instr 		1
 kporttime	linseg		0,0.001,0.05
 krate		chnget		"rate"
 kdepth 		chnget 		"depth"

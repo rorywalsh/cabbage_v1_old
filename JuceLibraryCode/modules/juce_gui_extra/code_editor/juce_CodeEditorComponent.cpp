@@ -1554,6 +1554,19 @@ void CodeEditorComponent::updateCachedIterators (int maxLineNum)
     }
 }
 
+void CodeEditorComponent::setReadOnly (bool b) noexcept
+{
+    if (readOnly != b)
+    {
+        readOnly = b;
+
+        if (b)
+            removeChildComponent (caret);
+        else
+            addAndMakeVisible (caret);
+    }
+}
+
 void CodeEditorComponent::getIteratorForPosition (int position, CodeDocument::Iterator& source)
 {
     if (codeTokeniser != nullptr)

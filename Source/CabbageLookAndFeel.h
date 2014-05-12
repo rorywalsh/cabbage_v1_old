@@ -85,13 +85,13 @@ public:
 
 	void drawPopupMenuBackground(Graphics &g, int width, int height);
 	Image drawCheckMark(); 
-	virtual void drawPopupMenuItem (Graphics &g, int width, int height, bool isSeparator, bool isActive, bool isHighlighted, 
-																											bool isTicked, 
-																											bool hasSubMenu, 
-																											const String &text, 
-																											const String &shortcutKeyText, 
-																											Image *image, 
-																											const Colour *const textColour);
+	virtual void drawPopupMenuItem (Graphics& g, const Rectangle<int>& area,
+                                        const bool isSeparator, const bool isActive,
+                                        const bool isHighlighted, const bool isTicked,
+                                        const bool hasSubMenu, const String& text,
+                                        const String& shortcutKeyText,
+                                        const Drawable* icon, const Colour* const textColourToUse);
+										
 	virtual void drawDocumentWindowTitleBar (DocumentWindow &window, Graphics &g, int w, int h, int titleSpaceX, int titleSpaceW, 
 																											const Image *icon, 
 																											bool drawTitleTextOnLeft);

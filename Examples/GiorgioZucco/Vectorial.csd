@@ -31,7 +31,7 @@ rslider bounds(0.25, .3, .6, .6), text("size"), colour("dodgerblue"), channel("s
 ;rslider bounds(165, 30, 60, 60), text("rate"), colour("dodgerblue"), channel("chrate"), range(0,10,0)
 checkbox  bounds(.55, .40, .60, .30),channel("onoff"), text("On/Off"), value(0), colour("blue")
 }
-
+ 
 keyboard bounds(5, 220, 750, 70)
 
 </Cabbage>

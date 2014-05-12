@@ -32,6 +32,7 @@
 
 #ifndef Cabbage_No_Csound
 #include <csound.hpp>
+#include "csdl.h"
 #include "cwindow.h"
 #include "../csPerfThread.hpp"
 #endif
@@ -40,7 +41,7 @@
 //#include "../Editor/CabbageEditorWindow.h"
 //#endif
 
-#define CABBAGE_VERSION "Cabbage v0.5.09 Alpha"
+#define CABBAGE_VERSION "Cabbage v0.5.10 Alpha"
 
 #define AUDIO_PLUGIN 1
 #define EXTERNAL_PLUGIN 2
@@ -110,7 +111,9 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 		controlChannelInfo_s* csoundChanList;
         int numCsoundChannels;          //number of Csound channels
         static void messageCallback(CSOUND *csound, int attr, const char *fmt, va_list args);  //message callback function
-        static void breakpointCallback(CSOUND *csound, int line, double instr, void *userdata);
+	#ifdef BUILD_DEBUGGER
+        static void breakpointCallback(CSOUND *csound, debug_bkpt_info_t *bkpt_info, void *udata);
+	#endif
 		int ksmpsOffset;
 		bool CS_DEBUG_MODE;
 		int pos;
@@ -247,7 +250,7 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData);
     void setStateInformation (const void* data, int sizeInBytes);
-	StringArray getTableEvtCode(int tableNum);
+	StringArray getTableStatement(int tableNum);
 	const Array<double, CriticalSection> getTable(int tableNum);
 	const Array<float, CriticalSection> getTableFloats(int tableNum);
 	void createGUI(String source, bool refresh);

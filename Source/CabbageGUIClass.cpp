@@ -543,6 +543,43 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::zoom, 0);
 		cabbageIdentifiers.set(CabbageIDs::tablenumber, -1);
 	}	
+	//===============gentable==================//	
+    else if(strTokens[0].trim() == "gentable"){
+		cabbageIdentifiers.set("basetype", "layout");
+		top = 10;
+		left = 10;
+		width = 300;
+		height = 200;
+		
+		var tableColours;
+		tableColours.append("white");
+		tableColours.append("cornflowerblue");
+		tableColours.append("yellow");
+		tableColours.append("lime");
+		tableColours.append("green");
+		tableColours.append("pink");		
+		
+		cabbageIdentifiers.set(CabbageIDs::top, 10);
+		cabbageIdentifiers.set(CabbageIDs::left, 10);
+		cabbageIdentifiers.set(CabbageIDs::width, 300);
+		cabbageIdentifiers.set(CabbageIDs::height, 200);	
+		var channels;
+		channels.append("pos");
+		channels.append("end");
+		cabbageIdentifiers.set(CabbageIDs::channel, channels);	  
+		cabbageIdentifiers.set(CabbageIDs::colour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::type, "gentable");
+		cabbageIdentifiers.set(CabbageIDs::tablecolour, tableColours);
+		cabbageIdentifiers.set(CabbageIDs::name, "gentable");
+		cabbageIdentifiers.set(CabbageIDs::file, "");
+		cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+		cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+		cabbageIdentifiers.set(CabbageIDs::visible, 1);
+		cabbageIdentifiers.set(CabbageIDs::scrubberposition, 0);
+		cabbageIdentifiers.set(CabbageIDs::zoom, 0);
+		cabbageIdentifiers.set(CabbageIDs::tablenumber, -1);
+	}
 	//===============snapshot==================//	
     else if(strTokens[0].trim() == "snapshot"){
 		cabbageIdentifiers.set("basetype", "layout");
@@ -727,6 +764,9 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		tableColours.append("white");
 		tableColours.append("cornflowerblue");
 		tableColours.append("yellow");
+		tableColours.append("lime");
+		tableColours.append("green");
+		tableColours.append("pink");
 		
 		cabbageIdentifiers.set(CabbageIDs::top, 10);
 		cabbageIdentifiers.set(CabbageIDs::left, 10);

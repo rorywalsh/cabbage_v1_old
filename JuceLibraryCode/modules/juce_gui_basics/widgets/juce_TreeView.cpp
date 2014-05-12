@@ -560,7 +560,7 @@ Viewport* TreeView::getViewport() const noexcept
 void TreeView::clearSelectedItems()
 {
     if (rootItem != nullptr)
-        rootItem->deselectAllRecursively();
+        rootItem->deselectAllRecursively (nullptr);
 }
 
 int TreeView::getNumSelectedItems (int maximumDepthToSearchTo) const noexcept
@@ -742,10 +742,18 @@ void TreeView::scrollToKeepItemVisible (TreeViewItem* item)
     }
 }
 
-void TreeView::toggleOpenSelectedItem()
+bool TreeView::toggleOpenSelectedItem()
 {
     if (TreeViewItem* const firstSelected = getSelectedItem (0))
-        firstSelected->setOpen (! firstSelected->isOpen());
+    {
+        if (firstSelected->mightContainSubItems())
+        {
+            firstSelected->setOpen (! firstSelected->isOpen());
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void TreeView::moveOutOfSelectedItem()
@@ -822,7 +830,7 @@ bool TreeView::keyPressed (const KeyPress& key)
         if (key == KeyPress::endKey)      { moveSelectedRow (0x3fffffff);  return true; }
         if (key == KeyPress::pageUpKey)   { moveByPages (-1); return true; }
         if (key == KeyPress::pageDownKey) { moveByPages (1);  return true; }
-        if (key == KeyPress::returnKey)   { toggleOpenSelectedItem(); return true; }
+        if (key == KeyPress::returnKey)   { return toggleOpenSelectedItem(); }
         if (key == KeyPress::leftKey)     { moveOutOfSelectedItem();  return true; }
         if (key == KeyPress::rightKey)    { moveIntoSelectedItem();   return true; }
     }
@@ -1291,12 +1299,13 @@ bool TreeViewItem::isSelected() const noexcept
     return selected;
 }
 
-void TreeViewItem::deselectAllRecursively()
+void TreeViewItem::deselectAllRecursively (TreeViewItem* itemToIgnore)
 {
-    setSelected (false, false);
+    if (this != itemToIgnore)
+        setSelected (false, false);
 
     for (int i = 0; i < subItems.size(); ++i)
-        subItems.getUnchecked(i)->deselectAllRecursively();
+        subItems.getUnchecked(i)->deselectAllRecursively (itemToIgnore);
 }
 
 void TreeViewItem::setSelected (const bool shouldBeSelected,
@@ -1307,7 +1316,7 @@ void TreeViewItem::setSelected (const bool shouldBeSelected,
         return;
 
     if (deselectOtherItemsFirst)
-        getTopLevelItem()->deselectAllRecursively();
+        getTopLevelItem()->deselectAllRecursively (this);
 
     if (shouldBeSelected != selected)
     {
@@ -1363,7 +1372,7 @@ String TreeViewItem::getTooltip()
 
 var TreeViewItem::getDragSourceDescription()
 {
-    return var::null;
+    return var();
 }
 
 bool TreeViewItem::isInterestedInFileDrag (const StringArray&)

@@ -8,7 +8,7 @@ DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 CSOUND_INCLUDE ?= "/usr/local/include/csound"
 
 # Default Csound library path
-CSOUND_LIBRARY ?= "/home/rory/sourcecode/csound/build"
+CSOUND_LIBRARY ?= "/usr/local/lib"
 
 ifndef CONFIG
   CONFIG=Debug

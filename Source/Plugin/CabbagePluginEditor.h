@@ -23,7 +23,6 @@
 #include  "../CabbageCustomWidgets.h"
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "CabbagePluginProcessor.h"
-//#include "../CabbageLookAndFeel.h"
 #include "../CabbagePropertiesDialog.h"
 #include "../CabbageUtils.h"
 

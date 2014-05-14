@@ -159,7 +159,7 @@ File(inputfile).setAsCurrentWorkingDirectory();
 
 #ifdef CSOUND6
 csoundParams = new CSOUND_PARAMS();
-csoundParams->nchnls_override =2;
+csoundParams->nchnls_override = this->getNumOutputChannels()
 csoundParams->displays = 0;
 csound->SetParams(csoundParams);
 #endif
@@ -354,7 +354,7 @@ csndIndex = 32;
 startTimer(20);
 #ifdef CSOUND6
 csoundParams = new CSOUND_PARAMS();
-csoundParams->nchnls_override =2;
+csoundParams->nchnls_override = this->getNumOutputChannels();
 csoundParams->displays = 0;
 csound->SetParams(csoundParams);
 #endif
@@ -1653,8 +1653,6 @@ if(!isSuspended() && !isGuiEnabled()){
 
 				csCompileResult = csound->PerformKsmps();
 				
-				
-				//csoundSetInstrumentBreakpoint(csound->GetCsound(), 1, 0);
 				if(csCompileResult!=OK)
 					suspendProcessing(true);
 				else

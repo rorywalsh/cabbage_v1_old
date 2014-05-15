@@ -264,6 +264,7 @@ private:
             owner.scrollToLineInternal ((int) newRangeStart);
         else
             owner.scrollToColumnInternal (newRangeStart);
+		owner.editorHasScrolled();
     }
 
     void codeDocumentTextInserted (const String& newText, int pos) override
@@ -654,6 +655,7 @@ void CodeEditorComponent::updateScrollBars()
 
     horizontalScrollBar.setRangeLimits (0, jmax ((double) document.getMaximumLineLength(), xOffset + columnsOnScreen));
     horizontalScrollBar.setCurrentRange (xOffset, columnsOnScreen);
+	repaint();
 }
 
 void CodeEditorComponent::scrollToLineInternal (int newFirstLineOnScreen)

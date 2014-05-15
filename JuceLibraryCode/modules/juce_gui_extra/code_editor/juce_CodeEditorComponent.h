@@ -417,6 +417,7 @@ private:
     void insertText (const String&);
     virtual void updateCaretPosition();
     void updateScrollBars();
+	virtual void editorHasScrolled(){}
     void scrollToLineInternal (int line);
     void scrollToColumnInternal (double column);
     void newTransaction();

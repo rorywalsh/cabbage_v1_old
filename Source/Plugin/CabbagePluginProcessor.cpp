@@ -159,7 +159,7 @@ File(inputfile).setAsCurrentWorkingDirectory();
 
 #ifdef CSOUND6
 csoundParams = new CSOUND_PARAMS();
-csoundParams->nchnls_override = this->getNumOutputChannels()
+csoundParams->nchnls_override = this->getNumOutputChannels();
 csoundParams->displays = 0;
 csound->SetParams(csoundParams);
 #endif

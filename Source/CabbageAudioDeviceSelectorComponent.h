@@ -20,9 +20,9 @@
    available: visit www.juce.com for more information.
 
   ==============================================================================
-   * 
+   *
    * hack of JUCE AudioDeviceSelectorComponent
-   * 
+   *
 */
 
 #ifndef CABBAGE_AUDIODEVICESELECTORCOMPONENT_H_INCLUDED
@@ -51,20 +51,20 @@
 
 //==============================================================================
 class CabbageAudioDeviceSelectorComponent  : public Component,
-                                                private ComboBoxListener, 
-                                                private ChangeListener
+    private ComboBoxListener,
+    private ChangeListener
 {
 public:
     //==============================================================================
     CabbageAudioDeviceSelectorComponent (AudioDeviceManager& deviceManager,
-                                  int minAudioInputChannels,
-                                  int maxAudioInputChannels,
-                                  int minAudioOutputChannels,
-                                  int maxAudioOutputChannels,
-                                  bool showMidiInputOptions,
-                                  bool showMidiOutputSelector,
-                                  bool showChannelsAsStereoPairs,
-                                  bool hideAdvancedOptionsWithButton);
+                                         int minAudioInputChannels,
+                                         int maxAudioInputChannels,
+                                         int minAudioOutputChannels,
+                                         int maxAudioOutputChannels,
+                                         bool showMidiInputOptions,
+                                         bool showMidiOutputSelector,
+                                         bool showChannelsAsStereoPairs,
+                                         bool hideAdvancedOptionsWithButton);
 
     /** Destructor */
     ~CabbageAudioDeviceSelectorComponent();
@@ -83,7 +83,7 @@ private:
     ScopedPointer<ComboBox> deviceTypeDropDown;
     ScopedPointer<Label> deviceTypeDropDownLabel;
     ScopedPointer<Component> audioDeviceSettingsComp;
-	
+
     String audioDeviceSettingsCompType;
     const int minOutputChannels, maxOutputChannels, minInputChannels, maxInputChannels;
     const bool showChannelsAsStereoPairs;
@@ -98,8 +98,8 @@ private:
     void comboBoxChanged (ComboBox*) override;
     void changeListenerCallback (ChangeBroadcaster*) override;
     void updateAllControls();
-	
-	ScopedPointer<CabbageLookAndFeel> lookAndFeel;
+
+    ScopedPointer<CabbageLookAndFeel> lookAndFeel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageAudioDeviceSelectorComponent)
 };

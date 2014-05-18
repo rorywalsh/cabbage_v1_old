@@ -4,7 +4,7 @@
   Cabbage is free software; you can redistribute it
   and/or modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.   
+  version 2.1 of the License, or (at your option) any later version.
 
   Cabbage is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,69 +27,71 @@
 // XYPad Automation class. Allows plugin editor to close while maintining automation
 //==============================================================================
 class XYPadAutomation	:	public Timer,
-							public ChangeBroadcaster
+    public ChangeBroadcaster
 {
 public:
-	XYPadAutomation();
-	~XYPadAutomation();
+    XYPadAutomation();
+    ~XYPadAutomation();
 
-	void updateCreationCounter();
-	int getCreationCounter();
-	void beginAutomation(int selectedToggleButton);
-	void setBallSize (float size);
-	void setMinMaxValues (float xMinimum, float xMaximum, float yMinimum, float yMaximum);
-	float getMinimumXValue();
-	float getMinimumYValue();
-	void updateIncrements();
-	void setInitialSpeedSliderValue ();
-	void setBallPath (Path path);
-	void cancelAutomation();
-	bool isAutomating();
-	void setSpeedSliderValue(float sliderValue);
-	void setBoundsForAutomation(Rectangle<int> bounds);
-	void timerCallback();
-	Point<float> getStartHandle();
-	Point<float> getEndHandle();
-	float getXValue();
-	float getYValue();
-	float getNormalisedXValue();
-	float getNormalisedYValue();
-	void setXValue(float value);
-	void setYValue(float value);
-	int getSelectedToggle();
-	float getSpeedSliderValue();
-	String xChannel, yChannel;
-	void update();
-	int updateCounter;
-	int paramIndex;
-	int creationCounter;
-	bool isAutomationOn;
-	
-	float getYRange(){
-		return yRange;
-	}
-	
-	float getXRange(){
-		return xRange;
-	}	
-	
+    void updateCreationCounter();
+    int getCreationCounter();
+    void beginAutomation(int selectedToggleButton);
+    void setBallSize (float size);
+    void setMinMaxValues (float xMinimum, float xMaximum, float yMinimum, float yMaximum);
+    float getMinimumXValue();
+    float getMinimumYValue();
+    void updateIncrements();
+    void setInitialSpeedSliderValue ();
+    void setBallPath (Path path);
+    void cancelAutomation();
+    bool isAutomating();
+    void setSpeedSliderValue(float sliderValue);
+    void setBoundsForAutomation(Rectangle<int> bounds);
+    void timerCallback();
+    Point<float> getStartHandle();
+    Point<float> getEndHandle();
+    float getXValue();
+    float getYValue();
+    float getNormalisedXValue();
+    float getNormalisedYValue();
+    void setXValue(float value);
+    void setYValue(float value);
+    int getSelectedToggle();
+    float getSpeedSliderValue();
+    String xChannel, yChannel;
+    void update();
+    int updateCounter;
+    int paramIndex;
+    int creationCounter;
+    bool isAutomationOn;
+
+    float getYRange()
+    {
+        return yRange;
+    }
+
+    float getXRange()
+    {
+        return xRange;
+    }
+
 private:
-	float xValue, yValue;
-	int timerInterval, minTimerInterval;	
-	float xValueIncrement, yValueIncrement;
-	float speedSliderValue, speedValue;
-	Rectangle<int> availableBounds;
-	float ballSize;
-	float xMin, yMin, xMax, yMax, xRange, yRange;
-	float xOut, yOut;
-	int selectedToggle;
-	Path ballPath;
-	float currentPointAlongPath, ballPathDirection;
-	
-	
-	
-	
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (XYPadAutomation);
+    float xValue, yValue;
+    int timerInterval, minTimerInterval;
+    float xValueIncrement, yValueIncrement;
+    float speedSliderValue, speedValue;
+    Rectangle<int> availableBounds;
+    float ballSize;
+    float xMin, yMin, xMax, yMax, xRange, yRange;
+    float xOut, yOut;
+    int selectedToggle;
+    Path ballPath;
+    float currentPointAlongPath, ballPathDirection;
+
+
+
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (XYPadAutomation);
 };
 
 

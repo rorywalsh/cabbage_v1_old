@@ -4,7 +4,7 @@
   Cabbage is free software; you can redistribute it
   and/or modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.   
+  version 2.1 of the License, or (at your option) any later version.
 
   Cabbage is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,7 +20,7 @@
 #ifndef SOUNDFILEWAVEFORM_H
 #define SOUNDFILEWAVEFORM_H
 
-#include "../JuceLibraryCode/JuceHeader.h" 
+#include "../JuceLibraryCode/JuceHeader.h"
 #include "CabbageUtils.h"
 #include "CabbageLookAndFeel.h"
 
@@ -29,28 +29,31 @@ class ZoomButton;
 // display a sound file as a waveform..
 //=================================================================
 class Soundfiler : public Component,
-						public ChangeBroadcaster,
-						private ScrollBar::Listener,
-						public ChangeListener
+    public ChangeBroadcaster,
+    private ScrollBar::Listener,
+    public ChangeListener
 {
 public:
-	Soundfiler(int sr, Colour col, Colour fcol);	
-	~Soundfiler();	
-	
-	double getCurrentPlayPos(){
-		return currentPlayPosition;
-	}
+    Soundfiler(int sr, Colour col, Colour fcol);
+    ~Soundfiler();
 
-	int getCurrentPlayPosInSamples(){
-		return currentPlayPosition*sampleRate;
-	}
-	
-	int getLoopLengthInSamples(){
-		return loopLength*sampleRate;
-	}	
-	
-	void setScrubberPos(double pos);
-	
+    double getCurrentPlayPos()
+    {
+        return currentPlayPosition;
+    }
+
+    int getCurrentPlayPosInSamples()
+    {
+        return currentPlayPosition*sampleRate;
+    }
+
+    int getLoopLengthInSamples()
+    {
+        return loopLength*sampleRate;
+    }
+
+    void setScrubberPos(double pos);
+
     float timeToX (const double time) const
     {
         return getWidth() * (float) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
@@ -61,48 +64,48 @@ public:
         return (x / getWidth()) * (visibleRange.getLength()) + visibleRange.getStart();
     }
 
-	
-	void setZoomFactor (double amount);
-	void setFile (const File& file);
-	void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
-	void setWaveform(AudioSampleBuffer buffer, int channels);
-	void createImage(String filename);
-	
+
+    void setZoomFactor (double amount);
+    void setFile (const File& file);
+    void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
+    void setWaveform(AudioSampleBuffer buffer, int channels);
+    void createImage(String filename);
+
 private:
-	Image img;
-	//Graphics& graphics;
-	int imgCount;
-	Range<double> visibleRange;
-	double zoom;
-	ScopedPointer<DrawableRectangle> currentPositionMarker;
-	ScopedPointer<ScrollBar> scrollbar;
-	void setRange(Range<double> newRange);
-	void resized();	    
+    Image img;
+    //Graphics& graphics;
+    int imgCount;
+    Range<double> visibleRange;
+    double zoom;
+    ScopedPointer<DrawableRectangle> currentPositionMarker;
+    ScopedPointer<ScrollBar> scrollbar;
+    void setRange(Range<double> newRange);
+    void resized();
     void paint (Graphics& g);
     void mouseDown (const MouseEvent& e);
-	void mouseUp(const MouseEvent& e);
-	void mouseEnter(const MouseEvent& e);
+    void mouseUp(const MouseEvent& e);
+    void mouseEnter(const MouseEvent& e);
     void mouseDrag(const MouseEvent& e);
-	void mouseExit(const MouseEvent& e);
-	bool reDraw;
-	double scrubberPosition;
-	void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
-	void changeListenerCallback(ChangeBroadcaster *source);
-	ScopedPointer<ZoomButton> zoomIn, zoomOut;
+    void mouseExit(const MouseEvent& e);
+    bool reDraw;
+    double scrubberPosition;
+    void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
+    void changeListenerCallback(ChangeBroadcaster *source);
+    ScopedPointer<ZoomButton> zoomIn, zoomOut;
 
-	AudioFormatManager formatManager;
-	float sampleRate;
-	float regionWidth;
-	Image waveformImage;
+    AudioFormatManager formatManager;
+    float sampleRate;
+    float regionWidth;
+    Image waveformImage;
     AudioThumbnailCache thumbnailCache;
     ScopedPointer<AudioThumbnail> thumbnail;
-	Colour colour, fontcolour;
-	int mouseDownX, mouseUpX;
-	Rectangle<int> localBounds;
-	double loopLength;
-	double loopStart;
-	double currentPlayPosition;
-	bool drawWaveform;
+    Colour colour, fontcolour;
+    int mouseDownX, mouseUpX;
+    Rectangle<int> localBounds;
+    double loopLength;
+    double loopStart;
+    double currentPlayPosition;
+    bool drawWaveform;
 };
 
 

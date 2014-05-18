@@ -27,15 +27,15 @@ class CabbageCallOutBox    : public Component
 public:
     //==============================================================================
     CabbageCallOutBox (Component& contentComponent,
-                const Rectangle<int>& areaToPointTo,
-                Component* parentComponent);
+                       const Rectangle<int>& areaToPointTo,
+                       Component* parentComponent);
     ~CabbageCallOutBox();
 
     void updatePosition (const Rectangle<int>& newAreaToPointTo,
                          const Rectangle<int>& newAreaToFitIn);
     static CabbageCallOutBox& launchAsynchronously (Component* contentComponent,
-                                             const Rectangle<int>& areaToPointTo,
-                                             Component* parentComponent);
+            const Rectangle<int>& areaToPointTo,
+            Component* parentComponent);
 
     //==============================================================================
     void paint (Graphics& g);

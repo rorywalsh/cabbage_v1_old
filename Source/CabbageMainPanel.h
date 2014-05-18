@@ -32,112 +32,125 @@ class ComponentLayoutEditor;
 //-----------------------------------------------------------------------------
 
 class CabbageMainPanel   : public Component,
-						   public CabbageUtils,
-						   public ActionBroadcaster
-						 
+    public CabbageUtils,
+    public ActionBroadcaster
+
 {
-private:	
-	
-	ScopedPointer<ComponentLayoutEditor> layoutEditor;
-	OwnedArray<Component > comps;
-	OwnedArray<Component > clipBoard;
-	
-	Colour panelColour;
-	int currentIndex;
-	bool LOCKED;
-	String mouseState;
-	String colour;
-	bool doubleClick;
+private:
+
+    ScopedPointer<ComponentLayoutEditor> layoutEditor;
+    OwnedArray<Component > comps;
+    OwnedArray<Component > clipBoard;
+
+    Colour panelColour;
+    int currentIndex;
+    bool LOCKED;
+    String mouseState;
+    String colour;
+    bool doubleClick;
 
 
 public:
-	Rectangle<int> currentBounds;
-	Array<Rectangle<int> > childBounds;
-	Array<Rectangle<int> > origChildBounds;
-	Array<Point<int> > origSelectedCompBounds;
-	Array<Point<int> > newSelectedCompBounds;
+    Rectangle<int> currentBounds;
+    Array<Rectangle<int> > childBounds;
+    Array<Rectangle<int> > origChildBounds;
+    Array<Point<int> > origSelectedCompBounds;
+    Array<Point<int> > newSelectedCompBounds;
 
 
-	int width, height, top, left;
-	inline void setCompColour(String col){
-		colour = col;
-	}
+    int width, height, top, left;
+    inline void setCompColour(String col)
+    {
+        colour = col;
+    }
 
-	inline String getColour(){
-		return colour;
-	}
+    inline String getColour()
+    {
+        return colour;
+    }
 
-	inline String getMouseState(){
-		return mouseState;
-	}
+    inline String getMouseState()
+    {
+        return mouseState;
+    }
 
-	inline void setMouseState(String state){
-		mouseState = state;
-	}
+    inline void setMouseState(String state)
+    {
+        mouseState = state;
+    }
 
-	inline void setDoubleClick(bool dblClick){
-		doubleClick = dblClick;
-	}
+    inline void setDoubleClick(bool dblClick)
+    {
+        doubleClick = dblClick;
+    }
 
-	bool isDoubleClick(){
-		return doubleClick;
-	}
+    bool isDoubleClick()
+    {
+        return doubleClick;
+    }
 
-	//String getCurrentBounds(){
-	//	return "bounds(" + String(currentBounds.getX()) + String(", ") + String(currentBounds.getY()) + String(", ") + String(currentBounds.getWidth()) + String(", ")
-	//		+ String(currentBounds.getHeight()) + String(")");
-	//}
+    //String getCurrentBounds(){
+    //	return "bounds(" + String(currentBounds.getX()) + String(", ") + String(currentBounds.getY()) + String(", ") + String(currentBounds.getWidth()) + String(", ")
+    //		+ String(currentBounds.getHeight()) + String(")");
+    //}
 
-	//String getCurrentChildBounds(int i){
-	//	return "bounds(" + String(childBounds[i].getX()) + String(", ") + String(childBounds[i].getY()) + String(", ") + String(childBounds[i].getWidth()) + String(", ")
-	//		+ String(childBounds[i].getHeight()) + String(")");
-	//}
+    //String getCurrentChildBounds(int i){
+    //	return "bounds(" + String(childBounds[i].getX()) + String(", ") + String(childBounds[i].getY()) + String(", ") + String(childBounds[i].getWidth()) + String(", ")
+    //		+ String(childBounds[i].getHeight()) + String(")");
+    //}
 
-	//String getCurrentOrigChildBounds(int i){
-	//	return "bounds(" + String(origChildBounds[i].getX()) + String(", ") + String(origChildBounds[i].getY()) + String(", ") + String(origChildBounds[i].getWidth()) + String(", ")
-	//		+ String(origChildBounds[i].getHeight()) + String(")");
-	//}
-	//	
-	//String getCurrentPos(){
-	//return String("pos(") + String(left) + String(", ") + String(top) + String(")");
-	//}
+    //String getCurrentOrigChildBounds(int i){
+    //	return "bounds(" + String(origChildBounds[i].getX()) + String(", ") + String(origChildBounds[i].getY()) + String(", ") + String(origChildBounds[i].getWidth()) + String(", ")
+    //		+ String(origChildBounds[i].getHeight()) + String(")");
+    //}
+    //
+    //String getCurrentPos(){
+    //return String("pos(") + String(left) + String(", ") + String(top) + String(")");
+    //}
 
 
-	String getCurrentSize(){
-	return String("size(") + String(width) + String(", ") + String(height) + String(")");
-	}
+    String getCurrentSize()
+    {
+        return String("size(") + String(width) + String(", ") + String(height) + String(")");
+    }
 
-	CabbageMainPanel();
-	~CabbageMainPanel();
-	void paint(Graphics &g);
-	ComponentLayoutEditor* getLayoutEditor();
-	void setLayoutEditor(ComponentLayoutEditor* ed);
+    CabbageMainPanel();
+    ~CabbageMainPanel();
+    void paint(Graphics &g);
+    ComponentLayoutEditor* getLayoutEditor();
+    void setLayoutEditor(ComponentLayoutEditor* ed);
 
-	inline int getIndex(){
-	return currentIndex;
-	}
+    inline int getIndex()
+    {
+        return currentIndex;
+    }
 
-	int getCurrentWidth(){
-		return width;
-	}
+    int getCurrentWidth()
+    {
+        return width;
+    }
 
-	int getCurrentHeight(){
-		return height;
-	}
+    int getCurrentHeight()
+    {
+        return height;
+    }
 
-	int getCurrentTop(){
-		return top;
-	}
+    int getCurrentTop()
+    {
+        return top;
+    }
 
-	int getCurrentLeft(){
-		return left;
-	}
+    int getCurrentLeft()
+    {
+        return left;
+    }
 
-	inline void setIndex(int index){
-	currentIndex = index;
-	}
+    inline void setIndex(int index)
+    {
+        currentIndex = index;
+    }
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageMainPanel);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageMainPanel);
 
 };
 

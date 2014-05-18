@@ -24,7 +24,7 @@
 #include "CabbageAudioDeviceSelectorComponent.h"
 
 class SimpleDeviceManagerInputLevelMeter  : public Component,
-                                            public Timer
+    public Timer
 {
 public:
     SimpleDeviceManagerInputLevelMeter (AudioDeviceManager& m)
@@ -53,7 +53,7 @@ public:
     void paint (Graphics& g) override
     {
         getLookAndFeel().drawLevelMeter(g, getWidth(), getHeight(),
-                                         (float) exp (log (level) / 3.0)); // (add a bit of a skew to make the level more obvious)
+                                        (float) exp (log (level) / 3.0)); // (add a bit of a skew to make the level more obvious)
     }
 
 private:
@@ -66,7 +66,7 @@ private:
 
 //==============================================================================
 class CabbageAudioDeviceSelectorComponent::MidiInputSelectorComponentListBox  : public ListBox,
-                                                                         private ListBoxModel
+    private ListBoxModel
 {
 public:
     MidiInputSelectorComponentListBox (AudioDeviceManager& dm,
@@ -92,11 +92,11 @@ public:
                            bool rowIsSelected)
     {
         g.fillAll(CabbageUtils::getBackgroundSkin());
-		if (isPositiveAndBelow (row, items.size()))
+        if (isPositiveAndBelow (row, items.size()))
         {
             if (rowIsSelected)
                 g.fillAll (findColour (TextEditor::highlightColourId)
-                               .withMultipliedAlpha (0.3f));
+                           .withMultipliedAlpha (0.3f));
 
             const String item (items [row]);
             bool enabled = deviceManager.isMidiInputEnabled (item);
@@ -134,7 +134,7 @@ public:
     void paint (Graphics& g) override
     {
         g.fillAll(CabbageUtils::getBackgroundSkin());
-		ListBox::paint (g);
+        ListBox::paint (g);
 
         if (items.size() == 0)
         {
@@ -186,13 +186,16 @@ struct AudioDeviceSetupDetails
     bool useStereoPairs;
 };
 
-static String getNoDeviceString()   { return "<< " + TRANS("none") + " >>"; }
+static String getNoDeviceString()
+{
+    return "<< " + TRANS("none") + " >>";
+}
 
 //==============================================================================
 class AudioDeviceSettingsPanel : public Component,
-                                 private ChangeListener,
-                                 private ComboBoxListener,  // (can't use ComboBox::Listener due to idiotic VC2005 bug)
-                                 private ButtonListener
+    private ChangeListener,
+    private ComboBoxListener,  // (can't use ComboBox::Listener due to idiotic VC2005 bug)
+    private ButtonListener
 {
 public:
     AudioDeviceSettingsPanel (AudioIODeviceType& t, AudioDeviceSetupDetails& setupDetails,
@@ -203,7 +206,7 @@ public:
         {
             addAndMakeVisible (showAdvancedSettingsButton = new TextButton (TRANS("Show advanced settings...")));
             showAdvancedSettingsButton->addListener (this);
-			setLookAndFeel(&this->getParentComponent()->getLookAndFeel());
+            setLookAndFeel(&this->getParentComponent()->getLookAndFeel());
         }
 
         type.scanForDevices();
@@ -276,7 +279,7 @@ public:
         if (sampleRateDropDown != nullptr)
         {
             sampleRateDropDown->setVisible (showAdvancedSettingsButton == nullptr
-                                             || ! showAdvancedSettingsButton->isVisible());
+                                            || ! showAdvancedSettingsButton->isVisible());
 
             sampleRateDropDown->setBounds (lx, y, w, h);
             y += dh;
@@ -285,7 +288,7 @@ public:
         if (bufferSizeDropDown != nullptr)
         {
             bufferSizeDropDown->setVisible (showAdvancedSettingsButton == nullptr
-                                             || ! showAdvancedSettingsButton->isVisible());
+                                            || ! showAdvancedSettingsButton->isVisible());
             bufferSizeDropDown->setBounds (lx, y, w, h);
             y += dh;
         }
@@ -293,7 +296,7 @@ public:
         if (showUIButton != nullptr)
         {
             showUIButton->setVisible (showAdvancedSettingsButton == nullptr
-                                        || ! showAdvancedSettingsButton->isVisible());
+                                      || ! showAdvancedSettingsButton->isVisible());
             showUIButton->changeWidthToFitText (h);
             showUIButton->setTopLeftPosition (lx, y);
         }
@@ -309,15 +312,15 @@ public:
         String error;
 
         if (comboBoxThatHasChanged == outputDeviceDropDown
-              || comboBoxThatHasChanged == inputDeviceDropDown)
+                || comboBoxThatHasChanged == inputDeviceDropDown)
         {
             if (outputDeviceDropDown != nullptr)
                 config.outputDeviceName = outputDeviceDropDown->getSelectedId() < 0 ? String::empty
-                                                                                    : outputDeviceDropDown->getText();
+                                          : outputDeviceDropDown->getText();
 
             if (inputDeviceDropDown != nullptr)
                 config.inputDeviceName = inputDeviceDropDown->getSelectedId() < 0 ? String::empty
-                                                                                  : inputDeviceDropDown->getText();
+                                         : inputDeviceDropDown->getText();
 
             if (! type.hasSeparateInputsAndOutputs())
                 config.inputDeviceName = config.outputDeviceName;
@@ -405,13 +408,13 @@ public:
         if (AudioIODevice* const currentDevice = setup.manager->getCurrentAudioDevice())
         {
             if (setup.maxNumOutputChannels > 0
-                 && setup.minNumOutputChannels < setup.manager->getCurrentAudioDevice()->getOutputChannelNames().size())
+                    && setup.minNumOutputChannels < setup.manager->getCurrentAudioDevice()->getOutputChannelNames().size())
             {
                 if (outputChanList == nullptr)
                 {
                     addAndMakeVisible (outputChanList
-                        = new ChannelSelectorListBox (setup, ChannelSelectorListBox::audioOutputType,
-                                                      TRANS ("(no audio output channels found)")));
+                                       = new ChannelSelectorListBox (setup, ChannelSelectorListBox::audioOutputType,
+                                               TRANS ("(no audio output channels found)")));
                     outputChanLabel = new Label (String::empty, TRANS ("active output channels:"));
                     outputChanLabel->attachToComponent (outputChanList, true);
                 }
@@ -425,13 +428,13 @@ public:
             }
 
             if (setup.maxNumInputChannels > 0
-                 && setup.minNumInputChannels < setup.manager->getCurrentAudioDevice()->getInputChannelNames().size())
+                    && setup.minNumInputChannels < setup.manager->getCurrentAudioDevice()->getInputChannelNames().size())
             {
                 if (inputChanList == nullptr)
                 {
                     addAndMakeVisible (inputChanList
-                        = new ChannelSelectorListBox (setup, ChannelSelectorListBox::audioInputType,
-                                                      TRANS ("(no audio input channels found)")));
+                                       = new ChannelSelectorListBox (setup, ChannelSelectorListBox::audioInputType,
+                                               TRANS ("(no audio input channels found)")));
                     inputChanLabel = new Label (String::empty, TRANS ("active input channels:"));
                     inputChanLabel->attachToComponent (inputChanList, true);
                 }
@@ -528,7 +531,7 @@ private:
         if (currentDevice != nullptr && currentDevice->hasControlPanel())
         {
             addAndMakeVisible (showUIButton = new TextButton (TRANS ("show this device's control panel"),
-                                                              TRANS ("opens the device's own control panel")));
+                    TRANS ("opens the device's own control panel")));
             showUIButton->addListener (this);
         }
 
@@ -547,7 +550,7 @@ private:
 
                 outputDeviceLabel = new Label (String::empty,
                                                type.hasSeparateInputsAndOutputs() ? TRANS ("output:")
-                                                                                  : TRANS ("device:"));
+                                               : TRANS ("device:"));
                 outputDeviceLabel->attachToComponent (outputDeviceDropDown, true);
 
                 if (setup.maxNumOutputChannels > 0)
@@ -577,7 +580,7 @@ private:
                 inputDeviceLabel->attachToComponent (inputDeviceDropDown, true);
 
                 addAndMakeVisible (inputLevelMeter
-                    = new SimpleDeviceManagerInputLevelMeter (*setup.manager));
+                                   = new SimpleDeviceManagerInputLevelMeter (*setup.manager));
             }
 
             addNamesToDeviceBox (*inputDeviceDropDown, true);
@@ -601,7 +604,7 @@ private:
             sampleRateDropDown->removeListener (this);
         }
 
-       const Array<double> rates (currentDevice->getAvailableSampleRates());
+        const Array<double> rates (currentDevice->getAvailableSampleRates());
 
         for (int i = 0; i < rates.size(); ++i)
         {
@@ -620,7 +623,7 @@ private:
             addAndMakeVisible (bufferSizeDropDown = new ComboBox (String::empty));
 
             bufferSizeLabel = new Label (String::empty, TRANS ("audio buffer size:"));
-			
+
             bufferSizeLabel->attachToComponent (bufferSizeDropDown, true);
         }
         else
@@ -629,7 +632,7 @@ private:
             bufferSizeDropDown->removeListener (this);
         }
 
-       const Array<int> bufferSizes (currentDevice->getAvailableBufferSizes());
+        const Array<int> bufferSizes (currentDevice->getAvailableBufferSizes());
 
         double currentRate = currentDevice->getCurrentSampleRate();
         if (currentRate == 0)
@@ -649,11 +652,11 @@ public:
 
     //==============================================================================
     class ChannelSelectorListBox  : public ListBox,
-                                    private ListBoxModel
+        private ListBoxModel
     {
     public:
-		ScopedPointer<CabbageLookAndFeel> lookAndFeel;
-	
+        ScopedPointer<CabbageLookAndFeel> lookAndFeel;
+
         enum BoxType
         {
             audioInputType,
@@ -667,11 +670,11 @@ public:
               setup (setupDetails), type (boxType), noItemsMessage (noItemsText)
         {
             lookAndFeel = new CabbageLookAndFeel();
-			setLookAndFeel(lookAndFeel);
-			refresh();
+            setLookAndFeel(lookAndFeel);
+            refresh();
             setModel (this);
             setOutlineThickness (1);
-			
+
         }
 
         void refresh()
@@ -715,7 +718,7 @@ public:
         void paintListBoxItem (int row, Graphics& g, int width, int height, bool rowIsSelected) override
         {
             g.fillAll(CabbageUtils::getBackgroundSkin());
-			if (isPositiveAndBelow (row, items.size()))
+            if (isPositiveAndBelow (row, items.size()))
             {
                 if (rowIsSelected)
                     g.fillAll (Colour(50, 50, 50));
@@ -744,7 +747,7 @@ public:
                 const int x = getTickX();
                 const float tickW = height * 0.75f;
 
-				g.setColour(Colours::lime);
+                g.setColour(Colours::lime);
                 getLookAndFeel().drawTickBox (g, *this, x - tickW, (height - tickW) / 2, tickW, tickW,
                                               enabled, true, true, false);
 
@@ -775,7 +778,7 @@ public:
         void paint (Graphics& g) override
         {
             g.fillAll(CabbageUtils::getBackgroundSkin());
-			ListBox::paint (g);
+            ListBox::paint (g);
 
             if (items.size() == 0)
             {
@@ -791,7 +794,7 @@ public:
         {
             return getRowHeight() * jlimit (2, jmax (2, maxHeight / getRowHeight()),
                                             getNumRows())
-                       + getOutlineThickness() * 2;
+                   + getOutlineThickness() * 2;
         }
 
     private:
@@ -830,7 +833,7 @@ public:
                 {
                     BigInteger bits;
                     BigInteger& original = (type == audioInputType ? config.inputChannels
-                                                                   : config.outputChannels);
+                                            : config.outputChannels);
 
                     for (int i = 0; i < 256; i += 2)
                         bits.setBit (i / 2, original [i] || original [i + 1]);
@@ -888,7 +891,7 @@ public:
                     const int firstActiveChan = chans.findNextSetBit (0);
 
                     chans.setBit (index > firstActiveChan
-                                     ? firstActiveChan : chans.getHighestBit(),
+                                  ? firstActiveChan : chans.getHighestBit(),
                                   false);
                 }
 
@@ -913,14 +916,14 @@ private:
 
 //==============================================================================
 CabbageAudioDeviceSelectorComponent::CabbageAudioDeviceSelectorComponent (AudioDeviceManager& dm,
-                                                            const int minInputChannels_,
-                                                            const int maxInputChannels_,
-                                                            const int minOutputChannels_,
-                                                            const int maxOutputChannels_,
-                                                            const bool showMidiInputOptions,
-                                                            const bool showMidiOutputSelector,
-                                                            const bool showChannelsAsStereoPairs_,
-                                                            const bool hideAdvancedOptionsWithButton_)
+        const int minInputChannels_,
+        const int maxInputChannels_,
+        const int minOutputChannels_,
+        const int maxOutputChannels_,
+        const bool showMidiInputOptions,
+        const bool showMidiOutputSelector,
+        const bool showChannelsAsStereoPairs_,
+        const bool hideAdvancedOptionsWithButton_)
     : deviceManager (dm),
       minOutputChannels (minOutputChannels_),
       maxOutputChannels (maxOutputChannels_),
@@ -932,8 +935,8 @@ CabbageAudioDeviceSelectorComponent::CabbageAudioDeviceSelectorComponent (AudioD
     jassert (minOutputChannels >= 0 && minOutputChannels <= maxOutputChannels);
     jassert (minInputChannels >= 0 && minInputChannels <= maxInputChannels);
 
-	lookAndFeel = new CabbageLookAndFeel();
-	setLookAndFeel(lookAndFeel);
+    lookAndFeel = new CabbageLookAndFeel();
+    setLookAndFeel(lookAndFeel);
 
     const OwnedArray<AudioIODeviceType>& types = deviceManager.getAvailableDeviceTypes();
 
@@ -955,8 +958,8 @@ CabbageAudioDeviceSelectorComponent::CabbageAudioDeviceSelectorComponent (AudioD
     if (showMidiInputOptions)
     {
         addAndMakeVisible (midiInputsList
-                            = new MidiInputSelectorComponentListBox (deviceManager,
-                                                                     "(" + TRANS("No MIDI inputs available") + ")"));
+                           = new MidiInputSelectorComponentListBox (deviceManager,
+                                   "(" + TRANS("No MIDI inputs available") + ")"));
 
         midiInputsLabel = new Label (String::empty, TRANS ("Active MIDI inputs:"));
         midiInputsLabel->setJustificationType (Justification::topRight);
@@ -1021,9 +1024,9 @@ void CabbageAudioDeviceSelectorComponent::resized()
 
     if (midiOutputSelector != nullptr)
         midiOutputSelector->setBounds (lx, y, w, h);
-		
-	setSize(getWidth(), y);	
-		
+
+    setSize(getWidth(), y);
+
 }
 
 void CabbageAudioDeviceSelectorComponent::childBoundsChanged (Component* child)
@@ -1062,14 +1065,14 @@ void CabbageAudioDeviceSelectorComponent::updateAllControls()
         deviceTypeDropDown->setText (deviceManager.getCurrentAudioDeviceType(), dontSendNotification);
 
     if (audioDeviceSettingsComp == nullptr
-         || audioDeviceSettingsCompType != deviceManager.getCurrentAudioDeviceType())
+            || audioDeviceSettingsCompType != deviceManager.getCurrentAudioDeviceType())
     {
         audioDeviceSettingsCompType = deviceManager.getCurrentAudioDeviceType();
         audioDeviceSettingsComp = nullptr;
 
         if (AudioIODeviceType* const type
                 = deviceManager.getAvailableDeviceTypes() [deviceTypeDropDown == nullptr
-                                                            ? 0 : deviceTypeDropDown->getSelectedId() - 1])
+                        ? 0 : deviceTypeDropDown->getSelectedId() - 1])
         {
             AudioDeviceSetupDetails details;
             details.manager = &deviceManager;

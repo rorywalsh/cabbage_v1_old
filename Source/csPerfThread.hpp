@@ -76,14 +76,16 @@ int main(int argc, char *argv[])
  */
 
 #ifdef SWIGPYTHON
-struct PUBLIC pycallbackdata {
-  PyObject *func;
-  PyObject *data;
+struct PUBLIC pycallbackdata
+{
+    PyObject *func;
+    PyObject *data;
 };
 #endif
 
-class PUBLIC CsoundPerformanceThread {
- private:
+class PUBLIC CsoundPerformanceThread
+{
+private:
     volatile CsoundPerformanceThreadMessage *firstMessage;
     CsoundPerformanceThreadMessage *lastMessage;
     CSOUND  *csound;
@@ -100,30 +102,37 @@ class PUBLIC CsoundPerformanceThread {
     void csPerfThread_constructor(CSOUND *);
     void QueueMessage(CsoundPerformanceThreadMessage *);
     void (*processcallback)(void *cdata);
- public:
-    int isRunning() { return running;}
+public:
+    int isRunning()
+    {
+        return running;
+    }
 #ifdef SWIGPYTHON
-  PyThreadState *_tstate;
-  pycallbackdata pydata;
+    PyThreadState *_tstate;
+    pycallbackdata pydata;
 #endif
-  /**
-  * Returns the process callback as a void pointer
-  */
-  void *GetProcessCallback() { return (void *)processcallback; }
+    /**
+    * Returns the process callback as a void pointer
+    */
+    void *GetProcessCallback()
+    {
+        return (void *)processcallback;
+    }
 
-  /**
-   * Sets the process callback.
-   */
-   void SetProcessCallback(void (*Callback)(void *), void *cbdata){
-    processcallback = Callback;
-    cdata = cbdata;
-   }
+    /**
+     * Sets the process callback.
+     */
+    void SetProcessCallback(void (*Callback)(void *), void *cbdata)
+    {
+        processcallback = Callback;
+        cdata = cbdata;
+    }
     /**
      * Returns the Csound instance pointer.
      */
     CSOUND *GetCsound()
     {
-      return csound;
+        return csound;
     }
     /**
      * Returns the current status, zero if still playing, positive if
@@ -132,7 +141,7 @@ class PUBLIC CsoundPerformanceThread {
      */
     int GetStatus()
     {
-      return status;
+        return status;
     }
     /**
      * Continues performance if it was paused.

@@ -13,91 +13,92 @@ StringArray undoHistory;
 
 
 class CabbageStandalone : public JUCEApplication
+{
+public:
+    CabbageStandalone()
     {
-       public:
-          CabbageStandalone()
-          {
-          }
+    }
 
-          void initialise(const String& /*commandLineParameters*/)
-          {
-			File thisFile(File::getSpecialLocation(File::currentExecutableFile));
-			currentApplicationDirectory =thisFile.getParentDirectory().getFullPathName();
-			//CabbageUtils::showMessage(currentApplicationDirectory);
-			PropertiesFile::Options options;
-			options.applicationName     = "Cabbage";
-			options.filenameSuffix      = "settings";
-			options.osxLibrarySubFolder = "Preferences";
+    void initialise(const String& /*commandLineParameters*/)
+    {
+        File thisFile(File::getSpecialLocation(File::currentExecutableFile));
+        currentApplicationDirectory =thisFile.getParentDirectory().getFullPathName();
+        //CabbageUtils::showMessage(currentApplicationDirectory);
+        PropertiesFile::Options options;
+        options.applicationName     = "Cabbage";
+        options.filenameSuffix      = "settings";
+        options.osxLibrarySubFolder = "Preferences";
 
-			appProperties = new ApplicationProperties();
-			//set fallback file for default properties...
+        appProperties = new ApplicationProperties();
+        //set fallback file for default properties...
 
-			appProperties->setStorageParameters (options);
+        appProperties->setStorageParameters (options);
 
-			defaultPropSet = new PropertySet();
-			ScopedPointer<XmlElement> xml;
-			xml = new XmlElement("PLANTS");
-			String homeDir = appProperties->getCommonSettings(true)->getFile().getParentDirectory().getFullPathName();
-			String manualPath;
+        defaultPropSet = new PropertySet();
+        ScopedPointer<XmlElement> xml;
+        xml = new XmlElement("PLANTS");
+        String homeDir = appProperties->getCommonSettings(true)->getFile().getParentDirectory().getFullPathName();
+        String manualPath;
 #if defined(LINUX) || defined(MACOSX)
-	manualPath = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/CsoundDocs/index.html";
+        manualPath = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/CsoundDocs/index.html";
 #else
-	manualPath = "Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual/index.html";
-#endif	
+        manualPath = "Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual/index.html";
+#endif
 
-			defaultPropSet->setValue("CsoundHelpDir", manualPath);
-			defaultPropSet->setValue("PlantFileDir", homeDir+"/Plants");
-			defaultPropSet->setValue("ExamplesDir", homeDir+"/Examples");
-			defaultPropSet->setValue("DisablePluginInfo", 0);
-			defaultPropSet->setValue("ShowEditorConsole", 0);
-			defaultPropSet->setValue("ExternalEditor", 0);
-			defaultPropSet->setValue("UseCabbageIO", 1);
-			defaultPropSet->setValue("ShowConsoleWithEditor", 0);
-			defaultPropSet->setValue("UsingCabbageCsound", 1);
-			defaultPropSet->setValue("AudioEnabled", 1);
-			defaultPropSet->setValue("DisableGUIEditModeWarning", 0);
-			defaultPropSet->setValue("SetAlwaysOnTop", 1);	
-			defaultPropSet->setValue("PlantRepository", xml);
-			defaultPropSet->setValue("EditorColourScheme", 1);
-			defaultPropSet->setValue("showTabs", 1);
-			
-			appProperties->getUserSettings()->setFallbackPropertySet(defaultPropSet);
-			filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black);
-            filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
-            filterWindow->setVisible (true);
-            //turn off resizeable...
-			filterWindow->setResizable(true, true);
-            juce::Thread::setCurrentThreadName("cabbage");
-          }
+        defaultPropSet->setValue("CsoundHelpDir", manualPath);
+        defaultPropSet->setValue("PlantFileDir", homeDir+"/Plants");
+        defaultPropSet->setValue("ExamplesDir", homeDir+"/Examples");
+        defaultPropSet->setValue("DisablePluginInfo", 0);
+        defaultPropSet->setValue("ShowEditorConsole", 0);
+        defaultPropSet->setValue("ExternalEditor", 0);
+        defaultPropSet->setValue("UseCabbageIO", 1);
+        defaultPropSet->setValue("ShowConsoleWithEditor", 0);
+        defaultPropSet->setValue("UsingCabbageCsound", 1);
+        defaultPropSet->setValue("AudioEnabled", 1);
+        defaultPropSet->setValue("DisableGUIEditModeWarning", 0);
+        defaultPropSet->setValue("SetAlwaysOnTop", 1);
+        defaultPropSet->setValue("PlantRepository", xml);
+        defaultPropSet->setValue("EditorColourScheme", 1);
+        defaultPropSet->setValue("showTabs", 1);
+        defaultPropSet->setValue("EnablePopupDisplay", 1);
 
-          void shutdown()
-          {
-			filterWindow = 0;// = nullptr;
-			appProperties->closeFiles();
-			deleteAndZero(appProperties);
-			deleteAndZero(defaultPropSet);
-			deleteAndZero(cabbageTimer);
-			deleteAndZero(lookAndFeel);
-			deleteAndZero(lookAndFeelBasic);
-          }
+        appProperties->getUserSettings()->setFallbackPropertySet(defaultPropSet);
+        filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black);
+        filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
+        filterWindow->setVisible (true);
+        //turn off resizeable...
+        filterWindow->setResizable(true, true);
+        juce::Thread::setCurrentThreadName("cabbage");
+    }
 
-          const String getApplicationName()
-          {
-             return String("cabbage");
-          }
-          
-          const String getApplicationVersion()
-          {
-             return String("0.0");
-          }
+    void shutdown()
+    {
+        filterWindow = 0;// = nullptr;
+        appProperties->closeFiles();
+        deleteAndZero(appProperties);
+        deleteAndZero(defaultPropSet);
+        deleteAndZero(cabbageTimer);
+        deleteAndZero(lookAndFeel);
+        deleteAndZero(lookAndFeelBasic);
+    }
 
-		  bool moreThanOneInstanceAllowed()       
-		  { 
-			  return true; 
-		  }
+    const String getApplicationName()
+    {
+        return String("cabbage");
+    }
 
-       private:
-         ScopedPointer<StandaloneFilterWindow> filterWindow;
-    };
+    const String getApplicationVersion()
+    {
+        return String("0.0");
+    }
 
-    START_JUCE_APPLICATION (CabbageStandalone)
+    bool moreThanOneInstanceAllowed()
+    {
+        return true;
+    }
+
+private:
+    ScopedPointer<StandaloneFilterWindow> filterWindow;
+};
+
+START_JUCE_APPLICATION (CabbageStandalone)

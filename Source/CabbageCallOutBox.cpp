@@ -18,7 +18,7 @@ CabbageCallOutBox::CabbageCallOutBox (Component& c, const Rectangle<int>& area, 
     {
         setAlwaysOnTop (true);
         updatePosition (area, Desktop::getInstance().getDisplays()
-                                .getDisplayContaining (area.getCentre()).userArea);
+                        .getDisplayContaining (area.getCentre()).userArea);
 
         addToDesktop (ComponentPeer::windowIsTemporary);
     }
@@ -48,8 +48,8 @@ public:
 };
 
 CabbageCallOutBox& CabbageCallOutBox::launchAsynchronously (Component* content,
-                                              const Rectangle<int>& area,
-                                              Component* parent)
+        const Rectangle<int>& area,
+        Component* parent)
 {
     jassert (content != nullptr); // must be a valid content component!
 
@@ -60,7 +60,7 @@ CabbageCallOutBox& CabbageCallOutBox::launchAsynchronously (Component* content,
 
 void CabbageCallOutBox::paint (Graphics& g)
 {
-g.fillAll(Colours::black);
+    g.fillAll(Colours::black);
 //    getLookAndFeel().drawCallOutBoxBackground (*this, g, outline, background);
 }
 
@@ -144,12 +144,14 @@ void CabbageCallOutBox::updatePosition (const Rectangle<int>& newAreaToPointTo, 
     Point<float> targets[4] = { Point<float> ((float) targetArea.getCentreX(), (float) targetArea.getBottom()),
                                 Point<float> ((float) targetArea.getRight(),   (float) targetArea.getCentreY()),
                                 Point<float> ((float) targetArea.getX(),       (float) targetArea.getCentreY()),
-                                Point<float> ((float) targetArea.getCentreX(), (float) targetArea.getY()) };
+                                Point<float> ((float) targetArea.getCentreX(), (float) targetArea.getY())
+                              };
 
     Line<float> lines[4] = { Line<float> (targets[0].translated (-hwReduced, hh - arrowIndent),    targets[0].translated (hwReduced, hh - arrowIndent)),
                              Line<float> (targets[1].translated (hw - arrowIndent, -hhReduced),    targets[1].translated (hw - arrowIndent, hhReduced)),
                              Line<float> (targets[2].translated (-(hw - arrowIndent), -hhReduced), targets[2].translated (-(hw - arrowIndent), hhReduced)),
-                             Line<float> (targets[3].translated (-hwReduced, -(hh - arrowIndent)), targets[3].translated (hwReduced, -(hh - arrowIndent))) };
+                             Line<float> (targets[3].translated (-hwReduced, -(hh - arrowIndent)), targets[3].translated (hwReduced, -(hh - arrowIndent)))
+                           };
 
     const Rectangle<float> centrePointArea (newAreaToFitIn.reduced (hw, hh).toFloat());
     const Point<float> targetCentre (targetArea.getCentre().toFloat());
@@ -186,12 +188,12 @@ void CabbageCallOutBox::refreshPath()
     background = Image::null;
     outline.clear();
 
-	outline.addRectangle(1, 1, getWidth()-2, getHeight()-2);
-/*
-    const float gap = 4.5f;
+    outline.addRectangle(1, 1, getWidth()-2, getHeight()-2);
+    /*
+        const float gap = 4.5f;
 
-    outline.addBubble (content.getBounds().toFloat().expanded (gap, gap),
-                       getLocalBounds().toFloat(),
-                       targetPoint - getPosition().toFloat(),
-                       9.0*/
+        outline.addBubble (content.getBounds().toFloat().expanded (gap, gap),
+                           getLocalBounds().toFloat(),
+                           targetPoint - getPosition().toFloat(),
+                           9.0*/
 }

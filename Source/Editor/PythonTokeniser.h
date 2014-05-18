@@ -25,10 +25,10 @@
 class PythonTokeniser : public CodeTokeniser
 {
 public:
-	PythonTokeniser(){}
-	~PythonTokeniser(){}
-	 
-	//==============================================================================
+    PythonTokeniser() {}
+    ~PythonTokeniser() {}
+
+    //==============================================================================
     enum TokenType
     {
         tokenType_error = 0,
@@ -42,111 +42,111 @@ public:
         tokenType_bracket,
         tokenType_punctuation,
         tokenType_preprocessor,
-		tokenType_csdTag
+        tokenType_csdTag
     };
 
-	CodeEditorComponent::ColourScheme getDefaultColourScheme()
-	{
-		struct Type
-		{
-			const char* name;
-			uint32 colour;
-		};
+    CodeEditorComponent::ColourScheme getDefaultColourScheme()
+    {
+        struct Type
+        {
+            const char* name;
+            uint32 colour;
+        };
 
-		const Type types[] =
-		{
-			{ "Error",              Colours::black.getARGB() },
-			{ "Comment",            Colours::green.getARGB() },
-			{ "Keyword",            Colours::blue.getARGB() },
-			{ "Identifier",         Colours::black.getARGB() },
-			{ "Integer",            Colours::orange.getARGB() },
-			{ "Float",              Colours::black.getARGB() },
-			{ "String",             Colours::red.getARGB() },
-			{ "Operator",           Colours::pink.getARGB() },
-			{ "Bracket",            Colours::darkgreen.getARGB() },
-			{ "Punctuation",        Colours::black.getARGB() },
-			{ "Preprocessor Text",  Colours::green.getARGB() },
-			{ "Csd Tag",			Colours::brown.getARGB() }
-		};
+        const Type types[] =
+        {
+            { "Error",              Colours::black.getARGB() },
+            { "Comment",            Colours::green.getARGB() },
+            { "Keyword",            Colours::blue.getARGB() },
+            { "Identifier",         Colours::black.getARGB() },
+            { "Integer",            Colours::orange.getARGB() },
+            { "Float",              Colours::black.getARGB() },
+            { "String",             Colours::red.getARGB() },
+            { "Operator",           Colours::pink.getARGB() },
+            { "Bracket",            Colours::darkgreen.getARGB() },
+            { "Punctuation",        Colours::black.getARGB() },
+            { "Preprocessor Text",  Colours::green.getARGB() },
+            { "Csd Tag",			Colours::brown.getARGB() }
+        };
 
-		CodeEditorComponent::ColourScheme cs;
+        CodeEditorComponent::ColourScheme cs;
 
-		for (int i = 0; i < sizeof (types) / sizeof (types[0]); ++i)  // (NB: numElementsInArray doesn't work here in GCC4.2)
-			cs.set (types[i].name, Colour (types[i].colour));
+        for (int i = 0; i < sizeof (types) / sizeof (types[0]); ++i)  // (NB: numElementsInArray doesn't work here in GCC4.2)
+            cs.set (types[i].name, Colour (types[i].colour));
 
-		return cs;
-	}
+        return cs;
+    }
 
-	CodeEditorComponent::ColourScheme getDarkColourScheme()
-	{
-		struct Type
-		{
-			const char* name;
-			uint32 colour;
-		};
+    CodeEditorComponent::ColourScheme getDarkColourScheme()
+    {
+        struct Type
+        {
+            const char* name;
+            uint32 colour;
+        };
 
-		const Type types[] =
-		{
-			{ "Error",              Colours::white.getARGB() },
-			{ "Comment",            Colours::green.getARGB() },
-			{ "Keyword",            Colours::cornflowerblue.getARGB() },
-			{ "Identifier",         Colours::white.getARGB() },
-			{ "Integer",            Colours::orange.getARGB() },
-			{ "Float",              Colours::lime.getARGB() },
-			{ "String",             Colours::red.getARGB() },
-			{ "Operator",           Colours::pink.getARGB() },
-			{ "Bracket",            Colours::darkgreen.getARGB() },
-			{ "Punctuation",        Colours::white.getARGB() },
-			{ "Preprocessor Text",  Colours::green.getARGB() },
-			{ "Csd Tag",			Colours::brown.getARGB() }
-		};
+        const Type types[] =
+        {
+            { "Error",              Colours::white.getARGB() },
+            { "Comment",            Colours::green.getARGB() },
+            { "Keyword",            Colours::cornflowerblue.getARGB() },
+            { "Identifier",         Colours::white.getARGB() },
+            { "Integer",            Colours::orange.getARGB() },
+            { "Float",              Colours::lime.getARGB() },
+            { "String",             Colours::red.getARGB() },
+            { "Operator",           Colours::pink.getARGB() },
+            { "Bracket",            Colours::darkgreen.getARGB() },
+            { "Punctuation",        Colours::white.getARGB() },
+            { "Preprocessor Text",  Colours::green.getARGB() },
+            { "Csd Tag",			Colours::brown.getARGB() }
+        };
 
-		CodeEditorComponent::ColourScheme cs;
+        CodeEditorComponent::ColourScheme cs;
 
-		for (int i = 0; i < sizeof (types) / sizeof (types[0]); ++i)  // (NB: numElementsInArray doesn't work here in GCC4.2)
-			cs.set (types[i].name, Colour (types[i].colour));
+        for (int i = 0; i < sizeof (types) / sizeof (types[0]); ++i)  // (NB: numElementsInArray doesn't work here in GCC4.2)
+            cs.set (types[i].name, Colour (types[i].colour));
 
-		return cs;
-	}
+        return cs;
+    }
 
 
 private:
-	//==============================================================================
-	StringArray getTokenTypes()
-	{
-    StringArray s;
-    s.add ("Error");
-    s.add ("Comment");
-    s.add ("C++ keyword");
-    s.add ("Identifier");
-    s.add ("Integer literal");
-    s.add ("Float literal");
-    s.add ("String literal");
-    s.add ("Operator");
-    s.add ("Bracket");
-    s.add ("Punctuation");
-    s.add ("Preprocessor line");
-	s.add ("CSD Tag");
-    return s;
-	}
-
-	//==============================================================================
-	void skipQuotedString (CodeDocument::Iterator& source)
-	{
-    const juce_wchar quote = source.nextChar();
-    for (;;)
+    //==============================================================================
+    StringArray getTokenTypes()
     {
-        const juce_wchar c = source.nextChar();
-        if (c == quote || c == 0)
-            break;
+        StringArray s;
+        s.add ("Error");
+        s.add ("Comment");
+        s.add ("C++ keyword");
+        s.add ("Identifier");
+        s.add ("Integer literal");
+        s.add ("Float literal");
+        s.add ("String literal");
+        s.add ("Operator");
+        s.add ("Bracket");
+        s.add ("Punctuation");
+        s.add ("Preprocessor line");
+        s.add ("CSD Tag");
+        return s;
+    }
 
-        if (c == '\\')
-            source.skip();
-		}
-	}
+    //==============================================================================
+    void skipQuotedString (CodeDocument::Iterator& source)
+    {
+        const juce_wchar quote = source.nextChar();
+        for (;;)
+        {
+            const juce_wchar c = source.nextChar();
+            if (c == quote || c == 0)
+                break;
+
+            if (c == '\\')
+                source.skip();
+        }
+    }
 
 
-	//==============================================================================
+    //==============================================================================
     void skipCSDTag (CodeDocument::Iterator& source) noexcept
     {
         for (;;)
@@ -157,68 +157,69 @@ private:
         }
     }
 
-	//==============================================================================
-	bool isIdentifierStart (const char c) 
-	{
-		return CharacterFunctions::isLetter (c)
-				|| c == '_' || c == '@';
-	}
+    //==============================================================================
+    bool isIdentifierStart (const char c)
+    {
+        return CharacterFunctions::isLetter (c)
+               || c == '_' || c == '@';
+    }
 
-	//==============================================================================
-	bool isIdentifierBody (const char c)
-	{
-		return CharacterFunctions::isLetter (c)
-				|| CharacterFunctions::isDigit (c)
-				|| c == '_' || c == '@';
-	}
+    //==============================================================================
+    bool isIdentifierBody (const char c)
+    {
+        return CharacterFunctions::isLetter (c)
+               || CharacterFunctions::isDigit (c)
+               || c == '_' || c == '@';
+    }
 
-	//==============================================================================
+    //==============================================================================
     bool isReservedKeyword (String::CharPointerType token, const int tokenLength) noexcept
     {
-	//populate char array with Csound keywords
-	//this list of keywords is not completely up to date! 
- 		 static const char* const keywords[] =
-		 {
-				"and",
-				"as",
-				"assert",
-				"break",
-				"class",
-				"continue",
-				"def",
-				"del",
-				"elif",
-				"else",
-				"except",
-				"exec",
-				"finally",
-				"for",
-				"from",
-				"global",
-				"if",
-				"import",
-				"in",
-				"is",
-				"lambda",
-				"not",
-				"or",
-				"pass",
-				"print",
-				"raise",
-				"return",
-				"try",
-				"while",
-				"with",
-				"yield"};
+        //populate char array with Csound keywords
+        //this list of keywords is not completely up to date!
+        static const char* const keywords[] =
+        {
+            "and",
+            "as",
+            "assert",
+            "break",
+            "class",
+            "continue",
+            "def",
+            "del",
+            "elif",
+            "else",
+            "except",
+            "exec",
+            "finally",
+            "for",
+            "from",
+            "global",
+            "if",
+            "import",
+            "in",
+            "is",
+            "lambda",
+            "not",
+            "or",
+            "pass",
+            "print",
+            "raise",
+            "return",
+            "try",
+            "while",
+            "with",
+            "yield"
+        };
 
 
         const char* const* k;
 
-       if (tokenLength < 2 || tokenLength > 16)
-                    return false;
+        if (tokenLength < 2 || tokenLength > 16)
+            return false;
 
-	   else
-		  k = keywords;
+        else
+            k = keywords;
 
 
         int i = 0;
@@ -232,8 +233,8 @@ private:
         return false;
     }
 
-	//==============================================================================
-   int parseIdentifier (CodeDocument::Iterator& source) noexcept
+    //==============================================================================
+    int parseIdentifier (CodeDocument::Iterator& source) noexcept
     {
         int tokenLength = 0;
         String::CharPointerType::CharType possibleIdentifier [100];
@@ -260,50 +261,52 @@ private:
         return CsoundTokeniser::tokenType_identifier;
     }
 
-   //==============================================================================
-	int readNextToken (CodeDocument::Iterator& source)
-	{
-    int result = tokenType_error;
-    source.skipWhitespace();
-    char firstChar = source.peekNextChar();
-
-    switch (firstChar)
+    //==============================================================================
+    int readNextToken (CodeDocument::Iterator& source)
     {
-    case 0:
-        source.skip();
-        break;
+        int result = tokenType_error;
+        source.skipWhitespace();
+        char firstChar = source.peekNextChar();
 
-    case ';':
-		source.skipToEndOfLine();
-        result = tokenType_comment;
-        break;
-
-	case '"':
- //   case T('\''):
-    	skipQuotedString (source);
-       result = tokenType_stringLiteral;
-       break;
-
-	case '<':
-		source.skip();
-		if((source.peekNextChar() == 'C') ||
-			(source.peekNextChar() == '/')){
-		skipCSDTag (source);
-        result = tokenType_csdTag;
-		}
-		break;
-
-    default:
-		if (isIdentifierStart (firstChar)){
-            result = parseIdentifier (source);
-		}
-        else
+        switch (firstChar)
+        {
+        case 0:
             source.skip();
-        break;
+            break;
+
+        case ';':
+            source.skipToEndOfLine();
+            result = tokenType_comment;
+            break;
+
+        case '"':
+//   case T('\''):
+            skipQuotedString (source);
+            result = tokenType_stringLiteral;
+            break;
+
+        case '<':
+            source.skip();
+            if((source.peekNextChar() == 'C') ||
+                    (source.peekNextChar() == '/'))
+            {
+                skipCSDTag (source);
+                result = tokenType_csdTag;
+            }
+            break;
+
+        default:
+            if (isIdentifierStart (firstChar))
+            {
+                result = parseIdentifier (source);
+            }
+            else
+                source.skip();
+            break;
+        }
+        //jassert (result != tokenType_unknown);
+        return result;
     }
-    //jassert (result != tokenType_unknown);
-    return result;
-	}
 };
 
 #endif

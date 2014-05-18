@@ -2,7 +2,7 @@
 
 //==============================================================================
 CommandManager::CommandManager () :
-	ApplicationCommandManager ()
+    ApplicationCommandManager ()
 {
 }
 

@@ -33,72 +33,78 @@ using namespace std;
 class CabbageChannelMessage : public CabbageUtils
 {
 public:
-	String channelName;
+    String channelName;
 #ifndef Cabbage_No_Csound
-	MYFLT value;
+    MYFLT value;
 #else
-float value;
+    float value;
 #endif
-	String type;
-	String fStatement;
-	int tableNumber;
-	String stringVal;
+    String type;
+    String fStatement;
+    int tableNumber;
+    String stringVal;
 
-	CabbageChannelMessage(String chan, double val, String _type)
-	{
-		channelName = chan;
-		value = val;
-		type = _type;		
-	}
-	
-	CabbageChannelMessage(String chan, String val, String _type)
-	{
-		channelName = chan;
-		stringVal = val;
-		type = _type;
-	}
+    CabbageChannelMessage(String chan, double val, String _type)
+    {
+        channelName = chan;
+        value = val;
+        type = _type;
+    }
 
-	~CabbageChannelMessage()
-	{}
+    CabbageChannelMessage(String chan, String val, String _type)
+    {
+        channelName = chan;
+        stringVal = val;
+        type = _type;
+    }
+
+    ~CabbageChannelMessage()
+    {}
 
 };
 
 //message queue class
 class CabbageMessageQueue : public CabbageUtils
 {
-	Array<CabbageChannelMessage, CriticalSection> outgoingChannelMessages;
+    Array<CabbageChannelMessage, CriticalSection> outgoingChannelMessages;
 
 public:
-	CabbageMessageQueue(){}
-	~CabbageMessageQueue(){}
+    CabbageMessageQueue() {}
+    ~CabbageMessageQueue() {}
 
-	void addOutgoingChannelMessageToQueue(String _chan, double _val, String _type){
-	outgoingChannelMessages.add(CabbageChannelMessage(_chan, _val, _type));
-	}
+    void addOutgoingChannelMessageToQueue(String _chan, double _val, String _type)
+    {
+        outgoingChannelMessages.add(CabbageChannelMessage(_chan, _val, _type));
+    }
 
-	void addOutgoingChannelMessageToQueue(String _chan, String _val, String _type){
-	outgoingChannelMessages.add(CabbageChannelMessage(_chan, _val, _type));
-	}
-	
-	void addOutgoingTableUpdateMessageToQueue(String fStatement, int tableNumber){
-	CabbageChannelMessage tableMessage("", 0.f, "updateTable");
-	tableMessage.fStatement = fStatement;
-	tableMessage.tableNumber = tableNumber;
-	outgoingChannelMessages.add(tableMessage);
-	}
+    void addOutgoingChannelMessageToQueue(String _chan, String _val, String _type)
+    {
+        outgoingChannelMessages.add(CabbageChannelMessage(_chan, _val, _type));
+    }
 
-	CabbageChannelMessage getOutgoingChannelMessageFromQueue(int index){
-		return outgoingChannelMessages.getReference(index);
-	}
+    void addOutgoingTableUpdateMessageToQueue(String fStatement, int tableNumber)
+    {
+        CabbageChannelMessage tableMessage("", 0.f, "updateTable");
+        tableMessage.fStatement = fStatement;
+        tableMessage.tableNumber = tableNumber;
+        outgoingChannelMessages.add(tableMessage);
+    }
 
-    int getNumberOfOutgoingChannelMessagesInQueue(){
-		return outgoingChannelMessages.size();
-	}
+    CabbageChannelMessage getOutgoingChannelMessageFromQueue(int index)
+    {
+        return outgoingChannelMessages.getReference(index);
+    }
 
-	void flushOutgoingChannelMessages(){
-		//const MessageManagerLock mmLock;
-		outgoingChannelMessages.clear();
-	}
+    int getNumberOfOutgoingChannelMessagesInQueue()
+    {
+        return outgoingChannelMessages.size();
+    }
+
+    void flushOutgoingChannelMessages()
+    {
+        //const MessageManagerLock mmLock;
+        outgoingChannelMessages.clear();
+    }
 
 };
 

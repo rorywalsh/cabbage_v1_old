@@ -4,7 +4,7 @@
   Cabbage is free software; you can redistribute it
   and/or modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.   
+  version 2.1 of the License, or (at your option) any later version.
 
   Cabbage is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,35 +29,35 @@
 #include "../CabbageLookAndFeel.h"
 
 class ProcessorParameterPropertyComp   : public PropertyComponent,
-                                         public AudioProcessorListener,
-                                         public Timer
+    public AudioProcessorListener,
+    public Timer
 {
- //==============================================================================
+//==============================================================================
     class ParamSlider  : public Slider,
-						 public ActionBroadcaster
-						// public ActionListener
+        public ActionBroadcaster
+        // public ActionListener
     {
     public:
         ParamSlider (AudioProcessor& owner_, const int index_)
             : owner (owner_),
               index (index_)
         {
-			//basicLookAndFeel = new CabbageLookAndFeelBasic();
-			setLookAndFeel(basicLookAndFeel);
-			this->setColour(Slider::textBoxBackgroundColourId, CabbageUtils::getBackgroundSkin());
+            //basicLookAndFeel = new CabbageLookAndFeelBasic();
+            setLookAndFeel(basicLookAndFeel);
+            this->setColour(Slider::textBoxBackgroundColourId, CabbageUtils::getBackgroundSkin());
 
             setRange (0.0, 1.0, 0.0);
-			setSliderStyle (Slider::LinearHorizontal);
-			setTextBoxStyle (Slider::TextBoxLeft, false, 80, 15);
+            setSliderStyle (Slider::LinearHorizontal);
+            setTextBoxStyle (Slider::TextBoxLeft, false, 80, 15);
             setTextBoxIsEditable (false);
             setScrollWheelEnabled (false);
         }
 
         void valueChanged()
         {
-			//this return the name of the plugin
-			//this calls ProcessorParameterPropertyComp::actionListenerCallbck
-			this->sendActionMessage("");
+            //this return the name of the plugin
+            //this calls ProcessorParameterPropertyComp::actionListenerCallbck
+            this->sendActionMessage("");
             const float newVal = (float) getValue();
 
             if (owner.getParameter (index) != newVal)
@@ -75,15 +75,15 @@ class ProcessorParameterPropertyComp   : public PropertyComponent,
         //==============================================================================
         AudioProcessor& owner;
         const int index;
-		ScopedPointer<CabbageLookAndFeelBasic> basicLookAndFeel;
+        ScopedPointer<CabbageLookAndFeelBasic> basicLookAndFeel;
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParamSlider);
     };
 
 
 public:
-	ParamSlider slider;
-	Colour highlightColour;
-	bool moddedText;
+    ParamSlider slider;
+    Colour highlightColour;
+    bool moddedText;
 
     ProcessorParameterPropertyComp (const String& name, AudioProcessor& owner_, const int index_)
         : PropertyComponent (name),
@@ -92,12 +92,12 @@ public:
           paramHasChanged (false),
           slider (owner_, index_)
     {
-		moddedText = false;
-		setPreferredHeight(20);
-		startTimer (100);
+        moddedText = false;
+        setPreferredHeight(20);
+        startTimer (100);
         addAndMakeVisible (&slider);
         owner_.addListener (this);
-		highlightColour = CabbageUtils::getDarkerBackgroundSkin();
+        highlightColour = CabbageUtils::getDarkerBackgroundSkin();
     }
 
     ~ProcessorParameterPropertyComp()
@@ -107,7 +107,7 @@ public:
 
     void refresh()
     {
-		paramHasChanged = false;
+        paramHasChanged = false;
         slider.setValue (owner.getParameter (index), sendNotification);
     }
 
@@ -133,30 +133,30 @@ public:
         }
     }
 
-	void paint(Graphics &g)
-	{
-		g.fillAll(CabbageUtils::getComponentSkin().darker(.4f)); //background
-		String text = getName();
-		if(moddedText)
-			g.setColour(Colours::yellow);
-		else
-			g.setColour(Colours::whitesmoke);
+    void paint(Graphics &g)
+    {
+        g.fillAll(CabbageUtils::getComponentSkin().darker(.4f)); //background
+        String text = getName();
+        if(moddedText)
+            g.setColour(Colours::yellow);
+        else
+            g.setColour(Colours::whitesmoke);
 
-		Font font (CabbageUtils::getTitleFont());
-		//font.setFallbackFontName (String("Verdana")); //in case the user doesn't have the first font installed
-		g.setFont (font);
-	
-		g.drawFittedText(text, 5, 5, 
-		font.getStringWidth(text), font.getHeight()-2, Justification::centredTop, 1);
-	
-	//	g.drawFittedText(text, 5, 5, 
-	//	font.getStringWidth(text), font.getHeight()-2, Justification::centredTop, 1);
-	}
+        Font font (CabbageUtils::getTitleFont());
+        //font.setFallbackFontName (String("Verdana")); //in case the user doesn't have the first font installed
+        g.setFont (font);
+
+        g.drawFittedText(text, 5, 5,
+                         font.getStringWidth(text), font.getHeight()-2, Justification::centredTop, 1);
+
+        //	g.drawFittedText(text, 5, 5,
+        //	font.getStringWidth(text), font.getHeight()-2, Justification::centredTop, 1);
+    }
 
 
 private:
 
-	ScopedPointer<CabbageLookAndFeelBasic> basicLookAndFeel;
+    ScopedPointer<CabbageLookAndFeelBasic> basicLookAndFeel;
     AudioProcessor& owner;
     const int index;
     bool volatile paramHasChanged;
@@ -170,58 +170,58 @@ class CabbageGenericAudioProcessorEditor      : public AudioProcessorEditor
 public:
     //==============================================================================
 
-	CabbageGenericAudioProcessorEditor(AudioProcessor* const owner_)
-		: AudioProcessorEditor (owner_)
-	{
-		jassert (owner_ != nullptr);
-		setOpaque (true); 
-		basicLookAndFeel = new CabbageLookAndFeelBasic();
-		this->setLookAndFeel(basicLookAndFeel);
-		addAndMakeVisible (&panel);
+    CabbageGenericAudioProcessorEditor(AudioProcessor* const owner_)
+        : AudioProcessorEditor (owner_)
+    {
+        jassert (owner_ != nullptr);
+        setOpaque (true);
+        basicLookAndFeel = new CabbageLookAndFeelBasic();
+        this->setLookAndFeel(basicLookAndFeel);
+        addAndMakeVisible (&panel);
 
-		Array <PropertyComponent*> params;
+        Array <PropertyComponent*> params;
 
-		const int numParams = owner_->getNumParameters();
-		Logger::writeToLog("NumParameters:" +String(numParams));
-		int totalHeight = 0;
+        const int numParams = owner_->getNumParameters();
+        Logger::writeToLog("NumParameters:" +String(numParams));
+        int totalHeight = 0;
 
-		for (int i = 0; i < numParams; ++i)
-		{
-			String name (owner_->getParameterName (i));
-			if (name.trim().isEmpty())
-				name = "Unnamed";
+        for (int i = 0; i < numParams; ++i)
+        {
+            String name (owner_->getParameterName (i));
+            if (name.trim().isEmpty())
+                name = "Unnamed";
 
-			ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp (name, *owner_, i);
-			
-			params.add (pc);
-			totalHeight += pc->getPreferredHeight();
-		}
+            ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp (name, *owner_, i);
 
-		panel.addProperties (params);
+            params.add (pc);
+            totalHeight += pc->getPreferredHeight();
+        }
 
-		setSize (400, jlimit (25, 400, totalHeight));
-	}
+        panel.addProperties (params);
 
-	~CabbageGenericAudioProcessorEditor()
-	{
-	}
+        setSize (400, jlimit (25, 400, totalHeight));
+    }
 
-
-	void paint (Graphics& g)
-	{
-		//background
-		g.setColour(Colour::fromRGB(20, 20, 20));
-		g.fillAll();
-	}
+    ~CabbageGenericAudioProcessorEditor()
+    {
+    }
 
 
-	void resized()
-	{
-		panel.setBounds (getLocalBounds());
-	}
+    void paint (Graphics& g)
+    {
+        //background
+        g.setColour(Colour::fromRGB(20, 20, 20));
+        g.fillAll();
+    }
 
 
-	ScopedPointer<CabbageLookAndFeelBasic> basicLookAndFeel;
+    void resized()
+    {
+        panel.setBounds (getLocalBounds());
+    }
+
+
+    ScopedPointer<CabbageLookAndFeelBasic> basicLookAndFeel;
 private:
     //==============================================================================
     PropertyPanel panel;

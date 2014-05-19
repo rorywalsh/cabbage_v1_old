@@ -262,6 +262,7 @@ public:
     const Array<double, CriticalSection> getTable(int tableNum);
     const Array<float, CriticalSection> getTableFloats(int tableNum);
     void createGUI(String source, bool refresh);
+	int checkTable(int tableNum);
     MidiKeyboardState keyboardState;
     //midiBuffers
     MidiBuffer midiBuffer;

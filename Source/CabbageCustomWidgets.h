@@ -69,7 +69,7 @@ public:
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<Button> button;
     //---- constructor -----
-    //---- constructor -----
+
     CabbageButton(CabbageGUIClass &cAttr) :
         name(cAttr.getStringProp(CabbageIDs::name)),
         caption(cAttr.getStringProp(CabbageIDs::caption)),
@@ -904,9 +904,9 @@ public:
         scrubberPos(cAttr.getNumProp(CabbageIDs::scrubberposition))
     {
         setName(cAttr.getStringProp(CabbageIDs::name));
-        table = new GenTable();
+        table = new TableManager();
         addAndMakeVisible(table);
-        table->addChangeListener(this);
+        //table->addChangeListener(this);
         sampleRate = 44100;
         if(File(file).existsAsFile())
             setFile(file);
@@ -929,7 +929,7 @@ public:
         if(scrubberPos!=m_cAttr.getNumProp(CabbageIDs::scrubberposition))
         {
             scrubberPos = m_cAttr.getNumProp(CabbageIDs::scrubberposition);
-            table->setScrubberPos(scrubberPos);
+            //table->setScrubberPos(scrubberPos);
         }
 
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
@@ -940,7 +940,7 @@ public:
         if(zoom!=m_cAttr.getNumProp(CabbageIDs::zoom))
         {
             zoom = m_cAttr.getNumProp(CabbageIDs::zoom);
-            table->setZoomFactor(zoom);
+            //table->setZoomFactor(zoom);
         }
 
 
@@ -948,27 +948,27 @@ public:
 
     void setFile(String newFile)
     {
-        table->setFile(File(newFile));
+        //table->setFile(File(newFile));
     }
 
-    int setWaveform(AudioSampleBuffer buffer, int channels)
+    int setWaveform(AudioSampleBuffer buffer, int ftnumber)
     {
-        table->setWaveform(buffer);
+        table->setWaveform(buffer, ftnumber);
     }
 
 
     int getPosition()
     {
-        return table->getCurrentPlayPosInSamples();
+        //return table->getCurrentPlayPosInSamples();
     }
 
     int getLoopLength()
     {
-        return table->getLoopLengthInSamples();
+        //return table->getLoopLengthInSamples();
     }
 
 
-    ScopedPointer<GenTable> table;
+    ScopedPointer<TableManager> table;
 private:
     float scrubberPosition;
 

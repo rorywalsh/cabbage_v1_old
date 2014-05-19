@@ -605,8 +605,9 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 
         getFilter()->getCsound()->GetCsound()->hfgens(getFilter()->getCsound()->GetCsound(), &ftpp, &evt, 1);
         Array<float, CriticalSection> points;
+
         points = Array<float, CriticalSection>(ftpp->ftable, ftpp->flen);
-        table->setWaveform(points, table->tableNumber, false);
+        table->setWaveform(points, false);
         Logger::writeToLog(fStatement.joinIntoString(" "));
         getFilter()->messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement.joinIntoString(" "), table->tableNumber);
     }
@@ -1973,22 +1974,32 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
     int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();
     for(int y=0; y<numberOfTables; y++)
     {
-        //tableBuffer.clear();
+        
         int tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, y);
-        GenTable* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
-        table->addChangeListener(this);
+        TableManager* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
+        //table->addChangeListener(this);
         StringArray pFields = getFilter()->getTableStatement(tableNumber);
         int genRoutine = pFields[4].getIntValue();
 
         tableValues.clear();
         tableValues = getFilter()->getTableFloats(tableNumber);
-        //tableBuffer.setSize(numberOfTables, tableValues.size());
-        //tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());
-        //create table and set colours
-        table->addTable(44100, cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), genRoutine, cAttr.getFloatArrayProp("amprange"));
-        //now fill table with data, tables can only be created on startup..
-        table->setWaveform(tableValues, tableNumber);
-        table->enableEditMode(pFields);
+		
+		table->addTable(44100, cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), genRoutine, 
+																cAttr.getFloatArrayProp("amprange"), 
+																tableNumber, this);
+		if(abs(genRoutine)==1)
+		{
+		tableBuffer.clear();
+		int channels = 1;//for now only works in mono;;
+        tableBuffer.setSize(channels, tableValues.size());
+        tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());	
+		table->setWaveform(tableBuffer, tableNumber);		
+		}
+		else
+		{
+		table->setWaveform(tableValues, tableNumber);
+        table->enableEditMode(pFields, tableNumber);
+		}
     }
 }
 

@@ -19,11 +19,103 @@
 
 #include "Table.h"
 
+//==============================================================================
+// Class to hold all tables
+//==============================================================================
+TableManager::TableManager(): Component(), zoom(0.0)
+{
+	addAndMakeVisible(zoomIn = new ZoomButton("zoomIn"));
+	addAndMakeVisible(zoomOut = new ZoomButton("zoomOut"));
+    zoomIn->toFront(false);
+	zoomIn->addChangeListener(this);
+    zoomOut->toFront(false);	
+	zoomOut->addChangeListener(this);
+}	
+//==============================================================================	
+void TableManager::changeListenerCallback(ChangeBroadcaster *source)
+{	
+    ZoomButton* button = dynamic_cast<ZoomButton*>(source);
+    if(button)
+    {
+        if(button->getName()=="zoomIn")
+        {
+            zoom+=0.1;
+			for(int i=0;i<tables.size();i++)
+            tables[i]->setZoomFactor(jmin(0.9, zoom));
+        }
+        else
+        {
+            zoom-=0.1;
+            if(zoom<=0)
+			{
+				for(int i=0;i<tables.size();i++)
+				tables[i]->setZoomFactor(0.0);
+			}
+            else
+			{
+				for(int i=0;i<tables.size();i++)
+				tables[i]->setZoomFactor(zoom);
+			}
+        }
+        repaint();
+    }
+	
+	GenTable* table = dynamic_cast<GenTable*>(source);
+	if(table)
+	{
+		if(table->changeMessage=="scrollbars moved")
+			for(int i=0;i<tables.size();i++)
+				tables[i]->setRange(table->globalRange);
+	}
+}	
+//==============================================================================	
+void TableManager::addTable(int sr, const String col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener)
+{
+	GenTable* table = new GenTable();	
+	table->addChangeListener(listener);
+	table->addTable(sr, col, gen, ampRange);
+	table->tableNumber = ftnumber;
+	table->addChangeListener(listener);
+	addAndMakeVisible(table);
+	tables.add(table);
 
+
+	
+	resized();	
+}
+//==============================================================================
+void TableManager::resized()
+{
+	for(int i =0; i<tables.size();i++)
+		tables[i]->setBounds(0, 0, getWidth(), getHeight()-20.f);	
+    zoomIn->setBounds(getWidth()-43, getHeight()-20, 20, 20);
+    zoomOut->setBounds(getWidth()-20, getHeight()-20, 20, 20);		
+	
+}
+//==============================================================================
+void TableManager::setWaveform(AudioSampleBuffer buffer, int ftNumber)
+{
+	for( int i=0;i<tables.size();i++)
+		if(ftNumber==tables[i]->tableNumber)
+			tables[i]->setWaveform(buffer);	
+}
+//==============================================================================
+void TableManager::setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange)
+{
+	for( int i=0;i<tables.size();i++)
+		if(ftNumber==tables[i]->tableNumber)
+			tables[i]->setWaveform(buffer, updateRange);		
+}
+//==============================================================================
+void TableManager::enableEditMode(StringArray pFields, int ftNumber)
+{
+	for( int i=0;i<tables.size();i++)
+		if(ftNumber==tables[i]->tableNumber)
+			tables[i]->enableEditMode(pFields);
+}	
 //==============================================================================
 // GenTable display  component
 //==============================================================================
-
 GenTable::GenTable():	thumbnailCache (5),
     currentPlayPosition(0),
     mouseDownX(0),
@@ -46,18 +138,13 @@ GenTable::GenTable():	thumbnailCache (5),
     scrollbar->addListener(this);
     currentPositionMarker->setFill (Colours::white.withAlpha (0.85f));
     addAndMakeVisible(currentPositionMarker);
-    zoomIn = new ZoomButton("zoomIn");
-    zoomOut = new ZoomButton("zoomOut");
-//	addAndMakeVisible();
-//	addAndMakeVisible();
-    zoomIn->addChangeListener(this);
-    zoomOut->addChangeListener(this);
+    
     handleViewer = new HandleViewer();
     addAndMakeVisible(handleViewer);
-    zoomIn->toFront(false);
-    zoomOut->toFront(false);
+
     minMax.setStart(0);
     minMax.setEnd(0);
+	handleViewer->minMax = minMax;
 }
 //==============================================================================
 GenTable::~GenTable()
@@ -72,10 +159,13 @@ void GenTable::addTable(int sr, const String col, int gen, Array<float> ampRange
     sampleRate = sr;
     colour = Colours::findColourForName(col, Colours::white);
     genRoutine = gen;
+	handleViewer->gen = gen;
+	handleViewer->colour = Colours::findColourForName(col, Colours::white);
     if(ampRange.size()>1)
     {
         minMax.setStart(ampRange[0]);
         minMax.setEnd(ampRange[1]);
+		handleViewer->minMax = minMax;
     }
     //set up table according to type of GEN used to create it
     if(genRoutine==1)
@@ -122,9 +212,8 @@ void GenTable::changeListenerCallback(ChangeBroadcaster *source)
 //==============================================================================
 void GenTable::resized()
 {
-    zoomIn->setBounds(getWidth()-43, getHeight()-40, 20, 20);
-    zoomOut->setBounds(getWidth()-20, getHeight()-40, 20, 20);
     handleViewer->setSize(getWidth(), getHeight()-25);
+	
     if(scrollbar)
         scrollbar->setBounds (getLocalBounds().removeFromBottom (20).reduced (2));
 }
@@ -132,7 +221,12 @@ void GenTable::resized()
 void GenTable::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
 {
     if (scrollBarThatHasMoved == scrollbar)
-        setRange (visibleRange.movedToStartAt (newRangeStart), true);
+	{
+		changeMessage = "scrollbars moved";
+		globalRange = visibleRange.movedToStartAt (newRangeStart);
+		sendChangeMessage();
+		//setRange (visibleRange.movedToStartAt (newRangeStart), true);		
+	}
 }
 
 void GenTable::setFile (const File& file)
@@ -166,9 +260,20 @@ Array<float> GenTable::getPfields()
 
     for(int i=0; i<handleViewer->handles.size(); i++)
     {
-        currXPos = round(handleViewer->handles[i]->xPosRelative*waveformBuffer.size())+5;
+        currXPos = round(handleViewer->handles[i]->xPosRelative*waveformBuffer.size()+5);
+		Logger::writeToLog(String(handleViewer->handles.size()));
+		//add x position
         values.add(jmax(0.f, currXPos-prevXPos));
-        values.add(pixelToAmp(handleViewer->getHeight(), minMax, handleViewer->handles[i]->getPosition().getY()));
+
+		//hack to prevent csound from bawking with a 0 in gen05
+		float amp = pixelToAmp(handleViewer->getHeight(), minMax, handleViewer->handles[i]->getPosition().getY()+5);
+		if(abs(genRoutine)==5)
+			amp = jmax(0.001f, amp);
+		else
+			amp = jmax(0.f, amp);        
+		//add y position
+		values.add(amp);
+
         prevXPos = round(handleViewer->handles[i]->xPosRelative*waveformBuffer.size());
     }
     return values;
@@ -182,6 +287,7 @@ void GenTable::setWaveform(AudioSampleBuffer buffer)
         tableSize = buffer.getNumSamples();
         thumbnail->clear();
         repaint();
+		Logger::writeToLog(String(buffer.getNumChannels()));
         thumbnail->reset(buffer.getNumChannels(), 44100, buffer.getNumSamples());
         thumbnail->addBlock(0, buffer, 0, buffer.getNumSamples());
         const Range<double> newRange (0.0, thumbnail->getTotalLength());
@@ -193,12 +299,11 @@ void GenTable::setWaveform(AudioSampleBuffer buffer)
     }
 }
 
-void GenTable::setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange)
+void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRange)
 {
     if(genRoutine != 1)
     {
         waveformBuffer = buffer;
-        tableNumber = ftNumber;
         tableSize = buffer.size();
         handleViewer->tableSize = tableSize;
 
@@ -214,7 +319,10 @@ void GenTable::setWaveform(Array<float, CriticalSection> buffer, int ftNumber, b
         }
 
         if(minMax.getLength()==0)
+		{
             minMax = findMinMax(buffer);
+			handleViewer->minMax = minMax;
+		}
 
         repaint();
     }
@@ -239,7 +347,7 @@ void GenTable::enableEditMode(StringArray pFields)
         if(abs(genRoutine)==7 || abs(genRoutine)==5)
         {
             float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
-            handleViewer->addHandle(0, ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue), this);
+            handleViewer->addHandle(0, ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue));
 
             Logger::writeToLog("Coordinates:("+String(xPos)+", "+String(ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue))+")");
 
@@ -247,7 +355,7 @@ void GenTable::enableEditMode(StringArray pFields)
             {
                 xPos = xPos + pFields[i].getFloatValue();
                 pFieldAmpValue = (normalised<0 ? pFields[i+1].getFloatValue() : pFields[i+1].getFloatValue()/pFieldMinMax.getEnd());
-                handleViewer->addHandle(xPos/(float)waveformBuffer.size(), ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue), this);
+                handleViewer->addHandle(xPos/(float)waveformBuffer.size(), ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue));
                 Logger::writeToLog("Coordinates:("+String(xPos)+", "+String(ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue))+")");
             }
 
@@ -316,6 +424,7 @@ void GenTable::setRange(Range<double> newRange, bool isScrolling)
     Logger::writeToLog("VisibleStart:"+String(visibleStart));
     Logger::writeToLog("VisibleEnd:"+String(visibleEnd));
     Logger::writeToLog("VisibleLength:"+String(visibleLength));
+	Logger::writeToLog("Zoom:"+String(zoom));
     visibleEnd = visibleRange.getEnd()*sampleRate;
     visibleLength = visibleRange.getLength()*sampleRate;
 
@@ -323,7 +432,8 @@ void GenTable::setRange(Range<double> newRange, bool isScrolling)
     {
         if(!isScrolling)
         {
-            float newWidth = getWidth()*(float(waveformBuffer.size())/visibleLength);
+			float comp = 0;// float(getWidth())*zoom;
+            float newWidth = float(getWidth())*(float(waveformBuffer.size())/visibleLength)+comp;
             float leftOffset = newWidth*(visibleStart/(float)waveformBuffer.size());
             Logger::writeToLog("leftOffset:"+String(leftOffset));
             handleViewer->setSize(newWidth, handleViewer->getHeight());
@@ -346,7 +456,7 @@ void GenTable::paint (Graphics& g)
     Rectangle<int> thumbArea (getLocalBounds());
     thumbArea.setHeight(getHeight()-14);
     thumbArea.setTop(10.f);
-    float prevY=thumbArea.getHeight(), prevX=-1, currY=0, currX=0;
+    float prevY=thumbArea.getHeight(), prevX=-1, currY=0, currX=1000;
 
     //if gen01 then use an audio thumbnail class
     if(genRoutine==1)
@@ -355,7 +465,7 @@ void GenTable::paint (Graphics& g)
         g.setColour(colour.contrasting(.5f).withAlpha(.7f));
         float zoomFactor = thumbnail->getTotalLength()/visibleRange.getLength();
         regionWidth = (regionWidth=2 ? 2 : regionWidth*zoomFactor);
-        g.fillRect(timeToX(currentPlayPosition), 10.f, (regionWidth==2 ? 2 : regionWidth*zoomFactor), (float)getHeight()-26.f);
+        //g.fillRect(timeToX(currentPlayPosition), 10.f, (regionWidth==2 ? 2 : regionWidth*zoomFactor), (float)getHeight()-26.f);
     }
 
     //else draw the waveform directly
@@ -366,10 +476,18 @@ void GenTable::paint (Graphics& g)
         float thumbHeight = thumbArea.reduced(2).getHeight();
         for(int i=visibleStart+1; i<visibleEnd; i++)
         {
+
             currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
-            g.drawLine(prevX, prevY, prevX+numPixelsPerIndex, prevY, 4);
+            
+			g.setColour(colour.withAlpha(.3f));
+			//if(i%jmax(2, int(10*(1-zoom)))==1)
+			g.drawVerticalLine(prevX, getHeight()-(getHeight()-prevY)+2, getHeight()-25);
+			
+			//g.setColour(this->colour);
+			//g.drawLine(prevX, prevY, prevX+numPixelsPerIndex, prevY, 4);
+			
             prevX = jmax(0.f, prevX + numPixelsPerIndex);
-            prevY = currY;
+			prevY = currY;
         }
     }
 }
@@ -468,30 +586,66 @@ HandleViewer::~HandleViewer()
 };
 
 //==============================================================================
-HandleComponent* HandleViewer::addHandle(float x, float  y, ChangeListener* listener)
+void HandleViewer::addHandle(float x, float  y)
 {
+    int indx;	
+	
+	GenTable* table = findParentComponentOfClass <GenTable>();
+	if(table)
+	{
     HandleComponent* handle = new HandleComponent(x, handles.size(), true);
     handle->setTopLeftPosition(getWidth()*x-5, y-5);
-    handle->addChangeListener(listener);
+	handle->setSize(getWidth()/40, getWidth()/40);
+    handle->addChangeListener(table);
     handle->addActionListener(this);
+	Logger::writeToLog(String(indx));
+	//handles.insert (indx, handle);
     handles.add(handle);
     addAndMakeVisible(handles[handles.size()-1]);
+	}
 }
+
+void HandleViewer::insertHandle(float x, float y)
+{
+    int indx;	
+	
+	GenTable* table = findParentComponentOfClass <GenTable>();
+	if(table)
+	{
+		for (int i=1; i<handles.size(); i++)
+		{
+			if (x*getWidth() >= handles[i-1]->getX() && x*getWidth() < handles[i]->getX())
+			{
+				indx = i;
+				Logger::writeToLog("Handle number: "+String(indx+1));
+			}
+		}
+		
+    HandleComponent* handle = new HandleComponent(x, handles.size(), true);
+    handle->setTopLeftPosition(getWidth()*x, y-5);
+	//handle->setSize(getWidth()/40, getWidth()/40);
+    handle->addChangeListener(table);
+    handle->addActionListener(this);
+	addAndMakeVisible(handle);
+	handles.insert(indx, handle);
+	handle->sendChangeMessage();
+	}
+
+}
+
 //==============================================================================
 void HandleViewer::mouseDown(const MouseEvent& e)
 {
-    Logger::writeToLog("mouse down - handle viewr");
+	
+    insertHandle(float(e.x)/getWidth(), (float)e.y);
 }
 //==============================================================================
 void HandleViewer::resized()
 {
     for(int i=0; i<handles.size(); i++)
     {
-        handles[i]->setTopLeftPosition(getWidth()*handles[i]->xPosRelative-5, handles[i]->getPosition().getY());
-        Logger::writeToLog(String(getWidth()*handles[i]->xPosRelative-5));
+        handles[i]->setTopLeftPosition((getWidth()*handles[i]->xPosRelative), handles[i]->getPosition().getY());
     }
-
-    //setTopLeftPosition((getWidth()*handles[i]->xPosRelative)-5, y-5);
 }
 //==============================================================================
 void HandleViewer::repaint(Graphics &g)
@@ -517,16 +671,36 @@ int HandleViewer::getHandleIndex(HandleComponent* thisHandle)
 //==============================================================================
 void HandleViewer::actionListenerCallback(const String &message)
 {
-    label->setVisible(true);
+    if(message=="mouseUp")
+	{
+		label->setVisible(false);
+		return;
+	}
+	
+	label->setVisible(true);
     int offsetY=0, offsetX=10;
     StringArray mess;
     mess.addTokens(message, " ");
+	
     if(mess[2].getIntValue()>getHeight()/2)
-        offsetY=-30;
+        offsetY=-18;
     if(mess[1].getIntValue()>getWidth()/2)
         offsetX=-60;
+		
     label->setBounds(mess[1].getIntValue()+offsetX, mess[2].getIntValue()+offsetY, 60, 20);
-    String text = String(mess[1].getIntValue())+", "+String(mess[2].getIntValue());
+	
+	
+	float amp = GenTable::pixelToAmp(getHeight(), minMax, mess[2].getIntValue()+5);
+	
+	int currXPos = round((mess[1].getFloatValue()/(float)getWidth())*this->tableSize+5);
+	
+	if(abs(gen)==5)
+		amp = jmax(0.001f, amp);
+	else
+		amp = jmax(0.f, amp);
+		
+	label->setColour(Label::textColourId, colour);
+	String text = String(currXPos)+", "+String(amp);
     label->setText(text, dontSendNotification);
 }
 
@@ -557,15 +731,19 @@ void HandleViewer::removeHandle (HandleComponent* thisHandle)
     {
         handles.removeObject(thisHandle, true);
     }
+	
+	if(handles.size()>0)
+		handles[0]->sendChangeMessage();
 }
+
 //==================================================================================
 HandleComponent::HandleComponent(float xPos, int _index, bool fixed):
     index(_index), x(0), y(0), colour(colour), fixed(fixed)
 {
     xPosRelative = xPos;
+	Logger::writeToLog("Pos for handle:"+String(index)+"="+String(xPos));
     this->setInterceptsMouseClicks(true, false);
     setSize(10, 10);
-    Logger::writeToLog("Index:"+String(index));
 }
 //==================================================================================
 HandleComponent::~HandleComponent()
@@ -592,12 +770,22 @@ void HandleComponent::mouseEnter (const MouseEvent& e)
 {
     setMouseCursor (MouseCursor::DraggingHandCursor);
     Logger::writeToLog("Current index:"+String(index));
+    String message;
+    message = String(String(index)+" "+String(getX())+" "+String(getY()));
+	sendActionMessage(message);
 }
 //==================================================================================
 void HandleComponent::mouseUp (const MouseEvent& e)
 {
     mouseStatus = "mouseUp";
+	sendActionMessage("mouseUp");
     sendChangeMessage();
+}
+//==================================================================================
+void HandleComponent::mouseExit (const MouseEvent& e)
+{
+    mouseStatus = "mouseUp";
+	sendActionMessage("mouseUp");
 }
 //==================================================================================
 void HandleComponent::mouseDown (const MouseEvent& e)
@@ -627,8 +815,7 @@ void HandleComponent::mouseDown (const MouseEvent& e)
         const int result = pop.show();
         if(result==4)
         {
-            changeMessage = "removeHandle";
-            sendChangeMessage();
+            removeThisHandle();
         }
     }
 }
@@ -663,20 +850,20 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
     if(dragX > rightLimit)
         dragX = rightLimit;
     if(dragY< -5)
-        dragY = -5;
-    if(dragY > getParentComponent()->getHeight()-5)
-        dragY = getParentComponent()->getHeight()-5;
+        dragY = 5;
+    if(dragY > getParentComponent()->getHeight())
+        dragY = getParentComponent()->getHeight();
     if(fixed)
         dragX = x;
 
     this->setTopLeftPosition(dragX, dragY);
     xPosRelative = dragX/this->getParentComponent()->getWidth();
-    Logger::writeToLog("xPosRelative:"+String(xPosRelative));
+    //Logger::writeToLog("xPosRelative:"+String(xPosRelative));
 
     sendChangeMessage();
     String message;
     message = String(String(index)+" "+String(dragX)+" "+String(dragY));
-    Logger::writeToLog(message);
+    //Logger::writeToLog(message);
     mouseStatus = "mouseDrag";
     sendActionMessage(message);
 }

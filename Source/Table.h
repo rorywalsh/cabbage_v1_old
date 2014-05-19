@@ -27,6 +27,25 @@
 class ZoomButton;
 class HandleViewer;
 class HandleComponent;
+class GenTable;
+
+class TableManager : public Component,
+					 public ChangeListener
+{
+	double zoom;
+public:	
+	TableManager();
+	~TableManager(){};
+	void resized();
+	void addTable(int sr, const String col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener);
+    void setWaveform(AudioSampleBuffer buffer, int ftNumber);
+    void setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange = true);
+	void enableEditMode(StringArray pFields, int ftnumber);
+    ScopedPointer<ZoomButton> zoomIn, zoomOut;	
+	OwnedArray<GenTable> tables;
+	void changeListenerCallback(ChangeBroadcaster *source);
+};
+
 //=================================================================
 // display a sound file as a waveform..
 //=================================================================
@@ -72,14 +91,16 @@ public:
     void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
     void setWaveform(AudioSampleBuffer buffer);
     void enableEditMode(StringArray pFields);
-    void setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange = true);
+    void setWaveform(Array<float, CriticalSection> buffer, bool updateRange = true);
     void createImage(String filename);
     void addTable(int sr, const String col, int gen, Array<float> ampRange);
-    float ampToPixel(int height, Range<float> minMax, float sampleVal);
-    float pixelToAmp(int height, Range<float> minMax, float sampleVal);
+    static float ampToPixel(int height, Range<float> minMax, float sampleVal);
+    static float pixelToAmp(int height, Range<float> minMax, float sampleVal);
     Array<float> getPfields();
     String changeMessage;
-    int tableNumber, tableSize, genRoutine;;
+    int tableNumber, tableSize, genRoutine;
+	void setRange(Range<double> newRange, bool isScrolling = false);
+	Range<double> globalRange;
 
 private:
     Image img;
@@ -87,11 +108,12 @@ private:
     //Graphics& graphics;
     int imgCount;
     Range<double> visibleRange;
+	Colour fillColour;
     float currentWidth;
     double zoom;
     ScopedPointer<DrawableRectangle> currentPositionMarker;
     ScopedPointer<ScrollBar> scrollbar;
-    void setRange(Range<double> newRange, bool isScrolling = false);
+    
     void resized();
     Rectangle<int> handleViewerRect;
     void paint (Graphics& g);
@@ -104,7 +126,6 @@ private:
     double scrubberPosition;
     void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
     void changeListenerCallback(ChangeBroadcaster *source);
-    ScopedPointer<ZoomButton> zoomIn, zoomOut;
     ScopedPointer<HandleViewer> handleViewer;
 
     AudioFormatManager formatManager;
@@ -156,7 +177,8 @@ public:
     void mouseDown(const MouseEvent& e);
     void repaint(Graphics &g);
     void resized();
-    HandleComponent* addHandle(float x, float  y, ChangeListener* listener);
+    void addHandle(float x, float  y);
+	void insertHandle(float x, float  y);
     HandleComponent* getPreviousHandle(HandleComponent* thisHandle);
     HandleComponent* getNextHandle(HandleComponent* thisHandle);
     int getHandleIndex(HandleComponent* thisHandle);
@@ -165,6 +187,9 @@ public:
     void fixEdgePoints();
     int handleIndex;
     float tableSize;
+	Range<float> minMax;
+	Colour colour;
+	int gen;
 
 };
 
@@ -186,6 +211,7 @@ public:
     void mouseDown (const MouseEvent& e);
     void mouseDrag (const MouseEvent& e);
     void mouseUp (const MouseEvent& e);
+	void mouseExit (const MouseEvent& e);
     int index;
     int height, width;
     int x,y;

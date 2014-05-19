@@ -24,7 +24,6 @@
 
 #define MAX_BUFFER_SIZE 1024
 //Csound functions like to return 0 when everything is ok..
-#define OK 0
 #define LOGGER 0
 
 //these two lines may need to be copied to top part of csound.h
@@ -1281,6 +1280,12 @@ const Array<float, CriticalSection> CabbagePluginAudioProcessor::getTableFloats(
     }
     return points;
 }
+
+int CabbagePluginAudioProcessor::checkTable(int tableNum)
+{
+	return  csound->TableLength(tableNum);	
+}
+
 //=================================================================================
 // Get and Set Parameter methods, called by our editor, and the plugin host...
 //=================================================================================

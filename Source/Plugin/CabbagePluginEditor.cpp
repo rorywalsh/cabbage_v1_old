@@ -576,7 +576,7 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
 void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 {
 #ifndef Cabbage_No_Csound	
-    Array<float> pFields = table->getPfields();
+    Array<double> pFields = table->getPfields();
     if( abs(table->genRoutine)==5 || abs(table->genRoutine)==7)
     {
         FUNC *ftpp;

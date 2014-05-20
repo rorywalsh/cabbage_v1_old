@@ -105,7 +105,7 @@ public:
     void addTable(int sr, const String col, int gen, Array<float> ampRange);
     static float ampToPixel(int height, Range<float> minMax, float sampleVal);
     static float pixelToAmp(int height, Range<float> minMax, float sampleVal);
-    Array<float> getPfields();
+    Array<double> getPfields();
     String changeMessage;
     int tableNumber, tableSize, genRoutine;
 	void setRange(Range<double> newRange, bool isScrolling = false);

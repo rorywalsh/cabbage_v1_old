@@ -275,17 +275,17 @@ void GenTable::setFile (const File& file)
 }
 
 //==============================================================================
-Array<float> GenTable::getPfields()
+Array<double> GenTable::getPfields()
 {
-    Array<float> values;
-    float prevXPos=0, currXPos=0;
+    Array<double> values;
+    double prevXPos=0, currXPos=0;
 
     for(int i=0; i<handleViewer->handles.size(); i++)
     {
-        currXPos = round(handleViewer->handles[i]->xPosRelative*waveformBuffer.size());
+        currXPos = handleViewer->handles[i]->xPosRelative*waveformBuffer.size();
 		Logger::writeToLog(String(handleViewer->handles.size()));
 		//add x position
-        values.add(jmax(0.f, currXPos-prevXPos));
+        values.add(jmax(0.0, currXPos-prevXPos));
 
 		//hack to prevent csound from bawking with a 0 in gen05
 		float amp = pixelToAmp(handleViewer->getHeight(), minMax, handleViewer->handles[i]->getPosition().getY());
@@ -296,7 +296,7 @@ Array<float> GenTable::getPfields()
 		//add y position
 		values.add(amp);
 
-        prevXPos = round(handleViewer->handles[i]->xPosRelative*waveformBuffer.size());
+        prevXPos = handleViewer->handles[i]->xPosRelative*waveformBuffer.size();
     }
     return values;
 }
@@ -727,7 +727,7 @@ void HandleViewer::actionListenerCallback(const String &message)
 		
     label->setBounds(mess[1].getIntValue()+offsetX, mess[2].getIntValue()+offsetY, 60, 20);
 	float amp = GenTable::pixelToAmp(getHeight(), minMax, mess[2].getIntValue());	
-	int currXPos = round((mess[1].getFloatValue()/(float)getWidth())*this->tableSize);
+	int currXPos = roundToInt((mess[1].getFloatValue()/(float)getWidth())*this->tableSize);
 	
 	if(abs(gen)==5)
 		amp = jmax(0.001f, amp);

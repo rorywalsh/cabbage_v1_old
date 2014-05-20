@@ -296,7 +296,7 @@ Array<double> GenTable::getPfields()
 		//add y position
 		values.add(amp);
 
-        prevXPos = handleViewer->handles[i]->xPosRelative*waveformBuffer.size();
+        prevXPos = roundToIntAccurate(handleViewer->handles[i]->xPosRelative*waveformBuffer.size());
     }
     return values;
 }
@@ -727,7 +727,7 @@ void HandleViewer::actionListenerCallback(const String &message)
 		
     label->setBounds(mess[1].getIntValue()+offsetX, mess[2].getIntValue()+offsetY, 60, 20);
 	float amp = GenTable::pixelToAmp(getHeight(), minMax, mess[2].getIntValue());	
-	int currXPos = roundToInt((mess[1].getFloatValue()/(float)getWidth())*this->tableSize);
+	int currXPos = round((mess[1].getFloatValue()/(float)getWidth())*this->tableSize);
 	
 	if(abs(gen)==5)
 		amp = jmax(0.001f, amp);

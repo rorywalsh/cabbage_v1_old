@@ -261,6 +261,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         tempAudioFile = fullFileName;
         tempAudioFile.replaceWithData(0 ,0);
 #endif
+	}
 }
 #else
 
@@ -435,6 +436,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
 
 
     createGUI(csdFile.loadFileAsString(), true);
+
 }
 #endif
 

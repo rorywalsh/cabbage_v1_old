@@ -238,9 +238,7 @@ void GenTable::changeListenerCallback(ChangeBroadcaster *source)
 //==============================================================================
 void GenTable::resized()
 {
-    handleViewer->setSize(getWidth(), getHeight()-25);
-
-	
+    handleViewer->setSize(getWidth(), getHeight()-25);	
 	Logger::writeToLog(String(getLocalBounds().getHeight()-20));
     if(scrollbar)
         scrollbar->setBounds (getLocalBounds().withWidth(getWidth()-scrollbarReduction).removeFromBottom (20).reduced (2));

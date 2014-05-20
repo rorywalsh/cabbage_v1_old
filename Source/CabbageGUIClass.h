@@ -339,8 +339,8 @@ public:
     float getFloatArrayPropValue(Identifier prop, int index);
     Array<float> getFloatArrayProp(Identifier prop);
 
-    String setStringArrayPropValue(Identifier prop, int index, String value);
-    String setStringArrayProp(Identifier prop, var value);
+    void setStringArrayPropValue(Identifier prop, int index, String value);
+    void setStringArrayProp(Identifier prop, var value);
 
 
     StringArray getChannels()

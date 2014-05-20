@@ -1973,6 +1973,8 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 
     //load initial files/tables if any are set
+	
+
     int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();
     for(int y=0; y<numberOfTables; y++)
     {

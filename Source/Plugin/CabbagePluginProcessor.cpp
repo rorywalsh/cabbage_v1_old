@@ -161,7 +161,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         File(inputfile).setAsCurrentWorkingDirectory();
 
 
-#ifdef CSOUND6
+#ifdef CSOUND6 
         csoundParams = new CSOUND_PARAMS();
         csoundParams->nchnls_override = this->getNumOutputChannels();
         csoundParams->displays = 0;

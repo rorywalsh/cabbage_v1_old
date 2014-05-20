@@ -608,6 +608,7 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 
         points = Array<float, CriticalSection>(ftpp->ftable, ftpp->flen);
         table->setWaveform(points, false);
+		//table->enableEditMode(fStatement);
         Logger::writeToLog(fStatement.joinIntoString(" "));
         getFilter()->messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement.joinIntoString(" "), table->tableNumber);
     }
@@ -1993,7 +1994,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 		tableBuffer.clear();
 		int channels = 1;//for now only works in mono;;
         tableBuffer.setSize(channels, tableValues.size());
-        tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());	
+        tableBuffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());	
 		table->setWaveform(tableBuffer, tableNumber);		
 		}
 		else
@@ -2002,7 +2003,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
         table->enableEditMode(pFields, tableNumber);
 		}
 		
-		table->bringTableToFront(2);
+		//table->bringTableToFront(2);
     }
 }
 

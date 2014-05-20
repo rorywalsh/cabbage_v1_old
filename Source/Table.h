@@ -116,6 +116,8 @@ public:
 	Range<double> visibleRange;
 	int scrollbarReduction;
 	
+	HandleViewer* getHandleViewer(){ return handleViewer;}
+	
 private:
     Image img;
     int normalised;
@@ -155,7 +157,7 @@ private:
     bool drawWaveform;
 
     Array<float, CriticalSection> waveformBuffer;
-    float visibleLength, visibleStart, visibleEnd, maxAmp;
+    double visibleLength, visibleStart, visibleEnd, maxAmp;
     Range<float> minMax;
 
     Range<float> findMinMax(Array<float, CriticalSection> buffer)
@@ -189,14 +191,15 @@ public:
     void mouseDown(const MouseEvent& e);
     void repaint(Graphics &g);
     void resized();
-    void addHandle(float x, float  y);
-	void insertHandle(float x, float  y);
+    void addHandle(double x, double y);
+	void insertHandle(double x, double y);
     HandleComponent* getPreviousHandle(HandleComponent* thisHandle);
     HandleComponent* getNextHandle(HandleComponent* thisHandle);
     int getHandleIndex(HandleComponent* thisHandle);
     void removeHandle (HandleComponent* thisHandle);
     OwnedArray<HandleComponent, CriticalSection> handles;
     void fixEdgePoints();
+	void showHandles(bool show);
     int handleIndex;
     float tableSize;
 	Range<float> minMax;
@@ -230,7 +233,7 @@ public:
 
     HandleComponent* getPreviousHandle();
     HandleComponent* getNextHandle();
-    float xPosRelative, yPosRelative;
+    double xPosRelative, yPosRelative;
     String changeMessage;
     String mouseStatus;
 

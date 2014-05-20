@@ -508,7 +508,7 @@ public:
         double z=x-y;
         double m=pow((double)10.f, (double)numDecimals);
         double q=z*m;
-        double r=round(q);
+        double r=roundToIntAccurate(q);
 
         return String(static_cast<double>(y)+(1.0/m)*r);
     }

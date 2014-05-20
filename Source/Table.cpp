@@ -326,7 +326,22 @@ void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRang
 {
     if(genRoutine != 1)
     {
-        waveformBuffer = buffer;
+  /*      buffer.clear();
+		buffer.add(0.0);
+		buffer.add(0.6);
+		buffer.add(0.2);
+		buffer.add(0.9);
+		buffer.add(0.0);
+		buffer.add(0.2);
+		buffer.add(0.3);
+		buffer.add(0.4);
+		buffer.add(0.5);
+		buffer.add(0.6);
+		buffer.add(0.7);
+		buffer.add(0.8);
+		buffer.add(0.9);
+	*/	
+		waveformBuffer = buffer;
         tableSize = buffer.size();
         handleViewer->tableSize = tableSize;
 
@@ -514,7 +529,7 @@ void GenTable::paint (Graphics& g)
 			//if(i%jmax(2, int(10*(1-zoom)))==1)
 			g.drawVerticalLine(prevX, getHeight()-(getHeight()-prevY)+2, getHeight()-25);
 			
-			//g.setColour(this->colour);
+			g.setColour(this->colour);
 			//g.drawLine(prevX, prevY, prevX+numPixelsPerIndex, prevY, 4);
 			
             prevX = jmax(0.0, prevX + numPixelsPerIndex);
@@ -728,7 +743,7 @@ void HandleViewer::actionListenerCallback(const String &message)
 		
     label->setBounds(mess[1].getIntValue()+offsetX, mess[2].getIntValue()+offsetY, 60, 20);
 	float amp = GenTable::pixelToAmp(getHeight(), minMax, mess[2].getIntValue());	
-	int currXPos = round((mess[1].getFloatValue()/(float)getWidth())*this->tableSize);
+	int currXPos = ((mess[1].getFloatValue()/(float)getWidth())*this->tableSize);
 	
 	if(abs(gen)==5)
 		amp = jmax(0.001f, amp);

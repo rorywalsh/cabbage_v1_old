@@ -2003,7 +2003,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
         table->enableEditMode(pFields, tableNumber);
 		}
 		
-		//table->bringTableToFront(2);
+		table->bringTableToFront(1);
     }
 }
 

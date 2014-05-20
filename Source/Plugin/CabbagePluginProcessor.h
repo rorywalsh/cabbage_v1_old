@@ -27,7 +27,7 @@
 #include "../XYPadAutomation.h"
 #include "../CabbageMessageSystem.h"
 #include "../Soundfiler.h"
-#include "CabbageGenericAudioProcessorEditor.h"
+#include "CabbageGenericAudioProcessorEditor.h" 
 #include "../CabbageLookAndFeel.h"
 
 #ifndef Cabbage_No_Csound
@@ -51,12 +51,9 @@
 class CsoundCodeEditor;
 #endif
 
-#ifdef BUILD_DEBUGGER
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
 #include <csdebug.h>
 #endif
-
-extern CabbageLookAndFeel* lookAndFeel;
-extern CabbageLookAndFeelBasic* lookAndFeelBasic;
 
 //==============================================================================
 // CabbagePluginAudioProcessor definition
@@ -111,12 +108,9 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     controlChannelInfo_s* csoundChanList;
     int numCsoundChannels;          //number of Csound channels
     static void messageCallback(CSOUND *csound, int attr, const char *fmt, va_list args);  //message callback function
-#ifdef BUILD_DEBUGGER
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
     static void breakpointCallback(CSOUND *csound, debug_bkpt_info_t *bkpt_info, void *udata);
 #endif
-    int ksmpsOffset;
-    bool CS_DEBUG_MODE;
-    int pos;
     //Csound API functions for deailing with midi input
     static int OpenMidiInputDevice(CSOUND * csnd, void **userData, const char *devName);
     static int OpenMidiOutputDevice(CSOUND * csnd, void **userData, const char *devName);
@@ -146,7 +140,9 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     static void YieldCallback(void* data);
     void updateCabbageControls();
     void sendOutgoingMessagesToCsound();
-
+    int ksmpsOffset;
+    bool CS_DEBUG_MODE;
+    int pos;
 
 
     StringArray debugInfo;
@@ -164,8 +160,11 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     OwnedArray<XYPadAutomation, CriticalSection> xyAutomation;
     void updateGUIControlsKsmps(int speed);
     int guiRefreshRate;
+#ifdef Cabbage_No_Csound
+	std::vector<float> temp;
+#else
     std::vector<MYFLT> temp;
-
+#endif
     TimeSliceThread backgroundThread; // the thread that will write our audio data to disk
     ScopedPointer<AudioFormatWriter::ThreadedWriter> threadedWriter; // the FIFO used to buffer the incoming data
     double sampleRate;

@@ -35,6 +35,10 @@ CabbageLookAndFeelBasic* lookAndFeelBasic;
 
 juce_ImplementSingleton (IdentArray);
 
+#if defined(Cabbage_No_Csound)
+#define OK 0
+#endif
+
 //==============================================================================
 // There are two different CabbagePluginAudioProcessor constructors. One for the
 // standalone application and the other for the plugin library
@@ -79,7 +83,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      mouseY(0),
      mouseX(0),
      isWinXP(false),
-     CS_DEBUG_MODE(false),
      ksmpsOffset(0),
      breakCount(0)
 {
@@ -258,10 +261,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         tempAudioFile = fullFileName;
         tempAudioFile.replaceWithData(0 ,0);
 #endif
-    }
-
-    lookAndFeel = new CabbageLookAndFeel();
-    lookAndFeelBasic = new CabbageLookAndFeelBasic();
 }
 #else
 
@@ -1111,7 +1110,8 @@ void CabbagePluginAudioProcessor::messageCallback(CSOUND* csound, int /*attr*/, 
 }
 #endif
 
-#ifdef BUILD_DEBUGGER
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
+
 void CabbagePluginAudioProcessor::breakpointCallback(CSOUND *csound, debug_bkpt_info_t *bkpt_info, void *userdata)
 {
 #ifdef BUILD_DEBUGGER
@@ -1220,8 +1220,8 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 //==============================================================================
 StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 {
-    StringArray fdata;
-
+StringArray fdata;
+#ifndef Cabbage_No_Csound
     if(csCompileResult==OK)
     {
         MYFLT* temp;
@@ -1233,6 +1233,7 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
                 fdata.add(String(e->p[i]));
         }
     }
+#endif
     return fdata;
 }
 //==============================================================================
@@ -1283,7 +1284,11 @@ const Array<float, CriticalSection> CabbagePluginAudioProcessor::getTableFloats(
 
 int CabbagePluginAudioProcessor::checkTable(int tableNum)
 {
+#ifndef Cabbage_No_Csound	
 	return  csound->TableLength(tableNum);	
+#else
+	return -1;
+#endif
 }
 
 //=================================================================================
@@ -1742,7 +1747,6 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 
             }
 
-            //CS_DEBUG_MODE=true;
             if (activeWriter != 0 && !isWinXP)
                 activeWriter->write (buffer.getArrayOfReadPointers(), buffer.getNumSamples());
 
@@ -1774,7 +1778,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 //==============================================================================
 void CabbagePluginAudioProcessor::setCsoundInstrumentBreakpoint(int instr, int line=0)
 {
-#ifdef BUILD_DEBUGGER
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
     getCallbackLock().enter();
     if(breakpointInstruments.size()==0)
         csoundDebuggerInit(csound->GetCsound());
@@ -1787,7 +1791,7 @@ void CabbagePluginAudioProcessor::setCsoundInstrumentBreakpoint(int instr, int l
 
 void CabbagePluginAudioProcessor::removeCsoundInstrumentBreakpoint(int instr)
 {
-#ifdef BUILD_DEBUGGER
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
     getCallbackLock().enter();
     breakpointInstruments.removeAllInstancesOf(instr);
     if(breakpointInstruments.size()==0)
@@ -1800,7 +1804,7 @@ void CabbagePluginAudioProcessor::removeCsoundInstrumentBreakpoint(int instr)
 
 void CabbagePluginAudioProcessor::continueCsoundDebug()
 {
-#ifdef BUILD_DEBUGGER
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
 
     if(breakpointInstruments.size()>0)
     {
@@ -1814,7 +1818,7 @@ void CabbagePluginAudioProcessor::continueCsoundDebug()
 
 void CabbagePluginAudioProcessor::nextCsoundDebug()
 {
-#ifdef BUILD_DEBUGGER
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
     //not yet implemented....
     if(breakpointInstruments.size()>0)
     {
@@ -1828,7 +1832,7 @@ void CabbagePluginAudioProcessor::nextCsoundDebug()
 
 void CabbagePluginAudioProcessor::cleanCsoundDebug()
 {
-#ifdef BUILD_DEBUGGER
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
     csoundClearBreakpoints(csound->GetCsound());
 #endif
 }

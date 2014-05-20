@@ -2000,6 +2000,8 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 		table->setWaveform(tableValues, tableNumber);
         table->enableEditMode(pFields, tableNumber);
 		}
+		
+		table->bringTableToFront(2);
     }
 }
 

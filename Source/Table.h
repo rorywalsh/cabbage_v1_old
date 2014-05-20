@@ -24,26 +24,35 @@
 #include "CabbageUtils.h"
 #include "CabbageLookAndFeel.h"
 
-class ZoomButton;
+class RoundButton;
 class HandleViewer;
 class HandleComponent;
 class GenTable;
 
 class TableManager : public Component,
+					 private ScrollBar::Listener,
 					 public ChangeListener
 {
 	double zoom;
+	int currentTableIndex;
 public:	
 	TableManager();
 	~TableManager(){};
+	void paint (Graphics& g){
+		g.fillAll(Colours::transparentBlack);
+	};
 	void resized();
+	void bringButtonsToFront();
 	void addTable(int sr, const String col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener);
     void setWaveform(AudioSampleBuffer buffer, int ftNumber);
+	void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
     void setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange = true);
 	void enableEditMode(StringArray pFields, int ftnumber);
-    ScopedPointer<ZoomButton> zoomIn, zoomOut;	
+    ScopedPointer<RoundButton> zoomIn, zoomOut;
+	OwnedArray<RoundButton> tableButtons;
 	OwnedArray<GenTable> tables;
 	void changeListenerCallback(ChangeBroadcaster *source);
+	void bringTableToFront(int ftNumber);
 };
 
 //=================================================================
@@ -101,20 +110,23 @@ public:
     int tableNumber, tableSize, genRoutine;
 	void setRange(Range<double> newRange, bool isScrolling = false);
 	Range<double> globalRange;
-
+	bool isTableOnTop;
+	ScopedPointer<ScrollBar> scrollbar;
+	void resized();
+	Range<double> visibleRange;
+	int scrollbarReduction;
+	
 private:
     Image img;
     int normalised;
-    //Graphics& graphics;
     int imgCount;
-    Range<double> visibleRange;
 	Colour fillColour;
     float currentWidth;
     double zoom;
     ScopedPointer<DrawableRectangle> currentPositionMarker;
-    ScopedPointer<ScrollBar> scrollbar;
     
-    void resized();
+    
+    
     Rectangle<int> handleViewerRect;
     void paint (Graphics& g);
     void mouseDown (const MouseEvent& e);
@@ -201,7 +213,7 @@ class HandleComponent : public Component,
     public ActionBroadcaster
 {
 public:
-    HandleComponent(float xPos, int index, bool fixed);
+    HandleComponent(double xPos, double yPos, int index, bool fixed);
     ~HandleComponent();
 
     HandleViewer* getParentComponent();
@@ -218,7 +230,7 @@ public:
 
     HandleComponent* getPreviousHandle();
     HandleComponent* getNextHandle();
-    float xPosRelative;
+    float xPosRelative, yPosRelative;
     String changeMessage;
     String mouseStatus;
 
@@ -233,33 +245,49 @@ private:
 };
 
 //==============================================================================
-// zooming button
+// round button
 //==============================================================================
-class ZoomButton : public Component,
+class RoundButton : public Component,
     public ChangeBroadcaster
 
 {
+String type;
+Colour colour;
 public:
-    ZoomButton(String type):Component()
+    RoundButton(String _type, Colour _colour):Component()
     {
-        setName(type);
+        setName(_type);
+		type = _type;
+		colour = _colour;
     }
-    ~ZoomButton() {}
+    ~RoundButton() {}
 
     void mouseDown(const MouseEvent& e)
     {
+		Logger::writeToLog("Mouse down on round button:"+String(type));
         sendChangeMessage();
     }
 
     void paint(Graphics& g)
     {
-        g.fillAll(Colours::transparentBlack);
-        g.setColour(Colours::white.withAlpha(.8f));
-        g.fillEllipse(0, 0, getWidth(), getHeight());
-        g.setColour(Colours::black);
-        g.fillRoundedRectangle(getWidth()*.18, getHeight()*.4f, getWidth()*.65, getHeight()*.25, 2);
-        if(getName()=="zoomIn")
-            g.fillRoundedRectangle(getWidth()*.38f, getHeight()*.20, getWidth()*.25, getHeight()*.65, 2);
+		Logger::writeToLog(type);
+        if(type.contains("zoom"))
+		{
+			g.fillAll(Colours::transparentBlack);
+			g.setColour(Colours::white.withAlpha(.8f));
+			g.fillEllipse(0, 0, getWidth(), getHeight());
+			g.setColour(Colours::black);
+			g.fillRoundedRectangle(getWidth()*.18, getHeight()*.4f, getWidth()*.65, getHeight()*.25, 2);
+			if(getName()=="zoomIn")
+				g.fillRoundedRectangle(getWidth()*.38f, getHeight()*.20, getWidth()*.25, getHeight()*.65, 2);
+		}
+		else{
+			g.fillAll(Colours::transparentBlack);
+			g.setColour(colour);
+			g.fillEllipse(0, 0, getWidth(), getHeight());
+			g.setColour(colour.contrasting());
+			g.drawFittedText(type, 0, 0, getWidth(), getHeight(), Justification::centred, 1); 
+		}
     }
 
 };

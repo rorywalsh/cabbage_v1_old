@@ -24,8 +24,8 @@
 //==============================================================================
 TableManager::TableManager(): Component(), zoom(0.0)
 {
-	addAndMakeVisible(zoomIn = new ZoomButton("zoomIn"));
-	addAndMakeVisible(zoomOut = new ZoomButton("zoomOut"));
+	addAndMakeVisible(zoomIn = new RoundButton("zoomIn", Colours::white));
+	addAndMakeVisible(zoomOut = new RoundButton("zoomOut", Colours::white));
     zoomIn->toFront(false);
 	zoomIn->addChangeListener(this);
     zoomOut->toFront(false);	
@@ -34,7 +34,7 @@ TableManager::TableManager(): Component(), zoom(0.0)
 //==============================================================================	
 void TableManager::changeListenerCallback(ChangeBroadcaster *source)
 {	
-    ZoomButton* button = dynamic_cast<ZoomButton*>(source);
+	RoundButton* button = dynamic_cast<RoundButton*>(source);
     if(button)
     {
         if(button->getName()=="zoomIn")
@@ -42,55 +42,86 @@ void TableManager::changeListenerCallback(ChangeBroadcaster *source)
             zoom+=0.1;
 			for(int i=0;i<tables.size();i++)
             tables[i]->setZoomFactor(jmin(0.9, zoom));
+/*			for(int i =0; i<tables.size();i++)
+				tables[i]->setBounds(0, 0, getWidth(), getHeight());*/	
         }
-        else
-        {
-            zoom-=0.1;
-            if(zoom<=0)
-			{
-				for(int i=0;i<tables.size();i++)
-				tables[i]->setZoomFactor(0.0);
-			}
-            else
-			{
-				for(int i=0;i<tables.size();i++)
-				tables[i]->setZoomFactor(zoom);
-			}
+        else if(button->getName()=="zoomOut")
+        {   
+			//zoom out in one go....
+			for(int i=0;i<tables.size();i++)
+			tables[i]->setZoomFactor(0.0);
+			zoom = 0.0;
+/*			for(int i =0; i<tables.size();i++)
+				tables[i]->setBounds(0, 0, getWidth(), getHeight());	*/
         }
+		else{
+			for(int i =0; i<tables.size();i++)
+			if(button->getName().getIntValue()==tables[i]->tableNumber)
+				{
+				tables[i]->toFront(true);
+				}
+			bringButtonsToFront();
+		}
         repaint();
     }
-	
-	GenTable* table = dynamic_cast<GenTable*>(source);
-	if(table)
-	{
-		if(table->changeMessage=="scrollbars moved")
-			for(int i=0;i<tables.size();i++)
-				tables[i]->setRange(table->globalRange);
-	}
 }	
 //==============================================================================	
 void TableManager::addTable(int sr, const String col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener)
 {
 	GenTable* table = new GenTable();	
 	table->addChangeListener(listener);
+	table->addChangeListener(this);
 	table->addTable(sr, col, gen, ampRange);
 	table->tableNumber = ftnumber;
+	table->scrollbar->addListener(this);
 	table->addChangeListener(listener);
 	addAndMakeVisible(table);
 	tables.add(table);
-
-
+	
+	RoundButton* button = new RoundButton(String(ftnumber), Colours::findColourForName(col, Colours::white));
+	button->addChangeListener(this);
+	addAndMakeVisible(button);
+	tableButtons.add(button);
 	
 	resized();	
+}
+
+void TableManager::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
+{
+	ScrollBar* scroll = dynamic_cast<ScrollBar*>(scrollBarThatHasMoved);
+    if(scroll)
+    {
+		for(int i=0;i<tables.size();i++)
+		{
+			float moveBy = newRangeStart/scrollBarThatHasMoved->getCurrentRange().getLength();
+			moveBy = tables[i]->visibleRange.getLength()*moveBy;
+			//Logger::writeToLog("table_range:"+String(scrollBarThatHasMoved->getCurrentRange().getLength()));
+			tables[i]->setRange(tables[i]->visibleRange.movedToStartAt (moveBy), true);
+		}
+	}
+			
 }
 //==============================================================================
 void TableManager::resized()
 {
-	for(int i =0; i<tables.size();i++)
-		tables[i]->setBounds(0, 0, getWidth(), getHeight()-20.f);	
+	for(int i =0; i<tables.size();i++){
+		tables[i]->setBounds(0, 0, getWidth(), getHeight());
+	}	
+		
+	bringButtonsToFront();
+}
+//==============================================================================
+void TableManager::bringButtonsToFront()
+{
     zoomIn->setBounds(getWidth()-43, getHeight()-20, 20, 20);
-    zoomOut->setBounds(getWidth()-20, getHeight()-20, 20, 20);		
-	
+	zoomIn->toFront(true);
+    zoomOut->setBounds(getWidth()-20, getHeight()-20, 20, 20);	
+	zoomOut->toFront(true);
+	for(int i=0;i<tableButtons.size();i++)
+	{
+		tableButtons[i]->setBounds(getWidth()-65-(i*18), getHeight()-18, 15, 15);
+		tableButtons[i]->toFront(true);				
+	}	
 }
 //==============================================================================
 void TableManager::setWaveform(AudioSampleBuffer buffer, int ftNumber)
@@ -113,6 +144,28 @@ void TableManager::enableEditMode(StringArray pFields, int ftNumber)
 		if(ftNumber==tables[i]->tableNumber)
 			tables[i]->enableEditMode(pFields);
 }	
+//==============================================================================
+void TableManager::bringTableToFront(int ftNumber)
+{
+	for( int i=0;i<tables.size();i++)
+	{
+		tables[i]->scrollbarReduction = (tables.size()*20)+50;
+		if(ftNumber==tables[i]->tableNumber)
+		{
+			tables[i]->toFront(true);
+		}
+		tables[i]->resized();
+	}		
+	
+	for(int i=0;i<tableButtons.size();i++)
+		tableButtons[i]->toFront(true);				
+
+    zoomIn->toFront(false);
+	zoomIn->addChangeListener(this);
+    zoomOut->toFront(false);	
+	zoomOut->addChangeListener(this);			
+}
+
 //==============================================================================
 // GenTable display  component
 //==============================================================================
@@ -179,26 +232,6 @@ void GenTable::addTable(int sr, const String col, int gen, Array<float> ampRange
 //==============================================================================
 void GenTable::changeListenerCallback(ChangeBroadcaster *source)
 {
-    ZoomButton* button = dynamic_cast<ZoomButton*>(source);
-
-    if(button)
-    {
-        if(button->getName()=="zoomIn")
-        {
-            zoom+=0.1;
-            setZoomFactor(jmin(0.9, zoom));
-        }
-        else
-        {
-            zoom-=0.1;
-            if(zoom<=0)
-                setZoomFactor(0.0);
-            else
-                setZoomFactor(zoom);
-        }
-        repaint();
-    }
-
     HandleComponent* handle = dynamic_cast<HandleComponent*>(source);
 
     if(handle)
@@ -213,20 +246,16 @@ void GenTable::changeListenerCallback(ChangeBroadcaster *source)
 void GenTable::resized()
 {
     handleViewer->setSize(getWidth(), getHeight()-25);
-	
     if(scrollbar)
-        scrollbar->setBounds (getLocalBounds().removeFromBottom (20).reduced (2));
+        scrollbar->setBounds (getLocalBounds().withWidth(getWidth()-scrollbarReduction).removeFromBottom (20).reduced (2));
 }
 //==============================================================================
+
 void GenTable::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
 {
-    if (scrollBarThatHasMoved == scrollbar)
-	{
-		changeMessage = "scrollbars moved";
-		globalRange = visibleRange.movedToStartAt (newRangeStart);
-		sendChangeMessage();
-		//setRange (visibleRange.movedToStartAt (newRangeStart), true);		
-	}
+	//visibleRange = visibleRange.movedToStartAt (newRangeStart);
+	//setRange (visibleRange.movedToStartAt (newRangeStart), true);	
+	//sendChangeMessage();
 }
 
 void GenTable::setFile (const File& file)
@@ -371,22 +400,29 @@ void GenTable::setZoomFactor (double amount)
 {
     zoom = amount;
 
+
     if(genRoutine==1)
     {
         if (thumbnail->getTotalLength() > 0)
         {
             const double newScale = jmax (0.001, thumbnail->getTotalLength() * (1.0 - jlimit (0.0, 0.99, amount)));
             const double timeAtCentre = xToTime (getWidth() / 2.0f);
-            setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
+			if(amount!=0)
+				setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
+			else
+				setRange (Range<double> (0, thumbnail->getTotalLength()));
         }
     }
     else
     {
         const double newScale = jmax (0.00001, waveformBuffer.size()/sampleRate * (1.0 - jlimit (0.0, 0.9999, amount)));
         const double timeAtCentre = xToTime (getWidth() / 2.0f);
-        setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
-
+		if(amount!=0)
+			setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
+		else
+			setRange (Range<double> (0, waveformBuffer.size()/sampleRate));
     }
+
     repaint();
 }
 
@@ -418,22 +454,23 @@ void GenTable::mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel
 void GenTable::setRange(Range<double> newRange, bool isScrolling)
 {
     visibleRange = newRange;
-    scrollbar->setCurrentRange (visibleRange);
     //set visible ranges in samples...
-    visibleStart = visibleRange.getStart()*sampleRate;
+    scrollbar->setCurrentRange (visibleRange, dontSendNotification);
+/*	Logger::writeToLog("TableNumber:"+String(tableNumber));
     Logger::writeToLog("VisibleStart:"+String(visibleStart));
     Logger::writeToLog("VisibleEnd:"+String(visibleEnd));
     Logger::writeToLog("VisibleLength:"+String(visibleLength));
-	Logger::writeToLog("Zoom:"+String(zoom));
-    visibleEnd = visibleRange.getEnd()*sampleRate;
-    visibleLength = visibleRange.getLength()*sampleRate;
+	Logger::writeToLog("Zoom:"+String(zoom));*/
 
     if(genRoutine!=1)
     {
+		
+		visibleStart = visibleRange.getStart()*sampleRate;
+		visibleEnd = visibleRange.getEnd()*sampleRate;
+		visibleLength = visibleRange.getLength()*sampleRate;
         if(!isScrolling)
         {
-			float comp = 0;// float(getWidth())*zoom;
-            float newWidth = float(getWidth())*(float(waveformBuffer.size())/visibleLength)+comp;
+            float newWidth = float(getWidth())*(float(waveformBuffer.size())/visibleLength);
             float leftOffset = newWidth*(visibleStart/(float)waveformBuffer.size());
             Logger::writeToLog("leftOffset:"+String(leftOffset));
             handleViewer->setSize(newWidth, handleViewer->getHeight());
@@ -446,7 +483,7 @@ void GenTable::setRange(Range<double> newRange, bool isScrolling)
         }
 
     }
-    repaint();
+	repaint();
 }
 //==============================================================================
 void GenTable::paint (Graphics& g)
@@ -563,6 +600,7 @@ void GenTable::setScrubberPos(double pos)
 
     if(visibleRange.getEnd()<=thumbnail->getTotalLength())
         setRange (visibleRange.movedToStartAt (jmax(0.0, pos - (visibleRange.getLength() / 2.0))));
+
 }
 //==============================================================================
 void GenTable::mouseUp(const MouseEvent& e)
@@ -593,7 +631,7 @@ void HandleViewer::addHandle(float x, float  y)
 	GenTable* table = findParentComponentOfClass <GenTable>();
 	if(table)
 	{
-    HandleComponent* handle = new HandleComponent(x, handles.size(), true);
+    HandleComponent* handle = new HandleComponent(x, y/getHeight(), handles.size(), true);
     handle->setTopLeftPosition(getWidth()*x-5, y-5);
 	handle->setSize(getWidth()/40, getWidth()/40);
     handle->addChangeListener(table);
@@ -621,7 +659,7 @@ void HandleViewer::insertHandle(float x, float y)
 			}
 		}
 		
-    HandleComponent* handle = new HandleComponent(x, handles.size(), true);
+    HandleComponent* handle = new HandleComponent(x, y/getHeight(), handles.size(), true);
     handle->setTopLeftPosition(getWidth()*x, y-5);
 	//handle->setSize(getWidth()/40, getWidth()/40);
     handle->addChangeListener(table);
@@ -644,7 +682,7 @@ void HandleViewer::resized()
 {
     for(int i=0; i<handles.size(); i++)
     {
-        handles[i]->setTopLeftPosition((getWidth()*handles[i]->xPosRelative), handles[i]->getPosition().getY());
+        handles[i]->setTopLeftPosition(((double)getWidth()*handles[i]->xPosRelative), ((double)getHeight()*handles[i]->yPosRelative));
     }
 }
 //==============================================================================
@@ -700,6 +738,8 @@ void HandleViewer::actionListenerCallback(const String &message)
 		amp = jmax(0.f, amp);
 		
 	label->setColour(Label::textColourId, colour);
+	label->setColour(Label::backgroundColourId, colour.contrasting());
+	
 	String text = String(currXPos)+", "+String(amp);
     label->setText(text, dontSendNotification);
 }
@@ -737,11 +777,13 @@ void HandleViewer::removeHandle (HandleComponent* thisHandle)
 }
 
 //==================================================================================
-HandleComponent::HandleComponent(float xPos, int _index, bool fixed):
+HandleComponent::HandleComponent(double xPos, double yPos, int _index, bool fixed):
     index(_index), x(0), y(0), colour(colour), fixed(fixed)
 {
     xPosRelative = xPos;
-	Logger::writeToLog("Pos for handle:"+String(index)+"="+String(xPos));
+	yPosRelative = yPos;
+	
+	//Logger::writeToLog("Pos for handle:"+String(index)+"="+String(xPos));
     this->setInterceptsMouseClicks(true, false);
     setSize(10, 10);
 }
@@ -841,8 +883,8 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
     int rightLimit = nextHandle == 0 ? getParentWidth()-previousHandle->getHeight() : nextHandle->getX()-1;
     int topLimit = previousHandle == 0 ? 0 : previousHandle->getX()+1;
 
-    float dragX = x+e.getDistanceFromDragStartX();
-    float dragY = y+e.getDistanceFromDragStartY();
+    double dragX = x+e.getDistanceFromDragStartX();
+    double dragY = y+e.getDistanceFromDragStartY();
 
     //dragger.dragComponent(this, e, &resizeLimits);
     if(dragX < leftLimit)
@@ -857,7 +899,8 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
         dragX = x;
 
     this->setTopLeftPosition(dragX, dragY);
-    xPosRelative = dragX/this->getParentComponent()->getWidth();
+    xPosRelative = dragX/(double)this->getParentComponent()->getWidth();
+	yPosRelative = dragY/(double)this->getParentComponent()->getHeight();
     //Logger::writeToLog("xPosRelative:"+String(xPosRelative));
 
     sendChangeMessage();

@@ -54,12 +54,20 @@ void TableManager::changeListenerCallback(ChangeBroadcaster *source)
 			for(int i =0; i<tables.size();i++)
 			if(button->getName().getIntValue()==tables[i]->tableNumber)
 				{
-				tables[i]->toFront(true);
-				tables[i]->getHandleViewer()->showHandles(true);
+					if(button->getMode()==1)
+					{
+					tables[i]->setVisible(true);
+					tables[i]->toFront(true);
+					tables[i]->getHandleViewer()->showHandles(true);
+					}
+					else if(button->getMode()==0)
+					tables[i]->setVisible(false);
+
 				}
 			else
 				tables[i]->getHandleViewer()->showHandles(false);
-			bringButtonsToFront();
+				
+				bringButtonsToFront();
 		}
         repaint();
     }
@@ -82,6 +90,7 @@ void TableManager::addTable(int sr, const String col, int gen, Array<float> ampR
 	addAndMakeVisible(button);
 	tableButtons.add(button);
 	
+	
 	resized();	
 }
 
@@ -97,17 +106,55 @@ void TableManager::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newR
 			//Logger::writeToLog("table_range:"+String(scrollBarThatHasMoved->getCurrentRange().getLength()));
 			tables[i]->setRange(tables[i]->visibleRange.movedToStartAt (moveBy), true);
 		}
-	}
-			
+	}			
+}
+
+void TableManager::setScrubberPos(double pos, int ftnumber)
+{
+	double relPosition = pos/getTableFromFtNumber(ftnumber)->tableSize;
+	for(int i=0;i<tables.size();i++)
+	tables[i]->setScrubberPos(relPosition);
 }
 //==============================================================================
 void TableManager::resized()
 {
+	//if tables are stacked on each, do the math here...
+	
 	for(int i =0; i<tables.size();i++){
 		tables[i]->setBounds(0, 0, getWidth(), getHeight());
 	}	
-		
+	
+	for(int i=0;i<tableConfigList.size();i++)
+	{
+		if(tableConfigList[i].size()>0)
+		for(int y=0;y<tableConfigList[i].size();y++)
+		{
+			int ySpacing = y*((getHeight()-25)/tableConfigList[i].size());
+			int height = (getHeight()-25)/tableConfigList[i].size();
+			int tableNumber = tableConfigList[i].getArray()->getReference(y);
+			int width = getWidth();
+			getTableFromFtNumber(tableNumber)->setBounds(0, ySpacing, getWidth(), height);
+			getTableFromFtNumber(tableNumber)->showScrollbar(false);
+		}
+	}
+	
 	bringButtonsToFront();
+}
+
+void TableManager::setConfigTableSizes(var intableConfigList)
+{
+	tableConfigList = intableConfigList;
+	resized();
+}
+
+GenTable* TableManager::getTableFromFtNumber(int ftnumber)
+{
+	for(int i=0;i<tables.size();i++)
+	{
+		if(tables[i]->tableNumber==ftnumber)
+			return tables[i];		
+	}
+	return nullptr;
 }
 //==============================================================================
 void TableManager::bringButtonsToFront()
@@ -122,6 +169,7 @@ void TableManager::bringButtonsToFront()
 		tableButtons[i]->toFront(true);				
 	}	
 }
+
 //==============================================================================
 void TableManager::setWaveform(AudioSampleBuffer buffer, int ftNumber)
 {
@@ -175,14 +223,15 @@ GenTable::GenTable():	thumbnailCache (5),
     zoom(0.0),
     currentWidth(0),
     normalised(0),
-    tableNumber(-1)
+    tableNumber(-1),
+	showScroll(true)
 {
     thumbnail=nullptr;
     addAndMakeVisible(scrollbar = new ScrollBar(false));
     scrollbar->setRangeLimits (visibleRange);
     //scrollbar->setAutoHide (false);
     scrollbar->addListener(this);
-    currentPositionMarker->setFill (Colours::white.withAlpha (0.85f));
+    currentPositionMarker->setFill (Colours::white);
     addAndMakeVisible(currentPositionMarker);
     
     handleViewer = new HandleViewer();
@@ -232,17 +281,24 @@ void GenTable::changeListenerCallback(ChangeBroadcaster *source)
         changeMessage = "updateFunctionTable";
         sendChangeMessage();
     }
-
-
 }
 //==============================================================================
 void GenTable::resized()
 {
     handleViewer->setSize(getWidth(), getHeight()-25);	
-	Logger::writeToLog(String(getLocalBounds().getHeight()-20));
     if(scrollbar)
+		if(showScroll)
         scrollbar->setBounds (getLocalBounds().withWidth(getWidth()-scrollbarReduction).removeFromBottom (20).reduced (2));
+		else
+		scrollbar->setBounds (-1000, 0, 100, 10);	
 }
+
+void GenTable::showScrollbar(bool show)
+{
+	showScroll = show;
+}
+
+
 //==============================================================================
 
 void GenTable::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
@@ -284,7 +340,6 @@ Array<double> GenTable::getPfields()
     for(int i=0; i<handleViewer->handles.size(); i++)
     {
         currXPos = handleViewer->handles[i]->xPosRelative*waveformBuffer.size();
-		Logger::writeToLog(String(handleViewer->handles.size()));
 		//add x position
         values.add(jmax(0.0, currXPos-prevXPos));
 
@@ -325,22 +380,17 @@ void GenTable::setWaveform(AudioSampleBuffer buffer)
 void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRange)
 {
     if(genRoutine != 1)
-    {
-  /*      buffer.clear();
-		buffer.add(0.0);
-		buffer.add(0.6);
-		buffer.add(0.2);
-		buffer.add(0.9);
-		buffer.add(0.0);
-		buffer.add(0.2);
-		buffer.add(0.3);
-		buffer.add(0.4);
-		buffer.add(0.5);
-		buffer.add(0.6);
-		buffer.add(0.7);
-		buffer.add(0.8);
-		buffer.add(0.9);
-	*/	
+    {	
+	/*	buffer.clear();
+		float freq = .12;
+		float x = 0;
+		float dx = (M_PI*2.0 / freq) * 512.f;
+		float amplitude = 1.f;
+		  for (int i = 0; i < 1024; i++) {
+			buffer.add(sin(x)*amplitude);
+			x+=dx;
+		  }	*/	
+		
 		waveformBuffer = buffer;
         tableSize = buffer.size();
         handleViewer->tableSize = tableSize;
@@ -387,14 +437,14 @@ void GenTable::enableEditMode(StringArray pFields)
             float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
             handleViewer->addHandle(0, ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue));
 
-            Logger::writeToLog("Coordinates:("+String(xPos)+", "+String(ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue))+")");
+            //Logger::writeToLog("Coordinates:("+String(xPos)+", "+String(ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue))+")");
 
             for(int i=6; i<pFields.size(); i+=2)
             {
                 xPos = xPos + pFields[i].getFloatValue();
                 pFieldAmpValue = (normalised<0 ? pFields[i+1].getFloatValue() : pFields[i+1].getFloatValue()/pFieldMinMax.getEnd());
                 handleViewer->addHandle(xPos/(float)waveformBuffer.size(), ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue));
-                Logger::writeToLog("Coordinates:("+String(xPos)+", "+String(ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue))+")");
+                //Logger::writeToLog("Coordinates:("+String(xPos)+", "+String(ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue))+")");
             }
 
         }
@@ -463,36 +513,39 @@ void GenTable::mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel
 void GenTable::setRange(Range<double> newRange, bool isScrolling)
 {
     visibleRange = newRange;
-    //set visible ranges in samples...
-    scrollbar->setCurrentRange (visibleRange, dontSendNotification);
-	Logger::writeToLog("TableNumber:"+String(tableNumber));
-    Logger::writeToLog("VisibleStart:"+String(visibleRange.getStart()*sampleRate));
-    Logger::writeToLog("VisibleEnd:"+String(visibleRange.getEnd()*sampleRate));
-    Logger::writeToLog("VisibleLength:"+String(visibleRange.getLength()*sampleRate));
-	Logger::writeToLog("Zoom:"+String(zoom));
+	if(newRange.getLength()>0)
+	{
+		//set visible ranges in samples...
+		scrollbar->setCurrentRange (visibleRange, dontSendNotification);
+//		Logger::writeToLog("TableNumber:"+String(tableNumber));
+//		Logger::writeToLog("VisibleStart:"+String(visibleRange.getStart()*sampleRate));
+//		Logger::writeToLog("VisibleEnd:"+String(visibleRange.getEnd()*sampleRate));
+//		Logger::writeToLog("VisibleLength:"+String(visibleRange.getLength()*sampleRate));
+//		Logger::writeToLog("Zoom:"+String(zoom));
 
-    if(genRoutine!=1)
-    {
-		
-		visibleStart = visibleRange.getStart()*sampleRate;
-		visibleEnd = visibleRange.getEnd()*sampleRate;
-		visibleLength = visibleRange.getLength()*sampleRate;
-        if(!isScrolling)
-        {
-            double newWidth = double(getWidth())*(double(waveformBuffer.size())/visibleLength);
-            double leftOffset = newWidth*(visibleStart/(double)waveformBuffer.size());
-            Logger::writeToLog("width:"+String(newWidth));
-			handleViewer->setSize(newWidth, handleViewer->getHeight());	
-            handleViewer->setTopLeftPosition(-leftOffset, 0);
-        }
-        else
-        {
-            double leftOffset = handleViewer->getWidth()*(visibleStart/(double)waveformBuffer.size());
-            handleViewer->setTopLeftPosition(-leftOffset, 0);
-        }
+		if(genRoutine!=1)
+		{
+			
+			visibleStart = visibleRange.getStart()*sampleRate;
+			visibleEnd = visibleRange.getEnd()*sampleRate;
+			visibleLength = visibleRange.getLength()*sampleRate;
+			if(!isScrolling)
+			{
+				double newWidth = double(getWidth())*(double(waveformBuffer.size())/visibleLength);
+				double leftOffset = newWidth*(visibleStart/(double)waveformBuffer.size());
+				handleViewer->setSize(newWidth, handleViewer->getHeight());	
+				handleViewer->setTopLeftPosition(-leftOffset, 0);
+			}
+			else
+			{
+				double leftOffset = handleViewer->getWidth()*(visibleStart/(double)waveformBuffer.size());
+				handleViewer->setTopLeftPosition(-leftOffset, 0);
+			}
 
-    }
-	repaint();
+		}
+		repaint();
+	}
+
 }
 //==============================================================================
 void GenTable::paint (Graphics& g)
@@ -530,7 +583,7 @@ void GenTable::paint (Graphics& g)
 			g.drawVerticalLine(prevX, getHeight()-(getHeight()-prevY)+2, getHeight()-25);
 			
 			g.setColour(this->colour);
-			//g.drawLine(prevX, prevY, prevX+numPixelsPerIndex, prevY, 4);
+			g.drawLine(prevX, prevY, prevX+numPixelsPerIndex, prevY, 4);
 			
             prevX = jmax(0.0, prevX + numPixelsPerIndex);
 			prevY = currY;
@@ -586,7 +639,7 @@ void GenTable::mouseDrag(const MouseEvent& e)
             {
                 double zoomFactor = visibleRange.getLength()/thumbnail->getTotalLength();
                 regionWidth = abs(e.getDistanceFromDragStartX())*zoomFactor;
-                Logger::writeToLog(String(e.getDistanceFromDragStartX()));
+                //Logger::writeToLog(String(e.getDistanceFromDragStartX()));
                 if(e.getDistanceFromDragStartX()<0)
                     currentPlayPosition = jmax (0.0, xToTime (loopStart+(float)e.getDistanceFromDragStartX()));
                 float widthInTime = ((float)e.getDistanceFromDragStartX() / (float)getWidth()) * (float)thumbnail->getTotalLength();
@@ -600,15 +653,45 @@ void GenTable::mouseDrag(const MouseEvent& e)
 void GenTable::setScrubberPos(double pos)
 {
     //might need to be taken care of on a higher level
-    currentPositionMarker->setVisible (true);
-    pos = (pos/(thumbnail->getTotalLength()*sampleRate))*thumbnail->getTotalLength();
-    currentPositionMarker->setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 10,
-                                         1.5f, (float) (getHeight() - scrollbar->getHeight()-10)));
-    if(pos<0.5)
-        setRange (visibleRange.movedToStartAt(0));
+    if(abs(genRoutine)==1)
+    {
+		currentPositionMarker->setVisible (true);
+				Logger::writeToLog("Pos:"+String(pos));
+				
+		pos = pos*thumbnail->getTotalLength()*sampleRate;
+		//assign time values in seconds to pos..
+		pos = (pos/(thumbnail->getTotalLength()*sampleRate))*thumbnail->getTotalLength();
+		
+		currentPositionMarker->setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 0,
+											 1.5f, (float) (getHeight() - 20)));
+											 Logger::writeToLog(String((thumbnail->getTotalLength()*sampleRate)/2));
 
-    if(visibleRange.getEnd()<=thumbnail->getTotalLength())
-        setRange (visibleRange.movedToStartAt (jmax(0.0, pos - (visibleRange.getLength() / 2.0))));
+		if(pos<thumbnail->getTotalLength()/2.f)
+			setRange (visibleRange.movedToStartAt(0));
+		else if(pos+visibleRange.getLength()>thumbnail->getTotalLength())
+			setRange (visibleRange.movedToEndAt(thumbnail->getTotalLength()));
+//		else
+//		if(visibleRange.getEnd()<=thumbnail->getTotalLength() && zoom>0.0)
+//				setRange (visibleRange.movedToStartAt (jmax(0.0, pos - (visibleRange.getLength() / 2.0))));
+
+	}
+    else
+    {
+		
+		currentPositionMarker->setVisible (true);
+		pos = pos*(double)waveformBuffer.size()/sampleRate;
+		currentPositionMarker->setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 0,
+											 1.5f, (float) (getHeight() - 20)));
+		if(pos<((double)waveformBuffer.size()/sampleRate)/2.f)
+			setRange (visibleRange.movedToStartAt(0));
+		else if(pos+((waveformBuffer.size()/sampleRate))>(waveformBuffer.size()/sampleRate))
+			setRange (visibleRange.movedToEndAt(waveformBuffer.size()/sampleRate));
+
+//		else if (pos<((double)waveformBuffer.size()/sampleRate)/2.f)
+//			if(visibleRange.getEnd()<=waveformBuffer.size() && zoom>0.0)
+//				setRange (visibleRange.movedToStartAt (jmax(0.0, pos - (visibleRange.getLength() / 2.0))));
+
+	}
 
 }
 //==============================================================================
@@ -641,7 +724,8 @@ void HandleViewer::addHandle(double x, double y)
 	if(table)
 	{
 		HandleComponent* handle = new HandleComponent(x, y/getHeight(), handles.size(), false);
-		handle->setTopLeftPosition((double)getWidth()*x, y);
+		handle->setCentrePosition((double)getWidth()*x, y);
+		//handle->setTopLeftPosition((double)getWidth()*x, y-5);
 		handle->setSize((double)getWidth()/40.0, (double)getWidth()/40.0);
 		handle->addChangeListener(table);
 		handle->addActionListener(this);
@@ -663,12 +747,13 @@ void HandleViewer::insertHandle(double x, double y)
 			if (x*getWidth() >= handles[i-1]->getX() && x*getWidth() < handles[i]->getX())
 			{
 				indx = i;
-				Logger::writeToLog("Handle number: "+String(indx+1));
+				//Logger::writeToLog("Handle number: "+String(indx+1));
 			}
 		}
 		
     HandleComponent* handle = new HandleComponent(x, y/getHeight(), handles.size(), false);
-    handle->setTopLeftPosition(getWidth()*x, y);
+    handle->setCentrePosition((double)getWidth()*x, y);
+	//handle->setTopLeftPosition(getWidth()*x, y);
 	//handle->setSize(getWidth()/40, getWidth()/40);
     handle->addChangeListener(table);
     handle->addActionListener(this);
@@ -691,14 +776,15 @@ void HandleViewer::showHandles(bool show)
 void HandleViewer::mouseDown(const MouseEvent& e)
 {	
     insertHandle(double(e.x)/(double)getWidth(), (float)e.y);
-	Logger::writeToLog("CHV Width:"+String(getWidth()));
+	//Logger::writeToLog("CHV Width:"+String(getWidth()));
 }
 //==============================================================================
 void HandleViewer::resized()
 {
     for(int i=0; i<handles.size(); i++)
     {
-        handles[i]->setTopLeftPosition(((double)getWidth()*handles[i]->xPosRelative), ((double)getHeight()*handles[i]->yPosRelative));
+		//Logger::writeToLog(String((double)getWidth()*handles[i]->xPosRelative));
+        handles[i]->setCentrePosition(((double)getWidth()*handles[i]->xPosRelative), ((double)getHeight()*handles[i]->yPosRelative));
     }
 }
 //==============================================================================
@@ -890,7 +976,7 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
     HandleComponent* previousHandle = getPreviousHandle();
     HandleComponent* nextHandle = getNextHandle();
     
-
+	bool fixed = this->getProperties().getWithDefault("fixedPos", false);
 
     int leftLimit = previousHandle == 0 ? 0 : previousHandle->getX()+1;
     int rightLimit = nextHandle == 0 ? getParentWidth()-previousHandle->getHeight() : nextHandle->getX()-1;
@@ -907,11 +993,13 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
     if(dragY< 0)
         dragY = 0;
     if(dragY > getParentComponent()->getHeight())
-        dragY = getParentComponent()->getHeight();
+        dragY = getParentComponent()->getHeight()-5;
     if(fixed)
         dragX = x;
 
-    this->setTopLeftPosition(dragX, dragY);
+    this->setCentrePosition(dragX, dragY);
+	//setTopLeftPosition(dragX, dragY);
+	
     xPosRelative = jlimit(0.0, 1.0, dragX/(double)this->getParentComponent()->getWidth());
 	yPosRelative = jlimit(0.0, 1.0, dragY/(double)this->getParentComponent()->getHeight());
     //Logger::writeToLog("xPosRelative:"+String(xPosRelative));

@@ -1972,40 +1972,44 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 
-    //load initial files/tables if any are set
 
-    int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();
-    for(int y=0; y<numberOfTables; y++)
+	TableManager* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
+	
+
+    var tables = cAttr.getVarArrayProp(CabbageIDs::tablenumber);
+	for(int y=0; y<tables.size(); y++)	
     {
-        
-        int tableNumber = cAttr.getIntArrayPropValue(CabbageIDs::tablenumber, y);
-        TableManager* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
-        //table->addChangeListener(this);
-        StringArray pFields = getFilter()->getTableStatement(tableNumber);
-        int genRoutine = pFields[4].getIntValue();
+			int tableNumber = tables[y];
+			if(tableNumber>0)
+			{
+			Logger::writeToLog(String(tableNumber));
+			//table->addChangeListener(this);
+			StringArray pFields = getFilter()->getTableStatement(tableNumber);
+			int genRoutine = pFields[4].getIntValue();
 
-        tableValues.clear();
-        tableValues = getFilter()->getTableFloats(tableNumber);
-		
-		table->addTable(44100, cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), genRoutine, 
-																cAttr.getFloatArrayProp("amprange"), 
-																tableNumber, this);
-		if(abs(genRoutine)==1)
-		{
-		tableBuffer.clear();
-		int channels = 1;//for now only works in mono;;
-        tableBuffer.setSize(channels, tableValues.size());
-        tableBuffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());	
-		table->setWaveform(tableBuffer, tableNumber);		
+			tableValues.clear();
+			tableValues = getFilter()->getTableFloats(tableNumber);
+			
+			table->addTable(44100, cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), genRoutine, 
+																	cAttr.getFloatArrayProp("amprange"), 
+																	tableNumber, this);
+			if(abs(genRoutine)==1)
+			{
+			tableBuffer.clear();
+			int channels = 1;//for now only works in mono;;
+			tableBuffer.setSize(channels, tableValues.size());
+			tableBuffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());	
+			table->setWaveform(tableBuffer, tableNumber);		
+			}
+			else
+			{
+			table->setWaveform(tableValues, tableNumber);
+			table->enableEditMode(pFields, tableNumber);
+			}				
 		}
-		else
-		{
-		table->setWaveform(tableValues, tableNumber);
-        table->enableEditMode(pFields, tableNumber);
-		}
-		
-		table->bringTableToFront(1);
     }
+	table->setConfigTableSizes(cAttr.getVarArrayProp(CabbageIDs::tableconfig));
+	table->bringTableToFront(1);	
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -3326,7 +3330,6 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                 getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
             }
             //gentable
-            /*
             else if((getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::gentable) &&
             		getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
             		{
@@ -3338,16 +3341,16 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
             				{
             				tableBuffer.clear();
             				int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
-            				GenTable* table = dynamic_cast<CabbageGenTable*>(layoutComps[i])->table;
+            				TableManager* table = dynamic_cast<CabbageGenTable*>(layoutComps[i])->table;
             				StringArray pFields = getFilter()->getTableStatement(tableNumber);
             				//tableValues.clear();
             				tableValues = getFilter()->getTableFloats(tableNumber);
             				table->setWaveform(tableValues, tableNumber);
             				}
+						}
+					((CabbageGenTable*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
             		getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
-            		}
             	}
-            	 * */
         }
 
 

@@ -894,7 +894,7 @@ class CabbageGenTable	:	public Component,
     String file;
     float zoom;
     double sampleRate;
-    float scrubberPos;
+    double scrubberPos;
 //---- constructor -----
 public:
     CabbageGenTable (CabbageGUIClass &cAttr) : colour(cAttr.getStringProp(CabbageIDs::colour)),
@@ -926,10 +926,13 @@ public:
     void update(CabbageGUIClass m_cAttr)
     {
         setBounds(m_cAttr.getBounds());
+		//Logger::writeToLog("ScrubberPos:"+String(m_cAttr.getNumProp(CabbageIDs::scrubberposition)));
         if(scrubberPos!=m_cAttr.getNumProp(CabbageIDs::scrubberposition))
         {
-            scrubberPos = m_cAttr.getNumProp(CabbageIDs::scrubberposition);
-            //table->setScrubberPos(scrubberPos);
+            //var scrubberPos = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition);
+			scrubberPos = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[0];
+			int tableNumber = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[1];
+			table->setScrubberPos(scrubberPos, 1);
         }
 
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
@@ -970,7 +973,7 @@ public:
 
     ScopedPointer<TableManager> table;
 private:
-    float scrubberPosition;
+    double scrubberPosition;
 
     void changeListenerCallback(ChangeBroadcaster *source)
     {

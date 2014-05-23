@@ -1061,7 +1061,10 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                 {
                     var colours;
                     for(int i=0; i<strTokens.size(); i++)
+					{
                         colours.append(strTokens[i].trim());
+						Logger::writeToLog(strTokens[i].trim());
+					}
                     cabbageIdentifiers.set(CabbageIDs::tablecolour, colours);
                 }
 
@@ -1468,7 +1471,16 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 
                 else if(identArray[indx].equalsIgnoreCase("scrubberposition"))
                 {
-                    cabbageIdentifiers.set(CabbageIDs::scrubberposition, strTokens[0].trim().getIntValue());
+					var positionAndTable;
+					positionAndTable.append(strTokens[0].trim().getIntValue());
+					if(strTokens.size()>1)
+					{
+					positionAndTable.append(strTokens[1].trim().getIntValue());	
+					cabbageIdentifiers.set(CabbageIDs::scrubberposition, positionAndTable);				
+					}
+					else{
+						cabbageIdentifiers.set(CabbageIDs::scrubberposition, positionAndTable);
+					}
                 }
 
                 else if(identArray[indx].equalsIgnoreCase("logger"))
@@ -1508,15 +1520,37 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                 {
                     int tableNum = strTokens[0].trim().getIntValue();
                     var value;
-                    value.append(tableNum);
-                    tableNumbers.add(tableNum);
-                    if(strTokens.size()>1)
-                        for(int i=1; i<strTokens.size(); i++)
-                        {
-                            tableNumbers.add(strTokens[i].trim().getFloatValue());
-                            value.append(strTokens[i].trim().getFloatValue());
+					var tableConfig;
+                    //value.append(tableNum);
+                    //tableNumbers.add(tableNum);
+					
+				for(int i=0; i<strTokens.size(); i++)
+                   {
+					if(strTokens[i].contains(":") && strTokens.size()>0)
+					{
+						//split string into two
+						StringArray tablesData;
+						tablesData.addTokens(strTokens[i], ":", "");
+						var tables;
+						for(int w=0;w<tablesData.size();w++)
+						{
+							tables.append(tablesData[w]);
+							value.append(tablesData[w]);
+							Logger::writeToLog(tablesData[w]);
+							
+						}
+						//value.append(tables);
+						tableConfig.append(tables);
+					}
+					else{
+						tableNumbers.add(strTokens[i].trim().getFloatValue());
+						value.append(strTokens[i].trim().getFloatValue());
+						tableConfig.append(strTokens[i].trim().getFloatValue());
+						Logger::writeToLog(strTokens[i].trim());
                         }
-                    //Logger::writeToLog(value[0].toString());
+				   }
+						
+                    cabbageIdentifiers.set(CabbageIDs::tableconfig, tableConfig);
                     cabbageIdentifiers.set(CabbageIDs::tablenumber, value);
                 }
                 else if(identArray[indx].equalsIgnoreCase("popup"))
@@ -1768,6 +1802,7 @@ String CabbageGUIClass::getStringArrayPropValue(Identifier prop, int index)
 {
     StringArray returnArray;
     var strings = cabbageIdentifiers.getWithDefault(prop, "");
+	//Logger::writeToLog(String(strings.size()));
     for(int i=0; i<strings.size(); i++)
         returnArray.add(strings[i].toString());
     if(isPositiveAndBelow(index,strings.size()))
@@ -1801,6 +1836,11 @@ Array<int> CabbageGUIClass::getIntArrayProp(Identifier prop)
     for(int i=0; i<ints.size(); i++)
         returnArray.add(ints[i]);
     return returnArray;
+}
+//===================================================================
+var CabbageGUIClass::getVarArrayProp(Identifier prop)
+{
+    return cabbageIdentifiers.getWithDefault(prop, "");
 }
 //===================================================================
 int CabbageGUIClass::getIntArrayPropValue(Identifier prop, int index)

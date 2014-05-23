@@ -167,6 +167,7 @@ static const Identifier popup = "popup";
 static const Identifier plant = "plant";
 static const Identifier line = "line";
 static const Identifier tablenumber = "tablenumber";
+static const Identifier tableconfig = "tableconfig";
 static const Identifier resizemode = "resizemode";
 static const Identifier drawmode = "drawmode";
 static const Identifier readonly = "readonly";
@@ -335,6 +336,8 @@ public:
 
     int getIntArrayPropValue(Identifier prop, int index);
     Array<int> getIntArrayProp(Identifier prop);
+	
+	var getVarArrayProp(Identifier prop);
 
     float getFloatArrayPropValue(Identifier prop, int index);
     Array<float> getFloatArrayProp(Identifier prop);

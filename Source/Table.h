@@ -35,6 +35,8 @@ class TableManager : public Component,
 {
 	double zoom;
 	int currentTableIndex;
+	var tableConfigList;
+
 public:	
 	TableManager();
 	~TableManager(){};
@@ -43,6 +45,11 @@ public:
 	};
 	void resized();
 	void bringButtonsToFront();
+	ScopedPointer<DrawableRectangle> currentPositionMarker;
+	double getLengthInSamples();
+	void setScrubberPos(double pos, int tableNum);
+	void scroll(double newRangeStart);
+	void setConfigTableSizes(var intableConfigList);
 	void addTable(int sr, const String col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener);
     void setWaveform(AudioSampleBuffer buffer, int ftNumber);
 	void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
@@ -53,6 +60,8 @@ public:
 	OwnedArray<GenTable> tables;
 	void changeListenerCallback(ChangeBroadcaster *source);
 	void bringTableToFront(int ftNumber);
+	void configTableSizes(var tableConfig);
+	GenTable* getTableFromFtNumber(int ftnumber);
 };
 
 //=================================================================
@@ -94,12 +103,12 @@ public:
         return (x / getWidth()) * (visibleRange.getLength()) + visibleRange.getStart();
     }
 
-
     void setZoomFactor (double amount);
     void setFile (const File& file);
     void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
     void setWaveform(AudioSampleBuffer buffer);
     void enableEditMode(StringArray pFields);
+	Point<int> tableTopAndHeight;
     void setWaveform(Array<float, CriticalSection> buffer, bool updateRange = true);
     void createImage(String filename);
     void addTable(int sr, const String col, int gen, Array<float> ampRange);
@@ -115,6 +124,7 @@ public:
 	void resized();
 	Range<double> visibleRange;
 	int scrollbarReduction;
+	void showScrollbar(bool show);
 	
 	HandleViewer* getHandleViewer(){ return handleViewer;}
 	
@@ -125,6 +135,8 @@ private:
 	Colour fillColour;
     float currentWidth;
     double zoom;
+	bool showScroll;
+	
     ScopedPointer<DrawableRectangle> currentPositionMarker;
     
     
@@ -256,12 +268,14 @@ class RoundButton : public Component,
 {
 String type;
 Colour colour;
+int mode;
 public:
     RoundButton(String _type, Colour _colour):Component()
     {
         setName(_type);
 		type = _type;
 		colour = _colour;
+		mode = 0;
     }
     ~RoundButton() {}
 
@@ -269,6 +283,7 @@ public:
     {
 		Logger::writeToLog("Mouse down on round button:"+String(type));
         sendChangeMessage();
+		mode = (mode==1 ? 0 : mode+1);
     }
 
     void paint(Graphics& g)
@@ -293,6 +308,10 @@ public:
 		}
     }
 
+	int getMode()
+	{
+		return mode;
+	}
 };
 
 #endif // SOUNDFILEWAVEFORM_H

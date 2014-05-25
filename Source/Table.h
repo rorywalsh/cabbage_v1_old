@@ -31,8 +31,7 @@ class GenTable;
 
 class TableManager : public Component,
 					 private ScrollBar::Listener,
-					 public ChangeListener,
-					 public Timer
+					 public ChangeListener
 {
 	double zoom;
 	int currentTableIndex;
@@ -52,7 +51,7 @@ public:
 	void timerCallback();
 	ScopedPointer<DrawableRectangle> currentPositionMarker;
 	double getLengthInSamples();
-	void setScrubberPos(double pos, int tableNum, double time);
+	void setScrubberPos(double pos, int tableNum);
 	void scroll(double newRangeStart);
 	void addTable(int sr, const String col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener);
     void setWaveform(AudioSampleBuffer buffer, int ftNumber);
@@ -142,9 +141,12 @@ private:
     float currentWidth;
     double zoom;
 	bool showScroll;
+	double qsteps;
+	double numPixelsPerIndex;
 	
 	
     ScopedPointer<DrawableRectangle> currentPositionMarker;
+	Rectangle<int> thumbArea;
     
     
     

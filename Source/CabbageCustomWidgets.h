@@ -932,12 +932,8 @@ public:
         {
             //var scrubberPos = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition);
 			scrubberPos = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[0];
-			int tableNumber = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[1];
-			
-			if(m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition).size()>1)
-			timeBetweenCalls = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[2];
-			
-			table->setScrubberPos(scrubberPos, tableNumber, timeBetweenCalls);
+			int tableNumber = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[1];		
+			table->setScrubberPos(scrubberPos, tableNumber);
         }
 
         if(!m_cAttr.getNumProp(CabbageIDs::visible))

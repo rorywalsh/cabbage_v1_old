@@ -115,17 +115,11 @@ void TableManager::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newR
 	}			
 }
 
-void TableManager::setScrubberPos(double pos, int ftnumber, double freq)
+void TableManager::setScrubberPos(double pos, int ftnumber)
 {
 	scrubberPosition = pos/getTableFromFtNumber(ftnumber)->tableSize;
 	for(int i=0;i<tables.size();i++)
 	tables[i]->setScrubberPos(scrubberPosition);
-	if(freq>0)
-	{
-	scrubberFreq = freq;
-	//this->startTimer((scrubberFreq/1.0)*1000.f);	
-	}
-
 }
 
 void TableManager::timerCallback()
@@ -279,14 +273,15 @@ GenTable::GenTable():	thumbnailCache (5),
 	showScroll(true),
 	mainFooterHeight(25),
 	paintFooterHeight(25),
-	quantiseSpace(1.0)
+	quantiseSpace(0.01),
+	qsteps(0)
 {
     thumbnail=nullptr;
     addAndMakeVisible(scrollbar = new ScrollBar(false));
     scrollbar->setRangeLimits (visibleRange);
     //scrollbar->setAutoHide (false);
     scrollbar->addListener(this);
-    currentPositionMarker->setFill (Colours::white);
+    currentPositionMarker->setFill (Colours::lime.withAlpha(.1f));
     addAndMakeVisible(currentPositionMarker);
     
     handleViewer = new HandleViewer();
@@ -321,7 +316,8 @@ void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRang
     }
 	if(ampRange.size()>3){
 		quantiseSpace = ampRange[3];
-		if(quantiseSpace/minMax.getEnd()==1)
+		qsteps = quantiseSpace/minMax.getEnd();
+		if(qsteps==1)
 			handleViewer->showHandles(false);
 	}
 		
@@ -628,7 +624,7 @@ void GenTable::setRange(Range<double> newRange, bool isScrolling)
 void GenTable::paint (Graphics& g)
 {
     g.fillAll (Colours::transparentBlack);
-    Rectangle<int> thumbArea (getLocalBounds());
+    thumbArea = getLocalBounds();
     thumbArea.setHeight(getHeight()-paintFooterHeight);
     //thumbArea.setTop(10.f);
     float prevY=0, prevX=0, currY=0;
@@ -649,7 +645,7 @@ void GenTable::paint (Graphics& g)
     {
 		Path path;
 		path.startNewSubPath(0, thumbArea.getHeight());
-        double numPixelsPerIndex = (double)thumbArea.getWidth() / visibleLength;
+        numPixelsPerIndex = (double)thumbArea.getWidth() / visibleLength;
         double waveformThickness = 4;
         double thumbHeight = thumbArea.getHeight();
 		prevY = ampToPixel(thumbHeight, minMax, waveformBuffer[0]);
@@ -666,8 +662,18 @@ void GenTable::paint (Graphics& g)
 			
 			if(genRoutine==2)
 			{
-			path.lineTo(prevX, currY);
-			path.lineTo(prevX+numPixelsPerIndex, currY);	
+				if(qsteps==1)
+				{
+					g.setColour(colour.withAlpha(.3f));					
+					g.drawRoundedRectangle(prevX+2, 2.f, numPixelsPerIndex-4, thumbHeight-4, numPixelsPerIndex*0.1, 1.f);
+					g.setColour(colour.withAlpha(.6f));
+					if(thumbHeight-(thumbHeight-currY)==0)
+					g.fillRoundedRectangle(prevX+4, thumbHeight-(thumbHeight-currY)+4, numPixelsPerIndex-8, thumbHeight-currY-8, numPixelsPerIndex*0.1);	
+				}
+				else{
+				path.lineTo(prevX, currY);
+				path.lineTo(prevX+numPixelsPerIndex, currY);	
+				}
 			}
 			else
 			path.lineTo(prevX+numPixelsPerIndex, prevY);
@@ -680,6 +686,7 @@ void GenTable::paint (Graphics& g)
 	path.closeSubPath();
 	g.fillPath(path);
 	g.setColour(colour.darker());
+	if(qsteps!=1)
 	g.strokePath(path, PathStrokeType(1));
     }
 }
@@ -772,8 +779,9 @@ void GenTable::setScrubberPos(double pos)
 		double waveformLengthSeconds = (double)waveformBuffer.size()/sampleRate;
 		
 		double timePos = pos*waveformLengthSeconds;
-		currentPositionMarker->setRectangle (Rectangle<float> (timeToX (timePos) - 0.75f, 0,
-											 1.5f, (float) (getHeight() - 20)));
+		
+		currentPositionMarker->setRectangle (Rectangle<float> (timeToX (timePos), 0,
+											 numPixelsPerIndex, thumbArea.getHeight()));
 											 
 		if(timePos<(waveformLengthSeconds)/25.f)
 			setRange (visibleRange.movedToStartAt(0));
@@ -878,14 +886,14 @@ void HandleViewer::mouseDown(const MouseEvent& e)
 
 void HandleViewer::mouseDrag(const MouseEvent& e)
 {	
+	if(shouldShowHandles)
 	positionHandle(e);
 }
 
 void HandleViewer::positionHandle(const MouseEvent& e)
 {
     if(gen==1)
-		return;	
-	
+		return;		
 	
 	double steps = (minMax.getEnd()/getParentTable()->quantiseSpace);
 	double ySnapPos;	
@@ -898,17 +906,19 @@ void HandleViewer::positionHandle(const MouseEvent& e)
 		//Logger::writeToLog("mousePos:"+String(e.x)+" handlePos:"+String(handles[i]->getPosition().getX()));
 		if(e.x>handleX && e.x<handleX+handles[i]->getWidth())
 		{
-			if(steps==1){
+			if(steps==1){	//if toggle mode is enabled..
+			handles[i]->setVisible(false);
 			handles[i]->status=!handles[i]->status;
 			handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapPosition(getHeight()*int(handles[i]->status))));
-			handles[i]->sendChangeMessage();
+			handles[i]->setRelativePositions(handles[i]->getPosition().toDouble().withY(getSnapPosition(getHeight()*double(handles[i]->status))));	
 			}
 			else{
-			//check value of handle here so we can toggle it...
-			handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapPosition(double(e.y))));
-			handles[i]->sendChangeMessage();
-			
+			handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapPosition(double(e.y))));	
+			handles[i]->setRelativePositions(handles[i]->getPosition().toDouble().withY(getSnapPosition(double(e.y))));
 			}
+			
+			handles[i]->setRelativePositions(handles[i]->getPosition().toDouble().withY(getSnapPosition(getHeight()*double(handles[i]->status))));
+			handles[i]->sendChangeMessage();
 		}		
 	}	
 }
@@ -931,10 +941,8 @@ double HandleViewer::getSnapPosition(const double y)
 //==============================================================================
 void HandleViewer::resized()
 {
-
     for(int i=0; i<handles.size(); i++)
     {
-
 		if(this->gen!=2)
         handles[i]->setCentrePosition(((double)getWidth()*handles[i]->xPosRelative), ((double)getHeight()*handles[i]->yPosRelative));
         else{

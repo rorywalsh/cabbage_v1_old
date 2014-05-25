@@ -570,12 +570,22 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         height = 200;
 
         var tableColours;
+
+			
         tableColours.append("white");
         tableColours.append("cornflowerblue");
         tableColours.append("yellow");
         tableColours.append("lime");
         tableColours.append("green");
         tableColours.append("pink");
+        tableColours.append("brown");
+        tableColours.append("purple");
+        tableColours.append("lightblue");
+        tableColours.append("darkgreen");
+        tableColours.append("lightgreen");
+        tableColours.append("mango");		
+		
+		
 
         cabbageIdentifiers.set(CabbageIDs::top, 10);
         cabbageIdentifiers.set(CabbageIDs::left, 10);
@@ -1471,16 +1481,16 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 
                 else if(identArray[indx].equalsIgnoreCase("scrubberposition"))
                 {
-					var positionAndTable;
-					positionAndTable.append(strTokens[0].trim().getIntValue());
-					if(strTokens.size()>1)
+					var scrubberInfo;
+					scrubberInfo.append(strTokens[0].trim().getIntValue());
+					for(int i=1;i<strTokens.size();i++)
 					{
-					positionAndTable.append(strTokens[1].trim().getIntValue());	
-					cabbageIdentifiers.set(CabbageIDs::scrubberposition, positionAndTable);				
+					scrubberInfo.append(strTokens[i].trim().getDoubleValue());	
+					cabbageIdentifiers.set(CabbageIDs::scrubberposition, scrubberInfo);				
 					}
-					else{
-						cabbageIdentifiers.set(CabbageIDs::scrubberposition, positionAndTable);
-					}
+
+					cabbageIdentifiers.set(CabbageIDs::scrubberposition, scrubberInfo);
+
                 }
 
                 else if(identArray[indx].equalsIgnoreCase("logger"))

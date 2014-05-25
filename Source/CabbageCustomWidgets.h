@@ -925,14 +925,19 @@ public:
     //update control
     void update(CabbageGUIClass m_cAttr)
     {
-        setBounds(m_cAttr.getBounds());
+        //setBounds(m_cAttr.getBounds());
+		double timeBetweenCalls=0;
 		//Logger::writeToLog("ScrubberPos:"+String(m_cAttr.getNumProp(CabbageIDs::scrubberposition)));
         if(scrubberPos!=m_cAttr.getNumProp(CabbageIDs::scrubberposition))
         {
             //var scrubberPos = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition);
 			scrubberPos = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[0];
 			int tableNumber = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[1];
-			table->setScrubberPos(scrubberPos, 1);
+			
+			if(m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition).size()>1)
+			timeBetweenCalls = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[2];
+			
+			table->setScrubberPos(scrubberPos, tableNumber, timeBetweenCalls);
         }
 
         if(!m_cAttr.getNumProp(CabbageIDs::visible))

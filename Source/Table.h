@@ -31,11 +31,15 @@ class GenTable;
 
 class TableManager : public Component,
 					 private ScrollBar::Listener,
-					 public ChangeListener
+					 public ChangeListener,
+					 public Timer
 {
 	double zoom;
 	int currentTableIndex;
 	var tableConfigList;
+	int largestTable;
+	double scrubberPosition;
+	double scrubberFreq;
 
 public:	
 	TableManager();
@@ -45,11 +49,11 @@ public:
 	};
 	void resized();
 	void bringButtonsToFront();
+	void timerCallback();
 	ScopedPointer<DrawableRectangle> currentPositionMarker;
 	double getLengthInSamples();
-	void setScrubberPos(double pos, int tableNum);
+	void setScrubberPos(double pos, int tableNum, double time);
 	void scroll(double newRangeStart);
-	void setConfigTableSizes(var intableConfigList);
 	void addTable(int sr, const String col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener);
     void setWaveform(AudioSampleBuffer buffer, int ftNumber);
 	void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
@@ -61,6 +65,7 @@ public:
 	void changeListenerCallback(ChangeBroadcaster *source);
 	void bringTableToFront(int ftNumber);
 	void configTableSizes(var tableConfig);
+	GenTable* getLargestTable();
 	GenTable* getTableFromFtNumber(int ftnumber);
 };
 
@@ -116,7 +121,7 @@ public:
     static float pixelToAmp(int height, Range<float> minMax, float sampleVal);
     Array<double> getPfields();
     String changeMessage;
-    int tableNumber, tableSize, genRoutine;
+    int tableNumber, tableSize, genRoutine, realGenRoutine;
 	void setRange(Range<double> newRange, bool isScrolling = false);
 	Range<double> globalRange;
 	bool isTableOnTop;
@@ -125,7 +130,7 @@ public:
 	Range<double> visibleRange;
 	int scrollbarReduction;
 	void showScrollbar(bool show);
-	
+	int mainFooterHeight, paintFooterHeight;
 	HandleViewer* getHandleViewer(){ return handleViewer;}
 	
 private:
@@ -201,19 +206,20 @@ public:
     ScopedPointer<TextButton> button1;
     ScopedPointer<TextButton> button2;
     void mouseDown(const MouseEvent& e);
+	void mouseDrag(const MouseEvent& e);
     void repaint(Graphics &g);
     void resized();
-    void addHandle(double x, double y);
-	void insertHandle(double x, double y);
+    void addHandle(double x, double y, double width, double height, Colour colour);
+	void insertHandle(double x, double y, Colour colour);
     HandleComponent* getPreviousHandle(HandleComponent* thisHandle);
     HandleComponent* getNextHandle(HandleComponent* thisHandle);
     int getHandleIndex(HandleComponent* thisHandle);
     void removeHandle (HandleComponent* thisHandle);
     OwnedArray<HandleComponent, CriticalSection> handles;
-    void fixEdgePoints();
+    void fixEdgePoints(int gen);
 	void showHandles(bool show);
     int handleIndex;
-    float tableSize;
+    double tableSize;
 	Range<float> minMax;
 	Colour colour;
 	int gen;
@@ -228,7 +234,7 @@ class HandleComponent : public Component,
     public ActionBroadcaster
 {
 public:
-    HandleComponent(double xPos, double yPos, int index, bool fixed);
+    HandleComponent(double xPos, double yPos, int index, bool fixed, int gen, Colour colour);
     ~HandleComponent();
 
     HandleViewer* getParentComponent();
@@ -243,18 +249,22 @@ public:
     int height, width;
     int x,y;
 
+	void setRelativePositions(Point<double> point);
+	
     HandleComponent* getPreviousHandle();
     HandleComponent* getNextHandle();
-    double xPosRelative, yPosRelative;
     String changeMessage;
     String mouseStatus;
-
+	double xPosRelative, yPosRelative;
+	
 private:
     Colour colour;
     bool fixed;
+	
     ComponentDragger dragger;
     int lastX, lastY;
     int offsetX, offsetY;
+	int genRoutine;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HandleComponent);
 };
@@ -281,14 +291,14 @@ public:
 
     void mouseDown(const MouseEvent& e)
     {
-		Logger::writeToLog("Mouse down on round button:"+String(type));
+		//Logger::writeToLog("Mouse down on round button:"+String(type));
         sendChangeMessage();
 		mode = (mode==1 ? 0 : mode+1);
     }
 
     void paint(Graphics& g)
     {
-		Logger::writeToLog(type);
+		//Logger::writeToLog(type);
         if(type.contains("zoom"))
 		{
 			g.fillAll(Colours::transparentBlack);

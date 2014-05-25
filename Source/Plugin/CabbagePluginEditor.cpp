@@ -577,12 +577,12 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 {
 #ifndef Cabbage_No_Csound	
     Array<double> pFields = table->getPfields();
-    if( abs(table->genRoutine)==5 || abs(table->genRoutine)==7)
+    if( table->genRoutine==5 || table->genRoutine==7 || table->genRoutine==2)
     {
         FUNC *ftpp;
         EVTBLK  evt;
         memset(&evt, 0, sizeof(EVTBLK));
-        evt.pcnt = 5+pFields.size()-1;
+        evt.pcnt = 5+pFields.size();
         evt.opcod = 'f';
         evt.p[0]=0;
 
@@ -590,9 +590,16 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
         evt.p[1]=0;
         evt.p[2]=0;
         evt.p[3]=table->tableSize;
-        evt.p[4]=table->genRoutine;
-        for(int i=0; i<pFields.size()-1; i++)
-            evt.p[5+i]= pFields[i+1];
+        evt.p[4]=table->realGenRoutine;
+		if(table->genRoutine==5)
+			{
+			for(int i=0; i<pFields.size()-1; i++)
+				evt.p[5+i]= jmax(0.00001, pFields[i+1]);
+			}
+		else{
+			for(int i=0; i<pFields.size(); i++)
+				evt.p[5+i] = pFields[i];
+			}
 
 
         StringArray fStatement;
@@ -603,13 +610,14 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
         fStatement.set(1, String(table->tableNumber));
         fStatement.set(0, "f");
 
+		//Logger::writeToLog(fStatement.joinIntoString(" "));
         getFilter()->getCsound()->GetCsound()->hfgens(getFilter()->getCsound()->GetCsound(), &ftpp, &evt, 1);
         Array<float, CriticalSection> points;
 
         points = Array<float, CriticalSection>(ftpp->ftable, ftpp->flen);
         table->setWaveform(points, false);
 		//table->enableEditMode(fStatement);
-        Logger::writeToLog(fStatement.joinIntoString(" "));
+        
         getFilter()->messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement.joinIntoString(" "), table->tableNumber);
     }
 #endif
@@ -2008,7 +2016,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 			}				
 		}
     }
-	table->setConfigTableSizes(cAttr.getVarArrayProp(CabbageIDs::tableconfig));
+	table->configTableSizes(cAttr.getVarArrayProp(CabbageIDs::tableconfig));
 	table->bringTableToFront(1);	
 }
 

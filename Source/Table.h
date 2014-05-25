@@ -175,6 +175,7 @@ private:
     double currentPlayPosition;
     bool drawWaveform;
 
+
     Array<float, CriticalSection> waveformBuffer;
     double visibleLength, visibleStart, visibleEnd, maxAmp;
     Range<float> minMax;
@@ -214,7 +215,7 @@ public:
     void resized();
     void addHandle(double x, double y, double width, double height, Colour colour);
 	void insertHandle(double x, double y, Colour colour);
-	double snapToGrid(const double y);
+	double getSnapPosition(const double y);
     HandleComponent* getPreviousHandle(HandleComponent* thisHandle);
     HandleComponent* getNextHandle(HandleComponent* thisHandle);
     int getHandleIndex(HandleComponent* thisHandle);
@@ -227,6 +228,7 @@ public:
 	Range<float> minMax;
 	Colour colour;
 	int gen;
+	bool shouldShowHandles;
 	
 	GenTable* getParentTable(){
 		return findParentComponentOfClass <GenTable>();
@@ -268,6 +270,7 @@ public:
     String changeMessage;
     String mouseStatus;
 	double xPosRelative, yPosRelative;
+	bool status;
 	
 private:
     Colour colour;

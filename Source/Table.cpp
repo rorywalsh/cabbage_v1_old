@@ -313,14 +313,19 @@ void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRang
 	realGenRoutine = igen;
 	handleViewer->colour = Colours::findColourForName(col, Colours::white);
 	
-    if(ampRange.size()>2 && ampRange[2]==tableNumber)
+    if(ampRange.size()>2 && (ampRange[2]==tableNumber || ampRange[2]==0))
     {
         minMax.setStart(ampRange[0]);
         minMax.setEnd(ampRange[1]);
 		handleViewer->minMax = minMax;
     }
-	if(ampRange.size()>3)
+	if(ampRange.size()>3){
 		quantiseSpace = ampRange[3];
+		if(quantiseSpace/minMax.getEnd()==1)
+			handleViewer->showHandles(false);
+	}
+		
+		
 		
     //set up table according to type of GEN used to create it
     if(genRoutine==1)
@@ -819,8 +824,10 @@ void HandleViewer::addHandle(double x, double y, double width, double height, Co
 		handle->addChangeListener(table);
 		handle->addActionListener(this);
 		//Logger::writeToLog(String(indx));
+		handle->status=true;
 		handles.add(handle);
 		addAndMakeVisible(handles[handles.size()-1]);
+		
 	}
 }
 
@@ -848,6 +855,7 @@ void HandleViewer::insertHandle(double x, double y, Colour colour)
     handle->addActionListener(this);
 	addAndMakeVisible(handle);
 	handles.insert(indx, handle);
+	handle->status=true;
 	handle->sendChangeMessage();
 	}
 
@@ -856,6 +864,7 @@ void HandleViewer::insertHandle(double x, double y, Colour colour)
 //==============================================================================
 void HandleViewer::showHandles(bool show)
 {
+	shouldShowHandles = show;
 	for (int i=1; i<handles.size(); i++)
 	{
 		handles[i]->setVisible(show);
@@ -874,7 +883,11 @@ void HandleViewer::mouseDrag(const MouseEvent& e)
 
 void HandleViewer::positionHandle(const MouseEvent& e)
 {
-    if(gen==1) return;	
+    if(gen==1)
+		return;	
+	
+	
+	double steps = (minMax.getEnd()/getParentTable()->quantiseSpace);
 	double ySnapPos;	
 	if(gen!=2)
 	insertHandle(double(e.x)/(double)getWidth(), (float)e.y, colour);
@@ -885,13 +898,22 @@ void HandleViewer::positionHandle(const MouseEvent& e)
 		//Logger::writeToLog("mousePos:"+String(e.x)+" handlePos:"+String(handles[i]->getPosition().getX()));
 		if(e.x>handleX && e.x<handleX+handles[i]->getWidth())
 		{
-				handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(this->snapToGrid(double(e.y))));
-				handles[i]->sendChangeMessage();
+			if(steps==1){
+			handles[i]->status=!handles[i]->status;
+			handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapPosition(getHeight()*int(handles[i]->status))));
+			handles[i]->sendChangeMessage();
+			}
+			else{
+			//check value of handle here so we can toggle it...
+			handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapPosition(double(e.y))));
+			handles[i]->sendChangeMessage();
+			
+			}
 		}		
 	}	
 }
 
-double HandleViewer::snapToGrid(const double y)
+double HandleViewer::getSnapPosition(const double y)
 {
 	double ySnapPos = 0;		
 	double steps = (minMax.getEnd()/getParentTable()->quantiseSpace);
@@ -909,13 +931,16 @@ double HandleViewer::snapToGrid(const double y)
 //==============================================================================
 void HandleViewer::resized()
 {
+
     for(int i=0; i<handles.size(); i++)
     {
+
 		if(this->gen!=2)
         handles[i]->setCentrePosition(((double)getWidth()*handles[i]->xPosRelative), ((double)getHeight()*handles[i]->yPosRelative));
         else{
 		handles[i]->setTopLeftPosition(((double)getWidth()*handles[i]->xPosRelative), ((double)getHeight()*handles[i]->yPosRelative));
  		handles[i]->setSize(getWidth()/tableSize, 5.f);	
+		handles[i]->setVisible(shouldShowHandles);
 		}  
 	}
 }
@@ -1017,7 +1042,7 @@ void HandleViewer::removeHandle (HandleComponent* thisHandle)
 }
 //==================================================================================
 HandleComponent::HandleComponent(double xPos, double yPos, int _index, bool fixed, int gen, Colour colour):
-    index(_index), x(0), y(0), colour(colour), fixed(fixed)
+    index(_index), x(0), y(0), colour(colour), fixed(fixed), status(false)
 {
     xPosRelative = xPos;
 	yPosRelative = yPos;
@@ -1152,15 +1177,15 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
 
 
 	if(genRoutine!=2)
-		setCentrePosition(dragX, viewer->snapToGrid(dragY));
+		setCentrePosition(dragX, viewer->getSnapPosition(dragY));
 	else
-		setTopLeftPosition(dragX, viewer->snapToGrid(dragY));
+		setTopLeftPosition(dragX, viewer->getSnapPosition(dragY));
 	
-    setRelativePositions(Point<double>(dragX, viewer->snapToGrid(dragY)));
+    setRelativePositions(Point<double>(dragX, viewer->getSnapPosition(dragY)));
 	//yPosRelative = jlimit(0.0, 1.0, dragY/(double)this->getParentComponent()->getHeight());
     //Logger::writeToLog("xPosRelative:"+String(xPosRelative));
     String message;
-    message = String(String(index)+" "+String(dragX)+" "+String(viewer->snapToGrid(dragY)));
+    message = String(String(index)+" "+String(dragX)+" "+String(viewer->getSnapPosition(dragY)));
     //Logger::writeToLog(message);
     mouseStatus = "mouseDrag";
     sendActionMessage(message);

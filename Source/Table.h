@@ -132,6 +132,7 @@ public:
 	void showScrollbar(bool show);
 	int mainFooterHeight, paintFooterHeight;
 	HandleViewer* getHandleViewer(){ return handleViewer;}
+	double quantiseSpace;
 	
 private:
     Image img;
@@ -141,6 +142,7 @@ private:
     float currentWidth;
     double zoom;
 	bool showScroll;
+	
 	
     ScopedPointer<DrawableRectangle> currentPositionMarker;
     
@@ -207,10 +209,12 @@ public:
     ScopedPointer<TextButton> button2;
     void mouseDown(const MouseEvent& e);
 	void mouseDrag(const MouseEvent& e);
+	void positionHandle(const MouseEvent& e);
     void repaint(Graphics &g);
     void resized();
     void addHandle(double x, double y, double width, double height, Colour colour);
 	void insertHandle(double x, double y, Colour colour);
+	double snapToGrid(const double y);
     HandleComponent* getPreviousHandle(HandleComponent* thisHandle);
     HandleComponent* getNextHandle(HandleComponent* thisHandle);
     int getHandleIndex(HandleComponent* thisHandle);
@@ -223,6 +227,10 @@ public:
 	Range<float> minMax;
 	Colour colour;
 	int gen;
+	
+	GenTable* getParentTable(){
+		return findParentComponentOfClass <GenTable>();
+	};	
 
 };
 
@@ -250,6 +258,10 @@ public:
     int x,y;
 
 	void setRelativePositions(Point<double> point);
+	
+	HandleViewer* getParentHandleViewer(){
+		return findParentComponentOfClass <HandleViewer>();
+	};	
 	
     HandleComponent* getPreviousHandle();
     HandleComponent* getNextHandle();

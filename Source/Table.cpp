@@ -478,7 +478,7 @@ void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRang
 //==============================================================================
 void GenTable::enableEditMode(StringArray pFields)
 {
-    //if dealing with normalised table check pfield amps..
+    //turns on edit mode by adding handles to the handleViewer
     Array<float, CriticalSection> pFieldAmps;
     pFieldAmps.add (pFields[5].getFloatValue());
 
@@ -496,34 +496,26 @@ void GenTable::enableEditMode(StringArray pFields)
             float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
             handleViewer->addHandle(0, ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue), 10, 10, this->colour);
 
-            //Logger::writeToLog("Coordinates:("+String(xPos)+", "+String(ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue))+")");
-
             for(int i=6; i<pFields.size(); i+=2)
             {
                 xPos = xPos + pFields[i].getFloatValue();
                 pFieldAmpValue = (normalised<0 ? pFields[i+1].getFloatValue() : pFields[i+1].getFloatValue()/pFieldMinMax.getEnd());
                 handleViewer->addHandle(xPos/(double)waveformBuffer.size(), ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue), 10, 10, this->colour);
-                //Logger::writeToLog("Coordinates:("+String(xPos)+", "+String(ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue))+")");
-            }
-			 handleViewer->fixEdgePoints(genRoutine);
+			}
+			handleViewer->fixEdgePoints(genRoutine);
         }
 	    else if(genRoutine==2)
         {
 			double width = (getWidth()/tableSize);
             float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
             handleViewer->addHandle(0, ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue), width+1, 5, this->colour);
-
-            //Logger::writeToLog("Coordinates:("+String(xPos)+", "+String(ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue))+")");
-            for(double i=6; i<pFields.size(); i++)
+			for(double i=6; i<pFields.size(); i++)
             {
                 xPos = (i-5.0)/(double(tableSize))*tableSize;
                 pFieldAmpValue = (normalised<0 ? pFields[i].getFloatValue() : pFields[i].getFloatValue()/pFieldMinMax.getEnd());
                 handleViewer->addHandle(xPos/tableSize, ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue), width+1, 5, this->colour);
-                
-				
-				//Logger::writeToLog("Coordinates:("+String(xPos)+", "+String(ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue))+")");
-            }
-			 handleViewer->fixEdgePoints(genRoutine);
+			}
+			handleViewer->fixEdgePoints(genRoutine);
         }
 
     }
@@ -533,6 +525,7 @@ void GenTable::enableEditMode(StringArray pFields)
 //==============================================================================
 void GenTable::setZoomFactor (double amount)
 {
+	//set zoom factor, between 0 and 1
     zoom = amount;
     if(genRoutine==1)
     {
@@ -591,12 +584,6 @@ void GenTable::setRange(Range<double> newRange, bool isScrolling)
 	{
 		//set visible ranges in samples...
 		scrollbar->setCurrentRange (visibleRange, dontSendNotification);
-//		Logger::writeToLog("TableNumber:"+String(tableNumber));
-//		Logger::writeToLog("VisibleStart:"+String(visibleRange.getStart()*sampleRate));
-//		Logger::writeToLog("VisibleEnd:"+String(visibleRange.getEnd()*sampleRate));
-//		Logger::writeToLog("VisibleLength:"+String(visibleRange.getLength()*sampleRate));
-//		Logger::writeToLog("Zoom:"+String(zoom));
-
 		if(genRoutine!=1)
 		{
 			
@@ -925,8 +912,6 @@ double HandleViewer::getSnapPosition(const double y)
 	double jump = (getParentTable()->quantiseSpace/minMax.getEnd())*getHeight();
 	for(double c=0;c<=steps;c++)
 	{
-		Logger::writeToLog(String(c*jump));
-		Logger::writeToLog(String(y));
 		if(y > (c*jump)-jump/2.f && y < ((c+1)*jump+(jump/2.f))) 
 			ySnapPos = c*jump;	
 	}

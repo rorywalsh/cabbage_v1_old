@@ -624,9 +624,9 @@ void GenTable::setRange(Range<double> newRange, bool isScrolling)
 void GenTable::paint (Graphics& g)
 {
     g.fillAll (Colours::transparentBlack);
+	//set thumbArea, this is the area of the painted image
     thumbArea = getLocalBounds();
     thumbArea.setHeight(getHeight()-paintFooterHeight);
-    //thumbArea.setTop(10.f);
     float prevY=0, prevX=0, currY=0;
 
     //if gen01 then use an audio thumbnail class
@@ -637,10 +637,10 @@ void GenTable::paint (Graphics& g)
         g.setColour(colour.contrasting(.5f).withAlpha(.7f));
         float zoomFactor = thumbnail->getTotalLength()/visibleRange.getLength();
         regionWidth = (regionWidth=2 ? 2 : regionWidth*zoomFactor);
-        //g.fillRect(timeToX(currentPlayPosition), 10.f, (regionWidth==2 ? 2 : regionWidth*zoomFactor), (float)getHeight()-26.f);
-    }
+   }
 
-    //else draw the waveform directly
+    //else draw the waveform directly onto this component
+	//edit handles get placed on the handleViewer, which is placed on top of this component
     else
     {
 		Path path;
@@ -651,17 +651,14 @@ void GenTable::paint (Graphics& g)
 		prevY = ampToPixel(thumbHeight, minMax, waveformBuffer[0]);
         for(int i=visibleStart; i<visibleEnd; i++)
         {
-			//Logger::writeToLog("Values:"+String(waveformBuffer[i])+" xPos:"+String(prevX));
-			
-			
+			//minMax is the range of the current waveforms amplitude
             currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
 			
 			g.setColour(colour.withAlpha(.2f));
-			//g.drawVerticalLine(prevX, getHeight()-(getHeight()-prevY)+2, getHeight()-FOOTERHEIGHT);			
-			//g.drawLine(prevX, prevY, prevX+numPixelsPerIndex, prevY, 4);*/
 			
 			if(genRoutine==2)
 			{
+				//when qsteps == 1 we draw a grid
 				if(qsteps==1)
 				{
 					g.setColour(colour.withAlpha(.3f));					
@@ -669,19 +666,18 @@ void GenTable::paint (Graphics& g)
 					g.setColour(colour.withAlpha(.6f));
 					if(thumbHeight-(thumbHeight-currY)==0)
 					g.fillRoundedRectangle(prevX+4, thumbHeight-(thumbHeight-currY)+4, numPixelsPerIndex-8, thumbHeight-currY-8, numPixelsPerIndex*0.1);	
-				}
+				}//else we draw a simple bar graph representation....
 				else{
 				path.lineTo(prevX, currY);
 				path.lineTo(prevX+numPixelsPerIndex, currY);	
 				}
 			}
 			else
-			path.lineTo(prevX+numPixelsPerIndex, prevY);
-
-			
+			path.lineTo(prevX+numPixelsPerIndex, prevY);			
             prevX = jmax(0.0, prevX + numPixelsPerIndex);
 			prevY = currY;
         }
+		
 	path.lineTo(prevX, thumbArea.getHeight());
 	path.closeSubPath();
 	g.fillPath(path);
@@ -694,20 +690,20 @@ void GenTable::paint (Graphics& g)
 //==============================================================================
 float GenTable::ampToPixel(int height, Range<float> minMax, float sampleVal)
 {
-    float amp =  (sampleVal-minMax.getStart()) / minMax.getLength();
+	//caluclate amp value based on pixel...
+	float amp =  (sampleVal-minMax.getStart()) / minMax.getLength();
     return jmax(0.f, ((1-amp) * height));
 }
 
 float GenTable::pixelToAmp(int height, Range<float> minMax, float pixelY)
 {
+	//caluclate pixel value based on amp...
     float amp =  ((1-(pixelY/height))*minMax.getLength())+minMax.getStart();
     return amp;
 }
 //==============================================================================
 void GenTable::mouseDown (const MouseEvent& e)
 {
-    Logger::writeToLog("mouseDown GenTable");
-    //will need to add handles here..and only select region if gen01
     if(!e.mods.isPopupMenu())
     {
         regionWidth = (1.01-zoom)*1.5;
@@ -733,13 +729,13 @@ void GenTable::mouseDrag(const MouseEvent& e)
 {
     if(genRoutine==1)
     {
+		//draw rectangle when users select audio in a gen01 table...
         if(this->getLocalBounds().contains(e.getPosition()))
         {
             if(e.mods.isLeftButtonDown())
             {
                 double zoomFactor = visibleRange.getLength()/thumbnail->getTotalLength();
                 regionWidth = abs(e.getDistanceFromDragStartX())*zoomFactor;
-                //Logger::writeToLog(String(e.getDistanceFromDragStartX()));
                 if(e.getDistanceFromDragStartX()<0)
                     currentPlayPosition = jmax (0.0, xToTime (loopStart+(float)e.getDistanceFromDragStartX()));
                 float widthInTime = ((float)e.getDistanceFromDragStartX() / (float)getWidth()) * (float)thumbnail->getTotalLength();
@@ -752,19 +748,19 @@ void GenTable::mouseDrag(const MouseEvent& e)
 //==============================================================================
 void GenTable::setScrubberPos(double pos)
 {
-    //might need to be taken care of on a higher level
+    //set the position of the scrubber. pos will be between 0 and 1
     if(genRoutine==1)
     {
 		currentPositionMarker->setVisible (true);
-		//Logger::writeToLog("Pos:"+String(pos));
-				
-		double timePos = pos*thumbnail->getTotalLength()*sampleRate;
-		//assign time values in seconds to pos..
+	
+		//assign time values in seconds to pos..		
+		double timePos = pos*thumbnail->getTotalLength()*sampleRate;		
 		timePos = (timePos/(thumbnail->getTotalLength()*sampleRate))*thumbnail->getTotalLength();
-		
+		//set position of scrubber rectangle
 		currentPositionMarker->setRectangle (Rectangle<float> (timeToX (timePos) - 0.75f, 0,
 											 1.5f, (float) (getHeight() - 20)));
 
+		//take care of scrolling...
 		if(timePos<thumbnail->getTotalLength()/25.f)
 			setRange (visibleRange.movedToStartAt(0));
 		else
@@ -773,13 +769,10 @@ void GenTable::setScrubberPos(double pos)
 
 	}
     else
-    {
-		
+    {		
 		currentPositionMarker->setVisible (true);
-		double waveformLengthSeconds = (double)waveformBuffer.size()/sampleRate;
-		
-		double timePos = pos*waveformLengthSeconds;
-		
+		double waveformLengthSeconds = (double)waveformBuffer.size()/sampleRate;		
+		double timePos = pos*waveformLengthSeconds;		
 		currentPositionMarker->setRectangle (Rectangle<float> (timeToX (timePos), 0,
 											 numPixelsPerIndex, thumbArea.getHeight()));
 											 
@@ -788,9 +781,7 @@ void GenTable::setScrubberPos(double pos)
 		else
 			if(visibleRange.getEnd()<=waveformLengthSeconds && zoom>0.0)
 				setRange (visibleRange.movedToStartAt (jmax(0.0, timePos - (visibleRange.getLength()/2.0))));
-
 	}
-
 }
 //==============================================================================
 void GenTable::mouseUp(const MouseEvent& e)
@@ -816,13 +807,16 @@ HandleViewer::~HandleViewer()
 //==============================================================================
 void HandleViewer::addHandle(double x, double y, double width, double height, Colour colour)
 {
+	//add a handle component to our handleViewer
     int indx;		
 	GenTable* table = getParentTable();
 	
 	if(table)
 	{
+		//set up handle, and pass relative x and y values as well as gen and colour
 		HandleComponent* handle = new HandleComponent(x, y/getHeight(), handles.size(), false, table->genRoutine, colour);
 		
+		//if gen02 use setTopLeft, else use setCentrePostion
 		if(table->genRoutine!=2)
 			handle->setCentrePosition((double)getWidth()*x, y);
 		else
@@ -831,7 +825,6 @@ void HandleViewer::addHandle(double x, double y, double width, double height, Co
 		handle->setSize(width, height);
 		handle->addChangeListener(table);
 		handle->addActionListener(this);
-		//Logger::writeToLog(String(indx));
 		handle->status=true;
 		handles.add(handle);
 		addAndMakeVisible(handles[handles.size()-1]);
@@ -841,8 +834,9 @@ void HandleViewer::addHandle(double x, double y, double width, double height, Co
 
 void HandleViewer::insertHandle(double x, double y, Colour colour)
 {
+	//add a handle component to our handleViewer. This should be combined with
+	//above function...
     int indx;	
-	
 	GenTable* table = findParentComponentOfClass <GenTable>();
 	if(table)
 	{
@@ -857,8 +851,6 @@ void HandleViewer::insertHandle(double x, double y, Colour colour)
 		
     HandleComponent* handle = new HandleComponent(x, y/getHeight(), handles.size(), false, table->genRoutine, colour);
     handle->setCentrePosition((double)getWidth()*x, y);
-	//handle->setTopLeftPosition(getWidth()*x, y);
-	//handle->setSize(getWidth()/40, getWidth()/40);
     handle->addChangeListener(table);
     handle->addActionListener(this);
 	addAndMakeVisible(handle);
@@ -892,39 +884,42 @@ void HandleViewer::mouseDrag(const MouseEvent& e)
 
 void HandleViewer::positionHandle(const MouseEvent& e)
 {
+	//positions the handle when a user sends a mouse down on the handleViewer
     if(gen==1)
 		return;		
 	
+	//determine whether of not we are in toggle on.off(grid) mode..
 	double steps = (minMax.getEnd()/getParentTable()->quantiseSpace);
 	double ySnapPos;	
+	
 	if(gen!=2)
-	insertHandle(double(e.x)/(double)getWidth(), (float)e.y, colour);
+		insertHandle(double(e.x)/(double)getWidth(), (float)e.y, colour);
     else if(gen==2)
-	for(int i=0;i<handles.size();i++)
-	{
-		double handleX = handles[i]->getPosition().getX();
-		//Logger::writeToLog("mousePos:"+String(e.x)+" handlePos:"+String(handles[i]->getPosition().getX()));
-		if(e.x>handleX && e.x<handleX+handles[i]->getWidth())
+		for(int i=0;i<handles.size();i++)
 		{
-			if(steps==1){	//if toggle mode is enabled..
-			handles[i]->setVisible(false);
-			handles[i]->status=!handles[i]->status;
-			handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapPosition(getHeight()*int(handles[i]->status))));
-			handles[i]->setRelativePositions(handles[i]->getPosition().toDouble().withY(getSnapPosition(getHeight()*double(handles[i]->status))));	
-			}
-			else{
-			handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapPosition(double(e.y))));	
-			handles[i]->setRelativePositions(handles[i]->getPosition().toDouble().withY(getSnapPosition(double(e.y))));
-			}
-			
-			handles[i]->setRelativePositions(handles[i]->getPosition().toDouble().withY(getSnapPosition(getHeight()*double(handles[i]->status))));
-			handles[i]->sendChangeMessage();
-		}		
-	}	
+			double handleX = handles[i]->getPosition().getX();
+
+			if(e.x>handleX && e.x<handleX+handles[i]->getWidth())
+			{
+				if(steps==1){	//if toggle mode is enabled..
+				handles[i]->setVisible(false);
+				handles[i]->status=!handles[i]->status;
+				handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapPosition(getHeight()*int(handles[i]->status))));
+				handles[i]->setRelativePositions(handles[i]->getPosition().toDouble().withY(getSnapPosition(getHeight()*double(handles[i]->status))));	
+				handles[i]->sendChangeMessage();
+				}
+				else{
+				handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapPosition(double(e.y))));	
+				handles[i]->setRelativePositions(handles[i]->getPosition().toDouble().withY(getSnapPosition(double(e.y))));
+				handles[i]->sendChangeMessage();
+				}		
+			}		
+		}	
 }
 
 double HandleViewer::getSnapPosition(const double y)
 {
+	//return snapped position if qunatise is one
 	double ySnapPos = 0;		
 	double steps = (minMax.getEnd()/getParentTable()->quantiseSpace);
 	double jump = (getParentTable()->quantiseSpace/minMax.getEnd())*getHeight();
@@ -960,6 +955,7 @@ void HandleViewer::repaint(Graphics &g)
 //==============================================================================
 void HandleViewer::fixEdgePoints(int gen)
 {
+	//fix outer handles so they can't be dragged from the edges
 	if(gen==7 || gen==5)
 	{ 
 		if(handles.size()>1)
@@ -968,6 +964,7 @@ void HandleViewer::fixEdgePoints(int gen)
 			handles[handles.size()-1]->getProperties().set("fixedPos", true);
 		}	
 	}
+	//with a GEN02 all points are fixed...
 	else if(abs(gen)==2)
 	{
 		for(int i=0;i<handles.size();i++)
@@ -986,6 +983,7 @@ int HandleViewer::getHandleIndex(HandleComponent* thisHandle)
 //==============================================================================
 void HandleViewer::actionListenerCallback(const String &message)
 {
+	//this is called to show the coordinates and position the labal accordingly
     if(message=="mouseUp")
 	{
 		label->setVisible(false);
@@ -1052,10 +1050,11 @@ void HandleViewer::removeHandle (HandleComponent* thisHandle)
 HandleComponent::HandleComponent(double xPos, double yPos, int _index, bool fixed, int gen, Colour colour):
     index(_index), x(0), y(0), colour(colour), fixed(fixed), status(false)
 {
-    xPosRelative = xPos;
+    //our main handle object. xPos and xPos are always between 0 and 1
+	//we convert them to pixel positions later, based on the size of the handleViewer
+	xPosRelative = xPos;
 	yPosRelative = yPos;
 	genRoutine = gen;	
-	//Logger::writeToLog("Pos for handle:"+String(index)+"="+String(xPos));
     this->setInterceptsMouseClicks(true, false);
     setSize(10, 10);
 }
@@ -1067,9 +1066,10 @@ HandleComponent::~HandleComponent()
 void HandleComponent::paint (Graphics& g)
 {
     g.setColour(colour.darker());
+	//if gen02 use long rectangles
 	if(genRoutine==2)
 		g.fillRect(0, 0, getWidth(), getHeight());
-	else
+	else//draw a circle..
     g.fillEllipse(0, 0, getWidth(), getHeight());
 }
 //==================================================================================
@@ -1086,15 +1086,16 @@ void HandleComponent::removeThisHandle()
 void HandleComponent::mouseEnter (const MouseEvent& e)
 {
     setMouseCursor (MouseCursor::DraggingHandCursor);
-    Logger::writeToLog("Current index:"+String(index));
     String message;
     message = String(String(index)+" "+String(getX())+" "+String(getY()));
+	//send an action message to the handleViewer to display the coordinates label
 	sendActionMessage(message);
 }
 //==================================================================================
 void HandleComponent::mouseUp (const MouseEvent& e)
 {
     mouseStatus = "mouseUp";
+	//send a message to kill the coordinates label...
 	sendActionMessage("mouseUp");
     sendChangeMessage();
 }
@@ -1107,7 +1108,8 @@ void HandleComponent::mouseExit (const MouseEvent& e)
 //==================================================================================
 void HandleComponent::mouseDown (const MouseEvent& e)
 {
-
+	//users can delete handles here, and will be able to set the curve type
+	//when gen16 is added to the mix. 
     x = getX();
     y = getY();
 
@@ -1124,10 +1126,6 @@ void HandleComponent::mouseDown (const MouseEvent& e)
 	
     if(e.mods.isRightButtonDown() == true)
     {
-        //pop.addItem(1, "Linear");
-        //subm.addItem(2, "Convex");
-        //subm.addItem(3, "Concave");
-        //pop.addSubMenu("Expon", subm);
         pop.addItem(4, "Delete");
 
         const int result = pop.show();
@@ -1151,13 +1149,16 @@ HandleComponent* HandleComponent::getNextHandle()
 //==================================================================================
 void HandleComponent::setRelativePositions(Point<double> mouse)
 {
-    xPosRelative = jlimit(0.0, 1.0, mouse.getX()/(double)this->getParentComponent()->getWidth());
+    //convert position so that it's scaled between 0 and 1 
+	xPosRelative = jlimit(0.0, 1.0, mouse.getX()/(double)this->getParentComponent()->getWidth());
 	yPosRelative = jlimit(0.0, 1.0, mouse.getY()/(double)this->getParentComponent()->getHeight());
 }
 //==================================================================================
 void HandleComponent::mouseDrag (const MouseEvent& e)
 {
-    HandleComponent* previousHandle = getPreviousHandle();
+    //when a handle is dragged, we update its position and send a message
+	//to Cabbage to update the Csound function table(CabbagePluginEditor.cpp)
+	HandleComponent* previousHandle = getPreviousHandle();
     HandleComponent* nextHandle = getNextHandle();
     
 	bool fixed = this->getProperties().getWithDefault("fixedPos", false);
@@ -1169,7 +1170,7 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
     double dragX = x+e.getDistanceFromDragStartX();
     double dragY = y+e.getDistanceFromDragStartY();
 
-    //dragger.dragComponent(this, e, &resizeLimits);
+	//should use a boundsConstrainer here....
     if(dragX < leftLimit)
         dragX = leftLimit;
     if(dragX > rightLimit)
@@ -1190,11 +1191,10 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
 		setTopLeftPosition(dragX, viewer->getSnapPosition(dragY));
 	
     setRelativePositions(Point<double>(dragX, viewer->getSnapPosition(dragY)));
-	//yPosRelative = jlimit(0.0, 1.0, dragY/(double)this->getParentComponent()->getHeight());
-    //Logger::writeToLog("xPosRelative:"+String(xPosRelative));
+
+	//create message to send to handleViewer to display the current coordinates
     String message;
     message = String(String(index)+" "+String(dragX)+" "+String(viewer->getSnapPosition(dragY)));
-    //Logger::writeToLog(message);
     mouseStatus = "mouseDrag";
     sendActionMessage(message);
     sendChangeMessage();

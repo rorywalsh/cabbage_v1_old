@@ -860,12 +860,13 @@ void HandleViewer::showHandles(bool show)
 //==============================================================================
 void HandleViewer::mouseDown(const MouseEvent& e)
 {	
+	if(this->gen!=10)
 	positionHandle(e);
 }
 
 void HandleViewer::mouseDrag(const MouseEvent& e)
 {	
-	if(shouldShowHandles)
+	if(gen==2 && shouldShowHandles)
 	positionHandle(e);
 }
 

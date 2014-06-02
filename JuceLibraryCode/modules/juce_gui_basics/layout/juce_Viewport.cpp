@@ -323,7 +323,7 @@ void Viewport::setScrollBarThickness (const int thickness)
 int Viewport::getScrollBarThickness() const
 {
     return scrollBarThickness > 0 ? scrollBarThickness
-                                  : getLookAndFeel().getDefaultScrollbarWidth();
+                                  : 18;
 }
 
 void Viewport::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)

@@ -134,7 +134,7 @@
 // juce_gui_basics flags:
 
 #ifndef    JUCE_ENABLE_REPAINT_DEBUGGING
- //#define JUCE_ENABLE_REPAINT_DEBUGGING 1
+ #define JUCE_ENABLE_REPAINT_DEBUGGING 0
 #endif
 
 #ifndef    JUCE_USE_XSHM
@@ -196,7 +196,6 @@
 #ifndef  JucePlugin_PreferredChannelConfigurations
 #define JucePlugin_PreferredChannelConfigurations  {1, 1}, {2, 2}
 #endif
-
 
 #ifdef Cabbage_Plugin_LV2
 #define JucePlugin_LV2URI               "urn:cabbage:plugin"

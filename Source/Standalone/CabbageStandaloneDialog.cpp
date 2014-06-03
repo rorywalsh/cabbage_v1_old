@@ -92,11 +92,6 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     PropertySet* const globalSettings = getGlobalSettings();
 
 
-
-
-
-
-
     deviceManager = new AudioDeviceManager();
     deviceManager->addMidiInputCallback (String::empty, &player);
     deviceManager->closeAudioDevice();
@@ -109,7 +104,10 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
     deviceManager->initialise(filter->getNumInputChannels(),
                               filter->getNumOutputChannels(), savedState, false);
+							  
+							  
     //deviceManager->closeAudioDevice();
+
     filter->suspendProcessing(true);
 
     int runningCabbageIO = getPreference(appProperties, "UseCabbageIO");
@@ -129,7 +127,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
 
     }
-    deviceManager->closeAudioDevice();
+    //deviceManager->closeAudioDevice();
 
     setContentOwned (filter->createEditorIfNeeded(), true);
 
@@ -498,6 +496,12 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
     {
         deviceManager->closeAudioDevice();
         deleteFilter();
+		
+		PropertySet* const globalSettings = getGlobalSettings();
+		ScopedPointer<XmlElement> savedState;
+		if (globalSettings != nullptr)
+			savedState = globalSettings->getXmlValue ("audioSetup");	
+		
         filter = createCabbagePluginFilter(csdFile.getFullPathName(), false, AUDIO_PLUGIN);
         filter->addChangeListener(this);
         filter->addActionListener(this);
@@ -507,10 +511,12 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
             cabbageCsoundEditor->textEditor->editor[0]->loadContent(csdFile.loadFileAsString());
         }
 
+			deviceManager->initialise(filter->getNumInputChannels(),
+								  filter->getNumOutputChannels(), savedState, false);
     }
     else
     {
-        deviceManager->closeAudioDevice();
+        //deviceManager->closeAudioDevice();
         filter->reCompileCsound(csdFile);
     }
 //	filter->sendChangeMessage();
@@ -534,7 +540,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
             {
                 player.setProcessor (filter);
                 //deviceManager->setAudioDeviceSetup(audioDeviceSetup, true);
-                deviceManager->restartLastAudioDevice();
+                //deviceManager->restartLastAudioDevice();
             }
         }
 

@@ -1230,9 +1230,10 @@ StringArray fdata;
         int tableSize = csound->GetTable(temp, tableNum);
         if(tableSize>0)
         {
-            EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
+			//uncomment with dev and modified Csound
+            /*EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
             for(int i=0; i<=e->pcnt; i++)
-                fdata.add(String(e->p[i]));
+                fdata.add(String(e->p[i]));*/
         }
     }
 #endif

@@ -99,7 +99,23 @@ void TableManager::addTable(int sr, const String col, int gen, Array<float> ampR
 		//tableSize=table->tableSize;
 	}
 }
-
+//==============================================================================
+void TableManager::setAmpRanges(Array<float> ampRange)
+{
+	if(ampRange.size()>2)
+		if(ampRange[2]==0)
+			for(int i=0;i<tables.size();i++)
+			{
+				tables[i]->setAmpRanges(ampRange);
+			}
+		else
+		{
+			getTableFromFtNumber(ampRange[2])->setAmpRanges(ampRange);
+		}
+		
+	
+}
+//==============================================================================
 void TableManager::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
 {
 	ScrollBar* scroll = dynamic_cast<ScrollBar*>(scrollBarThatHasMoved);
@@ -308,20 +324,7 @@ void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRang
 	realGenRoutine = igen;
 	handleViewer->colour = Colours::findColourForName(col, Colours::white);
 	
-    if(ampRange.size()>2 && (ampRange[2]==tableNumber || ampRange[2]==0))
-    {
-        minMax.setStart(ampRange[0]);
-        minMax.setEnd(ampRange[1]);
-		handleViewer->minMax = minMax;
-    }
-	if(ampRange.size()>3){
-		quantiseSpace = ampRange[3];
-		qsteps = quantiseSpace/minMax.getEnd();
-		if(qsteps==1)
-			handleViewer->showHandles(false);
-	}
-		
-		
+    setAmpRanges(ampRange);		
 		
     //set up table according to type of GEN used to create it
     if(genRoutine==1)
@@ -331,6 +334,28 @@ void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRang
         thumbnail->addChangeListener (this);
         setZoomFactor (0.0);
     }
+}
+//==============================================================================
+void GenTable::setAmpRanges(Array<float> ampRange)
+{
+	if(ampRange.size()>2)
+	{
+		//Logger::writeToLog(String(ampRange.size()));
+		if(ampRange[2]==tableNumber || ampRange[2]==0)
+		{
+			minMax.setStart(ampRange[0]);
+			minMax.setEnd(ampRange[1]);
+			handleViewer->minMax = minMax;
+		}
+		
+		if(ampRange.size()>3){
+			quantiseSpace = ampRange[3];
+			qsteps = quantiseSpace/minMax.getEnd();
+			if(qsteps==1)
+				handleViewer->showHandles(false);
+		}
+	}
+	repaint();
 }
 //==============================================================================
 void GenTable::changeListenerCallback(ChangeBroadcaster *source)
@@ -433,14 +458,13 @@ void GenTable::setWaveform(AudioSampleBuffer buffer)
         tableSize = buffer.getNumSamples();
         thumbnail->clear();
         repaint();
-		Logger::writeToLog(String(buffer.getNumChannels()));
         thumbnail->reset(buffer.getNumChannels(), 44100, buffer.getNumSamples());
         thumbnail->addBlock(0, buffer, 0, buffer.getNumSamples());
         const Range<double> newRange (0.0, thumbnail->getTotalLength());
         scrollbar->setRangeLimits (newRange);
         setRange (newRange);
-        setZoomFactor(zoom);
-        Logger::writeToLog("updating waveform:Length "+String(thumbnail->getTotalLength()));
+        //setZoomFactor(zoom);
+        //Logger::writeToLog("updating waveform:Length "+String(thumbnail->getTotalLength()));
         repaint();
     }
 }
@@ -448,8 +472,7 @@ void GenTable::setWaveform(AudioSampleBuffer buffer)
 void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRange)
 {
     if(genRoutine != 1)
-    {	
-
+    {			
 		waveformBuffer = buffer;
         tableSize = buffer.size();
         handleViewer->tableSize = tableSize;
@@ -476,9 +499,14 @@ void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRang
 
 }
 //==============================================================================
-void GenTable::enableEditMode(StringArray pFields)
+void GenTable::enableEditMode(StringArray m_pFields)
 {
     //turns on edit mode by adding handles to the handleViewer
+	
+	//only assign original pfields
+	if(m_pFields.size()>1)
+		pFields = m_pFields;
+		
     Array<float, CriticalSection> pFieldAmps;
     pFieldAmps.add (pFields[5].getFloatValue());
 
@@ -640,7 +668,6 @@ void GenTable::paint (Graphics& g)
         {
 			//minMax is the range of the current waveforms amplitude
             currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
-			
 			g.setColour(colour.withAlpha(.2f));
 			
 			if(genRoutine==2)
@@ -659,14 +686,18 @@ void GenTable::paint (Graphics& g)
 				path.lineTo(prevX+numPixelsPerIndex, currY);	
 				}
 			}
-			else
-			path.lineTo(prevX+numPixelsPerIndex, prevY);			
+			else{
+				path.lineTo(prevX+numPixelsPerIndex, prevY);			
+			}
             prevX = jmax(0.0, prevX + numPixelsPerIndex);
 			prevY = currY;
         }
 		
 	path.lineTo(prevX, thumbArea.getHeight());
 	path.closeSubPath();
+	//uncomment to use gradient fill...
+	//ColourGradient grad(Colours::yellow, 0.f, 0.f, colour, thumbArea.toFloat().getWidth(), thumbArea.toFloat().getHeight(), false);
+	//g.setGradientFill(grad);
 	g.fillPath(path);
 	g.setColour(colour.darker());
 	if(qsteps!=1)
@@ -1071,7 +1102,8 @@ void HandleComponent::removeThisHandle()
 //==================================================================================
 void HandleComponent::mouseEnter (const MouseEvent& e)
 {
-    setMouseCursor (MouseCursor::DraggingHandCursor);
+	MouseCursor cursor(MouseCursor::StandardCursorType::DraggingHandCursor);
+    setMouseCursor (cursor);
     String message;
     message = String(String(index)+" "+String(getX())+" "+String(getY()));
 	//send an action message to the handleViewer to display the coordinates label

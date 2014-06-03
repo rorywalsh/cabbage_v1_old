@@ -48,6 +48,7 @@ public:
 	};
 	void resized();
 	void bringButtonsToFront();
+	void setAmpRanges(Array<float> ampRange);
 	void timerCallback();
 	ScopedPointer<DrawableRectangle> currentPositionMarker;
 	double getLengthInSamples();
@@ -132,6 +133,7 @@ public:
 	int mainFooterHeight, paintFooterHeight;
 	HandleViewer* getHandleViewer(){ return handleViewer;}
 	double quantiseSpace;
+	void setAmpRanges(Array<float> ampRange);
 	
 private:
     Image img;
@@ -143,13 +145,10 @@ private:
 	bool showScroll;
 	double qsteps;
 	double numPixelsPerIndex;
-	
-	
+	ColourGradient gradient;
+	StringArray pFields;
     ScopedPointer<DrawableRectangle> currentPositionMarker;
 	Rectangle<int> thumbArea;
-    
-    
-    
     Rectangle<int> handleViewerRect;
     void paint (Graphics& g);
     void mouseDown (const MouseEvent& e);
@@ -162,7 +161,6 @@ private:
     void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
     void changeListenerCallback(ChangeBroadcaster *source);
     ScopedPointer<HandleViewer> handleViewer;
-
     AudioFormatManager formatManager;
     double sampleRate;
     float regionWidth;

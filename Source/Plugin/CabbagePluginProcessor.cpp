@@ -776,9 +776,9 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         //set up stuff for tables
                         if(tokes[0].equalsIgnoreCase(String("table")))
                         {
-                            if(cAttr.getStringArrayProp(CabbageIDs::channel).size()==0)
+/*                            if(cAttr.getStringArrayProp(CabbageIDs::channel).size()==0)
                                 for(int i=0; i<cAttr.getIntArrayProp("tablenumber").size(); i++)
-                                    cAttr.addDummyChannel("dummy"+String(i));
+                                    cAttr.addDummyChannel("dummy"+String(i));*/
 
                             for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channel).size(); i++)
                                 cAttr.addTableChannelValues();
@@ -1513,8 +1513,8 @@ void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
             //catch string messags
             else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type==CabbageIDs::stringchannel)
             {
-                Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName);
-                Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);
+                //Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName);
+                //Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);
                 csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
                                    messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal.toUTF8().getAddress());
             }

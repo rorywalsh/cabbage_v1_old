@@ -892,9 +892,11 @@ class CabbageGenTable	:	public Component,
     String colour;
     String fontcolour;
     String file;
+	var ampranges;
     float zoom;
     double sampleRate;
     double scrubberPos;
+	Array<float> ampRanges;
 //---- constructor -----
 public:
     CabbageGenTable (CabbageGUIClass &cAttr) : colour(cAttr.getStringProp(CabbageIDs::colour)),
@@ -926,7 +928,6 @@ public:
     void update(CabbageGUIClass m_cAttr)
     {
         //setBounds(m_cAttr.getBounds());
-		double timeBetweenCalls=0;
 		//Logger::writeToLog("ScrubberPos:"+String(m_cAttr.getNumProp(CabbageIDs::scrubberposition)));
         if(scrubberPos!=m_cAttr.getNumProp(CabbageIDs::scrubberposition))
         {
@@ -940,6 +941,14 @@ public:
             setVisible(false);
         else
             setVisible(true);
+
+		if(ampRanges!=m_cAttr.getFloatArrayProp("amprange"))
+		{
+			ampRanges = m_cAttr.getFloatArrayProp("amprange");
+			table->setAmpRanges(ampRanges);
+			if(ampRanges.size()>2)
+				table->enableEditMode(StringArray(""), ampRanges[2]);
+		}
 
         if(zoom!=m_cAttr.getNumProp(CabbageIDs::zoom))
         {
@@ -1586,7 +1595,7 @@ public:
             {
                 setDrawingModeBooleans(fixed, horizontal, toggleMaxMin, drawOriginal, drawFill, drawingModes[0]);
                 String name = "table"+String(tableNumbers[0]);
-                Logger::writeToLog(name);
+                //Logger::writeToLog(name);
                 table->addTable("table0", channels[0], tableNumbers[0], tableSizes[0], fixed,
                                 horizontal, drawOriginal, toggleMaxMin, drawFill,
                                 resizingModes[0], minMax[0], Colours::findColourForName(tableColours[0],

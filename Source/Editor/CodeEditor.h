@@ -221,7 +221,6 @@ public:
         {
             if(name.contains("code"))
             {
-                Logger::writeToLog("changing code paint, currentTab:"+String(currentTab));
                 if(active)
                     g.setColour(Colours::cornflowerblue.darker(.4f));
                 else
@@ -240,7 +239,6 @@ public:
         }
         else if(type=="Aux")
         {
-            Logger::writeToLog("Painting Aux");
             if(!active)
                 g.setColour(genericColour.darker(.9f));
             else
@@ -256,7 +254,7 @@ public:
             g.drawFittedText(name, 0, 0, getWidth(), getHeight(), Justification::centred, 1, 1.f);
 
         }
-        //if(type=="Instr")
+
         else
         {
             float number = name.substring(6, 5).getDoubleValue();

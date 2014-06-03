@@ -474,7 +474,7 @@ void CabbagePluginAudioProcessorEditor::insertScoreStatementText(Table* table, b
                         if(pfields[0].getFloatValue()==table->tableNumber &&
                                 pfields[2].getFloatValue()==table->tableSize)
                         {
-                            Logger::writeToLog(csdArray[i]);
+                            //Logger::writeToLog(csdArray[i]);
                             csdArray.set(i, table->currentfStatement);
                             getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
                             getFilter()->getCsound()->Message("!!Cabbage has overwritten score f-statement!!");
@@ -521,7 +521,7 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
     signed int curve=0;
     String fStatement = "f"+String(table->tableNumber)+" 0 "+String(table->tableSize)+" -16 ";
     String pFields = "";
-    Logger::writeToLog(fStatement);
+    //Logger::writeToLog(fStatement);
     float xAxisRescaleFactor = (float)table->tableSize/(float)table->getWidth();
     Logger::writeToLog("end XPos:"+String(table->getWidth()*xAxisRescaleFactor));
     for(int i=0; i<points.size()-1; i++)
@@ -567,7 +567,7 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
 
     pFields = pFields + String(yAmp);
     fStatement = fStatement+pFields;
-    Logger::writeToLog(fStatement);
+    //Logger::writeToLog(fStatement);
     table->currentfStatement = fStatement;
     getFilter()->messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement, table->tableNumber);
 
@@ -592,14 +592,20 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
         evt.p[3]=table->tableSize;
         evt.p[4]=table->realGenRoutine;
 		if(table->genRoutine==5)
-			{
+		{
 			for(int i=0; i<pFields.size()-1; i++)
 				evt.p[5+i]= jmax(0.00001, pFields[i+1]);
-			}
-		else{
+		}
+		else if(table->genRoutine==7)
+		{
+			for(int i=0; i<pFields.size()-1; i++)
+				evt.p[5+i]= pFields[i+1];			
+		}
+		else
+		{
 			for(int i=0; i<pFields.size(); i++)
 				evt.p[5+i] = pFields[i];
-			}
+		}
 
 
         StringArray fStatement;
@@ -610,7 +616,7 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
         fStatement.set(1, String(table->tableNumber));
         fStatement.set(0, "f");
 
-		//Logger::writeToLog(fStatement.joinIntoString(" "));
+		Logger::writeToLog(fStatement.joinIntoString(" "));
         getFilter()->getCsound()->GetCsound()->hfgens(getFilter()->getCsound()->GetCsound(), &ftpp, &evt, 1);
         Array<float, CriticalSection> points;
 
@@ -2949,35 +2955,6 @@ bool CabbagePluginAudioProcessorEditor::keyPressed(const juce::KeyPress &key ,Co
         getFilter()->sendActionMessage("MENU COMMAND: toggle edit");
     }
 
-
-
-#ifndef Cabbage_No_Csound
-    if(getFilter()->isGuiEnabled())
-    {
-        getFilter()->getCsound()->KeyPressed(key.getTextCharacter());
-//search through comps to see which is attached to the current key being pressed.
-        for(int i=0; i<(int)getFilter()->getGUICtrlsSize(); i++)
-        {
-            if(comps[i])
-                if(getFilter()->getGUICtrls(i).getKeySize()>0)
-                    if(getFilter()->getGUICtrls(i).getkey(0).equalsIgnoreCase(key.getTextDescription()))
-                        if(key.isCurrentlyDown())
-                        {
-                            if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("button"))
-                                this->buttonClicked(((CabbageButton*)comps[i])->button);
-                            else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("checkbox"))
-                            {
-                                if(((CabbageCheckbox*)comps[i])->button->getToggleState())
-                                    ((CabbageCheckbox*)comps[i])->button->setToggleState(0, dontSendNotification);
-                                else
-                                    ((CabbageCheckbox*)comps[i])->button->setToggleState(1, dontSendNotification);
-                                this->buttonClicked(((CabbageCheckbox*)comps[i])->button);
-                            }
-                        }
-
-        }
-    }//end of GUI enabled check
-#endif
     return true;
 }
 
@@ -3355,7 +3332,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
             				StringArray pFields = getFilter()->getTableStatement(tableNumber);
             				//tableValues.clear();
             				tableValues = getFilter()->getTableFloats(tableNumber);
-            				table->setWaveform(tableValues, tableNumber);
+            				table->setWaveform(tableValues, tableNumber, false);
             				}
 						}
 					((CabbageGenTable*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
@@ -3393,7 +3370,8 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                             else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String(CabbageIDs::button))
                             {
                                 if(comps[i])
-                                    ((CabbageButton*)comps[i])->button->setButtonText(getFilter()->getGUICtrls(i).getItems(1-(int)value));
+                                    ((CabbageButton*)comps[i])->button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1-(int)value));
+									//setButtonText(getFilter()->getGUICtrls(i).getItems(1-(int)value));
                             }
                             else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String(CabbageIDs::combobox))
                             {

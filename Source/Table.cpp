@@ -87,7 +87,8 @@ void TableManager::addTable(int sr, const String col, int gen, Array<float> ampR
 	table->addTable(sr, col, gen, ampRange);
 	addAndMakeVisible(table);
 	tables.add(table);
-		
+	
+	
 	
 	RoundButton* button = new RoundButton(String(ftnumber), Colours::findColourForName(col, Colours::white));
 	button->addChangeListener(this);
@@ -132,6 +133,16 @@ void TableManager::setPosition(double pos)
 	tables[i]->setXPosition(pos);
 	}
 }
+
+void TableManager::setDrawMode(String mode)
+{
+	for(int i=0;i<tables.size();i++)
+	{	
+	if(tables[i]->genRoutine==2)
+		tables[i]->drawAsVUMeter = true;
+	}
+}
+
 //==============================================================================
 void TableManager::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
 {
@@ -717,7 +728,7 @@ void GenTable::paint (Graphics& g)
 	
 	if(drawAsVUMeter)
 	{
-		ColourGradient grad(Colours::yellow, 0.f, 0.f, colour, thumbArea.toFloat().getWidth(), thumbArea.toFloat().getHeight(), false);
+		ColourGradient grad(Colours::yellow, 0.f, 0.f, Colours::red, thumbArea.toFloat().getWidth(), thumbArea.toFloat().getHeight(), false);
 		grad.addColour(.5, Colours::lime);
 		g.setGradientFill(grad);		
 	}

@@ -48,6 +48,7 @@ public:
 	};
 	void resized();
 	void setZoomFactor(double zoom);
+	void setDrawMode(String mode);
 	void bringButtonsToFront();
 	void setAmpRanges(Array<float> ampRange);
 	void timerCallback();
@@ -137,6 +138,7 @@ public:
 	double quantiseSpace;
 	void setAmpRanges(Array<float> ampRange);
 	void setXPosition(double pos);
+	bool drawAsVUMeter;
 	
 private:
     Image img;
@@ -177,7 +179,7 @@ private:
     double loopStart;
     double currentPlayPosition;
     bool drawWaveform;
-	bool drawAsVUMeter;
+
 
 
     Array<float, CriticalSection> waveformBuffer;

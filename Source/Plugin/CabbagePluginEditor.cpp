@@ -2021,7 +2021,9 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 			{
 				table->setWaveform(tableValues, tableNumber);
 				table->enableEditMode(pFields, tableNumber);
-			}				
+			}
+			if(cAttr.getStringProp(CabbageIDs::drawmode).toLowerCase()=="vu")
+				table->setDrawMode("vu");
 		}
     }
 	

@@ -60,7 +60,8 @@ void TableManager::changeListenerCallback(ChangeBroadcaster *source)
 					{
 					tables[i]->setVisible(true);
 					tables[i]->toFront(true);
-					tables[i]->getHandleViewer()->showHandles(true);
+					if(tables[i]->genRoutine != 2)
+						tables[i]->getHandleViewer()->showHandles(true);
 					}
 					else if(button->getMode()==0)
 					tables[i]->setVisible(false);
@@ -561,6 +562,7 @@ void GenTable::enableEditMode(StringArray m_pFields)
                 handleViewer->addHandle(xPos/tableSize, ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue), width+1, 5, this->colour);
 			}
 			handleViewer->fixEdgePoints(genRoutine);
+			handleViewer->showHandles(false);
         }
 
     }
@@ -681,7 +683,7 @@ void GenTable::paint (Graphics& g)
         double waveformThickness = 4;
         double thumbHeight = thumbArea.getHeight();
 		prevY = ampToPixel(thumbHeight, minMax, waveformBuffer[0]);
-        for(int i=visibleStart; i<visibleEnd; i++)
+        for(float i=visibleStart; i<visibleEnd; i++)
         {
 			//minMax is the range of the current waveforms amplitude
             currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
@@ -919,11 +921,11 @@ void HandleViewer::insertHandle(double x, double y, Colour colour)
 //==============================================================================
 void HandleViewer::showHandles(bool show)
 {
-	shouldShowHandles = show;
+/*	shouldShowHandles = show;
 	for (int i=1; i<handles.size(); i++)
 	{
-		handles[i]->setVisible(show);
-	}
+		handles[i]->setColour(Colours::transparentBlack);
+	}*/
 }
 //==============================================================================
 void HandleViewer::mouseDown(const MouseEvent& e)
@@ -958,7 +960,7 @@ void HandleViewer::positionHandle(const MouseEvent& e)
 			if(e.x>handleX && e.x<handleX+handles[i]->getWidth())
 			{
 				if(steps==1){	//if toggle mode is enabled..
-				handles[i]->setVisible(false);
+				//handles[i]->setVisible(false);
 				handles[i]->status=!handles[i]->status;
 				handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapPosition(getHeight()*int(handles[i]->status))));
 				handles[i]->setRelativePositions(handles[i]->getPosition().toDouble().withY(getSnapPosition(getHeight()*double(handles[i]->status))));	
@@ -996,8 +998,10 @@ void HandleViewer::resized()
         handles[i]->setCentrePosition(((double)getWidth()*handles[i]->xPosRelative), ((double)getHeight()*handles[i]->yPosRelative));
         else{
 		handles[i]->setTopLeftPosition(((double)getWidth()*handles[i]->xPosRelative), ((double)getHeight()*handles[i]->yPosRelative));
- 		handles[i]->setSize(getWidth()/tableSize, 5.f);	
-		handles[i]->setVisible(shouldShowHandles);
+ 		Logger::writeToLog(String(getWidth()/tableSize));
+		handles[i]->setSize(getWidth()/tableSize, 5.f);	
+		//handles[i]->setVisible(false);
+		showHandles(false);
 		}  
 	}
 }
@@ -1117,9 +1121,14 @@ HandleComponent::~HandleComponent()
 {
 }
 //==================================================================================
+void HandleComponent::setColour(Colour icolour)
+{
+	colour = icolour;
+}
+
 void HandleComponent::paint (Graphics& g)
 {
-    g.setColour(colour.darker());
+    g.setColour(Colours::transparentBlack);
 	//if gen02 use long rectangles
 	if(genRoutine==2)
 		g.fillRect(0, 0, getWidth(), getHeight());

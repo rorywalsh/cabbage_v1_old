@@ -262,7 +262,7 @@ public:
     int index;
     int height, width;
     int x,y;
-
+	void setColour(Colour icolour);
 	void setRelativePositions(Point<double> point);
 	
 	HandleViewer* getParentHandleViewer(){
@@ -279,6 +279,7 @@ public:
 private:
     Colour colour;
     bool fixed;
+	
 	
     ComponentDragger dragger;
     int lastX, lastY;

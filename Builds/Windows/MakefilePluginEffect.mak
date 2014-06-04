@@ -74,6 +74,7 @@ OBJECTS := \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
+  $(OBJDIR)/Table_35ae1cd9.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
@@ -127,6 +128,11 @@ $(OBJDIR)/CabbageCallOutBox_1ced38fd.o: ../../Source/CabbageCallOutBox.cpp
 $(OBJDIR)/CabbageGUIClass_79b9049f.o: ../../Source/CabbageGUIClass.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CabbageGUIClass.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/Table_35ae1cd9.o: ../../Source/Table.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling Table.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/CabbageLookAndFeel_220a01a6.o: ../../Source/CabbageLookAndFeel.cpp

@@ -81,6 +81,7 @@ OBJECTS := \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
+  $(OBJDIR)/Table_35ae1cd9.o \
   $(OBJDIR)/CabbageStandaloneDialog_72d272cd.o \
   $(OBJDIR)/StandaloneFilterApp_d9ee3663.o \
   $(OBJDIR)/SplitComponent_d9ee366f.o \
@@ -148,6 +149,11 @@ $(OBJDIR)/CabbageMainPanel_12c1333.o: ../../Source/CabbageMainPanel.cpp
 	@echo "Compiling CabbageMainPanel.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/Table_35ae1cd9.o: ../../Source/Table.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling Table.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
 $(OBJDIR)/CabbagePropertiesDialog_5e61b3fd.o: ../../Source/CabbagePropertiesDialog.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CabbagePropertiesDialog.cpp"

@@ -969,7 +969,6 @@ public:
         table->setWaveform(buffer, ftnumber);
     }
 
-
     int getPosition()
     {
         //return table->getCurrentPlayPosInSamples();

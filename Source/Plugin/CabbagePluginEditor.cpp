@@ -1995,11 +1995,11 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
     var tables = cAttr.getVarArrayProp(CabbageIDs::tablenumber);
 	for(int y=0; y<tables.size(); y++)	
     {
-			int tableNumber = tables[y];
-			if(tableNumber>0)
-			{
-			Logger::writeToLog(String(tableNumber));
-			//table->addChangeListener(this);
+		int tableNumber = tables[y];
+		if(tableNumber>0)
+		{
+			Logger::writeToLog("Table Number:"+String(tableNumber));
+
 			StringArray pFields = getFilter()->getTableStatement(tableNumber);
 			int genRoutine = pFields[4].getIntValue();
 
@@ -2011,21 +2011,27 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 																	tableNumber, this);
 			if(abs(genRoutine)==1)
 			{
-			tableBuffer.clear();
-			int channels = 1;//for now only works in mono;;
-			tableBuffer.setSize(channels, tableValues.size());
-			tableBuffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());	
-			table->setWaveform(tableBuffer, tableNumber);		
+				tableBuffer.clear();
+				int channels = 1;//for now only works in mono;;
+				tableBuffer.setSize(channels, tableValues.size());
+				tableBuffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());	
+				table->setWaveform(tableBuffer, tableNumber);		
 			}
 			else
 			{
-			table->setWaveform(tableValues, tableNumber);
-			table->enableEditMode(pFields, tableNumber);
+				table->setWaveform(tableValues, tableNumber);
+				table->enableEditMode(pFields, tableNumber);
 			}				
 		}
     }
+	
 	table->configTableSizes(cAttr.getVarArrayProp(CabbageIDs::tableconfig));
 	table->bringTableToFront(1);	
+	
+	if(cAttr.getNumProp(CabbageIDs::zoom)!=0)
+		table->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
+	if(cAttr.getNumProp(CabbageIDs::startpos)>0)
+		table->setPosition(cAttr.getNumProp(CabbageIDs::startpos));
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

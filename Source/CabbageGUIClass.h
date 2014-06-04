@@ -208,10 +208,9 @@ static const Identifier scrubberposition = "scrubberposition";
 static const Identifier startpoint = "startpoint";
 static const Identifier endpoint = "endpoint";
 static const Identifier zoom = "zoom";
+static const Identifier startpos = "startpos";
 static const Identifier show = "show";
 static const Identifier child = "child";
-
-
 
 
 //type of widgets/controls/messages

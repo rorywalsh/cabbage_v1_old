@@ -500,6 +500,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
         cabbageIdentifiers.set(CabbageIDs::scrubberposition, 0);
         cabbageIdentifiers.set(CabbageIDs::zoom, 0);
+		cabbageIdentifiers.set(CabbageIDs::startpos, 0);
         cabbageIdentifiers.set(CabbageIDs::tablenumber, -1);
     }
     //===============gentable==================//
@@ -549,6 +550,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
         cabbageIdentifiers.set(CabbageIDs::scrubberposition, 0);
         cabbageIdentifiers.set(CabbageIDs::zoom, 0);
+		cabbageIdentifiers.set(CabbageIDs::startpos, 0);
         cabbageIdentifiers.set(CabbageIDs::tablenumber, -1);
     }
 
@@ -1361,6 +1363,10 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                 else if(identArray[indx].equalsIgnoreCase("zoom"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::zoom, strTokens[0].trim().getFloatValue());
+					if(strTokens.size()>1)
+						cabbageIdentifiers.set(CabbageIDs::startpos, strTokens[1].trim().getFloatValue());
+					else
+						cabbageIdentifiers.set(CabbageIDs::startpos, -1);
                 }
 
                 else if(identArray[indx].equalsIgnoreCase("wrap"))

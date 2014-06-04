@@ -116,6 +116,22 @@ void TableManager::setAmpRanges(Array<float> ampRange)
 	
 }
 //==============================================================================
+void TableManager::setZoomFactor(double newZoom)
+{
+	for(int i=0;i<tables.size();i++)
+	{	
+	tables[i]->setZoomFactor(newZoom);
+	}
+}
+//==============================================================================
+void TableManager::setPosition(double pos)
+{
+	for(int i=0;i<tables.size();i++)
+	{	
+	tables[i]->setXPosition(pos);
+	}
+}
+//==============================================================================
 void TableManager::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
 {
 	ScrollBar* scroll = dynamic_cast<ScrollBar*>(scrollBarThatHasMoved);
@@ -290,7 +306,8 @@ GenTable::GenTable():	thumbnailCache (5),
 	mainFooterHeight(25),
 	paintFooterHeight(25),
 	quantiseSpace(0.01),
-	qsteps(0)
+	qsteps(0),
+	drawAsVUMeter(false)
 {
     thumbnail=nullptr;
     addAndMakeVisible(scrollbar = new ScrollBar(false));
@@ -695,9 +712,14 @@ void GenTable::paint (Graphics& g)
 		
 	path.lineTo(prevX, thumbArea.getHeight());
 	path.closeSubPath();
-	//uncomment to use gradient fill...
-	//ColourGradient grad(Colours::yellow, 0.f, 0.f, colour, thumbArea.toFloat().getWidth(), thumbArea.toFloat().getHeight(), false);
-	//g.setGradientFill(grad);
+	
+	if(drawAsVUMeter)
+	{
+		ColourGradient grad(Colours::yellow, 0.f, 0.f, colour, thumbArea.toFloat().getWidth(), thumbArea.toFloat().getHeight(), false);
+		grad.addColour(.5, Colours::lime);
+		g.setGradientFill(grad);		
+	}
+	
 	g.fillPath(path);
 	g.setColour(colour.darker());
 	if(qsteps!=1)
@@ -763,6 +785,21 @@ void GenTable::mouseDrag(const MouseEvent& e)
         }
     }
 }
+
+
+//==============================================================================
+void GenTable::setXPosition(double pos)
+{
+    if(genRoutine==1)
+    {
+			setRange (visibleRange.movedToStartAt(pos));		
+	}
+	else
+	{
+			setRange (visibleRange.movedToStartAt(pos));		
+	}
+}
+
 //==============================================================================
 void GenTable::setScrubberPos(double pos)
 {

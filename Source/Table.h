@@ -47,9 +47,11 @@ public:
 		g.fillAll(Colours::transparentBlack);
 	};
 	void resized();
+	void setZoomFactor(double zoom);
 	void bringButtonsToFront();
 	void setAmpRanges(Array<float> ampRange);
 	void timerCallback();
+	void setPosition(double pos);
 	ScopedPointer<DrawableRectangle> currentPositionMarker;
 	double getLengthInSamples();
 	void setScrubberPos(double pos, int tableNum);
@@ -134,6 +136,7 @@ public:
 	HandleViewer* getHandleViewer(){ return handleViewer;}
 	double quantiseSpace;
 	void setAmpRanges(Array<float> ampRange);
+	void setXPosition(double pos);
 	
 private:
     Image img;
@@ -174,6 +177,7 @@ private:
     double loopStart;
     double currentPlayPosition;
     bool drawWaveform;
+	bool drawAsVUMeter;
 
 
     Array<float, CriticalSection> waveformBuffer;

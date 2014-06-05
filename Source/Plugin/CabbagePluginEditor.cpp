@@ -2029,11 +2029,12 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 	
 	table->configTableSizes(cAttr.getVarArrayProp(CabbageIDs::tableconfig));
 	table->bringTableToFront(1);	
-	
+
+	if(cAttr.getNumProp(CabbageIDs::startpos)>-1)
+		table->setRange(cAttr.getNumProp(CabbageIDs::startpos), cAttr.getNumProp(CabbageIDs::endpos));	
 	if(cAttr.getNumProp(CabbageIDs::zoom)!=0)
 		table->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
-	if(cAttr.getNumProp(CabbageIDs::startpos)>0)
-		table->setPosition(cAttr.getNumProp(CabbageIDs::startpos));
+
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

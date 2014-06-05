@@ -1381,6 +1381,15 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 						cabbageIdentifiers.set(CabbageIDs::startpos, -1);
                 }
 
+                else if(identArray[indx].equalsIgnoreCase("samplerange"))
+                {
+                    cabbageIdentifiers.set(CabbageIDs::startpos, strTokens[0].trim().getFloatValue());
+					if(strTokens.size()>1)
+						cabbageIdentifiers.set(CabbageIDs::endpos, strTokens[1].trim().getFloatValue());
+					else
+						cabbageIdentifiers.set(CabbageIDs::endpos, -1);
+                }
+				
                 else if(identArray[indx].equalsIgnoreCase("wrap"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::wrap, strTokens[0].trim().getFloatValue());

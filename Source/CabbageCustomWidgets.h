@@ -677,7 +677,7 @@ public:
         //Logger::writeToLog("in paint routine");
         if(File(file).existsAsFile())
         {
-            Logger::writeToLog("drawing file");
+            //Logger::writeToLog("drawing file");
             g.drawImage(img, 0, 0, width, height, 0, 0, img.getWidth(), img.getHeight());
         }
         else
@@ -894,6 +894,7 @@ class CabbageGenTable	:	public Component,
     String file;
 	var ampranges;
     float zoom;
+	float startpos, endpos;
     double sampleRate;
     double scrubberPos;
 	Array<float> ampRanges;
@@ -903,7 +904,9 @@ public:
         fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
         file(cAttr.getStringProp(CabbageIDs::file)),
         zoom(cAttr.getNumProp(CabbageIDs::zoom)),
-        scrubberPos(cAttr.getNumProp(CabbageIDs::scrubberposition))
+        scrubberPos(cAttr.getNumProp(CabbageIDs::scrubberposition)),
+		startpos(-1),
+		endpos(-1)
     {
         setName(cAttr.getStringProp(CabbageIDs::name));
         table = new TableManager();
@@ -948,6 +951,13 @@ public:
 			table->setAmpRanges(ampRanges);
 			if(ampRanges.size()>2)
 				table->enableEditMode(StringArray(""), ampRanges[2]);
+		}
+
+		if(m_cAttr.getNumProp(CabbageIDs::startpos)!=startpos &&  m_cAttr.getNumProp(CabbageIDs::endpos)!=endpos)
+		{
+		table->setRange(m_cAttr.getNumProp(CabbageIDs::startpos), m_cAttr.getNumProp(CabbageIDs::endpos));	
+		endpos = m_cAttr.getNumProp(CabbageIDs::endpos);
+		startpos = m_cAttr.getNumProp(CabbageIDs::startpos);
 		}
 
         if(zoom!=m_cAttr.getNumProp(CabbageIDs::zoom))

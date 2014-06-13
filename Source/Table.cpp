@@ -45,8 +45,6 @@ void TableManager::changeListenerCallback(ChangeBroadcaster *source)
             zoom+=0.1;
 			for(int i=0;i<tables.size();i++)
 			{
-				double mvisibleLength = tables[i]->visibleRange.getLength()*44100.0;
-				Logger::writeToLog("Visible Length at Zoom:"+String(mvisibleLength));
 				tables[i]->setZoomFactor(jmin(0.9, zoom));
 			}
         }
@@ -641,13 +639,19 @@ void GenTable::setZoomFactor (double amount)
             const double newScale = jmax (0.001, thumbnail->getTotalLength() * (1.0 - jlimit (0.0, 0.99, amount)));
             const double timeAtCentre = xToTime (getWidth() / 2.0f);
 			if(amount!=0)
+			{
+				setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));	
 				setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
+				
+			}
 			else
 				setRange (Range<double> (0, thumbnail->getTotalLength()));
         }
     }
     else
     {
+		if(visibleRange.getLength()==0)
+			visibleRange.setLength(waveformBuffer.size()/sampleRate);		
 		const double newScale = jmax (0.00001, waveformBuffer.size()/sampleRate * (1.0 - jlimit (0.0, 0.9999, amount)));
         const double timeAtCentre = xToTime (getWidth() / 2.0f);
 		if(amount!=0)
@@ -748,16 +752,17 @@ void GenTable::paint (Graphics& g)
     else
     {
 		Path path;
-		path.startNewSubPath(0, thumbArea.getHeight());
+		path.startNewSubPath(0, thumbArea.getHeight()+5.f);
         numPixelsPerIndex = (double)thumbArea.getWidth() / visibleLength;
         double waveformThickness = 4;
         double thumbHeight = thumbArea.getHeight();
 		prevY = ampToPixel(thumbHeight, minMax, waveformBuffer[0]);
+		prevY = prevY+5.f;
         for(float i=visibleStart; i<visibleEnd; i++)
         {
 			//minMax is the range of the current waveforms amplitude
             currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
-			currY = (currY>thumbHeight/2.f ? currY+5.f : currY+5.f);
+			currY = currY+5.f;
 
 			g.setColour(colour.withAlpha(.2f));
 			
@@ -770,7 +775,7 @@ void GenTable::paint (Graphics& g)
 					g.drawRoundedRectangle(prevX+2, 2.f, numPixelsPerIndex-4, thumbHeight-4, numPixelsPerIndex*0.1, 1.f);
 					g.setColour(colour.withAlpha(.6f));
 					if(thumbHeight-(thumbHeight-currY)==0)
-					g.fillRoundedRectangle(prevX+4, thumbHeight-(thumbHeight-currY)+4, numPixelsPerIndex-8, thumbHeight-currY-8, numPixelsPerIndex*0.1);	
+					g.fillRoundedRectangle(prevX+4, thumbHeight-(thumbHeight-currY), numPixelsPerIndex-8, thumbHeight-currY, numPixelsPerIndex*0.1);	
 				}//else we draw a simple bar graph representation....
 				else{
 				path.lineTo(prevX, currY);
@@ -1212,12 +1217,12 @@ void HandleComponent::paint (Graphics& g)
 	}
 	else//draw a circle..
 	{
-		g.setColour(colour.brighter(1.f).withAlpha(.5f));
+		g.setColour(Colours::whitesmoke);
 		//g.drawLine(0, (getHeight()/2.f), getWidth(), (getHeight()/2.f), 1.f);
 		//g.drawLine(getWidth()/2.f, 0, getWidth()/2.f, getHeight(), 1.f);
 		//g.setColour(colour);
 		g.drawEllipse(getLocalBounds().reduced(1.4).toFloat(), 1.f);
-		g.setColour(colour.withAlpha(.2f));
+		g.setColour(colour.withAlpha(.5f));
 		g.fillEllipse(getLocalBounds().reduced(2).toFloat());
 	}
 }
@@ -1325,12 +1330,10 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
         dragX = leftLimit;
     if(dragX > rightLimit)
         dragX = rightLimit;
-    if(dragY< 0)
-        dragY = 0;
-    if(dragY > getParentComponent()->getHeight())
-        dragY = getParentComponent()->getHeight()-5;
     if(fixed)
         dragX = x;
+
+    dragY = jlimit(0.0, getParentComponent()->getHeight()+5.0, dragY);
 
 	HandleViewer* viewer = getParentHandleViewer();
 

@@ -236,6 +236,7 @@ public:
     OwnedArray<HandleComponent, CriticalSection> handles;
     void fixEdgePoints(int gen);
 	void showHandles(bool show);
+	void showLabel(String message);
     int handleIndex;
     double tableSize;
 	Range<float> minMax;

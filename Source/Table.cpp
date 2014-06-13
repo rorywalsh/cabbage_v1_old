@@ -771,15 +771,16 @@ void GenTable::paint (Graphics& g)
 				//when qsteps == 1 we draw a grid
 				if(qsteps==1)
 				{
-					g.setColour(colour.withAlpha(.3f));					
+					currY = currY-5.f;
+					g.setColour(colour.withAlpha(.3f));	
 					g.drawRoundedRectangle(prevX+2, 2.f, numPixelsPerIndex-4, thumbHeight-4, numPixelsPerIndex*0.1, 1.f);
 					g.setColour(colour.withAlpha(.6f));
 					if(thumbHeight-(thumbHeight-currY)==0)
-					g.fillRoundedRectangle(prevX+4, thumbHeight-(thumbHeight-currY), numPixelsPerIndex-8, thumbHeight-currY, numPixelsPerIndex*0.1);	
+					g.fillRoundedRectangle(prevX+3, thumbHeight-(thumbHeight-currY)+3.f, numPixelsPerIndex-6, thumbHeight-currY-6.f, numPixelsPerIndex*0.1);	
 				}//else we draw a simple bar graph representation....
 				else{
-				path.lineTo(prevX, currY);
-				path.lineTo(prevX+numPixelsPerIndex, currY);	
+					path.lineTo(prevX, currY);
+					path.lineTo(prevX+numPixelsPerIndex, currY);	
 				}
 			}
 			else{
@@ -1053,7 +1054,10 @@ void HandleViewer::positionHandle(const MouseEvent& e)
 				handles[i]->sendChangeMessage();
 				}		
 			}		
-		}	
+		}
+    String message;
+    message = String(String(handles.size())+" "+String(e.x)+" "+String(getSnapPosition(e.y)));
+	//showLabel(message);
 }
 
 double HandleViewer::getSnapPosition(const double y)
@@ -1120,6 +1124,34 @@ int HandleViewer::getHandleIndex(HandleComponent* thisHandle)
 }
 
 //==============================================================================
+void HandleViewer::showLabel(String message)
+{
+	
+	StringArray mess;
+    mess.addTokens(message, " ");
+	int offsetY=0, offsetX=10;
+
+	float amp = GenTable::pixelToAmp(getHeight(), minMax, mess[2].getIntValue());	
+	int currXPos = ((mess[1].getFloatValue()/(float)getWidth())*this->tableSize);
+	
+	if(abs(gen)==5)
+		amp = jmax(0.001f, amp);
+	else
+		amp = jmax(0.f, amp);
+	
+    if(mess[2].getIntValue()>getHeight()/2)
+        offsetY=-18;
+    if(mess[1].getIntValue()>getWidth()/2)
+        offsetX=-60;
+		
+	label->setVisible(true);
+	label->setBounds(mess[1].getIntValue()+offsetX, mess[2].getIntValue()+offsetY, 60, 20);
+	label->setColour(Label::textColourId, colour);
+	label->setColour(Label::backgroundColourId, colour.contrasting());
+	String text = String(currXPos)+", "+String(amp);
+    label->setText(text, dontSendNotification);	
+}
+//==============================================================================
 void HandleViewer::actionListenerCallback(const String &message)
 {
 	//this is called to show the coordinates and position the labal accordingly
@@ -1129,29 +1161,7 @@ void HandleViewer::actionListenerCallback(const String &message)
 		return;
 	}
 	
-	label->setVisible(true);
-    int offsetY=0, offsetX=10;
-    StringArray mess;
-    mess.addTokens(message, " ");
-	
-    if(mess[2].getIntValue()>getHeight()/2)
-        offsetY=-18;
-    if(mess[1].getIntValue()>getWidth()/2)
-        offsetX=-60;
-		
-    label->setBounds(mess[1].getIntValue()+offsetX, mess[2].getIntValue()+offsetY, 60, 20);
-	float amp = GenTable::pixelToAmp(getHeight(), minMax, mess[2].getIntValue());	
-	int currXPos = ((mess[1].getFloatValue()/(float)getWidth())*this->tableSize);
-	
-	if(abs(gen)==5)
-		amp = jmax(0.001f, amp);
-	else
-		amp = jmax(0.f, amp);
-		
-	label->setColour(Label::textColourId, colour);
-	label->setColour(Label::backgroundColourId, colour.contrasting());
-	String text = String(currXPos)+", "+String(amp);
-    label->setText(text, dontSendNotification);
+	showLabel(message);
 }
 
 //==============================================================================
@@ -1213,7 +1223,10 @@ void HandleComponent::paint (Graphics& g)
 	//if gen02 use long rectangles
 	if(genRoutine==2)
 	{
-		g.fillRect(0, 0, getWidth(), getHeight());
+//		g.setColour(colour.withAlpha(.5f));
+//		g.fillRect(getLocalBounds());
+//		g.setColour(Colours::whitesmoke);
+//		g.drawRect(getLocalBounds(), 1.f);
 	}
 	else//draw a circle..
 	{
@@ -1289,7 +1302,8 @@ void HandleComponent::mouseDown (const MouseEvent& e)
 			if(!fixed)
 			removeThisHandle();
         }
-    }
+    }	
+	
 }
 //==================================================================================
 HandleComponent* HandleComponent::getPreviousHandle()

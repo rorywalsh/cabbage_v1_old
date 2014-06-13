@@ -618,9 +618,9 @@ void CsoundCodeEditorComponenet::mouseWheelMove (const MouseEvent& e, const Mous
 	else
 	{
 		if(mouse.deltaY<0)
-		scrollBy(1);
+		scrollBy(10);
 		else
-			scrollBy(-1);
+			scrollBy(-10);
 	}
 }
 //==============================================================================

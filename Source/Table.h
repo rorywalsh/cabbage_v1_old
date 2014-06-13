@@ -148,6 +148,7 @@ public:
 	
 private:
     Image img;
+	bool shouldScroll;
     int normalised;
     int imgCount;
 	Colour fillColour;

@@ -44,7 +44,11 @@ void TableManager::changeListenerCallback(ChangeBroadcaster *source)
         {
             zoom+=0.1;
 			for(int i=0;i<tables.size();i++)
-            tables[i]->setZoomFactor(jmin(0.9, zoom));
+			{
+				double mvisibleLength = tables[i]->visibleRange.getLength()*44100.0;
+				Logger::writeToLog("Visible Length at Zoom:"+String(mvisibleLength));
+				tables[i]->setZoomFactor(jmin(0.9, zoom));
+			}
         }
         else if(button->getName()=="zoomOut")
         {   
@@ -356,6 +360,7 @@ GenTable::GenTable():	thumbnailCache (5),
     normalised(0),
     tableNumber(-1),
 	showScroll(true),
+	shouldScroll(true),
 	mainFooterHeight(25),
 	paintFooterHeight(25),
 	quantiseSpace(0.01),
@@ -595,13 +600,13 @@ void GenTable::enableEditMode(StringArray m_pFields)
         if(genRoutine==7 || genRoutine==5)
         {
             float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
-            handleViewer->addHandle(0, ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue), 10, 10, this->colour);
+            handleViewer->addHandle(0, ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue), 12, 12, this->colour);
 
             for(int i=6; i<pFields.size(); i+=2)
             {
                 xPos = xPos + pFields[i].getFloatValue();
                 pFieldAmpValue = (normalised<0 ? pFields[i+1].getFloatValue() : pFields[i+1].getFloatValue()/pFieldMinMax.getEnd());
-                handleViewer->addHandle(xPos/(double)waveformBuffer.size(), ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue), 10, 10, this->colour);
+                handleViewer->addHandle(xPos/(double)waveformBuffer.size(), ampToPixel(handleViewer->getHeight(), minMax, pFieldAmpValue), 12, 12, this->colour);
 			}
 			handleViewer->fixEdgePoints(genRoutine);
         }
@@ -643,7 +648,7 @@ void GenTable::setZoomFactor (double amount)
     }
     else
     {
-        const double newScale = jmax (0.00001, waveformBuffer.size()/sampleRate * (1.0 - jlimit (0.0, 0.9999, amount)));
+		const double newScale = jmax (0.00001, waveformBuffer.size()/sampleRate * (1.0 - jlimit (0.0, 0.9999, amount)));
         const double timeAtCentre = xToTime (getWidth() / 2.0f);
 		if(amount!=0)
 			setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
@@ -697,11 +702,11 @@ void GenTable::setRange(Range<double> newRange, bool isScrolling)
 		{
 			
 			visibleStart = visibleRange.getStart()*sampleRate;
-			Logger::writeToLog("VisibleStart:"+String(visibleRange.getStart()));
+			//Logger::writeToLog("VisibleStart:"+String(visibleRange.getStart()));
 			visibleEnd = visibleRange.getEnd()*sampleRate;
-			Logger::writeToLog("visibleEnd:"+String(visibleRange.getEnd()));
+			//Logger::writeToLog("visibleEnd:"+String(visibleRange.getEnd()));
 			visibleLength = visibleRange.getLength()*sampleRate;
-			Logger::writeToLog("VisibleStart:"+String(visibleRange.getLength()));
+			Logger::writeToLog("Table Number:"+String(tableNumber)+String(" VisibleLength:")+String(visibleRange.getLength()));
 			if(!isScrolling)
 			{
 				double newWidth = double(getWidth())*(double(waveformBuffer.size())/visibleLength);
@@ -752,6 +757,8 @@ void GenTable::paint (Graphics& g)
         {
 			//minMax is the range of the current waveforms amplitude
             currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
+			currY = (currY>thumbHeight/2.f ? currY+5.f : currY+5.f);
+
 			g.setColour(colour.withAlpha(.2f));
 			
 			if(genRoutine==2)
@@ -786,7 +793,7 @@ void GenTable::paint (Graphics& g)
 		grad.addColour(.5, Colours::lime);
 		g.setGradientFill(grad);		
 	}
-	
+
 	g.fillPath(path);
 	g.setColour(colour.darker());
 	if(qsteps!=1)
@@ -944,7 +951,7 @@ void HandleViewer::addHandle(double x, double y, double width, double height, Co
 		
 		//if gen02 use setTopLeft, else use setCentrePostion
 		if(table->genRoutine!=2)
-			handle->setCentrePosition((double)getWidth()*x, y);
+			handle->setCentrePosition((double)getWidth()*x, y+5.f);
 		else
 			handle->setTopLeftPosition((double)getWidth()*x, y-2.5);
 		
@@ -976,7 +983,7 @@ void HandleViewer::insertHandle(double x, double y, Colour colour)
 		}
 		
     HandleComponent* handle = new HandleComponent(x, y/getHeight(), handles.size(), false, table->genRoutine, colour);
-    handle->setCentrePosition((double)getWidth()*x, y);
+    handle->setCentrePosition((double)getWidth()*x, y+5);
     handle->addChangeListener(table);
     handle->addActionListener(this);
 	addAndMakeVisible(handle);
@@ -1183,7 +1190,7 @@ HandleComponent::HandleComponent(double xPos, double yPos, int _index, bool fixe
 	yPosRelative = yPos;
 	genRoutine = gen;	
     this->setInterceptsMouseClicks(true, false);
-    setSize(10, 10);
+    setSize(12, 12);
 }
 //==================================================================================
 HandleComponent::~HandleComponent()
@@ -1200,9 +1207,19 @@ void HandleComponent::paint (Graphics& g)
     g.setColour(Colours::transparentBlack);
 	//if gen02 use long rectangles
 	if(genRoutine==2)
+	{
 		g.fillRect(0, 0, getWidth(), getHeight());
+	}
 	else//draw a circle..
-    g.fillEllipse(0, 0, getWidth(), getHeight());
+	{
+		g.setColour(colour.brighter(1.f).withAlpha(.5f));
+		//g.drawLine(0, (getHeight()/2.f), getWidth(), (getHeight()/2.f), 1.f);
+		//g.drawLine(getWidth()/2.f, 0, getWidth()/2.f, getHeight(), 1.f);
+		//g.setColour(colour);
+		g.drawEllipse(getLocalBounds().reduced(1.4).toFloat(), 1.f);
+		g.setColour(colour.withAlpha(.2f));
+		g.fillEllipse(getLocalBounds().reduced(2).toFloat());
+	}
 }
 //==================================================================================
 HandleViewer* HandleComponent::getParentComponent()

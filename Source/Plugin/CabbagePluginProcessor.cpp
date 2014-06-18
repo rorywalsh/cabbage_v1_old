@@ -260,8 +260,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 #endif
         tempAudioFile = fullFileName;
         tempAudioFile.replaceWithData(0 ,0);
-#endif
 	}
+	#endif
 }
 #else
 

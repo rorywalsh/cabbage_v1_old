@@ -65,17 +65,41 @@ section "install"
 	File /r "..\..\Examples"
 	File /r "..\..\Docs"
 	File /r "..\..\..\CsoundDocs"
-	File /r "..\..\..\CsoundLibs\CsoundPlugins"
+	//File /r "..\..\..\CsoundLibs\CsoundPlugins"
 	File "build\CabbagePluginSynth.dat"
 	File "build\CabbagePluginEffect.dat"
 	File "build\opcodes.txt"
-	File "..\..\..\CsoundLibs\csound64.dll"
-	File "..\..\..\CsoundLibs\csnd6.dll"
-	File "..\..\..\CsoundLibs\ipmidi.dll"
-	File "..\..\..\CsoundLibs\libsndfile-1.dll"
-	File "..\..\..\CsoundLibs\libportaudio-2.dll"
-	File "..\..\..\CsoundLibs\liblo-7.dll"
-	File "..\..\..\CsoundLibs\py.dll"
+
+	File "..\..\..\csound\build\ampmidid.dll"            
+	File "..\..\..\csound\build\cellular.dll"
+	File "..\..\..\csound\build\cs_date.dll"
+	File "..\..\..\csound\build\csladspa.dll"
+	File "..\..\..\csound\build\csnd6.dll"
+	File "..\..\..\csound\build\csound64.dll"
+	File "..\..\..\csound\build\doppler.dll"
+	File "..\..\..\csound\build\fareygen.dll"
+	File "..\..\..\csound\build\fractalnoise.dll"
+	File "..\..\..\csound\build\ipmidi.dll"
+	File "..\..\..\csound\build\libcsnd6.dll.a"
+	File "..\..\..\csound\build\liblo-7.dll"
+	File "..\..\..\csound\build\libportaudio-2.dll"
+	File "..\..\..\csound\build\libsndfile-1.dll"
+	File "..\..\..\csound\build\libstdc++-6.dll"
+	File "..\..\..\csound\build\mixer.dll"
+	File "..\..\..\csound\build\msvcr110.dll"
+	File "..\..\..\csound\build\osc.dll"
+	File "..\..\..\csound\build\platerev.dll"
+	File "..\..\..\csound\build\portaudio_x86.dll"
+	File "..\..\..\csound\build\py.dll"
+	File "..\..\..\csound\build\rtpa.dll"
+	File "..\..\..\csound\build\rtwinmm.dll"
+	File "..\..\..\csound\build\scansyn.dll"
+	File "..\..\..\csound\build\serial.dll"
+	File "..\..\..\csound\build\signalflowgraph.dll"
+	File "..\..\..\csound\build\stdutil.dll"
+	File "..\..\..\csound\build\system_call.dll"
+
+
 	File "..\..\..\MingwLibs\libwinpthread-1.dll"
 	File "..\..\..\MingwLibs\libgomp-1.dll"
 	File "..\..\..\MingwLibs\libgcc_s_dw2-1.dll"
@@ -92,7 +116,7 @@ section "install"
 
 
 	${EnvVarUpdate} $0 "PATH" "P" "HKLM" "$INSTDIR"  ;Prepend path so we don't confuse a previously installed Csound 
-	${EnvVarUpdate} $0 "CABBAGE_OPCODE_PATH" "P" "HKLM" "$INSTDIR\CsoundPlugins"  ;Prepend path so we don't confuse a previously installed Csound 
+	${EnvVarUpdate} $0 "CABBAGE_OPCODE_PATH" "P" "HKLM" "$INSTDIR"  ;Prepend path so we don't confuse a previously installed Csound 
  
 sectionEnd
  

@@ -86,6 +86,7 @@ OBJECTS := \
   $(OBJDIR)/StandaloneFilterApp_d9ee3663.o \
   $(OBJDIR)/SplitComponent_d9ee366f.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
+  $(OBJDIR)/Table_35ae1cd9.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
@@ -164,6 +165,11 @@ $(OBJDIR)/CabbageTable_d003e736.o: ../../Source/CabbageTable.cpp
 	@echo "Compiling CabbageTable.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/Table_35ae1cd9.o: ../../Source/Table.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling Table.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
 $(OBJDIR)/ComponentLayoutEditor_aa38c835.o: ../../Source/ComponentLayoutEditor.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling ComponentLayoutEditor.cpp"

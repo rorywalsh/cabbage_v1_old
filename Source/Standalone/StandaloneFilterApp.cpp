@@ -19,11 +19,11 @@ public:
     {
     }
 
-    void initialise(const String& /*commandLineParameters*/)
+    void initialise(const String& commandLineParameters)
     {
         File thisFile(File::getSpecialLocation(File::currentExecutableFile));
         currentApplicationDirectory =thisFile.getParentDirectory().getFullPathName();
-        //CabbageUtils::showMessage(currentApplicationDirectory);
+        //CabbageUtils::showMessage(commandLineParameters);
         PropertiesFile::Options options;
         options.applicationName     = "Cabbage";
         options.filenameSuffix      = "settings";
@@ -63,7 +63,7 @@ public:
         defaultPropSet->setValue("EnablePopupDisplay", 1);
 
         appProperties->getUserSettings()->setFallbackPropertySet(defaultPropSet);
-        filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black);
+        filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black, getCommandLineParameters());
         filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
         filterWindow->setVisible (true);
         //turn off resizeable...

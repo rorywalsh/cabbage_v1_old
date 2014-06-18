@@ -115,7 +115,9 @@ public:
         add("identchannel");
         add("visible");
         add("scrubberposition");
+		add("scroll");
         add("zoom");
+		add("samplerange");
     }
     ~IdentArray()
     {
@@ -208,7 +210,10 @@ static const Identifier scrubberposition = "scrubberposition";
 static const Identifier startpoint = "startpoint";
 static const Identifier endpoint = "endpoint";
 static const Identifier zoom = "zoom";
+static const Identifier visiblelength = "visiblelength";
+static const Identifier samplerange = "samplerange";
 static const Identifier startpos = "startpos";
+static const Identifier endpos = "endpos";
 static const Identifier show = "show";
 static const Identifier child = "child";
 

@@ -80,6 +80,7 @@ section "install"
 	File "..\..\..\MingwLibs\libgomp-1.dll"
 	File "..\..\..\MingwLibs\libgcc_s_dw2-1.dll"
 	File "..\..\..\MingwLibs\libstdc++-6.dll"
+	File "..\..\..\MingwLibs\msvcr110.dll"
  
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
 	writeUninstaller "$INSTDIR\uninstall.exe"

@@ -524,6 +524,15 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
 CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument &document, CodeTokeniser *codeTokeniser)
     : CodeEditorComponent(document, codeTokeniser), type(type), columnEditMode(false), fontSize(15)
 {
+	
+#if defined(WIN32)
+    font = "Consolas";
+#elif defined(MACOSX)
+	font = "Courier New";
+#else
+	font = "Droid Sans Mono";
+#endif
+	
     document.addListener(this);
     setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(35, 35, 35));
     setColour(CodeEditorComponent::lineNumberBackgroundId, CabbageUtils::getDarkerBackgroundSkin());
@@ -612,15 +621,15 @@ void CsoundCodeEditorComponenet::editorHasScrolled()
 void CsoundCodeEditorComponenet::mouseWheelMove (const MouseEvent& e, const MouseWheelDetails& mouse)
 {
 	if(e.mods.isCommandDown() && mouse.deltaY>0) 
-		setFont(Font(++fontSize));
+		setFont(Font(font, (fontSize<100 ? ++fontSize : 100), 1));
 	else if(e.mods.isCommandDown() && mouse.deltaY<0) 
-		setFont(Font(--fontSize));
+		setFont(Font(font, (fontSize>8 ? --fontSize : 8), 1));
 	else
 	{
 		if(mouse.deltaY<0)
-		scrollBy(1);
+		scrollBy(10);
 		else
-			scrollBy(-1);
+			scrollBy(-10);
 	}
 }
 //==============================================================================

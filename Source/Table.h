@@ -39,6 +39,9 @@ class TableManager : public Component,
 	int largestTable;
 	double scrubberPosition;
 	double scrubberFreq;
+	bool shouldShowTableButtons;
+	bool shouldShowZoomButtons;
+	int mainFooterHeight;
 
 public:	
 	TableManager();
@@ -48,10 +51,11 @@ public:
 	};
 	void resized();
 	void setZoomFactor(double zoom);
+	void setDrawMode(String mode);
 	void bringButtonsToFront();
 	void setAmpRanges(Array<float> ampRange);
 	void timerCallback();
-	void setPosition(double pos);
+	void setRange(double start, double end);
 	ScopedPointer<DrawableRectangle> currentPositionMarker;
 	double getLengthInSamples();
 	void setScrubberPos(double pos, int tableNum);
@@ -64,6 +68,8 @@ public:
     ScopedPointer<RoundButton> zoomIn, zoomOut;
 	OwnedArray<RoundButton> tableButtons;
 	OwnedArray<GenTable> tables;
+	void showZoomButtons(bool show);
+	void showTableButtons(bool show);
 	void changeListenerCallback(ChangeBroadcaster *source);
 	void bringTableToFront(int ftNumber);
 	void configTableSizes(var tableConfig);
@@ -110,6 +116,7 @@ public:
         return (x / getWidth()) * (visibleRange.getLength()) + visibleRange.getStart();
     }
 
+	void setSampleRange(double pos, double end);
     void setZoomFactor (double amount);
     void setFile (const File& file);
     void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
@@ -137,9 +144,11 @@ public:
 	double quantiseSpace;
 	void setAmpRanges(Array<float> ampRange);
 	void setXPosition(double pos);
+	bool drawAsVUMeter;
 	
 private:
     Image img;
+	bool shouldScroll;
     int normalised;
     int imgCount;
 	Colour fillColour;
@@ -177,7 +186,7 @@ private:
     double loopStart;
     double currentPlayPosition;
     bool drawWaveform;
-	bool drawAsVUMeter;
+
 
 
     Array<float, CriticalSection> waveformBuffer;
@@ -227,6 +236,7 @@ public:
     OwnedArray<HandleComponent, CriticalSection> handles;
     void fixEdgePoints(int gen);
 	void showHandles(bool show);
+	void showLabel(String message);
     int handleIndex;
     double tableSize;
 	Range<float> minMax;
@@ -262,7 +272,7 @@ public:
     int index;
     int height, width;
     int x,y;
-
+	void setColour(Colour icolour);
 	void setRelativePositions(Point<double> point);
 	
 	HandleViewer* getParentHandleViewer(){
@@ -279,6 +289,7 @@ public:
 private:
     Colour colour;
     bool fixed;
+	
 	
     ComponentDragger dragger;
     int lastX, lastY;

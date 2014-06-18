@@ -117,6 +117,7 @@ private:
     CodeDocument::Position pos1, pos2;
     Colour selectedColour;
 	int fontSize;
+	String font;
     String type;
     StringArray opcodeStrings;
     StringArray opcodeTokens;

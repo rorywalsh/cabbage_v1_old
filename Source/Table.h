@@ -148,6 +148,7 @@ public:
 	
 private:
     Image img;
+	bool shouldScroll;
     int normalised;
     int imgCount;
 	Colour fillColour;
@@ -235,6 +236,7 @@ public:
     OwnedArray<HandleComponent, CriticalSection> handles;
     void fixEdgePoints(int gen);
 	void showHandles(bool show);
+	void showLabel(String message);
     int handleIndex;
     double tableSize;
 	Range<float> minMax;

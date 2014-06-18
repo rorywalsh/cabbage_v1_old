@@ -616,7 +616,7 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
         fStatement.set(1, String(table->tableNumber));
         fStatement.set(0, "f");
 
-		Logger::writeToLog(fStatement.joinIntoString(" "));
+		//Logger::writeToLog(fStatement.joinIntoString(" "));
         getFilter()->getCsound()->GetCsound()->hfgens(getFilter()->getCsound()->GetCsound(), &ftpp, &evt, 1);
         Array<float, CriticalSection> points;
 
@@ -1998,7 +1998,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 		int tableNumber = tables[y];
 		if(tableNumber>0)
 		{
-			Logger::writeToLog("Table Number:"+String(tableNumber));
+			//Logger::writeToLog("Table Number:"+String(tableNumber));
 
 			StringArray pFields = getFilter()->getTableStatement(tableNumber);
 			int genRoutine = pFields[4].getIntValue();

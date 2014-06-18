@@ -90,7 +90,7 @@ class StandaloneFilterWindow    :   public DocumentWindow,
 public:
     //==============================================================================
     StandaloneFilterWindow (const String& title,
-                            const Colour& backgroundColour);
+                            const Colour& backgroundColour, String commandLine);
 
     ~StandaloneFilterWindow();
     //=================================================================

@@ -255,11 +255,11 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
         break;
     case CommandIDs::editZoomIn:
         result.setInfo (String("Zoom in"), String("Zoom in"), CommandCategories::edit, 0);
-        result.addDefaultKeypress('=', ModifierKeys::commandModifier);
+        result.addDefaultKeypress('[', ModifierKeys::commandModifier);
         break;
     case CommandIDs::editZoomOut:
         result.setInfo (String("Zoom out"), String("Zoom out"), CommandCategories::edit, 0);
-        result.addDefaultKeypress ('-', ModifierKeys::commandModifier);
+        result.addDefaultKeypress (']', ModifierKeys::commandModifier);
         break;
     case CommandIDs::whiteBackground:
         result.setInfo (String("White background"), String("White scheme"), CommandCategories::edit, 0);

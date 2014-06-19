@@ -31,7 +31,7 @@ extern CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(Stri
 
 //==============================================================================
 StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
-        const Colour& backgroundColour)
+        const Colour& backgroundColour, String commandLineParams)
     : DocumentWindow (title, backgroundColour,
                       DocumentWindow::minimiseButton
                       | DocumentWindow::closeButton),
@@ -43,8 +43,15 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     standaloneMode(false),
     updateEditorOutputConsole(false)
 {
-    String defaultCSDFile = File(File::getSpecialLocation(File::currentExecutableFile)).withFileExtension(".csd").getFullPathName();
-    consoleMessages = "";
+	
+    String defaultCSDFile;
+
+	if(File(commandLineParams).existsAsFile())
+		defaultCSDFile = commandLineParams;
+	else
+		defaultCSDFile = File(File::getSpecialLocation(File::currentExecutableFile)).withFileExtension(".csd").getFullPathName();
+    
+	consoleMessages = "";
     cabbageDance = 0;
     setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
     Component::addAndMakeVisible (&optionsButton);
@@ -163,6 +170,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
         standaloneMode = true;
         openFile(defaultCSDFile);
     }
+
 
     //filter->codeWindow = cabbageCsoundEditor->textEditor;
     //start timer for output message, and autoupdate if it's on
@@ -1755,7 +1763,7 @@ void StandaloneFilterWindow::batchProcess(String type, bool dir)
     else
     {
 
-
+ 
 
         for(int i=0; i<files.size(); i++)
         {

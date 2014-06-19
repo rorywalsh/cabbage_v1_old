@@ -1217,8 +1217,7 @@ void HandleComponent::removeThisHandle()
 //==================================================================================
 void HandleComponent::mouseEnter (const MouseEvent& e)
 {
-	MouseCursor cursor(MouseCursor::StandardCursorType::DraggingHandCursor);
-    setMouseCursor (cursor);
+    setMouseCursor (MouseCursor::DraggingHandCursor);
     String message;
     message = String(String(index)+" "+String(getX())+" "+String(getY()));
 	//send an action message to the handleViewer to display the coordinates label

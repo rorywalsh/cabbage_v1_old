@@ -1763,7 +1763,7 @@ void StandaloneFilterWindow::batchProcess(String type, bool dir)
     else
     {
 
-
+ 
 
         for(int i=0; i<files.size(); i++)
         {

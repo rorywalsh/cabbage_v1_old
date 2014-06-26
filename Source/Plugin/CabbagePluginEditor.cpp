@@ -697,7 +697,7 @@ void CabbagePluginAudioProcessorEditor::convertIntoPlant()
         deleteComponents();
 
         //find area of image needed to hold plant
-        Rectangle<int> bounds(9999, 9999, -100, -100);
+        juce::Rectangle<int> bounds(9999, 9999, -100, -100);
         for(int i=0; i<newPlantText.size(); i++)
         {
             //get left most point
@@ -736,7 +736,7 @@ void CabbagePluginAudioProcessorEditor::convertIntoPlant()
         for(int i=0; i<newPlantText.size(); i++)
         {
             CabbageGUIClass cAttr(newPlantText[i], -99);
-            Rectangle<int> newBounds(cAttr.getNumProp(CabbageIDs::left)-bounds.getX(), cAttr.getNumProp(CabbageIDs::top)-bounds.getY(), cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));
+            juce::Rectangle<int> newBounds(cAttr.getNumProp(CabbageIDs::left)-bounds.getX(), cAttr.getNumProp(CabbageIDs::top)-bounds.getY(), cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));
             newPlantText.getReference(i) = replaceIdentifier(newPlantText[i], "bounds", getBoundsString(newBounds));
         }
 
@@ -794,7 +794,7 @@ void CabbagePluginAudioProcessorEditor::breakUpPlant()
     {
         //reposition all controls relative to the plant position
         CabbageGUIClass cAttr(brokenPlant[i], -99);
-        Rectangle <int> bounds(cAttr.getNumProp(CabbageIDs::left)+plantPos.getX(),
+        juce::Rectangle <int> bounds(cAttr.getNumProp(CabbageIDs::left)+plantPos.getX(),
                                cAttr.getNumProp(CabbageIDs::top)+plantPos.getY(),
                                cAttr.getNumProp(CabbageIDs::width),
                                cAttr.getNumProp(CabbageIDs::height));
@@ -1239,7 +1239,7 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
         StringArray userPlant;
         userPlant.addLines(customPlantControl);
         CabbageGUIClass cAttr(userPlant[0], -99);
-        Rectangle <int> bounds(x, y, cAttr.getBounds().getWidth(), cAttr.getBounds().getHeight());
+        juce::Rectangle <int> bounds(x, y, cAttr.getBounds().getWidth(), cAttr.getBounds().getHeight());
 
         userPlant.getReference(0) = replaceIdentifier(userPlant[0], "bounds", getBoundsString(bounds));
         insertComponentsFromCabbageText(userPlant, false);
@@ -1409,7 +1409,7 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
                 String plantName = "GUIabst_"+String(getFilter()->getGUILayoutCtrlsSize()+numberPlantsToBeDuplicated);
                 numberPlantsToBeDuplicated++;
                 text.getReference(i) = replaceIdentifier(text[i], "plant", "plant(\""+plantName+"\")");
-                Rectangle<int> bounds(cAttr.getNumProp(CabbageIDs::left)+offset, cAttr.getNumProp(CabbageIDs::top)+offset, cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));
+                juce::Rectangle<int> bounds(cAttr.getNumProp(CabbageIDs::left)+offset, cAttr.getNumProp(CabbageIDs::top)+offset, cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));
                 text.getReference(i) = replaceIdentifier(text[i], "bounds", getBoundsString(bounds));
                 layoutEditor->boundsForDuplicatedCtrls.add(bounds);
             }
@@ -1417,7 +1417,7 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
         else
         {
             CabbageGUIClass cAttr(text[i], i-99);
-            Rectangle<int> bounds(cAttr.getNumProp(CabbageIDs::left)+offset, cAttr.getNumProp(CabbageIDs::top)+offset, cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));
+            juce::Rectangle<int> bounds(cAttr.getNumProp(CabbageIDs::left)+offset, cAttr.getNumProp(CabbageIDs::top)+offset, cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));
             text.getReference(i) = replaceIdentifier(text[i], "bounds", getBoundsString(bounds));
             layoutEditor->boundsForDuplicatedCtrls.add(bounds);
         }

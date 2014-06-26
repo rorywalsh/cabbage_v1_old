@@ -180,7 +180,7 @@ private:
     ScopedPointer<AudioThumbnail> thumbnail;
     Colour colour, fontcolour;
     int mouseDownX, mouseUpX;
-    Rectangle<int> localBounds;
+    juce::Rectangle<int> localBounds;
     double loopLength;
     double loopStart;
     double currentPlayPosition;

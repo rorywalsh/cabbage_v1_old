@@ -878,7 +878,7 @@ void GenTable::setScrubberPos(double pos)
 		double timePos = pos*thumbnail->getTotalLength()*sampleRate;		
 		timePos = (timePos/(thumbnail->getTotalLength()*sampleRate))*thumbnail->getTotalLength();
 		//set position of scrubber rectangle
-		currentPositionMarker->setRectangle (Rectangle<float> (timeToX (timePos) - 0.75f, 0,
+		currentPositionMarker->setRectangle (juce::Rectangle<float> (timeToX (timePos) - 0.75f, 0,
 											 1.5f, (float) (getHeight() - 20)));
 
 		if(this->showScroll)
@@ -896,7 +896,7 @@ void GenTable::setScrubberPos(double pos)
 		currentPositionMarker->setVisible (true);
 		double waveformLengthSeconds = (double)waveformBuffer.size()/sampleRate;		
 		double timePos = pos*waveformLengthSeconds;		
-		currentPositionMarker->setRectangle (Rectangle<float> (timeToX (timePos), 0,
+		currentPositionMarker->setRectangle (juce::Rectangle<float> (timeToX (timePos), 0,
 											 numPixelsPerIndex, thumbArea.getHeight()));
 		
 		if(this->showScroll)

@@ -76,7 +76,7 @@ public:
         Viewport* const viewport = findParentComponentOfClass<Viewport>(); //Get the parent viewport
         if(viewport != nullptr) //Check for nullness
         {
-            Rectangle<int> viewRect(viewport->getViewPositionX(), viewport->getViewPositionY(), viewport->getViewWidth(), viewport->getViewHeight()); //Get the current displayed area in the viewport
+           juce::Rectangle<int> viewRect(viewport->getViewPositionX(), viewport->getViewPositionY(), viewport->getViewWidth(), viewport->getViewHeight()); //Get the current displayed area in the viewport
         }
     }
 };

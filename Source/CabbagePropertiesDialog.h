@@ -320,7 +320,7 @@ public :
         g.fillRoundedRectangle(2.f, 2.f, getWidth()-borderWidth-2, getHeight()-borderWidth-2,  getHeight()*0.1);
         g.setColour (colour.contrasting());
         g.setFont (CabbageUtils::getComponentFont());
-        const Rectangle<int> r (5, 0, getWidth()-1, getHeight()+1);
+        const juce::Rectangle<int> r (5, 0, getWidth()-1, getHeight()+1);
         g.drawFittedText(colour.toString(), r, Justification::centred, 2);
     }
 

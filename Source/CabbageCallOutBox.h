@@ -27,14 +27,14 @@ class CabbageCallOutBox    : public Component
 public:
     //==============================================================================
     CabbageCallOutBox (Component& contentComponent,
-                       const Rectangle<int>& areaToPointTo,
+                       const juce::Rectangle<int>& areaToPointTo,
                        Component* parentComponent);
     ~CabbageCallOutBox();
 
-    void updatePosition (const Rectangle<int>& newAreaToPointTo,
-                         const Rectangle<int>& newAreaToFitIn);
+    void updatePosition (const juce::Rectangle<int>& newAreaToPointTo,
+                         const juce::Rectangle<int>& newAreaToFitIn);
     static CabbageCallOutBox& launchAsynchronously (Component* contentComponent,
-            const Rectangle<int>& areaToPointTo,
+            const juce::Rectangle<int>& areaToPointTo,
             Component* parentComponent);
 
     //==============================================================================
@@ -54,7 +54,7 @@ private:
     Component& content;
     Path outline;
     Point<float> targetPoint;
-    Rectangle<int> availableArea, targetArea;
+    juce::Rectangle<int> availableArea, targetArea;
     Image background;
 
     void refreshPath();

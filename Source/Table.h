@@ -159,8 +159,8 @@ private:
 	ColourGradient gradient;
 	StringArray pFields;
     ScopedPointer<DrawableRectangle> currentPositionMarker;
-	Rectangle<int> thumbArea;
-    Rectangle<int> handleViewerRect;
+	juce::Rectangle<int> thumbArea;
+    juce::Rectangle<int> handleViewerRect;
     void paint (Graphics& g);
     void mouseDown (const MouseEvent& e);
     void mouseUp(const MouseEvent& e);

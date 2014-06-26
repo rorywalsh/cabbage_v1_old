@@ -331,7 +331,7 @@ public :
         colourSelector.addChangeListener(this);
         colourSelector.setNameOfParent(name);
         colourSelector.setCurrentColour(colour);
-        Rectangle<int> rect;
+        juce::Rectangle<int> rect;
         CabbageCallOutBox callOut (colourSelector, rect, nullptr);
         callOut.setLookAndFeel(lookAndFeelBasic);
         callOut.setTopLeftPosition(this->getScreenX()+this->getWidth(), e.getScreenY()-this->getHeight());
@@ -545,7 +545,7 @@ public:
     {
         g.setColour (Colours::white);
         g.setFont (CabbageUtils::getComponentFont());
-        const Rectangle<int> r (5, 0, getWidth(), getHeight());
+        const juce::Rectangle<int> r (5, 0, getWidth(), getHeight());
 
         if(value.size()>0)
             g.drawFittedText(value[0].toString(), r, Justification::centredLeft, 2);
@@ -576,7 +576,7 @@ public:
 
         textEditor.setText(text.trim());
         textEditor.setBounds(0, 100, 150, 70);
-        Rectangle<int> rectum(0, 100, 100, 70);
+        juce::Rectangle<int> rectum(0, 100, 100, 70);
         CabbageCallOutBox callOut (textEditor, rectum, nullptr);
         callOut.setLookAndFeel(lookAndFeelBasic);
         callOut.setTopLeftPosition(this->getScreenX()+this->getWidth(), e.getScreenY()-150/2);

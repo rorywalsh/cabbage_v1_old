@@ -16,7 +16,11 @@
 
 //==============================================================================
 // [BEGIN_USER_CODE_SECTION]
-
+#ifndef USE_NATIVE_DIALOGUES 
+   #define UseNativeDialogue 1
+#else
+   #define UseNativeDialogue 0
+#endif
 // [END_USER_CODE_SECTION]
 
 //==============================================================================

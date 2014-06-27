@@ -479,7 +479,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
     }
     else if(info.commandID==CommandIDs::fileOpen)
     {
-        FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.csd;*.py;*.txt"));
+        FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.csd;*.py;*.txt"), UseNativeDialogue);
         if(openFC.browseForFileToOpen())
         {
             Logger::writeToLog(openFC.getResult().getFullPathName());

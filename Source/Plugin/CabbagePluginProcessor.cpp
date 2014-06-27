@@ -1017,7 +1017,7 @@ void CabbagePluginAudioProcessor::stopRecording()
         // take a little time while remaining data gets flushed to disk, so it's best to avoid blocking
         // the audio callback while this happens.
 
-        FileChooser fc("Save", tempAudioFile.getFullPathName(), "*.wav", true);
+        FileChooser fc("Save", tempAudioFile.getFullPathName(), "*.wav", UseNativeDialogue);
         //determine whether to poen file or directory
         if(fc.browseForFileToSave(true))
         {

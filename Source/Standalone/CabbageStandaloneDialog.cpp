@@ -1120,7 +1120,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 #ifdef MACOSX
         dir = "Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual";
 #endif
-        FileChooser browser(String("Please select the Csound manual directory...\n"), File(dir), String("*.csd"));
+        FileChooser browser(String("Please select the Csound manual directory...\n"), File(dir), String("*.csd"), UseNativeDialogue);
         if(browser.browseForDirectory())
         {
             setPreference(appProperties, "CsoundHelpDir", browser.getResult().getFullPathName());
@@ -1130,7 +1130,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     else if(options==203)
     {
         String dir = getPreference(appProperties, "PlantFileDir", "");
-        FileChooser browser(String("Please select your Plant file directory..."), File(dir), String("*.csd"));
+        FileChooser browser(String("Please select your Plant file directory..."), File(dir), String("*.csd"), UseNativeDialogue);
         if(browser.browseForDirectory())
         {
             setPreference(appProperties, "PlantFileDir", browser.getResult().getFullPathName());
@@ -1196,7 +1196,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     else if(options==205)
     {
         String dir = getPreference(appProperties, "ExamplesDir", "");
-        FileChooser browser(String("Please select your Examples directory..."), File(dir), String("*.csd"));
+        FileChooser browser(String("Please select your Examples directory..."), File(dir), String("*.csd"), UseNativeDialogue);
         if(browser.browseForDirectory())
         {
             setPreference(appProperties, "ExamplesDir", browser.getResult().getFullPathName());
@@ -1339,7 +1339,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
     else
     {
 #ifdef MACOSX
-        FileChooser openFC(String("Open a Cabbage .csd file..."), File::nonexistent, String("*.csd;*.vst"));
+        FileChooser openFC(String("Open a Cabbage .csd file..."), File::nonexistent, String("*.csd;*.vst"), UseNativeDialogue);
         if(openFC.browseForFileToOpen())
         {
             csdFile = openFC.getResult();
@@ -1359,7 +1359,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
             resetFilter(true);
         }
 #else
-        FileChooser openFC(String("Open a Cabbage .csd file..."), File::nonexistent, String("*.csd"));
+        FileChooser openFC(String("Open a Cabbage .csd file..."), File::nonexistent, String("*.csd"), UseNativeDialogue);
         this->setAlwaysOnTop(false);
         if(openFC.browseForFileToOpen())
         {
@@ -1407,7 +1407,7 @@ void StandaloneFilterWindow::saveFile()
 
 void StandaloneFilterWindow::saveFileAs()
 {
-    FileChooser saveFC(String("Save Cabbage file as..."), File::nonexistent, String("*.csd"));
+    FileChooser saveFC(String("Save Cabbage file as..."), File::nonexistent, String("*.csd"), UseNativeDialogue);
     this->setAlwaysOnTop(false);
     if(saveFC.browseForFileToSave(true))
     {
@@ -1448,7 +1448,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs)
         return 0;
     }
 #ifdef LINUX
-    FileChooser saveFC(String("Save as..."), File::nonexistent, String(""));
+    FileChooser saveFC(String("Save as..."), File::nonexistent, String(""), UseNativeDialogue);
     String VST;
     Logger::writeToLog(currentApplicationDirectory);
     if (saveFC.browseForFileToSave(true))
@@ -1480,7 +1480,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs)
         }
     }
 #elif WIN32
-    FileChooser saveFC(String("Save plugin as..."), File::nonexistent, String("*.dll"));
+    FileChooser saveFC(String("Save plugin as..."), File::nonexistent, String("*.dll"), UseNativeDialogue);
     String VST;
     if(type.contains("VSTi"))
         VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbagePluginSynth.dat");
@@ -1537,7 +1537,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs)
 
 #if MACOSX
 
-    FileChooser saveFC(String("Save as..."), File::nonexistent, String("*.vst"));
+    FileChooser saveFC(String("Save as..."), File::nonexistent, String("*.vst"), UseNativeDialogue);
     String VST;
     if (saveFC.browseForFileToSave(true))
     {
@@ -1727,7 +1727,7 @@ void StandaloneFilterWindow::batchProcess(String type, bool dir)
 {
     File thisFile(File::getSpecialLocation(File::currentApplicationFile));
 #ifdef WIN32
-    FileChooser saveFC(String("Select files..."), File::nonexistent, String("*.csd;"));
+    FileChooser saveFC(String("Select files..."), File::nonexistent, String("*.csd;"), UseNativeDialogue);
     String VST;
 
     Array<File> files;

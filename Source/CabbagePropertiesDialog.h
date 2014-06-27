@@ -487,7 +487,7 @@ public :
 
     void mouseDown(const MouseEvent& e)
     {
-        FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.*"));
+        FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.*"), UseNativeDialogue);
         if(!e.mods.isCtrlDown())
             if(openFC.browseForFileToOpen())
             {

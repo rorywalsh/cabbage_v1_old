@@ -2452,7 +2452,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                             {
                                 if(!getFilter()->getGUILayoutCtrls(i).getStringProp("filetype").contains("snaps"))
                                 {
-                                    FileChooser fc("Open", directory.getFullPathName(), filetype, true);
+                                    FileChooser fc("Open", directory.getFullPathName(), filetype, UseNativeDialogue);
                                     //determine whether to poen file or directory
                                     if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="file")
                                     {
@@ -2479,7 +2479,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                 }
                                 else
                                 {
-                                    FileChooser fc("Select a file to save", directory.getFullPathName(), filetype, true);
+                                    FileChooser fc("Select a file to save", directory.getFullPathName(), filetype, UseNativeDialogue);
                                     if(fc.browseForFileToSave(true))
                                     {
                                         selectedFile = fc.getResult();

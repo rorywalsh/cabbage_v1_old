@@ -44,8 +44,8 @@ public:
     ComponentLayoutEditor ();
     ~ComponentLayoutEditor ();
 
-    void findLassoItemsInArea (Array <ChildAlias*>& results, const Rectangle<int>& area);
-    Rectangle<int> getLassoRect(SelectedItemSet <ChildAlias*>);
+    void findLassoItemsInArea (Array <ChildAlias*>& results, const juce::Rectangle<int>& area);
+    juce::Rectangle<int> getLassoRect(SelectedItemSet <ChildAlias*>);
 
     SelectedItemSet <ChildAlias*>& getLassoSelection();
 
@@ -58,7 +58,7 @@ public:
     void updateFrames ();
 
 
-    void selectDuplicatedComponents(Array<Rectangle <int> > controls);
+    void selectDuplicatedComponents(Array<juce::Rectangle <int> > controls);
     Point<int> currentMouseCoors;
     String currentEvent;
     void mouseDown (const MouseEvent& e);
@@ -67,13 +67,13 @@ public:
     LassoComponent <ChildAlias*> lassoComp;
     SelectedComponents selectedFilters;
     Array<int> selectedLineNumbers;
-    Array<Rectangle < int > > selectedCompsOrigCoordinates;
-    Array<Rectangle < int > > selectedCompsNewCoordinates;
+    Array<juce::Rectangle < int > > selectedCompsOrigCoordinates;
+    Array<juce::Rectangle < int > > selectedCompsNewCoordinates;
 
     void enablementChanged ();
     const Component* getTarget ();
     void resetAllBorders();
-    Array<Rectangle <int> > boundsForDuplicatedCtrls;
+    Array<juce::Rectangle <int> > boundsForDuplicatedCtrls;
 
 private:
     virtual ChildAlias* createAlias (Component* child, String type, int index);
@@ -131,7 +131,7 @@ public:
     bool interest, lockMovement;
 private:
     int index;
-    Array<Rectangle<int> > origBounds;
+    Array<juce::Rectangle<int> > origBounds;
     int dragX, dragY;
     String type;
     CriticalSection bounds;
@@ -141,7 +141,7 @@ private:
     SafePointer<Component> target;
 
     bool userAdjusting;
-    Rectangle<int> startBounds;
+    juce::Rectangle<int> startBounds;
     ScopedPointer<ComponentBoundsConstrainer> resizeContainer; //added resizeContainer to limit resizing sizes
     ScopedPointer<ResizableBorderComponent> resizer;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChildAlias);

@@ -33,7 +33,7 @@
 #ifndef Cabbage_No_Csound
 #include <csound.hpp>
 #include "csdl.h"
-#include "cwindow.h"
+//#include "cwindow.h"
 #include "../csPerfThread.hpp"
 #endif
 

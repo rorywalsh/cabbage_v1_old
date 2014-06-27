@@ -51,9 +51,9 @@ private:
 
 
 public:
-    Rectangle<int> currentBounds;
-    Array<Rectangle<int> > childBounds;
-    Array<Rectangle<int> > origChildBounds;
+    juce::Rectangle<int> currentBounds;
+    Array<juce::Rectangle<int> > childBounds;
+    Array<juce::Rectangle<int> > origChildBounds;
     Array<Point<int> > origSelectedCompBounds;
     Array<Point<int> > newSelectedCompBounds;
 

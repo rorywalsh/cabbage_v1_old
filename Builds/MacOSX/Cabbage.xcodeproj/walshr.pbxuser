@@ -57,6 +57,16 @@
 			sepNavVisRange = "{3611, 1719}";
 		};
 	};
+	610EBF5F1959BC030034C779 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 9DB1169E1C96CB12BB34C4AB /* CabbageStandaloneDialog.cpp */;
+		name = "CabbageStandaloneDialog.cpp: 918";
+		rLen = 0;
+		rLoc = 32372;
+		rType = 0;
+		vrLen = 2343;
+		vrLoc = 31213;
+	};
 	61385EA6186207AA00AC002E /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 7436CC64303138F2A5F3592D /* CabbageMessageSystem.h */;
@@ -427,9 +437,9 @@
 	};
 	9DB1169E1C96CB12BB34C4AB /* CabbageStandaloneDialog.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1254, 20878}}";
-			sepNavSelRange = "{32254, 0}";
-			sepNavVisRange = "{31657, 1276}";
+			sepNavIntBoundsRect = "{{0, 0}, {1254, 22854}}";
+			sepNavSelRange = "{32372, 0}";
+			sepNavVisRange = "{31213, 2343}";
 			sepNavWindowFrame = "{{15, 112}, {1067, 911}}";
 		};
 	};
@@ -544,10 +554,11 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 418311138;
-			PBXWorkspaceStateSaveDate = 418311138;
+			PBXPerProjectTemplateStateSaveDate = 425311217;
+			PBXWorkspaceStateSaveDate = 425311217;
 		};
 		perUserProjectItems = {
+			610EBF5F1959BC030034C779 /* PBXTextBookmark */ = 610EBF5F1959BC030034C779 /* PBXTextBookmark */;
 			61385EA6186207AA00AC002E = 61385EA6186207AA00AC002E /* PBXTextBookmark */;
 			61385EE4186323C500AC002E = 61385EE4186323C500AC002E /* PBXTextBookmark */;
 			61385F2418633FBD00AC002E = 61385F2418633FBD00AC002E /* PlistBookmark */;
@@ -563,7 +574,7 @@
 			61F0557C18E4A55C0087675C = 61F0557C18E4A55C0087675C /* PBXTextBookmark */;
 			61F0557D18E4A55C0087675C = 61F0557D18E4A55C0087675C /* PBXTextBookmark */;
 			61F0557E18E4A55C0087675C = 61F0557E18E4A55C0087675C /* PBXTextBookmark */;
-			61F0558D18EEEBE70087675C /* PBXTextBookmark */ = 61F0558D18EEEBE70087675C /* PBXTextBookmark */;
+			61F0558D18EEEBE70087675C = 61F0558D18EEEBE70087675C /* PBXTextBookmark */;
 		};
 		sourceControlManager = 617B76551861FF2C00D669B0 /* Source Control */;
 		userBuildSettings = {

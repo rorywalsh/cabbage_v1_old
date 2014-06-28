@@ -172,6 +172,7 @@ section "uninstall"
 
 	# Always delete uninstaller as the last action
 	delete $INSTDIR\uninstall.exe
+ 	rmDir /r $INSTDIR\CsoundDocs
  
  	rmDir /r $INSTDIR\Examples
  	rmDir /r $INSTDIR\Docs

@@ -134,6 +134,8 @@ section "uninstall"
 	# Try to remove the Start Menu folder - this will only happen if it is empty
 	rmDir "$SMPROGRAMS\${COMPANYNAME}"
  
+	rmDir /r $INSTDIR\CsoundDocs
+ 
 	# Remove files
 	delete $INSTDIR\cellular.dll
 	delete $INSTDIR\cs_date.dll

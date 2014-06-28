@@ -205,7 +205,7 @@ aflt1          reson     afm,kcf,kbw,1
 aflt2          reson     afm,kcf*.9, kbw*1.11,1       
 abal           balance   aflt1+aflt2,afm       
 
-asig           envlpx    abal,.2, gifc5, gifc5*.39, gifc5, 1                       
+asig           envlpx    abal, .2, gifc5, gifc5*.39, gifc5, 1, .01                       
 
 xout asig*kgate         
 

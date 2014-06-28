@@ -181,14 +181,14 @@ void CsoundCodeEditor::paint(Graphics& g)
             if(highlightedLine == true)
             {
                 g.setColour(Colours::black);
-                g.drawText(String(j+1), 0, (editor[currentEditor]->getLineHeight() * index)+20, 33, editor[currentEditor]->getLineHeight(),
+                g.drawFittedText(String(j+1), 0, (editor[currentEditor]->getLineHeight() * index)+20, 33, editor[currentEditor]->getLineHeight(),
                            juce::Justification::centredRight, false);
                 g.setColour(Colours::white);
                 highlightedLine = false;
             }
             else if(highlightedLine == false)
             {
-                g.drawText(String(j+1), 0, (editor[currentEditor]->getLineHeight() * index)+20, 33, editor[currentEditor]->getLineHeight(),
+                g.drawFittedText(String(j+1), 0, (editor[currentEditor]->getLineHeight() * index)+20, 33, editor[currentEditor]->getLineHeight(),
                            juce::Justification::centredRight, false);
             }
 
@@ -373,7 +373,7 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
             {
                 tabButtons[1]->isActive(true);
                 editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(),
-                                                   editor[currentEditor]->getAllText().indexOf("<CsInstruments>")+16),
+                                                   editor[currentEditor]->getAllText().indexOf("<CsoundSynthesizer>")+19),
                                                    false);
                 editor[currentEditor]->scrollToLine(editor[currentEditor]->getCaretPos().getLineNumber());
                 for(int i=0; i<tabButtons.size(); i++)

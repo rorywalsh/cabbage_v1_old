@@ -166,7 +166,6 @@ public:
     void menuItemSelected (int menuItemID, int topLevelMenuIndex);
     void setFontSize(String zoom);
 
-
     //================= command methods ====================
     ApplicationCommandTarget* getNextCommandTarget()
     {

@@ -43,7 +43,7 @@ SplitComponent::SplitComponent(Component& topLeftComponent, Component& bottomRig
     , m_pBottomRightComponent(&bottomRightComponent)
     , m_isVertical(isVertical)
     , m_splitBarGravity(0.0)
-    , m_fitToParent(true)
+    , m_fitToParent(false)
 {
     CommonConstruction();
 }

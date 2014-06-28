@@ -99,6 +99,7 @@ CodeWindow::~CodeWindow()
     deleteAndZero(textEditor);
 }
 
+
 //==============================================================================
 StringArray CodeWindow::getMenuBarNames()
 {

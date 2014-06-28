@@ -9,11 +9,11 @@ ECHO ===================================================
 ECHO 
 set JUCE_LIBRARY_CODE=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\cabbage\JuceLibraryCode
 set PREPROCESSOR_DEFS=-D__MINGW__=1 -DJUCE_MINGW -DWIN32 -D__MINGW_EXTENSION= -DCSOUND6=1 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
-set CSOUND_INCLUDE_DIR=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound64\include
+set CSOUND_INCLUDE_DIR=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound64\csound6\include
 set ASIOSDK2Dir=C:\SDKs\ASIOSDK2.3\common
 set VSTSDKDir=C:\SDKs\vstsdk2.4
 set CABBAGE_SOURCE_DIR=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\cabbage\Source
-set CSOUND_LIBRARY=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound64\debug\libcsound64.dll.a
+set CSOUND_LIBRARY=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound64\csound6\debug\libcsound64.dll.a
 set COMPILER_FLAGS=-Wall -Wno-strict-aliasing -Wno-strict-overflow  -march=x86-64 -g -ggdb -O0 -std=gnu++0x -g -ggdb -O0 -static-libgcc -static-libstdc++ -mstackrealign
 set OUTPUT_TARGET=CabbagePluginEffect.dll
 

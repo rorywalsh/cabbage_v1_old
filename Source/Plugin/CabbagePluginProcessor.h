@@ -41,7 +41,11 @@
 //#include "../Editor/CabbageEditorWindow.h"
 //#endif
 
-#define CABBAGE_VERSION "Cabbage v0.5.11 Alpha"
+#ifdef Cabbage64Bit
+    #define CABBAGE_VERSION "Cabbage(64bit) v0.5.11 Alpha"
+#else
+    #define CABBAGE_VERSION "Cabbage(32bit) v0.5.11 Alpha"
+#endif
 
 #define AUDIO_PLUGIN 1
 #define EXTERNAL_PLUGIN 2

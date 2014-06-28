@@ -499,6 +499,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 
     filter->suspendProcessing(true);
     deviceManager->addAudioCallback (&player);
+	deviceManager->addMidiInputCallback (String::empty, &player);
 
     if(shouldResetFilter)
     {
@@ -576,6 +577,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         filter->codeEditor = cabbageCsoundEditor->textEditor;
         //cabbageCsoundEditor->textEditor->setSavePoint();
     }
+	
 }
 
 //==============================================================================
@@ -649,7 +651,7 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
     CabbageAudioDeviceSelectorComponent selectorComp (*deviceManager,
             numIns, numIns, numOuts, numOuts,
             true, false, true, false);
-    selectorComp.setSize (400, 250);
+    selectorComp.setSize (400, 450);
     setAlwaysOnTop(false);
     selectorComp.setLookAndFeel(lookAndFeel);
     Colour col(24, 24, 24);
@@ -881,10 +883,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     else if(options==2000)
     {
         String credits = "				Rory Walsh, Copyright (2008)\n\n";
-        credits.append("\t\t\t\tLook and Feel Developer:\n", 2056);
-        credits.append("\t\t\t\t\tDamien Rennick\n\n", 2056);
         credits.append("\t\t\t\tCabbage Farmers:\n", 2056);
         credits.append("\t\t\t\t\tIain McCurdy\n", 2056);
+        credits.append("\t\t\t\t\tDamien Rennick\n\n", 2056);
         credits.append("\t\t\t\t\tGiorgio Zucco\n", 2056);
         credits.append("\t\t\t\t\tNil Geisweiller\n", 2056);
         credits.append("\t\t\t\t\tDave Philips\n", 2056);

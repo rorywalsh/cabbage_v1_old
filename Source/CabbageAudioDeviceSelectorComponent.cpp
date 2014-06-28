@@ -164,6 +164,8 @@ private:
         if (isPositiveAndBelow (row, items.size()))
         {
             const String item (items [row]);
+			//CabbageUtils::showMessage(item);
+			//CabbageUtils::setPreference(appProperties, "MIDI Device", item);
             deviceManager.setMidiInputEnabled (item, ! deviceManager.isMidiInputEnabled (item));
         }
     }
@@ -992,6 +994,10 @@ CabbageAudioDeviceSelectorComponent::CabbageAudioDeviceSelectorComponent (AudioD
 CabbageAudioDeviceSelectorComponent::~CabbageAudioDeviceSelectorComponent()
 {
     deviceManager.removeChangeListener (this);
+	PropertySet* const globalSettings = appProperties->getUserSettings();
+	//update settings:
+    ScopedPointer<XmlElement> xml (deviceManager.createStateXml());
+    globalSettings->setValue ("audioSetup", xml);		
 }
 
 void CabbageAudioDeviceSelectorComponent::resized()

@@ -112,7 +112,7 @@ public:
     void openFile(String _csdfile);
     void saveFile();
     void saveFileAs();
-    void showEditorConsole(bool show);
+    void showEditorConsole();
     void setupWindowDimensions();
 
     bool isGuiEnabled()

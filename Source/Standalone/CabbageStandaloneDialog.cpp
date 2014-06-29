@@ -153,10 +153,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     cabbageCsoundEditor->setVisible(false);
     //cabbageCsoundEditor->setSize(800, 500);
     setupWindowDimensions();
-    if(getPreference(appProperties, "ShowEditorConsole")==1)
-        showEditorConsole(1);
-    else
-        showEditorConsole(0);
+    showEditorConsole();
 
     cabbageCsoundEditor->addActionListener(this);
     cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
@@ -919,12 +916,6 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
                 cabbageCsoundEditor->toFront(true);
 
-                if(getPreference(appProperties, "ShowEditorConsole")==1)
-                    showEditorConsole(1);
-                else
-                    showEditorConsole(0);
-
-
                 if(!outputConsole)
                 {
                     outputConsole = new CsoundMessageConsole("Csound Output Messages",
@@ -941,6 +932,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                     }
                     else outputConsole->setVisible(false);
                 }
+				
+                showEditorConsole();
+				
             }
             else showMessage("Please open or create a file first", lookAndFeel);
         }
@@ -987,7 +981,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         cabbageCsoundEditor->newFile("effect");
         saveFileAs();
         setupWindowDimensions();
-        showEditorConsole(true);
+        showEditorConsole();
         //cabbageCsoundEditor->csoundEditor->textEditor->grabKeyboardFocus();
         isAFileOpen = true;
     }
@@ -1006,7 +1000,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         cabbageCsoundEditor->newFile("instrument");
         saveFileAs();
         setupWindowDimensions();
-        showEditorConsole(true);
+        showEditorConsole();
         //cabbageCsoundEditor->csoundEditor->textEditor->grabKeyboardFocus();
         isAFileOpen = true;
     }
@@ -1273,9 +1267,9 @@ void StandaloneFilterWindow::setupWindowDimensions()
 //==============================================================================
 // open text editor
 //==============================================================================
-void StandaloneFilterWindow::showEditorConsole(bool show)
+void StandaloneFilterWindow::showEditorConsole()
 {
-    if(getPreference(appProperties, "ShowEditorConsole")==(int)show)
+    if(getPreference(appProperties, "ShowEditorConsole")==1)
     {
         cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
 #ifdef BUILD_DEBUGGER
@@ -1298,10 +1292,7 @@ void StandaloneFilterWindow::openTextEditor()
         cabbageCsoundEditor->setVisible(true);
         setupWindowDimensions();
         cabbageCsoundEditor->toFront(true);
-        if(getPreference(appProperties, "ShowEditorConsole")==1)
-            showEditorConsole(1);
-        else
-            showEditorConsole(0);
+        showEditorConsole();
 
 
         if(getPreference(appProperties, "ShowConsoleWithEditor"))

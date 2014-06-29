@@ -46,10 +46,14 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	
     String defaultCSDFile;
 
-	if(File(commandLineParams).existsAsFile())
-		defaultCSDFile = commandLineParams;
+	if(File(commandLineParams.removeCharacters("\"")).existsAsFile())
+	{
+		defaultCSDFile = commandLineParams.removeCharacters("\"");
+	}
 	else
+	{
 		defaultCSDFile = File(File::getSpecialLocation(File::currentExecutableFile)).withFileExtension(".csd").getFullPathName();
+	}
     
 	consoleMessages = "";
     cabbageDance = 0;

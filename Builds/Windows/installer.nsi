@@ -1,7 +1,7 @@
 # Cabbage installer and uninstaller script
 # Rory Walsh Copright, 2013
 
-!define APPNAME "Cabbage"
+!define APPNAME "Cabbage32"
 !define COMPANYNAME "Cabbage Audio"
 !define DESCRIPTION "Audio plugin and standalone development toolkit"
 RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
@@ -10,7 +10,7 @@ InstallDir "$PROGRAMFILES\${COMPANYNAME}\${APPNAME}"
 # This will be in the installer/uninstaller's title bar
 Name "${COMPANYNAME} - ${APPNAME}"
 Icon "logo.ico"
-outFile "Cabbage64Installer.exe"
+outFile "Cabbage32Installer.exe"
  
 !include LogicLib.nsh
 ; Include LogicLibrary
@@ -21,7 +21,7 @@ outFile "Cabbage64Installer.exe"
 !include "MUI2.nsh"
 !define MUI_LANGUAGE
 !define MUI_ABORTWARNING
-!define MUI_WELCOMEPAGE_TITLE "Welcome to the Cabbage installer"
+!define MUI_WELCOMEPAGE_TITLE "Welcome to the Cabbage(32 bit) installer"
 !define MUI_WELCOMEPAGE_TEXT "This Wizard will install the Cabbage audio instrument development environment to your system. Note that this is alpha softare and is for testing purposes only. This software and can only used in production at the users own risk.$\r$\n$\r$\n$\r$\nCabbage Audio accepts no reponsibility for any weirdness.."
 
 
@@ -101,11 +101,11 @@ section "install"
 	File "..\..\..\MingwLibs\libgcc_s_seh-1.dll"
  
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
-	writeUninstaller "$INSTDIR\uninstall.exe"
+	writeUninstaller "$INSTDIR\Uninstall-Cabbage32.exe"
  
 	# Start Menu
 	createDirectory "$SMPROGRAMS\${COMPANYNAME}"
-	createShortCut "$SMPROGRAMS\${COMPANYNAME}\uninstall.lnk" "$INSTDIR\uninstall.exe"
+	createShortCut "$SMPROGRAMS\${COMPANYNAME}\uninstall.lnk" "$INSTDIR\Uninstall-Cabbage32.exe"
 	createShortCut "$SMPROGRAMS\${COMPANYNAME}\${APPNAME}.lnk" "$INSTDIR\Cabbage.exe" "" "$INSTDIR\logo.ico"
 
 
@@ -129,13 +129,9 @@ functionEnd
 section "uninstall"
  
 	# Remove Start Menu launcher
-	delete "$SMPROGRAMS\${COMPANYNAME}\Cabbage.lnk"
-	delete "$SMPROGRAMS\${COMPANYNAME}\uninstall.lnk"
-	# Try to remove the Start Menu folder - this will only happen if it is empty
-	rmDir "$SMPROGRAMS\${COMPANYNAME}"
- 
+	delete "$SMPROGRAMS\${COMPANYNAME}\Cabbage32.lnk"
+	delete "$SMPROGRAMS\${COMPANYNAME}\Uninstall-Cabbage32.lnk" 
 	rmDir /r $INSTDIR\CsoundDocs
- 
 	# Remove files
 	delete $INSTDIR\cellular.dll
 	delete $INSTDIR\cs_date.dll
@@ -180,6 +176,9 @@ section "uninstall"
  	# rmDir /r $INSTDIR\CsoundPlugins
 
  	${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR"  ;remove
+
+	# Try to remove the Start Menu folder - this will only happen if it is empty
+	rmDir "$SMPROGRAMS\${COMPANYNAME}"
 
 	# Try to remove the install directory - this will only happen if it is empty
 	rmDir $INSTDIR

@@ -101,11 +101,11 @@ section "install"
 	File "..\..\..\MingwLibs64\libgcc_s_seh-1.dll"
  
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
-	writeUninstaller "$INSTDIR\uninstall.exe"
+	writeUninstaller "$INSTDIR\Uninstall-Cabbage64.exe"
  
 	# Start Menu
 	createDirectory "$SMPROGRAMS\${COMPANYNAME}"
-	createShortCut "$SMPROGRAMS\${COMPANYNAME}\uninstall.lnk" "$INSTDIR\uninstall.exe"
+	createShortCut "$SMPROGRAMS\${COMPANYNAME}\Uninstall-Cabbage64.lnk" "$INSTDIR\Uninstall-Cabbage64.exe"
 	createShortCut "$SMPROGRAMS\${COMPANYNAME}\${APPNAME}.lnk" "$INSTDIR\Cabbage.exe" "" "$INSTDIR\logo.ico"
 
 
@@ -129,10 +129,8 @@ functionEnd
 section "uninstall"
  
 	# Remove Start Menu launcher
-	delete "$SMPROGRAMS\${COMPANYNAME}\Cabbage.lnk"
-	delete "$SMPROGRAMS\${COMPANYNAME}\uninstall.lnk"
-	# Try to remove the Start Menu folder - this will only happen if it is empty
-	rmDir "$SMPROGRAMS\${COMPANYNAME}"
+	delete "$SMPROGRAMS\${COMPANYNAME}\Cabbage64.lnk"
+	delete "$SMPROGRAMS\${COMPANYNAME}\Uninstall-Cabbage64.lnk"
  
 	# Remove files
 	delete $INSTDIR\cellular.dll
@@ -180,7 +178,12 @@ section "uninstall"
 
  	${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR"  ;remove
 
+
+	# Try to remove the Start Menu folder - this will only happen if it is empty
+	rmDir "$SMPROGRAMS\${COMPANYNAME}"
+
 	# Try to remove the install directory - this will only happen if it is empty
 	rmDir $INSTDIR
+
 
 sectionEnd

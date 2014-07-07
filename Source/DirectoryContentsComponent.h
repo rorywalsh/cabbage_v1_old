@@ -148,7 +148,7 @@ public:
             CabbageLookAndFeel cLAK;
             m.setLookAndFeel(&cLAK);
             m.addItem(1, "Delete selected");
-            int choice = m.show();
+            int choice = 0;//m.show();
             if(choice==1)
                 sendActionMessage("delete selected");
         }

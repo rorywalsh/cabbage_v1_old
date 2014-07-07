@@ -129,7 +129,13 @@ public:
     Array<int> popupMenus;
     void updateGUIControls();
     OwnedArray<CabbagePlantWindow> subPatches;
-
+    //CabbagePluginAudioProcessor* filter;
+    CabbagePluginAudioProcessor* getFilter() const
+    {
+        return static_cast <CabbagePluginAudioProcessor*> (getAudioProcessor());
+    }
+	
+	int currentPopupIndex;
 
 private:
     void setPositionOfComponent(float x, float y, float width, float height, Component* comp, String reltoplant);
@@ -199,12 +205,6 @@ private:
 
     ScopedPointer<Viewport> viewport;
     ScopedPointer<CabbageViewportComponent> viewportComponent;
-
-    //CabbagePluginAudioProcessor* filter;
-    CabbagePluginAudioProcessor* getFilter() const
-    {
-        return static_cast <CabbagePluginAudioProcessor*> (getAudioProcessor());
-    }
 
     bool keyStateChanged(bool onoff)
     {

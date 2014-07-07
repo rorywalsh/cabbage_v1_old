@@ -273,7 +273,10 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         m.addItem(4, "Create plant");
         m.addItem(5, "Break up plant");
         m.addItem(1, "Add to repository");
-        int choice = m.show();
+        int choice;
+#if !defined(AndroidBuild)
+		choice = m.show();
+#endif
         if(choice==1)
         {
             this->getTopLevelComponent()->setAlwaysOnTop(false);
@@ -285,12 +288,16 @@ void ChildAlias::mouseDown (const MouseEvent& e)
             alert.setColour(TextEditor::highlightColourId, Colour(20, 20, 20));
             //alert.addTextBlock("Enter a name and hit 'escape'(The following symbols not premitted in names:"" $ % ^ & * ( ) - + )");
             alert.addTextEditor("textEditor", "name", "");
+			String plantDir;
+#if !defined(AndroidBuild)
+			plantDir = appProperties->getUserSettings()->getValue("PlantFileDir", "");
             alert.runModalLoop();
+#endif
             this->getTopLevelComponent()->setAlwaysOnTop(true);
             bool clashingNames=false;
             int result;
 
-            String plantDir = appProperties->getUserSettings()->getValue("PlantFileDir", "");
+            
             //Logger::writeToLog(plantDir);
             Array<File> tempfiles;
             StringArray plants;

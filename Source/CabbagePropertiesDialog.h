@@ -337,7 +337,9 @@ public :
         callOut.setTopLeftPosition(this->getScreenX()+this->getWidth(), e.getScreenY()-this->getHeight());
         callOut.setAlwaysOnTop(true);
 
+#if !defined(AndroidBuild)
         callOut.runModalLoop();
+#endif
         colour = colourSelector.getCurrentColour();
         value.resize(0);
         value.append(colour.getRed());
@@ -487,6 +489,8 @@ public :
 
     void mouseDown(const MouseEvent& e)
     {
+#if !defined(AndroidBuild)
+		
         FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.*"), UseNativeDialogue);
         if(!e.mods.isCtrlDown())
             if(openFC.browseForFileToOpen())
@@ -499,6 +503,7 @@ public :
                 textField->setText(value[0]);
                 this->getTopLevelComponent()->grabKeyboardFocus();
             }
+#endif
     }
 
 
@@ -581,7 +586,9 @@ public:
         callOut.setLookAndFeel(lookAndFeelBasic);
         callOut.setTopLeftPosition(this->getScreenX()+this->getWidth(), e.getScreenY()-150/2);
         callOut.setAlwaysOnTop(true);
+#if !defined(AndroidBuild)
         callOut.runModalLoop();
+#endif
         value = textEditor.value;
         sendActionMessage("TextComboField");
         sendActionMessage("UpdateAll");

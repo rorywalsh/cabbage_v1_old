@@ -22,8 +22,13 @@
 #define CABBMESS_H
 
 #include "CabbageUtils.h"
+
 #ifndef Cabbage_No_Csound
-#include "csound.hpp"
+#ifdef AndroidBuild
+    #include "AndroidCsound.hpp"
+#else
+    #include <csound.hpp>
+#endif
 #endif
 
 using namespace std;

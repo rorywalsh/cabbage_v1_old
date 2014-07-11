@@ -155,6 +155,7 @@ private:
     void InsertDirectoryList(CabbageGUIClass &cAttr);
     void SetupWindow(CabbageGUIClass &cAttr);
     void InsertSlider(CabbageGUIClass &cAttr);
+	void InsertTextEditor(CabbageGUIClass &cAttr);
     void sliderValueChanged (Slider*);
     void InsertButton(CabbageGUIClass &cAttr);
     void InsertCheckBox(CabbageGUIClass &cAttr);

@@ -331,12 +331,16 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
     {
         InsertXYPad(cAttr);       //insert xypad
     }
-    //}
+    else if(cAttr.getStringProp(CabbageIDs::type)==String("texteditor"))
+    {
+        InsertTextEditor(cAttr);       //insert xypad
+    }
 }
 
 
 //===========================================================================
 //WHEN IN GUI EDITOR MODE THIS CALLBACK WILL NOTIFIY THE HOST OF EVENTS
+//IT CAN ALSO BE CALLED BY OTHER GUI WIDGETS WHEN THEIR STATE CHNANGES
 //===========================================================================
 void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster *source)
 {
@@ -402,6 +406,12 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
             if(gentable->changeMessage == "updateFunctionTable")
                 updatefTableData(gentable);
         }
+
+        CabbageTextEditor* textEditor = dynamic_cast<CabbageTextEditor*>(source);
+        if(textEditor)
+        {
+           getFilter()->messageQueue.addOutgoingChannelMessageToQueue(textEditor->channel, textEditor->getCurrentText(), "string");
+		}
 
         CabbageSoundfiler* soundfiler = dynamic_cast<CabbageSoundfiler*>(source);
         if(soundfiler)
@@ -1840,6 +1850,33 @@ void CabbagePluginAudioProcessorEditor::InsertTextbox(CabbageGUIClass &cAttr)
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//      TextEditor widget.
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+void CabbagePluginAudioProcessorEditor::InsertTextEditor(CabbageGUIClass &cAttr)
+{
+    layoutComps.add(new CabbageTextEditor(cAttr));
+    int idx = layoutComps.size()-1;
+    float left = cAttr.getNumProp(CabbageIDs::left);
+    float top = cAttr.getNumProp(CabbageIDs::top);
+    float width = cAttr.getNumProp(CabbageIDs::width);
+    float height = cAttr.getNumProp(CabbageIDs::height);
+    setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
+    layoutComps[idx]->setName("csoundoutput");
+    layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
+    //if control is embedded into a plant don't add mouse listener
+    if(cAttr.getStringProp("plant").isEmpty())
+        layoutComps[idx]->addMouseListener(this, true);
+    dynamic_cast<CabbageTextEditor*>(layoutComps[idx])->editor->setLookAndFeel(lookAndFeel);
+    layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+    layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+    //set visiblilty
+    layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+	//add change listener so we can inform Csound when the contents of the editor changes
+	dynamic_cast<CabbageTextEditor*>(layoutComps[idx])->addChangeListener(this);
+}
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //      Info button.
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -647,7 +647,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
-    //===============csoundoutput==================//
+    //===============textbox==================//
     else if(strTokens[0].trim() == "textbox")
     {
         cabbageIdentifiers.set("basetype", "layout");
@@ -670,6 +670,33 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
+
+    //===============textbox==================//
+    else if(strTokens[0].trim() == "texteditor")
+    {
+        cabbageIdentifiers.set("basetype", "layout");
+        top = 10;
+        left = 10;
+        width = 400;
+        height = 200;
+        cabbageIdentifiers.set(CabbageIDs::top, 10);
+        cabbageIdentifiers.set(CabbageIDs::left, 10);
+        cabbageIdentifiers.set(CabbageIDs::width, 400);
+        cabbageIdentifiers.set(CabbageIDs::text, "");
+        cabbageIdentifiers.set(CabbageIDs::height, 200);
+		cabbageIdentifiers.set(CabbageIDs::channel, "texteditor");
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
+        cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::name, "texteditor");
+        cabbageIdentifiers.set(CabbageIDs::type, "texteditor");
+        cabbageIdentifiers.set(CabbageIDs::wrap, 0);
+        cabbageIdentifiers.set(CabbageIDs::file, "");
+        cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+        cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+        cabbageIdentifiers.set(CabbageIDs::visible, 1);
+    }
+
+
     //===============vemeter==================//
     else if(strTokens[0].trim() == "vumeter")
     {

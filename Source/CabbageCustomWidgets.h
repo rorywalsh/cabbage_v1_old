@@ -1302,6 +1302,121 @@ public:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageXYController);
 };
 
+//===============================================================================
+//Cabbage text editor; for sending string to Csound 
+//===============================================================================
+class CabbageTextEditor : public Component,
+						  public TextEditor::Listener,
+						  public KeyListener,
+						  public ChangeBroadcaster
+{
+    ScopedPointer<GroupComponent> groupbox;
+    ScopedPointer<LookAndFeel_V1> lookAndFeel;
+    String text, name, caption, type, currentText;
+	StringArray strings;
+    Colour colour, fontcolour;
+    int offX, offY, offWidth, offHeight, stringIndex;
+public:
+	String channel;
+    ScopedPointer<TextEditor> editor;
+    //---- constructor -----
+    CabbageTextEditor(CabbageGUIClass &cAttr) :
+        name(cAttr.getStringProp(CabbageIDs::name)),
+        caption(cAttr.getStringProp(CabbageIDs::caption)),
+        text(cAttr.getStringProp(CabbageIDs::text)),
+        type(cAttr.getStringProp(CabbageIDs::type)),
+        editor(new TextEditor(String("editor_"))),
+        groupbox(new GroupComponent(String("groupbox_"))),
+        lookAndFeel(new LookAndFeel_V1()),
+        fontcolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
+        colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::colour))),
+		channel(cAttr.getStringProp(CabbageIDs::channel)),
+        offX(0),
+        offY(0),
+        offWidth(0),
+        offHeight(0),
+		stringIndex(0)
+    {
+        editor->setLookAndFeel(lookAndFeel);
+        addAndMakeVisible(editor);
+        editor->setMultiLine(false);
+        editor->setScrollbarsShown(true);
+        editor->setReadOnly(false);
+        //background colour ID
+        editor->setColour(0x1000200, colour);
+        //text colour ID
+        editor->setColour(0x1000201, fontcolour);
+        editor->setColour(Label::outlineColourId, Colours::white);
+		editor->addListener(this);
+		editor->addKeyListener(this);
+        //groupbox->setColour(GroupComponent::ColourIds::outlineColourId, Colours::red);
+        this->setWantsKeyboardFocus(false);
+    }
+
+    //---------------------------------------------
+    ~CabbageTextEditor() {}
+
+    //update control
+    void update(CabbageGUIClass m_cAttr)
+    {
+        editor->setColour(0x1000200, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
+        editor->setColour(0x1000201, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
+        setBounds(m_cAttr.getBounds());
+        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+            setVisible(false);
+        else
+            setVisible(true);
+        repaint();
+    }
+
+    void paint(Graphics &g)
+    {
+       g.fillAll(colour);
+    }
+
+    //---------------------------------------------
+    void resized()
+    {
+        editor->setBounds(0, 0, getWidth(), getHeight());
+        this->setWantsKeyboardFocus(false);
+    }
+
+	void textEditorReturnKeyPressed (TextEditor&) 
+	{
+		//CabbageUtils::showMessage(editor->getText());
+		strings.add(editor->getText());
+		currentText = editor->getText();
+		strings.removeDuplicates(false);
+		stringIndex = strings.size()-1;
+		editor->setText("", false);
+		sendChangeMessage();
+	}
+	
+	String getCurrentText()
+	{
+		return currentText;
+	}
+
+	bool keyPressed(const juce::KeyPress &key,Component *)
+	{
+    //Logger::writeToLog(String(key.getKeyCode()));
+    if (key.getTextDescription().contains("cursor up"))
+	{
+			editor->setText(strings[jmax(0, stringIndex--)]);
+			if(stringIndex<1) 
+				stringIndex=0;
+	}
+	else if (key.getTextDescription().contains("cursor down"))
+	{	
+			editor->setText(strings[jmin(strings.size()-1, stringIndex++)]);
+			if(stringIndex>strings.size()-1) 
+				stringIndex=strings.size()-1;
+	}
+	return false;
+	}
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageTextEditor);
+};
 
 //==============================================================================
 // custom Csound message console

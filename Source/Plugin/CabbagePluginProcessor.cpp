@@ -864,6 +864,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             ||tokes[0].equalsIgnoreCase(String("infobutton"))
                             ||tokes[0].equalsIgnoreCase(String("filebutton"))
                             ||tokes[0].equalsIgnoreCase(String("soundfiler"))
+							||tokes[0].equalsIgnoreCase(String("texteditor"))
                             ||tokes[0].equalsIgnoreCase(String("popupmenu"))
                             ||tokes[0].equalsIgnoreCase(String("snapshot"))
                             ||tokes[0].equalsIgnoreCase(String("table"))
@@ -1348,11 +1349,9 @@ StringArray fdata;
         int tableSize = csound->GetTable(temp, tableNum);
         if(tableSize>0)
         {
-			/*
             EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
             for(int i=0; i<=e->pcnt; i++)
                 fdata.add(String(e->p[i]));
-				*/
         }
     }
 #endif
@@ -1633,8 +1632,8 @@ void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
             //catch string messags
             else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type==CabbageIDs::stringchannel)
             {
-                //Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName);
-                //Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);
+                Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName);
+                Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);
                 csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
                                    messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal.toUTF8().getAddress());
             }
@@ -1803,12 +1802,12 @@ void CabbagePluginAudioProcessor::timerCallback()
 //==============================================================================
 void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
+    float* audioBuffer;
+	int numSamples = buffer.getNumSamples();
+		
     if(!isSuspended() && !isGuiEnabled())
     {
-        float* audioBuffer;
-        float lastOutputAmp;
 #ifndef Cabbage_No_Csound
-        int numSamples = buffer.getNumSamples();
 
         if(csCompileResult==OK)
         {
@@ -1825,9 +1824,6 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
             if(!midiOutputBuffer.isEmpty())
                 midiMessages.swapWith(midiOutputBuffer);
 #endif
-
-
-
 
             for(int i=0; i<numSamples; i++, csndIndex++)
             {
@@ -1888,7 +1884,6 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 
 #endif
     }
-
 #if JucePlugin_ProducesMidiOutput
     if(!midiBuffer.isEmpty())
         midiMessages.swapWith(midiOutputBuffer);

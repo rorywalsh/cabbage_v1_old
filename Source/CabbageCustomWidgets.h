@@ -1388,7 +1388,7 @@ public:
 		currentText = editor->getText();
 		strings.removeDuplicates(false);
 		stringIndex = strings.size()-1;
-		editor->setText("", false);
+		//editor->setText("", false);
 		sendChangeMessage();
 	}
 	

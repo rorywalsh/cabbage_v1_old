@@ -248,7 +248,6 @@ void StandaloneFilterWindow::timerCallback()
         float moveX = sin(yAxis*2*3.14*10/100);
         yAxis+=1;
         this->setTopLeftPosition(this->getScreenX()+(moveX*5), this->getScreenY()+(moveY*10));
-
     }
 
 
@@ -423,11 +422,13 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
                 {
                     ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
                     filter->setGuiEnabled(false);
+					//filter->suspendProcessing(false);
                 }
                 else
                 {
                     ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(true);
                     filter->setGuiEnabled(true);
+					//filter->suspendProcessing(true);
 
                     //stopTimer();
                     //setPreference(appProperties, "ExternalEditor", 0);
@@ -1234,7 +1235,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                     if(getPreference(appProperties, "ExternalEditor")==1)
                         csdFile = File(csdFile.getFullPathName());
                     startTimer(100);
-                    filter->suspendProcessing(false);
+                    //filter->suspendProcessing(false);
                     ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
                     filter->setGuiEnabled(false);
                 }
@@ -1242,7 +1243,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                 {
                     ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(true);
                     filter->setGuiEnabled(true);
-                    filter->suspendProcessing(true);
+                    //filter->suspendProcessing(true);
                     stopTimer();
                     //setPreference(appProperties, "ExternalEditor", 0);
                 }

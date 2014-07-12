@@ -1733,16 +1733,9 @@ void CabbagePluginAudioProcessor::setGuiEnabled(bool val)
     if(editor)
     {
         if(val==false)
-        {
             if(getPreference(appProperties, "ExternalEditor"))
                 csdFile.replaceWithText(codeEditor->getAllText());
-            //editor->resizer->setVisible(false);
-            //editor->propsWindow->setVisible(false);
-        }
-        else
-        {
-            //editor->resizer->setVisible(true);
-        }
+
     }
 #endif
 }
@@ -1884,6 +1877,10 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 
 #endif
     }
+else{	
+	//if in edit mode, of is suspend processing == true, clear audio buffers
+	buffer.clear();
+	}
 #if JucePlugin_ProducesMidiOutput
     if(!midiBuffer.isEmpty())
         midiMessages.swapWith(midiOutputBuffer);

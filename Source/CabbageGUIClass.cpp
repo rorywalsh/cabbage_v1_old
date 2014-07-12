@@ -833,6 +833,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::guirefresh, 100);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+		cabbageIdentifiers.set(CabbageIDs::scrollbars, 1);
+		
     }
 
     else if(strTokens[0].trim() == "hostbpm")
@@ -1016,7 +1018,6 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                 else if(identArray[indx].equalsIgnoreCase("shape"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::shape, strTokens[0].trim());
-
                 }
                 else if(identArray[indx].equalsIgnoreCase("outlinecolour"))
                 {
@@ -1507,6 +1508,11 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                     cabbageIdentifiers.set(CabbageIDs::value, strTokens[0].trim().getFloatValue());
                 }
 
+                else if(identArray[indx].equalsIgnoreCase("scrollbars"))
+                {
+                    cabbageIdentifiers.set(CabbageIDs::scrollbars, strTokens[0].trim().getIntValue());
+                }
+				
                 else
                 {
                 }

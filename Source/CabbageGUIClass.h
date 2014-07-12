@@ -118,6 +118,7 @@ public:
 		add("scroll");
         add("zoom");
 		add("samplerange");
+		add("scrollbars");
     }
     ~IdentArray()
     {
@@ -216,7 +217,7 @@ static const Identifier startpos = "startpos";
 static const Identifier endpos = "endpos";
 static const Identifier show = "show";
 static const Identifier child = "child";
-
+static const Identifier scrollbars = "scrollbars";
 
 //type of widgets/controls/messages
 static const String combobox = "combobox";

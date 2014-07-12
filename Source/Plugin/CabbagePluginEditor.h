@@ -214,6 +214,7 @@ private:
     }
     bool keyIsPressed;
     bool isMouseDown;
+	bool showScrollbars;
     void positionComponentWithinPlant(String type, float left, float top, float width, float height, Component *layout, Component *control);
     //ScopedPointer<CabbagePlantWindow> subPatch;
     OwnedArray<CabbageButton> plantButton;

@@ -42,7 +42,8 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
       propsWindow(new CabbagePropertiesDialog("Properties")),
 #endif
       xyPadIndex(0),
-      tableBuffer(2, 44100)
+      tableBuffer(2, 44100),
+	  showScrollbars(true)
 {
     //setup swatches for colour selector.
     swatchColours.set(0, Colour(0xFF000000));
@@ -221,8 +222,10 @@ void CabbagePluginAudioProcessorEditor::resized()
     if(componentPanel->getWidth()<this->getWidth()+18 && componentPanel->getHeight()<this->getHeight()+18)
         viewport->setScrollBarsShown(false, false);
     else
+		if(showScrollbars)
         viewport->setScrollBarsShown(true, true);
-
+		else
+			viewport->setScrollBarsShown(false, false);
 #endif
 }
 
@@ -1758,7 +1761,7 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
     int width = cAttr.getNumProp(CabbageIDs::width);
     int height = cAttr.getNumProp(CabbageIDs::height);
 
-
+	showScrollbars = (bool)cAttr.getNumProp(CabbageIDs::scrollbars);
     if(cAttr.getStringProp(CabbageIDs::colour).isNotEmpty())
         formColour = Colour::fromString(cAttr.getStringProp(CabbageIDs::colour));
     else

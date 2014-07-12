@@ -202,8 +202,8 @@ public:
         alert.setLookAndFeel(feel);
         alert.setAlwaysOnTop(true);
         alert.addButton("Ok", 1);
-        //alert.runModalLoop();
-		alert.showMessageBoxAsync(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
+        alert.runModalLoop();
+		//alert.showMessageBoxAsync(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
 		mainWindow->setAlwaysOnTop(true);
     }
 
@@ -213,16 +213,17 @@ public:
         AlertWindow alert("Cabbage Message" , message, AlertWindow::WarningIcon);
         alert.setLookAndFeel(feel);
         alert.addButton("Ok", 1);
-        alert.showMessageBoxAsync(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
+		alert.runModalLoop();
+        //alert.showMessageBoxAsync(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
     }
 
     static void showMessage(String title, String message, LookAndFeel* feel)
     {
         AlertWindow alert(title, message, AlertWindow::WarningIcon);
         alert.setLookAndFeel(feel);
-        alert.showMessageBoxAsync(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
-        //alert.addButton("Ok", 1);
-        //alert.runModalLoop();
+        //alert.showMessageBoxAsync(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
+        alert.addButton("Ok", 1);
+        alert.runModalLoop();
     }
 
 //===========================================================================================
@@ -234,8 +235,8 @@ public:
         alert.addButton("No", 1);
         if(cancel==1)
             alert.addButton("Cancel", 2);
-        //int result = alert.runModalLoop();
-        int result = alert.showYesNoCancelBox(AlertWindow::QuestionIcon, "Warning", message, "Yes", "No", "Cancel", nullptr, nullptr);
+        int result = alert.runModalLoop();
+        //int result = alert.showYesNoCancelBox(AlertWindow::QuestionIcon, "Warning", message, "Yes", "No", "Cancel", nullptr, nullptr);
         return result;
     }
 //===========================================================================================

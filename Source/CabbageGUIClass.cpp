@@ -1839,9 +1839,9 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
     String temp="";
     String type;
     String colour, fontcolour;
-    String left, top, width, height, colR, colG, colB, colA, min, max, skew, drawmode, tablenumber,resizemode,
-           incr, slidervalue, value, maxx, maxy, minx, miny, valuex, valuey, channel, xchannel, ychannel,
-           amprange;
+    String left("0"), top("0"), width("0"), height("0"), colR("0"), colG("0"), colB("0"), colA("0"), min("ERROR"), max("1"), skew("1"), drawmode("0"), tablenumber("0"),resizemode("0"),
+           incr("0.001"), slidervalue("0"), value("0"), maxx("1"), maxy("1"), minx("0"), miny("0"), valuex("0"), valuey("0"), channel("channel(\"ERROR\"), "), xchannel("xChan_ERROR, "), ychannel("yChan_ERROR, "),
+           amprange("0");
     var rgbVals;
     //run through the complete list of identifiers
     for(int i=0; i<props.size(); i++)

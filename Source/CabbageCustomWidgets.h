@@ -165,7 +165,8 @@ class CabbageSlider : public Component,
 
 
     String name, text, caption, kind, colour, fontColour, trackerFill;
-    int textBox, decPlaces, min, max;
+    int textBox, decPlaces;
+	double min, max;
     float incr, skew;
 public:
 
@@ -212,10 +213,14 @@ public:
 
         min = cAttr.getNumProp(CabbageIDs::min);
         max = cAttr.getNumProp(CabbageIDs::max);
+		if(min==max || min>max){
+			CabbageUtils::showMessage("Your min value is the same or greater than your max value.\nCabbage will now reduce your min value so that it falls into range", &getLookAndFeel());
+			min = max-.1;
+		}
         incr = cAttr.getNumProp(CabbageIDs::sliderincr);
         skew = cAttr.getNumProp(CabbageIDs::sliderskew);
         slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
-        slider->setRange(cAttr.getNumProp("min"), cAttr.getNumProp("max"), cAttr.getNumProp(CabbageIDs::sliderincr));
+        slider->setRange(min, max, cAttr.getNumProp(CabbageIDs::sliderincr));
         slider->setValue(cAttr.getNumProp(CabbageIDs::value));
     }//--- end of constructor ----
 

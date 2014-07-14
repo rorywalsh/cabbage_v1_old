@@ -84,10 +84,11 @@ section "install"
 	File "..\..\..\csound\build\libsndfile-1.dll"
 	File "..\..\..\csound\build\mixer.dll"
 	File "..\..\..\csound\build\osc.dll"
+	File "..\..\..\csound\build\liblo-7.dll"
 	File "..\..\..\csound\build\platerev.dll"
 	File "..\..\..\csound\build\py.dll"
-	File "..\..\..\csound\build\rtpa.dll"
-	File "..\..\..\csound\build\rtwinmm.dll"
+#	File "..\..\..\csound\build\rtpa.dll"
+#	File "..\..\..\csound\build\rtwinmm.dll"
 	File "..\..\..\csound\build\scansyn.dll"
 	File "..\..\..\csound\build\serial.dll"
 	File "..\..\..\csound\build\signalflowgraph.dll"
@@ -98,7 +99,7 @@ section "install"
 	File "..\..\..\MingwLibs\libgcc_s_dw2-1.dll"
 	File "..\..\..\MingwLibs\libstdc++-6.dll"
 	File "..\..\..\MingwLibs\msvcr110.dll"
-	File "..\..\..\MingwLibs\libgcc_s_seh-1.dll"
+
  
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
 	writeUninstaller "$INSTDIR\Uninstall-Cabbage32.exe"
@@ -149,8 +150,8 @@ section "uninstall"
 	delete $INSTDIR\osc.dll
 	delete $INSTDIR\platerev.dll
 	delete $INSTDIR\py.dll
-	delete $INSTDIR\rtpa.dll
-	delete $INSTDIR\rtwinmm.dll
+#	delete $INSTDIR\rtpa.dll
+#	delete $INSTDIR\rtwinmm.dll
 	delete $INSTDIR\scansyn.dll
 	delete $INSTDIR\serial.dll
 	delete $INSTDIR\signalflowgraph.dll
@@ -161,7 +162,7 @@ section "uninstall"
 	delete $INSTDIR\libgcc_s_dw2-1.dll
 	delete $INSTDIR\libstdc++-6.dll
 	delete $INSTDIR\msvcr110.dll
-	delete $INSTDIR\libgcc_s_seh-1.dll
+#	delete $INSTDIR\libgcc_s_seh-1.dll
 	delete $INSTDIR\Cabbage.exe
 	delete $INSTDIR\logo.ico
 	delete $INSTDIR\CabbagePluginEffect.dat

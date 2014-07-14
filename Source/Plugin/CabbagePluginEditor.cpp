@@ -434,7 +434,10 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
                         PopupMenu m;
                         m.setLookAndFeel(lookAndFeel);
                         static_cast<CabbagePopupMenu*>(layoutComps[index])->addItemsToPopup(m);
-                        int result = m.show();
+                        int result;
+#if !defined(AndroidBuild)
+						result = m.show();
+#endif
                         if(result>0)
                             getFilter()->messageQueue.addOutgoingChannelMessageToQueue(
                                 getFilter()->getGUILayoutCtrls(index).getStringProp(CabbageIDs::channel),
@@ -1108,6 +1111,14 @@ void CabbagePluginAudioProcessorEditor::mouseMove(const MouseEvent& event)
     //}
 }
 
+static void popupMenuCallback(int result, CabbagePluginAudioProcessorEditor* editor)
+{
+	if(result>0)
+		editor->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(
+			editor->getFilter()->getGUILayoutCtrls(editor->currentPopupIndex).getStringProp(CabbageIDs::channel),
+			result,	"popup");
+}
+
 void CabbagePluginAudioProcessorEditor::mouseDown(const MouseEvent& event)
 {
     if(event.mods.isPopupMenu())
@@ -1117,21 +1128,17 @@ void CabbagePluginAudioProcessorEditor::mouseDown(const MouseEvent& event)
             if(getFilter()->getGUILayoutCtrls(popupMenus[i]).getBounds().contains(event.getEventRelativeTo(this).getPosition())
                     && getFilter()->getGUILayoutCtrls(popupMenus[i]).getStringProp("reltoplant").isEmpty())
             {
-                int index = popupMenus[i];
+                currentPopupIndex = popupMenus[i];
                 layoutComps[popupMenus[i]]->setLookAndFeel(lookAndFeel);
                 PopupMenu m;
+				
                 m.setLookAndFeel(lookAndFeel);
-                static_cast<CabbagePopupMenu*>(layoutComps[index])->addItemsToPopup(m);
-                int result = m.show();
-                if(result>0)
-                    getFilter()->messageQueue.addOutgoingChannelMessageToQueue(
-                        getFilter()->getGUILayoutCtrls(index).getStringProp(CabbageIDs::channel),
-                        result,
-                        "popup");
+                static_cast<CabbagePopupMenu*>(layoutComps[currentPopupIndex])->addItemsToPopup(m);
+                m.showMenuAsync(PopupMenu::Options(), ModalCallbackFunction::forComponent(popupMenuCallback, this));
             }
 
         }
-    }
+    } 
     if(event.mods.isLeftButtonDown())
         getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousedownleft, 1, "");
     else if(event.mods.isRightButtonDown())
@@ -1194,7 +1201,10 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
 
     int channelOffset = getFilter()->getGUICtrlsSize();
 
-    int choice = m.show();
+    int choice;
+#if !defined(AndroidBuild)
+	choice = m.show();
+#endif
     if(choice==1)
         insertComponentsFromCabbageText(StringArray(String("button bounds(")+String(x)+(", ")+String(y)+String(", 60, 25), channel(\"but1\"), text(\"on\", \"off\")")), false);
     else if(choice==2)
@@ -2450,6 +2460,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                             //else let the user specify the filename for the snapshot
                             else
                             {
+#if !defined(AndroidBuild)
                                 if(!getFilter()->getGUILayoutCtrls(i).getStringProp("filetype").contains("snaps"))
                                 {
                                     FileChooser fc("Open", directory.getFullPathName(), filetype, UseNativeDialogue);
@@ -2492,6 +2503,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                         refreshDiskReadingGUIControls("combobox");
                                     }
                                 }
+#endif
                             }
 
                         }

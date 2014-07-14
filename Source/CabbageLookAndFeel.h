@@ -143,6 +143,11 @@ public:
                                           bool /*isVerticalBar*/,
                                           bool isMouseOver,
                                           bool isMouseDragging);
+
+	int getDefaultMenuBarHeight(){
+		return 18;
+	}
+										  
     juce_UseDebuggingNewOperator
 
 

@@ -247,10 +247,10 @@ void StandaloneFilterWindow::timerCallback()
     //cout << csdFile.getLastModificationTime().toString(true, true, false, false);
     if(cabbageDance)
     {
-        float moveY = sin(yAxis*2*3.14*20/100);
-        float moveX = sin(yAxis*2*3.14*10/100);
+        float moveY = sin(yAxis*2*3.14*5.f/100.f);
+        float moveX = sin(yAxis*2*3.14*5.f/100.f);
         yAxis+=1;
-        this->setTopLeftPosition(this->getScreenX()+(moveX*5), this->getScreenY()+(moveY*10));
+        this->setTopLeftPosition(this->getScreenX()+(moveX*10), this->getScreenY()+(moveY*10));
     }
 
 
@@ -799,13 +799,13 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         m.addItem(9, TRANS("Show MIDI Debug Information"));
         */
 
-        /*
+        
         	m.addSeparator();
         	if(cabbageDance)
         	m.addItem(99, String("Cabbage Dance"), true, true);
         	else
         	m.addItem(99, String("Cabbage Dance"));
-        */
+        
         subMenu.clear();
 
         if(getPreference(appProperties, "SetAlwaysOnTop"))
@@ -1218,6 +1218,16 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         toggleOnOffPreference(appProperties, "EnablePopupDisplay");
     }
 
+    //------- preference disable gui edit warning ------
+    else if(options==99)
+    {
+        cabbageDance=!cabbageDance;
+		if(cabbageDance)
+			startTimer(20);
+		else
+			startTimer(100);
+    }
+	
     //------- preference disable gui edit warning ------
     else if(options==202)
     {

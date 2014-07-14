@@ -1354,6 +1354,7 @@ public:
         editor->setColour(Label::outlineColourId, Colours::white);
 		editor->addListener(this);
 		editor->addKeyListener(this);
+		editor->setText(text, false);
         //groupbox->setColour(GroupComponent::ColourIds::outlineColourId, Colours::red);
         this->setWantsKeyboardFocus(false);
     }
@@ -1371,6 +1372,12 @@ public:
             setVisible(false);
         else
             setVisible(true);
+			
+		if(text!=m_cAttr.getStringProp(CabbageIDs::text))	
+		{
+			editor->setText(m_cAttr.getStringProp(CabbageIDs::text));
+			text = m_cAttr.getStringProp(CabbageIDs::text);			
+		}
         repaint();
     }
 

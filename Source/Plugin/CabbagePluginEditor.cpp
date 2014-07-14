@@ -62,9 +62,6 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     swatchColours.set(13, Colour(0x80FFFF00));
     swatchColours.set(14, Colour(0x80FF00FF));
     swatchColours.set(15, Colour(0x8000FFFF));
-
-
-
     setWantsKeyboardFocus(false);
     //set custom skin yo use
     lookAndFeel = new CabbageLookAndFeel();
@@ -1201,6 +1198,8 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
         subm.addItem(11, "label");
         subm.addItem(16, "filebutton");
         subm.addItem(17, "numberbox");
+		subm.addItem(18, "texteditor");
+		subm.addItem(19, "textbox");
 //subm.addItem(13, "soundfiler");
         subm.addItem(14, "table");
         subm.addItem(15, "Csound message console");
@@ -1252,6 +1251,10 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
         insertComponentsFromCabbageText(StringArray(String("csoundoutput bounds(")+String(x)+(", ")+String(y)+String(", 360, 200)")), false);
     else if(choice==17)
         insertComponentsFromCabbageText(StringArray(String("numberbox bounds(")+String(x)+(", ")+String(y)+String(", 40, 20), channel(\"numberbox\"), range(0, 100, 0), colour(\"white\")")), false);
+    else if(choice==18)
+        insertComponentsFromCabbageText(StringArray(String("texteditor bounds(")+String(x)+(", ")+String(y)+String(", 40, 20), channel(\"texteditor\"), colour(\"white\")")), false);
+    else if(choice==19)
+        insertComponentsFromCabbageText(StringArray(String("textbox bounds(")+String(x)+(", ")+String(y)+String(", 140, 80), colour(\"white\")")), false);
 
 
     else if(choice>=100)

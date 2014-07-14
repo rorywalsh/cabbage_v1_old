@@ -73,13 +73,34 @@ public:
     void createPlugin()
     {
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Standalone);
-        processor = createCabbagePluginFilter("~/test.csd", false, AUDIO_PLUGIN);
+
+		File thisFile(File::getSpecialLocation(File::currentApplicationFile));
+		InputStream* fileStream;
+		fileStream = File(thisFile.getFullPathName()).createInputStream();
+		ZipFile zipFile (fileStream, true);	
+		InputStream* fileContents;
+		fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/AndroidSimpleSynth.csd"));
+	
+		TemporaryFile file(".csd");
+		file.getFile().replaceWithText("test");
+		
+	
+		//if(File::getCurrentWorkingDirectory().getChildFile (filename).existsAsFile())
+		AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                              "This is an AlertWindow",
+                                              fileContents->readEntireStreamAsString(),
+                                              "ok");
+		
+		
+  
+
+        processor = createCabbagePluginFilter("", false, AUDIO_PLUGIN);
         jassert (processor != nullptr); // Your createPluginFilter() function must return a valid object!
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Undefined);
 
         processor->setPlayConfigDetails (JucePlugin_MaxNumInputChannels,
                                          JucePlugin_MaxNumOutputChannels,
-                                         44100, 512);
+                                         48000, 512);
     }
 
     void deletePlugin()
@@ -313,13 +334,14 @@ public:
         m.addItem (3, TRANS("Load a saved state..."));
         m.addSeparator();
         m.addItem (4, TRANS("Reset to default state"));
-
+/*
         switch (m.showAt (&optionsButton))
         {
             case 1:  pluginHolder->showAudioSettingsDialog(); break;
             case 4:  resetToDefaultState(); break;
             default: break;
         }
+		*/
     }
 
     void resized() override

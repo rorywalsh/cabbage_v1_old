@@ -55,6 +55,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 		defaultCSDFile = File(File::getSpecialLocation(File::currentExecutableFile)).withFileExtension(".csd").getFullPathName();
 	}
     
+										  
 	consoleMessages = "";
     cabbageDance = 0;
     setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
@@ -166,6 +167,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
     //opens a default file that matches the name of the current executable
     //this can be used to create more 'standalone' like apps
+
+	
     if(File(defaultCSDFile).existsAsFile())
     {
         standaloneMode = true;

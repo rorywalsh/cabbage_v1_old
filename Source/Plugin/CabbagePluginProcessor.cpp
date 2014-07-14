@@ -301,12 +301,9 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 
         includeFiles.removeDuplicates(0);
 
-#if !defined(AndroidBuild)
+
         csCompileResult = csound->Compile(const_cast<char*>(inputfile.toUTF8().getAddress()));
-#else
-		csCompileResult = csound->CompileCsd(quickGUITest.toUTF8().getAddress());
-#endif
-//csound->Start();
+
         Logger::writeToLog(inputfile);
         if(csCompileResult==OK)
         {
@@ -376,7 +373,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 
 
 #if defined(AndroidBuild)
-	createGUI(quickGUITest, true);
+	createGUI(File(inputfile).loadFileAsString(), true);
 #endif
 
 
@@ -1349,9 +1346,11 @@ StringArray fdata;
         int tableSize = csound->GetTable(temp, tableNum);
         if(tableSize>0)
         {
+			/*
             EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
             for(int i=0; i<=e->pcnt; i++)
                 fdata.add(String(e->p[i]));
+				*/
         }
     }
 #endif

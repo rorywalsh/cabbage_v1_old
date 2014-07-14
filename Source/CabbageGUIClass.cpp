@@ -20,15 +20,9 @@
 
 
 #include "CabbageGUIClass.h"
-
-
-
-
 //===============================================================================
 // Main Cabbage abstract GUI class
 //===============================================================================
-
-
 CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
     width(0),
     height(0),
@@ -685,12 +679,10 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::height, 200);
 		cabbageIdentifiers.set(CabbageIDs::channel, "texteditor");
-        cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
-        cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::name, "texteditor");
         cabbageIdentifiers.set(CabbageIDs::type, "texteditor");
-        cabbageIdentifiers.set(CabbageIDs::wrap, 0);
-        cabbageIdentifiers.set(CabbageIDs::file, "");
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
@@ -1845,9 +1837,9 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
     String temp="";
     String type;
     String colour, fontcolour;
-    String left("0"), top("0"), width("0"), height("0"), colR("0"), colG("0"), colB("0"), colA("0"), min("ERROR"), max("1"), skew("1"), drawmode("0"), tablenumber("0"),resizemode("0"),
-           incr("0.001"), slidervalue("0"), value("0"), maxx("1"), maxy("1"), minx("0"), miny("0"), valuex("0"), valuey("0"), channel("channel(\"ERROR\"), "), xchannel("xChan_ERROR, "), ychannel("yChan_ERROR, "),
-           amprange("0");
+    String left("0"), top("0"), width("100"), height("50"), colR, colG, colB, colA, min("0"), max("1"), skew("1"), drawmode, tablenumber,resizemode,
+           incr("0.001"), slidervalue, value, maxx, maxy, minx, miny, valuex, valuey, channel("channel(\"ERROR\"), "), xchannel("xChan_ERROR, "), ychannel("yChan_ERROR, "),
+           amprange;
     var rgbVals;
     //run through the complete list of identifiers
     for(int i=0; i<props.size(); i++)

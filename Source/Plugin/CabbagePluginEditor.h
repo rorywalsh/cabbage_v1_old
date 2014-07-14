@@ -76,7 +76,7 @@ public:
         Viewport* const viewport = findParentComponentOfClass<Viewport>(); //Get the parent viewport
         if(viewport != nullptr) //Check for nullness
         {
-            Rectangle<int> viewRect(viewport->getViewPositionX(), viewport->getViewPositionY(), viewport->getViewWidth(), viewport->getViewHeight()); //Get the current displayed area in the viewport
+           juce::Rectangle<int> viewRect(viewport->getViewPositionX(), viewport->getViewPositionY(), viewport->getViewWidth(), viewport->getViewHeight()); //Get the current displayed area in the viewport
         }
     }
 };
@@ -129,7 +129,13 @@ public:
     Array<int> popupMenus;
     void updateGUIControls();
     OwnedArray<CabbagePlantWindow> subPatches;
-
+    //CabbagePluginAudioProcessor* filter;
+    CabbagePluginAudioProcessor* getFilter() const
+    {
+        return static_cast <CabbagePluginAudioProcessor*> (getAudioProcessor());
+    }
+	
+	int currentPopupIndex;
 
 private:
     void setPositionOfComponent(float x, float y, float width, float height, Component* comp, String reltoplant);
@@ -149,6 +155,7 @@ private:
     void InsertDirectoryList(CabbageGUIClass &cAttr);
     void SetupWindow(CabbageGUIClass &cAttr);
     void InsertSlider(CabbageGUIClass &cAttr);
+	void InsertTextEditor(CabbageGUIClass &cAttr);
     void sliderValueChanged (Slider*);
     void InsertButton(CabbageGUIClass &cAttr);
     void InsertCheckBox(CabbageGUIClass &cAttr);
@@ -200,12 +207,6 @@ private:
     ScopedPointer<Viewport> viewport;
     ScopedPointer<CabbageViewportComponent> viewportComponent;
 
-    //CabbagePluginAudioProcessor* filter;
-    CabbagePluginAudioProcessor* getFilter() const
-    {
-        return static_cast <CabbagePluginAudioProcessor*> (getAudioProcessor());
-    }
-
     bool keyStateChanged(bool onoff)
     {
         keyIsPressed = onoff;
@@ -213,6 +214,7 @@ private:
     }
     bool keyIsPressed;
     bool isMouseDown;
+	bool showScrollbars;
     void positionComponentWithinPlant(String type, float left, float top, float width, float height, Component *layout, Component *control);
     //ScopedPointer<CabbagePlantWindow> subPatch;
     OwnedArray<CabbageButton> plantButton;

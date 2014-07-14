@@ -31,6 +31,7 @@
 
 using namespace std;
 
+
 class KeyboardShortcutKeys
 {
 public:
@@ -173,7 +174,7 @@ public:
     static void showMessage(String message)
     {
         AlertWindow alert("Cabbage Message" , message, AlertWindow::WarningIcon);
-        alert.showMessageBox(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
+        alert.showMessageBoxAsync(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
     }
 
 //===========================================================================================
@@ -181,7 +182,7 @@ public:
     {
         File thisFile(File::getSpecialLocation(File::currentApplicationFile));
         AlertWindow alert(thisFile.getFullPathName() , message, AlertWindow::WarningIcon);
-        alert.showMessageBox(AlertWindow::WarningIcon, thisFile.getFullPathName() , message, "Ok");
+        alert.showMessageBoxAsync(AlertWindow::WarningIcon, thisFile.getFullPathName() , message, "Ok");
     }
 //===========================================================================================
     static void showMessage(double num)
@@ -189,7 +190,7 @@ public:
         String str(num);
         File thisFile(File::getSpecialLocation(File::currentApplicationFile));
         AlertWindow alert(thisFile.getFullPathName(), str, AlertWindow::WarningIcon);
-        alert.showMessageBox(AlertWindow::WarningIcon, thisFile.getFullPathName(), str, "Ok");
+        alert.showMessageBoxAsync(AlertWindow::WarningIcon, thisFile.getFullPathName(), str, "Ok");
     }
 //===========================================================================================
     static void showMessage(String title, String message, LookAndFeel* feel, Component* mainWindow)
@@ -199,11 +200,14 @@ public:
 //	mainWindow->toBack();
         AlertWindow alert(title, message, AlertWindow::WarningIcon);
         alert.setLookAndFeel(feel);
-        //alert.showMessageBox(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
         alert.setAlwaysOnTop(true);
         alert.addButton("Ok", 1);
+		#if !defined(AndroidBuild)
         alert.runModalLoop();
-        mainWindow->setAlwaysOnTop(true);
+		#else
+		alert.showMessageBoxAsync(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
+		#endif
+		mainWindow->setAlwaysOnTop(true);
     }
 
 //===========================================================================================
@@ -211,18 +215,25 @@ public:
     {
         AlertWindow alert("Cabbage Message" , message, AlertWindow::WarningIcon);
         alert.setLookAndFeel(feel);
-        //alert.showMessageBox(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
         alert.addButton("Ok", 1);
-        alert.runModalLoop();
+		#if !defined(AndroidBuild)
+		alert.runModalLoop();
+		#else
+        alert.showMessageBoxAsync(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
+		#endif
     }
 
     static void showMessage(String title, String message, LookAndFeel* feel)
     {
         AlertWindow alert(title, message, AlertWindow::WarningIcon);
         alert.setLookAndFeel(feel);
-        //alert.showMessageBox(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
+        //alert.showMessageBoxAsync(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
         alert.addButton("Ok", 1);
-        alert.runModalLoop();
+        #if !defined(AndroidBuild)
+		alert.runModalLoop();
+		#else
+			alert.showMessageBoxAsync(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
+		#endif
     }
 
 //===========================================================================================
@@ -234,9 +245,12 @@ public:
         alert.addButton("No", 1);
         if(cancel==1)
             alert.addButton("Cancel", 2);
+		#if !defined(AndroidBuild)
         int result = alert.runModalLoop();
-        //int result = alert.showYesNoCancelBox(AlertWindow::QuestionIcon, "Warning", message, "Yes", "No", "Cancel");
-        return result;
+		#else
+        int result = alert.showYesNoCancelBox(AlertWindow::QuestionIcon, "Warning", message, "Yes", "No", "Cancel", nullptr, nullptr);
+        #endif
+		return result;
     }
 //===========================================================================================
     StringArray CreateStringArray(std::string str)

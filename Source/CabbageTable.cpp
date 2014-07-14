@@ -74,7 +74,10 @@ void CabbageEnvelopeHandleComponent::mouseDown (const MouseEvent& e)
         //pop.addSubMenu("Expon", subm);
         pop.addItem(4, "Delete");
 
-        const int result = pop.show();
+        int result;
+#if !defined(AndroidBuild)		
+		result = pop.show();
+#endif
         if(result==1)
             getProperties().set(String("curveType"), LINEAR);
         else if(result==2)
@@ -1072,7 +1075,10 @@ void CabbageTableManager::mouseDown (const MouseEvent& e)
         }
 
 
-        int choice = pop.show();
+        int choice;
+#if !defined(AndroidBuild)
+		choice = pop.show();
+#endif
         if((choice>=100) && (choice<200))
         {
             for(int i=0; i<tables.size(); i++)

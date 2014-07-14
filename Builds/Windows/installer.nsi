@@ -1,7 +1,7 @@
 # Cabbage installer and uninstaller script
 # Rory Walsh Copright, 2013
 
-!define APPNAME "Cabbage"
+!define APPNAME "Cabbage32"
 !define COMPANYNAME "Cabbage Audio"
 !define DESCRIPTION "Audio plugin and standalone development toolkit"
 RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
@@ -10,7 +10,7 @@ InstallDir "$PROGRAMFILES\${COMPANYNAME}\${APPNAME}"
 # This will be in the installer/uninstaller's title bar
 Name "${COMPANYNAME} - ${APPNAME}"
 Icon "logo.ico"
-outFile "CabbageInstaller.exe"
+outFile "Cabbage32Installer.exe"
  
 !include LogicLib.nsh
 ; Include LogicLibrary
@@ -21,7 +21,7 @@ outFile "CabbageInstaller.exe"
 !include "MUI2.nsh"
 !define MUI_LANGUAGE
 !define MUI_ABORTWARNING
-!define MUI_WELCOMEPAGE_TITLE "Welcome to the Cabbage installer"
+!define MUI_WELCOMEPAGE_TITLE "Welcome to the Cabbage(32 bit) installer"
 !define MUI_WELCOMEPAGE_TEXT "This Wizard will install the Cabbage audio instrument development environment to your system. Note that this is alpha softare and is for testing purposes only. This software and can only used in production at the users own risk.$\r$\n$\r$\n$\r$\nCabbage Audio accepts no reponsibility for any weirdness.."
 
 
@@ -65,12 +65,20 @@ section "install"
 	File /r "..\..\Examples"
 	File /r "..\..\Docs"
 	File /r "..\..\..\CsoundDocs"
+<<<<<<< HEAD
 	//File /r "..\..\..\CsoundLibs\CsoundPlugins"
 	File "build\CabbagePluginSynth.dat"
 	File "build\CabbagePluginEffect.dat"
 	File "build\opcodes.txt"
 
 	File "..\..\..\csound\build\ampmidid.dll"            
+=======
+	# File /r "..\..\..\CsoundLibs\CsoundPlugins"
+	File "build\CabbagePluginSynth.dat"
+	File "build\CabbagePluginEffect.dat"
+	File "build\opcodes.txt"
+           
+>>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 	File "..\..\..\csound\build\cellular.dll"
 	File "..\..\..\csound\build\cs_date.dll"
 	File "..\..\..\csound\build\csladspa.dll"
@@ -81,6 +89,7 @@ section "install"
 	File "..\..\..\csound\build\fractalnoise.dll"
 	File "..\..\..\csound\build\ipmidi.dll"
 	File "..\..\..\csound\build\libcsnd6.dll.a"
+<<<<<<< HEAD
 	File "..\..\..\csound\build\liblo-7.dll"
 	File "..\..\..\csound\build\libportaudio-2.dll"
 	File "..\..\..\csound\build\libsndfile-1.dll"
@@ -90,6 +99,13 @@ section "install"
 	File "..\..\..\csound\build\osc.dll"
 	File "..\..\..\csound\build\platerev.dll"
 	File "..\..\..\csound\build\portaudio_x86.dll"
+=======
+	File "..\..\..\csound\build\libportaudio-2.dll"
+	File "..\..\..\csound\build\libsndfile-1.dll"
+	File "..\..\..\csound\build\mixer.dll"
+	File "..\..\..\csound\build\osc.dll"
+	File "..\..\..\csound\build\platerev.dll"
+>>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 	File "..\..\..\csound\build\py.dll"
 	File "..\..\..\csound\build\rtpa.dll"
 	File "..\..\..\csound\build\rtwinmm.dll"
@@ -98,20 +114,24 @@ section "install"
 	File "..\..\..\csound\build\signalflowgraph.dll"
 	File "..\..\..\csound\build\stdutil.dll"
 	File "..\..\..\csound\build\system_call.dll"
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 	File "..\..\..\MingwLibs\libwinpthread-1.dll"
 	File "..\..\..\MingwLibs\libgomp-1.dll"
 	File "..\..\..\MingwLibs\libgcc_s_dw2-1.dll"
 	File "..\..\..\MingwLibs\libstdc++-6.dll"
 	File "..\..\..\MingwLibs\msvcr110.dll"
+	File "..\..\..\MingwLibs\libgcc_s_seh-1.dll"
  
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
-	writeUninstaller "$INSTDIR\uninstall.exe"
+	writeUninstaller "$INSTDIR\Uninstall-Cabbage32.exe"
  
 	# Start Menu
 	createDirectory "$SMPROGRAMS\${COMPANYNAME}"
-	createShortCut "$SMPROGRAMS\${COMPANYNAME}\uninstall.lnk" "$INSTDIR\uninstall.exe"
+	createShortCut "$SMPROGRAMS\${COMPANYNAME}\uninstall.lnk" "$INSTDIR\Uninstall-Cabbage32.exe"
 	createShortCut "$SMPROGRAMS\${COMPANYNAME}\${APPNAME}.lnk" "$INSTDIR\Cabbage.exe" "" "$INSTDIR\logo.ico"
 
 
@@ -135,32 +155,56 @@ functionEnd
 section "uninstall"
  
 	# Remove Start Menu launcher
-	delete "$SMPROGRAMS\${COMPANYNAME}\Cabbage.lnk"
-	delete "$SMPROGRAMS\${COMPANYNAME}\uninstall.lnk"
-	# Try to remove the Start Menu folder - this will only happen if it is empty
-	rmDir "$SMPROGRAMS\${COMPANYNAME}"
- 
+	delete "$SMPROGRAMS\${COMPANYNAME}\Cabbage32.lnk"
+	delete "$SMPROGRAMS\${COMPANYNAME}\Uninstall-Cabbage32.lnk" 
+	rmDir /r $INSTDIR\CsoundDocs
 	# Remove files
-	delete $INSTDIR\Cabbage.exe
-	delete $INSTDIR\logo.ico
+	delete $INSTDIR\cellular.dll
+	delete $INSTDIR\cs_date.dll
+	delete $INSTDIR\csladspa.dll
+	delete $INSTDIR\csnd6.dll
 	delete $INSTDIR\csound64.dll
+	delete $INSTDIR\doppler.dll
+	delete $INSTDIR\fareygen.dll
+	delete $INSTDIR\fractalnoise.dll
+	delete $INSTDIR\ipmidi.dll
+	delete $INSTDIR\libcsnd6.dll.a
+	delete $INSTDIR\libportaudio-2.dll
 	delete $INSTDIR\libsndfile-1.dll
-	delete $INSTDIR\CabbagePluginEffect.dat
-	delete $INSTDIR\CabbagePluginSynth.dat
-	delete $INSTDIR\opcodes.txt
+	delete $INSTDIR\mixer.dll
+	delete $INSTDIR\osc.dll
+	delete $INSTDIR\platerev.dll
+	delete $INSTDIR\py.dll
+	delete $INSTDIR\rtpa.dll
+	delete $INSTDIR\rtwinmm.dll
+	delete $INSTDIR\scansyn.dll
+	delete $INSTDIR\serial.dll
+	delete $INSTDIR\signalflowgraph.dll
+	delete $INSTDIR\stdutil.dll
+	delete $INSTDIR\system_call.dll
 	delete $INSTDIR\libwinpthread-1.dll
 	delete $INSTDIR\libgomp-1.dll
 	delete $INSTDIR\libgcc_s_dw2-1.dll
 	delete $INSTDIR\libstdc++-6.dll
+	delete $INSTDIR\msvcr110.dll
+	delete $INSTDIR\libgcc_s_seh-1.dll
+	delete $INSTDIR\Cabbage.exe
+	delete $INSTDIR\logo.ico
+	delete $INSTDIR\CabbagePluginEffect.dat
+	delete $INSTDIR\CabbagePluginSynth.dat
+	delete $INSTDIR\opcodes.txt
 
 	# Always delete uninstaller as the last action
 	delete $INSTDIR\uninstall.exe
  
  	rmDir /r $INSTDIR\Examples
  	rmDir /r $INSTDIR\Docs
- 	rmDir /r $INSTDIR\CsoundPlugins
+ 	# rmDir /r $INSTDIR\CsoundPlugins
 
  	${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR"  ;remove
+
+	# Try to remove the Start Menu folder - this will only happen if it is empty
+	rmDir "$SMPROGRAMS\${COMPANYNAME}"
 
 	# Try to remove the install directory - this will only happen if it is empty
 	rmDir $INSTDIR

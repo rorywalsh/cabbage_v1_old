@@ -48,6 +48,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "CabbageLookAndFeel.h"
+#include "CabbageUtils.h"
+
+extern ApplicationProperties* appProperties;
 
 //==============================================================================
 class CabbageAudioDeviceSelectorComponent  : public Component,

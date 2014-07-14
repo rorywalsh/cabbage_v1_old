@@ -2,10 +2,20 @@
 {
 	60183CAEB246E8D2E6EF6B47 /* AppConfig.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1090, 4992}}";
-			sepNavSelRange = "{7047, 0}";
-			sepNavVisRange = "{6715, 1378}";
+			sepNavIntBoundsRect = "{{0, 0}, {1109, 3848}}";
+			sepNavSelRange = "{5541, 20}";
+			sepNavVisRange = "{4821, 1438}";
 		};
+	};
+	610EBF931959BEEB0034C779 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 60183CAEB246E8D2E6EF6B47 /* AppConfig.h */;
+		name = "AppConfig.h: 205";
+		rLen = 20;
+		rLoc = 5541;
+		rType = 0;
+		vrLen = 1438;
+		vrLoc = 4821;
 	};
 	61385ED61863206500AC002E /* Source Control */ = {
 		isa = PBXSourceControlManager;
@@ -30,36 +40,6 @@
 		rType = 0;
 		vrLen = 1378;
 		vrLoc = 6715;
-	};
-	61385F0A18632C3900AC002E /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = B96DB6B7E61994841EEFBE8A /* CabbagePluginProcessor.cpp */;
-		name = "CabbagePluginProcessor.cpp: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 1854;
-		vrLoc = 0;
-	};
-	61385F0F18633EA100AC002E /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = B96DB6B7E61994841EEFBE8A /* CabbagePluginProcessor.cpp */;
-		name = "CabbagePluginProcessor.cpp: 208";
-		rLen = 6;
-		rLoc = 6396;
-		rType = 0;
-		vrLen = 1880;
-		vrLoc = 6215;
-	};
-	61385F8D1863452300AC002E /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = B96DB6B7E61994841EEFBE8A /* CabbagePluginProcessor.cpp */;
-		name = "CabbagePluginProcessor.cpp: 208";
-		rLen = 6;
-		rLoc = 6396;
-		rType = 0;
-		vrLen = 1880;
-		vrLoc = 6215;
 	};
 	6AA6D673B6E0417ECEDC6B57 /* Project object */ = {
 		activeBuildConfigurationName = Debug;
@@ -91,14 +71,12 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 409158927;
-			PBXWorkspaceStateSaveDate = 409158927;
+			PBXPerProjectTemplateStateSaveDate = 425311641;
+			PBXWorkspaceStateSaveDate = 425311641;
 		};
 		perUserProjectItems = {
-			61385F0918632C3900AC002E = 61385F0918632C3900AC002E /* PBXTextBookmark */;
-			61385F0A18632C3900AC002E = 61385F0A18632C3900AC002E /* PBXTextBookmark */;
-			61385F0F18633EA100AC002E = 61385F0F18633EA100AC002E /* PBXTextBookmark */;
-			61385F8D1863452300AC002E /* PBXTextBookmark */ = 61385F8D1863452300AC002E /* PBXTextBookmark */;
+			610EBF931959BEEB0034C779 /* PBXTextBookmark */ = 610EBF931959BEEB0034C779 /* PBXTextBookmark */;
+			61385F0918632C3900AC002E /* PBXTextBookmark */ = 61385F0918632C3900AC002E /* PBXTextBookmark */;
 		};
 		sourceControlManager = 61385ED61863206500AC002E /* Source Control */;
 		userBuildSettings = {
@@ -109,9 +87,9 @@
 	};
 	B96DB6B7E61994841EEFBE8A /* CabbagePluginProcessor.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1265, 19240}}";
-			sepNavSelRange = "{6396, 6}";
-			sepNavVisRange = "{6215, 1880}";
+			sepNavIntBoundsRect = "{{0, 0}, {1195, 26091}}";
+			sepNavSelRange = "{6257, 0}";
+			sepNavVisRange = "{6116, 2091}";
 		};
 	};
 }

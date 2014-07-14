@@ -166,7 +166,6 @@ public:
     void menuItemSelected (int menuItemID, int topLevelMenuIndex);
     void setFontSize(String zoom);
 
-
     //================= command methods ====================
     ApplicationCommandTarget* getNextCommandTarget()
     {
@@ -184,9 +183,9 @@ public:
     void timerCallback();
     void toggleTextWindows();
 
-    Rectangle<int> getCaretScreenPosition()
+    juce::Rectangle<int> getCaretScreenPosition()
     {
-        Rectangle<int> rect(textEditor->editor[textEditor->currentEditor]->getCaretPoisition());
+        juce::Rectangle<int> rect(textEditor->editor[textEditor->currentEditor]->getCaretPoisition());
         rect.setLeft(rect.getX()+this->getTopLevelComponent()->getX()+100);
         rect.setTop(rect.getY()+this->getTopLevelComponent()->getY()+45);
         return rect;

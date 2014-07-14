@@ -891,7 +891,7 @@ void GenTable::setScrubberPos(double pos)
 		double timePos = pos*thumbnail->getTotalLength()*sampleRate;		
 		timePos = (timePos/(thumbnail->getTotalLength()*sampleRate))*thumbnail->getTotalLength();
 		//set position of scrubber rectangle
-		currentPositionMarker->setRectangle (Rectangle<float> (timeToX (timePos) - 0.75f, 0,
+		currentPositionMarker->setRectangle (juce::Rectangle<float> (timeToX (timePos) - 0.75f, 0,
 											 1.5f, (float) (getHeight() - 20)));
 
 		if(this->showScroll)
@@ -909,7 +909,7 @@ void GenTable::setScrubberPos(double pos)
 		currentPositionMarker->setVisible (true);
 		double waveformLengthSeconds = (double)waveformBuffer.size()/sampleRate;		
 		double timePos = pos*waveformLengthSeconds;		
-		currentPositionMarker->setRectangle (Rectangle<float> (timeToX (timePos), 0,
+		currentPositionMarker->setRectangle (juce::Rectangle<float> (timeToX (timePos), 0,
 											 numPixelsPerIndex, thumbArea.getHeight()));
 		
 		if(this->showScroll)
@@ -1273,6 +1273,19 @@ void HandleComponent::mouseExit (const MouseEvent& e)
 	sendActionMessage("mouseUp");
 }
 //==================================================================================
+static void popupMenuCallback(int result, HandleComponent* handleComp)
+{
+
+	bool fixed = handleComp->getProperties().getWithDefault("fixedPos", false);
+	
+	if(result==4)
+	{
+		if(!fixed)
+		handleComp->removeThisHandle();
+	}
+
+}
+//==================================================================================
 void HandleComponent::mouseDown (const MouseEvent& e)
 {
 	//users can delete handles here, and will be able to set the curve type
@@ -1289,18 +1302,11 @@ void HandleComponent::mouseDown (const MouseEvent& e)
     PopupMenu pop, subm;
     pop.setLookAndFeel(&this->getTopLevelComponent()->getLookAndFeel());
     subm.setLookAndFeel(&this->getTopLevelComponent()->getLookAndFeel());
-	bool fixed = this->getProperties().getWithDefault("fixedPos", false);
 	
     if(e.mods.isRightButtonDown() == true)
     {
         pop.addItem(4, "Delete");
-
-        const int result = pop.show();
-        if(result==4)
-        {
-			if(!fixed)
-			removeThisHandle();
-        }
+		pop.showMenuAsync(PopupMenu::Options(), ModalCallbackFunction::forComponent(popupMenuCallback, this));
     }	
 	
 }

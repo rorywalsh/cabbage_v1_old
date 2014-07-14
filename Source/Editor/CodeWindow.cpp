@@ -86,6 +86,12 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
     //else csound->Message("Could not open opcodes.txt file, parameter display disabled..");
 
 
+		bool showConsole = (appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1 ? true : false);
+		if(showConsole == false)
+			splitWindow->SetSplitBarPosition(this->getHeight());
+		else
+            splitWindow->SetSplitBarPosition(this->getHeight()-(this->getHeight()/4));
+
     setContentNonOwned(splitWindow, false);
 
 }
@@ -98,6 +104,7 @@ CodeWindow::~CodeWindow()
     commandManager.deleteInstance();
     deleteAndZero(textEditor);
 }
+
 
 //==============================================================================
 StringArray CodeWindow::getMenuBarNames()
@@ -180,9 +187,15 @@ void CodeWindow::setFontSize(String zoom)
 #endif
 
     if(zoom==String("in"))
+	{
         textEditor->editor[textEditor->currentEditor]->setFont(Font(font, ++fontSize, 1));
+		CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
+	}
     else
+	{
         textEditor->editor[textEditor->currentEditor]->setFont(Font(font, --fontSize, 1));
+		CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
+	}
 }
 
 //==============================================================================
@@ -345,7 +358,8 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
     case CommandIDs::viewCsoundOutput:
         result.setInfo (String("View Csound Output"), String("View Csound Output"), CommandCategories::help, 0);
         result.addDefaultKeypress ('p', ModifierKeys::commandModifier);
-        result.setTicked(appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue());
+		bool isTicked = (appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1 ? true : false);
+        result.setTicked(isTicked);
         break;
     }
 }
@@ -479,7 +493,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
     }
     else if(info.commandID==CommandIDs::fileOpen)
     {
-        FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.csd;*.py;*.txt"));
+        FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.csd;*.py;*.txt"), UseNativeDialogue);
         if(openFC.browseForFileToOpen())
         {
             Logger::writeToLog(openFC.getResult().getFullPathName());
@@ -650,13 +664,17 @@ bool CodeWindow::perform (const InvocationInfo& info)
         if(appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1)
         {
             splitWindow->SetSplitBarPosition(this->getHeight());
-            appProperties->getUserSettings()->setValue("ShowEditorConsole", 0);
+            appProperties->getUserSettings()->setValue("ShowEditorConsole", "0");
         }
 
         else
         {
             splitWindow->SetSplitBarPosition(this->getHeight()-(this->getHeight()/4));
-            appProperties->getUserSettings()->setValue("ShowEditorConsole", 1);
+        //cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
+#ifdef BUILD_DEBUGGER
+        splitBottomWindow->SetSplitBarPosition(getWidth()/2);
+#endif			
+            appProperties->getUserSettings()->setValue("ShowEditorConsole", "1");
         }
     }
 
@@ -789,8 +807,9 @@ void CodeWindow::setEditorColourScheme(String theme)
 //==============================================================================
 void CodeWindow::actionListenerCallback(const String &message)
 {
+	if(message=="Launch help")
+		toggleManuals("Csound");
     sendActionMessage(message);
-
 }
 //==============================================================================
 void CodeWindow::setColourScheme(String theme)

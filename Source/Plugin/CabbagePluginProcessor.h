@@ -31,9 +31,14 @@
 #include "../CabbageLookAndFeel.h"
 
 #ifndef Cabbage_No_Csound
-#include <csound.hpp>
+#ifdef AndroidBuild
+    #include "AndroidCsound.hpp"
+#else
+    #include <csound.hpp>
+#endif
+
 #include "csdl.h"
-#include "cwindow.h"
+//#include "cwindow.h"
 #include "../csPerfThread.hpp"
 #endif
 
@@ -41,7 +46,11 @@
 //#include "../Editor/CabbageEditorWindow.h"
 //#endif
 
-#define CABBAGE_VERSION "Cabbage v0.5.11 Alpha"
+#ifdef Cabbage64Bit
+    #define CABBAGE_VERSION "Cabbage(64bit) v0.5.11 Alpha"
+#else
+    #define CABBAGE_VERSION "Cabbage(32bit) v0.5.11 Alpha"
+#endif
 
 #define AUDIO_PLUGIN 1
 #define EXTERNAL_PLUGIN 2
@@ -100,7 +109,11 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     ScopedPointer<CsoundPerformanceThread> csoundPerfThread;
     PVSDATEXT* dataout;
     MYFLT cs_scale;
+#if !defined(AndroidBuild)
     ScopedPointer<Csound> csound;                           //Csound instance
+#else
+	ScopedPointer<AndroidCsound> csound; 
+#endif
     MYFLT *CSspin, *CSspout;        //Csound audio IO pointers
     int csndIndex;                          //Csound sample counter
     int csdKsmps;
@@ -292,7 +305,7 @@ public:
     inline String getCsoundInputFileText()
     {
         String ret="";
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
         if(codeEditor)
             ret = codeEditor->getAllText();
         else
@@ -304,8 +317,7 @@ public:
     void updateCsoundFile(String text)
     {
         //csdFile.replaceWithText(text);
-#ifdef Cabbage_Build_Standalone
-        //codeEditor->textChanged = true;
+#if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
         codeEditor->setAllText(text);
 #endif
     }
@@ -346,7 +358,7 @@ public:
 
     void highlightLine(String text)
     {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
         codeEditor->highlightLine(text);
 #endif
     }
@@ -560,7 +572,7 @@ public:
 
 };
 
-//pecial auotmation only plugin type. Does not output any audio.
+//special auotmation only plugin type. Does not output any audio.
 #ifdef Cabbage_Host
 class CabbagePluginAutomationProcessor : public CabbagePluginAudioProcessor
 {

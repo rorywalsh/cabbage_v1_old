@@ -10,13 +10,13 @@
 ; Level		--	output level
 
 <Cabbage>
-form caption("Powershape") size(300,110), pluginID("pshp")
-image               bounds(0, 0,300,110), colour("Brown"), shape("rounded"), outlinecolour("white"), line(4) 
+form caption("Powershape") size(300,107), pluginID("pshp")
+image               bounds(0, 0,300,107), colour("Brown"), shape("rounded"), outline("white"), line(4) 
 checkbox bounds(10,  8,130, 12), channel("TestTone"), FontColour("white"),  value(0), text("Sine Tone"), colour(yellow)
-hslider bounds(  5, 18,290, 40),          colour("white"), trackercolour("white"), channel("amount"), range(1.001, 1000, 1, 0.5,0.001)
-label   bounds(129, 50, 40, 11), text("Amount"), fontcolour("white")
-hslider bounds(  5, 58,290, 40),          colour("white"), trackercolour("white"),  channel("level"),  range(0, 50, 0.5, 0.25,0.000001)    
-label   bounds(135, 90, 27, 11), text("Level"), fontcolour("white")
+hslider bounds(  5, 15,290, 40),          colour("white"), trackercolour("white"), channel("amount"), range(1, 500, 1, 0.5,0.001)
+label   bounds(130, 47, 60, 11), text("Amount"), fontcolour("white")
+hslider bounds(  5, 55,290, 40),          colour("white"), trackercolour("white"),  channel("level"),  range(0, 50, 0.5, 0.25,0.000001)    
+label   bounds(135, 87, 60, 11), text("Level"), fontcolour("white")
 }
 </Cabbage>
 

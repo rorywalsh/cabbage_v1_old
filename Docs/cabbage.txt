@@ -1,4 +1,4 @@
-﻿image:images/hlogo_blue_text.PNG[Cabbage]
+﻿image:images/CabbageDocLogo.PNG[Cabbage]
 =========================================
 
 [[x1]]
@@ -796,7 +796,55 @@ table bounds(10, 10, 271, 121), channel("adsrTable1", "adsrTable2", "adsrTable3"
 
 image:images/table.PNG[table]
 
-[[x40]]
+[[x41]]
+Textbox
+~~~~~~~
+--------------
+textbox bounds(x, y, width, height), file("filename"), colour("colour"), fontcolour("colour") 
+--------------
+
+Textbox will display the contents of a text file. This can be useful for placing instructions and information directly on to an instrument.  
+
+'bounds(x, y, width, height)': integer values that set position and size on screen(in pixels)
+
+'colour("colour")': This sets the colour of the image if a file name is not passed to file. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.  
+
+'fontcolour("colour")': Sets the colour of the text that appears with the slider. See above for details on "colour".
+
+'file("file name")': Set the file that will be opened. This file must reside in the same directory as the current .csd file. Do not pass a full path. Cabbage only needs the name and extension, for example file("help.txt"). 
+
+'identchannel("channel")': Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+
+Example:
+------------------
+textbox bounds(210, 00, 340, 145), file("help.txt")
+------------------
+
+[[x42]]
+TextEditor
+~~~~~~~~~~
+--------------
+texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour("colour"), fontcolour("colour") 
+--------------
+
+Texteditor can be used to send string to Csound. Hitting return will send the string to Csound on a named channel. Pressing the up and down buttons will toggle through the previous strings that have been sent. 
+
+'bounds(x, y, width, height)': integer values that set position and size on screen(in pixels)
+
+'channel("chanName")': "chanName" is the name of the channel upon which to communicate with Csound(see examples above). 
+
+'colour("colour")': This sets the colour of the image if a file name is not passed to file. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.  
+
+'fontcolour("colour")': Sets the colour of the text that appears with the slider. See above for details on "colour".
+
+'identchannel("channel")': Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+
+Example:
+------------------
+texteditor bounds(210, 00, 340, 145), text("Type some text here"), channel("texteditor1")
+------------------
+
+[[x50]]
 Plants
 ------
 Cabbage plants are GUI abstractions that contain one or more controls. These abstractions are used as anchors to the child widgets contained within. All widgets contained within a plant have top and left positions which are relative the the top left position of the parent. While all widgets can be children of a plant, only group boxes and images can be used as plants themselves. Adding a plant identifier to an image or group box definition will cause them to act as containers. The plant() identifier takes a string that denotes the name of the plant. Plant names must be unique within an instrument or plants will end up being placed on top of each other. When using an image or a group box as a plant, you must enclose the code from the controls that follow in curly brackets, to indicate which controls belong to the plant. In the code below a group box control is set up as a plant, and three child sliders are placed within it.
@@ -815,7 +863,7 @@ The values passed to bounds() for the child controls can be either fractions pro
 
 The major advantage to using plant abstractions is that you can easily move and resize them without needing to modify the dimensions of the child components contained within. You can also save your plants and recall them later from a plant repository. Plants are intended to be reused across instruments so users don't have to keep rebuilding GUIs from scratch. They can also be used to give your plugins a unique look and feel. 
 
-[[x46]]
+[[x51]]
 Reserved Channels
 -----------------
 Cabbage reserves several channels which are used to send information to Csound from either the host application, or from Cabbage itself. To retrieve info from any of these channels just use a chnget opcode.
@@ -842,7 +890,7 @@ Cabbage reserves several channels which are used to send information to Csound f
 
 'MOUSE_DOWN_RIGHT': Returns the current state of the right mouse button; 1 if pressed, and 0 if not. 
 
-[[x41]]
+[[x52]]
 Preset Snapshots
 ----------------
 There are several ways to save your instrument's parameters so that they can be recalled at a later time. If you are working in a VST host you can use the host's save/load functionality to save the parameters as fxp/fxb files. You can also use a filebutton with the file type ".snaps" to create a snapshot file of all your widget states. Snapshot files can be recalled using a combobox with a filetype of ".snaps" set. In the code below the user will be shown a filebutton whereby they can select the preset file to save. The combobox will auto-update with all the presets located in the set directory. When a user makes a selection with the combobox Cabbage will update all control states to reflect the data saved in the selected snapshot file. 
@@ -855,7 +903,7 @@ filebutton bounds(16, 332, 60, 25), text("Open", "Open"), populate(".snaps", "/u
 combobox bounds(376, 86, 268, 30), channel("combobox"), populate("*.snaps", "/home/rory/Desktop"),  colour(0, 0, 0, 255)
 ---------------
 
-[[x42]]
+[[x53]]
 Quick Reference 
 ---------------
 This quick reference table table gives a list of the valid identifiers for each Cabbage widget. 

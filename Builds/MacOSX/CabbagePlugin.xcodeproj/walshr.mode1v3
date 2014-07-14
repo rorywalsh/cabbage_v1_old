@@ -273,8 +273,6 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>29</integer>
-									<integer>26</integer>
 									<integer>2</integer>
 									<integer>1</integer>
 									<integer>0</integer>
@@ -318,7 +316,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>CabbagePluginProcessor.cpp</string>
+								<string>AppConfig.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -326,15 +324,14 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>CabbagePluginProcessor.cpp</string>
+										<string>AppConfig.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>61385F8D1863452300AC002E</string>
+										<string>610EBF931959BEEB0034C779</string>
 										<key>history</key>
 										<array>
 											<string>61385F0918632C3900AC002E</string>
-											<string>61385F0F18633EA100AC002E</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -346,14 +343,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1170, 658}}</string>
+								<string>{{0, 0}, {1170, 653}}</string>
 								<key>RubberWindowFrame</key>
 								<string>45 128 1472 900 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>658pt</string>
+							<string>653pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -366,14 +363,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 663}, {1170, 196}}</string>
+								<string>{{0, 658}, {1170, 201}}</string>
 								<key>RubberWindowFrame</key>
 								<string>45 128 1472 900 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>196pt</string>
+							<string>201pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -392,9 +389,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>61385F8E1863452300AC002E</string>
+				<string>610EBF831959BD9F0034C779</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>61385F8F1863452300AC002E</string>
+				<string>610EBF841959BD9F0034C779</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -613,7 +610,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>61385ED41863206500AC002E</string>
-				<string>61385F901863452300AC002E</string>
+				<string>610EBF851959BD9F0034C779</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

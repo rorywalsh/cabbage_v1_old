@@ -21,11 +21,7 @@ outFile "Cabbage64Installer.exe"
 !include "MUI2.nsh"
 !define MUI_LANGUAGE
 !define MUI_ABORTWARNING
-<<<<<<< HEAD
-!define MUI_WELCOMEPAGE_TITLE "Welcome to the Cabbage installer"
-=======
 !define MUI_WELCOMEPAGE_TITLE "Welcome to the Cabbage 64-bit installer"
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 !define MUI_WELCOMEPAGE_TEXT "This Wizard will install the Cabbage audio instrument development environment to your system. Note that this is alpha softare and is for testing purposes only. This software and can only used in production at the users own risk.$\r$\n$\r$\n$\r$\nCabbage Audio accepts no reponsibility for any weirdness.."
 
 
@@ -97,25 +93,11 @@ section "install"
 	File "..\..\..\csound64\csound6\debug\signalflowgraph.dll"
 	File "..\..\..\csound64\csound6\debug\stdutil.dll"
 	File "..\..\..\csound64\csound6\debug\system_call.dll"
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 	File "..\..\..\MingwLibs64\libwinpthread-1.dll"
 	File "..\..\..\MingwLibs64\libgomp-1.dll"
 	File "..\..\..\MingwLibs64\libgcc_s_dw2-1.dll"
 	File "..\..\..\MingwLibs64\libstdc++-6.dll"
 	File "..\..\..\MingwLibs64\msvcr110.dll"
-<<<<<<< HEAD
- 
-	# Uninstaller - See function un.onInit and section "uninstall" for configuration
-	writeUninstaller "$INSTDIR\uninstall.exe"
- 
-	# Start Menu
-	createDirectory "$SMPROGRAMS\${COMPANYNAME}"
-	createShortCut "$SMPROGRAMS\${COMPANYNAME}\uninstall.lnk" "$INSTDIR\uninstall.exe"
-=======
 	File "..\..\..\MingwLibs64\libgcc_s_seh-1.dll"
  
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
@@ -124,7 +106,6 @@ section "install"
 	# Start Menu
 	createDirectory "$SMPROGRAMS\${COMPANYNAME}"
 	createShortCut "$SMPROGRAMS\${COMPANYNAME}\Uninstall-Cabbage64.lnk" "$INSTDIR\Uninstall-Cabbage64.exe"
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 	createShortCut "$SMPROGRAMS\${COMPANYNAME}\${APPNAME}.lnk" "$INSTDIR\Cabbage.exe" "" "$INSTDIR\logo.ico"
 
 
@@ -148,21 +129,6 @@ functionEnd
 section "uninstall"
  
 	# Remove Start Menu launcher
-<<<<<<< HEAD
-	delete "$SMPROGRAMS\${COMPANYNAME}\Cabbage.lnk"
-	delete "$SMPROGRAMS\${COMPANYNAME}\uninstall.lnk"
-	# Try to remove the Start Menu folder - this will only happen if it is empty
-	rmDir "$SMPROGRAMS\${COMPANYNAME}"
- 
-	# Remove files
-	delete $INSTDIR\Cabbage.exe
-	delete $INSTDIR\logo.ico
-	delete $INSTDIR\csound64.dll
-	delete $INSTDIR\libsndfile-1.dll
-	delete $INSTDIR\CabbagePluginEffect.dat
-	delete $INSTDIR\CabbagePluginSynth.dat
-	delete $INSTDIR\opcodes.txt
-=======
 	delete "$SMPROGRAMS\${COMPANYNAME}\Cabbage64.lnk"
 	delete "$SMPROGRAMS\${COMPANYNAME}\Uninstall-Cabbage64.lnk"
  
@@ -190,26 +156,10 @@ section "uninstall"
 	delete $INSTDIR\signalflowgraph.dll
 	delete $INSTDIR\stdutil.dll
 	delete $INSTDIR\system_call.dll
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 	delete $INSTDIR\libwinpthread-1.dll
 	delete $INSTDIR\libgomp-1.dll
 	delete $INSTDIR\libgcc_s_dw2-1.dll
 	delete $INSTDIR\libstdc++-6.dll
-<<<<<<< HEAD
-
-	# Always delete uninstaller as the last action
-	delete $INSTDIR\uninstall.exe
- 
- 	rmDir /r $INSTDIR\Examples
- 	rmDir /r $INSTDIR\Docs
- 	rmDir /r $INSTDIR\CsoundPlugins
-
- 	${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR"  ;remove
-
-	# Try to remove the install directory - this will only happen if it is empty
-	rmDir $INSTDIR
-
-=======
 	delete $INSTDIR\msvcr110.dll
 	delete $INSTDIR\libgcc_s_seh-1.dll
 	delete $INSTDIR\Cabbage.exe
@@ -236,5 +186,4 @@ section "uninstall"
 	rmDir $INSTDIR
 
 
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 sectionEnd

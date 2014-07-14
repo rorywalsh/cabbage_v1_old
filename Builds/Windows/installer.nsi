@@ -65,20 +65,13 @@ section "install"
 	File /r "..\..\Examples"
 	File /r "..\..\Docs"
 	File /r "..\..\..\CsoundDocs"
-<<<<<<< HEAD
-	//File /r "..\..\..\CsoundLibs\CsoundPlugins"
-	File "build\CabbagePluginSynth.dat"
-	File "build\CabbagePluginEffect.dat"
-	File "build\opcodes.txt"
 
-	File "..\..\..\csound\build\ampmidid.dll"            
-=======
 	# File /r "..\..\..\CsoundLibs\CsoundPlugins"
 	File "build\CabbagePluginSynth.dat"
 	File "build\CabbagePluginEffect.dat"
 	File "build\opcodes.txt"
-           
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
+    
+    File /r "..\..\..\csound\build\auxLibs"       
 	File "..\..\..\csound\build\cellular.dll"
 	File "..\..\..\csound\build\cs_date.dll"
 	File "..\..\..\csound\build\csladspa.dll"
@@ -89,43 +82,28 @@ section "install"
 	File "..\..\..\csound\build\fractalnoise.dll"
 	File "..\..\..\csound\build\ipmidi.dll"
 	File "..\..\..\csound\build\libcsnd6.dll.a"
-<<<<<<< HEAD
-	File "..\..\..\csound\build\liblo-7.dll"
-	File "..\..\..\csound\build\libportaudio-2.dll"
-	File "..\..\..\csound\build\libsndfile-1.dll"
-	File "..\..\..\csound\build\libstdc++-6.dll"
-	File "..\..\..\csound\build\mixer.dll"
-	File "..\..\..\csound\build\msvcr110.dll"
-	File "..\..\..\csound\build\osc.dll"
-	File "..\..\..\csound\build\platerev.dll"
-	File "..\..\..\csound\build\portaudio_x86.dll"
-=======
 	File "..\..\..\csound\build\libportaudio-2.dll"
 	File "..\..\..\csound\build\libsndfile-1.dll"
 	File "..\..\..\csound\build\mixer.dll"
-	File "..\..\..\csound\build\osc.dll"
 	File "..\..\..\csound\build\platerev.dll"
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
-	File "..\..\..\csound\build\py.dll"
-	File "..\..\..\csound\build\rtpa.dll"
-	File "..\..\..\csound\build\rtwinmm.dll"
+#	File "..\..\..\csound\build\rtpa.dll"
+#	File "..\..\..\csound\build\rtwinmm.dll"
 	File "..\..\..\csound\build\scansyn.dll"
 	File "..\..\..\csound\build\serial.dll"
 	File "..\..\..\csound\build\signalflowgraph.dll"
 	File "..\..\..\csound\build\stdutil.dll"
 	File "..\..\..\csound\build\system_call.dll"
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 	File "..\..\..\MingwLibs\libwinpthread-1.dll"
 	File "..\..\..\MingwLibs\libgomp-1.dll"
 	File "..\..\..\MingwLibs\libgcc_s_dw2-1.dll"
 	File "..\..\..\MingwLibs\libstdc++-6.dll"
 	File "..\..\..\MingwLibs\msvcr110.dll"
-	File "..\..\..\MingwLibs\libgcc_s_seh-1.dll"
- 
+
+#	File "..\..\..\csound\build\osc.dll"
+#	File "..\..\..\csound\build\liblo-7.dll"
+#	File "..\..\..\csound\build\py.dll"
+	
+
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
 	writeUninstaller "$INSTDIR\Uninstall-Cabbage32.exe"
  
@@ -175,8 +153,8 @@ section "uninstall"
 	delete $INSTDIR\osc.dll
 	delete $INSTDIR\platerev.dll
 	delete $INSTDIR\py.dll
-	delete $INSTDIR\rtpa.dll
-	delete $INSTDIR\rtwinmm.dll
+#	delete $INSTDIR\rtpa.dll
+#	delete $INSTDIR\rtwinmm.dll
 	delete $INSTDIR\scansyn.dll
 	delete $INSTDIR\serial.dll
 	delete $INSTDIR\signalflowgraph.dll
@@ -187,7 +165,7 @@ section "uninstall"
 	delete $INSTDIR\libgcc_s_dw2-1.dll
 	delete $INSTDIR\libstdc++-6.dll
 	delete $INSTDIR\msvcr110.dll
-	delete $INSTDIR\libgcc_s_seh-1.dll
+#	delete $INSTDIR\libgcc_s_seh-1.dll
 	delete $INSTDIR\Cabbage.exe
 	delete $INSTDIR\logo.ico
 	delete $INSTDIR\CabbagePluginEffect.dat

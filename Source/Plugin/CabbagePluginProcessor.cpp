@@ -22,108 +22,6 @@
 #include <iostream>
 
 
-
-static String quickGUITest = 
-"<Cabbage>\n"
-"form caption(\"Buzz synthesizer\") size(562, 600), colour(\"black\"),pluginID(\"buz1\") \n"
-"csoundoutput bounds(0, 350, 500, 200) \n"
-"rslider bounds(15, 10, 100, 100) channel(\"detune\"), range(-1,1,0), caption(\"Detune\"), colour(\"SteelBlue\"), midictrl(1, 1)\n"
-"rslider bounds(120, 10, 100, 100) channel(\"semi\"), range(-24,12,-24), caption(\"Coarse\"), colour(\"SteelBlue \")\n"
-"rslider bounds(225, 10, 100, 100) channel(\"cutoff\"), range(60,2000,400), caption(\"Cutoff\"), colour(\"SteelBlue \")\n"
-"rslider bounds(330, 10, 100, 100) channel(\"harm\"), range(1,20,1), caption(\"Harmonic\"), colour(\"SteelBlue \")\n"
-"rslider bounds(435, 10, 100, 100) channel(\"spread\"), range(0, 1, .5), caption(\"Stereo image\"), colour(\"SteelBlue \")\n"
-"\n"
-"groupbox bounds(15, 120, 240, 100), text(\"ADSR amplitude\"), plant(\"ADSR\"){ \n"
-"rslider bounds(.0, .3, .6, .6), text(\"A\"), colour(\"orange\"), channel(\"att\"), range(0.01,3, .5)\n"
-"rslider bounds(.25, .3, .6, .6), text(\"D\"), colour(\"orange\"), channel(\"dec\"), range(0,1, .5)\n"
-"rslider bounds(.5, .3, .6, .6), text(\"S\"), colour(\"orange\"), channel(\"sus\"), range(0,1,.8)\n"
-"rslider bounds(.75, .3, .6, .6), text(\"R\"), colour(\"orange\"), channel(\"rel\"), range(0.01,3, .2)\n"
-"}\n"
-"groupbox bounds(270, 120, 130, 100), text(\"LFO\"), plant(\"lfo\"){ \n"
-"rslider bounds(.04, .3, .6, .6), text(\"Lfo Amp\"), colour(\"SteelBlue \"), channel(\"lfoamp\"), range(0,100, 0)\n"
-"rslider bounds(.5, .3, .6, .6), text(\"Lfo Rate\"), colour(\"SteelBlue \"), channel(\"lforate\"), range(0,20, 0)\n"
-"}\n"
-"groupbox bounds(410, 120, 130, 100), text(\"LFO filter\"), plant(\"lfofilter\"){ \n"
-"rslider bounds(.04, .3, .6, .6), text(\"Lfo Amp\"), colour(\"SteelBlue \"), channel(\"lfoamp2\"), range(0,1000, 0)\n"
-"rslider bounds(.5, .3, .6, .6), text(\"Lfo Rate\"), colour(\"SteelBlue \"), channel(\"lforate2\"), range(0,10, 0)\n"
-"}\n"
-"keyboard pos(10,240), size(540,60)\n"
-"\n"
-"</Cabbage>\n"
-"<CsoundSynthesizer>\n"
-"<CsOptions>\n"
-"-d -n -+rtmidi=null -M0 -b1024  -m0d\n"
-"</CsOptions>\n"
-"<CsInstruments>\n"
-"; Initialize the global variables. \n"
-"sr = 44100\n"
-"ksmps = 32\n"
-"nchnls = 2\n"
-"0dbfs = 1\n"
-"\n"
-";Author: Giorgio Zucco (2012)\n"
-"\n"
-"\n"
-"instr 1\n"
-"\n"
-";channel\n"
-"kdetune	chnget	\"detune\"\n"
-"ksemi	chnget	\"semi\"\n"
-"kcut	chnget	\"cutoff\"\n"
-"kharm	chnget	\"harm\"\n"
-"kspread chnget \"spread\"\n"
-"iatt	chnget	\"att\"\n"
-"idec	chnget	\"dec\"\n"
-"isus	chnget	\"sus\"\n"
-"irel	chnget	\"rel\"\n"
-"klfoamp	chnget	\"lfoamp\"\n"
-"klforate	chnget	\"lforate\"\n"
-"klfoamp2	chnget	\"lfoamp2\"	;lfo x filter\n"
-"klforate2	chnget	\"lforate2\"\n"
-";midi\n"
-"imidinn notnum\n"
-"iamp	ampmidi	1\n"
-"kbend	pchbend 0,2  ;pitch bend\n"
-"kfreq1 = cpsmidinn(imidinn+kbend+int(ksemi)) \n"
-"kfreq2 = cpsmidinn(imidinn+kbend+int(ksemi)+kdetune) \n"
-";lfo\n"
-"klfo	poscil	klfoamp,klforate,1	\n"
-"asig1	buzz	iamp,(kfreq1+klfo),int(kharm),1\n"
-"asig2	buzz	iamp,(kfreq2+klfo),int(kharm),1\n"
-";filter	\n"
-"klfofilter	lfo	klfoamp2,klforate2,3\n"
-"aout1	fofilter	asig1,kcut+klfofilter,0.007,0.04\n"
-"aout2	fofilter	asig2,kcut+klfofilter,0.007,0.04\n"
-"aout1x	balance	aout1,asig1\n"
-"aout2x	balance	aout2,asig2\n"
-"\n"
-";master\n"
-"aL	clip	aout1x,0,0dbfs\n"
-"aR	clip	aout2x,0,0dbfs\n"
-"\n"
-"\n"
-"aoutL = ((aL * kspread) + (aR * (1 - kspread))) *.5\n"
-"aoutR = ((aL * (1-kspread)) + (aR * kspread))  *.5 \n"
-"\n"
-"kadsr	mxadsr	iatt,idec,isus,irel\n"
-"\n"
-"outs	aoutL*kadsr,aoutR*kadsr\n"
-"\n"
-"endin\n"
-"\n"
-"\n"
-"\n"
-"</CsInstruments>\n"
-"<CsScore>\n"
-"f1	0	16384	10	1\n"
-"f2	0	1024	10	1\n"
-"i1	0	36000\n"
-"</CsScore>\n"
-"</CsoundSynthesizer>\n"
-"\n";
-
-
-
 #define MAX_BUFFER_SIZE 1024
 //Csound functions like to return 0 when everything is ok..
 #define LOGGER 0
@@ -369,9 +267,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         tempAudioFile = fullFileName;
         tempAudioFile.replaceWithData(0 ,0);
 	}
-<<<<<<< HEAD
-	#endif
-=======
 #endif
 
 
@@ -379,8 +274,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 	createGUI(File(inputfile).loadFileAsString(), true);
 #endif
 
-
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 }
 #else
 
@@ -1350,18 +1243,10 @@ StringArray fdata;
         int tableSize = csound->GetTable(temp, tableNum);
         if(tableSize>0)
         {
-<<<<<<< HEAD
 			//uncomment with dev and modified Csound
             /*EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
             for(int i=0; i<=e->pcnt; i++)
                 fdata.add(String(e->p[i]));*/
-=======
-			/*
-            EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
-            for(int i=0; i<=e->pcnt; i++)
-                fdata.add(String(e->p[i]));
-				*/
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
         }
     }
 #endif

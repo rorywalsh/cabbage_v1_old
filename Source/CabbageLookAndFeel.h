@@ -65,6 +65,7 @@ public:
     virtual void drawGroupComponentOutline (Graphics &g, int w, int h, const String &text, const Justification &position,
                                             GroupComponent &group);
     virtual int getDefaultScrollbarWidth();
+	int getMinimumScrollbarThumbSize(){return 15;}
     virtual void drawScrollbar (Graphics &g, ScrollBar &scrollbar, int x, int y, int width, int height,
                                 bool isScrollbarVertical,
                                 int thumbStartPosition,

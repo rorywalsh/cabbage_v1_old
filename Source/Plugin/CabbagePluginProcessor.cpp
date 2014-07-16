@@ -84,7 +84,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      mouseX(0),
      isWinXP(false),
      ksmpsOffset(0),
-     breakCount(0)
+     breakCount(0),
+	 stopProcessing(false)
 {
 
 //suspendProcessing(true);
@@ -301,7 +302,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     yieldCallbackBool(false),
     yieldCounter(10),
     nativePluginEditor(false),
-    averageSampleIndex(0)
+    averageSampleIndex(0),
+	stopProcessing(false)
 {
 //Cabbage plugins always try to load a csd file with the same name as the plugin library.
 //Therefore we need to find the name of the library and append a '.csd' to it.
@@ -479,7 +481,7 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
     deleteAndZero(lookAndFeelBasic);
     Logger::writeToLog("~CabbagePluginAudioProcessor()");
     Logger::setCurrentLogger (nullptr);
-    suspendProcessing(true);
+    stopProcessing = true;
     removeAllChangeListeners();
 #ifndef Cabbage_No_Csound
 
@@ -537,8 +539,9 @@ void CabbagePluginAudioProcessor::YieldCallback(void* data)
 void CabbagePluginAudioProcessor::reCompileCsound(File file)
 {
 #ifndef Cabbage_No_Csound
-    suspendProcessing(true);
-    getCallbackLock().enter();
+    
+	stopProcessing = true;
+    //getCallbackLock().enter();
     midiOutputBuffer.clear();
 //csound->DeleteChannelList(csoundChanList);
 
@@ -645,7 +648,7 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
         csound->SetChannel("CSD_PATH", file.getParentDirectory().getFullPathName().toUTF8().getAddress());
 #endif
 
-        this->suspendProcessing(false);
+        stopProcessing = false;
 
         return;
     }
@@ -1711,89 +1714,89 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     float* audioBuffer;
 	int numSamples = buffer.getNumSamples();
 
-    if(!isSuspended() && !isGuiEnabled())
+    if(stopProcessing || isGuiEnabled())
     {
+		buffer.clear();
+	}
+	else{
 #ifndef Cabbage_No_Csound
 
-        if(csCompileResult==OK)
-        {
+			if(csCompileResult==OK)
+			{
 
-            keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
-            midiBuffer = midiMessages;
-            ccBuffer = midiMessages;
+				keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
+				midiBuffer = midiMessages;
+				ccBuffer = midiMessages;
 
-            //if no inputs are used clear buffer in case it's not empty..
-            if(getNumInputChannels()==0)
-                buffer.clear();
+				//if no inputs are used clear buffer in case it's not empty..
+				if(getNumInputChannels()==0)
+					buffer.clear();
 
-#if JucePlugin_ProducesMidiOutput
-            if(!midiOutputBuffer.isEmpty())
-                midiMessages.swapWith(midiOutputBuffer);
-#endif
+	#if JucePlugin_ProducesMidiOutput
+				if(!midiOutputBuffer.isEmpty())
+					midiMessages.swapWith(midiOutputBuffer);
+	#endif
 
-            for(int i=0; i<numSamples; i++, csndIndex++)
-            {
-                if(csndIndex == csound->GetKsmps())
-                {
-                    getCallbackLock().enter();
-                    //slow down calls to these functions, no need for them to be firing at k-rate
-                    yieldCounter = (yieldCounter>guiRefreshRate) ? 0 : yieldCounter+1;
-                    if(yieldCounter==0)
-                    {
-                        sendOutgoingMessagesToCsound();
-                        updateCabbageControls();
-                    }
-
-
-                    csCompileResult = csound->PerformKsmps();
-
-                    if(csCompileResult!=OK)
-                        suspendProcessing(true);
-                    else
-                        ksmpsOffset++;
-
-                    getCallbackLock().exit();
-                    csndIndex = 0;
-                }
-                if(csCompileResult==OK)
-                {
-                    for(int channel = 0; channel < getNumOutputChannels(); channel++ )
-                    {
-                        audioBuffer = buffer.getWritePointer(channel,0);
-                        pos = csndIndex*getNumOutputChannels();
-                        CSspin[channel+pos] = audioBuffer[i]*cs_scale;
-                        audioBuffer[i] = (CSspout[channel+pos]/cs_scale);
-                    }
-                }
-                else
-                    buffer.clear();
+				for(int i=0; i<numSamples; i++, csndIndex++)
+				{
+					if(csndIndex == csound->GetKsmps())
+					{
+						getCallbackLock().enter();
+						//slow down calls to these functions, no need for them to be firing at k-rate
+						yieldCounter = (yieldCounter>guiRefreshRate) ? 0 : yieldCounter+1;
+						if(yieldCounter==0)
+						{
+							sendOutgoingMessagesToCsound();
+							updateCabbageControls();
+						}
 
 
-            }
+						csCompileResult = csound->PerformKsmps();
 
-            if (activeWriter != 0 && !isWinXP)
-                activeWriter->write (buffer.getArrayOfReadPointers(), buffer.getNumSamples());
+						if(csCompileResult!=OK)
+							stopProcessing = true;
+						else
+							ksmpsOffset++;
+
+						getCallbackLock().exit();
+						csndIndex = 0;
+					}
+					if(csCompileResult==OK)
+					{
+						for(int channel = 0; channel < getNumOutputChannels(); channel++ )
+						{
+							audioBuffer = buffer.getWritePointer(channel,0);
+							pos = csndIndex*getNumOutputChannels();
+							CSspin[channel+pos] = audioBuffer[i]*cs_scale;
+							audioBuffer[i] = (CSspout[channel+pos]/cs_scale);
+						}
+					}
+					else
+						buffer.clear();
 
 
-        }//if not compiled just mute output
-        else
-        {
-            for(int channel = 0; channel < getNumInputChannels(); channel++)
-            {
-                audioBuffer = buffer.getWritePointer(channel,0);
-                for(int i=0; i<numSamples; i++, csndIndex++)
-                {
-                    audioBuffer[i]=0;
-                }
-            }
-        }
+				}
 
-#endif
-    }
-else{	
-	//if in edit mode, of is suspend processing == true, clear audio buffers
-	buffer.clear();
-	}
+				if (activeWriter != 0 && !isWinXP)
+					activeWriter->write (buffer.getArrayOfReadPointers(), buffer.getNumSamples());
+
+
+			}//if not compiled just mute output
+			else
+			{
+				for(int channel = 0; channel < getNumInputChannels(); channel++)
+				{
+					audioBuffer = buffer.getWritePointer(channel,0);
+					for(int i=0; i<numSamples; i++, csndIndex++)
+					{
+						audioBuffer[i]=0;
+					}
+				}
+			}
+
+	#endif
+		}
+
 #if JucePlugin_ProducesMidiOutput
     if(!midiBuffer.isEmpty())
         midiMessages.swapWith(midiOutputBuffer);

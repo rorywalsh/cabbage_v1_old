@@ -287,6 +287,7 @@ public:
     CabbageMessageQueue messageQueue;
     StringArray scoreEvents;
     int averageSampleIndex;
+	bool stopProcessing;
     float outputNo1;
     int pluginType;
     float automationAmp;

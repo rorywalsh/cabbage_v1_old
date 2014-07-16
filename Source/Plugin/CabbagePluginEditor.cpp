@@ -1881,6 +1881,12 @@ void CabbagePluginAudioProcessorEditor::InsertTextEditor(CabbageGUIClass &cAttr)
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 	//add change listener so we can inform Csound when the contents of the editor changes
 	dynamic_cast<CabbageTextEditor*>(layoutComps[idx])->addChangeListener(this);
+	dynamic_cast<CabbageTextEditor*>(layoutComps[idx])->sendChangeMessage();
+	
+	//Logger::writeToLog(cAttr.getStringProp(CabbageIDs::channel))
+	if(cAttr.getStringProp(CabbageIDs::text).isNotEmpty() && cAttr.getStringProp(CabbageIDs::channel).isNotEmpty())
+		getFilter()->messageQueue.addOutgoingChannelMessageToQueue(cAttr.getStringProp(CabbageIDs::channel), 
+																   cAttr.getStringProp(CabbageIDs::text), "string");
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

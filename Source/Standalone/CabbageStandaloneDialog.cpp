@@ -120,7 +120,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 							  
     //deviceManager->closeAudioDevice();
 
-    filter->suspendProcessing(true);
+    filter->stopProcessing = true;
 
     int runningCabbageIO = getPreference(appProperties, "UseCabbageIO");
     if(runningCabbageIO)
@@ -442,13 +442,13 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
     else if(message.contains("MENU COMMAND: suspend audio"))
         if(AudioEnabled)
         {
-            filter->suspendProcessing(true);
+            filter->stopProcessing = true;
             AudioEnabled = false;
         }
         else
         {
             AudioEnabled = true;
-            filter->suspendProcessing(false);
+            filter->stopProcessing = false;
         }
     else {}
 #endif
@@ -502,7 +502,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 //first we check that the audio device is up and running ok
     stopTimer();
 
-    filter->suspendProcessing(true);
+    filter->stopProcessing=true;
     deviceManager->addAudioCallback (&player);
 	deviceManager->addMidiInputCallback (String::empty, &player);
 
@@ -1026,13 +1026,13 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     {
         if(getPreference(appProperties, "AudioEnabled"))
         {
-            filter->suspendProcessing(true);
+            filter->stopProcessing = true;
             setPreference(appProperties, "AudioEnabled", 0);
         }
         else
         {
             AudioEnabled = true;
-            filter->suspendProcessing(false);
+            filter->stopProcessing = false;
             setPreference(appProperties, "AudioEnabled", 1);
         }
     }

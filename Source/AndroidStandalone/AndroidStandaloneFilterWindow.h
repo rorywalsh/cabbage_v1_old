@@ -85,7 +85,7 @@ public:
 
         processor->setPlayConfigDetails (JucePlugin_MaxNumInputChannels,
                                          JucePlugin_MaxNumOutputChannels,
-                                         44100, 64);
+                                         22050, 1024);
     }
 
     void deletePlugin()

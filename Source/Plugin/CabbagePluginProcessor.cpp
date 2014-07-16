@@ -369,7 +369,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     csound = new Csound();
 #else
 	csound = new AndroidCsound();
-	csound->setOpenSlCallbacks(); // for android audio to work
+	//csound->setOpenSlCallbacks(); // for android audio to work
 #endif
 
     csound->SetHostImplementedMIDIIO(true);

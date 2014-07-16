@@ -173,8 +173,11 @@ public:
 //===========================================================================================
     static void showMessage(String message)
     {
-        AlertWindow alert("Cabbage Message" , message, AlertWindow::WarningIcon);
-        alert.showMessageBoxAsync(AlertWindow::WarningIcon, "Cabbage Message" , message, "Ok");
+	AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                              "Cabbage Message",
+                                              message,
+                                              "Ok");
+
     }
 
 //===========================================================================================

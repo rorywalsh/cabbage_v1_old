@@ -121,6 +121,10 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 #if !defined(AndroidBuild)
     csound = new Csound();
 #else
+				AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                              "Uh-oh",
+                                              "Pugin Constructor",
+                                              "ok");	
 	csound = new AndroidCsound();
 	csound->setOpenSlCallbacks(); // for android audio to work
 #endif
@@ -269,11 +273,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 	}
 #endif
 
-
-#if defined(AndroidBuild)
-	createGUI(File(inputfile).loadFileAsString(), true);
-#endif
-
 }
 #else
 
@@ -310,23 +309,38 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     String osxCSD = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+String("/Contents/")+File::getSpecialLocation(File::currentApplicationFile).getFileName();
     File thisFile(osxCSD);
     Logger::writeToLog("MACOSX defined OK");
+	csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
+#elif defined(AndroidBuild)
+    File inFile(File::getSpecialLocation(File::currentApplicationFile));
+    ScopedPointer<InputStream> fileStream;
+    fileStream = File(inFile.getFullPathName()).createInputStream();
+    ZipFile zipFile (fileStream, false); 
+    ScopedPointer<InputStream> fileContents;
+    fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/AndroidSimpleSynth.csd"));
+    File thisFile("/sdcard/Cabbage.csd");
+    thisFile.replaceWithText(fileContents->readEntireStreamAsString());
+    csdFile = thisFile;
 #else
     File thisFile(File::getSpecialLocation(File::currentExecutableFile));
+	csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
 #endif
-    csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
-
-
-    Logger::writeToLog(File::getSpecialLocation(File::currentExecutableFile).getFullPathName());
-
+   
+    //Logger::writeToLog(File::getSpecialLocation(File::currentExecutableFile).getFullPathName());
 
     if(csdFile.exists())
-        Logger::writeToLog("File exists:"+String(csdFile.getFullPathName()));
+	{
+		Logger::writeToLog("File exists:"+String(csdFile.getFullPathName()));
+		
+	}
     else
+	{
         Logger::writeToLog("File doesn't exist"+String(csdFile.getFullPathName()));
+	}
 
     File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
-
     csdFile.setAsCurrentWorkingDirectory();
+
+
 
     StringArray tmpArray;
     CabbageGUIClass cAttr;
@@ -349,8 +363,12 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     setOpcodeDirEnv();
 
 #ifndef Cabbage_No_Csound
+#if !defined(AndroidBuild)
     csound = new Csound();
-
+#else
+	csound = new AndroidCsound();
+	csound->setOpenSlCallbacks(); // for android audio to work
+#endif
 
     csound->SetHostImplementedMIDIIO(true);
 //csound->Reset();
@@ -381,9 +399,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     csdFile.setAsCurrentWorkingDirectory();
     if(csCompileResult==OK)
     {
-
         Logger::writeToLog("compiled Ok");
-        keyboardState.allNotesOff(0);
+		keyboardState.allNotesOff(0);
         keyboardState.reset();
         //simple hack to allow tables to be set up correctly.
         csound->PerformKsmps();
@@ -422,7 +439,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
             csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
         if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
-
+		Logger::writeToLog("everything still good...");
     }
     else
     {
@@ -448,6 +465,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
 
 
     createGUI(csdFile.loadFileAsString(), true);
+	Logger::writeToLog("GUI has been created");
 
 }
 #endif
@@ -1692,7 +1710,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 {
     float* audioBuffer;
 	int numSamples = buffer.getNumSamples();
-		
+
     if(!isSuspended() && !isGuiEnabled())
     {
 #ifndef Cabbage_No_Csound

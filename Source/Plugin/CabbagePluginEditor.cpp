@@ -1311,7 +1311,7 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 
 
 
-    if(width+left>componentPanel->getWidth())
+    if(width+left>componentPanel->getWidth() && reltoplant.isEmpty())
     {
         componentPanel->setBounds(0, 0, width+left, componentPanel->getHeight());
         viewportComponent->setBounds(0, 0, width+left, componentPanel->getHeight());
@@ -1327,7 +1327,7 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 #endif
     }
 
-    if(top+height>componentPanel->getHeight())
+    if(top+height>componentPanel->getHeight() && reltoplant.isEmpty())
     {
         componentPanel->setBounds(0, 0, componentPanel->getWidth(), top+height);
         viewportComponent->setBounds(0, 0, componentPanel->getWidth(), top+height);

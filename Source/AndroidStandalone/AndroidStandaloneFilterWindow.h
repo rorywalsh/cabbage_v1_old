@@ -31,12 +31,11 @@
 #include "../Plugin/CabbagePluginEditor.h"
 #include "../CabbageAudioDeviceSelectorComponent.h"
 
-//extern AudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter();
 
 //  and make it create an instance of the filter subclass that you're building.
-extern CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int plugType);
+///extern CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int plugType);
 
-
+extern AudioProcessor* JUCE_CALLTYPE createPluginFilter();
 //==============================================================================
 /**
     An object that creates and plays a standalone instance of an AudioProcessor.
@@ -74,39 +73,26 @@ public:
     {
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Standalone);
 
-		File thisFile(File::getSpecialLocation(File::currentApplicationFile));
-		InputStream* fileStream;
-		fileStream = File(thisFile.getFullPathName()).createInputStream();
-		ZipFile zipFile (fileStream, true);	
-		InputStream* fileContents;
-		fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/AndroidSimpleSynth.csd"));
-	
-		TemporaryFile file(".csd");
-		file.getFile().replaceWithText("test");
+        processor = createPluginFilter();
 		
-	
-		//if(File::getCurrentWorkingDirectory().getChildFile (filename).existsAsFile())
-		AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
-                                              "This is an AlertWindow",
-                                              fileContents->readEntireStreamAsString(),
-                                              "ok");
-		
-		
-  
+        if(processor == nullptr) // Your createPluginFilter() function must return a valid object!
+			CabbageUtils::showMessage("Something not right in plugin");
 
-        processor = createCabbagePluginFilter("", false, AUDIO_PLUGIN);
-        jassert (processor != nullptr); // Your createPluginFilter() function must return a valid object!
+											  
+		//processor->createGUI(tempFile.loadFileAsString(), true);
+									  
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Undefined);
 
         processor->setPlayConfigDetails (JucePlugin_MaxNumInputChannels,
                                          JucePlugin_MaxNumOutputChannels,
-                                         48000, 512);
+                                         44100, 64);
     }
 
     void deletePlugin()
     {
         stopPlaying();
         processor = nullptr;
+		Logger::writeToLog("deleting plugin");
     }
 
     static String getFilePatterns (const String& fileSuffix)
@@ -199,12 +185,14 @@ public:
     //==============================================================================
     ScopedPointer<PropertySet> settings;
     ScopedPointer<AudioProcessor> processor;
+	//ScopedPointer<CabbagePluginAudioProcessor> processor;
     AudioDeviceManager deviceManager;
     AudioProcessorPlayer player;
 
 private:
     void setupAudioDevices()
     {
+		Logger::writeToLog("gotcha!!");
         deviceManager.addAudioCallback (&player);
         deviceManager.addMidiInputCallback (String::empty, &player);
 
@@ -219,9 +207,9 @@ private:
         deviceManager.removeAudioCallback (&player);
     }
 
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StandalonePluginHolder)
 };
-
 
 //==============================================================================
 /**

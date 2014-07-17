@@ -43,7 +43,7 @@ public:
         : DocumentWindow (title, backgroundColour, DocumentWindow::closeButton)
     {
         this->setInterceptsMouseClicks(true, false);
-        setName("plantWindow");
+        setName(title);
     };
 
     ~CabbagePlantWindow()

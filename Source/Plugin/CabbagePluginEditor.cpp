@@ -204,6 +204,8 @@ CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
     //getFilter()->editorBeingDeleted(this);
     if(presetFileText.length()>1)
         SnapShotFile.replaceWithText(presetFileText);
+		
+	Logger::writeToLog("======EDITOR DECONSTRCUTOR=========");	
 }
 
 //==============================================================================
@@ -1881,7 +1883,7 @@ void CabbagePluginAudioProcessorEditor::InsertTextEditor(CabbageGUIClass &cAttr)
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 	//add change listener so we can inform Csound when the contents of the editor changes
 	dynamic_cast<CabbageTextEditor*>(layoutComps[idx])->addChangeListener(this);
-	dynamic_cast<CabbageTextEditor*>(layoutComps[idx])->sendChangeMessage();
+	//dynamic_cast<CabbageTextEditor*>(layoutComps[idx])->sendChangeMessage();
 	
 	//Logger::writeToLog(cAttr.getStringProp(CabbageIDs::channel))
 	if(cAttr.getStringProp(CabbageIDs::text).isNotEmpty() && cAttr.getStringProp(CabbageIDs::channel).isNotEmpty())

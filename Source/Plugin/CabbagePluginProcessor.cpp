@@ -479,7 +479,6 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 {
     deleteAndZero(lookAndFeel);
     deleteAndZero(lookAndFeelBasic);
-    Logger::writeToLog("~CabbagePluginAudioProcessor()");
     Logger::setCurrentLogger (nullptr);
     stopProcessing = true;
     removeAllChangeListeners();
@@ -1559,13 +1558,6 @@ void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
         }
 
         messageQueue.flushOutgoingChannelMessages();
-
-        if(isAutomator)
-        {
-            //sendChangeMessage();
-            //sendActionMessage("update automation:"+String(automationParamID)+"|"+String(automationAmp));
-            //Logger::writeToLog("update automation:"+String(automationAmp));
-        }
     }
 
 #endif

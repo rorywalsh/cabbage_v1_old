@@ -41,7 +41,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     AudioEnabled(true),
     isAFileOpen(false),
     standaloneMode(false),
-    updateEditorOutputConsole(false)
+    updateEditorOutputConsole(false),
+	hasEditorBeingOpened(false)
 {
 	
     String defaultCSDFile;
@@ -946,7 +947,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                 }
 				
                 showEditorConsole();
-				
+				hasEditorBeingOpened = true;
             }
             else showMessage("Please open or create a file first", lookAndFeel);
         }
@@ -1245,7 +1246,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         else
         {
             //if(getPreference(appProperties, "ExternalEditor")==0)
-            //    openTextEditor();
+            if(hasEditorBeingOpened==false)
+			{
+			openTextEditor();
+			hasEditorBeingOpened = true;
+			}
             if(isAFileOpen == true)
                 if(filter->isGuiEnabled())
                 {

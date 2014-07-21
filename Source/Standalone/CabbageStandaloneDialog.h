@@ -146,6 +146,7 @@ private:
     bool timerRunning;
     bool AudioEnabled;
     bool isAFileOpen;
+	bool hasEditorBeingOpened;
     int setUniquePluginID(File inFile, File csdFile, bool AU);
     float yAxis;
     void timerCallback();

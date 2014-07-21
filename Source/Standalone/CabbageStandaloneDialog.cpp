@@ -760,7 +760,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     m.addSeparator();
     if(!standaloneMode)
     {
-        m.addItem(100, String("Toggle Edit-mode"));
+        if(filter->isGuiEnabled() ==  false)
+		m.addItem(100, String("Edit-mode"), true, false);
+		else
+		m.addItem(100, String("Edit-mode"), true, true);
+			
         m.addSeparator();
         subMenu.clear();
         subMenu.addItem(15, TRANS("Plugin Synth"));
@@ -1240,8 +1244,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             showMessage("", "Warning!! This feature is still under development! Whilst every effort has been made to make it as usable as possible, there might still be some teething problems that need sorting out. If you find a problem, please try to recreate it, note the steps involved, and report it to the Cabbage users forum (www.TheCabbageFoundation.org). Thank you. You may disable this warning in 'Options->Preferences'", lookAndFeel);
         else
         {
-            if(getPreference(appProperties, "ExternalEditor")==0)
-                openTextEditor();
+            //if(getPreference(appProperties, "ExternalEditor")==0)
+            //    openTextEditor();
             if(isAFileOpen == true)
                 if(filter->isGuiEnabled())
                 {

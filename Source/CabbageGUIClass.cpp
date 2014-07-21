@@ -906,20 +906,26 @@ int CabbageGUIClass::parse(String inStr, String identifier)
     {
         //check to see if identifier is part of input string..turn to lowercase first..
         //Logger::writeToLog("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
-        int identPos = str.toLowerCase().replaceCharacters("()", "  ").indexOfWholeWordIgnoreCase(identArray[indx]);
-        if(str.substring(identPos).toLowerCase().contains(identArray[indx]+"("))
-            if(identPos>-1)
+        //int identPos = str.toLowerCase().replaceCharacters("()", "  ").indexOfWholeWordIgnoreCase(identArray[indx]);
+        //if(str.substring(identPos).toLowerCase().contains(identArray[indx]+"("))
+        int identPos = str.toLowerCase().indexOf(" "+identArray[indx]+"(");
+		if(identPos<0)
+			identPos = str.toLowerCase().indexOf(","+identArray[indx]+"(");
+			
+		if(identPos>-1)
             {
+				
                 String newString = str.substring(identPos+identArray[indx].length());
-                String tstr = newString.substring(newString.indexOf("(")+1, newString.indexOf(0, ")"));
+				//showMessage(newString, nullptr);
+				String tstr = newString.substring(newString.indexOf("(")+1, newString.indexOf(0, ")"));
+				//showMessage(tstr, nullptr);
 
                 if(tstr.length()==0)
                     return 0;
 
-                strTokens.addTokens(tstr.removeCharacters("\t()\""), ",", "\"");
 
-                //for(int i=0;i<strTokens.size();i++)
-                //	showMessage(strTokens[i]);
+
+                strTokens.addTokens(tstr.removeCharacters("\t)\""), ",", "\"");
 
                 if(identArray[indx].equalsIgnoreCase("name"))
                 {

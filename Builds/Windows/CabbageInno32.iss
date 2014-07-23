@@ -13,7 +13,7 @@ UninstallDisplayIcon={app}\Cabbage.exe
 ChangesEnvironment=yes
 
 [Types]
-Name: "standard"; Description: "Standard installation; perfect for most users"
+Name: "standard"; Description: "Standard installation; perfect for most uses"
 Name: "minimal"; Description: "Minimal installation: for minimal installations"
 Name: "custom"; Description: "Custom installation"; Flags: iscustom
 
@@ -21,6 +21,7 @@ Name: "custom"; Description: "Custom installation"; Flags: iscustom
 Name: "program"; Description: "Program Files, standard binaries and essential Csound dlls"; Types: standard minimal custom; Flags: fixed
 Name: "csound"; Description: "Csound plugin opcodes, all Csound opcodes and Aux libs"; Types: standard custom; 
 Name: "python"; Description: "Python opcodes, require Python 2.7"; Types: custom
+Name: "osc"; Description: "OSC opcodes, installs liblo library for OSC opcodes"; Types: custom
 Name: "csoundAudioMIDI"; Description: "Csound realtime audio and MIDI devices. Not needed for Cabbage, but needed to run Csound on its own"; Types: custom
 
 [Files]
@@ -46,18 +47,23 @@ Source: "..\..\..\csound\build\csladspa.dll";       DestDir: "{app}"; Components
 Source: "..\..\..\csound\build\csnd6.dll";          DestDir: "{app}"; Components: csound
 Source: "..\..\..\csound\build\doppler.dll";        DestDir: "{app}"; Components: csound
 Source: "..\..\..\csound\build\fareygen.dll";       DestDir: "{app}"; Components: csound
-Source: "..\..\..\csound\build\fractalnoise.dll";   DestDir: "{app}"; Components: csound;    
-Source: "..\..\..\csound\build\ipmidi.dll";         DestDir: "{app}"; Components: csound;
-Source: "..\..\..\csound\build\libcsnd6.dll.a";     DestDir: "{app}"; Components: csound;
-Source: "..\..\..\csound\build\libportaudio-2.dll"; DestDir: "{app}"; Components: csound;
-Source: "..\..\..\csound\build\libsndfile-1.dll";   DestDir: "{app}"; Components: csound;
-Source: "..\..\..\csound\build\mixer.dll";          DestDir: "{app}"; Components: csound;
-Source: "..\..\..\csound\build\platerev.dll";       DestDir: "{app}"; Components: csound;
-Source: "..\..\..\csound\build\scansyn.dll";        DestDir: "{app}"; Components: csound;
-Source: "..\..\..\csound\build\serial.dll";         DestDir: "{app}"; Components: csound;  
+Source: "..\..\..\csound\build\fractalnoise.dll";   DestDir: "{app}"; Components: csound    
+Source: "..\..\..\csound\build\ipmidi.dll";         DestDir: "{app}"; Components: csound
+Source: "..\..\..\csound\build\libcsnd6.dll.a";     DestDir: "{app}"; Components: csound
+Source: "..\..\..\csound\build\libportaudio-2.dll"; DestDir: "{app}"; Components: csound
+Source: "..\..\..\csound\build\libsndfile-1.dll";   DestDir: "{app}"; Components: csound
+Source: "..\..\..\csound\build\mixer.dll";          DestDir: "{app}"; Components: csound
+Source: "..\..\..\csound\build\platerev.dll";       DestDir: "{app}"; Components: csound
+Source: "..\..\..\csound\build\scansyn.dll";        DestDir: "{app}"; Components: csound
+Source: "..\..\..\csound\build\serial.dll";         DestDir: "{app}"; Components: csound  
 Source: "..\..\..\csound\build\signalflowgraph.dll";DestDir: "{app}"; Components: csound
 Source: "..\..\..\csound\build\stdutil.dll";        DestDir: "{app}"; Components: csound
 Source: "..\..\..\csound\build\system_call.dll";    DestDir: "{app}"; Components: csound
+
+;Special opcodes
+Source: "..\..\..\csound\build\osc.dll";            DestDir: "{app}"; Components: osc
+Source: "..\..\..\csound\build\liblo-7.dll";        DestDir: "{app}"; Components: osc
+Source: "..\..\..\csound\build\py.dll";             DestDir: "{app}"; Components: python  
 
 [Icons]
 Name: "{group}\Cabbage32"; Filename: "{app}\Cabbage.exe"

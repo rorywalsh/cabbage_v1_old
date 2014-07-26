@@ -1260,18 +1260,18 @@ fdata.add(String::empty);
 #ifndef Cabbage_No_Csound
     if(csCompileResult==OK)
     {
-//        MYFLT* argsPtr, *temp;
-//		int noOfArgs = csoundGetTableArgs(csound->GetCsound(), &argsPtr, tableNum);
-//		if(noOfArgs!=-1)
-//		{
-//		int tableSize = csound->GetTable(temp, tableNum);
-//		fdata.add(String(tableNum));	
-//		fdata.add("0");
-//		fdata.add(String(tableSize));
-//		for(int i=0;i<noOfArgs;i++)
-//		//Logger::writeToLog("TableNum:"+String(tableNum)+" ArgsCount:"+String(noOfArgs));
-//			fdata.add(String(argsPtr[i]));
-//		}
+        MYFLT* argsPtr, *temp;
+		int noOfArgs = csoundGetTableArgs(csound->GetCsound(), &argsPtr, tableNum);
+		if(noOfArgs!=-1)
+		{
+		int tableSize = csound->GetTable(temp, tableNum);
+		fdata.add(String(tableNum));	
+		fdata.add("0");
+		fdata.add(String(tableSize));
+		for(int i=0;i<noOfArgs;i++)
+		//Logger::writeToLog("TableNum:"+String(tableNum)+" ArgsCount:"+String(noOfArgs));
+			fdata.add(String(argsPtr[i]));
+		}
         //int tableSize = csound->GetTable(temp, tableNum);
         //if(tableSize>0)
         //{

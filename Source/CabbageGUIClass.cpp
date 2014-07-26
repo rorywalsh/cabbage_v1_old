@@ -910,11 +910,9 @@ int CabbageGUIClass::parse(String inStr, String identifier)
         //if(str.substring(identPos).toLowerCase().contains(identArray[indx]+"("))
         int identPos = str.toLowerCase().indexOf(" "+identArray[indx]+"(");
 		if(identPos<0)
-			identPos = str.toLowerCase().indexOf(","+identArray[indx]+"(");
-			
+			identPos = str.toLowerCase().indexOf(","+identArray[indx]+"(");			
 		if(identPos>-1)
-            {
-				
+            {				
                 String newString = str.substring(identPos+identArray[indx].length());
 				//showMessage(newString, nullptr);
 				String tstr = newString.substring(newString.indexOf("(")+1, newString.indexOf(0, ")"));

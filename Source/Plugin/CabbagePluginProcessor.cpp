@@ -1256,18 +1256,30 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 {
 StringArray fdata;
+fdata.add(String::empty);
 #ifndef Cabbage_No_Csound
     if(csCompileResult==OK)
     {
-        MYFLT* temp;
-        int tableSize = csound->GetTable(temp, tableNum);
-        if(tableSize>0)
-        {
+//        MYFLT* argsPtr, *temp;
+//		int noOfArgs = csoundGetTableArgs(csound->GetCsound(), &argsPtr, tableNum);
+//		if(noOfArgs!=-1)
+//		{
+//		int tableSize = csound->GetTable(temp, tableNum);
+//		fdata.add(String(tableNum));	
+//		fdata.add("0");
+//		fdata.add(String(tableSize));
+//		for(int i=0;i<noOfArgs;i++)
+//		//Logger::writeToLog("TableNum:"+String(tableNum)+" ArgsCount:"+String(noOfArgs));
+//			fdata.add(String(argsPtr[i]));
+//		}
+        //int tableSize = csound->GetTable(temp, tableNum);
+        //if(tableSize>0)
+        //{
 			//uncomment with dev and modified Csound
             /*EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
             for(int i=0; i<=e->pcnt; i++)
                 fdata.add(String(e->p[i]));*/
-        }
+        //}
     }
 #endif
     return fdata;
@@ -1459,7 +1471,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 if(channelMessage!="")
                 {
                     guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
-                    guiCtrls.getReference(index).parse(channelMessage, "");
+                    guiCtrls.getReference(index).parse(" "+channelMessage, "");
                     dirtyControls.addIfNotAlreadyThere(index);
                 }
                 //else
@@ -1493,7 +1505,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 //Logger::writeToLog(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel));
                 if(channelMessage!="")
                 {
-                    guiLayoutCtrls.getReference(index).parse(channelMessage, "");
+                    guiLayoutCtrls.getReference(index).parse(" "+channelMessage, "");
                     guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
                 }
                 //else

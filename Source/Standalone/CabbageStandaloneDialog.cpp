@@ -76,9 +76,9 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     oldLookAndFeel = new LookAndFeel_V1();
 // MOD - Stefano Bonetti
 #ifdef Cabbage_Named_Pipe
-    ipConnection = new socketConnection(*this);
-    pipeOpenedOk = ipConnection->createPipe(String("cabbage"));
-    if(pipeOpenedOk) Logger::writeToLog(String("Namedpipe created ..."));
+//    ipConnection = new socketConnection(*this);
+//    pipeOpenedOk = ipConnection->createPipe(String("cabbage"));
+//    if(pipeOpenedOk) Logger::writeToLog(String("Namedpipe created ..."));
 #endif
 // MOD - End
 
@@ -655,7 +655,7 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
     const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutputChannels : filter->getNumOutputChannels();
 
     CabbageAudioDeviceSelectorComponent selectorComp (*deviceManager,
-            numIns, numIns, numOuts, numOuts,
+            filter->getNumInputChannels(), JucePlugin_MaxNumInputChannels, filter->getNumOutputChannels(), JucePlugin_MaxNumOutputChannels,
             true, false, true, false);
     selectorComp.setSize (400, 450);
     setAlwaysOnTop(false);
@@ -713,7 +713,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     Array<File> exampleFiles;
     recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
 
-    standaloneMode=false;
+    //standaloneMode=false;
     isAFileOpen = true;
     if(!standaloneMode)
     {

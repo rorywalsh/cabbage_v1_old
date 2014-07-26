@@ -713,7 +713,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     Array<File> exampleFiles;
     recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
 
-    standaloneMode=false;
+    //standaloneMode=false;
     isAFileOpen = true;
     if(!standaloneMode)
     {

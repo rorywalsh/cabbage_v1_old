@@ -653,7 +653,7 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
 {
     const int numIns = filter->getNumInputChannels() <= 0 ? JucePlugin_MaxNumInputChannels : filter->getNumInputChannels();
     const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutputChannels : filter->getNumOutputChannels();
-
+	filter->stopProcessing = true;
     CabbageAudioDeviceSelectorComponent selectorComp (*deviceManager,
             numIns, numIns, numOuts, numOuts,
             true, false, true, false);
@@ -664,6 +664,8 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
     DialogWindow::showModalDialog(TRANS("Audio Settings"), &selectorComp, this, col, true, false, false);
     bool alwaysontop = getPreference(appProperties, "SetAlwaysOnTop");
     setAlwaysOnTop(alwaysontop);
+	resetFilter(true);
+	filter->stopProcessing = false;
 
 }
 //==============================================================================
@@ -1543,13 +1545,6 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs)
         int val = getPreference(appProperties, "DisablePluginInfo");
         if(!val)
             showMessage(info, lookAndFeel);
-
-#ifdef Cabbage_Named_Pipe
-        sendMessageToWinXound("CABBAGE_PLUGIN_FILE_UPDATE", csdFile.getFullPathName()+String("|")+loc_csdFile.getFullPathName());
-        csdFile = loc_csdFile;
-        cabbageCsoundEditor->setName(csdFile.getFullPathName());
-        sendMessageToWinXound("CABBAGE_SHOW_MESSAGE|Info", "WinXound has been updated\nyour .csd file");
-#endif
     }
 
 #endif
@@ -1651,7 +1646,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs)
 //==============================================================================
 int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool AU)
 {
-    String newID;
+    const char* newID;
     StringArray csdText;
     csdText.addLines(csdFile.loadFileAsString());
     //read contents of csd file to find pluginID
@@ -1669,7 +1664,7 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
             }
             else
             {
-                newID = cAttr.getStringProp("pluginID");
+                newID = cAttr.getStringProp("pluginID").toUTF8();
                 i = csdText.size();
             }
         }
@@ -1705,7 +1700,7 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
             {
                 //showMessage("The plugin ID was found!");
                 mFile.seekg (loc, ios::beg);
-                mFile.write(newID.toUTF8(), 4);
+                mFile.write(newID, 4);
             }
         }
 

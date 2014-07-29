@@ -1445,7 +1445,6 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
 
         for(int index=0; index<getGUICtrlsSize(); index++)
         {
-
             if(guiCtrls[index].getStringProp(CabbageIDs::channeltype).equalsIgnoreCase(CabbageIDs::stringchannel))
             {
                 //THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE..
@@ -1688,6 +1687,7 @@ void CabbagePluginAudioProcessor::prepareToPlay (double sampRate, int samplesPer
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+	showMessage(String(this->getNumOutputChannels()));
     keyboardState.reset();
     sampleRate = sampRate;
 }

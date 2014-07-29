@@ -1261,7 +1261,7 @@ fdata.add(String::empty);
     if(csCompileResult==OK)
     {
         MYFLT* argsPtr, *temp;
-		int noOfArgs = csoundGetTableArgs(csound->GetCsound(), &argsPtr, tableNum);
+		int noOfArgs = -1;//csoundGetTableArgs(csound->GetCsound(), &argsPtr, tableNum);
 		if(noOfArgs!=-1)
 		{
 		int tableSize = csound->GetTable(temp, tableNum);

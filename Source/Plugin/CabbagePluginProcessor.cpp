@@ -1687,7 +1687,7 @@ void CabbagePluginAudioProcessor::prepareToPlay (double sampRate, int samplesPer
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-	showMessage(String(this->getNumOutputChannels()));
+	//showMessage(String(this->getNumOutputChannels()));
     keyboardState.reset();
     sampleRate = sampRate;
 }

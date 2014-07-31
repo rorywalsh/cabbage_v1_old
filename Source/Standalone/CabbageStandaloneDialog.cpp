@@ -715,7 +715,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     Array<File> exampleFiles;
     recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
 
-    //standaloneMode=false;
+    standaloneMode=false;
     isAFileOpen = true;
     if(!standaloneMode)
     {
@@ -1646,7 +1646,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs)
 //==============================================================================
 int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool AU)
 {
-    const char* newID;
+    String newID;
     StringArray csdText;
     csdText.addLines(csdFile.loadFileAsString());
     //read contents of csd file to find pluginID
@@ -1664,7 +1664,7 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
             }
             else
             {
-                newID = cAttr.getStringProp("pluginID").toUTF8();
+                newID = cAttr.getStringProp(CabbageIDs::pluginid);
                 i = csdText.size();
             }
         }
@@ -1681,29 +1681,30 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
     long loc;
     //showMessage(binFile.getFullPathName(), lookAndFeel);
     fstream mFile(binFile.getFullPathName().toUTF8(), ios_base::in | ios_base::out | ios_base::binary);
-    if(mFile.is_open())
+    unsigned char* buffer ;
+	if(mFile.is_open())
     {
         mFile.seekg (0, ios::end);
         file_size = mFile.tellg();
-        unsigned char* buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
         //set plugin ID, do this a few times in case the plugin ID appear in more than one place.
         for(int r=0; r<10; r++)
         {
-            mFile.seekg (0, ios::beg);
-
+			buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
+			mFile.seekg (0, ios::beg);
             mFile.read((char*)&buffer[0], file_size);
             loc = cabbageFindPluginID(buffer, file_size, pluginID);
             if (loc < 0)
+			{
                 //showMessage(String("Internel Cabbage Error: The pluginID was not found"));
-                break;
+                //break;
+			}
             else
             {
-                //showMessage("The plugin ID was found!");
+                //showMessage(newID);
                 mFile.seekg (loc, ios::beg);
-                mFile.write(newID, 4);
+                mFile.write(newID.toUTF8(), 4);
             }
         }
-
         //set plugin name based on .csd file
         const char *pluginName = "CabbageEffectNam";
         String plugLibName = csdFile.getFileNameWithoutExtension();
@@ -1733,6 +1734,34 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
     return 1;
 }
 
+long StandaloneFilterWindow::cabbageFindPluginID(unsigned char *buf, size_t len, const char *s)
+{
+        long i, j;
+        int slen = strlen(s);
+        long imax = len - slen - 1;
+        long ret = -1;
+        int match;
+
+        for(i=0; i<imax; i++)
+        {
+            match = 1;
+            for (j=0; j<slen; j++)
+			{
+                if (buf[i+j] != s[j])
+                {
+                    match = 0;
+                    break;
+                }
+			}
+            if (match)
+            {
+                ret = i;
+                break;
+            }
+        }
+        //return position of plugin ID
+        return ret;
+    }
 
 //==============================================================================
 // Batch process multiple csd files to convert them to plugins libs.

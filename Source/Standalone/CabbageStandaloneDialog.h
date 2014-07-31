@@ -96,6 +96,7 @@ public:
     //=================================================================
     void resetFilter(bool shouldResetFilter);
     void saveState();
+	long cabbageFindPluginID(unsigned char *buf, size_t len, const char *s);
     void loadState();
     virtual void showAudioSettingsDialog();
     virtual PropertySet* getGlobalSettings();

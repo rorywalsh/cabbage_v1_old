@@ -1681,7 +1681,7 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
     long loc;
     //showMessage(binFile.getFullPathName(), lookAndFeel);
     fstream mFile(binFile.getFullPathName().toUTF8(), ios_base::in | ios_base::out | ios_base::binary);
-    unsigned char* buffer ;
+    unsigned char* buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
 	if(mFile.is_open())
     {
         mFile.seekg (0, ios::end);
@@ -1689,14 +1689,13 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
         //set plugin ID, do this a few times in case the plugin ID appear in more than one place.
         for(int r=0; r<10; r++)
         {
-			buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
 			mFile.seekg (0, ios::beg);
             mFile.read((char*)&buffer[0], file_size);
             loc = cabbageFindPluginID(buffer, file_size, pluginID);
             if (loc < 0)
 			{
                 //showMessage(String("Internel Cabbage Error: The pluginID was not found"));
-                //break;
+                break;
 			}
             else
             {

@@ -198,7 +198,7 @@
 #define JucePlugin_MaxNumOutputChannels   2
 #endif
 #ifndef  JucePlugin_PreferredChannelConfigurations
-#define JucePlugin_PreferredChannelConfigurations  {1, 1}, {2, 2}
+#define JucePlugin_PreferredChannelConfigurations  {2,2}//, {4,4}, {6,6}, {8,8}
 #endif
 
 #ifdef Cabbage_Plugin_LV2

@@ -4,17 +4,10 @@
 DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 
 # Default csound include path
-<<<<<<< HEAD
-CSOUND_INCLUDE ?= "C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound64\csound\include"
-
-# Default Csound library path
-CSOUND_LIBRARY ?= "C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound64\csound\debug\libcsound64.dll.a"
-=======
 CSOUND_INCLUDE ?= "C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound64\csound6\include"
 
 # Default Csound library path
 CSOUND_LIBRARY ?= "C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound64\csound6\debug\libcsound64.dll.a"
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 
 ASIO_SDK ?= "C:\SDKs\ASIOSDK2.3\common"
 VST_SDK ?= "C:\SDKs\vstsdk2.4"
@@ -37,28 +30,17 @@ ifeq ($(CONFIG),Debug)
   OUTDIR := build
 
   ifeq ($(TARGET_ARCH),)
-    TARGET_ARCH := -march=native
+    TARGET_ARCH := -march=x86-64
   endif
 
-<<<<<<< HEAD
-  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -DCabbage_No_Csound=1 -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
-  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -march=x86-64 -g -ggdb -Wmain -O -Wno-reorder -std=gnu++0x -mstackrealign
-  CXXFLAGS += $(CFLAGS)
-  LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 
-  LDDEPS :=
-  RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DCabbage_No_Csound=1 -DBUILD_DEBUGGER=1 -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
-  TARGET := Cabbage.exe
-  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) cabbage.o
-=======
   CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DCabbage64Bit=1 -DJUCER_CODEBLOCKS_20734A5D=1
-  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -march=x86-64 -g -ggdb -Wmain -O -Wno-reorder -std=gnu++0x -mstackrealign
+  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -g -ggdb -Wmain -O -Wno-reorder -std=gnu++0x -mstackrealign
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY)
   LDDEPS :=
   RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DBUILD_DEBUGGER=1 -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := Cabbage.exe
   BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH)
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 endif
 
 ifeq ($(CONFIG),Release)
@@ -68,25 +50,17 @@ ifeq ($(CONFIG),Release)
   OUTDIR := build
 
   ifeq ($(TARGET_ARCH),)
-    TARGET_ARCH := -march=native
+    TARGET_ARCH := -march=x86-64
   endif
 
   CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
-<<<<<<< HEAD
-  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -march=x86-64 -O -Wno-reorder -Wmain -std=gnu++0x -mstackrealign
-=======
-  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -march=pentium4 -O -Wno-reorder -Wmain -std=gnu++0x -mstackrealign
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
+  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -O -Wno-reorder -Wmain -std=gnu++0x -mstackrealign
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY)
   LDDEPS :=
   RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := Cabbage.exe
-<<<<<<< HEAD
-  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH)
-=======
   BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) cabbage64icon.o
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 endif
 
 OBJECTS := \
@@ -107,18 +81,11 @@ OBJECTS := \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
-<<<<<<< HEAD
-=======
-  $(OBJDIR)/Table_35ae1cd9.o \
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
   $(OBJDIR)/CabbageStandaloneDialog_72d272cd.o \
   $(OBJDIR)/StandaloneFilterApp_d9ee3663.o \
   $(OBJDIR)/SplitComponent_d9ee366f.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
-<<<<<<< HEAD
   $(OBJDIR)/Table_35ae1cd9.o \
-=======
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
@@ -182,14 +149,6 @@ $(OBJDIR)/CabbageMainPanel_12c1333.o: ../../Source/CabbageMainPanel.cpp
 	@echo "Compiling CabbageMainPanel.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-<<<<<<< HEAD
-=======
-$(OBJDIR)/Table_35ae1cd9.o: ../../Source/Table.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling Table.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-	
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 $(OBJDIR)/CabbagePropertiesDialog_5e61b3fd.o: ../../Source/CabbagePropertiesDialog.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CabbagePropertiesDialog.cpp"
@@ -199,14 +158,11 @@ $(OBJDIR)/CabbageTable_d003e736.o: ../../Source/CabbageTable.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CabbageTable.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-<<<<<<< HEAD
 
 $(OBJDIR)/Table_35ae1cd9.o: ../../Source/Table.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling Table.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-=======
->>>>>>> 2053b71cc59217e705311675d39fddff8a2ac114
 	
 $(OBJDIR)/ComponentLayoutEditor_aa38c835.o: ../../Source/ComponentLayoutEditor.cpp
 	-@mkdir -p $(OBJDIR)

@@ -30,15 +30,15 @@ ifeq ($(CONFIG),Debug)
   OUTDIR := build
 
   ifeq ($(TARGET_ARCH),)
-    TARGET_ARCH := -march=native
+    TARGET_ARCH := -march=pentium4
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -DCabbage_No_Csound=1 -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
+  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -march=pentium4 -g -ggdb -Wmain -O -Wno-reorder -std=gnu++0x -mstackrealign
   CXXFLAGS += $(CFLAGS)
-  LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 
+  LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY)
   LDDEPS :=
-  RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DCabbage_No_Csound=1 -DBUILD_DEBUGGER=1 -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DBUILD_DEBUGGER=1 -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := Cabbage.exe
   BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) cabbage32.o
 endif
@@ -50,7 +50,7 @@ ifeq ($(CONFIG),Release)
   OUTDIR := build
 
   ifeq ($(TARGET_ARCH),)
-    TARGET_ARCH := -march=native
+    TARGET_ARCH := -march=pentium4
   endif
 
   CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1

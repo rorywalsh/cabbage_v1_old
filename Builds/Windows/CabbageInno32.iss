@@ -4,6 +4,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING .ISS SCRIPT FILES!
 
 [Setup]
+OutputBaseFilename=Cabbage32Setup
 AppName=Cabbage32
 AppVersion=v0.5.12
 DefaultDirName={pf}\Cabbage32

@@ -5,15 +5,14 @@
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 8.6.8" />
 <title><span class="image">
-<img src="images/hlogo_blue_text.PNG" alt="Cabbage" />
+<img src="images/CabbageDocLogo.PNG" alt="Cabbage" />
 </span></title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
 /* Default font. */
 body {
-  font-family: Verdana, Sans-serif;
-  color: white;
+  font-family: Georgia,serif;
 }
 
 /* Title font. */
@@ -28,21 +27,16 @@ thead, p.table.header,
 
 body {
   margin: 1em 5% 1em 5%;
-  background-color: rgb(30, 30, 30);
 }
 
 a {
-  color: #527bbd;
+  color: blue;
   text-decoration: underline;
-}
-a:visited {
-  color: #527bbd;
 }
 
 em {
-font-family: Arial,Helvetica,sans-serif;
-  font-weight: bold;
-  color: rgb(150, 201, 61);
+  font-style: italic;
+  color: navy;
 }
 
 strong {
@@ -90,12 +84,16 @@ ul, ol, li > p {
   margin-top: 0;
 }
 ul > li     { color: #aaa; }
-ul > li > * { color: white; }
+ul > li > * { color: black; }
 
-pre {
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
   padding: 0;
   margin: 0;
 }
+
 
 #author {
   color: #527bbd;
@@ -175,8 +173,7 @@ div.sidebarblock > div.content {
 div.listingblock > div.content {
   border: 1px solid #dddddd;
   border-left: 5px solid #f0f0f0;
-  background: #527bbd;
-
+  background: #f8f8f8;
   padding: 0.5em;
 }
 
@@ -236,7 +233,7 @@ dt {
   margin-top: 0.5em;
   margin-bottom: 0;
   font-style: normal;
-  color: red;
+  color: navy;
 }
 dd > *:first-child {
   margin-top: 0.1em;
@@ -289,7 +286,7 @@ td.hdlist1 {
   vertical-align: top;
   font-style: normal;
   padding-right: 0.8em;
-  color: pink;
+  color: navy;
 }
 td.hdlist2 {
   vertical-align: top;
@@ -421,13 +418,6 @@ div.unbreakable { page-break-inside: avoid; }
  *
  * */
 
-tt {
-  font-family: "Courier New", Courier, monospace;
-  font-size: inherit;
-  font-weight: bold;
-  color: black;
-}
-
 div.tableblock {
   margin-top: 1.0em;
   margin-bottom: 1.5em;
@@ -460,12 +450,6 @@ div.tableblock > table[frame="vsides"] {
  * html5 specific
  *
  * */
-
-.monospaced {
-  font-family: "Courier New", Courier, monospace;
-  font-size: inherit;
-  color: navy;
-}
 
 table.tableblock {
   margin-top: 1.0em;
@@ -747,7 +731,7 @@ asciidoc.install(2);
 <body class="book">
 <div id="header">
 <h1><span class="image">
-<img src="images/hlogo_blue_text.PNG" alt="Cabbage" />
+<img src="images/CabbageDocLogo.PNG" alt="Cabbage" />
 </span></h1>
 <div id="toc">
   <div id="toctitle">Table of Contents</div>
@@ -1109,7 +1093,7 @@ i1 0 1000
 <div class="listingblock">
 <div class="content">
 <pre><code>groupbox bounds(x, y, width, height)[, text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"),
-                        popup(val), identchannel("channel")]</code></pre>
+                        identchannel("channel")]</code></pre>
 </div></div>
 <div class="paragraph"><p>Groupbox creates a container for other GUI controls. They do not communicate with Csound but can be useful for organising widgets into panels.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels)</p></div>
@@ -1118,16 +1102,7 @@ i1 0 1000
 <div class="paragraph"><p><em>fontcolour("colour")</em>: Sets the colour of the font to appear on the groupbox. See above for details on "colour".</p></div>
 <div class="paragraph"><p><em>line(value)</em>: Turns off the line that appears on a groupbox.</p></div>
 <div class="paragraph"><p><em>plant("name")</em>: Sets the name of the plant. No two plants can have the same name. See <em>PLANTS</em></p></div>
-<div class="paragraph"><p><em>popup("name")</em>: Sets whether the plant is to behave as a <em>popup</em> plant or not. If a <em>1</em> is passed to popup, i.e., popup(1) then a button of fixed size 100x30 will appear on screen in position x,y as set by bounds. When a user clicks the button their controls will appear in a separate window. This can be useful for saving space in the main instrument&#8217;s GUI.</p></div>
 <div class="paragraph"><p><em>identchannel("channel")</em>: Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p></div>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<img src="images/smallLogo.PNG" alt="Note" />
-</td>
-<td class="content">Popups can only be added through text.</td>
-</tr></table>
-</div>
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
 <div class="content">
@@ -1215,7 +1190,7 @@ file("file name")]</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre><code>image bounds(x, y, width, height), colour("colour")[, file("file name"), shape("type"), outline("colour"), line(thickness), 'plant("name"),
-popup(val), identchannel("channel")]</code></pre>
+identchannel("channel")]</code></pre>
 </div></div>
 <div class="paragraph"><p>Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. The file must be in the same directory as your Cabbage instrument. If you simply wish to draw a shape you can choose a background colour with colour() and an outline colour with outline(). line() will let you determine the thickness of the outline.</p></div>
 <div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels). If widget is part of a plant these values should be between 0 and 1. See PLANTS</p></div>
@@ -1225,7 +1200,6 @@ popup(val), identchannel("channel")]</code></pre>
 <div class="paragraph"><p><em>outline("colour")</em>: This sets the outline colour of the image/shape. See above for details on "colour".</p></div>
 <div class="paragraph"><p><em>line(thickness)</em>: This sets the line thickness in pixels.</p></div>
 <div class="paragraph"><p><em>plant("name")</em>: Sets the name of the plant. No two plants can have the same name. See <em>PLANTS</em></p></div>
-<div class="paragraph"><p><em>popup("name")</em>: Sets whether the plant is to behave as a <em>popup</em> plant or not. If  a one is passed to popup, i.e., popup(1) then a button of fixed size 100x30 will on screen in position x,y as set by bounds. When a user clicks the button their controls will appear in a separate window. This can be useful for saving space in the main instrument&#8217;s GUI.</p></div>
 <div class="paragraph"><p><em>identchannel("channel")</em>: Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p></div>
 <div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
@@ -1486,10 +1460,46 @@ checkbox bounds(130, 110, 120, 70), text("Mute"), channel("freq2"), value(1)</co
 <img src="images/table.PNG" alt="table" />
 </span></p></div>
 </div>
+<div class="sect2">
+<h3 id="x41">Textbox</h3>
+<div class="listingblock">
+<div class="content">
+<pre><code>textbox bounds(x, y, width, height), file("filename"), colour("colour"), fontcolour("colour")</code></pre>
+</div></div>
+<div class="paragraph"><p>Textbox will display the contents of a text file. This can be useful for placing instructions and information directly on to an instrument.</p></div>
+<div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels)</p></div>
+<div class="paragraph"><p><em>colour("colour")</em>: This sets the colour of the image if a file name is not passed to file. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p></div>
+<div class="paragraph"><p><em>fontcolour("colour")</em>: Sets the colour of the text that appears with the slider. See above for details on "colour".</p></div>
+<div class="paragraph"><p><em>file("file name")</em>: Set the file that will be opened. This file must reside in the same directory as the current .csd file. Do not pass a full path. Cabbage only needs the name and extension, for example file("help.txt").</p></div>
+<div class="paragraph"><p><em>identchannel("channel")</em>: Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>textbox bounds(210, 00, 340, 145), file("help.txt")</code></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="x42">TextEditor</h3>
+<div class="listingblock">
+<div class="content">
+<pre><code>texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour("colour"), fontcolour("colour")</code></pre>
+</div></div>
+<div class="paragraph"><p>Texteditor can be used to send string to Csound. Hitting return will send the string to Csound on a named channel. Pressing the up and down buttons will toggle through the previous strings that have been sent.</p></div>
+<div class="paragraph"><p><em>bounds(x, y, width, height)</em>: integer values that set position and size on screen(in pixels)</p></div>
+<div class="paragraph"><p><em>channel("chanName")</em>: "chanName" is the name of the channel upon which to communicate with Csound(see examples above).</p></div>
+<div class="paragraph"><p><em>colour("colour")</em>: This sets the colour of the image if a file name is not passed to file. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p></div>
+<div class="paragraph"><p><em>fontcolour("colour")</em>: Sets the colour of the text that appears with the slider. See above for details on "colour".</p></div>
+<div class="paragraph"><p><em>identchannel("channel")</em>: Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>texteditor bounds(210, 00, 340, 145), text("Type some text here"), channel("texteditor1")</code></pre>
+</div></div>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="x40">Plants</h2>
+<h2 id="x50">Plants</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Cabbage plants are GUI abstractions that contain one or more controls. These abstractions are used as anchors to the child widgets contained within. All widgets contained within a plant have top and left positions which are relative the the top left position of the parent. While all widgets can be children of a plant, only group boxes and images can be used as plants themselves. Adding a plant identifier to an image or group box definition will cause them to act as containers. The plant() identifier takes a string that denotes the name of the plant. Plant names must be unique within an instrument or plants will end up being placed on top of each other. When using an image or a group box as a plant, you must enclose the code from the controls that follow in curly brackets, to indicate which controls belong to the plant. In the code below a group box control is set up as a plant, and three child sliders are placed within it.</p></div>
 <div class="listingblock">
@@ -1508,7 +1518,7 @@ rslider bounds(.64, .3, .6, .6), text("Dist"), channel("filtDist"), range(0, 4, 
 </div>
 </div>
 <div class="sect1">
-<h2 id="x46">Reserved Channels</h2>
+<h2 id="x51">Reserved Channels</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Cabbage reserves several channels which are used to send information to Csound from either the host application, or from Cabbage itself. To retrieve info from any of these channels just use a chnget opcode.</p></div>
 <div class="paragraph"><p><em>CSD_PATH</em>: This string channel will retrieve the full path to the current csd file.</p></div>
@@ -1525,7 +1535,7 @@ rslider bounds(.64, .3, .6, .6), text("Dist"), channel("filtDist"), range(0, 4, 
 </div>
 </div>
 <div class="sect1">
-<h2 id="x41">Preset Snapshots</h2>
+<h2 id="x52">Preset Snapshots</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>There are several ways to save your instrument&#8217;s parameters so that they can be recalled at a later time. If you are working in a VST host you can use the host&#8217;s save/load functionality to save the parameters as fxp/fxb files. You can also use a filebutton with the file type ".snaps" to create a snapshot file of all your widget states. Snapshot files can be recalled using a combobox with a filetype of ".snaps" set. In the code below the user will be shown a filebutton whereby they can select the preset file to save. The combobox will auto-update with all the presets located in the set directory. When a user makes a selection with the combobox Cabbage will update all control states to reflect the data saved in the selected snapshot file.
 If no directory is given Cabbage will look in the current working directory.</p></div>
@@ -1538,7 +1548,7 @@ combobox bounds(376, 86, 268, 30), channel("combobox"), populate("*.snaps", "/ho
 </div>
 </div>
 <div class="sect1">
-<h2 id="x42">Quick Reference</h2>
+<h2 id="x53">Quick Reference</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This quick reference table table gives a list of the valid identifiers for each Cabbage widget.</p></div>
 <div class="tableblock">
@@ -1964,7 +1974,7 @@ cellspacing="0" cellpadding="4">
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-03-01 19:43:23 GMT
+Last updated 2014-07-14 12:06:27 CEST
 </div>
 </div>
 </body>

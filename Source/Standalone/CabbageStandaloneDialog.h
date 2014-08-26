@@ -96,6 +96,7 @@ public:
     //=================================================================
     void resetFilter(bool shouldResetFilter);
     void saveState();
+	long cabbageFindPluginID(unsigned char *buf, size_t len, const char *s);
     void loadState();
     virtual void showAudioSettingsDialog();
     virtual PropertySet* getGlobalSettings();
@@ -114,6 +115,7 @@ public:
     void saveFileAs();
     void showEditorConsole();
     void setupWindowDimensions();
+	
 
     bool isGuiEnabled()
     {
@@ -145,6 +147,7 @@ private:
     bool timerRunning;
     bool AudioEnabled;
     bool isAFileOpen;
+	bool hasEditorBeingOpened;
     int setUniquePluginID(File inFile, File csdFile, bool AU);
     float yAxis;
     void timerCallback();

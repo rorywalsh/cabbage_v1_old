@@ -22,108 +22,6 @@
 #include <iostream>
 
 
-
-static String quickGUITest = 
-"<Cabbage>\n"
-"form caption(\"Buzz synthesizer\") size(562, 600), colour(\"black\"),pluginID(\"buz1\") \n"
-"csoundoutput bounds(0, 350, 500, 200) \n"
-"rslider bounds(15, 10, 100, 100) channel(\"detune\"), range(-1,1,0), caption(\"Detune\"), colour(\"SteelBlue\"), midictrl(1, 1)\n"
-"rslider bounds(120, 10, 100, 100) channel(\"semi\"), range(-24,12,-24), caption(\"Coarse\"), colour(\"SteelBlue \")\n"
-"rslider bounds(225, 10, 100, 100) channel(\"cutoff\"), range(60,2000,400), caption(\"Cutoff\"), colour(\"SteelBlue \")\n"
-"rslider bounds(330, 10, 100, 100) channel(\"harm\"), range(1,20,1), caption(\"Harmonic\"), colour(\"SteelBlue \")\n"
-"rslider bounds(435, 10, 100, 100) channel(\"spread\"), range(0, 1, .5), caption(\"Stereo image\"), colour(\"SteelBlue \")\n"
-"\n"
-"groupbox bounds(15, 120, 240, 100), text(\"ADSR amplitude\"), plant(\"ADSR\"){ \n"
-"rslider bounds(.0, .3, .6, .6), text(\"A\"), colour(\"orange\"), channel(\"att\"), range(0.01,3, .5)\n"
-"rslider bounds(.25, .3, .6, .6), text(\"D\"), colour(\"orange\"), channel(\"dec\"), range(0,1, .5)\n"
-"rslider bounds(.5, .3, .6, .6), text(\"S\"), colour(\"orange\"), channel(\"sus\"), range(0,1,.8)\n"
-"rslider bounds(.75, .3, .6, .6), text(\"R\"), colour(\"orange\"), channel(\"rel\"), range(0.01,3, .2)\n"
-"}\n"
-"groupbox bounds(270, 120, 130, 100), text(\"LFO\"), plant(\"lfo\"){ \n"
-"rslider bounds(.04, .3, .6, .6), text(\"Lfo Amp\"), colour(\"SteelBlue \"), channel(\"lfoamp\"), range(0,100, 0)\n"
-"rslider bounds(.5, .3, .6, .6), text(\"Lfo Rate\"), colour(\"SteelBlue \"), channel(\"lforate\"), range(0,20, 0)\n"
-"}\n"
-"groupbox bounds(410, 120, 130, 100), text(\"LFO filter\"), plant(\"lfofilter\"){ \n"
-"rslider bounds(.04, .3, .6, .6), text(\"Lfo Amp\"), colour(\"SteelBlue \"), channel(\"lfoamp2\"), range(0,1000, 0)\n"
-"rslider bounds(.5, .3, .6, .6), text(\"Lfo Rate\"), colour(\"SteelBlue \"), channel(\"lforate2\"), range(0,10, 0)\n"
-"}\n"
-"keyboard pos(10,240), size(540,60)\n"
-"\n"
-"</Cabbage>\n"
-"<CsoundSynthesizer>\n"
-"<CsOptions>\n"
-"-d -n -+rtmidi=null -M0 -b1024  -m0d\n"
-"</CsOptions>\n"
-"<CsInstruments>\n"
-"; Initialize the global variables. \n"
-"sr = 44100\n"
-"ksmps = 32\n"
-"nchnls = 2\n"
-"0dbfs = 1\n"
-"\n"
-";Author: Giorgio Zucco (2012)\n"
-"\n"
-"\n"
-"instr 1\n"
-"\n"
-";channel\n"
-"kdetune	chnget	\"detune\"\n"
-"ksemi	chnget	\"semi\"\n"
-"kcut	chnget	\"cutoff\"\n"
-"kharm	chnget	\"harm\"\n"
-"kspread chnget \"spread\"\n"
-"iatt	chnget	\"att\"\n"
-"idec	chnget	\"dec\"\n"
-"isus	chnget	\"sus\"\n"
-"irel	chnget	\"rel\"\n"
-"klfoamp	chnget	\"lfoamp\"\n"
-"klforate	chnget	\"lforate\"\n"
-"klfoamp2	chnget	\"lfoamp2\"	;lfo x filter\n"
-"klforate2	chnget	\"lforate2\"\n"
-";midi\n"
-"imidinn notnum\n"
-"iamp	ampmidi	1\n"
-"kbend	pchbend 0,2  ;pitch bend\n"
-"kfreq1 = cpsmidinn(imidinn+kbend+int(ksemi)) \n"
-"kfreq2 = cpsmidinn(imidinn+kbend+int(ksemi)+kdetune) \n"
-";lfo\n"
-"klfo	poscil	klfoamp,klforate,1	\n"
-"asig1	buzz	iamp,(kfreq1+klfo),int(kharm),1\n"
-"asig2	buzz	iamp,(kfreq2+klfo),int(kharm),1\n"
-";filter	\n"
-"klfofilter	lfo	klfoamp2,klforate2,3\n"
-"aout1	fofilter	asig1,kcut+klfofilter,0.007,0.04\n"
-"aout2	fofilter	asig2,kcut+klfofilter,0.007,0.04\n"
-"aout1x	balance	aout1,asig1\n"
-"aout2x	balance	aout2,asig2\n"
-"\n"
-";master\n"
-"aL	clip	aout1x,0,0dbfs\n"
-"aR	clip	aout2x,0,0dbfs\n"
-"\n"
-"\n"
-"aoutL = ((aL * kspread) + (aR * (1 - kspread))) *.5\n"
-"aoutR = ((aL * (1-kspread)) + (aR * kspread))  *.5 \n"
-"\n"
-"kadsr	mxadsr	iatt,idec,isus,irel\n"
-"\n"
-"outs	aoutL*kadsr,aoutR*kadsr\n"
-"\n"
-"endin\n"
-"\n"
-"\n"
-"\n"
-"</CsInstruments>\n"
-"<CsScore>\n"
-"f1	0	16384	10	1\n"
-"f2	0	1024	10	1\n"
-"i1	0	36000\n"
-"</CsScore>\n"
-"</CsoundSynthesizer>\n"
-"\n";
-
-
-
 #define MAX_BUFFER_SIZE 1024
 //Csound functions like to return 0 when everything is ok..
 #define LOGGER 0
@@ -186,7 +84,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      mouseX(0),
      isWinXP(false),
      ksmpsOffset(0),
-     breakCount(0)
+     breakCount(0),
+	 stopProcessing(false)
 {
 
 //suspendProcessing(true);
@@ -223,6 +122,10 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 #if !defined(AndroidBuild)
     csound = new Csound();
 #else
+				AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                              "Uh-oh",
+                                              "Pugin Constructor",
+                                              "ok");	
 	csound = new AndroidCsound();
 	csound->setOpenSlCallbacks(); // for android audio to work
 #endif
@@ -301,12 +204,9 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 
         includeFiles.removeDuplicates(0);
 
-#if !defined(AndroidBuild)
+
         csCompileResult = csound->Compile(const_cast<char*>(inputfile.toUTF8().getAddress()));
-#else
-		csCompileResult = csound->CompileCsd(quickGUITest.toUTF8().getAddress());
-#endif
-//csound->Start();
+
         Logger::writeToLog(inputfile);
         if(csCompileResult==OK)
         {
@@ -374,12 +274,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 	}
 #endif
 
-
-#if defined(AndroidBuild)
-	createGUI(quickGUITest, true);
-#endif
-
-
 }
 #else
 
@@ -408,7 +302,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     yieldCallbackBool(false),
     yieldCounter(10),
     nativePluginEditor(false),
-    averageSampleIndex(0)
+    averageSampleIndex(0),
+	stopProcessing(false)
 {
 //Cabbage plugins always try to load a csd file with the same name as the plugin library.
 //Therefore we need to find the name of the library and append a '.csd' to it.
@@ -416,23 +311,38 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     String osxCSD = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+String("/Contents/")+File::getSpecialLocation(File::currentApplicationFile).getFileName();
     File thisFile(osxCSD);
     Logger::writeToLog("MACOSX defined OK");
+	csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
+#elif defined(AndroidBuild)
+    File inFile(File::getSpecialLocation(File::currentApplicationFile));
+    ScopedPointer<InputStream> fileStream;
+    fileStream = File(inFile.getFullPathName()).createInputStream();
+    ZipFile zipFile (fileStream, false); 
+    ScopedPointer<InputStream> fileContents;
+    fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/AndroidSimpleSynth.csd"));
+    File thisFile("/sdcard/Cabbage.csd");
+    thisFile.replaceWithText(fileContents->readEntireStreamAsString());
+    csdFile = thisFile;
 #else
     File thisFile(File::getSpecialLocation(File::currentExecutableFile));
+	csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
 #endif
-    csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
-
-
-    Logger::writeToLog(File::getSpecialLocation(File::currentExecutableFile).getFullPathName());
-
+   
+    //Logger::writeToLog(File::getSpecialLocation(File::currentExecutableFile).getFullPathName());
 
     if(csdFile.exists())
-        Logger::writeToLog("File exists:"+String(csdFile.getFullPathName()));
+	{
+		Logger::writeToLog("File exists:"+String(csdFile.getFullPathName()));
+		
+	}
     else
+	{
         Logger::writeToLog("File doesn't exist"+String(csdFile.getFullPathName()));
+	}
 
     File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
-
     csdFile.setAsCurrentWorkingDirectory();
+
+
 
     StringArray tmpArray;
     CabbageGUIClass cAttr;
@@ -455,8 +365,12 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     setOpcodeDirEnv();
 
 #ifndef Cabbage_No_Csound
+#if !defined(AndroidBuild)
     csound = new Csound();
-
+#else
+	csound = new AndroidCsound();
+	//csound->setOpenSlCallbacks(); // for android audio to work
+#endif
 
     csound->SetHostImplementedMIDIIO(true);
 //csound->Reset();
@@ -487,9 +401,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     csdFile.setAsCurrentWorkingDirectory();
     if(csCompileResult==OK)
     {
-
         Logger::writeToLog("compiled Ok");
-        keyboardState.allNotesOff(0);
+		keyboardState.allNotesOff(0);
         keyboardState.reset();
         //simple hack to allow tables to be set up correctly.
         csound->PerformKsmps();
@@ -528,7 +441,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
             csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
         if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
-
+		Logger::writeToLog("everything still good...");
     }
     else
     {
@@ -554,6 +467,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
 
 
     createGUI(csdFile.loadFileAsString(), true);
+	Logger::writeToLog("GUI has been created");
 
 }
 #endif
@@ -565,9 +479,8 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 {
     deleteAndZero(lookAndFeel);
     deleteAndZero(lookAndFeelBasic);
-    Logger::writeToLog("~CabbagePluginAudioProcessor()");
     Logger::setCurrentLogger (nullptr);
-    suspendProcessing(true);
+    stopProcessing = true;
     removeAllChangeListeners();
 #ifndef Cabbage_No_Csound
 
@@ -625,8 +538,9 @@ void CabbagePluginAudioProcessor::YieldCallback(void* data)
 void CabbagePluginAudioProcessor::reCompileCsound(File file)
 {
 #ifndef Cabbage_No_Csound
-    suspendProcessing(true);
-    getCallbackLock().enter();
+    
+	stopProcessing = true;
+    //getCallbackLock().enter();
     midiOutputBuffer.clear();
 //csound->DeleteChannelList(csoundChanList);
 
@@ -733,7 +647,7 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
         csound->SetChannel("CSD_PATH", file.getParentDirectory().getFullPathName().toUTF8().getAddress());
 #endif
 
-        this->suspendProcessing(false);
+        stopProcessing = false;
 
         return;
     }
@@ -864,6 +778,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             ||tokes[0].equalsIgnoreCase(String("infobutton"))
                             ||tokes[0].equalsIgnoreCase(String("filebutton"))
                             ||tokes[0].equalsIgnoreCase(String("soundfiler"))
+							||tokes[0].equalsIgnoreCase(String("texteditor"))
                             ||tokes[0].equalsIgnoreCase(String("popupmenu"))
                             ||tokes[0].equalsIgnoreCase(String("snapshot"))
                             ||tokes[0].equalsIgnoreCase(String("table"))
@@ -1341,19 +1256,30 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 {
 StringArray fdata;
+fdata.add(String::empty);
 #ifndef Cabbage_No_Csound
     if(csCompileResult==OK)
     {
-        MYFLT* temp;
-        int tableSize = csound->GetTable(temp, tableNum);
-        if(tableSize>0)
-        {
-			/*
-            EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
+        MYFLT* argsPtr, *temp;
+		int noOfArgs = -1;//csoundGetTableArgs(csound->GetCsound(), &argsPtr, tableNum);
+		if(noOfArgs!=-1)
+		{
+		int tableSize = csound->GetTable(temp, tableNum);
+		fdata.add(String(tableNum));	
+		fdata.add("0");
+		fdata.add(String(tableSize));
+		for(int i=0;i<noOfArgs;i++)
+		//Logger::writeToLog("TableNum:"+String(tableNum)+" ArgsCount:"+String(noOfArgs));
+			fdata.add(String(argsPtr[i]));
+		}
+        //int tableSize = csound->GetTable(temp, tableNum);
+        //if(tableSize>0)
+        //{
+			//uncomment with dev and modified Csound
+            /*EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
             for(int i=0; i<=e->pcnt; i++)
-                fdata.add(String(e->p[i]));
-				*/
-        }
+                fdata.add(String(e->p[i]));*/
+        //}
     }
 #endif
     return fdata;
@@ -1519,7 +1445,6 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
 
         for(int index=0; index<getGUICtrlsSize(); index++)
         {
-
             if(guiCtrls[index].getStringProp(CabbageIDs::channeltype).equalsIgnoreCase(CabbageIDs::stringchannel))
             {
                 //THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE..
@@ -1545,7 +1470,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 if(channelMessage!="")
                 {
                     guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
-                    guiCtrls.getReference(index).parse(channelMessage, "");
+                    guiCtrls.getReference(index).parse(" "+channelMessage, "");
                     dirtyControls.addIfNotAlreadyThere(index);
                 }
                 //else
@@ -1579,7 +1504,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 //Logger::writeToLog(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel));
                 if(channelMessage!="")
                 {
-                    guiLayoutCtrls.getReference(index).parse(channelMessage, "");
+                    guiLayoutCtrls.getReference(index).parse(" "+channelMessage, "");
                     guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
                 }
                 //else
@@ -1633,8 +1558,8 @@ void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
             //catch string messags
             else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type==CabbageIDs::stringchannel)
             {
-                //Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName);
-                //Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);
+                Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName);
+                Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);
                 csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
                                    messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal.toUTF8().getAddress());
             }
@@ -1644,13 +1569,6 @@ void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
         }
 
         messageQueue.flushOutgoingChannelMessages();
-
-        if(isAutomator)
-        {
-            //sendChangeMessage();
-            //sendActionMessage("update automation:"+String(automationParamID)+"|"+String(automationAmp));
-            //Logger::writeToLog("update automation:"+String(automationAmp));
-        }
     }
 
 #endif
@@ -1734,16 +1652,9 @@ void CabbagePluginAudioProcessor::setGuiEnabled(bool val)
     if(editor)
     {
         if(val==false)
-        {
             if(getPreference(appProperties, "ExternalEditor"))
                 csdFile.replaceWithText(codeEditor->getAllText());
-            //editor->resizer->setVisible(false);
-            //editor->propsWindow->setVisible(false);
-        }
-        else
-        {
-            //editor->resizer->setVisible(true);
-        }
+
     }
 #endif
 }
@@ -1776,6 +1687,7 @@ void CabbagePluginAudioProcessor::prepareToPlay (double sampRate, int samplesPer
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+	//showMessage(String(this->getNumOutputChannels()));
     keyboardState.reset();
     sampleRate = sampRate;
 }
@@ -1803,91 +1715,91 @@ void CabbagePluginAudioProcessor::timerCallback()
 //==============================================================================
 void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-    if(!isSuspended() && !isGuiEnabled())
+    float* audioBuffer;
+	int numSamples = buffer.getNumSamples();
+
+    if(stopProcessing || isGuiEnabled())
     {
-        float* audioBuffer;
-        float lastOutputAmp;
+		buffer.clear();
+	}
+	else{
 #ifndef Cabbage_No_Csound
-        int numSamples = buffer.getNumSamples();
 
-        if(csCompileResult==OK)
-        {
+			if(csCompileResult==OK)
+			{
 
-            keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
-            midiBuffer = midiMessages;
-            ccBuffer = midiMessages;
+				keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
+				midiBuffer = midiMessages;
+				ccBuffer = midiMessages;
 
-            //if no inputs are used clear buffer in case it's not empty..
-            if(getNumInputChannels()==0)
-                buffer.clear();
+				//if no inputs are used clear buffer in case it's not empty..
+				if(getNumInputChannels()==0)
+					buffer.clear();
 
-#if JucePlugin_ProducesMidiOutput
-            if(!midiOutputBuffer.isEmpty())
-                midiMessages.swapWith(midiOutputBuffer);
-#endif
+	#if JucePlugin_ProducesMidiOutput
+				if(!midiOutputBuffer.isEmpty())
+					midiMessages.swapWith(midiOutputBuffer);
+	#endif
 
-
-
-
-            for(int i=0; i<numSamples; i++, csndIndex++)
-            {
-                if(csndIndex == csound->GetKsmps())
-                {
-                    getCallbackLock().enter();
-                    //slow down calls to these functions, no need for them to be firing at k-rate
-                    yieldCounter = (yieldCounter>guiRefreshRate) ? 0 : yieldCounter+1;
-                    if(yieldCounter==0)
-                    {
-                        sendOutgoingMessagesToCsound();
-                        updateCabbageControls();
-                    }
+				for(int i=0; i<numSamples; i++, csndIndex++)
+				{
+					if(csndIndex == csound->GetKsmps())
+					{
+						getCallbackLock().enter();
+						//slow down calls to these functions, no need for them to be firing at k-rate
+						yieldCounter = (yieldCounter>guiRefreshRate) ? 0 : yieldCounter+1;
+						if(yieldCounter==0)
+						{
+							sendOutgoingMessagesToCsound();
+							updateCabbageControls();
+						}
 
 
-                    csCompileResult = csound->PerformKsmps();
+						csCompileResult = csound->PerformKsmps();
 
-                    if(csCompileResult!=OK)
-                        suspendProcessing(true);
-                    else
-                        ksmpsOffset++;
+						if(csCompileResult!=OK)
+							stopProcessing = true;
+						else
+							ksmpsOffset++;
 
-                    getCallbackLock().exit();
-                    csndIndex = 0;
-                }
-                if(csCompileResult==OK)
-                {
-                    for(int channel = 0; channel < getNumOutputChannels(); channel++ )
-                    {
-                        audioBuffer = buffer.getWritePointer(channel,0);
-                        pos = csndIndex*getNumOutputChannels();
-                        CSspin[channel+pos] = audioBuffer[i]*cs_scale;
-                        audioBuffer[i] = (CSspout[channel+pos]/cs_scale);
-                    }
-                }
-                else
-                    buffer.clear();
-
-
-            }
-
-            if (activeWriter != 0 && !isWinXP)
-                activeWriter->write (buffer.getArrayOfReadPointers(), buffer.getNumSamples());
+						getCallbackLock().exit();
+						csndIndex = 0;
+					}
+					if(csCompileResult==OK)
+					{
+						for(int channel = 0; channel < getNumOutputChannels(); channel++ )
+						{
+							audioBuffer = buffer.getWritePointer(channel,0);
+							pos = csndIndex*getNumOutputChannels();
+							CSspin[channel+pos] = audioBuffer[i]*cs_scale;
+							audioBuffer[i] = (CSspout[channel+pos]/cs_scale);
+						}
+					}
+					else
+						buffer.clear();
 
 
-        }//if not compiled just mute output
-        else
-        {
-            for(int channel = 0; channel < getNumInputChannels(); channel++)
-            {
-                audioBuffer = buffer.getWritePointer(channel,0);
-                for(int i=0; i<numSamples; i++, csndIndex++)
-                {
-                    audioBuffer[i]=0;
-                }
-            }
-        }
+				}
 
-#endif
-    }
+				if (activeWriter != 0 && !isWinXP)
+					activeWriter->write (buffer.getArrayOfReadPointers(), buffer.getNumSamples());
+
+
+			}//if not compiled just mute output
+			else
+			{
+				for(int channel = 0; channel < getNumInputChannels(); channel++)
+				{
+					audioBuffer = buffer.getWritePointer(channel,0);
+					for(int i=0; i<numSamples; i++, csndIndex++)
+					{
+						audioBuffer[i]=0;
+					}
+				}
+			}
+
+	#endif
+		}
 
 #if JucePlugin_ProducesMidiOutput
     if(!midiBuffer.isEmpty())

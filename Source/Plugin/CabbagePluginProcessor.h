@@ -47,9 +47,9 @@
 //#endif
 
 #ifdef Cabbage64Bit
-    #define CABBAGE_VERSION "Cabbage(64bit) v0.5.11 Alpha"
+    #define CABBAGE_VERSION "Cabbage(64bit) v0.5.12 Alpha"
 #else
-    #define CABBAGE_VERSION "Cabbage(32bit) v0.5.11 Alpha"
+    #define CABBAGE_VERSION "Cabbage(32bit) v0.5.12 Alpha"
 #endif
 
 #define AUDIO_PLUGIN 1
@@ -287,6 +287,7 @@ public:
     CabbageMessageQueue messageQueue;
     StringArray scoreEvents;
     int averageSampleIndex;
+	bool stopProcessing;
     float outputNo1;
     int pluginType;
     float automationAmp;

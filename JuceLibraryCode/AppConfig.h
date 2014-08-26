@@ -63,7 +63,7 @@
 #endif
 
 #ifndef    JUCE_USE_ANDROID_OPENSLES
-//#define JUCE_USE_ANDROID_OPENSLES
+  #define JUCE_USE_ANDROID_OPENSLES 1
 #endif
 
 #ifndef    JUCE_USE_CDREADER
@@ -112,11 +112,11 @@
 #endif
 
 #ifndef    JUCE_LOG_ASSERTIONS
-//#define JUCE_LOG_ASSERTIONS
+ //#define JUCE_LOG_ASSERTIONS 1
 #endif
 
 #ifndef    JUCE_CHECK_MEMORY_LEAKS
-//#define JUCE_CHECK_MEMORY_LEAKS
+ #define JUCE_CHECK_MEMORY_LEAKS 1
 #endif
 
 #ifndef    JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES
@@ -198,7 +198,7 @@
 #define JucePlugin_MaxNumOutputChannels   2
 #endif
 #ifndef  JucePlugin_PreferredChannelConfigurations
-#define JucePlugin_PreferredChannelConfigurations  {1, 1}, {2, 2}
+#define JucePlugin_PreferredChannelConfigurations  {2,2}//, {4,4}, {6,6}, {8,8}
 #endif
 
 #ifdef Cabbage_Plugin_LV2

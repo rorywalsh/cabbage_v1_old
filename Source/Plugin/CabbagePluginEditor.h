@@ -43,7 +43,7 @@ public:
         : DocumentWindow (title, backgroundColour, DocumentWindow::closeButton)
     {
         this->setInterceptsMouseClicks(true, false);
-        setName("plantWindow");
+        setName(title);
     };
 
     ~CabbagePlantWindow()
@@ -155,6 +155,7 @@ private:
     void InsertDirectoryList(CabbageGUIClass &cAttr);
     void SetupWindow(CabbageGUIClass &cAttr);
     void InsertSlider(CabbageGUIClass &cAttr);
+	void InsertTextEditor(CabbageGUIClass &cAttr);
     void sliderValueChanged (Slider*);
     void InsertButton(CabbageGUIClass &cAttr);
     void InsertCheckBox(CabbageGUIClass &cAttr);
@@ -213,6 +214,7 @@ private:
     }
     bool keyIsPressed;
     bool isMouseDown;
+	bool showScrollbars;
     void positionComponentWithinPlant(String type, float left, float top, float width, float height, Component *layout, Component *control);
     //ScopedPointer<CabbagePlantWindow> subPatch;
     OwnedArray<CabbageButton> plantButton;

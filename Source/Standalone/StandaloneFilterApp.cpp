@@ -55,7 +55,7 @@ public:
         defaultPropSet->setValue("ShowConsoleWithEditor", 0);
         defaultPropSet->setValue("UsingCabbageCsound", 1);
         defaultPropSet->setValue("AudioEnabled", 1);
-        defaultPropSet->setValue("DisableGUIEditModeWarning", 0);
+        defaultPropSet->setValue("DisableGUIEditModeWarning", 1);
         defaultPropSet->setValue("SetAlwaysOnTop", 1);
         defaultPropSet->setValue("PlantRepository", xml);
         defaultPropSet->setValue("EditorColourScheme", 1);

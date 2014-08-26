@@ -31,12 +31,11 @@
 #include "../Plugin/CabbagePluginEditor.h"
 #include "../CabbageAudioDeviceSelectorComponent.h"
 
-//extern AudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter();
 
 //  and make it create an instance of the filter subclass that you're building.
-extern CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int plugType);
+///extern CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int plugType);
 
-
+extern AudioProcessor* JUCE_CALLTYPE createPluginFilter();
 //==============================================================================
 /**
     An object that creates and plays a standalone instance of an AudioProcessor.
@@ -73,19 +72,27 @@ public:
     void createPlugin()
     {
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Standalone);
-        processor = createCabbagePluginFilter("~/test.csd", false, AUDIO_PLUGIN);
-        jassert (processor != nullptr); // Your createPluginFilter() function must return a valid object!
+
+        processor = createPluginFilter();
+		
+        if(processor == nullptr) // Your createPluginFilter() function must return a valid object!
+			CabbageUtils::showMessage("Something not right in plugin");
+
+											  
+		//processor->createGUI(tempFile.loadFileAsString(), true);
+									  
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Undefined);
 
         processor->setPlayConfigDetails (JucePlugin_MaxNumInputChannels,
                                          JucePlugin_MaxNumOutputChannels,
-                                         44100, 512);
+                                         22050, 1024);
     }
 
     void deletePlugin()
     {
         stopPlaying();
         processor = nullptr;
+		Logger::writeToLog("deleting plugin");
     }
 
     static String getFilePatterns (const String& fileSuffix)
@@ -178,12 +185,14 @@ public:
     //==============================================================================
     ScopedPointer<PropertySet> settings;
     ScopedPointer<AudioProcessor> processor;
+	//ScopedPointer<CabbagePluginAudioProcessor> processor;
     AudioDeviceManager deviceManager;
     AudioProcessorPlayer player;
 
 private:
     void setupAudioDevices()
     {
+		Logger::writeToLog("gotcha!!");
         deviceManager.addAudioCallback (&player);
         deviceManager.addMidiInputCallback (String::empty, &player);
 
@@ -198,9 +207,9 @@ private:
         deviceManager.removeAudioCallback (&player);
     }
 
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StandalonePluginHolder)
 };
-
 
 //==============================================================================
 /**
@@ -228,7 +237,7 @@ public:
     {
         setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
 
-        Component::addAndMakeVisible (optionsButton);
+        //Component::addAndMakeVisible (optionsButton);
         optionsButton.addListener (this);
         optionsButton.setTriggeredOnMouseDown (true);
 
@@ -313,13 +322,14 @@ public:
         m.addItem (3, TRANS("Load a saved state..."));
         m.addSeparator();
         m.addItem (4, TRANS("Reset to default state"));
-
+/*
         switch (m.showAt (&optionsButton))
         {
             case 1:  pluginHolder->showAudioSettingsDialog(); break;
             case 4:  resetToDefaultState(); break;
             default: break;
         }
+		*/
     }
 
     void resized() override

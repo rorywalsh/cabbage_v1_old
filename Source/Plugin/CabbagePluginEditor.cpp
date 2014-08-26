@@ -42,7 +42,8 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
       propsWindow(new CabbagePropertiesDialog("Properties")),
 #endif
       xyPadIndex(0),
-      tableBuffer(2, 44100)
+      tableBuffer(2, 44100),
+	  showScrollbars(true)
 {
     //setup swatches for colour selector.
     swatchColours.set(0, Colour(0xFF000000));
@@ -61,9 +62,6 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     swatchColours.set(13, Colour(0x80FFFF00));
     swatchColours.set(14, Colour(0x80FF00FF));
     swatchColours.set(15, Colour(0x8000FFFF));
-
-
-
     setWantsKeyboardFocus(false);
     //set custom skin yo use
     lookAndFeel = new CabbageLookAndFeel();
@@ -206,6 +204,8 @@ CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
     //getFilter()->editorBeingDeleted(this);
     if(presetFileText.length()>1)
         SnapShotFile.replaceWithText(presetFileText);
+		
+	Logger::writeToLog("======EDITOR DECONSTRCUTOR=========");	
 }
 
 //==============================================================================
@@ -221,8 +221,10 @@ void CabbagePluginAudioProcessorEditor::resized()
     if(componentPanel->getWidth()<this->getWidth()+18 && componentPanel->getHeight()<this->getHeight()+18)
         viewport->setScrollBarsShown(false, false);
     else
+		if(showScrollbars)
         viewport->setScrollBarsShown(true, true);
-
+		else
+			viewport->setScrollBarsShown(false, false);
 #endif
 }
 
@@ -331,12 +333,16 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
     {
         InsertXYPad(cAttr);       //insert xypad
     }
-    //}
+    else if(cAttr.getStringProp(CabbageIDs::type)==String("texteditor"))
+    {
+        InsertTextEditor(cAttr);       //insert xypad
+    }
 }
 
 
 //===========================================================================
 //WHEN IN GUI EDITOR MODE THIS CALLBACK WILL NOTIFIY THE HOST OF EVENTS
+//IT CAN ALSO BE CALLED BY OTHER GUI WIDGETS WHEN THEIR STATE CHNANGES
 //===========================================================================
 void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster *source)
 {
@@ -402,6 +408,12 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
             if(gentable->changeMessage == "updateFunctionTable")
                 updatefTableData(gentable);
         }
+
+        CabbageTextEditor* textEditor = dynamic_cast<CabbageTextEditor*>(source);
+        if(textEditor)
+        {
+           getFilter()->messageQueue.addOutgoingChannelMessageToQueue(textEditor->channel, textEditor->getCurrentText(), "string");
+		}
 
         CabbageSoundfiler* soundfiler = dynamic_cast<CabbageSoundfiler*>(source);
         if(soundfiler)
@@ -1188,6 +1200,8 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
         subm.addItem(11, "label");
         subm.addItem(16, "filebutton");
         subm.addItem(17, "numberbox");
+		subm.addItem(18, "texteditor");
+		subm.addItem(19, "textbox");
 //subm.addItem(13, "soundfiler");
         subm.addItem(14, "table");
         subm.addItem(15, "Csound message console");
@@ -1239,6 +1253,10 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
         insertComponentsFromCabbageText(StringArray(String("csoundoutput bounds(")+String(x)+(", ")+String(y)+String(", 360, 200)")), false);
     else if(choice==17)
         insertComponentsFromCabbageText(StringArray(String("numberbox bounds(")+String(x)+(", ")+String(y)+String(", 40, 20), channel(\"numberbox\"), range(0, 100, 0), colour(\"white\")")), false);
+    else if(choice==18)
+        insertComponentsFromCabbageText(StringArray(String("texteditor bounds(")+String(x)+(", ")+String(y)+String(", 40, 20), channel(\"texteditor\"), colour(\"white\")")), false);
+    else if(choice==19)
+        insertComponentsFromCabbageText(StringArray(String("textbox bounds(")+String(x)+(", ")+String(y)+String(", 140, 80), colour(\"white\")")), false);
 
 
     else if(choice>=100)
@@ -1295,7 +1313,7 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 
 
 
-    if(width+left>componentPanel->getWidth())
+    if(width+left>componentPanel->getWidth() && reltoplant.isEmpty())
     {
         componentPanel->setBounds(0, 0, width+left, componentPanel->getHeight());
         viewportComponent->setBounds(0, 0, width+left, componentPanel->getHeight());
@@ -1311,7 +1329,7 @@ void CabbagePluginAudioProcessorEditor::setPositionOfComponent(float left, float
 #endif
     }
 
-    if(top+height>componentPanel->getHeight())
+    if(top+height>componentPanel->getHeight() && reltoplant.isEmpty())
     {
         componentPanel->setBounds(0, 0, componentPanel->getWidth(), top+height);
         viewportComponent->setBounds(0, 0, componentPanel->getWidth(), top+height);
@@ -1748,7 +1766,7 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
     int width = cAttr.getNumProp(CabbageIDs::width);
     int height = cAttr.getNumProp(CabbageIDs::height);
 
-
+	showScrollbars = (bool)cAttr.getNumProp(CabbageIDs::scrollbars);
     if(cAttr.getStringProp(CabbageIDs::colour).isNotEmpty())
         formColour = Colour::fromString(cAttr.getStringProp(CabbageIDs::colour));
     else
@@ -1840,6 +1858,39 @@ void CabbagePluginAudioProcessorEditor::InsertTextbox(CabbageGUIClass &cAttr)
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//      TextEditor widget.
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+void CabbagePluginAudioProcessorEditor::InsertTextEditor(CabbageGUIClass &cAttr)
+{
+    layoutComps.add(new CabbageTextEditor(cAttr));
+    int idx = layoutComps.size()-1;
+    float left = cAttr.getNumProp(CabbageIDs::left);
+    float top = cAttr.getNumProp(CabbageIDs::top);
+    float width = cAttr.getNumProp(CabbageIDs::width);
+    float height = cAttr.getNumProp(CabbageIDs::height);
+    setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
+    layoutComps[idx]->setName("csoundoutput");
+    layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
+    //if control is embedded into a plant don't add mouse listener
+    if(cAttr.getStringProp("plant").isEmpty())
+        layoutComps[idx]->addMouseListener(this, true);
+    dynamic_cast<CabbageTextEditor*>(layoutComps[idx])->editor->setLookAndFeel(lookAndFeel);
+    layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+    layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+    //set visiblilty
+    layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+	//add change listener so we can inform Csound when the contents of the editor changes
+	dynamic_cast<CabbageTextEditor*>(layoutComps[idx])->addChangeListener(this);
+	//dynamic_cast<CabbageTextEditor*>(layoutComps[idx])->sendChangeMessage();
+	
+	//Logger::writeToLog(cAttr.getStringProp(CabbageIDs::channel))
+	if(cAttr.getStringProp(CabbageIDs::text).isNotEmpty() && cAttr.getStringProp(CabbageIDs::channel).isNotEmpty())
+		getFilter()->messageQueue.addOutgoingChannelMessageToQueue(cAttr.getStringProp(CabbageIDs::channel), 
+																   cAttr.getStringProp(CabbageIDs::text), "string");
+}
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //      Info button.
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

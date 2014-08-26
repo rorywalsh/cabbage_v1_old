@@ -40,13 +40,9 @@ class IdentArray : public StringArray
 public:
     IdentArray() : StringArray("tablecolour")
     {
-        //add(",colour(");
+
         add("tablecolours");
         add("bounds");
-        add("colour");
-        //add(" colour(");
-        //add(",colours(");
-        //add(" colours(");
         add("fontcolour");
         add("size");
         add("items");
@@ -58,24 +54,16 @@ public:
         add("guirefresh");
         add("midictrl");
         add("stack");
-        //add(" line(");
-        //add(",line(");
         add("line");
-
         add("populate");
-        //add(",range(");
-        //add(" range(");
         add("range");
         add("amprange");
         add("rangex");
         add("rangey");
         add("plant");
-        //add(",channel(");
-        add("channel");
         add("channeltype");
-        //add(" chan(");
         add("channels");
-        //add(" chans(");
+        add("channel");
         add("name");
         add("textbox");
         add("caption");
@@ -83,7 +71,6 @@ public:
         add("config");
         add("align");
         add("beveltype");
-        add("text");
         add("wrap");
         //add(" mode(");
         //add(",mode(");
@@ -118,6 +105,10 @@ public:
 		add("scroll");
         add("zoom");
 		add("samplerange");
+		add("scrollbars");
+		//colour and text must go at end to prevent fall through
+        add("colour");
+		add("text");
     }
     ~IdentArray()
     {
@@ -139,9 +130,13 @@ static const Identifier min = "min";
 static const Identifier max = "max";
 static const Identifier value = "value";
 static const Identifier channel = "channel";
-static const Identifier colour = "colour";
+static const Identifier outlinecolour = "outlinecolour";
+static const Identifier fillcolour = "fillcolour";
+static const Identifier textcolour = "textcolour";
+static const Identifier trackercolour = "trackercolour";
 static const Identifier tablecolour = "tablecolour";
 static const Identifier fontcolour= "fontcolour";
+static const Identifier colour = "colour";
 static const Identifier items = "items";
 static const Identifier text = "text";
 static const Identifier range = "range";
@@ -152,7 +147,6 @@ static const Identifier basetype = "basetype";
 static const Identifier textbox = "textbox";
 static const Identifier name = "name";
 static const Identifier type = "type";
-static const Identifier trackercolour = "trackercolour";
 static const Identifier sliderskew = "sliderskew";
 static const Identifier sliderincr = "sliderincr";
 static const Identifier midichan = "midichan";
@@ -164,7 +158,6 @@ static const Identifier shape = "shape";
 static const Identifier channeltype = "channeltype";
 static const Identifier comborange = "comborange";
 static const Identifier populate = "populate";
-static const Identifier outlinecolour = "outlinecolour";
 static const Identifier popup = "popup";
 static const Identifier plant = "plant";
 static const Identifier line = "line";
@@ -185,9 +178,7 @@ static const Identifier maxy = "maxy";
 static const Identifier logger = "logger";
 static const Identifier stack = "stack";
 static const Identifier valuex = "valuex";
-static const Identifier fillcolour = "fillcolour";
 static const Identifier valuey = "valuey";
-static const Identifier textcolour = "textcolour";
 static const Identifier pluginid = "pluginid";
 static const Identifier tabs = "tabs";
 static const Identifier wrap = "wrap";
@@ -216,7 +207,7 @@ static const Identifier startpos = "startpos";
 static const Identifier endpos = "endpos";
 static const Identifier show = "show";
 static const Identifier child = "child";
-
+static const Identifier scrollbars = "scrollbars";
 
 //type of widgets/controls/messages
 static const String combobox = "combobox";
@@ -229,6 +220,7 @@ static const String soundfiler = "sounfiler";
 static const String button = "button";
 static const String infobutton = "infobutton";
 static const String filebutton = "filebutton";
+static const String texteditor = "texteditor";
 static const String table = "table";
 static const String gentable = "gentable";
 static const String groupbox = "groupbox";

@@ -14,7 +14,7 @@ set VSTSDKDir=C:\SDKs\vstsdk2.4
 set CABBAGE_SOURCE_DIR=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\cabbage\Source
 set CSOUND_LIBRARY=C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound64\csound6\debug\libcsound64.dll.a
 set COMPILER_FLAGS= -Wall -Wreorder -Wno-strict-aliasing -ggdb -Wno-strict-overflow -static-libgcc -static-libstdc++  -march=x86-64 -g -O0 -std=gnu++0x -mstackrealign
-set OUTPUT_TARGET=Cabbage.exe
+set OUTPUT_TARGET=Cabbage64.exe
 
 IF "%1"=="release" set COMPILER_FLAGS= -Wall -Wreorder -O0 -Wno-strict-aliasing -Wno-strict-overflow  -march=x86-64 -static-libgcc -static-libstdc++ -std=gnu++0x -mstackrealign
 
@@ -62,6 +62,8 @@ g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%C
 g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %CABBAGE_SOURCE_DIR%\CabbagePropertiesDialog.cpp -o build\intermediate\Debug\CabbagePropertiesDialog.o
 
 g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %CABBAGE_SOURCE_DIR%\CabbageTable.cpp -o build\intermediate\Debug\CabbageTable.o
+
+g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %CABBAGE_SOURCE_DIR%\Table.cpp -o build\intermediate\Debug\Table.o
 
 g++.exe %COMPILER_FLAGS% %PREPROCESSOR_DEFS%    -I. -I..\..\JuceLibraryCode -I%CSOUND_INCLUDE_DIR% -I%ASIOSDK2Dir% -I%VSTSDKDir%  -c %CABBAGE_SOURCE_DIR%\ComponentLayoutEditor.cpp -o build\intermediate\Debug\ComponentLayoutEditor.o
 

@@ -20,15 +20,9 @@
 
 
 #include "CabbageGUIClass.h"
-
-
-
-
 //===============================================================================
 // Main Cabbage abstract GUI class
 //===============================================================================
-
-
 CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
     width(0),
     height(0),
@@ -647,7 +641,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
-    //===============csoundoutput==================//
+    //===============textbox==================//
     else if(strTokens[0].trim() == "textbox")
     {
         cabbageIdentifiers.set("basetype", "layout");
@@ -670,6 +664,31 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
+
+    //===============textbox==================//
+    else if(strTokens[0].trim() == "texteditor")
+    {
+        cabbageIdentifiers.set("basetype", "layout");
+        top = 10;
+        left = 10;
+        width = 400;
+        height = 200;
+        cabbageIdentifiers.set(CabbageIDs::top, 10);
+        cabbageIdentifiers.set(CabbageIDs::left, 10);
+        cabbageIdentifiers.set(CabbageIDs::width, 400);
+        cabbageIdentifiers.set(CabbageIDs::text, "");
+        cabbageIdentifiers.set(CabbageIDs::height, 200);
+		cabbageIdentifiers.set(CabbageIDs::channel, "texteditor");
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::black.toString());
+        cabbageIdentifiers.set(CabbageIDs::name, "texteditor");
+        cabbageIdentifiers.set(CabbageIDs::type, "texteditor");
+        cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+        cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+        cabbageIdentifiers.set(CabbageIDs::visible, 1);
+    }
+
+
     //===============vemeter==================//
     else if(strTokens[0].trim() == "vumeter")
     {
@@ -806,6 +825,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::guirefresh, 100);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+		cabbageIdentifiers.set(CabbageIDs::scrollbars, 1);
+		
     }
 
     else if(strTokens[0].trim() == "hostbpm")
@@ -885,20 +906,24 @@ int CabbageGUIClass::parse(String inStr, String identifier)
     {
         //check to see if identifier is part of input string..turn to lowercase first..
         //Logger::writeToLog("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
-        int identPos = str.toLowerCase().replaceCharacters("()", "  ").indexOfWholeWordIgnoreCase(identArray[indx]);
-        if(str.substring(identPos).toLowerCase().contains(identArray[indx]+"("))
-            if(identPos>-1)
-            {
+        //int identPos = str.toLowerCase().replaceCharacters("()", "  ").indexOfWholeWordIgnoreCase(identArray[indx]);
+        //if(str.substring(identPos).toLowerCase().contains(identArray[indx]+"("))
+        int identPos = str.toLowerCase().indexOf(" "+identArray[indx]+"(");
+		if(identPos<0)
+			identPos = str.toLowerCase().indexOf(","+identArray[indx]+"(");			
+		if(identPos>-1)
+            {				
                 String newString = str.substring(identPos+identArray[indx].length());
-                String tstr = newString.substring(newString.indexOf("(")+1, newString.indexOf(0, ")"));
+				//showMessage(newString, nullptr);
+				String tstr = newString.substring(newString.indexOf("(")+1, newString.indexOf(0, ")"));
+				//showMessage(tstr, nullptr);
 
                 if(tstr.length()==0)
                     return 0;
 
-                strTokens.addTokens(tstr.removeCharacters("\t()\""), ",", "\"");
 
-                //for(int i=0;i<strTokens.size();i++)
-                //	showMessage(strTokens[i]);
+
+                strTokens.addTokens(tstr.removeCharacters("\t)\""), ",", "\"");
 
                 if(identArray[indx].equalsIgnoreCase("name"))
                 {
@@ -989,7 +1014,6 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                 else if(identArray[indx].equalsIgnoreCase("shape"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::shape, strTokens[0].trim());
-
                 }
                 else if(identArray[indx].equalsIgnoreCase("outlinecolour"))
                 {
@@ -1480,6 +1504,11 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                     cabbageIdentifiers.set(CabbageIDs::value, strTokens[0].trim().getFloatValue());
                 }
 
+                else if(identArray[indx].equalsIgnoreCase("scrollbars"))
+                {
+                    cabbageIdentifiers.set(CabbageIDs::scrollbars, strTokens[0].trim().getIntValue());
+                }
+				
                 else
                 {
                 }
@@ -1812,8 +1841,8 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
     String temp="";
     String type;
     String colour, fontcolour;
-    String left, top, width, height, colR, colG, colB, colA, min, max, skew, drawmode, tablenumber,resizemode,
-           incr, slidervalue, value, maxx, maxy, minx, miny, valuex, valuey, channel, xchannel, ychannel,
+    String left("0"), top("0"), width("100"), height("50"), colR, colG, colB, colA, min("0"), max("1"), skew("1"), drawmode, tablenumber,resizemode,
+           incr("0.001"), slidervalue, value, maxx, maxy, minx, miny, valuex, valuey, channel, xchannel, ychannel,
            amprange;
     var rgbVals;
     //run through the complete list of identifiers

@@ -41,7 +41,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     AudioEnabled(true),
     isAFileOpen(false),
     standaloneMode(false),
-    updateEditorOutputConsole(false)
+    updateEditorOutputConsole(false),
+	hasEditorBeingOpened(false)
 {
 	
     String defaultCSDFile;
@@ -55,6 +56,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 		defaultCSDFile = File(File::getSpecialLocation(File::currentExecutableFile)).withFileExtension(".csd").getFullPathName();
 	}
     
+										  
 	consoleMessages = "";
     cabbageDance = 0;
     setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
@@ -74,9 +76,9 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     oldLookAndFeel = new LookAndFeel_V1();
 // MOD - Stefano Bonetti
 #ifdef Cabbage_Named_Pipe
-    ipConnection = new socketConnection(*this);
-    pipeOpenedOk = ipConnection->createPipe(String("cabbage"));
-    if(pipeOpenedOk) Logger::writeToLog(String("Namedpipe created ..."));
+//    ipConnection = new socketConnection(*this);
+//    pipeOpenedOk = ipConnection->createPipe(String("cabbage"));
+//    if(pipeOpenedOk) Logger::writeToLog(String("Namedpipe created ..."));
 #endif
 // MOD - End
 
@@ -119,7 +121,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 							  
     //deviceManager->closeAudioDevice();
 
-    filter->suspendProcessing(true);
+    filter->stopProcessing = true;
 
     int runningCabbageIO = getPreference(appProperties, "UseCabbageIO");
     if(runningCabbageIO)
@@ -166,6 +168,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
     //opens a default file that matches the name of the current executable
     //this can be used to create more 'standalone' like apps
+
+	
     if(File(defaultCSDFile).existsAsFile())
     {
         standaloneMode = true;
@@ -244,11 +248,10 @@ void StandaloneFilterWindow::timerCallback()
     //cout << csdFile.getLastModificationTime().toString(true, true, false, false);
     if(cabbageDance)
     {
-        float moveY = sin(yAxis*2*3.14*20/100);
-        float moveX = sin(yAxis*2*3.14*10/100);
+        float moveY = sin(yAxis*2*3.14*5.f/100.f);
+        float moveX = sin(yAxis*2*3.14*5.f/100.f);
         yAxis+=1;
-        this->setTopLeftPosition(this->getScreenX()+(moveX*5), this->getScreenY()+(moveY*10));
-
+        this->setTopLeftPosition(this->getScreenX()+(moveX*10), this->getScreenY()+(moveY*10));
     }
 
 
@@ -423,11 +426,13 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
                 {
                     ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
                     filter->setGuiEnabled(false);
+					//filter->suspendProcessing(false);
                 }
                 else
                 {
                     ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(true);
                     filter->setGuiEnabled(true);
+					//filter->suspendProcessing(true);
 
                     //stopTimer();
                     //setPreference(appProperties, "ExternalEditor", 0);
@@ -438,13 +443,13 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
     else if(message.contains("MENU COMMAND: suspend audio"))
         if(AudioEnabled)
         {
-            filter->suspendProcessing(true);
+            filter->stopProcessing = true;
             AudioEnabled = false;
         }
         else
         {
             AudioEnabled = true;
-            filter->suspendProcessing(false);
+            filter->stopProcessing = false;
         }
     else {}
 #endif
@@ -498,7 +503,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 //first we check that the audio device is up and running ok
     stopTimer();
 
-    filter->suspendProcessing(true);
+    filter->stopProcessing=true;
     deviceManager->addAudioCallback (&player);
 	deviceManager->addMidiInputCallback (String::empty, &player);
 
@@ -648,7 +653,7 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
 {
     const int numIns = filter->getNumInputChannels() <= 0 ? JucePlugin_MaxNumInputChannels : filter->getNumInputChannels();
     const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutputChannels : filter->getNumOutputChannels();
-
+	filter->stopProcessing = true;
     CabbageAudioDeviceSelectorComponent selectorComp (*deviceManager,
             numIns, numIns, numOuts, numOuts,
             true, false, true, false);
@@ -659,6 +664,8 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
     DialogWindow::showModalDialog(TRANS("Audio Settings"), &selectorComp, this, col, true, false, false);
     bool alwaysontop = getPreference(appProperties, "SetAlwaysOnTop");
     setAlwaysOnTop(alwaysontop);
+	resetFilter(true);
+	filter->stopProcessing = false;
 
 }
 //==============================================================================
@@ -756,7 +763,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     m.addSeparator();
     if(!standaloneMode)
     {
-        m.addItem(100, String("Toggle Edit-mode"));
+        if(filter->isGuiEnabled() ==  false)
+		m.addItem(100, String("Edit-mode"), true, false);
+		else
+		m.addItem(100, String("Edit-mode"), true, true);
+			
         m.addSeparator();
         subMenu.clear();
         subMenu.addItem(15, TRANS("Plugin Synth"));
@@ -795,13 +806,13 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         m.addItem(9, TRANS("Show MIDI Debug Information"));
         */
 
-        /*
+        
         	m.addSeparator();
         	if(cabbageDance)
         	m.addItem(99, String("Cabbage Dance"), true, true);
         	else
         	m.addItem(99, String("Cabbage Dance"));
-        */
+        
         subMenu.clear();
 
         if(getPreference(appProperties, "SetAlwaysOnTop"))
@@ -938,7 +949,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                 }
 				
                 showEditorConsole();
-				
+				hasEditorBeingOpened = true;
             }
             else showMessage("Please open or create a file first", lookAndFeel);
         }
@@ -1022,13 +1033,13 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     {
         if(getPreference(appProperties, "AudioEnabled"))
         {
-            filter->suspendProcessing(true);
+            filter->stopProcessing = true;
             setPreference(appProperties, "AudioEnabled", 0);
         }
         else
         {
             AudioEnabled = true;
-            filter->suspendProcessing(false);
+            filter->stopProcessing = false;
             setPreference(appProperties, "AudioEnabled", 1);
         }
     }
@@ -1215,6 +1226,16 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     }
 
     //------- preference disable gui edit warning ------
+    else if(options==99)
+    {
+        cabbageDance=!cabbageDance;
+		if(cabbageDance)
+			startTimer(20);
+		else
+			startTimer(100);
+    }
+	
+    //------- preference disable gui edit warning ------
     else if(options==202)
     {
         toggleOnOffPreference(appProperties, "DisableGUIEditModeWarning");
@@ -1226,15 +1247,19 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             showMessage("", "Warning!! This feature is still under development! Whilst every effort has been made to make it as usable as possible, there might still be some teething problems that need sorting out. If you find a problem, please try to recreate it, note the steps involved, and report it to the Cabbage users forum (www.TheCabbageFoundation.org). Thank you. You may disable this warning in 'Options->Preferences'", lookAndFeel);
         else
         {
-            if(getPreference(appProperties, "ExternalEditor")==0)
-                openTextEditor();
+            //if(getPreference(appProperties, "ExternalEditor")==0)
+            if(hasEditorBeingOpened==false)
+			{
+			openTextEditor();
+			hasEditorBeingOpened = true;
+			}
             if(isAFileOpen == true)
                 if(filter->isGuiEnabled())
                 {
                     if(getPreference(appProperties, "ExternalEditor")==1)
                         csdFile = File(csdFile.getFullPathName());
                     startTimer(100);
-                    filter->suspendProcessing(false);
+                    //filter->suspendProcessing(false);
                     ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
                     filter->setGuiEnabled(false);
                 }
@@ -1242,7 +1267,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                 {
                     ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(true);
                     filter->setGuiEnabled(true);
-                    filter->suspendProcessing(true);
+                    //filter->suspendProcessing(true);
                     stopTimer();
                     //setPreference(appProperties, "ExternalEditor", 0);
                 }
@@ -1520,13 +1545,6 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs)
         int val = getPreference(appProperties, "DisablePluginInfo");
         if(!val)
             showMessage(info, lookAndFeel);
-
-#ifdef Cabbage_Named_Pipe
-        sendMessageToWinXound("CABBAGE_PLUGIN_FILE_UPDATE", csdFile.getFullPathName()+String("|")+loc_csdFile.getFullPathName());
-        csdFile = loc_csdFile;
-        cabbageCsoundEditor->setName(csdFile.getFullPathName());
-        sendMessageToWinXound("CABBAGE_SHOW_MESSAGE|Info", "WinXound has been updated\nyour .csd file");
-#endif
     }
 
 #endif
@@ -1646,7 +1664,7 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
             }
             else
             {
-                newID = cAttr.getStringProp("pluginID");
+                newID = cAttr.getStringProp(CabbageIDs::pluginid);
                 i = csdText.size();
             }
         }
@@ -1663,29 +1681,29 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
     long loc;
     //showMessage(binFile.getFullPathName(), lookAndFeel);
     fstream mFile(binFile.getFullPathName().toUTF8(), ios_base::in | ios_base::out | ios_base::binary);
-    if(mFile.is_open())
+    unsigned char* buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
+	if(mFile.is_open())
     {
         mFile.seekg (0, ios::end);
         file_size = mFile.tellg();
-        unsigned char* buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
         //set plugin ID, do this a few times in case the plugin ID appear in more than one place.
         for(int r=0; r<10; r++)
         {
-            mFile.seekg (0, ios::beg);
-
+			mFile.seekg (0, ios::beg);
             mFile.read((char*)&buffer[0], file_size);
             loc = cabbageFindPluginID(buffer, file_size, pluginID);
             if (loc < 0)
+			{
                 //showMessage(String("Internel Cabbage Error: The pluginID was not found"));
                 break;
+			}
             else
             {
-                //showMessage("The plugin ID was found!");
+                //showMessage(newID);
                 mFile.seekg (loc, ios::beg);
                 mFile.write(newID.toUTF8(), 4);
             }
         }
-
         //set plugin name based on .csd file
         const char *pluginName = "CabbageEffectNam";
         String plugLibName = csdFile.getFileNameWithoutExtension();
@@ -1715,6 +1733,34 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
     return 1;
 }
 
+long StandaloneFilterWindow::cabbageFindPluginID(unsigned char *buf, size_t len, const char *s)
+{
+        long i, j;
+        int slen = strlen(s);
+        long imax = len - slen - 1;
+        long ret = -1;
+        int match;
+
+        for(i=0; i<imax; i++)
+        {
+            match = 1;
+            for (j=0; j<slen; j++)
+			{
+                if (buf[i+j] != s[j])
+                {
+                    match = 0;
+                    break;
+                }
+			}
+            if (match)
+            {
+                ret = i;
+                break;
+            }
+        }
+        //return position of plugin ID
+        return ret;
+    }
 
 //==============================================================================
 // Batch process multiple csd files to convert them to plugins libs.

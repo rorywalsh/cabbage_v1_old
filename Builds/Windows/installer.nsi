@@ -65,16 +65,19 @@ section "install"
 	File /r "..\..\Examples"
 	File /r "..\..\Docs"
 	File /r "..\..\..\CsoundDocs"
+
 	# File /r "..\..\..\CsoundLibs\CsoundPlugins"
 	File "build\CabbagePluginSynth.dat"
 	File "build\CabbagePluginEffect.dat"
 	File "build\opcodes.txt"
-           
+	File "..\..\..\csound\build\csound64.dll"
+    
+    File /r "..\..\..\csound\build\auxLibs"       
 	File "..\..\..\csound\build\cellular.dll"
 	File "..\..\..\csound\build\cs_date.dll"
 	File "..\..\..\csound\build\csladspa.dll"
 	File "..\..\..\csound\build\csnd6.dll"
-	File "..\..\..\csound\build\csound64.dll"
+
 	File "..\..\..\csound\build\doppler.dll"
 	File "..\..\..\csound\build\fareygen.dll"
 	File "..\..\..\csound\build\fractalnoise.dll"
@@ -83,10 +86,14 @@ section "install"
 	File "..\..\..\csound\build\libportaudio-2.dll"
 	File "..\..\..\csound\build\libsndfile-1.dll"
 	File "..\..\..\csound\build\mixer.dll"
+<<<<<<< HEAD
 	File "..\..\..\csound\build\osc.dll"
 	File "..\..\..\csound\build\liblo-7.dll"
 	File "..\..\..\csound\build\platerev.dll"
 	File "..\..\..\csound\build\py.dll"
+=======
+	File "..\..\..\csound\build\platerev.dll"
+>>>>>>> develop
 #	File "..\..\..\csound\build\rtpa.dll"
 #	File "..\..\..\csound\build\rtwinmm.dll"
 	File "..\..\..\csound\build\scansyn.dll"
@@ -100,7 +107,15 @@ section "install"
 	File "..\..\..\MingwLibs\libstdc++-6.dll"
 	File "..\..\..\MingwLibs\msvcr110.dll"
 
+<<<<<<< HEAD
  
+=======
+#	File "..\..\..\csound\build\osc.dll"
+#	File "..\..\..\csound\build\liblo-7.dll"
+#	File "..\..\..\csound\build\py.dll"
+	
+
+>>>>>>> develop
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
 	writeUninstaller "$INSTDIR\Uninstall-Cabbage32.exe"
  

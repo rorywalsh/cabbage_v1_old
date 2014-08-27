@@ -27,7 +27,7 @@
 #ifndef SPLITCOMPONENT_H_INCLUDED
 #define SPLITCOMPONENT_H_INCLUDED
 
-#include "JuceHeader.h"
+#include "../../JuceLibraryCode/JuceHeader.h"
 
 
 

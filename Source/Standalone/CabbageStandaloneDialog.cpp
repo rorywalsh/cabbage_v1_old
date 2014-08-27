@@ -1681,12 +1681,13 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
     long loc;
     //showMessage(binFile.getFullPathName(), lookAndFeel);
     fstream mFile(binFile.getFullPathName().toUTF8(), ios_base::in | ios_base::out | ios_base::binary);
-    unsigned char* buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
+    
 	if(mFile.is_open())
     {
         mFile.seekg (0, ios::end);
         file_size = mFile.tellg();
-        //set plugin ID, do this a few times in case the plugin ID appear in more than one place.
+        unsigned char* buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
+		//set plugin ID, do this a few times in case the plugin ID appear in more than one place.
         for(int r=0; r<10; r++)
         {
 			mFile.seekg (0, ios::beg);

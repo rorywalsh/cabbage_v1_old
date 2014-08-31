@@ -39,6 +39,8 @@ juce_ImplementSingleton (IdentArray);
 #define OK 0
 #endif
 
+//==================================================================
+
 //==============================================================================
 // There are two different CabbagePluginAudioProcessor constructors. One for the
 // standalone application and the other for the plugin library
@@ -85,16 +87,18 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      isWinXP(false),
      ksmpsOffset(0),
      breakCount(0),
-	 stopProcessing(false)
+	 stopProcessing(false),
+     oscThread()
 {
-
+//======OSC hack=====================	
+	
 //suspendProcessing(true);
     codeEditor = nullptr;
     backgroundThread.startThread();
 
     setPlayConfigDetails(2, 2, 44100, 512);
 
-
+    oscThread.run();
 //set up file logger if needed..
     StringArray tmpArray;
     CabbageGUIClass cAttr;
@@ -482,6 +486,8 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
     Logger::setCurrentLogger (nullptr);
     stopProcessing = true;
     removeAllChangeListeners();
+
+    oscThread.stopThread(10);
 #ifndef Cabbage_No_Csound
 
     xyAutomation.clear();

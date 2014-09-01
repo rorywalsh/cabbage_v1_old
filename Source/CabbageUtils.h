@@ -409,7 +409,7 @@ public:
     }
 
 //======= method for retrieve the string values of rectangles..
-    static	String getBoundsString(Rectangle<int> currentBounds)
+    static	String getBoundsString(juce::Rectangle<int> currentBounds)
     {
         return "bounds(" + String(currentBounds.getX()) + String(", ") + String(currentBounds.getY()) + String(", ") + String(currentBounds.getWidth()) + String(", ")
                + String(currentBounds.getHeight()) + String(")");

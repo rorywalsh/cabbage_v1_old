@@ -40,6 +40,51 @@ juce_ImplementSingleton (IdentArray);
 #endif
 
 //==================================================================
+OscThread::OscThread() : Thread("name")
+{
+	sock.setAddress("127.0.0.1");
+	sock.setPort(7000);
+	sock.bindSocket();
+}
+ 
+void OscThread::run()
+{
+	while(!threadShouldExit())
+		{
+		long size;
+		char* data = sock.getData(size);
+		if(size>10)
+		{
+			if(OSC::Message::isMessage(data, size))
+			{
+				Logger::writeToLog("Message:"+String(data));
+				OSC::Message message(data, size);
+				int numMessages = message.getNumFloats();
+					for(int y=0;y<numMessages;y++)
+						Logger::writeToLog("Message DATA:"+String(message.getFloat(y)));
+				//CabbageUtils::showMessage(message.getData());				
+			}
+			else if(OSC::Bundle::isBundle(data, size))
+			{
+				Logger::writeToLog("Bundle:"+String(data));
+				OSC::Bundle bundle(data, size);
+				int numMessages = bundle.getNumMessages();
+				for(int i=0;i<numMessages;i++)
+				{
+					Logger::writeToLog(String(bundle.getMessage(i)->getData()));
+					for(int y=0;y<bundle.getMessage(i)->getNumFloats();y++)
+						Logger::writeToLog("BUNDLE DATA:"+String(bundle.getMessage(i)->getFloat(y)));
+					for(int y=0;y<bundle.getMessage(i)->getNumInts();y++)
+						Logger::writeToLog("BUNDLE DATA:"+String(int(bundle.getMessage(i)->getInt(y))));
+					for(int y=0;y<bundle.getMessage(i)->getNumStrings();y++)
+						Logger::writeToLog("BUNDLE DATA:"+bundle.getMessage(i)->getString(y));
+				}
+				
+			}				
+		}
+		data = nullptr;
+		}
+}
 
 //==============================================================================
 // There are two different CabbagePluginAudioProcessor constructors. One for the
@@ -88,17 +133,15 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      ksmpsOffset(0),
      breakCount(0),
 	 stopProcessing(false),
-     oscThread()
+     oscThread(new OscThread())
 {
-//======OSC hack=====================	
-	
 //suspendProcessing(true);
     codeEditor = nullptr;
     backgroundThread.startThread();
 
     setPlayConfigDetails(2, 2, 44100, 512);
 
-    oscThread.run();
+    oscThread->startThread();
 //set up file logger if needed..
     StringArray tmpArray;
     CabbageGUIClass cAttr;
@@ -487,7 +530,7 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
     stopProcessing = true;
     removeAllChangeListeners();
 
-    oscThread.stopThread(10);
+    //oscThread.stopThread(10);
 #ifndef Cabbage_No_Csound
 
     xyAutomation.clear();
@@ -1149,6 +1192,8 @@ void CabbagePluginAudioProcessor::messageCallback(CSOUND* csound, int /*attr*/, 
     ud->debugMessage = "";
     ud = nullptr;
 }
+
+
 #endif
 
 #if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)

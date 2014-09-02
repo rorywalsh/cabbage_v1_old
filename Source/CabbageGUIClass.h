@@ -106,6 +106,7 @@ public:
         add("zoom");
 		add("samplerange");
 		add("scrollbars");
+		add("socket");
 		//colour and text must go at end to prevent fall through
         add("colour");
 		add("text");
@@ -208,6 +209,8 @@ static const Identifier endpos = "endpos";
 static const Identifier show = "show";
 static const Identifier child = "child";
 static const Identifier scrollbars = "scrollbars";
+static const Identifier oscport = "oscport";
+static const Identifier oscaddress = "oscaddress";
 
 //type of widgets/controls/messages
 static const String combobox = "combobox";

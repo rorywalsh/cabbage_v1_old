@@ -76,13 +76,25 @@ class OscThread;
 //==================================================================
 #define PORT 7000
 
-class OscThread : public Thread
+class OscThread : public Thread, public ChangeBroadcaster
 {
 private:
+	///	The socket we're sending our data through.
 	UDPSocket sock;
+	///	Bundle sent when the user drags an xy pad.
+	OSC::Bundle bundle;
+	CabbageMessageQueue messageQue;
+	StringArray channels;
 public:
     OscThread();
     ~OscThread(){}
+	CabbageMessageQueue getMessages(){
+		return messageQue;
+	}
+	void sendOSC(String message, float value);
+	void setupSocket(const String address, int port);
+	void setCsoundChannels(StringArray channels);
+	void flushOSCMessages();
     void run();
 };
 //==============================================================================
@@ -113,6 +125,11 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     bool updateTable;
     Array<int> tableNumbers;
     AudioPlayHead::CurrentPositionInfo hostInfo;
+	
+	StringArray oscChannelIdentifiers;
+	NamedValueSet oscChannelValues;
+	String oscAddress;
+	int oscPort;
 
     ScopedPointer<FileLogger> fileLogger;
     bool createLog;

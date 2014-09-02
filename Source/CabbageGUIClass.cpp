@@ -73,6 +73,12 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 
 
     }
+    else if(strTokens[0].trim() == "oscmessages")
+    {
+        cabbageIdentifiers.set(CabbageIDs::basetype, "layout");
+        cabbageIdentifiers.set(CabbageIDs::oscaddress, "");
+        cabbageIdentifiers.set(CabbageIDs::oscaddress, 0);
+	}
     else if(strTokens[0].trim() == "vslider")
     {
         cabbageIdentifiers.set(CabbageIDs::basetype, "interactive");
@@ -1156,7 +1162,18 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                 //numeric paramters
                 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+                else if(identArray[indx].equalsIgnoreCase("socket"))
+                {
+                    if(strTokens.size()>=2)
+                    {
+                        //sizeText = identArray.getReference(indx)+tstr+")";
+                        String address = strTokens[0].trim();
+                        int port = strTokens[1].trim().getIntValue();
+                        cabbageIdentifiers.set(CabbageIDs::oscaddress, address);
+                        cabbageIdentifiers.set(CabbageIDs::oscport, port);
+                    }
+                }
+				
                 else if(identArray[indx].equalsIgnoreCase("size"))
                 {
                     if(strTokens.size()>=2)

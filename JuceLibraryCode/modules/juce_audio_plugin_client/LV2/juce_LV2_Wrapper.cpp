@@ -261,6 +261,9 @@ const String makePluginFile (AudioProcessor* const filter)
     text += "<" + getPluginURI() + ">\n";
     text += "    a " + getPluginType() + " ;\n";
     text += "    lv2:requiredFeature <" LV2_BUF_SIZE__boundedBlockLength "> ,\n";
+#if JucePlugin_WantsLV2FixedBlockLength
+    text += "                        <" LV2_BUF_SIZE__fixedBlockLength "> ,\n";
+#endif
     text += "                        <" LV2_URID__map "> ;\n";
     text += "    lv2:extensionData <" LV2_OPTIONS__interface "> ,\n";
 #if JucePlugin_WantsLV2State
@@ -332,6 +335,7 @@ const String makePluginFile (AudioProcessor* const filter)
     text += "        lv2:symbol \"lv2_latency\" ;\n";
     text += "        lv2:name \"Latency\" ;\n";
     text += "        lv2:designation <" LV2_CORE__latency "> ;\n";
+    text += "        lv2:portProperty lv2:reportsLatency, lv2:integer ;\n";
     text += "    ] ;\n";
     text += "\n";
 
@@ -504,7 +508,7 @@ const String makePresetsFile (AudioProcessor* const filter)
 /** Creates manifest.ttl, plugin.ttl and presets.ttl files */
 void createLv2Files(const char* basename)
 {
-    ScopedJuceInitialiser_GUI juceInitialiser;
+    const ScopedJuceInitialiser_GUI juceInitialiser;
     ScopedPointer<AudioProcessor> filter (createPluginFilterOfType (AudioProcessor::wrapperType_VST)); // FIXME
 
     String binary(basename);
@@ -549,34 +553,24 @@ public:
 
     ~SharedMessageThread()
     {
-        signalThreadShouldExit();
-        JUCEApplication::quit();
+        MessageManager::getInstance()->stopDispatchLoop();
         waitForThreadToExit (5000);
-        clearSingletonInstance();
     }
 
-    void run()
+    void run() override
     {
-        initialiseJuce_GUI();
-        initialised = true;
+        const ScopedJuceInitialiser_GUI juceInitialiser;
 
         MessageManager::getInstance()->setCurrentThreadAsMessageThread();
+        initialised = true;
 
-        while ((! threadShouldExit()) && MessageManager::getInstance()->runDispatchLoopUntil (250))
-        {}
+        MessageManager::getInstance()->runDispatchLoop();
     }
-
-    juce_DeclareSingleton (SharedMessageThread, false);
 
 private:
     bool initialised;
 };
-
-juce_ImplementSingleton (SharedMessageThread)
-
 #endif
-
-static Array<void*> activePlugins;
 
 //==============================================================================
 /**
@@ -903,6 +897,8 @@ public:
 
     void lv2Cleanup()
     {
+        const MessageManagerLock mmLock;
+
         if (isExternal)
         {
             if (isTimerRunning())
@@ -1221,12 +1217,12 @@ public:
         progDesc.bank = 0;
         progDesc.program = 0;
         progDesc.name = nullptr;
-
-        activePlugins.add (this);
     }
 
     ~JuceLv2Wrapper ()
     {
+        const MessageManagerLock mmLock;
+
         ui = nullptr;
         filter = nullptr;
 
@@ -1235,9 +1231,6 @@ public:
 
         portControls.clear();
         lastControlValues.clear();
-
-        jassert (activePlugins.contains (this));
-        activePlugins.removeFirstMatchingValue (this);
     }
 
     //==============================================================================
@@ -1505,7 +1498,7 @@ public:
 
                 while (i.getNextEvent (midiEventData, midiEventSize, midiEventPosition))
                 {
-                    jassert (midiEventPosition >= 0 && midiEventPosition < sampleCount);
+                    jassert (midiEventPosition >= 0 && midiEventPosition < (int)sampleCount);
 
                     if (sizeof(LV2_Atom_Event) + midiEventSize > capacity - offset)
                         break;
@@ -1635,8 +1628,8 @@ public:
     {
         jassert (filter != nullptr);
 
-        size_t size;
-        uint32 type;
+        size_t size = 0;
+        uint32 type = 0;
         const void* data = retrieve (stateHandle,
 #if JucePlugin_WantsLV2StateString
                                      uridMap->map(uridMap->handle, JUCE_LV2_STATE_STRING_URI),
@@ -1644,6 +1637,9 @@ public:
                                      uridMap->map(uridMap->handle, JUCE_LV2_STATE_BINARY_URI),
 #endif
                                      &size, &type, &flags);
+
+        if (data == nullptr || size == 0 || type == 0)
+            return LV2_STATE_ERR_UNKNOWN;
 
 #if JucePlugin_WantsLV2StateString
         if (type == uridMap->map (uridMap->handle, LV2_ATOM__String))
@@ -1688,6 +1684,8 @@ public:
     JuceLv2UIWrapper* getUI (LV2UI_Write_Function writeFunction, LV2UI_Controller controller, LV2UI_Widget* widget,
                              const LV2_Feature* const* features, bool isExternal)
     {
+        const MessageManagerLock mmLock;
+
         if (ui != nullptr)
             ui->resetIfNeeded (writeFunction, controller, widget, features);
         else
@@ -1697,6 +1695,12 @@ public:
     }
 
 private:
+#if JUCE_LINUX
+    SharedResourcePointer<SharedMessageThread> msgThread;
+#else
+    SharedResourcePointer<ScopedJuceInitialiser_GUI> sharedJuceGUI;
+#endif
+
     ScopedPointer<AudioProcessor> filter;
     ScopedPointer<JuceLv2UIWrapper> ui;
     HeapBlock<float*> channels;
@@ -1747,20 +1751,6 @@ private:
 
 static LV2_Handle juceLV2_Instantiate (const LV2_Descriptor*, double sampleRate, const char*, const LV2_Feature* const* features)
 {
-    JUCE_AUTORELEASEPOOL
-
-    if (activePlugins.size() == 0)
-    {
-        initialiseJuce_GUI();
-#if JUCE_LINUX
-        SharedMessageThread::getInstance();
-#endif
-    }
-
-#if JUCE_LINUX
-    MessageManagerLock mmLock;
-#endif
-
     return new JuceLv2Wrapper (sampleRate, features);
 }
 
@@ -1788,22 +1778,7 @@ static void juceLV2_Deactivate (LV2_Handle handle)
 
 static void juceLV2_Cleanup (LV2_Handle handle)
 {
-    JUCE_AUTORELEASEPOOL
-
-    {
-#if JUCE_LINUX
-        MessageManagerLock mmLock;
-#endif
-        delete handlePtr;
-    }
-
-    if (activePlugins.size() == 0)
-    {
-#if JUCE_LINUX
-        SharedMessageThread::deleteInstance();
-#endif
-        shutdownJuce_GUI();
-    }
+    delete handlePtr;
 }
 
 //==============================================================================
@@ -1865,9 +1840,6 @@ static const void* juceLV2_ExtensionData (const char* uri)
 static LV2UI_Handle juceLV2UI_Instantiate (LV2UI_Write_Function writeFunction, LV2UI_Controller controller,
                                            LV2UI_Widget* widget, const LV2_Feature* const* features, bool isExternal)
 {
-    JUCE_AUTORELEASEPOOL
-    const MessageManagerLock mmLock;
-
     for (int i = 0; features[i] != nullptr; ++i)
     {
         if (strcmp(features[i]->URI, LV2_INSTANCE_ACCESS_URI) == 0 && features[i]->data != nullptr)
@@ -1895,8 +1867,6 @@ static LV2UI_Handle juceLV2UI_InstantiateParent (const LV2UI_Descriptor*, const 
 
 static void juceLV2UI_Cleanup (LV2UI_Handle handle)
 {
-    const MessageManagerLock mmLock;
-
     ((JuceLv2UIWrapper*)handle)->lv2Cleanup();
 }
 

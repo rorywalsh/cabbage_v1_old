@@ -770,11 +770,19 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 			
         m.addSeparator();
         subMenu.clear();
+#ifdef LINUX
+        // Make distinction between LV2 and VST on Linux
+        subMenu.addItem(17, TRANS("LV2 Plugin Synth"));
+        subMenu.addItem(18, TRANS("LV2 Plugin Effect"));
+        subMenu.addItem(15, TRANS("VST Plugin Synth"));
+        subMenu.addItem(16, TRANS("VST Plugin Effect"));
+#else
         subMenu.addItem(15, TRANS("Plugin Synth"));
         subMenu.addItem(16, TRANS("Plugin Effect"));
-#ifdef MACOSX
+ #ifdef MACOSX
         subMenu.addItem(150, TRANS("Plugin Synth(Csound bundle)"));
         subMenu.addItem(160, TRANS("Plugin Effect(Csound bundle)"));
+ #endif
 #endif
         m.addSubMenu(TRANS("Export..."), subMenu);
 
@@ -1050,6 +1058,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
     else if(options==16)
         exportPlugin(String("VST"), false);
+
+    else if(options==17)
+        exportPlugin(String("LV2-ins"), false);
+
+    else if(options==18)
+        exportPlugin(String("LV2-fx"), false);
 
     //----- export ------
     else if(options==150)
@@ -1478,6 +1492,10 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs)
             VST = currentApplicationDirectory + String("/CabbagePluginSynth.so");
         else if(type.contains(String("VST")))
             VST = currentApplicationDirectory + String("/CabbagePluginEffect.so");
+        else if(type.contains(String("LV2-ins")))
+            VST = currentApplicationDirectory + String("/CabbagePluginSynthLV2.so");
+        else if(type.contains(String("LV2-fx")))
+            VST = currentApplicationDirectory + String("/CabbagePluginEffectLV2.so");
         else if(type.contains(String("AU")))
         {
             showMessage("", "This feature only works on computers running OSX", lookAndFeel, this);
@@ -1493,11 +1511,38 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs)
 
         else
         {
-            File dll(saveFC.getResult().withFileExtension(".so").getFullPathName());
-            Logger::writeToLog(dll.getFullPathName());
-            if(!VSTData.copyFileTo(dll))	showMessage("", "Can not move lib", lookAndFeel, this);
-            File loc_csdFile(saveFC.getResult().withFileExtension(".csd").getFullPathName());
-            loc_csdFile.replaceWithText(csdFile.loadFileAsString());
+            if (type.contains("LV2"))
+            {
+                String filename(saveFC.getResult().getFileNameWithoutExtension());
+                File bundle(saveFC.getResult().withFileExtension(".lv2").getFullPathName());
+                bundle.createDirectory();
+                File dll(bundle.getChildFile(filename+".so"));
+                Logger::writeToLog(bundle.getFullPathName());
+                Logger::writeToLog(dll.getFullPathName());
+                if(!VSTData.copyFileTo(dll)) showMessage("", "Can not move lib", lookAndFeel, this);
+                File loc_csdFile(bundle.getChildFile(filename+".csd").getFullPathName());
+                loc_csdFile.replaceWithText(csdFile.loadFileAsString());
+
+                // this generates the ttl data
+                typedef void (*TTL_Generator_Function)(const char* basename);
+                DynamicLibrary lib(dll.getFullPathName());
+                TTL_Generator_Function genFunc = (TTL_Generator_Function)lib.getFunction("lv2_generate_ttl");
+                if(!genFunc) { showMessage("", "Can not generate LV2 data", lookAndFeel, this); return 1; }
+
+                // change CWD for ttl generation
+                File oldCWD(File::getCurrentWorkingDirectory());
+                bundle.setAsCurrentWorkingDirectory();
+                (genFunc)(filename.toRawUTF8());
+                oldCWD.setAsCurrentWorkingDirectory();
+            }
+            else
+            {
+                File dll(saveFC.getResult().withFileExtension(".so").getFullPathName());
+                Logger::writeToLog(dll.getFullPathName());
+                if(!VSTData.copyFileTo(dll))	showMessage("", "Can not move lib", lookAndFeel, this);
+                File loc_csdFile(saveFC.getResult().withFileExtension(".csd").getFullPathName());
+                loc_csdFile.replaceWithText(csdFile.loadFileAsString());
+            }
         }
     }
 #elif WIN32

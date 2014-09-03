@@ -20,7 +20,7 @@ endif
 ifeq ($(CONFIG),Debug)
   BINDIR := build
   LIBDIR := build
-  OBJDIR := build/intermediate/Debug
+  OBJDIR := build/intermediate-standalone/Debug
   OUTDIR := build
 
   ifeq ($(TARGET_ARCH),)
@@ -40,7 +40,7 @@ endif
 ifeq ($(CONFIG),Release)
   BINDIR := build
   LIBDIR := build
-  OBJDIR := build/intermediate/Release
+  OBJDIR := build/intermediate-standalone/Release
   OUTDIR := build
 
   ifeq ($(TARGET_ARCH),)

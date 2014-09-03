@@ -69,7 +69,9 @@ OBJECTS := \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
+  $(OBJDIR)/Table_35ae1cd9.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
+  $(OBJDIR)/OscPack_93b60b4b.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
   $(OBJDIR)/juce_audio_formats_d349f0c8.o \
@@ -178,6 +180,11 @@ $(OBJDIR)/XYPad_6eaa3453.o: ../../Source/XYPad.cpp
 $(OBJDIR)/XYPadAutomation_2865c48a.o: ../../Source/XYPadAutomation.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling XYPadAutomation.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/OscPack_93b60b4b.o: ../../Source/OscPack.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling OscPack.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/juce_audio_basics_2442e4ea.o: ../../JuceLibraryCode/modules/juce_audio_basics/juce_audio_basics.cpp

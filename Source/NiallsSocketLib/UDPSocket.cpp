@@ -26,6 +26,7 @@
 #include <sys/select.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <unistd.h>
 #endif
 #include "UDPSocket.h"
 

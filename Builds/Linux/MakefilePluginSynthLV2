@@ -24,10 +24,10 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := -march=native
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_Plugin_LV2=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -D "Cabbage_Plugin_Synth=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  CPPFLAGS := $(DEPFLAGS) -DJucePlugin_Build_LV2=1 -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_Plugin_LV2=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -D "Cabbage_Plugin_Synth=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -g -ggdb -fPIC -O0
   CXXFLAGS += $(CFLAGS)
-  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -L/usr/X11R6/lib/ -lGL -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64
+  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -L/usr/X11R6/lib/ -lGL -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile` -Wl,--no-undefined
   LDDEPS :=
   RESFLAGS :=  -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := CabbagePluginSynthLV2.so
@@ -44,10 +44,10 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := -march=native
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "Cabbage_Plugin_Synth=1" -D "_DEBUG=1" -D "Cabbage_Plugin_LV2=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  CPPFLAGS := $(DEPFLAGS) -DJucePlugin_Build_LV2=1 -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "Cabbage_Plugin_Synth=1" -D "_DEBUG=1" -D "Cabbage_Plugin_LV2=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -fPIC -Os
   CXXFLAGS += $(CFLAGS)
-  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -fvisibility=hidden -L/usr/X11R6/lib/ -lGL -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64
+  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -fvisibility=hidden -L/usr/X11R6/lib/ -lGL -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile` -Wl,--no-undefined
   LDDEPS :=
   RESFLAGS := -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_Plugin_Synth=1"  -D "USE_DOUBLE=1" -D "Cabbage_Plugin_LV2=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := CabbagePluginSynthLV2.so
@@ -69,7 +69,9 @@ OBJECTS := \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
+  $(OBJDIR)/Table_35ae1cd9.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
+  $(OBJDIR)/OscPack_93b60b4b.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
   $(OBJDIR)/juce_audio_formats_d349f0c8.o \
@@ -84,7 +86,7 @@ OBJECTS := \
   $(OBJDIR)/juce_gui_extra_7767d6a8.o \
   $(OBJDIR)/juce_opengl_c7e3506c.o \
   $(OBJDIR)/juce_PluginUtilities_e2e19a34.o \
-  $(OBJDIR)/juce_VST_Wrapper_bb62e93d.o \
+  $(OBJDIR)/juce_LV2_Wrapper_bb62e93d.o \
 
 .PHONY: clean
 
@@ -180,6 +182,11 @@ $(OBJDIR)/XYPadAutomation_2865c48a.o: ../../Source/XYPadAutomation.cpp
 	@echo "Compiling XYPadAutomation.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/OscPack_93b60b4b.o: ../../Source/OscPack.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling OscPack.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
 $(OBJDIR)/juce_audio_basics_2442e4ea.o: ../../JuceLibraryCode/modules/juce_audio_basics/juce_audio_basics.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling juce_audio_basics.cpp"
@@ -250,9 +257,9 @@ $(OBJDIR)/juce_PluginUtilities_e2e19a34.o: ../../JuceLibraryCode/modules/juce_au
 	@echo "Compiling juce_PluginUtilities.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/juce_VST_Wrapper_bb62e93d.o: ../../JuceLibraryCode/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp
+$(OBJDIR)/juce_LV2_Wrapper_bb62e93d.o: ../../JuceLibraryCode/modules/juce_audio_plugin_client/LV2/juce_LV2_Wrapper.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_VST_Wrapper.cpp"
+	@echo "Compiling juce_LV2_Wrapper.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 -include $(OBJECTS:%.o=%.d)

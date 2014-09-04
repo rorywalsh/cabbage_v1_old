@@ -10,9 +10,6 @@ CSOUND_INCLUDE ?= "/usr/local/include/csound"
 # Default Csound library path
 CSOUND_LIBRARY ?= "/usr/local/lib"
 
-# Default oscPack library path
-OSCPACK_LIBRARY ?= "/home/rory/sourcecode/oscpack_1_1_0"
-
 ifndef CONFIG
   CONFIG=Debug
 endif
@@ -58,6 +55,10 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS := \
+  $(OBJDIR)/OSCBundle.o \
+  $(OBJDIR)/OSCMessage.o \
+  $(OBJDIR)/OSCTimeTag.o \
+  $(OBJDIR)/UDPSocket.o \
   $(OBJDIR)/BinaryData_5ba7f54.o \
   $(OBJDIR)/CabbageCallOutBox_1ced38fd.o \
   $(OBJDIR)/CabbageGUIClass_79b9049f.o \
@@ -81,19 +82,18 @@ OBJECTS := \
   $(OBJDIR)/StandaloneFilterApp_d9ee3663.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
-  $(OBJDIR)/OscPack_93b60b4b.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
   $(OBJDIR)/juce_audio_formats_d349f0c8.o \
   $(OBJDIR)/juce_audio_processors_44a134a2.o \
   $(OBJDIR)/juce_audio_utils_f63b12e8.o \
   $(OBJDIR)/juce_core_aff681cc.o \
-  $(OBJDIR)/juce_cryptography_25c7e826.o \
   $(OBJDIR)/juce_data_structures_bdd6d488.o \
   $(OBJDIR)/juce_events_79b2840.o \
   $(OBJDIR)/juce_graphics_c8f1e7a4.o \
   $(OBJDIR)/juce_gui_basics_a630dd20.o \
   $(OBJDIR)/juce_gui_extra_7767d6a8.o \
+
 
 .PHONY: clean
 
@@ -114,6 +114,26 @@ strip:
 	@echo Stripping CabbageStandalone
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
 
+$(OBJDIR)/OSCBundle.o: ../../Source/NiallsOSCLib/OSCBundle.cpp 
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling OscBundle.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/OSCMessage.o: ../../Source/NiallsOSCLib/OSCMessage.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling OscMessage.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/OSCTimeTag.o: ../../Source/NiallsOSCLib/OSCTimeTag.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling OscTimeTag.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/UDPSocket.o: ../../Source/NiallsSocketLib/UDPSocket.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling UDPSocket.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
 $(OBJDIR)/BinaryData_5ba7f54.o: ../../Source/BinaryData.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling BinaryData.cpp"
@@ -227,11 +247,6 @@ $(OBJDIR)/XYPad_6eaa3453.o: ../../Source/XYPad.cpp
 $(OBJDIR)/XYPadAutomation_2865c48a.o: ../../Source/XYPadAutomation.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling XYPadAutomation.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/OscPack_93b60b4b.o: ../../Source/OscPack.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscPack.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/juce_audio_basics_2442e4ea.o: ../../JuceLibraryCode/modules/juce_audio_basics/juce_audio_basics.cpp

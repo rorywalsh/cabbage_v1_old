@@ -24,13 +24,13 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := -march=native
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -DJucePlugin_Build_LV2=1 -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_Plugin_LV2=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -D "Cabbage_Plugin_Synth=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
-  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -g -ggdb -fPIC -O0
+  CPPFLAGS := $(DEPFLAGS) -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D"BUILD_DEBUGGER=1" -D "Cabbage_Build_Standalone=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=0" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules -I $(CSOUND_INCLUDE)
+  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -std=c++11 -g -ggdb -O0
   CXXFLAGS += $(CFLAGS)
-  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -L/usr/X11R6/lib/ -lGL -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile` -Wl,--no-undefined
+  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64
   LDDEPS :=
-  RESFLAGS :=  -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
-  TARGET := CabbagePluginSynthLV2.so
+  RESFLAGS := -I $(CSOUND_INCLUDE)  -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  TARGET := Cabbage
   BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(TARGET_ARCH)
 endif
 
@@ -44,36 +44,30 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := -march=native
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -DJucePlugin_Build_LV2=1 -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "Cabbage_Plugin_Synth=1" -D "_DEBUG=1" -D "Cabbage_Plugin_LV2=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
-  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -fPIC -Os
+  CPPFLAGS := $(DEPFLAGS) -D "LINUX=1" -D "NDEBUG=1" -D "CSOUND6=1" -D"BUILD_DEBUGGER=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -Os
   CXXFLAGS += $(CFLAGS)
-  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -fvisibility=hidden -L/usr/X11R6/lib/ -lGL -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile` -Wl,--no-undefined
+  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -fvisibility=hidden -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt 
   LDDEPS :=
-  RESFLAGS := -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_Plugin_Synth=1"  -D "USE_DOUBLE=1" -D "Cabbage_Plugin_LV2=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
-  TARGET := CabbagePluginSynthLV2.so
+  RESFLAGS :=  -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  TARGET := Cabbage
   BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(TARGET_ARCH)
 endif
 
 OBJECTS := \
-  $(OBJDIR)/OSCBundle.o \
-  $(OBJDIR)/OSCMessage.o \
-  $(OBJDIR)/OSCTimeTag.o \
-  $(OBJDIR)/UDPSocket.o \
   $(OBJDIR)/BinaryData_5ba7f54.o \
   $(OBJDIR)/CabbageCallOutBox_1ced38fd.o \
   $(OBJDIR)/CabbageGUIClass_79b9049f.o \
   $(OBJDIR)/CabbageLookAndFeel_220a01a6.o \
   $(OBJDIR)/CabbageMainPanel_12c1333.o \
-  $(OBJDIR)/CabbagePropertiesDialog_5e61b3fd.o \
   $(OBJDIR)/CabbageTable_d003e736.o \
-  $(OBJDIR)/ComponentLayoutEditor_aa38c835.o \
-  $(OBJDIR)/csPerfThread_f9d0b9cc.o \
-  $(OBJDIR)/DirectoryContentsComponent_616f5a9f.o \
+  $(OBJDIR)/CommandManager_f4ac7445.o \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
-  $(OBJDIR)/XYPad_6eaa3453.o \
   $(OBJDIR)/Table_35ae1cd9.o \
+  $(OBJDIR)/StandaloneFilterApp_d9ee3663.o \
+  $(OBJDIR)/XYPad_6eaa3453.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
@@ -81,59 +75,31 @@ OBJECTS := \
   $(OBJDIR)/juce_audio_processors_44a134a2.o \
   $(OBJDIR)/juce_audio_utils_f63b12e8.o \
   $(OBJDIR)/juce_core_aff681cc.o \
+  $(OBJDIR)/juce_cryptography_25c7e826.o \
   $(OBJDIR)/juce_data_structures_bdd6d488.o \
   $(OBJDIR)/juce_events_79b2840.o \
   $(OBJDIR)/juce_graphics_c8f1e7a4.o \
   $(OBJDIR)/juce_gui_basics_a630dd20.o \
   $(OBJDIR)/juce_gui_extra_7767d6a8.o \
-  $(OBJDIR)/juce_PluginUtilities_e2e19a34.o \
-  $(OBJDIR)/juce_LV2_Wrapper_bb62e93d.o \
-
 
 .PHONY: clean
 
 $(OUTDIR)/$(TARGET): $(OBJECTS) $(LDDEPS) $(RESOURCES)
-	@echo Linking CabbagePluginSynth
+	@echo Linking CabbageStandalone
 	-@mkdir -p $(BINDIR)
 	-@mkdir -p $(LIBDIR)
 	-@mkdir -p $(OUTDIR)
 	@$(BLDCMD)
 
 clean:
-	@echo Cleaning CabbagePluginSynth
+	@echo Cleaning CabbageStandalone
 	-@rm -f $(OUTDIR)/$(TARGET)
 	-@rm -rf $(OBJDIR)/*
 	-@rm -rf $(OBJDIR)
 
 strip:
-	@echo Stripping CabbagePluginSynth
+	@echo Stripping CabbageStandalone
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
-
-
-$(OBJDIR)/Table_35ae1cd9.o: ../../Source/Table.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling Table.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/OSCBundle.o: ../../Source/NiallsOSCLib/OSCBundle.cpp 
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscBundle.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/OSCMessage.o: ../../Source/NiallsOSCLib/OSCMessage.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscMessage.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/OSCTimeTag.o: ../../Source/NiallsOSCLib/OSCTimeTag.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscTimeTag.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/UDPSocket.o: ../../Source/NiallsSocketLib/UDPSocket.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling UDPSocket.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/BinaryData_5ba7f54.o: ../../Source/BinaryData.cpp
 	-@mkdir -p $(OBJDIR)
@@ -160,29 +126,19 @@ $(OBJDIR)/CabbageMainPanel_12c1333.o: ../../Source/CabbageMainPanel.cpp
 	@echo "Compiling CabbageMainPanel.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/CabbagePropertiesDialog_5e61b3fd.o: ../../Source/CabbagePropertiesDialog.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling CabbagePropertiesDialog.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
 $(OBJDIR)/CabbageTable_d003e736.o: ../../Source/CabbageTable.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CabbageTable.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/ComponentLayoutEditor_aa38c835.o: ../../Source/ComponentLayoutEditor.cpp
+$(OBJDIR)/Table_35ae1cd9.o: ../../Source/Table.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling ComponentLayoutEditor.cpp"
+	@echo "Compiling Table.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/csPerfThread_f9d0b9cc.o: ../../Source/csPerfThread.cpp
+$(OBJDIR)/CommandManager_f4ac7445.o: ../../Source/Editor/CommandManager.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling csPerfThread.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/DirectoryContentsComponent_616f5a9f.o: ../../Source/DirectoryContentsComponent.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling DirectoryContentsComponent.cpp"
+	@echo "Compiling CommandManager.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/CabbagePluginEditor_5a11f64e.o: ../../Source/Plugin/CabbagePluginEditor.cpp
@@ -198,6 +154,11 @@ $(OBJDIR)/CabbagePluginProcessor_73d6661b.o: ../../Source/Plugin/CabbagePluginPr
 $(OBJDIR)/Soundfiler_35ae1cd0.o: ../../Source/Soundfiler.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling Soundfiler.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/StandaloneFilterApp_d9ee3663.o: ../../Source/AndroidStandalone/StandaloneFilterApp.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling StandaloneFilterApp.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/XYPad_6eaa3453.o: ../../Source/XYPad.cpp
@@ -268,21 +229,6 @@ $(OBJDIR)/juce_gui_basics_a630dd20.o: ../../JuceLibraryCode/modules/juce_gui_bas
 $(OBJDIR)/juce_gui_extra_7767d6a8.o: ../../JuceLibraryCode/modules/juce_gui_extra/juce_gui_extra.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling juce_gui_extra.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_opengl_c7e3506c.o: ../../JuceLibraryCode/modules/juce_opengl/juce_opengl.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_opengl.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_PluginUtilities_e2e19a34.o: ../../JuceLibraryCode/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_PluginUtilities.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_LV2_Wrapper_bb62e93d.o: ../../JuceLibraryCode/modules/juce_audio_plugin_client/LV2/juce_LV2_Wrapper.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_LV2_Wrapper.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 -include $(OBJECTS:%.o=%.d)

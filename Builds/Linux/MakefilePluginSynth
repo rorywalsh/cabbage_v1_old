@@ -71,22 +71,23 @@ OBJECTS := \
   $(OBJDIR)/XYPad_6eaa3453.o \
   $(OBJDIR)/Table_35ae1cd9.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
-  $(OBJDIR)/OscPack_93b60b4b.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
   $(OBJDIR)/juce_audio_formats_d349f0c8.o \
   $(OBJDIR)/juce_audio_processors_44a134a2.o \
   $(OBJDIR)/juce_audio_utils_f63b12e8.o \
   $(OBJDIR)/juce_core_aff681cc.o \
-  $(OBJDIR)/juce_cryptography_25c7e826.o \
   $(OBJDIR)/juce_data_structures_bdd6d488.o \
   $(OBJDIR)/juce_events_79b2840.o \
   $(OBJDIR)/juce_graphics_c8f1e7a4.o \
   $(OBJDIR)/juce_gui_basics_a630dd20.o \
   $(OBJDIR)/juce_gui_extra_7767d6a8.o \
-  $(OBJDIR)/juce_opengl_c7e3506c.o \
   $(OBJDIR)/juce_PluginUtilities_e2e19a34.o \
   $(OBJDIR)/juce_VST_Wrapper_bb62e93d.o \
+  $(OBJDIR)/OSCBundle.o \
+  $(OBJDIR)/OSCMessage.o \
+  $(OBJDIR)/OSCTimeTag.o \
+  $(OBJDIR)/UDPSocket.o \
 
 .PHONY: clean
 
@@ -106,6 +107,26 @@ clean:
 strip:
 	@echo Stripping CabbagePluginSynth
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
+
+$(OBJDIR)/OSCBundle.o: ../../Source/NiallsOSCLib/OSCBundle.cpp 
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling OscBundle.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/OSCMessage.o: ../../Source/NiallsOSCLib/OSCMessage.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling OscMessage.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/OSCTimeTag.o: ../../Source/NiallsOSCLib/OSCTimeTag.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling OscTimeTag.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/UDPSocket.o: ../../Source/NiallsSocketLib/UDPSocket.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling UDPSocket.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/BinaryData_5ba7f54.o: ../../Source/BinaryData.cpp
 	-@mkdir -p $(OBJDIR)
@@ -187,11 +208,6 @@ $(OBJDIR)/XYPadAutomation_2865c48a.o: ../../Source/XYPadAutomation.cpp
 	@echo "Compiling XYPadAutomation.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/OscPack_93b60b4b.o: ../../Source/OscPack.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscPack.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
 $(OBJDIR)/juce_audio_basics_2442e4ea.o: ../../JuceLibraryCode/modules/juce_audio_basics/juce_audio_basics.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling juce_audio_basics.cpp"
@@ -222,11 +238,6 @@ $(OBJDIR)/juce_core_aff681cc.o: ../../JuceLibraryCode/modules/juce_core/juce_cor
 	@echo "Compiling juce_core.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/juce_cryptography_25c7e826.o: ../../JuceLibraryCode/modules/juce_cryptography/juce_cryptography.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_cryptography.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
 $(OBJDIR)/juce_data_structures_bdd6d488.o: ../../JuceLibraryCode/modules/juce_data_structures/juce_data_structures.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling juce_data_structures.cpp"
@@ -250,11 +261,6 @@ $(OBJDIR)/juce_gui_basics_a630dd20.o: ../../JuceLibraryCode/modules/juce_gui_bas
 $(OBJDIR)/juce_gui_extra_7767d6a8.o: ../../JuceLibraryCode/modules/juce_gui_extra/juce_gui_extra.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling juce_gui_extra.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_opengl_c7e3506c.o: ../../JuceLibraryCode/modules/juce_opengl/juce_opengl.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_opengl.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/juce_PluginUtilities_e2e19a34.o: ../../JuceLibraryCode/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp

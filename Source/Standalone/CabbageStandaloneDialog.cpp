@@ -664,7 +664,9 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
     DialogWindow::showModalDialog(TRANS("Audio Settings"), &selectorComp, this, col, true, false, false);
     bool alwaysontop = getPreference(appProperties, "SetAlwaysOnTop");
     setAlwaysOnTop(alwaysontop);
+	#ifdef WIN32
 	resetFilter(true);
+	#endif
 	filter->stopProcessing = false;
 
 }
@@ -1508,7 +1510,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs)
             this->setMinimised(true);
             showMessage("", VST+" cannot be found?", lookAndFeel, this);
         }
-
+  
         else
         {
             if (type.contains("LV2"))
@@ -1522,7 +1524,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs)
                 if(!VSTData.copyFileTo(dll)) showMessage("", "Can not move lib", lookAndFeel, this);
                 File loc_csdFile(bundle.getChildFile(filename+".csd").getFullPathName());
                 loc_csdFile.replaceWithText(csdFile.loadFileAsString());
-
+ 
                 // this generates the ttl data
                 typedef void (*TTL_Generator_Function)(const char* basename);
                 DynamicLibrary lib(dll.getFullPathName());

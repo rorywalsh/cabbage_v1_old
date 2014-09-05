@@ -90,9 +90,10 @@ void OscThread::run()
 {
 	while(!threadShouldExit())
 		{
+		sock.bindSocket();	
 		long size;
 		char* data = sock.getData(size);
-		if(size>10)
+		if(size>0)
 		{
 
 				if(OSC::Message::isMessage(data, size))

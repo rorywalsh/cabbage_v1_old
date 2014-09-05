@@ -69,7 +69,8 @@ void OscThread::flushOSCMessages()
 
 void OscThread::sendOSC(String message, float value) 
 {
-	message = "/Cabbage/"+message;
+	//should add /Cabbage tag here to make messages easier to spot in other OSC hosts
+	message = "/"+message;
 	OSC::Message *bundleMessage;
 	long dataSize;	
 	bundleMessage = new OSC::Message();
@@ -125,7 +126,7 @@ void OscThread::run()
 					{
 						for(int x=0;x<channels.size();x++)
 						{		
-							CabbageUtils::showMessage("Bundle:"+String(bundle.getMessage(i)->getData()+String("-")+String(bundle.getMessage(i)->getFloat(0))));
+							//CabbageUtils::showMessage("Bundle:"+String(bundle.getMessage(i)->getData()+String("-")+String(bundle.getMessage(i)->getFloat(0))));
 							if(channels[x]==String(bundle.getMessage(i)->getData()).trim())
 							{
 							//Logger::writeToLog("Bundle:"+String(bundle.getMessage(i)->getData()+String("-")+String(bundle.getMessage(i)->getFloat(0))));

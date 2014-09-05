@@ -121,7 +121,7 @@ char *UDPSocket::getData(long& size)
 	fd_set setToCheck;
 	sockaddr_in receivedAddress;
 
-	timeToWait.tv_sec = 0;
+	timeToWait.tv_sec = .001;
 	timeToWait.tv_usec = 2500; // 1/4 of a second.
 
 	FD_ZERO(&setToCheck);
@@ -160,7 +160,7 @@ char *UDPSocket::getData(long& size)
 		return receiveBuffer;
 	}
 #else
-	if(select(1, &setToCheck, NULL, NULL, &timeToWait) == -1)
+	if (select((sock+1), &setToCheck, NULL, NULL, &timeToWait) == -1)
 	{
 		/*switch(errno)
 		{

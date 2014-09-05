@@ -70,7 +70,7 @@ void OscThread::flushOSCMessages()
 void OscThread::sendOSC(String message, float value) 
 {
 	//should add /Cabbage tag here to make messages easier to spot in other OSC hosts
-	message = "/"+message;
+	message = "/"+message;  
 	OSC::Message *bundleMessage;
 	long dataSize;	
 	bundleMessage = new OSC::Message();
@@ -91,8 +91,7 @@ void OscThread::run()
 {
 	while(!threadShouldExit())
 		{
-		sock.bindSocket();	
-		long size;
+		long size=0;
 		char* data = sock.getData(size);
 		if(size>0)
 		{

@@ -231,6 +231,7 @@ static const String image = "image";
 static const String popupmenu = "popupmenu";
 static const String label = "label";
 static const String keyboard = "keyboard";
+static const String oscserver = "oscserver";
 static const String form = "form";
 static const String directorylist = "directorylist";
 static const String index = "index";

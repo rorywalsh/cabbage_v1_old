@@ -73,7 +73,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 
 
     }
-    else if(strTokens[0].trim() == "oscmessages")
+    else if(strTokens[0].trim() == "oscserver")
     {
         cabbageIdentifiers.set(CabbageIDs::basetype, "layout");
         cabbageIdentifiers.set(CabbageIDs::oscaddress, "");

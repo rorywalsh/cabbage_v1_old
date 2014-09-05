@@ -867,7 +867,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                     //vector too, as can the editor button.
                     if(tokes[0].equalsIgnoreCase(String("form"))
                             ||tokes[0].equalsIgnoreCase(String("image"))
-							||tokes[0].equalsIgnoreCase(String("oscsocket"))
+							||tokes[0].equalsIgnoreCase(String("oscserver"))
                             ||tokes[0].equalsIgnoreCase(String("keyboard"))
                             ||tokes[0].equalsIgnoreCase(String("gentable"))
                             ||tokes[0].equalsIgnoreCase(String("csoundoutput"))
@@ -913,7 +913,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         //showMessage(cAttr.getStringProp("type"));
 
 
-                        if(tokes[0].equalsIgnoreCase(String("oscsocket")))
+                        if(tokes[0].equalsIgnoreCase(String("oscserver")))
                         {
 							for(int i=0;i<cAttr.getStringArrayProp(CabbageIDs::channel).size();i++)
 							{								

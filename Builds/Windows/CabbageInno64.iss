@@ -1,14 +1,9 @@
-; -- Example3.iss --
-; Same as Example1.iss, but creates some registry entries too.
-
-; SEE THE DOCUMENTATION FOR DETAILS ON CREATING .ISS SCRIPT FILES!
-
 [Setup]
-OutputBaseFilename=Cabbage32Setup
-AppName=Cabbage32
-AppVersion=v0.5.12
-DefaultDirName={pf}\Cabbage32
-DefaultGroupName=Cabbage32
+OutputBaseFilename=Cabbage64Setup
+AppName=Cabbage64
+AppVersion=v0.5
+DefaultDirName={pf}\Cabbage64
+DefaultGroupName=Cabbage64
 UninstallDisplayIcon={app}\Cabbage.exe
 ;OutputDir=userdocs:Inno Setup Examples Output
 ChangesEnvironment=yes
@@ -20,7 +15,7 @@ Name: "custom"; Description: "Custom installation"; Flags: iscustom
 
 [Components]
 Name: "program"; Description: "Program Files, standard binaries and essential Csound dlls"; Types: standard minimal custom; Flags: fixed
-Name: "python"; Description: "Python opcodes, requires Python 2.7 to be installed"; Types: custom
+;Name: "python"; Description: "Python opcodes, requires Python 2.7 to be installed"; Types: custom
 
 [Files]
 ;these are the minimal files needed to run Cabbage
@@ -37,7 +32,7 @@ Source: "..\..\Docs\*";                   DestDir: "{app}\Docs"; Components: pro
 ;Source: "..\..\..\MingwLibs\libstdc++-6.dll";     DestDir: "{app}"; Components: program
 ;Source: "..\..\..\MingwLibs\msvcr110.dll";        DestDir: "{app}"; Components: program
 Source: "..\..\..\csound\build\csound64.dll";     DestDir: "{app}"; Components: program
-Source: "..\..\..\csound\build\libsndfile-1.dll";   DestDir: "{app}"; Components: program
+Source: "C:\Program Files\Mega-Nerd\libsndfile\bin\libsndfile-1.dll";   DestDir: "{app}"; Components: program
 
 ;Regular Csound dlls
 Source: "..\..\..\csound\build\libsndfile-1.dll";   DestDir: "{app}"; Components: program
@@ -45,10 +40,10 @@ Source: "..\..\..\csound\build\libsndfile-1.dll";   DestDir: "{app}"; Components
 ;Special opcodes
 ;Source: "..\..\..\csound\build\osc.dll";            DestDir: "{app}"; Components: osc
 ;Source: "..\..\..\csound\build\liblo-7.dll";        DestDir: "{app}"; Components: osc
-Source: "..\..\..\csound\build\py.dll";             DestDir: "{app}"; Components: python  
+;Source: "..\..\..\csound\build\py.dll";             DestDir: "{app}"; Components: python  
 
 [Icons]
-Name: "{group}\Cabbage32"; Filename: "{app}\Cabbage.exe"
+Name: "{group}\Cabbage64"; Filename: "{app}\Cabbage.exe"
 
 ; NOTE: Most apps do not need registry entries to be pre-created. If you
 ; don't know what the registry is or if you need to use it, then chances are

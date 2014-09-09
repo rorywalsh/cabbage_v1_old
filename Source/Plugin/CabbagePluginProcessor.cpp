@@ -2186,7 +2186,6 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
         {
             for(int i=0; i<this->getNumParameters(); i++)
                 this->setParameter(i, (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel)));
-
         }
     }
 }

@@ -4,10 +4,10 @@
 DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 
 # Default csound include path
-CSOUND_INCLUDE ?= "C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound64\csound6\include"
+CSOUND_INCLUDE ?= "C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound\include"
 
 # Default Csound library path
-CSOUND_LIBRARY ?= "C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound64\csound6\debug\libcsound64.dll.a"
+CSOUND_LIBRARY ?= "C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound\build\libcsound64.dll.a"
 
 ASIO_SDK ?= "C:\SDKs\ASIOSDK2.3\common"
 VST_SDK ?= "C:\SDKs\vstsdk2.4"
@@ -33,14 +33,14 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := -march=x86-64
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DCabbage64Bit=1 -DJUCER_CODEBLOCKS_20734A5D=1
-  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -g -ggdb -Wmain -O -Wno-reorder -std=gnu++0x -mstackrealign
+  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJucePlugin_Build_Standalone=1 -DCabbage64Bit=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
+  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -g -ggdb -O -Wno-reorder -Wwrite-strings -Wmain -std=gnu++0x -mstackrealign -static-libgcc -static-libstdc++ -static 
   CXXFLAGS += $(CFLAGS)
-  LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY)
+  LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY) -static
   LDDEPS :=
   RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DBUILD_DEBUGGER=1 -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := Cabbage.exe
-  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH)
+  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) cabbage64icon.o -static-libgcc -static-libstdc++ -mstackrealign -static  $(OSCPACK_LIBRARY) 
 endif
 
 ifeq ($(CONFIG),Release)
@@ -51,19 +51,23 @@ ifeq ($(CONFIG),Release)
 
   ifeq ($(TARGET_ARCH),)
     TARGET_ARCH := -march=x86-64
-  endif
+    endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
-  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -O -Wno-reorder -Wmain -std=gnu++0x -mstackrealign
+  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCabbage64Bit=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
+  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -O -Wno-reorder -Wwrite-strings -Wmain -std=gnu++0x -mstackrealign -static-libgcc -static-libstdc++ -static 
   CXXFLAGS += $(CFLAGS)
-  LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY)
+  LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY) -static
   LDDEPS :=
-  RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DBUILD_DEBUGGER=1 -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := Cabbage.exe
-  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) cabbage64icon.o
+  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) cabbage64icon.o -static-libgcc -static-libstdc++ -mstackrealign -static
 endif
 
 OBJECTS := \
+  $(OBJDIR)/OSCBundle.o \
+  $(OBJDIR)/OSCMessage.o \
+  $(OBJDIR)/OSCTimeTag.o \
+  $(OBJDIR)/UDPSocket.o \
   $(OBJDIR)/BinaryData_5ba7f54.o \
   $(OBJDIR)/CabbageCallOutBox_1ced38fd.o \
   $(OBJDIR)/CabbageGUIClass_79b9049f.o \
@@ -81,11 +85,11 @@ OBJECTS := \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
+  $(OBJDIR)/Table_35ae1cd9.o \
   $(OBJDIR)/CabbageStandaloneDialog_72d272cd.o \
   $(OBJDIR)/StandaloneFilterApp_d9ee3663.o \
   $(OBJDIR)/SplitComponent_d9ee366f.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
-  $(OBJDIR)/Table_35ae1cd9.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
@@ -123,6 +127,27 @@ clean:
 strip:
 	@echo Stripping CabbageStandalone
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
+
+
+$(OBJDIR)/OSCBundle.o: ../../Source/NiallsOSCLib/OSCBundle.cpp 
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling OscBundle.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/OSCMessage.o: ../../Source/NiallsOSCLib/OSCMessage.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling OscMessage.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/OSCTimeTag.o: ../../Source/NiallsOSCLib/OSCTimeTag.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling OscTimeTag.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/UDPSocket.o: ../../Source/NiallsSocketLib/UDPSocket.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling UDPSocket.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/BinaryData_5ba7f54.o: ../../Source/BinaryData.cpp
 	-@mkdir -p $(OBJDIR)

@@ -2165,8 +2165,18 @@ void CabbagePluginAudioProcessor::getStateInformation (MemoryBlock& destData)
     XmlElement xml ("CABBAGE_PLUGIN_SETTINGS");
 
     for(int i=0; i<guiCtrls.size(); i++)
-        xml.setAttribute (guiCtrls[i].getStringProp(CabbageIDs::channel),getParameter(i));
+        xml.setAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel),getParameter(i));
 
+    for(int i=0; i<guiLayoutCtrls.size(); i++)
+		if(guiLayoutCtrls[i].getStringProp(CabbageIDs::type)==CabbageIDs::filebutton)
+		{
+			//save filebutton last opened file...
+			char string[1024] = {0};
+            csound->GetStringChannel(guiLayoutCtrls[i].getStringProp(CabbageIDs::channel).toUTF8().getAddress(), string);
+			xml.setAttribute ("filebutton_"+guiLayoutCtrls[i].getStringProp(CabbageIDs::channel), String(string));
+			Logger::writeToLog("filebutton_"+guiLayoutCtrls[i].getStringProp(CabbageIDs::channel));
+			Logger::writeToLog(String(string));
+		}
 
     // then use this helper function to stuff it into the binary blob and return it..
     copyXmlToBinary (xml, destData);
@@ -2185,8 +2195,24 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
         if (xmlState->hasTagName ("CABBAGE_PLUGIN_SETTINGS"))
         {
             for(int i=0; i<this->getNumParameters(); i++)
-                this->setParameter(i, (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel)));
-        }
+			{
+			this->setParameter(i, (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel)));
+			}
+			
+		
+			for(int i=0;i<xmlState->getNumAttributes();i++)
+			{
+				//if the instrument uses a filebutton, then retreive the last known
+				//file that was loaded with it
+				if(xmlState->getAttributeName(i).contains("filebutton_"))
+				{
+					String channel = xmlState->getAttributeName(i).substring(11);
+					//Logger::writeToLog(xmlState->getAttributeValue(i));
+					csound->SetChannel(channel.toUTF8().getAddress(), xmlState->getAttributeValue(i).toUTF8().getAddress());
+				}
+				
+			}
+		}
     }
 }
 

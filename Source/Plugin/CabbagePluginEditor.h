@@ -68,7 +68,9 @@ class CabbageViewportComponent : public Component
 
 public:
     CabbageViewportComponent() : Component("CabbageViewportComponent")
-    {}
+    {
+	this->setInterceptsMouseClicks(false, true);	
+	}
     ~CabbageViewportComponent() {}
 
     void paint(Graphics &g)

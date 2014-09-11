@@ -1116,10 +1116,14 @@ void CabbagePluginAudioProcessorEditor::mouseMove(const MouseEvent& event)
 {
     //if(!dynamic_cast<CabbageImage*>(event.eventComponent))
     //{
-    int X = event.eventComponent->getPosition().getX();
-    int Y = event.eventComponent->getPosition().getY();
-    getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousex, event.getPosition().getX()+X, "");
-    getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, event.getPosition().getY()+Y, "");
+    //int X = event.eventComponent->getMouseXYRelative().getX();
+    //int Y = event.eventComponent->getMouseXYRelative().getY();
+
+	//Logger::writeToLog(String(X));
+	//Logger::writeToLog(String(componentPanel->getMouseXYRelative().getX()));
+	
+    getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousex, componentPanel->getMouseXYRelative().getX(), "float");
+    getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, componentPanel->getMouseXYRelative().getY(), "float");
     //}
 }
 

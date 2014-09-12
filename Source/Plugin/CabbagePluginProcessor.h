@@ -52,9 +52,9 @@
 //#endif
 
 #ifdef Cabbage64Bit
-    #define CABBAGE_VERSION "Cabbage(64bit) v0.5.12 Alpha"
+    #define CABBAGE_VERSION "Cabbage(64bit) v0.5.13 Alpha"
 #else
-    #define CABBAGE_VERSION "Cabbage(32bit) v0.5.12 Alpha"
+    #define CABBAGE_VERSION "Cabbage(32bit) v0.5.13 Alpha"
 #endif
 
 #define AUDIO_PLUGIN 1

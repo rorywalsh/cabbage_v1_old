@@ -1733,7 +1733,7 @@ String CabbageGUIClass::getStringArrayPropValue(Identifier prop, int index)
 //===================================================================
 void CabbageGUIClass::setStringArrayProp(Identifier prop, var value)
 {
-    cabbageIdentifiers.set(prop, "");
+    cabbageIdentifiers.set(prop, value);
     //cabbageIdentifiers.set(prop, value);
 }
 //===================================================================

@@ -1557,7 +1557,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
                 getGUICtrls(index).getStringProp(CabbageIDs::channeltype)==CabbageIDs::stringchannel)
         {
             stringMessage = getGUICtrls(index).getStringArrayPropValue(CabbageIDs::text, newValue-1);
-            //Logger::writeToLog(stringMessage);
+            Logger::writeToLog(stringMessage);
             messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel),
                     stringMessage,
                     CabbageIDs::stringchannel);

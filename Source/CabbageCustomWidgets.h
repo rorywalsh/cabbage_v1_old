@@ -528,7 +528,7 @@ public:
     {
         setName(name);
         offX=offY=offWidth=offHeight=0;
-
+		var fileNames;
         groupbox = new GroupComponent(String("groupbox_")+name);
         combo = new ComboBox(name);
 
@@ -571,7 +571,8 @@ public:
         else
         {
             //appProperties->getUserSettings()->getValue("CsoundPluginDirectory");
-            CabbageUtils::showMessage(cAttr.getStringProp(CabbageIDs::workingdir));
+			combo->clear(dontSendNotification);
+            //CabbageUtils::showMessage(cAttr.getStringProp(CabbageIDs::workingdir));
             File pluginDir(cAttr.getStringProp(CabbageIDs::workingdir));
 
             const String filetype = cAttr.getStringProp("filetype");
@@ -588,10 +589,14 @@ public:
                 else
                     filename = dirFiles[i].getFileName();
                 combo->addItem(filename, i+1);
+				fileNames.append(filename);
+				cAttr.setStringArrayPropValue(CabbageIDs::text, i, filename);
             }
         }
+		cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
+		//CabbageUtils::showMessage(cAttr.getStringArrayPropValue(CabbageIDs::text, 1));
         combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);
-
+		
     }
     //---------------------------------------------
     ~CabbageComboBox()

@@ -60,6 +60,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	consoleMessages = "";
     cabbageDance = 0;
     setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
+	setTitleBarHeight(28);
     Component::addAndMakeVisible (&optionsButton);
     optionsButton.addListener (this);
     timerRunning = false;

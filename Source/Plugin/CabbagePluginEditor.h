@@ -42,14 +42,20 @@ public:
     CabbagePlantWindow(const String& title, const Colour& backgroundColour)
         : DocumentWindow (title, backgroundColour, DocumentWindow::closeButton)
     {
-        this->setInterceptsMouseClicks(true, false);
-        setName(title);
+		setName(title);
     };
 
     ~CabbagePlantWindow()
     {
     };
 
+//	void mouseMove(const MouseEvent& event)
+//	{		
+//		Logger::writeToLog("planty");
+//		//Logger::writeToLog(String(this->getContentComponent()->getMouseXYRelative().getX()));
+//	}
+//
+//	
     void closeButtonPressed()
     {
         setMinimised(true);

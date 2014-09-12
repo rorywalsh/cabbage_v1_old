@@ -1115,19 +1115,18 @@ void CabbagePluginAudioProcessorEditor::updateSizesAndPositionsOfComponents(int 
 void CabbagePluginAudioProcessorEditor::mouseMove(const MouseEvent& event)
 {
 	//look after mouse message from main plant windows and main window
+	int x = event.eventComponent->getTopLevelComponent()->getMouseXYRelative().x;
+	int y = event.eventComponent->getTopLevelComponent()->getMouseXYRelative().y;
+	
 	if(dynamic_cast<CabbagePlantWindow*>(event.eventComponent->getTopLevelComponent()))
 	{
 		getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousex, x, "float");
-		getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, jmax(0.f, y-18.f), "float");
-		Logger::writeToLog(String(x));
-		Logger::writeToLog(String(jmax(0.f, y-18.f)));
+		getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, jmax(0, y-18), "float");
 	}
 	else 
 	{
 		getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousex, x, "float");
-		getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, y-28.f, "float");	
-		Logger::writeToLog(String(x));
-		Logger::writeToLog(String(y-28.f));	
+		getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, y-28, "float");	
 	}
 }
 

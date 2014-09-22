@@ -665,6 +665,13 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
     DialogWindow::showModalDialog(TRANS("Audio Settings"), &selectorComp, this, col, true, false, false);
     bool alwaysontop = getPreference(appProperties, "SetAlwaysOnTop");
     setAlwaysOnTop(alwaysontop);
+	
+	PropertySet* const globalSettings = appProperties->getUserSettings();
+	//update settings:
+    ScopedPointer<XmlElement> xml (deviceManager->createStateXml());
+    globalSettings->setValue ("audioSetup", xml);	
+	
+	
 	#ifdef WIN32
 	resetFilter(true);
 	#endif
@@ -718,7 +725,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     Array<File> exampleFiles;
     recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
 
-    standaloneMode=false;
+    #ifndef RELEASE
+	standaloneMode=false;
+	#endif
+	
     isAFileOpen = true;
     if(!standaloneMode)
     {

@@ -437,6 +437,7 @@ public:
             {
                 updateText();
                 //sendChangeMessage();
+				sendActionMessage("TextField");
                 sendActionMessage("UpdateAll");
                 return false;
 

@@ -174,4 +174,68 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StandaloneFilterWindow);
 };
 
+//==============================================================================
+// Dialogue for choosing files if in standalone mode..
+//==============================================================================
+class StandaloneFileDialogue : public DocumentWindow
+{
+public:
+//container for file combo selector
+	class MainComponent : public Component,
+						  public ComboBox::Listener,
+						  public ActionBroadcaster
+	{
+	public:
+	ScopedPointer<ComboBox> combo;
+		MainComponent(){
+		addAndMakeVisible(combo = new ComboBox());
+		combo->setText("Please select a .csd file");
+		combo->addListener(this);
+		}
+	void resized(){
+		combo->setBounds(5, 5, 240, 20);
+		}
+
+	void comboBoxChanged (ComboBox *combo){
+	sendActionMessage("FileChooserDialog:"+String(combo->getSelectedId()));
+	}
+
+	void paint(Graphics &g){
+		g.fillAll(Colours::black);
+		}
+	};
+
+	ScopedPointer<MainComponent> mainComponent;
+	Array<File> cabbageFiles;
+	StandaloneFileDialogue(String title, Colour bgcolour): 
+			DocumentWindow(title, bgcolour, DocumentWindow::allButtons, true)
+			{
+				centreWithSize(250, 30);
+				setResizeLimits(250, 30, 32768, 32768);
+				mainComponent = new MainComponent();
+				mainComponent->setBounds(0, 0, 250, 30);
+				setAlwaysOnTop(true);
+				this->setTitleBarHeight(20);
+				setContentOwned(mainComponent, true);	
+			}
+
+			void addItemsToCombo(Array<File> files){
+				cabbageFiles = files;
+				for(int i=0;i<files.size();i++)
+					mainComponent->combo->addItem(files[i].getFileName(), i+1);
+			}
+
+			void setCurrentFile(String file){
+				for(int i=0;i<cabbageFiles.size();i++)
+				if(cabbageFiles[i].getFileName()==file)
+					mainComponent->combo->setSelectedItemIndex(i+1);
+			}
+
+			void closeButtonPressed(){
+				setVisible(false);
+			}
+
+
+};
+
 #endif   // __JUCE_STANDALONEFILTERWINDOW_JUCEHEADER__

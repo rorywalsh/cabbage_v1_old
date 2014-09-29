@@ -60,7 +60,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	consoleMessages = "";
     cabbageDance = 0;
     setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
-	setTitleBarHeight(28);
+	setTitleBarHeight(26);
     Component::addAndMakeVisible (&optionsButton);
     optionsButton.addListener (this);
     timerRunning = false;
@@ -169,13 +169,30 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
     //opens a default file that matches the name of the current executable
     //this can be used to create more 'standalone' like apps
-
 	
-    if(File(defaultCSDFile).existsAsFile())
-    {
-        standaloneMode = true;
-        openFile(defaultCSDFile);
-    }
+	if(File(File::getSpecialLocation(File::currentExecutableFile)).getFileNameWithoutExtension()!="Cabbage")
+	{
+		File directory = File(defaultCSDFile).getParentDirectory();
+		directory.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
+		//if multiple files....
+		setAlwaysOnTop(false);
+		standaloneFileDialogue = new StandaloneFileDialogue("File selector", Colours::cornflowerblue);
+		standaloneFileDialogue->mainComponent->setLookAndFeel(lookAndFeel);
+		standaloneFileDialogue->mainComponent->addActionListener(this);
+		standaloneFileDialogue->addItemsToCombo(cabbageFiles);
+		//standaloneFileDialogue->setCurrentFile(File(defaultCSDFile).getFileName());
+		standaloneFileDialogue->setVisible(true);
+		standaloneFileDialogue->setAlwaysOnTop(true);
+		//setAlwaysOnTop(true);	
+	}	
+	else{
+		if(File(defaultCSDFile).existsAsFile())
+		{
+			standaloneMode = true;
+			openFile(defaultCSDFile);
+		}	
+
+	}
 
 
     //filter->codeWindow = cabbageCsoundEditor->textEditor;
@@ -440,6 +457,17 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
                 }
         }
     }
+
+	else if(message.contains("FileChooserDialog:"))
+	{
+		int index = message.substring(18).getIntValue();
+		if(File(cabbageFiles[index-1].getFullPathName()).existsAsFile()){
+			openFile(cabbageFiles[index-1].getFullPathName());
+			if(standaloneFileDialogue)
+				standaloneFileDialogue->setMinimised(true);
+		}
+			
+	}
 
     else if(message.contains("MENU COMMAND: suspend audio"))
         if(AudioEnabled)

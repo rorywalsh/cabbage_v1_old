@@ -30,7 +30,7 @@ extern ApplicationProperties* appProperties;
 extern PropertySet* defaultPropSet;
 extern String currentApplicationDirectory;
 extern StringArray undoHistory;
-
+class StandaloneFileDialogue;
 
 //==============================================================================
 class CsoundMessageConsole : public DocumentWindow
@@ -115,7 +115,8 @@ public:
     void saveFileAs();
     void showEditorConsole();
     void setupWindowDimensions();
-	
+	Array<File> cabbageFiles;
+	ScopedPointer<StandaloneFileDialogue> standaloneFileDialogue;	
 
     bool isGuiEnabled()
     {

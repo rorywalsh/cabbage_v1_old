@@ -75,13 +75,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     lookAndFeel = new CabbageLookAndFeel();
     this->setLookAndFeel(lookAndFeel);
     oldLookAndFeel = new LookAndFeel_V1();
-// MOD - Stefano Bonetti
-#ifdef Cabbage_Named_Pipe
-//    ipConnection = new socketConnection(*this);
-//    pipeOpenedOk = ipConnection->createPipe(String("cabbage"));
-//    if(pipeOpenedOk) Logger::writeToLog(String("Namedpipe created ..."));
-#endif
-// MOD - End
+
 
     JUCE_TRY
     {
@@ -903,10 +897,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         //subMenu.addItem(207, String("Enable opcode popup help display"), true, true);
 
 
-        if(!getPreference(appProperties, "UseCabbageIO"))
-            subMenu.addItem(204, String("Use Cabbage IO"), true, false);
-        else
-            subMenu.addItem(204, String("Use Cabbage IO"), true, true);
+//        if(!getPreference(appProperties, "UseCabbageIO"))
+//            subMenu.addItem(204, String("Use Cabbage IO"), true, false);
+//        else
+//            subMenu.addItem(204, String("Use Cabbage IO"), true, true);
 //when buiding for inclusion with the Windows Csound installer comment out
 //this section
 #if !defined(LINUX) && !defined(MACOSX)

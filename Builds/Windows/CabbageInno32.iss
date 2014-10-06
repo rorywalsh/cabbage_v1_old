@@ -6,7 +6,7 @@
 [Setup]
 OutputBaseFilename=Cabbage32Setup
 AppName=Cabbage32
-AppVersion=v0.5.12
+AppVersion=v0.5.13
 DefaultDirName={pf}\Cabbage32
 DefaultGroupName=Cabbage32
 UninstallDisplayIcon={app}\Cabbage.exe
@@ -38,6 +38,7 @@ Source: "..\..\Docs\*";                   DestDir: "{app}\Docs"; Components: pro
 ;Source: "..\..\..\MingwLibs\msvcr110.dll";        DestDir: "{app}"; Components: program
 Source: "..\..\..\csound\build\csound64.dll";     DestDir: "{app}"; Components: program
 Source: "..\..\..\csound\build\libsndfile-1.dll";   DestDir: "{app}"; Components: program
+Source: "..\..\..\csound\build\signalflowgraph.dll";   DestDir: "{app}"; Components: program
 
 ;Regular Csound dlls
 Source: "..\..\..\csound\build\libsndfile-1.dll";   DestDir: "{app}"; Components: program

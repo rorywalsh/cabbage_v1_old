@@ -16,7 +16,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
   02111-1307 USA
 
-*/
+*/  
 
 #include "CabbagePluginProcessor.h"
 #include "CabbagePluginEditor.h"
@@ -2249,7 +2249,7 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
 
     int i = sliderThatWasMoved->getProperties().getWithDefault("index", -9999);
     if(i==-9999)jassert(1);
-
+	
     if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==sliderThatWasMoved->getParentComponent()->getName())
     {
 #ifndef Cabbage_Build_Standalone

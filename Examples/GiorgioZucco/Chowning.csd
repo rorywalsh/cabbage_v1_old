@@ -22,7 +22,7 @@ keyboard pos(10, 240), size(540, 60)
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>
--d -n -+rtmidi=null -M0 -b1024 
+-d -n -+rtmidi=null -M0 -b1024 -m0d
 </CsOptions>
 <CsInstruments>
 

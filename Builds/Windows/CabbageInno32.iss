@@ -14,13 +14,14 @@ UninstallDisplayIcon={app}\Cabbage.exe
 ChangesEnvironment=true
 
 [Types]
-Name: "full"; Description: "Full install, plugins might not work with Abelton Live 9!!"
-Name: "minimal"; Description: "Minimal installation; fine for most users"
+Name: "full"; Description: "Full install"
+Name: "minimal"; Description: "Minimal installation, includes only the Csound base dlls. "
 Name: "custom"; Description: "Custom installation"; Flags: iscustom
 
 [Components]
-Name: "program"; Description: "Program Files, standard binaries and essential Csound dlls"; Types: minimal full custom; Flags: fixed
+Name: "program"; Description: "Program Files, standard binaries and essential Csound dlls"; Types: full minimal custom; Flags: fixed
 Name: "csound"; Description: "Csound program files and audio/MIDI interfaces, for standalone Csound use"; Types: custom  full
+Name: "csoundOpcodes"; Description: "Csound plugin opcodes"; Types: custom full
 Name: "python"; Description: "Python opcodes, requires Python 2.7 to be installed"; Types: custom  full
 
 [Files]
@@ -55,18 +56,18 @@ Source: "..\..\..\csound\build\widgets.dll";            DestDir: "{app}\csound";
 ;Special opcodes
 Source: "C:\Users\rory\Documents\sourcecode\liblo-0.28\src\.libs\liblo-7.dll";        DestDir: "{app}"; Components: program
 Source: "..\..\..\csound\build\py.dll";             DestDir: "{app}"; Components: python  
-Source: "..\..\..\csound\build\signalflowgraph.dll"; DestDir: "{app}"; Components: program
-Source: "..\..\..\csound\build\serial.dll"; DestDir: "{app}"; Components: program
-Source: "..\..\..\csound\build\scansyn.dll"; DestDir: "{app}"; Components: program
-Source: "..\..\..\csound\build\doppler.dll"; DestDir: "{app}"; Components: program
-Source: "..\..\..\csound\build\fractalnoise.dll"; DestDir: "{app}"; Components: program
-Source: "..\..\..\csound\build\fareygen.dll"; DestDir: "{app}"; Components: program
-Source: "..\..\..\csound\build\chua.dll"; DestDir: "{app}"; Components: program
-Source: "..\..\..\csound\build\mixer.dll"; DestDir: "{app}"; Components: program
-Source: "..\..\..\csound\build\ampmidid.dll"; DestDir: "{app}"; Components: program
-Source: "..\..\..\csound\build\cs_date.dll"; DestDir: "{app}"; Components: program
-Source: "..\..\..\csound\build\cellular.dll"; DestDir: "{app}"; Components: program
-Source: "..\..\..\csound\build\platerev.dll"; DestDir: "{app}"; Components: program
+Source: "..\..\..\csound\build\signalflowgraph.dll"; DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\serial.dll"; DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\scansyn.dll"; DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\doppler.dll"; DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\fractalnoise.dll"; DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\fareygen.dll"; DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\chua.dll"; DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\mixer.dll"; DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\ampmidid.dll"; DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\cs_date.dll"; DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\cellular.dll"; DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\platerev.dll"; DestDir: "{app}"; Components: csoundOpcodes
 
 [Icons]
 Name: "{group}\Cabbage32"; Filename: "{app}\Cabbage.exe"

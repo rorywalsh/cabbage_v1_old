@@ -23,13 +23,19 @@ Name: "program"; Description: "Program Files, standard binaries and essential Cs
 Name: "csound"; Description: "Csound program files and audio/MIDI interfaces, for standalone Csound use"; Types: custom  full
 Name: "csoundOpcodes"; Description: "Csound plugin opcodes"; Types: custom full
 Name: "python"; Description: "Python opcodes, requires Python 2.7 to be installed"; Types: custom  full
+Name: "csound4Max"; Description: "csound~ object for Max/MSP/M4L"; Types: custom  full
+;C:\Users\rory\Documents\sourcecode\cabbageaudio\csound\build\frontends
 
 [Files]
 ;these are the minimal files needed to run Cabbage
-Source: "build\Cabbage.exe";              DestDir: "{app}"; Components: program
-Source: "build\CabbagePluginSynth.dat";   DestDir: "{app}"; Components: program 
-Source: "build\CabbagePluginEffect.dat";  DestDir: "{app}"; Components: program
-Source: "build\opcodes.txt";              DestDir: "{app}"; Components: program
+Source: "build\Cabbage.exe";                                  DestDir: "{app}"; Components: program
+Source: "build\CabbagePluginSynth.dat";                       DestDir: "{app}"; Components: program 
+Source: "build\CabbagePluginEffect.dat";                      DestDir: "{app}"; Components: program
+Source: "build\opcodes.txt";                                  DestDir: "{app}"; Components: program
+Source: "..\..\..\csound\build\frontends\max_csound_tilde\*";   DestDir: "{app}\csound4Max"; Components: csound4Max
+Source: "..\..\..\csound\frontends\max_csound_tilde\examples\*";   DestDir: "{app}\csound4Max\examples"; Components: csound4Max
+
+
 Source: "..\..\Examples\*";               DestDir: "{app}\Examples"; Components: program; Flags: recursesubdirs
 Source: "..\..\Docs\*";                   DestDir: "{app}\Docs"; Components: program; Flags: recursesubdirs
 

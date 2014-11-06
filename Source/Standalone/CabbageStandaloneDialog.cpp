@@ -166,27 +166,27 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	
 	if(File(File::getSpecialLocation(File::currentExecutableFile)).getFileNameWithoutExtension()!="Cabbage")
 	{
-		File directory = File(defaultCSDFile).getParentDirectory();
-		directory.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
-		//if multiple files....
-		setAlwaysOnTop(false);
-		standaloneFileDialogue = new StandaloneFileDialogue("File selector", Colours::cornflowerblue);
-		standaloneFileDialogue->mainComponent->setLookAndFeel(lookAndFeel);
-		standaloneFileDialogue->mainComponent->addActionListener(this);
-		standaloneFileDialogue->addItemsToCombo(cabbageFiles);
-		//standaloneFileDialogue->setCurrentFile(File(defaultCSDFile).getFileName());
-		standaloneFileDialogue->setVisible(true);
-		standaloneFileDialogue->setAlwaysOnTop(true);
-		//setAlwaysOnTop(true);	
-	}	
-	else{
 		if(File(defaultCSDFile).existsAsFile())
 		{
 			standaloneMode = true;
 			openFile(defaultCSDFile);
-		}	
-
-	}
+		}
+		else{	
+				File directory = File(defaultCSDFile).getParentDirectory();
+				directory.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
+				//if multiple files....
+				standaloneMode=true;
+				setAlwaysOnTop(false);
+				standaloneFileDialogue = new StandaloneFileDialogue("File selector", Colours::cornflowerblue);
+				standaloneFileDialogue->mainComponent->setLookAndFeel(lookAndFeel);
+				standaloneFileDialogue->mainComponent->addActionListener(this);
+				standaloneFileDialogue->addItemsToCombo(cabbageFiles);
+				//standaloneFileDialogue->setCurrentFile(File(defaultCSDFile).getFileName());
+				standaloneFileDialogue->setVisible(true);
+				standaloneFileDialogue->setAlwaysOnTop(true);
+				//setAlwaysOnTop(true);
+		}
+	}	
 
 
     //filter->codeWindow = cabbageCsoundEditor->textEditor;

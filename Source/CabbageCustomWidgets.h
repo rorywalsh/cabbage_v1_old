@@ -1813,7 +1813,8 @@ public:
         text(cAttr.getStringProp(CabbageIDs::text)),
         textbox(cAttr.getNumProp(CabbageIDs::textbox)),
         decPlaces(cAttr.getNumProp(CabbageIDs::decimalplaces)),
-        caption(cAttr.getStringProp(CabbageIDs::caption))
+        caption(cAttr.getStringProp(CabbageIDs::caption)),
+		name(cAttr.getStringProp(CabbageIDs::name))
 
     {
         setName(name);

@@ -18,7 +18,7 @@ class CabbageLookAndFeel	:	public LookAndFeel_V2
 public:
     CabbageLookAndFeel();
     ~CabbageLookAndFeel();
-
+	Image getSVGImageFor(String type);
 
     Image drawRotaryImage(int diameter, const Colour circleFill, const Colour trackerCol, float sliderPosProportional, float zeroPosProportional,
                           bool useTrackerFill,

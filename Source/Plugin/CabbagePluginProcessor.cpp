@@ -955,8 +955,23 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         else if(cAttr.getStringProp(String("reltoplant")).equalsIgnoreCase(String("")))
                             cAttr.setStringProp(String("reltoplant"), plantFlag);
 
-                        guiLayoutCtrls.add(cAttr);
-                        guiID++;
+							if(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0){
+								//showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).joinIntoString(" ")));
+								//showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()));
+								for(int i=0;i<cAttr.getStringArrayProp(CabbageIDs::channelarray).size();i++)
+								{
+									CabbageGUIClass copy = cAttr;
+									copy.setStringProp(CabbageIDs::channel, cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
+									copy.setStringProp(CabbageIDs::identchannel, cAttr.getStringArrayProp(CabbageIDs::identchannelarray).getReference(i));
+									//Logger::writeToLog(cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
+									guiLayoutCtrls.add(copy);
+									guiID++;
+								}
+							}
+							else{
+								guiLayoutCtrls.add(cAttr);
+								guiID++;
+							}
 
                         if(cAttr.getStringProp("type").containsIgnoreCase("form"))
                             if(cAttr.getStringProp("text").length()>2)
@@ -987,6 +1002,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             ||tokes[0].equalsIgnoreCase(String("xypad"))
                             ||tokes[0].equalsIgnoreCase(String("button")))
                     {
+						
                         CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
                         cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
                         //Logger::writeToLog(csdLine.trimEnd());
@@ -1003,6 +1019,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                                 cAttr.setStringProp(String("preset"), presetFlag.trim());
                             //showMessage(cAttr.getStringProp("preset"));
                         }
+												
                         //xypad contain two control paramters, one for x axis and another for y. As such we add two
                         //to our contorl vector so that plugin hosts display two sliders. We name one of the xypad pads
                         // 'dummy' so that our editor doesn't display it. Our editor only needs to show one xypad.
@@ -1031,9 +1048,25 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         }
                         else
                         {
-                            //Logger::writeToLog("Value:"+String(cAttr.getNumProp(CabbageIDs::value)));
-                            guiCtrls.add(cAttr);
-                            guiID++;
+                            //if an array of objects is to be set up enter.....
+							if(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0){
+								//showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).joinIntoString(" ")));
+								//showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()));
+								for(int i=0;i<cAttr.getStringArrayProp(CabbageIDs::channelarray).size();i++)
+								{
+									CabbageGUIClass copy = cAttr;
+									copy.setStringProp(CabbageIDs::channel, cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
+									copy.setStringProp(CabbageIDs::identchannel, cAttr.getStringArrayProp(CabbageIDs::identchannelarray).getReference(i));
+									//Logger::writeToLog(cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
+									guiCtrls.add(copy);
+									guiID++;
+								}
+							}
+                            else{
+								guiCtrls.add(cAttr);
+								guiID++;
+							}
+                            
                         }
 
                         //debugMessageArray.addArray(logGUIAttributes(cAttr, String("Interactive")));

@@ -36,8 +36,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 
     StringArray strTokens;
     strTokens.addTokens(compStr, " ", "\"");
-    //changing case to lower to make syntax non case-sensitive
 
+	cabbageIdentifiers.set(CabbageIDs::channelarray, "");
     //===============sliders==================//
     if(strTokens[0].trim() == "hslider")
     {
@@ -945,7 +945,8 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                 }
 
                 else if(identArray[indx].equalsIgnoreCase("channel")||
-                        identArray[indx].equalsIgnoreCase("channels"))
+                        identArray[indx].equalsIgnoreCase("channels")||
+						identArray[indx].equalsIgnoreCase("channelarray"))
                 {
                     var array;
                     array.append(strTokens[0].trim());
@@ -970,7 +971,20 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                                 array.append(strTokens[i].trim());
                             }
                     }
+					
                     cabbageIdentifiers.set(CabbageIDs::channel, array);
+					if(identArray[indx].equalsIgnoreCase("channelarray"))
+					{
+							var channelArray, identChannelArray;
+							int size = strTokens[1].getIntValue();
+							for(int i=0;i<size;i++){
+								channelArray.append(String(strTokens[0])+String(i));	
+								identChannelArray.append(String(strTokens[0])+String("_ident")+String(i));
+								
+							}						
+							cabbageIdentifiers.set(CabbageIDs::channelarray, channelArray);		
+							cabbageIdentifiers.set(CabbageIDs::identchannelarray, identChannelArray);						
+					}
                 }
 
                 else if(identArray[indx].equalsIgnoreCase("colour")||

@@ -547,6 +547,7 @@ private:
             if (outputDeviceDropDown == nullptr)
             {
                 outputDeviceDropDown = new ComboBox (String::empty);
+				outputDeviceDropDown->setColour(ComboBox::ColourIds::textColourId,  Colour(200, 200, 200));
                 outputDeviceDropDown->addListener (this);
                 addAndMakeVisible (outputDeviceDropDown);
 
@@ -575,6 +576,7 @@ private:
             if (inputDeviceDropDown == nullptr)
             {
                 inputDeviceDropDown = new ComboBox (String::empty);
+				inputDeviceDropDown->setColour(ComboBox::ColourIds::textColourId, Colour(200, 200, 200));
                 inputDeviceDropDown->addListener (this);
                 addAndMakeVisible (inputDeviceDropDown);
 
@@ -596,7 +598,7 @@ private:
         if (sampleRateDropDown == nullptr)
         {
             addAndMakeVisible (sampleRateDropDown = new ComboBox (String::empty));
-
+			sampleRateDropDown->setColour(ComboBox::ColourIds::textColourId, Colour(200, 200, 200));
             sampleRateLabel = new Label (String::empty, TRANS ("sample rate:"));
             sampleRateLabel->attachToComponent (sampleRateDropDown, true);
         }
@@ -623,7 +625,7 @@ private:
         if (bufferSizeDropDown == nullptr)
         {
             addAndMakeVisible (bufferSizeDropDown = new ComboBox (String::empty));
-
+			bufferSizeDropDown->setColour(ComboBox::ColourIds::textColourId, Colour(200, 200, 200));
             bufferSizeLabel = new Label (String::empty, TRANS ("audio buffer size:"));
 
             bufferSizeLabel->attachToComponent (bufferSizeDropDown, true);
@@ -951,6 +953,7 @@ CabbageAudioDeviceSelectorComponent::CabbageAudioDeviceSelectorComponent (AudioD
 
         addAndMakeVisible (deviceTypeDropDown);
         deviceTypeDropDown->addListener (this);
+		deviceTypeDropDown->setColour(ComboBox::ColourIds::textColourId,  Colour(200, 200, 200));
 
         deviceTypeDropDownLabel = new Label (String::empty, TRANS ("Audio device type:"));
         deviceTypeDropDownLabel->setJustificationType (Justification::centredRight);
@@ -965,6 +968,7 @@ CabbageAudioDeviceSelectorComponent::CabbageAudioDeviceSelectorComponent (AudioD
 
         midiInputsLabel = new Label (String::empty, TRANS ("Active MIDI inputs:"));
         midiInputsLabel->setJustificationType (Justification::topRight);
+		midiInputsList->setColour(ComboBox::ColourIds::textColourId,  Colour(200, 200, 200));
         midiInputsLabel->attachToComponent (midiInputsList, true);
     }
     else
@@ -978,6 +982,7 @@ CabbageAudioDeviceSelectorComponent::CabbageAudioDeviceSelectorComponent (AudioD
         addAndMakeVisible (midiOutputSelector = new ComboBox (String::empty));
         midiOutputSelector->addListener (this);
 
+		midiOutputSelector->setColour(ComboBox::ColourIds::textColourId,  Colour(200, 200, 200));
         midiOutputLabel = new Label ("lm", TRANS("MIDI Output:"));
         midiOutputLabel->attachToComponent (midiOutputSelector, true);
     }

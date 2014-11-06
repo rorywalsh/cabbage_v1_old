@@ -15,6 +15,41 @@ CabbageLookAndFeel::CabbageLookAndFeel()
     setColour(ComboBox::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
     setColour(ScrollBar::trackColourId, Colours::transparentBlack);
     setColour(ScrollBar::thumbColourId, CabbageUtils::getComponentSkin());
+	
+	
+	
+	
+}
+
+Image CabbageLookAndFeel::getSVGImageFor(String type)
+{
+	String svgFileName;
+	Image svgImg;
+	if(type=="button")
+		svgFileName = "/home/rory/sourcecode/cabbageaudio/cabbageSVG/"+String(type)+".svg";
+	
+	File svgFile(svgFileName);  
+	ScopedPointer<XmlElement> svg (XmlDocument::parse(svgFile.loadFileAsString()));
+	if (svgFile.exists())
+	{
+		if(svg == nullptr)
+			Logger::writeToLog("couldn't parse svg, might not exist");
+		ScopedPointer<Drawable> drawable; 
+		svgImg = Image(Image::ARGB, 100, 50, true);
+		Graphics graph(svgImg);
+		if (svg != nullptr)
+		{
+			drawable = Drawable::createFromSVG (*svg);
+			drawable->draw(graph, 1.f, AffineTransform::identity);
+			return svgImg;
+		}			
+	}
+		
+
+
+	
+	return svgImg;
+	
 }
 
 CabbageLookAndFeel::~CabbageLookAndFeel()
@@ -505,49 +540,59 @@ Image CabbageLookAndFeel::drawTextButtonImage (float width, float height, bool i
     Graphics g (img);
     float opacity;
 
-    //----- Outline
-    g.setColour (Colour::fromRGBA (10, 10, 10, 255));
-    g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+	if(getSVGImageFor("button").isValid())	
+	{		
+		//----- If "off"
+		if (isButtonDown == false)
+			g.drawImage(getSVGImageFor("button"), 0, 0, width, height, 0, 0, 100, 50, false);
+		else
+			g.drawImage(getSVGImageFor("button"), 1, 1, width-2, height-2, 0, 0, 100, 50, false);
+	}
+	else{
 
-    //----- If "off"
-    if (isButtonDown == false)
-    {
-        //----- Shadow
-        for (float i=0.01; i<0.05; i+=0.01)
-        {
-            g.setColour (Colour::fromRGBA (0, 0, 0, 255/(i*100)));
-            g.fillRoundedRectangle (width*i, height*i,
-                                    width*0.95, height*0.95, height*0.1);
-            opacity = 0.3;
-        }
-    }
-    else
-        opacity = 0.1;
+		//----- Outline
+		g.setColour (Colour::fromRGBA (10, 10, 10, 255));
+		g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+		
+		//----- If "off"
+		if (isButtonDown == false)
+		{
+			//----- Shadow
+			for (float i=0.01; i<0.05; i+=0.01)
+			{
+				g.setColour (Colour::fromRGBA (0, 0, 0, 255/(i*100)));
+				g.fillRoundedRectangle (width*i, height*i,
+										width*0.95, height*0.95, height*0.1);
+				opacity = 0.3;
+			}
+		}
+		else
+			opacity = 0.1;
 
-    //----- Filling in the button
-    //Colour bg1 = Colour::fromRGBA (25, 25, 28, 255);
-    //Colour bg2 = Colour::fromRGBA (15, 15, 18, 255);
-    Colour bg1 = colour;
-    Colour bg2 = colour.darker();
+		//----- Filling in the button
+		//Colour bg1 = Colour::fromRGBA (25, 25, 28, 255);
+		//Colour bg2 = Colour::fromRGBA (15, 15, 18, 255);
+		Colour bg1 = colour;
+		Colour bg2 = colour.darker();
 
-    ColourGradient cg = ColourGradient (bg1, 0, 0, bg2, width*0.5, height*0.5, false);
-    g.setGradientFill (cg);
-    g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, height*0.1);
+		ColourGradient cg = ColourGradient (bg1, 0, 0, bg2, width*0.5, height*0.5, false);
+		g.setGradientFill (cg);
+		g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, height*0.1);
 
-    //----- For emphasising the top and left edges to give the illusion that light is shining on them
-    ColourGradient edgeHighlight = ColourGradient (Colours::whitesmoke, 0, 0,
-                                   Colours::transparentWhite, 0, height*0.1, false);
-    g.setGradientFill (edgeHighlight);
-    g.setOpacity (opacity);
-    g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+		//----- For emphasising the top and left edges to give the illusion that light is shining on them
+		ColourGradient edgeHighlight = ColourGradient (Colours::whitesmoke, 0, 0,
+									   Colours::transparentWhite, 0, height*0.1, false);
+		g.setGradientFill (edgeHighlight);
+		g.setOpacity (opacity);
+		g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
 
-    ColourGradient edgeHighlight2 = ColourGradient (Colours::whitesmoke, 0, 0,
-                                    Colours::transparentWhite, height*0.1, 0, false);
-    g.setGradientFill (edgeHighlight2);
-    g.setOpacity (opacity);
-    g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
-
-    return img;
+		ColourGradient edgeHighlight2 = ColourGradient (Colours::whitesmoke, 0, 0,
+										Colours::transparentWhite, height*0.1, 0, false);
+		g.setGradientFill (edgeHighlight2);
+		g.setOpacity (opacity);
+		g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+	}
+		return img;
 }
 
 /*

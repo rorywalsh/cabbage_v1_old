@@ -18,24 +18,26 @@ class CabbageLookAndFeel	:	public LookAndFeel_V2
 public:
     CabbageLookAndFeel();
     ~CabbageLookAndFeel();
-	Image getSVGImageFor(String type);
+	Image getSVGImageFor(String path, String type, AffineTransform affine);
 
     Image drawRotaryImage(int diameter, const Colour circleFill, const Colour trackerCol, float sliderPosProportional, float zeroPosProportional,
                           bool useTrackerFill,
-                          float markerOpacity);
+                          float markerOpacity,
+						  String svgPath);
     Image drawLinearBgImage (float width, float height, float sliderPosProportional, float zeroPosProportional,
                              bool useTrackerFill,
                              bool isVertical,
-                             const Colour trackerCol);
+                             const Colour trackerCol,
+							 String svgPath);
 
     void drawTableHeaderColumn (Graphics& g, const String& columnName, int /*columnId*/,
                                 int width, int height,
                                 bool isMouseOver, bool isMouseDown,
                                 int columnFlags);
     void drawTableHeaderBackground (Graphics& g, TableHeaderComponent& header);
-    Image drawLinearThumbImage (float width, float height, const Colour thumbFill, bool isVertical);
-    static Image drawToggleImage (float width, float height, bool isToggleOn, Colour colour, bool isRect);
-    Image drawTextButtonImage (float width, float height, bool isButtonDown, Colour colour);
+    Image drawLinearThumbImage (float width, float height, const Colour thumbFill, bool isVertical, String svgPath);
+    static Image drawToggleImage (float width, float height, bool isToggleOn, Colour colour, bool isRect, String svgPath);
+    Image drawTextButtonImage (float width, float height, bool isButtonDown, Colour colour, String svgPath);
     virtual void drawRotarySlider (Graphics &g, int x, int y, int width, int height, float sliderPosProportional,
                                    float rotaryStartAngle,
                                    float rotaryEndAngle,

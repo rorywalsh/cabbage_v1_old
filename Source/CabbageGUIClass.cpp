@@ -1026,6 +1026,11 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                     cabbageIdentifiers.set(CabbageIDs::file, strTokens[0].trim());
                 }
 
+                else if(identArray[indx].equalsIgnoreCase("svgpath"))
+                {
+                    cabbageIdentifiers.set(CabbageIDs::svgpath, strTokens[0].trim());
+                }
+				
                 else if(identArray[indx].equalsIgnoreCase("fillcolour"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::fillcolour, getColourFromText(strTokens.joinIntoString(",")).toString());

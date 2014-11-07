@@ -112,6 +112,7 @@ public:
                     attributeNames[i].equalsIgnoreCase("scaley") ||
                     attributeNames[i].equalsIgnoreCase("scalex") ||
                     attributeNames[i].equalsIgnoreCase("range") ||
+					attributeNames[i].equalsIgnoreCase("channelarray") ||
                     attributeNames[i].equalsIgnoreCase("popup") ||
                     attributeNames[i].equalsIgnoreCase("comborange") ||
                     attributeNames[i].equalsIgnoreCase("basetype") ||

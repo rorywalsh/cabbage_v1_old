@@ -1556,6 +1556,11 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 {
+	//if not svg files are set, try using the global theme...
+	cAttr.setStringProp(CabbageIDs::svgpath, (cAttr.getStringProp(CabbageIDs::svgpath).isNotEmpty() ? 
+												cAttr.getStringProp(CabbageIDs::svgpath) :
+												globalSVGPath));	
+	
     layoutComps.add(new CabbageGroupbox(cAttr));
 
     int idx = layoutComps.size()-1;
@@ -1775,6 +1780,8 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
     int width = cAttr.getNumProp(CabbageIDs::width);
     int height = cAttr.getNumProp(CabbageIDs::height);
 
+	globalSVGPath = cAttr.getStringProp(CabbageIDs::svgpath);
+
 	showScrollbars = (bool)cAttr.getNumProp(CabbageIDs::scrollbars);
     if(cAttr.getStringProp(CabbageIDs::colour).isNotEmpty())
         formColour = Colour::fromString(cAttr.getStringProp(CabbageIDs::colour));
@@ -1861,6 +1868,7 @@ void CabbagePluginAudioProcessorEditor::InsertTextbox(CabbageGUIClass &cAttr)
     //if control is not part of a plant, add mouse listener
     if(cAttr.getStringProp("plant").isEmpty())
         layoutComps[idx]->addMouseListener(this, true);
+		
     dynamic_cast<CabbageTextbox*>(layoutComps[idx])->editor->setLookAndFeel(lookAndFeel);
     layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
     layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
@@ -1936,6 +1944,11 @@ void CabbagePluginAudioProcessorEditor::InsertInfoButton(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
 {
+	//if not svg files are set, try using the global theme...
+	cAttr.setStringProp(CabbageIDs::svgpath, (cAttr.getStringProp(CabbageIDs::svgpath).isNotEmpty() ? 
+												cAttr.getStringProp(CabbageIDs::svgpath) :
+												globalSVGPath));
+												
     layoutComps.add(new CabbageButton(cAttr));
     int idx = layoutComps.size()-1;
 
@@ -1967,6 +1980,10 @@ void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertRecordButton(CabbageGUIClass &cAttr)
 {
+	//if not svg files are set, try using the global theme...
+	cAttr.setStringProp(CabbageIDs::svgpath, (cAttr.getStringProp(CabbageIDs::svgpath).isNotEmpty() ? 
+												cAttr.getStringProp(CabbageIDs::svgpath) :
+												globalSVGPath));
     layoutComps.add(new CabbageButton(cAttr));
     int idx = layoutComps.size()-1;
 
@@ -2200,6 +2217,13 @@ void CabbagePluginAudioProcessorEditor::InsertSlider(CabbageGUIClass &cAttr)
     float top = cAttr.getNumProp(CabbageIDs::top);
     float width = cAttr.getNumProp(CabbageIDs::width);
     float height = cAttr.getNumProp(CabbageIDs::height);
+	
+	
+	//if not svg files are set, try using the global theme...
+	cAttr.setStringProp(CabbageIDs::svgpath, (cAttr.getStringProp(CabbageIDs::svgpath).isNotEmpty() ? 
+												cAttr.getStringProp(CabbageIDs::svgpath) :
+												globalSVGPath));
+	
     comps.add(new CabbageSlider(cAttr));
     int idx = comps.size()-1;
     setPositionOfComponent(left, top, width, height, comps[idx], cAttr.getStringProp("reltoplant"));
@@ -2298,6 +2322,11 @@ void CabbagePluginAudioProcessorEditor::InsertPopupMenu(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
 {
+	//if not svg files are set, try using the global theme...
+	cAttr.setStringProp(CabbageIDs::svgpath, (cAttr.getStringProp(CabbageIDs::svgpath).isNotEmpty() ? 
+												cAttr.getStringProp(CabbageIDs::svgpath) :
+												globalSVGPath));
+												
     comps.add(new CabbageButton(cAttr));
     int idx = comps.size()-1;
     float left = cAttr.getNumProp(CabbageIDs::left);
@@ -2326,6 +2355,10 @@ void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertCheckBox(CabbageGUIClass &cAttr)
 {
+	//if not svg files are set, try using the global theme...
+	cAttr.setStringProp(CabbageIDs::svgpath, (cAttr.getStringProp(CabbageIDs::svgpath).isNotEmpty() ? 
+												cAttr.getStringProp(CabbageIDs::svgpath) :
+												globalSVGPath));
     comps.add(new CabbageCheckbox(cAttr));
     int idx = comps.size()-1;
     float left = cAttr.getNumProp(CabbageIDs::left);
@@ -2665,6 +2698,11 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
     if(File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::workingdir))!=true)
         cAttr.setStringProp(CabbageIDs::workingdir, currentFileLocation);
 
+	//if not svg files are set, try using the global theme...
+	cAttr.setStringProp(CabbageIDs::svgpath, (cAttr.getStringProp(CabbageIDs::svgpath).isNotEmpty() ? 
+												cAttr.getStringProp(CabbageIDs::svgpath) :
+												globalSVGPath));
+												
     comps.add(new CabbageComboBox(cAttr));
 
     int idx = comps.size()-1;

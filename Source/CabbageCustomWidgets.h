@@ -81,6 +81,7 @@ public:
         offX=offY=offWidth=offHeight=0;
         groupbox = new GroupComponent(String("groupbox_")+name);
         button = new TextButton(name);
+		button->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
         addAndMakeVisible(groupbox);
         addAndMakeVisible(button);
         groupbox->setVisible(false);
@@ -190,6 +191,7 @@ public:
         offX=offY=offWidth=offHeight=0;
         groupbox = new GroupComponent(String("groupbox_")+name);
         slider = new Slider(text);
+		slider->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
         slider->toFront(true);
         addAndMakeVisible(slider);
         addAndMakeVisible(groupbox);
@@ -257,6 +259,7 @@ public:
             slider->setSliderStyle(Slider::Rotary);
             getProperties().set("type", var("rslider"));
             slider->setSliderStyle(Slider::RotaryVerticalDrag);
+			
             slider->setRotaryParameters(float_Pi * 1.2f, float_Pi * 2.8f, false);
             //if using group caption
             if (compName.length() > 0)
@@ -365,7 +368,7 @@ public:
         offX=offY=offWidth=offHeight=0;
         groupbox = new GroupComponent(String("groupbox_")+name);
         button = new ToggleButton(name);
-
+		button->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
         addAndMakeVisible(groupbox);
         addAndMakeVisible(button);
         groupbox->setVisible(false);
@@ -539,6 +542,7 @@ public:
         combo->setColour(ComboBox::textColourId, Colour::fromString(fontcolour));
         combo->setColour(ComboBox::backgroundColourId, Colour::fromString(colour));
         combo->lookAndFeelChanged();
+		combo->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
 
         groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
         groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
@@ -755,6 +759,7 @@ public:
         setColour(TextButton::buttonColourId, Colour::fromString(colour));
         setName(cAttr.getStringProp(CabbageIDs::name));
         setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
+		getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
 
         this->setText(text);
         this->setWantsKeyboardFocus(false);

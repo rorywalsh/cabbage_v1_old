@@ -1,5 +1,24 @@
 #include "CabbageLookAndFeel.h"
 
+#define svgRSliderDiameter 150
+
+#define svgVSliderWidth 30
+#define svgVSliderHeight 150
+
+#define svgVSliderThumbHeight 50
+#define svgVSliderThumbWidth 50
+
+#define svgHSliderThumbWidth 50
+#define svgHSliderThumbHeight 50
+
+#define svgHSliderHeight 30
+#define svgHSliderWidth 150
+
+#define svgButtonWidth 100
+#define svgButtonHeight 50
+
+#define svgGroupboxWidth 1000
+#define svgGroupboxHeight 800
 
 CabbageLookAndFeel::CabbageLookAndFeel()
 {
@@ -14,19 +33,35 @@ CabbageLookAndFeel::CabbageLookAndFeel()
     setColour(ComboBox::textColourId, CabbageUtils::getComponentFontColour());
     setColour(ComboBox::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
     setColour(ScrollBar::trackColourId, Colours::transparentBlack);
-    setColour(ScrollBar::thumbColourId, CabbageUtils::getComponentSkin());
-	
-	
-	
-	
+    setColour(ScrollBar::thumbColourId, CabbageUtils::getComponentSkin());	
 }
 
-Image CabbageLookAndFeel::getSVGImageFor(String type)
+Image CabbageLookAndFeel::getSVGImageFor(String path, String type, AffineTransform affine)
 {
+	
 	String svgFileName;
 	Image svgImg;
-	if(type=="button")
-		svgFileName = "/home/rory/sourcecode/cabbageaudio/cabbageSVG/"+String(type)+".svg";
+	if(type.contains("button"))
+	{
+		svgFileName = path+"/"+String(type)+".svg";
+		if(File(svgFileName).existsAsFile())
+			svgImg = Image(Image::ARGB, svgButtonWidth, svgButtonHeight, true);//default button size 100px X 50px
+	}
+	
+	else if(type.contains("slider"))
+	{
+		svgFileName = path+"/"+String(type)+".svg";	
+		if(File(svgFileName).existsAsFile())
+			svgImg = Image(Image::ARGB, svgRSliderDiameter, svgRSliderDiameter, true);//default rotary slider size 150px X 150px
+	}
+	
+	else if(type.contains("groupbox"))
+	{
+		svgFileName = path+"/"+String(type)+".svg";	
+		if(File(svgFileName).existsAsFile())
+			svgImg = Image(Image::ARGB, svgGroupboxWidth, svgGroupboxHeight, true);//default rotary slider size 150px X 150px
+	}	
+	
 	
 	File svgFile(svgFileName);  
 	ScopedPointer<XmlElement> svg (XmlDocument::parse(svgFile.loadFileAsString()));
@@ -35,21 +70,17 @@ Image CabbageLookAndFeel::getSVGImageFor(String type)
 		if(svg == nullptr)
 			Logger::writeToLog("couldn't parse svg, might not exist");
 		ScopedPointer<Drawable> drawable; 
-		svgImg = Image(Image::ARGB, 100, 50, true);
+
 		Graphics graph(svgImg);
 		if (svg != nullptr)
 		{
 			drawable = Drawable::createFromSVG (*svg);
-			drawable->draw(graph, 1.f, AffineTransform::identity);
+			drawable->draw(graph, 1.f, affine);
 			return svgImg;
 		}			
 	}
-		
-
-
 	
-	return svgImg;
-	
+	return svgImg;	
 }
 
 CabbageLookAndFeel::~CabbageLookAndFeel()
@@ -79,8 +110,6 @@ void CabbageLookAndFeel::drawLevelMeter(Graphics &g, int width, int	height,	floa
 
         g.fillRoundedRectangle (3.0f + i * w + w * 0.1f, 3.0f, w * 0.8f, height - 6.0f, w * 0.4f);
     }
-
-
 }
 
 //==============================================================================
@@ -194,12 +223,15 @@ void CabbageLookAndFeel::drawFileBrowserRow (Graphics& g, int width, int height,
 Image CabbageLookAndFeel::drawRotaryImage(int diameter, const Colour sliderColour, const Colour trackerCol, float sliderPosProportional,
         float zeroPosProportional,
         bool useTrackerFill,
-        float markerOpacity)
+        float markerOpacity,
+		String svgPath)
 {
     //A simpler slider is created if the diameter is 25 or less.
     bool useBigImage = true;
     if (diameter <=25)
         useBigImage = false;
+		
+	bool usingSVG=false;
 
     Image img = Image(Image::ARGB, diameter, diameter, true);
     Graphics g (img);
@@ -209,11 +241,21 @@ Image CabbageLookAndFeel::drawRotaryImage(int diameter, const Colour sliderColou
     float numRadians = (300*3.14) / 180;
     AffineTransform tnsForm = AffineTransform::identity; //this means no transform, or identical
 
+	//if slider background svg exists...
+	if(getSVGImageFor(svgPath, "rslider_background", AffineTransform::identity).isValid()){
+	g.drawImage(getSVGImageFor(svgPath, "rslider_background", AffineTransform::identity), 0, 0,  
+													diameter, diameter, 0, 0, svgRSliderDiameter, svgRSliderDiameter, false);
+	usingSVG = true;												
+	}
+
+
     // Outer grey circle and green fill.  Only used if using big slider image.
     if (useBigImage)
     {
-        g.setColour (Colour::fromRGBA(150, 165, 170, 150));
-        g.drawEllipse (0.5, 0.5, diameter-1, diameter-1, 1);
+        if(!usingSVG){
+			g.setColour (Colour::fromRGBA(150, 165, 170, 150));
+			g.drawEllipse (0.5, 0.5, diameter-1, diameter-1, 1);
+		}
 
         if (useTrackerFill)
         {
@@ -227,66 +269,89 @@ Image CabbageLookAndFeel::drawRotaryImage(int diameter, const Colour sliderColou
         }
     }
 
-    //----------- Polygon -----------------------------------------
-    g.setColour (Colour::fromRGBA(0, 0, 0, 150));
-    g.fillEllipse (diameter*0.17, diameter*0.17, diameter*0.7, diameter*0.7); //for shadow
+    //only draw Polygon if we're not using any SVGs
+	if(!usingSVG)
+	{
+		g.setColour (Colour::fromRGBA(0, 0, 0, 150));
+		g.fillEllipse (diameter*0.17, diameter*0.17, diameter*0.7, diameter*0.7); //for shadow
 
-    Path newPolygon;
-    Point<float> centre (diameter/2, diameter/2);
+		Path newPolygon;
+		Point<float> centre (diameter/2, diameter/2);
 
-    if (diameter >= 40)   //If diameter is >= 40 then polygon has 12 steps
-    {
-        newPolygon.addPolygon (centre, 12, diameter*0.35, 0);
-        newPolygon.applyTransform (AffineTransform::rotation ((sliderPosProportional * numRadians),
-                                   diameter/2, diameter/2));
-    }
-    else if ((diameter < 40) && (diameter > 25))   //Polygon has 10 steps
-    {
-        newPolygon.addPolygon (centre, 10, diameter*0.35, 0);
-        newPolygon.applyTransform (AffineTransform::rotation ((sliderPosProportional * numRadians),
-                                   diameter/2, diameter/2));
-    }
-    else //Else just use a circle. This is clearer than a polygon when very small.
-        newPolygon.addEllipse (0, 0, diameter, diameter);
+		if (diameter >= 40)   //If diameter is >= 40 then polygon has 12 steps
+		{
+			newPolygon.addPolygon (centre, 12, diameter*0.35, 0);
+			newPolygon.applyTransform (AffineTransform::rotation ((sliderPosProportional * numRadians),
+									   diameter/2, diameter/2));
+		}
+		else if ((diameter < 40) && (diameter > 25))   //Polygon has 10 steps
+		{
+			newPolygon.addPolygon (centre, 10, diameter*0.35, 0);
+			newPolygon.applyTransform (AffineTransform::rotation ((sliderPosProportional * numRadians),
+									   diameter/2, diameter/2));
+		}
+		else //Else just use a circle. This is clearer than a polygon when very small.
+			newPolygon.addEllipse (0, 0, diameter, diameter);
 
-    ColourGradient cg = ColourGradient (Colours::white, 0, 0, Colours::black, diameter*0.8, diameter*0.8, false);
-    g.setGradientFill (cg);
-    g.fillPath (newPolygon, tnsForm);
+		ColourGradient cg = ColourGradient (Colours::white, 0, 0, Colours::black, diameter*0.8, diameter*0.8, false);
+		g.setGradientFill (cg);
+		g.fillPath (newPolygon, tnsForm);
 
 
-    //-------- Inner circle -------------------------
-    g.setColour (Colour::fromRGBA(0, 0, 0, 180)); //for inner shadow
-    g.fillEllipse (diameter*0.185, diameter*0.185, diameter*0.65, diameter*0.65);
-    for (float i=0.09; i>0.0; i-=0.01)
-    {
-        g.setOpacity (i*2);
-        g.fillEllipse (diameter * (0.19+i), diameter * (0.19+i), diameter*0.62, diameter*0.62);
-    }
+		//-------- Inner circle -------------------------
+		g.setColour (Colour::fromRGBA(0, 0, 0, 180)); //for inner shadow
+		g.fillEllipse (diameter*0.185, diameter*0.185, diameter*0.65, diameter*0.65);
+		for (float i=0.09; i>0.0; i-=0.01)
+		{
+			g.setOpacity (i*2);
+			g.fillEllipse (diameter * (0.19+i), diameter * (0.19+i), diameter*0.62, diameter*0.62);
+		}
 
-    // Using a colour gradient from white to the chosen colour gives the effect of a light source.
-    ColourGradient circleGrad = ColourGradient (Colours::white, diameter*-0.2, diameter*-0.2,
-                                sliderColour, diameter*0.5, diameter*0.5, false);
-    g.setGradientFill (circleGrad);
-    //filling inner circle
-    if (diameter > 25)
-        g.fillEllipse (diameter*0.19, diameter*0.19, diameter*0.62, diameter*0.62);
-    else
-        g.fillEllipse (diameter*0.1, diameter*0.1, diameter*0.8, diameter*0.8);
+		// Using a colour gradient from white to the chosen colour gives the effect of a light source.
+		ColourGradient circleGrad = ColourGradient (Colours::white, diameter*-0.2, diameter*-0.2,
+									sliderColour, diameter*0.5, diameter*0.5, false);
+		g.setGradientFill (circleGrad);
+		//filling inner circle
+		if (diameter > 25)
+			g.fillEllipse (diameter*0.19, diameter*0.19, diameter*0.62, diameter*0.62);
+		else
+			g.fillEllipse (diameter*0.1, diameter*0.1, diameter*0.8, diameter*0.8);
 
+	}
+	else{
+	if(getSVGImageFor(svgPath, "rslider_inner", AffineTransform::identity).isValid())
+	{
+		g.setOpacity(1.0);
+		g.drawImage(getSVGImageFor(svgPath, "rslider_inner", AffineTransform::rotation (((sliderPosProportional-0.5) * numRadians),
+                                 svgRSliderDiameter/2, svgRSliderDiameter/2)), 0, 0, diameter, diameter,
+											 0, 0, svgRSliderDiameter, svgRSliderDiameter, false);
+											 
+	}		
+		
+	}
     //------ Marker --------------
+	
     Path circleMarker;
-    if (diameter > 25) //If diameter is greater than 25 use a rounded rectangle
-        circleMarker.addRoundedRectangle (diameter*0.47, diameter*0.19, diameter*0.06, diameter*0.22,
-                                          diameter*0.01, diameter*0.05);
-    else //Otherwise use a normal rectangle
-        circleMarker.addRectangle (diameter*0.47, diameter*0.1, diameter*0.06, diameter*0.3);
-
-    circleMarker.applyTransform (AffineTransform::rotation (((sliderPosProportional-0.5) * numRadians),
-                                 diameter/2, diameter/2));
-    g.setColour(sliderColour.contrasting(1.0f)); //will be contrasted against the slider bg
-    g.setOpacity(markerOpacity);
-    g.fillPath (circleMarker, tnsForm);
-
+	if(getSVGImageFor(svgPath, "rslider_thumb", AffineTransform::identity).isValid())
+	{
+		 AffineTransform trans = AffineTransform::rotation (((sliderPosProportional-0.5) * numRadians),
+                                 svgRSliderDiameter/2, svgRSliderDiameter/2);						
+		g.drawImage(getSVGImageFor(svgPath, "rslider_thumb", trans), 0, 0, diameter, diameter,
+											 0, 0, svgRSliderDiameter, svgRSliderDiameter, false);
+	}
+	else
+	{
+		if (diameter > 25) //If diameter is greater than 25 use a rounded rectangle
+			circleMarker.addRoundedRectangle(diameter*0.47, diameter*0.19, diameter*0.06, diameter*0.22,
+											  diameter*0.01, diameter*0.05);
+		else //Otherwise use a normal rectangle
+			circleMarker.addRectangle (diameter*0.47, diameter*0.1, diameter*0.06, diameter*0.3);	
+		circleMarker.applyTransform (AffineTransform::rotation (((sliderPosProportional-0.5) * numRadians),
+									 diameter/2, diameter/2));
+		g.setColour(sliderColour.contrasting(1.0f)); //will be contrasted against the slider bg
+		g.setOpacity(markerOpacity);
+		g.fillPath (circleMarker, tnsForm);
+	}
 
     return img;
 }
@@ -296,7 +361,8 @@ Image CabbageLookAndFeel::drawLinearBgImage (float width, float height, float sl
         float zeroPosProportional,
         bool useTrackerFill,
         bool isVertical,
-        const Colour trackerFill)
+        const Colour trackerFill,
+		String svgPath)
 {
     Image img = Image(Image::ARGB, width, height, true);
     Graphics g (img);
@@ -304,25 +370,35 @@ Image CabbageLookAndFeel::drawLinearBgImage (float width, float height, float sl
     //----- For horizontal sliders ---------------------------------------------------
     if (isVertical == false)
     {
-        // Drawing the small ticks
-        g.setColour (Colours::whitesmoke);
-        g.setOpacity (0.3);
-        float markerGap = width/10; //gap between ticks
-        for (int i=1; i<5; i++)
-            g.drawLine ((i*markerGap), height*0.3, (i*markerGap), height*0.7, .7);
-        for (int i=6; i<10; i++)
-            g.drawLine ((i*markerGap), height*0.3, (i*markerGap), height*0.7, .7);
-        //Drawing the centre tick, this will be longer and thicker
-        g.setOpacity (0.6);
-        g.drawLine ((width/2), height*0.25, (width/2), height*0.75, 1.5);
+		//if slider background svg exists...
+		if(getSVGImageFor(svgPath, "hslider_background", AffineTransform::identity).isValid())
+		{
+			g.drawImage(getSVGImageFor(svgPath, "hslider_background", AffineTransform::identity), 0, 0,  
+													width, height, 0, 0, svgHSliderWidth, svgHSliderHeight, false);
+											
+		}
+		else
+		{		
+			// Drawing the small ticks
+			g.setColour (Colours::whitesmoke);
+			g.setOpacity (0.3);
+			float markerGap = width/10; //gap between ticks
+			for (int i=1; i<5; i++)
+				g.drawLine ((i*markerGap), height*0.3, (i*markerGap), height*0.7, .7);
+			for (int i=6; i<10; i++)
+				g.drawLine ((i*markerGap), height*0.3, (i*markerGap), height*0.7, .7);
+			//Drawing the centre tick, this will be longer and thicker
+			g.setOpacity (0.6);
+			g.drawLine ((width/2), height*0.25, (width/2), height*0.75, 1.5);
 
-        // Main Rectangle. Creating the illusion of lighting by painting an almost transparent rectangle first.
-        g.setColour (Colours::whitesmoke);
-        g.setOpacity (0.1);
-        g.fillRoundedRectangle (0, height*0.44, width, height*0.15, height*0.05); //for light effect
-        g.setColour (Colour::fromRGBA(5, 5, 5, 255));
-        g.fillRoundedRectangle (0, height*0.425, width*0.99, height*0.15, height*0.05); //main rectangle
-
+			// Main Rectangle. Creating the illusion of lighting by painting an almost transparent rectangle first.
+			g.setColour (Colours::whitesmoke);
+			g.setOpacity (0.1);
+			g.fillRoundedRectangle (0, height*0.44, width, height*0.15, height*0.05); //for light effect
+			g.setColour (Colour::fromRGBA(5, 5, 5, 255));
+			g.fillRoundedRectangle (0, height*0.425, width*0.99, height*0.15, height*0.05); //main rectangle
+		}
+		
         // Tracker fill.
         if (useTrackerFill)
         {
@@ -345,25 +421,35 @@ Image CabbageLookAndFeel::drawLinearBgImage (float width, float height, float sl
     //----- For vertical sliders ---------------------------------------------------
     if (isVertical == true)
     {
-        // ticks
-        g.setColour (Colours::whitesmoke);
-        g.setOpacity (0.3);
-        float markerGap = height/10; //gap between ticks
-        for (int i=1; i<5; i++)
-            g.drawLine (width*0.3, (i*markerGap), width*0.7, (i*markerGap), .7);
-        for (int i=6; i<10; i++)
-            g.drawLine (width*0.3, (i*markerGap), width*0.7, (i*markerGap), .7);
-        //Drawing the centre tick, this will be longer and thicker
-        g.setOpacity (0.6);
-        g.drawLine (width*0.25, (height/2), width*0.75, (height/2), 1.5);
+		//if slider background svg exists...
+		if(getSVGImageFor(svgPath, "vslider_background", AffineTransform::identity).isValid())
+		{
+			g.drawImage(getSVGImageFor(svgPath, "vslider_background", AffineTransform::identity), 0, 0,  
+													width, height, 0, 0, svgVSliderWidth, svgVSliderHeight, false);
+											
+		}
+		else
+		{
+			// ticks
+			g.setColour (Colours::whitesmoke);
+			g.setOpacity (0.3);
+			float markerGap = height/10; //gap between ticks
+			for (int i=1; i<5; i++)
+				g.drawLine (width*0.3, (i*markerGap), width*0.7, (i*markerGap), .7);
+			for (int i=6; i<10; i++)
+				g.drawLine (width*0.3, (i*markerGap), width*0.7, (i*markerGap), .7);
+			//Drawing the centre tick, this will be longer and thicker
+			g.setOpacity (0.6);
+			g.drawLine (width*0.25, (height/2), width*0.75, (height/2), 1.5);
 
-        // Main Rectangle. Creating the illusion of lighting by painting an almost transparent rectangle first.
-        g.setColour (Colours::whitesmoke);
-        g.setOpacity (0.1);
-        g.fillRoundedRectangle (width*0.44, 0, width*0.15, height, width*0.05); //for light effect
-        g.setColour (Colour::fromRGBA(5, 5, 5, 255));
-        g.fillRoundedRectangle (width*0.425, 0, width*0.15, height*0.99, width*0.05); //main rectangle
-
+			// Main Rectangle. Creating the illusion of lighting by painting an almost transparent rectangle first.
+			g.setColour (Colours::whitesmoke);
+			g.setOpacity (0.1);
+			g.fillRoundedRectangle (width*0.44, 0, width*0.15, height, width*0.05); //for light effect
+			g.setColour (Colour::fromRGBA(5, 5, 5, 255));
+			g.fillRoundedRectangle (width*0.425, 0, width*0.15, height*0.99, width*0.05); //main rectangle
+		}
+		
         // Tracker fill.
         if (useTrackerFill == true)
         {
@@ -409,7 +495,7 @@ void CabbageLookAndFeel::drawLinearSlider (Graphics& g, int x, int y, int width,
 }
 //========= Linear slider thumb image ====================================================================
 Image CabbageLookAndFeel::drawLinearThumbImage (float width, float height, const Colour thumbFill,
-        bool isVertical)
+        bool isVertical, String svgPath)
 {
     Image img = Image(Image::ARGB, width, height, true);
     Graphics g (img);
@@ -424,36 +510,58 @@ Image CabbageLookAndFeel::drawLinearThumbImage (float width, float height, const
     //----- For horizontal sliders ------------------------------------------
     if (isVertical == false)
     {
-        //For shadow effect
-        g.setColour (Colours::black);
-        g.setOpacity (0.8);
-        g.fillEllipse ((width*0.2)+1, (height*0.1)+1, width*0.6, height*0.8);
-        g.setOpacity (0.4);
-        g.fillEllipse ((width*0.2)+3, (height*0.1)+3, width*0.6, height*0.8);
-        //Colouring in the thumb
-        g.setGradientFill (thumb);
-        g.fillEllipse (width*0.2, height*0.1, width*0.6, height*0.8);
+		//if slider background svg exists...
+		if(getSVGImageFor(svgPath, "hslider_thumb", AffineTransform::identity).isValid())
+		{
+			g.drawImage(getSVGImageFor(svgPath, "hslider_thumb", AffineTransform::identity), 0, 0,  
+													width, height, 0, 0, svgHSliderThumbWidth, svgHSliderThumbHeight, false);
+											
+		}
+		else
+		{
+			//For shadow effect
+			g.setColour (Colours::black);
+			g.setOpacity (0.8);
+			g.fillEllipse ((width*0.2)+1, (height*0.1)+1, width*0.6, height*0.8);
+			g.setOpacity (0.4);
+			g.fillEllipse ((width*0.2)+3, (height*0.1)+3, width*0.6, height*0.8);
+			//Colouring in the thumb
+			g.setGradientFill (thumb);
+			g.fillEllipse (width*0.2, height*0.1, width*0.6, height*0.8);
+		}
     }
 
     //----- For vertical sliders ------------------------------------------
     else if (isVertical == true)
     {
-        //For shadow effect
-        g.setColour (Colours::black);
-        g.setOpacity (0.8);
-        g.fillEllipse ((width*0.1)+1, (height*0.2)+1, width*0.8, height*0.6);
-        g.setOpacity (0.4);
-        g.fillEllipse ((width*0.1)+3, (height*0.2)+3, width*0.8, height*0.6);
-        //Colouring in the thumb
-        g.setGradientFill (thumb);
-        g.fillEllipse (width*0.1, height*0.2, width*0.8, height*0.6);
+		
+		//if slider background svg exists...
+		if(getSVGImageFor(svgPath, "vslider_thumb", AffineTransform::identity).isValid())
+		{
+			g.drawImage(getSVGImageFor(svgPath, "vslider_thumb", AffineTransform::identity), 0, 0,  
+													width, height, 0, 0, svgVSliderThumbWidth, svgVSliderThumbHeight, false);
+											
+		}
+		else
+			{
+			//For shadow effect
+			g.setColour (Colours::black);
+			g.setOpacity (0.8);
+			g.fillEllipse ((width*0.1)+1, (height*0.2)+1, width*0.8, height*0.6);
+			g.setOpacity (0.4);
+			g.fillEllipse ((width*0.1)+3, (height*0.2)+3, width*0.8, height*0.6);
+			//Colouring in the thumb
+			g.setGradientFill (thumb);
+			g.fillEllipse (width*0.1, height*0.2, width*0.8, height*0.6);
+		
+		}
     }
 
     return img;
 }
 
 //========= Toggle Button image ========================================================
-Image CabbageLookAndFeel::drawToggleImage (float width, float height, bool isToggleOn, Colour colour, bool isRect)
+Image CabbageLookAndFeel::drawToggleImage (float width, float height, bool isToggleOn, Colour colour, bool isRect, String svgPath)
 {
     Image img = Image(Image::ARGB, width, height, true);
     Graphics g (img);
@@ -534,19 +642,19 @@ Image CabbageLookAndFeel::drawToggleImage (float width, float height, bool isTog
 }
 
 //========= Text button image ========================================================
-Image CabbageLookAndFeel::drawTextButtonImage (float width, float height, bool isButtonDown, Colour colour)
+Image CabbageLookAndFeel::drawTextButtonImage (float width, float height, bool isButtonDown, Colour colour, String svgPath)
 {
     Image img = Image(Image::ARGB, width, height, true);
     Graphics g (img);
     float opacity;
 
-	if(getSVGImageFor("button").isValid())	
+	if(getSVGImageFor(svgPath, "button_background", AffineTransform::identity).isValid())	
 	{		
 		//----- If "off"
 		if (isButtonDown == false)
-			g.drawImage(getSVGImageFor("button"), 0, 0, width, height, 0, 0, 100, 50, false);
+			g.drawImage(getSVGImageFor(svgPath, "button_background", AffineTransform::identity), 0, 0, width, height, 0, 0, svgButtonWidth, svgButtonHeight, false);
 		else
-			g.drawImage(getSVGImageFor("button"), 1, 1, width-2, height-2, 0, 0, 100, 50, false);
+			g.drawImage(getSVGImageFor(svgPath, "button_background", AffineTransform::identity), 1, 1, width-2, height-2, 0, 0, svgButtonWidth, svgButtonHeight, false);
 	}
 	else{
 
@@ -611,7 +719,8 @@ void CabbageLookAndFeel::drawRotarySlider(Graphics& g, int /*x*/, int /*y*/, int
         float /*endAngle*/,
         Slider& slider)
 {
-    // Name
+    // svg Path
+	String svgPath = slider.getProperties().getWithDefault("svgpath", "");
     String name(slider.getName());
     Font nameFont = CabbageUtils::getComponentFont();
     float nameWidth = nameFont.getStringWidth(name);
@@ -678,7 +787,7 @@ void CabbageLookAndFeel::drawRotarySlider(Graphics& g, int /*x*/, int /*y*/, int
     // Creating slider image
     bool useTracker = true;
     Image newSlider = drawRotaryImage(jmax(1.f, destWidth), slider.findColour(Slider::rotarySliderFillColourId), slider.findColour(Slider::trackColourId), sliderPosProportional,
-                                      zeroPosProportional, useTracker, markerOpacity);
+                                      zeroPosProportional, useTracker, markerOpacity, svgPath);
     g.drawImage (newSlider, destX, destY, destWidth, destHeight, 0, 0, newSlider.getWidth(), newSlider.getHeight(), false);
 
     // If NO textbox and mouse is hovering or dragging, then draw the value across the slider.  This has to be done
@@ -736,6 +845,7 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int /*y
     Font valueFont(CabbageUtils::getValueFont());
     // Setting up the format of the string....
     int numDec = slider.getProperties().getWithDefault("decimalPlaces", 0);
+	String svgPath = slider.getProperties().getWithDefault("svgpath", "");
     String format;
     format << "%." << numDec << "f";
     String sliderValue = CabbageUtils::cabbageString(String::formatted(format, slider.getValue()), valueFont, slider.getWidth());
@@ -812,7 +922,7 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int /*y
         bool useTracker = true;
         // Getting image
         newBackground = drawLinearBgImage (destWidth, destHeight, sliderPosProp, zeroPosProportional,
-                                           useTracker, false, slider.findColour(Slider::trackColourId));
+                                           useTracker, false, slider.findColour(Slider::trackColourId), svgPath);
     }
 
     //=========================== Else if Vertical Slider =======================================
@@ -883,7 +993,7 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int /*y
         bool useTracker = true;
         // Getting image
         newBackground = drawLinearBgImage (destWidth, destHeight, sliderPosProp, zeroPosProportional,
-                                           useTracker, true, slider.findColour(Slider::trackColourId));
+                                           useTracker, true, slider.findColour(Slider::trackColourId), svgPath);
     }
 
     // Drawing Image.
@@ -910,6 +1020,8 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics &g, int x, int /*y*/, i
     Image newThumb;
 
     float sliderPosProp = slider.valueToProportionOfLength(slider.getValue());
+	
+	String svgPath = slider.getProperties().getWithDefault("svgpath", "");
 
     // The following determines if slider value should be displayed, in the event of no textbox.  It
     // also calculates the string sliderValue and its width etc..
@@ -974,7 +1086,7 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics &g, int x, int /*y*/, i
             g.drawText(sliderValue, valuePos+1, 0, (int)sliderValueWidth, valueFont.getHeight(), Justification::centred, false);
         }
 
-        newThumb = drawLinearThumbImage (thumbWidth, thumbHeight, thumbFill, false); //creating image
+        newThumb = drawLinearThumbImage (thumbWidth, thumbHeight, thumbFill, false, svgPath); //creating image
     }
 
     //=========================== Else if vertical ===================================================
@@ -1023,7 +1135,7 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics &g, int x, int /*y*/, i
             g.drawText (sliderValue, (width/2) - (sliderValueWidth/2), newSliderPos-(valueFont.getHeight()+(thumbHeight/2)),
                         (int)sliderValueWidth, valueFont.getHeight(), Justification::centred, false);
         }
-        newThumb = drawLinearThumbImage (thumbWidth, thumbHeight, thumbFill, true); //creating image
+        newThumb = drawLinearThumbImage (thumbWidth, thumbHeight, thumbFill, true, svgPath); //creating image
     }
 
     g.drawImage (newThumb, destX, destY, thumbWidth, thumbHeight, 0, 0, newThumb.getWidth(), newThumb.getHeight(), false);
@@ -1049,9 +1161,10 @@ void CabbageLookAndFeel::drawToggleButton (Graphics &g, ToggleButton &button, bo
         isToggleOn = false;
 
     bool isRECT = button.getProperties().getWithDefault("isRect", 0);
+	String svgPath = button.getProperties().getWithDefault("svgpath", "");
 
     //----- Creating the image
-    Image newButton = drawToggleImage (destWidth, destHeight, isToggleOn, button.findColour(TextButton::buttonColourId), isRECT);
+    Image newButton = drawToggleImage (destWidth, destHeight, isToggleOn, button.findColour(TextButton::buttonColourId), isRECT, svgPath);
 
     //----- Drawing image
     g.drawImage (newButton, destX, destY, destWidth, destHeight, 0, 0, destWidth, destHeight, false);
@@ -1078,7 +1191,9 @@ void CabbageLookAndFeel::drawButtonBackground (Graphics& g, Button& button, cons
 {
     float width = button.getWidth();
     float height = button.getHeight();
-    Image newButton = drawTextButtonImage (width, height, isButtonDown, button.findColour(TextButton::buttonColourId));
+	String svgPath = button.getProperties().getWithDefault("svgpath", "");
+    Image newButton = drawTextButtonImage (width, height, isButtonDown, button.findColour(TextButton::buttonColourId),
+	svgPath);
     g.drawImage (newButton, 0, 0, width, height, 0, 0, width, height, false);
 }
 
@@ -1231,18 +1346,32 @@ void CabbageLookAndFeel::drawGroupComponentOutline (Graphics &g, int w, int h, c
         const Justification &position,
         GroupComponent &group)
 {
-    //----- Background
-    Colour col;
-    String bgColour = group.getProperties().getWithDefault("colour", "").toString();
-    String fontColour = group.getProperties().getWithDefault("fontcolour", "").toString();
+	g.fillAll(Colours::transparentBlack);
+	String svgPath = group.getProperties().getWithDefault("svgpath", "");
+	//if slider background svg exists...
+	if(getSVGImageFor(svgPath, "groupbox_background", AffineTransform::identity).isValid())
+	{
+		g.drawImage(getSVGImageFor(svgPath, "groupbox_background", AffineTransform::identity), 0, 0,  
+												w, h, 0, 0, svgGroupboxWidth, svgGroupboxHeight, false);
+										
+	}
+	else
+	{
+		Colour col;
+		g.setColour (group.findColour(TextButton::buttonColourId));
+		g.fillRoundedRectangle (0, 0, w, h, 5);
 
-    g.setColour (group.findColour(TextButton::buttonColourId));
-    g.fillRoundedRectangle (0, 0, w, h, 5);
+		//----- Outline
+		g.setColour (CabbageUtils::getComponentFontColour());
+		g.setOpacity (0.1);
+		g.drawRoundedRectangle (0.5, 0.5, w-1, h-1, 5, 1);
 
-    //----- Outline
-    g.setColour (CabbageUtils::getComponentFontColour());
-    g.setOpacity (0.1);
-    g.drawRoundedRectangle (0.5, 0.5, w-1, h-1, 5, 1);
+		g.setColour (group.findColour(GroupComponent::textColourId));
+		if(!group.getProperties().getWithDefault("groupLine", 0).equals(var(0)))
+		{
+			g.drawLine (10, 20, w-10, 20, 0.2);
+		}
+	}
 
     //----- Text
     String name = group.getText();
@@ -1255,18 +1384,6 @@ void CabbageLookAndFeel::drawGroupComponentOutline (Graphics &g, int w, int h, c
     g.setColour (group.findColour(GroupComponent::textColourId));
     name = CabbageUtils::cabbageString (name, font, group.getWidth());
     g.drawText (name, 0, 5, w, font.getHeight(), 36, false);
-    if(!group.getProperties().getWithDefault("groupLine", 0).equals(var(0)))
-    {
-        g.drawLine (10, 20, w-10, 20, 0.2);
-    }
-    //----- Corner holes
-    g.setColour (CabbageUtils::getBackgroundSkin());
-    g.setOpacity(0.7);
-    g.fillEllipse (2, 2, 4, 4); //top-left
-    g.fillEllipse (2, h-6, 4, 4); //bottom-left
-    g.fillEllipse (w-6, 2, 4, 4); //top-right
-    g.fillEllipse (w-6, h-6, 4, 4); //bottom-right
-
 }
 
 //======== Scrollbars ==============================================================================

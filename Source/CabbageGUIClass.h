@@ -84,6 +84,7 @@ public:
         add("fill");
         add("logger");
         add("file");
+		add("svgpath");
         add("outlinecolour");
         add("master");
         add("shape");
@@ -164,6 +165,7 @@ static const Identifier channeltype = "channeltype";
 static const Identifier comborange = "comborange";
 static const Identifier populate = "populate";
 static const Identifier popup = "popup";
+static const Identifier svgpath = "svgpath";
 static const Identifier plant = "plant";
 static const Identifier line = "line";
 static const Identifier tablenumber = "tablenumber";

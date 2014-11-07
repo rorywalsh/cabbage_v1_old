@@ -69,15 +69,13 @@ public:
         if (newState.width  <= 0) newState.width  = 100;
         if (newState.height <= 0) newState.height = 100;
 
-        Point<float> viewboxXY;
-
         if (xml->hasAttribute ("viewBox"))
         {
             const String viewBoxAtt (xml->getStringAttribute ("viewBox"));
             String::CharPointerType viewParams (viewBoxAtt.getCharPointer());
-            Point<float> vwh;
+            Point<float> vxy, vwh;
 
-            if (parseCoords (viewParams, viewboxXY, true)
+            if (parseCoords (viewParams, vxy, true)
                  && parseCoords (viewParams, vwh, true)
                  && vwh.x > 0
                  && vwh.y > 0)
@@ -107,7 +105,7 @@ public:
                 }
 
                 newState.transform = RectanglePlacement (placementFlags)
-                                        .getTransformToFit (Rectangle<float> (viewboxXY.x, viewboxXY.y, vwh.x, vwh.y),
+                                        .getTransformToFit (Rectangle<float> (vxy.x, vxy.y, vwh.x, vwh.y),
                                                             Rectangle<float> (newState.width, newState.height))
                                         .followedBy (newState.transform);
             }
@@ -120,10 +118,7 @@ public:
 
         newState.parseSubElements (xml, *drawable);
 
-        drawable->setContentArea (RelativeRectangle (RelativeCoordinate (viewboxXY.x),
-                                                     RelativeCoordinate (viewboxXY.x + newState.viewBoxW),
-                                                     RelativeCoordinate (viewboxXY.y),
-                                                     RelativeCoordinate (viewboxXY.y + newState.viewBoxH)));
+        drawable->setContentArea (RelativeRectangle (Rectangle<float> (newState.viewBoxW, newState.viewBoxH)));
         drawable->resetBoundingBoxToContentArea();
 
         return drawable;
@@ -162,7 +157,7 @@ public:
 
                     if (lastCommandChar == 'M' || lastCommandChar == 'm')
                     {
-                        subpathStart = p1;
+						subpathStart = p1;
                         path.startNewSubPath (p1);
                         lastCommandChar = 'l';
                     }
@@ -338,7 +333,7 @@ public:
                 path.closeSubPath();
                 last = last2 = subpathStart;
                 d = d.findEndOfWhitespace();
-                lastCommandChar = 'M';
+                lastCommandChar = 'M';                       
                 break;
 
             default:
@@ -350,10 +345,6 @@ public:
                 break;
         }
 
-        // paths that finish back at their start position often seem to be
-        // left without a 'z', so need to be closed explicitly..
-        if (path.getCurrentPosition() == subpathStart)
-            path.closeSubPath();
     }
 
 private:
@@ -418,13 +409,13 @@ private:
 
         drawable->resetContentAreaAndBoundingBoxToFitChildren();
         return drawable;
-    }
+    } 
 
     //==============================================================================
     Drawable* parsePath (const XmlPath& xml) const
     {
-        Path path;
-        parsePathString (path, xml->getStringAttribute ("d"));
+        Path path;	
+		parsePathString (path, xml->getStringAttribute ("d"));
 
         if (getStyleAttribute (xml, "fill-rule").trim().equalsIgnoreCase ("evenodd"))
             path.setUsingNonZeroWinding (false);
@@ -551,21 +542,39 @@ private:
         dp->setFill (Colours::transparentBlack);
 
         path.applyTransform (transform);
-        dp->setPath (path);
 
+
+		//create dashed line array if needed
+		const String strokeDashStyle (getStyleAttribute (xml, "stroke-dasharray"));
+		Path newPath;
+		const float strokeWidth (getStyleAttribute(xml, "stroke-width").getFloatValue());
+		Array<float> dashes;
+		StringArray dashArray;
+
+		if(!strokeDashStyle.equalsIgnoreCase("none")){
+			dashArray.addTokens(strokeDashStyle, ",", "");
+			for(int i=0;i<dashArray.size();i++){
+				dashes.add(dashArray[i].getFloatValue());
+			}					
+		}
+						
+        dp->setPath (path);
+		dp->setDashArray (dashes);
+		
         Path::Iterator iter (path);
+		
 
         bool containsClosedSubPath = false;
         while (iter.next())
         {
             if (iter.elementType == Path::Iterator::closePath)
             {
-                containsClosedSubPath = true;
+				containsClosedSubPath = true;
                 break;
             }
         }
 
-        dp->setFill (getPathFillType (path,
+        dp->setFill(getPathFillType (newPath,
                                       getStyleAttribute (xml, "fill"),
                                       getStyleAttribute (xml, "fill-opacity"),
                                       getStyleAttribute (xml, "opacity"),
@@ -574,14 +583,14 @@ private:
 
         const String strokeType (getStyleAttribute (xml, "stroke"));
 
-        if (strokeType.isNotEmpty() && ! strokeType.equalsIgnoreCase ("none"))
-        {
-            dp->setStrokeFill (getPathFillType (path, strokeType,
+		if (strokeType.isNotEmpty() && ! strokeType.equalsIgnoreCase ("none"))
+		{
+			dp->setStrokeFill (getPathFillType (path, strokeType,
                                                 getStyleAttribute (xml, "stroke-opacity"),
                                                 getStyleAttribute (xml, "opacity"),
                                                 Colours::transparentBlack));
 
-            dp->setStrokeType (getStrokeFor (xml));
+            dp->setStrokeType(getStrokeFor (xml));
         }
 
         return dp;
@@ -884,11 +893,11 @@ private:
 
     bool parseCoordsOrSkip (String::CharPointerType& s, Point<float>& p, const bool allowUnits) const
     {
-        if (parseCoords (s, p, allowUnits))
-            return true;
+        const bool b = parseCoords (s, p, allowUnits);
+        if (! b)
+            ++s;
 
-        if (! s.isEmpty()) ++s;
-        return false;
+        return b;
     }
 
     float getCoordLength (const String& s, const float sizeForProportions) const
@@ -954,7 +963,7 @@ private:
     }
 
     String getStyleAttribute (const XmlPath& xml, const String& attributeName,
-                              const String& defaultValue = String()) const
+                              const String& defaultValue = String::empty) const
     {
         if (xml->hasAttribute (attributeName))
             return xml->getStringAttribute (attributeName, defaultValue);
@@ -963,7 +972,7 @@ private:
 
         if (styleAtt.isNotEmpty())
         {
-            const String value (getAttributeFromStyleList (styleAtt, attributeName, String()));
+            const String value (getAttributeFromStyleList (styleAtt, attributeName, String::empty));
 
             if (value.isNotEmpty())
                 return value;
@@ -1001,7 +1010,7 @@ private:
         if (xml.parent != nullptr)
             return getInheritedAttribute  (*xml.parent, attributeName);
 
-        return String();
+        return String::empty;
     }
 
     //==============================================================================
@@ -1154,7 +1163,7 @@ private:
             StringArray tokens;
             tokens.addTokens (t.fromFirstOccurrenceOf ("(", false, false)
                                .upToFirstOccurrenceOf (")", false, false),
-                              ", ", "");
+                              ", ", String::empty);
 
             tokens.removeEmptyStrings (true);
 

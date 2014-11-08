@@ -1130,12 +1130,32 @@ void CabbagePluginAudioProcessorEditor::mouseMove(const MouseEvent& event)
 	}
 }
 
+//==============================================================================
 static void popupMenuCallback(int result, CabbagePluginAudioProcessorEditor* editor)
 {
 	if(result>0)
 		editor->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(
 			editor->getFilter()->getGUILayoutCtrls(editor->currentPopupIndex).getStringProp(CabbageIDs::channel),
 			result,	"popup");
+}
+//==============================================================================
+void CabbagePluginAudioProcessorEditor::mouseDrag(const MouseEvent& event)
+{
+
+	int x = event.eventComponent->getTopLevelComponent()->getMouseXYRelative().x;
+	int y = event.eventComponent->getTopLevelComponent()->getMouseXYRelative().y;
+
+	if(dynamic_cast<CabbagePlantWindow*>(event.eventComponent->getTopLevelComponent()))
+	{
+		getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousex, x, "float");
+		getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, jmax(0, y-18), "float");
+	}
+	else 
+	{
+		getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousex, x, "float");
+		getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, y-28, "float");	
+	}
+	
 }
 
 void CabbagePluginAudioProcessorEditor::mouseDown(const MouseEvent& event)

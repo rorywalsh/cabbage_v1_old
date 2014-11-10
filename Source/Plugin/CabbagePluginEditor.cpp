@@ -1136,7 +1136,7 @@ static void popupMenuCallback(int result, CabbagePluginAudioProcessorEditor* edi
 	if(result>0)
 		editor->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(
 			editor->getFilter()->getGUILayoutCtrls(editor->currentPopupIndex).getStringProp(CabbageIDs::channel),
-			result,	"popup");
+			result,	"float");
 }
 //==============================================================================
 void CabbagePluginAudioProcessorEditor::mouseDrag(const MouseEvent& event)

@@ -29,6 +29,7 @@ CabbageLookAndFeel::CabbageLookAndFeel()
     setColour(DirectoryContentsDisplayComponent::highlightColourId, Colours::red);
     setColour(Label::textColourId, CabbageUtils::getComponentFontColour());
     setColour(TextButton::textColourOnId, CabbageUtils::getComponentFontColour());
+	setColour(TextButton::textColourOffId, CabbageUtils::getComponentFontColour());
     setColour(TextButton::buttonColourId, Colour(20, 20, 20));
     setColour(ComboBox::textColourId, CabbageUtils::getComponentFontColour());
     setColour(ComboBox::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
@@ -1164,7 +1165,13 @@ void CabbageLookAndFeel::drawToggleButton (Graphics &g, ToggleButton &button, bo
 	String svgPath = button.getProperties().getWithDefault("svgpath", "");
 
     //----- Creating the image
-    Image newButton = drawToggleImage (destWidth, destHeight, isToggleOn, button.findColour(TextButton::buttonColourId), isRECT, svgPath);
+	Image newButton;
+	if(!button.getToggleState())
+    newButton = drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonColourId), isRECT, svgPath);
+	else
+	newButton = drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonOnColourId), isRECT, svgPath);
+		
+
 
     //----- Drawing image
     g.drawImage (newButton, destX, destY, destWidth, destHeight, 0, 0, destWidth, destHeight, false);
@@ -1189,12 +1196,16 @@ void CabbageLookAndFeel::drawButtonBackground (Graphics& g, Button& button, cons
         bool /*isButtonOver*/,
         bool isButtonDown)
 {
+	Image newButton;
     float width = button.getWidth();
     float height = button.getHeight();
 	String svgPath = button.getProperties().getWithDefault("svgpath", "");
-    Image newButton = drawTextButtonImage (width, height, isButtonDown, button.findColour(TextButton::buttonColourId),
-	svgPath);
-    g.drawImage (newButton, 0, 0, width, height, 0, 0, width, height, false);
+	if(!button.getToggleState())
+    newButton = drawTextButtonImage (width, height, isButtonDown, button.findColour(TextButton::buttonColourId), svgPath);
+    else
+	newButton = drawTextButtonImage (width, height, isButtonDown, button.findColour(TextButton::buttonOnColourId), svgPath);
+    	
+	g.drawImage (newButton, 0, 0, width, height, 0, 0, width, height, false);
 }
 
 //======= Text Button text =========================================================================
@@ -1212,7 +1223,11 @@ void CabbageLookAndFeel::drawButtonText (Graphics &g, TextButton &button, bool i
     Justification just (36); //centered
     float destY = (height*0.5) - (font.getHeight()*0.5);
 
-    Colour textColour = button.findColour(TextButton::textColourOnId);
+    Colour textColour;
+	if(!button.getToggleState())
+		textColour = button.findColour(TextButton::textColourOffId);
+	else
+		textColour = button.findColour(TextButton::textColourOffId);
 
     //----- The text colour and start position change if the button is down or up....
     if (isButtonDown == true)

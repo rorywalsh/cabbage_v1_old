@@ -186,6 +186,8 @@ private:
     void InsertTextbox(CabbageGUIClass &cAttr);
     void InsertNumberBox(CabbageGUIClass &cAttr);
     void buttonClicked(Button*);
+	void textButtonClicked(Button* button);
+	void toggleButtonClicked(Button* button);
     void mouseMove(const MouseEvent& event);
 	void mouseDrag(const MouseEvent& event);
     void mouseDown(const MouseEvent& event);
@@ -250,7 +252,7 @@ private:
     ScopedPointer<Label> debugLabel;
     StringArray scoreEvents;
 	String globalSVGPath;
-
+	Array<int> radioGroups;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePluginAudioProcessorEditor);
 
 };

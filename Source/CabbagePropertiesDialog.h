@@ -113,6 +113,7 @@ public:
                     attributeNames[i].equalsIgnoreCase("scalex") ||
                     attributeNames[i].equalsIgnoreCase("range") ||
 					attributeNames[i].equalsIgnoreCase("channelarray") ||
+					attributeNames[i].equalsIgnoreCase("offfontcolour") ||
                     attributeNames[i].equalsIgnoreCase("popup") ||
                     attributeNames[i].equalsIgnoreCase("comborange") ||
                     attributeNames[i].equalsIgnoreCase("basetype") ||

@@ -40,14 +40,16 @@ class IdentArray : public StringArray
 public:
     IdentArray() : StringArray("tablecolour")
     {
-
         add("tablecolours");
         add("bounds");
         add("fontcolour");
+		add("fontcolour:1");
+		add("fontcolour:0");
         add("size");
         add("items");
         add("pos");
         add("min");
+        add("radiogroup");
         add("max");
         add("value");
         add("tabpage");
@@ -110,8 +112,10 @@ public:
 		add("samplerange");
 		add("scrollbars");
 		add("socket");
-		//colour and text must go at end to prevent fall through
+
         add("colour");
+		add("colour:0");
+		add("colour:1");
 		add("text");
     }
     ~IdentArray()
@@ -142,7 +146,9 @@ static const Identifier textcolour = "textcolour";
 static const Identifier trackercolour = "trackercolour";
 static const Identifier tablecolour = "tablecolour";
 static const Identifier fontcolour= "fontcolour";
+static const Identifier onfontcolour= "onfontcolour";
 static const Identifier colour = "colour";
+static const Identifier oncolour = "oncolour";
 static const Identifier items = "items";
 static const Identifier text = "text";
 static const Identifier range = "range";
@@ -194,6 +200,7 @@ static const Identifier tabbed = "tabbed";
 static const Identifier rangey = "rangey";
 static const Identifier rangex = "rangex";
 static const Identifier include = "include";
+static const Identifier radiogroup = "radiogroup";
 static const Identifier tabpage = "tabpage";
 static const Identifier filetype = "filetype";
 static const Identifier workingdir = "workingdir";

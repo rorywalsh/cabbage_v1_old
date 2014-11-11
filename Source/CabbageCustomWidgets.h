@@ -64,7 +64,7 @@ class CabbageButton : public Component
 {
     int offX, offY, offWidth, offHeight;
     String buttonType;
-    String name, caption, buttonText, colour, fontcolour;
+    String name, caption, buttonText, colour, fontcolour, oncolour, onfontcolour;
 public:
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<Button> button;
@@ -75,7 +75,9 @@ public:
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         buttonText(cAttr.getStringProp(CabbageIDs::text)),
         colour(cAttr.getStringProp(CabbageIDs::colour)),
-        fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour))
+        fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
+        oncolour(cAttr.getStringProp(CabbageIDs::oncolour)),
+        onfontcolour(cAttr.getStringProp(CabbageIDs::onfontcolour))
     {
         setName(name);
         offX=offY=offWidth=offHeight=0;
@@ -88,6 +90,10 @@ public:
         groupbox->getProperties().set("groupLine", var(1));
         Logger::writeToLog(buttonText);
         button->setButtonText(buttonText);
+		
+		if(cAttr.getNumProp(CabbageIDs::radiogroup)!=0)
+			button->setRadioGroupId(cAttr.getNumProp(CabbageIDs::radiogroup));
+			
         if(caption.length()>0)
         {
             offX=10;
@@ -99,9 +105,12 @@ public:
         }
 
 
-        button->setColour(TextButton::textColourOnId, Colour::fromString(fontcolour));
+        button->setColour(TextButton::textColourOffId, Colour::fromString(fontcolour));
         button->setColour(TextButton::buttonColourId, Colour::fromString(colour));
+        button->setColour(TextButton::textColourOnId, Colour::fromString(onfontcolour));
+        button->setColour(TextButton::buttonOnColourId, Colour::fromString(oncolour));
         button->setButtonText(cAttr.getStringArrayPropValue(CabbageIDs::text, cAttr.getNumProp(CabbageIDs::value)));
+		button->setToggleState((bool)cAttr.getNumProp(CabbageIDs::value), dontSendNotification);
     }
     //---------------------------------------------
     ~CabbageButton()
@@ -354,7 +363,7 @@ public:
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<ToggleButton> button;
     bool isRect;
-    String name, caption, buttonText, colour, fontcolour;
+    String name, caption, buttonText, colour, fontcolour, oncolour;
     //---- constructor -----
     CabbageCheckbox(CabbageGUIClass &cAttr) :
         name(cAttr.getStringProp(CabbageIDs::name)),
@@ -362,6 +371,7 @@ public:
         buttonText(cAttr.getStringProp(CabbageIDs::text)),
         colour(cAttr.getStringProp(CabbageIDs::colour)),
         fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
+        oncolour(cAttr.getStringProp(CabbageIDs::oncolour)),
         isRect(cAttr.getStringProp(CabbageIDs::shape).equalsIgnoreCase("square"))
     {
         setName(name);
@@ -388,7 +398,12 @@ public:
         }
 
         button->getProperties().set("isRect", isRect);
+		
+		if(cAttr.getNumProp(CabbageIDs::radiogroup)!=0)
+			button->setRadioGroupId(cAttr.getNumProp(CabbageIDs::radiogroup));
+			
         button->setColour(ToggleButton::textColourId, Colour::fromString(fontcolour));
+        button->setColour(TextButton::buttonOnColourId, Colour::fromString(oncolour));
         button->setColour(TextButton::buttonColourId, Colour::fromString(colour));
         button->setButtonText(buttonText);
 

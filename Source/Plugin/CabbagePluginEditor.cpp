@@ -1247,7 +1247,7 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
 	choice = m.show();
 #endif
     if(choice==1)
-        insertComponentsFromCabbageText(StringArray(String("button bounds(")+String(x)+(", ")+String(y)+String(", 60, 25), channel(\"but1\"), text(\"on\", \"off\")")), false);
+        insertComponentsFromCabbageText(StringArray(String("button bounds(")+String(x)+(", ")+String(y)+String(", 60, 25), channel(\"but1\"), text(\"Push\", \"Push\")")), false);
     else if(choice==2)
         insertComponentsFromCabbageText(StringArray(String("rslider bounds(")+String(x)+(", ")+String(y)+String(", 50, 50), channel(\"rslider\"), range(0, 100, 0)")), false);
     else if(choice==3)
@@ -2359,6 +2359,11 @@ void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
     ((CabbageButton*)comps[idx])->button->setWantsKeyboardFocus(true);
 #endif
     ((CabbageButton*)comps[idx])->button->getProperties().set(String("index"), idx);
+
+	//add radio groupings
+	if(cAttr.getNumProp(CabbageIDs::radiogroup)>0)
+		radioGroups.add(idx);
+	
     if(!cAttr.getNumProp(CabbageIDs::visible))
         comps[idx]->setVisible(false);
     //if control is not part of a plant, add mouse listener
@@ -2393,6 +2398,11 @@ void CabbagePluginAudioProcessorEditor::InsertCheckBox(CabbageGUIClass &cAttr)
     ((CabbageCheckbox*)comps[idx])->button->getProperties().set(String("index"), idx);
     if(!cAttr.getNumProp(CabbageIDs::visible))
         comps[idx]->setVisible(false);
+		
+	//add radio groupings
+	if(cAttr.getNumProp(CabbageIDs::radiogroup)>0)
+		radioGroups.add(idx);
+		
     //if control is not part of a plant, add mouse listener
     if(cAttr.getStringProp("reltoplant").isEmpty())
         comps[idx]->addMouseListener(this, true);
@@ -2425,12 +2435,14 @@ void CabbagePluginAudioProcessorEditor::buttonStateChanged(Button* button)
                         getFilter()->setParameterNotifyingHost(i, 1.f);
                         getFilter()->setParameter(i, 1.f);
                         getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 1);
+						button->setToggleState(true, dontSendNotification);
                     }
                     else
                     {
                         getFilter()->setParameterNotifyingHost(i, 0.f);
                         getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 0);
                         getFilter()->setParameter(i, 0.f);
+						button->setToggleState(false, dontSendNotification);
                     }
                     //toggle text values
                     for(int o=0; o<getFilter()->getGUICtrls(i).getStringArrayProp("text").size(); o++)
@@ -2622,85 +2634,12 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                         }
                     }
 
-
-                //for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++){//find correct control from vector
-                i = button->getProperties().getWithDefault("index", -9999);
-
-                //+++++++++++++button+++++++++++++
-                if(isPositiveAndBelow(i, getFilter()->getGUICtrlsSize()))
-                    if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==button->getName())
-                    {
-                        if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("button"))
-                        {
-                            //toggle button values
-                            if(getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value)==0)
-                            {
-                                getFilter()->setParameterNotifyingHost(i, 1.f);
-                                getFilter()->setParameter(i, 1.f);
-                                //getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), 1.f);
-                                getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 1);
-                            }
-                            else
-                            {
-                                getFilter()->setParameterNotifyingHost(i, 0.f);
-                                //getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), 0.f);
-                                getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 0);
-                                getFilter()->setParameter(i, 0.f);
-                            }
-                            //toggle text values
-                            for(int o=0; o<getFilter()->getGUICtrls(i).getStringArrayProp("text").size(); o++)
-                                Logger::writeToLog(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", o));
-
-                            if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1).equalsIgnoreCase(button->getButtonText()))
-                                button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 0));
-                            else
-                                button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1));
-                        }
-
-                    }
-                /*
-                				//show plants as popup window
-                				for(int p=0;p<getFilter()->getGUILayoutCtrlsSize();p++){
-                						if(getFilter()->getGUILayoutCtrls(p).getStringProp("plant") ==button->getName()){
-                						int index = button->getProperties().getWithDefault(String("index"), 0);
-                						subPatch[index]->setVisible(true);
-                						subPatch[index]->setAlwaysOnTop(true);
-                						subPatch[index]->toFront(true);
-                						i=getFilter()->getGUICtrlsSize();
-                						break;
-                						}
-                					}
-                */
+			textButtonClicked(button);
             }
 
             else if(dynamic_cast<ToggleButton*>(button))
             {
-                //for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control from vector
-                int i = button->getProperties().getWithDefault("index", -9999);
-                if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==button->getName())
-                {
-                    //      Logger::writeToLog(String(button->getToggleStateValue().getValue()));
-
-                    if(button->getToggleState())
-                    {
-                        button->setToggleState(true, dontSendNotification);
-                        getFilter()->setParameter(i, 1.f);
-                        getFilter()->setParameterNotifyingHost(i, 1.f);
-                        //getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), 1.f);
-                        getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 1);
-                    }
-                    else
-                    {
-                        button->setToggleState(false, dontSendNotification);
-                        getFilter()->setParameter(i, 0.f);
-                        getFilter()->setParameterNotifyingHost(i, 0.f);
-                        //getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), 0.f);
-                        getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 0);
-                        //Logger::writeToLog("pressed");
-                    }
-                    //getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), button->getToggleStateValue().getValue());
-                    //getFilter()->setParameterNotifyingHost(i, button->getToggleStateValue().getValue());
-                }
+			toggleButtonClicked(button);	
             }
         }
 
@@ -2708,6 +2647,133 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 #endif
 }
 
+//--------------------------------------------------------
+//text button clicked method
+//--------------------------------------------------------
+void CabbagePluginAudioProcessorEditor::textButtonClicked(Button* button)
+{
+int i = button->getProperties().getWithDefault("index", -9999);
+
+if(isPositiveAndBelow(i, getFilter()->getGUICtrlsSize()))
+	if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==button->getName())
+	{
+		if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==String("button"))
+		{
+			//if dealing with radio grouped buttons....		
+			if(button->getRadioGroupId()>0)
+			{
+				for(int id=0;id<radioGroups.size();id++)
+				{
+					if(dynamic_cast<CabbageButton*>(comps[radioGroups[id]]))
+					{
+						Button* cabButton = dynamic_cast<CabbageButton*>(comps[radioGroups[id]])->button;
+						if(cabButton->getRadioGroupId()==button->getRadioGroupId())
+						{						
+							if(i!=radioGroups[id])
+							{
+								Logger::writeToLog("Disabling button:"+String(radioGroups[id]));
+								getFilter()->setParameterNotifyingHost(radioGroups[id], 0.f);
+								getFilter()->setParameter(radioGroups[id], 0.f);
+								cabButton->setToggleState(false, dontSendNotification);
+								getFilter()->getGUICtrls(radioGroups[id]).setNumProp(CabbageIDs::value, 0);							
+							}
+						}
+					}				
+				}
+				getFilter()->setParameterNotifyingHost(i, 1.f);
+				getFilter()->setParameter(i, 1.f);
+				button->setToggleState(true, dontSendNotification);
+				//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), 1.f);
+				getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 1);				
+				return;
+			}
+			
+			//toggle button values
+			if(getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value)==0)
+			{
+				getFilter()->setParameterNotifyingHost(i, 1.f);
+				getFilter()->setParameter(i, 1.f);
+				button->setToggleState(true, dontSendNotification);
+				//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), 1.f);
+				getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 1);
+			}
+			else
+			{
+				getFilter()->setParameterNotifyingHost(i, 0.f);
+				//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), 0.f);
+				getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 0);
+				getFilter()->setParameter(i, 0.f);
+				button->setToggleState(false, dontSendNotification);
+			}
+			//toggle text values
+			if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1).equalsIgnoreCase(button->getButtonText()))
+				button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 0));
+			else
+				button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1));
+		}
+
+	}	
+	
+}
+
+//--------------------------------------------------------
+//toggle button clicked method
+//--------------------------------------------------------
+void CabbagePluginAudioProcessorEditor::toggleButtonClicked(Button* button)
+{
+//for(int i=0;i<(int)getFilter()->getGUICtrlsSize();i++)//find correct control from vector
+int i = button->getProperties().getWithDefault("index", -9999);
+if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==button->getName())
+{
+	Logger::writeToLog("ToggleRadioID:"+String(button->getRadioGroupId()));
+			//if dealing with radio grouped buttons....		
+			if(button->getRadioGroupId()>0)
+			{
+				for(int id=0;id<radioGroups.size();id++)
+				{
+					if(dynamic_cast<CabbageCheckbox*>(comps[radioGroups[id]]))
+					{
+						Button* cabButton = dynamic_cast<CabbageCheckbox*>(comps[radioGroups[id]])->button;
+						if(cabButton->getRadioGroupId()==button->getRadioGroupId())
+						{						
+							if(i!=radioGroups[id])
+							{
+								Logger::writeToLog("Disabling button:"+String(radioGroups[id]));
+								getFilter()->setParameterNotifyingHost(radioGroups[id], 0.f);
+								getFilter()->setParameter(radioGroups[id], 0.f);
+								cabButton->setToggleState(false, dontSendNotification);
+								getFilter()->getGUICtrls(radioGroups[id]).setNumProp(CabbageIDs::value, 0);							
+							}
+						}
+					}				
+				}
+				getFilter()->setParameterNotifyingHost(i, 1.f);
+				getFilter()->setParameter(i, 1.f);
+				button->setToggleState(true, dontSendNotification);
+				//getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), 1.f);
+				getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 1);				
+				return;
+			}	
+	
+	
+	if(getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value)==0)
+	{
+	   
+		getFilter()->setParameter(i, 1.f);
+		getFilter()->setParameterNotifyingHost(i, 1.f);
+		getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 1);
+		button->setToggleState(true, dontSendNotification);
+	}
+	else
+	{
+		
+		getFilter()->setParameter(i, 0.f);
+		getFilter()->setParameterNotifyingHost(i, 0.f);
+		getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 0);
+		button->setToggleState(false, dontSendNotification);
+	}
+}	
+}
 
 //+++++++++++++++++++++++++++++++++++++++++++
 //                                      combobox

@@ -295,16 +295,19 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         var channels;
         channels.append("buttonchan");
         cabbageIdentifiers.set(CabbageIDs::channel, channels);
-        cabbageIdentifiers.set(CabbageIDs::value, 1);
+        cabbageIdentifiers.set(CabbageIDs::value, 0);
         cabbageIdentifiers.set(CabbageIDs::text, array);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::oncolour, Colours::black.toString());
+        cabbageIdentifiers.set(CabbageIDs::onfontcolour, Colours::white.toString());
         cabbageIdentifiers.set(CabbageIDs::latched, 1);
         cabbageIdentifiers.set(CabbageIDs::type, "button");
         cabbageIdentifiers.set(CabbageIDs::name, "button");
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+		cabbageIdentifiers.set(CabbageIDs::radiogroup, 0);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
 
     }
@@ -325,12 +328,13 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::caption, "");
         cabbageIdentifiers.set(CabbageIDs::shape, "square");
         cabbageIdentifiers.set(CabbageIDs::type, "checkbox");
-
-        cabbageIdentifiers.set(CabbageIDs::colour, Colours::lime.toString());
+		cabbageIdentifiers.set(CabbageIDs::oncolour, Colours::lime.toString());
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::name, "checkbox");
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+		cabbageIdentifiers.set(CabbageIDs::radiogroup, 0);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
 
@@ -988,15 +992,25 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                 }
 
                 else if(identArray[indx].equalsIgnoreCase("colour")||
+						identArray[indx].equalsIgnoreCase("colour:0")||
                         identArray[indx].equalsIgnoreCase("colours("))
                 {
                     cabbageIdentifiers.set(CabbageIDs::colour, getColourFromText(strTokens.joinIntoString(",")).toString());
                 }
 
-
-                else if(identArray[indx].equalsIgnoreCase("fontcolour"))
+                else if(identArray[indx].equalsIgnoreCase("colour:1"))
+                {
+                    cabbageIdentifiers.set(CabbageIDs::oncolour, getColourFromText(strTokens.joinIntoString(",")).toString());
+                }
+				
+                else if(identArray[indx].equalsIgnoreCase("fontcolour")||
+						identArray[indx].equalsIgnoreCase("fontcolour:0"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::fontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
+                }
+                else if(identArray[indx].equalsIgnoreCase("fontcolour:1"))
+                {
+                    cabbageIdentifiers.set(CabbageIDs::onfontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
                 }
 
                 else if(identArray[indx].equalsIgnoreCase("tablecolour") ||
@@ -1393,6 +1407,11 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                     cabbageIdentifiers.set(CabbageIDs::latched, strTokens[0].trim().getFloatValue());
                 }
 
+                else if(identArray[indx].equalsIgnoreCase("radiogroup"))
+                {
+                    cabbageIdentifiers.set(CabbageIDs::radiogroup, strTokens[0].trim().getFloatValue());
+                }
+				
                 else if(identArray[indx].equalsIgnoreCase("guirefresh"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::guirefresh, strTokens[0].trim().getFloatValue());

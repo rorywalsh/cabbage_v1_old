@@ -1557,7 +1557,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
             VST = currentApplicationDirectory + String("/CabbagePluginEffectLV2.so");
         else if(type.contains(String("AU")))
         {
-            m_ShowMessage("", "This feature only works on computers running OSX", lookAndFeel);
+            m_ShowMessage("This feature only works on computers running OSX", lookAndFeel);
         }
         //Logger::writeToLog(VST);
         //showMessage(VST);
@@ -1565,7 +1565,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         if(!VSTData.exists())
         {
             this->setMinimised(true);
-            m_ShowMessage("", VST+" cannot be found?", lookAndFeel);
+            m_ShowMessage(VST+" cannot be found?", lookAndFeel);
         }
   
         else
@@ -1578,7 +1578,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
                 File dll(bundle.getChildFile(filename+".so"));
                 Logger::writeToLog(bundle.getFullPathName());
                 Logger::writeToLog(dll.getFullPathName());
-                if(!VSTData.copyFileTo(dll)) m_ShowMessage("", "Can not move lib", lookAndFeel);
+                if(!VSTData.copyFileTo(dll)) m_ShowMessage("Can not move lib", lookAndFeel);
                 File loc_csdFile(bundle.getChildFile(filename+".csd").getFullPathName());
                 loc_csdFile.replaceWithText(csdFile.loadFileAsString());
  

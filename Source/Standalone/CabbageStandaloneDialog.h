@@ -109,12 +109,12 @@ public:
     void resized();
     void changeListenerCallback(ChangeBroadcaster *source);
     void actionListenerCallback (const String& message);
-    int exportPlugin(String type, bool saveAs);
     void openFile(String _csdfile);
     void saveFile();
     void saveFileAs();
     void showEditorConsole();
     void setupWindowDimensions();
+	int exportPlugin(String type, bool saveAs, String fileName="");
 	Array<File> cabbageFiles;
 	ScopedPointer<StandaloneFileDialogue> standaloneFileDialogue;	
 

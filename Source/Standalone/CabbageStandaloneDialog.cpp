@@ -44,18 +44,6 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     updateEditorOutputConsole(false),
 	hasEditorBeingOpened(false)
 {
-	
-    String defaultCSDFile;
-
-	if(File(commandLineParams.removeCharacters("\"")).existsAsFile())
-	{
-		defaultCSDFile = commandLineParams.removeCharacters("\"");
-	}
-	else
-	{
-		defaultCSDFile = File(File::getSpecialLocation(File::currentExecutableFile)).withFileExtension(".csd").getFullPathName();
-	}
-    
 										  
 	consoleMessages = "";
     cabbageDance = 0;
@@ -160,10 +148,39 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
 
     filter->codeEditor = cabbageCsoundEditor->textEditor;
+    //start timer for output message, and autoupdate if it's on
+    startTimer(100);
+
+
+
+    String defaultCSDFile;
+	//showMessage(commandLineParams);
+	if(commandLineParams.contains("--export-VSTi"))
+	{
+		String inputFileName = commandLineParams.substring(commandLineParams.indexOf("--export-VSTi")+13);
+		openFile(inputFileName);
+		//showMessage(params);
+		
+	}
+	else if(commandLineParams.contains("--export-VST"))
+	{
+		showMessage("exporting as VST");
+		
+	}
+	else if(File(commandLineParams).existsAsFile())
+	{
+		defaultCSDFile = commandLineParams;
+		openFile(defaultCSDFile);
+		return;
+	}
+	
+	else
+	{
+		defaultCSDFile = File(File::getSpecialLocation(File::currentExecutableFile)).withFileExtension(".csd").getFullPathName();
+	}
 
     //opens a default file that matches the name of the current executable
     //this can be used to create more 'standalone' like apps
-	
 	if(File(File::getSpecialLocation(File::currentExecutableFile)).getFileNameWithoutExtension()!="Cabbage")
 	{
 		if(File(defaultCSDFile).existsAsFile())
@@ -187,11 +204,6 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 				//setAlwaysOnTop(true);
 		}
 	}	
-
-
-    //filter->codeWindow = cabbageCsoundEditor->textEditor;
-    //start timer for output message, and autoupdate if it's on
-    startTimer(100);
 }
 //==============================================================================
 // Destructor
@@ -826,7 +838,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         subMenu.clear();
         subMenu.addItem(5, TRANS("Plugin Synth"));
         subMenu.addItem(6, TRANS("Plugin Effect"));
+#if !defined(LINUX)
         m.addSubMenu(TRANS("Export As..."), subMenu);
+#endif
         subMenu.clear();
         subMenu.addItem(11, TRANS("Effects"));
         subMenu.addItem(12, TRANS("Synths"));
@@ -1502,7 +1516,7 @@ void StandaloneFilterWindow::saveFileAs()
 //==============================================================================
 // Export plugin method
 //==============================================================================
-int StandaloneFilterWindow::exportPlugin(String type, bool saveAs)
+int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileName)
 {
     File dll;
     File loc_csdFile;
@@ -1521,7 +1535,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs)
     FileChooser saveFC(String("Save as..."), File::nonexistent, String(""), UseNativeDialogue);
     String VST;
     Logger::writeToLog(currentApplicationDirectory);
-    if (saveFC.browseForFileToSave(true))
+    if (saveFC.browseForFileToSave(true) || fileName.isNotEmpty())
     {
         if(type.contains("VSTi"))
             VST = currentApplicationDirectory + String("/CabbagePluginSynth.so");

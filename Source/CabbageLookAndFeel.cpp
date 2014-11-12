@@ -1227,7 +1227,7 @@ void CabbageLookAndFeel::drawButtonText (Graphics &g, TextButton &button, bool i
 	if(!button.getToggleState())
 		textColour = button.findColour(TextButton::textColourOffId);
 	else
-		textColour = button.findColour(TextButton::textColourOffId);
+		textColour = button.findColour(TextButton::textColourOnId);
 
     //----- The text colour and start position change if the button is down or up....
     if (isButtonDown == true)

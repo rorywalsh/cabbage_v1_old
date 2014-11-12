@@ -19,9 +19,8 @@
 
 #include "CabbageStandaloneDialog.h"
 
-
 #ifdef WIN32
-#include <windows.h>
+	#include <windows.h>
 #endif
 
 #define MAXBYTES 16777216
@@ -167,9 +166,9 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 		}
 
 	}
-	else if(commandLineParams.contains("--export-VST"))
+	else if(commandLineParams.contains("--export-VST "))
 	{
-		String inputFileName = commandLineParams.substring(commandLineParams.indexOf("--export-VSTi")+12);
+		String inputFileName = commandLineParams.substring(commandLineParams.indexOf("--export-VSTi")+13).trim();
 		if(File(inputFileName).existsAsFile()){
 			openFile(inputFileName);
 			exportPlugin("VST", false);	
@@ -182,6 +181,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 		openFile(defaultCSDFile);
 		return;
 	}
+	
+	
 	
 	else
 	{
@@ -451,7 +452,7 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
     {
         int val = getPreference(appProperties, "DisableGUIEditModeWarning");
         if(!val)
-            showMessage("", "Warning!! This feature is still under development! Whilst every effort has been made to make it as usable as possible, there might still be some teething problems that need sorting out. If you find a problem, please try to recreate it, note the steps involved, and report it to the Cabbage users forum (www.TheCabbageFoundation.org). Thank you. ge, disable this warning under the 'Preferences' menu command and try 'Edit Mode' again, otherwise just let it be...", lookAndFeel, this);
+            m_ShowMessage("Warning!! This feature is still under development! Whilst every effort has been made to make it as usable as possible, there might still be some teething problems that need sorting out. If you find a problem, please try to recreate it, note the steps involved, and report it to the Cabbage users forum (www.TheCabbageFoundation.org). Thank you. ge, disable this warning under the 'Preferences' menu command and try 'Edit Mode' again, otherwise just let it be...", lookAndFeel);
         else
         {
             if(isAFileOpen == true)
@@ -971,7 +972,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         credits.append("\t\t\t\tUsers Forum:\n", 2056);
         credits.append("\t\t\t\t\twww.thecabbagefoundation.org", 2056);
         String title(CABBAGE_VERSION);
-        showMessage("			"+title, credits, lookAndFeel, this);
+        m_ShowMessage(credits, lookAndFeel, "			"+title);
 
     }
     //----- view text editor ------
@@ -1017,10 +1018,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                 showEditorConsole();
 				hasEditorBeingOpened = true;
             }
-            else showMessage("Please open or create a file first", lookAndFeel);
+            else m_ShowMessage("Please open or create a file first", lookAndFeel);
         }
         else
-            showMessage("Please disable \'Use external editor\' from preferences first", lookAndFeel);
+            m_ShowMessage("Please disable \'Use external editor\' from preferences first", lookAndFeel);
     }
     //-------Csound output console-----
     else if(options==3)
@@ -1046,7 +1047,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                 outputConsole->setVisible(true);
             }
         }
-        else showMessage("Please open or create a file first", lookAndFeel);
+        else m_ShowMessage("Please open or create a file first", lookAndFeel);
     }
     //----- new effect ------
     else if(options==30)
@@ -1257,9 +1258,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             String pluginFolder = homeFolder+"\\Disabled_CsoundPlugins";
             String csoundDLL = homeFolder+"\\Disabled_csound64.dll";
             if(!File(pluginFolder).moveFileTo(File(homeFolder+"\\CsoundPlugins")))
-                showMessage("Could not find Csound plugins folder?", &getLookAndFeel());
+                m_ShowMessage("Could not find Csound plugins folder?", &getLookAndFeel());
             if(!File(csoundDLL).moveFileTo(File(homeFolder+"\\csound64.dll")))
-                showMessage("Could not find Csound library dll?", &getLookAndFeel());
+                m_ShowMessage("Could not find Csound library dll?", &getLookAndFeel());
         }
         else
         {
@@ -1267,9 +1268,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             String pluginFolder = homeFolder+"\\CsoundPlugins";
             String csoundDLL = homeFolder+"\\csound64.dll";
             if(!File(pluginFolder).moveFileTo(File(homeFolder+"\\Disabled_CsoundPlugins")))
-                showMessage("Could not find Disable_CsoundPlugins folder?", &getLookAndFeel());
+                m_ShowMessage("Could not find Disable_CsoundPlugins folder?", &getLookAndFeel());
             if(!File(csoundDLL).moveFileTo(File(homeFolder+"\\Disabled_csound64.dll")))
-                showMessage("Could not find Disabled_Csound64.dll?", &getLookAndFeel());
+                m_ShowMessage("Could not find Disabled_Csound64.dll?", &getLookAndFeel());
 
         }
     }
@@ -1343,7 +1344,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                     stopTimer();
                     //setPreference(appProperties, "ExternalEditor", 0);
                 }
-            else showMessage("", "Open or create a file first", &getLookAndFeel(), this);
+            else m_ShowMessage("Open or create a file first", &getLookAndFeel());
         }
     }
     repaint();
@@ -1410,7 +1411,7 @@ void StandaloneFilterWindow::openTextEditor()
                 outputConsole->setVisible(true);
             }
     }
-    else showMessage("Please open or create a file first", lookAndFeel);
+    else m_ShowMessage("Please open or create a file first", lookAndFeel);
 }
 
 //==========================================================================
@@ -1537,7 +1538,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
 
     if(!csdFile.exists())
     {
-        showMessage("", "You need to open a Cabbage instrument before you can export one as a plugin!", lookAndFeel, this);
+        m_ShowMessage("You need to open a Cabbage instrument before you can export one as a plugin!", lookAndFeel);
         return 0;
     }
 #ifdef LINUX
@@ -1556,7 +1557,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
             VST = currentApplicationDirectory + String("/CabbagePluginEffectLV2.so");
         else if(type.contains(String("AU")))
         {
-            showMessage("", "This feature only works on computers running OSX", lookAndFeel, this);
+            m_ShowMessage("", "This feature only works on computers running OSX", lookAndFeel);
         }
         //Logger::writeToLog(VST);
         //showMessage(VST);
@@ -1564,7 +1565,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         if(!VSTData.exists())
         {
             this->setMinimised(true);
-            showMessage("", VST+" cannot be found?", lookAndFeel, this);
+            m_ShowMessage("", VST+" cannot be found?", lookAndFeel);
         }
   
         else
@@ -1577,7 +1578,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
                 File dll(bundle.getChildFile(filename+".so"));
                 Logger::writeToLog(bundle.getFullPathName());
                 Logger::writeToLog(dll.getFullPathName());
-                if(!VSTData.copyFileTo(dll)) showMessage("", "Can not move lib", lookAndFeel, this);
+                if(!VSTData.copyFileTo(dll)) m_ShowMessage("", "Can not move lib", lookAndFeel);
                 File loc_csdFile(bundle.getChildFile(filename+".csd").getFullPathName());
                 loc_csdFile.replaceWithText(csdFile.loadFileAsString());
  
@@ -1615,7 +1616,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
 
     if(!VSTData.exists())
     {
-        showMessage("", "Cabbage cannot find the plugin libraries. Make sure that Cabbage is situated in the same directory as CabbagePluginSynth.dat and CabbagePluginEffect.dat", oldLookAndFeel, this);
+        m_ShowMessage("Cabbage cannot find the plugin libraries. Make sure that Cabbage is situated in the same directory as CabbagePluginSynth.dat and CabbagePluginEffect.dat", oldLookAndFeel);
         return 0;
     }
     else
@@ -1638,7 +1639,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         }
         //showMessage(dll.getFullPathName());
         if(!VSTData.copyFileTo(dll))
-            showMessage("", "Problem moving plugin lib, make sure it's not currently open in your plugin host!", lookAndFeel, this);
+            m_ShowMessage("Problem moving plugin lib, make sure it's not currently open in your plugin host!", lookAndFeel);
 
         loc_csdFile.replaceWithText(csdFile.loadFileAsString());
         setUniquePluginID(dll, loc_csdFile, false);
@@ -1647,7 +1648,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
 
         int val = getPreference(appProperties, "DisablePluginInfo");
         if(!val)
-            showMessage(info, lookAndFeel);
+            m_ShowMessage(info, lookAndFeel);
     }
 
 #endif
@@ -1762,7 +1763,7 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
             CabbageGUIClass cAttr(csdText[i].trimEnd(), 0);
             if(cAttr.getStringProp(CabbageIDs::pluginid).length()!=4)
             {
-                showMessage(String("Your plugin ID is not the right size. It MUST be 4 characters long. Some hosts may not be able to load your plugin"), lookAndFeel);
+                m_ShowMessage("Your plugin ID is not the right size. It MUST be 4 characters long. Some hosts may not be able to load your plugin", lookAndFeel);
                 return 0;
             }
             else
@@ -1820,7 +1821,7 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
         mFile.read((char*)&buffer[0], file_size);
         loc = cabbageFindPluginID(buffer, file_size, pluginName);
         if (loc < 0)
-            showMessage(String("Plugin name could not be set?!?"), lookAndFeel);
+            m_ShowMessage("Plugin name could not be set?!?", lookAndFeel);
         else
         {
             //showMessage("plugin name set!");
@@ -1831,7 +1832,7 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
 
     }
     else
-        showMessage("File could not be opened", lookAndFeel);
+        m_ShowMessage("File could not be opened", lookAndFeel);
 
     mFile.close();
     return 1;
@@ -1905,7 +1906,7 @@ void StandaloneFilterWindow::batchProcess(String type, bool dir)
     }
     File VSTData(VST);
     if(!VSTData.exists())
-        showMessage("Cannot find plugin libs", &getLookAndFeel());
+        m_ShowMessage("Cannot find plugin libs", &getLookAndFeel());
     else
     {
 
@@ -1919,8 +1920,27 @@ void StandaloneFilterWindow::batchProcess(String type, bool dir)
                 showMessage("problem moving plugin lib");
             setUniquePluginID(dll, files.getReference(i), false);
         }
-        showMessage("Batch Convertion Complete", &getLookAndFeel());
+        m_ShowMessage("Batch Convertion Complete", &getLookAndFeel());
     }
 
 #endif
+}
+
+//==============================================================================
+// Batch process multiple csd files to convert them to plugins libs.
+//==============================================================================
+void StandaloneFilterWindow::m_ShowMessage(String message, LookAndFeel* lookAndFeel, String title)
+{
+	if(getPreference(appProperties, "EnableNativePopups")){
+#ifdef WIN32
+		MessageBox(
+        NULL,
+        message.toUTF8().getAddress(),
+        title.toUTF8().getAddress(),
+        MB_OK);
+#endif
+	}
+	else
+		showMessage(message, lookAndFeel);
+	
 }

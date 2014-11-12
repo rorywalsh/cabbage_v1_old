@@ -955,7 +955,8 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         else if(cAttr.getStringProp(String("reltoplant")).equalsIgnoreCase(String("")))
                             cAttr.setStringProp(String("reltoplant"), plantFlag);
 
-							if(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0){
+						//if an array of object is being set up...
+						if(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0){
 								//showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).joinIntoString(" ")));
 								//showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()));
 								for(int i=0;i<cAttr.getStringArrayProp(CabbageIDs::channelarray).size();i++)

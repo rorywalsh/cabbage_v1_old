@@ -61,6 +61,7 @@ public:
         defaultPropSet->setValue("EditorColourScheme", 1);
         defaultPropSet->setValue("showTabs", 1);
         defaultPropSet->setValue("EnablePopupDisplay", 1);
+		defaultPropSet->setValue("EnableNativePopup", 0);
 		defaultPropSet->setValue("windowX", 100);
 		defaultPropSet->setValue("windowY", 100);
 

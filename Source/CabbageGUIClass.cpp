@@ -982,8 +982,8 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 							var channelArray, identChannelArray;
 							int size = strTokens[1].getIntValue();
 							for(int i=0;i<size;i++){
-								channelArray.append(String(strTokens[0])+String(i));	
-								identChannelArray.append(String(strTokens[0])+String("_ident")+String(i));
+								channelArray.append(String(strTokens[0])+String(i+1));	
+								identChannelArray.append(String(strTokens[0])+String("_ident")+String(i+1));
 								
 							}						
 							cabbageIdentifiers.set(CabbageIDs::channelarray, channelArray);		

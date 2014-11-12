@@ -20,6 +20,9 @@
 #include "CabbageStandaloneDialog.h"
 
 
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 #define MAXBYTES 16777216
 
@@ -131,7 +134,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     const int y = globalSettings->getIntValue ("windowY", -100);
 
     if (x != -100 && y != -100)
-        setBoundsConstrained (Rectangle<int> (x, y, getWidth(), getHeight()));
+        setBoundsConstrained (juce::Rectangle<int> (x, y, getWidth(), getHeight()));
     else
         centreWithSize (getWidth(), getHeight());
 
@@ -157,14 +160,20 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	//showMessage(commandLineParams);
 	if(commandLineParams.contains("--export-VSTi"))
 	{
-		String inputFileName = commandLineParams.substring(commandLineParams.indexOf("--export-VSTi")+13);
-		openFile(inputFileName);
-		//showMessage(params);
-		
+		String inputFileName = commandLineParams.substring(commandLineParams.indexOf("--export-VSTi")+13).trim();
+		if(File(inputFileName).existsAsFile()){
+			openFile(inputFileName);
+			exportPlugin("VSTi", false);	
+		}
+
 	}
 	else if(commandLineParams.contains("--export-VST"))
 	{
-		showMessage("exporting as VST");
+		String inputFileName = commandLineParams.substring(commandLineParams.indexOf("--export-VSTi")+12);
+		if(File(inputFileName).existsAsFile()){
+			openFile(inputFileName);
+			exportPlugin("VST", false);	
+		}
 		
 	}
 	else if(File(commandLineParams).existsAsFile())

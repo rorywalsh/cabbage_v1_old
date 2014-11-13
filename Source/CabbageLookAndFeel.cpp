@@ -1166,10 +1166,10 @@ void CabbageLookAndFeel::drawToggleButton (Graphics &g, ToggleButton &button, bo
 
     //----- Creating the image
 	Image newButton;
-	if(!button.getToggleState())
-    newButton = drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonColourId), isRECT, svgPath);
-	else
-	newButton = drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonOnColourId), isRECT, svgPath);
+	//if(!button.getToggleState())
+    //newButton = drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonColourId), isRECT, svgPath);
+	//else
+	newButton = drawToggleImage (destWidth, destHeight, isToggleOn, button.findColour(TextButton::buttonOnColourId), isRECT, svgPath);
 		
 
 

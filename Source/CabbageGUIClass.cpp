@@ -991,14 +991,14 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 					}
                 }
 
-                else if(identArray[indx].equalsIgnoreCase("colour")||
-						identArray[indx].equalsIgnoreCase("colour:0")||
+                else if(identArray[indx].equalsIgnoreCase("colour:0")||
                         identArray[indx].equalsIgnoreCase("colours("))
                 {
                     cabbageIdentifiers.set(CabbageIDs::colour, getColourFromText(strTokens.joinIntoString(",")).toString());
                 }
 
-                else if(identArray[indx].equalsIgnoreCase("colour:1"))
+                else if(identArray[indx].equalsIgnoreCase("colour:1") ||
+						identArray[indx].equalsIgnoreCase("colour"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::oncolour, getColourFromText(strTokens.joinIntoString(",")).toString());
                 }

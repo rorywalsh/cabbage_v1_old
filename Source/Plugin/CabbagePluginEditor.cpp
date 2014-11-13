@@ -2725,7 +2725,6 @@ void CabbagePluginAudioProcessorEditor::toggleButtonClicked(Button* button)
 int i = button->getProperties().getWithDefault("index", -9999);
 if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==button->getName())
 {
-	Logger::writeToLog("ToggleRadioID:"+String(button->getRadioGroupId()));
 			//if dealing with radio grouped buttons....		
 			if(button->getRadioGroupId()>0)
 			{
@@ -2738,7 +2737,6 @@ if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==button->getName(
 						{						
 							if(i!=radioGroups[id])
 							{
-								Logger::writeToLog("Disabling button:"+String(radioGroups[id]));
 								getFilter()->setParameterNotifyingHost(radioGroups[id], 0.f);
 								getFilter()->setParameter(radioGroups[id], 0.f);
 								cabButton->setToggleState(false, dontSendNotification);
@@ -2758,19 +2756,17 @@ if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==button->getName(
 	
 	if(getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value)==0)
 	{
-	   
+		button->setToggleState(true, dontSendNotification);
 		getFilter()->setParameter(i, 1.f);
 		getFilter()->setParameterNotifyingHost(i, 1.f);
 		getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 1);
-		button->setToggleState(true, dontSendNotification);
 	}
 	else
 	{
-		
+		button->setToggleState(false, dontSendNotification);
 		getFilter()->setParameter(i, 0.f);
 		getFilter()->setParameterNotifyingHost(i, 0.f);
 		getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 0);
-		button->setToggleState(false, dontSendNotification);
 	}
 }	
 }
@@ -3363,7 +3359,8 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                         if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
                             ((CabbageCheckbox*)comps[i])->update(getFilter()->getGUICtrls(i));
                         int val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
-                        ((CabbageCheckbox*)comps[i])->button->setToggleState((bool)val, sendNotification);
+						Logger::writeToLog(String(val));
+                        ((CabbageCheckbox*)comps[i])->button->setToggleState((bool)val, dontSendNotification);
                     }
                 }
             }

@@ -1643,10 +1643,11 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
             else
             {
                 float value = csound->GetChannel(guiCtrls[index].getStringProp(CabbageIDs::channel).getCharPointer());
-                //Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));
-                //Logger::writeToLog("value:"+String(value));
+
                 if(value!=guiCtrls.getReference(index).getNumProp(CabbageIDs::value))
                 {
+					//Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));
+					//Logger::writeToLog("value:"+String(value));
                     guiCtrls.getReference(index).setNumProp(CabbageIDs::value, value);
                     dirtyControls.addIfNotAlreadyThere(index);
                 }

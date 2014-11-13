@@ -1,21 +1,21 @@
 #include "CabbageLookAndFeel.h"
 
-#define svgRSliderDiameter 150
+#define svgRSliderDiameter 1000
 
-#define svgVSliderWidth 30
-#define svgVSliderHeight 150
+#define svgVSliderWidth 300
+#define svgVSliderHeight 1000
 
-#define svgVSliderThumbHeight 50
-#define svgVSliderThumbWidth 50
+#define svgVSliderThumbHeight 1000
+#define svgVSliderThumbWidth 1000
 
-#define svgHSliderThumbWidth 50
-#define svgHSliderThumbHeight 50
+#define svgHSliderThumbWidth 1000
+#define svgHSliderThumbHeight 1000
 
-#define svgHSliderHeight 30
-#define svgHSliderWidth 150
+#define svgHSliderHeight 300
+#define svgHSliderWidth 1000
 
-#define svgButtonWidth 100
-#define svgButtonHeight 50
+#define svgButtonWidth 1000
+#define svgButtonHeight 500
 
 #define svgGroupboxWidth 1000
 #define svgGroupboxHeight 800

@@ -1011,8 +1011,12 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                 else if(identArray[indx].equalsIgnoreCase("fontcolour")||
 						identArray[indx].equalsIgnoreCase("fontcolour:1"))
                 {
-                    cabbageIdentifiers.set(CabbageIDs::onfontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
-                }
+                    if(typeOfWidget=="button")
+					cabbageIdentifiers.set(CabbageIDs::onfontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
+					else
+					cabbageIdentifiers.set(CabbageIDs::fontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
+						
+				}
                 else if(identArray[indx].equalsIgnoreCase("fontcolour:0"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::fontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());

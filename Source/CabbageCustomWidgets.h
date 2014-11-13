@@ -1062,8 +1062,7 @@ public:
         soundFiler->addChangeListener(this);
         sampleRate = 44100;
         soundFiler->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
-        if(File(file).existsAsFile())
-            setFile(file);
+
     }
 
     ~CabbageSoundfiler()
@@ -1104,6 +1103,7 @@ public:
     {
         soundFiler->setFile(File(newFile));
     }
+	
     int setWaveform(AudioSampleBuffer buffer, int channels)
     {
         soundFiler->setWaveform(buffer, channels);

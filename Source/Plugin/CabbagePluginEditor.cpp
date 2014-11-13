@@ -2055,6 +2055,7 @@ void CabbagePluginAudioProcessorEditor::InsertSoundfiler(CabbageGUIClass &cAttr)
 
     //load initial files/tables if any are set
     int numberOfTables = cAttr.getStringArrayProp(CabbageIDs::tablenumber).size();
+	tableBuffer.setSize(numberOfTables, 0);
     tableBuffer.clear();
     for(int y=0; y<numberOfTables; y++)
     {
@@ -2066,6 +2067,8 @@ void CabbagePluginAudioProcessorEditor::InsertSoundfiler(CabbageGUIClass &cAttr)
         tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());
     }
     dynamic_cast<CabbageSoundfiler*>(layoutComps[idx])->setWaveform(tableBuffer, numberOfTables);
+        if(File(cAttr.getStringProp(CabbageIDs::file)).existsAsFile())
+				((CabbageSoundfiler*)layoutComps[idx])->setFile(cAttr.getStringProp(CabbageIDs::file));	
 
 }
 

@@ -177,6 +177,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::caption, "");
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::onfontcolour, Colours::white.toString());
         cabbageIdentifiers.set(CabbageIDs::type, "infobutton");
         cabbageIdentifiers.set(CabbageIDs::name, "infobutton");
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));

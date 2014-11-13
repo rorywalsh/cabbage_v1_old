@@ -159,7 +159,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	//showMessage(commandLineParams);
 	if(commandLineParams.contains("--export-VSTi"))
 	{
-		String inputFileName = commandLineParams.substring(commandLineParams.indexOf("--export-VSTi")+13).trim();
+		String inputFileName = commandLineParams.substring(commandLineParams.indexOf("--export-VSTi")+13).trim().removeCharacters("\"");
 		if(File(inputFileName).existsAsFile()){
 			openFile(inputFileName);
 			exportPlugin("VSTi", false);	
@@ -168,16 +168,16 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 	}
 	else if(commandLineParams.contains("--export-VST "))
 	{
-		String inputFileName = commandLineParams.substring(commandLineParams.indexOf("--export-VSTi")+13).trim();
+		String inputFileName = commandLineParams.substring(commandLineParams.indexOf("--export-VSTi")+13).trim().removeCharacters("\"");
 		if(File(inputFileName).existsAsFile()){
 			openFile(inputFileName);
 			exportPlugin("VST", false);	
 		}
 		
 	}
-	else if(File(commandLineParams).existsAsFile())
+	else if(File(commandLineParams.trim().removeCharacters("\"")).existsAsFile())
 	{
-		defaultCSDFile = commandLineParams;
+		defaultCSDFile = commandLineParams.trim().removeCharacters("\"");;
 		openFile(defaultCSDFile);
 		return;
 	}
@@ -702,7 +702,7 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
     CabbageAudioDeviceSelectorComponent selectorComp (*deviceManager,
             numIns, numIns, numOuts, numOuts,
             true, false, true, false);
-    selectorComp.setSize (400, 450);
+    selectorComp.setSize (400, 550);
     setAlwaysOnTop(false);
     selectorComp.setLookAndFeel(lookAndFeel);
     Colour col(24, 24, 24);

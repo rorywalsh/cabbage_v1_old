@@ -3359,7 +3359,6 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                         if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
                             ((CabbageCheckbox*)comps[i])->update(getFilter()->getGUICtrls(i));
                         int val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
-						Logger::writeToLog(String(val));
                         ((CabbageCheckbox*)comps[i])->button->setToggleState((bool)val, dontSendNotification);
                     }
                 }

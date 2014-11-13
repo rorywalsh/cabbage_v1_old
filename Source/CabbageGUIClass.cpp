@@ -910,7 +910,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
     StringArray strTokens, tempTokens;
     tempTokens.addTokens(str, ", \t", "\"");
     typeOfWidget = tempTokens[0];
-
+	//Logger::writeToLog(typeOfWidget);
 
     for(int indx=0; indx<identArray.size(); indx++)
     {
@@ -1000,17 +1000,21 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                 else if(identArray[indx].equalsIgnoreCase("colour:1") ||
 						identArray[indx].equalsIgnoreCase("colour"))
                 {
-                    cabbageIdentifiers.set(CabbageIDs::oncolour, getColourFromText(strTokens.joinIntoString(",")).toString());
-                }
+                    if(typeOfWidget=="checkbox" || typeOfWidget=="button")
+						cabbageIdentifiers.set(CabbageIDs::oncolour, getColourFromText(strTokens.joinIntoString(",")).toString());
+					else
+						cabbageIdentifiers.set(CabbageIDs::colour, getColourFromText(strTokens.joinIntoString(",")).toString());
+					
+				}
 				
                 else if(identArray[indx].equalsIgnoreCase("fontcolour")||
-						identArray[indx].equalsIgnoreCase("fontcolour:0"))
-                {
-                    cabbageIdentifiers.set(CabbageIDs::fontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
-                }
-                else if(identArray[indx].equalsIgnoreCase("fontcolour:1"))
+						identArray[indx].equalsIgnoreCase("fontcolour:1"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::onfontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
+                }
+                else if(identArray[indx].equalsIgnoreCase("fontcolour:0"))
+                {
+                    cabbageIdentifiers.set(CabbageIDs::fontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
                 }
 
                 else if(identArray[indx].equalsIgnoreCase("tablecolour") ||

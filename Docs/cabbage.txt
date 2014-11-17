@@ -361,7 +361,7 @@ Keyboard
 ~~~~~~~~
 ---------------------------------------------------------------------------------
 keyboard bounds(x, y, width, height), value(note), identchannel("channel")
-----------------------------------------------------------------------
+---------------------------------------------------------------------------------
 
 Keyboard create a piano keyboard that will send MIDI information to your Csound instrument. This component can be used together with a hardware controller. Pressing keys on the actual MIDI keyboard will cause the on-screen keys to light up.
 
@@ -434,10 +434,10 @@ NOTE: This is only supported on OSX and Windows.
 [[x31]]
 Image
 ~~~~~
----------------------------------------
+--------------------------------------------------------------------------------------
 image bounds(x, y, width, height), colour("colour")[, file("file name"), shape("type"), outline("colour"), line(thickness), 'plant("name"), 
 identchannel("channel")] 
----------------------------------------
+--------------------------------------------------------------------------------------
 Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. The file must be in the same directory as your Cabbage instrument. If you simply wish to draw a shape you can choose a background colour with colour() and an outline colour with outline(). line() will let you determine the thickness of the outline. 
 
 'bounds(x, y, width, height)': integer values that set position and size on screen(in pixels). If widget is part of a plant these values should be between 0 and 1. See PLANTS
@@ -461,7 +461,7 @@ Example:
 image bounds(0, 10, 260, 190), colour("white")
 image bounds(5, 15, 250, 180), colour("brown") 
 image bounds(30, 30, 200, 150), file("logo_cabbage_sw_no_text.PNG")
-------------
+-----------
 
 image:images/images.PNG[image]
 
@@ -500,7 +500,7 @@ Label
 ~~~~~
 --------------
 label bounds(x, y, width, height), text("text")[, fontcolour("colour"), identchannel("channel")] 
--------------
+--------------
 
 Label is useful for placing text on-screen. 
 
@@ -515,7 +515,7 @@ Label is useful for placing text on-screen.
 Example:
 -----------------
 label bounds(0, 0, 3, 10), text("Label"), fontcolour("white") 
-------------------
+-----------------
 
 [[x34]]
 Button
@@ -523,7 +523,7 @@ Button
 -------------
 button bounds(x, y, width, height), channel("chanName")[, text("offCaption","onCaption"), caption("caption"), \
 	value(val), colour("colour"), fontcolour("colour"), latched(val), identchannel("channel")]
---------------
+-------------
 
 Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish. 
 
@@ -549,7 +549,7 @@ Button creates a button on screen that can be used for a whole range of differen
 -----------------------------------------
 button bounds(0, 110, 120, 70), caption("Freq1"), text("On", "Off"), channel("freq2"), value(1)
 button bounds(150, 110, 120, 70), text("On", "Off"), channel("freq2"), value(0)
-------------------------------------------
+-----------------------------------------
 
 image:images/buttons.PNG[Buttons]
 
@@ -614,7 +614,7 @@ FileButton
 filebutton bounds(x, y, width, height), channel("chanName")[, mode("mode"), \
 	text("offCaption","onCaption"), populate("filetype", "dir"), caption("caption"), \
 	value(val), colour("colour"), fontcolour("colour"), identchannel("channel")]
---------------
+-------------
 
 A filebutton can be used to select files from disk. The filename selected, or created will be sent to Csound on the named channel as a string message. Filebuttons can also be used to select snapshot files for Cabbage to save parameter presets. See the populate identifier below.  
 
@@ -642,7 +642,7 @@ A filebutton can be used to select files from disk. The filename selected, or cr
 -----------------------------------------
 button bounds(0, 110, 120, 70), caption("Freq1"), text("On", "Off"), channel("freq2"), value(1)
 button bounds(150, 110, 120, 70), text("On", "Off"), channel("freq2"), value(0)
-------------------------------------------
+-----------------------------------------
 
 image:images/buttons.PNG[Buttons]
 

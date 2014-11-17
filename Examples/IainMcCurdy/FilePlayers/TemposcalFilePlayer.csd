@@ -1,7 +1,18 @@
-<Cabbage>
-form caption("Temposcal File Player") size(570,160), colour(0,0,0) pluginID("TScl")
-image                       bounds(  0,  0,570,160), colour( 30, 70, 70), outlinecolour("White"), line(3)
+TemposcalFilePlayer.csd
+Written by Iain McCurdy, 2014.
 
+Load a user selected sound file into a GEN 01 function table and plays it back using temposcal.
+
+The sound file can be played back using the Play/Stop button (and the 'Transpose' and 'Speed' buttons to implement pitch abd speed changes independently.
+Playing back using the MIDI keyboard will implement pitch changes based on key played.
+
+<Cabbage>
+form caption("Temposcal File Player") size(570,340), colour(0,0,0) pluginID("TScl")
+image                       bounds(  0,  0,570,340), colour( 30, 70, 70), outlinecolour("White"), shape("sharp"), line(3)
+
+soundfiler bounds(  5,  5,560,175), channel("beg","len"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255), 
+
+image    bounds(  0,180,570,160), colour(0,0,0,0), outlinecolour("white"), line(2), shape("sharp"), plant("controls"){
 filebutton bounds(  5, 10, 80, 25), text("Open","Open"), fontcolour("white") channel("filename"), shape("ellipse")
 checkbox   bounds(  5, 40, 95, 25), channel("PlayStop"), text("Play/Stop"), fontcolour("white")
 
@@ -19,6 +30,7 @@ rslider    bounds(435,  5, 70, 70), channel("MidiRef"),   range(0,127,60, 1, 1),
 rslider    bounds(500,  5, 70, 70), channel("level"),     range(  0,  3.00, 1, 0.5),        colour( 50, 90, 90),  trackercolour("silver"), text("Level"),     fontcolour("white")
 
 keyboard bounds( 5, 80, 560, 75)
+}
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -70,6 +82,8 @@ instr	99	; load sound file
   gitableR	ftgen	2,0,0,1,gSfilepath,0,0,2
  endif
  giReady 	=	1					; if no string has yet been loaded giReady will be zero
+ Smessage sprintfk "file(%s)", gSfilepath			; print sound file to viewer
+ chnset Smessage, "filer1"
 endin
 
 instr	2
@@ -104,7 +118,18 @@ instr	2
   	outs	a1*aenv,a2*aenv
  endif
 endif
+
+ ; print scrubber
+ kscrubber	phasor	(gkspeed*gkfreeze*sr)/ftlen(gitableL)
+ if(metro(20)==1) then
+  Smessage sprintfk "scrubberposition(%d)", kscrubber*ftlen(gitableL)
+  chnset Smessage, "filer1"
+ endif
+
 endin
+
+
+
 
 instr	3	; midi triggered instrument
  if giReady = 1 then						; i.e. if a file has been loaded

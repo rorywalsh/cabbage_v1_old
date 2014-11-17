@@ -6,16 +6,22 @@ This file player is best suited for polyphonic playback and is less well suited 
 The sound file can be played back using the Play/Stop button (and the 'Transpose' / 'Speed' buttons to implement pitch/speed change)
  or it can be played back using the MIDI keyboard.
 
-<Cabbage>
-form caption("Loscil File Player") size(685,160), colour(0,0,0) pluginID("Losc")
-image                    bounds(  0,  0,685,160), colour(30, 70, 30), outlinecolour("White"), line(3)	; main panel colouration    
+The loop points can be set either by using the loop 'Start' and 'End' sliders or by clicking and dragging on the waveform view -
+ - loscil will take the values from the last control input moved.
 
+<Cabbage>
+form caption("Loscil File Player") size(685,340), colour(0,0,0) pluginID("Losc")
+image                    bounds(  0,  0,685,340), colour(30, 70, 30), outlinecolour("White"), line(3), shape("sharp")	; main panel colouration    
+
+soundfiler bounds(  5,  5,675,175), channel("beg","len"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255), 
+
+image    bounds(  0,180,685,160), colour(0,0,0,0), outlinecolour("white"), line(2), shape("sharp"), plant("controls"){
 filebutton bounds(  5, 10, 80, 25), text("Open File","Open File"), fontcolour("white") channel("filename"), shape("ellipse")
 checkbox   bounds(  5, 40, 95, 25), channel("PlayStop"), text("Play/Stop"), colour("yellow"), fontcolour("white")
 
-groupbox   bounds(100, 10,100, 50), plant("looping"), text("Looping Mode"), fontcolour("white"){
-combobox   bounds( 10, 25, 80, 20), channel("loop"), items("None", "Forward", "Fwd./Bwd."), value(1), fontcolour("white")
-}
+label      bounds(110, 12, 80, 12), text("Looping Mode"), fontcolour("white")
+combobox   bounds(110, 25, 80, 20), channel("loop"), items("None", "Forward", "Fwd./Bwd."), value(1), fontcolour("white")
+
 label      bounds(241,  4, 43, 8), text("L   O   O   P"), fontcolour("white")
 rslider    bounds(205, 15, 60, 60), channel("LoopStart"), range(0, 1, 0),                   colour( 50, 90, 50), text("Start"),     fontcolour("white")
 rslider    bounds(260, 15, 60, 60), channel("LoopEnd"),   range(0, 1, 1),                   colour( 50, 90, 50), text("End"),       fontcolour("white")
@@ -36,6 +42,7 @@ rslider    bounds(565, 15, 60, 60), channel("MidiRef"),   range(0,127,60, 1, 1),
 rslider    bounds(620, 15, 60, 60), channel("level"),     range(  0,  3.00, 1, 0.5),        colour( 50, 90, 50), text("Level"),     fontcolour("white")
 
 keyboard bounds(5, 80, 675, 75)
+}
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -55,12 +62,28 @@ nchnls = 2
 gichans		init	0
 giReady		init	0
 gSfilepath	init	""
+gkTabLen	init	2
 
 instr	1
  gkloop		chnget	"loop"
- gkLoopStart	chnget	"LoopStart"
- gkLoopEnd	chnget	"LoopEnd"
- gkLoopEnd	limit	gkLoopEnd,gkLoopStart+0.01,1	; limit loop end to prevent crashes
+ kLoopStart	chnget	"LoopStart"
+ kLoopEnd	chnget	"LoopEnd"
+ kLoopEnd	limit	kLoopEnd,kLoopStart+0.01,1	; limit loop end to prevent crashes
+ kbeg		chnget	"beg"				; click and drag
+ klen		chnget	"len"				;  "
+
+ ; loop points defined by sliders or click and drag...
+ kTrigSlid	changed	kLoopStart,kLoopEnd	
+ kTrigCAD	changed	kbeg,klen
+ if kTrigSlid==1 then
+  gkLoopStart	=	kLoopStart
+  gkLoopEnd	=	kLoopEnd
+ elseif kTrigCAD==1 then
+  gkLoopStart	=	kbeg/gkTabLen
+  gkLoopEnd	=	(kbeg+klen)/gkTabLen
+ endif
+
+
  gkPlayStop	chnget	"PlayStop"
  gktranspose	chnget	"transpose"
  gkspeed	chnget	"speed"
@@ -90,6 +113,9 @@ instr	99	; load sound file
  gitable	ftgen	1,0,0,1,gSfilepath,0,0,0		; load sound file into a GEN 01 function table 
  gichans	filenchnls	gSfilepath			; derive the number of channels (mono=1,stereo=2) in the sound file
  giReady 	=	1					; if no string has yet been loaded giReady will be zero
+ gkTabLen	init		ftlen(gitable)/gichans		; table length in sample frames
+ Smessage sprintfk "file(%s)", gSfilepath			; print sound file to viewer
+ chnset Smessage, "filer1"	
 endin
 
 instr	2	; sample triggered by 'play/stop' button

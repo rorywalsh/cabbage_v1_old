@@ -1,6 +1,7 @@
 <Cabbage>
-form caption("Buzz synthesizer") size(562, 340), colour("black"),pluginID("buz1") 
-rslider bounds(15, 10, 100, 100) channel("detune"), range(-1,1,0), caption("Detune"), colour("SteelBlue"), midictrl(1, 1)
+form caption("Buzz synthesizer") size(562, 340), colour("black"),pluginID("buz1")
+
+rslider bounds(15, 10, 100, 100) channel("detune"), range(-1,1,0), caption("Detune"), colour("SteelBlue")
 rslider bounds(120, 10, 100, 100) channel("semi"), range(-24,12,-24), caption("Coarse"), colour("SteelBlue ")
 rslider bounds(225, 10, 100, 100) channel("cutoff"), range(60,2000,400), caption("Cutoff"), colour("SteelBlue ")
 rslider bounds(330, 10, 100, 100) channel("harm"), range(1,20,1), caption("Harmonic"), colour("SteelBlue ")

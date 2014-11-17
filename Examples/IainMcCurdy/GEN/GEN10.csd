@@ -5,7 +5,7 @@
 <Cabbage>
 form caption("GEN10"), size(410, 340), pluginID("gn10"), colour("20,70,170,150")
 
-table bounds(  5,  5, 400, 120), identchannel("table1"), tableNumbers(1), tablecolour("yellow"), readonly(1)
+table bounds(  5,  5, 400, 120), identchannel("table1"), tableNumbers(1), tablecolour("yellow")
 
 rslider bounds(  5,130, 50, 70), channel("str1"), text("Str.1"), textBox(1), range(-1.00, 1.00, 1), colour(100,100,250,200)
 rslider bounds( 55,130, 50, 70), channel("str2"), text("Str.2"), textBox(1), range(-1.00, 1.00, 0), colour(100,100,250,200)
@@ -34,23 +34,23 @@ checkbox bounds(274,228, 12, 12), channel("solo6"),  value(0), colour("yellow"),
 checkbox bounds(324,228, 12, 12), channel("solo7"),  value(0), colour("yellow"), shape("square")
 checkbox bounds(374,228, 12, 12), channel("solo8"),  value(0), colour("yellow"), shape("square")
 
-label    bounds( 20,216, 55, 10), text("Mute"),  FontColour("white")
-label    bounds( 70,216, 55, 10), text("Mute"),  FontColour("white")
-label    bounds(120,216, 55, 10), text("Mute"),  FontColour("white")
-label    bounds(170,216, 55, 10), text("Mute"),  FontColour("white")
-label    bounds(220,216, 55, 10), text("Mute"),  FontColour("white")
-label    bounds(270,216, 55, 10), text("Mute"),  FontColour("white")
-label    bounds(320,216, 55, 10), text("Mute"),  FontColour("white")
-label    bounds(370,216, 55, 10), text("Mute"),  FontColour("white")
+label    bounds( 19,216, 24, 10), text("Mute"),  FontColour("white")
+label    bounds( 69,216, 24, 10), text("Mute"),  FontColour("white")
+label    bounds(119,216, 24, 10), text("Mute"),  FontColour("white")
+label    bounds(169,216, 24, 10), text("Mute"),  FontColour("white")
+label    bounds(219,216, 24, 10), text("Mute"),  FontColour("white")
+label    bounds(269,216, 24, 10), text("Mute"),  FontColour("white")
+label    bounds(319,216, 24, 10), text("Mute"),  FontColour("white")
+label    bounds(369,216, 24, 10), text("Mute"),  FontColour("white")
 
-label    bounds( 20,241, 55, 10), text("Solo"),  FontColour("white")
-label    bounds( 70,241, 55, 10), text("Solo"),  FontColour("white")
-label    bounds(120,241, 55, 10), text("Solo"),  FontColour("white")
-label    bounds(170,241, 55, 10), text("Solo"),  FontColour("white")
-label    bounds(220,241, 55, 10), text("Solo"),  FontColour("white")
-label    bounds(270,241, 55, 10), text("Solo"),  FontColour("white")
-label    bounds(320,241, 55, 10), text("Solo"),  FontColour("white")
-label    bounds(370,241, 55, 10), text("Solo"),  FontColour("white")
+label    bounds( 20,241, 21, 10), text("Solo"),  FontColour("white")
+label    bounds( 70,241, 21, 10), text("Solo"),  FontColour("white")
+label    bounds(120,241, 21, 10), text("Solo"),  FontColour("white")
+label    bounds(170,241, 21, 10), text("Solo"),  FontColour("white")
+label    bounds(220,241, 21, 10), text("Solo"),  FontColour("white")
+label    bounds(270,241, 21, 10), text("Solo"),  FontColour("white")
+label    bounds(320,241, 21, 10), text("Solo"),  FontColour("white")
+label    bounds(370,241, 21, 10), text("Solo"),  FontColour("white")
 
 keyboard bounds(  0,260,410, 80)
 </Cabbage>
@@ -125,10 +125,12 @@ instr	1
 	if ktrig==1 then
 	 reinit UPDATE
 	endif
-	UPDATE:
+	UPDATE:	
 	giwave	ftgen	1,0, 4096,10, i(gkstr1)*i(kstatus1),i(gkstr2)*i(kstatus2),i(gkstr3)*i(kstatus3),i(gkstr4)*i(kstatus4),i(gkstr5)*i(kstatus5),i(gkstr6)*i(kstatus6),i(gkstr7)*i(kstatus7),i(gkstr8)*i(kstatus8)
-	ktrigr	=	-1		; trigger to update table display widget (-1 = update) 
-	chnset	"tablenumber(1)", "table1"	; update table display	
+	rireturn
+	if ktrig==1 then
+	 chnset	"tablenumber(1)", "table1"	; update table display	
+	endif
 endin
 
 instr	3

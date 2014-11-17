@@ -12,7 +12,6 @@ combobox channel("kind"),  bounds(273, 59, 128, 18), value(2), text("Butterworth
 rslider bounds(400, 11, 70, 70), text("Mix"),	      colour( 40,40,100),	fontcolour("white"), 	channel("mix"), 	range(0,1.00,1),   trackercolour("white")
 rslider bounds(465, 11, 70, 70), text("Level"),	      colour( 40,40,100),	fontcolour("white"), 	channel("level"), 	range(0,1.00,0.3), trackercolour("white")
 checkbox channel("test"), pos(540, 35), text("TEST"), colour("yellow"), fontcolour("white"), size(100, 15), value(0)
-}
 </Cabbage>
 
 <CsoundSynthesizer>

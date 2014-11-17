@@ -1,5 +1,5 @@
 <Cabbage>
-form caption("Bassline") size(615, 250), pluginID("basl")
+form caption("Bassline") size(615, 250), pluginID("basl"), guirefresh(64)
 
 image    bounds(  0,  0,615,220), colour("grey"), shape("rounded"), oulinecolour("white"), line(4)
 checkbox bounds( 64,  8,  4,  4), channel("Act1"),  value(0), colour("yellow"), shape("ellipse")
@@ -102,12 +102,12 @@ rslider  bounds(270,120, 60, 60), text("Dist."),  channel("Dist"),  range(0,1.00
 rslider  bounds(320,120, 60, 60), text("Decay"),  channel("Decay"),  range(0.10, 5, .3, 0.25), FontColour("black")
 rslider  bounds(370,120, 60, 60), text("Accent"),  channel("Accent"),  range(0, 1.00, .5), FontColour("black")
 rslider  bounds(420,120, 60, 60), text("Tempo"),  channel("Tempo"),  range(1, 500, 110, 1, 1), FontColour("black"), FontColour("black")
-button   bounds(480,120, 60, 15), text("Reset"), channel("Reset"), value(0)
-button   bounds(540,120, 60, 15), text("Random"), channel("Rnd"), value(0)
-button   bounds(480,140, 60, 15), text("-semi"), channel("SemiDn"), value(0)
-button   bounds(540,140, 60, 15), text("+semi"), channel("SemiUp"), value(0)
-button   bounds(480,160, 60, 15), text("-oct"), channel("OctDn"), value(0)
-button   bounds(540,160, 60, 15), text("+oct"), channel("OctUp"), value(0)
+button   bounds(480,120, 60, 15), text("Reset"), channel("Reset"), value(0), latched(0)
+button   bounds(540,120, 60, 15), text("Random"), channel("Rnd"), value(0), latched(0)
+button   bounds(480,140, 60, 15), text("-semi"), channel("SemiDn"), value(0), latched(0)
+button   bounds(540,140, 60, 15), text("+semi"), channel("SemiUp"), value(0), latched(0)
+button   bounds(480,160, 60, 15), text("-oct"), channel("OctDn"), value(0), latched(0)
+button   bounds(540,160, 60, 15), text("+oct"), channel("OctUp"), value(0), latched(0)
 
 button bounds(280, 185, 80, 20), text("Internal","External"), channel("ClockSource"), value(0)
 label  bounds(281, 205, 75, 12), text("Clock Source"), FontColour("black")
@@ -376,7 +376,7 @@ instr	1	;BASSLINE INSTRUMENT
 	SKIP:
 	
 	;RESET SEQUENCE TO BLANK
-	ktrig	changed	gkReset
+	ktrig	trigger	gkReset,0.5,0
 	if ktrig==1 then
 	 kval	=	60
 	 chnset	kval,"Note1"
@@ -447,7 +447,7 @@ instr	1	;BASSLINE INSTRUMENT
 	endif
 
 	;RANDOMISE SEQUENCE
-	ktrig	changed	gkRnd
+	ktrig	trigger	gkRnd,0.5,0	
 	if ktrig==1 then
 #define	RANDOM_STEP(N)
 	 #
@@ -536,10 +536,10 @@ instr	1	;BASSLINE INSTRUMENT
 	endif	
 
 	;TRANSPOSE
-	ktrig1	changed	kSemiDn
-	ktrig2	changed	kSemiUp
-	ktrig3	changed	kOctDn
-	ktrig4	changed	kOctUp
+	ktrig1	trigger	kSemiDn,0.5,0
+	ktrig2	trigger	kSemiUp,0.5,0
+	ktrig3	trigger	kOctDn,0.5,0
+	ktrig4	trigger	kOctUp,0.5,0
 	if ktrig1+ktrig2+ktrig3+ktrig4==1 then
 #define	TRANSPOSE(N)
 	 #

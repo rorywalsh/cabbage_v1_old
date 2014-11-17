@@ -1,7 +1,14 @@
 RubbedResonators.csd
+Written by Iain McCurdy. Updated 2014
 
 This example introduces a method of 'exciting' mode filters that creates an imitation of a resonant object being bowed or rubbed. The excitation signal consists of a stack of sine wave oscillators that match the number and frequencies of the mode filters being used. This arrangement can cause the mode filters to resonate with great intensity so the amplitudes of the sine wave oscillators should be kept low to prevent overloading. Additionally the frequency of each sine wave oscillator is individually modulated using a random 'jitter' function created using 'gaussi' (interpolating gaussian noise generator). This technique results is a shifting spectral response from the filters. Adjusting the rate and amplitude of this jitter function can imitate a variety of bowing and rubbing techniques. Increasing 'Jit.Dep.' while 'Jit.Rate' is kept low gives the impression of the resonator being rubbed with greater pressure. If both 'Jit.Dep.' and 'Jit.Rate' are high the impression is of the resonator begin brushed. 
 If 'Q' is low then more of the character of the impulse sound (the sine wave oscillators) will be apparent (and therefore the jitter modulation will be more apparent). If 'Q' is higher then the character of the mode filters will dominate and modulation of the impulse sound frequencies will be less apparent. A key aspect of this instrument is that once the impulse sound is removed ('Impulse Amp.' is brought to minimum) the sound produced is solely the residual resonance of the mode filters, therefore any modulation within the sine wave oscillators becomes irrelevant.
+
+'Poly.Limit'	-	controls the maximum number of layers allowed. 
+			If an attempt to exceed the polyphony limit is made, the oldest held note will be removed.
+			This is useful for prevent CPU overloads.
+
+'Rel.Time'	-	defines the time over which a note will fade out if it has been removed on account of exceeding the polyphony limit 
 
 For brightness (damping) control to work properly modal ratios in their function table will need to be in ascending order.
 
@@ -10,43 +17,50 @@ Chorus effect is disabled when 'Mix' is zero
 Number of partials in the chosen algorithm is printed to the GUI for the user's information. Algorithms with high numbers of partials will demand more CPU and lower polyphony will be possible.
 
 <Cabbage>
-form caption("Rubbed Resonators"), size(440, 320), pluginID("RubR")
-image pos(0, 0), size(440, 290), colour("Sienna"), shape("rounded"), oulinecolour("brown"), line(4)
+form caption("Rubbed Resonators"), size(540, 320), pluginID("RubR")
+image pos(0, 0),                   size(540, 290), colour("Sienna"), shape("rounded"), oulinecolour("brown"), line(4)
 
 ;IMPULSE
-groupbox bounds(10, 10, 260, 90), text("Impulse"), fontcolour("white"){
-rslider bounds( 10, 35,60,60), text("Amp."), colour("Chocolate"), channel("ImpDB"), range(-70, 0, 0)
-rslider bounds( 60, 35,60,60), text("HPF"), colour("Chocolate"), channel("HPF"), range(20, 20000, 20, 0.5)
-rslider bounds(110, 35,60,60), text("LPF"), colour("Chocolate"), channel("LPF"), range(20, 20000, 20000, 0.5)
-rslider bounds(160, 35,60,60), text("Jit. Dep."), channel("JitDep"), colour("Chocolate"), range(0, 5, 0.4,0.5)
-rslider bounds(210, 35,60,60), text("Jit. Rate"), channel("JitRte"), colour("Chocolate"), range(0.01,100, 3,0.5)
+groupbox bounds(10, 10, 260, 90), text("Impulse"), fontcolour("white"), plant("impulse"){
+rslider bounds(  0, 25,60,60), text("Amp."), colour("Chocolate"), channel("ImpDB"), range(-70, 0, 0)
+rslider bounds( 50, 25,60,60), text("HPF"), colour("Chocolate"), channel("HPF"), range(20, 20000, 20, 0.5)
+rslider bounds(100, 25,60,60), text("LPF"), colour("Chocolate"), channel("LPF"), range(20, 20000, 20000, 0.5)
+rslider bounds(150, 25,60,60), text("Jit. Dep."), channel("JitDep"), colour("Chocolate"), range(0, 5.00, 0.4,0.5)
+rslider bounds(200, 25,60,60), text("Jit. Rate"), channel("JitRte"), colour("Chocolate"), range(0.01,100, 3,0.5)
 }
 
 ;RESONATORS
-groupbox bounds(270, 10,160,180), text("Resonators"), fontcolour("white"){
-label    bounds(310, 40, 70, 12), text("Instrument"), fontcolour("white")
-combobox bounds(280, 55,140, 25), channel("sound"), value(4), text("Single", "Dahina", "Banyan", "Xylophone", "Tibetan Bowl 180mm", "Spinel Sphere", "Pot Lid", "Red Cedar Wood Plate", "Tubular Bell", "Redwood Wood Plate", "Douglas Fir Wood Plate", "Uniform Wooden Bar", "Uniform Aluminium Bar", "Vibraphone 1", "Vibraphone 2", "Chalandi Plates", "Tibetan Bowl 152mm", "Tibetan Bowl 140mm", "Wine Glass", "Small Handbell", "Albert Clock Bell", "Wood Block","Harmonic 10","Harmonic 20","Harmonic 30","Harmonic Odd 10","Harmonic Odd 20")
-rslider  bounds(315, 85, 70, 30), text("N.Partials"), TextBox(1), channel("npartials"), range(1, 10000, 1, 1, 1)
-rslider  bounds(270,125, 60, 60), text("Q"), colour("orange"), channel("Q"), range(50, 10000, 2000, 0.5)
-rslider  bounds(320,125, 60, 60), text("Bright"), colour("orange"), channel("bright"), range(-4, 4, 0)
-rslider  bounds(370,125, 60, 60), text("Gain"), colour("orange"), channel("gain"), range(0, 8, 1)
+groupbox bounds(270, 10,260, 90), text("Resonators"), fontcolour("white"), plant("resonators"){
+label    bounds( 40, 21, 70, 12), text("Instrument"), fontcolour("white")
+combobox bounds( 10, 36,140, 25), channel("sound"), value(4), text("Single", "Dahina", "Banyan", "Xylophone", "Tibetan Bowl 180mm", "Spinel Sphere", "Pot Lid", "Red Cedar Wood Plate", "Tubular Bell", "Redwood Wood Plate", "Douglas Fir Wood Plate", "Uniform Wooden Bar", "Uniform Aluminium Bar", "Vibraphone 1", "Vibraphone 2", "Chalandi Plates", "Tibetan Bowl 152mm", "Tibetan Bowl 140mm", "Wine Glass", "Small Handbell", "Albert Clock Bell", "Wood Block","Harmonic 10","Harmonic 20","Harmonic 30","Harmonic Odd 10","Harmonic Odd 20")
+label    bounds( 44, 62, 70, 12), text("N.Partials"), fontcolour("white")
+rslider  bounds( 64, 58, 70, 30), text("."), TextBox(1), channel("npartials"), range(1, 10000, 1, 1, 1)
+rslider  bounds(150, 25, 60, 60), text("Q"), colour("orange"), channel("Q"), range(50, 10000, 2000, 0.5)
+rslider  bounds(200, 25, 60, 60), text("Bright"), colour("orange"), channel("bright"), range(-4.00, 4, 0)
 }
 
 ;POLYPHONY
-groupbox bounds( 10,100,100, 90), text("Polyphony"), fontcolour("white"){
-button   bounds( 20,125, 80, 20), text("poly","mono"), channel("monopoly"), value(0), fontcolour("lime")
-hslider  bounds( 15,143, 90, 38), colour("chocolate"), channel("GlissTime"), range(0.005, 0.3, 0.1, 0.25, 0.001)
-label    bounds( 32,174, 58, 12), text("Gliss Time")
+groupbox bounds( 10,100,220, 90), text("Polyphony"), fontcolour("white"), plant("polyphony"){
+button   bounds( 10, 25, 80, 20), text("poly","mono"), channel("monopoly"), value(0), fontcolour("lime")
+hslider  bounds(  5, 43, 90, 38), colour("chocolate"), channel("GlissTime"), range(0.005,  2, 0.1, 0.25, 0.001)
+label    bounds( 22, 74, 58, 12), text("Gliss Time")
+rslider  bounds( 95, 25, 60, 60), text("Poly.Limit"), channel("PolyLimit"), range(0, 20, 5,1,1), colour("chocolate")
+rslider  bounds(155, 25, 60, 60), text("Rel.Time"), channel("RelTim"), range(0.01, 5,0.2,0.5,0.01), colour("chocolate")
 }
 
 ;CHORUS
-groupbox bounds(110,100,160, 90), text("Chorus"), fontcolour("white"){
-rslider  bounds(110,125, 60, 60), text("Mix"), channel("ChoMix"), range(0, 1, 0.5), colour("yellow")
-rslider  bounds(160,125, 60, 60), text("Depth"), channel("ChoDep"), range(0, 0.1, 0.01,0.5, 0.001), colour("yellow")
-rslider  bounds(210,125, 60, 60), text("Rate"), channel("ChoRte"), range(0, 20, 0.96, 0.5), colour("yellow")
+groupbox bounds(230,100,160, 90), text("Chorus"), fontcolour("white"), plant("chorus"){
+rslider  bounds(  0, 25, 60, 60), text("Mix"), channel("ChoMix"), range(0, 1.00, 0.5), colour("yellow")
+rslider  bounds( 50, 25, 60, 60), text("Depth"), channel("ChoDep"), range(0, 0.1, 0.01,0.5, 0.001), colour("yellow")
+rslider  bounds(100, 25, 60, 60), text("Rate"), channel("ChoRte"), range(0, 20, 0.96, 0.5), colour("yellow")
 }
 
-keyboard bounds(10, 195, 420, 85)
+;OUTPUT
+groupbox bounds(390,100,140, 90), text("Output"), fontcolour("white"), plant("output"){
+rslider  bounds( 40, 25, 60, 60), text("Level"), channel("OutLev"), range(0, 1.00, 0.25), colour("GoldenRod")
+}
+
+keyboard bounds(10, 195, 520, 85)
 
 image bounds(5, 295, 240, 22), colour(75, 85, 90, 100), plant("credit"){
 label bounds(0.03, 0.15, .9, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white")
@@ -164,6 +178,8 @@ giNoteActive	ftgen	0,0,128,2,0
 
 gkbright	init	0
 gasend		init	0
+gkactive 	init 	0	; total number of active notes
+gkPolyLimit	init	1
 
 ;--UDOS--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 opcode	SineVoice,a,kkkiiii
@@ -171,7 +187,7 @@ opcode	SineVoice,a,kkkiiii
 	amix	=	0								;initialise audio mix variable (mixture of all sine wave oscillators)
 	kjit	gaussi	kjitdep, 1, kjitrte						;jitter function (semitone deviation)
 	irto	table	icount-1,irtos							;read the frequency ratio for this oscillator from the appropriate ratios table
-	a1	oscili	1,semitone(kjit)*kfreq*irto,isfn				;create the oscillator
+	a1	oscil	1,semitone(kjit)*kfreq*irto,isfn				;create the oscillator
 	if icount<invoices then								;if not all required oscillators have been created yet... 
 	 amix	SineVoice	kfreq,kjitdep,kjitrte,icount+1,invoices,irtos,isfn	;call the udo again, with the incremented counter
 	endif
@@ -199,6 +215,23 @@ opcode	ModeVoice,a,akkkiii						;mode udo (k-rate base frequency) - used for non
 	endif
 	xout	amix+asig								;send all audio back to caller instrument
 endop											;end of udo
+
+; 'lineto' opcode seems buggy. Here's a UDO alternative 'lineto2'
+opcode	lineto2,k,kk
+ kinput,ktime	xin
+ ktrig	changed	kinput,ktime				; reset trigger
+ if ktrig==1 then					; if new note has been received or if portamento time has been changed...
+  reinit RESTART
+ endif
+ RESTART:						; restart 'linseg' envelope
+ if i(ktime)==0 then					; 'linseg' fails if duration is zero...
+  koutput	=	i(kinput)			; ...in which case output simply equals input
+ else
+  koutput	linseg	i(koutput),i(ktime),i(kinput)	; linseg envelope from old value to new value
+ endif
+ rireturn
+ 		xout	koutput
+endop
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 instr	1	;read in widgets (always on)
@@ -209,16 +242,16 @@ instr	1	;read in widgets (always on)
 	gkJitDep	chnget	"JitDep"
 	gkJitRte	chnget	"JitRte"
 	gkbright	chnget	"bright"
-	gkgain		chnget	"gain"
 	gkmonopoly	chnget	"monopoly"
 	gkGlissTime	chnget	"GlissTime"
 	gksound		chnget	"sound"
 	gkChoMix	chnget	"ChoMix"
 	gkChoRte	chnget	"ChoRte"
 	gkChoDep	chnget	"ChoDep"
+	gkOutLev	chnget	"OutLev"
+	gkOutLev	port	gkOutLev,0.05
 	gkImpAmp	=	ampdbfs(kImpDB)		;convert from dB value to amp value
 	gkbright	port	gkbright,0.02		;smooth changes using portamento
-	gkgain		port	gkgain,0.02		;
 	ktrig	changed	gksound				;if sound combobox changes...
 	if ktrig==1 then				
 	 event	"i",5,0,0.001				;...call instrument 5 to update 'N.Partials' number box
@@ -242,6 +275,21 @@ instr	2	;MIDI TRIGGERED INSTRUMENT
 endin
 
 instr	3				;impulse and modal resonators instrument
+	/* POLYPHONY CONTROL */
+	iPolyLimit	chnget	"PolyLimit"
+	if iPolyLimit>0 then
+	 gkactive init i(gkactive) + 1	;INCREMENT NOTE COUNTER
+	 if gkactive>iPolyLimit then	;IF POLYPHONY IS EXCEEDED (THROUGH THE ADDITION OF NEW NOTE)
+	  turnoff			;REMOVE THIS NOTE
+	 endif
+	 krel release			;IF NOTE HELD = 0, IF NOTE RELEASED = 1
+	 ktrig trigger krel,0.5,0	;WHEN RELEASE FLAG CROSSES 0.5 UPWARDS, I.E. NOTE HAS BEEN RELEASED...	
+	 if ktrig==1 then		
+	  gkactive = gkactive - 1	;...DECREMENT ACTIVE NOTES COUNTER
+	 endif
+        endif
+
+
 	ktrig	changed	gksound
 	if ktrig==1 then
 	 reinit RESTART_INSTRUMENT
@@ -251,7 +299,8 @@ instr	3				;impulse and modal resonators instrument
 	if gkmonopoly==1 then
 	/*monophonic*/
 	 kporttime	linseg	0,0.001,1
-	 kbase		portk	gkbase,kporttime*gkGlissTime	
+	 ;kbase		portk	gkbase,kporttime*gkGlissTime
+	 kbase		lineto2	gkbase,kporttime*gkGlissTime
 	 kactive		active	p1-1
 	 kactive		limit	kactive,0,1	
 	else
@@ -282,17 +331,29 @@ instr	3				;impulse and modal resonators instrument
 	RESTART_INSTRUMENT2:
 
 	aSineMix	SineVoice	kbase,gkJitDep,gkJitRte,icount,invoices,irtos,gisine	;call sine oscillator udo (it will be recursively recalled within the udo the appropriate number of times according to invoices)
-	aSineMix	=	aSineMix*0.002*kactivePort*kenv*gkImpAmp	;scale the mixture of sines audio signal
+	aSineMix	=	aSineMix*0.002*kactivePort*kenv*gkImpAmp			;scale the mixture of sines audio signal
 	aSineMix	buthp	aSineMix,gkHPF
 	aSineMix	butlp	aSineMix,gkLPF	 
 	amodes			ModeVoice	aSineMix,kbase,gkQ,gkbright,icount,invoices,irtos	;call sine oscillator udo (it will be recursively recalled within the udo the appropriate number of times according to invoices)
-	amodes		=		(amodes*gkgain*0.2)/invoices					;scale the amplitude of the sound according to the number of modes in the chosen algorithm
+	amodes		=		(amodes*0.2*gkOutLev)/invoices				;scale the amplitude of the sound according to the number of modes in the chosen algorithm
+
+	
+	/* POLYPHONY LIMIT ENVELOPE */
+	if iPolyLimit>0 then
+	 iRelTim	chnget	"RelTim"
+	 aRelEnv	linsegr	1,iRelTim,0
+	 amodes	=	amodes * aRelEnv
+	endif
+
+
+	/* TRACK OUTPUT AMPLITUDE. REMOVE SILENT NOTES */
 	krms		rms		amodes								;track the amplitude of the sound as an rms value
 	ithreshold	=	0.00001
 	if krms<ithreshold&&kactive=0 then			;if sound has died away and key is inactive...
 	 turnoff						;turn instrument off
 	endif
-	xtratim	0.1						;this is needed to prevent initialisation crashes, I'm not sure why 
+	;xtratim	0.1						;this is needed to prevent initialisation crashes, I'm not sure why 
+
 			outs	amodes,amodes			;send mode filters output mixture to output and rescale according to the number of modes used
 	gasend	=	gasend+amodes*gkChoMix
 	gkNoteTrig	=	0				;reset new-note trigger (in case it was '1')

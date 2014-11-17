@@ -1,12 +1,17 @@
 SyncFilePlayer.csd
+Written by Iain McCurdy 2014
+
+The internal pointer used by syncgrain to track progress through the sound file is affected by grain size and density as well as speed 
+ so on accaount of this complication a scrubber line in the waveform view is not yet implemented.
 
 <Cabbage>
-form caption("Syncgrain File Player") size(800,160), colour(0,0,0) pluginID("Losc")
-image                       bounds(  0,  0,800,160), colour( 90, 60, 30), outlinecolour("White"), line(3)	; main panel colouration    
+form caption("Syncgrain File Player") size(800,340), colour(0,0,0) pluginID("Losc")
+image                       bounds(  0,  0,800,340), colour( 90, 60, 30), outlinecolour("White"), shape("sharp"), line(3)	; main panel colouration    
+soundfiler                  bounds(  5,  5,790,175), channel("beg","len"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255), 
 
+image    bounds(  0,180,800,160), colour(0,0,0,0), outlinecolour("white"), line(0), shape("sharp"), plant("controls"){
 filebutton bounds(  5, 10, 80, 25), text("Open File","Open File"), fontcolour("white") channel("filename"), shape("ellipse")
 checkbox   bounds(  5, 40, 95, 25), channel("PlayStop"), text("Play/Stop"), fontcolour("white")
-
 label      bounds(225,  4, 65, 8), text("G   R   A   I   N   S"), fontcolour("white")
 rslider    bounds( 90, 15, 60, 60), channel("density"),   range( 0.5,400.00,20, 0.5),          colour( 90, 60, 30), text("Density"),     fontcolour("white"),trackercolour( 90, 70, 30)
 rslider    bounds(145, 15, 60, 60), channel("DensOS"),     range( 0, 5.00, 0),                 colour( 90, 60, 30), text("Dens.OS"),     fontcolour("white"),trackercolour( 90, 70, 30)
@@ -32,6 +37,7 @@ rslider    bounds(685, 15, 60, 60), channel("MidiRef"),   range(0,127,60, 1, 1),
 rslider    bounds(740, 15, 60, 60), channel("level"),     range(  0,  3.00, 1, 0.5),        colour( 90, 60, 30), text("Level"),     fontcolour("white"),trackercolour( 90, 70, 30)
 
 keyboard bounds(5, 80,790, 75)
+}
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -94,6 +100,8 @@ instr	99	; load sound file
   gitableR	ftgen	2,0,0,1,gSfilepath,0,0,2
  endif
  giReady 	=	1					; if no string has yet been loaded giReady will be zero
+ Smessage sprintfk "file(%s)", gSfilepath			; print sound file to viewer
+ chnset Smessage, "filer1"
 endin
 
 instr	2	; triggered by 'play/stop' button

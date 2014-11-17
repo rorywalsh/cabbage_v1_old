@@ -20,7 +20,7 @@
 ; I have been unable to find a clear technical specification of how this was implemented but have nonetheless made my 'best guess'.
 
 <Cabbage>
-form caption("...") size(159, 180), pluginID("basl")
+form caption("...") size(159, 180), pluginID("basl"), scrollbars(0)
 
 label   bounds(  5,  3, 18, 22), text("R"), fontcolour(red)
 label   bounds( 20,  5, 18, 22), text("H"), fontcolour(yellow)
@@ -61,7 +61,7 @@ checkbox bounds(131, 101,  9, 10), channel("k15") value(0) shape(square) colour(
 checkbox bounds(140, 101, 10, 10), channel("k16") value(0) shape(square) colour(yellow)
 checkbox bounds(150, 101, 10, 10), channel("k17") value(0) shape(square) colour(red)
 
-keyboard bounds(-13, 110, 450, 70)
+keyboard bounds(-561, 110,1200, 70)
 </Cabbage>
 
 <CsoundSynthesizer>

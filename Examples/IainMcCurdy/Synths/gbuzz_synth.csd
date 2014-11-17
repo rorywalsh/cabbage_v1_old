@@ -41,7 +41,7 @@ combobox bounds( 10, 65, 90, 18), channel("PortMode"), value(1), text("Fixed", "
 
 ;REVERB              
 image   bounds(710,101,120, 90), colour("DarkSlateGrey"), oulinecolour("white"), line(2), shape("sharp"), plant("reverb"){	;reverb
-label   bounds( 35,  5,100, 15), text("Reverb"), fontcolour(white)
+label   bounds( 34,  5, 49, 15), text("Reverb"), fontcolour(white)
 rslider bounds(  0, 23, 60, 60), text("Mix"), channel("RvbMix"), range(0, 1, 0.3), fontcolour(white) colour(SlateGrey)
 rslider bounds( 60, 23, 60, 60), text("Size"), channel("RvbSize"), range(0.3, 1, 0.7), fontcolour(white) colour(SlateGrey)
 }                       
@@ -103,7 +103,7 @@ rslider bounds(422, 23, 62, 62), text("Tone Dep."), colour(SlateGrey) channel("T
 
 ;NOISE
 image   bounds(580,101,125, 90), colour("DarkSlateGrey"), oulinecolour("white"), line(2), shape("sharp"), plant("noise"){	;NOISE
-label   bounds( 40,  5,100, 15), text("Noise"), fontcolour(white)
+label   bounds( 40,  5, 45, 15), text("Noise"), fontcolour(white)
 rslider bounds(  2, 23, 62, 62), text("Depth"),  colour(SlateGrey) channel("NoiseAmp"),range(0,300.00, 0, 1, 0.0001), fontcolour(white)
 rslider bounds( 62, 23, 62, 62), text("Damp"),  colour(SlateGrey) channel("NoiseDamp"),range(15, 10000, 1000, 0.5, 0.01), fontcolour(white)
 }                 

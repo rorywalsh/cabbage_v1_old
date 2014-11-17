@@ -16,7 +16,7 @@
 ; Tempo		in beats per minute
 
 <Cabbage>
-form caption("GEN02"), size(410, 540), colour( 50, 50, 50),pluginID("gn02")
+form caption("GEN02"), size(410, 540), scrollbars(0), colour( 50, 50, 50),pluginID("gn02")
 checkbox bounds(  0,  0,  10, 10), channel("Act1"),  value(0), colour("white"), shape("ellipse")
 checkbox bounds( 50,  0,  10, 10), channel("Act2"),  value(0), colour("white"), shape("ellipse")
 checkbox bounds(100,  0,  10, 10), channel("Act3"),  value(0), colour("white"), shape("ellipse")
@@ -26,9 +26,9 @@ checkbox bounds(250,  0,  10, 10), channel("Act6"),  value(0), colour("white"), 
 checkbox bounds(300,  0,  10, 10), channel("Act7"),  value(0), colour("white"), shape("ellipse")
 checkbox bounds(350,  0,  10, 10), channel("Act8"),  value(0), colour("white"), shape("ellipse")
                                                                                   
-table bounds(  5, 10, 400, 70), channel("notetable"),  tableNumbers(1), tablecolour("yellow"), identchannel("table1"), readonly(1), drawmode(4), amprange(0,1)
-table bounds(  5, 80, 400, 70), channel("amptable"),   tableNumbers(2), tablecolour("green"),  identchannel("table2"), readonly(1), drawmode(4), amprange(0,1)
-table bounds(  5,150, 400, 70), channel("speedtable"), tableNumbers(3), tablecolour("blue"),   identchannel("table3"), readonly(1), drawmode(4), amprange(0,1)
+table bounds(  5, 10, 400, 70), channel("notetable"),  tableNumbers(1), tablecolour("yellow"), identchannel("table1"), drawmode(2), amprange(0,1)
+table bounds(  5, 80, 400, 70), channel("amptable"),   tableNumbers(2), tablecolour("green"),  identchannel("table2"), drawmode(2), amprange(0,1)
+table bounds(  5,150, 400, 70), channel("speedtable"), tableNumbers(3), tablecolour("blue"),   identchannel("table3"), drawmode(2), amprange(0,1)
 
 image   bounds(  0,230,400,400), colour( 50, 50, 50), oulinecolour("white"), line(0), shape("sharp"), plant("controls"){
 rslider bounds(  5,  0, 50, 50), channel("note1"), text("Note.1"), range(0, 108, 48, 1, 1),colour("yellow"),trackercolour("yellow")  
@@ -139,11 +139,12 @@ instr	1						; update function tables and send to Cabbage table display
 	 i$NAME7	init	(i(k$NAME7)-($MIN))/($MAX-$MIN)
 	 i$NAME8	init	(i(k$NAME8)-($MIN))/($MAX-$MIN)
 	 gi$NAMEs	ftgen	$NUM,0, 8,-2, i$NAME1, i$NAME2, i$NAME3, i$NAME4, i$NAME5, i$NAME6, i$NAME7, i$NAME8	; update function table
-	 ktrigr	=	-1								; table update trigger
+	rireturn									; return from reinit
+	if ktrig==1 then
 	 chnset	"tablenumber(1)", "table1"	; update table display	
 	 chnset	"tablenumber(2)", "table2"	; update table display	
 	 chnset	"tablenumber(3)", "table3"	; update table display	
-	rireturn									; return from reinit
+	endif
 	#
 	$AttributeSet(note'1'0'108)							; expand macro (args: name label, table number, minimum and maximum) 
 	$AttributeSet(amp'2'0'1)

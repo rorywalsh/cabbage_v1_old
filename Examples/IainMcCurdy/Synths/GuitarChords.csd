@@ -6,7 +6,7 @@ Mute buttons dictate the behaviour of a string when it is open and un-fretted, t
 <Cabbage>
 form size(620, 260), caption("Guitar Chords"), pluginID("guit")
 
-label  bounds( 56,  0, 80,  9), text("Mute"), FontColour("white")
+label  bounds( 54,  0, 25, 10), text("Mute"), FontColour("white")
 
 combobox bounds(  3, 10, 50, 15), channel("TuneHighE"), value(64), text("G9","F#9","F9","E9","D#9","D9","C#9","C9","B8","A#8","A8","G#8","G8","F#8","F8","E8","D#8","D8","C#8","C8","B7","A#7","A7","G#7","G7","F#7","F7","E7","D#7","D7","C#7","C7","B6","A#6","A6","G#6","G6","F#6","F6","E6","D#6","D6","C#6","C6","B5","A#5","A5","G#5","G5","F#5","F5","E5","D#5","D5","C#5","C5","B4","A#4","A4","G#4","G4","F#4","F4","E4","D#4","D4","C#4","C4","B3","A#3","A3","G#3","G3","F#3","F3","E3","D#3","D3","C#3","C3","B2","A#2","A2","G#2","G2","F#2","F2","E2","D#2","D2","C#2","C2","B1","A#1","A1","G#1","G1","F#1","F1","E1","D#1","D1","C#1","C1","B0","A#0","A0","G#0","G0","F#0","F0","E0","D#0","D0","C#0","C0","B-1","A#-1","A-1","G#-1","G-1","F#-1","F-1","E-1","D#-1","D-1","C#-1","C-1")
 checkbox bounds( 59, 10, 15, 15), channel("HighE0"), colour("255, 20, 20")
@@ -103,9 +103,16 @@ checkbox bounds(495,110, 15, 15), channel("LowE10"), colour("250,250,  0");34
 checkbox bounds(529,110, 15, 15), channel("LowE11"), colour("250,250,  0");32
 checkbox bounds(561,110, 15, 15), channel("LowE12"), colour("250,250,  0");30
 checkbox bounds(591,110, 15, 15), channel("LowE13"), colour("250,250,  0");
+                                                               
+image bounds( 80,  0,540,140), colour("white"), line(0)	; neck
+image bounds(185,  5, 47,130), colour(100,80,40,100), line(0)	; 3rd fret
+image bounds(279,  5, 45,130), colour(100,80,40,100), line(0)	; 5th fret
+image bounds(367,  5, 42,130), colour(100,80,40,100), line(0)	; 7th fret
+image bounds(447,  5, 37,130), colour(100,80,40,100), line(0)	; 9th fret
+image bounds(552,  5, 31,130), colour(100,80,40,100), line(0)	; 12th fret
 
-; frets                                                               
-line bounds(134, 5, 2, 130), colour(50,50,50)	      	;	;
+; frets
+line bounds(134,  5,  2, 130), colour(50,50,50)	      	;	;
 line bounds(185,  5,  2, 130), colour(50,50,50)		;3      ;
 line bounds(232,  5,  2, 130), colour(50,50,50)		;       ;
 line bounds(279,  5,  2, 130), colour(50,50,50)      	;5      ;
@@ -117,14 +124,7 @@ line bounds(484,  5,  2, 130), colour(50,50,50)       	;       ;
 line bounds(519,  5,  2, 130), colour(50,50,50)       	;       ;
 line bounds(552,  5,  2, 130), colour(50,50,50)       	;12     ;
 line bounds(583,  5,  2, 130), colour(50,50,50)       	;       ;
-line bounds(612,  5,  2, 130), colour(50,50,50)                 ;                                         
-                                                               
-image bounds(185,  5, 47,130), colour("tan"), line(0)	; 3rd fret
-image bounds(279,  5, 45,130), colour("tan"), line(0)	; 5th fret
-image bounds(367,  5, 42,130), colour("tan"), line(0)	; 7th fret
-image bounds(447,  5, 37,130), colour("tan"), line(0)	; 9th fret
-image bounds(552,  5, 31,130), colour("tan"), line(0)	; 12th fret
-image bounds( 80,  0,624,140), colour("white"), line(0)	; neck
+line bounds(612,  5,  2, 130), colour(50,50,50)                 ;
 
 button   bounds( 80,150,100, 30), text("strum"), channel("strum"), value(0), FontColour("yellow")
 combobox bounds( 80,185, 95, 17), channel("GuitarType"), value(1), text("6 String","12 String")

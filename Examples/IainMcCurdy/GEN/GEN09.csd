@@ -15,9 +15,6 @@
 ;		The interpolating opcodes oscili and poscil are less likely to produce quantisation effects when small table sizes are used.
 ;		The waveform can be played back using oscbnk (if 'voices' is greater than 1), in which case 'spread' and 'speed' can be used to modify the texture of the tone cluster.
 
-; 		
-
-
 <Cabbage>
 form caption("GEN09"), size(420, 555), pluginID("gn09")
 
@@ -68,23 +65,23 @@ checkbox bounds(279,297, 12, 12), channel("solo6"),  value(0), colour("yellow"),
 checkbox bounds(329,297, 12, 12), channel("solo7"),  value(0), colour("yellow"), shape("square")
 checkbox bounds(379,297, 12, 12), channel("solo8"),  value(0), colour("yellow"), shape("square")
 
-label    bounds( 24,286, 55, 10), text("Mute"),  FontColour("white")
-label    bounds( 74,286, 55, 10), text("Mute"),  FontColour("white")
-label    bounds(124,286, 55, 10), text("Mute"),  FontColour("white")
-label    bounds(174,286, 55, 10), text("Mute"),  FontColour("white")
-label    bounds(224,286, 55, 10), text("Mute"),  FontColour("white")
-label    bounds(274,286, 55, 10), text("Mute"),  FontColour("white")
-label    bounds(324,286, 55, 10), text("Mute"),  FontColour("white")
-label    bounds(374,286, 55, 10), text("Mute"),  FontColour("white")
+label    bounds( 23,286, 24, 10), text("Mute"),  FontColour("white")
+label    bounds( 73,286, 24, 10), text("Mute"),  FontColour("white")
+label    bounds(123,286, 24, 10), text("Mute"),  FontColour("white")
+label    bounds(173,286, 24, 10), text("Mute"),  FontColour("white")
+label    bounds(223,286, 24, 10), text("Mute"),  FontColour("white")
+label    bounds(273,286, 24, 10), text("Mute"),  FontColour("white")
+label    bounds(323,286, 24, 10), text("Mute"),  FontColour("white")
+label    bounds(373,286, 24, 10), text("Mute"),  FontColour("white")
 
-label    bounds( 24,307, 55, 10), text("Solo"),  FontColour("white")
-label    bounds( 74,307, 55, 10), text("Solo"),  FontColour("white")
-label    bounds(124,307, 55, 10), text("Solo"),  FontColour("white")
-label    bounds(174,307, 55, 10), text("Solo"),  FontColour("white")
-label    bounds(224,307, 55, 10), text("Solo"),  FontColour("white")
-label    bounds(274,307, 55, 10), text("Solo"),  FontColour("white")
-label    bounds(324,307, 55, 10), text("Solo"),  FontColour("white")
-label    bounds(374,307, 55, 10), text("Solo"),  FontColour("white")
+label    bounds( 24,307, 21, 10), text("Solo"),  FontColour("white")
+label    bounds( 74,307, 21, 10), text("Solo"),  FontColour("white")
+label    bounds(124,307, 21, 10), text("Solo"),  FontColour("white")
+label    bounds(174,307, 21, 10), text("Solo"),  FontColour("white")
+label    bounds(224,307, 21, 10), text("Solo"),  FontColour("white")
+label    bounds(274,307, 21, 10), text("Solo"),  FontColour("white")
+label    bounds(324,307, 21, 10), text("Solo"),  FontColour("white")
+label    bounds(374,307, 21, 10), text("Solo"),  FontColour("white")
 
 rslider bounds( 10,320, 50, 70), channel("ph1"), text("Ph.1"), textBox(1), range(0, 360, 0), colour(150,150,150,200)
 rslider bounds( 60,320, 50, 70), channel("ph2"), text("Ph.2"), textBox(1), range(0, 360, 0), colour(150,150,150,200)
@@ -218,8 +215,10 @@ instr	1
 	gi7	ftgen	7, 0, 2048,9, i(gkbase)+i(gkpn1),i(gkstr1)*i(kstatus1),i(gkph1), i(gkbase)+i(gkpn2)+i(gkint),i(gkstr2)*i(kstatus2),i(gkph2), i(gkbase)+i(gkpn3)+(i(gkint)*2),i(gkstr3)*i(kstatus3),i(gkph3), i(gkbase)+i(gkpn4)+(i(gkint)*3),i(gkstr4)*i(kstatus4),i(gkph4), i(gkbase)+i(gkpn5)+(i(gkint)*4),i(gkstr5)*i(kstatus5),i(gkph5), i(gkbase)+i(gkpn6)+(i(gkint)*5),i(gkstr6)*i(kstatus6),i(gkph6), i(gkbase)+i(gkpn7)+(i(gkint)*6),i(gkstr7)*i(kstatus7),i(gkph7), i(gkbase)+i(gkpn8)+(i(gkint)*7),i(gkstr8)*i(kstatus8),i(gkph8)
 	gi8	ftgen	8, 0, 4096,9, i(gkbase)+i(gkpn1),i(gkstr1)*i(kstatus1),i(gkph1), i(gkbase)+i(gkpn2)+i(gkint),i(gkstr2)*i(kstatus2),i(gkph2), i(gkbase)+i(gkpn3)+(i(gkint)*2),i(gkstr3)*i(kstatus3),i(gkph3), i(gkbase)+i(gkpn4)+(i(gkint)*3),i(gkstr4)*i(kstatus4),i(gkph4), i(gkbase)+i(gkpn5)+(i(gkint)*4),i(gkstr5)*i(kstatus5),i(gkph5), i(gkbase)+i(gkpn6)+(i(gkint)*5),i(gkstr6)*i(kstatus6),i(gkph6), i(gkbase)+i(gkpn7)+(i(gkint)*6),i(gkstr7)*i(kstatus7),i(gkph7), i(gkbase)+i(gkpn8)+(i(gkint)*7),i(gkstr8)*i(kstatus8),i(gkph8)
 	gi9	ftgen	9, 0, 8192,9, i(gkbase)+i(gkpn1),i(gkstr1)*i(kstatus1),i(gkph1), i(gkbase)+i(gkpn2)+i(gkint),i(gkstr2)*i(kstatus2),i(gkph2), i(gkbase)+i(gkpn3)+(i(gkint)*2),i(gkstr3)*i(kstatus3),i(gkph3), i(gkbase)+i(gkpn4)+(i(gkint)*3),i(gkstr4)*i(kstatus4),i(gkph4), i(gkbase)+i(gkpn5)+(i(gkint)*4),i(gkstr5)*i(kstatus5),i(gkph5), i(gkbase)+i(gkpn6)+(i(gkint)*5),i(gkstr6)*i(kstatus6),i(gkph6), i(gkbase)+i(gkpn7)+(i(gkint)*6),i(gkstr7)*i(kstatus7),i(gkph7), i(gkbase)+i(gkpn8)+(i(gkint)*7),i(gkstr8)*i(kstatus8),i(gkph8)
-	ktrigr	=	-1		; trigger for table widget update. The complete table will always be updated but a k-rate variable needs to be given.
-	chnset	"tablenumber(8)", "table"	; update table display	
+	rireturn
+	if ktrig==1 then
+	 chnset	"tablenumber(8)", "table"	; update table display	
+	endif
 	; update "P.N.1-8" (partial numbers) value display boxes.
 	chnset	i(gkbase)+i(gkpn1),"pn1_out"
 	chnset	i(gkbase)+i(gkpn2)+i(gkint),"pn2_out"

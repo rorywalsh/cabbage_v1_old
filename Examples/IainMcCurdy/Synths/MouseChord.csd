@@ -19,20 +19,20 @@ iNavigate is a free option for Mac OS 10.5 if the user wants to experiment with 
 
 <Cabbage>
 form caption("Mouse Chord") size(1100, 800), pluginID("MChd")
-image bounds( 50,200, 200, 200),     colour("Maroon"), shape("rounded"), outlinecolour("white"), line(1) 	; I
+image bounds( 50,200, 200, 200),     colour(255,100,0), shape("rounded"), outlinecolour("white"), line(1) 	; I
 image bounds(300,200, 200, 200),     colour("Blue"),   shape("rounded"), outlinecolour("white"), line(1) 	; II
 image bounds(550,200, 200, 200),     colour("Yellow"), shape("rounded"), outlinecolour("white"), line(1) 	; III
 image bounds(800,200, 200, 200),     colour("Green"),  shape("rounded"), outlinecolour("white"), line(1) 	; IV
-image bounds(150,550, 200, 200),     colour("Red"),    shape("rounded"), outlinecolour("white"), line(1) 	; V
+image bounds(150,550, 200, 200),     colour(255,0,0),    shape("rounded"), outlinecolour("white"), line(1) 	; V
 image bounds(400,550, 200, 200),     colour("Purple"), shape("rounded"), outlinecolour("white"), line(1) 	; VI
-image bounds(650,550, 200, 200),     colour("Tan"),    shape("rounded"), outlinecolour("white"), line(1) 	; VII
-label bounds(132,150, 40, 50), text("I"), fontcolour("white")
-label bounds(380,150, 45, 50), text("II"), fontcolour("white")
-label bounds(615,150, 70, 50), text("III"), fontcolour("white")
-label bounds(875,150, 60, 50), text("IV"), fontcolour("white")
-label bounds(220,500, 60, 50), text("V"), fontcolour("white")
-label bounds(470,500, 60, 50), text("VI"), fontcolour("white")
-label bounds(708,500, 80, 50), text("VII"), fontcolour("white")
+image bounds(650,550, 200, 200),     colour(150, 40, 40),    shape("rounded"), outlinecolour("white"), line(1) 	; VII
+label bounds(132,270, 40, 50), text("I"), fontcolour("white")
+label bounds(380,270, 45, 50), text("II"), fontcolour("white")
+label bounds(615,270, 70, 50), text("III"), fontcolour("white")
+label bounds(875,270, 60, 50), text("IV"), fontcolour("white")
+label bounds(220,620, 60, 50), text("V"), fontcolour("white")
+label bounds(470,620, 60, 50), text("VI"), fontcolour("white")
+label bounds(708,620, 80, 50), text("VII"), fontcolour("white")
 
 combobox bounds(  5, 20, 70, 20), channel("key"), value(12), text("B", "A#", "A", "G#", "G", "F#", "F", "E", "D#", "D", "C#", "C")
 combobox bounds( 80, 20, 70, 20), channel("oct"), value(3), text("2", "1", "0", "-1", "-2")
@@ -61,7 +61,23 @@ nchnls	= 	2
 zakinit	4,10
 gkRvbSze	init	0.85
 gkRvbSnd	init	0.2
+
+
+
 gisaw		ftgen	0,0,4096,11,80,1,0.9
+
+/* generate bandlimited sawtooth waves */
+i0	=  0
+loop1:
+imaxh	=  sr / (2 * 440.0 * exp (log(2.0) * (i0 - 69) / 12))
+i_	ftgen i0 + 10, 0, 4096, -30, gisaw, 1, imaxh					;use gen 30
+i0	=  i0 + 1
+	if (i0 < 127.5) igoto loop1
+
+
+
+
+
 giahh55 	ftgen	0,0,4096,10,0.667225,0.194524,0.098683,0.096875,0.021209,0.006311,0.002978,0.001013,0.001249,0.001446,0.002393,0.004826,0.018741,0.012161,0.010480,0.005261,0.004569,0.001376,0.001132,0.003605,0.001846,0.002757,0.005346,0.004712,0.004806,0.002357,0.001109,0.001302,0.001860,0.001054,0.001120,0.001642,0.002240,0.004382,0.005473,0.003755,0.002444,0.002088,0.001822,0.000946,0.000790,0.001222,0.001653,0.001374,0.001401,0.002118,0.002061,0.001470,0.001198,0.001635,0.002387,0.002248,0.001327,0.000951,0.000884,0.000844,0.000805,0.000667,0.000669,0.000701,0.000591,0.000445,0.000367,0.000314,0.000272,0.000225,0.000179,0.000152,0.000164,0.000169,0.000151,0.000144,0.000137,0.000121,0.000115,0.000123,0.000125,0.000116,0.000102,0.000095,0.000102,0.000120,0.000135,0.000132,0.000117,0.000100,0.000084,0.000074,0.000072,0.000075,0.000077,0.000079,0.000083,0.000083,0.000081,0.000082,0.000084,0.000081,0.000074,0.000063
 
 gicos		ftgen	0,0,4096,11,1		;COSINE WAVE (USED BY THE LFOS)
@@ -85,9 +101,8 @@ gichord3m	ftgen	0,0,4,-2,8.03,8.07,8.11,9.03
 gichord4m	ftgen	0,0,4,-2,8.05,8.08,8.00,9.05
 gichord5m	ftgen	0,0,4,-2,8.07,8.11,8.02,9.07
 gichord6m	ftgen	0,0,4,-2,8.08,8.00,8.03,9.08
-gichord7m	ftgen	0,0,4,-2,8.02,8.05,8.11,9.02
-
-
+gichord7m	ftgen	0,0,4,-2,8.02,8.05,8.11,9.02	
+	
 instr	1
 
  gkMOUSE_X	chnget	"MOUSE_X"
@@ -149,10 +164,14 @@ instr	2
 		ipch$N	table	$N-1, gichord1m + p4 - 1;DEFINE PITCH (PCH FORMAT) FOR THIS NOTE (MINOR)
 	endif				;ENDO OF CONDITIONAL BRANCHING
 	kcps$N		=	cpspch(ipch$N + (i(gkkey)*0.01) + i(gkoct))
+
+	kfnum	=  (10 + 69 + 0.5 + 12 * log(kcps$N / 440.0) / log(2.0))				;table number
+
+
  	;TWO ITERATIONS OF oscbnk ARE CREATED, ONE FOR EACH OF THE STEREO AUDIO CHANNELS. THE OUTPUTS WILL BE DIFFERENT AS THE RANDOM NUMBER GENERATORS WILL BE SEEDED BY THE SYSTEM CLOCK
  	;OUTPUT	OPCODE  CPS    | AMD  |    FMD       | PMD | OVERLAPS   | SEED  | L1MINF  | L1MAXF  | L2MINF  | L2MAXF  | LFOMODE | EQMINF  | EQMAXF | EQMINL | EQMAXL | EQMINQ | EQMAXQ  | EQMODE | KFN  | L1FN | L2FN | EQFFN  | EQLF   |  EQQFN |  TABL  | OUTFN
- 	aL$N	oscbnk	kcps$N,   0,   0.005*kcps$N,    0,     10,        rnd(1),   0,         1,       0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1, gisaw,  gicos, gicos, gieqffn, gieqlfn, gieqqfn
- 	aR$N	oscbnk	kcps$N,   0,   0.005*kcps$N,    0,     10,        rnd(1),   0,        -1,       0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1, gisaw,  gicos, gicos, gieqffn, gieqlfn, gieqqfn
+ 	aL$N	oscbnk	kcps$N,   0,   0.005*kcps$N,    0,     10,        rnd(1),   0,         1,       0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1, kfnum,  gicos, gicos, gieqffn, gieqlfn, gieqqfn
+ 	aR$N	oscbnk	kcps$N,   0,   0.005*kcps$N,    0,     10,        rnd(1),   0,        -1,       0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1, kfnum,  gicos, gicos, gieqffn, gieqlfn, gieqqfn
 
 
 	#

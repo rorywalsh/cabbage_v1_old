@@ -19,9 +19,6 @@ combobox bounds(450, 10,130, 70), caption("Scaling Mode"), channel("scl"), value
 combobox bounds(590, 10,130, 70), caption("Separation Mode"), channel("sepmode"), value(1), text("octs.total", "hertz", "octs.adjacent")
 rslider  bounds(730, 10, 70, 70), text("Level"),           fontcolour("white"), channel("gain"), range(0.0001, 1, 30, 0.5),  colour(255,100,0,255), trackercolour(255,250,100)
 }
-image bounds(5, 95, 205, 20), colour(100,100,100,80), plant("credit"), line(0){
-label bounds(0.03, 0.1, .95, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white")
-}
 </Cabbage>
 
 <CsoundSynthesizer>

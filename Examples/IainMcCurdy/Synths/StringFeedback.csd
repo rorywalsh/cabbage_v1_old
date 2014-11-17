@@ -28,11 +28,12 @@ Room		-	Room size
 
 Output
 ------
-Release		-	ampllitude envelope release for the feedback signal
+FB.Rel.		-	release time for the feedback signal
+Str.Rel.	-	release time for the string output signal
 Level		-	Level control (pre reverb so reverberation will always die away natuarally)
 
 <Cabbage>
-form caption("String Feedback"), size(775, 205), pluginID("fbck"), colour("0,0,0")
+form caption("String Feedback"), size(830, 205), pluginID("fbck"), colour("0,0,0"), guirefresh(256)
 
 groupbox bounds(  0,  0, 290, 90), text("Amplifier"), fontcolour(195,126, 0){
 rslider bounds(  5, 25, 60, 60), text("Feedback"),  colour(195,126,  0), FontColour(195,126,  0), channel("fback"),   range(0, 8, 0.8,0.5)
@@ -57,12 +58,13 @@ rslider bounds(535, 25, 60, 60), text("Distance"),colour(195,126,  0), FontColou
 rslider bounds(590, 25, 60, 60), text("Room"),    colour(195,126,  0), FontColour(195,126,  0), channel("room"),   range(0.5,0.99, 0.85)
 }
 
-groupbox bounds(650,  0,125, 90), text("Output"), fontcolour(195,126, 0){
-rslider bounds(655, 25, 60, 60), text("Release"), colour(195,126,  0), FontColour(195,126,  0), channel("rel"),   range(0.01, 8, 0.01, 0.5)
-rslider bounds(710, 25, 60, 60), text("Level"),   colour(195,126,  0), FontColour(195,126,  0), channel("level"),   range(0, 1, 0.5)
+groupbox bounds(650,  0,180, 90), text("Output"), fontcolour(195,126, 0){
+rslider bounds(655, 25, 60, 60), text("FB.Rel."), colour(195,126,  0), FontColour(195,126,  0), channel("rel"),   range(0.01, 8, 0.01, 0.5)
+rslider bounds(710, 25, 60, 60), text("Str.Rel."), colour(195,126,  0), FontColour(195,126,  0), channel("StrRel"),   range(0.1, 15, 5, 0.5)
+rslider bounds(765, 25, 60, 60), text("Level"),   colour(195,126,  0), FontColour(195,126,  0), channel("level"),   range(0, 1, 0.5)
 }
 
-keyboard bounds(0,  95,775,80)
+keyboard bounds(0,  95,830,80)
 image bounds(5, 180, 230, 20), colour(75, 85, 90, 50), plant("credit"){
 label bounds(0.01, 0.1, .95, .7), text("Author: Iain McCurdy |2013|"), FontColour(195,126,  0)
 }
@@ -79,7 +81,7 @@ label bounds(0.01, 0.1, .95, .7), text("Author: Iain McCurdy |2013|"), FontColou
 <CsInstruments>
 
 sr 		= 	44100
-ksmps 		= 	4
+ksmps 		= 	64
 nchnls 		= 	2
 0dbfs		=	1
 massign		0,1		; assign all midi to channel 1
@@ -88,6 +90,9 @@ massign		0,1		; assign all midi to channel 1
 gasendL,gasendR,garvbL,garvbR	init	0	; initialise global variables to zero
 giscal	ftgen	0,0,1024,-16,1,1024,4,8		; amplitude scaling used in 'overdrive' mechanism
 gifbscl	ftgen	0,0,128,-27, 0,1, 36,1, 86,3, 127,3	; Feedback scaling function table. Higher notes need higher levels of feedback.
+
+
+
 
 instr	1
 kporttime	linseg	0,0.001,0.05	; used to smooth GUI control movement
@@ -142,8 +147,9 @@ kHPF	limit	icps*kHPF,1,sr/2
 asig	buthp	asig, kHPF
 
 ; amplitude enveloping
-aAmpEnv	expsegr	0.001,.1,1,15,0.001	; amplitude envelope
-asig	=	asig*aAmpEnv		; apply amplitude envelope
+iStrRel	chnget	"StrRel"
+aAmpEnv	expsegr	0.001,.1,1,irel+iStrRel,0.001	; amplitude envelope (extend note duration a little beyond the when the feedback signal envelope ends)
+asig	=	asig*aAmpEnv			; apply amplitude envelope
 
 ; delay (this controls how different harmonics are accentuated in the feedback process)
 kspeed	chnget	"speed"				; delay time modulation speed
@@ -152,7 +158,7 @@ iDelMax	=	0.01				; ...and maximum. These could maybe be brought out as GUI cont
 kdeltim	rspline	iDelMin,iDelMax,kspeed,kspeed*2	; random spline for delay time (k-rate)
 kdeltim	limit	kdeltim,iDelMin,iDelMax		; limit value (n.b. rspline will generate values beyond its given minimum and maximum) 
 adeltim	interp	kdeltim				; interpolate to create a-rate verion for delay time (a-rate will give smoother results)
-adel	vdelay3	asig, adeltim*1000, 1000	; create modulating delay signal
+adel	vdelay	asig, adeltim*1000, 1000	; create modulating delay signal
 
 ; stereo spatialisation - this gives the dry (unreverberated) signal some stereo width 
 kdelL	rspline	0.001, 0.01, 0.05, 0.1		; left channel spatialising delay
@@ -161,8 +167,8 @@ kdelL	limit	kdelL,0.001, 0.01		; limit left channel delay times (n.b. rspline wi
 kdelR	limit	kdelR,0.001, 0.01		; limit right channel delay times (n.b. rspline will generate values beyond its given minimum and maximum)
 adelL	interp	kdelL				; create a-rate of left channel delay time version using interpolation
 adelR   interp	kdelR				; create a-rate of right channel delay time version using interpolation
-aL	vdelay3	adel,adelL*1000,10		; delay signal left channel
-aR	vdelay3	adel,adelR*1000,10		; delay signal right channel
+aL	vdelay	adel,adelL*1000,10		; delay signal left channel
+aR	vdelay	adel,adelR*1000,10		; delay signal right channel
 
 ; create reverb send signals (stereo)
 klevel	chnget	"level"				; level control (pre reverb input therefore allows reverb to die away naturally)

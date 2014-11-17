@@ -108,10 +108,6 @@ rslider bounds( 50,  25,  55, 55), fontcolour("white"), text("Size"), channel("R
 
 keyboard bounds(0, 255, 525, 75)
 
-image bounds(5, 337, 250, 25), colour(75, 85, 90, 100), plant("credit"){
-label bounds(0.03, 0.2, .9, .6), text("Author: Iain McCurdy |2012|"), colour("white")
-}
-
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -443,8 +439,25 @@ giwavemapUnmuted	ftgen	0,0,128,-27, 0,0, 22,0, 23,1, 24,2, 25,3, 26,4, 27,5, 28,
 gitabs4morfUnmuted	ftgen	0,0,64,-2, giUnmuted22,giUnmuted23,giUnmuted24,giUnmuted25,giUnmuted26,giUnmuted27,giUnmuted28,giUnmuted30,giUnmuted31,giUnmuted32,giUnmuted33,giUnmuted34,giUnmuted35,giUnmuted37,giUnmuted38,giUnmuted39,giUnmuted40,giUnmuted41,giUnmuted42,giUnmuted43,giUnmuted44,giUnmuted45,giUnmuted46,giUnmuted48,giUnmuted49,giUnmuted50,giUnmuted51,giUnmuted52,giUnmuted53,giUnmuted55,giUnmuted56,giUnmuted57,giUnmuted58,giUnmuted59,giUnmuted60,giUnmuted61,giUnmuted62,giUnmuted63,giUnmuted64,giUnmuted65,giUnmuted67,giUnmuted69,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70
 
 
-gisaw		ftgen	0,0,4096,11,80,1,0.9
-gisquare	ftgen	0,0,4096,10, 1,0, 1/3,0, 1/5,0, 1/7,0, 1/9,0, 1/11,0, 1/13,0, 1/15,0, 1/17,0, 1/19,0, 1/21,0, 1/23,0, 1/25,0, 1/27,0, 1/29,0, 1/31,0, 1/33,0, 1/35,0, 1/37,0, 1/39
+isaw	ftgen	0,0,4096,7,1,4096,-1
+
+icount	=	0
+loop1:
+imaxh	=  sr / (2 * 440.0 * exp(log(2.0) * (icount - 69) / 12))
+ifn	ftgen	1000+icount,0,4096,-30,isaw,1,imaxh
+	loop_le	icount,1,127,loop1
+
+
+;gisquare	ftgen	0,0,4096,10, 1,0, 1/3,0, 1/5,0, 1/7,0, 1/9,0, 1/11,0, 1/13,0, 1/15,0, 1/17,0, 1/19,0, 1/21,0, 1/23,0, 1/25,0, 1/27,0, 1/29,0, 1/31,0, 1/33,0, 1/35,0, 1/37,0, 1/39
+
+isquare		ftgen	0,0,4096,7,1,2048,1,0,-1,2048,-1
+
+icount	=	0
+loop2:
+imaxh	=  sr / (2 * 440.0 * exp(log(2.0) * (icount - 69) / 12))
+ifn	ftgen	2000+icount,0,4096,-30,isquare,1,imaxh
+	loop_le	icount,1,127,loop2
+
 giorg		ftgen	0,0,4096,9, 1,1,rnd(1), 2,1/2,rnd(1), 4,1/4,rnd(1), 8,1/8,rnd(1), 16,1/16,rnd(1), 32,1/32,rnd(1), 64,1/64,rnd(1), 128,1/128,rnd(1)
 gieee 		ftgen 	0,0,4096,10, 0.430487,0.778043,0.090552,0.011467,0.030632,0.017911,0.006520,0.006820,0.007109,0.006437,0.008527,0.009083,0.016774,0.058922,0.070507,0.116728,0.045479,0.060107,0.069023,0.036487,0.047350,0.049526,0.036678,0.022550,0.022550
 giooh 		ftgen 	0,0,4096,10, 0.110941,0.606890,0.046168,0.040510,0.031310,0.007323,0.003115,0.002749,0.002420,0.002253,0.002853,0.002337,0.002672,0.002061,0.002202,0.002410,0.002615,0.005079,0.003192,0.002699,0.003708,0.003501,0.002264,0.001713,0.001713
@@ -598,7 +611,17 @@ instr	2	; triggered by instr 2
 	kCFoct		limit	4+kFEnv+gkcfoct+kFLFO,4,14
 	kCF		=	cpsoct(kCFoct)
 	  
-	if i(gkwaveform)==6 then
+	if i(gkwaveform)==1 then
+	 kwave	=	1000+knum
+	elseif i(gkwaveform)==2 then
+	 kwave	=	2000+knum
+	elseif i(gkwaveform)==3 then
+	 kwave	=	giorg
+	elseif i(gkwaveform)==4 then
+	 kwave	=	gieee
+	elseif i(gkwaveform)==5 then
+	 kwave	=	giooh
+	elseif i(gkwaveform)==6 then
 	 giwavemap	=	giwavemapClar
 	 gitabs4morf	=	gitabs4morfClar
 	 imorphtab	ftgentmp	0,0,4096,10,1
@@ -742,8 +765,6 @@ instr	2	; triggered by instr 2
 	 kftndx		tablei		kndx,giwavemap			;ftndx REMAPPED ACCORDING TO THE WAVETABLE MAP FOR THIS INSTRUMENT
 			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORPHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 	 kwave		=		imorphtab
-	else 
-	 kwave	=	gisaw+gkwaveform-1			;DERIVE FUNCTION TABLE NUMBER OF WAVEFORM FOR THE OSCILLATORS
 	endif
 
 

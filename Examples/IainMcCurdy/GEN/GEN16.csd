@@ -98,7 +98,6 @@ instr	2
 	   idur3	=	i(gkdur3)
 	  endif
 	gi1	ftgen	1, 0,   4096,-16, i(gkval1), idur1, i(gkshp1), i(gkval2), idur2, i(gkshp2), i(gkval3), idur3, i(gkshp3), i(gkval4)
-	ktrigr	=	-1		; trigger for table widget update. The complete table will always be updated but a k-rate variable needs to be given.
 	chnset	"tablenumber(1)", "table"	; update table display	
 endin
 

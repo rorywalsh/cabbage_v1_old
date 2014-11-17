@@ -6,7 +6,7 @@
 
 <Cabbage>
 form caption("FFT Spectrum"), size(410, 140), colour( 50, 50, 50),pluginID("spec")                                                                                  
-table   bounds(  0,  0, 810,100), tableNumbers(1,2), tablecolour("yellow","green"), identchannel("ampFFT"), amprange(0,1)
+table   bounds(  0,  0, 410,100), tableNumbers(1,2), tablecolour("yellow","green"), identchannel("ampFFT"), amprange(0,1)
 hslider bounds(  5,105,400, 30), channel("gain"), text("Input Gain"), textBox(1), range(0.1,50.00, 4, 0.5)
 </Cabbage>                                                   
 

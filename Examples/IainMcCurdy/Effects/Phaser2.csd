@@ -9,7 +9,7 @@ rslider bounds(290, 11, 70, 70), text("Separation"), channel("sep"),      range(
 rslider bounds(355, 11, 70, 70), text("Feedback"),   channel("feedback"), range(-0.99, 0.99, 0.9),      colour(100,100,200), trackercolour(silver)
 rslider bounds(420, 11, 70, 70), text("Mix"),        channel("mix"),      range(0, 1.00, 1),            colour(100,100,200), trackercolour(silver)
 rslider bounds(485, 11, 70, 70), text("Level"),      channel("level"),    range(0, 1.00, 0.7),          colour(100,100,200), trackercolour(silver)
-combobox bounds(210, 34, 80,25), channel("mode"), size(100,50), value(1), text("Equal", "Power")
+combobox bounds(210, 34, 80,25), channel("mode"), value(1), text("Equal", "Power")
 }
 </Cabbage>
 

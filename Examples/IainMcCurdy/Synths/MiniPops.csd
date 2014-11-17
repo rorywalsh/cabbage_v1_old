@@ -7,7 +7,7 @@
 
 
 <Cabbage>
-form size(840,250), caption("Mini Pops"), pluginID("MPop"), colour(255,255,205)
+form size(840,250), caption("Mini Pops"), pluginID("MPop"), colour(255,255,205), guirefresh(64)
 
 checkbox bounds( 12,  6,   47,   47), colour("tomato"), channel("Act1"),  value(0), shape("ellipse")
 checkbox bounds( 67,  6,   47,   47), colour("tomato"), channel("Act2"),  value(0), shape("ellipse")
@@ -73,13 +73,13 @@ checkbox bounds(783, 66, 60, 10), text("mute"), channel("mute15"), fontcolour("b
 checkbox bounds(783, 78, 60, 10), text("solo"), channel("solo15"), fontcolour("black"), colour(lime),value(0)
 
 ;control
-image    bounds(620,100, 640,150), colour(0,0,0,0), line(0), plant("control"){
+image    bounds(620,100, 220,150), colour(0,0,0,0), line(0), plant("control"){
 ;combobox bounds( 15, 20, 60, 18), channel("UpperLower"), value(1), text("Upper", "Lower")
 
 checkbox bounds( 15, 16, 12, 13), channel("r1") fontcolour("white") colour(yellow) value(1)
 checkbox bounds( 15, 28, 12, 13), channel("r2") fontcolour("white") colour(yellow) 
-label    bounds( 28, 17, 60, 12), text("Upper"), fontcolour("black")
-label    bounds( 28, 29, 60, 12), text("Lower"), fontcolour(205,0,0)
+label    bounds( 28, 17, 60, 12), text("Upper"), fontcolour("black"), align("left")
+label    bounds( 28, 29, 60, 12), text("Lower"), fontcolour(205,0,0), align("left")
 
 checkbox bounds(130,  2,  7,  7), channel("DistOn"), value(0), colour(red), shape("ellipse")
 checkbox bounds(190,  2,  7,  7), channel("FoldOn"), value(0), colour(red), shape("ellipse")
@@ -92,10 +92,10 @@ checkbox bounds(191,  2,  6,  6), channel("FoldOn"), value(0), colour(red), shap
 
 checkbox bounds( 15, 45, 70, 12), channel("cutup"), text("Mash"), fontcolour("black"), colour("yellow"),value(0)
 
-rslider  bounds(  0, 70, 70, 70), text("Volume"),     FontColour("black"), colour(255,235,140), trackercolour(120,100, 52), channel("volume"),      range(0, 1, .4)
+rslider  bounds(  0, 70, 70, 70), text("Volume"),     FontColour("black"), colour(255,235,140), trackercolour(120,100, 52), channel("volume"),      range(0, 1.00, .4)
 rslider  bounds( 70, 70, 70, 70), text("Tempo"),      FontColour("black"), colour(255,235,140), trackercolour(120,100, 52), channel("tempo"),       range(40, 480, 115, 1, 1)
 checkbox bounds(153, 77, 45, 45), channel("OnOff"), fontcolour("black"), colour("yellow"),value(1)
-label    bounds(148,127, 60, 11), text("Start/Stop"),     FontColour("black")
+label    bounds(148,127, 60, 11), text("Start/Stop"),     FontColour("black"), align("left")
 }
 
 ;rhythms
@@ -111,27 +111,27 @@ checkbox bounds(430,  0, 60, 20), channel("but8"), colour(250,250,105), value(0)
 checkbox bounds(490,  0, 60, 20), channel("but9"), colour(250,250,105), value(0)
 checkbox bounds(550,  0, 60, 20), channel("but10"), colour(250,250,105), value(0)
 
-label    bounds( 22, 20, 60, 10), text("WALTZ"),     FontColour("black")
-label    bounds( 82, 20, 60, 10), text("SAMBA"),     FontColour("black")
-label    bounds(141, 20, 60, 10), text("MAMBO"),     FontColour("black")
-label    bounds(200, 20, 60, 10), text("RUMBA"),     FontColour("black")
-label    bounds(260, 20, 60, 10), text("TANGO"),     FontColour("black")
-label    bounds(310, 20, 60, 10), text("BOSSANOVA"), FontColour("black")
-label    bounds(382, 20, 60, 10), text("ROCK 1"),    FontColour("black")
-label    bounds(442, 20, 60, 10), text("ROCK 2"),    FontColour("black")
-label    bounds(493, 20, 60, 10), text("MARCH 2/4"), FontColour("black")
-label    bounds(562, 20, 60, 10), text("SWING"),     FontColour("black")
+label    bounds( 22, 20, 60, 10), text("WALTZ"),     FontColour("black"), align("left")
+label    bounds( 82, 20, 60, 10), text("SAMBA"),     FontColour("black"), align("left")
+label    bounds(141, 20, 60, 10), text("MAMBO"),     FontColour("black"), align("left")
+label    bounds(200, 20, 60, 10), text("RUMBA"),     FontColour("black"), align("left")
+label    bounds(260, 20, 60, 10), text("TANGO"),     FontColour("black"), align("left")
+label    bounds(310, 20, 60, 10), text("BOSSANOVA"), FontColour("black"), align("left")
+label    bounds(382, 20, 60, 10), text("ROCK 1"),    FontColour("black"), align("left")
+label    bounds(442, 20, 60, 10), text("ROCK 2"),    FontColour("black"), align("left")
+label    bounds(493, 20, 60, 10), text("MARCH 2/4"), FontColour("black"), align("left")
+label    bounds(562, 20, 60, 10), text("SWING"),     FontColour("black"), align("left")
 
-label    bounds( 10, 30, 60, 10), text("JAZZ WALTZ"),  FontColour(205,  0,  0)
-label    bounds( 73, 30, 60, 10), text("MERINGUE"),    FontColour(205,  0,  0)
-label    bounds(137, 30, 60, 10), text("CHA CHA"),     FontColour(205,  0,  0)
-label    bounds(197, 30, 60, 10), text("BEGUINE"),     FontColour(205,  0,  0)
-label    bounds(253, 30, 60, 10), text("HABANERA"),    FontColour(205,  0,  0)
-label    bounds(313, 30, 60, 10), text("SLOW ROCK"),   FontColour(205,  0,  0)
-label    bounds(382, 30, 60, 10), text("ROCK 3"),      FontColour(205,  0,  0)
-label    bounds(442, 30, 60, 10), text("ROCK 4"),      FontColour(205,  0,  0)
-label    bounds(493, 30, 60, 10), text("MARCH 6/8"),   FontColour(205,  0,  0)
-label    bounds(550, 30, 65, 10), text("LATIN SWING"), FontColour(205,  0,  0)
+label    bounds( 10, 30, 60, 10), text("JAZZ WALTZ"),  FontColour(205,  0,  0), align("left")
+label    bounds( 73, 30, 60, 10), text("MERINGUE"),    FontColour(205,  0,  0), align("left")
+label    bounds(137, 30, 60, 10), text("CHA CHA"),     FontColour(205,  0,  0), align("left")
+label    bounds(197, 30, 60, 10), text("BEGUINE"),     FontColour(205,  0,  0), align("left")
+label    bounds(253, 30, 60, 10), text("HABANERA"),    FontColour(205,  0,  0), align("left")
+label    bounds(313, 30, 60, 10), text("SLOW ROCK"),   FontColour(205,  0,  0), align("left")
+label    bounds(382, 30, 60, 10), text("ROCK 3"),      FontColour(205,  0,  0), align("left")
+label    bounds(442, 30, 60, 10), text("ROCK 4"),      FontColour(205,  0,  0), align("left")
+label    bounds(493, 30, 60, 10), text("MARCH 6/8"),   FontColour(205,  0,  0), align("left")
+label    bounds(550, 30, 65, 10), text("LATIN SWING"), FontColour(205,  0,  0), align("left")
 
 checkbox bounds(618, 19, 10, 10), channel("Indic1"), value(0), colour( 70,255, 70), shape("ellipse")
 checkbox bounds(618, 30, 10, 10), channel("Indic2"), value(0), colour(255, 30, 30), shape("ellipse")
@@ -139,7 +139,7 @@ checkbox bounds(618, 30, 10, 10), channel("Indic2"), value(0), colour(255, 30, 3
 
 keyboard bounds( 10,150, 600, 90)
 
-label   bounds(705,239, 145, 10), text("Author: Iain McCurdy |2014|"), FontColour("DarkSlateGrey")
+label   bounds(695,239, 145, 10), text("Author: Iain McCurdy |2014|"), FontColour("DarkSlateGrey"), align("left")
 </Cabbage>
               
 <CsoundSynthesizer>
@@ -1204,7 +1204,7 @@ instr	2	;READ MIDI AND TRIGGER NOTES
 	 event_i	"i",101+iinstr,0,3600,ampdbfs(idb)	;CALL guiro INSTRUMENT AND SEND AMPLITUDE VALUE AS p4
 	 krel	release						;sense not release
 	 if krel==1 then					;if this note is released...
-	  turnoff2	101+iinstr,0,0				;...turn off the subinstrumet
+	  turnoff2	101+iinstr,0,1				;...turn off the subinstrumet
 	 endif
 	else							;otherwise (any instrument besides the guiro) i.e. no sustain and no midi release
 	 event_i	"i",101+iinstr,0,0.956,ampdbfs(idb)	;CALL THE RELEVANT INSTRUMENT AND SEND AMPLITUDE VALUE AS p4
@@ -1587,15 +1587,19 @@ instr	3	; rhythm sequencer instrument
 	schedkwhen	ktriggerTa*kpTa_1*gkstatus15, kmintim, 0, kpTa_1, 0, 0.001,kpTa_4
 endin
 
+giFlashTime	=	0.1
 
 instr	101	; Korg Minipops 7: Bass Drum
-	chnset	giOn,"Act1"					; turn instrument indicator on
-	scoreline_i	{{ i 201 0.1 0 "Act1"}}			; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act1"					; turn instrument indicator on
+;	scoreline_i	{{ i 201 0.1 0 "Act1"}}			; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act1"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	p3	=	0.437
 	kactive active	p1					; turnoff older active notes
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	ifrq	=	64					; fundemantal pitch
 	asig	mpulse	1,0					; generate a click impulse
 	asig	reson	asig,ifrq,ifrq*0.001,2			; reson filter it
@@ -1606,12 +1610,15 @@ instr	101	; Korg Minipops 7: Bass Drum
 endin
 
 instr	102	; Korg Minipops 7: Snare 1
-	chnset	giOn,"Act2"					; turn instrument indicator on
-	scoreline_i	{{ i 201 0.1 0 "Act2"}}         	; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act2"					; turn instrument indicator on
+;	scoreline_i	{{ i 201 0.1 0 "Act2"}}         	; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act2"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1					; turnoff older overlapping notes
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	p3	=	0.387
 	
 	; body of the sound (duration governed by p3)
@@ -1632,12 +1639,15 @@ instr	102	; Korg Minipops 7: Snare 1
 endin
 
 instr	103	; Korg Minipops 7: Snare 2
-	chnset	giOn,"Act3"				; turn instrument indicator on                             
-	scoreline_i	{{ i 201 0.1 0 "Act3"}}         ; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act3"				; turn instrument indicator on                             
+;	scoreline_i	{{ i 201 0.1 0 "Act3"}}         ; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act3"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	p3	=	0.4
 	
 	anoise	pinkish	1
@@ -1657,12 +1667,15 @@ instr	103	; Korg Minipops 7: Snare 2
 endin
 
 instr	104	;  Korg Minipops 7: Rimshot
-	chnset	giOn,"Act4"				; turn instrument indicator on                             
-	scoreline_i	{{ i 201 0.1 0 "Act4"}}         ; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act4"				; turn instrument indicator on                             
+;	scoreline_i	{{ i 201 0.1 0 "Act4"}}         ; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act4"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	p3	=	0.005
 	icps	=	1700
 	aenv	expon	1,p3,0.0001
@@ -1674,12 +1687,15 @@ instr	104	;  Korg Minipops 7: Rimshot
 endin
 
 instr	105	; Korg Minipops 7: Cymbal 1
-	chnset	giOn,"Act5"				; turn instrument indicator on                             
-	scoreline_i	{{ i 201 0.1 0 "Act5"}}         ; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act5"				; turn instrument indicator on                             
+;	scoreline_i	{{ i 201 0.1 0 "Act5"}}         ; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act5"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	p3	=	0.304
 	aenv	transeg	1,p3,-2,0
 	anoise	dust2	1, 30000			;CREATE NOISE SIGNAL	
@@ -1692,12 +1708,15 @@ instr	105	; Korg Minipops 7: Cymbal 1
 endin
 
 instr	106	; Korg Minipops 7: Cymbal 2
-	chnset	giOn,"Act6"				; turn instrument indicator on                             
-	scoreline_i	{{ i 201 0.1 0 "Act6"}}         ; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act6"				; turn instrument indicator on                             
+;	scoreline_i	{{ i 201 0.1 0 "Act6"}}         ; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act6"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	p3	=	1.404
 
 	aenv	transeg	1,p3,-2,0
@@ -1719,12 +1738,15 @@ instr	106	; Korg Minipops 7: Cymbal 2
 endin
 
 instr	107	; Minipops: Bongo 1
-	chnset	giOn,"Act7"				; turn instrument indicator on                             
-	scoreline_i	{{ i 201 0.1 0 "Act7"}}         ; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act7"				; turn instrument indicator on                             
+;	scoreline_i	{{ i 201 0.1 0 "Act7"}}         ; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act7"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	p3	=	0.2
 	aenv	transeg	1,p3,13,0
 	asig	mpulse	1,0
@@ -1737,12 +1759,15 @@ instr	107	; Minipops: Bongo 1
 endin
 
 instr	108	; Korg Minipops 7: Bongo 2
-	chnset	giOn,"Act8"				; turn instrument indicator on                             
-	scoreline_i	{{ i 201 0.1 0 "Act8"}}         ; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act8"				; turn instrument indicator on                             
+;	scoreline_i	{{ i 201 0.1 0 "Act8"}}         ; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act8"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	p3	=	0.3
 	kcps	expon	400,p3,390	; bongo 2 freq. and that of claves (body) should correspond
 	aenv	transeg	1,p3-0.005,0,0.1,0.005,0, 0
@@ -1755,12 +1780,15 @@ instr	108	; Korg Minipops 7: Bongo 2
 endin
 
 instr	109	; Korg Minipops 7: Bongo 3
-	chnset	giOn,"Act9"				; turn instrument indicator on                             
-	scoreline_i	{{ i 201 0.1 0 "Act9"}}         ; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act9"				; turn instrument indicator on                             
+;	scoreline_i	{{ i 201 0.1 0 "Act9"}}         ; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act9"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	p3	=	1.229
 	icps	=	194;187
 	aenv	transeg	0, 0.001, -2, 1, p3-0.001, -2, 0
@@ -1773,12 +1801,15 @@ instr	109	; Korg Minipops 7: Bongo 3
 endin
 
 instr	110	; Korg Minipops 7: Claves
-	chnset	giOn,"Act10"				; turn instrument indicator on                             
-	scoreline_i	{{ i 201 0.1 0 "Act10"}}        ; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act10"				; turn instrument indicator on                             
+;	scoreline_i	{{ i 201 0.1 0 "Act10"}}        ; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act10"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	p3	=	0.186
 	aenv	line	1,p3,0
 	asig	mpulse	1,0
@@ -1791,12 +1822,15 @@ instr	110	; Korg Minipops 7: Claves
 endin
 
 instr	111	; Korg Minipops 7: Cowbell
-	chnset	giOn,"Act11"				; turn instrument indicator on                             
-	scoreline_i	{{ i 201 0.1 0 "Act11"}}        ; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act11"				; turn instrument indicator on                             
+;	scoreline_i	{{ i 201 0.1 0 "Act11"}}        ; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act11"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	p3	=	0.3
 	aenv	line	1,p3,0
 	astrike	mpulse	1,0
@@ -1811,14 +1845,16 @@ instr	111	; Korg Minipops 7: Cowbell
 endin
 
 instr	112	; Korg Minipops 7: Guiro
-	chnset	giOn,"Act12"				; turn instrument indicator on                             
-	scoreline_i	{{ i 201 0.1 0 "Act12"}}        ; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act12"				; turn instrument indicator on                             
+;	scoreline_i	{{ i 201 0.1 0 "Act12"}}        ; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act12"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1
-	if kactive>1 then        
-	 turnoff
-	endif
-	idur	=	(p3=3600?0.256:p3*0.9)
-	p3	=	p3*0.9
+	;if kactive>1 then        
+	; turnoff
+	;endif
+	idur	=	(p3=3600?0.256:p3*0.9)	
 	kcps	transeg	66,idur,2,77
 	asig	vco2	0.1,kcps,6;,0.0005
 	icf	=	2000
@@ -1830,12 +1866,15 @@ instr	112	; Korg Minipops 7: Guiro
 endin
 
 instr	113	; Korg Minipops 7: Maracas
-	chnset	giOn,"Act13"				; turn instrument indicator on                             
-	scoreline_i	{{ i 201 0.1 0 "Act13"}}        ; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act13"				; turn instrument indicator on                             
+;	scoreline_i	{{ i 201 0.1 0 "Act13"}}        ; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act13"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	p3	=	0.05
 	asig	noise	1,0.04
 	icf	=	5000
@@ -1847,12 +1886,15 @@ instr	113	; Korg Minipops 7: Maracas
 endin
 
 instr	114	; Korg Minipops 7: Quijada
-	chnset	giOn,"Act14"				; turn instrument indicator on                             
-	scoreline_i	{{ i 201 0.1 0 "Act14"}}        ; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act14"				; turn instrument indicator on                             
+;	scoreline_i	{{ i 201 0.1 0 "Act14"}}        ; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act14"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	p3	=	0.817
 
 	idur1	=	0.817
@@ -1871,12 +1913,15 @@ instr	114	; Korg Minipops 7: Quijada
 endin
 
 instr	115	; Korg Minipops 7: Tambourine
-	chnset	giOn,"Act15"				; turn instrument indicator on                             
-	scoreline_i	{{ i 201 0.1 0 "Act15"}}        ; call instrument to turn off indicator after a short delay
+;	chnset	giOn,"Act15"				; turn instrument indicator on                             
+;	scoreline_i	{{ i 201 0.1 0 "Act15"}}        ; call instrument to turn off indicator after a short delay
+	xtratim	giFlashTime
+	krelease	release				;SENSE RELEASE OF THIS NOTE ('1' WHEN RELEASED, OTHERWISE ZERO)   
+	chnset	1-krelease,"Act15"               	;TURN ON ACTIVE LIGHT WHEN NOTE STARTS, TURN IT OFF WHEN NOTE ENDS
 	kactive active	p1
-	if kactive>1 then
-	 turnoff
-	endif
+	;if kactive>1 then
+	; turnoff
+	;endif
 	p3	=	0.271
 	aenv	transeg	1,p3,-8,0
 	;aenv	linseg	1, 0.02, 1, 0.01, 0.4, p3-0.02-0.01, 0 
@@ -1958,7 +2003,7 @@ instr	200	; output
 	  chnset	giOff,"DistOn"
 	 endif
 	 if gkdist>0 then
-	  gasend	clip		gasend,0,1-i(gkdist*0.99)
+	  gasend	clip		gasend,0,1-(i(gkdist)*0.99)
 	  rireturn
 	  gasend	dam 		gasend, 0.25,1,   1.35,   0.01, 0.01	; compress the signal (whenever distortion is on) 
 	 endif

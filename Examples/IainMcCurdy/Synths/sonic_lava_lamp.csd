@@ -11,7 +11,7 @@ xypad bounds(5, 210, 250, 210), channel("pan", "amp"), rangex(0, 1, 0.5), rangey
 xypad bounds(255, 210, 250, 210), channel("DelTim", "DelSnd"), rangex(0, 1.00, 0.5), rangey(0, 1.00, 0.5), text("Delay Time/Send")
 infobutton bounds(5,425, 100, 20), text("Help"), file("SonicLavaLampHelp.html")
 image bounds(105, 425, 300, 20), colour(75, 85, 90, 100), plant("credit"), line(0){
-label bounds(0.03, 0.1, .6, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white")
+label bounds(0.03, 0.1, .9, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white")
 }
 </Cabbage>
 <CsoundSynthesizer>
@@ -68,7 +68,7 @@ $SET_XYPAD_INIT(DelTim'0.5)
 $SET_XYPAD_INIT(DelSnd'0.5)
 endin
 
-instr 1
+instr	1
 	kLFOspeed	chnget	"LFOspeed"
 	kLFO_OS		chnget	"LFO_OS"
 	kLFOshape	chnget	"LFOshape"

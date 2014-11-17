@@ -6,16 +6,21 @@ This file player is best suited for polyphonic playback and is less well suited 
 The sound file can be played back using the Play/Stop button (and the 'Transpose' / 'Speed' buttons to implement pitch/speed change)
  or it can be played back using the MIDI keyboard.
 
-<Cabbage>
-form caption("Flooper File Player") size(805,160), colour(0,0,0) pluginID("FlFP")
-image                     bounds(  0,  0,805,160), colour(155, 50,  0), outlinecolour("White"), line(3)	; main panel colouration    
+The loop points can be set either by using the loop 'Start' and 'End' sliders or by clicking and dragging on the waveform view -
+ - flooper2 will take the values from the last control input moved.
 
+<Cabbage>
+form caption("Flooper2 File Player") size(805,340), colour(0,0,0) pluginID("FlFP")
+image                     bounds(  0,  0,805,340), colour(155, 50,  0), outlinecolour("White"), line(3), shape("sharp")	; main panel colouration    
+
+soundfiler bounds(  5,  5,795,175), channel("beg","len"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255), 
+
+image    bounds(  0,180,805,160), colour(155,30,0,0), outlinecolour("white"), line(2), shape("sharp"), plant("controls"){
 filebutton bounds(  5, 10, 80, 25), text("Open File","Open File"), fontcolour("white") channel("filename"), shape("ellipse")
 checkbox   bounds(  5, 40, 95, 25), channel("PlayStop"), text("Play/Stop"), colour("yellow"), fontcolour("white")
 
-groupbox   bounds(100, 20,100, 50), plant("looping"), text("Looping Mode"), fontcolour("white"){
-combobox   bounds( 10, 25, 80, 20), channel("mode"), items("Forward", "Backward", "Fwd./Bwd."), value(1), fontcolour("white")
-}
+label      bounds(110, 12, 80, 12), text("Looping Mode"), fontcolour("white")
+combobox   bounds(110, 25, 80, 20), channel("mode"), items("Forward", "Backward", "Fwd./Bwd."), value(1), fontcolour("white")
 
 line       bounds(207, 10,  2, 65), colour("Grey")
                         
@@ -41,6 +46,7 @@ rslider    bounds(685, 15, 60, 60), channel("MidiRef"),   range(0,127,60, 1, 1),
 rslider    bounds(740, 15, 60, 60), channel("level"),     range(  0,  3.00, 1, 0.5),        colour(165, 60, 10), text("Level"),     fontcolour("white"), trackercolour("DarkBrown")
 
 keyboard bounds(5, 80, 795, 75)
+}
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -61,10 +67,26 @@ gichans		init	0
 giReady		init	0
 gSfilepath	init	""
 
+gitableL	ftgen	1,0,2,2,0
+gkTabLen	init	ftlen(gitableL)
+
 instr	1
  gkmode		chnget	"mode"
- gkLoopStart	chnget	"LoopStart"
- gkLoopEnd	chnget	"LoopEnd"
+ kLoopStart	chnget	"LoopStart"		; sliders
+ kLoopEnd	chnget	"LoopEnd"		;  "
+ kbeg		chnget	"beg"			; click and drag
+ klen		chnget	"len"			;  "
+ kTrigSlid	changed	kLoopStart,kLoopEnd
+ kTrigCAD	changed	kbeg,klen
+ if kTrigSlid==1 then
+  gkLoopStart	=	kLoopStart
+  gkLoopEnd	=	kLoopEnd
+ elseif kTrigCAD==1 then
+  gkLoopStart	=	kbeg/gkTabLen
+  gkLoopEnd	=	(kbeg+klen)/gkTabLen
+ endif
+  
+
  gkLoopEnd	limit	gkLoopEnd,gkLoopStart+0.01,1	; limit loop end to prevent crashes
  gkcrossfade	chnget	"crossfade"
  gkinskip	chnget	"inskip"
@@ -99,10 +121,14 @@ instr	99	; load sound file
  gichans	filenchnls	gSfilepath			; derive the number of channels (mono=1,stereo=2) in the sound file
  gitableL	ftgen	1,0,0,1,gSfilepath,0,0,1
  giFileLen	filelen		gSfilepath			; derive the file duration
+ gkTabLen	init		ftlen(gitableL)			; table length in sample frames
  if gichans==2 then
   gitableR	ftgen	2,0,0,1,gSfilepath,0,0,2
  endif
  giReady 	=	1					; if no string has yet been loaded giReady will be zero
+
+ Smessage sprintfk "file(%s)", gSfilepath			; print sound file to viewer
+ chnset Smessage, "filer1"	
 endin
 
 
@@ -148,7 +174,7 @@ instr	3	; sample triggered by midi note
  icps	cpsmidi							; read in midi note data as cycles per second
  iamp	ampmidi	1						; read in midi velocity (as a value within the range 0 - 1)
  iMidiRef	chnget	"MidiRef"
-/*
+
  if giReady = 1 then						; i.e. if a file has been loaded
   iAttTim	chnget	"AttTim"				; read in widgets
   iRelTim	chnget	"RelTim"
@@ -160,17 +186,21 @@ instr	3	; sample triggered by midi note
   kenv	expcurve	kenv,8					; remap amplitude value with a more natural curve
   aenv	interp		kenv					; interpolate and create a-rate envelope
   kporttime	linseg	0,0.001,0.05				; portamento time function. (Rises quickly from zero to a held value.)
-  ispeed	=	icps/cpsmidinn(iMidiRef)	; derive playback speed from note played in relation to a reference note (MIDI note 60 / middle C)
-  klevel	portk	gklevel,kporttime		; apply portamento smoothing to changes in level
+  klevel	portk	gklevel,kporttime			; apply portamento smoothing to changes in level
+  kcrossfade	=	0.01
+  istart	=	0
+  ifenv		=	0
+  iskip		=	0
   if gichans==1 then						; if mono...
-   a1	loscil3	klevel*aenv*iamp,ispeed,gitable,1,i(gkloop)-1,nsamp(gitable)*i(gkLoopStart),nsamp(gitable)*i(gkLoopEnd)	; use a mono loscil3
- 	outs	a1,a1						; send mono audio to both outputs 
+   a1	flooper2	klevel,icps/cpsmidinn(iMidiRef), gkLoopStart*giFileLen, gkLoopEnd*giFileLen, gkcrossfade, gitableL, i(gkinskip)*giFileLen, i(gkmode)-1, ifenv, iskip
+	outs	a1*aenv,a1*aenv					; send mono audio to both outputs 
   elseif gichans==2 then						; otherwise, if stereo...
-   a1,a2	loscil3	klevel*aenv*iamp,ispeed,gitable,1,i(gkloop)-1,nsamp(gitable)*i(gkLoopStart),nsamp(gitable)*i(gkLoopEnd)	; use stereo loscil3
- 	outs	a1,a2						; send stereo signal to outputs
-  endif
+   a1	flooper2	klevel,icps/cpsmidinn(iMidiRef), gkLoopStart*giFileLen, gkLoopEnd*giFileLen, gkcrossfade, gitableL, i(gkinskip)*giFileLen, i(gkmode)-1, ifenv, iskip
+   a2	flooper2	klevel,icps/cpsmidinn(iMidiRef), gkLoopStart*giFileLen, gkLoopEnd*giFileLen, gkcrossfade, gitableR, i(gkinskip)*giFileLen, i(gkmode)-1, ifenv, iskip
+ 	outs	a1*aenv,a2*aenv					; send stereo signal to outputs
+  endif               
  endif
-*/
+
 endin
  
 </CsInstruments>  

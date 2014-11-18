@@ -1722,6 +1722,12 @@ void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
             csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
         if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
+		if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+            csound->SetChannel(CabbageIDs::timeinsamples.toUTF8(), hostInfo.timeInSamples);
+        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+            csound->SetChannel(CabbageIDs::timeSigDenom.toUTF8(), hostInfo.timeSigDenominator);
+        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+            csound->SetChannel(CabbageIDs::timeSigNum.toUTF8(), hostInfo.timeSigNumerator);
 #endif
 
         for(int i=0; i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue(); i++)

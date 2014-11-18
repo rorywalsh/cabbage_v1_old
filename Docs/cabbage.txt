@@ -878,6 +878,12 @@ Cabbage reserves several channels which are used to send information to Csound f
 
 'TIME_IN_SECONDS': Return the current time in seconds from the start of the track.
 
+'TIME_IN_SAMPLES': Return the current time in samples from the start of the track.
+
+'TIME_SIG_DENOM': The signature denominator, e.g. the 4 of a 3/4 time sig 
+
+'TIME_SIG_NUM': The signature numerator, e.g. the 3 of a 3/4 time sig 
+
 'HOST_PPQ_POS': Return the position of the start of the last bar, in pulses-per-quarter-note.
 
 'MOUSE_X': Returns the X coordinate of the current mouse position.

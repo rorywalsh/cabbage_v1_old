@@ -20,15 +20,17 @@ public:
     ~CabbageLookAndFeel();
 	Image getSVGImageFor(String path, String type, AffineTransform affine);
 
-    Image drawRotaryImage(int diameter, const Colour circleFill, const Colour trackerCol, float sliderPosProportional, float zeroPosProportional,
-                          bool useTrackerFill,
-                          float markerOpacity,
-						  String svgPath);
+    Image drawRotaryImage(int diameter, const Colour sliderColour, const Colour trackerCol, float sliderPosProportional,
+								float zeroPosProportional,
+								bool useTrackerFill,
+								float markerOpacity,
+								String svgPath,
+								float trackerThickness);
     Image drawLinearBgImage (float width, float height, float sliderPosProportional, float zeroPosProportional,
-                             bool useTrackerFill,
-                             bool isVertical,
-                             const Colour trackerCol,
-							 String svgPath);
+								bool useTrackerFill,
+								bool isVertical,
+								const Colour trackerCol,
+								String svgPath);
 
     void drawTableHeaderColumn (Graphics& g, const String& columnName, int /*columnId*/,
                                 int width, int height,

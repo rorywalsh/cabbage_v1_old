@@ -108,7 +108,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::kind, "vertical");
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
-        cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+        cabbageIdentifiers.set(CabbageIDs::identchannel, "");		
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
 
     }
@@ -142,6 +142,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::kind, "rotary");
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+		cabbageIdentifiers.set(CabbageIDs::trackerthickness, .05);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
 
@@ -229,6 +230,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::caption, "");
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::onfontcolour, Colours::white.toString());
         cabbageIdentifiers.set(CabbageIDs::type, "recordbutton");
         cabbageIdentifiers.set(CabbageIDs::name, "recordbutton");
         cabbageIdentifiers.set(CabbageIDs::mode, "file");
@@ -265,6 +267,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::caption, "");
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
+		cabbageIdentifiers.set(CabbageIDs::onfontcolour, Colours::white.toString());
         cabbageIdentifiers.set(CabbageIDs::type, "filebutton");
         cabbageIdentifiers.set(CabbageIDs::name, "filebutton");
         cabbageIdentifiers.set(CabbageIDs::mode, "file");
@@ -577,7 +580,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::shape, "rounded");
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
         cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colours::white.toString());
-        cabbageIdentifiers.set(CabbageIDs::line, 0);
+        cabbageIdentifiers.set(CabbageIDs::linethickness, 0);
         cabbageIdentifiers.set(CabbageIDs::popup, 0);
         cabbageIdentifiers.set(CabbageIDs::plant, "");
         cabbageIdentifiers.set(CabbageIDs::type, "image");
@@ -600,7 +603,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::popup, 0);
         cabbageIdentifiers.set(CabbageIDs::plant, "");
         cabbageIdentifiers.set(CabbageIDs::child, 0);
-        cabbageIdentifiers.set(CabbageIDs::line, 1);
+        cabbageIdentifiers.set(CabbageIDs::linethickness, 1);
         cabbageIdentifiers.set(CabbageIDs::type, "groupbox");
         cabbageIdentifiers.set(CabbageIDs::name, "groupbox");
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
@@ -1002,9 +1005,12 @@ int CabbageGUIClass::parse(String inStr, String identifier)
 						identArray[indx].equalsIgnoreCase("colour"))
                 {
                     if(typeOfWidget=="checkbox" || typeOfWidget=="button")
-						cabbageIdentifiers.set(CabbageIDs::oncolour, getColourFromText(strTokens.joinIntoString(",")).toString());
+					{
+						cabbageIdentifiers.set(CabbageIDs::oncolour, getColourFromText(strTokens.joinIntoString(",")).toString());				
+					}
 					else
 						cabbageIdentifiers.set(CabbageIDs::colour, getColourFromText(strTokens.joinIntoString(",")).toString());
+					
 					
 				}
 				
@@ -1557,12 +1563,18 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                     cabbageIdentifiers.set(CabbageIDs::amprange, value);
                 }
 
-                else if(identArray[indx].equalsIgnoreCase("line"))
+                else if(identArray[indx].equalsIgnoreCase("linethickness"))
                 {
                     //cabbageIdentifiers.set("line", strTokens[0].trim().getFloatValue());
-                    cabbageIdentifiers.set(CabbageIDs::line, strTokens[0].trim().getFloatValue());
+                    cabbageIdentifiers.set(CabbageIDs::linethickness, strTokens[0].trim().getFloatValue());
                 }
 
+                else if(identArray[indx].equalsIgnoreCase("trackerthickness"))
+                {
+                    //cabbageIdentifiers.set("line", strTokens[0].trim().getFloatValue());
+                    cabbageIdentifiers.set(CabbageIDs::trackerthickness, strTokens[0].trim().getFloatValue());
+                }
+				
                 else if(identArray[indx].equalsIgnoreCase("value"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::value, strTokens[0].trim().getFloatValue());
@@ -1627,7 +1639,13 @@ Colour CabbageGUIClass::getColourFromText(String text)
     strTokens.addTokens(text, ",", "");
     Colour colour;
     if(strTokens.size()<2)
-        colour = Colours::findColourForName(strTokens[0].trim(), Colours::white);
+	{
+        if(strTokens[0].trim()=="0")
+			colour = Colours::white.withAlpha(1.f);
+		else
+			colour = Colours::findColourForName(strTokens[0].trim(), Colours::white);
+		
+	}
     else if(strTokens.size()==4)
         colour = Colour::fromRGBA (strTokens[0].getIntValue(),
                                    strTokens[1].getIntValue(),

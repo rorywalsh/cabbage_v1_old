@@ -303,7 +303,7 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
     {
         InsertMultiTab(cAttr);
     }
-    else if(cAttr.getStringProp(CabbageIDs::type)==String(CabbageIDs::line))
+    else if(cAttr.getStringProp(CabbageIDs::type)==String(CabbageIDs::linethickness))
     {
         InsertLineSeparator(cAttr);
     }
@@ -1654,7 +1654,7 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
     cAttr.setStringProp(CabbageIDs::type, "groupbox");
     layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
-    layoutComps[idx]->getProperties().set(String("groupLine"), cAttr.getNumProp(CabbageIDs::line));
+    layoutComps[idx]->getProperties().set(String("groupLine"), cAttr.getNumProp(CabbageIDs::linethickness));
     layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
     layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
 

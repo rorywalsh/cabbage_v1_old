@@ -177,7 +177,7 @@ class CabbageSlider : public Component,
     String name, text, caption, kind, colour, fontColour, trackerFill;
     int textBox, decPlaces;
 	double min, max;
-    float incr, skew;
+    float incr, skew, trackerThickness;
 public:
 
     ScopedPointer<GroupComponent> groupbox;
@@ -194,6 +194,7 @@ public:
         tracker(cAttr.getStringProp(CabbageIDs::trackercolour)),
         decPlaces(cAttr.getNumProp(CabbageIDs::decimalplaces)),
         textBox(cAttr.getNumProp(CabbageIDs::textbox)),
+		trackerThickness(cAttr.getNumProp(CabbageIDs::trackerthickness)),
         text(cAttr.getStringProp(CabbageIDs::text))
     {
         setName(name);
@@ -215,6 +216,7 @@ public:
         slider->setColour(Slider::trackColourId, Colour::fromString(tracker));
 
         slider->getProperties().set("decimalPlaces", decPlaces);
+		slider->getProperties().set("trackerThickness", trackerThickness);
 
 
         if(textBox<1)
@@ -666,7 +668,7 @@ public:
         outline(cAttr.getStringProp(CabbageIDs::outlinecolour)),
         colour(cAttr.getStringProp(CabbageIDs::colour)),
         shape(cAttr.getStringProp("shape")),
-        line(cAttr.getNumProp(CabbageIDs::line))
+        line(cAttr.getNumProp(CabbageIDs::linethickness))
     {
         setName(name);
         img = ImageCache::getFromFile (File (file));
@@ -692,7 +694,7 @@ public:
         colour = m_cAttr.getStringProp(CabbageIDs::colour);
         outline = m_cAttr.getStringProp(CabbageIDs::outlinecolour);
         shape = m_cAttr.getStringProp(CabbageIDs::shape);
-        line = m_cAttr.getNumProp(CabbageIDs::line);
+        line = m_cAttr.getNumProp(CabbageIDs::linethickness);
         setBounds(m_cAttr.getBounds());
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
             setVisible(false);
@@ -767,7 +769,7 @@ public:
         colour(cAttr.getStringProp(CabbageIDs::colour)),
         fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
         GroupComponent(cAttr.getStringProp(CabbageIDs::name)),
-        line(cAttr.getNumProp(CabbageIDs::line))
+        line(cAttr.getNumProp(CabbageIDs::linethickness))
     {
         toBack();
         offX=offY=offWidth=offHeight=0;

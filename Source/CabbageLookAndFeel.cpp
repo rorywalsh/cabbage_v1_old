@@ -225,7 +225,8 @@ Image CabbageLookAndFeel::drawRotaryImage(int diameter, const Colour sliderColou
         float zeroPosProportional,
         bool useTrackerFill,
         float markerOpacity,
-		String svgPath)
+		String svgPath,
+		float trackerThickness)
 {
     //A simpler slider is created if the diameter is 25 or less.
     bool useBigImage = true;
@@ -241,6 +242,7 @@ Image CabbageLookAndFeel::drawRotaryImage(int diameter, const Colour sliderColou
     // where 12 o'clock is zero.
     float numRadians = (300*3.14) / 180;
     AffineTransform tnsForm = AffineTransform::identity; //this means no transform, or identical
+
 
 	//if slider background svg exists...
 	if(getSVGImageFor(svgPath, "rslider_background", AffineTransform::identity).isValid()){
@@ -261,17 +263,22 @@ Image CabbageLookAndFeel::drawRotaryImage(int diameter, const Colour sliderColou
         if (useTrackerFill)
         {
             Path path;
-            path.addArc (diameter*0.075, diameter*0.075, diameter*0.85, diameter*0.85, -2.6167 + (zeroPosProportional*numRadians),
+			float x = diameter*0.075;
+			float y = diameter*0.075;
+			float w = diameter*0.85;
+			float h = diameter*0.85;
+			float offset = diameter*(trackerThickness/3.5);
+            path.addArc (x+offset, y+offset, w-offset*2, h-offset*2, -2.6167 + (zeroPosProportional*numRadians),
                          (sliderPosProportional-0.5)*numRadians, true);
-            PathStrokeType type (diameter*0.05);
+            PathStrokeType type (diameter*trackerThickness);
             g.setColour(trackerCol);
-            g.setOpacity (0.7);
+            g.setOpacity (0.9);
             g.strokePath (path, type, tnsForm);
         }
     }
 
     //only draw Polygon if we're not using any SVGs
-	if(!usingSVG)
+	if(getSVGImageFor(svgPath, "rslider_inner", AffineTransform::identity).isNull())
 	{
 		g.setColour (Colour::fromRGBA(0, 0, 0, 150));
 		g.fillEllipse (diameter*0.17, diameter*0.17, diameter*0.7, diameter*0.7); //for shadow
@@ -320,14 +327,10 @@ Image CabbageLookAndFeel::drawRotaryImage(int diameter, const Colour sliderColou
 
 	}
 	else{
-	if(getSVGImageFor(svgPath, "rslider_inner", AffineTransform::identity).isValid())
-	{
 		g.setOpacity(1.0);
 		g.drawImage(getSVGImageFor(svgPath, "rslider_inner", AffineTransform::rotation (((sliderPosProportional-0.5) * numRadians),
                                  svgRSliderDiameter/2, svgRSliderDiameter/2)), 0, 0, diameter, diameter,
 											 0, 0, svgRSliderDiameter, svgRSliderDiameter, false);
-											 
-	}		
 		
 	}
     //------ Marker --------------
@@ -787,8 +790,11 @@ void CabbageLookAndFeel::drawRotarySlider(Graphics& g, int /*x*/, int /*y*/, int
 
     // Creating slider image
     bool useTracker = true;
+    // Setting up the format of the string....
+    float trackerThickness = slider.getProperties().getWithDefault("trackerThickness", .05);
+	
     Image newSlider = drawRotaryImage(jmax(1.f, destWidth), slider.findColour(Slider::rotarySliderFillColourId), slider.findColour(Slider::trackColourId), sliderPosProportional,
-                                      zeroPosProportional, useTracker, markerOpacity, svgPath);
+                                      zeroPosProportional, useTracker, markerOpacity, svgPath, trackerThickness);
     g.drawImage (newSlider, destX, destY, destWidth, destHeight, 0, 0, newSlider.getWidth(), newSlider.getHeight(), false);
 
     // If NO textbox and mouse is hovering or dragging, then draw the value across the slider.  This has to be done

@@ -535,17 +535,17 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
         csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());
 #endif
 
-        //send host info before performance..
         if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+		{
             csound->SetChannel(CabbageIDs::hostbpm.toUTF8(), hostInfo.bpm);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::timeinseconds.toUTF8(), hostInfo.timeInSeconds);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::isplaying.toUTF8(), hostInfo.isPlaying);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
+            csound->SetChannel(CabbageIDs::timeinsamples.toUTF8(), hostInfo.timeInSamples);
+            csound->SetChannel(CabbageIDs::timeSigDenom.toUTF8(), hostInfo.timeSigDenominator);
+            csound->SetChannel(CabbageIDs::timeSigNum.toUTF8(), hostInfo.timeSigNumerator);
+		}
 		Logger::writeToLog("everything still good...");
     }
     else
@@ -1713,21 +1713,17 @@ void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
     {
 #ifndef Cabbage_Build_Standalone
         if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+		{
             csound->SetChannel(CabbageIDs::hostbpm.toUTF8(), hostInfo.bpm);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::timeinseconds.toUTF8(), hostInfo.timeInSeconds);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::isplaying.toUTF8(), hostInfo.isPlaying);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
-		if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::timeinsamples.toUTF8(), hostInfo.timeInSamples);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::timeSigDenom.toUTF8(), hostInfo.timeSigDenominator);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::timeSigNum.toUTF8(), hostInfo.timeSigNumerator);
+			
+		}
 #endif
 
         for(int i=0; i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue(); i++)

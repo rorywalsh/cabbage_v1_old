@@ -1940,7 +1940,11 @@ void StandaloneFilterWindow::m_ShowMessage(String message, LookAndFeel* lookAndF
         MB_OK);
 #endif
 	}
-	else
-		showMessage(message, lookAndFeel);
+	else{
+		if(title.length()>0)
+			showMessage(title, message, lookAndFeel);
+		else
+			showMessage(message, lookAndFeel);
+	}
 	
 }

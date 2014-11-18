@@ -281,10 +281,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         csoundParams->displays = 0;
         csound->SetParams(csoundParams);
 #endif
-
-//ftpp->ftable;
-
-
         StringArray lines, includeFiles;
         lines.addLines(File(inputfile).loadFileAsString());
 
@@ -331,6 +327,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 
             csound->SetScoreOffsetSeconds(0);
             csound->RewindScore();
+			
+			
 #ifdef WIN32
             csound->SetChannel("CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());
 #else
@@ -1097,7 +1095,9 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     //init all channels with their init val, and set parameters
     for(int i=0; i<guiLayoutCtrls.size(); i++)
     {
-//		Logger::writeToLog(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel)+": "+String(guiCtrls[i].getNumProp(CabbageIDs::value)));
+		if(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("texteditor"))
+			csound->SetChannel(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), 
+						guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::text).toUTF8().getAddress());
 #ifndef Cabbage_No_Csound
         if(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::identchannel).isNotEmpty())
             //deal with combobox strings..

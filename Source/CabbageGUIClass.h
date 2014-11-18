@@ -270,7 +270,6 @@ static const String csoundoutput = "csoundoutput";
 
 
 
-
 class CabbageGUIClass : public CabbageUtils
 {
     double width, height, top, left;

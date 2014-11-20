@@ -412,124 +412,6 @@ Image CabbageLookAndFeel::drawRotaryImage(int diameter, const Colour sliderColou
     return img;
 }
 
-//===== Linear slider bg image =========================================================================
-Image CabbageLookAndFeel::drawLinearBgImage (float width, float height, float sliderPosProportional,
-        float zeroPosProportional,
-        bool useTrackerFill,
-        bool isVertical,
-        const Colour trackerFill,
-		String svgPath)
-{
-    Image img = Image(Image::ARGB, width, height, true);
-    Graphics g (img);
-
-    //----- For horizontal sliders ---------------------------------------------------
-    if (isVertical == false)
-    {
-		//if slider background svg exists...
-		if(getSVGImageFor(svgPath, "hslider_background", AffineTransform::identity).isValid())
-		{
-			g.drawImage(getSVGImageFor(svgPath, "hslider_background", AffineTransform::identity), 0, 0,  
-													width, height, 0, 0, svgHSliderWidth, svgHSliderHeight, false);
-											
-		}
-		else
-		{		
-			// Drawing the small ticks
-			g.setColour (Colours::whitesmoke);
-			g.setOpacity (0.3);
-			float markerGap = width/10; //gap between ticks
-			for (int i=1; i<5; i++)
-				g.drawLine ((i*markerGap), height*0.3, (i*markerGap), height*0.7, .7);
-			for (int i=6; i<10; i++)
-				g.drawLine ((i*markerGap), height*0.3, (i*markerGap), height*0.7, .7);
-			//Drawing the centre tick, this will be longer and thicker
-			g.setOpacity (0.6);
-			g.drawLine ((width/2), height*0.25, (width/2), height*0.75, 1.5);
-
-			// Main Rectangle. Creating the illusion of lighting by painting an almost transparent rectangle first.
-			g.setColour (Colours::whitesmoke);
-			g.setOpacity (0.1);
-			g.fillRoundedRectangle (0, height*0.44, width, height*0.15, height*0.05); //for light effect
-			g.setColour (Colour::fromRGBA(5, 5, 5, 255));
-			g.fillRoundedRectangle (0, height*0.425, width*0.99, height*0.15, height*0.05); //main rectangle
-		}
-		
-        // Tracker fill.
-        if (useTrackerFill)
-        {
-            ColourGradient fill;
-            if (zeroPosProportional != 0)
-            {
-                fill = ColourGradient (trackerFill, 0, 0, trackerFill, width, 0, false);
-                fill.addColour(zeroPosProportional, Colours::transparentBlack);
-                fill.addColour(zeroPosProportional+0.05, trackerFill);
-                fill.addColour(zeroPosProportional-0.05, trackerFill);
-            }
-            else
-                fill = ColourGradient (Colours::transparentBlack, 0, 0, trackerFill, width*0.1, 0, false);
-
-            g.setGradientFill (fill);
-            g.setOpacity(0.9);
-            g.drawLine (zeroPosProportional*width, height*0.5, sliderPosProportional*width, height*0.5, height*0.05);
-        }
-    }
-    //----- For vertical sliders ---------------------------------------------------
-    if (isVertical == true)
-    {
-		//if slider background svg exists...
-		if(getSVGImageFor(svgPath, "vslider_background", AffineTransform::identity).isValid())
-		{
-			g.drawImage(getSVGImageFor(svgPath, "vslider_background", AffineTransform::identity), 0, 0,  
-													width, height, 0, 0, svgVSliderWidth, svgVSliderHeight, false);
-											
-		}
-		else
-		{
-			// ticks
-			g.setColour (Colours::whitesmoke);
-			g.setOpacity (0.3);
-			float markerGap = height/10; //gap between ticks
-			for (int i=1; i<5; i++)
-				g.drawLine (width*0.3, (i*markerGap), width*0.7, (i*markerGap), .7);
-			for (int i=6; i<10; i++)
-				g.drawLine (width*0.3, (i*markerGap), width*0.7, (i*markerGap), .7);
-			//Drawing the centre tick, this will be longer and thicker
-			g.setOpacity (0.6);
-			g.drawLine (width*0.25, (height/2), width*0.75, (height/2), 1.5);
-
-			// Main Rectangle. Creating the illusion of lighting by painting an almost transparent rectangle first.
-			g.setColour (Colours::whitesmoke);
-			g.setOpacity (0.1);
-			g.fillRoundedRectangle (width*0.44, 0, width*0.15, height, width*0.05); //for light effect
-			g.setColour (Colour::fromRGBA(5, 5, 5, 255));
-			g.fillRoundedRectangle (width*0.425, 0, width*0.15, height*0.99, width*0.05); //main rectangle
-		}
-		
-        // Tracker fill.
-        if (useTrackerFill == true)
-        {
-            ColourGradient fill;
-            if (zeroPosProportional != 0)
-            {
-                fill = ColourGradient (trackerFill, 0, height, trackerFill, 0, 0, false);
-                fill.addColour(zeroPosProportional, Colours::transparentBlack);
-                fill.addColour(zeroPosProportional+0.05, trackerFill);
-                fill.addColour(zeroPosProportional-0.05,trackerFill);
-            }
-            else
-                fill = ColourGradient (Colours::transparentBlack, 0, height, trackerFill, 0, height*0.9, false);
-
-            g.setGradientFill (fill);
-            g.setOpacity(0.9);
-            sliderPosProportional = 1 - sliderPosProportional; //inverting y axis
-            zeroPosProportional = 1 - zeroPosProportional;
-            g.drawLine (width*0.5, sliderPosProportional*height, width*0.5, zeroPosProportional*height, width*0.05);
-        }
-    }
-
-    return img;
-}
 
 //========= linear slider ================================================================================
 void CabbageLookAndFeel::drawLinearSlider (Graphics& g, int x, int y, int width, int height,
@@ -947,6 +829,12 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
     const float sliderRadius = (float) (getSliderThumbRadius (slider) - 2);
 
     const Colour trackColour (slider.findColour (Slider::trackColourId));
+	
+	float zeroPosProportional = 0;
+	
+	if (slider.getMinimum() < 0)
+		zeroPosProportional = slider.valueToProportionOfLength(0); //takes into account skew factor
+
 
     Path indent;
 
@@ -974,11 +862,27 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
         const float iy = y + height * 0.5f - sliderRadius * 0.25f;
         const float ih = sliderRadius*.5f;
 
-        g.setGradientFill(ColourGradient (Colours::transparentBlack, 0, 0, trackColour, width*0.2, 0, false));
-
-        indent.addRoundedRectangle (x - sliderRadius * 0.5f, iy,
-                                    sliderPos - sliderRadius, ih,
-                                    5.0f);
+		if(slider.getMinimum()>=0)
+			g.setGradientFill(ColourGradient (Colours::transparentBlack, 0, 0, trackColour, width*0.25, 0, false));
+		else
+			g.setGradientFill(ColourGradient(Colours::transparentBlack, 
+											 (slider.getValue()<= 0 ? zeroPosProportional*width*1.25 : zeroPosProportional*width), 
+											 0, 
+											 trackColour, 
+											 (slider.getValue()<= 0 ? 0 : width), 
+											 0, 
+											 false));
+		
+		
+		
+		if(slider.getValue()>0)
+			indent.addRoundedRectangle (zeroPosProportional*width + sliderRadius, iy,
+										sliderPos - sliderRadius*0.5 - zeroPosProportional*width, ih,
+										5.0f);
+		else
+			indent.addRoundedRectangle (sliderPos, iy,
+										zeroPosProportional*width + sliderRadius - sliderPos, ih,
+										5.0f);
     }
     else //vertical
     {
@@ -995,7 +899,7 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
 			g.drawLine (width*0.3, midPoint-markerGap*i, width*0.7, midPoint-markerGap*i, .7);
 		}		
 
-		g.setColour (Colours::whitesmoke);
+		g.setColour(Colours::whitesmoke);
 		g.setOpacity (0.1);
 		g.fillRoundedRectangle(width*0.44, sliderRadius, width*0.15, height, width*0.05); 
 		g.setColour (Colour::fromRGBA(5, 5, 5, 255));
@@ -1004,15 +908,29 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
         const float ix = x + width * 0.5f - sliderRadius * 0.25f;
         const float iw = sliderRadius*.5f;
 
+		if(slider.getMinimum()>=0)
         g.setGradientFill(ColourGradient(Colours::transparentBlack, 0, height, trackColour, 0, height*0.8, false));
+		else
+			g.setGradientFill(ColourGradient(Colours::transparentBlack, 
+											 0,
+											 (slider.getValue()<= 0 ? zeroPosProportional*height : zeroPosProportional*height*1.25), 
+											 trackColour, 
+											 0, 
+											 (slider.getValue()<= 0 ? height : 0), 
+											 false));
 
-        indent.addRoundedRectangle (ix, y + sliderPos - sliderRadius*1.5f,
-                                    iw, height - sliderPos + sliderRadius+1.5f,
+
+		if(slider.getValue()>=0)
+			indent.addRoundedRectangle (ix, y + sliderPos - sliderRadius*1.5f,
+                                    iw, height - sliderPos + sliderRadius+1.5f - zeroPosProportional*height,
+                                    5.0f);
+		else
+			indent.addRoundedRectangle (ix, zeroPosProportional*height+sliderRadius,
+                                    iw, sliderPos - sliderRadius - zeroPosProportional*height,
                                     5.0f);
     }
 
     g.fillPath (indent);
-
     g.setColour (Colour (0x4c000000));
     g.strokePath (indent, PathStrokeType (0.3f));
 

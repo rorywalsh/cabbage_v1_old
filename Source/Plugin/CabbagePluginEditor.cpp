@@ -69,9 +69,10 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
 	
 	//create popup display for showing value of sliders. 
 	popupBubble = new BubbleMessageComponent(250);
-	popupBubble->setColour(BubbleComponent::backgroundColourId, Colours::whitesmoke);
+	popupBubble->setColour(BubbleComponent::backgroundColourId, Colours::white);
 	popupBubble->setBounds(0, 0, 50, 20);
 	addChildComponent(popupBubble);
+	popupBubble->setAlwaysOnTop(true);
 
 	
 	
@@ -430,9 +431,9 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
 			if(cabSlider->shouldDisplayPopupValue())
 			{
 				float value = cabSlider->slider->getValue();
-				if(String(value)=="7.45058e-07")
-					value=0;
-				popupBubble->showAt(cabSlider->slider, AttributedString(String(value)), 550);
+				if(value>-0.00001 && value<0.00001) value = 0;
+				String popupText = cabSlider->getChannel()+": "+String(value);
+				popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
 			}
 		}
 		

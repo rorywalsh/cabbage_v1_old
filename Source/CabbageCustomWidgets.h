@@ -172,7 +172,7 @@ class CabbageSlider : public Component,
     };
 
 
-    String name, text, caption, kind, colour, fontColour, trackerFill;
+    String name, text, caption, kind, colour, fontColour, trackerFill, channel;
     int textBox, decPlaces;
 	double min, max;
 	ScopedPointer<Label> textLabel;
@@ -198,6 +198,7 @@ public:
         textBox(cAttr.getNumProp(CabbageIDs::textbox)),
 		trackerThickness(cAttr.getNumProp(CabbageIDs::trackerthickness)),
         text(cAttr.getStringProp(CabbageIDs::text)),
+		channel(cAttr.getStringProp(CabbageIDs::channel)),
 		lookAndFeel(new CabbageLookAndFeel()),
 		shouldDisplayPopup(false),
 		textLabel(new Label())
@@ -260,6 +261,7 @@ public:
         slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
         slider->setRange(min, max, cAttr.getNumProp(CabbageIDs::sliderincr));
         slider->setValue(cAttr.getNumProp(CabbageIDs::value));
+		slider->setDoubleClickReturnValue(true, cAttr.getNumProp(CabbageIDs::value));
     }//--- end of constructor ----
 
     //---------------------------------------------
@@ -294,6 +296,11 @@ public:
 	{
 		if(shouldDisplayPopup)
 		sendChangeMessage();
+	}
+
+	String getChannel()
+	{
+		return channel;
 	}
 
     //update controls

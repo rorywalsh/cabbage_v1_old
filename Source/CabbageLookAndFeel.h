@@ -77,6 +77,8 @@ public:
 	void drawSphericalThumb (Graphics& g, const float x, const float y,
                                       const float w, const float h, const Colour& colour,
                                       const float outlineThickness);
+	class SliderLabelComp;
+	Label* createSliderTextBox (Slider&) override;
     void drawButtonBackground (Graphics&, Button&, const Colour&, bool, bool);
     void drawButtonText (Graphics &g, TextButton &button, bool isMouseOverButton, bool isButtonDown);
 
@@ -84,6 +86,10 @@ public:
     void drawComboBox (Graphics&, int, int, bool, int, int, int, int, ComboBox&);
     Font getComboBoxFont (ComboBox& box);
     Label* createComboBoxTextBox (ComboBox&);
+	void drawBubble (Graphics&, BubbleComponent&, const Point<float>& tip, const Rectangle<float>& body) override;
+    Font getSliderPopupFont (Slider&) override;
+    int getSliderPopupPlacement (Slider&) override;
+	
     void positionComboBoxText (ComboBox& box, Label& label);
     void drawToggleButton (Graphics &g, ToggleButton &button, bool isMouseOverButton, bool isButtonDown);
     void drawTextEditorOutline (Graphics &g, int width, int height, TextEditor &textEditor);

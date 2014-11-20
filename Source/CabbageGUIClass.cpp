@@ -362,8 +362,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::value, 0);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
         cabbageIdentifiers.set(CabbageIDs::type, "numberbox");
-        cabbageIdentifiers.set(CabbageIDs::colour, Colours::lime.toString());
-        cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
+        cabbageIdentifiers.set(CabbageIDs::colour, CabbageUtils::getDarkerBackgroundSkin().toString());
+        cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::whitesmoke.toString());
         cabbageIdentifiers.set(CabbageIDs::name, "numberbox");
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");

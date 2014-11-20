@@ -66,7 +66,15 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     //set custom skin yo use
     lookAndFeel = new CabbageLookAndFeel();
     basicLookAndFeel = new CabbageLookAndFeelBasic();
+	
+	//create popup display for showing value of sliders. 
+	popupBubble = new BubbleMessageComponent(250);
+	popupBubble->setColour(BubbleComponent::backgroundColourId, Colours::whitesmoke);
+	popupBubble->setBounds(0, 0, 50, 20);
+	addChildComponent(popupBubble);
 
+	
+	
 #ifdef Cabbage_Build_Standalone
     propsWindow->setAlwaysOnTop(true);
     propsWindow->setVisible(false);
@@ -81,6 +89,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     viewportComponent = new CabbageViewportComponent();
     viewport->addMouseListener(this, true);
 
+	this->setLookAndFeel(lookAndFeel);
     Component::setLookAndFeel(lookAndFeel);
     //oldSchoolLook = new OldSchoolLookAndFeel();
 #ifdef Cabbage_Build_Standalone
@@ -415,6 +424,18 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
            getFilter()->messageQueue.addOutgoingChannelMessageToQueue(textEditor->channel, textEditor->getCurrentText(), "string");
 		}
 
+        CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(source);
+        if(cabSlider)
+        {
+			if(cabSlider->shouldDisplayPopupValue())
+			{
+				float value = cabSlider->slider->getValue();
+				if(String(value)=="7.45058e-07")
+					value=0;
+				popupBubble->showAt(cabSlider->slider, AttributedString(String(value)), 550);
+			}
+		}
+		
         CabbageSoundfiler* soundfiler = dynamic_cast<CabbageSoundfiler*>(source);
         if(soundfiler)
         {
@@ -424,7 +445,7 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
             channel = getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel)[0];
             val = soundfiler->getPosition();
             getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, val, "");
-            //there snhould always be two channels, but check just in case..
+            //there should always be two channels, but check just in case..
             if(getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel).size()>1)
             {
                 channel = getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel)[1];
@@ -2261,6 +2282,7 @@ void CabbagePluginAudioProcessorEditor::InsertSlider(CabbageGUIClass &cAttr)
     comps[idx]->getProperties().set(CabbageIDs::index, idx);
     //set visiblilty
     comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+	((CabbageSlider*)comps[idx])->addChangeListener(this);
 }
 //+++++++++++++++++++++++++++++++++++++++++++
 //                                     numberbox/slider

@@ -168,8 +168,6 @@ class CabbageSlider : public Component,
         {
             slider->sendChangeMessage();
         }
-
-
         CabbageSlider* slider;
     };
 
@@ -177,11 +175,15 @@ class CabbageSlider : public Component,
     String name, text, caption, kind, colour, fontColour, trackerFill;
     int textBox, decPlaces;
 	double min, max;
+	ScopedPointer<Label> textLabel;
+	
     float incr, skew, trackerThickness;
+	ScopedPointer<CabbageLookAndFeel> lookAndFeel;
 public:
 
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<Slider> slider;
+	bool shouldDisplayPopup;
     //---- constructor -----
     CabbageSlider(CabbageGUIClass &cAttr) : plantX(-99), plantY(-99),
         name(cAttr.getStringProp(CabbageIDs::name)),
@@ -195,32 +197,55 @@ public:
         decPlaces(cAttr.getNumProp(CabbageIDs::decimalplaces)),
         textBox(cAttr.getNumProp(CabbageIDs::textbox)),
 		trackerThickness(cAttr.getNumProp(CabbageIDs::trackerthickness)),
-        text(cAttr.getStringProp(CabbageIDs::text))
-    {
+        text(cAttr.getStringProp(CabbageIDs::text)),
+		lookAndFeel(new CabbageLookAndFeel()),
+		shouldDisplayPopup(false),
+		textLabel(new Label())
+    {		
         setName(name);
+		
         offX=offY=offWidth=offHeight=0;
         groupbox = new GroupComponent(String("groupbox_")+name);
         slider = new Slider(text);
+        if(textBox<1)
+		{
+            slider->setTextBoxStyle (Slider::NoTextBox, true, 0, 0);
+			shouldDisplayPopup=true;
+		}
+
+		
+		
 		slider->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
         slider->toFront(true);
-        addAndMakeVisible(slider);
-        addAndMakeVisible(groupbox);
-        groupbox->setVisible(false);
-        groupbox->getProperties().set("groupLine", var(1));
-        groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontColour));
-        groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
+		slider->addMouseListener(this, false);
 
+		//slider->setPopupDisplayEnabled (true, 0);
+		
+		slider->setColour(Slider::textBoxHighlightColourId, Colours::lime.withAlpha(.5f));
         slider->setColour(Slider::rotarySliderFillColourId, Colour::fromString(cl));
         slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
         slider->setColour(Slider::textBoxTextColourId, Colour::fromString(fontColour));
-        slider->setColour(Slider::trackColourId, Colour::fromString(tracker));
-
+		slider->setColour(Label::textColourId, Colour::fromString(fontColour));
+		slider->setColour(Label::backgroundColourId, CabbageUtils::getBackgroundSkin());
+		slider->setColour(TextEditor::textColourId, Colour::fromString(fontColour));
+		slider->setColour(TextEditor::backgroundColourId, CabbageUtils::getBackgroundSkin());
+        slider->setColour(Slider::trackColourId, Colour::fromString(tracker));	
+		slider->setColour(Label::outlineColourId, CabbageUtils::getBackgroundSkin());
+		
+		
+		slider->setLookAndFeel(lookAndFeel);
+		textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
+        addAndMakeVisible(slider);
+        addAndMakeVisible(groupbox);
+		addAndMakeVisible(textLabel);
+        textLabel->setVisible(false);
+		groupbox->setVisible(false);
+        groupbox->getProperties().set("groupLine", var(1));
+        groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontColour));
+        groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
         slider->getProperties().set("decimalPlaces", decPlaces);
 		slider->getProperties().set("trackerThickness", trackerThickness);
-
-
-        if(textBox<1)
-            slider->setTextBoxStyle (Slider::NoTextBox, true, 0, 0);
+	
         this->setWantsKeyboardFocus(false);
         resizeCount = 0;
 
@@ -241,6 +266,35 @@ public:
     ~CabbageSlider()
     {
     }
+
+	bool shouldDisplayPopupValue()
+	{
+		return shouldDisplayPopup;
+	}
+	
+	String getSliderType()
+	{
+		return sliderType;
+	}
+
+	void mouseDrag(const MouseEvent& event)
+	{
+		if(shouldDisplayPopup)
+		sendChangeMessage();
+	}
+
+	
+	void mouseMove (const MouseEvent &event)
+	{
+		if(shouldDisplayPopup)
+		sendChangeMessage();
+	}
+	
+	void mouseEnter (const MouseEvent &event)
+	{
+		if(shouldDisplayPopup)
+		sendChangeMessage();
+	}
 
     //update controls
     void update(CabbageGUIClass m_cAttr)
@@ -295,6 +349,9 @@ public:
         else if (sliderType.contains("vertical"))
         {
             slider->setSliderStyle(Slider::LinearVertical);
+			if(textBox>0)
+				slider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 15);	
+			
             if(cl.length() > 0)
                 slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
             if (compName.length() > 0)
@@ -311,13 +368,24 @@ public:
                 groupbox->setText(compName);
                 slider->toFront(true);
             }
-            else
-                slider->setBounds(0, 0, getWidth(), getHeight());
+            else{
+                if(text.isNotEmpty()){
+					textLabel->setBounds(0, getHeight()-20, getWidth(), 20);
+					textLabel->setText(text, dontSendNotification);		
+					textLabel->setVisible(true);
+					slider->setBounds(0, 0, getWidth(), getHeight()-20);
+				}
+				else
+				slider->setBounds(0, 0, getWidth(), getHeight());	
+				
+			}
         }
         //else if horizontal
         else
         {
             slider->setSliderStyle(Slider::LinearHorizontal);
+			if(textBox>0)
+				slider->setTextBoxStyle(Slider::TextBoxRight, false, 40, 15);		
             if(cl.length() > 0)
                 slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
             if (compName.length() > 0)
@@ -334,8 +402,16 @@ public:
                 groupbox->setVisible(true);
                 slider->toFront(true);
             }
-            else
-                slider->setBounds(0, 0, getWidth(), getHeight());
+            else{
+                if(text.isNotEmpty()){
+					textLabel->setBounds(0, 0, 50, getHeight());
+					textLabel->setText(text, dontSendNotification);		
+					textLabel->setVisible(true);
+					slider->setBounds(50, 0, getWidth()-50, getHeight());
+				}
+				else
+				slider->setBounds(0, 0, getWidth(), getHeight());				
+			}
         }
 
         //We only store the original dimensions the first time resized() is called.
@@ -1861,7 +1937,8 @@ public:
         slider->setColour(Slider::trackColourId, colour);
         slider->setColour(Slider::thumbColourId, colour);
         slider->setColour(Slider::textBoxHighlightColourId, slider->findColour(Slider::textBoxBackgroundColourId));
-        slider->setColour(Slider::textBoxTextColourId, fontcolour.contrasting());
+        slider->setColour(Slider::textBoxTextColourId, fontcolour);
+		slider->setColour(Slider::textBoxBackgroundColourId, colour);
         slider->setVelocityBasedMode(true);
         slider->setVelocityModeParameters(80);
         slider->getProperties().set("decimalPlaces", decPlaces);

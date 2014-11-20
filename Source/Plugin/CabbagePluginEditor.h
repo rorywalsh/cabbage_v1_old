@@ -253,6 +253,7 @@ private:
     StringArray scoreEvents;
 	String globalSVGPath;
 	Array<int> radioGroups;
+	ScopedPointer<BubbleMessageComponent> popupBubble;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePluginAudioProcessorEditor);
 
 };

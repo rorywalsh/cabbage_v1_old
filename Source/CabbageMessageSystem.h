@@ -25,9 +25,9 @@
 
 #ifndef Cabbage_No_Csound
 #ifdef AndroidBuild
-    #include "AndroidCsound.hpp"
+#include "AndroidCsound.hpp"
 #else
-    #include <csound.hpp>
+#include <csound.hpp>
 #endif
 #endif
 

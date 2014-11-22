@@ -96,7 +96,7 @@ public:
     //=================================================================
     void resetFilter(bool shouldResetFilter);
     void saveState();
-	long cabbageFindPluginID(unsigned char *buf, size_t len, const char *s);
+    long cabbageFindPluginID(unsigned char *buf, size_t len, const char *s);
     void loadState();
     virtual void showAudioSettingsDialog();
     virtual PropertySet* getGlobalSettings();
@@ -114,10 +114,10 @@ public:
     void saveFileAs();
     void showEditorConsole();
     void setupWindowDimensions();
-	void m_ShowMessage(String mess, LookAndFeel* feel, String title="Cabbage");
-	int exportPlugin(String type, bool saveAs, String fileName="");
-	Array<File> cabbageFiles;
-	ScopedPointer<StandaloneFileDialogue> standaloneFileDialogue;	
+    void m_ShowMessage(String mess, LookAndFeel* feel, String title="Cabbage");
+    int exportPlugin(String type, bool saveAs, String fileName="");
+    Array<File> cabbageFiles;
+    ScopedPointer<StandaloneFileDialogue> standaloneFileDialogue;
 
     bool isGuiEnabled()
     {
@@ -149,7 +149,7 @@ private:
     bool timerRunning;
     bool AudioEnabled;
     bool isAFileOpen;
-	bool hasEditorBeingOpened;
+    bool hasEditorBeingOpened;
     int setUniquePluginID(File inFile, File csdFile, bool AU);
     float yAxis;
     void timerCallback();
@@ -183,59 +183,66 @@ class StandaloneFileDialogue : public DocumentWindow
 {
 public:
 //container for file combo selector
-	class MainComponent : public Component,
-						  public ComboBox::Listener,
-						  public ActionBroadcaster
-	{
-	public:
-	ScopedPointer<ComboBox> combo;
-		MainComponent(){
-		addAndMakeVisible(combo = new ComboBox());
-		combo->setText("Please select a .csd file");
-		combo->addListener(this);
-		}
-	void resized(){
-		combo->setBounds(5, 5, 240, 20);
-		}
+    class MainComponent : public Component,
+        public ComboBox::Listener,
+        public ActionBroadcaster
+    {
+    public:
+        ScopedPointer<ComboBox> combo;
+        MainComponent()
+        {
+            addAndMakeVisible(combo = new ComboBox());
+            combo->setText("Please select a .csd file");
+            combo->addListener(this);
+        }
+        void resized()
+        {
+            combo->setBounds(5, 5, 240, 20);
+        }
 
-	void comboBoxChanged (ComboBox *combo){
-	sendActionMessage("FileChooserDialog:"+String(combo->getSelectedId()));
-	}
+        void comboBoxChanged (ComboBox *combo)
+        {
+            sendActionMessage("FileChooserDialog:"+String(combo->getSelectedId()));
+        }
 
-	void paint(Graphics &g){
-		g.fillAll(Colours::black);
-		}
-	};
+        void paint(Graphics &g)
+        {
+            g.fillAll(Colours::black);
+        }
+    };
 
-	ScopedPointer<MainComponent> mainComponent;
-	Array<File> cabbageFiles;
-	StandaloneFileDialogue(String title, Colour bgcolour): 
-			DocumentWindow(title, bgcolour, DocumentWindow::allButtons, true)
-			{
-				centreWithSize(250, 30);
-				setResizeLimits(250, 30, 32768, 32768);
-				mainComponent = new MainComponent();
-				mainComponent->setBounds(0, 0, 250, 30);
-				setAlwaysOnTop(true);
-				this->setTitleBarHeight(20);
-				setContentOwned(mainComponent, true);	
-			}
+    ScopedPointer<MainComponent> mainComponent;
+    Array<File> cabbageFiles;
+    StandaloneFileDialogue(String title, Colour bgcolour):
+        DocumentWindow(title, bgcolour, DocumentWindow::allButtons, true)
+    {
+        centreWithSize(250, 30);
+        setResizeLimits(250, 30, 32768, 32768);
+        mainComponent = new MainComponent();
+        mainComponent->setBounds(0, 0, 250, 30);
+        setAlwaysOnTop(true);
+        this->setTitleBarHeight(20);
+        setContentOwned(mainComponent, true);
+    }
 
-			void addItemsToCombo(Array<File> files){
-				cabbageFiles = files;
-				for(int i=0;i<files.size();i++)
-					mainComponent->combo->addItem(files[i].getFileName(), i+1);
-			}
+    void addItemsToCombo(Array<File> files)
+    {
+        cabbageFiles = files;
+        for(int i=0; i<files.size(); i++)
+            mainComponent->combo->addItem(files[i].getFileName(), i+1);
+    }
 
-			void setCurrentFile(String file){
-				for(int i=0;i<cabbageFiles.size();i++)
-				if(cabbageFiles[i].getFileName()==file)
-					mainComponent->combo->setSelectedItemIndex(i+1);
-			}
+    void setCurrentFile(String file)
+    {
+        for(int i=0; i<cabbageFiles.size(); i++)
+            if(cabbageFiles[i].getFileName()==file)
+                mainComponent->combo->setSelectedItemIndex(i+1);
+    }
 
-			void closeButtonPressed(){
-				setVisible(false);
-			}
+    void closeButtonPressed()
+    {
+        setVisible(false);
+    }
 
 
 };

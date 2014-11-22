@@ -191,7 +191,7 @@ void Soundfiler::paint (Graphics& g)
 {
     g.fillAll (Colours::black);
     g.setColour (colour);
-	Logger::writeToLog(String(thumbnail->getTotalLength()));
+    Logger::writeToLog(String(thumbnail->getTotalLength()));
     if (thumbnail->getTotalLength() != 0.0)
     {
         //if(GEN01 then draw thumbnail)

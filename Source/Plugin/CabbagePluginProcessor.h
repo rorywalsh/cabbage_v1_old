@@ -27,19 +27,19 @@
 #include "../XYPadAutomation.h"
 #include "../CabbageMessageSystem.h"
 #include "../Soundfiler.h"
-#include "CabbageGenericAudioProcessorEditor.h" 
+#include "CabbageGenericAudioProcessorEditor.h"
 #include "../CabbageLookAndFeel.h"
 
 #include "../NiallsSocketLib/UDPSocket.h"
-#include "../NiallsOSCLib/OSCBundle.h" 
-#include "../NiallsOSCLib/OSCMessage.h" 
-#include "../NiallsOSCLib/OSCTimeTag.h" 
+#include "../NiallsOSCLib/OSCBundle.h"
+#include "../NiallsOSCLib/OSCMessage.h"
+#include "../NiallsOSCLib/OSCTimeTag.h"
 
 #ifndef Cabbage_No_Csound
 #ifdef AndroidBuild
-    #include "AndroidCsound.hpp"
+#include "AndroidCsound.hpp"
 #else
-    #include <csound.hpp>
+#include <csound.hpp>
 #endif
 
 #include "csdl.h"
@@ -52,9 +52,9 @@
 //#endif
 
 #ifdef Cabbage64Bit
-    #define CABBAGE_VERSION "Cabbage(64bit) v0.5.14 Alpha"
+#define CABBAGE_VERSION "Cabbage(64bit) v0.5.14 Alpha"
 #else
-    #define CABBAGE_VERSION "Cabbage(32bit) v0.5.14 Alpha"
+#define CABBAGE_VERSION "Cabbage(32bit) v0.5.14 Alpha"
 #endif
 
 #define AUDIO_PLUGIN 1
@@ -79,22 +79,23 @@ class OscThread;
 class OscThread : public Thread, public ChangeBroadcaster
 {
 private:
-	///	The socket we're sending our data through.
-	UDPSocket sock;
-	///	Bundle sent when the user drags an xy pad.
-	OSC::Bundle bundle;
-	CabbageMessageQueue messageQue;
-	StringArray channels;
+    ///	The socket we're sending our data through.
+    UDPSocket sock;
+    ///	Bundle sent when the user drags an xy pad.
+    OSC::Bundle bundle;
+    CabbageMessageQueue messageQue;
+    StringArray channels;
 public:
     OscThread();
-    ~OscThread(){}
-	CabbageMessageQueue getMessages(){
-		return messageQue;
-	}
-	void sendOSC(String message, float value);
-	void setupSocket(const String address, int port);
-	void setCsoundChannels(StringArray channels);
-	void flushOSCMessages();
+    ~OscThread() {}
+    CabbageMessageQueue getMessages()
+    {
+        return messageQue;
+    }
+    void sendOSC(String message, float value);
+    void setupSocket(const String address, int port);
+    void setCsoundChannels(StringArray channels);
+    void flushOSCMessages();
     void run();
 };
 //==============================================================================
@@ -125,11 +126,11 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     bool updateTable;
     Array<int> tableNumbers;
     AudioPlayHead::CurrentPositionInfo hostInfo;
-	
-	StringArray oscChannelIdentifiers;
-	NamedValueSet oscChannelValues;
-	String oscAddress;
-	int oscPort;
+
+    StringArray oscChannelIdentifiers;
+    NamedValueSet oscChannelValues;
+    String oscAddress;
+    int oscPort;
 
     ScopedPointer<FileLogger> fileLogger;
     bool createLog;
@@ -153,7 +154,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 #if !defined(AndroidBuild)
     ScopedPointer<Csound> csound;                           //Csound instance
 #else
-	ScopedPointer<AndroidCsound> csound; 
+    ScopedPointer<AndroidCsound> csound;
 #endif
     MYFLT *CSspin, *CSspout;        //Csound audio IO pointers
     int csndIndex;                          //Csound sample counter
@@ -215,7 +216,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     void updateGUIControlsKsmps(int speed);
     int guiRefreshRate;
 #ifdef Cabbage_No_Csound
-	std::vector<float> temp;
+    std::vector<float> temp;
 #else
     std::vector<MYFLT> temp;
 #endif
@@ -315,7 +316,7 @@ public:
     const Array<double, CriticalSection> getTable(int tableNum);
     const Array<float, CriticalSection> getTableFloats(int tableNum);
     void createGUI(String source, bool refresh);
-	int checkTable(int tableNum);
+    int checkTable(int tableNum);
     MidiKeyboardState keyboardState;
     //midiBuffers
     MidiBuffer midiBuffer;
@@ -328,7 +329,7 @@ public:
     CabbageMessageQueue messageQueue;
     StringArray scoreEvents;
     int averageSampleIndex;
-	bool stopProcessing;
+    bool stopProcessing;
     float outputNo1;
     int pluginType;
     float automationAmp;

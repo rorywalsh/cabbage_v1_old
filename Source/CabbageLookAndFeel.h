@@ -37,19 +37,19 @@ class CabbageLookAndFeel	:	public LookAndFeel_V2
 public:
     CabbageLookAndFeel();
     ~CabbageLookAndFeel();
-	Image getSVGImageFor(String path, String type, AffineTransform affine);
+    Image getSVGImageFor(String path, String type, AffineTransform affine);
 
     Image drawRotaryImage(int diameter, const Colour sliderColour, const Colour trackerCol, float sliderPosProportional,
-								float zeroPosProportional,
-								bool useTrackerFill,
-								float markerOpacity,
-								String svgPath,
-								float trackerThickness);
+                          float zeroPosProportional,
+                          bool useTrackerFill,
+                          float markerOpacity,
+                          String svgPath,
+                          float trackerThickness);
     Image drawLinearBgImage (float width, float height, float sliderPosProportional, float zeroPosProportional,
-								bool useTrackerFill,
-								bool isVertical,
-								const Colour trackerCol,
-								String svgPath);
+                             bool useTrackerFill,
+                             bool isVertical,
+                             const Colour trackerCol,
+                             String svgPath);
 
     void drawTableHeaderColumn (Graphics& g, const String& columnName, int /*columnId*/,
                                 int width, int height,
@@ -60,25 +60,25 @@ public:
     static Image drawToggleImage (float width, float height, bool isToggleOn, Colour colour, bool isRect, String svgPath);
     Image drawTextButtonImage (float width, float height, bool isButtonDown, Colour colour, String svgPath);
     void drawRotarySlider (Graphics &g, int x, int y, int width, int height, float sliderPosProportional,
-                                   float rotaryStartAngle,
-                                   float rotaryEndAngle,
-                                   Slider &slider);
+                           float rotaryStartAngle,
+                           float rotaryEndAngle,
+                           Slider &slider);
     void drawLinearSliderBackground (Graphics &g, int x, int y, int width, int height,
-            float sliderPos,
-            float minSliderPos,
-            float maxSliderPos,
-            const Slider::SliderStyle style,
-            Slider &slider);
+                                     float sliderPos,
+                                     float minSliderPos,
+                                     float maxSliderPos,
+                                     const Slider::SliderStyle style,
+                                     Slider &slider);
     void drawLinearSliderThumb (Graphics &g, int x, int y, int width, int height, float sliderPos,
-                                        float minSliderPos,
-                                        float maxSliderPos,
-                                        const Slider::SliderStyle style,
-                                        Slider &slider);
-	void drawSphericalThumb (Graphics& g, const float x, const float y,
-                                      const float w, const float h, const Colour& colour,
-                                      const float outlineThickness);
-	class SliderLabelComp;
-	Label* createSliderTextBox (Slider&) override;
+                                float minSliderPos,
+                                float maxSliderPos,
+                                const Slider::SliderStyle style,
+                                Slider &slider);
+    void drawSphericalThumb (Graphics& g, const float x, const float y,
+                             const float w, const float h, const Colour& colour,
+                             const float outlineThickness);
+    class SliderLabelComp;
+    Label* createSliderTextBox (Slider&) override;
     void drawButtonBackground (Graphics&, Button&, const Colour&, bool, bool);
     void drawButtonText (Graphics &g, TextButton &button, bool isMouseOverButton, bool isButtonDown);
 
@@ -86,48 +86,51 @@ public:
     void drawComboBox (Graphics&, int, int, bool, int, int, int, int, ComboBox&);
     Font getComboBoxFont (ComboBox& box);
     Label* createComboBoxTextBox (ComboBox&);
-	void drawBubble (Graphics&, BubbleComponent&, const Point<float>& tip, const Rectangle<float>& body) override;
+    void drawBubble (Graphics&, BubbleComponent&, const Point<float>& tip, const Rectangle<float>& body) override;
     Font getSliderPopupFont (Slider&) override;
     int getSliderPopupPlacement (Slider&) override;
-	
+
     void positionComboBoxText (ComboBox& box, Label& label);
     void drawToggleButton (Graphics &g, ToggleButton &button, bool isMouseOverButton, bool isButtonDown);
     void drawTextEditorOutline (Graphics &g, int width, int height, TextEditor &textEditor);
     void fillTextEditorBackground (Graphics &g, int width, int height, TextEditor &textEditor);
     void drawGroupComponentOutline (Graphics &g, int w, int h, const String &text, const Justification &position,
-                                            GroupComponent &group);
+                                    GroupComponent &group);
     int getDefaultScrollbarWidth();
-	int getMinimumScrollbarThumbSize(){return 15;}
+    int getMinimumScrollbarThumbSize()
+    {
+        return 15;
+    }
     void drawScrollbar (Graphics &g, ScrollBar &scrollbar, int x, int y, int width, int height,
-                                bool isScrollbarVertical,
-                                int thumbStartPosition,
-                                int thumbSize,
-                                bool isMouseOver,
-                                bool isMouseDown);
+                        bool isScrollbarVertical,
+                        int thumbStartPosition,
+                        int thumbSize,
+                        bool isMouseOver,
+                        bool isMouseDown);
     void drawScrollbarButton (Graphics &g, ScrollBar &scrollbar, int width, int height, int buttonDirection,
-                                      bool isScrollbarVertical,
-                                      bool isMouseOverButton,
-                                      bool isButtonDown);
+                              bool isScrollbarVertical,
+                              bool isMouseOverButton,
+                              bool isButtonDown);
 
     void setDefaultSansSerifTypefaceName (const String &newName);
     void drawMenuBarBackground(Graphics &g, int width, int height, bool isMouseOverBar, MenuBarComponent &menuBar);
     void drawMenuBarItem(Graphics & g, int width, int height, int itemIndex,
-                                 const String &itemText, bool isMouseOverItem,
-                                 bool isMenuOpen, bool isMouseOverBar,
-                                 MenuBarComponent &menuBar);
+                         const String &itemText, bool isMouseOverItem,
+                         bool isMenuOpen, bool isMouseOverBar,
+                         MenuBarComponent &menuBar);
 
     void drawPopupMenuBackground(Graphics &g, int width, int height);
     Image drawCheckMark();
     void drawPopupMenuItem (Graphics& g, const Rectangle<int>& area,
-                                    const bool isSeparator, const bool isActive,
-                                    const bool isHighlighted, const bool isTicked,
-                                    const bool hasSubMenu, const String& text,
-                                    const String& shortcutKeyText,
-                                    const Drawable* icon, const Colour* const textColourToUse);
+                            const bool isSeparator, const bool isActive,
+                            const bool isHighlighted, const bool isTicked,
+                            const bool hasSubMenu, const String& text,
+                            const String& shortcutKeyText,
+                            const Drawable* icon, const Colour* const textColourToUse);
 
     void drawDocumentWindowTitleBar (DocumentWindow &window, Graphics &g, int w, int h, int titleSpaceX, int titleSpaceW,
-            const Image *icon,
-            bool drawTitleTextOnLeft);
+                                     const Image *icon,
+                                     bool drawTitleTextOnLeft);
     Image drawWindowButtonNormal(int buttonType);
     Image drawWindowButtonIsOver(int buttonType);
     Button* createDocumentWindowButton (int buttonType);
@@ -177,10 +180,11 @@ public:
                                           bool isMouseOver,
                                           bool isMouseDragging);
 
-	int getDefaultMenuBarHeight(){
-		return 18;
-	}
-										  
+    int getDefaultMenuBarHeight()
+    {
+        return 18;
+    }
+
     juce_UseDebuggingNewOperator
 
 

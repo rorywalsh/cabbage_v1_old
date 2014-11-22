@@ -43,8 +43,8 @@ public:
         add("tablecolours");
         add("bounds");
         add("fontcolour");
-		add("fontcolour:1");
-		add("fontcolour:0");
+        add("fontcolour:1");
+        add("fontcolour:0");
         add("size");
         add("items");
         add("pos");
@@ -57,7 +57,7 @@ public:
         add("midictrl");
         add("stack");
         add("linethickness");
-		add("trackerthickness");
+        add("trackerthickness");
         add("populate");
         add("range");
         add("amprange");
@@ -67,8 +67,8 @@ public:
         add("channeltype");
         add("channels");
         add("channel");
-		add("channelarray");	
-		add("identchannelarray");		
+        add("channelarray");
+        add("identchannelarray");
         add("name");
         add("textbox");
         add("caption");
@@ -87,7 +87,7 @@ public:
         add("fill");
         add("logger");
         add("file");
-		add("svgpath");
+        add("svgpath");
         add("outlinecolour");
         add("master");
         add("shape");
@@ -108,16 +108,16 @@ public:
         add("identchannel");
         add("visible");
         add("scrubberposition");
-		add("scroll");
+        add("scroll");
         add("zoom");
-		add("samplerange");
-		add("scrollbars");
-		add("socket");
+        add("samplerange");
+        add("scrollbars");
+        add("socket");
 
         add("colour");
-		add("colour:0");
-		add("colour:1");
-		add("text");
+        add("colour:0");
+        add("colour:1");
+        add("text");
     }
     ~IdentArray()
     {
@@ -273,7 +273,7 @@ static const String csoundoutput = "csoundoutput";
 class CabbageGUIClass : public CabbageUtils
 {
     double width, height, top, left;
-	/*, isRect, min, max, minX, minY, maxX, tabbed, maxY, comboRange, fftSize, overlapSize, frameSize,
+    /*, isRect, min, max, minX, minY, maxX, tabbed, maxY, comboRange, fftSize, overlapSize, frameSize,
            noOfMenus, onoff, midiChan, midiCtrl, sliderRange, xypadRangeY, xypadRangeX, noSteps, noPatterns, pvsChannel, alpha,
            line, anchor, linkTo, scaleX, scaleY, value, valueX, valueY, maxItems, sliderIncr, sliderSkew, decimalPlaces, rCtrls, lineIsVertical;
     StringArray items, onoffcaptions, key, channels, snapshotData, colours;*/
@@ -348,8 +348,8 @@ public:
 
     int getIntArrayPropValue(Identifier prop, int index);
     Array<int> getIntArrayProp(Identifier prop);
-	
-	var getVarArrayProp(Identifier prop);
+
+    var getVarArrayProp(Identifier prop);
 
     float getFloatArrayPropValue(Identifier prop, int index);
     Array<float> getFloatArrayProp(Identifier prop);

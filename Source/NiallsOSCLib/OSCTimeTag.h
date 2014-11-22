@@ -31,67 +31,73 @@ namespace OSC
 ///	Class representing an OSC TimeTag, used by Bundle.
 class TimeTag
 {
-  public:
-	///	Copy constructor.
-	/*!
-		Necessary?
-	 */
-	TimeTag(const TimeTag& copy);
-	///	Default Constructor.
-	/*!
-		Initialises the time to the 'immediately' - i.e. 0x0000000000000001.
-	 */
-	TimeTag();
-	///	Constructor to initialise the time to a particular time.
-	TimeTag(const unsigned long seconds, const unsigned long fraction);
-	///	Constructor to initialise the time from a char block of 8 bytes.
-	/*!
-		Note: the data passed in must be at least 8 bytes long!
+public:
+    ///	Copy constructor.
+    /*!
+    	Necessary?
+     */
+    TimeTag(const TimeTag& copy);
+    ///	Default Constructor.
+    /*!
+    	Initialises the time to the 'immediately' - i.e. 0x0000000000000001.
+     */
+    TimeTag();
+    ///	Constructor to initialise the time to a particular time.
+    TimeTag(const unsigned long seconds, const unsigned long fraction);
+    ///	Constructor to initialise the time from a char block of 8 bytes.
+    /*!
+    	Note: the data passed in must be at least 8 bytes long!
 
-		This is most useful when you've just received a block of char data and
-		need to determine it's time tag.
-	 */
-	TimeTag(char *data);
+    	This is most useful when you've just received a block of char data and
+    	need to determine it's time tag.
+     */
+    TimeTag(char *data);
 
-	///	Returns the seconds value for this time tag.
-	unsigned long getSeconds() const {return seconds;};
-	///	Returnes the fractional part for this time tag.
-	unsigned long getFraction() const {return fraction;};
-	///	Returns the time represented as a string.
-	std::string getTimeAsText();
+    ///	Returns the seconds value for this time tag.
+    unsigned long getSeconds() const
+    {
+        return seconds;
+    };
+    ///	Returnes the fractional part for this time tag.
+    unsigned long getFraction() const
+    {
+        return fraction;
+    };
+    ///	Returns the time represented as a string.
+    std::string getTimeAsText();
 
-	///	Sets the seconds value for this time tag.
-	void setSeconds(const unsigned long val);
-	///	Sets the fractional value for this time tag.
-	void setFraction(const unsigned long val);
-	///	Sets the seconds and fractional values for this time tag.
-	void setTime(const unsigned long seconds, const unsigned long fraction);
+    ///	Sets the seconds value for this time tag.
+    void setSeconds(const unsigned long val);
+    ///	Sets the fractional value for this time tag.
+    void setFraction(const unsigned long val);
+    ///	Sets the seconds and fractional values for this time tag.
+    void setTime(const unsigned long seconds, const unsigned long fraction);
 
-	///	Static method to create a new TimeTag with the current time.
-	static TimeTag getCurrentTime();
+    ///	Static method to create a new TimeTag with the current time.
+    static TimeTag getCurrentTime();
 
-	///	So we can test TimeTags against each other.
-	bool operator==(const TimeTag& other);
-	///	So we can test TimeTags against each other.
-	bool operator!=(const TimeTag& other);
-	///	So we can test TimeTags against each other.
-	bool operator<(const TimeTag& other);
-	///	So we can test TimeTags against each other.
-	bool operator>(const TimeTag& other);
-	///	So we can test TimeTags against each other.
-	bool operator<=(const TimeTag& other);
-	///	So we can test TimeTags against each other.
-	bool operator>=(const TimeTag& other);
+    ///	So we can test TimeTags against each other.
+    bool operator==(const TimeTag& other);
+    ///	So we can test TimeTags against each other.
+    bool operator!=(const TimeTag& other);
+    ///	So we can test TimeTags against each other.
+    bool operator<(const TimeTag& other);
+    ///	So we can test TimeTags against each other.
+    bool operator>(const TimeTag& other);
+    ///	So we can test TimeTags against each other.
+    bool operator<=(const TimeTag& other);
+    ///	So we can test TimeTags against each other.
+    bool operator>=(const TimeTag& other);
 
-	///	So we can assign one TimeTag's values to another.
-	TimeTag operator=(const TimeTag& other);
+    ///	So we can assign one TimeTag's values to another.
+    TimeTag operator=(const TimeTag& other);
 
-	juce_UseDebuggingNewOperator
-  private:
-	///	The seconds value for this time tag.
-	unsigned long seconds;
-	///	The fractional part of this time tag.
-	unsigned long fraction;
+    juce_UseDebuggingNewOperator
+private:
+    ///	The seconds value for this time tag.
+    unsigned long seconds;
+    ///	The fractional part of this time tag.
+    unsigned long fraction;
 };
 
 }

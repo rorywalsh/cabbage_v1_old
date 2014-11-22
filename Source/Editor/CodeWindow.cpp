@@ -86,11 +86,11 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
     //else csound->Message("Could not open opcodes.txt file, parameter display disabled..");
 
 
-		bool showConsole = (appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1 ? true : false);
-		if(showConsole == false)
-			splitWindow->SetSplitBarPosition(this->getHeight());
-		else
-            splitWindow->SetSplitBarPosition(this->getHeight()-(this->getHeight()/4));
+    bool showConsole = (appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1 ? true : false);
+    if(showConsole == false)
+        splitWindow->SetSplitBarPosition(this->getHeight());
+    else
+        splitWindow->SetSplitBarPosition(this->getHeight()-(this->getHeight()/4));
 
     setContentNonOwned(splitWindow, false);
 
@@ -187,15 +187,15 @@ void CodeWindow::setFontSize(String zoom)
 #endif
 
     if(zoom==String("in"))
-	{
+    {
         textEditor->editor[textEditor->currentEditor]->setFont(Font(font, ++fontSize, 1));
-		CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
-	}
+        CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
+    }
     else
-	{
+    {
         textEditor->editor[textEditor->currentEditor]->setFont(Font(font, --fontSize, 1));
-		CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
-	}
+        CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
+    }
 }
 
 //==============================================================================
@@ -358,7 +358,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
     case CommandIDs::viewCsoundOutput:
         result.setInfo (String("View Csound Output"), String("View Csound Output"), CommandCategories::help, 0);
         result.addDefaultKeypress ('p', ModifierKeys::commandModifier);
-		bool isTicked = (appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1 ? true : false);
+        bool isTicked = (appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1 ? true : false);
         result.setTicked(isTicked);
         break;
     }
@@ -670,10 +670,10 @@ bool CodeWindow::perform (const InvocationInfo& info)
         else
         {
             splitWindow->SetSplitBarPosition(this->getHeight()-(this->getHeight()/4));
-        //cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
+            //cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
 #ifdef BUILD_DEBUGGER
-        splitBottomWindow->SetSplitBarPosition(getWidth()/2);
-#endif			
+            splitBottomWindow->SetSplitBarPosition(getWidth()/2);
+#endif
             appProperties->getUserSettings()->setValue("ShowEditorConsole", "1");
         }
     }
@@ -807,8 +807,8 @@ void CodeWindow::setEditorColourScheme(String theme)
 //==============================================================================
 void CodeWindow::actionListenerCallback(const String &message)
 {
-	if(message=="Launch help")
-		toggleManuals("Csound");
+    if(message=="Launch help")
+        toggleManuals("Csound");
     sendActionMessage(message);
 }
 //==============================================================================

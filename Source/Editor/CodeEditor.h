@@ -109,15 +109,15 @@ public:
     }
 
     bool columnEditMode;
-	void mouseWheelMove (const MouseEvent&, const MouseWheelDetails&);
-	
-	
+    void mouseWheelMove (const MouseEvent&, const MouseWheelDetails&);
+
+
 private:
     int xPos, yPos, prevXpos;
     CodeDocument::Position pos1, pos2;
     Colour selectedColour;
-	int fontSize;
-	String font;
+    int fontSize;
+    String font;
     String type;
     StringArray opcodeStrings;
     StringArray opcodeTokens;

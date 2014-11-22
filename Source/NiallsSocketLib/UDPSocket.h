@@ -28,66 +28,66 @@
 ///	Class to handle UDP network communication.
 class UDPSocket
 {
-  public:
-	///	Default constructor.
-	/*!
-		This version is intended for keeping a socket open for a fairly long
-		time.
-	 */
-	UDPSocket();
-	///	Constructor.
-	/*!
-		\param address The address to send data to.
-		\param port The port to send data from/to.
+public:
+    ///	Default constructor.
+    /*!
+    	This version is intended for keeping a socket open for a fairly long
+    	time.
+     */
+    UDPSocket();
+    ///	Constructor.
+    /*!
+    	\param address The address to send data to.
+    	\param port The port to send data from/to.
 
-		This version is intended for times when you just want to quickly open a
-		socket and send something (i.e. in a method that doesn't get called
-		often).
-	 */
-	UDPSocket(const std::string& address, const short port);
-	///	Destructor.
-	~UDPSocket();
+    	This version is intended for times when you just want to quickly open a
+    	socket and send something (i.e. in a method that doesn't get called
+    	often).
+     */
+    UDPSocket(const std::string& address, const short port);
+    ///	Destructor.
+    ~UDPSocket();
 
-	///	Sets the address to send data to.
-	void setAddress(const std::string& address);
-	///	Sets the port to send data from/to.
-	void setPort(const short port);
-	///	Binds sock to the currently-set port.
-	/*!
-		You must call this before you call getData().
-	 */
-	void bindSocket();
+    ///	Sets the address to send data to.
+    void setAddress(const std::string& address);
+    ///	Sets the port to send data from/to.
+    void setPort(const short port);
+    ///	Binds sock to the currently-set port.
+    /*!
+    	You must call this before you call getData().
+     */
+    void bindSocket();
 
-	///	Sends data to previously-set address/port.
-	/*!
-		\param data The data to send (a contiguous block of bytes).
-		\param size The size of the data to send.
-	 */
-	void sendData(char *data, const long size);
+    ///	Sends data to previously-set address/port.
+    /*!
+    	\param data The data to send (a contiguous block of bytes).
+    	\param size The size of the data to send.
+     */
+    void sendData(char *data, const long size);
 
-	///	Returns a data packet sent to us.
-	/*!
-		On return, size will be filled with the size of the packet, or -1 if it
-		failed.
-	 */
-	char *getData(long& size);
+    ///	Returns a data packet sent to us.
+    /*!
+    	On return, size will be filled with the size of the packet, or -1 if it
+    	failed.
+     */
+    char *getData(long& size);
 
     juce_UseDebuggingNewOperator
-  private:
-	///	The address to send data to.
-	std::string address;
-	///	The port to send data from/to.
-	short port;
-	///	Our socket.
-	int sock;
+private:
+    ///	The address to send data to.
+    std::string address;
+    ///	The port to send data from/to.
+    short port;
+    ///	Our socket.
+    int sock;
 
-	enum
-	{
-		MaxBufferSize = 16384 //16kB should be enough?
-	};
+    enum
+    {
+        MaxBufferSize = 16384 //16kB should be enough?
+    };
 
-	///	Buffer to receive any data sent to us.
-	char receiveBuffer[MaxBufferSize];
+    ///	Buffer to receive any data sent to us.
+    char receiveBuffer[MaxBufferSize];
 };
 
 //------------------------------------------------------------------------------
@@ -98,26 +98,26 @@ class UDPSocket
  */
 class SocketSetup
 {
-  public:
-	///	Returns the single active instance of the class.
-	/*!
-		If the class is not yet instantiated, constructs it.  Since the actual
-		setup is done in the constructor, the returned pointer probably isn't
-		going to be any use...
-	 */
-	static SocketSetup *getInstance();
+public:
+    ///	Returns the single active instance of the class.
+    /*!
+    	If the class is not yet instantiated, constructs it.  Since the actual
+    	setup is done in the constructor, the returned pointer probably isn't
+    	going to be any use...
+     */
+    static SocketSetup *getInstance();
 
-	///	Destructor.
-	/*!
-		Note: always remember to delete the singleton when you're done with it.
-	 */
-	~SocketSetup();
-  private:
-	///	Constructor.
-	SocketSetup();
+    ///	Destructor.
+    /*!
+    	Note: always remember to delete the singleton when you're done with it.
+     */
+    ~SocketSetup();
+private:
+    ///	Constructor.
+    SocketSetup();
 
-	///	Pointer to the single instance of this class.
-	static SocketSetup *instance;
+    ///	Pointer to the single instance of this class.
+    static SocketSetup *instance;
 };
 
 #endif

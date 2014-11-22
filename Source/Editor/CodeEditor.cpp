@@ -182,14 +182,14 @@ void CsoundCodeEditor::paint(Graphics& g)
             {
                 g.setColour(Colours::black);
                 g.drawFittedText(String(j+1), 0, (editor[currentEditor]->getLineHeight() * index)+20, 33, editor[currentEditor]->getLineHeight(),
-                           juce::Justification::centredRight, false);
+                                 juce::Justification::centredRight, false);
                 g.setColour(Colours::white);
                 highlightedLine = false;
             }
             else if(highlightedLine == false)
             {
                 g.drawFittedText(String(j+1), 0, (editor[currentEditor]->getLineHeight() * index)+20, 33, editor[currentEditor]->getLineHeight(),
-                           juce::Justification::centredRight, false);
+                                 juce::Justification::centredRight, false);
             }
 
             index += 1;
@@ -510,8 +510,8 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
         sendActionMessage(message);
         repaint();
     }
-	else if(message=="Launch help")
-		sendActionMessage("Launch help");
+    else if(message=="Launch help")
+        sendActionMessage("Launch help");
 
     if(helpComp->isVisible())
         helpComp->setText(editor[currentEditor]->getOpcodeToken(2).removeCharacters("\""),
@@ -526,15 +526,15 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
 CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument &document, CodeTokeniser *codeTokeniser)
     : CodeEditorComponent(document, codeTokeniser), type(type), columnEditMode(false), fontSize(15)
 {
-	
+
 #if defined(WIN32)
     font = "Consolas";
 #elif defined(MACOSX)
-	font = "Courier New";
+    font = "Courier New";
 #else
-	font = "Droid Sans Mono";
+    font = "Droid Sans Mono";
 #endif
-	
+
     document.addListener(this);
     setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(35, 35, 35));
     setColour(CodeEditorComponent::lineNumberBackgroundId, CabbageUtils::getDarkerBackgroundSkin());
@@ -547,10 +547,10 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
     //setColour(CodeEditorComponent::highlightColourId, Colours::yellow);
     setColour(CodeEditorComponent::lineNumberTextId, Colours::whitesmoke);
     setLineNumbersShown(false);
-	
-	fontSize = (CabbageUtils::getPreference(appProperties, "FontSize")>7 ? 
-				CabbageUtils::getPreference(appProperties, "FontSize") : 13);
-	
+
+    fontSize = (CabbageUtils::getPreference(appProperties, "FontSize")>7 ?
+                CabbageUtils::getPreference(appProperties, "FontSize") : 13);
+
 #if defined(WIN32)
     setFont(Font(String("Consolas"), fontSize, 1));
 #elif defined(MACOSX)
@@ -627,23 +627,23 @@ void CsoundCodeEditorComponenet::editorHasScrolled()
 void CsoundCodeEditorComponenet::mouseWheelMove (const MouseEvent& e, const MouseWheelDetails& mouse)
 {
 
-	if(e.mods.isCommandDown() && mouse.deltaY>0)
-	{
-		setFont(Font(font, (fontSize<100 ? ++fontSize : 100), 1));
-		CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
-	}	
-	else if(e.mods.isCommandDown() && mouse.deltaY<0) 
-	{
-		setFont(Font(font, (fontSize>8 ? --fontSize : 8), 1));
-		CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
-	}	
-	else
-	{
-		if(mouse.deltaY<0)
-		scrollBy(10);
-		else
-			scrollBy(-10);
-	}
+    if(e.mods.isCommandDown() && mouse.deltaY>0)
+    {
+        setFont(Font(font, (fontSize<100 ? ++fontSize : 100), 1));
+        CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
+    }
+    else if(e.mods.isCommandDown() && mouse.deltaY<0)
+    {
+        setFont(Font(font, (fontSize>8 ? --fontSize : 8), 1));
+        CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
+    }
+    else
+    {
+        if(mouse.deltaY<0)
+            scrollBy(10);
+        else
+            scrollBy(-10);
+    }
 }
 //==============================================================================
 void CsoundCodeEditorComponenet::insertText(String text)
@@ -727,8 +727,8 @@ void CsoundCodeEditorComponenet::addPopupMenuItems (PopupMenu &menuToAddTo, cons
     menuToAddTo.addItem(3, "Paste");
     menuToAddTo.addItem(4, "Select All");
     menuToAddTo.addSeparator();
-	menuToAddTo.addItem(5, "Opcode Help");
-	menuToAddTo.addSeparator();
+    menuToAddTo.addItem(5, "Opcode Help");
+    menuToAddTo.addSeparator();
     menuToAddTo.addItem(11, "Add instrument breakpoint");
     menuToAddTo.addItem(12, "Remove instrument breakpoint");
     menuToAddTo.addSeparator();
@@ -758,18 +758,18 @@ Rectangle<int> CsoundCodeEditorComponenet::getCaretPoisition()
 //==============================================================================
 void CsoundCodeEditorComponenet::performPopupMenuAction (int menuItemID)
 {
-	if(menuItemID==1)
-		this->cutToClipboard();
-	else if(menuItemID==2)
-		this->copyToClipboard();
-	else if(menuItemID==3)
-		this->pasteFromClipboard();
-	else if(menuItemID==4)
-		this->selectAll();
-	else if(menuItemID==5)
-		sendActionMessage("Launch help");
+    if(menuItemID==1)
+        this->cutToClipboard();
+    else if(menuItemID==2)
+        this->copyToClipboard();
+    else if(menuItemID==3)
+        this->pasteFromClipboard();
+    else if(menuItemID==4)
+        this->selectAll();
+    else if(menuItemID==5)
+        sendActionMessage("Launch help");
 
-	
+
     else if(menuItemID==1000)
     {
         pos1 = getDocument().findWordBreakBefore(getCaretPos());
@@ -785,7 +785,7 @@ void CsoundCodeEditorComponenet::performPopupMenuAction (int menuItemID)
     {
         addToRepository();
     }
-	
+
     //insert from repo
     else if(menuItemID>=100)
     {

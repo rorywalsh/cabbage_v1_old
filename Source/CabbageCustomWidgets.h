@@ -83,17 +83,17 @@ public:
         offX=offY=offWidth=offHeight=0;
         groupbox = new GroupComponent(String("groupbox_")+name);
         button = new TextButton(name);
-		button->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
+        button->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
         addAndMakeVisible(groupbox);
         addAndMakeVisible(button);
         groupbox->setVisible(false);
         groupbox->getProperties().set("groupLine", var(1));
         Logger::writeToLog(buttonText);
         button->setButtonText(buttonText);
-		
-		if(cAttr.getNumProp(CabbageIDs::radiogroup)!=0)
-			button->setRadioGroupId(cAttr.getNumProp(CabbageIDs::radiogroup));
-			
+
+        if(cAttr.getNumProp(CabbageIDs::radiogroup)!=0)
+            button->setRadioGroupId(cAttr.getNumProp(CabbageIDs::radiogroup));
+
         if(caption.length()>0)
         {
             offX=10;
@@ -110,7 +110,7 @@ public:
         button->setColour(TextButton::textColourOnId, Colour::fromString(onfontcolour));
         button->setColour(TextButton::buttonOnColourId, Colour::fromString(oncolour));
         button->setButtonText(cAttr.getStringArrayPropValue(CabbageIDs::text, cAttr.getNumProp(CabbageIDs::value)));
-		button->setToggleState((bool)cAttr.getNumProp(CabbageIDs::value), dontSendNotification);
+        button->setToggleState((bool)cAttr.getNumProp(CabbageIDs::value), dontSendNotification);
     }
     //---------------------------------------------
     ~CabbageButton()
@@ -172,96 +172,99 @@ class CabbageSlider : public Component,
     };
 
 
-    String name, text, caption, kind, colour, fontColour, trackerFill, channel;
+    String name, text, caption, kind, colour, fontColour, trackerFill, outlineColour, channel;
     int textBox, decPlaces;
-	double min, max;
-	ScopedPointer<Label> textLabel;
-	
+    double min, max;
+    ScopedPointer<Label> textLabel;
+
     float incr, skew, trackerThickness;
-	ScopedPointer<CabbageLookAndFeel> lookAndFeel;
+    ScopedPointer<CabbageLookAndFeel> lookAndFeel;
 public:
 
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<Slider> slider;
-	bool shouldDisplayPopup;
+    bool shouldDisplayPopup;
     //---- constructor -----
     CabbageSlider(CabbageGUIClass &cAttr) : plantX(-99), plantY(-99),
         name(cAttr.getStringProp(CabbageIDs::name)),
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         colour(cAttr.getStringProp(CabbageIDs::colour)),
         fontColour(cAttr.getStringProp(CabbageIDs::fontcolour)),
+        outlineColour(cAttr.getStringProp(CabbageIDs::outlinecolour)),
         sliderType(cAttr.getStringProp(CabbageIDs::kind)),
         compName(cAttr.getStringProp(CabbageIDs::caption)),
         cl(cAttr.getStringProp(CabbageIDs::colour)),
         tracker(cAttr.getStringProp(CabbageIDs::trackercolour)),
         decPlaces(cAttr.getNumProp(CabbageIDs::decimalplaces)),
         textBox(cAttr.getNumProp(CabbageIDs::textbox)),
-		trackerThickness(cAttr.getNumProp(CabbageIDs::trackerthickness)),
+        trackerThickness(cAttr.getNumProp(CabbageIDs::trackerthickness)),
         text(cAttr.getStringProp(CabbageIDs::text)),
-		channel(cAttr.getStringProp(CabbageIDs::channel)),
-		lookAndFeel(new CabbageLookAndFeel()),
-		shouldDisplayPopup(false),
-		textLabel(new Label())
-    {		
+        channel(cAttr.getStringProp(CabbageIDs::channel)),
+        lookAndFeel(new CabbageLookAndFeel()),
+        shouldDisplayPopup(false),
+        textLabel(new Label())
+    {
         setName(name);
-		
+
         offX=offY=offWidth=offHeight=0;
         groupbox = new GroupComponent(String("groupbox_")+name);
         slider = new Slider(text);
         if(textBox<1)
-		{
+        {
             slider->setTextBoxStyle (Slider::NoTextBox, true, 0, 0);
-			shouldDisplayPopup=true;
-		}
+            shouldDisplayPopup=true;
+        }
 
-		
-		
-		slider->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
+
+
+        slider->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
         slider->toFront(true);
-		slider->addMouseListener(this, false);
+        slider->addMouseListener(this, false);
 
-		//slider->setPopupDisplayEnabled (true, 0);
-		
-		slider->setColour(Slider::textBoxHighlightColourId, Colours::lime.withAlpha(.5f));
-        slider->setColour(Slider::rotarySliderFillColourId, Colour::fromString(cl));
+        //slider->setPopupDisplayEnabled (true, 0);
+
+        slider->setColour(Slider::textBoxHighlightColourId, Colours::lime.withAlpha(.5f));
+        //slider->setColour(Slider::rotarySliderFillColourId, Colours::red);
         slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
         slider->setColour(Slider::textBoxTextColourId, Colour::fromString(fontColour));
-		slider->setColour(Label::textColourId, Colour::fromString(fontColour));
-		slider->setColour(Label::backgroundColourId, CabbageUtils::getBackgroundSkin());
-		slider->setColour(TextEditor::textColourId, Colour::fromString(fontColour));
-		slider->setColour(TextEditor::backgroundColourId, CabbageUtils::getBackgroundSkin());
-        slider->setColour(Slider::trackColourId, Colour::fromString(tracker));	
-		slider->setColour(Label::outlineColourId, CabbageUtils::getBackgroundSkin());
-		
-		
-		slider->setLookAndFeel(lookAndFeel);
-		textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
+        slider->setColour(Label::textColourId, Colour::fromString(fontColour));
+        slider->setColour(Label::backgroundColourId, CabbageUtils::getBackgroundSkin());
+        slider->setColour(TextEditor::textColourId, Colour::fromString(fontColour));
+        slider->setColour(TextEditor::backgroundColourId, CabbageUtils::getBackgroundSkin());
+        slider->setColour(Slider::trackColourId, Colour::fromString(tracker));
+        slider->setColour(Label::outlineColourId, CabbageUtils::getBackgroundSkin());
+        slider->setColour(Slider::Slider::rotarySliderOutlineColourId, Colour::fromString(outlineColour));
+
+
+        slider->setLookAndFeel(lookAndFeel);
+        textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
         addAndMakeVisible(slider);
         addAndMakeVisible(groupbox);
-		addAndMakeVisible(textLabel);
+        addAndMakeVisible(textLabel);
         textLabel->setVisible(false);
-		groupbox->setVisible(false);
+        groupbox->setVisible(false);
         groupbox->getProperties().set("groupLine", var(1));
         groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontColour));
         groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
         slider->getProperties().set("decimalPlaces", decPlaces);
-		slider->getProperties().set("trackerThickness", trackerThickness);
-	
+        slider->getProperties().set("trackerThickness", trackerThickness);
+
         this->setWantsKeyboardFocus(false);
         resizeCount = 0;
 
         min = cAttr.getNumProp(CabbageIDs::min);
         max = cAttr.getNumProp(CabbageIDs::max);
-		if(min==max || min>max){
-			CabbageUtils::showMessage("Your min value is the same or greater than your max value.\nCabbage will now reduce your min value so that it falls into range", &getLookAndFeel());
-			min = max-.1;
-		}
+        if(min==max || min>max)
+        {
+            CabbageUtils::showMessage("Your min value is the same or greater than your max value.\nCabbage will now reduce your min value so that it falls into range", &getLookAndFeel());
+            min = max-.1;
+        }
         incr = cAttr.getNumProp(CabbageIDs::sliderincr);
         skew = cAttr.getNumProp(CabbageIDs::sliderskew);
         slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
         slider->setRange(min, max, cAttr.getNumProp(CabbageIDs::sliderincr));
         slider->setValue(cAttr.getNumProp(CabbageIDs::value));
-		slider->setDoubleClickReturnValue(true, cAttr.getNumProp(CabbageIDs::value));
+        slider->setDoubleClickReturnValue(true, cAttr.getNumProp(CabbageIDs::value));
     }//--- end of constructor ----
 
     //---------------------------------------------
@@ -269,39 +272,39 @@ public:
     {
     }
 
-	bool shouldDisplayPopupValue()
-	{
-		return shouldDisplayPopup;
-	}
-	
-	String getSliderType()
-	{
-		return sliderType;
-	}
+    bool shouldDisplayPopupValue()
+    {
+        return shouldDisplayPopup;
+    }
 
-	void mouseDrag(const MouseEvent& event)
-	{
-		if(shouldDisplayPopup)
-		sendChangeMessage();
-	}
+    String getSliderType()
+    {
+        return sliderType;
+    }
 
-	
-	void mouseMove (const MouseEvent &event)
-	{
-		if(shouldDisplayPopup)
-		sendChangeMessage();
-	}
-	
-	void mouseEnter (const MouseEvent &event)
-	{
-		if(shouldDisplayPopup)
-		sendChangeMessage();
-	}
+    void mouseDrag(const MouseEvent& event)
+    {
+        if(shouldDisplayPopup)
+            sendChangeMessage();
+    }
 
-	String getChannel()
-	{
-		return channel;
-	}
+
+    void mouseMove (const MouseEvent &event)
+    {
+        if(shouldDisplayPopup)
+            sendChangeMessage();
+    }
+
+    void mouseEnter (const MouseEvent &event)
+    {
+        if(shouldDisplayPopup)
+            sendChangeMessage();
+    }
+
+    String getChannel()
+    {
+        return channel;
+    }
 
     //update controls
     void update(CabbageGUIClass m_cAttr)
@@ -331,7 +334,10 @@ public:
             slider->setSliderStyle(Slider::Rotary);
             getProperties().set("type", var("rslider"));
             slider->setSliderStyle(Slider::RotaryVerticalDrag);
-			
+
+            if(textBox>0)
+                slider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 15);
+
             slider->setRotaryParameters(float_Pi * 1.2f, float_Pi * 2.8f, false);
             //if using group caption
             if (compName.length() > 0)
@@ -348,17 +354,39 @@ public:
                 groupbox->setVisible(true);
                 slider->toFront(true);
             }
-            //else if no group caption then the slider takes the whole area available
             else
-                slider->setBounds(0, 0, getWidth(), getHeight());
+            {
+                if(text.isNotEmpty())
+                {
+                    if(textBox>0)
+                    {
+                        textLabel->setBounds(0, 0, getWidth(), 20);
+                        textLabel->setText(text, dontSendNotification);
+                        textLabel->setJustificationType(Justification::centred);
+                        textLabel->setVisible(true);
+                        slider->setBounds(0, 20, getWidth(), getHeight()-20);
+                    }
+                    else
+                    {
+                        textLabel->setBounds(0, getHeight()-20, getWidth(), 20);
+                        textLabel->setText(text, dontSendNotification);
+                        textLabel->setJustificationType(Justification::centred);
+                        textLabel->setVisible(true);
+                        slider->setBounds(0, 0, getWidth(), getHeight()-20);
+                    }
+                }
+                else
+                    slider->setBounds(0, 0, getWidth(), getHeight());
+
+            }
         }
         //else if vertical
         else if (sliderType.contains("vertical"))
         {
             slider->setSliderStyle(Slider::LinearVertical);
-			if(textBox>0)
-				slider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 15);	
-			
+            if(textBox>0)
+                slider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 15);
+
             if(cl.length() > 0)
                 slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
             if (compName.length() > 0)
@@ -375,24 +403,27 @@ public:
                 groupbox->setText(compName);
                 slider->toFront(true);
             }
-            else{
-                if(text.isNotEmpty()){
-					textLabel->setBounds(0, getHeight()-20, getWidth(), 20);
-					textLabel->setText(text, dontSendNotification);		
-					textLabel->setVisible(true);
-					slider->setBounds(0, 0, getWidth(), getHeight()-20);
-				}
-				else
-				slider->setBounds(0, 0, getWidth(), getHeight());	
-				
-			}
+            else
+            {
+                if(text.isNotEmpty())
+                {
+                    textLabel->setBounds(0, getHeight()-20, getWidth(), 20);
+                    textLabel->setJustificationType(Justification::centred);
+                    textLabel->setText(text, dontSendNotification);
+                    textLabel->setVisible(true);
+                    slider->setBounds(0, 0, getWidth(), getHeight()-20);
+                }
+                else
+                    slider->setBounds(0, 0, getWidth(), getHeight());
+
+            }
         }
         //else if horizontal
         else
         {
             slider->setSliderStyle(Slider::LinearHorizontal);
-			if(textBox>0)
-				slider->setTextBoxStyle(Slider::TextBoxRight, false, 40, 15);		
+            if(textBox>0)
+                slider->setTextBoxStyle(Slider::TextBoxRight, false, 40, 15);
             if(cl.length() > 0)
                 slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
             if (compName.length() > 0)
@@ -409,16 +440,18 @@ public:
                 groupbox->setVisible(true);
                 slider->toFront(true);
             }
-            else{
-                if(text.isNotEmpty()){
-					textLabel->setBounds(0, 0, 50, getHeight());
-					textLabel->setText(text, dontSendNotification);		
-					textLabel->setVisible(true);
-					slider->setBounds(50, 0, getWidth()-50, getHeight());
-				}
-				else
-				slider->setBounds(0, 0, getWidth(), getHeight());				
-			}
+            else
+            {
+                if(text.isNotEmpty())
+                {
+                    textLabel->setBounds(0, 0, 50, getHeight());
+                    textLabel->setText(text, dontSendNotification);
+                    textLabel->setVisible(true);
+                    slider->setBounds(50, 0, getWidth()-50, getHeight());
+                }
+                else
+                    slider->setBounds(0, 0, getWidth(), getHeight());
+            }
         }
 
         //We only store the original dimensions the first time resized() is called.
@@ -463,7 +496,7 @@ public:
         offX=offY=offWidth=offHeight=0;
         groupbox = new GroupComponent(String("groupbox_")+name);
         button = new ToggleButton(name);
-		button->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
+        button->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
         addAndMakeVisible(groupbox);
         addAndMakeVisible(button);
         groupbox->setVisible(false);
@@ -483,10 +516,10 @@ public:
         }
 
         button->getProperties().set("isRect", isRect);
-		
-		if(cAttr.getNumProp(CabbageIDs::radiogroup)!=0)
-			button->setRadioGroupId(cAttr.getNumProp(CabbageIDs::radiogroup));
-			
+
+        if(cAttr.getNumProp(CabbageIDs::radiogroup)!=0)
+            button->setRadioGroupId(cAttr.getNumProp(CabbageIDs::radiogroup));
+
         button->setColour(ToggleButton::textColourId, Colour::fromString(fontcolour));
         button->setColour(TextButton::buttonOnColourId, Colour::fromString(oncolour));
         button->setColour(TextButton::buttonColourId, Colour::fromString(colour));
@@ -631,7 +664,7 @@ public:
     {
         setName(name);
         offX=offY=offWidth=offHeight=0;
-		var fileNames;
+        var fileNames;
         groupbox = new GroupComponent(String("groupbox_")+name);
         combo = new ComboBox(name);
 
@@ -642,7 +675,7 @@ public:
         combo->setColour(ComboBox::textColourId, Colour::fromString(fontcolour));
         combo->setColour(ComboBox::backgroundColourId, Colour::fromString(colour));
         combo->lookAndFeelChanged();
-		combo->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
+        combo->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
 
         groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
         groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
@@ -675,7 +708,7 @@ public:
         else
         {
             //appProperties->getUserSettings()->getValue("CsoundPluginDirectory");
-			combo->clear(dontSendNotification);
+            combo->clear(dontSendNotification);
             //CabbageUtils::showMessage(cAttr.getStringProp(CabbageIDs::workingdir));
             File pluginDir(cAttr.getStringProp(CabbageIDs::workingdir));
 
@@ -693,14 +726,14 @@ public:
                 else
                     filename = dirFiles[i].getFileName();
                 combo->addItem(filename, i+1);
-				fileNames.append(filename);
-				cAttr.setStringArrayPropValue(CabbageIDs::text, i, filename);
+                fileNames.append(filename);
+                cAttr.setStringArrayPropValue(CabbageIDs::text, i, filename);
             }
         }
-		cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
-		//CabbageUtils::showMessage(cAttr.getStringArrayPropValue(CabbageIDs::text, 1));
+        cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
+        //CabbageUtils::showMessage(cAttr.getStringArrayPropValue(CabbageIDs::text, 1));
         combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);
-		
+
     }
     //---------------------------------------------
     ~CabbageComboBox()
@@ -859,7 +892,7 @@ public:
         setColour(TextButton::buttonColourId, Colour::fromString(colour));
         setName(cAttr.getStringProp(CabbageIDs::name));
         setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
-		getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
+        getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
 
         this->setText(text);
         this->setWantsKeyboardFocus(false);
@@ -1007,12 +1040,12 @@ class CabbageGenTable	:	public Component,
     String colour;
     String fontcolour;
     String file;
-	var ampranges;
+    var ampranges;
     float zoom;
-	float startpos, endpos;
+    float startpos, endpos;
     double sampleRate;
     double scrubberPos;
-	Array<float> ampRanges;
+    Array<float> ampRanges;
 //---- constructor -----
 public:
     CabbageGenTable (CabbageGUIClass &cAttr) : colour(cAttr.getStringProp(CabbageIDs::colour)),
@@ -1020,8 +1053,8 @@ public:
         file(cAttr.getStringProp(CabbageIDs::file)),
         zoom(cAttr.getNumProp(CabbageIDs::zoom)),
         scrubberPos(cAttr.getNumProp(CabbageIDs::scrubberposition)),
-		startpos(-1),
-		endpos(-1)
+        startpos(-1),
+        endpos(-1)
     {
         setName(cAttr.getStringProp(CabbageIDs::name));
         table = new TableManager();
@@ -1046,13 +1079,13 @@ public:
     void update(CabbageGUIClass m_cAttr)
     {
         //setBounds(m_cAttr.getBounds());
-		//Logger::writeToLog("ScrubberPos:"+String(m_cAttr.getNumProp(CabbageIDs::scrubberposition)));
+        //Logger::writeToLog("ScrubberPos:"+String(m_cAttr.getNumProp(CabbageIDs::scrubberposition)));
         if(scrubberPos!=m_cAttr.getNumProp(CabbageIDs::scrubberposition))
         {
             //var scrubberPos = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition);
-			scrubberPos = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[0];
-			int tableNumber = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[1];		
-			table->setScrubberPos(scrubberPos, tableNumber);
+            scrubberPos = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[0];
+            int tableNumber = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[1];
+            table->setScrubberPos(scrubberPos, tableNumber);
         }
 
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
@@ -1060,20 +1093,20 @@ public:
         else
             setVisible(true);
 
-		if(ampRanges!=m_cAttr.getFloatArrayProp("amprange"))
-		{
-			ampRanges = m_cAttr.getFloatArrayProp("amprange");
-			table->setAmpRanges(ampRanges);
-			if(ampRanges.size()>2)
-				table->enableEditMode(StringArray(""), ampRanges[2]);
-		}
+        if(ampRanges!=m_cAttr.getFloatArrayProp("amprange"))
+        {
+            ampRanges = m_cAttr.getFloatArrayProp("amprange");
+            table->setAmpRanges(ampRanges);
+            if(ampRanges.size()>2)
+                table->enableEditMode(StringArray(""), ampRanges[2]);
+        }
 
-		if(m_cAttr.getNumProp(CabbageIDs::startpos)!=startpos &&  m_cAttr.getNumProp(CabbageIDs::endpos)!=endpos)
-		{
-		table->setRange(m_cAttr.getNumProp(CabbageIDs::startpos), m_cAttr.getNumProp(CabbageIDs::endpos));	
-		endpos = m_cAttr.getNumProp(CabbageIDs::endpos);
-		startpos = m_cAttr.getNumProp(CabbageIDs::startpos);
-		}
+        if(m_cAttr.getNumProp(CabbageIDs::startpos)!=startpos &&  m_cAttr.getNumProp(CabbageIDs::endpos)!=endpos)
+        {
+            table->setRange(m_cAttr.getNumProp(CabbageIDs::startpos), m_cAttr.getNumProp(CabbageIDs::endpos));
+            endpos = m_cAttr.getNumProp(CabbageIDs::endpos);
+            startpos = m_cAttr.getNumProp(CabbageIDs::startpos);
+        }
 
         if(zoom!=m_cAttr.getNumProp(CabbageIDs::zoom))
         {
@@ -1188,7 +1221,7 @@ public:
     {
         soundFiler->setFile(File(newFile));
     }
-	
+
     int setWaveform(AudioSampleBuffer buffer, int channels)
     {
         soundFiler->setWaveform(buffer, channels);
@@ -1418,21 +1451,21 @@ public:
 };
 
 //===============================================================================
-//Cabbage text editor; for sending string to Csound 
+//Cabbage text editor; for sending string to Csound
 //===============================================================================
 class CabbageTextEditor : public Component,
-						  public TextEditor::Listener,
-						  public KeyListener,
-						  public ChangeBroadcaster
+    public TextEditor::Listener,
+    public KeyListener,
+    public ChangeBroadcaster
 {
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<LookAndFeel_V1> lookAndFeel;
     String text, name, caption, type, currentText;
-	StringArray strings;
+    StringArray strings;
     Colour colour, fontcolour;
     int offX, offY, offWidth, offHeight, stringIndex;
 public:
-	String channel;
+    String channel;
     ScopedPointer<TextEditor> editor;
     //---- constructor -----
     CabbageTextEditor(CabbageGUIClass &cAttr) :
@@ -1445,12 +1478,12 @@ public:
         lookAndFeel(new LookAndFeel_V1()),
         fontcolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
         colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::colour))),
-		channel(cAttr.getStringProp(CabbageIDs::channel)),
+        channel(cAttr.getStringProp(CabbageIDs::channel)),
         offX(0),
         offY(0),
         offWidth(0),
         offHeight(0),
-		stringIndex(0)
+        stringIndex(0)
     {
         editor->setLookAndFeel(lookAndFeel);
         addAndMakeVisible(editor);
@@ -1462,9 +1495,9 @@ public:
         //text colour ID
         editor->setColour(0x1000201, fontcolour);
         editor->setColour(Label::outlineColourId, Colours::white);
-		editor->addListener(this);
-		editor->addKeyListener(this);
-		editor->setText(text, false);
+        editor->addListener(this);
+        editor->addKeyListener(this);
+        editor->setText(text, false);
         //groupbox->setColour(GroupComponent::ColourIds::outlineColourId, Colours::red);
         this->setWantsKeyboardFocus(false);
     }
@@ -1482,18 +1515,18 @@ public:
             setVisible(false);
         else
             setVisible(true);
-			
-		if(text!=m_cAttr.getStringProp(CabbageIDs::text))	
-		{
-			editor->setText(m_cAttr.getStringProp(CabbageIDs::text));
-			text = m_cAttr.getStringProp(CabbageIDs::text);			
-		}
+
+        if(text!=m_cAttr.getStringProp(CabbageIDs::text))
+        {
+            editor->setText(m_cAttr.getStringProp(CabbageIDs::text));
+            text = m_cAttr.getStringProp(CabbageIDs::text);
+        }
         repaint();
     }
 
     void paint(Graphics &g)
     {
-       g.fillAll(colour);
+        g.fillAll(colour);
     }
 
     //---------------------------------------------
@@ -1503,39 +1536,39 @@ public:
         this->setWantsKeyboardFocus(false);
     }
 
-	void textEditorReturnKeyPressed (TextEditor&) 
-	{
-		//CabbageUtils::showMessage(editor->getText());
-		strings.add(editor->getText());
-		currentText = editor->getText();
-		strings.removeDuplicates(false);
-		stringIndex = strings.size()-1;
-		//editor->setText("", false);
-		sendChangeMessage();
-	}
-	
-	String getCurrentText()
-	{
-		return currentText;
-	}
+    void textEditorReturnKeyPressed (TextEditor&)
+    {
+        //CabbageUtils::showMessage(editor->getText());
+        strings.add(editor->getText());
+        currentText = editor->getText();
+        strings.removeDuplicates(false);
+        stringIndex = strings.size()-1;
+        //editor->setText("", false);
+        sendChangeMessage();
+    }
 
-	bool keyPressed(const juce::KeyPress &key,Component *)
-	{
-    //Logger::writeToLog(String(key.getKeyCode()));
-    if (key.getTextDescription().contains("cursor up"))
-	{
-			editor->setText(strings[jmax(0, stringIndex--)]);
-			if(stringIndex<1) 
-				stringIndex=0;
-	}
-	else if (key.getTextDescription().contains("cursor down"))
-	{	
-			editor->setText(strings[jmin(strings.size()-1, stringIndex++)]);
-			if(stringIndex>strings.size()-1) 
-				stringIndex=strings.size()-1;
-	}
-	return false;
-	}
+    String getCurrentText()
+    {
+        return currentText;
+    }
+
+    bool keyPressed(const juce::KeyPress &key,Component *)
+    {
+        //Logger::writeToLog(String(key.getKeyCode()));
+        if (key.getTextDescription().contains("cursor up"))
+        {
+            editor->setText(strings[jmax(0, stringIndex--)]);
+            if(stringIndex<1)
+                stringIndex=0;
+        }
+        else if (key.getTextDescription().contains("cursor down"))
+        {
+            editor->setText(strings[jmin(strings.size()-1, stringIndex++)]);
+            if(stringIndex>strings.size()-1)
+                stringIndex=strings.size()-1;
+        }
+        return false;
+    }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageTextEditor);
 };
@@ -1919,7 +1952,7 @@ public:
         textbox(cAttr.getNumProp(CabbageIDs::textbox)),
         decPlaces(cAttr.getNumProp(CabbageIDs::decimalplaces)),
         caption(cAttr.getStringProp(CabbageIDs::caption)),
-		name(cAttr.getStringProp(CabbageIDs::name))
+        name(cAttr.getStringProp(CabbageIDs::name))
 
     {
         setName(name);
@@ -1945,7 +1978,7 @@ public:
         slider->setColour(Slider::thumbColourId, colour);
         slider->setColour(Slider::textBoxHighlightColourId, slider->findColour(Slider::textBoxBackgroundColourId));
         slider->setColour(Slider::textBoxTextColourId, fontcolour);
-		slider->setColour(Slider::textBoxBackgroundColourId, colour);
+        slider->setColour(Slider::textBoxBackgroundColourId, colour);
         slider->setVelocityBasedMode(true);
         slider->setVelocityModeParameters(80);
         slider->getProperties().set("decimalPlaces", decPlaces);

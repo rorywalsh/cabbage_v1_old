@@ -41,27 +41,27 @@ typedef char PaddingByte;
 ///	The base class for any OSC message/bundle packets.
 class OscBase
 {
-  public:
-	///	Constructor.
-	OscBase() {};
-	///	Destructor.
-	virtual ~OscBase() {};
+public:
+    ///	Constructor.
+    OscBase() {};
+    ///	Destructor.
+    virtual ~OscBase() {};
 
-	///	Returns the total size of the OSC data to be sent.
-	virtual Int32 getSize() = 0;
-	///	Returns the data to be sent as a contiguous unsigned char array.
-	virtual char *getData() = 0;
+    ///	Returns the total size of the OSC data to be sent.
+    virtual Int32 getSize() = 0;
+    ///	Returns the data to be sent as a contiguous unsigned char array.
+    virtual char *getData() = 0;
 
-	juce_UseDebuggingNewOperator
+    juce_UseDebuggingNewOperator
 };
 
 ///	Used to easily access the individual bytes in Int32 and Float32s.
 typedef struct
 {
-	unsigned char a;
-	unsigned char b;
-	unsigned char c;
-	unsigned char d;
+    unsigned char a;
+    unsigned char b;
+    unsigned char c;
+    unsigned char d;
 } GetTheBytes;
 
 }

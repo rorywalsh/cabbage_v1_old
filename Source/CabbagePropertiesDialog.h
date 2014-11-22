@@ -112,8 +112,8 @@ public:
                     attributeNames[i].equalsIgnoreCase("scaley") ||
                     attributeNames[i].equalsIgnoreCase("scalex") ||
                     attributeNames[i].equalsIgnoreCase("range") ||
-					attributeNames[i].equalsIgnoreCase("channelarray") ||
-					attributeNames[i].equalsIgnoreCase("offfontcolour") ||
+                    attributeNames[i].equalsIgnoreCase("channelarray") ||
+                    attributeNames[i].equalsIgnoreCase("offfontcolour") ||
                     attributeNames[i].equalsIgnoreCase("popup") ||
                     attributeNames[i].equalsIgnoreCase("comborange") ||
                     attributeNames[i].equalsIgnoreCase("basetype") ||
@@ -439,7 +439,7 @@ public:
             {
                 updateText();
                 //sendChangeMessage();
-				sendActionMessage("TextField");
+                sendActionMessage("TextField");
                 sendActionMessage("UpdateAll");
                 return false;
 
@@ -493,7 +493,7 @@ public :
     void mouseDown(const MouseEvent& e)
     {
 #if !defined(AndroidBuild)
-		
+
         FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.*"), UseNativeDialogue);
         if(!e.mods.isCtrlDown())
             if(openFC.browseForFileToOpen())

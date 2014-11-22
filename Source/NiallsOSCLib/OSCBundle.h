@@ -39,107 +39,116 @@ class Message;
  */
 class Bundle : public OscBase
 {
-  public:
-	///	Default constructor.
-	/*!
-		Typically used when you're constructing a bundle to send out.
-	 */
-	Bundle();
-	///	Constructor used to create a bundle and it's contents from a block of char data.
-	/*!
-		\param data A block of data which should contain an OSC bundle.
-		\param size The size of the data.
+public:
+    ///	Default constructor.
+    /*!
+    	Typically used when you're constructing a bundle to send out.
+     */
+    Bundle();
+    ///	Constructor used to create a bundle and it's contents from a block of char data.
+    /*!
+    	\param data A block of data which should contain an OSC bundle.
+    	\param size The size of the data.
 
-		You'd typically use this when you've received a block of data, and want
-		to extract all the bundle data from it.  To be safe, make sure you check
-		the data is actually a bundle with the isBundle() static method before
-		you call this.
-	 */
-	Bundle(char *data, const int size);
-	///	Destructor.
-	/*!
-		All elements in the messageArray and bundleArray are deleted here.
-	 */
-	~Bundle();
+    	You'd typically use this when you've received a block of data, and want
+    	to extract all the bundle data from it.  To be safe, make sure you check
+    	the data is actually a bundle with the isBundle() static method before
+    	you call this.
+     */
+    Bundle(char *data, const int size);
+    ///	Destructor.
+    /*!
+    	All elements in the messageArray and bundleArray are deleted here.
+     */
+    ~Bundle();
 
-	///	Returns the total size of the message.
-	/*!
-		You must call this beforeyou call getData(), or the memory for
-		getData()'s return buffer won't be allocated.
-	 */
-	///	Returns the bundle (including all it's elements) as a contiguous block of memory.
-	Int32 getSize();
-	char *getData();
+    ///	Returns the total size of the message.
+    /*!
+    	You must call this beforeyou call getData(), or the memory for
+    	getData()'s return buffer won't be allocated.
+     */
+    ///	Returns the bundle (including all it's elements) as a contiguous block of memory.
+    Int32 getSize();
+    char *getData();
 
-	///	Adds an element to the bundle's array of contents.
-	/*!
-		The element may be either a Message or a Bundle.  The bundle (this
-		bundle) will call Message::isMessage() and Bundle::isBundle() on the
-		element's data to determine what kind of entry it is.  This is
-		necessary so we can easily manipulate the data with the various
-		getMessage() and getBundle() methods.
+    ///	Adds an element to the bundle's array of contents.
+    /*!
+    	The element may be either a Message or a Bundle.  The bundle (this
+    	bundle) will call Message::isMessage() and Bundle::isBundle() on the
+    	element's data to determine what kind of entry it is.  This is
+    	necessary so we can easily manipulate the data with the various
+    	getMessage() and getBundle() methods.
 
-		Once an element has been added to a Bundle, it is the Bundle's
-		responsibility to delete it, not the caller's.
+    	Once an element has been added to a Bundle, it is the Bundle's
+    	responsibility to delete it, not the caller's.
 
-		Note that the order you add elements is not preserved for the final
-		bundle sent off via getData() - the final order will always be:
-		1st->last Messages, 1st->last Bundles.
-	 */
-	void addElement(OscBase *entry);
-	///	Clears all elements from the bundle (deletes them).
-	void clearElements();
-	///	Sets the time tag for this bundle.
-	void setTimeTag(const TimeTag& val);
-	///	Returns the time tag for this bundle.
-	TimeTag getTimeTag() const {return timeTag;};
+    	Note that the order you add elements is not preserved for the final
+    	bundle sent off via getData() - the final order will always be:
+    	1st->last Messages, 1st->last Bundles.
+     */
+    void addElement(OscBase *entry);
+    ///	Clears all elements from the bundle (deletes them).
+    void clearElements();
+    ///	Sets the time tag for this bundle.
+    void setTimeTag(const TimeTag& val);
+    ///	Returns the time tag for this bundle.
+    TimeTag getTimeTag() const
+    {
+        return timeTag;
+    };
 
-	///	Returns the number of elements in this bundle.
-	long getNumElements() const;
-	///	Returns the number of Messages in this bundle.
-	long getNumMessages() const {return messageArray.size();};
-	///	Returns the number of Bundles in this bundle.
-	long getNumBundles() const {return bundleArray.size();};
-	///	Returns the indexed Message.
-	/*!
-		\return 0 if we're outside the array's bounds.
-	 */
-	Message *getMessage(const long index);
-	///	Returns the indexed Bundle.
-	/*!
-		\return 0 if we're outside the array's bounds.
-	 */
-	Bundle *getBundle(const long index);
+    ///	Returns the number of elements in this bundle.
+    long getNumElements() const;
+    ///	Returns the number of Messages in this bundle.
+    long getNumMessages() const
+    {
+        return messageArray.size();
+    };
+    ///	Returns the number of Bundles in this bundle.
+    long getNumBundles() const
+    {
+        return bundleArray.size();
+    };
+    ///	Returns the indexed Message.
+    /*!
+    	\return 0 if we're outside the array's bounds.
+     */
+    Message *getMessage(const long index);
+    ///	Returns the indexed Bundle.
+    /*!
+    	\return 0 if we're outside the array's bounds.
+     */
+    Bundle *getBundle(const long index);
 
-	///	Method to check whether a block of data is an OSC Message.
-	/*!
-		Basically just checks for the presence of the initial '#bundle' string
-		that all OSC bundles should have as their first bytes.
-	 */
-	static bool isBundle(char *data, const int size);
+    ///	Method to check whether a block of data is an OSC Message.
+    /*!
+    	Basically just checks for the presence of the initial '#bundle' string
+    	that all OSC bundles should have as their first bytes.
+     */
+    static bool isBundle(char *data, const int size);
 
-	juce_UseDebuggingNewOperator
-  private:
-	///	The TimeTag for this bundle.
-	TimeTag timeTag;
+    juce_UseDebuggingNewOperator
+private:
+    ///	The TimeTag for this bundle.
+    TimeTag timeTag;
 
-	///	Dynamic array of Messages.
-	std::vector<Message *> messageArray;
-	///	Dynamic array of bundles.
-	std::vector<Bundle *> bundleArray;
+    ///	Dynamic array of Messages.
+    std::vector<Message *> messageArray;
+    ///	Dynamic array of bundles.
+    std::vector<Bundle *> bundleArray;
 
-	///	Current size of the data buffer we're holding.
-	Int32 bufferSize;
-	///	Size of the data buffer when we're sending data out via getData().
-	/*!
-		We keep track of two sizes because we don't want to keep allocating
-		memory - if we need to allocate a new buffer which is smaller than the
-		current one, we just set outgoingSize to the new size, and don't bother
-		re-allocating.
-	 */
-	Int32 outgoingSize;
-	///	The data buffer we pass out when we're sending data out via getData().
-	char *dataBuffer;
+    ///	Current size of the data buffer we're holding.
+    Int32 bufferSize;
+    ///	Size of the data buffer when we're sending data out via getData().
+    /*!
+    	We keep track of two sizes because we don't want to keep allocating
+    	memory - if we need to allocate a new buffer which is smaller than the
+    	current one, we just set outgoingSize to the new size, and don't bother
+    	re-allocating.
+     */
+    Int32 outgoingSize;
+    ///	The data buffer we pass out when we're sending data out via getData().
+    char *dataBuffer;
 };
 
 }

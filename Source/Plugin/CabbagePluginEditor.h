@@ -42,7 +42,7 @@ public:
     CabbagePlantWindow(const String& title, const Colour& backgroundColour)
         : DocumentWindow (title, backgroundColour, DocumentWindow::closeButton)
     {
-		setName(title);
+        setName(title);
     };
 
     ~CabbagePlantWindow()
@@ -50,12 +50,12 @@ public:
     };
 
 //	void mouseMove(const MouseEvent& event)
-//	{		
+//	{
 //		Logger::writeToLog("planty");
 //		//Logger::writeToLog(String(this->getContentComponent()->getMouseXYRelative().getX()));
 //	}
 //
-//	
+//
     void closeButtonPressed()
     {
         setMinimised(true);
@@ -75,8 +75,8 @@ class CabbageViewportComponent : public Component
 public:
     CabbageViewportComponent() : Component("CabbageViewportComponent")
     {
-	this->setInterceptsMouseClicks(false, true);	
-	}
+        this->setInterceptsMouseClicks(false, true);
+    }
     ~CabbageViewportComponent() {}
 
     void paint(Graphics &g)
@@ -84,7 +84,7 @@ public:
         Viewport* const viewport = findParentComponentOfClass<Viewport>(); //Get the parent viewport
         if(viewport != nullptr) //Check for nullness
         {
-           juce::Rectangle<int> viewRect(viewport->getViewPositionX(), viewport->getViewPositionY(), viewport->getViewWidth(), viewport->getViewHeight()); //Get the current displayed area in the viewport
+            juce::Rectangle<int> viewRect(viewport->getViewPositionX(), viewport->getViewPositionY(), viewport->getViewWidth(), viewport->getViewHeight()); //Get the current displayed area in the viewport
         }
     }
 };
@@ -142,8 +142,8 @@ public:
     {
         return static_cast <CabbagePluginAudioProcessor*> (getAudioProcessor());
     }
-	
-	int currentPopupIndex;
+
+    int currentPopupIndex;
 
 private:
     void setPositionOfComponent(float x, float y, float width, float height, Component* comp, String reltoplant);
@@ -163,7 +163,7 @@ private:
     void InsertDirectoryList(CabbageGUIClass &cAttr);
     void SetupWindow(CabbageGUIClass &cAttr);
     void InsertSlider(CabbageGUIClass &cAttr);
-	void InsertTextEditor(CabbageGUIClass &cAttr);
+    void InsertTextEditor(CabbageGUIClass &cAttr);
     void sliderValueChanged (Slider*);
     void InsertButton(CabbageGUIClass &cAttr);
     void InsertCheckBox(CabbageGUIClass &cAttr);
@@ -186,10 +186,10 @@ private:
     void InsertTextbox(CabbageGUIClass &cAttr);
     void InsertNumberBox(CabbageGUIClass &cAttr);
     void buttonClicked(Button*);
-	void textButtonClicked(Button* button);
-	void toggleButtonClicked(Button* button);
+    void textButtonClicked(Button* button);
+    void toggleButtonClicked(Button* button);
     void mouseMove(const MouseEvent& event);
-	void mouseDrag(const MouseEvent& event);
+    void mouseDrag(const MouseEvent& event);
     void mouseDown(const MouseEvent& event);
     void mouseUp(const MouseEvent& event);
     void buttonStateChanged(Button*);
@@ -225,7 +225,7 @@ private:
     }
     bool keyIsPressed;
     bool isMouseDown;
-	bool showScrollbars;
+    bool showScrollbars;
     void positionComponentWithinPlant(String type, float left, float top, float width, float height, Component *layout, Component *control);
     //ScopedPointer<CabbagePlantWindow> subPatch;
     OwnedArray<CabbageButton> plantButton;
@@ -251,9 +251,9 @@ private:
     ScopedPointer<CabbageLookAndFeelBasic> basicLookAndFeel;
     ScopedPointer<Label> debugLabel;
     StringArray scoreEvents;
-	String globalSVGPath;
-	Array<int> radioGroups;
-	ScopedPointer<BubbleMessageComponent> popupBubble;
+    String globalSVGPath;
+    Array<int> radioGroups;
+    ScopedPointer<BubbleMessageComponent> popupBubble;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePluginAudioProcessorEditor);
 
 };

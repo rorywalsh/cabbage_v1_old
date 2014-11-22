@@ -590,99 +590,6 @@ void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width,
 
     }
 
-//    // svg Path
-//	String svgPath = slider.getProperties().getWithDefault("svgpath", "");
-//    String name(slider.getName());
-//    Font nameFont = CabbageUtils::getComponentFont();
-//    float nameWidth = nameFont.getStringWidth(name);
-//    name = CabbageUtils::cabbageString (name, nameFont, slider.getWidth());
-//
-//    // Image dimensions etc..
-//    float destX, destY, destHeight, destWidth, sliderBottom;
-//    destX = destY = 0;
-//    sliderBottom = slider.getHeight();
-//
-//    // Setting up textbox variables
-//    Font valueFont(CabbageUtils::getValueFont());
-//    // Setting up the format of the string....
-//    int numDec = slider.getProperties().getWithDefault("decimalPlaces", 0);
-//    String format;
-//    format << "%." << numDec << "f";
-//    String sliderValue = CabbageUtils::cabbageString(String::formatted(format, slider.getValue()), valueFont, slider.getWidth());
-//    float strWidth = valueFont.getStringWidth(sliderValue);
-//
-//    // If no textbox
-//    if (slider.getTextBoxPosition() == Slider::NoTextBox)
-//    {
-//        slider.setTextBoxStyle (Slider::NoTextBox, true, 0, 0);
-//
-//        //Name label goes at bottom
-//        if (slider.getName().length() > 0)
-//        {
-//            g.setColour (slider.findColour(Slider::textBoxTextColourId));
-//            g.setFont (nameFont);
-//            g.drawText (name, (slider.getWidth()/2) - (nameWidth/2), slider.getHeight() - nameFont.getHeight(),
-//                        (int)nameWidth, nameFont.getHeight(), Justification::centred, false);
-//            sliderBottom -= nameFont.getHeight(); //gap for name label
-//        }
-//    }
-//    // Else if textbox
-//    else
-//    {
-//        slider.setTextBoxStyle (Slider::TextBoxBelow, true, strWidth, 15);
-//        sliderBottom -= slider.getTextBoxHeight();
-//        //Name label goes at top...
-//        if (slider.getName().length() > 0)
-//        {
-//            g.setColour (slider.findColour(Slider::textBoxTextColourId));
-//            g.setFont (nameFont);
-//            g.drawText (name, (slider.getWidth()/2) - (nameWidth/2), 0, (int)nameWidth, nameFont.getHeight(),
-//                        Justification::centred, false);
-//            destY += nameFont.getHeight();
-//        }
-//    }
-//
-//    destHeight = sliderBottom - destY;
-//    destWidth = destHeight;							//because rotary slider images have the same width and height....
-//    destX = ((slider.getWidth()-destWidth) / 2) + 0.5;	//starting x position, rounding up
-//
-//    // Getting the zero position in proportion to the range.  The tracker fill starts at 0, not the minimum...
-//    float zeroPosProportional = 0;
-//    if (slider.getMinimum() < 0)
-//        zeroPosProportional = (slider.getMinimum()*-1) / (slider.getMaximum() - slider.getMinimum());
-//
-//    float markerOpacity = 1;
-//    if (slider.isMouseOverOrDragging())
-//        markerOpacity = 0.4;
-//
-//    // Creating slider image
-//    bool useTracker = true;
-//    // Setting up the format of the string....
-//    float trackerThickness = slider.getProperties().getWithDefault("trackerThickness", .05);
-//
-//    Image newSlider = drawRotaryImage(jmax(1.f, destWidth), slider.findColour(Slider::rotarySliderFillColourId), slider.findColour(Slider::trackColourId), sliderPosProportional,
-//                                      zeroPosProportional, useTracker, markerOpacity, svgPath, trackerThickness);
-//    g.drawImage (newSlider, destX, destY, destWidth, destHeight, 0, 0, newSlider.getWidth(), newSlider.getHeight(), false);
-//
-//    // If NO textbox and mouse is hovering or dragging, then draw the value across the slider.  This has to be done
-//    // after the images as it must go on top of them.
-//    int valueAlwaysOn = slider.getProperties().getWithDefault(String("valueAlwaysOn"), 0); //using same colour as tracker
-//    //String valueFontColour = slider.getProperties().getWithDefault(String("valueFontColour"), "");
-//
-//    if ((slider.getTextBoxPosition() == Slider::NoTextBox) && (slider.isMouseOverOrDragging() == true) ||
-//            valueAlwaysOn)
-//    {
-//
-//        // Background box
-//        g.setColour(slider.findColour(0x1001200, false));
-//        g.fillRoundedRectangle ((slider.getWidth()/2) - (strWidth/2), destHeight/2 - valueFont.getHeight()/2,
-//                                strWidth, valueFont.getHeight(), valueFont.getHeight()/5);
-//
-//        g.setColour(slider.findColour(Slider::rotarySliderFillColourId).contrasting(1.f));
-//        g.setFont (valueFont);
-//        g.drawText (sliderValue, (slider.getWidth()/2) - (strWidth/2), destHeight/2 - valueFont.getHeight()/2,
-//                    (int)strWidth, valueFont.getHeight(), Justification::centred, false);
-//    }
 }
 
 
@@ -707,49 +614,63 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
 
     if (slider.isHorizontal())
     {
-        // ticks
-        g.setColour (Colours::whitesmoke);
-        g.setOpacity (0.6);
-        const float midPoint = width/2.f+sliderRadius;
-        const float markerGap = width/9.f;
-        g.drawLine (midPoint, height*0.25, midPoint, height*0.75, 1.5);
-        g.setOpacity (0.3);
-        for (int i=1; i<5; i++)
-        {
-            g.drawLine (midPoint+markerGap*i, height*0.3, midPoint+markerGap*i, height*0.7, .7);
-            g.drawLine (midPoint-markerGap*i, height*0.3, midPoint-markerGap*i, height*0.7, .7);
-        }
-        //backgrounds
-        g.setColour (Colours::whitesmoke);
-        g.setOpacity (0.1);
-        g.fillRoundedRectangle (sliderRadius, height*0.44, width, height*0.15, height*0.05); //for light effect
-        g.setColour (Colour::fromRGBA(5, 5, 5, 255));
-        g.fillRoundedRectangle (sliderRadius, height*0.425, width*0.99, height*0.15, height*0.05); //main rectangle
+		g.setColour (Colours::whitesmoke);
+		g.setOpacity (0.6);
+		const float midPoint = width/2.f+sliderRadius;
+		const float markerGap = width/9.f;
+		g.drawLine (midPoint, height*0.25, midPoint, height*0.75, 1.5);
+		g.setOpacity (0.3);
+		for (int i=1; i<5; i++)
+		{
+			g.drawLine (midPoint+markerGap*i, height*0.3, midPoint+markerGap*i, height*0.7, .7);
+			g.drawLine (midPoint-markerGap*i, height*0.3, midPoint-markerGap*i, height*0.7, .7);
+		}
+		//backgrounds
+		g.setColour (Colours::whitesmoke);
+		g.setOpacity (0.1);
+		g.fillRoundedRectangle (sliderRadius, height*0.44, width, height*0.15, height*0.05); //for light effect
+		g.setColour (Colour::fromRGBA(5, 5, 5, 255));
+		g.fillRoundedRectangle (sliderRadius, height*0.425, width*0.99, height*0.15, height*0.05); //main rectangle
 
-        const float iy = y + height * 0.5f - sliderRadius * 0.25f;
-        const float ih = sliderRadius*.5f;
+		const float iy = y + height * 0.5f - sliderRadius * 0.25f;
+		const float ih = sliderRadius*.5f;
 
-        if(slider.getMinimum()>=0)
-            g.setGradientFill(ColourGradient (Colours::transparentBlack, 0, 0, trackColour, width*0.25, 0, false));
-        else
-            g.setGradientFill(ColourGradient(Colours::transparentBlack,
-                                             (slider.getValue()<= 0 ? zeroPosProportional*width*1.25 : zeroPosProportional*width),
-                                             0,
-                                             trackColour,
-                                             (slider.getValue()<= 0 ? 0 : width),
-                                             0,
-                                             false));
+		if(slider.getSliderStyle()==Slider::TwoValueHorizontal)
+		{
+				g.setColour(trackColour);
+				const float minPos = slider.valueToProportionOfLength(slider.getMinValue())*width;
+				const float maxPos = slider.valueToProportionOfLength(slider.getMaxValue())*width;
+				indent.addRoundedRectangle(minPos + sliderRadius, iy, maxPos-minPos, ih, 5.0f);				
+		}
+		else if(slider.getSliderStyle()==Slider::ThreeValueHorizontal)
+		{
+				g.setColour(trackColour);
+				const float minPos = slider.valueToProportionOfLength(slider.getMinValue())*width;
+				const float currentPos = slider.valueToProportionOfLength(slider.getValue())*width;
+				indent.addRoundedRectangle(minPos + sliderRadius, iy, currentPos-minPos, ih, 5.0f);				
+		}
+		else
+		{
+			if(slider.getMinimum()>=0)
+				g.setGradientFill(ColourGradient (Colours::transparentBlack, 0, 0, trackColour, width*0.25, 0, false));
+			else
+				g.setGradientFill(ColourGradient(Colours::transparentBlack,
+												 (slider.getValue()<= 0 ? zeroPosProportional*width*1.25 : zeroPosProportional*width),
+												 0,
+												 trackColour,
+												 (slider.getValue()<= 0 ? 0 : width),
+												 0,
+												 false));
+			if(slider.getValue()>0)
+				indent.addRoundedRectangle (zeroPosProportional*width + sliderRadius, iy,
+											sliderPos - sliderRadius*0.5 - zeroPosProportional*width, ih,
+											5.0f);
+			else
+				indent.addRoundedRectangle (sliderPos, iy,
+											zeroPosProportional*width + sliderRadius - sliderPos, ih,
+											5.0f);
+		}							
 
-
-
-        if(slider.getValue()>0)
-            indent.addRoundedRectangle (zeroPosProportional*width + sliderRadius, iy,
-                                        sliderPos - sliderRadius*0.5 - zeroPosProportional*width, ih,
-                                        5.0f);
-        else
-            indent.addRoundedRectangle (sliderPos, iy,
-                                        zeroPosProportional*width + sliderRadius - sliderPos, ih,
-                                        5.0f);
     }
     else //vertical
     {
@@ -775,26 +696,44 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
         const float ix = x + width * 0.5f - sliderRadius * 0.25f;
         const float iw = sliderRadius*.5f;
 
-        if(slider.getMinimum()>=0)
-            g.setGradientFill(ColourGradient(Colours::transparentBlack, 0, height, trackColour, 0, height*0.8, false));
-        else
-            g.setGradientFill(ColourGradient(Colours::transparentBlack,
-                                             0,
-                                             (slider.getValue()<= 0 ? zeroPosProportional*height : zeroPosProportional*height*1.25),
-                                             trackColour,
-                                             0,
-                                             (slider.getValue()<= 0 ? height : 0),
-                                             false));
+		if(slider.getSliderStyle()==Slider::TwoValueVertical)
+		{
+			g.setColour(trackColour);
+			const float minPos = slider.valueToProportionOfLength(slider.getMinValue())*height;
+			const float maxPos = slider.valueToProportionOfLength(slider.getMaxValue())*height;
+			indent.addRoundedRectangle(ix, height-maxPos+sliderRadius*1.5f, iw, maxPos - minPos - sliderRadius*.5f, 5.0f);		
+		}
+		else if(slider.getSliderStyle()==Slider::ThreeValueVertical)
+		{
+			g.setColour(trackColour);
+			const float minPos = slider.valueToProportionOfLength(slider.getMinValue())*height;
+			const float maxPos = slider.valueToProportionOfLength(slider.getMaxValue())*height;
+			const float currentPos = slider.valueToProportionOfLength(slider.getValue())*height; 
+			indent.addRoundedRectangle(ix, height-currentPos+sliderRadius*.5f, iw, currentPos-minPos+sliderRadius, 5.0f);	
+		}
+		else
+		{
+			if(slider.getMinimum()>=0)
+				g.setGradientFill(ColourGradient(Colours::transparentBlack, 0, height, trackColour, 0, height*0.8, false));
+			else
+				g.setGradientFill(ColourGradient(Colours::transparentBlack,
+												 0,
+												 (slider.getValue()<= 0 ? zeroPosProportional*height : zeroPosProportional*height*1.25),
+												 trackColour,
+												 0,
+												 (slider.getValue()<= 0 ? height : 0),
+												 false));
 
 
-        if(slider.getValue()>=0)
-            indent.addRoundedRectangle (ix, y + sliderPos - sliderRadius*1.5f,
-                                        iw, height - sliderPos + sliderRadius+1.5f - zeroPosProportional*height,
-                                        5.0f);
-        else
-            indent.addRoundedRectangle (ix, zeroPosProportional*height+sliderRadius,
-                                        iw, sliderPos - sliderRadius - zeroPosProportional*height,
-                                        5.0f);
+			if(slider.getValue()>=0)
+				indent.addRoundedRectangle (ix, y + sliderPos - sliderRadius*1.5f,
+											iw, height - sliderPos + sliderRadius+1.5f - zeroPosProportional*height,
+											5.0f);
+			else
+				indent.addRoundedRectangle (ix, zeroPosProportional*height+sliderRadius,
+											iw, sliderPos - sliderRadius - zeroPosProportional*height,
+											5.0f);
+		}
     }
 
     g.fillPath (indent);
@@ -860,9 +799,9 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
         }
         else if (style == Slider::ThreeValueHorizontal)
         {
-            drawSphericalThumb (g,sliderPos - sliderRadius,
+            drawSphericalThumb (g,sliderPos - sliderRadius * 0.75f,
                                 y + height * 0.5f - sliderRadius,
-                                sliderRadius * 2.0f,
+                                sliderRadius * 1.5f,
                                 sliderRadius * 2.0f,
                                 knobColour, outlineThickness);
         }
@@ -907,6 +846,53 @@ void CabbageLookAndFeel::drawSphericalThumb (Graphics& g, const float x, const f
     g.fillEllipse (x+1, y+1, w, h);
 
 }
+
+
+//==============================================================================
+void CabbageLookAndFeel::drawGlassPointer (Graphics& g,
+                                       const float x, const float y, float diameter,
+                                       const Colour& colour, const float outlineThickness,
+                                       const int direction) noexcept
+{
+    if (diameter <= outlineThickness)
+        return;
+
+    Path p;
+
+    p.startNewSubPath (x + diameter * 0.5f, y);
+    p.lineTo (x + diameter*.9f, y + diameter * 0.6f);
+//    p.lineTo (x + diameter, y + diameter);
+    p.lineTo (diameter*.1f+x, y + diameter*0.6f);
+//    p.lineTo (x, y + diameter * 0.6f);
+    p.closeSubPath();
+
+    p.applyTransform(AffineTransform::rotation (direction * (float_Pi * 0.5f), x + diameter * 0.5f, y + diameter * 0.5f));
+
+    {
+        ColourGradient cg (Colours::white.overlaidWith (colour.withMultipliedAlpha (0.7f)), 0, y,
+                           Colours::white.overlaidWith (colour.withMultipliedAlpha (0.3f)), 0, y + diameter, false);
+
+        cg.addColour (0.4, Colours::white.overlaidWith (colour));
+
+        g.setGradientFill (cg);
+        g.fillPath (p);
+    }
+
+    ColourGradient cg (Colours::transparentBlack,
+                       x + diameter * 0.5f, y + diameter * 0.5f,
+                       Colours::black.withAlpha (0.5f * outlineThickness * colour.getFloatAlpha()),
+                       x - diameter * 0.2f, y + diameter * 0.5f, true);
+
+    cg.addColour (0.5, Colours::transparentBlack);
+    cg.addColour (0.7, Colours::black.withAlpha (0.07f * outlineThickness));
+
+    g.setGradientFill (cg);
+    g.fillPath (p);
+
+    g.setColour (Colours::black.withAlpha (0.5f * colour.getFloatAlpha()));
+    g.strokePath (p, PathStrokeType (outlineThickness));
+}
+
 
 //======= Toggle Buttons ========================================================================
 void CabbageLookAndFeel::drawToggleButton (Graphics &g, ToggleButton &button, bool /*isMouseOverButton*/, bool /*isButtonDown*/)

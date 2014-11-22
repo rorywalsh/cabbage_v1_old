@@ -220,18 +220,22 @@ public:
         slider->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
         slider->toFront(true);
         slider->addMouseListener(this, false);
+		textLabel->setColour(Label::textColourId, Colour::fromString(fontColour));
 
         //slider->setPopupDisplayEnabled (true, 0);
 
-        slider->setColour(Slider::textBoxHighlightColourId, Colours::lime.withAlpha(.5f));
+        slider->setColour(Slider::textBoxHighlightColourId, Colours::lime.withAlpha(.2f));
         //slider->setColour(Slider::rotarySliderFillColourId, Colours::red);
         slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
-        slider->setColour(Slider::textBoxTextColourId, Colour::fromString(fontColour));
+        //slider->setColour(Slider::textBoxTextColourId, Colour::fromString(fontColour));
         slider->setColour(Label::textColourId, Colour::fromString(fontColour));
         slider->setColour(Label::backgroundColourId, CabbageUtils::getBackgroundSkin());
-        slider->setColour(TextEditor::textColourId, Colour::fromString(fontColour));
-        slider->setColour(TextEditor::backgroundColourId, CabbageUtils::getBackgroundSkin());
+        slider->setColour(TextEditor::textColourId, Colours::white);
+        slider->setColour(Slider::textBoxTextColourId, Colours::white);
+		slider->setColour(Slider::textBoxBackgroundColourId, Colours::black);
+		slider->setColour(Slider::textBoxHighlightColourId, Colours::white);
         slider->setColour(Slider::trackColourId, Colour::fromString(tracker));
+		
         slider->setColour(Label::outlineColourId, CabbageUtils::getBackgroundSkin());
         slider->setColour(Slider::Slider::rotarySliderOutlineColourId, Colour::fromString(outlineColour));
 
@@ -263,6 +267,12 @@ public:
         skew = cAttr.getNumProp(CabbageIDs::sliderskew);
         slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
         slider->setRange(min, max, cAttr.getNumProp(CabbageIDs::sliderincr));
+		
+		if(sliderType=="horizontal3" || sliderType=="horizontal2" || sliderType=="vertical3" || sliderType=="vertical2")
+		{
+			slider->setMinValue(cAttr.getNumProp(CabbageIDs::minvalue), dontSendNotification);
+			slider->setMaxValue(cAttr.getNumProp(CabbageIDs::maxvalue), dontSendNotification);
+		}
         slider->setValue(cAttr.getNumProp(CabbageIDs::value));
         slider->setDoubleClickReturnValue(true, cAttr.getNumProp(CabbageIDs::value));
     }//--- end of constructor ----
@@ -383,7 +393,14 @@ public:
         //else if vertical
         else if (sliderType.contains("vertical"))
         {
-            slider->setSliderStyle(Slider::LinearVertical);
+            
+			if(sliderType=="vertical3")
+				slider->setSliderStyle(Slider::ThreeValueVertical);
+			else if(sliderType=="vertical2")
+				slider->setSliderStyle(Slider::TwoValueVertical);
+			else
+				slider->setSliderStyle(Slider::LinearVertical);
+								
             if(textBox>0)
                 slider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 15);
 
@@ -421,7 +438,13 @@ public:
         //else if horizontal
         else
         {
-            slider->setSliderStyle(Slider::LinearHorizontal);
+			if(sliderType=="horizontal3")
+				slider->setSliderStyle(Slider::ThreeValueHorizontal);
+			else if(sliderType=="horizontal2")
+				slider->setSliderStyle(Slider::TwoValueHorizontal);
+			else
+				slider->setSliderStyle(Slider::LinearHorizontal);
+				
             if(textBox>0)
                 slider->setTextBoxStyle(Slider::TextBoxRight, false, 40, 15);
             if(cl.length() > 0)

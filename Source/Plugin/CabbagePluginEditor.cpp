@@ -429,10 +429,30 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
         {
             if(cabSlider->shouldDisplayPopupValue())
             {
+				String popupText;
                 float value = cabSlider->slider->getValue();
                 if(value>-0.00001 && value<0.00001) value = 0;
-                String popupText = cabSlider->getChannel()+": "+String(value);
-                popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
+				if(cabSlider->slider->getSliderStyle()==Slider::TwoValueHorizontal ||
+				   cabSlider->slider->getSliderStyle()==Slider::TwoValueVertical)
+				{
+					popupText = "Min: "+String(cabSlider->slider->getMinValue())+
+								"\nMax: "+String(cabSlider->slider->getMaxValue());
+					popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
+				}
+				else if(cabSlider->slider->getSliderStyle()==Slider::ThreeValueHorizontal ||
+						cabSlider->slider->getSliderStyle()==Slider::ThreeValueVertical)
+				{
+					popupText = "Min: "+String(cabSlider->slider->getMinValue())+
+								"\nMax: "+String(cabSlider->slider->getMaxValue())+
+								"\nValue: "+String(value);
+					popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
+				}
+				else
+				{
+					popupText = cabSlider->getChannel()+": "+String(value);
+					popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
+				}
+                
             }
         }
 

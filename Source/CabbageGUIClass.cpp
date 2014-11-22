@@ -39,7 +39,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 
     cabbageIdentifiers.set(CabbageIDs::channelarray, "");
     //===============sliders==================//
-    if(strTokens[0].trim() == "hslider")
+    if(strTokens[0].trim() == "hslider" || strTokens[0].trim() == "hslider2" || strTokens[0].trim() == "hslider3")
     {
         cabbageIdentifiers.set(CabbageIDs::basetype, "interactive");
         cabbageIdentifiers.set(CabbageIDs::top, 10);
@@ -66,7 +66,12 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, "hslider");
         cabbageIdentifiers.set(CabbageIDs::type, cabbageIdentifiers.getWithDefault("name", "").toString());
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
-        cabbageIdentifiers.set(CabbageIDs::kind, "horizontal");
+		if(strTokens[0].trim() == "hslider2")
+			cabbageIdentifiers.set(CabbageIDs::kind, "horizontal2");
+		else if(strTokens[0].trim() == "hslider3")
+			cabbageIdentifiers.set(CabbageIDs::kind, "horizontal3");
+		else
+			cabbageIdentifiers.set(CabbageIDs::kind, "horizontal");
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
@@ -79,7 +84,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::oscaddress, "");
         cabbageIdentifiers.set(CabbageIDs::oscaddress, 0);
     }
-    else if(strTokens[0].trim() == "vslider")
+    else if(strTokens[0].trim() == "vslider" || strTokens[0].trim() == "vslider2" ||  strTokens[0].trim() == "vslider3")
     {
         cabbageIdentifiers.set(CabbageIDs::basetype, "interactive");
         cabbageIdentifiers.set(CabbageIDs::top, 10);
@@ -106,7 +111,13 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, "vslider");
         cabbageIdentifiers.set(CabbageIDs::type, cabbageIdentifiers.getWithDefault("name", "").toString());
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
-        cabbageIdentifiers.set(CabbageIDs::kind, "vertical");
+		if(strTokens[0].trim() == "vslider2")
+			cabbageIdentifiers.set(CabbageIDs::kind, "vertical2");
+		else if(strTokens[0].trim() == "vslider3")
+			cabbageIdentifiers.set(CabbageIDs::kind, "vertical3");
+		else
+			cabbageIdentifiers.set(CabbageIDs::kind, "vertical");
+			
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
@@ -1375,7 +1386,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
             }
             else if(identArray[indx].equalsIgnoreCase("min"))
             {
-                cabbageIdentifiers.set(CabbageIDs::min, strTokens[0].trim().getFloatValue());
+                cabbageIdentifiers.set(CabbageIDs::minvalue, strTokens[0].trim().getFloatValue());
             }
             else if(identArray[indx].equalsIgnoreCase("midictrl"))
             {
@@ -1391,7 +1402,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
             }
             else if(identArray[indx].equalsIgnoreCase("max"))
             {
-                cabbageIdentifiers.set(CabbageIDs::max, strTokens[0].trim().getFloatValue());
+                cabbageIdentifiers.set(CabbageIDs::maxvalue, strTokens[0].trim().getFloatValue());
             }
 
             else if(identArray[indx].equalsIgnoreCase("sliderincr"))
@@ -1960,7 +1971,7 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
             }
             else if(props.getName(i).toString()=="colour" || props.getName(i).toString()=="fontcolour"
                     || props.getName(i).toString()=="trackercolour" || props.getName(i).toString()=="fill" ||
-                    props.getName(i).toString()=="outline")
+                    props.getName(i).toString()=="outlinecolour")
             {
                 if(propsArray.size()>0)
                 {

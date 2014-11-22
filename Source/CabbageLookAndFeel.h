@@ -69,7 +69,8 @@ public:
     Label* createSliderTextBox (Slider&) override;
     void drawButtonBackground (Graphics&, Button&, const Colour&, bool, bool);
     void drawButtonText (Graphics &g, TextButton &button, bool isMouseOverButton, bool isButtonDown);
-
+	static void drawGlassPointer (Graphics&, float x, float y, float diameter,
+                                  const Colour& colour, float outlineThickness, int direction) noexcept;
     void drawLabel (Graphics &g, Label &label);
     void drawComboBox (Graphics&, int, int, bool, int, int, int, int, ComboBox&);
     Font getComboBoxFont (ComboBox& box);

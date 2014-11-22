@@ -995,8 +995,12 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                     }
                 //populate the guiCtrls vector with interactive widgets
                     else if(tokes[0].equalsIgnoreCase(String("hslider"))
-                            ||tokes[0].equalsIgnoreCase(String("vslider"))
+							||tokes[0].equalsIgnoreCase(String("hslider2"))
+							||tokes[0].equalsIgnoreCase(String("hslider3"))
                             ||tokes[0].equalsIgnoreCase(String("rslider"))
+                            ||tokes[0].equalsIgnoreCase(String("vslider"))
+							||tokes[0].equalsIgnoreCase(String("vslider2"))
+							||tokes[0].equalsIgnoreCase(String("vslider3"))
                             ||tokes[0].equalsIgnoreCase(String("combobox"))
                             ||tokes[0].equalsIgnoreCase(String("checkbox"))
                             ||tokes[0].equalsIgnoreCase(String("numberbox"))

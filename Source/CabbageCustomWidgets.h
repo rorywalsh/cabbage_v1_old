@@ -372,7 +372,7 @@ public:
                         textLabel->setText(text, dontSendNotification);
                         textLabel->setJustificationType(Justification::centred);
                         textLabel->setVisible(true);
-                        slider->setBounds(0, 0, getWidth(), getHeight()-20);
+                        slider->setBounds(0, 0, getWidth(), getHeight()-15);
                     }
                 }
                 else

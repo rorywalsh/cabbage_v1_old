@@ -131,6 +131,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::whitesmoke.toString());
+		cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colours::whitesmoke.toString());
         cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);

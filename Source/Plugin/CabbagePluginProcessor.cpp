@@ -1072,6 +1072,13 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             {
                                 guiCtrls.add(cAttr);
                                 guiID++;
+								if(tokes[0].equalsIgnoreCase(String("hslider2")) || tokes[0].equalsIgnoreCase(String("vslider2")))
+								{
+									cAttr.setStringProp(String(CabbageIDs::channel), cAttr.getStringArrayPropValue(CabbageIDs::channel, 1));
+									cAttr.setStringProp("name", cAttr.getStringProp(CabbageIDs::name)+String("dummy"));
+									guiCtrls.add(cAttr);							
+									guiID++;	
+								}
                             }
 
                         }

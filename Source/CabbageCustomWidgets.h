@@ -172,7 +172,7 @@ class CabbageSlider : public Component,
     };
 
 
-    String name, text, caption, kind, colour, fontColour, trackerFill, outlineColour, channel;
+    String name, text, caption, kind, colour, fontColour, trackerFill, outlineColour, channel, channel2;
     int textBox, decPlaces;
     double min, max;
     ScopedPointer<Label> textLabel;
@@ -215,7 +215,9 @@ public:
             shouldDisplayPopup=true;
         }
 
-
+		if(sliderType=="horizontal2" || sliderType=="vertical2")
+			channel2 = cAttr.getStringArrayPropValue(CabbageIDs::channel, 1);
+		
 
         slider->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
         slider->toFront(true);
@@ -256,8 +258,8 @@ public:
         this->setWantsKeyboardFocus(false);
         resizeCount = 0;
 
-        min = cAttr.getNumProp(CabbageIDs::min);
-        max = cAttr.getNumProp(CabbageIDs::max);
+        min = cAttr.getNumProp(CabbageIDs::minvalue);
+        max = cAttr.getNumProp(CabbageIDs::maxvalue);
         if(min==max || min>max)
         {
             CabbageUtils::showMessage("Your min value is the same or greater than your max value.\nCabbage will now reduce your min value so that it falls into range", &getLookAndFeel());
@@ -266,14 +268,10 @@ public:
         incr = cAttr.getNumProp(CabbageIDs::sliderincr);
         skew = cAttr.getNumProp(CabbageIDs::sliderskew);
         slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
-        slider->setRange(min, max, cAttr.getNumProp(CabbageIDs::sliderincr));
-		
-		if(sliderType=="horizontal3" || sliderType=="horizontal2" || sliderType=="vertical3" || sliderType=="vertical2")
-		{
-			slider->setMinValue(cAttr.getNumProp(CabbageIDs::minvalue), dontSendNotification);
-			slider->setMaxValue(cAttr.getNumProp(CabbageIDs::maxvalue), dontSendNotification);
-		}
-        slider->setValue(cAttr.getNumProp(CabbageIDs::value));
+        slider->setRange(cAttr.getNumProp(CabbageIDs::min), cAttr.getNumProp(CabbageIDs::max), cAttr.getNumProp(CabbageIDs::sliderincr));
+	
+		if(sliderType=="vertical" || sliderType=="horizontal")	
+			slider->setValue(cAttr.getNumProp(CabbageIDs::value));
         slider->setDoubleClickReturnValue(true, cAttr.getNumProp(CabbageIDs::value));
     }//--- end of constructor ----
 
@@ -400,6 +398,12 @@ public:
 				slider->setSliderStyle(Slider::TwoValueVertical);
 			else
 				slider->setSliderStyle(Slider::LinearVertical);
+
+			if(sliderType=="vertical3" || sliderType=="vertical2")
+			{
+				slider->setMinValue(min, dontSendNotification);
+				slider->setMaxValue(max, dontSendNotification);
+			}
 								
             if(textBox>0)
                 slider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 15);
@@ -444,6 +448,12 @@ public:
 				slider->setSliderStyle(Slider::TwoValueHorizontal);
 			else
 				slider->setSliderStyle(Slider::LinearHorizontal);
+				
+			if(sliderType=="horizontal3" || sliderType=="horizontal2")
+			{
+				slider->setMinValue(min, dontSendNotification);
+				slider->setMaxValue(max, dontSendNotification);
+			}				
 				
             if(textBox>0)
                 slider->setTextBoxStyle(Slider::TextBoxRight, false, 40, 15);

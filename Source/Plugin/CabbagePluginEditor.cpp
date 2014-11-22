@@ -197,7 +197,6 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     viewport->setViewedComponent(viewportComponent);
     getFilter()->addChangeListener(this);
     resized();
-    //startTimer(20);
 }
 
 
@@ -2289,8 +2288,11 @@ void CabbagePluginAudioProcessorEditor::InsertSlider(CabbageGUIClass &cAttr)
                         globalSVGPath));
 
     comps.add(new CabbageSlider(cAttr));
+
+	
     int idx = comps.size()-1;
-    setPositionOfComponent(left, top, width, height, comps[idx], cAttr.getStringProp("reltoplant"));
+	if(!cAttr.getStringProp(CabbageIDs::name).contains("dummy"))
+		setPositionOfComponent(left, top, width, height, comps[idx], cAttr.getStringProp("reltoplant"));
     ((CabbageSlider*)comps[idx])->slider->addListener(this);
     comps[idx]->getProperties().set(String("midiChan"), cAttr.getNumProp("midichan"));
     comps[idx]->getProperties().set(String("midiCtrl"), cAttr.getNumProp("midictrl"));
@@ -2303,6 +2305,7 @@ void CabbagePluginAudioProcessorEditor::InsertSlider(CabbageGUIClass &cAttr)
     //set visiblilty
     comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
     ((CabbageSlider*)comps[idx])->addChangeListener(this);
+
 }
 //+++++++++++++++++++++++++++++++++++++++++++
 //                                     numberbox/slider
@@ -2342,20 +2345,40 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
     if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name)==sliderThatWasMoved->getParentComponent()->getName())
     {
 #ifndef Cabbage_Build_Standalone
-        getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, (float)sliderThatWasMoved->getValue());
+        //getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, (float)sliderThatWasMoved->getValue());
         float min = getFilter()->getGUICtrls(i).getNumProp("min");
         float range = getFilter()->getGUICtrls(i).getNumProp("range");
         //normalise parameters in plugin mode.
         getFilter()->beginParameterChangeGesture(i);
-        getFilter()->setParameter(i, (float)((sliderThatWasMoved->getValue()-min)/range));
-        getFilter()->setParameterNotifyingHost(i, (float)((sliderThatWasMoved->getValue()-min)/range));
-        //getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getValue());
+		if(sliderThatWasMoved->getSliderStyle()==Slider::LinearHorizontal 
+			|| sliderThatWasMoved->getSliderStyle()==Slider::LinearVertical)
+        {
+			getFilter()->setParameter(i, (float)((sliderThatWasMoved->getValue()-min)/range));
+			getFilter()->setParameterNotifyingHost(i, (float)((sliderThatWasMoved->getValue()-min)/range));		
+		}
+		else
+		{
+			getFilter()->setParameter(i, (float)((sliderThatWasMoved->getMinValue()-min)/range));
+			getFilter()->setParameterNotifyingHost(i, (float)((sliderThatWasMoved->getMinValue()-min)/range));	
+			getFilter()->setParameter(i+1, (float)((sliderThatWasMoved->getMaxValue()-min)/range));
+			getFilter()->setParameterNotifyingHost(i+1, (float)((sliderThatWasMoved->getMaxValue()-min)/range));	
+		}
         getFilter()->endParameterChangeGesture(i);
 #else
         float value = sliderThatWasMoved->getValue();//getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
         getFilter()->beginParameterChangeGesture(i);
-        getFilter()->setParameter(i, (float)sliderThatWasMoved->getValue());
-        getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getValue());
+		if(sliderThatWasMoved->getSliderStyle()==Slider::TwoValueHorizontal || sliderThatWasMoved->getSliderStyle()==Slider::TwoValueHorizontal)
+        {
+			getFilter()->setParameter(i, (float)sliderThatWasMoved->getMinValue());
+			getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getMinValue());
+			getFilter()->setParameter(i+1, (float)sliderThatWasMoved->getMinValue());
+			getFilter()->setParameterNotifyingHost(i+1, (float)sliderThatWasMoved->getMinValue());				
+		}
+		else
+		{
+			getFilter()->setParameter(i, (float)sliderThatWasMoved->getValue());
+			getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getValue());
+		}
         getFilter()->endParameterChangeGesture(i);
 
 #endif
@@ -3335,12 +3358,32 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     if(cabSlider)
                     {
 #ifndef Cabbage_Build_Standalone
-                        float val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i)+
-                                    getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::min);
-                        cabSlider->slider->setValue(val, dontSendNotification);
+						if(cabSlider->slider->getSliderStyle()==Slider::LinearVertical ||
+						   cabSlider->slider->getSliderStyle()==Slider::LinearHorizontal)
+						{
+							float val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i)+
+										getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::min);
+							cabSlider->slider->setValue(val, dontSendNotification);
+						}
+						else
+						{
+							float bottomVal = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i);
+							float topVal = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i+1);
+
+							cabSlider->slider->setMaxValue(topVal, dontSendNotification);	
+							cabSlider->slider->setMinValue(bottomVal, dontSendNotification);	
+						
+						}
 #else
-                        //Logger::writeToLog(String(inValue));
-                        cabSlider->slider->setValue(inValue, sendNotification);
+						if(cabSlider->slider->getSliderStyle()==Slider::LinearVertical ||
+						   cabSlider->slider->getSliderStyle()==Slider::LinearHorizontal)
+						{
+							cabSlider->slider->setValue(inValue, sendNotification);
+						}
+						else
+						{
+							cabSlider->slider->setValue(inValue, sendNotification);
+						}
 #endif
                     }
                 }

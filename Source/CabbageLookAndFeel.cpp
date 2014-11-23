@@ -780,7 +780,7 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
             sliderHeight = sliderRadius * 2.0f;
         }
 
-        drawSphericalThumb (g,
+        CabbageUtils::drawSphericalThumb (g,
                             kx - sliderRadius,
                             ky - sliderRadius,
                             sliderWidth,
@@ -791,7 +791,7 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
     {
         if (style == Slider::ThreeValueVertical)
         {
-            drawSphericalThumb (g, x + width * 0.5f - sliderRadius,
+            CabbageUtils::drawSphericalThumb (g, x + width * 0.5f - sliderRadius,
                                 sliderPos - sliderRadius,
                                 sliderRadius * 2.0f,
                                 sliderRadius * 2.0f,
@@ -799,7 +799,7 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
         }
         else if (style == Slider::ThreeValueHorizontal)
         {
-            drawSphericalThumb (g,sliderPos - sliderRadius * 0.75f,
+            CabbageUtils::drawSphericalThumb (g,sliderPos - sliderRadius * 0.75f,
                                 y + height * 0.5f - sliderRadius,
                                 sliderRadius * 1.5f,
                                 sliderRadius * 2.0f,
@@ -810,87 +810,26 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
         {
             const float sr = jmin (sliderRadius, width * 0.4f);
 
-            drawGlassPointer (g, jmax (0.0f, x + width * 0.5f - sliderRadius * 2.0f),
+            CabbageUtils::drawGlassPointer (g, jmax (0.0f, x + width * 0.5f - sliderRadius * 2.0f),
                               minSliderPos - sliderRadius,
                               sliderRadius * 2.0f, knobColour, outlineThickness, 1);
 
-            drawGlassPointer (g, jmin (x + width - sliderRadius * 2.0f, x + width * 0.5f), maxSliderPos - sr,
+            CabbageUtils::drawGlassPointer (g, jmin (x + width - sliderRadius * 2.0f, x + width * 0.5f), maxSliderPos - sr,
                               sliderRadius * 2.0f, knobColour, outlineThickness, 3);
         }
         else if (style == Slider::TwoValueHorizontal || style == Slider::ThreeValueHorizontal)
         {
             const float sr = jmin (sliderRadius, height * 0.4f);
 
-            drawGlassPointer (g, minSliderPos - sr,
+            CabbageUtils::drawGlassPointer (g, minSliderPos - sr,
                               jmax (0.0f, y + height * 0.5f - sliderRadius * 2.0f),
                               sliderRadius * 2.0f, knobColour, outlineThickness, 2);
 
-            drawGlassPointer (g, maxSliderPos - sliderRadius,
+           CabbageUtils::drawGlassPointer (g, maxSliderPos - sliderRadius,
                               jmin (y + height - sliderRadius * 2.0f, y + height * 0.5f),
                               sliderRadius * 2.0f, knobColour, outlineThickness, 4);
         }
     }
-}
-
-//==============================================================================
-void CabbageLookAndFeel::drawSphericalThumb (Graphics& g, const float x, const float y,
-        const float w, const float  h, const Colour& colour,
-        const float outlineThickness)
-{
-
-    ColourGradient cg = ColourGradient (Colours::white, 0, 0, colour, w/2, h/2, false);
-    cg.addColour (0.4, Colours::white.overlaidWith (colour));
-    g.setGradientFill (cg);
-    g.fillEllipse (x, y, w, h);
-    g.setOpacity(.4);
-    g.fillEllipse (x+1, y+1, w, h);
-
-}
-
-
-//==============================================================================
-void CabbageLookAndFeel::drawGlassPointer (Graphics& g,
-                                       const float x, const float y, float diameter,
-                                       const Colour& colour, const float outlineThickness,
-                                       const int direction) noexcept
-{
-    if (diameter <= outlineThickness)
-        return;
-
-    Path p;
-
-    p.startNewSubPath (x + diameter * 0.5f, y);
-    p.lineTo (x + diameter*.9f, y + diameter * 0.6f);
-//    p.lineTo (x + diameter, y + diameter);
-    p.lineTo (diameter*.1f+x, y + diameter*0.6f);
-//    p.lineTo (x, y + diameter * 0.6f);
-    p.closeSubPath();
-
-    p.applyTransform(AffineTransform::rotation (direction * (float_Pi * 0.5f), x + diameter * 0.5f, y + diameter * 0.5f));
-
-    {
-        ColourGradient cg (Colours::white.overlaidWith (colour.withMultipliedAlpha (0.7f)), 0, y,
-                           Colours::white.overlaidWith (colour.withMultipliedAlpha (0.3f)), 0, y + diameter, false);
-
-        cg.addColour (0.4, Colours::white.overlaidWith (colour));
-
-        g.setGradientFill (cg);
-        g.fillPath (p);
-    }
-
-    ColourGradient cg (Colours::transparentBlack,
-                       x + diameter * 0.5f, y + diameter * 0.5f,
-                       Colours::black.withAlpha (0.5f * outlineThickness * colour.getFloatAlpha()),
-                       x - diameter * 0.2f, y + diameter * 0.5f, true);
-
-    cg.addColour (0.5, Colours::transparentBlack);
-    cg.addColour (0.7, Colours::black.withAlpha (0.07f * outlineThickness));
-
-    g.setGradientFill (cg);
-    g.fillPath (p);
-
-    g.setColour (Colours::black.withAlpha (0.5f * colour.getFloatAlpha()));
-    g.strokePath (p, PathStrokeType (outlineThickness));
 }
 
 

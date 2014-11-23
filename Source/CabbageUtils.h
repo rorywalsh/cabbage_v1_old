@@ -533,6 +533,59 @@ public:
         appPrefs->getUserSettings()->setValue(pref, var(value));
     }
 
+    static void drawSphericalThumb (Graphics& g, const float x, const float y,
+                             const float w, const float h, const Colour& colour,
+                             const float outlineThickness)
+	{
+		ColourGradient cg = ColourGradient (Colours::white, 0, 0, colour, w/2, h/2, false);
+		cg.addColour (0.4, Colours::white.overlaidWith (colour));
+		g.setGradientFill (cg);
+		g.fillEllipse (x, y, w, h);
+		g.setOpacity(.4);
+		g.fillEllipse (x+1, y+1, w, h);	 
+	}
+	
+	static void drawGlassPointer (Graphics& g, float x, float y, float diameter,
+                                  const Colour& colour, float outlineThickness, int direction)
+	{
+		if (diameter <= outlineThickness)
+			return;
+
+		Path p;
+
+		p.startNewSubPath (x + diameter * 0.5f, y);
+		p.lineTo (x + diameter*.9f, y + diameter * 0.6f);
+	//    p.lineTo (x + diameter, y + diameter);
+		p.lineTo (diameter*.1f+x, y + diameter*0.6f);
+	//    p.lineTo (x, y + diameter * 0.6f);
+		p.closeSubPath();
+
+		p.applyTransform(AffineTransform::rotation (direction * (float_Pi * 0.5f), x + diameter * 0.5f, y + diameter * 0.5f));
+
+		{
+			ColourGradient cg (Colours::white.overlaidWith (colour.withMultipliedAlpha (0.7f)), 0, y,
+							   Colours::white.overlaidWith (colour.withMultipliedAlpha (0.3f)), 0, y + diameter, false);
+
+			cg.addColour (0.4, Colours::white.overlaidWith (colour));
+
+			g.setGradientFill (cg);
+			g.fillPath (p);
+		}
+
+		ColourGradient cg (Colours::transparentBlack,
+						   x + diameter * 0.5f, y + diameter * 0.5f,
+						   Colours::black.withAlpha (0.5f * outlineThickness * colour.getFloatAlpha()),
+						   x - diameter * 0.2f, y + diameter * 0.5f, true);
+
+		cg.addColour (0.5, Colours::transparentBlack);
+		cg.addColour (0.7, Colours::black.withAlpha (0.07f * outlineThickness));
+
+		g.setGradientFill (cg);
+		g.fillPath (p);
+
+		g.setColour (Colours::black.withAlpha (0.5f * colour.getFloatAlpha()));
+		g.strokePath (p, PathStrokeType (outlineThickness));		
+	}
 //=======================================================================================
 //draw buttons for transport controls
     static Image drawSoundfilerButton(String type, String colour)

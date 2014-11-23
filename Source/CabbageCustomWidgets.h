@@ -146,6 +146,67 @@ public:
 //==============================================================================
 // custom slider component with optional surrounding groupbox
 //==============================================================================
+class RangeSlider : public Slider, public Slider::Listener
+{
+    public:
+        RangeSlider(String text):Slider(text){
+		addListener(this);	
+		}
+        ~RangeSlider() {};
+
+    private:
+        void mouseDown(const MouseEvent& event)
+        {
+			mouseDownX = event.getPosition().getX();
+			topThumbDownX = valueToProportionOfLength(getMinValue())*getWidth();
+			bottomThumbDownX = valueToProportionOfLength(getMaxValue())*getWidth();
+        }
+
+        void mouseDrag(const MouseEvent& event)
+        {
+			const float sliderMin = getMinValue();
+			const float sliderMax = getMaxValue();
+			const float currentMouseX = event.getPosition().getX();
+			const float bottomThumbPosition = valueToProportionOfLength(sliderMin)*getWidth();
+			const float topThumbPosition = valueToProportionOfLength(sliderMax)*getWidth();
+			const int distanceFromDragStart = event.getDistanceFromDragStartX();
+			if(event.getPosition().getY()>getHeight()/2.f)
+			{
+				
+				if(currentMouseX>topThumbPosition-20 && currentMouseX<topThumbPosition+20)
+					setMaxValue(proportionOfLengthToValue(currentMouseX/getWidth()));				
+				
+			}
+			else
+			{
+				if(currentMouseX>bottomThumbPosition-20 && currentMouseX<bottomThumbPosition+20)
+					setMinValue(proportionOfLengthToValue(currentMouseX/getWidth()));				
+			}
+			
+			if(currentMouseX>bottomThumbPosition+20 && currentMouseX<topThumbPosition-20)
+			{				
+				if(bottomThumbPosition>5 && topThumbPosition<getWidth()-5)
+				{
+				setMinValue(proportionOfLengthToValue(topThumbDownX+distanceFromDragStart)/getWidth());		
+				setMaxValue(proportionOfLengthToValue(bottomThumbDownX+distanceFromDragStart)/getWidth());	
+				}
+			}
+			
+        }
+		
+		void sliderValueChanged (Slider *slider)
+		{
+			
+		}
+		 
+		void sliderDragStarted (Slider *){}
+		 
+		void sliderDragEnded (Slider *){}
+		
+		int mouseDownX, topThumbDownX, bottomThumbDownX;
+
+};
+
 class CabbageSlider : public Component,
     public ChangeBroadcaster
 {
@@ -153,24 +214,6 @@ class CabbageSlider : public Component,
     String sliderType, compName, cl;
     int resizeCount;
     String tracker;
-
-
-    //subclass slider here to expose mouse listener method
-    class cSlider : public Slider
-    {
-    public:
-        cSlider(String text, CabbageSlider* _slider):Slider(text),
-            slider(_slider) {}
-        ~cSlider() {};
-
-    private:
-        void mouseMove(const MouseEvent& event)
-        {
-            slider->sendChangeMessage();
-        }
-        CabbageSlider* slider;
-    };
-
 
     String name, text, caption, kind, colour, fontColour, trackerFill, outlineColour, channel, channel2;
     int textBox, decPlaces;
@@ -182,7 +225,7 @@ class CabbageSlider : public Component,
 public:
 
     ScopedPointer<GroupComponent> groupbox;
-    ScopedPointer<Slider> slider;
+    ScopedPointer<RangeSlider> slider;
     bool shouldDisplayPopup;
     //---- constructor -----
     CabbageSlider(CabbageGUIClass &cAttr) : plantX(-99), plantY(-99),
@@ -208,7 +251,7 @@ public:
 
         offX=offY=offWidth=offHeight=0;
         groupbox = new GroupComponent(String("groupbox_")+name);
-        slider = new Slider(text);
+        slider = new RangeSlider(text);
         if(textBox<1)
         {
             slider->setTextBoxStyle (Slider::NoTextBox, true, 0, 0);

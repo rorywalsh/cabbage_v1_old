@@ -31,6 +31,7 @@
 
 Array <Colour> swatchColours;
 
+
 //==============================================================================
 CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePluginAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),

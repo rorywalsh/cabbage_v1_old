@@ -146,18 +146,22 @@ public:
 //==============================================================================
 // custom slider component with optional surrounding groupbox
 //==============================================================================
-class RangeSlider : public Slider, public Slider::Listener
+class RangeSlider : public Slider
 {
-    public:
-        RangeSlider(String text):Slider(text){
-		addListener(this);	
+    
+public:
+        RangeSlider(String text):
+		Slider(text),
+		thumbWidth(20)
+		{
+			setSliderStyle(SliderStyle::TwoValueHorizontal);
 		}
+		
         ~RangeSlider() {};
 
-    private:
+private:
         void mouseDown(const MouseEvent& event)
         {
-			mouseDownX = event.getPosition().getX();
 			topThumbDownX = valueToProportionOfLength(getMinValue())*getWidth();
 			bottomThumbDownX = valueToProportionOfLength(getMaxValue())*getWidth();
         }
@@ -166,45 +170,38 @@ class RangeSlider : public Slider, public Slider::Listener
         {
 			const float sliderMin = getMinValue();
 			const float sliderMax = getMaxValue();
+			const int minPosition = valueToProportionOfLength(getMinimum())*getWidth(); 
+			const int maxPosition = valueToProportionOfLength(getMaximum())*getWidth(); 
 			const float currentMouseX = event.getPosition().getX();
 			const float bottomThumbPosition = valueToProportionOfLength(sliderMin)*getWidth();
 			const float topThumbPosition = valueToProportionOfLength(sliderMax)*getWidth();
-			const int distanceFromDragStart = event.getDistanceFromDragStartX();
+			const int distanceFromStart = event.getDistanceFromDragStartX();
+			
 			if(event.getPosition().getY()>getHeight()/2.f)
 			{
-				
-				if(currentMouseX>topThumbPosition-20 && currentMouseX<topThumbPosition+20)
-					setMaxValue(proportionOfLengthToValue(currentMouseX/getWidth()));				
-				
+				if(currentMouseX>topThumbPosition-thumbWidth && currentMouseX<topThumbPosition+thumbWidth)
+					setMaxValue(proportionOfLengthToValue(currentMouseX/getWidth()));						
 			}
 			else
 			{
-				if(currentMouseX>bottomThumbPosition-20 && currentMouseX<bottomThumbPosition+20)
+				if(currentMouseX>bottomThumbPosition-thumbWidth && currentMouseX<bottomThumbPosition+thumbWidth)
 					setMinValue(proportionOfLengthToValue(currentMouseX/getWidth()));				
 			}
 			
-			if(currentMouseX>bottomThumbPosition+20 && currentMouseX<topThumbPosition-20)
-			{				
-				if(bottomThumbPosition>5 && topThumbPosition<getWidth()-5)
+			if(currentMouseX>bottomThumbPosition+thumbWidth && currentMouseX<topThumbPosition-thumbWidth)
+			{		
+				Logger::writeToLog(String(topThumbPosition));
+				if(topThumbPosition>minPosition && bottomThumbPosition<maxPosition)
 				{
-				setMinValue(proportionOfLengthToValue(topThumbDownX+distanceFromDragStart)/getWidth());		
-				setMaxValue(proportionOfLengthToValue(bottomThumbDownX+distanceFromDragStart)/getWidth());	
+				setMinValue(proportionOfLengthToValue(topThumbDownX+distanceFromStart)/getWidth());		
+				setMaxValue(proportionOfLengthToValue(bottomThumbDownX+distanceFromStart)/getWidth());	
 				}
 			}
 			
         }
 		
-		void sliderValueChanged (Slider *slider)
-		{
-			
-		}
-		 
-		void sliderDragStarted (Slider *){}
-		 
-		void sliderDragEnded (Slider *){}
-		
-		int mouseDownX, topThumbDownX, bottomThumbDownX;
-
+		int topThumbDownX, bottomThumbDownX;
+		const int thumbWidth;
 };
 
 class CabbageSlider : public Component,

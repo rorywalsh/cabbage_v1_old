@@ -222,7 +222,7 @@ class CabbageSlider : public Component,
 public:
 
     ScopedPointer<GroupComponent> groupbox;
-    ScopedPointer<RangeSlider> slider;
+    ScopedPointer<Slider> slider;
     bool shouldDisplayPopup;
     //---- constructor -----
     CabbageSlider(CabbageGUIClass &cAttr) : plantX(-99), plantY(-99),
@@ -248,7 +248,12 @@ public:
 
         offX=offY=offWidth=offHeight=0;
         groupbox = new GroupComponent(String("groupbox_")+name);
-        slider = new RangeSlider(text);
+		
+		if(sliderType=="vertical2" || sliderType=="horizontal2")	
+			slider = new RangeSlider(text);
+		else
+			slider = new Slider(text);
+			
         if(textBox<1)
         {
             slider->setTextBoxStyle (Slider::NoTextBox, true, 0, 0);
@@ -298,21 +303,27 @@ public:
         this->setWantsKeyboardFocus(false);
         resizeCount = 0;
 
-        min = cAttr.getNumProp(CabbageIDs::minvalue);
-        max = cAttr.getNumProp(CabbageIDs::maxvalue);
-        if(min==max || min>max)
+
+        if(cAttr.getNumProp(CabbageIDs::min)==cAttr.getNumProp(CabbageIDs::max) 
+		|| cAttr.getNumProp(CabbageIDs::min)>cAttr.getNumProp(CabbageIDs::max))
         {
             CabbageUtils::showMessage("Your min value is the same or greater than your max value.\nCabbage will now reduce your min value so that it falls into range", &getLookAndFeel());
-            min = max-.1;
+            cAttr.setNumProp(CabbageIDs::min, cAttr.getNumProp(CabbageIDs::max)-.001);
         }
+		
+        min = cAttr.getNumProp(CabbageIDs::minvalue);
+        max = cAttr.getNumProp(CabbageIDs::maxvalue);
+		
         incr = cAttr.getNumProp(CabbageIDs::sliderincr);
         skew = cAttr.getNumProp(CabbageIDs::sliderskew);
         slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
         slider->setRange(cAttr.getNumProp(CabbageIDs::min), cAttr.getNumProp(CabbageIDs::max), cAttr.getNumProp(CabbageIDs::sliderincr));
 	
-		if(sliderType=="vertical" || sliderType=="horizontal")	
+		if(sliderType=="vertical" || sliderType=="horizontal" || sliderType=="rotary")	
 			slider->setValue(cAttr.getNumProp(CabbageIDs::value));
+			
         slider->setDoubleClickReturnValue(true, cAttr.getNumProp(CabbageIDs::value));
+
     }//--- end of constructor ----
 
     //---------------------------------------------
@@ -857,7 +868,7 @@ public:
         outline(cAttr.getStringProp(CabbageIDs::outlinecolour)),
         colour(cAttr.getStringProp(CabbageIDs::colour)),
         shape(cAttr.getStringProp("shape")),
-        line(cAttr.getNumProp(CabbageIDs::linethickness))
+        line(cAttr.getNumProp(CabbageIDs::outlinethickness))
     {
         setName(name);
         img = ImageCache::getFromFile (File (file));
@@ -883,7 +894,7 @@ public:
         colour = m_cAttr.getStringProp(CabbageIDs::colour);
         outline = m_cAttr.getStringProp(CabbageIDs::outlinecolour);
         shape = m_cAttr.getStringProp(CabbageIDs::shape);
-        line = m_cAttr.getNumProp(CabbageIDs::linethickness);
+        line = m_cAttr.getNumProp(CabbageIDs::outlinethickness);
         setBounds(m_cAttr.getBounds());
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
             setVisible(false);

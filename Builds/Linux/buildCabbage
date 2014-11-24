@@ -3,19 +3,19 @@
 if [ $1 = "plugins" ]; then
 echo "Building Cabbage plugin libraries! "
 make -f MakefilePluginEffect clean 
-make -f MakefilePluginEffect
+make -f MakefilePluginEffect -j8
 make -f MakefilePluginSynth clean 
-make -f MakefilePluginSynth 
+make -f MakefilePluginSynth -j8
 elif [ $1 = "standalone" ]; then
 echo "Building Cabbage standalone! "
 make -f MakefileStandalone clean 
-make -f MakefileStandalone 
+make -f MakefileStandalone -j8
 else
 echo "Building Cabbage! "
 make -f MakefileStandalone clean 
-make -f MakefileStandalone 
+make -f MakefileStandalone -j8
 make -f MakefilePluginEffect clean 
-make -f MakefilePluginEffect 
+make -f MakefilePluginEffect -j8
 make -f MakefilePluginSynth clean 
-make -f MakefilePluginSynth 
+make -f MakefilePluginSynth -j8
 fi

@@ -2366,17 +2366,19 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
 		}
         getFilter()->endParameterChangeGesture(i);
 #else
-        float value = sliderThatWasMoved->getValue();//getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
+        
         getFilter()->beginParameterChangeGesture(i);
 		if(sliderThatWasMoved->getSliderStyle()==Slider::TwoValueHorizontal || sliderThatWasMoved->getSliderStyle()==Slider::TwoValueHorizontal)
         {
+			const float value = sliderThatWasMoved->getValue();//getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
 			getFilter()->setParameter(i, (float)sliderThatWasMoved->getMinValue());
 			getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getMinValue());
 			getFilter()->setParameter(i+1, (float)sliderThatWasMoved->getMinValue());
-			getFilter()->setParameterNotifyingHost(i+1, (float)sliderThatWasMoved->getMinValue());				
+			getFilter()->setParameterNotifyingHost(i+1, (float)sliderThatWasMoved->getMaxValue());				
 		}
 		else
 		{
+			const float value = sliderThatWasMoved->getValue();//getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
 			getFilter()->setParameter(i, (float)sliderThatWasMoved->getValue());
 			getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getValue());
 		}

@@ -839,10 +839,10 @@ void LookAndFeel_V2::drawBubble (Graphics& g, BubbleComponent& comp,
     p.addBubble (body.reduced (0.5f), body.getUnion (Rectangle<float> (tip.x, tip.y, 1.0f, 1.0f)),
                  tip, 5.0f, jmin (15.0f, body.getWidth() * 0.2f, body.getHeight() * 0.2f));
 
-    g.setColour (comp.findColour (BubbleComponent::backgroundColourId));
+    g.setColour (Colours::whitesmoke);
     g.fillPath (p);
 
-    g.setColour (comp.findColour (BubbleComponent::outlineColourId));
+    g.setColour (Colour(40, 40, 40));
     g.strokePath (p, PathStrokeType (1.0f));
 }
 

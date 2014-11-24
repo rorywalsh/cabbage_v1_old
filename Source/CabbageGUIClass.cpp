@@ -592,7 +592,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::shape, "rounded");
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
         cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colours::white.toString());
-        cabbageIdentifiers.set(CabbageIDs::linethickness, 0);
+        cabbageIdentifiers.set(CabbageIDs::outlinethickness, 0);
         cabbageIdentifiers.set(CabbageIDs::popup, 0);
         cabbageIdentifiers.set(CabbageIDs::plant, "");
         cabbageIdentifiers.set(CabbageIDs::type, "image");
@@ -1577,12 +1577,18 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                 cabbageIdentifiers.set(CabbageIDs::amprange, value);
             }
 
+            else if(identArray[indx].equalsIgnoreCase("outlinethickness"))
+            {
+                //cabbageIdentifiers.set("line", strTokens[0].trim().getFloatValue());
+                cabbageIdentifiers.set(CabbageIDs::outlinethickness, strTokens[0].trim().getFloatValue());
+            }
+
             else if(identArray[indx].equalsIgnoreCase("linethickness"))
             {
                 //cabbageIdentifiers.set("line", strTokens[0].trim().getFloatValue());
                 cabbageIdentifiers.set(CabbageIDs::linethickness, strTokens[0].trim().getFloatValue());
             }
-
+			
             else if(identArray[indx].equalsIgnoreCase("trackerthickness"))
             {
                 //cabbageIdentifiers.set("line", strTokens[0].trim().getFloatValue());

@@ -1564,7 +1564,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
             m_ShowMessage("This feature only works on computers running OSX", lookAndFeel);
         }
         //Logger::writeToLog(VST);
-        //showMessage(VST);
+        showMessage(VST);
         File VSTData(VST);
         if(!VSTData.exists())
         {
@@ -1605,8 +1605,9 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
             else
             {
                 File dll(saveFC.getResult().withFileExtension(".so").getFullPathName());
-                Logger::writeToLog(dll.getFullPathName());
-                if(!VSTData.copyFileTo(dll))	showMessage("", "Can not move lib", lookAndFeel, this);
+                if(!VSTData.copyFileTo(dll))	
+					showMessage("", "Can not move lib", lookAndFeel, this);
+					
                 File loc_csdFile(saveFC.getResult().withFileExtension(".csd").getFullPathName());
                 loc_csdFile.replaceWithText(csdFile.loadFileAsString());
             }

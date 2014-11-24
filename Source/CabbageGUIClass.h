@@ -56,7 +56,8 @@ public:
         add("guirefresh");
         add("midictrl");
         add("stack");
-        add("linethickness");
+        add("outlinethickness");
+		add("linethickness");
         add("trackerthickness");
         add("populate");
         add("range");
@@ -177,6 +178,7 @@ static const Identifier popup = "popup";
 static const Identifier svgpath = "svgpath";
 static const Identifier plant = "plant";
 static const Identifier trackerthickness = "trackerthickness";
+static const Identifier outlinethickness = "outlinethickness";
 static const Identifier linethickness = "linethickness";
 static const Identifier tablenumber = "tablenumber";
 static const Identifier tableconfig = "tableconfig";

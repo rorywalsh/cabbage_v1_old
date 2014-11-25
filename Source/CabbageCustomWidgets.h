@@ -297,7 +297,7 @@ class CabbageSlider : public Component,
     int resizeCount;
     String tracker;
 
-    String name, text, caption, kind, colour, fontColour, trackerFill, outlineColour, channel, channel2;
+    String name, text, caption, kind, colour, fontColour, textColour, trackerFill, outlineColour, channel, channel2;
     int textBox, decPlaces;
     double min, max;
     ScopedPointer<Label> textLabel;
@@ -315,6 +315,7 @@ public:
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         colour(cAttr.getStringProp(CabbageIDs::colour)),
         fontColour(cAttr.getStringProp(CabbageIDs::fontcolour)),
+		textColour(cAttr.getStringProp(CabbageIDs::textcolour)),
         outlineColour(cAttr.getStringProp(CabbageIDs::outlinecolour)),
         sliderType(cAttr.getStringProp(CabbageIDs::kind)),
         compName(cAttr.getStringProp(CabbageIDs::caption)),
@@ -352,7 +353,7 @@ public:
         slider->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
         slider->toFront(true);
         slider->addMouseListener(this, false);
-		textLabel->setColour(Label::textColourId, Colour::fromString(fontColour));
+		textLabel->setColour(Label::textColourId, Colour::fromString(textColour));
 
         //slider->setPopupDisplayEnabled (true, 0);
 
@@ -362,8 +363,8 @@ public:
         //slider->setColour(Slider::textBoxTextColourId, Colour::fromString(fontColour));
         slider->setColour(Label::textColourId, Colour::fromString(fontColour));
         slider->setColour(Label::backgroundColourId, CabbageUtils::getBackgroundSkin());
-        slider->setColour(TextEditor::textColourId, Colours::white);
-        slider->setColour(Slider::textBoxTextColourId, Colours::white);
+        slider->setColour(TextEditor::textColourId, Colour::fromString(fontColour));
+        slider->setColour(Slider::textBoxTextColourId, Colour::fromString(fontColour));
 		slider->setColour(Slider::textBoxBackgroundColourId, Colours::black);
 		slider->setColour(Slider::textBoxHighlightColourId, Colours::white);
         slider->setColour(Slider::trackColourId, Colour::fromString(tracker));
@@ -2107,7 +2108,7 @@ public:
 class CabbageNumberBox :  public Component
 {
     String name;
-    Colour colour, outlinecolour, fontcolour;
+    Colour colour, outlinecolour, fontcolour, textcolour;
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<Label> label;
     int offX, offY, offWidth, offHeight, width, height, value, lastValue, decPlaces, textbox;
@@ -2120,6 +2121,7 @@ public:
         colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::colour))),
         outlinecolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::outlinecolour))),
         fontcolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
+		textcolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::textcolour))),
         text(cAttr.getStringProp(CabbageIDs::text)),
         textbox(cAttr.getNumProp(CabbageIDs::textbox)),
         decPlaces(cAttr.getNumProp(CabbageIDs::decimalplaces)),
@@ -2135,7 +2137,7 @@ public:
         slider->toFront(true);
         label = new Label();
         label->setText(text, dontSendNotification);
-        label->setColour(Label::textColourId, fontcolour);
+        label->setColour(Label::textColourId, textcolour);
 
         addAndMakeVisible(label);
         addAndMakeVisible(slider);

@@ -58,6 +58,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::whitesmoke.toString());
         cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::textcolour, CabbageUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
         cabbageIdentifiers.set(CabbageIDs::sliderincr, .01);
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);
@@ -103,6 +104,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::whitesmoke.toString());
         cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::textcolour, CabbageUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
         cabbageIdentifiers.set(CabbageIDs::sliderincr, .01);
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);
@@ -145,6 +147,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 		cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colours::whitesmoke.toString());
         cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::textcolour, CabbageUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);
         cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
         //these don't appear in the props dialog
@@ -376,6 +379,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::type, "numberbox");
         cabbageIdentifiers.set(CabbageIDs::colour, CabbageUtils::getDarkerBackgroundSkin().toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::whitesmoke.toString());
+		cabbageIdentifiers.set(CabbageIDs::textcolour, CabbageUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::name, "numberbox");
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
@@ -1088,19 +1092,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
             }
             else if(identArray[indx].equalsIgnoreCase("textcolour"))
             {
-                Colour textcolour;
-                if(strTokens.size()<2)
-                    textcolour = Colours::findColourForName(strTokens[0].trim(), Colours::white);
-                else if(strTokens.size()==4)
-                    textcolour = Colour::fromRGBA (strTokens[0].getIntValue(),
-                                                   strTokens[1].getIntValue(),
-                                                   strTokens[2].getIntValue(),
-                                                   strTokens[3].getIntValue());
-                else if(strTokens.size()==3)
-                    textcolour = Colour::fromRGB (strTokens[0].getIntValue(),
-                                                  strTokens[1].getIntValue(),
-                                                  strTokens[2].getIntValue());
-                cabbageIdentifiers.set(CabbageIDs::textcolour, textcolour.toString());
+                cabbageIdentifiers.set(CabbageIDs::textcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
             }
 
             else if(identArray[indx].equalsIgnoreCase("pluginid"))

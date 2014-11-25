@@ -146,26 +146,48 @@ public:
 //==============================================================================
 // custom slider component with optional surrounding groupbox
 //==============================================================================
-class RangeSlider : public Slider
+class CabbageRangeSlider : public Slider
 {
     
 public:
-        RangeSlider(String text):
-		Slider(text),
-		thumbWidth(20)
+        CabbageRangeSlider(String name):
+		Slider(name),
+		thumbWidth(10)
 		{
 			setSliderStyle(SliderStyle::TwoValueHorizontal);
 		}
 		
-        ~RangeSlider() {};
+        ~CabbageRangeSlider() {};
 
 private:
         void mouseDown(const MouseEvent& event)
         {
 			topThumbDownX = valueToProportionOfLength(getMinValue())*getWidth();
 			bottomThumbDownX = valueToProportionOfLength(getMaxValue())*getWidth();
+			isDraggingRange=false;
         }
 
+
+        void mouseMove(const MouseEvent& event)
+        {
+			const float sliderMin = getMinValue();
+			const float sliderMax = getMaxValue();
+			const float currentMouseX = event.getPosition().getX();
+			const float bottomThumbPosition = valueToProportionOfLength(sliderMin)*getWidth();
+			const float topThumbPosition = valueToProportionOfLength(sliderMax)*getWidth();
+			const int minPosition = valueToProportionOfLength(getMinimum())*getWidth(); 
+			const int maxPosition = valueToProportionOfLength(getMaximum())*getWidth(); 
+			if(currentMouseX>bottomThumbPosition+thumbWidth && currentMouseX<topThumbPosition-thumbWidth)
+			{		
+				if(topThumbPosition>minPosition && bottomThumbPosition<maxPosition)
+				{
+				setMouseCursor(MouseCursor::DraggingHandCursor);	
+				}
+			}
+			else
+				setMouseCursor(MouseCursor::NormalCursor);
+        }
+		
         void mouseDrag(const MouseEvent& event)
         {
 			const float sliderMin = getMinValue();
@@ -176,32 +198,44 @@ private:
 			const float bottomThumbPosition = valueToProportionOfLength(sliderMin)*getWidth();
 			const float topThumbPosition = valueToProportionOfLength(sliderMax)*getWidth();
 			const int distanceFromStart = event.getDistanceFromDragStartX();
-			
-			if(event.getPosition().getY()>getHeight()/2.f)
-			{
-				if(currentMouseX>topThumbPosition-thumbWidth && currentMouseX<topThumbPosition+thumbWidth)
-					setMaxValue(proportionOfLengthToValue(currentMouseX/getWidth()));						
-			}
-			else
-			{
-				if(currentMouseX>bottomThumbPosition-thumbWidth && currentMouseX<bottomThumbPosition+thumbWidth)
-					setMinValue(proportionOfLengthToValue(currentMouseX/getWidth()));				
-			}
+
 			
 			if(currentMouseX>bottomThumbPosition+thumbWidth && currentMouseX<topThumbPosition-thumbWidth)
 			{		
-				Logger::writeToLog(String(topThumbPosition));
 				if(topThumbPosition>minPosition && bottomThumbPosition<maxPosition)
 				{
 				setMinValue(proportionOfLengthToValue(topThumbDownX+distanceFromStart)/getWidth());		
 				setMaxValue(proportionOfLengthToValue(bottomThumbDownX+distanceFromStart)/getWidth());	
+				setMouseCursor(MouseCursor::DraggingHandCursor);
+				isDraggingRange = true;
 				}
+			}
+			
+			if(isDraggingRange==false)
+			{
+				setMouseCursor(MouseCursor::NormalCursor);
+				if(event.getPosition().getY()>getHeight()/2.f)
+				{
+					if(currentMouseX>topThumbPosition-thumbWidth && currentMouseX<topThumbPosition+thumbWidth)
+					{
+						setMaxValue(proportionOfLengthToValue(currentMouseX/getWidth()));											
+						//Logger::writeToLog(String(proportionOfLengthToValue(currentMouseX/getWidth())));
+					}
+				}
+				else
+				{
+					if(currentMouseX>bottomThumbPosition-thumbWidth && currentMouseX<bottomThumbPosition+thumbWidth)
+					{
+						setMinValue(proportionOfLengthToValue(currentMouseX/getWidth()));							
+					}
+				}			
 			}
 			
         }
 		
 		int topThumbDownX, bottomThumbDownX;
 		const int thumbWidth;
+		bool isDraggingRange;
 };
 
 class CabbageSlider : public Component,
@@ -250,7 +284,7 @@ public:
         groupbox = new GroupComponent(String("groupbox_")+name);
 		
 		if(sliderType=="vertical2" || sliderType=="horizontal2")	
-			slider = new RangeSlider(text);
+			slider = new CabbageRangeSlider(channel);
 		else
 			slider = new Slider(text);
 			

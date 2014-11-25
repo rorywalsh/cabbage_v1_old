@@ -1592,6 +1592,8 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
             range=1;
         else
             newValue = (newValue*range)+min;
+			
+		
 
 #endif
         if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox &&
@@ -1608,8 +1610,8 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
             messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel),
                     newValue,
                     guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
+					
         }
-
         guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
     }
 #endif

@@ -2293,8 +2293,12 @@ void CabbagePluginAudioProcessorEditor::InsertSlider(CabbageGUIClass &cAttr)
 	
     int idx = comps.size()-1;
 	if(!cAttr.getStringProp(CabbageIDs::name).contains("dummy"))
+	{
 		setPositionOfComponent(left, top, width, height, comps[idx], cAttr.getStringProp("reltoplant"));
-    ((CabbageSlider*)comps[idx])->slider->addListener(this);
+		((CabbageSlider*)comps[idx])->slider->addListener(this);
+	}
+	else
+		
     comps[idx]->getProperties().set(String("midiChan"), cAttr.getNumProp("midichan"));
     comps[idx]->getProperties().set(String("midiCtrl"), cAttr.getNumProp("midictrl"));
     ((CabbageSlider*)comps[idx])->slider->getProperties().set(String("index"), idx);
@@ -2370,11 +2374,10 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
         getFilter()->beginParameterChangeGesture(i);
 		if(sliderThatWasMoved->getSliderStyle()==Slider::TwoValueHorizontal || sliderThatWasMoved->getSliderStyle()==Slider::TwoValueHorizontal)
         {
-			const float value = sliderThatWasMoved->getValue();//getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
 			getFilter()->setParameter(i, (float)sliderThatWasMoved->getMinValue());
 			getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getMinValue());
-			getFilter()->setParameter(i+1, (float)sliderThatWasMoved->getMinValue());
-			getFilter()->setParameterNotifyingHost(i+1, (float)sliderThatWasMoved->getMaxValue());				
+			getFilter()->setParameter(i+1, (float)sliderThatWasMoved->getMaxValue());
+			getFilter()->setParameterNotifyingHost(i+1, (float)sliderThatWasMoved->getMaxValue());
 		}
 		else
 		{
@@ -3381,7 +3384,12 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 						if(cabSlider->slider->getSliderStyle()==Slider::LinearVertical ||
 						   cabSlider->slider->getSliderStyle()==Slider::LinearHorizontal)
 						{
-							cabSlider->slider->setValue(inValue, sendNotification);
+							float bottomVal = getFilter()->getParameter(i);
+							float topVal = getFilter()->getParameter(i+1);
+
+							cabSlider->slider->setMaxValue(topVal, dontSendNotification);	
+							cabSlider->slider->setMinValue(bottomVal, dontSendNotification);								
+
 						}
 						else
 						{

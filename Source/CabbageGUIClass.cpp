@@ -59,7 +59,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
-        cabbageIdentifiers.set(CabbageIDs::sliderincr, .1);
+        cabbageIdentifiers.set(CabbageIDs::sliderincr, .01);
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);
         cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
         //these don't appear in the props dialog
@@ -104,7 +104,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
-        cabbageIdentifiers.set(CabbageIDs::sliderincr, .1);
+        cabbageIdentifiers.set(CabbageIDs::sliderincr, .01);
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);
         cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
         //these don't appear in the props dialog
@@ -137,7 +137,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::max, 100);
         cabbageIdentifiers.set(CabbageIDs::value, 50);
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
-        cabbageIdentifiers.set(CabbageIDs::sliderincr, .1);
+        cabbageIdentifiers.set(CabbageIDs::sliderincr, .01);
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
@@ -369,7 +369,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::max, 100);
         cabbageIdentifiers.set(CabbageIDs::value, 50);
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
-        cabbageIdentifiers.set(CabbageIDs::sliderincr, .0001);
+        cabbageIdentifiers.set(CabbageIDs::sliderincr, .01);
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::value, 0);
         cabbageIdentifiers.set(CabbageIDs::caption, "");

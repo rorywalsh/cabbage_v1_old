@@ -127,6 +127,8 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     Array<int> tableNumbers;
     AudioPlayHead::CurrentPositionInfo hostInfo;
 
+	NamedValueSet macroText;
+
     StringArray oscChannelIdentifiers;
     NamedValueSet oscChannelValues;
     String oscAddress;

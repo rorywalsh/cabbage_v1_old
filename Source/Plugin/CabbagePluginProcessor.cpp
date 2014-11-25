@@ -802,10 +802,10 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     csdText.addLines(source);
     bool multiComment = false;
     bool multiLine = false;
-//check for minimal Cabbage GUI
 
-    for(int i=0; i<csdText.size(); i++)
-    {
+	for(int i=0; i<csdText.size(); i++)
+    {	
+		
         int csdLineNumber=0;
 #if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
         if(!refresh)
@@ -836,7 +836,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                 csdLine = csdLine.trimStart();
                 //csdLine = csdLine.removeCharacters(" \\");
                 //csdLine = csdLine.removeCharacters(",\\");
-                //Logger::writeToLog(csdLine);
+                
                 StringArray tokes;
                 tokes.addTokens(csdLine.trimEnd(), ", ", "\"");
 
@@ -858,6 +858,21 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                     plantFlag = ""; //reset plantFlag when a closing bracket is found
                     presetFlag = "";
                 }
+
+				if(tokes[0].containsIgnoreCase("#define"))
+				{
+					tokes.removeEmptyStrings();
+					if(tokes.size()>2)
+					{
+						macroText.set("$"+tokes[1], csdLine.substring(csdLine.indexOf(tokes[1])+tokes[1].length()));
+					}					
+				}
+
+				for(int cnt=0;cnt<macroText.size();cnt++)
+				{
+					if(csdLine.contains(macroText.getName(cnt).toString()))
+						csdLine = csdLine.replace(macroText.getName(cnt), macroText.getWithDefault(macroText.getName(cnt), "").toString()+" ");
+				}
 
                 if(!multiComment)
                     //populate the guiLayoutCtrls vector with non-interactive widgets

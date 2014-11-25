@@ -432,12 +432,17 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
 				String popupText;
                 float value = cabSlider->slider->getValue();
                 if(value>-0.00001 && value<0.00001) value = 0;
-				if(cabSlider->slider->getSliderStyle()==Slider::TwoValueHorizontal ||
-				   cabSlider->slider->getSliderStyle()==Slider::TwoValueVertical)
+				if(cabSlider->slider->getSliderStyle()==Slider::TwoValueHorizontal)
 				{
 					popupText = "Min: "+String(cabSlider->slider->getMinValue())+
 								"\nMax: "+String(cabSlider->slider->getMaxValue());
 					popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
+				}
+				else if(cabSlider->slider->getSliderStyle()==Slider::TwoValueVertical)
+				{
+					popupText = "Max: "+String(cabSlider->slider->getMaxValue())+
+								"\nMin: "+String(cabSlider->slider->getMinValue());
+					popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);					
 				}
 				else if(cabSlider->slider->getSliderStyle()==Slider::ThreeValueHorizontal ||
 						cabSlider->slider->getSliderStyle()==Slider::ThreeValueVertical)

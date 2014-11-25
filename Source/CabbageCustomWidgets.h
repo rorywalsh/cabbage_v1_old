@@ -154,7 +154,7 @@ public:
 		Slider(name),
 		thumbWidth(10)
 		{
-			setSliderStyle(SliderStyle::TwoValueHorizontal);
+			
 		}
 		
         ~CabbageRangeSlider() {};
@@ -162,9 +162,17 @@ public:
 private:
         void mouseDown(const MouseEvent& event)
         {
-			topThumbDownX = valueToProportionOfLength(getMinValue())*getWidth();
-			bottomThumbDownX = valueToProportionOfLength(getMaxValue())*getWidth();
-			isDraggingRange=false;
+			isDraggingRange=false;		
+			if(getSliderStyle()==Slider::TwoValueHorizontal)
+			{
+				topThumbDownPos = valueToProportionOfLength(getMinValue())*getWidth();
+				bottomThumbDownPos = valueToProportionOfLength(getMaxValue())*getWidth();		
+			}
+			else
+			{
+				rightThumbDownPos = valueToProportionOfLength(getMinValue())*getHeight();
+				leftThumbDownPos = valueToProportionOfLength(getMaxValue())*getHeight();				
+			}
         }
 
 
@@ -172,68 +180,111 @@ private:
         {
 			const float sliderMin = getMinValue();
 			const float sliderMax = getMaxValue();
-			const float currentMouseX = event.getPosition().getX();
-			const float bottomThumbPosition = valueToProportionOfLength(sliderMin)*getWidth();
-			const float topThumbPosition = valueToProportionOfLength(sliderMax)*getWidth();
-			const int minPosition = valueToProportionOfLength(getMinimum())*getWidth(); 
-			const int maxPosition = valueToProportionOfLength(getMaximum())*getWidth(); 
-			if(currentMouseX>bottomThumbPosition+thumbWidth && currentMouseX<topThumbPosition-thumbWidth)
-			{		
-				if(topThumbPosition>minPosition && bottomThumbPosition<maxPosition)
-				{
-				setMouseCursor(MouseCursor::DraggingHandCursor);	
+			if(getSliderStyle()==Slider::TwoValueHorizontal)
+			{
+				const float currentMouseX = event.getPosition().getX();
+				const float bottomThumbPosition = valueToProportionOfLength(sliderMin)*getWidth();
+				const float topThumbPosition = valueToProportionOfLength(sliderMax)*getWidth();
+				const int minPosition = valueToProportionOfLength(getMinimum())*getWidth(); 
+				const int maxPosition = valueToProportionOfLength(getMaximum())*getWidth(); 
+				if(currentMouseX>bottomThumbPosition+thumbWidth && currentMouseX<topThumbPosition-thumbWidth)
+				{		
+					if(topThumbPosition>minPosition && bottomThumbPosition<maxPosition)
+					setMouseCursor(MouseCursor::DraggingHandCursor);	
 				}
+				else
+					setMouseCursor(MouseCursor::NormalCursor);	
 			}
 			else
-				setMouseCursor(MouseCursor::NormalCursor);
+			{
+				const int minPosition = valueToProportionOfLength(getMinimum())*getHeight(); 
+				const int maxPosition = valueToProportionOfLength(getMaximum())*getHeight(); 
+				const float currentMouseY = event.getPosition().getY();
+				const float leftThumbPosition = getHeight()-valueToProportionOfLength(sliderMin)*getHeight();
+				const float rightThumbPosition = getHeight()-valueToProportionOfLength(sliderMax)*getHeight();
+				const int distanceFromStart = event.getDistanceFromDragStartY();
+				if(currentMouseY<leftThumbPosition-thumbWidth && currentMouseY>rightThumbPosition+thumbWidth)
+				{	
+					if(rightThumbPosition>minPosition && leftThumbPosition<maxPosition)
+					setMouseCursor(MouseCursor::DraggingHandCursor);	
+				}
+				else
+					setMouseCursor(MouseCursor::NormalCursor);					
+			}
         }
 		
         void mouseDrag(const MouseEvent& event)
         {
 			const float sliderMin = getMinValue();
 			const float sliderMax = getMaxValue();
-			const int minPosition = valueToProportionOfLength(getMinimum())*getWidth(); 
-			const int maxPosition = valueToProportionOfLength(getMaximum())*getWidth(); 
-			const float currentMouseX = event.getPosition().getX();
-			const float bottomThumbPosition = valueToProportionOfLength(sliderMin)*getWidth();
-			const float topThumbPosition = valueToProportionOfLength(sliderMax)*getWidth();
-			const int distanceFromStart = event.getDistanceFromDragStartX();
-
-			
-			if(currentMouseX>bottomThumbPosition+thumbWidth && currentMouseX<topThumbPosition-thumbWidth)
-			{		
-				if(topThumbPosition>minPosition && bottomThumbPosition<maxPosition)
-				{
-				setMinValue(proportionOfLengthToValue(topThumbDownX+distanceFromStart)/getWidth());		
-				setMaxValue(proportionOfLengthToValue(bottomThumbDownX+distanceFromStart)/getWidth());	
-				setMouseCursor(MouseCursor::DraggingHandCursor);
-				isDraggingRange = true;
-				}
-			}
-			
-			if(isDraggingRange==false)
+			if(getSliderStyle()==Slider::TwoValueHorizontal)
 			{
-				setMouseCursor(MouseCursor::NormalCursor);
-				if(event.getPosition().getY()>getHeight()/2.f)
-				{
-					if(currentMouseX>topThumbPosition-thumbWidth && currentMouseX<topThumbPosition+thumbWidth)
-					{
-						setMaxValue(proportionOfLengthToValue(currentMouseX/getWidth()));											
-						//Logger::writeToLog(String(proportionOfLengthToValue(currentMouseX/getWidth())));
-					}
+				const int minPosition = valueToProportionOfLength(getMinimum())*getWidth(); 
+				const int maxPosition = valueToProportionOfLength(getMaximum())*getWidth(); 
+				const float currentMouseX = event.getPosition().getX();
+				const float bottomThumbPosition = valueToProportionOfLength(sliderMin)*getWidth();
+				const float topThumbPosition = valueToProportionOfLength(sliderMax)*getWidth();
+				const int distanceFromStart = event.getDistanceFromDragStartX();
+				
+				if(currentMouseX>bottomThumbPosition+thumbWidth && currentMouseX<topThumbPosition-thumbWidth)
+				{		
+					setMinValue(proportionOfLengthToValue(topThumbDownPos+distanceFromStart)/getWidth());		
+					setMaxValue(proportionOfLengthToValue(bottomThumbDownPos+distanceFromStart)/getWidth());	
+					setMouseCursor(MouseCursor::DraggingHandCursor);
+					isDraggingRange = true;
 				}
-				else
+				
+				if(isDraggingRange==false)
 				{
-					if(currentMouseX>bottomThumbPosition-thumbWidth && currentMouseX<bottomThumbPosition+thumbWidth)
+					setMouseCursor(MouseCursor::NormalCursor);
+					if(event.getPosition().getY()>getHeight()/2.f)
 					{
-						setMinValue(proportionOfLengthToValue(currentMouseX/getWidth()));							
+						if(currentMouseX>topThumbPosition-thumbWidth && currentMouseX<topThumbPosition+thumbWidth)
+							setMaxValue(proportionOfLengthToValue(currentMouseX/getWidth()));											
 					}
-				}			
+					else
+					{
+						if(currentMouseX>bottomThumbPosition-thumbWidth && currentMouseX<bottomThumbPosition+thumbWidth)
+							setMinValue(proportionOfLengthToValue(currentMouseX/getWidth()));							
+					}			
+				}
+				
 			}
-			
+			else//vertical slider 
+			{
+				const int minPosition = valueToProportionOfLength(getMinimum())*getHeight(); 
+				const int maxPosition = valueToProportionOfLength(getMaximum())*getHeight(); 
+				const float currentMouseY = event.getPosition().getY();
+				const float leftThumbPosition = getHeight()-valueToProportionOfLength(sliderMin)*getHeight();
+				const float rightThumbPosition = getHeight()-valueToProportionOfLength(sliderMax)*getHeight();
+				const int distanceFromStart = event.getDistanceFromDragStartY();
+
+				if(currentMouseY<leftThumbPosition-thumbWidth && currentMouseY>rightThumbPosition+thumbWidth)
+				{							
+					setMinValue(proportionOfLengthToValue((rightThumbDownPos+(1.f-distanceFromStart)))/getHeight());		
+					setMaxValue(proportionOfLengthToValue((leftThumbDownPos+(1.f-distanceFromStart)))/getHeight());	
+					setMouseCursor(MouseCursor::DraggingHandCursor);
+					isDraggingRange = true;
+				}
+				
+				if(isDraggingRange==false)
+				{
+					setMouseCursor(MouseCursor::NormalCursor);
+					if(event.getPosition().getX()>getWidth()/2.f)
+					{
+						if(currentMouseY>rightThumbPosition-thumbWidth && currentMouseY<rightThumbPosition+thumbWidth)
+							setMaxValue(proportionOfLengthToValue(1.f-(currentMouseY/getHeight())));										
+					}
+					else
+					{
+						if(currentMouseY>leftThumbPosition-thumbWidth && currentMouseY<leftThumbPosition+thumbWidth)
+							setMinValue(proportionOfLengthToValue(1.f-(currentMouseY/getHeight())));							
+					}			
+				}				
+			}
         }
 		
-		int topThumbDownX, bottomThumbDownX;
+		int topThumbDownPos, bottomThumbDownPos, rightThumbDownPos, leftThumbDownPos;
 		const int thumbWidth;
 		bool isDraggingRange;
 };
@@ -344,17 +395,22 @@ public:
             CabbageUtils::showMessage("Your min value is the same or greater than your max value.\nCabbage will now reduce your min value so that it falls into range", &getLookAndFeel());
             cAttr.setNumProp(CabbageIDs::min, cAttr.getNumProp(CabbageIDs::max)-.001);
         }
-		
+
         min = cAttr.getNumProp(CabbageIDs::minvalue);
-        max = cAttr.getNumProp(CabbageIDs::maxvalue);
+        max = cAttr.getNumProp(CabbageIDs::maxvalue);		
+		
+		if(sliderType=="vertical" || sliderType=="horizontal" || sliderType=="rotary")	
+			slider->setValue(cAttr.getNumProp(CabbageIDs::value));		
+		else
+			setupMinMaxValue();
+
 		
         incr = cAttr.getNumProp(CabbageIDs::sliderincr);
         skew = cAttr.getNumProp(CabbageIDs::sliderskew);
         slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
         slider->setRange(cAttr.getNumProp(CabbageIDs::min), cAttr.getNumProp(CabbageIDs::max), cAttr.getNumProp(CabbageIDs::sliderincr));
 	
-		if(sliderType=="vertical" || sliderType=="horizontal" || sliderType=="rotary")	
-			slider->setValue(cAttr.getNumProp(CabbageIDs::value));
+
 			
         slider->setDoubleClickReturnValue(true, cAttr.getNumProp(CabbageIDs::value));
 
@@ -364,6 +420,12 @@ public:
     ~CabbageSlider()
     {
     }
+
+	void setupMinMaxValue()
+	{
+		slider->setMinValue(min);
+		slider->setMaxValue(max);
+	}
 
     bool shouldDisplayPopupValue()
     {
@@ -427,7 +489,7 @@ public:
             slider->setSliderStyle(Slider::Rotary);
             getProperties().set("type", var("rslider"));
             slider->setSliderStyle(Slider::RotaryVerticalDrag);
-
+			
             if(textBox>0)
                 slider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 15);
 
@@ -483,13 +545,9 @@ public:
 				slider->setSliderStyle(Slider::TwoValueVertical);
 			else
 				slider->setSliderStyle(Slider::LinearVertical);
-
-			if(sliderType=="vertical3" || sliderType=="vertical2")
-			{
-				slider->setMinValue(min, dontSendNotification);
-				slider->setMaxValue(max, dontSendNotification);
-			}
-								
+					
+			setupMinMaxValue();			
+			
             if(textBox>0)
                 slider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 15);
 
@@ -534,12 +592,8 @@ public:
 			else
 				slider->setSliderStyle(Slider::LinearHorizontal);
 				
-			if(sliderType=="horizontal3" || sliderType=="horizontal2")
-			{
-				slider->setMinValue(min, dontSendNotification);
-				slider->setMaxValue(max, dontSendNotification);
-			}				
-				
+			setupMinMaxValue();
+	
             if(textBox>0)
                 slider->setTextBoxStyle(Slider::TextBoxRight, false, 40, 15);
             if(cl.length() > 0)

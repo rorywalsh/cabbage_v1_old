@@ -1,7 +1,7 @@
 <Cabbage>
 form caption("Granular synthesizer") size(428, 220), colour("black"), pluginID("gra1")
 rslider bounds(0, 0, 80, 80) channel("random"), range(1, 2000, 200), caption("Random freq"), colour("white"), midictrl(1, 1)
-rslider bounds(85, 0, 80, 80) channel("size"), range(0.005,.2, .02), caption("Grain size"), colour("white"), midictrl(1, 2)
+rslider bounds(85, 0, 80, 80) channel("size"), range(0.005,.2, .02, 1, 0.001), caption("Grain size"), colour("white"), midictrl(1, 2)
 rslider bounds(170, 0, 80, 80) channel("density"), range(1, 10, 1), caption("Density"), colour("white"), midictrl(1, 3)
 rslider bounds(255, 0, 80, 80) channel("reverb"), range(0, 1, 0), caption("Reverb"), colour("white"), midictrl(1, 4)
 rslider bounds(340, 0, 80, 80) channel("freq"), range(0,30, 0), caption("Flanger"), colour("white"), midictrl(1, 5)

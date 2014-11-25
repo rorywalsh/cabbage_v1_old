@@ -3356,44 +3356,50 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
             inValue = getFilter()->getParameter(i);
             if(i<getFilter()->getGUICtrlsSize())
             {
-                if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::hslider||
-                        getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::rslider||
-                        getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::vslider)
+                if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type).contains("slider")||
+				getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::numberbox)
                 {
-                    CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(comps[i]);
-                    if(cabSlider)
+                    CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(comps[i]);	
+					CabbageNumberBox* cabNumber = dynamic_cast<CabbageNumberBox*>(comps[i]);
+					Slider* slider = nullptr;
+					if(cabSlider)
+						slider = cabSlider->slider;
+					else if(cabNumber)
+						slider = cabNumber->slider;
+					
+                    if(slider)
                     {
 #ifndef Cabbage_Build_Standalone
-						if(cabSlider->slider->getSliderStyle()==Slider::LinearVertical ||
-						   cabSlider->slider->getSliderStyle()==Slider::LinearHorizontal)
+						if(slider->getSliderStyle()==Slider::LinearVertical ||
+						   slider->getSliderStyle()==Slider::LinearHorizontal)
 						{
 							float val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i)+
 										getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::min);
-							cabSlider->slider->setValue(val, dontSendNotification);
+							slider->setValue(val, dontSendNotification);
 						}
 						else
 						{
 							float bottomVal = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i);
 							float topVal = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i+1);
 
-							cabSlider->slider->setMaxValue(topVal, dontSendNotification);	
-							cabSlider->slider->setMinValue(bottomVal, dontSendNotification);	
+							slider->setMaxValue(topVal, dontSendNotification);	
+							slider->setMinValue(bottomVal, dontSendNotification);	
 						
 						}
 #else
-						if(cabSlider->slider->getSliderStyle()==Slider::LinearVertical ||
-						   cabSlider->slider->getSliderStyle()==Slider::LinearHorizontal)
+						if(slider->getSliderStyle()==Slider::LinearVertical ||
+						   slider->getSliderStyle()==Slider::LinearHorizontal)
 						{
 							float bottomVal = getFilter()->getParameter(i);
 							float topVal = getFilter()->getParameter(i+1);
 
-							cabSlider->slider->setMaxValue(topVal, dontSendNotification);	
-							cabSlider->slider->setMinValue(bottomVal, dontSendNotification);								
+							slider->setMaxValue(topVal, dontSendNotification);	
+							slider->setMinValue(bottomVal, dontSendNotification);								
 
 						}
 						else
 						{
-							cabSlider->slider->setValue(inValue, sendNotification);
+							slider->setValue(inValue, sendNotification);
 						}
 #endif
                     }

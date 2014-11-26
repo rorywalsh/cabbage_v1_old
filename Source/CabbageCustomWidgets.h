@@ -88,7 +88,6 @@ public:
         addAndMakeVisible(button);
         groupbox->setVisible(false);
         groupbox->getProperties().set("groupLine", var(1));
-        Logger::writeToLog(buttonText);
         button->setButtonText(buttonText);
 
         if(cAttr.getNumProp(CabbageIDs::radiogroup)!=0)
@@ -104,7 +103,7 @@ public:
             groupbox->setText(caption);
         }
 
-
+		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
         button->setColour(TextButton::textColourOffId, Colour::fromString(fontcolour));
         button->setColour(TextButton::buttonColourId, Colour::fromString(colour));
         button->setColour(TextButton::textColourOnId, Colour::fromString(onfontcolour));
@@ -124,6 +123,8 @@ public:
         const MessageManagerLock mmLock;
         button->setColour(TextButton::textColourOnId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
         button->setColour(TextButton::buttonColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
+		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
+		
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
             setVisible(false);
         else
@@ -299,7 +300,7 @@ class CabbageSlider : public Component,
 
     String name, text, caption, kind, colour, fontColour, textColour, trackerFill, outlineColour, channel, channel2;
     int textBox, decPlaces;
-    double min, max;
+    double min, max, value;
     ScopedPointer<Label> textLabel;
 
     float incr, skew, trackerThickness;
@@ -328,6 +329,7 @@ public:
         channel(cAttr.getStringProp(CabbageIDs::channel)),
         lookAndFeel(new CabbageLookAndFeel()),
         shouldDisplayPopup(false),
+		value(cAttr.getNumProp(CabbageIDs::value)),
         textLabel(new Label())
     {
         setName(name);
@@ -385,6 +387,7 @@ public:
         groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
         slider->getProperties().set("decimalPlaces", decPlaces);
         slider->getProperties().set("trackerThickness", trackerThickness);
+		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));	
 
         this->setWantsKeyboardFocus(false);
         resizeCount = 0;
@@ -405,7 +408,7 @@ public:
 		else
 			setupMinMaxValue();
 
-		
+		Logger::writeToLog(String(cAttr.getNumProp(CabbageIDs::value)));
         incr = cAttr.getNumProp(CabbageIDs::sliderincr);
         skew = cAttr.getNumProp(CabbageIDs::sliderskew);
         slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
@@ -477,6 +480,7 @@ public:
             setVisible(false);
         else
             setVisible(true);
+		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
         repaint();
     }
 
@@ -490,7 +494,7 @@ public:
             slider->setSliderStyle(Slider::Rotary);
             getProperties().set("type", var("rslider"));
             slider->setSliderStyle(Slider::RotaryVerticalDrag);
-			
+			slider->setValue((value));
             if(textBox>0)
                 slider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 15);
 
@@ -541,11 +545,17 @@ public:
         {
             
 			if(sliderType=="vertical3")
+			{
 				slider->setSliderStyle(Slider::ThreeValueVertical);
+				slider->setValue(value);
+			}
 			else if(sliderType=="vertical2")
 				slider->setSliderStyle(Slider::TwoValueVertical);
 			else
+			{
 				slider->setSliderStyle(Slider::LinearVertical);
+				slider->setValue(value);
+			}
 					
 			setupMinMaxValue();			
 			
@@ -587,11 +597,17 @@ public:
         else
         {
 			if(sliderType=="horizontal3")
+			{
 				slider->setSliderStyle(Slider::ThreeValueHorizontal);
+				slider->setValue(value);
+			}
 			else if(sliderType=="horizontal2")
 				slider->setSliderStyle(Slider::TwoValueHorizontal);
 			else
+			{
 				slider->setSliderStyle(Slider::LinearHorizontal);
+				slider->setValue(value);
+			}
 				
 			setupMinMaxValue();
 	
@@ -697,7 +713,7 @@ public:
         button->setColour(TextButton::buttonOnColourId, Colour::fromString(oncolour));
         button->setColour(TextButton::buttonColourId, Colour::fromString(colour));
         button->setButtonText(buttonText);
-
+		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
         //set initial value if given
         if(cAttr.getNumProp(CabbageIDs::value)==1)
             button->setToggleState(true, sendNotification);
@@ -721,7 +737,8 @@ public:
         setBounds(m_cAttr.getBounds());
         button->getProperties().set("isRect", m_cAttr.getStringProp(CabbageIDs::shape).equalsIgnoreCase("square"));
         button->setButtonText(m_cAttr.getStringProp(CabbageIDs::text));
-        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+        setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
             setVisible(false);
         else
             setVisible(true);
@@ -803,15 +820,7 @@ public:
     //update controls
     void update(CabbageGUIClass m_cAttr)
     {
-        //const MessageManagerLock mmLock;
-        //combo->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
-        //combo->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
-        //setBounds(m_cAttr.getBounds());
-        //if(!m_cAttr.getNumProp(CabbageIDs::visible))
-        //	setVisible(false);
-        //else
-        //	setVisible(true);
-        //repaint();
+	
     }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePopupMenu);
@@ -868,6 +877,7 @@ public:
         combo->setJustificationType (Justification::centredLeft);
         combo->setTextWhenNothingSelected(text);
         this->setWantsKeyboardFocus(false);
+		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
 
         //populate combo with files
         Array<File> dirFiles;
@@ -921,7 +931,8 @@ public:
         combo->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
         combo->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
         setBounds(m_cAttr.getBounds());
-        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+        setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
             setVisible(false);
         else
             setVisible(true);
@@ -966,6 +977,7 @@ public:
         if(cAttr.getStringProp(CabbageIDs::plant).isNotEmpty())
             this->setInterceptsMouseClicks(true, true);
         repaint();
+		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
     }
     ~CabbageImage()
     {
@@ -984,6 +996,8 @@ public:
         outline = m_cAttr.getStringProp(CabbageIDs::outlinecolour);
         shape = m_cAttr.getStringProp(CabbageIDs::shape);
         line = m_cAttr.getNumProp(CabbageIDs::outlinethickness);
+		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
+		
         setBounds(m_cAttr.getBounds());
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
             setVisible(false);
@@ -1066,7 +1080,7 @@ public:
         setName(cAttr.getStringProp(CabbageIDs::name));
         setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
         getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
-
+		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
         this->setText(text);
         this->setWantsKeyboardFocus(false);
         if(line==0)
@@ -1100,7 +1114,9 @@ public:
         setColour(GroupComponent::textColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
         setBounds(m_cAttr.getBounds());
         setText(m_cAttr.getStringProp(CabbageIDs::text));
-        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+        setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
+		
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
             setVisible(false);
         else
             setVisible(true);
@@ -1185,6 +1201,7 @@ public:
             this->setBounds(getX(), getY(), getWidth(), getHeight());
 
         this->setAlpha(0.7);
+
     }
 
     void paint(Graphics& g)
@@ -1234,6 +1251,7 @@ public:
         addAndMakeVisible(table);
         //table->addChangeListener(this);
         sampleRate = 44100;
+		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
         if(File(file).existsAsFile())
             setFile(file);
     }
@@ -1353,7 +1371,7 @@ public:
         soundFiler->addChangeListener(this);
         sampleRate = 44100;
         soundFiler->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
-
+		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
     }
 
     ~CabbageSoundfiler()
@@ -1460,6 +1478,8 @@ public:
             textAlign = Justification::left;
         else
             textAlign = Justification::right;
+			
+		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
 
     }
 
@@ -1495,7 +1515,9 @@ public:
         colour = m_cAttr.getStringProp(CabbageIDs::colour);
         fontcolour = m_cAttr.getStringProp(CabbageIDs::fontcolour);
         setBounds(m_cAttr.getBounds());
-        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+        setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
+		
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
             setVisible(false);
         else
             setVisible(true);
@@ -1605,7 +1627,8 @@ public:
     void update(CabbageGUIClass m_cAttr)
     {
         setBounds(m_cAttr.getBounds());
-        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+        setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
+		if(!m_cAttr.getNumProp(CabbageIDs::visible))
             setVisible(false);
         else
             setVisible(true);
@@ -1673,6 +1696,7 @@ public:
         editor->setText(text, false);
         //groupbox->setColour(GroupComponent::ColourIds::outlineColourId, Colours::red);
         this->setWantsKeyboardFocus(false);
+		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
     }
 
     //---------------------------------------------
@@ -1694,6 +1718,7 @@ public:
             editor->setText(m_cAttr.getStringProp(CabbageIDs::text));
             text = m_cAttr.getStringProp(CabbageIDs::text);
         }
+		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
         repaint();
     }
 
@@ -1788,6 +1813,7 @@ public:
         editor->setColour(0x1000200, colour);
         //text colour ID
         editor->setColour(0x1000201, fontcolour);
+		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
 
         if(type==CabbageIDs::textbox.toString())
         {
@@ -1832,6 +1858,7 @@ public:
             setVisible(false);
         else
             setVisible(true);
+		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
         repaint();
     }
 
@@ -2095,6 +2122,7 @@ public:
             setVisible(false);
         else
             setVisible(true);
+		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
         repaint();
     }
 
@@ -2156,6 +2184,7 @@ public:
         slider->setVelocityBasedMode(true);
         slider->setVelocityModeParameters(80);
         slider->getProperties().set("decimalPlaces", decPlaces);
+		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
 
 
         if(caption.length()>0)
@@ -2201,6 +2230,7 @@ public:
         slider->setColour(Slider::textBoxTextColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
         slider->setColour(Slider::trackColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::trackercolour)));
         setBounds(m_cAttr.getBounds());
+		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
         slider->setName(m_cAttr.getStringProp(CabbageIDs::text));
         slider->setSkewFactor(m_cAttr.getNumProp(CabbageIDs::sliderskew));
         if(!m_cAttr.getNumProp(CabbageIDs::visible))

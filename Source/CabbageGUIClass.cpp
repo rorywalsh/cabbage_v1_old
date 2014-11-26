@@ -33,6 +33,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 //before parsing begins
     cabbageIdentifiers.set("scalex", 1);
     cabbageIdentifiers.set("scaley", 1);
+	cabbageIdentifiers.set(CabbageIDs::alpha, 1.f);
 
     StringArray strTokens;
     strTokens.addTokens(compStr, " ", "\"");
@@ -1427,6 +1428,11 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                 cabbageIdentifiers.set(CabbageIDs::latched, strTokens[0].trim().getFloatValue());
             }
 
+            else if(identArray[indx].equalsIgnoreCase("alpha"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::alpha, strTokens[0].trim().getFloatValue());
+            }
+			
             else if(identArray[indx].equalsIgnoreCase("radiogroup"))
             {
                 cabbageIdentifiers.set(CabbageIDs::radiogroup, strTokens[0].trim().getFloatValue());

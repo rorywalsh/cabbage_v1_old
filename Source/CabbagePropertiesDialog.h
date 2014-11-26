@@ -118,8 +118,10 @@ public:
                     attributeNames[i].equalsIgnoreCase("comborange") ||
                     attributeNames[i].equalsIgnoreCase("basetype") ||
                     attributeNames[i].equalsIgnoreCase("visible") ||
+					attributeNames[i].equalsIgnoreCase("alpha") ||
                     attributeNames[i].equalsIgnoreCase("decimalplaces"))
             {
+				//hide these identifiers from the properties component
                 comps[i]->setPreferredHeight(0);
                 hiddenComponents++;
             }

@@ -3394,17 +3394,16 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 #else
 						if(slider->getSliderStyle()==Slider::LinearVertical ||
 						   slider->getSliderStyle()==Slider::LinearHorizontal)
+						{							
+							slider->setValue(inValue, sendNotification);
+						}
+						else
 						{
 							float bottomVal = getFilter()->getParameter(i);
 							float topVal = getFilter()->getParameter(i+1);
 
 							slider->setMaxValue(topVal, dontSendNotification);	
 							slider->setMinValue(bottomVal, dontSendNotification);								
-
-						}
-						else
-						{
-							slider->setValue(inValue, sendNotification);
 						}
 #endif
                     }

@@ -41,6 +41,7 @@ public:
     IdentArray() : StringArray("tablecolour")
     {
         add("tablecolours");
+		add("alpha");
         add("bounds");
         add("fontcolour");
         add("fontcolour:1");
@@ -141,6 +142,7 @@ static const Identifier max = "max";
 static const Identifier minvalue = "minvalue";
 static const Identifier maxvalue = "maxvalue";
 static const Identifier value = "value";
+static const Identifier alpha = "alpha";
 static const Identifier channel = "channel";
 static const Identifier channelarray = "channelarray";
 static const Identifier identchannelarray = "identchannelarray";

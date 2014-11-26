@@ -312,7 +312,7 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
     {
         InsertMultiTab(cAttr);
     }
-    else if(cAttr.getStringProp(CabbageIDs::type)==String(CabbageIDs::linethickness))
+    else if(cAttr.getStringProp(CabbageIDs::type)==String("line"))
     {
         InsertLineSeparator(cAttr);
     }

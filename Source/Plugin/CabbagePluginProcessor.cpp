@@ -864,7 +864,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 					tokes.removeEmptyStrings();
 					if(tokes.size()>2)
 					{
-						macroText.set("$"+tokes[1], csdLine.substring(csdLine.indexOf(tokes[1])+tokes[1].length()));
+						macroText.set("$"+tokes[1], " "+csdLine.substring(csdLine.indexOf(tokes[1])+tokes[1].length())+" ");
 					}					
 				}
 

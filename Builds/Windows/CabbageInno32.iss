@@ -33,7 +33,7 @@ Source: "build\CabbagePluginSynth.dat";                       DestDir: "{app}"; 
 Source: "build\CabbagePluginEffect.dat";                      DestDir: "{app}"; Components: program
 Source: "build\opcodes.txt";                                  DestDir: "{app}"; Components: program
 Source: "..\..\..\csound\build\frontends\max_csound_tilde\*";   DestDir: "{app}\csound4Max"; Components: csound4Max
-Source: "..\..\..\csound\frontends\max_csound_tilde\examples\*";   DestDir: "{app}\csound4Max\examples"; Components: csound4Max
+Source: "..\..\..\csound\frontends\max_csound_tilde\examples\*";   DestDir: "{app}\csound4Max"; Components: csound4Max
 
 
 Source: "..\..\Examples\*";               DestDir: "{app}\Examples"; Components: program; Flags: recursesubdirs
@@ -41,7 +41,7 @@ Source: "..\..\Docs\*";                   DestDir: "{app}\Docs"; Components: pro
 
 ;Source: "..\..\..\MingwLibs\libwinpthread-1.dll"; DestDir: "{app}"; Components: program
 ;Source: "..\..\..\MingwLibs\libgomp-1.dll";       DestDir: "{app}"; Components: program
-;Source: "..\..\..\MingwLibs\libgcc_s_dw2-1.dll";  DestDir: "{app}"; Components: program
+;Source: "C:\mingw32\bin\libgcc_s_dw2-1.dll";  DestDir: "{app}"; Components: program
 ;Source: "..\..\..\MingwLibs\libstdc++-6.dll";     DestDir: "{app}"; Components: program
 ;Source: "..\..\..\MingwLibs\msvcr110.dll";        DestDir: "{app}"; Components: program
 Source: "..\..\..\csound\build\csound64.dll";     DestDir: "{app}"; Components: program
@@ -50,16 +50,16 @@ Source: "..\..\..\csound\build\signalflowgraph.dll";   DestDir: "{app}"; Compone
 
 ;Csound binaries
 Source: "..\..\..\csound\build\csound.exe";             DestDir: "{app}"; Components: csound
-Source: "..\..\..\csound\build\csnd6.jar";             DestDir: "{app}"; Components: csound
-Source: "..\..\..\csound\build\csnd6.dll";             DestDir: "{app}"; Components: csound
+;Source: "..\..\..\csound\build\csnd6.jar";             DestDir: "{app}"; Components: csound
+;Source: "..\..\..\csound\build\csnd6.dll";             DestDir: "{app}"; Components: csound
 Source: "..\..\..\csound\build\libportaudio-2.dll";     DestDir: "{app}"; Components: csound
 Source: "..\..\..\csound\build\pmidi.dll";              DestDir: "{app}"; Components: csound
 Source: "C:/Users/rory/Documents/sourcecode/portmidi/build/libportmidi.dll";              DestDir: "{app}"; Components: csound
 Source: "..\..\..\csound\build\ipmidi.dll";             DestDir: "{app}"; Components: csound
 Source: "..\..\..\csound\build\rtpa.dll";               DestDir: "{app}"; Components: csound
 Source: "..\..\..\csound\build\rtwinmm.dll";            DestDir: "{app}"; Components: csound
-Source: "..\..\..\csound\build\virtual.dll";            DestDir: "{app}"; Components: csound
-Source: "..\..\..\csound\build\_jcsound6.dll";            DestDir: "{app}"; Components: csound
+;Source: "..\..\..\csound\build\virtual.dll";            DestDir: "{app}"; Components: csound
+;Source: "..\..\..\csound\build\_jcsound6.dll";            DestDir: "{app}"; Components: csound
 
 ;Source: "..\..\..\csound\build\widgets.dll";            DestDir: "{app}"; Components: csound
 

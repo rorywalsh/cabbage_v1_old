@@ -1470,7 +1470,7 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
     if(csCompileResult==OK)
     {
         MYFLT* argsPtr, *temp;
-        int noOfArgs = -1;//csoundGetTableArgs(csound->GetCsound(), &argsPtr, tableNum);
+        int noOfArgs = csoundGetTableArgs(csound->GetCsound(), &argsPtr, tableNum);
         if(noOfArgs!=-1)
         {
             int tableSize = csound->GetTable(temp, tableNum);

@@ -558,6 +558,9 @@ void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRang
         waveformBuffer = buffer;
         tableSize = buffer.size();
         handleViewer->tableSize = tableSize;
+		
+		if(buffer[buffer.size()-1]!=buffer[0])
+			buffer.add(buffer[0]);
 
         if(buffer.size() > 22050)
             CabbageUtils::showMessage("Tables of sizes over 22050 samples should be created using GEN01", &this->getLookAndFeel());
@@ -716,7 +719,7 @@ void GenTable::setRange(Range<double> newRange, bool isScrolling)
             visibleEnd = visibleRange.getEnd()*sampleRate;
             //Logger::writeToLog("visibleEnd:"+String(visibleRange.getEnd()));
             visibleLength = visibleRange.getLength()*sampleRate;
-            Logger::writeToLog("Table Number:"+String(tableNumber)+String(" VisibleLength:")+String(visibleRange.getLength()));
+            //Logger::writeToLog("Table Number:"+String(tableNumber)+String(" VisibleLength:")+String(visibleRange.getLength()));
             if(!isScrolling)
             {
                 double newWidth = double(getWidth())*(double(waveformBuffer.size())/visibleLength);
@@ -758,48 +761,53 @@ void GenTable::paint (Graphics& g)
     else
     {
         Path path;
-        path.startNewSubPath(0, thumbArea.getHeight()+5.f);
         numPixelsPerIndex = (double)thumbArea.getWidth() / visibleLength;
         double waveformThickness = 4;
         double thumbHeight = thumbArea.getHeight();
         prevY = ampToPixel(thumbHeight, minMax, waveformBuffer[0]);
-        prevY = prevY+5.f;
-        for(float i=visibleStart; i<visibleEnd; i++)
+		Logger::writeToLog("Index:"+String(0)+" "+String(prevY));
+		//path.startNewSubPath(0, prevY);
+        //prevY = prevY+5.f;
+        for(float i=visibleStart; i<=visibleEnd+1; i++)
         {
-            //minMax is the range of the current waveforms amplitude
-            currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
-            currY = currY+5.f;
+			if(i==(float)visibleStart){
+				//start subpath
+				path.startNewSubPath(numPixelsPerIndex, ampToPixel(thumbHeight, minMax, waveformBuffer[i]));
+			}
+			else{
+				//minMax is the range of the current waveforms amplitude
+				currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
+				currY = currY+5.f;
 
-            g.setColour(colour.withAlpha(.2f));
+				g.setColour(colour.withAlpha(.2f));
 
-            if(genRoutine==2)
-            {
-                //when qsteps == 1 we draw a grid
-                if(qsteps==1)
-                {
-                    currY = currY-5.f;
-                    g.setColour(colour.withAlpha(.3f));
-                    g.drawRoundedRectangle(prevX+2, 2.f, numPixelsPerIndex-4, thumbHeight-4, numPixelsPerIndex*0.1, 1.f);
-                    g.setColour(colour.withAlpha(.6f));
-                    if(thumbHeight-(thumbHeight-currY)==0)
-                        g.fillRoundedRectangle(prevX+3, thumbHeight-(thumbHeight-currY)+3.f, numPixelsPerIndex-6, thumbHeight-currY-6.f, numPixelsPerIndex*0.1);
-                }//else we draw a simple bar graph representation....
-                else
-                {
-                    path.lineTo(prevX, currY);
-                    path.lineTo(prevX+numPixelsPerIndex, currY);
-                }
-            }
-            else
-            {
-                path.lineTo(prevX+numPixelsPerIndex, prevY);
-            }
-            prevX = jmax(0.0, prevX + numPixelsPerIndex);
-            prevY = currY;
+				if(genRoutine==2)
+				{
+					//when qsteps == 1 we draw a grid
+					if(qsteps==1)
+					{
+						currY = currY-5.f;
+						g.setColour(colour.withAlpha(.3f));
+						g.drawRoundedRectangle(prevX+2, 2.f, numPixelsPerIndex-4, thumbHeight-4, numPixelsPerIndex*0.1, 1.f);
+						g.setColour(colour.withAlpha(.6f));
+						if(thumbHeight-(thumbHeight-currY)==0)
+							g.fillRoundedRectangle(prevX+3, thumbHeight-(thumbHeight-currY)+3.f, numPixelsPerIndex-6, thumbHeight-currY-6.f, numPixelsPerIndex*0.1);
+					}//else we draw a simple bar graph representation....
+					else
+					{
+						path.lineTo(prevX, currY);
+						path.lineTo(prevX+numPixelsPerIndex, currY);
+					}
+				}
+				else
+				{
+					path.lineTo(prevX+numPixelsPerIndex, currY);
+				}
+				prevX = jmax(0.0, prevX + numPixelsPerIndex);
+				prevY = currY;
+			
+			}
         }
-
-        path.lineTo(prevX, thumbArea.getHeight());
-        path.closeSubPath();
 
         if(drawAsVUMeter)
         {
@@ -808,10 +816,16 @@ void GenTable::paint (Graphics& g)
             g.setGradientFill(grad);
         }
 
-        g.fillPath(path);
+		if(genRoutine==2 || genRoutine==7 || genRoutine==5)
+		{
+			path.lineTo(prevX, thumbArea.getHeight());
+			path.closeSubPath();
+			g.fillPath(path);
+		}		
+        
         g.setColour(colour.darker());
         if(qsteps!=1)
-            g.strokePath(path, PathStrokeType(1));
+            g.strokePath(path, PathStrokeType(4));
     }
 }
 
@@ -1092,7 +1106,7 @@ void HandleViewer::resized()
         else
         {
             handles[i]->setTopLeftPosition(((double)getWidth()*handles[i]->xPosRelative), ((double)getHeight()*handles[i]->yPosRelative));
-            Logger::writeToLog(String(getWidth()/tableSize));
+            //Logger::writeToLog(String(getWidth()/tableSize));
             handles[i]->setSize(getWidth()/tableSize, 5.f);
             //handles[i]->setVisible(false);
             showHandles(false);

@@ -41,25 +41,41 @@ Source: "..\..\Docs\*";                   DestDir: "{app}\Docs"; Components: pro
 
 ;Source: "..\..\..\MingwLibs\libwinpthread-1.dll"; DestDir: "{app}"; Components: program
 ;Source: "..\..\..\MingwLibs\libgomp-1.dll";       DestDir: "{app}"; Components: program
-;Source: "C:\mingw32\bin\libgcc_s_dw2-1.dll";  DestDir: "{app}"; Components: program
-;Source: "..\..\..\MingwLibs\libstdc++-6.dll";     DestDir: "{app}"; Components: program
+Source: "C:\mingw32\bin\libgcc_s_dw2-1.dll";  DestDir: "{app}\csound"; Components: program
+Source: "C:\mingw32\bin\libstdc++-6.dll";     DestDir: "{app}\csound"; Components: program
 ;Source: "..\..\..\MingwLibs\msvcr110.dll";        DestDir: "{app}"; Components: program
 Source: "..\..\..\csound\build\csound64.dll";     DestDir: "{app}"; Components: program
 Source: "C:\Program Files (x86)\Mega-Nerd\libsndfile32\bin\libsndfile-1.dll";   DestDir: "{app}"; Components: program
 Source: "..\..\..\csound\build\signalflowgraph.dll";   DestDir: "{app}"; Components: program
 
 ;Csound binaries
-Source: "..\..\..\csound\build\csound.exe";             DestDir: "{app}"; Components: csound
-;Source: "..\..\..\csound\build\csnd6.jar";             DestDir: "{app}"; Components: csound
-;Source: "..\..\..\csound\build\csnd6.dll";             DestDir: "{app}"; Components: csound
-Source: "..\..\..\csound\build\libportaudio-2.dll";     DestDir: "{app}"; Components: csound
-Source: "..\..\..\csound\build\pmidi.dll";              DestDir: "{app}"; Components: csound
-Source: "C:/Users/rory/Documents/sourcecode/portmidi/build/libportmidi.dll";              DestDir: "{app}"; Components: csound
-Source: "..\..\..\csound\build\ipmidi.dll";             DestDir: "{app}"; Components: csound
-Source: "..\..\..\csound\build\rtpa.dll";               DestDir: "{app}"; Components: csound
-Source: "..\..\..\csound\build\rtwinmm.dll";            DestDir: "{app}"; Components: csound
+Source: "..\..\..\csound\build\csound.exe";             DestDir: "{app}\csound"; Components: csound
+Source: "C:\Program Files (x86)\Mega-Nerd\libsndfile32\bin\libsndfile-1.dll";   DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\csnd6.jar";             DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\test.csd";             DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\csnd6.dll";             DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\libportaudio-2.dll";     DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\pmidi.dll";              DestDir: "{app}\csound"; Components: csound
+Source: "C:/Users/rory/Documents/sourcecode/portmidi/build/libportmidi.dll";              DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\ipmidi.dll";             DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\rtpa.dll";               DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\rtwinmm.dll";            DestDir: "{app}\csound"; Components: csound
 ;Source: "..\..\..\csound\build\virtual.dll";            DestDir: "{app}"; Components: csound
-;Source: "..\..\..\csound\build\_jcsound6.dll";            DestDir: "{app}"; Components: csound
+Source: "..\..\..\csound\build\_jcsound6.dll";            DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\py.dll";             DestDir: "{app}\csound"; Components: python  
+Source: "..\..\..\csound\build\signalflowgraph.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\serial.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\scansyn.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\doppler.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\fractalnoise.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\fareygen.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
+;Source: "..\..\..\csound\build\libportaudio-2.dll";     DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\chua.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\mixer.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\ampmidid.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\cs_date.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\cellular.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\platerev.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
 
 ;Source: "..\..\..\csound\build\widgets.dll";            DestDir: "{app}"; Components: csound
 
@@ -72,7 +88,8 @@ Source: "..\..\..\csound\build\scansyn.dll"; DestDir: "{app}"; Components: csoun
 Source: "..\..\..\csound\build\doppler.dll"; DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\fractalnoise.dll"; DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\fareygen.dll"; DestDir: "{app}"; Components: csoundOpcodes
-Source: "..\..\..\csound\build\chua.dll"; DestDir: "{app}"; Components: csoundOpcodes
+;Source: "..\..\..\csound\build\libportaudio-2.dll";     DestDir: "{app}"; Components: csoundOpcodes
+;Source: "..\..\..\csound\build\chua.dll"; DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\mixer.dll"; DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\ampmidid.dll"; DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\cs_date.dll"; DestDir: "{app}"; Components: csoundOpcodes

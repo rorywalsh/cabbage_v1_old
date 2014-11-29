@@ -40,108 +40,108 @@ juce_ImplementSingleton (IdentArray);
 #endif
 
 //==================================================================
-OscThread::OscThread() : Thread("OSCThread")
-{
-
-}
-
-void OscThread::setupSocket(const String address, int port)
-{
-    sock.setAddress(address.toStdString());
-    sock.setPort(port);
-    sock.bindSocket();
-}
-
-void OscThread::setCsoundChannels(StringArray chans)
-{
-    channels = chans;
-    for(int i=0; i<channels.size(); i++)
-    {
-        //add '/' for message
-        channels.set(i, String("/")+channels[i]);
-    }
-}
-
-void OscThread::flushOSCMessages()
-{
-    messageQue.flushOutgoingChannelMessages();
-}
-
-void OscThread::sendOSC(String message, float value)
-{
-    //should add /Cabbage tag here to make messages easier to spot in other OSC hosts
-    message = "/"+message;
-    OSC::Message *bundleMessage;
-    long dataSize;
-    bundleMessage = new OSC::Message();
-    bundleMessage->setAddress(message.toStdString());
-    if(bundleMessage->getAddress() != "")
-    {
-        bundleMessage->addFloat32(value);
-    }
-    bundle.addElement(bundleMessage);
-    dataSize = bundle.getSize();
-    sock.sendData(bundle.getData(), dataSize);
-    //Clean up for the next send.
-    bundle.clearElements();
-}
-
-
-void OscThread::run()
-{
-    while(!threadShouldExit())
-    {
-        long size=0;
-        char* data = sock.getData(size);
-        if(size>0)
-        {
-
-            if(OSC::Message::isMessage(data, size))
-            {
-                OSC::Message message(data, size);
-
-                for(int i=0; i<channels.size(); i++)
-                {
-                    if(channels[i]==String(data).trim())
-                    {
-                        Logger::writeToLog("Message:"+String(data)+"-"+String(message.getFloat(0)));
-                        //remove the '/'
-                        messageQue.addOutgoingChannelMessageToQueue(channels[i].substring(1), message.getFloat(0), "float");
-                    }
-
-                }
-                sendChangeMessage();
-                //int numMessages = message.getNumFloats();
-                //	for(int y=0;y<numMessages;y++)
-                //		Logger::writeToLog(String(message.getFloat(y)));
-                //CabbageUtils::showMessage(message.getData());
-            }
-            else if(OSC::Bundle::isBundle(data, size))
-            {
-                //Logger::writeToLog("Bundle:"+String(data));
-                OSC::Bundle bundle(data, size);
-                int numMessages = bundle.getNumMessages();
-                for(int i=0; i<numMessages; i++)
-                {
-                    for(int x=0; x<channels.size(); x++)
-                    {
-                        //CabbageUtils::showMessage("Bundle:"+String(bundle.getMessage(i)->getData()+String("-")+String(bundle.getMessage(i)->getFloat(0))));
-                        if(channels[x]==String(bundle.getMessage(i)->getData()).trim())
-                        {
-                            //Logger::writeToLog("Bundle:"+String(bundle.getMessage(i)->getData()+String("-")+String(bundle.getMessage(i)->getFloat(0))));
-                            messageQue.addOutgoingChannelMessageToQueue(channels[x].substring(1), bundle.getMessage(i)->getFloat(0), "float");
-                        }
-                    }
-                    //for(int y=0;y<bundle.getMessage(i)->getNumFloats();y++)
-                    //	Logger::writeToLog(String(bundle.getMessage(i)->getFloat(y)));
-                }
-                sendChangeMessage();
-            }
-        }
-        data = nullptr;
-    }
-
-}
+//OscThread::OscThread() : Thread("OSCThread")
+//{
+//
+//}
+//
+//void OscThread::setupSocket(const String address, int port)
+//{
+//    sock.setAddress(address.toStdString());
+//    sock.setPort(port);
+//    sock.bindSocket();
+//}
+//
+//void OscThread::setCsoundChannels(StringArray chans)
+//{
+//    channels = chans;
+//    for(int i=0; i<channels.size(); i++)
+//    {
+//        //add '/' for message
+//        channels.set(i, String("/")+channels[i]);
+//    }
+//}
+//
+//void OscThread::flushOSCMessages()
+//{
+//    messageQue.flushOutgoingChannelMessages();
+//}
+//
+//void OscThread::sendOSC(String message, float value)
+//{
+//    //should add /Cabbage tag here to make messages easier to spot in other OSC hosts
+//    message = "/"+message;
+//    OSC::Message *bundleMessage;
+//    long dataSize;
+//    bundleMessage = new OSC::Message();
+//    bundleMessage->setAddress(message.toStdString());
+//    if(bundleMessage->getAddress() != "")
+//    {
+//        bundleMessage->addFloat32(value);
+//    }
+//    bundle.addElement(bundleMessage);
+//    dataSize = bundle.getSize();
+//    sock.sendData(bundle.getData(), dataSize);
+//    //Clean up for the next send.
+//    bundle.clearElements();
+//}
+//
+//
+//void OscThread::run()
+//{
+//    while(!threadShouldExit())
+//    {
+//        long size=0;
+//        char* data = sock.getData(size);
+//        if(size>0)
+//        {
+//
+//            if(OSC::Message::isMessage(data, size))
+//            {
+//                OSC::Message message(data, size);
+//
+//                for(int i=0; i<channels.size(); i++)
+//                {
+//                    if(channels[i]==String(data).trim())
+//                    {
+//                        Logger::writeToLog("Message:"+String(data)+"-"+String(message.getFloat(0)));
+//                        //remove the '/'
+//                        messageQue.addOutgoingChannelMessageToQueue(channels[i].substring(1), message.getFloat(0), "float");
+//                    }
+//
+//                }
+//                sendChangeMessage();
+//                //int numMessages = message.getNumFloats();
+//                //	for(int y=0;y<numMessages;y++)
+//                //		Logger::writeToLog(String(message.getFloat(y)));
+//                //CabbageUtils::showMessage(message.getData());
+//            }
+//            else if(OSC::Bundle::isBundle(data, size))
+//            {
+//                //Logger::writeToLog("Bundle:"+String(data));
+//                OSC::Bundle bundle(data, size);
+//                int numMessages = bundle.getNumMessages();
+//                for(int i=0; i<numMessages; i++)
+//                {
+//                    for(int x=0; x<channels.size(); x++)
+//                    {
+//                        //CabbageUtils::showMessage("Bundle:"+String(bundle.getMessage(i)->getData()+String("-")+String(bundle.getMessage(i)->getFloat(0))));
+//                        if(channels[x]==String(bundle.getMessage(i)->getData()).trim())
+//                        {
+//                            //Logger::writeToLog("Bundle:"+String(bundle.getMessage(i)->getData()+String("-")+String(bundle.getMessage(i)->getFloat(0))));
+//                            messageQue.addOutgoingChannelMessageToQueue(channels[x].substring(1), bundle.getMessage(i)->getFloat(0), "float");
+//                        }
+//                    }
+//                    //for(int y=0;y<bundle.getMessage(i)->getNumFloats();y++)
+//                    //	Logger::writeToLog(String(bundle.getMessage(i)->getFloat(y)));
+//                }
+//                sendChangeMessage();
+//            }
+//        }
+//        data = nullptr;
+//    }
+//
+//}
 
 //==============================================================================
 // There are two different CabbagePluginAudioProcessor constructors. One for the
@@ -189,8 +189,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      isWinXP(false),
      ksmpsOffset(0),
      breakCount(0),
-     stopProcessing(false),
-     oscThread(new OscThread())
+     stopProcessing(false)
 {
 //suspendProcessing(true);
     codeEditor = nullptr;
@@ -586,7 +585,7 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
     stopProcessing = true;
     removeAllChangeListeners();
 
-    oscThread->stopThread(10);
+//    oscThread->stopThread(10);
 #ifndef Cabbage_No_Csound
 
     xyAutomation.clear();
@@ -938,14 +937,14 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 
                         if(cAttr.getStringProp(CabbageIDs::oscaddress).isNotEmpty() && cAttr.getStringProp(CabbageIDs::oscaddress).isNotEmpty())
                         {
-                            oscAddress = cAttr.getStringProp(CabbageIDs::oscaddress);
-							showMessage(oscAddress);
-                            oscPort = cAttr.getNumProp(CabbageIDs::oscport);
-							showMessage(oscPort);
-                            oscThread->setupSocket(oscAddress, oscPort);
-                            oscThread->setCsoundChannels(oscChannelIdentifiers);
-                            oscThread->addChangeListener(this);
-                            oscThread->startThread();
+//                            oscAddress = cAttr.getStringProp(CabbageIDs::oscaddress);
+//							showMessage(oscAddress);
+//                            oscPort = cAttr.getNumProp(CabbageIDs::oscport);
+//							showMessage(oscPort);
+//                            oscThread->setupSocket(oscAddress, oscPort);
+//                            oscThread->setCsoundChannels(oscChannelIdentifiers);
+//                            oscThread->addChangeListener(this);
+//                            oscThread->startThread();
                         }
                         csdLine = "";
 
@@ -1445,19 +1444,19 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 #endif
     }
 
-    OscThread* oscObject = dynamic_cast< OscThread*>(source);
-    if(oscObject)
-    {
-        for(int i=0; i<oscObject->getMessages().getNumberOfOutgoingChannelMessagesInQueue(); i++)
-        {
-            //csound-> oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).channelName,
-            //											  oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).value, "float");
-            csound->SetChannel(oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
-                               oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).value);
-            //Logger::writeToLog("OSC invoming messages");
-        }
-        oscObject->flushOSCMessages();
-    }
+//    OscThread* oscObject = dynamic_cast< OscThread*>(source);
+//    if(oscObject)
+//    {
+//        for(int i=0; i<oscObject->getMessages().getNumberOfOutgoingChannelMessagesInQueue(); i++)
+//        {
+//            //csound-> oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).channelName,
+//            //											  oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).value, "float");
+//            csound->SetChannel(oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
+//                               oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).value);
+//            //Logger::writeToLog("OSC invoming messages");
+//        }
+//        oscObject->flushOSCMessages();
+//    }
 
 }
 
@@ -1646,18 +1645,18 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
     if(csCompileResult==OK)
     {
         //receive OSC data from Csound channels
-        for(int i=0; i<oscChannelIdentifiers.size(); i++)
-        {
-            //showMessage(oscChannelIdentifiers[i]);
-            float currentVal = (float)oscChannelValues.getWithDefault(oscChannelIdentifiers[i], -9999);
-            float channelValue = csound->GetChannel(oscChannelIdentifiers[i].getCharPointer());
-
-            if(currentVal != channelValue)
-            {
-                oscChannelValues.set(oscChannelIdentifiers[i], channelValue);
-                oscThread->sendOSC(oscChannelIdentifiers[i], channelValue);
-            }
-        }
+//        for(int i=0; i<oscChannelIdentifiers.size(); i++)
+//        {
+//            //showMessage(oscChannelIdentifiers[i]);
+//            float currentVal = (float)oscChannelValues.getWithDefault(oscChannelIdentifiers[i], -9999);
+//            float channelValue = csound->GetChannel(oscChannelIdentifiers[i].getCharPointer());
+//
+//            if(currentVal != channelValue)
+//            {
+//                oscChannelValues.set(oscChannelIdentifiers[i], channelValue);
+//                oscThread->sendOSC(oscChannelIdentifiers[i], channelValue);
+//            }
+//        }
 
         //update all control widgets
         for(int index=0; index<getGUICtrlsSize(); index++)

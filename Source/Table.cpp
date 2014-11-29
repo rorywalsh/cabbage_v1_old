@@ -765,7 +765,7 @@ void GenTable::paint (Graphics& g)
         double waveformThickness = 4;
         double thumbHeight = thumbArea.getHeight();
         prevY = ampToPixel(thumbHeight, minMax, waveformBuffer[0]);
-		Logger::writeToLog("Index:"+String(0)+" "+String(prevY));
+		
 		//path.startNewSubPath(0, prevY);
         //prevY = prevY+5.f;
         for(float i=visibleStart; i<=visibleEnd+1; i++)

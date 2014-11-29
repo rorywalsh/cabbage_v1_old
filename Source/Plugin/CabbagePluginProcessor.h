@@ -30,10 +30,6 @@
 #include "CabbageGenericAudioProcessorEditor.h"
 #include "../CabbageLookAndFeel.h"
 
-#include "../NiallsSocketLib/UDPSocket.h"
-#include "../NiallsOSCLib/OSCBundle.h"
-#include "../NiallsOSCLib/OSCMessage.h"
-#include "../NiallsOSCLib/OSCTimeTag.h"
 
 #ifndef Cabbage_No_Csound
 #ifdef AndroidBuild
@@ -69,35 +65,7 @@ class CsoundCodeEditor;
 #include <csdebug.h>
 #endif
 
-//class OscThread;
 
-//==================================================================
-//OSC hack socket/server......
-//==================================================================
-//#define PORT 7000
-//
-//class OscThread : public Thread, public ChangeBroadcaster
-//{
-//private:
-//    ///	The socket we're sending our data through.
-//    UDPSocket sock;
-//    ///	Bundle sent when the user drags an xy pad.
-//    OSC::Bundle bundle;
-//    CabbageMessageQueue messageQue;
-//    StringArray channels;
-//public:
-//    OscThread();
-//    ~OscThread() {}
-//    CabbageMessageQueue getMessages()
-//    {
-//        return messageQue;
-//    }
-//    void sendOSC(String message, float value);
-//    void setupSocket(const String address, int port);
-//    void setCsoundChannels(StringArray channels);
-//    void flushOSCMessages();
-//    void run();
-//};
 //==============================================================================
 // CabbagePluginAudioProcessor definition
 //==============================================================================

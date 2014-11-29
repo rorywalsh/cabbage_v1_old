@@ -1936,7 +1936,7 @@ String CabbageGUIClass::getStringForIdentifier(var propsArray, String identifier
 String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
 {
     //Logger::writeToLog("::::getCabbageCodeFromIdentifiers::::");
-    String line;
+    String line, widgetType;
     var propsArray;
     String temp="";
     String type;
@@ -1945,14 +1945,29 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
            incr("0.001"), slidervalue, value, maxx, maxy, minx, miny, valuex, valuey, channel, xchannel, ychannel,
            amprange;
     var rgbVals;
-    //run through the complete list of identifiers
+    //run through the complete list of identifiers and find type
     for(int i=0; i<props.size(); i++)
-    {
+		 if(props.getName(i).toString().equalsIgnoreCase(CabbageIDs::type))
+			 widgetType = props.getValueAt(i).toString();
+			 
+	//get default values for this type of widget
+	CabbageGUIClass cAttr(widgetType, -99);
+	
+	//run through the complete list of identifiersand create code
+	for(int i=0; i<props.size(); i++)
+    {	
         String identifier = props.getName(i).toString();
         propsArray = props.getValueAt(i);
         if(props.getValueAt(i).toString()!="")
         {
-            if(props.getName(i).toString()=="top")
+			Logger::writeToLog(cAttr.getStringProp(props.getName(i).toString()+":"+props.getValueAt(i).toString()));
+			if(props.getValueAt(i).isString() && 
+				props.getValueAt(i).toString() == cAttr.getStringProp(props.getName(i).toString()))
+				{
+					Logger::writeToLog("Should be default");
+				}
+			
+            else if(props.getName(i).toString()=="top")
                 top = props.getValueAt(i).toString();
             else if(props.getName(i).toString()=="left")
                 left = props.getValueAt(i).toString();
@@ -1969,12 +1984,13 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
                     identifier=="basetype" ||
                     identifier=="kind" ||
                     identifier=="visible" ||
+					identifier=="trackerthickness" ||
                     identifier=="comborange")
             {
                 //none of these identifiers need to be seen...
             }
             else if(props.getName(i).toString()=="colour" || props.getName(i).toString()=="fontcolour"
-                    || props.getName(i).toString()=="trackercolour" || props.getName(i).toString()=="fill" ||
+                    || props.getName(i).toString()=="trackercolour" || props.getName(i).toString()=="textcolour" ||
                     props.getName(i).toString()=="outlinecolour")
             {
                 if(propsArray.size()>0)
@@ -1987,9 +2003,9 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
                 }
                 else
                 {
-                    Colour col = Colour::fromString(props.getValueAt(i).toString());
-                    colour = colour << props.getName(i).toString() << "(" << (float)col.getRed() << ", " << (float)col.getGreen() << ", " << (float)col.getBlue() << ", " << (float)col.getAlpha() << "), ";
-                }
+					Colour col = Colour::fromString(props.getValueAt(i).toString());
+                    colour = colour << props.getName(i).toString() << "(" << (float)col.getRed() << ", " << (float)col.getGreen() << ", " << (float)col.getBlue() << ", " << (float)col.getAlpha() << "), ";			
+				}
                 rgbVals.resize(0);
             }
 
@@ -2075,8 +2091,6 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
             {
                 //only show if not set to default
             }
-            else if(identifier=="type")
-                type = props.getValueAt(i).toString();
             else
             {
                 //catch all other identifiers....
@@ -2106,12 +2120,12 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
     String rangex = "rangex("+minx+", "+maxx+", "+valuex+"), ";
     String rangey = "rangey("+miny+", "+maxy+", "+valuey+"), ";
     String xypadChannels = "channel(\""+xchannel+"\", \""+ychannel+"\"), ";
-    if((type == "rslider") || (type=="hslider") || (type=="vslider") || (type=="numberbox"))
-        completeLine = type+" bounds("+left+", "+top+", "+width+", "+height+"), "+channel+range+line.replace(", )", ")")+ " "+colour;
-    else if(type=="xypad")
-        completeLine = type+" bounds("+left+", "+top+", "+width+", "+height+"), "+xypadChannels+rangex+rangey+line.replace(", )", ")")+ " "+colour;
+    if(widgetType.contains("slider") || widgetType=="numberbox")
+        completeLine = widgetType+" bounds("+left+", "+top+", "+width+", "+height+"), "+channel+range+line.replace(", )", ")")+ " "+colour;
+    else if(widgetType=="xypad")
+        completeLine = widgetType+" bounds("+left+", "+top+", "+width+", "+height+"), "+xypadChannels+rangex+rangey+line.replace(", )", ")")+ " "+colour;
     else
-        completeLine = type+" bounds("+left+", "+top+", "+width+", "+height+"), "+channel+line.replace(", )", ")")+ " "+tablenumber+drawmode+amprange+colour+resizemode+value;
+        completeLine = widgetType+" bounds("+left+", "+top+", "+width+", "+height+"), "+channel+line.replace(", )", ")")+ " "+tablenumber+drawmode+amprange+colour+resizemode+value;
     return completeLine;
 
 }

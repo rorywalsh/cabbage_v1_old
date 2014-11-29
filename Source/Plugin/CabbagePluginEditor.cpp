@@ -1373,6 +1373,7 @@ void CabbagePluginAudioProcessorEditor::setEditMode(bool on)
         componentPanel->toFront(true);
         componentPanel->setInterceptsMouseClicks(false, true);
         getFilter()->setGuiEnabled(false);
+		propsWindow->closeButtonPressed();
     }
     resized();
 #endif

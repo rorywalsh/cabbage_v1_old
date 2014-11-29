@@ -38,6 +38,7 @@ Source: "..\..\..\csound\frontends\max_csound_tilde\examples\*";   DestDir: "{ap
 
 Source: "..\..\Examples\*";               DestDir: "{app}\Examples"; Components: program; Flags: recursesubdirs
 Source: "..\..\Docs\*";                   DestDir: "{app}\Docs"; Components: program; Flags: recursesubdirs
+Source: "..\..\..\csoundDocs\*";                   DestDir: "{app}\csoundDocs"; Components: program; Flags: recursesubdirs
 
 ;Source: "..\..\..\MingwLibs\libwinpthread-1.dll"; DestDir: "{app}"; Components: program
 ;Source: "..\..\..\MingwLibs\libgomp-1.dll";       DestDir: "{app}"; Components: program
@@ -61,26 +62,27 @@ Source: "..\..\..\csound\build\ipmidi.dll";             DestDir: "{app}\csound";
 Source: "..\..\..\csound\build\rtpa.dll";               DestDir: "{app}\csound"; Components: csound
 Source: "..\..\..\csound\build\rtwinmm.dll";            DestDir: "{app}\csound"; Components: csound
 ;Source: "..\..\..\csound\build\virtual.dll";            DestDir: "{app}"; Components: csound
+Source: "C:\Users\rory\Documents\sourcecode\liblo-0.28\src\.libs\liblo-7.dll";        DestDir: "{app}\csound"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\_jcsound6.dll";            DestDir: "{app}\csound"; Components: csound
 Source: "..\..\..\csound\build\py.dll";             DestDir: "{app}\csound"; Components: python  
-Source: "..\..\..\csound\build\signalflowgraph.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
-Source: "..\..\..\csound\build\serial.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
-Source: "..\..\..\csound\build\scansyn.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
-Source: "..\..\..\csound\build\doppler.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
-Source: "..\..\..\csound\build\fractalnoise.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
-Source: "..\..\..\csound\build\fareygen.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
-;Source: "..\..\..\csound\build\libportaudio-2.dll";     DestDir: "{app}"; Components: csoundOpcodes
-Source: "..\..\..\csound\build\chua.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
-Source: "..\..\..\csound\build\mixer.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
-Source: "..\..\..\csound\build\ampmidid.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
-Source: "..\..\..\csound\build\cs_date.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
-Source: "..\..\..\csound\build\cellular.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
-Source: "..\..\..\csound\build\platerev.dll"; DestDir: "{app}\csound"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\signalflowgraph.dll"; DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\serial.dll"; DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\scansyn.dll"; DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\doppler.dll"; DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\fractalnoise.dll"; DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\fareygen.dll"; DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\osc.dll";     DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\chua.dll"; DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\mixer.dll"; DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\ampmidid.dll"; DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\cs_date.dll"; DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\cellular.dll"; DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\platerev.dll"; DestDir: "{app}\csound"; Components: csound
 
 ;Source: "..\..\..\csound\build\widgets.dll";            DestDir: "{app}"; Components: csound
 
-;Special opcodes
-;Source: "C:\Users\rory\Documents\sourcecode\liblo-0.28\src\.libs\liblo-7.dll";        DestDir: "{app}"; Components: program
+;Csound opcodes
+Source: "C:\Users\rory\Documents\sourcecode\liblo-0.28\src\.libs\liblo-7.dll";        DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\py.dll";             DestDir: "{app}"; Components: python  
 Source: "..\..\..\csound\build\signalflowgraph.dll"; DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\serial.dll"; DestDir: "{app}"; Components: csoundOpcodes
@@ -88,13 +90,13 @@ Source: "..\..\..\csound\build\scansyn.dll"; DestDir: "{app}"; Components: csoun
 Source: "..\..\..\csound\build\doppler.dll"; DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\fractalnoise.dll"; DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\fareygen.dll"; DestDir: "{app}"; Components: csoundOpcodes
-;Source: "..\..\..\csound\build\libportaudio-2.dll";     DestDir: "{app}"; Components: csoundOpcodes
-;Source: "..\..\..\csound\build\chua.dll"; DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\chua.dll"; DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\mixer.dll"; DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\ampmidid.dll"; DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\cs_date.dll"; DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\cellular.dll"; DestDir: "{app}"; Components: csoundOpcodes
 Source: "..\..\..\csound\build\platerev.dll"; DestDir: "{app}"; Components: csoundOpcodes
+Source: "..\..\..\csound\build\osc.dll";     DestDir: "{app}"; Components: csoundOpcodes
 
 [Icons]
 Name: "{group}\Cabbage32"; Filename: "{app}\Cabbage.exe"

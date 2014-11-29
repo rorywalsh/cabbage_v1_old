@@ -60,10 +60,6 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS := \
-  $(OBJDIR)/OSCBundle.o \
-  $(OBJDIR)/OSCMessage.o \
-  $(OBJDIR)/OSCTimeTag.o \
-  $(OBJDIR)/UDPSocket.o \
   $(OBJDIR)/BinaryData_5ba7f54.o \
   $(OBJDIR)/CabbageCallOutBox_1ced38fd.o \
   $(OBJDIR)/CabbageGUIClass_79b9049f.o \
@@ -119,25 +115,6 @@ strip:
 	@echo Stripping CabbagePluginSynth
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
 
-$(OBJDIR)/OSCBundle.o: ../../Source/NiallsOSCLib/OSCBundle.cpp 
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscBundle.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/OSCMessage.o: ../../Source/NiallsOSCLib/OSCMessage.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscMessage.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/OSCTimeTag.o: ../../Source/NiallsOSCLib/OSCTimeTag.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscTimeTag.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/UDPSocket.o: ../../Source/NiallsSocketLib/UDPSocket.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling UDPSocket.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 	
 $(OBJDIR)/BinaryData_5ba7f54.o: ../../Source/BinaryData.cpp
 	-@mkdir -p $(OBJDIR)

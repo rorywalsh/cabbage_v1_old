@@ -404,8 +404,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     yieldCounter(10),
     nativePluginEditor(false),
     averageSampleIndex(0),
-    stopProcessing(false),
-    oscThread(new OscThread())
+    stopProcessing(false)
 {
 //Cabbage plugins always try to load a csd file with the same name as the plugin library.
 //Therefore we need to find the name of the library and append a '.csd' to it.

@@ -3396,7 +3396,8 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 						}
 #else
 						if(slider->getSliderStyle()==Slider::LinearVertical ||
-						   slider->getSliderStyle()==Slider::LinearHorizontal)
+						   slider->getSliderStyle()==Slider::LinearHorizontal ||
+						   slider->getSliderStyle()==Slider::RotaryVerticalDrag)
 						{							
 							slider->setValue(inValue, sendNotification);
 						}

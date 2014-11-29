@@ -104,7 +104,7 @@ void OscThread::run()
                 {
                     if(channels[i]==String(data).trim())
                     {
-                        //Logger::writeToLog("Message:"+String(data)+"-"+String(message.getFloat(0)));
+                        Logger::writeToLog("Message:"+String(data)+"-"+String(message.getFloat(0)));
                         //remove the '/'
                         messageQue.addOutgoingChannelMessageToQueue(channels[i].substring(1), message.getFloat(0), "float");
                     }
@@ -939,7 +939,9 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         if(cAttr.getStringProp(CabbageIDs::oscaddress).isNotEmpty() && cAttr.getStringProp(CabbageIDs::oscaddress).isNotEmpty())
                         {
                             oscAddress = cAttr.getStringProp(CabbageIDs::oscaddress);
+							showMessage(oscAddress);
                             oscPort = cAttr.getNumProp(CabbageIDs::oscport);
+							showMessage(oscPort);
                             oscThread->setupSocket(oscAddress, oscPort);
                             oscThread->setCsoundChannels(oscChannelIdentifiers);
                             oscThread->addChangeListener(this);

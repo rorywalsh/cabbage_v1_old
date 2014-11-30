@@ -51,6 +51,8 @@ Source: "..\..\..\csound\build\signalflowgraph.dll";   DestDir: "{app}"; Compone
 
 ;Csound binaries
 Source: "..\..\..\csound\build\csound.exe";             DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\libcsound64.dll.a";             DestDir: "{app}\csound"; Components: csound
+Source: "..\..\..\csound\build\libcsnd6.dll.a";             DestDir: "{app}\csound"; Components: csound
 Source: "C:\Program Files (x86)\Mega-Nerd\libsndfile32\bin\libsndfile-1.dll";   DestDir: "{app}\csound"; Components: csound
 Source: "..\..\..\csound\build\csnd6.jar";             DestDir: "{app}\csound"; Components: csound
 Source: "..\..\..\csound\build\test.csd";             DestDir: "{app}\csound"; Components: csound

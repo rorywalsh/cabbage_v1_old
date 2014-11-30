@@ -547,17 +547,22 @@ public:
 			if(sliderType=="vertical3")
 			{
 				slider->setSliderStyle(Slider::ThreeValueVertical);
+				setupMinMaxValue();		
 				slider->setValue(value);
 			}
 			else if(sliderType=="vertical2")
+			{
 				slider->setSliderStyle(Slider::TwoValueVertical);
+				setupMinMaxValue();		
+				
+			}
 			else
 			{
 				slider->setSliderStyle(Slider::LinearVertical);
 				slider->setValue(value);
 			}
 					
-			setupMinMaxValue();			
+	
 			
             if(textBox>0)
                 slider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 15);
@@ -599,17 +604,21 @@ public:
 			if(sliderType=="horizontal3")
 			{
 				slider->setSliderStyle(Slider::ThreeValueHorizontal);
+				setupMinMaxValue();
 				slider->setValue(value);
 			}
 			else if(sliderType=="horizontal2")
+			{
 				slider->setSliderStyle(Slider::TwoValueHorizontal);
+				setupMinMaxValue();
+			}
 			else
 			{
 				slider->setSliderStyle(Slider::LinearHorizontal);
 				slider->setValue(value);
 			}
 				
-			setupMinMaxValue();
+
 	
             if(textBox>0)
                 slider->setTextBoxStyle(Slider::TextBoxRight, false, 40, 15);

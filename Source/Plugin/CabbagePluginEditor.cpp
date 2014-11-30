@@ -2365,7 +2365,8 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
         //normalise parameters in plugin mode.
         getFilter()->beginParameterChangeGesture(i);
 		if(sliderThatWasMoved->getSliderStyle()==Slider::LinearHorizontal 
-			|| sliderThatWasMoved->getSliderStyle()==Slider::LinearVertical)
+			|| sliderThatWasMoved->getSliderStyle()==Slider::LinearVertical
+			|| sliderThatWasMoved->getSliderStyle()==Slider::RotaryVerticalDrag)
         {
 			getFilter()->setParameter(i, (float)((sliderThatWasMoved->getValue()-min)/range));
 			getFilter()->setParameterNotifyingHost(i, (float)((sliderThatWasMoved->getValue()-min)/range));		
@@ -2381,8 +2382,10 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
 #else
         
         getFilter()->beginParameterChangeGesture(i);
-		if(sliderThatWasMoved->getSliderStyle()==Slider::TwoValueHorizontal || sliderThatWasMoved->getSliderStyle()==Slider::TwoValueHorizontal)
-        {
+		if(sliderThatWasMoved->getSliderStyle()==Slider::LinearHorizontal 
+			|| sliderThatWasMoved->getSliderStyle()==Slider::LinearVertical
+			|| sliderThatWasMoved->getSliderStyle()==Slider::RotaryVerticalDrag)
+		{
 			getFilter()->setParameter(i, (float)sliderThatWasMoved->getMinValue());
 			getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getMinValue());
 			getFilter()->setParameter(i+1, (float)sliderThatWasMoved->getMaxValue());
@@ -3380,6 +3383,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     {
 #ifndef Cabbage_Build_Standalone
 						if(slider->getSliderStyle()==Slider::LinearVertical ||
+						   slider->getSliderStyle()==Slider::RotaryVerticalDrag ||
 						   slider->getSliderStyle()==Slider::LinearHorizontal)
 						{
 							float val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i)+

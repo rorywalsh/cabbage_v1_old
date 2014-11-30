@@ -771,8 +771,14 @@ void GenTable::paint (Graphics& g)
         for(float i=visibleStart; i<=visibleEnd+1; i++)
         {
 			if(i==(float)visibleStart){
-				//start subpath
-				path.startNewSubPath(numPixelsPerIndex, ampToPixel(thumbHeight, minMax, waveformBuffer[i]));
+				//start subpath, if gen is 7 or 5, start path from bottom of table widget
+				if(genRoutine==7 | genRoutine==5)
+				{
+					path.startNewSubPath(0, thumbHeight);
+					path.lineTo(numPixelsPerIndex, ampToPixel(thumbHeight, minMax, waveformBuffer[i]));
+				}
+				else
+					path.startNewSubPath(numPixelsPerIndex, ampToPixel(thumbHeight, minMax, waveformBuffer[i]));
 			}
 			else{
 				//minMax is the range of the current waveforms amplitude

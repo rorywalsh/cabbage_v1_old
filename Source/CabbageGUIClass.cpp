@@ -1964,7 +1964,7 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
 			if(props.getValueAt(i).isString() && 
 				props.getValueAt(i).toString() == cAttr.getStringProp(props.getName(i).toString()))
 				{
-					Logger::writeToLog("Should be default");
+					//Logger::writeToLog("setting default values");
 				}
 			
             else if(props.getName(i).toString()=="top")

@@ -518,7 +518,7 @@ void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width,
     if (radius > 12.0f)
     {
         if (slider.isEnabled())
-            g.setColour (slider.findColour (Slider::trackColourId).withAlpha (isMouseOver ? 1.0f : 0.7f));
+            g.setColour (slider.findColour (Slider::trackColourId).withAlpha (isMouseOver ? 1.0f : 0.9f));
         else
             g.setColour (Colour (0x80808080));
 
@@ -545,15 +545,15 @@ void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width,
         Path newPolygon;
         Point<float> centre (centreX, centreY);
 
-        if (diameter >= 40)   //If diameter is >= 40 then polygon has 12 steps
+        if (diameter >= 25)   //If diameter is >= 40 then polygon has 12 steps
         {
             newPolygon.addPolygon(centre, 12.f, radius*.65, 0.f);
-            newPolygon.applyTransform (AffineTransform::rotation (angle,
-                                       centreX, centreY));
-        }
-        else if ((diameter < 40) && (diameter > 25))   //Polygon has 10 steps
-        {
-            newPolygon.addPolygon (centre, 10, radius*0.65, 0);
+
+			//newPolygon.addRoundedRectangle(radius, radius*.1f, radius*.25f, radius*.5f, 2.f);
+			//g.setColour(Colours::lime);
+			//g.fillPath (newPolygon);		
+			
+			//newPolygon.addLineSegment (Line<float> (0.0f, 60.0f, 0.0f, -radius), rw);
             newPolygon.applyTransform (AffineTransform::rotation (angle,
                                        centreX, centreY));
         }
@@ -563,7 +563,7 @@ void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width,
 
         g.setColour (slider.findColour (Slider::thumbColourId));
 
-        Colour thumbColour = slider.findColour (Slider::thumbColourId).withAlpha (isMouseOver ? 1.0f : 0.7f);
+        Colour thumbColour = slider.findColour (Slider::thumbColourId).withAlpha (isMouseOver ? 1.0f : 0.9f);
         ColourGradient cg = ColourGradient (Colours::white, 0, 0, thumbColour, diameter*0.6, diameter*0.4, false);
         if(slider.findColour (Slider::thumbColourId)!=Colour(0.f,0.f,0.f,0.f))
             g.setGradientFill (cg);

@@ -2386,16 +2386,16 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
 			|| sliderThatWasMoved->getSliderStyle()==Slider::LinearVertical
 			|| sliderThatWasMoved->getSliderStyle()==Slider::RotaryVerticalDrag)
 		{
+			const float value = sliderThatWasMoved->getValue();//getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
+			getFilter()->setParameter(i, (float)sliderThatWasMoved->getValue());
+			getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getValue());
+		}
+		else
+		{
 			getFilter()->setParameter(i, (float)sliderThatWasMoved->getMinValue());
 			getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getMinValue());
 			getFilter()->setParameter(i+1, (float)sliderThatWasMoved->getMaxValue());
 			getFilter()->setParameterNotifyingHost(i+1, (float)sliderThatWasMoved->getMaxValue());
-		}
-		else
-		{
-			const float value = sliderThatWasMoved->getValue();//getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
-			getFilter()->setParameter(i, (float)sliderThatWasMoved->getValue());
-			getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getValue());
 		}
         getFilter()->endParameterChangeGesture(i);
 

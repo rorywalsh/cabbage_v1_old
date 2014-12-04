@@ -400,7 +400,7 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
         Table* table = dynamic_cast<Table*>(source);
         if(table)
         {
-            if(table->changeMessage=="overwriteFunctionTable")
+			if(table->changeMessage=="overwriteFunctionTable")
                 insertScoreStatementText(table, true);
             else if(table->changeMessage=="writeNewFunctionTable")
                 insertScoreStatementText(table, false);
@@ -411,11 +411,13 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
             return;
         }
 
-        GenTable* gentable = dynamic_cast<GenTable*>(source);
-        if(gentable)
+        GenTable* genTable = dynamic_cast<GenTable*>(source);
+        if(genTable)
         {
-            if(gentable->changeMessage == "updateFunctionTable")
-                updatefTableData(gentable);
+			if(genTable->getCurrentHandle())
+				popupBubble->showAt(genTable->getCurrentHandle(), AttributedString(genTable->getCoordinates()), 1050);		
+            if(genTable->changeMessage == "updateFunctionTable")
+                updatefTableData(genTable);
         }
 
         CabbageTextEditor* textEditor = dynamic_cast<CabbageTextEditor*>(source);
@@ -2180,6 +2182,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
             else
             {
                 table->setWaveform(tableValues, tableNumber);
+				//only enable editing for gen05, 07, and 02
                 table->enableEditMode(pFields, tableNumber);
             }
             if(cAttr.getStringProp(CabbageIDs::drawmode).toLowerCase()=="vu")
@@ -2190,7 +2193,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
     table->configTableSizes(cAttr.getVarArrayProp(CabbageIDs::tableconfig));
     table->bringTableToFront(1);
 
-    if(cAttr.getNumProp(CabbageIDs::startpos)>-1)
+    if(cAttr.getNumProp(CabbageIDs::startpos)>-1 && cAttr.getNumProp(CabbageIDs::endpos)>0)
         table->setRange(cAttr.getNumProp(CabbageIDs::startpos), cAttr.getNumProp(CabbageIDs::endpos));
     if(cAttr.getNumProp(CabbageIDs::zoom)!=0)
         table->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));

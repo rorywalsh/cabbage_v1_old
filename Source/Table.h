@@ -149,9 +149,21 @@ public:
     void setAmpRanges(Array<float> ampRange);
     void setXPosition(double pos);
     bool drawAsVUMeter;
+	
+	HandleComponent* getCurrentHandle()
+	{
+		return currentHandle;
+	}
 
+	String getCoordinates()
+	{
+		return coordinates;
+	}
+	
 private:
     Image img;
+	String coordinates;
+	HandleComponent* currentHandle;
     bool shouldScroll;
     int normalised;
     int imgCount;
@@ -215,11 +227,9 @@ private:
 //==============================================================================
 // HandleViewer class, holds breakpoint handles
 //==============================================================================
-class HandleViewer : public Component,
-    public ActionListener
+class HandleViewer : public Component
 {
-    void actionListenerCallback(const String &message);
-    ScopedPointer<Label> label;
+		
 public:
     HandleViewer();
     ~HandleViewer();
@@ -232,7 +242,8 @@ public:
     void resized();
     void addHandle(double x, double y, double width, double height, Colour colour);
     void insertHandle(double x, double y, Colour colour);
-    double getSnapPosition(const double y);
+    double getSnapYPosition(const double y);
+	double getSnapXPosition(const double x);
     HandleComponent* getPreviousHandle(HandleComponent* thisHandle);
     HandleComponent* getNextHandle(HandleComponent* thisHandle);
     int getHandleIndex(HandleComponent* thisHandle);
@@ -240,7 +251,6 @@ public:
     OwnedArray<HandleComponent, CriticalSection> handles;
     void fixEdgePoints(int gen);
     void showHandles(bool show);
-    void showLabel(String message);
     int handleIndex;
     double tableSize;
     Range<float> minMax;
@@ -259,14 +269,13 @@ public:
 // Handle class
 //==============================================================================
 class HandleComponent : public Component,
-    public ChangeBroadcaster,
-    public ActionBroadcaster
+    public ChangeBroadcaster
 {
 public:
     HandleComponent(double xPos, double yPos, int index, bool fixed, int gen, Colour colour);
     ~HandleComponent();
 
-    HandleViewer* getParentComponent();
+
     void paint (Graphics& g);
     void removeThisHandle();
     void mouseEnter (const MouseEvent& e);
@@ -278,13 +287,33 @@ public:
     int height, width;
     int x,y;
     void setColour(Colour icolour);
-    void setRelativePositions(Point<double> point);
+    void setRelativePosition(Point<double> point);
 
     HandleViewer* getParentHandleViewer()
     {
         return findParentComponentOfClass <HandleViewer>();
     };
 
+	int getUniqueID()
+	{
+		return uniqueID;
+	}
+
+	void setUniqueID(int id)
+	{
+		uniqueID = id;
+	}
+
+	double getDoubleY()
+	{
+		return highResY;
+	}
+
+	double setDoubleY(double y)
+	{
+		highResY = y;
+	}
+	
     HandleComponent* getPreviousHandle();
     HandleComponent* getNextHandle();
     String changeMessage;
@@ -295,7 +324,8 @@ public:
 private:
     Colour colour;
     bool fixed;
-
+	double highResY;
+	int uniqueID;
 
     ComponentDragger dragger;
     int lastX, lastY;

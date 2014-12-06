@@ -104,29 +104,19 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     layoutEditor->addChangeListener(this);
     layoutEditor->setBounds(0, 0, getWidth(), getHeight());
 
-
-
     viewportComponent->addAndMakeVisible(layoutEditor);
     viewportComponent->addAndMakeVisible(componentPanel);
-
     layoutEditor->setTargetComponent(componentPanel);
     layoutEditor->setInterceptsMouseClicks(true, true);
     resizeLimits.setSizeLimits (150, 150, 3800, 3800);
     resizer = new CabbageCornerResizer(this, this, &resizeLimits);
-
 #else
     componentPanel = new Component();
     componentPanel->setTopLeftPosition(0, 0);
     viewportComponent->addAndMakeVisible(componentPanel);
 #endif
-
-
-
-
     componentPanel->addKeyListener(this);
     componentPanel->setInterceptsMouseClicks(false, true);
-
-
 
 #ifndef Cabbage_No_Csound
     if(getFilter()->getCsound())
@@ -139,7 +129,6 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     layoutEditor->setSize(400, 400);
     layoutEditor->updateFrames();
 #endif
-
 
     for(int i=0; i<getFilter()->getGUILayoutCtrlsSize(); i++)
         InsertGUIControls(getFilter()->getGUILayoutCtrls(i));

@@ -170,6 +170,20 @@ public:
         else return in;
     }
 //
+	static void debug(String message)
+	{
+		Logger::writeToLog(message);
+	}
+
+	static void debug(float value)
+	{
+		Logger::writeToLog(String(value));
+	}
+	
+	static void debug(String message, float value)
+	{
+		Logger::writeToLog(message+":"+String(value));
+	}
 //===========================================================================================
     static void showMessage(String message)
     {

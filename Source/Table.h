@@ -50,6 +50,9 @@ public:
     {
         g.fillAll(Colours::transparentBlack);
     };
+	
+	
+	void repaintAllTables();
     void resized();
     void setZoomFactor(double zoom);
     void setDrawMode(String mode);
@@ -109,7 +112,7 @@ public:
 
     float timeToX (const double time) const
     {
-        return getWidth() * (float) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
+		return getWidth() * (double) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
     }
 
     double xToTime (const float x) const
@@ -160,9 +163,16 @@ public:
 		return coordinates;
 	}
 	
+	double getNewRangeStart()
+	{
+		return newRangeStart;
+	}
+	
 private:
-    Image img;
+    Image cacheImg;
+	bool paintCachedImage;
 	String coordinates;
+	double newRangeStart;
 	HandleComponent* currentHandle;
     bool shouldScroll;
     int normalised;
@@ -276,6 +286,8 @@ public:
     ~HandleComponent();
 
 
+	void setPosition(double x, double y, bool circularEnv);
+
     void paint (Graphics& g);
     void removeThisHandle();
     void mouseEnter (const MouseEvent& e);
@@ -292,6 +304,16 @@ public:
     HandleViewer* getParentHandleViewer()
     {
         return findParentComponentOfClass <HandleViewer>();
+    };
+	
+    GenTable* getParentGenTable()
+    {
+        return findParentComponentOfClass <GenTable>();
+    };	
+
+    TableManager* getParentTableManager()
+    {
+        return findParentComponentOfClass <TableManager>();
     };
 
 	int getUniqueID()

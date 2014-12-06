@@ -42,6 +42,8 @@ class TableManager : public Component,
     bool shouldShowTableButtons;
     bool shouldShowZoomButtons;
     int mainFooterHeight;
+	Colour gridColour;
+	int tableIndex;
 
 public:
     TableManager();
@@ -51,6 +53,8 @@ public:
         g.fillAll(Colours::transparentBlack);
     };
 	
+	
+	void setGridColour(Colour col);
 	
 	void repaintAllTables();
     void resized();
@@ -134,6 +138,7 @@ public:
     static float pixelToAmp(int height, Range<float> minMax, float sampleVal);
     Array<double> getPfields();
     String changeMessage;
+	Colour gridColour;
     int tableNumber, tableSize, genRoutine, realGenRoutine;
     void setRange(Range<double> newRange, bool isScrolling = false);
     Range<double> globalRange;
@@ -168,7 +173,13 @@ public:
 		return newRangeStart;
 	}
 	
+	void shouldDrawGrid(bool val)
+	{
+		drawGrid = val;
+	}
+	
 private:
+	bool drawGrid;
     Image cacheImg;
 	bool paintCachedImage;
 	String coordinates;
@@ -365,10 +376,11 @@ class RoundButton : public Component,
 
 {
     String type;
+	String visible;
     Colour colour;
     int mode;
 public:
-    RoundButton(String _type, Colour _colour):Component()
+    RoundButton(String _type, Colour _colour):Component(), visible("bacground")
     {
         setName(_type);
         type = _type;
@@ -390,8 +402,10 @@ public:
         if(type.contains("zoom"))
         {
             g.fillAll(Colours::transparentBlack);
+			g.setColour(CabbageUtils::getBackgroundSkin());
+			g.fillEllipse(0, 0, getWidth(), getHeight());
             g.setColour(Colours::white.withAlpha(.8f));
-            g.fillEllipse(0, 0, getWidth(), getHeight());
+            g.fillEllipse(1, 1, getWidth()-2, getHeight()-2);
             g.setColour(Colours::black);
             g.fillRoundedRectangle(getWidth()*.18, getHeight()*.4f, getWidth()*.65, getHeight()*.25, 2);
             if(getName()=="zoomIn")
@@ -400,16 +414,34 @@ public:
         else
         {
             g.fillAll(Colours::transparentBlack);
-            g.setColour(colour);
-            g.fillEllipse(0, 0, getWidth(), getHeight());
+			g.setColour(CabbageUtils::getBackgroundSkin());
+			g.fillEllipse(0, 0, getWidth(), getHeight());
+            g.setColour((visible=="foreground" ? colour : colour.withAlpha(.3f)));
+            g.fillEllipse(1, 1, getWidth()-2, getHeight()-2);
             g.setColour(colour.contrasting());
             g.drawFittedText(type, 0, 0, getWidth(), getHeight(), Justification::centred, 1);
+			if(visible=="off")
+			{
+				g.setColour(colour.contrasting());
+				g.drawLine(0, 0, getWidth(), getHeight(), 2);
+				g.drawLine(0, getHeight(), getWidth(), 0, 2);	
+			}
         }
     }
+
+	void setVisibilityStatus(String status)
+	{
+		visible = status;
+	}
 
     int getMode()
     {
         return mode;
+    }
+	
+    int setMode(int mod)
+    {
+        mode=mod;
     }
 };
 

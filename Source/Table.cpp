@@ -24,7 +24,7 @@
 // Class to hold all tables
 //==============================================================================
 TableManager::TableManager(): Component(), zoom(0.0), largestTable(0), scrubberPosition(0),
-    scrubberFreq(0), shouldShowTableButtons(true), shouldShowZoomButtons(true),
+    scrubberFreq(0), shouldShowTableButtons(true), shouldShowZoomButtons(true), tableIndex(0),
     mainFooterHeight(25)
 {
     addAndMakeVisible(zoomIn = new RoundButton("zoomIn", Colours::white));
@@ -34,6 +34,7 @@ TableManager::TableManager(): Component(), zoom(0.0), largestTable(0), scrubberP
     zoomOut->toFront(false);
     zoomOut->addChangeListener(this);
 }
+
 //==============================================================================
 void TableManager::changeListenerCallback(ChangeBroadcaster *source)
 {
@@ -63,12 +64,24 @@ void TableManager::changeListenerCallback(ChangeBroadcaster *source)
                     if(button->getMode()==1)
                     {
                         tables[i]->setVisible(true);
+						button->setVisibilityStatus("foreground");
+						
+						for(int c=0; c<tableButtons.size(); c++)
+							if(button!=tableButtons[c])
+							{
+								tableButtons[c]->setVisibilityStatus("background");
+								button->setMode(0);
+							}
+						
                         tables[i]->toFront(true);
                         if(tables[i]->genRoutine != 2)
                             tables[i]->getHandleViewer()->showHandles(true);
                     }
                     else if(button->getMode()==0)
+					{
                         tables[i]->setVisible(false);
+						button->setVisibilityStatus("off");
+					}
 
                 }
                 else
@@ -109,13 +122,14 @@ void TableManager::addTable(int sr, const String col, int gen, Array<float> ampR
     table->scrollbar->addListener(this);
     table->addChangeListener(listener);
     table->addTable(sr, col, gen, ampRange);
-    addAndMakeVisible(table);
+	addAndMakeVisible(table);
     tables.add(table);
     RoundButton* button = new RoundButton(String(ftnumber), Colours::findColourForName(col, Colours::white));
     button->addChangeListener(this);
     addAndMakeVisible(button);
     tableButtons.add(button);
     resized();
+
 
 }
 //==============================================================================
@@ -157,6 +171,15 @@ void TableManager::repaintAllTables()
         tables[i]->repaint();
     }
 }
+//==============================================================================
+void TableManager::setGridColour(Colour col)
+{
+    for(int i=0; i<tables.size(); i++)
+    {
+        tables[i]->gridColour = col;
+    }	
+}
+
 //==============================================================================
 void TableManager::setRange(double start, double end)
 {
@@ -211,8 +234,12 @@ void TableManager::resized()
 
     for(int i =0; i<tables.size(); i++)
     {
-        tables[i]->setBounds(0, 0, getWidth(), getHeight());
+        tables[i]->setBounds(0, 0, getWidth(), getHeight());	
+		tables[i]->shouldDrawGrid(false);	
     }
+
+	if(tables.size())
+		tables[tables.size()-1]->shouldDrawGrid(true);
 
     if(tableConfigList.size()==1)
         shouldShowTableButtons=false;
@@ -400,7 +427,8 @@ GenTable::GenTable():	thumbnailCache (5),
     paintFooterHeight(25),
     quantiseSpace(0.01),
     qsteps(0),
-    drawAsVUMeter(false)
+    drawAsVUMeter(false),
+	drawGrid(false)
 {
     thumbnail=nullptr;
     addAndMakeVisible(scrollbar = new ScrollBar(false));
@@ -804,8 +832,24 @@ void GenTable::paint (Graphics& g)
     thumbArea = getLocalBounds();
     thumbArea.setHeight(getHeight()-paintFooterHeight);
     float prevY=0, prevX=0, currY=0;
-
+	const double scrollingResolution = 0.01;
 	const bool interp = (getWidth()<tableSize ? true : false);
+	const double thumbHeight = thumbArea.getHeight()-10;//scrollbar thickness
+
+	numPixelsPerIndex = ((double)thumbArea.getWidth() / visibleLength);
+	
+	if(drawGrid==true)
+	{
+		g.setColour(gridColour);
+		
+		for(float i=0;i<getWidth();i+=(interp ? getWidth()/20.f : numPixelsPerIndex))
+			g.drawVerticalLine(i+1, 0, thumbHeight-4);
+			
+		g.drawVerticalLine(getWidth()-1, 0, thumbHeight-4);
+		
+		for(float i=0;i<thumbHeight+2;i+=(getHeight()+2.f)/20.f)
+			g.drawHorizontalLine(i, 1, getWidth());
+	}
 
     //if gen01 then use an audio thumbnail class
     if(genRoutine==1)
@@ -816,20 +860,21 @@ void GenTable::paint (Graphics& g)
         float zoomFactor = thumbnail->getTotalLength()/visibleRange.getLength();
         regionWidth = (regionWidth=2 ? 2 : regionWidth*zoomFactor);
     }
-
     //else draw the waveform directly onto this component
     //edit handles get placed on the handleViewer, which is placed on top of this component
     else
     {
         Path path;
-		const double scrollingResolution = 0.01;
         numPixelsPerIndex = ((double)thumbArea.getWidth() / visibleLength)*scrollingResolution;
-        const double thumbHeight = thumbArea.getHeight()-10;//scrollbar thickness
         prevY = ampToPixel(thumbHeight, minMax, waveformBuffer[0]);
 		const float midPoint = minMax.getLength()/2.f-minMax.getEnd();
 		float cnt = visibleEnd-visibleStart;
+		
+		
+		
         for(float i=visibleStart; i<=visibleEnd; i+=scrollingResolution)
         {
+			
 			if(i==(float)visibleStart){
 				//start subpath, if gen is 7 or 5, start path from bottom of table widget
 				if(genRoutine==7 | genRoutine==5)
@@ -878,10 +923,13 @@ void GenTable::paint (Graphics& g)
 					}
 				}
 				prevX = jmax(0.0, prevX + numPixelsPerIndex);
+				
 				prevY = currY;
 			
 			}
         }
+
+		
 
         if(drawAsVUMeter)
         {
@@ -1002,7 +1050,7 @@ void GenTable::setScrubberPos(double pos)
             //take care of scrolling...
             if(timePos<thumbnail->getTotalLength()/25.f)
 			{
-            //    setRange (visibleRange.movedToStartAt(0));
+                setRange (visibleRange.movedToStartAt(0));
 				newRangeStart = 0;
 			}
             else if(visibleRange.getEnd()<=thumbnail->getTotalLength() && zoom>0.0)
@@ -1069,7 +1117,7 @@ void HandleViewer::addHandle(double x, double y, double width, double height, Co
         //set up handle, and pass relative x and y values as well as gen and colour
         HandleComponent* handle = new HandleComponent(x, y/getHeight(), handles.size(), false, table->genRoutine, colour);
 		const double width = (getWidth()/tableSize);  
-        handle->setSize((width>10 ? width : FIXED_WIDTH), (width>10 ? 5 : FIXED_WIDTH));      
+        handle->setSize((width>10 ? width+1 : FIXED_WIDTH), (width>10 ? 5 : FIXED_WIDTH));      
 		handle->setPosition(getWidth()*x, y, (handle->getWidth()==FIXED_WIDTH ? true : false));
 
 		handle->addChangeListener(table);
@@ -1100,7 +1148,7 @@ void HandleViewer::insertHandle(double x, double y, Colour colour)
         HandleComponent* handle = new HandleComponent(x, y/getHeight(), handles.size(), false, table->genRoutine, colour);
 
 		const double width = (getWidth()/tableSize);         
-        handle->setSize((width>10 ? width : FIXED_WIDTH), (width>10 ? 5 : FIXED_WIDTH));
+        handle->setSize((width>10 ? width+1 : FIXED_WIDTH), (width>10 ? 5 : FIXED_WIDTH));
 		handle->setPosition(getWidth()*x, y, (handle->getWidth()==FIXED_WIDTH ? true : false));
         handle->addChangeListener(table);
 		handle->setUniqueID(indx);
@@ -1174,7 +1222,7 @@ void HandleViewer::positionHandle(const MouseEvent& e)
 	//if handle doesn't exist, create one	
 	if(handleExists==false)
 	{
-		insertHandle(getSnapXPosition(e.x)/(double)getWidth(), (float)e.y, colour);
+		insertHandle(getSnapXPosition(e.x)/(double)getWidth(), getSnapYPosition(e.y), colour);
 	}
 		
 }
@@ -1203,8 +1251,8 @@ double HandleViewer::getSnapYPosition(const double y)
     //return snapped position if quantise is one
     double ySnapPos = 0;
     double steps = (minMax.getEnd()/getParentTable()->quantiseSpace);
-	if(steps!=1)
-		return y;
+//	if(steps!=1)
+//		return y;
 		
     double jump = (getParentTable()->quantiseSpace/minMax.getEnd())*getHeight();
     for(double c=0; c<=steps; c++)
@@ -1331,16 +1379,16 @@ void HandleComponent::paint (Graphics& g)
     g.setColour(colour);
 	if(getWidth()<=15)
 	{
-	g.setColour(Colours::lime);
+	g.setColour(colour.withAlpha(.4f));
 		
-	g.drawLine(0, 7, getWidth(), 7, 1);
-	g.drawLine(7, 0, 7, getHeight(), 1);
+	//g.drawLine(0, 7, getWidth(), 7, 1);
+	//g.drawLine(7, 0, 7, getHeight(), 1);
 	g.drawEllipse(3, 3, 9, 9, 1);
 	
 	}
 	else
 	{
-		g.setColour(Colours::red);
+		g.setColour(colour);
 		g.drawRoundedRectangle(getLocalBounds().reduced(1.2f).toFloat(), 2.f, 1.f);
 		g.setColour(colour.withAlpha(.7f));
 		g.drawRoundedRectangle(getLocalBounds().toFloat(), 2.f, 1.f);		

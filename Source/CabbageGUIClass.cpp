@@ -578,6 +578,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::zoom, 0);
         cabbageIdentifiers.set(CabbageIDs::startpos, 0);
         cabbageIdentifiers.set(CabbageIDs::tablenumber, -1);
+		cabbageIdentifiers.set(CabbageIDs::tablegridcolour, Colours::whitesmoke.withAlpha(.1f).toString());
     }
 
     //===============image==================//
@@ -1028,8 +1029,6 @@ int CabbageGUIClass::parse(String inStr, String identifier)
                 }
                 else
                     cabbageIdentifiers.set(CabbageIDs::colour, getColourFromText(strTokens.joinIntoString(",")).toString());
-
-
             }
 
             else if(identArray[indx].equalsIgnoreCase("fontcolour")||
@@ -1045,7 +1044,12 @@ int CabbageGUIClass::parse(String inStr, String identifier)
             {
                 cabbageIdentifiers.set(CabbageIDs::fontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
             }
-
+			
+            else if(identArray[indx].equalsIgnoreCase("tablegridcolour"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::tablegridcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
+            }
+			
             else if(identArray[indx].equalsIgnoreCase("tablecolour") ||
                     identArray[indx].equalsIgnoreCase("tablecolours"))
             {

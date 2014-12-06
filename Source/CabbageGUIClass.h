@@ -40,7 +40,8 @@ class IdentArray : public StringArray
 public:
     IdentArray() : StringArray("tablecolour")
     {
-        add("tablecolours");
+        add("tablecolour");
+		add("tablegridcolour");
 		add("alpha");
         add("bounds");
         add("fontcolour");
@@ -165,6 +166,7 @@ static const Identifier basetype = "basetype";
 static const Identifier textbox = "textbox";
 static const Identifier name = "name";
 static const Identifier type = "type";
+static const Identifier tablegridcolour= "tablegridcolour";
 static const Identifier sliderskew = "sliderskew";
 static const Identifier sliderincr = "sliderincr";
 static const Identifier midichan = "midichan";

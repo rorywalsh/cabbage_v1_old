@@ -2186,7 +2186,8 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
         table->setRange(cAttr.getNumProp(CabbageIDs::startpos), cAttr.getNumProp(CabbageIDs::endpos));
     if(cAttr.getNumProp(CabbageIDs::zoom)!=0)
         table->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
-
+	//set grib colour for all tables
+	table->setGridColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablegridcolour)));
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

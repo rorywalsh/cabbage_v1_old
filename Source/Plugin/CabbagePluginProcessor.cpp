@@ -1378,7 +1378,6 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 			else
             for(int i=0; i<noOfArgs; i++)
 			{
-                Logger::writeToLog("TableNum:"+String(tableNum)+" data:"+String(argsPtr[i]));
                 fdata.add(String(argsPtr[i]));
 			}
         }

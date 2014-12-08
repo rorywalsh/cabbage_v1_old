@@ -403,7 +403,7 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
         GenTable* genTable = dynamic_cast<GenTable*>(source);
         if(genTable)
         {
-			if(genTable->getCurrentHandle())
+			if(genTable->getCurrentHandle() && genTable->displayAsGrid()!=1)
 				popupBubble->showAt(genTable->getCurrentHandle(), AttributedString(genTable->getCoordinates()), 1050);		
             if(genTable->changeMessage == "updateFunctionTable")
                 updatefTableData(genTable);
@@ -575,7 +575,6 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
     String pFields = "";
     //Logger::writeToLog(fStatement);
     float xAxisRescaleFactor = (float)table->tableSize/(float)table->getWidth();
-    Logger::writeToLog("end XPos:"+String(table->getWidth()*xAxisRescaleFactor));
     for(int i=0; i<points.size()-1; i++)
     {
         int handleYPos1 = points.getReference(i).point.getY();
@@ -1351,7 +1350,6 @@ void CabbagePluginAudioProcessorEditor::setEditMode(bool on)
 #ifdef Cabbage_Build_Standalone
     if(on)
     {
-        Logger::writeToLog(CabbageUtils::getBoundsString(layoutEditor->getBounds()));
         getFilter()->setGuiEnabled(true);;
         componentPanel->toBack();
         layoutEditor->setEnabled(true);
@@ -2524,9 +2522,6 @@ void CabbagePluginAudioProcessorEditor::buttonStateChanged(Button* button)
                         button->setToggleState(false, dontSendNotification);
                     }
                     //toggle text values
-                    for(int o=0; o<getFilter()->getGUICtrls(i).getStringArrayProp("text").size(); o++)
-                        Logger::writeToLog(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", o));
-
                     if(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 1).equalsIgnoreCase(button->getButtonText()))
                         button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue("text", 0));
                     else
@@ -3528,7 +3523,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 
         }
 
-//getFilter()->dirtyControls.clear();
+getFilter()->dirtyControls.clear();
 //the following code looks after updating any objects that don't get recognised as plugin parameters,
 //for example, table objects don't get listed by the host as a paramters. Likewise the csoundoutput widget..
         for(int i=0; i<getFilter()->getGUILayoutCtrlsSize(); i++)

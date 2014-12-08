@@ -180,7 +180,7 @@ public:
 		Logger::writeToLog(String(value));
 	}
 	
-	static void debug(String message, float value)
+	static void debug(String message, double value)
 	{
 		Logger::writeToLog(message+":"+String(value));
 	}
@@ -193,6 +193,44 @@ public:
                                           "Ok");
 
     }
+
+
+	static bool compDouble(double x, int y)
+	{
+		if( x > (double)y-0.0001 && x < (double)y+0.0001) 
+		{
+			// They are almost equal
+			return true;
+		}
+		else
+		{
+			// They aren't equal at all
+			return false;
+		}		
+	}
+
+	static double roundToPrec(double x, int prec)
+	{
+		double power = 1.0;
+		int i;
+
+		if (prec > 0)
+			for (i = 0; i < prec; i++)
+				power *= 10.0;
+		else if (prec < 0)
+			for (i = 0; i < prec; i++)
+				power /= 10.0;
+
+		if (x > 0)
+			x = floor(x * power + 0.5) / power;
+		else if (x < 0)
+			x = ceil(x * power - 0.5) / power;
+
+		if (x == -0)
+			x = 0;
+
+		return x;
+	}
 
 //===========================================================================================
     static void showMessageWithLocation(String message)

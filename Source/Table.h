@@ -149,6 +149,12 @@ public:
     int scrollbarReduction;
     void showScrollbar(bool show);
     int mainFooterHeight, paintFooterHeight;
+	
+	void drawGridRect(float position)
+	{
+
+	}
+	
     HandleViewer* getHandleViewer()
     {
         return handleViewer;
@@ -178,9 +184,13 @@ public:
 		drawGrid = val;
 	}
 	
+	int displayAsGrid()
+	{
+		return qsteps;
+	}
+	
 private:
 	bool drawGrid;
-    Image cacheImg;
 	bool paintCachedImage;
 	String coordinates;
 	double newRangeStart;
@@ -224,7 +234,7 @@ private:
     double currentPlayPosition;
     bool drawWaveform;
 
-
+	const Image drawGridImage(bool redraw, double width=0.0, double height=0.0, double offset=0.0);
 
     Array<float, CriticalSection> waveformBuffer;
     double visibleLength, visibleStart, visibleEnd, maxAmp;
@@ -273,10 +283,21 @@ public:
     void fixEdgePoints(int gen);
     void showHandles(bool show);
     int handleIndex;
+	bool showingGrid;
     double tableSize;
     Range<float> minMax;
     Colour colour;
     int gen;
+	
+	bool isShowingGrid()
+	{
+		return showingGrid;
+	}
+	
+	void setShowingGrid(bool val)
+	{
+		showingGrid = val;
+	}
     bool shouldShowHandles;
 
     GenTable* getParentTable()

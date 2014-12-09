@@ -67,7 +67,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     //set custom skin yo use
     lookAndFeel = new CabbageLookAndFeel();
     basicLookAndFeel = new CabbageLookAndFeelBasic();
-
+	feely = new LookAndFeel_V1();
     //create popup display for showing value of sliders.
     popupBubble = new BubbleMessageComponent(250);
     popupBubble->setColour(BubbleComponent::backgroundColourId, Colours::white);
@@ -1594,7 +1594,7 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
     }
 
 #else
-    g.setColour(formColour);
+    g.setColour(formColour.withAlpha(1.f));
     g.fillAll();
     g.setColour (CabbageUtils::getTitleFontColour());
 #ifndef Cabbage_Plugin_Host
@@ -2288,8 +2288,8 @@ void CabbagePluginAudioProcessorEditor::InsertSlider(CabbageGUIClass &cAttr)
                         cAttr.getStringProp(CabbageIDs::svgpath) :
                         globalSVGPath));
 
+	
     comps.add(new CabbageSlider(cAttr));
-
 	
     int idx = comps.size()-1;
 	if(!cAttr.getStringProp(CabbageIDs::name).contains("dummy"))
@@ -3604,7 +3604,7 @@ getFilter()->dirtyControls.clear();
             {
                 ((CabbageImage*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
                 getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
-                repaint();
+                //repaint();
             }
             //table
             else if((getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::table) &&

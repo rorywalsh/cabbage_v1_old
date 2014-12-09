@@ -237,7 +237,7 @@ private:
     ScopedPointer<Component> componentPanel;
 #endif
     ScopedPointer<MidiKeyboardComponent> midiKeyboard;
-    ScopedPointer<LookAndFeel> feely;
+    ScopedPointer<LookAndFeel_V1> feely;
     ComponentBoundsConstrainer resizeLimits;
 
     AudioPlayHead::CurrentPositionInfo hostInfo;

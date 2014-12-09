@@ -375,7 +375,7 @@ public:
         slider->setColour(Slider::Slider::rotarySliderOutlineColourId, Colour::fromString(outlineColour));
 
 
-        slider->setLookAndFeel(lookAndFeel);
+       // slider->setLookAndFeel(lookAndFeel);
         textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
         addAndMakeVisible(slider);
         addAndMakeVisible(groupbox);

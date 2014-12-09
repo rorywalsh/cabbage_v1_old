@@ -118,7 +118,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     //============== Csound related variables/methods ==============================
 #ifndef Cabbage_No_Csound
     ScopedPointer<CSOUND_PARAMS> csoundParams;
-    ScopedPointer<CsoundPerformanceThread> csoundPerfThread;
+    //ScopedPointer<CsoundPerformanceThread> csoundPerfThread;
     PVSDATEXT* dataout;
     MYFLT cs_scale;
 #if !defined(AndroidBuild)

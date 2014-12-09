@@ -150,8 +150,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 #ifndef Cabbage_Plugin_Host
     if(!getPreference(appProperties, "UseCabbageIO"))
     {
-        csoundPerfThread = new CsoundPerformanceThread(csound);
-        csoundPerfThread->SetProcessCallback(CabbagePluginAudioProcessor::YieldCallback, (void*)this);
+        //csoundPerfThread = new CsoundPerformanceThread(csound);
+        //csoundPerfThread->SetProcessCallback(CabbagePluginAudioProcessor::YieldCallback, (void*)this);
     }
 #endif
 
@@ -489,11 +489,11 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
     //const MessageManagerLock mmLock;
     if(csound)
     {
-        if(csoundPerfThread)
-        {
-            csoundPerfThread->Stop();
-            csoundPerfThread = nullptr;
-        }
+        //if(csoundPerfThread)
+        //{
+        //    csoundPerfThread->Stop();
+        //    csoundPerfThread = nullptr;
+        //}
         //csound->SetHostImplementedMIDIIO(false);
         csound->DeleteChannelList(csoundChanList);
         Logger::writeToLog("about to cleanup Csound");
@@ -516,7 +516,7 @@ int CabbagePluginAudioProcessor::performEntireScore()
 #ifndef Cabbage_No_Csound
     if(!isNativeThreadRunning)
     {
-        csoundPerfThread->Play();
+        //csoundPerfThread->Play();
         isNativeThreadRunning = true;
     }
 #endif

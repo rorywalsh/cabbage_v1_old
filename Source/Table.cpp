@@ -18,7 +18,6 @@
 */
 
 #include "Table.h"
-#define FIXED_WIDTH 15
 
 //==============================================================================
 // Class to hold all tables
@@ -615,9 +614,11 @@ Array<double> GenTable::getPfields()
 //==============================================================================
 void GenTable::setWaveform(AudioSampleBuffer buffer)
 {
-    if(genRoutine==1)
+	//we will deal with large tables as we would a GEN01 for efficiency
+    if(genRoutine==1 || buffer.getNumSamples()>MAX_TABLE_SIZE)
     {
         tableSize = buffer.getNumSamples();
+		genRoutine=1;
         thumbnail->clear();
         repaint();
         thumbnail->reset(buffer.getNumChannels(), 44100, buffer.getNumSamples());
@@ -641,9 +642,6 @@ void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRang
 
         handleViewer->tableSize = tableSize;
 		
-        if(buffer.size() > 22050)
-            CabbageUtils::showMessage("Tables of sizes over 22050 samples should be created using GEN01", &this->getLookAndFeel());
-
         if(updateRange == true)
         {
             const Range<double> newRange (0.0, buffer.size()/sampleRate);
@@ -868,8 +866,8 @@ void GenTable::paint (Graphics& g)
     //set thumbArea, this is the area of the painted image
     thumbArea = getLocalBounds();
     thumbArea.setHeight(getHeight()-paintFooterHeight);
-    float prevY=0, prevX=0, currY=0;
-	const double scrollingResolution = 0.1;
+    float prevY=0, prevX=0, currY=0, currX=0;
+	const double scrollingResolution = (zoom == 0 ? 1 : 0.1);
 	const bool interp = (getWidth()<tableSize ? true : false);
 	const double thumbHeight = thumbArea.getHeight()-(showScroll==true? 10 : 0);//scrollbar thickness
 	numPixelsPerIndex = ((double)thumbArea.getWidth() / visibleLength);
@@ -890,7 +888,7 @@ void GenTable::paint (Graphics& g)
 	}
 
     //if gen01 then use an audio thumbnail class
-    if(genRoutine==1)
+    if(genRoutine==1 || waveformBuffer.size()>MAX_TABLE_SIZE)
     {
         g.setColour (colour);
         thumbnail->drawChannels(g, thumbArea.reduced (2), visibleRange.getStart(), visibleRange.getEnd(), .8f);
@@ -902,78 +900,52 @@ void GenTable::paint (Graphics& g)
     //edit handles get placed on the handleViewer, which is placed on top of this component
     else
     {
-        Path path;
-		const int actualNumPixelsPerIndex = numPixelsPerIndex;
-        numPixelsPerIndex = ((double)thumbArea.getWidth() / visibleLength)*scrollingResolution;
+
+		float incr = visibleLength/((double)thumbArea.getWidth()); 
         prevY = ampToPixel(thumbHeight, minMax, waveformBuffer[0]);
-		const float midPoint = minMax.getLength()/2.f-minMax.getEnd();
-		float cnt = visibleEnd-visibleStart;
+		float midPoint;
+		bool drawTrace=true;
+
+		if(genRoutine==7 || genRoutine==5 || genRoutine==2 || genRoutine==27){
+			midPoint = ampToPixel(thumbHeight, minMax, minMax.getStart());
+			drawTrace=false;
+		}
+			
+		else
+			midPoint = ampToPixel(thumbHeight, minMax, minMax.getLength()/2.f-minMax.getEnd());
+
 		int gridIndex=ceil(visibleStart);
-        for(float i=visibleStart; i<=visibleEnd; i+=scrollingResolution)
+		float lineDepth=1;
+        for(double i=visibleStart; i<=visibleEnd; i+=incr)
         {
 				//when qsteps == 1 we draw a grid
 				if(qsteps==1)
 				{
-					//g.setColour(colour);
 					if(CabbageUtils::compDouble(i, gridIndex))
 					{
 						gridIndex++;
-//						handleViewer->setSize(newWidth, handleViewer->getHeight());
-//						handleViewer->setTopLeftPosition(-leftOffset, 0);
 						g.drawImageAt(drawGridImage(true, handleViewer->getWidth(), thumbHeight-4, handleViewer->getX()), 0, 0, false);
-							
-						//CabbageUtils::debug("i", i);
-						//g.drawRoundedRectangle(prevX-offset, 2.f, actualNumPixelsPerIndex, thumbHeight-4, actualNumPixelsPerIndex*0.1, 1.f);
 
 					}
-						
-					prevX = jmax(0.0, prevX + numPixelsPerIndex);				
-					prevY = currY;
-						
-					//g.setColour(colour.withAlpha(.6f));
-					//if(thumbHeight-(thumbHeight-currY)==0)
-					//	g.fillRoundedRectangle(prevX+3, thumbHeight-(thumbHeight-currY)+3.f, numPixelsPerIndex-6, thumbHeight-currY-6.f, numPixelsPerIndex*0.1);
 				}
 				
 				else
 				{
-					if(i==(float)visibleStart){
-						//start subpath, if gen is 7 or 5, start path from bottom of table widget
-						if(genRoutine==7 || genRoutine==5 || genRoutine==2 || genRoutine==27)
-						{
-							path.startNewSubPath(0, thumbHeight);
-							path.lineTo(prevX, ampToPixel(thumbHeight, minMax, minMax.getStart()));
-							if(!interp)
-								path.lineTo(0, prevY);
-						}
-						else{
-							path.startNewSubPath(0, ampToPixel(thumbHeight, minMax, midPoint));
-							path.lineTo(prevX, ampToPixel(thumbHeight, minMax, waveformBuffer[i]));				
-						}
-					}
-					else
-					{
-						//minMax is the range of the current waveforms amplitude
-						currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
-						g.setColour(colour.withAlpha(.2f));
 
-						if(interp)
-							path.lineTo(prevX+numPixelsPerIndex, currY);
-						else
-						{
-							path.lineTo(prevX+numPixelsPerIndex, prevY);
-							path.lineTo(prevX+numPixelsPerIndex, currY);
-						}
-
-						prevX = jmax(0.0, prevX + numPixelsPerIndex);				
-						prevY = currY;
-					
+					//minMax is the range of the current waveforms amplitude
+					currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
+					currX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);
+					g.setColour(colour.withAlpha(.2f));
+					g.drawVerticalLine(prevX, (prevY<midPoint ? prevY : midPoint),  (prevY>midPoint ? prevY : midPoint));
+					g.setColour(colour);				
+					//draw trace 
+					//g.drawLine(prevX, prevY, currX, currY, 1.f);
+										
+					prevX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);				
+					prevY = currY;					
 					}
 				}
 		}
-		
-		if(qsteps==1)
-			return;
 
         if(drawAsVUMeter)
         {
@@ -982,26 +954,6 @@ void GenTable::paint (Graphics& g)
             g.setGradientFill(grad);
         }
 
-		if(genRoutine==2 || genRoutine==7 || genRoutine==5 || genRoutine==27)
-		{
-			path.lineTo(getWidth(), ampToPixel(thumbHeight, minMax, minMax.getStart()));
-			if(qsteps!=1)
-			{
-				path.closeSubPath();
-				g.fillPath(path);
-			}
-		}
-		else
-		{
-			path.lineTo(getWidth(), ampToPixel(thumbHeight, minMax, midPoint));
-			path.closeSubPath();
-			g.fillPath(path);
-		}		
-        
-        g.setColour(colour.darker());
-        if(qsteps!=1)
-            g.strokePath(path, PathStrokeType(1));
-    }
 }
 
 //==============================================================================
@@ -1232,8 +1184,8 @@ void HandleViewer::mouseDrag(const MouseEvent& e)
 void HandleViewer::positionHandle(const MouseEvent& e)
 {
     //positions the handle when a user sends a mouse down on the handleViewer
-    if(gen==1)
-        jassert(0);
+    if(gen==1 || tableSize>MAX_TABLE_SIZE )
+        return;
 
     //determine whether of not we are in toggle on.off(grid) mode..
     double steps = (minMax.getEnd()/getParentTable()->quantiseSpace);

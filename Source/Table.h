@@ -20,6 +20,9 @@
 #ifndef GENTABLE_H
 #define GENTABLE_H
 
+#define FIXED_WIDTH 15
+#define MAX_TABLE_SIZE 16384
+
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "CabbageUtils.h"
 #include "CabbageLookAndFeel.h"

@@ -2155,10 +2155,13 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
             tableValues.clear();
             tableValues = getFilter()->getTableFloats(tableNumber);
 
-            table->addTable(44100, cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), genRoutine,
+            table->addTable(44100, 
+							cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), 
+							(tableValues.size()>=MAX_TABLE_SIZE ? 1 : genRoutine),
                             cAttr.getFloatArrayProp("amprange"),
                             tableNumber, this);
-            if(abs(genRoutine)==1)
+							
+            if(abs(genRoutine)==1 || tableValues.size()>=MAX_TABLE_SIZE)
             {
                 tableBuffer.clear();
                 int channels = 1;//for now only works in mono;;
@@ -3359,14 +3362,17 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                 if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type).contains("slider")||
 				getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::numberbox)
                 {
-                    CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(comps[i]);	
-					CabbageNumberBox* cabNumber = dynamic_cast<CabbageNumberBox*>(comps[i]);
+                    //CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(comps[i]);	
+					//CabbageNumberBox* cabNumber = dynamic_cast<CabbageNumberBox*>(comps[i]);
 					Slider* slider = nullptr;
-					if(cabSlider)
-						slider = cabSlider->slider;
-					else if(cabNumber)
-						slider = cabNumber->slider;
-					
+					if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::numberbox)
+					{
+						slider = static_cast<CabbageNumberBox*>(comps[i])->slider;	
+					}
+					else
+					{
+						slider = static_cast<CabbageSlider*>(comps[i])->slider;	
+					}
                     if(slider)
                     {
 #ifndef Cabbage_Build_Standalone
@@ -3408,12 +3414,8 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 
                 else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::button)
                 {
-                    CabbageButton* cabButton = dynamic_cast<CabbageButton*>(comps[i]);
-                    if(cabButton)
-                    {
-                        //Logger::writeToLog("Button:"+String(inValue));
-                        cabButton->button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue(CabbageIDs::text, inValue));
-                    }
+                    CabbageButton* cabButton = static_cast<CabbageButton*>(comps[i]);
+                    cabButton->button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue(CabbageIDs::text, inValue));
                 }
 
                 else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::xypad &&
@@ -3616,7 +3618,7 @@ getFilter()->dirtyControls.clear();
                     int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();
                     for(int y=0; y<numberOfTables; y++)
                     {
-                        int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
+                        const int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
                         tableValues.clear();
                         tableValues = getFilter()->getTableFloats(tableNumber);
                         ((CabbageTable*)layoutComps[i])->fillTable(y, tableValues);
@@ -3631,16 +3633,23 @@ getFilter()->dirtyControls.clear();
                 String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
                 if(message.contains("tablenumber")||message.contains("tablenumbers"))
                 {
-                    int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();
+                    tableBuffer.clear();
+					int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();
                     for(int y=0; y<numberOfTables; y++)
                     {
-                        tableBuffer.clear();
-                        int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
-                        TableManager* table = dynamic_cast<CabbageGenTable*>(layoutComps[i])->table;
-                        StringArray pFields = getFilter()->getTableStatement(tableNumber);
+                        
+                        const int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
+                        TableManager* table = static_cast<CabbageGenTable*>(layoutComps[i])->table;
+                        //StringArray pFields = getFilter()->getTableStatement(tableNumber);
                         //tableValues.clear();
                         tableValues = getFilter()->getTableFloats(tableNumber);
-                        table->setWaveform(tableValues, tableNumber, false);
+						if(table->getTableFromFtNumber(tableNumber)->tableSize>=MAX_TABLE_SIZE)
+						{
+						tableBuffer.clear();
+						tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());
+						table->setWaveform(tableBuffer, tableNumber);
+						}
+                        else table->setWaveform(tableValues, tableNumber, false);
                     }
                 }
                 ((CabbageGenTable*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));

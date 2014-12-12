@@ -126,11 +126,16 @@ public:
 		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
 		
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
+		{
+			setVisible(false);			
+            setEnabled(false);			
+		}
         else
-            setVisible(true);
+		{
+			setEnabled(true);		
+			setVisible(true);
+		}
         setBounds(m_cAttr.getBounds());
-        repaint();
     }
 
     //---------------------------------------------
@@ -477,11 +482,17 @@ public:
         slider->setName(m_cAttr.getStringProp(CabbageIDs::text));
         slider->setSkewFactor(m_cAttr.getNumProp(CabbageIDs::sliderskew));
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
+		{
+			setVisible(false);			
+            setEnabled(false);			
+		}
         else
-            setVisible(true);
+		{
+			setVisible(true);			
+			setEnabled(true);
+		}
 		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
-        repaint();
+        //repaint();
     }
 
     //---------------------------------------------
@@ -747,11 +758,17 @@ public:
         button->getProperties().set("isRect", m_cAttr.getStringProp(CabbageIDs::shape).equalsIgnoreCase("square"));
         button->setButtonText(m_cAttr.getStringProp(CabbageIDs::text));
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
-		if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
+        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+		{
+			setVisible(false);			
+            setEnabled(false);			
+		}
         else
-            setVisible(true);
-        repaint();
+		{
+			setVisible(true);			
+			setEnabled(true);
+		}
+        //repaint();
     }
 
     //---------------------------------------------
@@ -941,11 +958,17 @@ public:
         combo->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
         setBounds(m_cAttr.getBounds());
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
-		if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
+        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+		{
+			setVisible(false);			
+            setEnabled(false);			
+		}
         else
-            setVisible(true);
-        repaint();
+		{
+			setVisible(true);			
+			setEnabled(true);
+		}
+        //repaint();
     }
 
 
@@ -985,7 +1008,7 @@ public:
         //if widget is a plant intercept mouse events
         if(cAttr.getStringProp(CabbageIDs::plant).isNotEmpty())
             this->setInterceptsMouseClicks(true, true);
-        repaint();
+        //repaint();
 		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
     }
     ~CabbageImage()
@@ -1009,10 +1032,16 @@ public:
 		
         setBounds(m_cAttr.getBounds());
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
+		{
+			setVisible(false);			
+            setEnabled(false);			
+		}
         else
-            setVisible(true);
-        repaint();
+		{
+			setEnabled(true);		
+			setVisible(true);
+		}
+        //repaint();
     }
 
     void paint (Graphics& g)
@@ -1096,7 +1125,7 @@ public:
             this->getProperties().set("groupLine", var(0));
         else
             this->getProperties().set("groupLine", var(1));
-        this->repaint();
+        //repaint();
 
         //if widget is a plant intercept mouse events
         if(cAttr.getStringProp(CabbageIDs::plant).isNotEmpty())
@@ -1125,11 +1154,17 @@ public:
         setText(m_cAttr.getStringProp(CabbageIDs::text));
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
 		
-		if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
+        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+		{
+			setVisible(false);			
+            setEnabled(false);			
+		}
         else
-            setVisible(true);
-        repaint();
+		{
+			setEnabled(true);			
+			setVisible(true);
+		}
+        //repaint();
     }
 
     //---------------------------------------------
@@ -1289,9 +1324,15 @@ public:
         }
 
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
-        else
-            setVisible(true);
+		{
+            setEnabled(false);
+			setVisible(false);		
+		}
+		else{
+            setEnabled(true);
+			setVisible(true);
+			
+		}
 
         if(ampRanges!=m_cAttr.getFloatArrayProp("amprange"))
         {
@@ -1404,9 +1445,15 @@ public:
         }
 
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
+		{
+			setVisible(false);			
+            setEnabled(false);			
+		}
         else
-            setVisible(true);
+		{
+			setEnabled(true);		
+			setVisible(true);
+		}
 
         if(zoom!=m_cAttr.getNumProp(CabbageIDs::zoom))
         {
@@ -1514,7 +1561,7 @@ public:
     void setText(String _text)
     {
         text = _text;
-        repaint();
+        //repaint();
     }
 
 
@@ -1526,12 +1573,19 @@ public:
         setBounds(m_cAttr.getBounds());
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
 		
-		if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
+        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+		{
+			setVisible(false);			
+            setEnabled(false);			
+		}
         else
-            setVisible(true);
+		{
+			setEnabled(true);		
+			setVisible(true);
+		}
+		
         setText(m_cAttr.getStringProp(CabbageIDs::text));
-        repaint();
+        //repaint();
     }
 
 
@@ -1637,11 +1691,18 @@ public:
     {
         setBounds(m_cAttr.getBounds());
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
-		if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
+        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+		{
+			setVisible(false);			
+            setEnabled(false);			
+		}
         else
-            setVisible(true);
-        repaint();
+		{
+			setEnabled(true);		
+			setVisible(true);
+		}
+		
+        //repaint();
     }
 
     //---------------------------------------------
@@ -1718,9 +1779,15 @@ public:
         editor->setColour(0x1000201, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
         setBounds(m_cAttr.getBounds());
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
+		{
+			setVisible(false);			
+            setEnabled(false);			
+		}
         else
-            setVisible(true);
+		{
+			setEnabled(true);		
+			setVisible(true);
+		}
 
         if(text!=m_cAttr.getStringProp(CabbageIDs::text))
         {
@@ -1728,7 +1795,7 @@ public:
             text = m_cAttr.getStringProp(CabbageIDs::text);
         }
 		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
-        repaint();
+        //repaint();
     }
 
     void paint(Graphics &g)
@@ -1864,11 +1931,18 @@ public:
         if(type==CabbageIDs::textbox.toString())
             setFile(m_cAttr.getStringProp(CabbageIDs::file));
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
+		{
+			setVisible(false);			
+            setEnabled(false);			
+		}
         else
-            setVisible(true);
+		{
+			setEnabled(true);		
+			setVisible(true);
+		}
+		
 		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
-        repaint();
+        //repaint();
     }
 
     void paint(Graphics &g)
@@ -2128,11 +2202,18 @@ public:
     {
         setBounds(m_cAttr.getBounds());
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
+		{
+			setVisible(false);			
+            setEnabled(false);			
+		}
         else
-            setVisible(true);
+		{
+			setEnabled(true);
+			setVisible(true);
+		}
+		
 		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
-        repaint();
+        //repaint();
     }
 
 
@@ -2241,12 +2322,18 @@ public:
         setBounds(m_cAttr.getBounds());
 		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
         slider->setName(m_cAttr.getStringProp(CabbageIDs::text));
-        slider->setSkewFactor(m_cAttr.getNumProp(CabbageIDs::sliderskew));
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
-            setVisible(false);
+		{
+			setVisible(false);			
+            setEnabled(false);			
+		}
         else
-            setVisible(true);
-        repaint();
+		{
+			setEnabled(true);		
+			setVisible(true);
+		}
+		
+        //repaint();
     }
 
 };

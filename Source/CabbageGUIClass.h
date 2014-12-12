@@ -293,7 +293,7 @@ class CabbageGUIClass : public CabbageUtils
     Array<int> vuConfig;
     Array<int> tableNumbers;
     Array<float> tableChannelValues;
-
+	IdentArray identArray;
 
     //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGUIClass);
 public:

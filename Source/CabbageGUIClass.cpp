@@ -578,6 +578,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::zoom, 0);
         cabbageIdentifiers.set(CabbageIDs::startpos, 0);
         cabbageIdentifiers.set(CabbageIDs::tablenumber, -1);
+		cabbageIdentifiers.set(CabbageIDs::outlinethickness, 1.f);
 		cabbageIdentifiers.set(CabbageIDs::tablegridcolour, Colours::white.withAlpha(.1f).toString());
     }
 
@@ -909,7 +910,6 @@ CabbageGUIClass::~CabbageGUIClass()
 //===========================================================================================
 int CabbageGUIClass::parse(String inStr, String identifier)
 {
-    IdentArray identArray;
     //Logger::writeToLog(str);
     //remove any text after a semicolon and take out tabs..
     String str = inStr.removeCharacters("\t");

@@ -58,6 +58,7 @@ public:
 	
 	
 	void setGridColour(Colour col);
+	void setOutlineThickness(float thickness);
 	
 	void repaintAllTables();
     void resized();
@@ -192,8 +193,17 @@ public:
 		return qsteps;
 	}
 	
+	void setTraceThickness(float thickness)
+	{
+	traceThickness = thickness;	
+	}
+	
+	
 private:
+	void drawBackgroundGrid();
+	Image backgroundImage;
 	bool drawGrid;
+	float traceThickness;
 	bool paintCachedImage;
 	String coordinates;
 	double newRangeStart;

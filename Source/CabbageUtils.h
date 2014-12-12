@@ -579,12 +579,93 @@ public:
     {
         appPrefs->getUserSettings()->setValue(pref, var(value));
     }
+//====================================================================================================
+	static Image drawToggleImage (float width, float height, bool isToggleOn, Colour colour, bool isRect, String svgPath)
+	{
+		Image img = Image(Image::ARGB, width, height, true);
+		Graphics g (img);
+		float opacity = 0;
 
+		if (isRect)   //if rectangular toggle
+		{
+			g.setColour (Colour::fromRGBA (10, 10, 10, 255));
+			g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+
+			if (isToggleOn == true)
+			{
+				g.setColour (colour);
+				g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, height*0.1);
+				opacity = 0.4;
+			}
+			else   //off
+			{
+				// Shadow
+				for (float i=0.01; i<0.05; i+=0.01)
+				{
+					g.setColour (Colour::fromRGBA (0, 0, 0, 255/(i*100)));
+					g.fillRoundedRectangle (width*i, height*i,
+											width*0.95, height*0.95, height*0.1);
+				}
+				// Filling in the button
+				Colour bg1 = Colour::fromRGBA (25, 25, 28, 255);
+				Colour bg2 = Colour::fromRGBA (15, 15, 18, 255);
+				ColourGradient cg = ColourGradient (bg1, 0, 0, bg2, width*0.5, height*0.5, false);
+				g.setGradientFill (cg);
+				g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, height*0.1);
+				opacity = 0.2;
+			}
+
+			// For emphasising the top and left edges to give the illusion that light is shining on them
+			ColourGradient edgeHighlight = ColourGradient (Colours::whitesmoke, 0, 0,
+										   Colours::transparentWhite, 0, height*0.1, false);
+			g.setGradientFill (edgeHighlight);
+			g.setOpacity (opacity);
+			g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+
+			ColourGradient edgeHighlight2 = ColourGradient (Colours::whitesmoke, 0, 0,
+											Colours::transparentWhite, height*0.1, 0, false);
+			g.setGradientFill (edgeHighlight2);
+			g.setOpacity (opacity);
+			g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+		}
+		else   //else if round toggle
+		{
+			//base
+			ColourGradient base = ColourGradient (Colours::white, width*-0.3, height*-0.3, Colours::black,
+												  width*0.8, height*0.8, false);
+			g.setGradientFill(base);
+			g.fillEllipse (0, 0, width, height);
+
+			g.setColour(Colour::fromRGB(70, 70, 70));
+			g.fillEllipse(width*0.04, height*0.04, width*0.92, height*0.92);
+
+			if (isToggleOn)   //on
+			{
+				ColourGradient cg = ColourGradient(colour.withSaturation(0.2), width*0.4, height*0.4, colour,
+												   width*0.8, height*0.8, true);
+				g.setGradientFill (cg);
+				g.fillEllipse(width*0.09, height*0.09, width*0.82, height*0.82);
+			}
+			else   //off
+			{
+				g.setColour(Colours::black);
+				g.fillEllipse(width*0.09, height*0.09, width*0.82, height*0.82);
+
+				ColourGradient cg = ColourGradient (Colours::white, width*0.4, height*0.4, colour.darker(0.9), width*0.3, height*0.3, true);
+				g.setGradientFill (cg);
+				g.setOpacity(0.4);
+				g.fillEllipse(width*0.1, height*0.1, width*0.8, height*0.8);
+			}
+		}
+		return img;
+	}
+
+//====================================================================================================
     static void setPreference(ApplicationProperties* appPrefs, String pref, String value)
     {
         appPrefs->getUserSettings()->setValue(pref, var(value));
     }
-
+//====================================================================================================
     static void drawSphericalThumb (Graphics& g, const float x, const float y,
                              const float w, const float h, const Colour& colour,
                              const float outlineThickness)
@@ -596,7 +677,7 @@ public:
 		g.setOpacity(.4);
 		g.fillEllipse (x+1, y+1, w, h);	 
 	}
-	
+//====================================================================================================	
 	static void drawGlassPointer (Graphics& g, float x, float y, float diameter,
                                   const Colour& colour, float outlineThickness, int direction)
 	{
@@ -804,7 +885,7 @@ public:
 
         else return img;
     }
-
+//====================================================================================================
     String returnFullPathForFile(String file, String fullPath)
     {
         String pic;

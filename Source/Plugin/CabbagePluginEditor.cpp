@@ -403,10 +403,10 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
         GenTable* genTable = dynamic_cast<GenTable*>(source);
         if(genTable)
         {
-			if(genTable->getCurrentHandle() && genTable->displayAsGrid()!=1)
-				popupBubble->showAt(genTable->getCurrentHandle(), AttributedString(genTable->getCoordinates()), 1050);		
-            if(genTable->changeMessage == "updateFunctionTable")
-                updatefTableData(genTable);
+//			if(genTable->getCurrentHandle() && genTable->displayAsGrid()!=1)
+//				popupBubble->showAt(genTable->getCurrentHandle(), AttributedString(genTable->getCoordinates()), 1050);		
+//            if(genTable->changeMessage == "updateFunctionTable")
+//                updatefTableData(genTable);
         }
 
         CabbageTextEditor* textEditor = dynamic_cast<CabbageTextEditor*>(source);
@@ -636,6 +636,10 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
         evt.pcnt = 5+pFields.size();
         evt.opcod = 'f';
         evt.p[0]=0;
+		
+		
+//		CabbageUtils::debug("table->tableSize", table->tableSize);
+	
 
         //setting table number to 0.
         evt.p[1]=0;
@@ -1551,23 +1555,22 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
 //==============================================================================
 void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 {
-
-    for(int i=0; i<getFilter()->getGUILayoutCtrlsSize(); i++)
-    {
-        if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("keyboard"))
-        {
-#ifdef Cabbage_Build_Standalone
-            if(keyIsPressed)
-                if(isMouseOver(true))
-                {
-                    //this lets controls keep focus even when you are playing the keyboard
-                    //layoutComps[i]->setWantsKeyboardFocus(true);
-                    //layoutComps[i]->grabKeyboardFocus();
-                    //layoutComps[i]->toFront(true);
-                }
-#endif
-        }
-    }
+//    for(int i=0; i<getFilter()->getGUILayoutCtrlsSize(); i++)
+//    {
+//        if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("keyboard"))
+//        {
+//#ifdef Cabbage_Build_Standalone
+//            if(keyIsPressed)
+//                if(isMouseOver(true))
+//                {
+//                    //this lets controls keep focus even when you are playing the keyboard
+//                    //layoutComps[i]->setWantsKeyboardFocus(true);
+//                    //layoutComps[i]->grabKeyboardFocus();
+//                    //layoutComps[i]->toFront(true);
+//                }
+//#endif
+//        }
+//    }
 #ifdef Cabbage_Build_Standalone
     if(getFilter()->compiledOk())
     {
@@ -2136,10 +2139,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
-
-
     TableManager* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
-
 
     var tables = cAttr.getVarArrayProp(CabbageIDs::tablenumber);
     for(int y=0; y<tables.size(); y++)
@@ -2175,6 +2175,9 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 				//only enable editing for gen05, 07, and 02
                 table->enableEditMode(pFields, tableNumber);
             }
+			
+			table->setOutlineThickness(cAttr.getNumProp(CabbageIDs::outlinethickness));
+			
             if(cAttr.getStringProp(CabbageIDs::drawmode).toLowerCase()=="vu")
                 table->setDrawMode("vu");
         }
@@ -3633,7 +3636,6 @@ getFilter()->dirtyControls.clear();
                 String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
                 if(message.contains("tablenumber")||message.contains("tablenumbers"))
                 {
-                    tableBuffer.clear();
 					int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();
                     for(int y=0; y<numberOfTables; y++)
                     {
@@ -3641,7 +3643,7 @@ getFilter()->dirtyControls.clear();
                         const int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
                         TableManager* table = static_cast<CabbageGenTable*>(layoutComps[i])->table;
                         //StringArray pFields = getFilter()->getTableStatement(tableNumber);
-                        //tableValues.clear();
+                        //tableValues.clear();						
                         tableValues = getFilter()->getTableFloats(tableNumber);
 						if(table->getTableFromFtNumber(tableNumber)->tableSize>=MAX_TABLE_SIZE)
 						{

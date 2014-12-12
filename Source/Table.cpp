@@ -200,6 +200,13 @@ void TableManager::setDrawMode(String mode)
     }
 }
 
+void TableManager::setOutlineThickness(float thickness)
+{
+    for(int i=0; i<tables.size(); i++)
+    {
+            tables[i]->setTraceThickness(thickness);
+    }	
+}
 //==============================================================================
 void TableManager::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
 {
@@ -365,6 +372,7 @@ void TableManager::setWaveform(AudioSampleBuffer buffer, int ftNumber)
         if(ftNumber==tables[i]->tableNumber)
 		{
             tables[i]->setWaveform(buffer);
+			return;
 		}
 }
 //==============================================================================
@@ -374,6 +382,7 @@ void TableManager::setWaveform(Array<float, CriticalSection> buffer, int ftNumbe
         if(ftNumber==tables[i]->tableNumber)
 		{
             tables[i]->setWaveform(buffer, updateRange);
+			return;
 		}
 }
 //==============================================================================
@@ -444,6 +453,7 @@ GenTable::GenTable():	thumbnailCache (5),
     minMax.setStart(0);
     minMax.setEnd(0);
     handleViewer->minMax = minMax;
+	
 }
 //==============================================================================
 GenTable::~GenTable()
@@ -474,6 +484,8 @@ void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRang
     }
 	else
 		setBufferedToImage(true);
+		
+	drawBackgroundGrid();		
 }
 //==============================================================================
 void GenTable::setAmpRanges(Array<float> ampRange)
@@ -492,6 +504,7 @@ void GenTable::setAmpRanges(Array<float> ampRange)
             quantiseSpace = ampRange[3];
             qsteps = quantiseSpace/minMax.getEnd();
             if(qsteps==1){
+				handleViewer->setShowingGrid(true);
                 handleViewer->showHandles(false);
 			}
         }
@@ -533,7 +546,8 @@ void GenTable::resized()
             scrollbar->setBounds (getLocalBounds().withWidth(getWidth()-scrollbarReduction).removeFromBottom (mainFooterHeight-5).reduced(2));
         else
             scrollbar->setBounds (-1000, 0, 100, 10);
-			
+	
+	drawBackgroundGrid();	
 }
 
 void GenTable::showScrollbar(bool show)
@@ -638,7 +652,8 @@ void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRang
     {
         waveformBuffer.clear();
 		waveformBuffer = buffer;
-        tableSize = buffer.size();
+		//waveformBuffer.swapWith(buffer);
+        tableSize = waveformBuffer.size();
 
         handleViewer->tableSize = tableSize;
 		
@@ -664,39 +679,6 @@ void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRang
 
 }
 //==============================================================================
-const Image GenTable::drawGridImage(bool redraw, double width, double height, double offset)
-{
-	if(redraw==true)
-	{
-		Image gridImage(Image::ARGB, width, height, true);
-		Graphics g(gridImage);
-		const double widthOfGridElement = width/waveformBuffer.size();
-		
-		//g.setColour(Colours::red);
-		//draw grid image
-		for(double i=0;i<waveformBuffer.size();i++)
-		{
-			g.setColour(colour.darker());
-			g.drawRoundedRectangle(i*(widthOfGridElement)+1, 0.f, widthOfGridElement-3.f, height, widthOfGridElement*0.1, 1.f);
-			if(waveformBuffer[i]>0.0)
-			{
-				g.setColour(colour.withAlpha(.5f));
-				g.fillRoundedRectangle(i*(widthOfGridElement)+2, 1.f, widthOfGridElement-5.f, height-2.f, widthOfGridElement*0.1);
-			}
-		}
-		
-		
-		//g.strokePath(p, PathStrokeType(1));
-		//return a clipped image
-		Rectangle<int> clippedImage(offset*-1, 0, width, height);
-		return gridImage.getClippedImage(clippedImage);
-	}
-	else
-	{
-		return Image();
-	}
-}
-//==============================================================================
 void GenTable::enableEditMode(StringArray m_pFields)
 {
     //turns on edit mode by adding handles to the handleViewer
@@ -720,6 +702,8 @@ void GenTable::enableEditMode(StringArray m_pFields)
     double xPos = 0;
     handleViewer->handles.clear();
 	const double thumbHeight = getHeight()-paintFooterHeight-10;
+	int pfieldCount=0;
+
 
     if(pFields.size()>0)
     {
@@ -742,12 +726,25 @@ void GenTable::enableEditMode(StringArray m_pFields)
         {
             float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
             handleViewer->addHandle(0, ampToPixel(thumbHeight, minMax, pFieldAmpValue), width+1, 5, this->colour);
-            for(double i=6; i<pFields.size(); i++)
+            
+
+			for(double i=6; i<pFields.size(); i++)
             {
+				CabbageUtils::debug("pfeild", pFields[i-2].getFloatValue());
+				pfieldCount++;
                 xPos = (i-5.0)/(double(tableSize))*tableSize;
                 pFieldAmpValue = (normalised<0 ? pFields[i].getFloatValue() : pFields[i].getFloatValue()/pFieldMinMax.getEnd());
                 handleViewer->addHandle(xPos/tableSize, ampToPixel(thumbHeight, minMax, pFieldAmpValue), width+1, 5, this->colour);
             }
+			
+			//initialise all remaining points in the table if user hasn't
+			for(double i=pfieldCount; i<tableSize; i++)
+            {
+                xPos = (i+1)/(double(tableSize))*tableSize;
+                pFieldAmpValue = pFieldMinMax.getEnd();
+                handleViewer->addHandle(xPos/tableSize, ampToPixel(thumbHeight, minMax, pFieldAmpValue), width+1, 5, this->colour);
+            }			
+			
             handleViewer->fixEdgePoints(genRoutine);
             handleViewer->showHandles(false);
         }
@@ -791,6 +788,58 @@ void GenTable::setZoomFactor (double amount)
 
     repaint();
 }
+
+//==============================================================================
+const Image GenTable::drawGridImage(bool redraw, double width, double height, double offset)
+{
+	if(redraw==true)
+	{
+		Image gridImage(Image::ARGB, width, height, true);
+		Graphics g(gridImage);
+		const double widthOfGridElement = width/waveformBuffer.size();
+		
+		//g.setColour(Colours::red);
+		//draw grid image
+		for(double i=0;i<waveformBuffer.size();i++)
+		{
+		g.drawImageAt(CabbageUtils::drawToggleImage(widthOfGridElement-3.f, height, (waveformBuffer[i]>0.0 ? true : false), colour, true, ""), 
+						i*(widthOfGridElement)+2, 
+						1.f);
+		}
+		
+		
+		//g.strokePath(p, PathStrokeType(1));
+		//return a clipped image
+		Rectangle<int> clippedImage(offset*-1, 0, width, height);
+		return gridImage.getClippedImage(clippedImage);
+	}
+	else
+	{
+		return Image();
+	}
+}
+
+void GenTable::drawBackgroundGrid()
+{
+
+	const bool interp = (getWidth()<tableSize ? true : false);
+	float thumbHeight = getHeight()-paintFooterHeight;
+	
+	Image gridImage(Image::ARGB, getWidth(), thumbHeight, true);
+	Graphics g(gridImage);	
+	const float pixelsPerIndex = ((double)thumbArea.getWidth() / visibleLength);
+	const double divisors = (getWidth()>300 ? 20.f : 10.f);
+	for(float i=0;i<getWidth();i+=(interp ? getWidth()/divisors : pixelsPerIndex))
+		g.drawVerticalLine(i+1, 0, thumbHeight-8);
+		
+	g.drawVerticalLine(getWidth()-1, 0, thumbHeight);
+	
+	for(float i=0;i<=thumbHeight-4;i+=(getHeight()+2.f)/divisors)
+		g.drawHorizontalLine(i, 1, getWidth());	
+	
+	backgroundImage = gridImage;
+}
+
 //==============================================================================
 void GenTable::setSampleRange(double start, double end)
 {
@@ -877,14 +926,7 @@ void GenTable::paint (Graphics& g)
 	if(drawGrid==true && qsteps!=1)
 	{
 		g.setColour(gridColour);
-		const double divisors = (getWidth()>300 ? 20.f : 10.f);
-		for(float i=0;i<getWidth();i+=(interp ? getWidth()/divisors : numPixelsPerIndex))
-			g.drawVerticalLine(i+1, 0, thumbHeight);
-			
-		g.drawVerticalLine(getWidth()-1, 0, thumbHeight);
-		
-		for(float i=0;i<=thumbHeight+4;i+=(getHeight()+2.f)/divisors)
-			g.drawHorizontalLine(i, 1, getWidth());
+		g.drawImageAt(backgroundImage, 0, 0, true);
 	}
 
     //if gen01 then use an audio thumbnail class
@@ -916,7 +958,7 @@ void GenTable::paint (Graphics& g)
 
 		int gridIndex=ceil(visibleStart);
 		float lineDepth=1;
-        for(double i=visibleStart; i<=visibleEnd; i+=incr)
+        for(int i=visibleStart; i<=visibleEnd; i+=incr)
         {
 				//when qsteps == 1 we draw a grid
 				if(qsteps==1)
@@ -925,22 +967,24 @@ void GenTable::paint (Graphics& g)
 					{
 						gridIndex++;
 						g.drawImageAt(drawGridImage(true, handleViewer->getWidth(), thumbHeight-4, handleViewer->getX()), 0, 0, false);
-
 					}
 				}
 				
 				else
 				{
-
 					//minMax is the range of the current waveforms amplitude
 					currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
-					currX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);
 					g.setColour(colour.withAlpha(.2f));
 					g.drawVerticalLine(prevX, (prevY<midPoint ? prevY : midPoint),  (prevY>midPoint ? prevY : midPoint));
-					g.setColour(colour);				
-					//draw trace 
-					//g.drawLine(prevX, prevY, currX, currY, 1.f);
-										
+
+					if(traceThickness>0)
+					{
+						g.setColour(colour);				
+						//draw trace 
+						currX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);
+						g.drawLine(prevX, prevY, currX, currY, 1.f);
+					}
+				
 					prevX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);				
 					prevY = currY;					
 					}
@@ -1177,9 +1221,10 @@ void HandleViewer::mouseDown(const MouseEvent& e)
 
 void HandleViewer::mouseDrag(const MouseEvent& e)
 {
-    if(gen==2)
+    if(gen==2 && !isShowingGrid())
         positionHandle(e);
 }
+
 
 void HandleViewer::positionHandle(const MouseEvent& e)
 {
@@ -1195,6 +1240,7 @@ void HandleViewer::positionHandle(const MouseEvent& e)
 	
 	if(abs(gen)==2)
 		handleExists = true;
+		
 		
 	for(int i=0; i<handles.size(); i++)
 	{

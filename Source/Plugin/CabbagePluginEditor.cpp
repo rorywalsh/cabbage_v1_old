@@ -1572,43 +1572,43 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 //#endif
 //        }
 //    }
-//#ifdef Cabbage_Build_Standalone
-//    if(getFilter()->compiledOk())
-//    {
-//        g.setColour (Colours::black);
-//        //g.setColour (CabbageUtils::getBackgroundSkin());
-//        g.fillAll();
-//
-//        Image logo = ImageCache::getFromMemory (BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize);
-//        g.drawImage(logo, 10, 10, getWidth(), getHeight()-60, 0, 0, logo.getWidth(), logo.getHeight());
-//
-//    }
-//    else
-//    {
-//        g.setColour(formColour);
-//        g.fillAll();
-//
-//        g.setColour (CabbageUtils::getTitleFontColour().withAlpha(.3f));
-//        Image logo = ImageCache::getFromMemory (BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize);
-//        g.drawImage (logo, getWidth() - 100, getHeight()-35, logo.getWidth()*0.55, logo.getHeight()*0.55,
-//                     0, 0, logo.getWidth(), logo.getHeight(), true);
-//        g.setColour(fontColour);
-//        g.drawFittedText(authorText, 10, getHeight()-35, getWidth()*.65, logo.getHeight(), 1, 1);
-//        //g.drawLine(10, getHeight()-27, getWidth()-10, getHeight()-27, 0.2);
-//    }
-//
-//#else
-//    g.setColour(formColour.withAlpha(1.f));
-//    g.fillAll();
-//    g.setColour (CabbageUtils::getTitleFontColour());
-//#ifndef Cabbage_Plugin_Host
-//    Image logo = ImageCache::getFromMemory (BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize);
-//    g.drawImage (logo, getWidth() - 100, getHeight()-35, logo.getWidth()*0.55, logo.getHeight()*0.55,
-//                 0, 0, logo.getWidth(), logo.getHeight(), true);
-//    g.setColour(fontColour);
-//    g.drawFittedText(authorText, 10, getHeight()-35, getWidth()*.65, logo.getHeight(), 1, 1);
-//#endif
-//#endif
+#ifdef Cabbage_Build_Standalone
+    if(getFilter()->compiledOk())
+    {
+        g.setColour (Colours::black);
+        //g.setColour (CabbageUtils::getBackgroundSkin());
+        g.fillAll();
+
+        Image logo = ImageCache::getFromMemory (BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize);
+        g.drawImage(logo, 10, 10, getWidth(), getHeight()-60, 0, 0, logo.getWidth(), logo.getHeight());
+
+    }
+    else
+    {
+        g.setColour(formColour);
+        g.fillAll();
+
+        g.setColour (CabbageUtils::getTitleFontColour().withAlpha(.3f));
+        Image logo = ImageCache::getFromMemory (BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize);
+        g.drawImage (logo, getWidth() - 100, getHeight()-35, logo.getWidth()*0.55, logo.getHeight()*0.55,
+                     0, 0, logo.getWidth(), logo.getHeight(), true);
+        g.setColour(fontColour);
+        g.drawFittedText(authorText, 10, getHeight()-35, getWidth()*.65, logo.getHeight(), 1, 1);
+        //g.drawLine(10, getHeight()-27, getWidth()-10, getHeight()-27, 0.2);
+    }
+
+#else
+    g.setColour(formColour);
+    g.fillAll();
+    g.setColour (CabbageUtils::getTitleFontColour());
+#ifndef Cabbage_Plugin_Host
+    Image logo = ImageCache::getFromMemory (BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize);
+    g.drawImage (logo, getWidth() - 100, getHeight()-35, logo.getWidth()*0.55, logo.getHeight()*0.55,
+                 0, 0, logo.getWidth(), logo.getHeight(), true);
+    g.setColour(fontColour);
+    g.drawFittedText(authorText, 10, getHeight()-35, getWidth()*.65, logo.getHeight(), 1, 1);
+#endif
+#endif
 }
 
 //=======================================================================================

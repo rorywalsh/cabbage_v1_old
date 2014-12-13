@@ -367,7 +367,7 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
                     if(i!=0)
                         tabButtons[i]->isActive(false);
                 //resized();
-                repaint();
+                //repaint();
             }
             else if(button->getName()=="Csound code")
             {

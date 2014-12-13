@@ -89,7 +89,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 {
 //suspendProcessing(true);
     codeEditor = nullptr;
-    backgroundThread.startThread();
+    //backgroundThread.startThread();
 
     setPlayConfigDetails(2, 2, 44100, 512);
 
@@ -1094,6 +1094,7 @@ void CabbagePluginAudioProcessor::startRecording ()
         {
             // Create an OutputStream to write to our destination file...
             tempAudioFile.deleteFile();
+			backgroundThread.startThread();
             ScopedPointer<FileOutputStream> fileStream (tempAudioFile.createOutputStream());
 
             if (fileStream != nullptr)
@@ -1851,7 +1852,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 
             for(int i=0; i<numSamples; i++, csndIndex++)
             {
-                if(csndIndex == csound->GetKsmps())
+                if(csndIndex == csdKsmps)
                 {
                     getCallbackLock().enter();
                     //slow down calls to these functions, no need for them to be firing at k-rate

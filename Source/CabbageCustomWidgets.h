@@ -2170,7 +2170,7 @@ public:
     {
         if(yValues.size()>1)
             table->fillTable(ID, yValues);
-        table->repaint();
+        //table->repaint();
     }
 
     //---------------------------------------------

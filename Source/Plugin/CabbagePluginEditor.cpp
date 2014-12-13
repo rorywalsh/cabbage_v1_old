@@ -64,6 +64,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     swatchColours.set(14, Colour(0x80FF00FF));
     swatchColours.set(15, Colour(0x8000FFFF));
     setWantsKeyboardFocus(false);
+	//setOpaque(true);
     //set custom skin yo use
     lookAndFeel = new CabbageLookAndFeel();
     basicLookAndFeel = new CabbageLookAndFeelBasic();
@@ -1571,43 +1572,43 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 //#endif
 //        }
 //    }
-#ifdef Cabbage_Build_Standalone
-    if(getFilter()->compiledOk())
-    {
-        g.setColour (Colours::black);
-        //g.setColour (CabbageUtils::getBackgroundSkin());
-        g.fillAll();
-
-        Image logo = ImageCache::getFromMemory (BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize);
-        g.drawImage(logo, 10, 10, getWidth(), getHeight()-60, 0, 0, logo.getWidth(), logo.getHeight());
-
-    }
-    else
-    {
-        g.setColour(formColour);
-        g.fillAll();
-
-        g.setColour (CabbageUtils::getTitleFontColour().withAlpha(.3f));
-        Image logo = ImageCache::getFromMemory (BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize);
-        g.drawImage (logo, getWidth() - 100, getHeight()-35, logo.getWidth()*0.55, logo.getHeight()*0.55,
-                     0, 0, logo.getWidth(), logo.getHeight(), true);
-        g.setColour(fontColour);
-        g.drawFittedText(authorText, 10, getHeight()-35, getWidth()*.65, logo.getHeight(), 1, 1);
-        //g.drawLine(10, getHeight()-27, getWidth()-10, getHeight()-27, 0.2);
-    }
-
-#else
-    g.setColour(formColour.withAlpha(1.f));
-    g.fillAll();
-    g.setColour (CabbageUtils::getTitleFontColour());
-#ifndef Cabbage_Plugin_Host
-    Image logo = ImageCache::getFromMemory (BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize);
-    g.drawImage (logo, getWidth() - 100, getHeight()-35, logo.getWidth()*0.55, logo.getHeight()*0.55,
-                 0, 0, logo.getWidth(), logo.getHeight(), true);
-    g.setColour(fontColour);
-    g.drawFittedText(authorText, 10, getHeight()-35, getWidth()*.65, logo.getHeight(), 1, 1);
-#endif
-#endif
+//#ifdef Cabbage_Build_Standalone
+//    if(getFilter()->compiledOk())
+//    {
+//        g.setColour (Colours::black);
+//        //g.setColour (CabbageUtils::getBackgroundSkin());
+//        g.fillAll();
+//
+//        Image logo = ImageCache::getFromMemory (BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize);
+//        g.drawImage(logo, 10, 10, getWidth(), getHeight()-60, 0, 0, logo.getWidth(), logo.getHeight());
+//
+//    }
+//    else
+//    {
+//        g.setColour(formColour);
+//        g.fillAll();
+//
+//        g.setColour (CabbageUtils::getTitleFontColour().withAlpha(.3f));
+//        Image logo = ImageCache::getFromMemory (BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize);
+//        g.drawImage (logo, getWidth() - 100, getHeight()-35, logo.getWidth()*0.55, logo.getHeight()*0.55,
+//                     0, 0, logo.getWidth(), logo.getHeight(), true);
+//        g.setColour(fontColour);
+//        g.drawFittedText(authorText, 10, getHeight()-35, getWidth()*.65, logo.getHeight(), 1, 1);
+//        //g.drawLine(10, getHeight()-27, getWidth()-10, getHeight()-27, 0.2);
+//    }
+//
+//#else
+//    g.setColour(formColour.withAlpha(1.f));
+//    g.fillAll();
+//    g.setColour (CabbageUtils::getTitleFontColour());
+//#ifndef Cabbage_Plugin_Host
+//    Image logo = ImageCache::getFromMemory (BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize);
+//    g.drawImage (logo, getWidth() - 100, getHeight()-35, logo.getWidth()*0.55, logo.getHeight()*0.55,
+//                 0, 0, logo.getWidth(), logo.getHeight(), true);
+//    g.setColour(fontColour);
+//    g.drawFittedText(authorText, 10, getHeight()-35, getWidth()*.65, logo.getHeight(), 1, 1);
+//#endif
+//#endif
 }
 
 //=======================================================================================
@@ -2190,8 +2191,10 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
         table->setRange(cAttr.getNumProp(CabbageIDs::startpos), cAttr.getNumProp(CabbageIDs::endpos));
     if(cAttr.getNumProp(CabbageIDs::zoom)!=0)
         table->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
-	//set grib colour for all tables
+		
+	//set grid colour and background colours for all tables
 	table->setGridColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablegridcolour)));
+	table->setBackgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::backgroundcolour)));
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

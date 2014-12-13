@@ -59,7 +59,7 @@ public:
 	
 	void setGridColour(Colour col);
 	void setOutlineThickness(float thickness);
-	
+	void setBackgroundColour(Colour col);
 	void repaintAllTables();
     void resized();
     void setZoomFactor(double zoom);
@@ -150,14 +150,10 @@ public:
     ScopedPointer<ScrollBar> scrollbar;
     void resized();
     Range<double> visibleRange;
+	bool drawGrid;
     int scrollbarReduction;
     void showScrollbar(bool show);
     int mainFooterHeight, paintFooterHeight;
-	
-	void drawGridRect(float position)
-	{
-
-	}
 	
     HandleViewer* getHandleViewer()
     {
@@ -198,11 +194,14 @@ public:
 	traceThickness = thickness;	
 	}
 	
+	void setBackgroundColour(Colour col)
+	{
+		backgroundColour = col;
+	}
 	
 private:
 	void drawBackgroundGrid();
 	Image backgroundImage;
-	bool drawGrid;
 	float traceThickness;
 	bool paintCachedImage;
 	String coordinates;
@@ -212,6 +211,7 @@ private:
     int normalised;
     int imgCount;
     Colour fillColour;
+	Colour backgroundColour;
     float currentWidth;
     double zoom;
     bool showScroll;

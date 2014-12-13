@@ -179,9 +179,21 @@ void TableManager::setGridColour(Colour col)
     for(int i=0; i<tables.size(); i++)
     {
         tables[i]->gridColour = col;
+		if(col.getAlpha()==0x00)
+			tables[i]->drawGrid = false;
     }	
 }
 
+void TableManager::setBackgroundColour(Colour col)
+{	
+    for(int i=0; i<tables.size(); i++)
+    {
+        tables[i]->setBackgroundColour(col);
+		CabbageUtils::debug(col.getAlpha());
+		if(col.getAlpha()==0xff)
+			tables[i]->setOpaque(true);
+    }	
+}
 //==============================================================================
 void TableManager::setRange(double start, double end)
 {
@@ -485,7 +497,7 @@ void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRang
 	else
 		setBufferedToImage(true);
 		
-	drawBackgroundGrid();		
+	//drawBackgroundGrid();		
 }
 //==============================================================================
 void GenTable::setAmpRanges(Array<float> ampRange)
@@ -911,7 +923,7 @@ void GenTable::setRange(Range<double> newRange, bool isScrolling)
 //==============================================================================
 void GenTable::paint (Graphics& g)
 {
-    g.fillAll (Colours::transparentBlack);
+    g.fillAll (backgroundColour);
     //set thumbArea, this is the area of the painted image
     thumbArea = getLocalBounds();
     thumbArea.setHeight(getHeight()-paintFooterHeight);
@@ -926,7 +938,16 @@ void GenTable::paint (Graphics& g)
 	if(drawGrid==true && qsteps!=1)
 	{
 		g.setColour(gridColour);
-		g.drawImageAt(backgroundImage, 0, 0, true);
+		//g.drawImageAt(backgroundImage, 0, 0, true);
+		const double divisors = (getWidth()>300 ? 20.f : 10.f);
+		for(float i=0;i<getWidth();i+=(interp ? getWidth()/divisors : numPixelsPerIndex))
+			g.drawVerticalLine(i+1, 0, thumbHeight-8);
+			
+		g.drawVerticalLine(getWidth()-1, 0, thumbHeight);
+		
+		for(float i=0;i<=thumbHeight-4;i+=(getHeight()+2.f)/divisors)
+			g.drawHorizontalLine(i, 1, getWidth());			
+		
 	}
 
     //if gen01 then use an audio thumbnail class
@@ -958,7 +979,7 @@ void GenTable::paint (Graphics& g)
 
 		int gridIndex=ceil(visibleStart);
 		float lineDepth=1;
-        for(int i=visibleStart; i<=visibleEnd; i+=incr)
+        for(double i=visibleStart; i<=visibleEnd; i+=incr)
         {
 				//when qsteps == 1 we draw a grid
 				if(qsteps==1)
@@ -1108,26 +1129,6 @@ void GenTable::setScrubberPos(double pos)
         }
     }
 	
-//not sure there is much need for scrubbers with envelop tables. 
-//    else
-//    {
-//        currentPositionMarker->setVisible (true);
-//		
-//        double waveformLengthSeconds = (double)waveformBuffer.size()/sampleRate;
-//        double timePos = pos*waveformLengthSeconds;
-//
-//        currentPositionMarker->setRectangle (juce::Rectangle<float> (scrubberTimeToX (timePos*sampleRate), 0,
-//                                             jmax(numPixelsPerIndex, 4.0), thumbArea.getHeight()));
-//											 
-//		
-//        if(this->showScroll)
-//        {
-//            if(timePos<(waveformLengthSeconds)/25.f)
-//                setRange (visibleRange.movedToStartAt(0));
-//            else if(visibleRange.getEnd()<=waveformLengthSeconds && zoom>0.0)
-//                setRange (visibleRange.movedToStartAt (jmax(0.0, timePos - (visibleRange.getLength()/2.0))));
-//        }
-//    }
 }
 //==============================================================================
 void GenTable::mouseUp(const MouseEvent& e)

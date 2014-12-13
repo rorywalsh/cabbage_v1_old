@@ -44,7 +44,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     isAFileOpen(false),
     standaloneMode(false),
     updateEditorOutputConsole(false),
-    hasEditorBeingOpened(false)
+    hasEditorBeingOpened(false),
+	isUsingExternalEditor(false)
 {
 
     consoleMessages = "";
@@ -270,7 +271,7 @@ StandaloneFilterWindow::~StandaloneFilterWindow()
 void StandaloneFilterWindow::timerCallback()
 {
 
-    if(getPreference(appProperties, "ExternalEditor"))
+    if(isUsingExternalEditor)
     {
         int64 diskTime = csdFile.getLastModificationTime().toMilliseconds();
         int64 tempTime = lastSaveTime.toMilliseconds();
@@ -296,7 +297,7 @@ void StandaloneFilterWindow::timerCallback()
         if(outputConsole->getText()!=filter->getCsoundOutput())
             outputConsole->setText(filter->getCsoundOutput());
 
-    if(cabbageCsoundEditor)
+    if(cabbageCsoundEditor->isVisible())
     {
         if(cabbageCsoundEditor->csoundOutputComponent->getText()!=filter->getCsoundOutput())
             cabbageCsoundEditor->csoundOutputComponent->setText(filter->getCsoundOutput());
@@ -1351,6 +1352,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             else m_ShowMessage("Open or create a file first", &getLookAndFeel());
         }
     }
+	isUsingExternalEditor = getPreference(appProperties, "ExternalEditor");
     repaint();
 }
 

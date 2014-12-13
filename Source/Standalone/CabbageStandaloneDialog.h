@@ -142,6 +142,7 @@ public:
 private:
     AudioDeviceManager::AudioDeviceSetup audioDeviceSetup;
     bool updateEditorOutputConsole;
+	bool isUsingExternalEditor;
     Time lastSaveTime;
     void openTextEditor();
     bool standaloneMode;

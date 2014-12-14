@@ -2156,32 +2156,36 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
             tableValues.clear();
             tableValues = getFilter()->getTableFloats(tableNumber);
 
-            table->addTable(44100, 
-							cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), 
-							(tableValues.size()>=MAX_TABLE_SIZE ? 1 : genRoutine),
-                            cAttr.getFloatArrayProp("amprange"),
-                            tableNumber, this);
-							
-            if(abs(genRoutine)==1 || tableValues.size()>=MAX_TABLE_SIZE)
-            {
-                tableBuffer.clear();
-                int channels = 1;//for now only works in mono;;
-                tableBuffer.setSize(channels, tableValues.size());
-                tableBuffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());
-                table->setWaveform(tableBuffer, tableNumber);
-            }
-            else
-            {
-                table->setWaveform(tableValues, tableNumber);
-				//only enable editing for gen05, 07, and 02
-                table->enableEditMode(pFields, tableNumber);
-            }
-			
-			table->setOutlineThickness(cAttr.getNumProp(CabbageIDs::outlinethickness));
-			
-            if(cAttr.getStringProp(CabbageIDs::drawmode).toLowerCase()=="vu")
-                table->setDrawMode("vu");
-        }
+			if(getFilter()->compiledOk()==OK)
+			{
+
+				table->addTable(44100, 
+								cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), 
+								(tableValues.size()>=MAX_TABLE_SIZE ? 1 : genRoutine),
+								cAttr.getFloatArrayProp("amprange"),
+								tableNumber, this);
+								
+				if(abs(genRoutine)==1 || tableValues.size()>=MAX_TABLE_SIZE)
+				{
+					tableBuffer.clear();
+					int channels = 1;//for now only works in mono;;
+					tableBuffer.setSize(channels, tableValues.size());
+					tableBuffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());
+					table->setWaveform(tableBuffer, tableNumber);
+				}
+				else
+				{
+					table->setWaveform(tableValues, tableNumber);
+					//only enable editing for gen05, 07, and 02
+					table->enableEditMode(pFields, tableNumber);
+				}
+				
+				table->setOutlineThickness(cAttr.getNumProp(CabbageIDs::outlinethickness));
+				
+				if(cAttr.getStringProp(CabbageIDs::drawmode).toLowerCase()=="vu")
+					table->setDrawMode("vu");
+			}
+		}
     }
 
     table->configTableSizes(cAttr.getVarArrayProp(CabbageIDs::tableconfig));

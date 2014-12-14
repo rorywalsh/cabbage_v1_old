@@ -580,7 +580,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::tablenumber, -1);
 		cabbageIdentifiers.set(CabbageIDs::outlinethickness, 1.f);
 		cabbageIdentifiers.set(CabbageIDs::backgroundcolour, Colour(15, 15, 15).toString());
-		cabbageIdentifiers.set(CabbageIDs::tablegridcolour, Colours::white.withAlpha(1.f).toString());
+		cabbageIdentifiers.set(CabbageIDs::tablegridcolour, Colour(45, 45, 45).toString());
     }
 
     //===============image==================//

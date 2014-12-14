@@ -939,15 +939,16 @@ void GenTable::paint (Graphics& g)
 	{
 		g.setColour(gridColour);
 		//g.drawImageAt(backgroundImage, 0, 0, true);
-		const double divisors = (getWidth()>300 ? 20.f : 10.f);
+		const double divisors = (getWidth()>300 ? 20.0 : 10.0);
 		for(float i=0;i<getWidth();i+=(interp ? getWidth()/divisors : numPixelsPerIndex))
-			g.drawVerticalLine(i+1, 0, thumbHeight-8);
+			g.drawVerticalLine(i+1, 0, thumbHeight);
 			
 		g.drawVerticalLine(getWidth()-1, 0, thumbHeight);
 		
-		for(float i=0;i<=thumbHeight-4;i+=(getHeight()+2.f)/divisors)
+		for(double i=0;i<=thumbHeight;i+=(getHeight()+2.0)/divisors)
 			g.drawHorizontalLine(i, 1, getWidth());			
 		
+		g.drawHorizontalLine(thumbHeight-.5, 1, getWidth());		
 	}
 
     //if gen01 then use an audio thumbnail class

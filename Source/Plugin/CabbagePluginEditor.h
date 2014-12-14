@@ -214,6 +214,7 @@ private:
     StringArray pastEvents;
     Array <float, CriticalSection> tableValues;
     AudioSampleBuffer tableBuffer;
+	String lastOpenedDirectory;
 
     ScopedPointer<Viewport> viewport;
     ScopedPointer<CabbageViewportComponent> viewportComponent;

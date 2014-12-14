@@ -2618,12 +2618,17 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 
                             const String filetype = getFilter()->getGUILayoutCtrls(i).getStringProp("filetype");
                             const String selectedDir = getFilter()->getGUILayoutCtrls(i).getStringProp("workingdir");
+							
                             File directory;
                             if(selectedDir.isNotEmpty())
                                 directory = File(selectedDir);
                             else
-                                directory = File::getCurrentWorkingDirectory();
-
+							{
+                                if(lastOpenedDirectory.isNotEmpty())
+									directory = File(lastOpenedDirectory);
+								else
+									directory = File::getCurrentWorkingDirectory();
+							}
 
                             File selectedFile;
                             //check for snapshot mode
@@ -2685,6 +2690,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                             getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
                                                     selectedFile.getFullPathName().replace("\\", "\\\\"),
                                                     "string");
+											lastOpenedDirectory = fc.getResult().getFullPathName();
                                         }
                                     }
 
@@ -2697,6 +2703,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                             getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
                                                     selectedFile.getFullPathName().replace("\\", "\\\\"),
                                                     "string");
+											lastOpenedDirectory = fc.getResult().getFullPathName();
                                         }
                                     }
                                 }
@@ -2713,6 +2720,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                                     selectedFile.getFullPathName(),
                                                     "string");
                                         refreshDiskReadingGUIControls("combobox");
+										lastOpenedDirectory = fc.getResult().getFullPathName();
                                     }
                                 }
 #endif

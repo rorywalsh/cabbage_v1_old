@@ -121,8 +121,11 @@ public:
     void update(CabbageGUIClass m_cAttr)
     {
         const MessageManagerLock mmLock;
-        button->setColour(TextButton::textColourOnId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
-        button->setColour(TextButton::buttonColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
+        button->setColour(TextButton::textColourOffId, Colour::fromString(fontcolour));
+        button->setColour(TextButton::buttonColourId, Colour::fromString(colour));
+        button->setColour(TextButton::textColourOnId, Colour::fromString(onfontcolour));
+        button->setColour(TextButton::buttonOnColourId, Colour::fromString(oncolour));		
+		
 		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
 		
         if(!m_cAttr.getNumProp(CabbageIDs::visible))

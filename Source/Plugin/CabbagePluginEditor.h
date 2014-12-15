@@ -28,6 +28,7 @@
 
 extern CabbageLookAndFeel* lookAndFeel;
 extern CabbageLookAndFeelBasic* lookAndFeelBasic;
+extern ApplicationProperties* appProperties;
 
 class CabbageMainPanel;
 class ComponentLayoutEditor;
@@ -146,6 +147,7 @@ public:
     int currentPopupIndex;
 
 private:
+	WildcardFileFilter wildcardFilter;
     void setPositionOfComponent(float x, float y, float width, float height, Component* comp, String reltoplant);
     void createfTableData(Table* table, bool sendToCsound);
     bool keyPressed(const juce::KeyPress &,Component *);

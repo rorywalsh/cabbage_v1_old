@@ -38,6 +38,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
       inValue(0),
       authorText(""),
       keyIsPressed(false),
+	  wildcardFilter("*.*", "*", "File Filter"),
       currentLineNumber(0),
 #ifdef Cabbage_Build_Standalone
       propsWindow(new CabbagePropertiesDialog("Properties")),
@@ -2677,50 +2678,70 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                             //else let the user specify the filename for the snapshot
                             else
                             {
-#if !defined(AndroidBuild)
+#if !defined(AndroidBuild)		
+								wildcardFilter = WildcardFileFilter((const String)filetype, directory.getFullPathName(), "File fitler");
                                 if(!getFilter()->getGUILayoutCtrls(i).getStringProp("filetype").contains("snaps"))
                                 {
-                                    FileChooser fc("Open", directory.getFullPathName(), filetype, UseNativeDialogue);
+                                    //FileChooser fc("Open", directory.getFullPathName(), filetype, UseNativeDialogue);
                                     //determine whether to poen file or directory
                                     if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="file")
                                     {
-                                        if(fc.browseForFileToOpen())
+										Array<File> selectedFiles = CabbageUtils::launchFileBrowser("Open a file", 
+																									wildcardFilter, 
+																									0, 
+																									directory, 
+																									CabbageUtils::getPreference(appProperties, "ShowNativeFileDialogues"), 
+																									&getLookAndFeel());
+                                        if(selectedFiles.size())
                                         {
-                                            selectedFile = fc.getResult();
+                                            selectedFile = selectedFiles[0];
                                             getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
                                                     selectedFile.getFullPathName().replace("\\", "\\\\"),
                                                     "string");
-											lastOpenedDirectory = fc.getResult().getFullPathName();
+											lastOpenedDirectory = selectedFile.getFullPathName();
                                         }
                                     }
 
                                     else if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="directory")
                                     {
-                                        if(fc.browseForDirectory())
+										Array<File> selectedFiles = CabbageUtils::launchFileBrowser("Open a file", 
+																									wildcardFilter, 
+																									2, 
+																									directory, 
+																									CabbageUtils::getPreference(appProperties, "ShowNativeFileDialogues"), 
+																									&getLookAndFeel());
+                                        if(selectedFiles.size())
                                         {
-                                            selectedFile = fc.getResult();
+                                            selectedFile = selectedFiles[0];
                                             Logger::writeToLog(selectedFile.getFullPathName());
                                             getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
                                                     selectedFile.getFullPathName().replace("\\", "\\\\"),
                                                     "string");
-											lastOpenedDirectory = fc.getResult().getFullPathName();
+											lastOpenedDirectory = selectedFile.getParentDirectory().getFullPathName();
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    FileChooser fc("Select a file to save", directory.getFullPathName(), filetype, UseNativeDialogue);
-                                    if(fc.browseForFileToSave(true))
-                                    {
-                                        selectedFile = fc.getResult();
-                                        if(filetype.contains("snaps"))
-                                            savePresetsFromParameters(selectedFile, "create");
-                                        else
-                                            getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
-                                                    selectedFile.getFullPathName(),
-                                                    "string");
-                                        refreshDiskReadingGUIControls("combobox");
-										lastOpenedDirectory = fc.getResult().getFullPathName();
+
+									Array<File> selectedFiles = CabbageUtils::launchFileBrowser("Select a file to save", 
+																								wildcardFilter, 
+																								0, 
+																								directory, 
+																								CabbageUtils::getPreference(appProperties, "ShowNativeFileDialogues"), 
+																								&getLookAndFeel());
+
+									if(selectedFiles.size())
+									{
+										selectedFile = selectedFiles[0];
+										if(filetype.contains("snaps"))
+											savePresetsFromParameters(selectedFile, "create");
+										else
+											getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
+													selectedFile.getFullPathName(),
+													"string");
+										refreshDiskReadingGUIControls("combobox");
+										lastOpenedDirectory = selectedFile.getFullPathName();
                                     }
                                 }
 #endif
@@ -3319,7 +3340,7 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
         for(int i=0; i<getFilter()->getNumParameters(); i++)
         {
             float newValue = (float)xml->getDoubleAttribute(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel));
-
+			
 #ifndef Cabbage_Build_Standalone
 
             float range = getFilter()->getGUICtrls(i).getNumProp("range");
@@ -3339,10 +3360,17 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
                 range=1;
             else
                 newValue = (newValue/range)+min;
+				
+			//getFilter()->getGUICtrls(i)->setNumProp(CabbageIDs::value, newValue);
 #endif
+			
+            if(!getFilter()->getGUICtrls(i).getStringProp("filetype").contains("snaps"))
+			{
+                getFilter()->setParameterNotifyingHost(i, newValue);
+				getFilter()->setParameter(i, newValue);				
+				getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, newValue);
+			}
 
-            if(!getFilter()->getGUICtrls(i).getStringProp("filetype").contains("snaps")	)
-                getFilter()->setParameter(i, newValue);
         }
     }
 }

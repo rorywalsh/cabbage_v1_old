@@ -1561,7 +1561,6 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                     //Logger::writeToLog("value:"+String(value));
                     guiCtrls.getReference(index).setNumProp(CabbageIDs::value, value);
                     dirtyControls.addIfNotAlreadyThere(index);
-					sendChangeMessage();
                 }
             }
 
@@ -1581,7 +1580,6 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 //guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
                 //zero channel message so that we don't keep sending the same string
                 csound->SetChannel(guiCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
-				sendChangeMessage();
             }
         }
 
@@ -1597,7 +1595,6 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                     //String test = getGUILayoutCtrls(index).getStringArrayPropValue(CabbageIDs::channel, y);
                     float value = csound->GetChannel(guiLayoutCtrls[index].getStringArrayPropValue(CabbageIDs::channel, y).getCharPointer());
                     guiLayoutCtrls[index].setTableChannelValues(y, value);
-					sendChangeMessage();
                 }
             }
 
@@ -1617,9 +1614,9 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 //	guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
                 //zero channel message so that we don't keep sending the same string
                 csound->SetChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
-				sendChangeMessage();
             }
-        }		
+        }
+		sendChangeMessage();		
     }
 #endif
 }

@@ -142,14 +142,25 @@ public:
     void createTabButtonShape (TabBarButton&, Path& path,  bool isMouseOver, bool isMouseDown);
     void fillTabButtonShape (TabBarButton&, Graphics& g, const Path& path, bool isMouseOver, bool isMouseDown);
 
-    void drawFileBrowserRow (Graphics& g, int width, int height,
+    const Drawable* getDefaultFolderImage() override;
+    const Drawable* getDefaultDocumentFileImage() override;
+	ScopedPointer<Drawable> folderImage, documentImage;
+    AttributedString createFileChooserHeaderText (const String& title, const String& instructions) override;
+
+    void drawFileBrowserRow (Graphics&, int width, int height,
                              const String& filename, Image* icon,
-                             const String& fileSizeDescription,
-                             const String& fileTimeDescription,
-                             bool isDirectory,
-                             bool isItemSelected,
-                             int itemIndex,
-                             DirectoryContentsDisplayComponent& component);
+                             const String& fileSizeDescription, const String& fileTimeDescription,
+                             bool isDirectory, bool isItemSelected, int itemIndex,
+                             DirectoryContentsDisplayComponent&) override;
+
+    Button* createFileBrowserGoUpButton();
+
+    void layoutFileBrowserComponent (FileBrowserComponent&,
+                                     DirectoryContentsDisplayComponent*,
+                                     FilePreviewComponent*,
+                                     ComboBox* currentPathBox,
+                                     TextEditor* filenameBox,
+                                     Button* goUpButton) override;
 
 
     void drawTreeviewPlusMinusBox (Graphics& g, int x, int y, int w, int h, bool isPlus, bool /*isMouseOver*/);

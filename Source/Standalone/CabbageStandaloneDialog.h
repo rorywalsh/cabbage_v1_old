@@ -140,6 +140,7 @@ public:
     }
 
 private:
+	WildcardFileFilter wildcardFilter;
     AudioDeviceManager::AudioDeviceSetup audioDeviceSetup;
     bool updateEditorOutputConsole;
 	bool isUsingExternalEditor;

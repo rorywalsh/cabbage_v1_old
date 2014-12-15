@@ -76,8 +76,9 @@ CabbageLookAndFeel::CabbageLookAndFeel()
     setColour(AlertWindow::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
     setColour(AlertWindow::textColourId, Colour(200, 200, 200));
     setColour(AlertWindow::outlineColourId, Colours::whitesmoke);
-    setColour(DirectoryContentsDisplayComponent::textColourId, Colours::whitesmoke);
-    setColour(DirectoryContentsDisplayComponent::highlightColourId, Colours::red);
+    setColour(DirectoryContentsDisplayComponent::textColourId, Colours::black);
+    setColour(DirectoryContentsDisplayComponent::highlightColourId, Colours::whitesmoke);
+	setColour(ListBox::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
     setColour(Label::textColourId, CabbageUtils::getComponentFontColour());
     setColour(TextButton::textColourOnId, CabbageUtils::getComponentFontColour());
     setColour(TextButton::textColourOffId, CabbageUtils::getComponentFontColour());
@@ -87,6 +88,16 @@ CabbageLookAndFeel::CabbageLookAndFeel()
     setColour(ScrollBar::trackColourId, Colours::transparentBlack);
     setColour(ScrollBar::thumbColourId, CabbageUtils::getComponentSkin());
     setColour(TooltipWindow::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
+	
+	
+		setColour(ListBox::outlineColourId, CabbageUtils::getDarkerBackgroundSkin());
+		//browserComponent.setColour(Label::backgroundColourId, Colours::cornflowerblue);
+		//setColour(ListBox::textColourId, Colours::cornflowerblue);
+		setColour(TextEditor::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
+		setColour(TextEditor::textColourId, Colours::white);
+		setColour(TextEditor::highlightedTextColourId, Colours::lime);
+		setColour(TextEditor::ColourIds::shadowColourId, Colours::pink);
+		setColour(FileChooserDialogBox::titleTextColourId, Colours::lime);		
 }
 
 Image CabbageLookAndFeel::getSVGImageFor(String path, String type, AffineTransform affine)
@@ -200,46 +211,88 @@ void CabbageLookAndFeel::drawTreeviewPlusMinusBox (Graphics& g, int x, int y, in
 }
 
 //==============================================================================
-void CabbageLookAndFeel::drawFileBrowserRow (Graphics& g, int width, int height,
-        const String& filename, Image* icon,
-        const String& fileSizeDescription,
-        const String& fileTimeDescription,
-        const bool isDirectory,
-        const bool isItemSelected,
-        const int /*itemIndex*/,
-        DirectoryContentsDisplayComponent&)
+AttributedString CabbageLookAndFeel::createFileChooserHeaderText (const String& title,
+                                                           const String& instructions)
 {
+    AttributedString s;
+    s.setJustification (Justification::centred);
+
+    const Colour colour (CabbageUtils::getComponentFontColour());
+    s.append (title + "\n\n", Font (17.0f, Font::bold), colour);
+    s.append (instructions, Font (14.0f), colour);
+
+    return s;
+}
+
+void CabbageLookAndFeel::drawFileBrowserRow (Graphics& g, int width, int height,
+                                         const String& filename, Image* icon,
+                                         const String& fileSizeDescription,
+                                         const String& fileTimeDescription,
+                                         const bool isDirectory, const bool isItemSelected,
+                                         const int /*itemIndex*/, DirectoryContentsDisplayComponent& dcc)
+{
+    Component* const fileListComp = dynamic_cast<Component*> (&dcc);
+
     if (isItemSelected)
-        //g.fillAll (findColour (DirectoryContentsDisplayComponent::highlightColourId));
-        g.fillAll(Colours::cornflowerblue.withAlpha(.2f));
+	g.fillAll(Colours::black.brighter(.1f));
+	else
+	g.fillAll(Colours::black);	
 
     const int x = 32;
-    g.setColour (Colours::black);
-
+    
     if (icon != nullptr && icon->isValid())
     {
-        g.drawImageWithin (*icon, 2, 2, x - 4, height - 4,
-                           RectanglePlacement::centred | RectanglePlacement::onlyReduceInSize,
-                           false);
+		g.setColour (Colours::red);
+		g.fillRoundedRectangle(0, 0, 30, height, 2);
+//        g.drawImageWithin (*icon, 2, 2, x - 4, height - 4,
+//                           RectanglePlacement::centred | RectanglePlacement::onlyReduceInSize,
+//                           false);
     }
     else
     {
-        //g.fillAll(Colours::black);
-        Path path;
-        //draw custom folder icon, netter yet, just import a binary..
-        path.addLineSegment(Line<float> (3, 3, 13, 3), 2);
-        path.addLineSegment(Line<float> (13, 3, 15, 10), 2);
-        path.addLineSegment(Line<float> (15, 10, 26, 10), 2);
-        path.addLineSegment(Line<float> (26, 10, 26, 20), 2);
-        path.addLineSegment(Line<float> (26, 20, 3, 20), 2);
-        path.addLineSegment(Line<float> (3, 20, 3, 3), 2);
-        g.setColour(Colours::cornflowerblue.withAlpha(.4f));
-        PathStrokeType stroke(.01f);
-        g.fillPath(path);
+		if(isDirectory)
+		{
+			g.setColour (Colours::cornflowerblue.darker(.6f));
+			Path p;
+			p.startNewSubPath(8, 2);
+			p.lineTo(18, 2);
+			p.lineTo(18, 5);
+			p.lineTo(22, 7);
+			p.lineTo(22, height-5);
+			p.lineTo(8, height-5);
+			p.lineTo(8, 2);
+			g.strokePath(p, PathStrokeType(1));
+			g.fillPath(p);
+			g.setColour(Colours::black);
+			p.scaleToFit(5, 3, 20, height-8, true);
+			g.fillPath(p);
+			p.startNewSubPath(8, 7);
+			p.lineTo(22, 7);
+			p.closeSubPath();
+			g.setColour (Colours::cornflowerblue.darker(.6f));
+			g.strokePath(p, PathStrokeType(2));		
+		}
+		else
+		{
+		g.setColour (Colours::cornflowerblue);
+		g.drawLine(8, 2, 15, 2);
+		g.drawLine(15 ,2, 20, 5);
+		g.drawLine(20, 5, 20, height-5);
+		g.drawLine(20, height-5, 8, height-5);
+		g.drawLine(8, height-5, 8, 2);
+		g.setColour (Colours::cornflowerblue.darker(.6f));
+		}
+//        if (const Drawable* d = isDirectory ? getDefaultFolderImage()
+//                                            : getDefaultDocumentFileImage())
+//            d->drawWithin (g, Rectangle<float> (2.0f, 2.0f, x - 4.0f, height - 4.0f),
+//                           RectanglePlacement::centred | RectanglePlacement::onlyReduceInSize, 1.0f);
     }
 
-    g.setColour (findColour (DirectoryContentsDisplayComponent::textColourId));
-    g.setFont (height * 0.7f);
+
+    g.setColour (fileListComp != nullptr ? fileListComp->findColour (DirectoryContentsDisplayComponent::textColourId)
+                                         : findColour (DirectoryContentsDisplayComponent::textColourId));
+    g.setColour(Colours::whitesmoke);
+	g.setFont (height * 0.7f);
 
     if (width > 450 && ! isDirectory)
     {
@@ -251,7 +304,7 @@ void CabbageLookAndFeel::drawFileBrowserRow (Graphics& g, int width, int height,
                           Justification::centredLeft, 1);
 
         g.setFont (height * 0.5f);
-        g.setColour (Colours::darkgrey);
+        g.setColour (Colours::cornflowerblue.brighter(6.6f));
 
         if (! isDirectory)
         {
@@ -272,6 +325,135 @@ void CabbageLookAndFeel::drawFileBrowserRow (Graphics& g, int width, int height,
 
     }
 }
+
+Button* CabbageLookAndFeel::createFileBrowserGoUpButton()
+{
+    DrawableButton* goUpButton = new DrawableButton("up", DrawableButton::ImageOnButtonBackground);
+    Path arrowPath;
+    arrowPath.addArrow (Line<float> (50.0f, 100.0f, 50.0f, 0.0f), 40.0f, 100.0f, 50.0f);
+
+	
+    DrawablePath arrowImage;
+    arrowImage.setFill (Colours::white);
+	arrowImage.setStrokeFill (Colours::white);
+    arrowImage.setPath (arrowPath);
+
+    goUpButton->setImages (&arrowImage);
+
+    return goUpButton;
+}
+
+void CabbageLookAndFeel::layoutFileBrowserComponent (FileBrowserComponent& browserComp,
+                                                 DirectoryContentsDisplayComponent* fileListComponent,
+                                                 FilePreviewComponent* previewComp,
+                                                 ComboBox* currentPathBox,
+                                                 TextEditor* filenameBox,
+                                                 Button* goUpButton)
+{
+    const int x = 8;
+    int w = browserComp.getWidth() - x - x;
+
+    if (previewComp != nullptr)
+    {
+        const int previewWidth = w / 3;
+        previewComp->setBounds (x + w - previewWidth, 0, previewWidth, browserComp.getHeight());
+
+        w -= previewWidth + 4;
+    }
+
+    int y = 4;
+
+    const int controlsHeight = 22;
+    const int bottomSectionHeight = controlsHeight + 8;
+    const int upButtonWidth = 50;
+
+    currentPathBox->setBounds (x, y, w - upButtonWidth - 6, controlsHeight);
+    goUpButton->setBounds (x + w - upButtonWidth, y, upButtonWidth, controlsHeight);
+	goUpButton->setColour(TextButton::buttonColourId, Colours::cornflowerblue);
+
+    y += controlsHeight + 4;
+
+    if (Component* const listAsComp = dynamic_cast <Component*> (fileListComponent))
+    {
+        listAsComp->setBounds (x, y, w, browserComp.getHeight() - y - bottomSectionHeight);
+        y = listAsComp->getBottom() + 4;
+    }
+
+    filenameBox->setBounds (x + 50, y, w - 50, controlsHeight);
+}
+
+// Pulls a drawable out of compressed valuetree data..
+static Drawable* loadDrawableFromData (const void* data, size_t numBytes)
+{
+    MemoryInputStream m (data, numBytes, false);
+    GZIPDecompressorInputStream gz (m);
+    ValueTree drawable (ValueTree::readFromStream (gz));
+    return Drawable::createFromValueTree (drawable.getChild (0), nullptr);
+}
+
+const Drawable* CabbageLookAndFeel::getDefaultFolderImage()
+{
+
+    if (folderImage == nullptr)
+    {
+        static const unsigned char drawableData[] =
+        { 120,218,197,86,77,111,27,55,16,229,182,161,237,6,61,39,233,77,63,192,38,56,195,225,215,209,105,210,2,141,13,20,201,193,109,111,178,181,178,183,145,181,130,180,110,145,127,159,199,93,73,137,87,53,218,91,109,192,160,151,179,156,55,111,222,188,229,155,247,
+        231,87,231,175,47,222,170,234,155,229,244,190,86,213,115,253,102,61,253,123,122,189,168,85,51,83,213,119,250,238,221,47,231,151,175,223,169,170,250,121,221,62,172,84,245,172,60,63,209,243,118,49,171,215,170,107,87,23,245,188,83,213,145,182,167,19,91,
+        254,127,223,220,222,117,37,68,82,40,143,174,219,174,107,239,135,168,147,18,37,108,85,245,237,46,207,70,33,249,175,211,238,78,85,186,28,253,76,175,73,109,186,117,251,177,190,106,102,229,241,247,58,24,103,203,15,101,245,103,219,44,187,15,221,39,0,172,142,
+        245,125,211,1,196,205,116,181,125,114,164,175,31,186,78,45,219,229,31,245,186,189,106,150,179,102,121,139,100,154,240,231,167,102,177,64,72,247,105,213,23,122,187,158,206,154,122,217,169,85,57,18,1,47,53,101,107,18,135,204,167,147,192,201,216,20,114,
+        244,195,62,171,234,7,125,198,100,136,216,145,149,211,9,57,103,40,249,72,219,8,167,170,87,250,140,162,199,123,226,3,34,82,202,134,131,13,172,74,170,233,162,0,177,234,166,93,180,15,235,141,170,206,180,157,204,231,150,156,159,207,39,195,50,214,88,18,150,
+        245,205,124,250,104,169,212,135,158,19,144,53,20,112,172,55,237,2,132,13,199,149,130,230,115,145,112,147,147,82,61,157,32,238,178,253,11,145,213,138,10,52,138,38,103,111,99,164,211,137,139,198,35,177,35,167,212,143,15,215,205,13,160,109,163,172,225,152,
+        16,232,17,149,140,103,144,158,146,90,113,217,12,6,197,167,236,3,54,5,181,101,73,54,138,90,245,165,227,120,18,252,150,77,15,242,188,228,204,81,169,139,102,249,5,68,192,145,14,244,112,1,145,29,94,137,96,235,49,136,151,58,246,32,88,192,161,88,176,76,226,
+        36,247,24,176,7,232,62,16,83,42,155,201,160,30,222,65,72,98,82,76,33,198,254,197,96,124,10,150,243,8,130,48,228,36,94,124,6,4,43,38,0,142,205,99,30,4,221,13,33,230,220,71,177,65,49,142,243,150,7,1,51,20,2,5,96,96,84,225,56,217,188,3,33,46,24,228,112,
+        69,69,12,68,228,108,242,99,16,165,118,208,28,51,200,98,87,42,74,62,209,24,4,206,48,22,153,125,132,220,196,56,15,234,99,216,130,0,141,38,74,162,130,48,35,163,141,94,196,245,32,94,104,7,154,132,209,40,108,162,165,232,153,165,17,4,138,201,176,135,58,49,
+        165,130,122,108,114,54,28,240,64,17,89,188,79,177,116,149,10,4,246,91,30,94,104,112,96,226,144,131,144,142,98,78,177,7,128,81,242,224,140,36,249,80,208,145,196,12,202,15,16,60,161,200,69,187,169,213,86,198,123,87,224,255,199,21,94,105,134,72,40,177,245,
+        14,182,32,232,54,196,231,100,111,11,189,168,201,39,177,84,102,38,139,177,168,74,210,87,174,64,20,138,160,67,111,10,4,98,196,97,60,158,118,133,25,111,173,224,171,37,97,185,119,133,221,242,63,184,194,140,71,174,240,252,145,43,72,32,147,146,147,4,104,104,
+        117,134,10,18,12,107,212,40,72,148,57,6,71,69,135,222,248,16,160,168,3,169,144,55,201,69,41,147,137,134,99,50,97,8,178,85,43,217,140,201,151,192,152,10,242,190,24,11,59,183,29,25,42,115,236,98,14,229,252,32,80,66,0,162,17,136,72,6,67,5,45,242,224,10,
+        193,102,71,50,6,17,129,212,18,115,105,150,80,169,45,123,222,141,76,178,70,32,55,24,90,217,132,71,73,200,57,238,204,3,136,49,144,185,55,183,190,20,137,52,246,47,113,232,158,69,35,49,145,208,129,193,56,178,77,135,230,145,113,22,140,69,74,20,146,2,120,218,
+        155,135,48,32,10,89,30,156,165,204,254,222,193,160,12,19,49,6,210,59,11,70,62,4,31,15,64,196,2,157,98,33,58,1,104,32,152,50,31,128,64,148,183,197,108,209,89,107,240,41,75,36,123,16,208,108,180,44,236,250,182,227,27,20,137,118,76,60,165,137,221,92,94,
+        78,215,31,235,245,230,183,242,229,30,214,251,251,195,145,94,148,15,253,170,221,52,93,211,46,7,109,171,81,208,177,94,247,119,132,47,81,186,92,22,246,7,255,254,15,7,107,141,171,197,191,156,123,162,135,187,198,227,131,113,219,80,159,1,4,239,223,231,0,0 };
+
+        folderImage = loadDrawableFromData (drawableData, sizeof (drawableData));
+    }
+
+    return folderImage;
+}
+
+const Drawable* CabbageLookAndFeel::getDefaultDocumentFileImage()
+{
+    if (documentImage == nullptr)
+    {
+        static const unsigned char drawableData[] =
+        { 120,218,213,88,77,115,219,54,16,37,147,208,246,228,214,75,155,246,164,123,29,12,176,216,197,199,49,105,218,94,156,153,78,114,72,219,155,108,75,137,26,89,212,200,116,59,233,175,239,3,105,201,164,68,50,158,166,233,76,196,11,69,60,173,128,197,123,139,183,
+        124,241,234,217,155,103,207,207,126,204,242,7,171,233,213,44,203,31,23,47,54,211,191,166,231,203,89,182,184,204,242,147,226,195,165,219,252,125,150,229,249,207,155,242,102,157,229,143,210,227,199,197,101,121,113,115,53,91,85,89,85,174,207,102,243,42,
+        203,143,10,125,58,209,233,251,171,197,219,119,85,250,173,97,151,30,157,151,85,85,94,53,168,147,132,50,226,179,252,225,246,143,174,179,44,63,254,101,90,189,203,242,34,5,127,84,172,77,118,93,109,202,247,179,55,139,203,244,248,97,161,179,63,202,197,170,
+        122,93,125,192,196,242,227,226,106,81,205,54,217,197,116,125,251,228,168,56,191,169,170,108,85,174,126,159,109,202,55,139,213,229,98,245,182,249,97,254,240,167,197,114,137,5,86,31,214,245,111,175,203,37,254,230,162,92,150,55,155,180,148,249,237,39,203,
+        94,215,127,58,10,213,245,39,203,234,249,102,249,87,47,203,63,129,204,49,227,252,73,225,149,145,104,131,245,254,116,34,202,82,164,16,153,179,236,108,177,234,7,49,41,237,130,144,167,17,144,15,42,104,239,93,12,35,32,99,68,9,187,24,125,7,244,77,23,36,164,
+        40,56,226,61,12,107,229,130,215,100,105,24,227,89,17,246,211,105,55,140,49,218,43,207,100,245,72,28,195,70,17,230,201,118,8,243,164,139,233,95,88,23,52,152,162,54,104,48,217,237,105,15,111,91,107,253,131,160,118,34,239,69,128,54,232,135,101,121,61,203,
+        110,169,181,147,2,253,159,82,48,180,229,247,167,74,193,41,141,188,35,93,241,116,18,148,113,214,120,207,113,47,19,109,16,51,182,153,193,5,59,2,10,90,69,114,218,135,48,2,50,198,43,171,189,152,81,144,88,108,85,136,78,246,64,54,42,163,35,69,30,3,121,82,38,
+        98,81,98,70,64,70,139,34,111,163,167,49,144,13,202,138,179,58,220,23,52,180,186,54,104,48,79,109,208,96,198,219,19,31,220,187,118,10,6,65,237,100,222,139,5,109,80,191,30,236,151,162,135,147,142,30,68,105,182,58,6,22,84,43,229,124,148,116,97,145,55,231,
+        139,11,76,228,16,37,14,48,205,145,77,134,34,176,55,152,182,200,57,99,93,204,144,145,253,65,97,229,132,72,104,63,62,71,21,140,54,186,41,226,59,84,19,63,130,15,222,235,224,185,59,104,27,226,68,101,153,241,227,177,248,29,20,136,26,8,252,178,183,241,219,
+        131,137,160,209,107,109,92,79,124,16,211,184,104,93,77,130,110,124,2,65,172,67,201,60,157,88,163,2,91,99,92,216,198,55,78,69,75,190,150,119,84,98,200,71,150,109,124,36,204,227,52,8,33,229,223,68,167,173,167,131,248,137,212,226,141,19,233,160,154,248,
+        144,142,195,140,137,185,59,104,15,247,119,40,126,23,69,81,200,242,110,254,123,20,49,94,112,110,245,199,111,241,167,87,36,252,101,138,132,149,22,22,38,65,134,29,182,139,24,230,192,31,144,184,133,130,72,44,131,210,142,111,147,216,30,76,123,30,113,206,242,
+        150,196,157,65,129,130,76,180,194,61,34,225,160,5,228,233,160,118,34,137,26,202,115,212,29,108,72,134,243,223,90,114,226,199,226,119,80,6,245,152,197,122,217,146,184,53,24,140,210,30,21,59,80,79,124,182,202,71,207,218,112,159,72,80,53,140,109,68,2,191,
+        227,217,210,78,36,94,137,88,231,82,157,8,176,61,0,122,191,19,137,3,255,13,39,183,228,20,193,151,144,119,166,79,36,40,253,156,138,72,11,181,19,137,14,46,176,217,27,180,135,251,219,31,255,235,61,148,165,96,72,122,118,23,229,81,52,135,24,250,163,183,216,
+        211,43,17,217,151,136,253,116,137,28,53,188,127,92,188,221,76,47,23,169,59,90,167,144,141,239,197,86,104,141,189,60,157,80,84,142,140,4,31,154,241,122,105,132,41,107,13,201,39,86,120,24,82,114,206,198,6,96,27,227,172,36,232,168,201,36,219,24,113,62,163,
+        154,101,233,143,166,203,102,26,141,206,174,179,252,89,161,39,243,249,197,121,186,38,233,246,146,211,53,1,123,56,194,231,122,143,103,179,217,60,204,167,19,147,110,41,93,173,219,123,72,89,248,35,173,16,220,50,179,111,60,181,24,88,103,156,235,7,78,248,14,
+        4,119,78,162,93,60,112,35,109,16,124,126,12,17,71,67,24,1,165,142,1,181,215,248,56,6,66,235,193,137,167,61,22,30,5,3,27,101,71,64,169,25,112,216,2,63,22,169,110,43,18,200,140,129,208,160,88,44,220,208,125,65,67,171,107,131,6,243,212,6,13,102,188,61,241,
+        225,189,107,165,96,16,212,78,230,189,88,208,6,245,235,214,237,235,150,62,167,110,155,106,170,53,133,192,117,193,20,84,78,74,174,98,39,92,156,8,112,21,46,80,106,12,209,207,225,228,16,113,59,225,126,87,60,133,25,209,34,36,2,99,242,52,197,48,30,75,244,247,
+        212,238,246,182,173,221,185,78,215,127,167,221,162,163,221,250,152,217,146,196,222,145,100,223,235,105,108,28,250,149,212,74,224,86,2,213,118,110,119,204,224,144,208,38,214,131,200,14,214,223,120,189,230,53,1,193,70,133,154,131,56,223,16,229,48,188,14,
+        201,205,213,121,71,233,68,89,15,124,103,37,53,26,11,118,176,127,169,88,166,158,219,178,117,173,83,108,75,95,55,68,186,193,53,246,146,206,127,6,63,53,78,58,228,204,155,224,113,74,91,232,221,195,240,105,215,34,29,138,64,128,183,8,130,233,71,173,56,54,101,
+        99,75,186,111,65,58,28,229,145,82,19,152,12,99,180,81,130,131,75,234,229,220,247,53,231,154,79,205,185,185,155,199,249,172,38,85,253,204,76,68,95,92,204,207,255,221,75,178,227,14,187,224,224,97,202,172,173,219,12,167,130,133,9,54,135,245,92,176,29,134,
+        165,110,139,141,18,16,223,29,188,183,65,207,144,106,144,151,143,128,224,176,168,110,140,32,62,56,110,219,195,54,235,20,68,209,216,34,232,21,6,41,234,157,39,211,201,107,160,230,66,225,56,153,9,101,21,37,237,150,204,14,115,208,22,221,54,216,230,33,116,
+        14,65,14,44,19,8,236,73,71,246,182,110,125,224,75,132,195,214,247,163,36,51,252,84,76,124,37,212,100,88,62,183,179,76,67,217,218,242,244,229,116,243,126,182,185,254,21,105,126,208,220,239,94,229,30,21,203,244,202,117,93,94,47,170,69,185,106,246,60,219,
+        3,29,23,155,250,109,237,29,170,72,175,109,119,129,127,235,9,92,20,85,185,254,72,220,147,162,121,235,219,13,44,144,225,63,241,244,165,51,0,0 };
+
+        documentImage = loadDrawableFromData (drawableData, sizeof (drawableData));
+    }
+
+    return documentImage;
+}
+
 
 //========= linear slider ================================================================================
 void CabbageLookAndFeel::drawLinearSlider (Graphics& g, int x, int y, int width, int height,

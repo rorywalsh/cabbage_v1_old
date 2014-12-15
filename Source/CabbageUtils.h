@@ -327,7 +327,119 @@ public:
         strArray.add(str2Juce(str.substr(0, 100)));
         return strArray;
     }
+//==========================================================================================
+static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, int mode, File initialDir, bool useNative, LookAndFeel *look)
+{
+    const bool selectsDirectories = (FileBrowserComponent::openMode
+                        | FileBrowserComponent::canSelectFiles & FileBrowserComponent::canSelectDirectories) != 0;
+    const bool selectsFiles       = (FileBrowserComponent::openMode
+                        | FileBrowserComponent::canSelectFiles & FileBrowserComponent::canSelectFiles) != 0;
+    const bool warnAboutOverwrite = (FileBrowserComponent::openMode
+                        | FileBrowserComponent::canSelectFiles & FileBrowserComponent::warnAboutOverwriting) != 0;
+    const bool selectMultiple     = (FileBrowserComponent::openMode
+                        | FileBrowserComponent::canSelectFiles & FileBrowserComponent::canSelectMultipleItems) != 0;
+	
+	Array<File> results;
 
+	//if set to open or browse for files
+	if(mode==1)
+	{
+#ifndef Cabbage_Build_Standalone	
+		//in plugin mode it's best to use Cabbage file browser instead of a system one
+		useNative=false;
+#endif
+		
+		if(useNative==false)
+		{
+			FileBrowserComponent browserComponent ( FileBrowserComponent::FileChooserFlags::openMode|
+													FileBrowserComponent::FileChooserFlags::canSelectFiles, 
+													initialDir, 
+													&filter, 
+													nullptr);
+													
+			FileChooserDialogBox box (title, String::empty,
+									  browserComponent, warnAboutOverwrite,
+									  CabbageUtils::getDarkerBackgroundSkin());
+														  
+			box.setLookAndFeel(look);
+
+			if (box.show())
+			{
+				for (int i = 0; i < browserComponent.getNumSelectedFiles(); ++i)
+					results.add (browserComponent.getSelectedFile (i));
+			}
+		}	
+		else
+		{
+			FileChooser openFC(title, File::nonexistent, filter.getDescription(), true);
+			if(openFC.browseForFileToOpen())
+				results = openFC.getResults();			
+		}
+	}
+	
+	//set to save files
+	if(mode==0)
+	{
+		if(useNative==false)
+		{
+			FileBrowserComponent browserComponent ( FileBrowserComponent::saveMode| 
+													FileBrowserComponent::canSelectFiles, 
+													initialDir, 
+													&filter, 
+													nullptr);
+													
+			FileChooserDialogBox box (title, String::empty,
+									  browserComponent, warnAboutOverwrite,
+									  CabbageUtils::getDarkerBackgroundSkin());
+														  
+			box.setLookAndFeel(look);
+
+			if (box.show())
+			{
+				for (int i = 0; i < browserComponent.getNumSelectedFiles(); ++i)
+					results.add (browserComponent.getSelectedFile (i));
+			}
+		}
+		else
+		{
+			FileChooser saveFC(String("Save as..."), File::nonexistent, String(""), true);	
+			if(saveFC.browseForFileToSave(true))
+				results = saveFC.getResults();	
+		}		
+	}	
+
+	//browse for directory
+	if(mode==2)
+	{
+		if(useNative==false)
+		{
+			FileBrowserComponent browserComponent ( FileBrowserComponent::openMode, 
+													initialDir, 
+													&filter, 
+													nullptr);
+													
+			FileChooserDialogBox box (title, String::empty,
+									  browserComponent, warnAboutOverwrite,
+									  CabbageUtils::getDarkerBackgroundSkin());
+														  
+			box.setLookAndFeel(look);
+
+			if (box.show())
+			{
+				for (int i = 0; i < browserComponent.getNumSelectedFiles(); ++i)
+					results.add (browserComponent.getSelectedFile (i));
+			}
+		}
+		else
+		{
+			FileChooser fc(title, File::nonexistent, String(""), true);	
+			if(fc.browseForDirectory())
+				results.add(fc.getResult());	
+		}		
+	}	
+		
+return results;
+}
 //==========================================================================================
     static String cabbageString (String input, Font font, float availableWidth)
     {

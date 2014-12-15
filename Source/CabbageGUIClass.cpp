@@ -144,9 +144,9 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
-        cabbageIdentifiers.set(CabbageIDs::colour, Colours::whitesmoke.toString());
-		cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colours::whitesmoke.toString());
-        cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
+        cabbageIdentifiers.set(CabbageIDs::colour, Colour(135, 30, 30).toString());
+		cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colour(40, 40, 40).toString());
+        cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::whitesmoke.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
 		cabbageIdentifiers.set(CabbageIDs::textcolour, CabbageUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);
@@ -194,6 +194,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::caption, "");
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::oncolour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::onfontcolour, Colours::white.toString());
         cabbageIdentifiers.set(CabbageIDs::type, "infobutton");
         cabbageIdentifiers.set(CabbageIDs::name, "infobutton");
@@ -246,6 +247,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::caption, "");
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::oncolour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::onfontcolour, Colours::white.toString());
         cabbageIdentifiers.set(CabbageIDs::type, "recordbutton");
         cabbageIdentifiers.set(CabbageIDs::name, "recordbutton");
@@ -283,6 +285,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::caption, "");
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::oncolour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::onfontcolour, Colours::white.toString());
         cabbageIdentifiers.set(CabbageIDs::type, "filebutton");
         cabbageIdentifiers.set(CabbageIDs::name, "filebutton");

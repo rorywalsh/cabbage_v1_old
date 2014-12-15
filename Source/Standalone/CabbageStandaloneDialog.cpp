@@ -45,7 +45,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     standaloneMode(false),
     updateEditorOutputConsole(false),
     hasEditorBeingOpened(false),
-	isUsingExternalEditor(false)
+	isUsingExternalEditor(false),
+	wildcardFilter("*.*", "*", "File Filter")
 {
 
     consoleMessages = "";
@@ -910,6 +911,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         else
             subMenu.addItem(299, String("Use external editor"), true, true);
 
+
+        if(getPreference(appProperties, "ShowNativeFileDialogues"))
+            subMenu.addItem(300, String("Use native file dialogues"), true, false);
+        else
+            subMenu.addItem(300, String("Use native file dialogue"), true, true);
+			
         if(!getPreference(appProperties, "showTabs"))
             subMenu.addItem(298, String("Show tabs in editor"), true, false);
         else
@@ -1201,6 +1208,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         toggleOnOffPreference(appProperties, "ShowConsoleWithEditor");
     }
 
+    else if(options==300)
+    {
+        toggleOnOffPreference(appProperties, "ShowNativeFileDialogues");
+    }
+	
     //------- preference Csound manual dir ------
     else if(options==200)
     {
@@ -1459,11 +1471,13 @@ void StandaloneFilterWindow::openFile(String _csdfile)
             resetFilter(true);
         }
 #else
-        FileChooser openFC(String("Open a Cabbage .csd file..."), File::nonexistent, String("*.csd"), UseNativeDialogue);
-        this->setAlwaysOnTop(false);
-        if(openFC.browseForFileToOpen())
+		this->setAlwaysOnTop(false);
+		bool showNative = CabbageUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+		Array<File> selectedFile = CabbageUtils::launchFileBrowser("Open a .csd file", wildcardFilter, 0, File("*"), showNative, &getLookAndFeel());
+      
+        if(selectedFile.size()>0)
         {
-            csdFile = openFC.getResult();
+            csdFile = File(selectedFile[0]);//openFC.getResult();
             csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
             lastSaveTime = csdFile.getLastModificationTime();
             resetFilter(true);

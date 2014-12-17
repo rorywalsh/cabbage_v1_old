@@ -1473,7 +1473,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
 #else
 		this->setAlwaysOnTop(false);
 		bool showNative = CabbageUtils::getPreference(appProperties, "ShowNativeFileDialogues");
-		Array<File> selectedFile = CabbageUtils::launchFileBrowser("Open a .csd file", wildcardFilter, 0, File("*"), showNative, &getLookAndFeel());
+		Array<File> selectedFile = CabbageUtils::launchFileBrowser("Open a .csd file", wildcardFilter, 1, File("*"), showNative, &getLookAndFeel());
       
         if(selectedFile.size()>0)
         {
@@ -1562,10 +1562,13 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         return 0;
     }
 #ifdef LINUX
-    FileChooser saveFC(String("Save as..."), File::nonexistent, String(""), UseNativeDialogue);
+    //FileChooser saveFC(String("Save as..."), File::nonexistent, String(""), UseNativeDialogue);
+	bool showNative = CabbageUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+	Array<File> selectedFile = CabbageUtils::launchFileBrowser("Save a file..", wildcardFilter, 0, File("*"), showNative, &getLookAndFeel());
+ 
     String VST;
     Logger::writeToLog(currentApplicationDirectory);
-    if (saveFC.browseForFileToSave(true) || fileName.isNotEmpty())
+    if (selectedFile.size()>0)
     {
         if(type.contains("VSTi"))
             VST = currentApplicationDirectory + String("/CabbagePluginSynth.so");
@@ -1580,7 +1583,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
             m_ShowMessage("This feature only works on computers running OSX", lookAndFeel);
         }
         //Logger::writeToLog(VST);
-        showMessage(VST);
+
         File VSTData(VST);
         if(!VSTData.exists())
         {
@@ -1592,8 +1595,8 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         {
             if (type.contains("LV2"))
             {
-                String filename(saveFC.getResult().getFileNameWithoutExtension());
-                File bundle(saveFC.getResult().withFileExtension(".lv2").getFullPathName());
+                String filename(selectedFile[0].getFileNameWithoutExtension());
+                File bundle(selectedFile[0].withFileExtension(".lv2").getFullPathName());
                 bundle.createDirectory();
                 File dll(bundle.getChildFile(filename+".so"));
                 Logger::writeToLog(bundle.getFullPathName());
@@ -1620,11 +1623,11 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
             }
             else
             {
-                File dll(saveFC.getResult().withFileExtension(".so").getFullPathName());
+                File dll(selectedFile[0].withFileExtension(".so").getFullPathName());
                 if(!VSTData.copyFileTo(dll))	
 					showMessage("", "Can not move lib", lookAndFeel, this);
 					
-                File loc_csdFile(saveFC.getResult().withFileExtension(".csd").getFullPathName());
+                File loc_csdFile(selectedFile[0].withFileExtension(".csd").getFullPathName());
                 loc_csdFile.replaceWithText(csdFile.loadFileAsString());
             }
         }

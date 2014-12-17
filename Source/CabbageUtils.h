@@ -340,7 +340,6 @@ static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, in
                         | FileBrowserComponent::canSelectFiles & FileBrowserComponent::canSelectMultipleItems) != 0;
 	
 	Array<File> results;
-
 	//if set to open or browse for files
 	if(mode==1)
 	{
@@ -351,8 +350,8 @@ static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, in
 		
 		if(useNative==false)
 		{
-			FileBrowserComponent browserComponent ( FileBrowserComponent::FileChooserFlags::openMode|
-													FileBrowserComponent::FileChooserFlags::canSelectFiles, 
+			FileBrowserComponent browserComponent ( FileBrowserComponent::openMode|
+													FileBrowserComponent::canSelectFiles, 
 													initialDir, 
 													&filter, 
 													nullptr);

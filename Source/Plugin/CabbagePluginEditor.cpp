@@ -386,8 +386,7 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
 
         le->currentEvent = "";
     }
-    else
-    {
+#endif
         Table* table = dynamic_cast<Table*>(source);
         if(table)
         {
@@ -405,10 +404,10 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
         GenTable* genTable = dynamic_cast<GenTable*>(source);
         if(genTable)
         {
-//			if(genTable->getCurrentHandle() && genTable->displayAsGrid()!=1)
-//				popupBubble->showAt(genTable->getCurrentHandle(), AttributedString(genTable->getCoordinates()), 1050);		
-//            if(genTable->changeMessage == "updateFunctionTable")
-//                updatefTableData(genTable);
+			if((genTable->getCurrentHandle() && genTable->displayAsGrid()!=1))
+				popupBubble->showAt(genTable->getCurrentHandle(), AttributedString(genTable->getCoordinates()), 1050);		
+            if(genTable->changeMessage == "updateFunctionTable")
+                updatefTableData(genTable);
         }
 
         CabbageTextEditor* textEditor = dynamic_cast<CabbageTextEditor*>(source);
@@ -500,8 +499,6 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
         }
 
 
-    }
-#endif
 }
 
 //==================================================================
@@ -620,7 +617,7 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
 
     pFields = pFields + String(yAmp);
     fStatement = fStatement+pFields;
-    //Logger::writeToLog(fStatement);
+    Logger::writeToLog(fStatement);
     table->currentfStatement = fStatement;
     getFilter()->messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement, table->tableNumber);
 
@@ -629,6 +626,7 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
 void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 {
 #ifndef Cabbage_No_Csound
+
     Array<double> pFields = table->getPfields();
     if( table->genRoutine==5 || table->genRoutine==7 || table->genRoutine==2)
     {
@@ -2190,7 +2188,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
     }
 
     table->configTableSizes(cAttr.getVarArrayProp(CabbageIDs::tableconfig));
-    table->bringTableToFront(1);
+    table->bringTableToFront(0);
 
     if(cAttr.getNumProp(CabbageIDs::startpos)>-1 && cAttr.getNumProp(CabbageIDs::endpos)>0)
         table->setRange(cAttr.getNumProp(CabbageIDs::startpos), cAttr.getNumProp(CabbageIDs::endpos));
@@ -2690,7 +2688,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 																									wildcardFilter, 
 																									0, 
 																									directory, 
-																									CabbageUtils::getPreference(appProperties, "ShowNativeFileDialogues"), 
+																									false, 
 																									&getLookAndFeel());
                                         if(selectedFiles.size())
                                         {
@@ -2708,7 +2706,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 																									wildcardFilter, 
 																									2, 
 																									directory, 
-																									CabbageUtils::getPreference(appProperties, "ShowNativeFileDialogues"), 
+																									false, 
 																									&getLookAndFeel());
                                         if(selectedFiles.size())
                                         {
@@ -2728,7 +2726,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 																								wildcardFilter, 
 																								0, 
 																								directory, 
-																								CabbageUtils::getPreference(appProperties, "ShowNativeFileDialogues"), 
+																								false, 
 																								&getLookAndFeel());
 
 									if(selectedFiles.size())

@@ -28,7 +28,10 @@
 
 extern CabbageLookAndFeel* lookAndFeel;
 extern CabbageLookAndFeelBasic* lookAndFeelBasic;
+
+#ifdef Cabbage_Build_Standalone
 extern ApplicationProperties* appProperties;
+#endif
 
 class CabbageMainPanel;
 class ComponentLayoutEditor;

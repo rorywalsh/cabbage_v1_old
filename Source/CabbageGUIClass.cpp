@@ -56,7 +56,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
-        cabbageIdentifiers.set(CabbageIDs::colour, Colours::whitesmoke.toString());
+        cabbageIdentifiers.set(CabbageIDs::colour, Colour(9, 77, 31).toString());
         cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
 		cabbageIdentifiers.set(CabbageIDs::textcolour, CabbageUtils::getComponentFontColour().toString());
@@ -102,7 +102,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
-        cabbageIdentifiers.set(CabbageIDs::colour, Colours::whitesmoke.toString());
+        cabbageIdentifiers.set(CabbageIDs::colour, Colour(9, 77, 31).toString());
         cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
 		cabbageIdentifiers.set(CabbageIDs::textcolour, CabbageUtils::getComponentFontColour().toString());
@@ -144,11 +144,11 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
-        cabbageIdentifiers.set(CabbageIDs::colour, Colour(135, 30, 30).toString());
-		cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colour(40, 40, 40).toString());
+		cabbageIdentifiers.set(CabbageIDs::colour, Colour(0, 118, 38).toString());
         cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::whitesmoke.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
 		cabbageIdentifiers.set(CabbageIDs::textcolour, CabbageUtils::getComponentFontColour().toString());
+		cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colours::black.brighter(.3f).toString());
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);
         cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
         //these don't appear in the props dialog
@@ -621,7 +621,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::left, 10);
         cabbageIdentifiers.set(CabbageIDs::width, 80);
         cabbageIdentifiers.set(CabbageIDs::height, 22);
-        cabbageIdentifiers.set(CabbageIDs::colour, CabbageUtils::getComponentSkin().toString());
+        cabbageIdentifiers.set(CabbageIDs::colour, Colour(35, 35, 35).toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, CabbageUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::popup, 0);
         cabbageIdentifiers.set(CabbageIDs::plant, "");

@@ -96,7 +96,7 @@ CabbageLookAndFeel::CabbageLookAndFeel()
 		setColour(TextEditor::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
 		setColour(TextEditor::textColourId, Colours::white);
 		setColour(TextEditor::highlightedTextColourId, Colours::lime);
-		setColour(TextEditor::ColourIds::shadowColourId, Colours::pink);
+		setColour(TextEditor::shadowColourId, Colours::pink);
 		setColour(FileChooserDialogBox::titleTextColourId, Colours::lime);		
 }
 
@@ -252,25 +252,27 @@ void CabbageLookAndFeel::drawFileBrowserRow (Graphics& g, int width, int height,
     {
 		if(isDirectory)
 		{
-			g.setColour (Colours::cornflowerblue.darker(.6f));
+			g.setColour (Colours::black);
 			Path p;
-			p.startNewSubPath(8, 2);
+			p.startNewSubPath(4, 2);
 			p.lineTo(18, 2);
 			p.lineTo(18, 5);
-			p.lineTo(22, 7);
+			p.lineTo(22, 5);
 			p.lineTo(22, height-5);
-			p.lineTo(8, height-5);
-			p.lineTo(8, 2);
+			p.lineTo(4, height-5);
+			p.lineTo(4, 2);
 			g.strokePath(p, PathStrokeType(1));
 			g.fillPath(p);
 			g.setColour(Colours::black);
 			p.scaleToFit(5, 3, 20, height-8, true);
 			g.fillPath(p);
 			p.startNewSubPath(8, 7);
-			p.lineTo(22, 7);
+			p.lineTo(24, 7);
 			p.closeSubPath();
-			g.setColour (Colours::cornflowerblue.darker(.6f));
-			g.strokePath(p, PathStrokeType(2));		
+			g.setColour(Colours::white);
+			g.fillPath(p);
+			g.setColour (Colours::black);
+			g.strokePath(p, PathStrokeType(1));		
 		}
 		else
 		{
@@ -282,10 +284,6 @@ void CabbageLookAndFeel::drawFileBrowserRow (Graphics& g, int width, int height,
 		g.drawLine(8, height-5, 8, 2);
 		g.setColour (Colours::cornflowerblue.darker(.6f));
 		}
-//        if (const Drawable* d = isDirectory ? getDefaultFolderImage()
-//                                            : getDefaultDocumentFileImage())
-//            d->drawWithin (g, Rectangle<float> (2.0f, 2.0f, x - 4.0f, height - 4.0f),
-//                           RectanglePlacement::centred | RectanglePlacement::onlyReduceInSize, 1.0f);
     }
 
 

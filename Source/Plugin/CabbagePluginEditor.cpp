@@ -1154,7 +1154,7 @@ void CabbagePluginAudioProcessorEditor::updateSizesAndPositionsOfComponents(int 
 //=============================================================================
 void CabbagePluginAudioProcessorEditor::mouseMove(const MouseEvent& event)
 {
-	if(getFilter()->compiledOk())
+	if(getFilter()->compiledOk()==OK)
 	{
 		//look after mouse message from main plant windows and main window
 		int x = event.eventComponent->getTopLevelComponent()->getMouseXYRelative().x;
@@ -2369,7 +2369,8 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
         getFilter()->beginParameterChangeGesture(i);
 		if(sliderThatWasMoved->getSliderStyle()==Slider::LinearHorizontal 
 			|| sliderThatWasMoved->getSliderStyle()==Slider::LinearVertical
-			|| sliderThatWasMoved->getSliderStyle()==Slider::RotaryVerticalDrag)
+			|| sliderThatWasMoved->getSliderStyle()==Slider::RotaryVerticalDrag
+			|| sliderThatWasMoved->getSliderStyle()==Slider::LinearBarVertical)
         {
 			getFilter()->setParameter(i, (float)((sliderThatWasMoved->getValue()-min)/range));
 			getFilter()->setParameterNotifyingHost(i, (float)((sliderThatWasMoved->getValue()-min)/range));		
@@ -2387,7 +2388,8 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
         getFilter()->beginParameterChangeGesture(i);
 		if(sliderThatWasMoved->getSliderStyle()==Slider::LinearHorizontal 
 			|| sliderThatWasMoved->getSliderStyle()==Slider::LinearVertical
-			|| sliderThatWasMoved->getSliderStyle()==Slider::RotaryVerticalDrag)
+			|| sliderThatWasMoved->getSliderStyle()==Slider::RotaryVerticalDrag
+			|| sliderThatWasMoved->getSliderStyle()==Slider::LinearBarVertical)
 		{
 			const float value = sliderThatWasMoved->getValue();//getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
 			getFilter()->setParameter(i, (float)sliderThatWasMoved->getValue());
@@ -3400,9 +3402,9 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
         for(int index=0; index<getFilter()->dirtyControls.size(); index++)
         {
             int i = getFilter()->dirtyControls[index];
-            inValue = getFilter()->getParameter(i);
             if(i<getFilter()->getGUICtrlsSize())
             {
+				inValue = getFilter()->getParameter(i);
                 if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type).contains("slider")||
 				getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::numberbox)
                 {
@@ -3422,7 +3424,8 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 #ifndef Cabbage_Build_Standalone
 						if(slider->getSliderStyle()==Slider::LinearVertical ||
 						   slider->getSliderStyle()==Slider::RotaryVerticalDrag ||
-						   slider->getSliderStyle()==Slider::LinearHorizontal)
+						   slider->getSliderStyle()==Slider::LinearHorizontal ||
+						   slider->getSliderStyle()==Slider::LinearBarVertical)
 						{
 							float val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i)+
 										getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::min);
@@ -3440,7 +3443,8 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 #else
 						if(slider->getSliderStyle()==Slider::LinearVertical ||
 						   slider->getSliderStyle()==Slider::LinearHorizontal ||
-						   slider->getSliderStyle()==Slider::RotaryVerticalDrag)
+						   slider->getSliderStyle()==Slider::RotaryVerticalDrag ||
+						   slider->getSliderStyle()==Slider::LinearBarVertical)
 						{							
 							slider->setValue(inValue, sendNotification);
 						}

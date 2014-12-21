@@ -1044,7 +1044,7 @@ public:
 			setEnabled(true);		
 			setVisible(true);
 		}
-        //repaint();
+        repaint();
     }
 
     void paint (Graphics& g)

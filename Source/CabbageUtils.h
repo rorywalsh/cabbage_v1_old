@@ -370,7 +370,7 @@ static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, in
 		}	
 		else
 		{
-			FileChooser openFC(title, File::nonexistent, filter.getDescription(), true);
+			FileChooser openFC(title, File::nonexistent, "*.*", true);
 			if(openFC.browseForFileToOpen())
 				results = openFC.getResults();			
 		}

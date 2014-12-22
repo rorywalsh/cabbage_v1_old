@@ -1473,6 +1473,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
 #else
 		this->setAlwaysOnTop(false);
 		bool showNative = CabbageUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+		wildcardFilter = WildcardFileFilter(".csd", "*", ".csd Files");
 		Array<File> selectedFile = CabbageUtils::launchFileBrowser("Open a .csd file", wildcardFilter, 1, File("*"), showNative, &getLookAndFeel());
       
         if(selectedFile.size()>0)

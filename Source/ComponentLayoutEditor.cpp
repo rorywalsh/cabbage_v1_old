@@ -476,8 +476,8 @@ void ChildAlias::mouseDrag (const MouseEvent& e)
                         selectedCompsPosY = selectedCompsPosY/gridSize*gridSize;
                         selectedCompsPosX = selectedCompsPosX+dragX;
                         selectedCompsPosX = selectedCompsPosX/gridSize*gridSize;
-
-                        restrictBounds(selectedCompsPosX, selectedCompsPosY);
+						//needs fixing for multiple objects. For now leaving it disabled...
+                        //restrictBounds(selectedCompsPosX, selectedCompsPosY);
                         c->setTopLeftPosition(selectedCompsPosX, selectedCompsPosY);
                         c->applyToTarget("");
                     }
@@ -516,6 +516,7 @@ void ChildAlias::mouseDrag (const MouseEvent& e)
 
 void ChildAlias::restrictBounds(int &x, int &y)
 {
+	//this is kak when dealing with multiple objects....
     if(x>getParentComponent()->getWidth()-this->getWidth())
         x = getParentComponent()->getWidth()-this->getWidth();
     if(x<0)

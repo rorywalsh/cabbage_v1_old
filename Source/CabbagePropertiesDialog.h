@@ -21,7 +21,7 @@
 */
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "CabbageCallOutBox.h"
-//#include "CabbageLookAndFeel.h"
+#include "CabbageLookAndFeel.h"
 #include "CabbageGUIClass.h"
 #include "./Plugin/CabbagePluginProcessor.h"
 
@@ -117,6 +117,9 @@ public:
                     attributeNames[i].equalsIgnoreCase("popup") ||
                     attributeNames[i].equalsIgnoreCase("comborange") ||
                     attributeNames[i].equalsIgnoreCase("basetype") ||
+					attributeNames[i].equalsIgnoreCase("rangey") ||
+					attributeNames[i].equalsIgnoreCase("rangex") ||
+					attributeNames[i].equalsIgnoreCase("xyautoindex") ||
                     attributeNames[i].equalsIgnoreCase("decimalplaces"))
             {
 				//hide these identifiers from the properties component
@@ -471,10 +474,14 @@ class FileBrowserField : public Component,
     public ActionBroadcaster,
     public ActionListener
 {
+WildcardFileFilter wildcardFilter;
+ScopedPointer<CabbageLookAndFeel> lookAndFeel;
 
 public :
 
-    FileBrowserField(String name, String string):name(name), Component("FileBrowserField")
+    FileBrowserField(String name, String string):name(name), Component("FileBrowserField"), 
+												wildcardFilter("*", "*", "File filter"),
+												lookAndFeel(new CabbageLookAndFeel())
     {
         addAndMakeVisible(textField = new TextField(name));
         textField->addActionListener(this);
@@ -493,18 +500,30 @@ public :
     {
 #if !defined(AndroidBuild)
 
-        FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.*"), UseNativeDialogue);
+        //FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.*"), UseNativeDialogue);
+		
         if(!e.mods.isCtrlDown())
-            if(openFC.browseForFileToOpen())
+		{
+		//wildcardFilter = WildcardFileFilter("*", directory.getFullPathName(), "File fitler");
+
+		Array<File> selectedFiles = CabbageUtils::launchFileBrowser("Select a file", 
+																	wildcardFilter, 
+																	1, 
+																	File(""), 
+																	false, 
+																	lookAndFeel);
+            if(selectedFiles.size()>0)
             {
                 value.resize(0);
                 //add file name to value
-                value.append(openFC.getResult().getFullPathName());
+                value.append(selectedFiles[0].getFullPathName());
                 sendActionMessage("FileBrowserField");
                 sendActionMessage("UpdateAll");
                 textField->setText(value[0]);
                 this->getTopLevelComponent()->grabKeyboardFocus();
             }
+			
+		}
 #endif
     }
 

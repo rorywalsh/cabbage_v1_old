@@ -305,7 +305,6 @@ public:
     ~CabbageGUIClass();
     int parse(String str, String identifier);
     float getNumProp(Identifier prop);
-    float getNumProp(Identifier prop, int index);
     void setNumProp(Identifier prop, float val);
     void setTableChannelValues(int index, float val);
     float getTableChannelValues(int index);

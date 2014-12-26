@@ -67,7 +67,7 @@ class CabbageButton : public Component
     String name, caption, buttonText, colour, fontcolour, oncolour, onfontcolour;
 public:
     ScopedPointer<GroupComponent> groupbox;
-    ScopedPointer<Button> button;
+    ScopedPointer<TextButton> button;
     //---- constructor -----
 
     CabbageButton(CabbageGUIClass &cAttr) :
@@ -404,12 +404,12 @@ public:
         if(cAttr.getNumProp(CabbageIDs::min)==cAttr.getNumProp(CabbageIDs::max) 
 		|| cAttr.getNumProp(CabbageIDs::min)>cAttr.getNumProp(CabbageIDs::max))
         {
-            CabbageUtils::showMessage("Your min value is the same or greater than your max value.\nCabbage will now reduce your min value so that it falls into range", &getLookAndFeel());
+            //CabbageUtils::showMessage("Your min value is the same or greater than your max value.\nCabbage will now reduce your min value so that it falls into range", &getLookAndFeel());
             cAttr.setNumProp(CabbageIDs::min, cAttr.getNumProp(CabbageIDs::max)-.001);
         }
 
-        min = cAttr.getNumProp(CabbageIDs::minvalue);
-        max = cAttr.getNumProp(CabbageIDs::maxvalue);		
+        min = (cAttr.getNumProp(CabbageIDs::minvalue)==-9999 ? cAttr.getNumProp(CabbageIDs::min) : cAttr.getNumProp(CabbageIDs::minvalue));
+        max = (cAttr.getNumProp(CabbageIDs::maxvalue)==-9999 ? cAttr.getNumProp(CabbageIDs::max) : cAttr.getNumProp(CabbageIDs::maxvalue));
 		
 		if(sliderType=="vertical" || sliderType=="horizontal" || sliderType=="rotary")	
 			slider->setValue(cAttr.getNumProp(CabbageIDs::value));		
@@ -434,9 +434,8 @@ public:
     }
 
 	void setupMinMaxValue()
-	{
-		slider->setMinValue(min);
-		slider->setMaxValue(max);
+	{	
+		slider->setMinAndMaxValues(min, max);
 	}
 
     bool shouldDisplayPopupValue()

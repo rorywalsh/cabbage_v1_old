@@ -892,10 +892,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             subMenu.addItem(7, String("Always on Top"), true, true);
         else
             subMenu.addItem(7, String("Always on Top"), true, false);
-        if(getPreference(appProperties, "ShowConsoleWithEditor"))
-            subMenu.addItem(20, String("Auto-launch Csound Console with Editor"), true, true);
-        else
-            subMenu.addItem(20, String("Auto-launch Csound Console with Editor"), true, false);
+//        if(getPreference(appProperties, "ShowConsoleWithEditor"))
+//            subMenu.addItem(20, String("Auto-launch Csound Console with Editor"), true, true);
+//        else
+//            subMenu.addItem(20, String("Auto-launch Csound Console with Editor"), true, false);
         //preferences....
         subMenu.addItem(203, "Set Cabbage Plant Directory");
         subMenu.addItem(200, "Set Csound Manual Directory");
@@ -917,10 +917,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         else
             subMenu.addItem(300, String("Use native file dialogue"), true, true);
 			
-        if(!getPreference(appProperties, "showTabs"))
-            subMenu.addItem(298, String("Show tabs in editor"), true, false);
-        else
-            subMenu.addItem(298, String("Show tabs in editor"), true, true);
+//        if(!getPreference(appProperties, "showTabs"))
+//            subMenu.addItem(298, String("Show tabs in editor"), true, false);
+//        else
+//            subMenu.addItem(298, String("Show tabs in editor"), true, true);
 
         if(!getPreference(appProperties, "DisableGUIEditModeWarning"))
             subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, false);
@@ -939,12 +939,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 //            subMenu.addItem(204, String("Use Cabbage IO"), true, true);
 //when buiding for inclusion with the Windows Csound installer comment out
 //this section
-#if !defined(LINUX) && !defined(MACOSX)
-        if(!getPreference(appProperties, "UsingCabbageCsound"))
-            subMenu.addItem(206, String("Using Cabbage-Csound"), true, false);
-        else
-            subMenu.addItem(206, String("Using Cabbage-Csound"), true, true);
-#endif
+//#if !defined(LINUX) && !defined(MACOSX)
+//        if(!getPreference(appProperties, "UsingCabbageCsound"))
+//            subMenu.addItem(206, String("Using Cabbage-Csound"), true, false);
+//        else
+//            subMenu.addItem(206, String("Using Cabbage-Csound"), true, true);
+//#endif
 //END of commented section for Windows Csound installer
         m.addSubMenu("Preferences", subMenu);
         m.addItem(2000, "About");
@@ -1023,8 +1023,13 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                         outputConsole->setAlwaysOnTop(true);
                         outputConsole->toFront(true);
                         outputConsole->setVisible(true);
+						outputConsole->setTopLeftPosition(500, 400);
                     }
-                    else outputConsole->setVisible(false);
+                    else 
+					{
+						outputConsole->setVisible(false);
+						outputConsole->setTopLeftPosition(-1500, -1400);
+					}
                 }
 
                 showEditorConsole();
@@ -1473,7 +1478,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
 #else
 		this->setAlwaysOnTop(false);
 		bool showNative = CabbageUtils::getPreference(appProperties, "ShowNativeFileDialogues");
-		wildcardFilter = WildcardFileFilter(".csd", "*", ".csd Files");
+		wildcardFilter = WildcardFileFilter("*.csd", "*", ".csd Files");
 		Array<File> selectedFile = CabbageUtils::launchFileBrowser("Open a .csd file", wildcardFilter, 1, File("*"), showNative, &getLookAndFeel());
       
         if(selectedFile.size()>0)
@@ -1630,6 +1635,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
 					
                 File loc_csdFile(selectedFile[0].withFileExtension(".csd").getFullPathName());
                 loc_csdFile.replaceWithText(csdFile.loadFileAsString());
+				setUniquePluginID(dll, loc_csdFile, false);
             }
         }
     }
@@ -1793,7 +1799,7 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
             if(cAttr.getStringProp(CabbageIDs::pluginid).length()!=4)
             {
                 m_ShowMessage("Your plugin ID is not the right size. It MUST be 4 characters long. Some hosts may not be able to load your plugin", lookAndFeel);
-                return 0;
+                //return 0;
             }
             else
             {
@@ -1845,19 +1851,19 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
             for(int y=plugLibName.length(); y<16; y++)
                 plugLibName.append(String(" "), 1);
 
-        mFile.seekg (0, ios::beg);
-        buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
-        mFile.read((char*)&buffer[0], file_size);
-        loc = cabbageFindPluginID(buffer, file_size, pluginName);
-        if (loc < 0)
-            m_ShowMessage("Plugin name could not be set?!?", lookAndFeel);
-        else
-        {
-            //showMessage("plugin name set!");
-            mFile.seekg (loc, ios::beg);
-            mFile.write(csdFile.getFileNameWithoutExtension().toUTF8(), 16);
-        }
-        //#endif
+				mFile.seekg (0, ios::beg);
+				buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
+				mFile.read((char*)&buffer[0], file_size);
+				loc = cabbageFindPluginID(buffer, file_size, pluginName);
+				if (loc < 0)
+					m_ShowMessage("Plugin name could not be set?!?", lookAndFeel);
+				else
+				{
+					//showMessage("plugin name set!");
+					mFile.seekg (loc, ios::beg);
+					mFile.write(csdFile.getFileNameWithoutExtension().toUTF8(), 16);
+				}
+				//#endif
 
     }
     else

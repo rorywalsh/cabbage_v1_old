@@ -184,6 +184,11 @@ public:
 	{
 		Logger::writeToLog(message+":"+String(value));
 	}
+	
+	static void debug(String message, String value)
+	{
+		Logger::writeToLog(message+":"+value);
+	}
 //===========================================================================================
     static void showMessage(String message)
     {

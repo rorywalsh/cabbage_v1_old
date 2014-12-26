@@ -33,7 +33,6 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 //before parsing begins
     cabbageIdentifiers.set("scalex", 1);
     cabbageIdentifiers.set("scaley", 1);
-	cabbageIdentifiers.set(CabbageIDs::alpha, 1.f);
 
     StringArray strTokens;
     strTokens.addTokens(compStr, " ", "\"");
@@ -901,6 +900,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::type, "hosttime");
     }
 
+	cabbageIdentifiers.set(CabbageIDs::alpha, 1);
+	cabbageIdentifiers.set(CabbageIDs::visible, 1);
 //parse the text now that all default values ahve been assigned
     parse(compStr, "");
 }
@@ -1027,7 +1028,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("colour:1") ||
                     identArray[indx].equalsIgnoreCase("colour"))
             {
-                if(typeOfWidget=="checkbox" || typeOfWidget=="button")
+                if(typeOfWidget=="checkbox" || typeOfWidget.contains("button"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::oncolour, getColourFromText(strTokens.joinIntoString(",")).toString());
                 }
@@ -1038,7 +1039,7 @@ int CabbageGUIClass::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("fontcolour")||
                     identArray[indx].equalsIgnoreCase("fontcolour:1"))
             {
-                if(typeOfWidget=="button")
+                if(typeOfWidget.contains("button"))
                     cabbageIdentifiers.set(CabbageIDs::onfontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
                 else
                     cabbageIdentifiers.set(CabbageIDs::fontcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
@@ -1641,13 +1642,6 @@ float CabbageGUIClass::getNumProp(Identifier prop)
     else
         return cabbageIdentifiers.getWithDefault(prop, -9999.f);
 }
-//==================================================================
-float CabbageGUIClass::getNumProp(Identifier prop, int index)
-{
-    //this method should never be called...
-    jassert(1);
-    return 0.f;
-}
 
 //================================================================================================
 // these mthods can be used to find the values of indentifiers
@@ -1998,6 +1992,7 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
                     identifier=="kind" ||
                     identifier=="visible" ||
 					identifier=="trackerthickness" ||
+					identifier=="xyautoindex" ||
                     identifier=="comborange")
             {
                 //none of these identifiers need to be seen...

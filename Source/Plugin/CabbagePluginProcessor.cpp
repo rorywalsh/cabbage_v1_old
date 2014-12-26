@@ -637,7 +637,7 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
         for(int i=0; i<guiCtrls.size(); i++)
         {
             csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
-                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
+                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));			
         }
 
 #ifdef WIN32
@@ -986,6 +986,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 								if(tokes[0].equalsIgnoreCase(String("hslider2")) || tokes[0].equalsIgnoreCase(String("vslider2")))
 								{
 									cAttr.setStringProp(String(CabbageIDs::channel), cAttr.getStringArrayPropValue(CabbageIDs::channel, 1));
+									
 									cAttr.setStringProp("name", cAttr.getStringProp(CabbageIDs::name)+String("dummy"));
 									guiCtrls.add(cAttr);							
 									guiID++;	
@@ -1473,19 +1474,16 @@ float CabbagePluginAudioProcessor::getParameter (int index)
             return 0.0f;
     }
     else
+	{
+		CabbageUtils::debug("getParameter(): Parameter index out of bounds");
         return 0.0f;
+	}
 }
-
 
 void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
 {
     String stringMessage;
 #ifndef Cabbage_No_Csound
-    /* this will get called by the plugin GUI sliders or
-    by the host, via automation. The timer thread in the plugin's editor
-    will constantly update with the values that have been set here.
-    We don't actually change any parameters here, we simply add the messages
-    to a queue. See next method. The updates will only happen when it's safe to do. */
     float range, min, max, comboRange;
 //add index of control that was changed to dirty control vector
     dirtyControls.addIfNotAlreadyThere(index);
@@ -1516,16 +1514,13 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
                 getGUICtrls(index).getStringProp(CabbageIDs::channeltype)==CabbageIDs::stringchannel)
         {
             stringMessage = getGUICtrls(index).getStringArrayPropValue(CabbageIDs::text, newValue-1);
-            Logger::writeToLog(stringMessage);
             messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel),
-                    stringMessage,
-                    CabbageIDs::stringchannel);
+                    stringMessage, CabbageIDs::stringchannel);
         }
         else
         {
             messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel),
-                    newValue,
-                    guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
+                    newValue, guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
 					
         }
         guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);

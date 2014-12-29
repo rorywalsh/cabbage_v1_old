@@ -303,7 +303,7 @@ public:
     CabbageGUIClass(String str, int ID);
     CabbageGUIClass() {};
     ~CabbageGUIClass();
-    String parse(String str, String identifier);
+    void parse(String str, String identifier);
     float getNumProp(Identifier prop);
     void setNumProp(Identifier prop, float val);
     void setTableChannelValues(int index, float val);

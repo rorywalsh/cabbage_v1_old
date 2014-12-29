@@ -685,6 +685,8 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     int indexOfLastGUICtrl = guiCtrls.size();
     int indexOfLastLayoutCtrl = guiLayoutCtrls.size();
 
+	String warningMessage;
+
     int test=100;
     int checkGUI = isGuiEnabled();
 //setGuiEnabled((false));
@@ -806,7 +808,11 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             ||tokes[0].equalsIgnoreCase(String("groupbox")))
                     {
                         CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
-						csound->Message(cAttr.getWarningMessages().toUTF8().getAddress());
+						warningMessage = "";
+						warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
+						if(cAttr.getWarningMessages().isNotEmpty())
+						csound->Message(warningMessage.toUTF8().getAddress());
+						
                         //showMessage(csdLine);
                         cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
                         if(cAttr.getStringProp("native").length()>0)
@@ -923,7 +929,11 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                     {
 
                         CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
-						csound->Message(cAttr.getWarningMessages().toUTF8().getAddress());
+						warningMessage = "";
+						warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
+						if(cAttr.getWarningMessages().isNotEmpty())
+						csound->Message(warningMessage.toUTF8().getAddress());
+						
                         cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
                         //Logger::writeToLog(csdLine.trimEnd());
                         csdLine = "";
@@ -1008,7 +1018,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
         else break;
     } //end of scan through entire csd text, control vectors are now populated
 
-	csound->Message("\n===End of Cabbage warnings===\n");
+	csound->Message("===End of Cabbage warnings===\n");
     //init all channels with their init val, and set parameters
     for(int i=0; i<guiCtrls.size(); i++)
     {

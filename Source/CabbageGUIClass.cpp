@@ -904,7 +904,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 	cabbageIdentifiers.set(CabbageIDs::alpha, 1);
 	cabbageIdentifiers.set(CabbageIDs::visible, 1);
 //parse the text now that all default values ahve been assigned
-    warningMessages = parse(compStr, "");
+	parse(compStr, "");
 }
 
 CabbageGUIClass::~CabbageGUIClass()
@@ -914,7 +914,7 @@ CabbageGUIClass::~CabbageGUIClass()
 //===========================================================================================
 // this method parsing the Cabbage text and set each of the Cabbage indentifers
 //===========================================================================================
-String CabbageGUIClass::parse(String inStr, String identifier)
+void CabbageGUIClass::parse(String inStr, String identifier)
 {
     //Logger::writeToLog(str);
     //remove any text after a semicolon and take out tabs..
@@ -932,6 +932,7 @@ String CabbageGUIClass::parse(String inStr, String identifier)
 
 
     String typeOfWidget="";
+
 
     //Logger::writeToLog(String(identArray.size()));
     //retrieve paramters consisting of strings
@@ -957,7 +958,7 @@ String CabbageGUIClass::parse(String inStr, String identifier)
             //showMessage(tstr, nullptr);
 
             if(tstr.length()==0)
-                return "";
+                return;
 
 			//find current identifier and remove it from main string so that we can 
 			//check for multiple instances of an identifier such as amprange
@@ -1257,13 +1258,16 @@ String CabbageGUIClass::parse(String inStr, String identifier)
                     cabbageIdentifiers.set(CabbageIDs::width, strTokens[0].trim().getFloatValue());
                     cabbageIdentifiers.set(CabbageIDs::height, strTokens[1].trim().getFloatValue());
                 }
+				else
+					warningMessages+="size() does not have enough parameters\n";
             }
 
             else if(identArray[indx].equalsIgnoreCase("bounds"))
             {
-                if(strTokens.size()<3)
+				cUtils::debug(strTokens.size());
+                if(strTokens.size()<4)
                 {
-                    //debugMessage ="WARNING: Not enough paramters passed to bounds(): usage pos(top, left width, height\")";
+                    warningMessages+="Not enough paramters passed to bounds(): usage pos(top, left width, height\")\n";
                 }
                 else
                 {
@@ -1300,7 +1304,7 @@ String CabbageGUIClass::parse(String inStr, String identifier)
             {
                 if(strTokens.size()<2)
                 {
-                    //debugMessage ="WARNING: Not enough paramters passed to pos(): usage pos(top, left\")";
+                    warningMessages+="Not enough paramters passed to pos(): usage pos(top, left\")\n";
                 }
                 else
                 {
@@ -1315,7 +1319,7 @@ String CabbageGUIClass::parse(String inStr, String identifier)
             {
                 if(strTokens.size()<3)
                 {
-                    //debugMessage ="WARNING: Not enough paramters passed to range(): usage range(minx, max, value, incr\")";
+                    warningMessages+="Not enough paramters passed to range(): usage range(minx, max, value, skew, incr\")\n";
                 }
                 else
                 {
@@ -1360,7 +1364,7 @@ String CabbageGUIClass::parse(String inStr, String identifier)
             {
                 if(strTokens.size()<3)
                 {
-                    //debugMessage ="WARNING: Not enough paramters passed to range(): usage range(minx, max, value\")";
+                    warningMessages+="Not enough paramters passed to range(): usage range(minx, max, value\")\n";
                 }
                 else
                 {
@@ -1381,7 +1385,7 @@ String CabbageGUIClass::parse(String inStr, String identifier)
             {
                 if(strTokens.size()<3)
                 {
-                    //debugMessage ="WARNING: Not enough paramters passed to range(): usage range(minx, max, value\")";
+                    warningMessages+="Not enough paramters passed to range(): usage range(minx, max, value\")\n";
                 }
                 else
                 {
@@ -1404,7 +1408,7 @@ String CabbageGUIClass::parse(String inStr, String identifier)
             {
                 if(strTokens.size()<2)
                 {
-                    //debugMessage ="WARNING: Not enough paramters passed to midiCtrl(): usage midiCtrl(midiChan, midiCtrl\")";
+                    warningMessages+="Not enough paramters passed to midiCtrl(): usage midiCtrl(midiChan, midiCtrl\")\n";
                 }
                 else
                 {
@@ -1584,6 +1588,9 @@ String CabbageGUIClass::parse(String inStr, String identifier)
 
             else if(identArray[indx].equalsIgnoreCase("amprange"))
             {
+				if(strTokens.size()<3)
+					warningMessages+="Not enough paramters passed to amprange(): usage amprange(min, max, tablenumber, quantise\")\n";
+					
 				var value;
 				var temp = cabbageIdentifiers.getWithDefault(CabbageIDs::amprange, "");
 
@@ -1644,8 +1651,6 @@ String CabbageGUIClass::parse(String inStr, String identifier)
 
         //}
     }
-    return "";//must add error checking to this...
-
 }
 //=========================================================================
 //retrieve numerical attributes

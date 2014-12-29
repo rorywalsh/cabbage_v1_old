@@ -44,7 +44,7 @@ class ProcessorParameterPropertyComp   : public PropertyComponent,
         {
             //basicLookAndFeel = new CabbageLookAndFeelBasic();
             setLookAndFeel(basicLookAndFeel);
-            this->setColour(Slider::textBoxBackgroundColourId, CabbageUtils::getBackgroundSkin());
+            this->setColour(Slider::textBoxBackgroundColourId, cUtils::getBackgroundSkin());
 
             setRange (0.0, 1.0, 0.0);
             setSliderStyle (Slider::LinearHorizontal);
@@ -97,7 +97,7 @@ public:
         startTimer (100);
         addAndMakeVisible (&slider);
         owner_.addListener (this);
-        highlightColour = CabbageUtils::getDarkerBackgroundSkin();
+        highlightColour = cUtils::getDarkerBackgroundSkin();
     }
 
     ~ProcessorParameterPropertyComp()
@@ -135,14 +135,14 @@ public:
 
     void paint(Graphics &g)
     {
-        g.fillAll(CabbageUtils::getComponentSkin().darker(.4f)); //background
+        g.fillAll(cUtils::getComponentSkin().darker(.4f)); //background
         String text = getName();
         if(moddedText)
             g.setColour(Colours::yellow);
         else
             g.setColour(Colours::whitesmoke);
 
-        Font font (CabbageUtils::getTitleFont());
+        Font font (cUtils::getTitleFont());
         //font.setFallbackFontName (String("Verdana")); //in case the user doesn't have the first font installed
         g.setFont (font);
 

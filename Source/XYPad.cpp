@@ -88,7 +88,7 @@ void XYToggle::resized()
 
 void XYToggle::paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown)
 {
-    g.setColour(CabbageUtils::getDarkerBackgroundSkin());
+    g.setColour(cUtils::getDarkerBackgroundSkin());
     g.fillRoundedRectangle(0, 0, getWidth(), getHeight(), getHeight()/5);
 
     if (this->getToggleState() == true)
@@ -96,9 +96,9 @@ void XYToggle::paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDo
     else
     {
         if (isMouseOverButton)
-            g.setColour(CabbageUtils::getComponentSkin().withMultipliedBrightness(2));
+            g.setColour(cUtils::getComponentSkin().withMultipliedBrightness(2));
         else
-            g.setColour(CabbageUtils::getComponentSkin());
+            g.setColour(cUtils::getComponentSkin());
     }
     g.drawImage(img, 0, 0, getWidth(), getHeight(), 0, 0, img.getWidth(), img.getHeight(), true);
     g.setOpacity(0.7);
@@ -130,11 +130,11 @@ void XYValueDisplay::setValue (String val)
 
 void XYValueDisplay::paint (Graphics& g)
 {
-    Font font = (CabbageUtils::getValueFont());
+    Font font = (cUtils::getValueFont());
     g.setFont (font);
     g.setColour (colour);
     g.setOpacity(0.6);
-    value = CabbageUtils::cabbageString(value, font, getWidth());
+    value = cUtils::cabbageString(value, font, getWidth());
     g.drawText (value, 0, 0, getWidth(), getHeight(), Justification::centred, false);
 }
 
@@ -159,19 +159,19 @@ void XYCanvasBackground::resized()
 
 void XYCanvasBackground::paint(Graphics& g)
 {
-    g.setColour (CabbageUtils::getBackgroundSkin());
+    g.setColour (cUtils::getBackgroundSkin());
     g.fillRoundedRectangle (0, 0, getWidth(), getHeight(), 5);
 
     // Grid lines
     ColourGradient vGradient = ColourGradient(Colours::transparentBlack, 0, 0,
                                Colours::transparentBlack, 0, getHeight(), false);
-    vGradient.addColour(0.5, CabbageUtils::getComponentSkin());
+    vGradient.addColour(0.5, cUtils::getComponentSkin());
     g.setGradientFill(vGradient);
     g.drawLine(getWidth()/2, 0, getWidth()/2, getHeight(), 1);
 
     ColourGradient hGradient = ColourGradient(Colours::transparentBlack, 0, 0,
                                Colours::transparentBlack, getWidth(), 0, false);
-    hGradient.addColour(0.5, CabbageUtils::getComponentSkin());
+    hGradient.addColour(0.5, cUtils::getComponentSkin());
     g.setGradientFill(hGradient);
     g.drawLine(0, getHeight()/2, getWidth(), getHeight()/2, 1);
 }
@@ -474,7 +474,7 @@ XYPad::XYPad(XYPadAutomation* xyPadAutomationPtr, String title, int minXValue, i
     // Colours
     ballColour = ballCol;
     fontColour = fontCol;
-    if (fontColour != CabbageUtils::getComponentFontColour())
+    if (fontColour != cUtils::getComponentFontColour())
         toggleColour = fontColour;
     else
         toggleColour = Colours::cornflowerblue;
@@ -624,20 +624,20 @@ void XYPad::sliderValueChanged(Slider* slider)
 
 void XYPad::paint (Graphics& g)
 {
-    g.setColour (CabbageUtils::getComponentSkin());
+    g.setColour (cUtils::getComponentSkin());
     g.fillRoundedRectangle (0, 0, getWidth(), getHeight(), 5);
 
     // Border outline
-    float borderWidth = CabbageUtils::getBorderWidth();
-    g.setColour (CabbageUtils::getBorderColour());
+    float borderWidth = cUtils::getBorderWidth();
+    g.setColour (cUtils::getBorderColour());
     g.drawRoundedRectangle (borderWidth/2, borderWidth/2, getWidth()-borderWidth, getHeight()-borderWidth,
                             5, borderWidth);
 
     // For drawing the title
     g.setColour(fontColour);
-    Font font = CabbageUtils::getComponentFont();
+    Font font = cUtils::getComponentFont();
     g.setFont (font);
-    title = CabbageUtils::cabbageString (title, font, canvas->getRight()-(getWidth()/2));
+    title = cUtils::cabbageString (title, font, canvas->getRight()-(getWidth()/2));
     float strWidth = font.getStringWidthFloat (title);
     g.drawText (title, canvas->getRight()-strWidth, getHeight()-(font.getHeight()+3),
                 strWidth, font.getHeight(), 1, false);
@@ -715,8 +715,8 @@ void XYPad::mouseEnter(const MouseEvent& e)
 
 void XYPad::displayXYValues (float xValue, float yValue)
 {
-    valueDisplays[0]->setValue(CabbageUtils::setDecimalPlaces(xValue, 2));
-    valueDisplays[1]->setValue(CabbageUtils::setDecimalPlaces(yValue, 2));
+    valueDisplays[0]->setValue(cUtils::setDecimalPlaces(xValue, 2));
+    valueDisplays[1]->setValue(cUtils::setDecimalPlaces(yValue, 2));
     //Logger::writeToLog("yValue:"+String(yValue));
     canvas->setBallPositionFromXYValues(xValue, yValue);
 }

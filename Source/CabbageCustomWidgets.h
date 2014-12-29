@@ -372,14 +372,14 @@ public:
         slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
         //slider->setColour(Slider::textBoxTextColourId, Colour::fromString(fontColour));
         slider->setColour(Label::textColourId, Colour::fromString(fontColour));
-        slider->setColour(Label::backgroundColourId, CabbageUtils::getBackgroundSkin());
+        slider->setColour(Label::backgroundColourId, cUtils::getBackgroundSkin());
         slider->setColour(TextEditor::textColourId, Colour::fromString(fontColour));
         slider->setColour(Slider::textBoxTextColourId, Colour::fromString(fontColour));
 		slider->setColour(Slider::textBoxBackgroundColourId, Colours::black);
 		slider->setColour(Slider::textBoxHighlightColourId, Colours::white);
         slider->setColour(Slider::trackColourId, Colour::fromString(tracker));
 		
-        slider->setColour(Label::outlineColourId, CabbageUtils::getBackgroundSkin());
+        slider->setColour(Label::outlineColourId, cUtils::getBackgroundSkin());
         slider->setColour(Slider::Slider::rotarySliderOutlineColourId, Colour::fromString(outlineColour));
 
 
@@ -392,7 +392,7 @@ public:
         groupbox->setVisible(false);
         groupbox->getProperties().set("groupLine", var(1));
         groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontColour));
-        groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
+        groupbox->setColour(TextButton::buttonColourId, cUtils::getComponentSkin());
         slider->getProperties().set("decimalPlaces", decPlaces);
         slider->getProperties().set("trackerThickness", trackerThickness);
 		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));	
@@ -404,7 +404,7 @@ public:
         if(cAttr.getNumProp(CabbageIDs::min)==cAttr.getNumProp(CabbageIDs::max) 
 		|| cAttr.getNumProp(CabbageIDs::min)>cAttr.getNumProp(CabbageIDs::max))
         {
-            //CabbageUtils::showMessage("Your min value is the same or greater than your max value.\nCabbage will now reduce your min value so that it falls into range", &getLookAndFeel());
+            //cUtils::showMessage("Your min value is the same or greater than your max value.\nCabbage will now reduce your min value so that it falls into range", &getLookAndFeel());
             cAttr.setNumProp(CabbageIDs::min, cAttr.getNumProp(CabbageIDs::max)-.001);
         }
 
@@ -713,7 +713,7 @@ public:
         groupbox->setVisible(false);
         groupbox->getProperties().set("groupLine", var(1));
         groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
-        groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
+        groupbox->setColour(TextButton::buttonColourId, cUtils::getComponentSkin());
 
         button->setButtonText(buttonText);
         if(caption.length()>0)
@@ -888,7 +888,7 @@ public:
         combo->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
 
         groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
-        groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
+        groupbox->setColour(TextButton::buttonColourId, cUtils::getComponentSkin());
 
         if(caption.length()>0)
         {
@@ -920,7 +920,7 @@ public:
         {
             //appProperties->getUserSettings()->getValue("CsoundPluginDirectory");
             combo->clear(dontSendNotification);
-            //CabbageUtils::showMessage(cAttr.getStringProp(CabbageIDs::workingdir));
+            //cUtils::showMessage(cAttr.getStringProp(CabbageIDs::workingdir));
             File pluginDir(cAttr.getStringProp(CabbageIDs::workingdir));
 
             const String filetype = cAttr.getStringProp("filetype");
@@ -942,7 +942,7 @@ public:
             }
         }
         cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
-        //CabbageUtils::showMessage(cAttr.getStringArrayPropValue(CabbageIDs::text, 1));
+        //cUtils::showMessage(cAttr.getStringArrayPropValue(CabbageIDs::text, 1));
         combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);
 
     }
@@ -1255,7 +1255,7 @@ public:
         g.setColour (col);
         g.fillRoundedRectangle(0, 0, getWidth(), getHeight(), 1);
 
-        g.setColour (CabbageUtils::getBackgroundSkin());
+        g.setColour (cUtils::getBackgroundSkin());
         g.fillRoundedRectangle (0, 0, getWidth()-1, getHeight()-1, 1);
     }
 
@@ -1555,7 +1555,7 @@ public:
         g.setColour(Colour::fromString(colour));
         g.fillRoundedRectangle(getLocalBounds().toFloat(), 3.f);
         g.setColour(Colour::fromString(fontcolour));
-        g.setFont(CabbageUtils::getComponentFont());
+        g.setFont(cUtils::getComponentFont());
         g.setFont(getHeight());
         g.drawFittedText(text, 0, 0, getWidth(), getHeight(), textAlign, 1, 1);
     }
@@ -1668,7 +1668,7 @@ public:
         groupbox->setVisible(false);
         //outline colour ID
         groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
-        groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
+        groupbox->setColour(TextButton::buttonColourId, cUtils::getComponentSkin());
 
         if(caption.length()>0)
         {
@@ -1814,7 +1814,7 @@ public:
 
     void textEditorReturnKeyPressed (TextEditor&)
     {
-        //CabbageUtils::showMessage(editor->getText());
+        //cUtils::showMessage(editor->getText());
         strings.add(editor->getText());
         currentText = editor->getText();
         strings.removeDuplicates(false);
@@ -1952,7 +1952,7 @@ public:
         //----- For drawing the border
         if(type==CabbageIDs::csoundoutput)
         {
-            g.setColour(CabbageUtils::getComponentSkin());
+            g.setColour(cUtils::getComponentSkin());
             g.fillRoundedRectangle (0, -3, getWidth(), getHeight(), 5.f);
             //g.setColour(Colours::black);
             //g.fillRoundedRectangle(5, getHeight()-35, getWidth()-10, 20, 5.f);
@@ -2055,7 +2055,7 @@ public:
         groupbox->setVisible(false);
         //outline colour ID
         groupbox->setColour(GroupComponent::textColourId, Colours::white);
-        groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
+        groupbox->setColour(TextButton::buttonColourId, cUtils::getComponentSkin());
 
         if(caption.length()>0)
         {
@@ -2265,7 +2265,7 @@ public:
         groupbox->setVisible(false);
         groupbox->getProperties().set("groupLine", var(1));
         groupbox->setColour(GroupComponent::textColourId, fontcolour);
-        groupbox->setColour(TextButton::buttonColourId, CabbageUtils::getComponentSkin());
+        groupbox->setColour(TextButton::buttonColourId, cUtils::getComponentSkin());
 
         slider->setSliderStyle(Slider::LinearBarVertical);
         slider->setColour(Slider::trackColourId, colour);
@@ -2367,19 +2367,19 @@ public:
         //playButton->setState(Button::buttonDown);
         /*
         	playButton->setImages(false, true, true,
-        		CabbageUtils::drawSoundfilerButton("play_normal"), 1.0f, Colours::transparentBlack,
-        		CabbageUtils::drawSoundfilerButton("play_hover"), 1.0f, Colours::transparentBlack,
-        		CabbageUtils::drawSoundfilerButton("play_down"), 1.0f, Colours::transparentBlack);
+        		cUtils::drawSoundfilerButton("play_normal"), 1.0f, Colours::transparentBlack,
+        		cUtils::drawSoundfilerButton("play_hover"), 1.0f, Colours::transparentBlack,
+        		cUtils::drawSoundfilerButton("play_down"), 1.0f, Colours::transparentBlack);
 
         	skipToStartButton->setImages(false, true, true,
-        		CabbageUtils::drawSoundfilerButton("skip_start_normal"), 1.0f, Colours::transparentBlack,
-        		CabbageUtils::drawSoundfilerButton("skip_start_hover"), 1.0f, Colours::transparentBlack,
-        		CabbageUtils::drawSoundfilerButton("skip_start_down"), 1.0f, Colours::transparentBlack);
+        		cUtils::drawSoundfilerButton("skip_start_normal"), 1.0f, Colours::transparentBlack,
+        		cUtils::drawSoundfilerButton("skip_start_hover"), 1.0f, Colours::transparentBlack,
+        		cUtils::drawSoundfilerButton("skip_start_down"), 1.0f, Colours::transparentBlack);
 
         	skipToEndButton->setImages(false, true, true,
-        		CabbageUtils::drawSoundfilerButton("skip_end_normal"), 1.0f, Colours::transparentBlack,
-        		CabbageUtils::drawSoundfilerButton("skip_end_hover"), 1.0f, Colours::transparentBlack,
-        		CabbageUtils::drawSoundfilerButton("skip_end_down"), 1.0f, Colours::transparentBlack);
+        		cUtils::drawSoundfilerButton("skip_end_normal"), 1.0f, Colours::transparentBlack,
+        		cUtils::drawSoundfilerButton("skip_end_hover"), 1.0f, Colours::transparentBlack,
+        		cUtils::drawSoundfilerButton("skip_end_down"), 1.0f, Colours::transparentBlack);
         		 */
     }
 
@@ -2399,7 +2399,7 @@ public:
 
     void paint(Graphics& g)
     {
-        //g.setColour(CabbageUtils::getDarkerBackgroundSkin());
+        //g.setColour(cUtils::getDarkerBackgroundSkin());
         g.setColour(Colours::lightgrey);
         g.fillAll();
     }

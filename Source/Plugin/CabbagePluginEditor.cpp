@@ -638,7 +638,7 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
         evt.p[0]=0;
 		
 		
-//		CabbageUtils::debug("table->tableSize", table->tableSize);
+//		cUtils::debug("table->tableSize", table->tableSize);
 	
 
         //setting table number to 0.
@@ -1576,7 +1576,7 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
     if(getFilter()->compiledOk())
     {
         g.setColour (Colours::black);
-        //g.setColour (CabbageUtils::getBackgroundSkin());
+        //g.setColour (cUtils::getBackgroundSkin());
         g.fillAll();
 
         Image logo = ImageCache::getFromMemory (BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize);
@@ -1588,7 +1588,7 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
         g.setColour(formColour);
         g.fillAll();
 
-        g.setColour (CabbageUtils::getTitleFontColour().withAlpha(.3f));
+        g.setColour (cUtils::getTitleFontColour().withAlpha(.3f));
         Image logo = ImageCache::getFromMemory (BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize);
         g.drawImage (logo, getWidth() - 100, getHeight()-35, logo.getWidth()*0.55, logo.getHeight()*0.55,
                      0, 0, logo.getWidth(), logo.getHeight(), true);
@@ -1600,7 +1600,7 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 #else
     g.setColour(formColour);
     g.fillAll();
-    g.setColour (CabbageUtils::getTitleFontColour());
+    g.setColour (cUtils::getTitleFontColour());
 #ifndef Cabbage_Plugin_Host
     Image logo = ImageCache::getFromMemory (BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize);
     g.drawImage (logo, getWidth() - 100, getHeight()-35, logo.getWidth()*0.55, logo.getHeight()*0.55,
@@ -1849,12 +1849,12 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
     if(cAttr.getStringProp(CabbageIDs::colour).isNotEmpty())
         formColour = Colour::fromString(cAttr.getStringProp(CabbageIDs::colour));
     else
-        formColour = CabbageUtils::getBackgroundSkin();
+        formColour = cUtils::getBackgroundSkin();
 
     if(cAttr.getStringProp(CabbageIDs::fontcolour).isNotEmpty())
         fontColour = Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour));
     else
-        fontColour = CabbageUtils::getComponentFontColour();
+        fontColour = cUtils::getComponentFontColour();
     authorText = cAttr.getStringProp("author");
 
 #ifdef Cabbage_Build_Standalone
@@ -2156,13 +2156,17 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
             tableValues.clear();
             tableValues = getFilter()->getTableFloats(tableNumber);
 
+			Array<float> ampRange = getAmpRangeArray(cAttr.getFloatArrayProp("amprange"), tableNumber);
+			
+			
+
 			if(getFilter()->compiledOk()==OK)
 			{
 
 				table->addTable(44100, 
 								cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), 
 								(tableValues.size()>=MAX_TABLE_SIZE ? 1 : genRoutine),
-								cAttr.getFloatArrayProp("amprange"),
+								ampRange,
 								tableNumber, this);
 								
 				if(abs(genRoutine)==1 || tableValues.size()>=MAX_TABLE_SIZE)
@@ -2577,7 +2581,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                     file.append("/", 5);
                     file.append(button->getProperties().getWithDefault("filename", ""), 1024);
                     if(!process.start("xdg-open "+file))
-                        CabbageUtils::showMessage("Couldn't show file", &getLookAndFeel());
+                        cUtils::showMessage("Couldn't show file", &getLookAndFeel());
 #else
                     file.append("\\", 5);
                     file.append(button->getProperties().getWithDefault("filename", ""), 1024);
@@ -2691,7 +2695,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                     //determine whether to poen file or directory
                                     if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="file")
                                     {
-										Array<File> selectedFiles = CabbageUtils::launchFileBrowser("Open a file", 
+										Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file", 
 																									wildcardFilter, 
 																									1, 
 																									directory, 
@@ -2700,7 +2704,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                         if(selectedFiles.size())
                                         {
                                             selectedFile = selectedFiles[0];
-											//CabbageUtils::debug(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel));
+											//cUtils::debug(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel));
                                             getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
                                                     selectedFile.getFullPathName().replace("\\", "\\\\"),
                                                     "string");
@@ -2710,7 +2714,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 
                                     else if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="directory")
                                     {
-										Array<File> selectedFiles = CabbageUtils::launchFileBrowser("Open a file", 
+										Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file", 
 																									wildcardFilter, 
 																									2, 
 																									directory, 
@@ -2730,7 +2734,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                 else
                                 {
 
-									Array<File> selectedFiles = CabbageUtils::launchFileBrowser("Select a file to save", 
+									Array<File> selectedFiles = cUtils::launchFileBrowser("Select a file to save", 
 																								wildcardFilter, 
 																								0, 
 																								directory, 

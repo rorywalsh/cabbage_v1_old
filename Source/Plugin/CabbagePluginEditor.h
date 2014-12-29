@@ -110,7 +110,7 @@ public:
 // main GUI editor window
 //==============================================================================
 class CabbagePluginAudioProcessorEditor  : public AudioProcessorEditor,
-    public CabbageUtils,
+    public cUtils,
     public SliderListener,
     public ComboBoxListener,
     public ButtonListener,

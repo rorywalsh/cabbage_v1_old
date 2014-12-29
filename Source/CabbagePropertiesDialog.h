@@ -317,13 +317,13 @@ public :
     void paint(Graphics &g)
     {
         g.fillAll(Colours::black);
-        g.setColour(CabbageUtils::getBorderColour());
-        float borderWidth = CabbageUtils::getBorderWidth();
+        g.setColour(cUtils::getBorderColour());
+        float borderWidth = cUtils::getBorderWidth();
         g.fillRoundedRectangle(0.f, 0.f, getWidth()-borderWidth, getHeight()-borderWidth,  getHeight()*0.1);
         g.setColour(colour);
         g.fillRoundedRectangle(2.f, 2.f, getWidth()-borderWidth-2, getHeight()-borderWidth-2,  getHeight()*0.1);
         g.setColour (colour.contrasting());
-        g.setFont (CabbageUtils::getComponentFont());
+        g.setFont (cUtils::getComponentFont());
         const juce::Rectangle<int> r (5, 0, getWidth()-1, getHeight()+1);
         g.drawFittedText(colour.toString(), r, Justification::centred, 2);
     }
@@ -506,7 +506,7 @@ public :
 		{
 		//wildcardFilter = WildcardFileFilter("*", directory.getFullPathName(), "File fitler");
 
-		Array<File> selectedFiles = CabbageUtils::launchFileBrowser("Select a file", 
+		Array<File> selectedFiles = cUtils::launchFileBrowser("Select a file", 
 																	wildcardFilter, 
 																	1, 
 																	File(""), 
@@ -570,7 +570,7 @@ public:
     void paint(Graphics &g)
     {
         g.setColour (Colours::white);
-        g.setFont (CabbageUtils::getComponentFont());
+        g.setFont (cUtils::getComponentFont());
         const juce::Rectangle<int> r (5, 0, getWidth(), getHeight());
 
         if(value.size()>0)

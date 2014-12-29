@@ -95,7 +95,7 @@ public:
 
     void paintRowBackground (Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
     {
-        g.fillAll (CabbageUtils::getBackgroundSkin());
+        g.fillAll (cUtils::getBackgroundSkin());
         g.setFont (font);
         g.setColour(Colours::white);
         //g.drawText (rowData[rowNumber], 2, 0, width - 4, height, Justification::centredLeft, true);

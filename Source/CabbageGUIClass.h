@@ -80,8 +80,7 @@ public:
         add("align");
         add("beveltype");
         add("wrap");
-        //add(" mode(");
-        //add(",mode(");
+		add("backgroundcolour");
         add("mode");
         add("tablenumber");
         add("tablenum");
@@ -283,7 +282,7 @@ static const String csoundoutput = "csoundoutput";
 
 
 
-class CabbageGUIClass : public CabbageUtils
+class CabbageGUIClass : public cUtils
 {
     double width, height, top, left;
     /*, isRect, min, max, minX, minY, maxX, tabbed, maxY, comboRange, fftSize, overlapSize, frameSize,
@@ -295,15 +294,16 @@ class CabbageGUIClass : public CabbageUtils
     Array<int> tableNumbers;
     Array<float> tableChannelValues;
 	IdentArray identArray;
+	String warningMessages;
 
     //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGUIClass);
 public:
-    //constructor
+    String getWarningMessages(){	return warningMessages;	};
     NamedValueSet cabbageIdentifiers;
     CabbageGUIClass(String str, int ID);
     CabbageGUIClass() {};
     ~CabbageGUIClass();
-    int parse(String str, String identifier);
+    String parse(String str, String identifier);
     float getNumProp(Identifier prop);
     void setNumProp(Identifier prop, float val);
     void setTableChannelValues(int index, float val);

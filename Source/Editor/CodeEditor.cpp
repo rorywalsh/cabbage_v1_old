@@ -80,7 +80,7 @@ int CsoundCodeEditor::saveAllFiles()
         if(editor[i]->getDocument().hasChangedSinceSavePoint())
         {
             String message = File(openFiles[i]).getFileName()+String(" has changed. Would like to save your changes?");
-            result = CabbageUtils::showYesNoMessage(message, &this->getLookAndFeel(), 1);
+            result = cUtils::showYesNoMessage(message, &this->getLookAndFeel(), 1);
             if(result==0)
             {
                 File(openFiles[i]).replaceWithText(editor[i]->getAllText());
@@ -155,7 +155,7 @@ void CsoundCodeEditor::resized()
 //==============================================================================
 void CsoundCodeEditor::paint(Graphics& g)
 {
-    g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
+    g.fillAll(cUtils::getDarkerBackgroundSkin());
     if(editor[currentEditor] != 0)
     {
         g.setColour(juce::Colours::white);
@@ -384,7 +384,7 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
         else if(button->type=="Aux")
         {
             currentEditor = button->currentTab;
-            //CabbageUtils::showMessage(currentEditor);
+            //cUtils::showMessage(currentEditor);
             editor[currentEditor]->toFront(true);
             editor[currentEditor]->enableColumnEditMode(false);
             button->isActive(true);
@@ -505,7 +505,7 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
             else
                 breakpointLines.removeAllInstancesOf(lineNumber+1);
 
-        //CabbageUtils::showMessage(breakpointLines.size());
+        //cUtils::showMessage(breakpointLines.size());
 
         sendActionMessage(message);
         repaint();
@@ -537,7 +537,7 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
 
     document.addListener(this);
     setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(35, 35, 35));
-    setColour(CodeEditorComponent::lineNumberBackgroundId, CabbageUtils::getDarkerBackgroundSkin());
+    setColour(CodeEditorComponent::lineNumberBackgroundId, cUtils::getDarkerBackgroundSkin());
     //toggle this when in column-edit mode
     setColour(CodeEditorComponent::highlightColourId, Colours::lime.withAlpha(.3f));
     setColour(CaretComponent::caretColourId, Colours::white);
@@ -548,8 +548,8 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
     setColour(CodeEditorComponent::lineNumberTextId, Colours::whitesmoke);
     setLineNumbersShown(false);
 
-    fontSize = (CabbageUtils::getPreference(appProperties, "FontSize")>7 ?
-                CabbageUtils::getPreference(appProperties, "FontSize") : 13);
+    fontSize = (cUtils::getPreference(appProperties, "FontSize")>7 ?
+                cUtils::getPreference(appProperties, "FontSize") : 13);
 
 #if defined(WIN32)
     setFont(Font(String("Consolas"), fontSize, 1));
@@ -630,12 +630,12 @@ void CsoundCodeEditorComponenet::mouseWheelMove (const MouseEvent& e, const Mous
     if(e.mods.isCommandDown() && mouse.deltaY>0)
     {
         setFont(Font(font, (fontSize<100 ? ++fontSize : 100), 1));
-        CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
+        cUtils::setPreference(appProperties, "FontSize", String(fontSize));
     }
     else if(e.mods.isCommandDown() && mouse.deltaY<0)
     {
         setFont(Font(font, (fontSize>8 ? --fontSize : 8), 1));
-        CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
+        cUtils::setPreference(appProperties, "FontSize", String(fontSize));
     }
     else
     {

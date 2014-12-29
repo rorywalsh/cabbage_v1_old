@@ -359,7 +359,7 @@ void Table::paint (Graphics& g)
                 topYPixelValue -= (minGap-diff)/2;
             }
 
-            if (CabbageUtils::isNumber(topYPixelValue) && CabbageUtils::isNumber(bottomYPixelValue))
+            if (cUtils::isNumber(topYPixelValue) && cUtils::isNumber(bottomYPixelValue))
             {
                 g.setColour(currColour);
                 topYPixelValue -= minWaveHeight/2;
@@ -554,8 +554,8 @@ void Table::paint (Graphics& g)
     if(onTop){
     String text = "ftable:"+String(tableNumber);
     g.setColour(currColour);
-    g.setFont(CabbageUtils::getComponentFont());
-    int length = CabbageUtils::getComponentFont().getStringWidth(text)+10;
+    g.setFont(cUtils::getComponentFont());
+    int length = cUtils::getComponentFont().getStringWidth(text)+10;
     g.drawText(text, getWidth()-length,
     					   2,
     					   length, 12,
@@ -815,7 +815,7 @@ Table* CabbageTableManager::getTable(int index)
 
 void CabbageTableManager::paint(Graphics& g)
 {
-    g.setColour(CabbageUtils::getDarkerBackgroundSkin());
+    g.setColour(cUtils::getDarkerBackgroundSkin());
     g.fillAll();
     //this needs to be updated so that we can stables on top of each other
     if(toggleMode)

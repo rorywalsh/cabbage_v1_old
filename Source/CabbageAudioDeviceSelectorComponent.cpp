@@ -91,7 +91,7 @@ public:
                            int width, int height,
                            bool rowIsSelected)
     {
-        g.fillAll(CabbageUtils::getBackgroundSkin());
+        g.fillAll(cUtils::getBackgroundSkin());
         if (isPositiveAndBelow (row, items.size()))
         {
             if (rowIsSelected)
@@ -133,7 +133,7 @@ public:
 
     void paint (Graphics& g) override
     {
-        g.fillAll(CabbageUtils::getBackgroundSkin());
+        g.fillAll(cUtils::getBackgroundSkin());
         ListBox::paint (g);
 
         if (items.size() == 0)
@@ -164,8 +164,8 @@ private:
         if (isPositiveAndBelow (row, items.size()))
         {
             const String item (items [row]);
-            //CabbageUtils::showMessage(item);
-            //CabbageUtils::setPreference(appProperties, "MIDI Device", item);
+            //cUtils::showMessage(item);
+            //cUtils::setPreference(appProperties, "MIDI Device", item);
             deviceManager.setMidiInputEnabled (item, ! deviceManager.isMidiInputEnabled (item));
         }
     }
@@ -721,7 +721,7 @@ public:
 
         void paintListBoxItem (int row, Graphics& g, int width, int height, bool rowIsSelected) override
         {
-            g.fillAll(CabbageUtils::getBackgroundSkin());
+            g.fillAll(cUtils::getBackgroundSkin());
             if (isPositiveAndBelow (row, items.size()))
             {
                 if (rowIsSelected)
@@ -781,7 +781,7 @@ public:
 
         void paint (Graphics& g) override
         {
-            g.fillAll(CabbageUtils::getBackgroundSkin());
+            g.fillAll(cUtils::getBackgroundSkin());
             ListBox::paint (g);
 
             if (items.size() == 0)

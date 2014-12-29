@@ -501,6 +501,8 @@ void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRang
 //==============================================================================
 void GenTable::setAmpRanges(Array<float> ampRange)
 {
+	cUtils::debug(ampRange.size());
+	cUtils::debug(tableNumber);
     if(ampRange.size()>2)
     {
         if(ampRange[2]==tableNumber || ampRange[2]==0)
@@ -823,7 +825,7 @@ const Image GenTable::drawGridImage(bool redraw, double width, double height, do
 		//draw grid image
 		for(double i=0;i<waveformBuffer.size();i++)
 		{
-		g.drawImageAt(CabbageUtils::drawToggleImage(widthOfGridElement-3.f, 
+		g.drawImageAt(cUtils::drawToggleImage(widthOfGridElement-3.f, 
 													height, 
 													(waveformBuffer[i]>0.0 ? true : false), 
 													colour, 
@@ -980,7 +982,7 @@ void GenTable::paint (Graphics& g)
 				//when qsteps == 1 we draw a grid
 				if(qsteps==1)
 				{
-					if(CabbageUtils::compDouble(i, gridIndex))
+					if(cUtils::compDouble(i, gridIndex))
 					{
 						gridIndex++;
 						g.drawImageAt(drawGridImage(true, handleViewer->getWidth(), thumbHeight-4, handleViewer->getX()), 0, 0, false);
@@ -1206,7 +1208,7 @@ void HandleViewer::showHandles(bool show)
     	shouldShowHandles = show;
     	for (int i=0; i<handles.size(); i++)
     	{
-    		handles[i]->setColour(Colours::transparentBlack);
+    		//handles[i]->setColour(Colours::transparentBlack);
     	}
 }
 //==============================================================================
@@ -1247,7 +1249,7 @@ void HandleViewer::positionHandle(const MouseEvent& e)
 		{			
 			if(steps==1) 	//if toggle mode is enabled..
 			{
-				//CabbageUtils::debug(getSnapYPosition(getHeight()*int(handles[i]->status));
+				//cUtils::debug(getSnapYPosition(getHeight()*int(handles[i]->status));
 				handles[i]->status=!handles[i]->status;
 				handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapYPosition(getHeight()*int(handles[i]->status))));
 				handles[i]->setRelativePosition(handles[i]->getPosition().toDouble().withY(getSnapYPosition(getHeight()*double(handles[i]->status))));
@@ -1324,10 +1326,10 @@ void HandleViewer::resized()
 		handles[i]->setPosition(((double)getWidth()*handles[i]->xPosRelative), ((double)getHeight()*handles[i]->yPosRelative), (handleWidth==FIXED_WIDTH ? true : false));
 
 		if(handles[i]->getWidth()>15)
-		
+			showHandles(false);
 		
 		//handles[i]->setVisible(false);
-		showHandles(false);
+		
     }
 }
 //==============================================================================
@@ -1395,8 +1397,8 @@ void HandleViewer::removeHandle (HandleComponent* thisHandle)
         handles[0]->sendChangeMessage();
 }
 //==================================================================================
-HandleComponent::HandleComponent(double xPos, double yPos, int _index, bool fixed, int gen, Colour colour):
-    index(_index), x(0), y(0), colour(colour), fixed(fixed), status(false)
+HandleComponent::HandleComponent(double xPos, double yPos, int _index, bool fixed, int gen, Colour _colour):
+    index(_index), x(0), y(0), colour(_colour), fixed(fixed), status(false)
 {
     //our main handle object. xPos and xPos are always between 0 and 1
     //we convert them to pixel positions later, based on the size of the handleViewer
@@ -1418,21 +1420,18 @@ void HandleComponent::setColour(Colour icolour)
 
 void HandleComponent::paint (Graphics& g)
 {
-    g.setColour(Colours::transparentBlack);
+    //g.setColour(Colours::transparentBlack);
 	if(abs(genRoutine)!=2)
     {
-		g.setColour(colour.withAlpha(.5f));
 		//g.drawLine(0, (getHeight()/2.f), getWidth(), (getHeight()/2.f), 1.f);
 		//g.drawLine(getWidth()/2.f, 0, getWidth()/2.f, getHeight(), 1.f);
 		g.setColour(colour);
 		if(getWidth()<=15)
 		{
-		g.setColour(colour.withAlpha(.4f));
-			
+		//g.setColour(colour.withAlpha(.4f));	
 		//g.drawLine(0, 7, getWidth(), 7, 1);
 		//g.drawLine(7, 0, 7, getHeight(), 1);
-		g.drawEllipse(3, 3, 9, 9, 1);
-		
+		g.drawEllipse(3, 3, 9, 9, 1);		
 		}
 		else
 		{

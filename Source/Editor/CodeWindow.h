@@ -36,7 +36,7 @@ public:
     {
         textEditor = new TextEditor();
         textEditor->setColour(Label::outlineColourId, Colours::white);
-        textEditor->setColour(TextEditor::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
+        textEditor->setColour(TextEditor::backgroundColourId, cUtils::getDarkerBackgroundSkin());
         textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
         textEditor->setMultiLine(true);
         textEditor->setFont(Font("Arial", 14, 0));
@@ -66,7 +66,7 @@ public:
 
     void paint(Graphics& g)
     {
-        g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
+        g.fillAll(cUtils::getDarkerBackgroundSkin());
         g.setColour(Colours::white);
         g.drawRoundedRectangle(getLocalBounds().toFloat(), 2, 2);
         g.drawFittedText("Csound output", getLocalBounds().withHeight(18), Justification::centred, 1, 1.f);
@@ -83,7 +83,7 @@ public:
     {
         textEditor = new TextEditor();
         textEditor->setColour(Label::outlineColourId, Colours::white);
-        textEditor->setColour(TextEditor::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
+        textEditor->setColour(TextEditor::backgroundColourId, cUtils::getDarkerBackgroundSkin());
         textEditor->setColour(TextEditor::textColourId, Colours::white);
         textEditor->setMultiLine(true);
 #if defined(WIN32)
@@ -138,7 +138,7 @@ public:
 
     void paint(Graphics& g)
     {
-        g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
+        g.fillAll(cUtils::getDarkerBackgroundSkin());
         g.setColour(Colours::white);
         g.drawRoundedRectangle(getLocalBounds().toFloat(), 2, 2);
         g.drawFittedText("Debugger output", getLocalBounds().withHeight(18), Justification::centred, 1, 1.f);

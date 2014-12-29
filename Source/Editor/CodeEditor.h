@@ -374,7 +374,7 @@ public:
 
     void paint(Graphics& g)
     {
-        g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
+        g.fillAll(cUtils::getDarkerBackgroundSkin());
     }
 
     void resized()

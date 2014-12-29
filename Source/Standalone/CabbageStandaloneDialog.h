@@ -82,7 +82,7 @@ public:
 class StandaloneFilterWindow    :   public DocumentWindow,
     public Button::Listener,
     public ChangeListener,
-    public CabbageUtils,
+    public cUtils,
     public Timer,
     public ActionListener,
     public KeyListener

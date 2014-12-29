@@ -182,12 +182,12 @@ table {
 }
 
 html, body {
-    font-size: 100%;
+    font-size: 90%;
 }
 
 body {
-    background: #dddddd;
-    color: #444444;
+    background: #111111;
+    color: #888888;
     padding: 0;
     margin: 0;
     font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
@@ -321,7 +321,7 @@ h1, h2, h3, #toctitle, .sidebarblock > .content > .title, h4, h5, h6 {
     font-family: Georgia, "URW Bookman L", Helvetica, Arial, sans-serif;
     font-weight: normal;
     font-style: normal;
-    color: #222222;
+    color: #dddddd;
     text-rendering: optimizeLegibility;
     margin-top: 1em;
     margin-bottom: 0.5em;
@@ -330,7 +330,7 @@ h1, h2, h3, #toctitle, .sidebarblock > .content > .title, h4, h5, h6 {
 
 h1 small, h2 small, h3 small, #toctitle small, .sidebarblock > .content > .title small, h4 small, h5 small, h6 small {
     font-size: 60%;
-    color: #222222;
+    color: #ffffff;
     line-height: 0;
 }
 
@@ -657,7 +657,7 @@ table thead tr th, table tfoot tr th, table tbody tr td, table tr td, table tfoo
 
 pre, pre > code {
     line-height: 1.4;
-    color: lime;
+    color: white;
     background-color: #444444;
     border-radius: 4px;
     font-family: Consolas, "Liberation Mono", Courier, monospace;
@@ -787,7 +787,7 @@ p a > code:hover {
 }
 
 #toctitle {
-    color: #222222;
+    color: white;
 }
 
 @media only screen and (min-width: 1280px) {
@@ -967,7 +967,7 @@ table.tableblock #preamble > .sectionbody > .paragraph:first-of-type p {
     padding-left: 1.125em;
     padding-right: 1.25em;
     border-left: 1px solid #dddddd;
-    color: #444444;
+    color: green;
 }
 
 .admonitionblock > table td.content > :last-child > :last-child {

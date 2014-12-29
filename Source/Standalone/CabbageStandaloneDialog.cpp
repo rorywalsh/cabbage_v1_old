@@ -860,11 +860,13 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         subMenu.clear();
         subMenu.addItem(11, TRANS("Effects"));
         subMenu.addItem(12, TRANS("Synths"));
+#ifdef WIN32
         m.addSubMenu("Batch Convert (Multiple)", subMenu);
         subMenu.clear();
         subMenu.addItem(13, TRANS("Effects"));
         subMenu.addItem(14, TRANS("Synths"));
         m.addSubMenu("Batch Convert (Directory)", subMenu);
+#endif
 #endif
         m.addSeparator();
     }
@@ -899,7 +901,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         //preferences....
         subMenu.addItem(203, "Set Cabbage Plant Directory");
         subMenu.addItem(200, "Set Csound Manual Directory");
-        subMenu.addItem(205, "Set Examples Directory");
+//        subMenu.addItem(205, "Set Examples Directory");
         if(!getPreference(appProperties, "DisablePluginInfo"))
             subMenu.addItem(201, String("Disable Export Plugin Info"), true, false);
         else
@@ -974,14 +976,14 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     else if(options==2000)
     {
         String credits = "				Rory Walsh, Copyright (2008)\n\n";
-        credits.append("\t\t\t\tCabbage Farmers:\n", 2056);
+        credits.append("\t\t\t\tSpecial thanks to:\n", 2056);
         credits.append("\t\t\t\t\tIain McCurdy\n", 2056);
         credits.append("\t\t\t\t\tDamien Rennick\n\n", 2056);
         credits.append("\t\t\t\t\tGiorgio Zucco\n", 2056);
         credits.append("\t\t\t\t\tNil Geisweiller\n", 2056);
         credits.append("\t\t\t\t\tDave Philips\n", 2056);
         credits.append("\t\t\t\t\tEamon Brady\n\n", 2056);
-        credits.append("\t\t\t\tUsers Forum:\n", 2056);
+        credits.append("\t\t\t\tUser Forum:\n", 2056);
         credits.append("\t\t\t\t\twww.thecabbagefoundation.org", 2056);
         String title(CABBAGE_VERSION);
         m_ShowMessage(credits, lookAndFeel, "			"+title);
@@ -1477,9 +1479,9 @@ void StandaloneFilterWindow::openFile(String _csdfile)
         }
 #else
 		this->setAlwaysOnTop(false);
-		bool showNative = CabbageUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
 		wildcardFilter = WildcardFileFilter("*.csd", "*", ".csd Files");
-		Array<File> selectedFile = CabbageUtils::launchFileBrowser("Open a .csd file", wildcardFilter, 1, File("*"), showNative, &getLookAndFeel());
+		Array<File> selectedFile = cUtils::launchFileBrowser("Open a .csd file", wildcardFilter, 1, File("*"), showNative, &getLookAndFeel());
       
         if(selectedFile.size()>0)
         {
@@ -1569,8 +1571,8 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
     }
 #ifdef LINUX
     //FileChooser saveFC(String("Save as..."), File::nonexistent, String(""), UseNativeDialogue);
-	bool showNative = CabbageUtils::getPreference(appProperties, "ShowNativeFileDialogues");
-	Array<File> selectedFile = CabbageUtils::launchFileBrowser("Save a file..", wildcardFilter, 0, File("*"), showNative, &getLookAndFeel());
+	bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+	Array<File> selectedFile = cUtils::launchFileBrowser("Save a file..", wildcardFilter, 0, File("*"), showNative, &getLookAndFeel());
  
     String VST;
     Logger::writeToLog(currentApplicationDirectory);

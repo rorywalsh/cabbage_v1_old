@@ -73,27 +73,27 @@ static TextLayout layoutTooltipText (const String& text, Colour colour) noexcept
 //main Cabbage look and feel class
 CabbageLookAndFeel::CabbageLookAndFeel()
 {
-    setColour(AlertWindow::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
+    setColour(AlertWindow::backgroundColourId, cUtils::getDarkerBackgroundSkin());
     setColour(AlertWindow::textColourId, Colour(200, 200, 200));
     setColour(AlertWindow::outlineColourId, Colours::whitesmoke);
     setColour(DirectoryContentsDisplayComponent::textColourId, Colours::black);
     setColour(DirectoryContentsDisplayComponent::highlightColourId, Colours::whitesmoke);
-	setColour(ListBox::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
-    setColour(Label::textColourId, CabbageUtils::getComponentFontColour());
-    setColour(TextButton::textColourOnId, CabbageUtils::getComponentFontColour());
-    setColour(TextButton::textColourOffId, CabbageUtils::getComponentFontColour());
+	setColour(ListBox::backgroundColourId, cUtils::getDarkerBackgroundSkin());
+    setColour(Label::textColourId, cUtils::getComponentFontColour());
+    setColour(TextButton::textColourOnId, cUtils::getComponentFontColour());
+    setColour(TextButton::textColourOffId, cUtils::getComponentFontColour());
     setColour(TextButton::buttonColourId, Colour(20, 20, 20));
-    setColour(ComboBox::textColourId, CabbageUtils::getComponentFontColour());
-    setColour(ComboBox::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
+    setColour(ComboBox::textColourId, cUtils::getComponentFontColour());
+    setColour(ComboBox::backgroundColourId, cUtils::getDarkerBackgroundSkin());
     setColour(ScrollBar::trackColourId, Colours::transparentBlack);
-    setColour(ScrollBar::thumbColourId, CabbageUtils::getComponentSkin());
-    setColour(TooltipWindow::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
+    setColour(ScrollBar::thumbColourId, cUtils::getComponentSkin());
+    setColour(TooltipWindow::backgroundColourId, cUtils::getDarkerBackgroundSkin());
 	
 	
-		setColour(ListBox::outlineColourId, CabbageUtils::getDarkerBackgroundSkin());
+		setColour(ListBox::outlineColourId, cUtils::getDarkerBackgroundSkin());
 		//browserComponent.setColour(Label::backgroundColourId, Colours::cornflowerblue);
 		//setColour(ListBox::textColourId, Colours::cornflowerblue);
-		setColour(TextEditor::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
+		setColour(TextEditor::backgroundColourId, cUtils::getDarkerBackgroundSkin());
 		setColour(TextEditor::textColourId, Colours::white);
 		setColour(TextEditor::highlightedTextColourId, Colours::lime);
 		setColour(TextEditor::shadowColourId, Colours::pink);
@@ -217,7 +217,7 @@ AttributedString CabbageLookAndFeel::createFileChooserHeaderText (const String& 
     AttributedString s;
     s.setJustification (Justification::centred);
 
-    const Colour colour (CabbageUtils::getComponentFontColour());
+    const Colour colour (cUtils::getComponentFontColour());
     s.append (title + "\n\n", Font (17.0f, Font::bold), colour);
     s.append (instructions, Font (14.0f), colour);
 
@@ -879,7 +879,7 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
             sliderHeight = sliderRadius * 2.0f;
         }
 
-        CabbageUtils::drawSphericalThumb (g,
+        cUtils::drawSphericalThumb (g,
                             kx - sliderRadius,
                             ky - sliderRadius,
                             sliderWidth,
@@ -890,7 +890,7 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
     {
         if (style == Slider::ThreeValueVertical)
         {
-            CabbageUtils::drawSphericalThumb (g, x + width * 0.5f - sliderRadius,
+            cUtils::drawSphericalThumb (g, x + width * 0.5f - sliderRadius,
                                 sliderPos - sliderRadius,
                                 sliderRadius * 2.0f,
                                 sliderRadius * 2.0f,
@@ -898,7 +898,7 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
         }
         else if (style == Slider::ThreeValueHorizontal)
         {
-            CabbageUtils::drawSphericalThumb (g,sliderPos - sliderRadius * 0.75f,
+            cUtils::drawSphericalThumb (g,sliderPos - sliderRadius * 0.75f,
                                 y + height * 0.5f - sliderRadius,
                                 sliderRadius * 1.5f,
                                 sliderRadius * 2.0f,
@@ -909,22 +909,22 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
         {
             const float sr = jmin (sliderRadius, width * 0.4f);
 
-            CabbageUtils::drawGlassPointer (g, jmax (0.0f, x + width * 0.5f - sliderRadius * 2.0f),
+            cUtils::drawGlassPointer (g, jmax (0.0f, x + width * 0.5f - sliderRadius * 2.0f),
                               minSliderPos - sliderRadius,
                               sliderRadius * 2.0f, knobColour, outlineThickness, 1);
 
-            CabbageUtils::drawGlassPointer (g, jmin (x + width - sliderRadius * 2.0f, x + width * 0.5f), maxSliderPos - sr,
+            cUtils::drawGlassPointer (g, jmin (x + width - sliderRadius * 2.0f, x + width * 0.5f), maxSliderPos - sr,
                               sliderRadius * 2.0f, knobColour, outlineThickness, 3);
         }
         else if (style == Slider::TwoValueHorizontal || style == Slider::ThreeValueHorizontal)
         {
             const float sr = jmin (sliderRadius, height * 0.4f);
 
-            CabbageUtils::drawGlassPointer (g, minSliderPos - sr,
+            cUtils::drawGlassPointer (g, minSliderPos - sr,
                               jmax (0.0f, y + height * 0.5f - sliderRadius * 2.0f),
                               sliderRadius * 2.0f, knobColour, outlineThickness, 2);
 
-           CabbageUtils::drawGlassPointer (g, maxSliderPos - sliderRadius,
+           cUtils::drawGlassPointer (g, maxSliderPos - sliderRadius,
                               jmin (y + height - sliderRadius * 2.0f, y + height * 0.5f),
                               sliderRadius * 2.0f, knobColour, outlineThickness, 4);
         }
@@ -957,9 +957,9 @@ void CabbageLookAndFeel::drawToggleButton (Graphics &g, ToggleButton &button, bo
     //----- Creating the image
     Image newButton;
     if(!button.getToggleState())
-        newButton = CabbageUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonColourId), isRECT, svgPath);
+        newButton = cUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonColourId), isRECT, svgPath);
     else
-        newButton = CabbageUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonOnColourId), isRECT, svgPath);
+        newButton = cUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonOnColourId), isRECT, svgPath);
 
 
 
@@ -970,12 +970,12 @@ void CabbageLookAndFeel::drawToggleButton (Graphics &g, ToggleButton &button, bo
     if (button.getButtonText().length() > 0)
     {
         Justification just (1); //left
-        //g.setFont (CabbageUtils::getComponentFont());
+        //g.setFont (cUtils::getComponentFont());
         g.setColour (button.findColour(ToggleButton::textColourId));
         //g.setColour(Colours::white);
         String name;
         name << button.getButtonText();
-        name = CabbageUtils::cabbageString (name, CabbageUtils::getComponentFont(), (button.getWidth()-(destWidth+5))); //shortening string if too long
+        name = cUtils::cabbageString (name, cUtils::getComponentFont(), (button.getWidth()-(destWidth+5))); //shortening string if too long
 
         g.drawText (name, destWidth+5, destY, button.getWidth(), button.getHeight(), just, false);
     }
@@ -1006,10 +1006,10 @@ void CabbageLookAndFeel::drawButtonText (Graphics &g, TextButton &button, bool i
     float height = button.getHeight();
     float destX;
     float destWidth = width*0.8;
-    Font font = CabbageUtils::getComponentFont();
+    Font font = cUtils::getComponentFont();
     String text;
     text << button.getButtonText();
-    text = CabbageUtils::cabbageString (text, font, destWidth);
+    text = cUtils::cabbageString (text, font, destWidth);
     Justification just (36); //centered
     float destY = (height*0.5) - (font.getHeight()*0.5);
 
@@ -1045,7 +1045,7 @@ void CabbageLookAndFeel::drawComboBox(Graphics& g, int width, int height, bool /
                                       ComboBox& box)
 {
     // The box that contains the arrow
-    g.setColour(CabbageUtils::getComponentFontColour());
+    g.setColour(cUtils::getComponentFontColour());
     float arrowBoxWidth;
     if (width >= 40)
         arrowBoxWidth = 20;
@@ -1057,8 +1057,8 @@ void CabbageLookAndFeel::drawComboBox(Graphics& g, int width, int height, bool /
     g.fillRoundedRectangle (0, 0, width, height, height*0.1);
 
     // Border outline
-    g.setColour(CabbageUtils::getBorderColour());
-    float borderWidth = CabbageUtils::getBorderWidth();
+    g.setColour(cUtils::getBorderColour());
+    float borderWidth = cUtils::getBorderWidth();
     g.drawRoundedRectangle (borderWidth/2, borderWidth/2, width-borderWidth,
                             height-borderWidth, height*0.1, borderWidth);
 
@@ -1164,7 +1164,7 @@ void CabbageLookAndFeel::drawGroupComponentOutline (Graphics &g, int w, int h, c
         g.fillRoundedRectangle (0, 0, w, h, 5);
 
         //----- Outline
-        g.setColour (CabbageUtils::getComponentFontColour());
+        g.setColour (cUtils::getComponentFontColour());
         g.setOpacity (0.1);
         g.drawRoundedRectangle (0.5, 0.5, w-1, h-1, 5, 1);
 
@@ -1177,14 +1177,14 @@ void CabbageLookAndFeel::drawGroupComponentOutline (Graphics &g, int w, int h, c
 
     //----- Text
     String name = group.getText();
-    Font font = CabbageUtils::getTitleFont();
+    Font font = cUtils::getTitleFont();
 #ifndef MACOSX
     font.setFallbackFontName("Verdana");
 #endif
     g.setFont (font);
 
     g.setColour (group.findColour(GroupComponent::textColourId));
-    name = CabbageUtils::cabbageString (name, font, group.getWidth());
+    name = cUtils::cabbageString (name, font, group.getWidth());
     g.drawText (name, 0, 5, w, font.getHeight(), 36, false);
 }
 
@@ -1200,7 +1200,7 @@ void CabbageLookAndFeel::drawScrollbar (Graphics &g, ScrollBar &scrollbar, int x
     g.setColour (Colours::transparentBlack.withAlpha(0.f));
     g.fillAll();
 
-    g.setColour (CabbageUtils::getComponentSkin().withAlpha(.5f));
+    g.setColour (cUtils::getComponentSkin().withAlpha(.5f));
     g.drawRect (x, y, width, height);
 
     if (isScrollbarVertical == false) //horizontal
@@ -1222,7 +1222,7 @@ void CabbageLookAndFeel::drawStretchableLayoutResizerBar (Graphics& g, int w, in
         bool isMouseDragging)
 {
     float alpha = 0.5f;
-    g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
+    g.fillAll(cUtils::getDarkerBackgroundSkin());
     if (isMouseOver || isMouseDragging)
     {
         g.fillAll (Colour (40, 40, 40));
@@ -1248,9 +1248,9 @@ void CabbageLookAndFeel::drawScrollbarButton (Graphics &g, ScrollBar &scrollbar,
     g.fillAll();
 
     if (isButtonDown == true)
-        g.setColour (CabbageUtils::getComponentSkin().brighter(0.5f));
+        g.setColour (cUtils::getComponentSkin().brighter(0.5f));
     else
-        g.setColour (CabbageUtils::getComponentSkin());
+        g.setColour (cUtils::getComponentSkin());
 
     if (buttonDirection == 3)   //left arrow
     {
@@ -1279,10 +1279,10 @@ void CabbageLookAndFeel::drawScrollbarButton (Graphics &g, ScrollBar &scrollbar,
 //======== Popup Menu background ======================================================================
 void CabbageLookAndFeel::drawPopupMenuBackground(Graphics &g, int width, int height)
 {
-    g.setColour (CabbageUtils::getDarkerBackgroundSkin());
+    g.setColour (cUtils::getDarkerBackgroundSkin());
     g.fillAll();
 
-    g.setColour (CabbageUtils::getComponentSkin());
+    g.setColour (cUtils::getComponentSkin());
     g.drawRect (0, -5, width, height+5, 1); //dont want to see top line
 }
 
@@ -1313,7 +1313,7 @@ void CabbageLookAndFeel::drawPopupMenuItem (Graphics& g, const Rectangle<int>& a
     Colour textColour;
     if ((isHighlighted == true) && (isSeparator == false))
     {
-        g.setColour (CabbageUtils::getComponentSkin());
+        g.setColour (cUtils::getComponentSkin());
         g.fillAll();
         g.setColour (Colours::cornflowerblue);
     }
@@ -1325,16 +1325,16 @@ void CabbageLookAndFeel::drawPopupMenuItem (Graphics& g, const Rectangle<int>& a
             g.setColour(textColour);
         }
         else
-            g.setColour (CabbageUtils::getComponentFontColour());
+            g.setColour (cUtils::getComponentFontColour());
     }
 
 
-    g.setFont (CabbageUtils::getComponentFont());
-    g.drawText (CabbageUtils::cabbageString(text, CabbageUtils::getComponentFont(), area.getWidth()*0.8), 20, 0, area.getWidth()*0.8, area.getHeight(), 1, false);
+    g.setFont (cUtils::getComponentFont());
+    g.drawText (cUtils::cabbageString(text, cUtils::getComponentFont(), area.getWidth()*0.8), 20, 0, area.getWidth()*0.8, area.getHeight(), 1, false);
 
     if (isSeparator == true)
     {
-        g.setColour(CabbageUtils::getComponentSkin());
+        g.setColour(cUtils::getComponentSkin());
         g.drawLine(0, area.getHeight()/2,  area.getWidth(), 3);
     }
 
@@ -1366,7 +1366,7 @@ void CabbageLookAndFeel::drawPopupMenuItem (Graphics& g, const Rectangle<int>& a
 //======== Menubar background ======================================================================
 void CabbageLookAndFeel::drawMenuBarBackground(Graphics &g, int width, int height, bool isMouseOverBar, MenuBarComponent &menuBar)
 {
-    g.setColour (CabbageUtils::getBackgroundSkin());
+    g.setColour (cUtils::getBackgroundSkin());
     g.fillAll();
 }
 
@@ -1380,13 +1380,13 @@ void CabbageLookAndFeel::drawMenuBarItem(Graphics & g, int width, int height, in
 {
     if ((isMouseOverItem == true) || (isMenuOpen == true))
     {
-        g.setColour (CabbageUtils::getBackgroundSkin().darker (0.2));
+        g.setColour (cUtils::getBackgroundSkin().darker (0.2));
         g.fillRect (0, 0, width, height);
     }
 
-    g.setColour (CabbageUtils::getComponentFontColour());
-    g.setFont (CabbageUtils::getComponentFont());
-    g.drawFittedText(CabbageUtils::cabbageString(itemText, CabbageUtils::getComponentFont(), width*0.9), 5, 0, width, height, 36, 1);
+    g.setColour (cUtils::getComponentFontColour());
+    g.setFont (cUtils::getComponentFont());
+    g.drawFittedText(cUtils::cabbageString(itemText, cUtils::getComponentFont(), width*0.9), 5, 0, width, height, 36, 1);
 }
 
 //======== Document Window title bar ===================================================================
@@ -1398,17 +1398,17 @@ void CabbageLookAndFeel::drawDocumentWindowTitleBar (DocumentWindow &window, Gra
 {
     window.setUsingNativeTitleBar(false);
 
-    g.setColour (CabbageUtils::getDarkerBackgroundSkin());
+    g.setColour (cUtils::getDarkerBackgroundSkin());
     g.fillAll();
 
-    g.setColour (CabbageUtils::getComponentFontColour());
-    Font font = CabbageUtils::getTitleFont();
+    g.setColour (cUtils::getComponentFontColour());
+    Font font = cUtils::getTitleFont();
 #ifndef MACOSX
     font.setFallbackFontName("Verdana");
 #endif
     font.setHeight(16);
     g.setFont (font);
-    g.drawText (CabbageUtils::cabbageString(window.getName(), font, titleSpaceW), (w/2)-(titleSpaceW/2),
+    g.drawText (cUtils::cabbageString(window.getName(), font, titleSpaceW), (w/2)-(titleSpaceW/2),
                 (h/2)-(font.getHeight()/2), titleSpaceW, font.getHeight(), 36, false);
 }
 
@@ -1434,9 +1434,9 @@ Image CabbageLookAndFeel::drawWindowButtonNormal(int buttonType)
     g.fillRoundedRectangle(1, 1, width-2, height-2, 2);
 
     //----- Text symbol
-    Font font = CabbageUtils::getComponentFont();
+    Font font = cUtils::getComponentFont();
     g.setFont (font);
-    g.setColour (CabbageUtils::getComponentFontColour());
+    g.setColour (cUtils::getComponentFontColour());
     g.drawText(str, (width/2) - (font.getHeight()/2), (width/2) - (font.getHeight()/2),
                font.getHeight(), font.getHeight(), 36, false);
 
@@ -1465,7 +1465,7 @@ Image CabbageLookAndFeel::drawWindowButtonIsOver(int buttonType)
     g.fillRoundedRectangle(1, 1, width-2, height-2, 2);
 
     //---- Text symbol
-    Font font = CabbageUtils::getComponentFont();
+    Font font = cUtils::getComponentFont();
     g.setFont (font);
     g.setColour (Colours::whitesmoke);
     g.drawText(str, (width/2) - (font.getHeight()/2), (width/2) - (font.getHeight()/2),
@@ -1474,7 +1474,7 @@ Image CabbageLookAndFeel::drawWindowButtonIsOver(int buttonType)
     //---- V lines
     ColourGradient cg = ColourGradient(Colours::transparentBlack, 0, 0, Colours::transparentBlack,
                                        0, height, false);
-    cg.addColour (0.5, CabbageUtils::getComponentFontColour());
+    cg.addColour (0.5, cUtils::getComponentFontColour());
     g.setGradientFill (cg);
     g.drawLine (0, 0, 0, height, 1);
     g.drawLine (width, 0, width, height, 1);
@@ -1752,12 +1752,12 @@ void CabbageLookAndFeel::createTabButtonShape (TabBarButton& button, Path& p, bo
 void CabbageLookAndFeel::fillTabButtonShape (TabBarButton& button, Graphics& g, const Path& path,  bool /*isMouseOver*/, bool /*isMouseDown*/)
 {
     const Colour tabBackground (button.getTabBackgroundColour());
-    //const Colour tabBackground (CabbageUtils::getBackgroundSkin());
+    //const Colour tabBackground (cUtils::getBackgroundSkin());
     const bool isFrontTab = button.isFrontTab();
 
     g.setColour (isFrontTab ? tabBackground
                  : tabBackground.withMultipliedAlpha (0.9f));
-    //g.setColour(CabbageUtils::getBackgroundSkin());
+    //g.setColour(cUtils::getBackgroundSkin());
     g.fillPath (path);
 
     g.setColour (button.findColour (isFrontTab ? TabbedButtonBar::frontOutlineColourId
@@ -1932,7 +1932,7 @@ void CabbageLookAndFeel::drawTableHeaderBackground (Graphics& g, TableHeaderComp
     const int w = header.getWidth();
     const int h = header.getHeight();
 
-    g.setGradientFill (ColourGradient (CabbageUtils::getBackgroundSkin(), 0.0f, h * 0.5f,
+    g.setGradientFill (ColourGradient (cUtils::getBackgroundSkin(), 0.0f, h * 0.5f,
                                        Colours::black, 0.0f, h - 1.0f,
                                        false));
     g.fillRect (0, h / 2, w, h);
@@ -2085,11 +2085,11 @@ void CabbageLookAndFeelBasic::drawButtonBackground (Graphics& g, Button& button,
 
     g.drawRoundedRectangle(0, 0, w, h, 5, 1.f);
 
-    g.setColour(CabbageUtils::getComponentSkin());
+    g.setColour(cUtils::getComponentSkin());
     g.fillRoundedRectangle(0, 0, w, h, 5);
 
-    g.setColour (CabbageUtils::getComponentFontColour());
-    g.setFont (CabbageUtils::getComponentFont());
+    g.setColour (cUtils::getComponentFontColour());
+    g.setFont (cUtils::getComponentFont());
     g.drawFittedText (button.getName(),
                       0 + 4, 0 + 2, w - 8, h - 4,
                       Justification::centred, 2);
@@ -2142,7 +2142,7 @@ void CabbageLookAndFeelBasic::drawScrollbar (Graphics &g, ScrollBar &scrollbar, 
     g.setColour (Colours::transparentBlack);
     g.fillAll();
 
-    g.setColour (CabbageUtils::getComponentSkin());
+    g.setColour (cUtils::getComponentSkin());
     g.drawRoundedRectangle (x, y, width, height, 5, 1);
 
     if (isScrollbarVertical == false) //horizontal
@@ -2161,14 +2161,14 @@ void CabbageLookAndFeelBasic::drawLabel (Graphics &g, Label &label)
     // If slider
     if (dynamic_cast<Slider*>(comp))
     {
-        //g.setColour(CabbageUtils::getDarkerBackgroundSkin());
+        //g.setColour(cUtils::getDarkerBackgroundSkin());
         //g.fillRoundedRectangle (0, 0, label.getWidth(), label.getHeight(), label.getHeight() / 10.0f);
-        g.setColour(CabbageUtils::getComponentFontColour());
-        g.setFont(CabbageUtils::getValueFont());
+        g.setColour(cUtils::getComponentFontColour());
+        g.setFont(cUtils::getValueFont());
         g.drawText (label.getText(), 0, 0, label.getWidth(), label.getHeight(), Justification::left, false);
         /* Border
-        g.setColour(CabbageUtils::getBorderColour());
-        float borderWidth = CabbageUtils::getBorderWidth();
+        g.setColour(cUtils::getBorderColour());
+        float borderWidth = cUtils::getBorderWidth();
         g.drawRoundedRectangle(borderWidth/2, borderWidth/2, label.getWidth()-borderWidth, label.getHeight()-borderWidth,
         	label.getHeight()/5, borderWidth);*/
     }
@@ -2179,12 +2179,12 @@ void CabbageLookAndFeelBasic::drawLabel (Graphics &g, Label &label)
         g.fillRoundedRectangle (0, 0, label.getWidth(), label.getHeight(), label.getHeight()/5);
 
         // For the text
-        g.setFont (CabbageUtils::getComponentFont());
+        g.setFont (cUtils::getComponentFont());
         String col = label.getProperties().getWithDefault("textColour", "");
         if (col.length()>0)
             g.setColour(Colour::fromString(col));
         else
-            g.setColour (CabbageUtils::getComponentFontColour());
+            g.setColour (cUtils::getComponentFontColour());
 
         g.drawText (label.getText(), 0, 0, label.getWidth(), label.getHeight(), Justification::centred, false);
     }
@@ -2199,34 +2199,34 @@ void CabbageLookAndFeelBasic::drawDocumentWindowTitleBar (DocumentWindow &window
 {
     window.setUsingNativeTitleBar(false);
     window.setOpaque(true);
-    g.setColour (CabbageUtils::getComponentSkin().brighter());
+    g.setColour (cUtils::getComponentSkin().brighter());
     g.fillRoundedRectangle(0, 0, w, h+20, 10);
 
-    g.setColour (CabbageUtils::getComponentFontColour());
-    Font font = CabbageUtils::getTitleFont();
+    g.setColour (cUtils::getComponentFontColour());
+    Font font = cUtils::getTitleFont();
 #ifndef MACOSX
     font.setFallbackFontName("Verdana");
 #endif
     font.setHeight(16);
     g.setFont (font);
-    g.drawText (CabbageUtils::cabbageString(window.getName(), font, titleSpaceW), (w/2)-(titleSpaceW/2),
+    g.drawText (cUtils::cabbageString(window.getName(), font, titleSpaceW), (w/2)-(titleSpaceW/2),
                 (h/2)-(font.getHeight()/2), titleSpaceW, font.getHeight(), 36, false);
 }
 
 //======== Popup Menu background ======================================================================
 void CabbageLookAndFeelBasic::drawPopupMenuBackground(Graphics &g, int width, int height)
 {
-    g.setColour (CabbageUtils::getDarkerBackgroundSkin());
+    g.setColour (cUtils::getDarkerBackgroundSkin());
     g.fillAll();
 
-    g.setColour (CabbageUtils::getComponentSkin());
+    g.setColour (cUtils::getComponentSkin());
     g.drawRect (0, -5, width, height+5, 1); //dont want to see top line
 }
 
 //======== Menubar background ======================================================================
 void CabbageLookAndFeelBasic::drawMenuBarBackground(Graphics &g, int width, int height, bool isMouseOverBar, MenuBarComponent &menuBar)
 {
-    g.setColour (CabbageUtils::getBackgroundSkin());
+    g.setColour (cUtils::getBackgroundSkin());
     g.fillAll();
 }
 
@@ -2240,13 +2240,13 @@ void CabbageLookAndFeelBasic::drawMenuBarItem(Graphics & g, int width, int heigh
 {
     if ((isMouseOverItem == true) || (isMenuOpen == true))
     {
-        g.setColour (CabbageUtils::getBackgroundSkin().darker (0.2));
+        g.setColour (cUtils::getBackgroundSkin().darker (0.2));
         g.fillRect (0, 0, width, height);
     }
 
-    g.setColour (CabbageUtils::getComponentFontColour());
-    g.setFont (CabbageUtils::getComponentFont());
-    g.drawFittedText(CabbageUtils::cabbageString(itemText, CabbageUtils::getComponentFont(), width*0.9), 5, 0, width, height, 36, 1);
+    g.setColour (cUtils::getComponentFontColour());
+    g.setFont (cUtils::getComponentFont());
+    g.drawFittedText(cUtils::cabbageString(itemText, cUtils::getComponentFont(), width*0.9), 5, 0, width, height, 36, 1);
 }
 
 //====== Returns image of a check mark ==============================================
@@ -2284,19 +2284,19 @@ void CabbageLookAndFeelBasic::drawPopupMenuItem (Graphics &g, int width, int hei
 {
     if ((isHighlighted == true) && (isSeparator == false))
     {
-        g.setColour (CabbageUtils::getComponentSkin());
+        g.setColour (cUtils::getComponentSkin());
         g.fillAll();
         g.setColour (Colours::cornflowerblue);
     }
     else
-        g.setColour (CabbageUtils::getComponentFontColour());
+        g.setColour (cUtils::getComponentFontColour());
 
-    g.setFont (CabbageUtils::getComponentFont());
-    g.drawText (CabbageUtils::cabbageString(text, CabbageUtils::getComponentFont(), width*0.8), 20, 0, width*0.8, height, 1, false);
+    g.setFont (cUtils::getComponentFont());
+    g.drawText (cUtils::cabbageString(text, cUtils::getComponentFont(), width*0.8), 20, 0, width*0.8, height, 1, false);
 
     if (isSeparator == true)
     {
-        g.setColour(CabbageUtils::getComponentSkin());
+        g.setColour(cUtils::getComponentSkin());
         g.drawLine(0, height/2, width, 3);
     }
 

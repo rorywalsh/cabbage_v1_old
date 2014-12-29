@@ -87,7 +87,7 @@ private:
 
 //=============================================================================
 class ChildAlias   :   public Component,
-    public CabbageUtils,
+    public cUtils,
     public KeyListener
 {
 public:

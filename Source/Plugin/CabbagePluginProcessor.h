@@ -70,7 +70,7 @@ class CsoundCodeEditor;
 // CabbagePluginAudioProcessor definition
 //==============================================================================
 class CabbagePluginAudioProcessor  : public AudioProcessor,
-    public CabbageUtils,
+    public cUtils,
     public ChangeBroadcaster,
     public Timer,
     public ActionBroadcaster,

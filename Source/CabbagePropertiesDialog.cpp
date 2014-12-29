@@ -94,7 +94,7 @@ void ControlProperty::paint(Graphics &g)
     g.fillAll();
 
     g.setColour (Colours::orange);
-    g.setFont (CabbageUtils::getComponentFont());
+    g.setFont (cUtils::getComponentFont());
 
     const Rectangle<int> r (5, 0, getWidth()/2, getHeight()-2);
 

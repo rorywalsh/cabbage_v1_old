@@ -122,7 +122,7 @@ DirectoryContentsComponent::~DirectoryContentsComponent()
 //====================================================================================
 void DirectoryContentsComponent::paint (Graphics& g)
 {
-    g.setColour(CabbageUtils::getBackgroundSkin());
+    g.setColour(cUtils::getBackgroundSkin());
     g.fillRoundedRectangle(0, 0, getWidth(), getHeight(), 7);
 
 }

@@ -212,7 +212,7 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         getLayoutEditor()->selectedLineNumbers.clear();
         getLayoutEditor()->selectedCompsOrigCoordinates.add(this->getBounds());
         getLayoutEditor()->selectedLineNumbers.add(this->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
-        //Logger::writeToLog("ChildAlias MouseDown SingleSel:\n"+CabbageUtils::getBoundsString(getBounds()));
+        //Logger::writeToLog("ChildAlias MouseDown SingleSel:\n"+cUtils::getBoundsString(getBounds()));
         toFront (true);
         if(!e.mods.isCommandDown())
             getProperties().set("interest", "current");
@@ -226,7 +226,7 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         for(int i=0; i<numSelected; i++)
         {
             //add original position of selected filters to vector
-            //Logger::writeToLog("ChildAlias MouseDown MultiSel:\n"+CabbageUtils::getBoundsString(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds()));
+            //Logger::writeToLog("ChildAlias MouseDown MultiSel:\n"+cUtils::getBoundsString(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds()));
             getLayoutEditor()->selectedCompsOrigCoordinates.add(
                 getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds());
             getLayoutEditor()->selectedLineNumbers.add(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
@@ -321,7 +321,7 @@ void ChildAlias::mouseDown (const MouseEvent& e)
 
                 if(clashingNames==true)
                 {
-                    result = CabbageUtils::showYesNoMessage("Do you wish to overwrite the existing plant?", &getLookAndFeel());
+                    result = cUtils::showYesNoMessage("Do you wish to overwrite the existing plant?", &getLookAndFeel());
                     if(result == 0)
                         parent->sendChangeMessage();
                     else

@@ -29,6 +29,10 @@
 #include "BinaryData.h"
 #endif
 
+#ifdef LINUX
+#include <assert.h>
+#endif
+
 using namespace std;
 
 
@@ -142,11 +146,11 @@ private:
 //===========================================================================================
 //some utility functions used across classes...
 //===========================================================================================
-class CabbageUtils
+class cUtils
 {
 public:
-    CabbageUtils() {};
-    ~CabbageUtils() {};
+    cUtils() {};
+    ~cUtils() {};
 
 
 //===========================================================================================
@@ -363,7 +367,7 @@ static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, in
 													
 			FileChooserDialogBox box (title, String::empty,
 									  browserComponent, warnAboutOverwrite,
-									  CabbageUtils::getDarkerBackgroundSkin());
+									  cUtils::getDarkerBackgroundSkin());
 														  
 			box.setLookAndFeel(look);
 
@@ -394,7 +398,7 @@ static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, in
 													
 			FileChooserDialogBox box (title, String::empty,
 									  browserComponent, warnAboutOverwrite,
-									  CabbageUtils::getDarkerBackgroundSkin());
+									  cUtils::getDarkerBackgroundSkin());
 														  
 			box.setLookAndFeel(look);
 
@@ -424,7 +428,7 @@ static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, in
 													
 			FileChooserDialogBox box (title, String::empty,
 									  browserComponent, warnAboutOverwrite,
-									  CabbageUtils::getDarkerBackgroundSkin());
+									  cUtils::getDarkerBackgroundSkin());
 														  
 			box.setLookAndFeel(look);
 
@@ -616,6 +620,23 @@ return results;
         clock_t goal = mseconds + clock();
         while (goal > clock());
     }
+
+//==========================================================================================
+Array<float> getAmpRangeArray(Array<float> ranges, int tableNumber)
+{
+	Array<float> ampRange;
+	int numRangeArrays = ranges.size()/4;
+	
+	for(int i=2;i<ranges.size();i+=4)
+		if(ranges[i]==tableNumber)
+		{
+			for(int y = i-2;y<=i+1;y++)
+				ampRange.add(ranges[y]);
+		}
+		
+	return ampRange;
+	
+}
 
 //======== Check if NaN ====================================================================
     static bool isNumber(double x)
@@ -871,7 +892,7 @@ return results;
         }
         else if (type == "play_down")
         {
-            //g.setColour(CabbageUtils::getDarkerBackgroundSkin().darker(0.9f));
+            //g.setColour(cUtils::getDarkerBackgroundSkin().darker(0.9f));
             g.setColour(Colours::black.withAlpha(0.4f));
             g.fillRoundedRectangle(0, 0, img.getWidth(), img.getHeight(), jmin(img.getWidth()/20.0f,
                                    img.getHeight()/20.0f));
@@ -896,7 +917,7 @@ return results;
             Path p;
             p.addTriangle(img.getWidth()*0.2f, img.getHeight()*0.2f, img.getWidth()*0.6f, img.getHeight()*0.5f,
                           img.getWidth()*0.2f, img.getHeight()*0.8f);
-            g.setColour(CabbageUtils::getComponentFontColour());
+            g.setColour(cUtils::getComponentFontColour());
             g.fillPath(p);
             g.fillRoundedRectangle(img.getWidth()*0.7f, img.getHeight()*0.2f,
                                    img.getWidth()*0.1f, img.getHeight()*0.6f, img.getWidth()/20.0f);
@@ -907,7 +928,7 @@ return results;
             Path p;
             p.addTriangle(img.getWidth()*0.2f, img.getHeight()*0.2f, img.getWidth()*0.6f, img.getHeight()*0.5f,
                           img.getWidth()*0.2f, img.getHeight()*0.8f);
-            g.setColour(CabbageUtils::getComponentFontColour());
+            g.setColour(cUtils::getComponentFontColour());
             g.fillPath(p);
             g.fillRoundedRectangle(img.getWidth()*0.7f, img.getHeight()*0.2f,
                                    img.getWidth()*0.1f, img.getHeight()*0.6f, img.getWidth()/20.0f);
@@ -923,7 +944,7 @@ return results;
         }
         else if (type == "skip_end_down")
         {
-            //g.setColour(CabbageUtils::getDarkerBackgroundSkin().darker(0.9f));
+            //g.setColour(cUtils::getDarkerBackgroundSkin().darker(0.9f));
             g.setColour(Colours::black.withAlpha(0.4f));
             g.fillRoundedRectangle(0, 0, img.getWidth(), img.getHeight(), jmin(img.getWidth()/20.0f,
                                    img.getHeight()/20.0f));
@@ -976,7 +997,7 @@ return results;
         }
         else if (type == "skip_start_down")
         {
-            //g.setColour(CabbageUtils::getDarkerBackgroundSkin().darker(0.9f));
+            //g.setColour(cUtils::getDarkerBackgroundSkin().darker(0.9f));
             g.setColour(Colours::black.withAlpha(0.4f));
             g.fillRoundedRectangle(0, 0, img.getWidth(), img.getHeight(), jmin(img.getWidth()/20.0f,
                                    img.getHeight()/20.0f));

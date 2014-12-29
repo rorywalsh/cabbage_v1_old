@@ -166,7 +166,14 @@ public:
 	
 	HandleComponent* getCurrentHandle()
 	{
-		return currentHandle;
+		if(currentHandle)
+			return currentHandle;
+		else
+		{
+			assert(false);
+			return nullptr;			
+		}
+
 	}
 
 	String getCoordinates()
@@ -436,7 +443,7 @@ public:
         if(type.contains("zoom"))
         {
             g.fillAll(Colours::transparentBlack);
-			g.setColour(CabbageUtils::getBackgroundSkin());
+			g.setColour(cUtils::getBackgroundSkin());
 			g.fillEllipse(0, 0, getWidth(), getHeight());
             g.setColour(Colours::white.withAlpha(.8f));
             g.fillEllipse(1, 1, getWidth()-2, getHeight()-2);
@@ -448,7 +455,7 @@ public:
         else
         {
             g.fillAll(Colours::transparentBlack);
-			g.setColour(CabbageUtils::getBackgroundSkin());
+			g.setColour(cUtils::getBackgroundSkin());
 			g.fillEllipse(0, 0, getWidth(), getHeight());
             g.setColour((visible=="foreground" ? colour : colour.withAlpha(.3f)));
             g.fillEllipse(1, 1, getWidth()-2, getHeight()-2);

@@ -697,6 +697,8 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     bool multiComment = false;
     bool multiLine = false;
 
+	csound->Message("\n===Cabbage Warnings===\n");
+
 	for(int i=0; i<csdText.size(); i++)
     {	
 		
@@ -804,6 +806,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             ||tokes[0].equalsIgnoreCase(String("groupbox")))
                     {
                         CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
+						csound->Message(cAttr.getWarningMessages().toUTF8().getAddress());
                         //showMessage(csdLine);
                         cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
                         if(cAttr.getStringProp("native").length()>0)
@@ -920,6 +923,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                     {
 
                         CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
+						csound->Message(cAttr.getWarningMessages().toUTF8().getAddress());
                         cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
                         //Logger::writeToLog(csdLine.trimEnd());
                         csdLine = "";
@@ -1004,7 +1008,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
         else break;
     } //end of scan through entire csd text, control vectors are now populated
 
-
+	csound->Message("\n===End of Cabbage warnings===\n");
     //init all channels with their init val, and set parameters
     for(int i=0; i<guiCtrls.size(); i++)
     {
@@ -1475,7 +1479,7 @@ float CabbagePluginAudioProcessor::getParameter (int index)
     }
     else
 	{
-		CabbageUtils::debug("getParameter(): Parameter index out of bounds");
+		cUtils::debug("getParameter(): Parameter index out of bounds");
         return 0.0f;
 	}
 }

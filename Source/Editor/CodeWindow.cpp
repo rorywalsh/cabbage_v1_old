@@ -53,7 +53,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
     textEditor->editor[textEditor->currentEditor]->addActionListener(this);
 
     this->setTitleBarHeight(20);
-    this->setColour(DocumentWindow::backgroundColourId, CabbageUtils::getBackgroundSkin());
+    this->setColour(DocumentWindow::backgroundColourId, cUtils::getBackgroundSkin());
 
 
     setMenuBar(this, 25);
@@ -189,12 +189,12 @@ void CodeWindow::setFontSize(String zoom)
     if(zoom==String("in"))
     {
         textEditor->editor[textEditor->currentEditor]->setFont(Font(font, ++fontSize, 1));
-        CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
+        cUtils::setPreference(appProperties, "FontSize", String(fontSize));
     }
     else
     {
         textEditor->editor[textEditor->currentEditor]->setFont(Font(font, --fontSize, 1));
-        CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
+        cUtils::setPreference(appProperties, "FontSize", String(fontSize));
     }
 }
 
@@ -478,7 +478,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
         Logger::writeToLog("fileSaved");
         if(textEditor->currentEditor!=0)
         {
-            CabbageUtils::showMessage("Saving an auxillary file!");
+            cUtils::showMessage("Saving an auxillary file!");
             textEditor->saveAuxFile();
         }
         else
@@ -712,7 +712,7 @@ void CodeWindow::toggleManuals(String manual)
 
 
     if(helpDir.length()<2)
-        CabbageUtils::showMessage("Please set the Csound manual directory in the Preference menu", &getLookAndFeel());
+        cUtils::showMessage("Please set the Csound manual directory in the Preference menu", &getLookAndFeel());
     else
     {
         CodeDocument::Position pos1, pos2;
@@ -739,7 +739,7 @@ void CodeWindow::toggleManuals(String manual)
         {
 #ifdef LINUX
             if(!process.start("xdg-open "+urlCsound.toString(false).toUTF8()))
-                CabbageUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
+                cUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
 #else
             urlCsound.launchInDefaultBrowser();
 #endif
@@ -750,13 +750,13 @@ void CodeWindow::toggleManuals(String manual)
             {
 #ifdef LINUX
                 if(!process.start("xdg-open "+homePage))
-                    CabbageUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
+                    cUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
 #else
                 URL(homePage).launchInDefaultBrowser();
 #endif
             }
             else
-                CabbageUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
+                cUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
 
         }
 
@@ -775,7 +775,7 @@ void CodeWindow::showCabbageHelp()
 
 
     if(!File(path).existsAsFile())
-        CabbageUtils::showMessage(
+        cUtils::showMessage(
             "Could not find Cabbage manual. Make sure\n\
 	it is located in the Docs folder in the same\n\
 	directory as the main Cabbage executable", &getLookAndFeel());
@@ -787,7 +787,7 @@ void CodeWindow::showCabbageHelp()
         {
 #ifdef LINUX
             if(!process.start("xdg-open "+path))
-                CabbageUtils::showMessage("Couldn't show file", &getLookAndFeel());
+                cUtils::showMessage("Couldn't show file", &getLookAndFeel());
 #else
             URL(path).launchInDefaultBrowser();
 #endif

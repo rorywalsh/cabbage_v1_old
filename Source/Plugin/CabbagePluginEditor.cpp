@@ -2142,6 +2142,22 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
     TableManager* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
 
+	int fileTable = 0;
+
+	if(cAttr.getStringProp(CabbageIDs::file).isNotEmpty())
+	{
+			table->addTable(44100, 
+							cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, 0), 
+							1,
+							Array<float>(),
+							0, this);	
+			fileTable=1;
+			table->setFile(cAttr.getStringProp(CabbageIDs::file));
+	}
+
+
+
+
     var tables = cAttr.getVarArrayProp(CabbageIDs::tablenumber);
     for(int y=0; y<tables.size(); y++)
     {
@@ -2164,7 +2180,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 			{
 
 				table->addTable(44100, 
-								cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y), 
+								cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y+fileTable), 
 								(tableValues.size()>=MAX_TABLE_SIZE ? 1 : genRoutine),
 								ampRange,
 								tableNumber, this);
@@ -2192,7 +2208,10 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 		}
     }
 
-    table->configTableSizes(cAttr.getVarArrayProp(CabbageIDs::tableconfig));
+	var tableConfigArray = cAttr.getVarArrayProp(CabbageIDs::tableconfig);
+	if(fileTable==1) 
+		tableConfigArray.insert(0, 0);
+    table->configTableSizes(tableConfigArray);
     table->bringTableToFront(0);
 
     if(cAttr.getNumProp(CabbageIDs::startpos)>-1 && cAttr.getNumProp(CabbageIDs::endpos)>0)
@@ -2201,8 +2220,13 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
         table->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
 		
 	//set grid colour and background colours for all tables
-	table->setGridColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablegridcolour)));
+	if(fileTable==0)
+		table->setGridColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablegridcolour)));
+	else
+		table->setGridColour(Colours::transparentBlack);
+		
 	table->setBackgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::backgroundcolour)));
+	table->setFill(cAttr.getNumProp(CabbageIDs::fill));
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -3692,6 +3716,7 @@ getFilter()->dirtyControls.clear();
                     getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
             {
                 String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
+				TableManager* table = static_cast<CabbageGenTable*>(layoutComps[i])->table;
                 if(message.contains("tablenumber")||message.contains("tablenumbers"))
                 {
 					int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();
@@ -3699,7 +3724,6 @@ getFilter()->dirtyControls.clear();
                     {
                         
                         const int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
-                        TableManager* table = static_cast<CabbageGenTable*>(layoutComps[i])->table;
                         //StringArray pFields = getFilter()->getTableStatement(tableNumber);
                         //tableValues.clear();						
                         tableValues = getFilter()->getTableFloats(tableNumber);
@@ -3712,6 +3736,9 @@ getFilter()->dirtyControls.clear();
                         else table->setWaveform(tableValues, tableNumber, false);
                     }
                 }
+				else if(message.contains("file("))
+                    table->setFile(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::file));
+
                 ((CabbageGenTable*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
                 getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
             }

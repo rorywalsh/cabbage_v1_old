@@ -123,6 +123,13 @@ void TableManager::addTable(int sr, const String col, int gen, Array<float> ampR
     table->addChangeListener(this);
     table->scrollbar->addListener(this);
     table->addChangeListener(listener);
+	if(ampRange.size()==0)
+	{
+		ampRange.add(-1.f);
+		ampRange.add(1.f);
+		ampRange.add(0.f);
+		ampRange.add(0.01);
+	}
     table->addTable(sr, col, gen, ampRange);
 	addAndMakeVisible(table);
     tables.add(table);
@@ -131,14 +138,15 @@ void TableManager::addTable(int sr, const String col, int gen, Array<float> ampR
     addAndMakeVisible(button);
     tableButtons.add(button);
     resized();
-
+	
+	bringButtonsToFront();
 
 }
 //==============================================================================
 void TableManager::setAmpRanges(Array<float> ampRange)
 {
     if(ampRange.size()>2)
-        if(ampRange[2]==0)
+        if(ampRange[2]==-1)
             for(int i=0; i<tables.size(); i++)
             {
                 tables[i]->setAmpRanges(ampRange);
@@ -216,6 +224,14 @@ void TableManager::setOutlineThickness(float thickness)
     for(int i=0; i<tables.size(); i++)
     {
             tables[i]->setTraceThickness(thickness);
+    }	
+}
+
+void TableManager::setFill(bool fill)
+{
+    for(int i=0; i<tables.size(); i++)
+    {
+            tables[i]->shouldFillTable(fill);
     }	
 }
 //==============================================================================
@@ -386,6 +402,18 @@ void TableManager::setWaveform(AudioSampleBuffer buffer, int ftNumber)
 			return;
 		}
 }
+
+//==============================================================================
+void TableManager::setFile(const File file)
+{
+    for( int i=0; i<tables.size(); i++)
+        if(tables[i]->tableNumber==0)
+		{
+            tables[i]->setFile(file);
+			return;
+		}
+}
+
 //==============================================================================
 void TableManager::setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange)
 {
@@ -448,7 +476,8 @@ GenTable::GenTable():	thumbnailCache (5),
     quantiseSpace(0.01),
     qsteps(0),
     drawAsVUMeter(false),
-	drawGrid(false)
+	drawGrid(false),
+	shouldFill(true)
 {
     thumbnail=nullptr;
     addAndMakeVisible(scrollbar = new ScrollBar(false));
@@ -584,7 +613,7 @@ void GenTable::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRange
 
 void GenTable::setFile (const File& file)
 {
-    if (!file.isDirectory())
+    if (file.existsAsFile())
     {
         genRoutine==1;
         AudioFormatManager format;
@@ -969,7 +998,7 @@ void GenTable::paint (Graphics& g)
 
 		if(genRoutine==7 || genRoutine==5 || genRoutine==2 || genRoutine==27){
 			midPoint = ampToPixel(thumbHeight, minMax, minMax.getStart());
-			drawTrace=false;
+			drawTrace= false;
 		}
 			
 		else
@@ -993,15 +1022,17 @@ void GenTable::paint (Graphics& g)
 				{
 					//minMax is the range of the current waveforms amplitude
 					currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
-					g.setColour(colour.withAlpha(.2f));
-					g.drawVerticalLine(prevX, (prevY<midPoint ? prevY : midPoint),  (prevY>midPoint ? prevY : midPoint));
-
+					if(shouldFill)
+					{
+						g.setColour(colour.withAlpha(.2f));
+						g.drawVerticalLine(prevX, (prevY<midPoint ? prevY : midPoint),  (prevY>midPoint ? prevY : midPoint));
+					}
 					if(traceThickness>0)
 					{
 						g.setColour(colour);				
 						//draw trace 
 						currX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);
-						g.drawLine(prevX, prevY, currX, currY, 1.f);
+						g.drawLine(prevX, prevY, currX, currY, traceThickness);
 					}
 				
 					prevX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);				
@@ -1126,8 +1157,27 @@ void GenTable::setScrubberPos(double pos)
 		
         }
     }
+	else if(genRoutine==2)
+	{
+		currentPositionMarker->setVisible (true);
+		double waveformLengthSeconds = (double)waveformBuffer.size()/sampleRate;		
+		double timePos = pos*waveformLengthSeconds;		
+		currentPositionMarker->setRectangle (juce::Rectangle<float> (timeToX (timePos), 0,
+											 numPixelsPerIndex, thumbArea.getHeight()));
+		
+		if(this->showScroll)
+		{									 
+		if(timePos<(waveformLengthSeconds)/25.f)
+			setRange (visibleRange.movedToStartAt(0));
+		else
+			if(visibleRange.getEnd()<=waveformLengthSeconds && zoom>0.0)
+				setRange (visibleRange.movedToStartAt (jmax(0.0, timePos - (visibleRange.getLength()/2.0))));
+		}		
+	}
 	
 }
+
+
 //==============================================================================
 void GenTable::mouseUp(const MouseEvent& e)
 {
@@ -1214,7 +1264,7 @@ void HandleViewer::showHandles(bool show)
 //==============================================================================
 void HandleViewer::mouseDown(const MouseEvent& e)
 {
-    if(gen==5 || gen==7 || gen==2)
+    if(gen==-5 || gen==-7 || gen==-2)
         positionHandle(e);
 }
 

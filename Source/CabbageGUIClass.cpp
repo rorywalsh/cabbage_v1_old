@@ -56,8 +56,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
-        cabbageIdentifiers.set(CabbageIDs::colour, Colour(9, 77, 31).toString());
-        cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::trackercolour, Colour(0, 118, 38).toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
 		cabbageIdentifiers.set(CabbageIDs::textcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
@@ -102,8 +102,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
-        cabbageIdentifiers.set(CabbageIDs::colour, Colour(9, 77, 31).toString());
-        cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::lime.toString());
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::trackercolour, Colour(0, 118, 38).toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
 		cabbageIdentifiers.set(CabbageIDs::textcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
@@ -1404,6 +1404,12 @@ void CabbageGUIClass::parse(String inStr, String identifier)
             {
                 cabbageIdentifiers.set(CabbageIDs::minvalue, strTokens[0].trim().getFloatValue());
             }
+			
+            else if(identArray[indx].equalsIgnoreCase("fill"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::fill, strTokens[0].trim().getIntValue());
+            }
+			
             else if(identArray[indx].equalsIgnoreCase("midictrl"))
             {
                 if(strTokens.size()<2)

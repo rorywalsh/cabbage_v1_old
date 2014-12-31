@@ -193,9 +193,12 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         }
         if(partOfSelection==false)
         {
-            getLayoutEditor()->selectedFilters.deselectAll();
-            getLayoutEditor()->resetAllBorders();
-            numSelected = 0;
+			if(getLayoutEditor())
+			{
+				getLayoutEditor()->selectedFilters.deselectAll();
+				getLayoutEditor()->resetAllBorders();
+				numSelected = 0;				
+			}
         }
     }
 
@@ -227,9 +230,10 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         {
             //add original position of selected filters to vector
             //Logger::writeToLog("ChildAlias MouseDown MultiSel:\n"+cUtils::getBoundsString(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds()));
-            getLayoutEditor()->selectedCompsOrigCoordinates.add(
-                getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds());
-            getLayoutEditor()->selectedLineNumbers.add(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
+           if(getLayoutEditor()->getLassoSelection().getSelectedItem(i))
+			getLayoutEditor()->selectedCompsOrigCoordinates.add(
+									getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds());
+									getLayoutEditor()->selectedLineNumbers.add(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
         }
     }
 

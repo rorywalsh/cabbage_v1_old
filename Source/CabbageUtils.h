@@ -722,6 +722,13 @@ Array<float> getAmpRangeArray(Array<float> ranges, int tableNumber)
 		Image img = Image(Image::ARGB, width, height, true);
 		Graphics g (img);
 		float opacity = 0;
+		
+		//if alpha is full draw invible button
+		if(colour.getAlpha()==0x00)
+		{
+			g.fillAll(Colours::transparentBlack);
+			return img;
+		}
 
 		if (isRect)   //if rectangular toggle
 		{

@@ -1234,18 +1234,22 @@ void CabbagePluginAudioProcessor::setupNativePluginEditor()
 #ifndef Cabbage_No_Csound
 void CabbagePluginAudioProcessor::messageCallback(CSOUND* csound, int /*attr*/,  const char* fmt, va_list args)
 {
-    CabbagePluginAudioProcessor* ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
-    char msg[MAX_BUFFER_SIZE];
-    vsnprintf(msg, MAX_BUFFER_SIZE, fmt, args);
+	if(fmt)
+	{
+		CabbagePluginAudioProcessor* ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
+		char msg[MAX_BUFFER_SIZE];
+		vsnprintf(msg, MAX_BUFFER_SIZE, fmt, args);
 
-    ud->debugMessage += String(msg); //We have to append the incoming msg
-    ud->csoundOutput += ud->debugMessage;
-    ud->debugMessageArray.add(ud->debugMessage);
-    if(ud->createLog)
-        Logger::writeToLog(String(msg).trim());
-    ud->sendChangeMessage();
-    ud->debugMessage = "";
-    ud = nullptr;
+		ud->debugMessage += String(msg); //We have to append the incoming msg
+		ud->csoundOutput += ud->debugMessage;
+		ud->debugMessageArray.add(ud->debugMessage);
+		if(ud->createLog)
+			Logger::writeToLog(String(msg).trim());
+		ud->sendChangeMessage();
+		ud->debugMessage = "";
+		ud = nullptr;
+		
+	}
 }
 
 

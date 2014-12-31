@@ -59,6 +59,7 @@ public:
 	
 	void setGridColour(Colour col);
 	void setOutlineThickness(float thickness);
+	void setFill(bool fill );
 	void setBackgroundColour(Colour col);
 	void repaintAllTables();
     void resized();
@@ -76,6 +77,7 @@ public:
     void setWaveform(AudioSampleBuffer buffer, int ftNumber);
     void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
     void setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange = true);
+	void setFile(const File file);
     void enableEditMode(StringArray pFields, int ftnumber);
     ScopedPointer<RoundButton> zoomIn, zoomOut;
     OwnedArray<RoundButton> tableButtons;
@@ -200,6 +202,11 @@ public:
 	{
 	traceThickness = thickness;	
 	}
+
+	void shouldFillTable(bool fill)
+	{
+	shouldFill = fill;	
+	}
 	
 	void setBackgroundColour(Colour col)
 	{
@@ -209,6 +216,7 @@ public:
 private:
 	void drawBackgroundGrid();
 	Image backgroundImage;
+	bool shouldFill;
 	float traceThickness;
 	bool paintCachedImage;
 	String coordinates;

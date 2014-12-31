@@ -148,6 +148,7 @@ static const Identifier channelarray = "channelarray";
 static const Identifier identchannelarray = "identchannelarray";
 static const Identifier outlinecolour = "outlinecolour";
 static const Identifier fillcolour = "fillcolour";
+static const Identifier fill = "fill";
 static const Identifier textcolour = "textcolour";
 static const Identifier trackercolour = "trackercolour";
 static const Identifier tablecolour = "tablecolour";

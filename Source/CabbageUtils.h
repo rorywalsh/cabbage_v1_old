@@ -35,6 +35,25 @@
 
 using namespace std;
 
+#define svgRSliderDiameter 1000
+
+#define svgVSliderWidth 300
+#define svgVSliderHeight 1000
+
+#define svgVSliderThumbHeight 1000
+#define svgVSliderThumbWidth 1000
+
+#define svgHSliderThumbWidth 1000
+#define svgHSliderThumbHeight 1000
+
+#define svgHSliderHeight 300
+#define svgHSliderWidth 1000
+
+#define svgButtonWidth 1000
+#define svgButtonHeight 500
+
+#define svgGroupboxWidth 1000
+#define svgGroupboxHeight 800
 
 class KeyboardShortcutKeys
 {
@@ -716,6 +735,126 @@ Array<float> getAmpRangeArray(Array<float> ranges, int tableNumber)
     {
         appPrefs->getUserSettings()->setValue(pref, var(value));
     }
+
+//====================================================================================
+static Image getSVGImageFor(String path, String type, AffineTransform affine)
+{
+
+    String svgFileName;
+    Image svgImg;
+    if(type.contains("button"))
+    {
+        svgFileName = path+"/"+String(type)+".svg";
+        if(File(svgFileName).existsAsFile())
+            svgImg = Image(Image::ARGB, svgButtonWidth, svgButtonHeight, true);//default button size 100px X 50px
+    }
+
+    else if(type.contains("slider"))
+    {
+        svgFileName = path+"/"+String(type)+".svg";
+        if(File(svgFileName).existsAsFile())
+            svgImg = Image(Image::ARGB, svgRSliderDiameter, svgRSliderDiameter, true);//default rotary slider size 150px X 150px
+    }
+
+    else if(type.contains("groupbox"))
+    {
+        svgFileName = path+"/"+String(type)+".svg";
+        if(File(svgFileName).existsAsFile())
+            svgImg = Image(Image::ARGB, svgGroupboxWidth, svgGroupboxHeight, true);//default rotary slider size 150px X 150px
+    }
+
+
+    File svgFile(svgFileName);
+    ScopedPointer<XmlElement> svg (XmlDocument::parse(svgFile.loadFileAsString()));
+    if (svgFile.exists())
+    {
+        if(svg == nullptr)
+            Logger::writeToLog("couldn't parse svg, might not exist");
+        ScopedPointer<Drawable> drawable;
+
+        Graphics graph(svgImg);
+        if (svg != nullptr)
+        {
+            drawable = Drawable::createFromSVG (*svg);
+            drawable->draw(graph, 1.f, affine);
+            return svgImg;
+        }
+    }
+
+    return svgImg;
+}
+
+//========= Text button image ========================================================
+static Image drawTextButtonImage(float width, float height, bool isButtonDown, Colour colour, String svgPath)
+{
+    Image img = Image(Image::ARGB, width, height, true);
+    Graphics g (img);
+    float opacity;
+
+	//if alpha is full draw invible button
+	if(colour.getAlpha()==0x00)
+	{
+		g.fillAll(Colours::transparentBlack);
+		return img;
+	}
+
+
+    if(getSVGImageFor(svgPath, "button_background", AffineTransform::identity).isValid())
+    {
+        //----- If "off"
+        if (isButtonDown == false)
+            g.drawImage(getSVGImageFor(svgPath, "button_background", AffineTransform::identity), 0, 0, width, height, 0, 0, svgButtonWidth, svgButtonHeight, false);
+        else
+            g.drawImage(getSVGImageFor(svgPath, "button_background", AffineTransform::identity), 1, 1, width-2, height-2, 0, 0, svgButtonWidth, svgButtonHeight, false);
+    }
+    else
+    {
+
+        //----- Outline
+        g.setColour (Colour::fromRGBA (10, 10, 10, 255));
+        g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+
+        //----- If "off"
+        if (isButtonDown == false)
+        {
+            //----- Shadow
+            for (float i=0.01; i<0.05; i+=0.01)
+            {
+                g.setColour (Colour::fromRGBA (0, 0, 0, 255/(i*100)));
+                g.fillRoundedRectangle (width*i, height*i,
+                                        width*0.95, height*0.95, height*0.1);
+                opacity = 0.3;
+            }
+        }
+        else
+            opacity = 0.1;
+
+        //----- Filling in the button
+        //Colour bg1 = Colour::fromRGBA (25, 25, 28, 255);
+        //Colour bg2 = Colour::fromRGBA (15, 15, 18, 255);
+        Colour bg1 = colour;
+        Colour bg2 = colour.darker();
+
+        ColourGradient cg = ColourGradient (bg1, 0, 0, bg2, width*0.5, height*0.5, false);
+        g.setGradientFill (cg);
+        g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, height*0.1);
+
+        //----- For emphasising the top and left edges to give the illusion that light is shining on them
+        ColourGradient edgeHighlight = ColourGradient (Colours::whitesmoke, 0, 0,
+                                       Colours::transparentWhite, 0, height*0.1, false);
+        g.setGradientFill (edgeHighlight);
+        g.setOpacity (opacity);
+        g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+
+        ColourGradient edgeHighlight2 = ColourGradient (Colours::whitesmoke, 0, 0,
+                                        Colours::transparentWhite, height*0.1, 0, false);
+        g.setGradientFill (edgeHighlight2);
+        g.setOpacity (opacity);
+        g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+    }
+    return img;
+}
+
 //====================================================================================================
 	static Image drawToggleImage (float width, float height, bool isToggleOn, Colour colour, bool isRect, String svgPath)
 	{

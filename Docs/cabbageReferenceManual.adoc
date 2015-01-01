@@ -36,6 +36,9 @@ Button creates a button on screen that can be used for a whole range of differen
 
 `colour:1("colour")` This sets the colour of the button when it's value is 1.  See above for details on valid colours. 
 
+[icon="images/smallLogo.PNG"]
+NOTE: You can create an invisible button by setting the colour to something with an alpha value of 0. Images can then be placed under the button to create an image button. 
+
 `fontcolour:0("colour")` Sets the colour of the text that appears on the button when it's in its off state. See above for details on valid colours. 
 
 `fontcolour:1("colour")` Sets the colour of the text that appears on the button when it's in its on state. See above for details on valid colours. 

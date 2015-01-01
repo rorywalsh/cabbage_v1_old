@@ -37,7 +37,7 @@ class CabbageLookAndFeel	:	public LookAndFeel_V2
 public:
     CabbageLookAndFeel();
     ~CabbageLookAndFeel();
-    Image getSVGImageFor(String path, String type, AffineTransform affine);
+
 
     void drawTableHeaderColumn (Graphics& g, const String& columnName, int /*columnId*/,
                                 int width, int height,
@@ -45,7 +45,6 @@ public:
                                 int columnFlags);
     void drawTableHeaderBackground (Graphics& g, TableHeaderComponent& header);
     Image drawLinearThumbImage (float width, float height, const Colour thumbFill, bool isVertical, String svgPath);
-    Image drawTextButtonImage (float width, float height, bool isButtonDown, Colour colour, String svgPath);
     void drawRotarySlider (Graphics &g, int x, int y, int width, int height, float sliderPosProportional,
                            float rotaryStartAngle,
                            float rotaryEndAngle,

@@ -1305,7 +1305,7 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
     else if(choice==7)
         insertComponentsFromCabbageText(StringArray(String("groupbox bounds(")+String(x)+(", ")+String(y)+String(", 200, 150), text(\"groupbox\"), colour(\"black\"), caption(\"groupbBox\")")), false);
     else if(choice==8)
-        insertComponentsFromCabbageText(StringArray(String("image bounds(")+String(x)+(", ")+String(y)+String(", 200, 150), colour(\"white\"), line(0)")), false);
+        insertComponentsFromCabbageText(StringArray(String("image bounds(")+String(x)+(", ")+String(y)+String(", 200, 150), colour(\"white\")")), false);
     else if(choice==9)
         insertComponentsFromCabbageText(StringArray(String("keyboard bounds(")+String(x)+(", ")+String(y)+String(", 150, 60)")), false);
     else if(choice==10)
@@ -1720,6 +1720,8 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
     float top = cAttr.getNumProp(CabbageIDs::top);
     float width = cAttr.getNumProp(CabbageIDs::width);
     float height = cAttr.getNumProp(CabbageIDs::height);
+
+	static_cast<CabbageImage*>(layoutComps[idx])->setBaseDirectory(getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());
 
     int relY=0,relX=0;
     if(layoutComps.size()>0)
@@ -2173,12 +2175,9 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
             tableValues = getFilter()->getTableFloats(tableNumber);
 
 			Array<float> ampRange = getAmpRangeArray(cAttr.getFloatArrayProp("amprange"), tableNumber);
-			
-			
-
+				
 			if(getFilter()->compiledOk()==OK)
 			{
-
 				table->addTable(44100, 
 								cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y+fileTable), 
 								(tableValues.size()>=MAX_TABLE_SIZE ? 1 : genRoutine),
@@ -2227,6 +2226,17 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 		
 	table->setBackgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::backgroundcolour)));
 	table->setFill(cAttr.getNumProp(CabbageIDs::fill));
+	
+	//set VU gradients based on tablecolours, take only the first three colours. 
+	Array<Colour> gradient;
+	for(int i=0;i<3;i++)
+	{
+		cUtils::debug(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, i));
+		gradient.add(Colours::findColourForName(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, i), Colours::white));		
+	}
+	
+	table->setVUGradient(gradient);
+	
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -3500,6 +3510,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                 else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::button)
                 {
                     CabbageButton* cabButton = static_cast<CabbageButton*>(comps[i]);
+					cabButton->button->setToggleState(inValue, dontSendNotification);
                     cabButton->button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue(CabbageIDs::text, inValue));
                 }
 

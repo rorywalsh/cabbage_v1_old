@@ -63,6 +63,8 @@ Soundfiler::Soundfiler(int sr, Colour col, Colour fcol):	thumbnailCache (5),
     regionWidth(1),
     loopLength(0),
     scrubberPosition(0),
+	showScrubber(true),
+	selectableRange(true),
     fontcolour(fcol),
     currentPositionMarker(new DrawableRectangle())
 {
@@ -201,32 +203,11 @@ void Soundfiler::paint (Graphics& g)
         thumbnail->drawChannels(g, thumbArea.reduced (2),
                                 visibleRange.getStart(), visibleRange.getEnd(), .8f);
 
-        /*
-        for(int i=0.f;i<getWidth();i++){
-        g.setColour (fontcolour);
-        //float pos = visibleRange.getStart()+i;
-        //float xPos = (jmax(1, i)/visibleRange.getStart()) / (visibleRange.getLength() * getWidth());
-        //double round = xToTime(i);
-
-        double round = fabs(xToTime(i));
-        //Logger::writeToLog(String(round-abs((int)round)));
-        if(round-abs((int)round)<(0.05*(1-zoom)))
-        {
-        	String test = CabbageUtils::setDecimalPlaces(xToTime(i), 1);
-        	g.setFont(10);
-        	g.drawFittedText(test, i, 0, 20, 11, Justification::left, 1);
-        	//g.drawVerticalLine(i+1, 5, 10);
-        }
-
-        //g.drawVerticalLine(i, 5, 10);
-        }*/
-
-
-
         //if(regionWidth>1){
         g.setColour(colour.contrasting(.5f).withAlpha(.7f));
         float zoomFactor = thumbnail->getTotalLength()/visibleRange.getLength();
         //regionWidth = (regionWidth=2 ? 2 : regionWidth*zoomFactor)
+		if(showScrubber)
         g.fillRect(timeToX(currentPlayPosition), 10.f, (regionWidth==2 ? 2 : regionWidth*zoomFactor), (float)getHeight()-26.f);
         //}
 
@@ -285,35 +266,42 @@ void Soundfiler::mouseExit(const MouseEvent& e)
 //==============================================================================
 void Soundfiler::mouseDrag(const MouseEvent& e)
 {
-
-    if(this->getLocalBounds().contains(e.getPosition()))
-    {
-        if(e.mods.isLeftButtonDown())
-        {
-            double zoomFactor = visibleRange.getLength()/thumbnail->getTotalLength();
-            regionWidth = abs(e.getDistanceFromDragStartX())*zoomFactor;
-            Logger::writeToLog(String(e.getDistanceFromDragStartX()));
-            if(e.getDistanceFromDragStartX()<0)
-                currentPlayPosition = jmax (0.0, xToTime (loopStart+(float)e.getDistanceFromDragStartX()));
-            float widthInTime = ((float)e.getDistanceFromDragStartX() / (float)getWidth()) * (float)thumbnail->getTotalLength();
-            loopLength = jmax (0.0, widthInTime*zoomFactor);
-        }
-        repaint();
-    }
+	if(selectableRange)
+	{
+		if(this->getLocalBounds().contains(e.getPosition()))
+		{
+			if(e.mods.isLeftButtonDown())
+			{
+				double zoomFactor = visibleRange.getLength()/thumbnail->getTotalLength();
+				regionWidth = abs(e.getDistanceFromDragStartX())*zoomFactor;
+				Logger::writeToLog(String(e.getDistanceFromDragStartX()));
+				if(e.getDistanceFromDragStartX()<0)
+					currentPlayPosition = jmax (0.0, xToTime (loopStart+(float)e.getDistanceFromDragStartX()));
+				float widthInTime = ((float)e.getDistanceFromDragStartX() / (float)getWidth()) * (float)thumbnail->getTotalLength();
+				loopLength = jmax (0.0, widthInTime*zoomFactor);
+			}
+			repaint();
+		}
+		
+	}
 }
 //==============================================================================
 void Soundfiler::setScrubberPos(double pos)
 {
-    currentPositionMarker->setVisible (true);
-    pos = (pos/(thumbnail->getTotalLength()*sampleRate))*thumbnail->getTotalLength();
-    currentPositionMarker->setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 10,
-                                         1.5f, (float) (getHeight() - scrollbar->getHeight()-10)));
-    if(pos<0.5)
-        setRange (visibleRange.movedToStartAt(0));
+	if(showScrubber)
+	{
+		currentPositionMarker->setVisible (true);
+		pos = (pos/(thumbnail->getTotalLength()*sampleRate))*thumbnail->getTotalLength();
+		currentPositionMarker->setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 10,
+											 1.5f, (float) (getHeight() - scrollbar->getHeight()-10)));
+											 
+		if(pos<0.5)
+			setRange (visibleRange.movedToStartAt(0));
 
-
-    if(visibleRange.getEnd()<=thumbnail->getTotalLength())
-        setRange (visibleRange.movedToStartAt (jmax(0.0, pos - (visibleRange.getLength() / 2.0))));
+		if(visibleRange.getEnd()<=thumbnail->getTotalLength())
+			setRange (visibleRange.movedToStartAt (jmax(0.0, pos - (visibleRange.getLength() / 2.0))));
+			
+	}
 }
 //==============================================================================
 void Soundfiler::mouseUp(const MouseEvent& e)

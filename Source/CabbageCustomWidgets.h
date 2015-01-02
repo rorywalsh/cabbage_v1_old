@@ -29,7 +29,6 @@
 #include "Soundfiler.h"
 #include "DirectoryContentsComponent.h"
 
-
 class InfoWindow   : public DocumentWindow
 {
     ScopedPointer<WebBrowserComponent> htmlInfo;
@@ -993,7 +992,7 @@ class CabbageImage : public Component,
     String name, outline, colour, shape, file;
     Image img;
     int top, left, width, height, line;
-    File picFile;
+    String currentDirectory;
 
 public:
     CabbageImage(CabbageGUIClass &cAttr):
@@ -1005,6 +1004,7 @@ public:
         line(cAttr.getNumProp(CabbageIDs::outlinethickness))
     {
         setName(name);
+		//picPath = File(file).getParentDirectory();
         img = ImageCache::getFromFile (File (file));
         this->setWantsKeyboardFocus(false);
         //if widget is a plant intercept mouse events
@@ -1016,6 +1016,11 @@ public:
     ~CabbageImage()
     {
     }
+
+	void setBaseDirectory(String dir)
+	{
+		currentDirectory = dir;
+	}
 
     void mouseDown(const MouseEvent& event)
     {
@@ -1031,6 +1036,13 @@ public:
         shape = m_cAttr.getStringProp(CabbageIDs::shape);
         line = m_cAttr.getNumProp(CabbageIDs::outlinethickness);
 		setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));	
+		
+		if(m_cAttr.getStringProp(CabbageIDs::file)!=file)
+		{
+			file = cUtils::returnFullPathForFile(m_cAttr.getStringProp(CabbageIDs::file), currentDirectory);
+ 			img = ImageCache::getFromFile (File (file));
+			repaint();
+		}
 		
         setBounds(m_cAttr.getBounds());
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
@@ -1049,11 +1061,10 @@ public:
     void paint (Graphics& g)
     {
         //Logger::writeToLog("in paint routine");
-        if(File(file).existsAsFile())
-        {
-            //Logger::writeToLog("drawing file");
-            g.drawImage(img, 0, 0, width, height, 0, 0, img.getWidth(), img.getHeight());
-        }
+		if(img.isValid())
+		{
+			g.drawImage(img, 0, 0, width, height, 0, 0, img.getWidth(), img.getHeight());
+		}
         else
         {
             if(shape=="rounded")
@@ -1416,7 +1427,7 @@ public:
         file(cAttr.getStringProp(CabbageIDs::file)),
         zoom(cAttr.getNumProp(CabbageIDs::zoom)),
         scrubberPos(cAttr.getNumProp(CabbageIDs::scrubberposition))
-    {
+    {			
         setName(cAttr.getStringProp(CabbageIDs::name));
         soundFiler = new Soundfiler(44100, Colour::fromString(colour), Colour::fromString(fontcolour));
         addAndMakeVisible(soundFiler);
@@ -1424,6 +1435,14 @@ public:
         sampleRate = 44100;
         soundFiler->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
 		setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
+		//if no channels are set remove the selectable range feature
+		
+		if(cAttr.getNumProp(CabbageIDs::scrubberposition)<0)
+			soundFiler->shouldShowScrubber(false);
+			
+		if(cAttr.getStringArrayProp(CabbageIDs::channel).size()==0)
+			soundFiler->setIsRangeSelectable(false);
+		
     }
 
     ~CabbageSoundfiler()

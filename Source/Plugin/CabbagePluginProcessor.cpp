@@ -656,6 +656,7 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
         csoundStatus=false;
     }
     getCallbackLock().exit();
+	
 #endif
 }
 //===========================================================

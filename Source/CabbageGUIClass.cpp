@@ -297,6 +297,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         populate.append("");
         cabbageIdentifiers.set("populate", populate);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+		cabbageIdentifiers.set(CabbageIDs::filetype, "*");
     }
 
     //===============button==================//
@@ -515,8 +516,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::width, 300);
         cabbageIdentifiers.set(CabbageIDs::height, 200);
         var channels;
-        channels.append("pos");
-        channels.append("end");
+        //channels.append("pos");
+        //channels.append("end");
         cabbageIdentifiers.set(CabbageIDs::channel, channels);
         cabbageIdentifiers.set(CabbageIDs::colour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());

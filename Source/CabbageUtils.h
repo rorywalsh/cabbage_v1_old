@@ -647,10 +647,13 @@ Array<float> getAmpRangeArray(Array<float> ranges, int tableNumber)
 	int numRangeArrays = ranges.size()/4;
 	
 	for(int i=2;i<ranges.size();i+=4)
-		if(ranges[i]==tableNumber)
+		if(ranges[i]==tableNumber || ranges[i]==-1)
 		{
 			for(int y = i-2;y<=i+1;y++)
+			{
 				ampRange.add(ranges[y]);
+				cUtils::debug(ranges[y]);
+			}
 		}
 		
 	return ampRange;
@@ -1169,7 +1172,7 @@ static Image drawTextButtonImage(float width, float height, bool isButtonDown, C
         else return img;
     }
 //====================================================================================================
-    String returnFullPathForFile(String file, String fullPath)
+    static String returnFullPathForFile(String file, String fullPath)
     {
         String pic;
         if(file.isNotEmpty())

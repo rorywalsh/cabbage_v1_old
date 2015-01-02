@@ -87,6 +87,7 @@ public:
     void changeListenerCallback(ChangeBroadcaster *source);
     void bringTableToFront(int ftNumber);
     void configTableSizes(var tableConfig);
+	void setVUGradient(Array<Colour> colour);
     GenTable* getLargestTable();
     GenTable* getTableFromFtNumber(int ftnumber);
 };
@@ -212,6 +213,11 @@ public:
 	{
 		backgroundColour = col;
 	}
+
+	void setVUGradient(ColourGradient grad)
+	{
+		vuGradient=grad;
+	}
 	
 private:
 	void drawBackgroundGrid();
@@ -261,6 +267,7 @@ private:
     double loopStart;
     double currentPlayPosition;
     bool drawWaveform;
+	ColourGradient vuGradient;
 
 	const Image drawGridImage(bool redraw, double width=0.0, double height=0.0, double offset=0.0);
 
@@ -315,7 +322,7 @@ public:
     double tableSize;
     Range<float> minMax;
     Colour colour;
-    int gen;
+    int handleViewerGen;
 	
 	bool isShowingGrid()
 	{

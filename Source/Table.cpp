@@ -163,7 +163,7 @@ void TableManager::setZoomFactor(double newZoom)
 {
     for(int i=0; i<tables.size(); i++)
     {
-        if(newZoom<0)
+        if(newZoom<0 || tables[i]->tableSize<=2)
         {
             showZoomButtons(false);
             tables[i]->showScrollbar(false);
@@ -234,6 +234,19 @@ void TableManager::setFill(bool fill)
             tables[i]->shouldFillTable(fill);
     }	
 }
+
+void TableManager::setVUGradient(Array<Colour> colour)
+{
+	
+    ColourGradient vuGradient(colour[0], 0.f, 0.f, colour[2], getWidth(), getHeight(), false);
+    vuGradient.addColour(.5, colour[1]);
+
+    for(int i=0; i<tables.size(); i++)
+    {
+            tables[i]->setVUGradient(vuGradient);
+    }
+
+}
 //==============================================================================
 void TableManager::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
 {
@@ -301,7 +314,7 @@ void TableManager::resized()
                     }
                     else
                     {
-                        height = getHeight()-yPos;
+                        height = getHeight()-yPos-5;
                         ySpacing = yPos;
                     }
 
@@ -477,7 +490,8 @@ GenTable::GenTable():	thumbnailCache (5),
     qsteps(0),
     drawAsVUMeter(false),
 	drawGrid(false),
-	shouldFill(true)
+	shouldFill(true),
+	vuGradient(Colours::yellow, 0.f, 0.f, Colours::red, getWidth(), getHeight(), false)
 {
     thumbnail=nullptr;
     addAndMakeVisible(scrollbar = new ScrollBar(false));
@@ -508,7 +522,7 @@ void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRang
     sampleRate = sr;
     colour = Colours::findColourForName(col, Colours::white);
     genRoutine = abs(igen);
-    handleViewer->gen = abs(igen);
+    handleViewer->handleViewerGen = igen;
     realGenRoutine = igen;
     handleViewer->colour = Colours::findColourForName(col, Colours::white);
 
@@ -530,11 +544,10 @@ void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRang
 //==============================================================================
 void GenTable::setAmpRanges(Array<float> ampRange)
 {
-	cUtils::debug(ampRange.size());
-	cUtils::debug(tableNumber);
+	cUtils::debug(ampRange[2]);
     if(ampRange.size()>2)
     {
-        if(ampRange[2]==tableNumber || ampRange[2]==0)
+        if(ampRange[2]==tableNumber || ampRange[2]==-1)
         {
             minMax.setStart(ampRange[0]);
             minMax.setEnd(ampRange[1]);
@@ -544,6 +557,7 @@ void GenTable::setAmpRanges(Array<float> ampRange)
         if(ampRange.size()>3)
         {
             quantiseSpace = ampRange[3];
+			cUtils::debug(minMax.getEnd());
             qsteps = quantiseSpace/minMax.getEnd();
             if(qsteps==1){
 				handleViewer->setShowingGrid(true);
@@ -958,7 +972,7 @@ void GenTable::paint (Graphics& g)
 	const bool interp = (getWidth()<tableSize ? true : false);
 	const double thumbHeight = thumbArea.getHeight()-(showScroll==true? 10 : 0);//scrollbar thickness
 	numPixelsPerIndex = ((double)thumbArea.getWidth() / visibleLength);
-
+	Path vuPath;
 	
 	//don't draw a grid when the table itself is a grid
 	if(drawGrid==true && qsteps!=1)
@@ -990,8 +1004,10 @@ void GenTable::paint (Graphics& g)
     //edit handles get placed on the handleViewer, which is placed on top of this component
     else
     {
-
-		float incr = visibleLength/((double)thumbArea.getWidth()); 
+		vuPath.startNewSubPath(0, thumbArea.getHeight()+5.f);
+		
+		//if drawing VU meter then we don't need a high resolution for the draing. 
+		float incr = (tableSize<=2 ? 1 : visibleLength/((double)thumbArea.getWidth())); 
         prevY = ampToPixel(thumbHeight, minMax, waveformBuffer[0]);
 		float midPoint;
 		bool drawTrace=true;
@@ -1022,30 +1038,42 @@ void GenTable::paint (Graphics& g)
 				{
 					//minMax is the range of the current waveforms amplitude
 					currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
-					if(shouldFill)
+					if(tableSize<=2)
 					{
-						g.setColour(colour.withAlpha(.2f));
-						g.drawVerticalLine(prevX, (prevY<midPoint ? prevY : midPoint),  (prevY>midPoint ? prevY : midPoint));
+						//if table is size of two or less draw as a VU meter using a path. 
+						vuPath.addRectangle(prevX, prevY, prevX+numPixelsPerIndex, thumbHeight);
+						//vuPath.lineTo(prevX+numPixelsPerIndex, prevY);
 					}
-					if(traceThickness>0)
+					else
 					{
-						g.setColour(colour);				
-						//draw trace 
-						currX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);
-						g.drawLine(prevX, prevY, currX, currY, traceThickness);
+						if(shouldFill)
+						{
+							g.setColour(colour.withAlpha(.2f));
+							g.drawVerticalLine(prevX, (prevY<midPoint ? prevY : midPoint),  (prevY>midPoint ? prevY : midPoint));
+						}
+						if(traceThickness>0)
+						{
+							g.setColour(colour);				
+							//draw trace 
+							currX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);
+							g.drawLine(prevX, prevY, currX, currY, traceThickness);
+						}
 					}
-				
+
 					prevX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);				
-					prevY = currY;					
+					prevY = currY;				
+
 					}
 				}
 		}
 
-        if(drawAsVUMeter)
+		vuPath.lineTo(prevX, thumbArea.getHeight());
+		vuPath.closeSubPath();
+
+        if(tableSize<=2)
         {
-            ColourGradient grad(Colours::yellow, 0.f, 0.f, Colours::red, thumbArea.toFloat().getWidth(), thumbArea.toFloat().getHeight(), false);
-            grad.addColour(.5, Colours::lime);
-            g.setGradientFill(grad);
+            g.setGradientFill(vuGradient);
+			g.fillPath(vuPath);
         }
 
 }
@@ -1264,13 +1292,13 @@ void HandleViewer::showHandles(bool show)
 //==============================================================================
 void HandleViewer::mouseDown(const MouseEvent& e)
 {
-    if(gen==-5 || gen==-7 || gen==-2)
+    if(handleViewerGen==-5 || handleViewerGen==-7 || handleViewerGen==-2)
         positionHandle(e);
 }
 
 void HandleViewer::mouseDrag(const MouseEvent& e)
 {
-    if(gen==2 && !isShowingGrid())
+    if(handleViewerGen==-2 && !isShowingGrid())
         positionHandle(e);
 }
 
@@ -1278,7 +1306,7 @@ void HandleViewer::mouseDrag(const MouseEvent& e)
 void HandleViewer::positionHandle(const MouseEvent& e)
 {
     //positions the handle when a user sends a mouse down on the handleViewer
-    if(gen==1 || tableSize>MAX_TABLE_SIZE )
+    if(handleViewerGen==1 || tableSize>MAX_TABLE_SIZE )
         return;
 
     //determine whether of not we are in toggle on.off(grid) mode..
@@ -1287,7 +1315,7 @@ void HandleViewer::positionHandle(const MouseEvent& e)
 
 	bool handleExists = false;
 	
-	if(abs(gen)==2)
+	if(abs(handleViewerGen)==2)
 		handleExists = true;
 		
 		

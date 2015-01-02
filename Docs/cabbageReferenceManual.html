@@ -190,12 +190,12 @@ table {
 }
 
 html, body {
-    font-size: 100%;
+    font-size: 90%;
 }
 
 body {
-    background: #dddddd;
-    color: #444444;
+    background: #111111;
+    color: #888888;
     padding: 0;
     margin: 0;
     font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
@@ -329,7 +329,7 @@ h1, h2, h3, #toctitle, .sidebarblock > .content > .title, h4, h5, h6 {
     font-family: Georgia, "URW Bookman L", Helvetica, Arial, sans-serif;
     font-weight: normal;
     font-style: normal;
-    color: #222222;
+    color: #dddddd;
     text-rendering: optimizeLegibility;
     margin-top: 1em;
     margin-bottom: 0.5em;
@@ -338,7 +338,7 @@ h1, h2, h3, #toctitle, .sidebarblock > .content > .title, h4, h5, h6 {
 
 h1 small, h2 small, h3 small, #toctitle small, .sidebarblock > .content > .title small, h4 small, h5 small, h6 small {
     font-size: 60%;
-    color: #222222;
+    color: #ffffff;
     line-height: 0;
 }
 
@@ -665,7 +665,7 @@ table thead tr th, table tfoot tr th, table tbody tr td, table tr td, table tfoo
 
 pre, pre > code {
     line-height: 1.4;
-    color: lime;
+    color: white;
     background-color: #444444;
     border-radius: 4px;
     font-family: Consolas, "Liberation Mono", Courier, monospace;
@@ -795,7 +795,7 @@ p a > code:hover {
 }
 
 #toctitle {
-    color: #222222;
+    color: white;
 }
 
 @media only screen and (min-width: 1280px) {
@@ -975,7 +975,7 @@ table.tableblock #preamble > .sectionbody > .paragraph:first-of-type p {
     padding-left: 1.125em;
     padding-right: 1.25em;
     border-left: 1px solid #dddddd;
-    color: #444444;
+    color: green;
 }
 
 .admonitionblock > table td.content > :last-child > :last-child {
@@ -1763,24 +1763,26 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 <div id="toctitle">Cabbage Reference Manual</div>
 <ul class="sectlevel1">
 <li><a href="#_cabbage_widgets">Cabbage Widgets</a></li>
-<li><a href="#_form">Form</a></li>
-<li><a href="#_group_box">Group Box</a></li>
-<li><a href="#_keyboard">Keyboard</a></li>
-<li><a href="#_csound_output_widget">Csound Output Widget</a></li>
-<li><a href="#_image">Image</a></li>
-<li><a href="#_label">Label</a></li>
 <li><a href="#_button">Button</a></li>
-<li><a href="#_file_button">File Button</a></li>
-<li><a href="#_information_button">Information Button</a></li>
-<li><a href="#_sliders">Sliders</a></li>
+<li><a href="#_button_file_button">Button (File button)</a></li>
+<li><a href="#_button_information_button">Button (Information button)</a></li>
 <li><a href="#_check_box">Check Box</a></li>
 <li><a href="#_combo_box">Combo Box</a></li>
+<li><a href="#_csound_output_widget">Csound Output Widget</a></li>
+<li><a href="#_form">Form</a></li>
+<li><a href="#_group_box">Group Box</a></li>
+<li><a href="#_image">Image</a></li>
+<li><a href="#_keyboard">Keyboard</a></li>
+<li><a href="#_label">Label</a></li>
+<li><a href="#_sliders">Sliders</a></li>
+<li><a href="#_soundfiler">Soundfiler</a></li>
+<li><a href="#_table">Table</a></li>
 <li><a href="#_text_box">Text Box</a></li>
 <li><a href="#_text_editor">Text Editor</a></li>
 <li><a href="#_xy_pad">XY Pad</a></li>
-<li><a href="#_table">Table</a></li>
 <li><a href="#_plants">Plants</a></li>
 <li><a href="#_reserved_channels">Reserved Channels</a></li>
+<li><a href="#_the_cabbage_standalone_host">The Cabbage Standalone Host</a></li>
 </ul>
 </div>
 </div>
@@ -1800,6 +1802,384 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 </div>
 </div>
 <div class="sect1">
+<h2 id="_button">Button</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), value(val), colour("colour"), fontcolour("colour"), latched(val), identchannel("channel"), alpha(val), visible(val), caption("caption")</code></pre>
+</div>
+</div>
+<hr>
+<div class="sect2">
+<h3 id="_identifiers">Identifiers</h3>
+<div class="paragraph">
+<p>Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish.</p>
+</div>
+<div class="paragraph">
+<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
+</div>
+<div class="paragraph">
+<p><code>channel("chan")</code> "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode.</p>
+</div>
+<div class="paragraph">
+<p><code>text("offCaption", "onCaption")</code> The text identifier must be passed at least one string argument. This string will be the one that will appear on the button. If you pass two strings to text() the button will toggle between the two string each time it is pushed.</p>
+</div>
+<div class="paragraph">
+<p><code>value(val)</code> val sets the initial state of the widget</p>
+</div>
+<div class="paragraph">
+<p><code>colour:0("colour")</code> This sets the colour of the button when it&#8217;s value is 0. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
+</div>
+<div class="paragraph">
+<p><code>colour:1("colour")</code> This sets the colour of the button when it&#8217;s value is 1.  See above for details on valid colours.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+You can create an invisible button by setting the colour to something with an alpha value of 0. Images can then be placed under the button to create an image button.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><code>fontcolour:0("colour")</code> Sets the colour of the text that appears on the button when it&#8217;s in its off state. See above for details on valid colours.</p>
+</div>
+<div class="paragraph">
+<p><code>fontcolour:1("colour")</code> Sets the colour of the text that appears on the button when it&#8217;s in its on state. See above for details on valid colours.</p>
+</div>
+<div class="paragraph">
+<p><code>latched(val)</code> With latched set to 0 the button will send a message to Csound on the initial mouse press, and once again as soon as the user releases the button. Therefore the button will toggle between 0 and 1 on each click rather than needing two separate mouse clicks.</p>
+</div>
+<div class="paragraph">
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+</div>
+<div class="paragraph">
+<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
+</div>
+<div class="paragraph">
+<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<div class="paragraph">
+<p><code>caption("caption")</code> This identifier will place the widget within a groupbox. "caption" is the text that will appear on group box. This identifier is included for legacy purposes only. It is recommended that you use use your own groupbox component as it will give you far more control over how everything appears on your instrument.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+colour:1() and fontcolour:1() can be set using colour() and fontcolour(). However, it&#8217;s recommended that you use the numerated colour identifiers in order to make your code as readable a possible.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="_example">Example</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/buttonExample.png" alt="Buttons"></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_button_file_button">Button (File button)</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), mode("mode")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A filebutton can be used to select files from disk. The filename selected, or created will be sent to Csound on the named channel as a string message. Filebuttons can also be used to select snapshot files for Cabbage to save parameter presets. See the populate identifier below.</p>
+</div>
+<hr>
+<div class="sect2">
+<h3 id="_identifiers_2">Identifiers</h3>
+<div class="paragraph">
+<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
+</div>
+<div class="paragraph">
+<p><code>text("name")</code> "name" will be the text that appears on the top of the info button.</p>
+</div>
+<div class="paragraph">
+<p><code>colour("colour")</code> This sets the colour of the button. filebuttons only have a single state, therefore they don&#8217;t need a unique on and off colour. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
+</div>
+<div class="paragraph">
+<p><code>fontcolour("colour")</code> Sets the colour of the text that appears with the slider. See above for details on valid colours.</p>
+</div>
+<div class="paragraph">
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS</p>
+</div>
+<div class="paragraph">
+<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
+</div>
+<div class="paragraph">
+<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<div class="paragraph">
+<p><code>populate("filetype", "dir")</code> Sets the type of file to search for, and the initial directory to look in. For example, to set the file type to wave files use "<strong>.wav" as the filetype string. If using the filebutton to record parameter snapshots, you must specify a filetype of "</strong>.snaps", and a mode type of snapshot. If no directory is specified, the file browser will open in the current working directory.</p>
+</div>
+<div class="paragraph">
+<p><code>mode("mode")</code> Set how the button will behave when pressed. Valid modes are:
+* <strong>file</strong>, Default. Will let the browser to select a file
+* <strong>directory</strong>, Will let the browser to select a folder/directory
+* <strong>snapshot</strong>, Will stop the file browser from opening, and instead will write a preset, or snapshot, file to disk with a default file name. The default filename will be the csd filename, with an underscore and number appended to it. For instance, if the filename is CabbageStew.csd, the preset files will be named CabbageStew_0.csd, CabbageStew_1.csd, CabbageStew_2.csd, etc. The snapshot mode provides is a very quick way of saving presets to disk. For more on presets see the Combobox widget reference.</p>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="_example_2">Example</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/filebuttonExample.png" alt="Buttons"></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_button_information_button">Button (Information button)</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>infobutton bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour") file("file name"), identchannel("chan"), alpha(val), visible(val)</code></pre>
+</div>
+</div>
+<hr>
+<div class="sect2">
+<h3 id="_identifiers_3">Identifiers</h3>
+<div class="paragraph">
+<p>Infobuttons can be used to open html files in the system&#8217;s default web browser. When clicked, the file passed to the file() identifier will be opened, if it is a valid file. This widget can be useful for providing help files or any other additional information about your instruments.</p>
+</div>
+<div class="paragraph">
+<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
+</div>
+<div class="paragraph">
+<p><code>text("name")</code> "name" will be the text that appears on the top of the info button.</p>
+</div>
+<div class="paragraph">
+<p><code>colour("colour")</code> This sets the colour of the button. infobuttons only have a single state, therefore they don&#8217;t need a unique on and off colour. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
+</div>
+<div class="paragraph">
+<p><code>fontcolour("colour")</code> Sets the colour of the text that appears with the slider. See above for details on valid colours. .</p>
+</div>
+<div class="paragraph">
+<p><code>file("file name")</code> Sets the file that will be opened when a user clicks on the button. For convenience, the file passed to the file() identifier should reside in the same directory as the current .csd file. If not you will need to provide a full path to the requested file.</p>
+</div>
+<div class="paragraph">
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS</p>
+</div>
+<div class="paragraph">
+<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
+</div>
+<div class="paragraph">
+<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="_example_3">Example</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/infobuttonExample.png" alt="csound output"></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_check_box">Check Box</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>checkbox bounds(x, y, width, height), channel("chan"), text("name"), value(val), caption("Caption"), colour:0("colour"), colour:1("colour"), shape("shape"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Checkbox creates a checkbox which functions like a button, but the associated caption will not change when the user checks it. As with all widgets capable of sending data to Csound, the channel string is the channel on which the widget will communicate with Csound.</p>
+</div>
+<hr>
+<div class="sect2">
+<h3 id="_identifiers_4">Identifiers</h3>
+<div class="paragraph">
+<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
+</div>
+<div class="paragraph">
+<p><code>channel("chan")</code> "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode.</p>
+</div>
+<div class="paragraph">
+<p><code>caption("caption")</code> This identifier lets you place your control within a groupbox. "caption" is the text that will appear on groupbox. This identifier is useful for naming and containing controls.</p>
+</div>
+<div class="paragraph">
+<p><code>text("name")</code> "name" will be the text that appears beside the checkbox.</p>
+</div>
+<div class="paragraph">
+<p><code>value(val)</code> val sets the initial state of the control</p>
+</div>
+<div class="paragraph">
+<p><code>colour:0("colour")</code> This sets the colour of the LED when it is in its OFF state. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
+</div>
+<div class="paragraph">
+<p><code>colour:1("colour")</code> Sets the colour of the widget when it is in its ON state. See above for details on valid colours.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+You can create an invisible checkbox by setting the colour to something with an alpha value of 0. Images can then be placed under the checkbox to create an image button. See the PVSampler instrument as an example of this.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><code>fontcolour("colour")</code> Sets the colour of the font to appear on the groupbox. See above for details on valid colours.</p>
+</div>
+<div class="paragraph">
+<p><code>shape("shape")</code> Sets the shape of the LED. Default is "square" but users can use "circle" also.</p>
+</div>
+<div class="paragraph">
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+</div>
+<div class="paragraph">
+<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
+</div>
+<div class="paragraph">
+<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+colour:1() can be set using colour(). However, it&#8217;s recommended that you use the numerated colour identifiers in order to make your code more readable.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="_example_4">Example</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/checkboxExample.png" alt="Checkboxes"></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_combo_box">Combo Box</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>combobox bounds(x, y, width, height), channel("chan"), value(val), items("item1", "item2", ...), populate("filetype", "dir"), channeltype("type"), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption")</code></pre>
+</div>
+</div>
+<hr>
+<div class="sect2">
+<h3 id="_identifiers_5">Identifiers</h3>
+<div class="paragraph">
+<p>Combobox creates a drop-down list of items which users can choose from. Once the user selects an item, the index of their selection will be sent to Csound on a channel named by the channel string. The default value is 0.</p>
+</div>
+<div class="paragraph">
+<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
+</div>
+<div class="paragraph">
+<p><code>channel("chan")</code> "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode.</p>
+</div>
+<div class="paragraph">
+<p><code>items("item1", "item2", ...)</code> list of items that will populate the combo box. Each item has a corresponding index value. The first item when selected will send a 1, the second item a 2, the third a 3 etc. If this identifier is left out default values of "Item 1", "Item  2", "Item  3", "Item 4" and "Item 5" will be used.</p>
+</div>
+<div class="paragraph">
+<p><code>value(val)</code> val sets the initial state of the widget</p>
+</div>
+<div class="paragraph">
+<p><code>populate("filetype", "dir")</code> This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "*.snaps". When using the populate() identifier you do not need to use the items() identifier. If no directory is specified, Cabbage will look in the current working directory.</p>
+</div>
+<div class="paragraph">
+<p><code>caption("caption")</code> This identifier lets you place your widget within a groupbox. "caption" is the text that will appear on groupbox. This identifier is useful for naming and containing widgets.</p>
+</div>
+<div class="paragraph">
+<p><code>channeltype("type")</code> Specifies the type of channel. Default is "float". If you wish to send the text contained in the combobox, for examples the names of a set of audio samples, set type to "string". If type is not set to string the index of the selected item will be sent to Csound on the named channel.</p>
+</div>
+<div class="paragraph">
+<p><code>colour("colour")</code> This sets the background colour of the combobox. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
+</div>
+<div class="paragraph">
+<p><code>fontcolour("colour")</code> Sets the colour of the text and arrow that appear on the combobox. See above for details on valid colours.</p>
+</div>
+<div class="paragraph">
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+</div>
+<div class="paragraph">
+<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
+</div>
+<div class="paragraph">
+<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="_example_5">Example</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/comboboxExample.png" alt="Combo"></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_csound_output_widget">Csound Output Widget</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>csoundoutput bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour"), identchannel("channel"), visible(val), alpha(val)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>csoundoutput will display Csound output messages within your instrument`s GUI. This widget can be very useful when working in plugin mode and can be invaluable when it comes to de-slugging Cabbage instruments.</p>
+</div>
+<hr>
+<div class="sect2">
+<h3 id="_identifiers_6">Identifiers</h3>
+<div class="paragraph">
+<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
+</div>
+<div class="paragraph">
+<p><code>text("name")</code> "name" will be the text that appears on the top of the check box.</p>
+</div>
+<div class="paragraph">
+<p><code>colour("colour")</code> This sets the colour of the background of the output console. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
+</div>
+<div class="paragraph">
+<p><code>fontcolour("colour")</code> Sets the colour of the text. See above for details on valid colours.</p>
+</div>
+<div class="paragraph">
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS</p>
+</div>
+<div class="paragraph">
+<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
+</div>
+<div class="paragraph">
+<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="_example_6">Example</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/csoundOutputExample.png" alt="csound output"></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_form">Form</h2>
 <div class="sectionbody">
 <div class="listingblock">
@@ -1812,7 +2192,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers">Identifiers</h3>
+<h3 id="_identifiers_7">Identifiers</h3>
 <div class="paragraph">
 <p><code>caption</code> The string passed to caption will be the string that appears on the main application window.</p>
 </div>
@@ -1842,7 +2222,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example">Example</h4>
+<h4 id="_example_7">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/formExample.png" alt="form"></span></p>
 </div>
@@ -1863,7 +2243,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_2">Identifiers</h3>
+<h3 id="_identifiers_8">Identifiers</h3>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -1902,9 +2282,75 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_2">Example</h4>
+<h4 id="_example_8">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/groupBoxExample.png" alt="form"></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_image">Image</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outline("colour"), line(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. For convenience, the file passed to file() should be in the same directory as your Cabbage instrument.</p>
+</div>
+<hr>
+<div class="sect2">
+<h3 id="_identifiers_9">Identifiers</h3>
+<div class="paragraph">
+<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
+</div>
+<div class="paragraph">
+<p><code>file("filename")</code> "filename" is the name of the image file to be displayed on the widget. If a full file path is not given, file() will search  in the current directory, i.e., the directory that contains the csd file that is open. It is best to keep all files in the same directory as your csd file, but if you wish to keep them in a sperate folder you can pass a full path to the file() identifier.</p>
+</div>
+<div class="paragraph">
+<p><code>shape("type");</code> "shape" must be either round(with rounded corners, default), sharp(with sharp corners), or ellipse(an elliptical shape)</p>
+</div>
+<div class="paragraph">
+<p><code>colour("colour")</code> This sets the colour of the image if no file name is given with the file identifier. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
+</div>
+<div class="paragraph">
+<p><code>outlinecolour("colour")</code> This sets the outline colour of the image/shape. See above for details on valid colours. .</p>
+</div>
+<div class="paragraph">
+<p><code>linethickness(thickness)</code> This sets the line thickness in pixels.</p>
+</div>
+<div class="paragraph">
+<p><code>plant("name")</code> Sets the name of the plant. No two plants can have the same name. See <code>PLANTS</code></p>
+</div>
+<div class="paragraph">
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+</div>
+<div class="paragraph">
+<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
+</div>
+<div class="paragraph">
+<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+Try to avoid full path names at all costs. They will work fine on a local machine, but will not be valid on another machine.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="_example_9">Example</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/imageExample.png" alt="image"></span></p>
 </div>
 </div>
 </div>
@@ -1923,7 +2369,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_3">Identifiers</h3>
+<h3 id="_identifiers_10">Identifiers</h3>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -1950,108 +2396,9 @@ The keyboard can be played at different velocities depending on where you click 
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_3">Example</h4>
+<h4 id="_example_10">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/keyboardExample.png" alt="keyboard"></span></p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_csound_output_widget">Csound Output Widget</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>csoundoutput bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour"), identchannel("channel"), visible(val), alpha(val)</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>csoundoutput will display Csound output messages within your instrument`s GUI. This widget can be very useful when working in plugin mode and can be invaluable when it comes to de-slugging Cabbage instruments.</p>
-</div>
-<hr>
-<div class="sect2">
-<h3 id="_identifiers_4">Identifiers</h3>
-<div class="paragraph">
-<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
-</div>
-<div class="paragraph">
-<p><code>text("name")</code> "name" will be the text that appears on the top of the check box.</p>
-</div>
-<div class="paragraph">
-<p><code>colour("colour")</code> This sets the colour of the background of the output console. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
-</div>
-<div class="paragraph">
-<p><code>fontcolour("colour")</code> Sets the colour of the text. See above for details on valid colours.</p>
-</div>
-<div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS</p>
-</div>
-<div class="paragraph">
-<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
-</div>
-<div class="paragraph">
-<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
-</div>
-<hr>
-<div class="sect3">
-<h4 id="_example_4">Example</h4>
-<div class="paragraph">
-<p><span class="image"><img src="images/csoundOutputExample.png" alt="csound output"></span></p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_image">Image</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outline("colour"), line(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val)</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. For convenience, the file passed to file() should be in the same directory as your Cabbage instrument.</p>
-</div>
-<hr>
-<div class="sect2">
-<h3 id="_identifiers_5">Identifiers</h3>
-<div class="paragraph">
-<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
-</div>
-<div class="paragraph">
-<p><code>file("filename")</code> "filename" is the name of the image file to be displayed on the widget. This file must reside in the same directory as the current .csd file. Do not pass a full path. Cabbage only needs the name and extension, for example file("cabbage.PNG").</p>
-</div>
-<div class="paragraph">
-<p><code>shape("type");</code> "shape" must be either round(with rounded corners, default), sharp(with sharp corners), or ellipse(an elliptical shape)</p>
-</div>
-<div class="paragraph">
-<p><code>colour("colour")</code> This sets the colour of the image if no file name is given with the file identifier. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
-</div>
-<div class="paragraph">
-<p><code>outlinecolour("colour")</code> This sets the outline colour of the image/shape. See above for details on valid colours. .</p>
-</div>
-<div class="paragraph">
-<p><code>linethickness(thickness)</code> This sets the line thickness in pixels.</p>
-</div>
-<div class="paragraph">
-<p><code>plant("name")</code> Sets the name of the plant. No two plants can have the same name. See <code>PLANTS</code></p>
-</div>
-<div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
-</div>
-<div class="paragraph">
-<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
-</div>
-<div class="paragraph">
-<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
-</div>
-<hr>
-<div class="sect3">
-<h4 id="_example_5">Example</h4>
-<div class="paragraph">
-<p><span class="image"><img src="images/imageExample.png" alt="image"></span></p>
 </div>
 </div>
 </div>
@@ -2070,7 +2417,7 @@ The keyboard can be played at different velocities depending on where you click 
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_6">Identifiers</h3>
+<h3 id="_identifiers_11">Identifiers</h3>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
 </div>
@@ -2097,180 +2444,9 @@ The keyboard can be played at different velocities depending on where you click 
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_6">Example</h4>
+<h4 id="_example_11">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/labelExample.png" alt="image"></span></p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_button">Button</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), value(val), colour("colour"), fontcolour("colour"), latched(val), identchannel("channel"), alpha(val), visible(val), caption("caption")</code></pre>
-</div>
-</div>
-<hr>
-<div class="sect2">
-<h3 id="_identifiers_7">Identifiers</h3>
-<div class="paragraph">
-<p>Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish.</p>
-</div>
-<div class="paragraph">
-<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
-</div>
-<div class="paragraph">
-<p><code>channel("chan")</code> "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode.</p>
-</div>
-<div class="paragraph">
-<p><code>text("offCaption", "onCaption")</code> The text identifier must be passed at least one string argument. This string will be the one that will appear on the button. If you pass two strings to text() the button will toggle between the two string each time it is pushed.</p>
-</div>
-<div class="paragraph">
-<p><code>value(val)</code> val sets the initial state of the widget</p>
-</div>
-<div class="paragraph">
-<p><code>colour:0("colour")</code> This sets the colour of the button when it&#8217;s value is 0. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
-</div>
-<div class="paragraph">
-<p><code>colour:1("colour")</code> This sets the colour of the button when it&#8217;s value is 1.  See above for details on valid colours.</p>
-</div>
-<div class="paragraph">
-<p><code>fontcolour:0("colour")</code> Sets the colour of the text that appears on the button when it&#8217;s in its off state. See above for details on valid colours.</p>
-</div>
-<div class="paragraph">
-<p><code>fontcolour:1("colour")</code> Sets the colour of the text that appears on the button when it&#8217;s in its on state. See above for details on valid colours.</p>
-</div>
-<div class="paragraph">
-<p><code>latched(val)</code> With latched set to 0 the button will send a message to Csound on the initial mouse press, and once again as soon as the user releases the button. Therefore the button will toggle between 0 and 1 on each click rather than needing two separate mouse clicks.</p>
-</div>
-<div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
-</div>
-<div class="paragraph">
-<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
-</div>
-<div class="paragraph">
-<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
-</div>
-<div class="paragraph">
-<p><code>caption("caption")</code> This identifier will place the widget within a groupbox. "caption" is the text that will appear on group box. This identifier is included for legacy purposes only. It is recommended that you use use your own groupbox component as it will give you far more control over how everything appears on your instrument.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<img src="images/smallLogo.PNG" alt="Note">
-</td>
-<td class="content">
-colour:1() and fontcolour:1() can be set using colour() and fontcolour(). However, it&#8217;s recommended that you use the numerated colour identifiers in order to make your code as readable a possible.
-</td>
-</tr>
-</table>
-</div>
-<hr>
-<div class="sect3">
-<h4 id="_example_7">Example</h4>
-<div class="paragraph">
-<p><span class="image"><img src="images/buttonExample.png" alt="Buttons"></span></p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_file_button">File Button</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>filebutton bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val)</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>A filebutton can be used to select files from disk. The filename selected, or created will be sent to Csound on the named channel as a string message. Filebuttons can also be used to select snapshot files for Cabbage to save parameter presets. See the populate identifier below.</p>
-</div>
-<hr>
-<div class="sect2">
-<h3 id="_identifiers_8">Identifiers</h3>
-<div class="paragraph">
-<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
-</div>
-<div class="paragraph">
-<p><code>text("name")</code> "name" will be the text that appears on the top of the info button.</p>
-</div>
-<div class="paragraph">
-<p><code>colour("colour")</code> This sets the colour of the button. filebuttons only have a single state, therefore they don&#8217;t need a unique on and off colour. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
-</div>
-<div class="paragraph">
-<p><code>fontcolour("colour")</code> Sets the colour of the text that appears with the slider. See above for details on valid colours.</p>
-</div>
-<div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS</p>
-</div>
-<div class="paragraph">
-<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
-</div>
-<div class="paragraph">
-<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
-</div>
-<div class="paragraph">
-<p><code>populate("filetype", "dir")</code> Sets the type of file to search for, and the initial directory to look in. For example, to set the file type to wave files use "<strong>.wav" as the filetype string. If using the filebutton to record parameter snapshots, you must specify a filetype of "</strong>.snaps". If no directory is specified, the file browser will open in the current working directory.</p>
-</div>
-<hr>
-<div class="sect3">
-<h4 id="_example_8">Example</h4>
-<div class="paragraph">
-<p><span class="image"><img src="images/filebuttonExample.png" alt="Buttons"></span></p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_information_button">Information Button</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>infobutton bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour") file("file name"), identchannel("chan"), alpha(val), visible(val)</code></pre>
-</div>
-</div>
-<hr>
-<div class="sect2">
-<h3 id="_identifiers_9">Identifiers</h3>
-<div class="paragraph">
-<p>Infobuttons can be used to open html files in the system&#8217;s default web browser. When clicked, the file passed to the file() identifier will be opened, if it is a valid file. This widget can be useful for providing help files or any other additional information about your instruments.</p>
-</div>
-<div class="paragraph">
-<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
-</div>
-<div class="paragraph">
-<p><code>text("name")</code> "name" will be the text that appears on the top of the info button.</p>
-</div>
-<div class="paragraph">
-<p><code>colour("colour")</code> This sets the colour of the button. infobuttons only have a single state, therefore they don&#8217;t need a unique on and off colour. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
-</div>
-<div class="paragraph">
-<p><code>fontcolour("colour")</code> Sets the colour of the text that appears with the slider. See above for details on valid colours. .</p>
-</div>
-<div class="paragraph">
-<p><code>file("file name")</code> Sets the file that will be opened when a user clicks on the button. For convenience, the file passed to the file() identifier should reside in the same directory as the current .csd file. If not you will need to provide a full path to the requested file.</p>
-</div>
-<div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS</p>
-</div>
-<div class="paragraph">
-<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
-</div>
-<div class="paragraph">
-<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
-</div>
-<hr>
-<div class="sect3">
-<h4 id="_example_9">Example</h4>
-<div class="paragraph">
-<p><span class="image"><img src="images/infobuttonExample.png" alt="csound output"></span></p>
 </div>
 </div>
 </div>
@@ -2290,7 +2466,7 @@ textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolo
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_10">Identifiers</h3>
+<h3 id="_identifiers_12">Identifiers</h3>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
 </div>
@@ -2385,7 +2561,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_10">Example</h4>
+<h4 id="_example_12">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/sliderExample.png" alt="Sliders"></span></p>
 </div>
@@ -2394,45 +2570,39 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 </div>
 <div class="sect1">
-<h2 id="_check_box">Check Box</h2>
+<h2 id="_soundfiler">Soundfiler</h2>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>checkbox bounds(x, y, width, height), channel("chan"), text("name"), value(val), caption("Caption"), colour:0("colour"), colour:1("colour"), shape("shape"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val)</code></pre>
+<pre class="highlight"><code>soundfiler bounds(x, y, width, height), channel("start", "end"), colour("colour1"), zoom(val), tablenumber(val), file("filename"), scrubberpos(val), identchannel("channel"), alpha(val), visible(val)</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Checkbox creates a checkbox which functions like a button, but the associated caption will not change when the user checks it. As with all widgets capable of sending data to Csound, the channel string is the channel on which the widget will communicate with Csound.</p>
+<p>soundfiler will display the contents of a sound file, or a function table containing a sound file (GEN01 tables). This is a fast waveform viewer that allows users to select regions of the waveform. Unlike the table widget, soundfiler can only display one waveform at a time.</p>
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_11">Identifiers</h3>
+<h3 id="_identifiers_13">Identifiers</h3>
 <div class="paragraph">
-<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
+<p><code>bounds(x, y, width, height)</code> Integer values that set position and size on screen(in pixels)</p>
 </div>
 <div class="paragraph">
-<p><code>channel("chan")</code> "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode.</p>
+<p><code>tablenumber(val)</code> Sets the table/tables to be displayed. If multiple tables are specified the tables will be superimposed on top of each other. If multiple tables are specified with a colon between then the tables will be stacked on top of each other along the Y-axis, e.g., tablenumber(1:2:3:4).</p>
 </div>
 <div class="paragraph">
-<p><code>caption("caption")</code> This identifier lets you place your control within a groupbox. "caption" is the text that will appear on groupbox. This identifier is useful for naming and containing controls.</p>
+<p><code>channel("start", "end")</code> The soundfiler widget takes two channel parameters which relate to the currently selected region. The first channel will provide the starting position, in samples, of the selected region. The second channel will be the end position, in samples.</p>
 </div>
 <div class="paragraph">
-<p><code>text("name")</code> "name" will be the text that appears beside the checkbox.</p>
+<p><code>scrubberpos(val)</code> Sets the scrubber position where val is an integer value in samples. If you wish to update the scrubberposition in real time use an identchannel identifier.</p>
 </div>
 <div class="paragraph">
-<p><code>value(val)</code> val sets the initial state of the control</p>
+<p><code>colour("colour")</code> This sets the global background colour. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
 </div>
 <div class="paragraph">
-<p><code>colour:0("colour")</code> This sets the colour of the LED when it is in its OFF state. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
+<p><code>file("filename")</code> Sets a file for the table to display. Unlike the tablenumber() identifier, which depends on the existence of a valid function table, file() will simply display a file from disk. This can be useful if you are using one of Csound&#8217;s file reading opcodes. If a full file path is not given, file() will search  in the current directory, i.e., the directory that contains the csd file that is open. It is best to keep all files in the same directory as your csd file, but if you wish to keep them in a sperate folder you can pass a full path to the file() identifier.</p>
 </div>
 <div class="paragraph">
-<p><code>colour:1("colour")</code> Sets the colour of the widget when it is in its ON state. See above for details on valid colours.</p>
-</div>
-<div class="paragraph">
-<p><code>fontcolour("colour")</code> Sets the colour of the font to appear on the groupbox. See above for details on valid colours.</p>
-</div>
-<div class="paragraph">
-<p><code>shape("shape")</code> Sets the shape of the LED. Default is "square" but users can use "circle" also.</p>
+<p><code>zoom(val)</code> Sets the initial zoom value. Passing a -1 to zoom will cause the zoom buttons to disappear.</p>
 </div>
 <div class="paragraph">
 <p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
@@ -2441,7 +2611,37 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
 </div>
 <div class="paragraph">
-<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default</p>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="_example_13">Example</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/soundfilerExample.png" alt="table"></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_table">Table</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>table bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), backgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>table displays the contents of a function table, multiple tables, or files. Function tables that use a negative GEN05, GEN07 or GEN02 can be edited by clicking and dragging on the table. Only tables of size less or equal to 16384 points can be manually edited. If you wish to save any tables that you create you can use one of Csound&#8217;s built-in table saving opcode "ftsave". If you need only display the contents of a static sound file from disk, use soundfiler as it will be fast and use less CPU. If on the other hand you wish to create some user editable envelopes, or display FFT or live waveform data use table.</p>
+</div>
+<hr>
+<div class="sect2">
+<h3 id="_identifiers_14">Identifiers</h3>
+<div class="paragraph">
+<p><code>bounds(x, y, width, height)</code> Integer values that set position and size on screen(in pixels)</p>
+</div>
+<div class="paragraph">
+<p><code>amprange(min, max, tablenumber, quantise)</code> Sets the amplitude range(Y-axis) for a particular table. Min and Max are the minimum and maximum values. Quantise will set the resolution of the Y axis for editing. For example, if quantise is set to 1, all points added to the table will be quantised to integer values. If quantise matches the dynamic range of the table, the table will be drawn as a grid of on/off switches. If only one amprange() identifier is used, a table number of -1 can be set so that each table displayed will share the same amp range.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2450,61 +2650,70 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <img src="images/smallLogo.PNG" alt="Note">
 </td>
 <td class="content">
-colour:1() can be set using colour(). However, it&#8217;s recommended that you use the numerated colour identifiers in order to make your code more readable.
+amprange() is one of the few identifiers in Cabbage that can be used more than once in a line of Cabbage code.
 </td>
 </tr>
 </table>
 </div>
-<hr>
-<div class="sect3">
-<h4 id="_example_11">Example</h4>
 <div class="paragraph">
-<p><span class="image"><img src="images/checkboxExample.png" alt="Checkboxes"></span></p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_combo_box">Combo Box</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>combobox bounds(x, y, width, height), channel("chan"), value(val), items("item1", "item2", ...), populate("filetype", "dir"), channeltype("type"), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption")</code></pre>
-</div>
-</div>
-<hr>
-<div class="sect2">
-<h3 id="_identifiers_12">Identifiers</h3>
-<div class="paragraph">
-<p>Combobox creates a drop-down list of items which users can choose from. Once the user selects an item, the index of their selection will be sent to Csound on a channel named by the channel string. The default value is 0.</p>
+<p><code>tablenumber(1, 2, ..)</code> Sets the table/tables to be displayed. If multiple tables are specified the tables will be superimposed on top of each other. If multiple tables are specified with a colon between then the tables will be stacked on top of each other along the Y-axis, e.g., tablenumber(1:2:3:4).</p>
 </div>
 <div class="paragraph">
-<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
+<p><code>backgroundcolour("colour")</code> This sets the global background colour. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+The default value for the background colour is rgb(10, 10, 10). If you are superimposing tables on top of each other only one can be seen at any time when using the default background colour. If you wish to show all tables at the same time use a colour with an alpha value. Tables  with no alpha channels are drawn faster and use less CPU.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p><code>channel("chan")</code> "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode.</p>
+<p><code>tablegridcolour("colour")</code> Sets the colour of the grid to be drawn. If you don&#8217;t want a grid to be drawn set this colour to transparent, i.e., 0,0,0,0. See above for details on valid colours.</p>
 </div>
 <div class="paragraph">
-<p><code>items("item1", "item2", ...)</code> list of items that will populate the combo box. Each item has a corresponding index value. The first item when selected will send a 1, the second item a 2, the third a 3 etc. If this identifier is left out default values of "Item 1", "Item  2", "Item  3", "Item 4" and "Item 5" will be used.</p>
+<p><code>tablecolour("colour1", "colour2", ...)</code> Sets the colours of the tables and editable envelope handles, when the table is editable. If you leave this identifier out default colours will be chosen for the tables.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+The tablecolour() identifier will not work with RGBA/RGB values. You must instead use a valid CSS colour name.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p><code>value(val)</code> val sets the initial state of the widget</p>
+<p><code>file("filename")</code> Sets a file for the table to display. Unlike the tablenumber() identifier, which depends on the existence of a valid function table, file() will simply display a file from disk. This can be useful if you are using one of Csound&#8217;s file reading opcodes. File are always shown as table 0, and will always be the first table created. Therefore it will always take the first colour passed to the tablecolour list.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+The background grid is disabled when working with a table that use the file() identifier.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p><code>populate("filetype", "dir")</code> This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "*.snaps". When using populate you don`t need to use items() to populate the combobox. If no directory is specified, Cabbage will look in the current working directory.</p>
+<p><code>zoom(val)</code> Sets the initial zoom value. Passing a -1 to zoom will cause the zoom buttons to disappear.</p>
 </div>
 <div class="paragraph">
-<p><code>caption("caption")</code> This identifier lets you place your widget within a groupbox. "caption" is the text that will appear on groupbox. This identifier is useful for naming and containing widgets.</p>
+<p><code>outlinethickness(val)</code> Sets the thickness of the waveform&#8217;s envelope in pixels. If you are drawing spectrograms setting this to 0 will speed up the process and reduce CPU drain.</p>
 </div>
 <div class="paragraph">
-<p><code>channeltype("type")</code> Specifies the type of channel. Default is "float". If you wish to send the text contained in the combobox, for examples the names of a set of audio samples, set type to "string". If type is not set to string the index of the selected item will be sent to Csound on the named channel.</p>
-</div>
-<div class="paragraph">
-<p><code>colour("colour")</code> This sets the background colour of the combobox. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
-</div>
-<div class="paragraph">
-<p><code>fontcolour("colour")</code> Sets the colour of the text and arrow that appear on the combobox. See above for details on valid colours.</p>
+<p><em>fill(val)</em> This will turn on or off the waveform fill. By default this is set to 1, therefore all table will fill in their envelopes.</p>
 </div>
 <div class="paragraph">
 <p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
@@ -2513,13 +2722,13 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
 </div>
 <div class="paragraph">
-<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default</p>
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_12">Example</h4>
+<h4 id="_example_14">Example</h4>
 <div class="paragraph">
-<p><span class="image"><img src="images/comboboxExample.png" alt="Combo"></span></p>
+<p><span class="image"><img src="images/tableExample.png" alt="table"></span></p>
 </div>
 </div>
 </div>
@@ -2538,7 +2747,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_13">Identifiers</h3>
+<h3 id="_identifiers_15">Identifiers</h3>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2565,7 +2774,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_13">Example</h4>
+<h4 id="_example_15">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/textboxExample.png" alt="textbox"></span></p>
 </div>
@@ -2586,7 +2795,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_14">Identifiers</h3>
+<h3 id="_identifiers_16">Identifiers</h3>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2610,7 +2819,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_14">Example</h4>
+<h4 id="_example_16">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/texteditorExample.png" alt="textbox"></span></p>
 </div>
@@ -2631,7 +2840,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_15">Identifiers</h3>
+<h3 id="_identifiers_17">Identifiers</h3>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2669,78 +2878,16 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <img src="images/smallLogo.PNG" alt="Note">
 </td>
 <td class="content">
-XY pads  range identifiers do not permit the setting of skew factors, or increments. If you wish to set a custom skew factor, or increment value you will need to do so using Csound code.
+XY pads range identifiers do not permit the setting of skew factors, or increments. If you wish to set a custom skew factor, or increment value, you will need to do so using Csound code.
 </td>
 </tr>
 </table>
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_15">Example</h4>
+<h4 id="_example_17">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/xypadExample.png" alt="xypad"></span></p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_table">Table</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre>table bounds(x, y, width, height), channel("chan1", "chan2", ...), tableNumbers(1, 2, ...), colour("colour1", "colour2", ...),
-			drawMode(m1, m2, ...), amprange(min, max), resizeMode(val), readonly(val), identchannel("channel")</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>table is a new and experimental control which creates a function table editor capable of displaying any number of tables at once. If multiple tables are specified the tables will be superimposed on top of each other. To edit a table one must right click the table and select <code>edit</code>. You mst choose the number of points that will be used to represent the table. Note that this leads to some decimation or tables (If you wish to create a high resolution table just use a Csound GEN routine).</p>
-</div>
-<hr>
-<div class="sect2">
-<h3 id="_identifiers_16">Identifiers</h3>
-<div class="paragraph">
-<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
-</div>
-<div class="paragraph">
-<p><code>channel("chan1",  ...)</code> specifies the channel with which to communicate with Csound on. As table is not an interactive control it only retrieves data from Csound. A value of -1 will causes Cabbage to update the corresponding table, while a value between 0 and 1 will cause a scrubber to appear on the table, 0 being the start of the table, 1 being the end.</p>
-</div>
-<div class="paragraph">
-<p><code>amprange(min, max)</code> sets the global amplitude range(Y-axis). Min and Max are the minimum and maximum values. Omitting this identifiers will cause the table widgets to rescale the Y-axis if users increase the max amp value.</p>
-</div>
-<div class="paragraph">
-<p><code>drawMode(m1, m2, ...)</code> sets the drawing mode for the tables, where m1, m2, m3, etc, are integers denoting the particular drawing mode to be used in the table see below.</p>
-</div>
-<div class="paragraph">
-<p><code>resizemode(val)</code> If this is set to 1 the table will resize if a users drags a point above the maximum amplitude value. val should be 0 or 1</p>
-</div>
-<div class="paragraph">
-<p><code>tableNumbers(1, 2, ..)</code> sets the table to be displayed.</p>
-</div>
-<div class="paragraph">
-<p><code>readonly(val)</code> This identifier removes edit-mode from a table. By default tables can be put into edit mode with a right-click. With readonly set to 1 tables can no longer be editing on the fly however, users can still interact with a table if its draw mode is set to five. val should be 0 or 1.</p>
-</div>
-<div class="paragraph">
-<p><code>colour("colour1", "colour2", ...)</code> sets the colours of the tables. Note that you must pass valid CSS colour names and NOT RGB colours to this list.</p>
-</div>
-<div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
-</div>
-<div class="paragraph">
-<p>Drawing Modes:</p>
-</div>
-<div class="paragraph">
-<p><code>0</code> Normal drawing mode. Joins each successive point in the table with a straight line. No fill. Users must right click to enable edit mode in the table.
-<code>1</code> Same as above, but horizontal lines are drawn between points resulting in a bar-graph type of representation.
-<code>2</code> Same as mode 0 only the envelope will used fixed points. This means users will not be able to move any points on the envelope left or right. They are restricted to up/down movement only.
-<code>3</code> Same as above but with horizontal lines between the fixed points.
-<code>4</code> This mode results in a fixed point table with horizontal lines that is in edit mode from the onset. This mode also has toggle min/max enabled meaning users can click on a point to toggle it between min and max values. This drawing mode is useful for pattern editors.</p>
-</div>
-<hr>
-<div class="sect3">
-<h4 id="_example_16">Example</h4>
-<div class="paragraph">
-<p><span class="image"><img src="images/table.PNG" alt="table"></span></p>
 </div>
 </div>
 </div>
@@ -2750,62 +2897,214 @@ XY pads  range identifiers do not permit the setting of skew factors, or increme
 <h2 id="_plants">Plants</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Cabbage plants are GUI abstractions that contain one or more controls. These abstractions are used as anchors to the child widgets contained within. All widgets contained within a plant have top and left positions which are relative the the top left position of the parent. While all widgets can be children of a plant, only group boxes and images can be used as plants themselves. Adding a plant identifier to an image or group box definition will cause them to act as containers. The plant() identifier takes a string that denotes the name of the plant. Plant names must be unique within an instrument or plants will end up being placed on top of each other. When using an image or a group box as a plant, you must enclose the code from the controls that follow in curly brackets, to indicate which controls belong to the plant. In the code below a group box control is set up as a plant, and three child sliders are placed within it.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>groupbox bounds(12, 115, 170, 100), text("Output Filter -k-rate-"), plant("filter"){
-rslider bounds(.01, .3, .6, .6), text("Freq"), channel("filtFreq"), range(0, 22050, 10000)
-rslider bounds(.32, .3, .6, .6), text("Res"), channel("filtRes"), range(0, 1, 0)
-rslider bounds(.64, .3, .6, .6), text("Dist"), channel("filtDist"), range(0, 4, 0)
-}</pre>
-</div>
+<p>Cabbage plants are GUI abstractions that contain one or more controls. These abstractions are used as anchors to the child widgets contained within. All widgets contained within a plant have top and left positions which are relative the the top left position of the parent. Resizing the plant will in turn resize all the widgets contained within. While all widgets can be children of a plant, only group boxes and images can be used as plants themselves. Adding a plant identifier to an image or group box definition will cause them to act as containers. The plant() identifier takes a string that denotes the name of the plant. Plant names must be unique within an instrument or plants will end up being placed on top of each other. When using an image or a group box as a plant, you must enclose the code from the widgets that follow in curly brackets to indicate which controls belong to the plant. In the code below a group box control is set up as a plant, and three child sliders are placed within it.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><img src="images/plant.PNG" alt="xypad"></span></p>
+<p><span class="image"><img src="images/plantsExample.png" alt="plants"></span></p>
 </div>
 <div class="paragraph">
 <p>The values passed to bounds() for the child controls can be either fractions proportional to the plants overall size and position, or absolute pixel values. For example, <code>bounds(0, .5, .5, 1)</code> will cause a child widget to appear half way across the plant, and half way down. While <code>bounds(10, 10, 200, 200)</code> will cause the child control to be 10 pixels from the top/left, and have a size of 200x200 pixels.</p>
 </div>
 <div class="paragraph">
-<p>The major advantage to using plant abstractions is that you can easily move and resize them without needing to modify the dimensions of the child components contained within. You can also save your plants and recall them later from a plant repository. Plants are intended to be reused across instruments so users don`t have to keep rebuilding GUIs from scratch. They can also be used to give your plugins a unique look and feel.</p>
+<p>The major advantage to using plant abstractions is that you can easily move and resize them without needing to modify the dimensions of the child widgets contained within. You can also save your plants and recall them later from a plant repository. Plants are intended to be reused across instruments so users do not have to keep rebuilding GUIs from scratch. They can also be used to give your plugins a unique look and feel.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_reserved_channels">Reserved Channels</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre>Cabbage reserves several channels which are used to send information to Csound from either the host application, or from Cabbage itself. To retrieve info from any of these channels just use a chnget opcode.
-
-`CSD_PATH` This string channel will retrieve the full path to the current csd file.
-
-`HOST_BPM` Retrieve the currents host bpm. This will be updated whenever the host BPM changes.
-
-`IS_PLAYING` Pressing play on the host transport dialogue will cause this channel to send a 1. Hitting stop will send a 0.
-
-`IS_RECORDING` As above only for monitoring the record status of a session.
-
-`TIME_IN_SECONDS` Return the current time in seconds from the start of the track.
-
-`TIME_IN_SAMPLES` Return the current time in samples from the start of the track.
-
-`TIME_SIG_DENOM` The signature denominator, e.g. the 4 of a 3/4 time sig
-
-`TIME_SIG_NUM` The signature numerator, e.g. the 3 of a 3/4 time sig
-
-`HOST_PPQ_POS` Return the position of the start of the last bar, in pulses-per-quarter-note.
-
-`MOUSE_X` Returns the X coordinate of the current mouse position.
-
-`MOUSE_Y` Returns the Y coordinate of the current mouse position
-
-`MOUSE_DOWN_LEFT` Returns the current state of the left most mouse button; 1 if pressed, and 0 if not.
-
-`MOUSE_DOWN_MIDDLE` Returns the current state of the middle mouse button; 1 if pressed, and 0 if not.
-
-`MOUSE_DOWN_RIGHT` Returns the current state of the right mouse button; 1 if pressed, and 0 if not.</pre>
+<div class="paragraph">
+<p>Cabbage reserves several channels which are used to send information to Csound from either the host application, or from Cabbage itself. To retrieve info from any of these channels just use a chnget opcode.</p>
+</div>
+<div class="paragraph">
+<p><code>CSD_PATH</code> This string channel will retrieve the full path to the current csd file.</p>
+</div>
+<div class="paragraph">
+<p><code>HOST_BPM</code> Retrieve the currents host bpm. This will be updated whenever the host BPM changes.</p>
+</div>
+<div class="paragraph">
+<p><code>IS_PLAYING</code> Pressing play on the host transport dialogue will cause this channel to send a 1. Hitting stop will send a 0.</p>
+</div>
+<div class="paragraph">
+<p><code>IS_RECORDING</code> As above only for monitoring the record status of a session.</p>
+</div>
+<div class="paragraph">
+<p><code>TIME_IN_SECONDS</code> Return the current time in seconds from the start of the track.</p>
+</div>
+<div class="paragraph">
+<p><code>TIME_IN_SAMPLES</code> Return the current time in samples from the start of the track.</p>
+</div>
+<div class="paragraph">
+<p><code>TIME_SIG_DENOM</code> The signature denominator, e.g. the 4 of a 3/4 time sig</p>
+</div>
+<div class="paragraph">
+<p><code>TIME_SIG_NUM</code> The signature numerator, e.g. the 3 of a 3/4 time sig</p>
+</div>
+<div class="paragraph">
+<p><code>HOST_PPQ_POS</code> Return the position of the start of the last bar, in pulses-per-quarter-note.</p>
+</div>
+<div class="paragraph">
+<p><code>MOUSE_X</code> Returns the X coordinate of the current mouse position.</p>
+</div>
+<div class="paragraph">
+<p><code>MOUSE_Y</code> Returns the Y coordinate of the current mouse position</p>
+</div>
+<div class="paragraph">
+<p><code>MOUSE_DOWN_LEFT</code> Returns the current state of the left most mouse button; 1 if pressed, and 0 if not.</p>
+</div>
+<div class="paragraph">
+<p><code>MOUSE_DOWN_MIDDLE</code> Returns the current state of the middle mouse button; 1 if pressed, and 0 if not.</p>
+</div>
+<div class="paragraph">
+<p><code>MOUSE_DOWN_RIGHT</code> Returns the current state of the right mouse button; 1 if pressed, and 0 if not.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_cabbage_standalone_host">The Cabbage Standalone Host</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><span class="image"><img src="images/CabbageStandaloneHost.PNG" alt="Cabbage"></span></p>
+</div>
+<div class="paragraph">
+<p>While any text editor can be used to code Cabbage instruments, it&#8217;s fair to say that most development and prototyping will be done with the main Cabbage host and source code editor. The following is a run down of the various options accessible from the <em>Options</em> menu.</p>
+</div>
+<div class="sect2">
+<h3 id="_open_cabbage_instrument">Open Cabbage Instrument</h3>
+<div class="paragraph">
+<p>Use this command to open a cabbage instrument(unified Csound file with a dedicated &lt;Cabbage&gt;&lt;/Cabbage&gt; section). You may open any .csd file you wish and add a Cabbage section yourself once it&#8217;s open. Note that if you try to open an existing non-Cabbage .csd file you will need to update its CsOptions section so that Csound doesn&#8217;t try to write audio to disk itself.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+On OSX users can open .csd files contained within plugins. Just select a .vst file instead of a .csd file when opening. See the sections on exporting plugins for more information.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_new_cabbage">New Cabbage&#8230;</h3>
+<div class="paragraph">
+<p>This command will help you create a new Cabbage instrument/effect. Cabbage instruments are synthesisers capable of creating sounds from scratch while effects process incoming audio. Effects can access the incoming audio by using the <em>inch</em> or <em>ins</em> opcodes. All effects have stereo inputs and stereo outputs. Instruments can access the incoming MIDI data in a host of different ways but the easiest is to pipe the MIDI data directly to instrument p-fields using the MIDI inter-op command line flags. Examples can be found in the examples folder.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_view_source_editor">View Source Editor</h3>
+<div class="paragraph">
+<p>This command will launch the integrated text editor. The text editor will always contain the text which corresponds to the instrument that is currently open. Each time a file is saved in the editor(Ctrl+S), Cabbage will automatically recompile the underlying Csound instrument and update any changes that have been made to the instruments GUI. The editor also features a Csound message console that can prove useful when debugging instruments.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_audio_settings">Audio Settings</h3>
+<div class="paragraph">
+<p>Clicking on the audio settings command will open the audio settings window. Here you can choose your audio/MIDI input/output devices. You can also select the sampling rate and audio buffer sizes. Small buffer sizes will reduce latency but might cause some clicks in the audio.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_toggle_edit_mode">Toggle edit-mode</h3>
+<div class="paragraph">
+<p>Enabling edit-mode allows users to interact with GUI widgets. When in edit-mode, right clicking on the instrument&#8217;s main area will display a context menu that will let you select a widget to insert on to your main form. When a widget is placed on screen the corresponding code will be inserted into your instrument&#8217;s code. Any changes you make to the widget&#8217;s size and position will automatically be updated in your code. Toggling edit-mode will also cause a property dialogue to appear. Any widget property can be set using this property dialogue window. In order to update your underlying source code with a newly edited property you must hit the <em>Esc</em> key on your keyboard. If you do not, your updated property will not be passed to the instrument&#8217;s source code and will therefore be discarded.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+One should get into the habit of updating/saving their instruments when they make changes to its user interface. Instruments need to be recompiled for any changes to stick.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_export_export_as">Export/Export as&#8230;</h3>
+<div class="paragraph">
+<p>This command will export your Cabbage instrument as a plugin. Clicking <em>synth</em> or <em>effect</em> will cause Cabbage to create a plugin file in the same directory as the .csd file you are currently using. When <em>exporting as&#8230;</em> Cabbage will prompt you to save your plugin in a set location, under a specific name. Once Cabbage has created the plugin it will make a copy of the current .csd file and locate it in the same folder as the plugin. This new .csd file will have the same name as the plugin and should ALWAYS be in the same directory as the plugin file.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+You do not need to keep exporting instruments as plugins every time you modify them. You need only modify the associated .csd file. To simplify this task, Cabbage will automatically load the associated .csd file whenever you export as a plugin. On OSX Cabbage can open a plugin&#8217;s .csd file directly be selecting the plugin when prompted to select a file to open.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reload_instrument">Reload Instrument</h3>
+<div class="paragraph">
+<p>This command will hard reset and rebuild the instrument from disk.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_batch_convert">Batch Convert</h3>
+<div class="paragraph">
+<p>Batch convert will let convert a selection of Cabbage .csd files, or an entire directory into plugins so you don&#8217;t have to manually open and export each one.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+Currently this feature is only available on Windows.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_preferences">Preferences</h3>
+<div class="paragraph">
+<p>The following preferences are available:</p>
+</div>
+<div class="sect3">
+<h4 id="_always_on_top">Always on Top</h4>
+<div class="paragraph">
+<p>This command lets you toggle <em>Always on top</em> mode. By default it is turned on. This means your Cabbage instrument will always appear on top of any other applications that are currently open.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_set_cabbage_plant_directory">Set Cabbage plant directory</h4>
+<div class="paragraph">
+<p>This will open a directory browser dialog so that you can specify a set directory for saving Cabbage plant text files to. The default location for these files will be the user&#8217;s home folder and should be left as is unless a unique location is absolutely required.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_set_csound_manual_directory">Set Csound manual directory</h4>
+<div class="paragraph">
+<p>This will open a directory browser dialog so that you can specify the directory that contains Csound&#8217;s index.html file. Once this directory is set you can launch context help for any Csound opcode that the text cursor is currently placed on.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_disable_plugin_export_info">Disable plugin export info</h4>
+<div class="paragraph">
+<p>Checking this will disable the plugin export information that pops up on screen each time you export a plugin.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_use_external_editor">Use external editor</h4>
+<div class="paragraph">
+<p>If you wish to use a different source code editor with Cabbage than the one provided, you can check this option. Whenever you save changes to the .csd file that Cabbage currently has open, Cabbage will automatically update according to the changes made. Although it&#8217;s not as quick as the integrated editor, it does give you scope to use some feature rich source code editors with Cabbage.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_use_native_file_dialogues">Use native file dialogues</h4>
+<div class="paragraph">
+<p>This option lets you set whether Cabbage will use its own File Chooser dialogues, or those provided by the operating system. Due to various issues with Linux file managers, Linux users may want to ensure that they use non-native dialogues. All file choosers that launch from within a Cabbage instrument will use non-native dialogues.</p>
+</div>
 </div>
 </div>
 </div>
@@ -2813,7 +3112,7 @@ rslider bounds(.64, .3, .6, .6), text("Dist"), channel("filtDist"), range(0, 4, 
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-12-23 21:25:43 GMT
+Last updated 2015-01-02 12:44:12 GMT
 </div>
 </div>
 </body>

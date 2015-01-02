@@ -10,7 +10,7 @@ Cabbage is a software for prototyping and developing audio plugins with the Csou
 
 In order to use Cabbage on OSX and Linux you MUST have Csound installed. Cabbage ships with its own bundled version of Csound on Windows.  
 
-== Your first Cabbage instruments
+== Your first Cabbage instrument
 The following section illustrates the steps involved in building a simple Cabbage instrument. It is assumed that the user has some prior knowledge of Csound. For a list of Csound tutorials and resources please visit the http://csound.github.io/[Csound Homepage]. Each Cabbage instrument is defined in a simple text file with a .csd extension. The syntax used to create GUI widgets is quite straightforward and should be provided within special xml-style tags <Cabbage> and </Cabbage> which can appear either above or below Csound's own <CsoundSynthesizer> tags. Each line of Cabbage specific code relates to one GUI widget only. The attributes of each widget are set using different identifiers such as colour(), channel(), size() etc. Where identifiers are not used, Cabbage will use the default values. Long lines can be broken up with a '\' placed at the end of a line. 
 
 Each and every Cabbage widget has 4 common parameters: position on screen(x, y) and size(width, height). Apart from position and size all other parameters are optional and if left out default values will be assigned. To set widget parameters you will need to use an appropriate identifier after the widget name. More information on the various widgets and identifiers available in Cabbage can be found in the http://cabbageReferenceManual.html[Cabbage reference manual]
@@ -25,7 +25,7 @@ image:images/simpleSynthExample.png[Simple Synth]
 [icon="images/smallLogo.PNG"]
 NOTE: You'll notice that a '-n' and '-d' are passed to Csound in the CsOptions section. -n stops Csound from writing audio to disk. This must be used as Cabbage manages its own audio and MIDI IO callbacks. The '-d' prevents any FLTK widgets from displaying. You will also notice that our instrument is stereo. All Cabbage instruments are stereo. 
 
-== Controlling your Cabbage patch
+== Controlling your Cabbage instrument
 The most obvious limitation to the above instrument is that users cannot interact with the underlying Csound instrument. In order to do this we can use a Csound named channel opcode and a Cabbage widget such as a slider. Any widget that needs to interact with Csound must have a channel identifier. 
 
 When one supplies a channel name to the channel() identifier Csound will listen for data being sent on that channel through the use of a named channel opcode. The chnget opcode is used to grab data from a named channel. It is defined in the Csound reference manual as:
@@ -50,33 +50,27 @@ The above instrument uses 3 rsliders to control the reverb size(feedback level),
 NOTE: If you compare the two score sections in the above instruments you'll notice that the synth instrument doesn't use any i-statement. Instead it uses an 'f0 3600'. This tells Csound to wait for 3600 seconds before exiting. Because the instrument is to be controlled via MIDI we don't need to use an i-statement in the score. In the second example we use an i-statement with a long duration so that the instrument runs without stopping for a long time.    
 
 == Exporting your instruments as audio plugins
-Once you have created your instruments you will need to export them as plugins from the 'Options' menu in the Cabbage standalone player. When you export an instrument Cabbage will create a plugin binary with a .so, .vst, or .dll file extension, depending on your OS. It will also make a copy of your current text file and place it into the same directory as the plugin file. The newly created text file and plugin file have the same file name. It's important that you keep these files together. Failing to do so will cause problems, as the Cabbage plugin will not be able to find the corresponding Csound text file. Once you have your plugin created, you will need to add the plugin directory to your host. On Linux you can simply make sure that all plugins reside in ~/.vst. Most hosts in OSX and Windows let you specify unique plugin directories. For more details consult your HOST's documentation. 
-
-
+Once you have created your instruments you will need to export them as plugins from the 'Options' menu in the Cabbage standalone player. When you export an instrument Cabbage will create a plugin binary with a .so, .vst, or .dll file extension, depending on your OS. Cabbage will also make a copy of your current text file and place it into the same directory as the plugin file. The newly created text file and plugin file will have the same file name(with different file extensions). It's important that you keep these files together. Failing to do so will cause problems as the Cabbage plugin will not be able to find the corresponding Csound text file. Once you have your plugin created, you will need to add the plugin directory to your host. On Linux you can simply make sure that all plugins reside in ~/.vst. Most hosts in OSX and Windows let you specify unique plugin directories. The best strategy here is to keep all your Cabbage plugins in the same directory. That way you only need to set the plugin directory once. For more details on setting plugin directories consult your HOST's documentation. 
 
 [icon="images/smallLogo.PNG"]
-NOTE: In order to make future changes to the instrument you only need to edit the associated .csd file. For instance, on windows you might have a plugin called "SavageCabbage.dll". If you wish to make some chages you only have to edit the corresponding "SavageCabbage.csd" file. In order to see the changes in your plugin host you will need to delete and reinstate the plugin from the track. Once you remove and add the plugin it will show the new changes. 
+NOTE: In order to make changes to your newly exported plugin you only need to edit the associated .csd file. For instance, on Windows you might have a plugin called "SavageCabbage.dll". If you wish to make some changes to this plugin you only have to edit the corresponding "SavageCabbage.csd" file. In order to see the changes in your plugin host you will need to delete and reinstate the plugin from the track. Once you remove and add the plugin it will show the new changes. 
 
-== Distributing standalone software 
-For Cabbage plugins and instruments to work on other machines the host PC will have to have Csound installed. If Csound is not there then Cabbage will not be able to run its instrument due to the absence of the Csound library. Must users developing instruments will most likely to have Csound installed. But your target audience might not. In order to avoid the need for them to have Csound you can simply distribute Csound with your plugins and instruments. To do this simply copy the Csound bin, and Plugins directory and distribute them with your plugin. Cabbage will search for Csound in a set location so the end user doesn't need to have Csound installed. 
+== Distributing Cabbage instruments (Plugins/Standalone)
+For Cabbage instruments to work on other machines the host PC will have to have Csound installed. If Csound is not there then Cabbage will not be able to run due to the absence of the Csound library. Must users developing instruments will have Csound installed, but your target audience may not. In order to avoid the need for them to have Csound you can simply distribute Csound with your instruments.
 
-If you wish to work in standalone mode, outside of a host, you may want to distribute your instrument as a single 'standalone'. A single application makes it easy for other users to use 'out of the box'. To do this you can create a 'standalone' or 'single instance' Cabbage instrument. In order to do this you must copy the Cabbage.exe binary, and rename it to the name of your corresponding .csd file. For instance, if one creates an instrument and saves the file as CabbageIceCream.csd they must then copy and rename the Cabbage binary to CabbageIceCream.exe, and make sure the two files reside in the same folder. When you open the newly created CabbageIceCream.exe Cabbage will automatically launch the instrument in a simplified host. The simplified host is missing certain menu commands such 'Open Editor', 'Build Instrument', etc. It will only allow you to change the audio settings and toggle Audio/On and off. Effectively this will hide the nuts and bolts of your software and provide the user with a simple, user-friendly interface to create music with. As with the case of plugins above, you can distribute Csound with the application so that the end-user doesn't need to have Csound installed.  
+If you wish to distribute instruments that work in standalone mode, i.e., outside of a host, you may want to create an instrument that runs 'out of the box' as a single standalone. To do this you can create a 'standalone' or 'single instance' Cabbage instrument. In order to do this you must copy the Cabbage binary(.exe on Windows, .app on OSX), and rename it to the name of your corresponding .csd file. For instance, if one creates an instrument and saves the file as CabbageIceCream.csd they must then copy and rename the Cabbage binary to CabbageIceCream.exe. Remember to make sure that the two files reside in the same folder. When you open the newly created CabbageIceCream.exe Cabbage will automatically launch the instrument in a simplified host. The simplified host is missing certain menu commands such 'Open Editor', 'Build Instrument', etc. It will only allow you to change the audio settings and toggle Audio/On and off. This standalone mode hides the nuts and bolts of your software and provides the user with a simple, user-friendly interface to create music with. 
 
-== Distributing standalone applications 
+If you wish to provide a set of instruments in standalone mode simply copy and rename Cabbage to something else and place it into the same directory as your .csd files. When users open the renamed Cabbage binary a file chooser dialog will list all the available instruments. Users can then quicly swap between the various instruments. As with the case of plugins above, you can distribute Csound with the application so that the end-user doesn't need to have Csound installed.  
 
-If you create a fully featured standalone instrument you may want to distribute is a single 'standalone' to make it easy for other users to use 'out of the box'. To do this you can create a 'standalone' or 'single instance' Cabbage instrument. In order to do so all you have to do is copy the Cabbage.exe binary, and rename it to the name of our corresponding .csd file. For instance, if one creates an instrument and saves the file as CabbageIceCream.csd they must then copy and rename the Cabbage binary to CabbageIceCream.exe and make sure the two files reside in the same folder. When you open the newly created CabbageIceCream.exe Cabbage will automatically launch the instrument in a simplified host. The simplified host is missing certain menu commands such 'Open Editor', 'Build Instrument', etc. It will only allow you to change the audio settings and toggle Audio/On and off. 
 
-[icon="images/smallLogo.PNG"]
-NOTE: In order to make future changes to the instrument you only need to edit the associated .csd file. For instance, on windows you might have a plugin called "SavageCabbage.dll". If you wish to make some chages you only have to edit the corresponding "SavageCabbage.csd" file. In order to see the changes in your plugin host you will need to delete and reinstate the plugin from the track. Once you remove and add the plugin it will show the new changes. 
-
-== The Cabbage standalone player
+== The Cabbage Standalone Host
 
 image:images/CabbageStandaloneHost.PNG[Cabbage]
 
-Most prototyping will be done in the Cabbage standalone host. This host lets you load and perform Cabbage instruments, as seen in the screenshot above. Clicking on the options button will give you access to the following commands:
+While any text editor can be used to code Cabbage instruments, it's fair to say that most development and prototyping will be done with the main Cabbage host and source code editor. The following is a run down of the various options accessible from the 'Options' menu. 
 
 === Open Cabbage Instrument
-Use this command to open a cabbage instrument(unified Csound file with a dedicated <Cabbage></Cabbage> section). You may open any .csd file you wish and add a Cabbage section yourself once it's open. If opening an existing Csound instrument you may need to turn off Cabbage audio IO in the preferences, otherwise you may have a situation where both Csound and Cabbage are trying to access the computers audio drivers. 
+Use this command to open a cabbage instrument(unified Csound file with a dedicated <Cabbage></Cabbage> section). You may open any .csd file you wish and add a Cabbage section yourself once it's open. Note that if you try to open an existing non-Cabbage .csd file you will need to update its CsOptions section so that Csound doesn't try to write audio to disk itself. 
  
 [icon="images/smallLogo.PNG"]
 NOTE: On OSX users can open .csd files contained within plugins. Just select a .vst file instead of a .csd file when opening. See the sections on exporting plugins for more information. 
@@ -84,39 +78,31 @@ NOTE: On OSX users can open .csd files contained within plugins. Just select a .
 === New Cabbage...
 This command will help you create a new Cabbage instrument/effect. Cabbage instruments are synthesisers capable of creating sounds from scratch while effects process incoming audio. Effects can access the incoming audio by using the 'inch' or 'ins' opcodes. All effects have stereo inputs and stereo outputs. Instruments can access the incoming MIDI data in a host of different ways but the easiest is to pipe the MIDI data directly to instrument p-fields using the MIDI inter-op command line flags. Examples can be found in the examples folder.
 
-[icon="images/smallLogo.PNG"]
-The 'ctrl7' opcode doesn't currently work in Cabbage due to some issues with CC messages in the incoming MIDI stream. You can however use ctrl7 in standalone mode if you disable Cabbage IO and use Csound IO instead. 
-
 === View Source Editor 
 This command will launch the integrated text editor. The text editor will always contain the text which corresponds to the instrument that is currently open. Each time a file is saved in the editor(Ctrl+S), Cabbage will automatically recompile the underlying Csound instrument and update any changes that have been made to the instruments GUI. The editor also features a Csound message console that can prove useful when debugging instruments. 
 
 
 === Audio Settings
-Clicking on the audio settings command will open the audio settings window. Here you can choose your audio/MIDI input/output devices. You can also select the sampling rate and audio buffer sizes. Small buffer sizes will reduce latency but might cause some clicks in the audio. A buffer size of 64 seems to work very well on Linux systems, but keep testing sizes until you find a setting that works best for your PC. 
-
-[icon="images/smallLogo.PNG"]
-NOTE: If Cabbage is using its own audio IO, which it does be default, be sure to use -n in the <CsOptions> sections of your Csound file. This tells Csound not to open any audio devices.  
+Clicking on the audio settings command will open the audio settings window. Here you can choose your audio/MIDI input/output devices. You can also select the sampling rate and audio buffer sizes. Small buffer sizes will reduce latency but might cause some clicks in the audio. 
 
 === Toggle edit-mode
+Enabling edit-mode allows users to interact with GUI widgets. When in edit-mode, right clicking on the instrument's main area will display a context menu that will let you select a widget to insert on to your main form. When a widget is placed on screen the corresponding code will be inserted into your instrument's code. Any changes you make to the widget's size and position will automatically be updated in your code. Toggling edit-mode will also cause a property dialogue to appear. Any widget property can be set using this property dialogue window. In order to update your underlying source code with a newly edited property you must hit the 'Esc' key on your keyboard. If you do not, your updated property will not be passed to the instrument's source code and will therefore be discarded.  
 
-This is a new and somewhat experimental feature that allows you to design GUIs using the mouse. When in edit-mode, right clicking the instrument GUI will display a context menu that will let you select controls to insert into the GUI. When a control is placed into your GUI the corresponding code will be inserted into your csd file. Any changes you make to the control's size and position will automatically be updated in your code. 
+[icon="images/smallLogo.PNG"]
+NOTE: One should get into the habit of updating/saving their instruments when they make changes to its user interface. Instruments need to be recompiled for any changes to stick.   
 
 === Export/Export as...
 
 This command will export your Cabbage instrument as a plugin. Clicking 'synth' or 'effect' will cause Cabbage to create a plugin file in the same directory as the .csd file you are currently using. When 'exporting as...' Cabbage will prompt you to save your plugin in a set location, under a specific name. Once Cabbage has created the plugin it will make a copy of the current .csd file and locate it in the same folder as the plugin. This new .csd file will have the same name as the plugin and should ALWAYS be in the same directory as the plugin file. 
 
 [icon="images/smallLogo.PNG"]
-NOTE: You do not need to keep exporting instruments as plugins every time you modify them. You need only modify the associated .csd file. To simplify this task, Cabbage will automatically load the associated .csd file whenever you export as a plugin. On OSX you Cabbage can open a plugin's .csd file directly be selecting the plugin when prompted to select a file to open.   
+NOTE: You do not need to keep exporting instruments as plugins every time you modify them. You need only modify the associated .csd file. To simplify this task, Cabbage will automatically load the associated .csd file whenever you export as a plugin. On OSX Cabbage can open a plugin's .csd file directly be selecting the plugin when prompted to select a file to open.   
 
-=== Rebuild Instrument
+=== Reload Instrument
+This command will hard reset and rebuild the instrument from disk. 
 
-This command will reset and rebuild the instrument. All sounds will be lost as Csound will be told to recompile the .csd file. This is what happens each time you hit Ctrl+s from the code editor.  
-
-=== Rebuild GUI
-This command will update the instrument's GUI, but will not recompile Csound. This command is called each time you press Ctrl+u from the code editor. 
-
-=== Batch Convert
-This command will let you convert a selection of Cabbage .csd files into plugins so you don't have to manually open and export each one. 
+=== Batch Convert 
+Batch convert will let convert a selection of Cabbage .csd files, or an entire directory into plugins so you don't have to manually open and export each one.  
 
 [icon="images/smallLogo.PNG"]
 NOTE: Currently this feature is only available on Windows. 
@@ -131,15 +117,13 @@ This command lets you toggle 'Always on top' mode. By default it is turned on. T
 This will open a directory browser dialog so that you can specify a set directory for saving Cabbage plant text files to. The default location for these files will be the user's home folder and should be left as is unless a unique location is absolutely required. 
 
 ==== Set Csound manual directory
-This will open a directory browser dialog so that you can specify the directory that contains Csound's index.html file. 
-
-==== Set Examples directory
-This will open a directory browser dialog so that you can specify the directory that contains Csound's index.html file. 
+This will open a directory browser dialog so that you can specify the directory that contains Csound's index.html file. Once this directory is set you can launch context help for any Csound opcode that the text cursor is currently placed on. 
 
 ==== Disable plugin export info
 Checking this will disable the plugin export information that pops up on screen each time you export a plugin. 
 
 ==== Use external editor
-Checking this will cause Cabbage to continuously check whether changes have been made to the file it has open. If you wish to use a different source code editor with Cabbage than the one provided, you can check this option. Whenever you save changes to the .csd file that Cabbage currently has open, Cabbage will automatically update according to the changes made. Although it's not as quick as the integrated editor, it does give you scope to use some feature rich source code editors with Cabbage.   
+If you wish to use a different source code editor with Cabbage than the one provided, you can check this option. Whenever you save changes to the .csd file that Cabbage currently has open, Cabbage will automatically update according to the changes made. Although it's not as quick as the integrated editor, it does give you scope to use some feature rich source code editors with Cabbage.   
 
-===== Use native file dialogues
+==== Use native file dialogues
+This option lets you set whether Cabbage will use its own File Chooser dialogues, or those provided by the operating system. Due to various issues with Linux file managers, Linux users may want to ensure that they use non-native dialogues. All file choosers that launch from within a Cabbage instrument will use non-native dialogues. 

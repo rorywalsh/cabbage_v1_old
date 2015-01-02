@@ -64,7 +64,7 @@ image:images/buttonExample.png[Buttons]
 == Button (File button)
 [source]
 -------------
-filebutton bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val)
+filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), mode("mode")
 -------------
 
 A filebutton can be used to select files from disk. The filename selected, or created will be sent to Csound on the named channel as a string message. Filebuttons can also be used to select snapshot files for Cabbage to save parameter presets. See the populate identifier below.  
@@ -85,7 +85,12 @@ A filebutton can be used to select files from disk. The filename selected, or cr
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
-`populate("filetype", "dir")` Sets the type of file to search for, and the initial directory to look in. For example, to set the file type to wave files use "*.wav" as the filetype string. If using the filebutton to record parameter snapshots, you must specify a filetype of "*.snaps". If no directory is specified, the file browser will open in the current working directory.  
+`populate("filetype", "dir")` Sets the type of file to search for, and the initial directory to look in. For example, to set the file type to wave files use "*.wav" as the filetype string. If using the filebutton to record parameter snapshots, you must specify a filetype of "*.snaps", and a mode type of snapshot. If no directory is specified, the file browser will open in the current working directory.  
+
+`mode("mode")` Set how the button will behave when pressed. Valid modes are:
+* *file*, Default. Will let the browser to select a file
+* *directory*, Will let the browser to select a folder/directory
+* *snapshot*, Will stop the file browser from opening, and instead will write a preset, or snapshot, file to disk with a default file name. The default filename will be the csd filename, with an underscore and number appended to it. For instance, if the filename is CabbageStew.csd, the preset files will be named CabbageStew_0.csd, CabbageStew_1.csd, CabbageStew_2.csd, etc. The snapshot mode provides is a very quick way of saving presets to disk. For more on presets see the Combobox widget reference.     
 
 ---
 ==== Example
@@ -187,7 +192,7 @@ Combobox creates a drop-down list of items which users can choose from. Once the
 
 `value(val)` val sets the initial state of the widget
   
-`populate("filetype", "dir")` This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "*.snaps". When using populate you don`t need to use items() to populate the combobox. If no directory is specified, Cabbage will look in the current working directory.  
+`populate("filetype", "dir")` This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "*.snaps". When using the populate() identifier you do not need to use the items() identifier. If no directory is specified, Cabbage will look in the current working directory.  
   
 `caption("caption")` This identifier lets you place your widget within a groupbox. "caption" is the text that will appear on groupbox. This identifier is useful for naming and containing widgets.  
 
@@ -317,7 +322,7 @@ Image creates a static shape or graphic. It can be used to show pictures or it c
 
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels). 
 
-`file("filename")` "filename" is the name of the image file to be displayed on the widget. This file must reside in the same directory as the current .csd file. Do not pass a full path. Cabbage only needs the name and extension, for example file("cabbage.PNG"). 
+`file("filename")` "filename" is the name of the image file to be displayed on the widget. If a full file path is not given, file() will search  in the current directory, i.e., the directory that contains the csd file that is open. It is best to keep all files in the same directory as your csd file, but if you wish to keep them in a sperate folder you can pass a full path to the file() identifier. 
 
 `shape("type");` "shape" must be either round(with rounded corners, default), sharp(with sharp corners), or ellipse(an elliptical shape)
 
@@ -334,6 +339,9 @@ Image creates a static shape or graphic. It can be used to show pictures or it c
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
+
+[icon="images/smallLogo.PNG"]
+NOTE: Try to avoid full path names at all costs. They will work fine on a local machine, but will not be valid on another machine.
 
 ---
 ==== Example
@@ -468,13 +476,49 @@ NOTE: Make sure to use two unique channel names when using hslider2 and vslider2
 
 image:images/sliderExample.png[Sliders]
 
+== Soundfiler
+[source]
+----
+soundfiler bounds(x, y, width, height), channel("start", "end"), colour("colour1"), zoom(val), tablenumber(val), file("filename"), scrubberpos(val), identchannel("channel"), alpha(val), visible(val)
+----
+
+soundfiler will display the contents of a sound file, or a function table containing a sound file (GEN01 tables). This is a fast waveform viewer that allows users to select regions of the waveform. Unlike the table widget, soundfiler can only display one waveform at a time. 
+
+---
+=== Identifiers
+`bounds(x, y, width, height)` Integer values that set position and size on screen(in pixels)
+
+`tablenumber(val)` Sets the table/tables to be displayed. If multiple tables are specified the tables will be superimposed on top of each other. If multiple tables are specified with a colon between then the tables will be stacked on top of each other along the Y-axis, e.g., tablenumber(1:2:3:4).  
+
+`channel("start", "end")` The soundfiler widget takes two channel parameters which relate to the currently selected region. The first channel will provide the starting position, in samples, of the selected region. The second channel will be the end position, in samples. 
+
+`scrubberpos(val)` Sets the scrubber position where val is an integer value in samples. If you wish to update the scrubberposition in real time use an identchannel identifier.
+
+`colour("colour")` This sets the global background colour. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full. 
+
+`file("filename")` Sets a file for the table to display. Unlike the tablenumber() identifier, which depends on the existence of a valid function table, file() will simply display a file from disk. This can be useful if you are using one of Csound's file reading opcodes. If a full file path is not given, file() will search  in the current directory, i.e., the directory that contains the csd file that is open. It is best to keep all files in the same directory as your csd file, but if you wish to keep them in a sperate folder you can pass a full path to the file() identifier. 
+
+`zoom(val)` Sets the initial zoom value. Passing a -1 to zoom will cause the zoom buttons to disappear.  
+
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+
+`alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
+
+`visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default
+
+---
+==== Example
+
+image:images/soundfilerExample.png[table]
+
+
 == Table
 [source]
 ----
 table bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), backgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val)
 ----
 
-table displays the contents of a function table, or multiple tables. Function tables that use a negative GEN05, GEN07 or GEN02 can be edited by the user by clicking and dragging on the table points. 
+table displays the contents of a function table, multiple tables, or files. Function tables that use a negative GEN05, GEN07 or GEN02 can be edited by clicking and dragging on the table. Only tables of size less or equal to 16384 points can be manually edited. If you wish to save any tables that you create you can use one of Csound's built-in table saving opcode "ftsave". If you need only display the contents of a static sound file from disk, use soundfiler as it will be fast and use less CPU. If on the other hand you wish to create some user editable envelopes, or display FFT or live waveform data use table. 
 
 ---
 === Identifiers

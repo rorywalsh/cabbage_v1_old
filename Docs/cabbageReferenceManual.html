@@ -1769,6 +1769,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 <li><a href="#_check_box">Check Box</a></li>
 <li><a href="#_combo_box">Combo Box</a></li>
 <li><a href="#_csound_output_widget">Csound Output Widget</a></li>
+<li><a href="#_gentable">GenTable</a></li>
 <li><a href="#_form">Form</a></li>
 <li><a href="#_group_box">Group Box</a></li>
 <li><a href="#_image">Image</a></li>
@@ -1776,7 +1777,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 <li><a href="#_label">Label</a></li>
 <li><a href="#_sliders">Sliders</a></li>
 <li><a href="#_soundfiler">Soundfiler</a></li>
-<li><a href="#_table">Table</a></li>
+<li><a href="#_table_deprecated">Table (deprecated)</a></li>
 <li><a href="#_text_box">Text Box</a></li>
 <li><a href="#_text_editor">Text Editor</a></li>
 <li><a href="#_xy_pad">XY Pad</a></li>
@@ -2180,11 +2181,137 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 </div>
 <div class="sect1">
+<h2 id="_gentable">GenTable</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>gentable bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val), scrubberposition(val)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>gentable displays the contents of a function table, multiple tables, or files. Function tables that use a negative GEN05, GEN07 or GEN02 can be edited by clicking and dragging on the table. Only tables of size less or equal to 16384 points can be manually edited. If you wish to save any tables that you create you can use one of Csound&#8217;s built-in table saving opcode "ftsave". If you need only display the contents of a static sound file from disk, use soundfiler as it will be fast and use less CPU. If on the other hand you wish to create some user editable envelopes, or display FFT or live waveform data use table.</p>
+</div>
+<hr>
+<div class="sect2">
+<h3 id="_identifiers_7">Identifiers</h3>
+<div class="paragraph">
+<p><code>bounds(x, y, width, height)</code> Integer values that set position and size on screen(in pixels)</p>
+</div>
+<div class="paragraph">
+<p><code>amprange(min, max, tablenumber, quantise)</code> Sets the amplitude range(Y-axis) for a particular table. Min and Max are the minimum and maximum values. Quantise will set the resolution of the Y axis for editing. For example, if quantise is set to 1, all points added to the table will be quantised to integer values. If quantise matches the dynamic range of the table, the table will be drawn as a grid of on/off switches. If only one amprange() identifier is used, a table number of -1 can be set so that each table displayed will share the same amp range.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+amprange() is one of the few identifiers in Cabbage that can be used more than once in a line of Cabbage code.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><code>tablenumber(1, 2, ..)</code> Sets the table/tables to be displayed. If multiple tables are specified the tables will be superimposed on top of each other. If multiple tables are specified with a colon between then the tables will be stacked on top of each other along the Y-axis, e.g., tablenumber(1:2:3:4).</p>
+</div>
+<div class="paragraph">
+<p><code>tablebackgroundcolour("colour")</code> This sets the global background colour. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+The default value for the background colour is rgb(10, 10, 10). If you are superimposing tables on top of each other only one can be seen at any time when using the default background colour. If you wish to show all tables at the same time use a colour with an alpha value. Tables  with no alpha channels are drawn faster and use less CPU.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><code>tablegridcolour("colour")</code> Sets the colour of the grid to be drawn. If you don&#8217;t want a grid to be drawn set this colour to transparent, i.e., 0,0,0,0. See above for details on valid colours.</p>
+</div>
+<div class="paragraph">
+<p><code>tablecolour("colour1", "colour2", ...)</code> Sets the colour of the table. If you leave this identifier out default colours will be chosen for the tables. If the table size is equal or less than two, the colours passed to tablecolour() will form a gradient fill or three colours.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+The tablecolour() identifier will not work with RGBA/RGB values. You must instead use a valid CSS colour name.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><code>file("filename")</code> Sets a file for the table to display. Unlike the tablenumber() identifier, which depends on the existence of a valid function table, file() will simply display a file from disk. This can be useful if you are using one of Csound&#8217;s file reading opcodes. File are always shown as table 0, and will always be the first table created. Therefore it will always take the first colour passed to the tablecolour list.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+The background grid is disabled when working with a table that use the file() identifier.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><em>scrubberposition(val)</em> Sets the scrubber position in samples, from the start of the file. Only valid when displaying a sound file or a GEN01 table. If you wish to display a scrubber with other table types use an image and an identchannel. See the GridSequencer instrument as an example.</p>
+</div>
+<div class="paragraph">
+<p><code>zoom(val)</code> Sets the initial zoom value. Passing a -1 to zoom will cause the zoom buttons to disappear.</p>
+</div>
+<div class="paragraph">
+<p><code>outlinethickness(val)</code> Sets the thickness of the waveform&#8217;s envelope in pixels. If you are drawing spectrograms setting this to 0 will speed up the process and reduce CPU drain.</p>
+</div>
+<div class="paragraph">
+<p><em>fill(val)</em> This will turn on or off the waveform fill. By default this is set to 1, therefore all table will fill in their envelopes.</p>
+</div>
+<div class="paragraph">
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+</div>
+<div class="paragraph">
+<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
+</div>
+<div class="paragraph">
+<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+If you need to redraw tables quickly, make sure they don&#8217;t use negative GEN routines as it will seriously slow down redrawing.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="_example_7">Example</h4>
+<div class="paragraph">
+<p><span class="image"><img src="images/tableExample.png" alt="table"></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_form">Form</h2>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>form caption("title"), size(Width, Height), pluginid("plug"), colour("colour"), guifresh(val)</code></pre>
+<pre class="highlight"><code>form caption("title"), size(Width, Height), pluginid("plug"), colour("colour"), guirefresh(val)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2192,7 +2319,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_7">Identifiers</h3>
+<h3 id="_identifiers_8">Identifiers</h3>
 <div class="paragraph">
 <p><code>caption</code> The string passed to caption will be the string that appears on the main application window.</p>
 </div>
@@ -2206,7 +2333,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <p><code>guirefresh(val)</code> Sets the rate at which Cabbage will update its GUI widgets when controlled by Csound. The value passed represents the number of k-rate cycles to be skipped before the next update. The larger this is the slower the GUI updates will take place, but the less CPU intensive the instrument will be. val should be an integer greater than 1 and is set to 50 by default.</p>
 </div>
 <div class="paragraph">
-<p><code>colour("colour")</code> This sets the background colour of the instrument. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create blue. RGBA values are not permitted when setting colours for your main form. If an RGBA value is set, Cabbage will convert it to RGB.</p>
+<p><code>colour("colour")</code> This sets the background colour of the instrument. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create blue. RGBA values are not permitted when setting colours for your main form. If an RGBA value is set, Cabbage will convert it to RGB. The default colour for form is rgb(5, 15, 20).</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2222,7 +2349,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_7">Example</h4>
+<h4 id="_example_8">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/formExample.png" alt="form"></span></p>
 </div>
@@ -2243,7 +2370,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_8">Identifiers</h3>
+<h3 id="_identifiers_9">Identifiers</h3>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2282,7 +2409,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_8">Example</h4>
+<h4 id="_example_9">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/groupBoxExample.png" alt="form"></span></p>
 </div>
@@ -2303,7 +2430,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_9">Identifiers</h3>
+<h3 id="_identifiers_10">Identifiers</h3>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
 </div>
@@ -2348,7 +2475,7 @@ Try to avoid full path names at all costs. They will work fine on a local machin
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_9">Example</h4>
+<h4 id="_example_10">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/imageExample.png" alt="image"></span></p>
 </div>
@@ -2369,7 +2496,7 @@ Try to avoid full path names at all costs. They will work fine on a local machin
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_10">Identifiers</h3>
+<h3 id="_identifiers_11">Identifiers</h3>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2396,7 +2523,7 @@ The keyboard can be played at different velocities depending on where you click 
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_10">Example</h4>
+<h4 id="_example_11">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/keyboardExample.png" alt="keyboard"></span></p>
 </div>
@@ -2417,7 +2544,7 @@ The keyboard can be played at different velocities depending on where you click 
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_11">Identifiers</h3>
+<h3 id="_identifiers_12">Identifiers</h3>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
 </div>
@@ -2444,7 +2571,7 @@ The keyboard can be played at different velocities depending on where you click 
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_11">Example</h4>
+<h4 id="_example_12">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/labelExample.png" alt="image"></span></p>
 </div>
@@ -2466,7 +2593,7 @@ textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolo
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_12">Identifiers</h3>
+<h3 id="_identifiers_13">Identifiers</h3>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
 </div>
@@ -2561,7 +2688,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_12">Example</h4>
+<h4 id="_example_13">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/sliderExample.png" alt="Sliders"></span></p>
 </div>
@@ -2582,7 +2709,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identifiers_13">Identifiers</h3>
+<h3 id="_identifiers_14">Identifiers</h3>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> Integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2615,7 +2742,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_example_13">Example</h4>
+<h4 id="_example_14">Example</h4>
 <div class="paragraph">
 <p><span class="image"><img src="images/soundfilerExample.png" alt="table"></span></p>
 </div>
@@ -2624,113 +2751,10 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 </div>
 <div class="sect1">
-<h2 id="_table">Table</h2>
+<h2 id="_table_deprecated">Table (deprecated)</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>table bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), backgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val)</code></pre>
-</div>
-</div>
 <div class="paragraph">
-<p>table displays the contents of a function table, multiple tables, or files. Function tables that use a negative GEN05, GEN07 or GEN02 can be edited by clicking and dragging on the table. Only tables of size less or equal to 16384 points can be manually edited. If you wish to save any tables that you create you can use one of Csound&#8217;s built-in table saving opcode "ftsave". If you need only display the contents of a static sound file from disk, use soundfiler as it will be fast and use less CPU. If on the other hand you wish to create some user editable envelopes, or display FFT or live waveform data use table.</p>
-</div>
-<hr>
-<div class="sect2">
-<h3 id="_identifiers_14">Identifiers</h3>
-<div class="paragraph">
-<p><code>bounds(x, y, width, height)</code> Integer values that set position and size on screen(in pixels)</p>
-</div>
-<div class="paragraph">
-<p><code>amprange(min, max, tablenumber, quantise)</code> Sets the amplitude range(Y-axis) for a particular table. Min and Max are the minimum and maximum values. Quantise will set the resolution of the Y axis for editing. For example, if quantise is set to 1, all points added to the table will be quantised to integer values. If quantise matches the dynamic range of the table, the table will be drawn as a grid of on/off switches. If only one amprange() identifier is used, a table number of -1 can be set so that each table displayed will share the same amp range.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<img src="images/smallLogo.PNG" alt="Note">
-</td>
-<td class="content">
-amprange() is one of the few identifiers in Cabbage that can be used more than once in a line of Cabbage code.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p><code>tablenumber(1, 2, ..)</code> Sets the table/tables to be displayed. If multiple tables are specified the tables will be superimposed on top of each other. If multiple tables are specified with a colon between then the tables will be stacked on top of each other along the Y-axis, e.g., tablenumber(1:2:3:4).</p>
-</div>
-<div class="paragraph">
-<p><code>backgroundcolour("colour")</code> This sets the global background colour. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<img src="images/smallLogo.PNG" alt="Note">
-</td>
-<td class="content">
-The default value for the background colour is rgb(10, 10, 10). If you are superimposing tables on top of each other only one can be seen at any time when using the default background colour. If you wish to show all tables at the same time use a colour with an alpha value. Tables  with no alpha channels are drawn faster and use less CPU.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p><code>tablegridcolour("colour")</code> Sets the colour of the grid to be drawn. If you don&#8217;t want a grid to be drawn set this colour to transparent, i.e., 0,0,0,0. See above for details on valid colours.</p>
-</div>
-<div class="paragraph">
-<p><code>tablecolour("colour1", "colour2", ...)</code> Sets the colours of the tables and editable envelope handles, when the table is editable. If you leave this identifier out default colours will be chosen for the tables.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<img src="images/smallLogo.PNG" alt="Note">
-</td>
-<td class="content">
-The tablecolour() identifier will not work with RGBA/RGB values. You must instead use a valid CSS colour name.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p><code>file("filename")</code> Sets a file for the table to display. Unlike the tablenumber() identifier, which depends on the existence of a valid function table, file() will simply display a file from disk. This can be useful if you are using one of Csound&#8217;s file reading opcodes. File are always shown as table 0, and will always be the first table created. Therefore it will always take the first colour passed to the tablecolour list.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<img src="images/smallLogo.PNG" alt="Note">
-</td>
-<td class="content">
-The background grid is disabled when working with a table that use the file() identifier.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p><code>zoom(val)</code> Sets the initial zoom value. Passing a -1 to zoom will cause the zoom buttons to disappear.</p>
-</div>
-<div class="paragraph">
-<p><code>outlinethickness(val)</code> Sets the thickness of the waveform&#8217;s envelope in pixels. If you are drawing spectrograms setting this to 0 will speed up the process and reduce CPU drain.</p>
-</div>
-<div class="paragraph">
-<p><em>fill(val)</em> This will turn on or off the waveform fill. By default this is set to 1, therefore all table will fill in their envelopes.</p>
-</div>
-<div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
-</div>
-<div class="paragraph">
-<p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
-</div>
-<div class="paragraph">
-<p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default</p>
-</div>
-<hr>
-<div class="sect3">
-<h4 id="_example_14">Example</h4>
-<div class="paragraph">
-<p><span class="image"><img src="images/tableExample.png" alt="table"></span></p>
-</div>
-</div>
+<p>Please use gentable, or soundfiler instead. If you wish to update instrument that used the table widget, you can simply replace table with gentable. The table widget will remain in the code base so that older instruments which use it will continue to work.</p>
 </div>
 </div>
 </div>
@@ -3112,7 +3136,7 @@ Currently this feature is only available on Windows.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-01-02 12:44:12 GMT
+Last updated 2015-01-03 10:10:29 GMT
 </div>
 </div>
 </body>

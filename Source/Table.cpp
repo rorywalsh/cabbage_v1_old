@@ -24,16 +24,22 @@
 //==============================================================================
 TableManager::TableManager(): Component(), zoom(0.0), largestTable(0), scrubberPosition(0),
     scrubberFreq(0), shouldShowTableButtons(true), shouldShowZoomButtons(true), tableIndex(0),
-    mainFooterHeight(25)
+    mainFooterHeight(25), backgroundColour(cUtils::getDarkerBackgroundSkin())
 {
     addAndMakeVisible(zoomIn = new RoundButton("zoomIn", Colours::white));
     addAndMakeVisible(zoomOut = new RoundButton("zoomOut", Colours::white));
+	//setOpaque(true);
     zoomIn->toFront(false);
     zoomIn->addChangeListener(this);
     zoomOut->toFront(false);
     zoomOut->addChangeListener(this);
 }
 
+//==============================================================================
+void TableManager::paint (Graphics& g)
+{
+	g.fillAll(backgroundColour);
+}
 //==============================================================================
 void TableManager::changeListenerCallback(ChangeBroadcaster *source)
 {
@@ -194,12 +200,13 @@ void TableManager::setGridColour(Colour col)
 
 void TableManager::setBackgroundColour(Colour col)
 {	
-    for(int i=0; i<tables.size(); i++)
-    {
-        tables[i]->setBackgroundColour(col);
-		if(col.getAlpha()==0xff)
-			tables[i]->setOpaque(true);
-    }	
+backgroundColour = col;	
+//    for(int i=0; i<tables.size(); i++)
+//    {
+//        tables[i]->setBackgroundColour(col);
+//		if(col.getAlpha()==0xff)
+//			tables[i]->setOpaque(true);
+//    }	
 }
 //==============================================================================
 void TableManager::setRange(double start, double end)
@@ -264,9 +271,12 @@ void TableManager::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newR
 
 void TableManager::setScrubberPos(double pos, int ftnumber)
 {
-    scrubberPosition = pos/getTableFromFtNumber(ftnumber)->tableSize;
-    for(int i=0; i<tables.size(); i++)
-        tables[i]->setScrubberPos(scrubberPosition);
+	if(getTableFromFtNumber(ftnumber))
+	{
+		scrubberPosition = pos/getTableFromFtNumber(ftnumber)->tableSize;
+		for(int i=0; i<tables.size(); i++)
+			tables[i]->setScrubberPos(scrubberPosition);
+	}
 }
 
 void TableManager::timerCallback()
@@ -357,7 +367,8 @@ GenTable* TableManager::getTableFromFtNumber(int ftnumber)
         if(tables[i]->tableNumber==ftnumber)
             return tables[i];
     }
-    return nullptr;
+	//else return first table, which will be valid
+    return tables[0];
 }
 
 //==============================================================================
@@ -397,7 +408,7 @@ void TableManager::bringButtonsToFront()
     {
         if(shouldShowTableButtons == true)
         {
-            tableButtons[i]->setBounds(getWidth()-65-(i*18), getHeight()-18, 15, 15);
+            tableButtons[i]->setBounds(getWidth()-(shouldShowZoomButtons==true ? 65 : 20)-(i*18), getHeight()-18, 15, 15);
             tableButtons[i]->toFront(true);
         }
         else
@@ -498,7 +509,6 @@ GenTable::GenTable():	thumbnailCache (5),
     scrollbar->setRangeLimits (visibleRange);
     //scrollbar->setAutoHide (false);
     scrollbar->addListener(this);
-    currentPositionMarker->setFill (Colours::lime.withAlpha(.1f));
     addAndMakeVisible(currentPositionMarker);
 
     handleViewer = new HandleViewer();
@@ -521,6 +531,7 @@ void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRang
 {
     sampleRate = sr;
     colour = Colours::findColourForName(col, Colours::white);
+	currentPositionMarker->setFill(colour.withAlpha(.5f));
     genRoutine = abs(igen);
     handleViewer->handleViewerGen = igen;
     realGenRoutine = igen;
@@ -544,7 +555,6 @@ void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRang
 //==============================================================================
 void GenTable::setAmpRanges(Array<float> ampRange)
 {
-	cUtils::debug(ampRange[2]);
     if(ampRange.size()>2)
     {
         if(ampRange[2]==tableNumber || ampRange[2]==-1)
@@ -557,7 +567,7 @@ void GenTable::setAmpRanges(Array<float> ampRange)
         if(ampRange.size()>3)
         {
             quantiseSpace = ampRange[3];
-			cUtils::debug(minMax.getEnd());
+			//cUtils::debug(minMax.getEnd());
             qsteps = quantiseSpace/minMax.getEnd();
             if(qsteps==1){
 				handleViewer->setShowingGrid(true);

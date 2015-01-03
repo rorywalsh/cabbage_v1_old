@@ -1041,7 +1041,7 @@ public:
 		{
 			file = cUtils::returnFullPathForFile(m_cAttr.getStringProp(CabbageIDs::file), currentDirectory);
  			img = ImageCache::getFromFile (File (file));
-			repaint();
+			repaint(this->getBounds());
 		}
 		
         setBounds(m_cAttr.getBounds());
@@ -1055,7 +1055,7 @@ public:
 			setEnabled(true);		
 			setVisible(true);
 		}
-        repaint();
+        repaint(this->getBounds());
     }
 
     void paint (Graphics& g)
@@ -1331,9 +1331,12 @@ public:
         if(scrubberPos!=m_cAttr.getNumProp(CabbageIDs::scrubberposition))
         {
             //var scrubberPos = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition);
-            scrubberPos = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[0];
-            int tableNumber = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[1];
-            table->setScrubberPos(scrubberPos, tableNumber);
+			if(m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition).size()>1)
+			{
+				scrubberPos = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[0];
+				int tableNumber = m_cAttr.getVarArrayProp(CabbageIDs::scrubberposition)[1];
+				table->setScrubberPos(scrubberPos, tableNumber);				
+			}
         }
 
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
@@ -1355,7 +1358,7 @@ public:
                 table->enableEditMode(StringArray(""), ampRanges[2]);
         }
 
-        if(m_cAttr.getNumProp(CabbageIDs::startpos)!=startpos &&  m_cAttr.getNumProp(CabbageIDs::endpos)!=endpos)
+        if(m_cAttr.getNumProp(CabbageIDs::startpos)!=startpos ||  m_cAttr.getNumProp(CabbageIDs::endpos)!=endpos)
         {
             table->setRange(m_cAttr.getNumProp(CabbageIDs::startpos), m_cAttr.getNumProp(CabbageIDs::endpos));
             endpos = m_cAttr.getNumProp(CabbageIDs::endpos);
@@ -1367,7 +1370,6 @@ public:
             zoom = m_cAttr.getNumProp(CabbageIDs::zoom);
             //table->setZoomFactor(zoom);
         }
-
 
     }
 

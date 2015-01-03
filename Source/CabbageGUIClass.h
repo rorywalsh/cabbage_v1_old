@@ -80,7 +80,7 @@ public:
         add("align");
         add("beveltype");
         add("wrap");
-		add("backgroundcolour");
+		add("tablebackgroundcolour");
         add("mode");
         add("tablenumber");
         add("tablenum");
@@ -156,7 +156,7 @@ static const Identifier fontcolour= "fontcolour";
 static const Identifier onfontcolour= "onfontcolour";
 static const Identifier colour = "colour";
 static const Identifier oncolour = "oncolour";
-static const Identifier backgroundcolour = "backgroundcolour";
+static const Identifier tablebackgroundcolour = "tablebackgroundcolour";
 static const Identifier items = "items";
 static const Identifier text = "text";
 static const Identifier range = "range";

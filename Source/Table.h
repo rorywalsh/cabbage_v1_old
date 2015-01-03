@@ -46,17 +46,13 @@ class TableManager : public Component,
     bool shouldShowZoomButtons;
     int mainFooterHeight;
 	Colour gridColour;
+	Colour backgroundColour;
 	int tableIndex;
 
 public:
     TableManager();
     ~TableManager() {};
-    void paint (Graphics& g)
-    {
-        g.fillAll(Colours::transparentBlack);
-    };
-	
-	
+    void paint (Graphics& g);	
 	void setGridColour(Colour col);
 	void setOutlineThickness(float thickness);
 	void setFill(bool fill );

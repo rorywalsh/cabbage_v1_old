@@ -151,6 +151,7 @@ public:
 
 private:
 	WildcardFileFilter wildcardFilter;
+	Image logo;
     void setPositionOfComponent(float x, float y, float width, float height, Component* comp, String reltoplant);
     void createfTableData(Table* table, bool sendToCsound);
     bool keyPressed(const juce::KeyPress &,Component *);

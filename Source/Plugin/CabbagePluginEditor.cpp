@@ -35,6 +35,7 @@ Array <Colour> swatchColours;
 //==============================================================================
 CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePluginAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),
+	  logo(ImageCache::getFromMemory(BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize)),
       inValue(0),
       authorText(""),
       keyIsPressed(false),
@@ -1556,40 +1557,18 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
 //==============================================================================
 void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 {
-//    for(int i=0; i<getFilter()->getGUILayoutCtrlsSize(); i++)
-//    {
-//        if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("keyboard"))
-//        {
-//#ifdef Cabbage_Build_Standalone
-//            if(keyIsPressed)
-//                if(isMouseOver(true))
-//                {
-//                    //this lets controls keep focus even when you are playing the keyboard
-//                    //layoutComps[i]->setWantsKeyboardFocus(true);
-//                    //layoutComps[i]->grabKeyboardFocus();
-//                    //layoutComps[i]->toFront(true);
-//                }
-//#endif
-//        }
-//    }
 #ifdef Cabbage_Build_Standalone
     if(getFilter()->compiledOk())
     {
         g.setColour (Colours::black);
         //g.setColour (cUtils::getBackgroundSkin());
         g.fillAll();
-
-        Image logo = ImageCache::getFromMemory (BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize);
         g.drawImage(logo, 10, 10, getWidth(), getHeight()-60, 0, 0, logo.getWidth(), logo.getHeight());
-
     }
     else
     {
-        g.setColour(formColour);
-        g.fillAll();
-
+        g.fillAll(formColour);
         g.setColour (cUtils::getTitleFontColour().withAlpha(.3f));
-        Image logo = ImageCache::getFromMemory (BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize);
         g.drawImage (logo, getWidth() - 100, getHeight()-35, logo.getWidth()*0.55, logo.getHeight()*0.55,
                      0, 0, logo.getWidth(), logo.getHeight(), true);
         g.setColour(fontColour);
@@ -2224,14 +2203,14 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 	else
 		table->setGridColour(Colours::transparentBlack);
 		
-	table->setBackgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::backgroundcolour)));
+	table->setBackgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablebackgroundcolour)));
 	table->setFill(cAttr.getNumProp(CabbageIDs::fill));
 	
 	//set VU gradients based on tablecolours, take only the first three colours. 
 	Array<Colour> gradient;
 	for(int i=0;i<3;i++)
 	{
-		cUtils::debug(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, i));
+		//cUtils::debug(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, i));
 		gradient.add(Colours::findColourForName(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, i), Colours::white));		
 	}
 	

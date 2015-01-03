@@ -779,6 +779,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     standaloneMode=false;
 #endif
 
+	String examplesDir = appProperties->getUserSettings()->getValue("ExamplesDir", "");
     isAFileOpen = true;
     if(!standaloneMode)
     {
@@ -786,8 +787,6 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
         recentFiles.createPopupMenuItems (recentFilesMenu, 9000, false, true);
         m.addSubMenu ("Open recent file", recentFilesMenu);
-
-        String examplesDir = appProperties->getUserSettings()->getValue("ExamplesDir", "");
         if(!File(examplesDir).exists())
         {
 #if defined(LINUX) || defined(MACOSX)
@@ -798,6 +797,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         }
 
         addFilesToPopupMenu(subMenu, exampleFiles, examplesDir, "*.csd", examplesOffset);
+		subMenu.addItem(3999, "Browse all examples");
         m.addSubMenu(String("Examples"), subMenu);
 
         subMenu.clear();
@@ -968,6 +968,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     {
         openFile(exampleFiles[options-examplesOffset].getFullPathName());
     }
+
+	else if(options==3999)
+	{
+		openFile(examplesDir);
+	}
 
     else if(options>=9000)
     {
@@ -1447,7 +1452,7 @@ void StandaloneFilterWindow::openTextEditor()
 //==============================================================================
 void StandaloneFilterWindow::openFile(String _csdfile)
 {
-    if(_csdfile.length()>4)
+    if(File(_csdfile).existsAsFile())
     {
         csdFile = File(_csdfile);
         originalCsdFile = csdFile;
@@ -1457,8 +1462,9 @@ void StandaloneFilterWindow::openFile(String _csdfile)
     }
     else
     {
+		File currentDir = File(_csdfile);
 #ifdef MACOSX
-        FileChooser openFC(String("Open a Cabbage .csd file..."), File::nonexistent, String("*.csd;*.vst"), UseNativeDialogue);
+        FileChooser openFC(String("Open a Cabbage .csd file..."), currentDir, String("*.csd;*.vst"), UseNativeDialogue);
         if(openFC.browseForFileToOpen())
         {
             csdFile = openFC.getResult();
@@ -1481,7 +1487,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
 		this->setAlwaysOnTop(false);
 		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
 		wildcardFilter = WildcardFileFilter("*.csd", "*", ".csd Files");
-		Array<File> selectedFile = cUtils::launchFileBrowser("Open a .csd file", wildcardFilter, 1, File("*"), showNative, &getLookAndFeel());
+		Array<File> selectedFile = cUtils::launchFileBrowser("Open a .csd file", wildcardFilter, 1, currentDir, showNative, &getLookAndFeel());
       
         if(selectedFile.size()>0)
         {

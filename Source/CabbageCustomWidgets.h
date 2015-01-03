@@ -1055,7 +1055,7 @@ public:
 			setEnabled(true);		
 			setVisible(true);
 		}
-        repaint(this->getBounds());
+        repaint();
     }
 
     void paint (Graphics& g)

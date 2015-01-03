@@ -35,7 +35,8 @@ Array <Colour> swatchColours;
 //==============================================================================
 CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePluginAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),
-	  logo(ImageCache::getFromMemory(BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize)),
+	  logo1(ImageCache::getFromMemory(BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize)),
+	  logo2(ImageCache::getFromMemory(BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize)),
       inValue(0),
       authorText(""),
       keyIsPressed(false),
@@ -1563,16 +1564,16 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
         g.setColour (Colours::black);
         //g.setColour (cUtils::getBackgroundSkin());
         g.fillAll();
-        g.drawImage(logo, 10, 10, getWidth(), getHeight()-60, 0, 0, logo.getWidth(), logo.getHeight());
+        g.drawImage(logo1, 10, 10, getWidth(), getHeight()-60, 0, 0, logo1.getWidth(), logo1.getHeight());
     }
     else
     {
         g.fillAll(formColour);
         g.setColour (cUtils::getTitleFontColour().withAlpha(.3f));
-        g.drawImage (logo, getWidth() - 100, getHeight()-35, logo.getWidth()*0.55, logo.getHeight()*0.55,
-                     0, 0, logo.getWidth(), logo.getHeight(), true);
+        g.drawImage (logo2, getWidth() - 100, getHeight()-35, logo2.getWidth()*0.55, logo2.getHeight()*0.55,
+                     0, 0, logo2.getWidth(), logo2.getHeight(), true);
         g.setColour(fontColour);
-        g.drawFittedText(authorText, 10, getHeight()-35, getWidth()*.65, logo.getHeight(), 1, 1);
+        //g.drawFittedText(authorText, 10, getHeight()-35, getWidth()*.65, logo.getHeight(), 1, 1);
         //g.drawLine(10, getHeight()-27, getWidth()-10, getHeight()-27, 0.2);
     }
 

@@ -173,16 +173,16 @@ void CabbageLookAndFeel::drawFileBrowserRow (Graphics& g, int width, int height,
 
     const int x = 32;
     
-    if (icon != nullptr && icon->isValid())
-    {
-		g.setColour (Colours::red);
-		g.fillRoundedRectangle(0, 0, 30, height, 2);
-//        g.drawImageWithin (*icon, 2, 2, x - 4, height - 4,
-//                           RectanglePlacement::centred | RectanglePlacement::onlyReduceInSize,
-//                           false);
-    }
-    else
-    {
+//    if (icon != nullptr && icon->isValid())
+//    {
+//		g.setColour (Colours::black);
+//		g.fillRoundedRectangle(0, 0, 30, height, 2);
+////        g.drawImageWithin (*icon, 2, 2, x - 4, height - 4,
+////                           RectanglePlacement::centred | RectanglePlacement::onlyReduceInSize,
+////                           false);
+//    }
+//    else
+//    {
 		if(isDirectory)
 		{
 			g.setColour (Colours::black);
@@ -217,7 +217,7 @@ void CabbageLookAndFeel::drawFileBrowserRow (Graphics& g, int width, int height,
 		g.drawLine(8, height-5, 8, 2);
 		g.setColour (Colours::cornflowerblue.darker(.6f));
 		}
-    }
+    
 
 
     g.setColour (fileListComp != nullptr ? fileListComp->findColour (DirectoryContentsDisplayComponent::textColourId)

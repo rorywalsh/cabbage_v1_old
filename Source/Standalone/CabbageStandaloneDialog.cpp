@@ -780,6 +780,18 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 #endif
 
 	String examplesDir = appProperties->getUserSettings()->getValue("ExamplesDir", "");
+	String examplesBaseDir = appProperties->getUserSettings()->getValue("ExamplesDir", "");
+	if(!File(examplesDir).exists())
+	{
+	#if defined(LINUX) || defined(MACOSX)
+		examplesBaseDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
+		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples/Examples";
+	#else
+		examplesBaseDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
+		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples\\Examples";
+	#endif
+	}
+
     isAFileOpen = true;
     if(!standaloneMode)
     {
@@ -787,14 +799,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
         recentFiles.createPopupMenuItems (recentFilesMenu, 9000, false, true);
         m.addSubMenu ("Open recent file", recentFilesMenu);
-        if(!File(examplesDir).exists())
-        {
-#if defined(LINUX) || defined(MACOSX)
-            examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
-#else
-            examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
-#endif
-        }
+
 
         addFilesToPopupMenu(subMenu, exampleFiles, examplesDir, "*.csd", examplesOffset);
 		subMenu.addItem(3999, "Browse all examples");
@@ -971,7 +976,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
 	else if(options==3999)
 	{
-		openFile(examplesDir);
+		openFile(examplesBaseDir);
 	}
 
     else if(options>=9000)

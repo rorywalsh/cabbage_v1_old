@@ -29,9 +29,7 @@
 #include "BinaryData.h"
 #endif
 
-#ifdef LINUX
 #include <assert.h>
-#endif
 
 using namespace std;
 
@@ -398,7 +396,7 @@ static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, in
 		}	
 		else
 		{
-			FileChooser openFC(title, File::nonexistent, "*.*", true);
+			FileChooser openFC(title, initialDir, "*.*", true);
 			if(openFC.browseForFileToOpen())
 				results = openFC.getResults();			
 		}

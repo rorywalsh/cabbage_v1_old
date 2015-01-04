@@ -1763,6 +1763,8 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 <div id="toctitle">Cabbage Reference Manual</div>
 <ul class="sectlevel1">
 <li><a href="#_cabbage_widgets">Cabbage Widgets</a></li>
+<li>
+<ul class="sectlevel2">
 <li><a href="#_button">Button</a></li>
 <li><a href="#_button_file_button">Button (File button)</a></li>
 <li><a href="#_button_information_button">Button (Information button)</a></li>
@@ -1781,9 +1783,25 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 <li><a href="#_text_box">Text Box</a></li>
 <li><a href="#_text_editor">Text Editor</a></li>
 <li><a href="#_xy_pad">XY Pad</a></li>
+</ul>
+</li>
 <li><a href="#_plants">Plants</a></li>
+<li><a href="#_macros">Macros</a></li>
 <li><a href="#_reserved_channels">Reserved Channels</a></li>
 <li><a href="#_the_cabbage_standalone_host">The Cabbage Standalone Host</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#_open_cabbage_instrument">Open Cabbage Instrument</a></li>
+<li><a href="#_new_cabbage">New Cabbage&#8230;</a></li>
+<li><a href="#_view_source_editor">View Source Editor</a></li>
+<li><a href="#_audio_settings">Audio Settings</a></li>
+<li><a href="#_toggle_edit_mode">Toggle edit-mode</a></li>
+<li><a href="#_export_export_as">Export/Export as&#8230;</a></li>
+<li><a href="#_reload_instrument">Reload Instrument</a></li>
+<li><a href="#_batch_convert">Batch Convert</a></li>
+<li><a href="#_preferences">Preferences</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -1800,19 +1818,16 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 <div class="paragraph">
 <p>bounds() must be set for every widget. All other identifiers will be given default values if none are set.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_button">Button</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_button">Button</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), value(val), colour("colour"), fontcolour("colour"), latched(val), identchannel("channel"), alpha(val), visible(val), caption("caption")</code></pre>
 </div>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers">Identifiers</h4>
 <div class="paragraph">
 <p>Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish.</p>
 </div>
@@ -1880,6 +1895,7 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 </table>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example">Example</h4>
 <div class="paragraph">
@@ -1887,11 +1903,8 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_button_file_button">Button (File button)</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_button_file_button">Button (File button)</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), mode("mode")</code></pre>
@@ -1901,8 +1914,8 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 <p>A filebutton can be used to select files from disk. The filename selected, or created will be sent to Csound on the named channel as a string message. Filebuttons can also be used to select snapshot files for Cabbage to save parameter presets. See the populate identifier below.</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_2">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers_2">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -1934,6 +1947,7 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 * <strong>snapshot</strong>, Will stop the file browser from opening, and instead will write a preset, or snapshot, file to disk with a default file name. The default filename will be the csd filename, with an underscore and number appended to it. For instance, if the filename is CabbageStew.csd, the preset files will be named CabbageStew_0.csd, CabbageStew_1.csd, CabbageStew_2.csd, etc. The snapshot mode provides is a very quick way of saving presets to disk. For more on presets see the Combobox widget reference.</p>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_2">Example</h4>
 <div class="paragraph">
@@ -1941,19 +1955,16 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_button_information_button">Button (Information button)</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_button_information_button">Button (Information button)</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>infobutton bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour") file("file name"), identchannel("chan"), alpha(val), visible(val)</code></pre>
 </div>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_3">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers_3">Identifiers</h4>
 <div class="paragraph">
 <p>Infobuttons can be used to open html files in the system&#8217;s default web browser. When clicked, the file passed to the file() identifier will be opened, if it is a valid file. This widget can be useful for providing help files or any other additional information about your instruments.</p>
 </div>
@@ -1982,6 +1993,7 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_3">Example</h4>
 <div class="paragraph">
@@ -1989,11 +2001,8 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_check_box">Check Box</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_check_box">Check Box</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>checkbox bounds(x, y, width, height), channel("chan"), text("name"), value(val), caption("Caption"), colour:0("colour"), colour:1("colour"), shape("shape"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val)</code></pre>
@@ -2003,10 +2012,9 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 <p>Checkbox creates a checkbox which functions like a button, but the associated caption will not change when the user checks it. As with all widgets capable of sending data to Csound, the channel string is the channel on which the widget will communicate with Csound.</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_4">Identifiers</h3>
 <div class="paragraph">
-<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
+<p>====Identifiers
+<code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
 </div>
 <div class="paragraph">
 <p><code>channel("chan")</code> "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode.</p>
@@ -2073,19 +2081,16 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_combo_box">Combo Box</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_combo_box">Combo Box</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>combobox bounds(x, y, width, height), channel("chan"), value(val), items("item1", "item2", ...), populate("filetype", "dir"), channeltype("type"), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption")</code></pre>
 </div>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_5">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers_4">Identifiers</h4>
 <div class="paragraph">
 <p>Combobox creates a drop-down list of items which users can choose from. Once the user selects an item, the index of their selection will be sent to Csound on a channel named by the channel string. The default value is 0.</p>
 </div>
@@ -2126,6 +2131,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_5">Example</h4>
 <div class="paragraph">
@@ -2133,11 +2139,8 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_csound_output_widget">Csound Output Widget</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_csound_output_widget">Csound Output Widget</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>csoundoutput bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour"), identchannel("channel"), visible(val), alpha(val)</code></pre>
@@ -2147,8 +2150,8 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <p>csoundoutput will display Csound output messages within your instrument`s GUI. This widget can be very useful when working in plugin mode and can be invaluable when it comes to de-slugging Cabbage instruments.</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_6">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers_5">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2171,6 +2174,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_6">Example</h4>
 <div class="paragraph">
@@ -2178,11 +2182,8 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_gentable">GenTable</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_gentable">GenTable</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>gentable bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val), scrubberposition(val)</code></pre>
@@ -2192,8 +2193,8 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <p>gentable displays the contents of a function table, multiple tables, or files. Function tables that use a negative GEN05, GEN07 or GEN02 can be edited by clicking and dragging on the table. Only tables of size less or equal to 16384 points can be manually edited. If you wish to save any tables that you create you can use one of Csound&#8217;s built-in table saving opcode "ftsave". If you need only display the contents of a static sound file from disk, use soundfiler as it will be fast and use less CPU. If on the other hand you wish to create some user editable envelopes, or display FFT or live waveform data use table.</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_7">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers_6">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> Integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2249,7 +2250,7 @@ The tablecolour() identifier will not work with RGBA/RGB values. You must instea
 </table>
 </div>
 <div class="paragraph">
-<p><code>file("filename")</code> Sets a file for the table to display. Unlike the tablenumber() identifier, which depends on the existence of a valid function table, file() will simply display a file from disk. This can be useful if you are using one of Csound&#8217;s file reading opcodes. File are always shown as table 0, and will always be the first table created. Therefore it will always take the first colour passed to the tablecolour list.</p>
+<p><code>file("filename")</code> Sets a file for the table to display. Unlike the tablenumber() identifier, which depends on the existence of a valid function table, file() will simply display a file from disk. This can be useful if you are using one of Csound&#8217;s file reading opcodes. File are always shown as table 0, and will always be the first table created. Therefore it will always take the first colour passed to the tablecolour list. If you wish to load a file after the gentable widget has been created you will need to pass a dummy filename to file() so that the underlying table gets created. If not, calling the file() identifier with an identchannel() will not work.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2264,7 +2265,7 @@ The background grid is disabled when working with a table that use the file() id
 </table>
 </div>
 <div class="paragraph">
-<p><em>scrubberposition(val)</em> Sets the scrubber position in samples, from the start of the file. Only valid when displaying a sound file or a GEN01 table. If you wish to display a scrubber with other table types use an image and an identchannel. See the GridSequencer instrument as an example.</p>
+<p><em>scrubberposition(val, tableNum)</em> Sets the scrubber position in samples, from the start of the file. Only valid when displaying a sound file or a GEN01 table. tableNum will determine which table the scrubber will be placed on. If you wish to display a scrubber with other table types(non GEN01) use an image and an identchannel. See the GridSequencer instrument as an example.</p>
 </div>
 <div class="paragraph">
 <p><code>zoom(val)</code> Sets the initial zoom value. Passing a -1 to zoom will cause the zoom buttons to disappear.</p>
@@ -2297,6 +2298,7 @@ If you need to redraw tables quickly, make sure they don&#8217;t use negative GE
 </table>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_7">Example</h4>
 <div class="paragraph">
@@ -2304,11 +2306,8 @@ If you need to redraw tables quickly, make sure they don&#8217;t use negative GE
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_form">Form</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_form">Form</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>form caption("title"), size(Width, Height), pluginid("plug"), colour("colour"), guirefresh(val)</code></pre>
@@ -2318,8 +2317,8 @@ If you need to redraw tables quickly, make sure they don&#8217;t use negative GE
 <p>Form creates the main application window. pluginid() is the only required identifier. The default values for size are 600x300.</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_8">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers_7">Identifiers</h4>
 <div class="paragraph">
 <p><code>caption</code> The string passed to caption will be the string that appears on the main application window.</p>
 </div>
@@ -2348,6 +2347,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </table>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_8">Example</h4>
 <div class="paragraph">
@@ -2355,11 +2355,8 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_group_box">Group Box</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_group_box">Group Box</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>groupbox bounds(x, y, width, height), text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), popup(val), child(val), visible(val), alpha(val), show(val), identchannel("channel")</code></pre>
@@ -2369,8 +2366,8 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 <p>Groupbox creates a container for other GUI widgets. They do not communicate with Csound but can be useful for organising widgets into panels.</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_9">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers_8">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2408,6 +2405,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 <p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS</p>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_9">Example</h4>
 <div class="paragraph">
@@ -2415,11 +2413,8 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_image">Image</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_image">Image</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outline("colour"), line(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val)</code></pre>
@@ -2429,8 +2424,8 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 <p>Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. For convenience, the file passed to file() should be in the same directory as your Cabbage instrument.</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_10">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers_9">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
 </div>
@@ -2474,6 +2469,7 @@ Try to avoid full path names at all costs. They will work fine on a local machin
 </table>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_10">Example</h4>
 <div class="paragraph">
@@ -2481,11 +2477,8 @@ Try to avoid full path names at all costs. They will work fine on a local machin
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_keyboard">Keyboard</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_keyboard">Keyboard</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>keyboard bounds(x, y, width, height), value(note), identchannel("channel"), visible(val)</code></pre>
@@ -2495,10 +2488,9 @@ Try to avoid full path names at all costs. They will work fine on a local machin
 <p>Keyboard will display a keyboard that will send MIDI information to your Csound instrument. This component can be used together with a hardware controller. Pressing keys on the actual MIDI keyboard will cause the on-screen keys to react up.</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_11">Identifiers</h3>
 <div class="paragraph">
-<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
+<p>====Identifiers
+<code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
 <div class="paragraph">
 <p><code>value(note)</code> sets the note on the leftmost side of the keyboard when it appears on-screen. Middle C, 60, is the default.</p>
@@ -2529,11 +2521,8 @@ The keyboard can be played at different velocities depending on where you click 
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_label">Label</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_label">Label</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>label bounds(x, y, width, height), text("text"), colour("colour"), fontcolour("colour"), align("position"), identchannel("channel"), alpha(val), visible(val)</code></pre>
@@ -2543,8 +2532,8 @@ The keyboard can be played at different velocities depending on where you click 
 <p>Labels can be used for placing text on-screen.</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_12">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers_10">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
 </div>
@@ -2570,6 +2559,7 @@ The keyboard can be played at different velocities depending on where you click 
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_12">Example</h4>
 <div class="paragraph">
@@ -2577,11 +2567,8 @@ The keyboard can be played at different velocities depending on where you click 
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_sliders">Sliders</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_sliders">Sliders</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>hslider bounds(x, y, width, height), channel("chan"), text("name"), textbox(val), range(min, max, value, skew, incr), min(val), max(val),
@@ -2592,8 +2579,8 @@ textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolo
 <p>Slider can be used to create an on-screen slider. Data can be sent to Csound on the channel specified through the chan string. Presented above is the syntax for a horizontal slider, i.e., hslider. In order to change it to another slider type simple substitute hslider with the appropriate slider type as outlined below.</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_13">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers_11">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
 </div>
@@ -2687,6 +2674,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </table>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_13">Example</h4>
 <div class="paragraph">
@@ -2694,11 +2682,8 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_soundfiler">Soundfiler</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_soundfiler">Soundfiler</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>soundfiler bounds(x, y, width, height), channel("start", "end"), colour("colour1"), zoom(val), tablenumber(val), file("filename"), scrubberpos(val), identchannel("channel"), alpha(val), visible(val)</code></pre>
@@ -2708,10 +2693,9 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p>soundfiler will display the contents of a sound file, or a function table containing a sound file (GEN01 tables). This is a fast waveform viewer that allows users to select regions of the waveform. Unlike the table widget, soundfiler can only display one waveform at a time.</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_14">Identifiers</h3>
 <div class="paragraph">
-<p><code>bounds(x, y, width, height)</code> Integer values that set position and size on screen(in pixels)</p>
+<p>====Identifiers
+<code>bounds(x, y, width, height)</code> Integer values that set position and size on screen(in pixels)</p>
 </div>
 <div class="paragraph">
 <p><code>tablenumber(val)</code> Sets the table/tables to be displayed. If multiple tables are specified the tables will be superimposed on top of each other. If multiple tables are specified with a colon between then the tables will be stacked on top of each other along the Y-axis, e.g., tablenumber(1:2:3:4).</p>
@@ -2748,19 +2732,14 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_table_deprecated">Table (deprecated)</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_table_deprecated">Table (deprecated)</h3>
 <div class="paragraph">
 <p>Please use gentable, or soundfiler instead. If you wish to update instrument that used the table widget, you can simply replace table with gentable. The table widget will remain in the code base so that older instruments which use it will continue to work.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_text_box">Text Box</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_text_box">Text Box</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>textbox bounds(x, y, width, height), file("filename"), colour("colour"), fontcolour("colour"), wrap(val), alpha(val), visible(val)</code></pre>
@@ -2770,8 +2749,8 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p>Textbox will display the contents of a text file. This can be useful for placing instructions and information directly on to an instrument.</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_15">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers_12">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2797,6 +2776,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_15">Example</h4>
 <div class="paragraph">
@@ -2804,11 +2784,8 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_text_editor">Text Editor</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_text_editor">Text Editor</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour("colour"), fontcolour("colour"), alpha(val), visible(val)</code></pre>
@@ -2818,8 +2795,8 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p><strong>Texteditor can be used to send strings to Csound. Hitting return will send the string to Csound on a named string channel. Pressing the up and down buttons when the texteditor is in focus will toggle through the previous strings that have been sent.</strong>+</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_16">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers_13">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2842,6 +2819,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_16">Example</h4>
 <div class="paragraph">
@@ -2849,11 +2827,8 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_xy_pad">XY Pad</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_xy_pad">XY Pad</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>xypad bounds(x, y, width, height), channel("chan1", "chan2"), rangex(min, max, val), rangey(min, max, val), text("name"), identchannel("channel"), colour("colour"), fontcolour("colour"), alpha(val), visible(val)</code></pre>
@@ -2863,8 +2838,8 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p>xypad is an x/y controller that sends data to Csound on two named channels. The first channel transmits the current position of the ball on the X axis, while the second transmits the position of the ball on the Y axis. The XY pad can function in two unique modes of automation, free and path based. The two modes can be toggled by clicking on the corresponding icon on the bottom left of the xypad control. With either mode selected you can right-click the xypad and create a trajectory or path for the circle&#8217;s movement. Release the mouse and the circle will start moving. Once the ball is in full flight you can control the speed of the ball using the XY pad slider that will appear once you hover over it with the mouse. To stop the ball simple left click anywhere on the xy pad canvas with the left mouse button.</p>
 </div>
 <hr>
-<div class="sect2">
-<h3 id="_identifiers_17">Identifiers</h3>
+<div class="sect3">
+<h4 id="_identifiers_14">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2908,6 +2883,7 @@ XY pads range identifiers do not permit the setting of skew factors, or incremen
 </table>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_17">Example</h4>
 <div class="paragraph">
@@ -2931,6 +2907,38 @@ XY pads range identifiers do not permit the setting of skew factors, or incremen
 </div>
 <div class="paragraph">
 <p>The major advantage to using plant abstractions is that you can easily move and resize them without needing to modify the dimensions of the child widgets contained within. You can also save your plants and recall them later from a plant repository. Plants are intended to be reused across instruments so users do not have to keep rebuilding GUIs from scratch. They can also be used to give your plugins a unique look and feel.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_macros">Macros</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Cabbage specific macros can be used to define a range of difference identifiers, a provide tidy way of achieving a consistent look and feel across your instrument&#8217;s widgets without having to hard code each and every one of a widget&#8217;s identifiers. To create a macro one must define it using a #define keyword. The following code will create a macro called SLIDER1 that will define several attributes of a slider widget:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>#define SLIDER1 colour("red"), fontcolour("yellow"), outlinecolour("red"), range(0, 1000, 500)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The macro can then be used anywhere else in your Cabbage code by placing it on an appropriate line of Cabbage code. For example, the following code uses the above macro with an rslider.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>rslider bounds(39, 12, 50, 50), channel("rslider"), $SLIDER1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can override any identifiers contained in a macro by placing them in front of the macro name. The following code will override the colour identifier from the macro with a new colour.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>rslider bounds(39, 12, 50, 50), channel("rslider"), colour("purple"), $SLIDER1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can use as many macros as you wish in your Cabbage code.</p>
 </div>
 </div>
 </div>
@@ -3136,7 +3144,7 @@ Currently this feature is only available on Windows.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-01-03 10:10:29 GMT
+Last updated 2015-01-04 10:06:41 GMT
 </div>
 </div>
 </body>

@@ -1,5 +1,5 @@
 :toc: right
-:toclevels: 1
+:toclevels: 2
 :toc-title: Cabbage Reference Manual
 
 :stylesheet: DocStyle.css
@@ -14,14 +14,14 @@ Each Cabbage widget has a corresponding set of identifiers that can be set to co
 
 bounds() must be set for every widget. All other identifiers will be given default values if none are set.  
 
-== Button
+=== Button
 [source]
 ----
 button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), value(val), colour("colour"), fontcolour("colour"), latched(val), identchannel("channel"), alpha(val), visible(val), caption("caption")
 ----
 
 ---
-=== Identifiers
+==== Identifiers
 
 Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish. 
 
@@ -42,7 +42,7 @@ NOTE: You can create an invisible button by setting the colour to something with
 
 `fontcolour:0("colour")` Sets the colour of the text that appears on the button when it's in its off state. See above for details on valid colours. 
 
-`fontcolour:1("colour")` Sets the colour of the text that appears on the button when it's in its on state. See above for details on valid colours. 
+`fontcolour:1("colour")` Sets the colour of the text that appears on the button when it's in its on state. See above for details on valid colours.
 
 `latched(val)` With latched set to 0 the button will send a message to Csound on the initial mouse press, and once again as soon as the user releases the button. Therefore the button will toggle between 0 and 1 on each click rather than needing two separate mouse clicks. 
 
@@ -62,7 +62,7 @@ NOTE: colour:1() and fontcolour:1() can be set using colour() and fontcolour(). 
 
 image:images/buttonExample.png[Buttons]
 
-== Button (File button)
+=== Button (File button)
 [source]
 -------------
 filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), mode("mode")
@@ -71,7 +71,7 @@ filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), pop
 A filebutton can be used to select files from disk. The filename selected, or created will be sent to Csound on the named channel as a string message. Filebuttons can also be used to select snapshot files for Cabbage to save parameter presets. See the populate identifier below.  
 
 ---
-=== Identifiers
+==== Identifiers
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels)
 
 `text("name")` "name" will be the text that appears on the top of the info button.  
@@ -98,14 +98,14 @@ A filebutton can be used to select files from disk. The filename selected, or cr
 
 image:images/filebuttonExample.png[Buttons]
 
-== Button (Information button)
+=== Button (Information button)
 [source]
 ----
 infobutton bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour") file("file name"), identchannel("chan"), alpha(val), visible(val)
 ----
 
 ---
-=== Identifiers
+==== Identifiers
 Infobuttons can be used to open html files in the system's default web browser. When clicked, the file passed to the file() identifier will be opened, if it is a valid file. This widget can be useful for providing help files or any other additional information about your instruments. 
 
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels)
@@ -129,7 +129,7 @@ Infobuttons can be used to open html files in the system's default web browser. 
 
 image:images/infobuttonExample.png[csound output]
 
-== Check Box
+=== Check Box
 [source]
 -----------------------------------------------------------------------------------------------
 checkbox bounds(x, y, width, height), channel("chan"), text("name"), value(val), caption("Caption"), colour:0("colour"), colour:1("colour"), shape("shape"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val)
@@ -138,7 +138,7 @@ checkbox bounds(x, y, width, height), channel("chan"), text("name"), value(val),
 Checkbox creates a checkbox which functions like a button, but the associated caption will not change when the user checks it. As with all widgets capable of sending data to Csound, the channel string is the channel on which the widget will communicate with Csound. 
 
 ---
-=== Identifiers
+====Identifiers
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels). 
 
 `channel("chan")` "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode. 
@@ -175,14 +175,14 @@ NOTE: colour:1() can be set using colour(). However, it's recommended that you u
 
 image:images/checkboxExample.png[Checkboxes]
 
-== Combo Box
+=== Combo Box
 [source]
 -------
 combobox bounds(x, y, width, height), channel("chan"), value(val), items("item1", "item2", ...), populate("filetype", "dir"), channeltype("type"), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption")
 -------
 
 ---
-=== Identifiers
+==== Identifiers
 Combobox creates a drop-down list of items which users can choose from. Once the user selects an item, the index of their selection will be sent to Csound on a channel named by the channel string. The default value is 0.
 
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels).
@@ -214,7 +214,7 @@ Combobox creates a drop-down list of items which users can choose from. Once the
 
 image:images/comboboxExample.png[Combo]
 
-== Csound Output Widget
+=== Csound Output Widget
 [source]
 ----
 csoundoutput bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour"), identchannel("channel"), visible(val), alpha(val)
@@ -223,7 +223,7 @@ csoundoutput bounds(x, y, width, height), text("name"), colour("colour"), fontco
 csoundoutput will display Csound output messages within your instrument`s GUI. This widget can be very useful when working in plugin mode and can be invaluable when it comes to de-slugging Cabbage instruments. 
 
 ---
-=== Identifiers
+==== Identifiers
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels)
 
 `text("name")` "name" will be the text that appears on the top of the check box.  
@@ -243,7 +243,7 @@ csoundoutput will display Csound output messages within your instrument`s GUI. T
 
 image:images/csoundOutputExample.png[csound output]
 
-== GenTable
+=== GenTable
 [source]
 ----
 gentable bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val), scrubberposition(val)
@@ -252,7 +252,7 @@ gentable bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colou
 gentable displays the contents of a function table, multiple tables, or files. Function tables that use a negative GEN05, GEN07 or GEN02 can be edited by clicking and dragging on the table. Only tables of size less or equal to 16384 points can be manually edited. If you wish to save any tables that you create you can use one of Csound's built-in table saving opcode "ftsave". If you need only display the contents of a static sound file from disk, use soundfiler as it will be fast and use less CPU. If on the other hand you wish to create some user editable envelopes, or display FFT or live waveform data use table. 
 
 ---
-=== Identifiers
+==== Identifiers
 `bounds(x, y, width, height)` Integer values that set position and size on screen(in pixels)
 
 `amprange(min, max, tablenumber, quantise)` Sets the amplitude range(Y-axis) for a particular table. Min and Max are the minimum and maximum values. Quantise will set the resolution of the Y axis for editing. For example, if quantise is set to 1, all points added to the table will be quantised to integer values. If quantise matches the dynamic range of the table, the table will be drawn as a grid of on/off switches. If only one amprange() identifier is used, a table number of -1 can be set so that each table displayed will share the same amp range.
@@ -298,7 +298,7 @@ NOTE: If you need to redraw tables quickly, make sure they don't use negative GE
 image:images/tableExample.png[table]
 
 
-== Form
+=== Form
 [source]
 ----
 form caption("title"), size(Width, Height), pluginid("plug"), colour("colour"), guirefresh(val)
@@ -307,7 +307,7 @@ form caption("title"), size(Width, Height), pluginid("plug"), colour("colour"), 
 Form creates the main application window. pluginid() is the only required identifier. The default values for size are 600x300. 
 
 ---
-=== Identifiers
+==== Identifiers
 `caption` The string passed to caption will be the string that appears on the main application window. 
 
 `size(Width, Height)` integer values denoted the width and height of the form.
@@ -326,7 +326,7 @@ NOTE: Every plugin must have a unique plugin ID. If you experience problems load
 
 image:images/formExample.png[form]
 
-== Group Box
+=== Group Box
 [source]
 groupbox bounds(x, y, width, height), text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), popup(val), child(val), visible(val), alpha(val), show(val), identchannel("channel")
 
@@ -334,7 +334,7 @@ groupbox bounds(x, y, width, height), text("Caption"), colour("colour"), fontcol
 Groupbox creates a container for other GUI widgets. They do not communicate with Csound but can be useful for organising widgets into panels.
 
 ---
-=== Identifiers
+==== Identifiers
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels)
 
 `text("caption")` "caption" will be the string to appear on the group box
@@ -364,7 +364,7 @@ Groupbox creates a container for other GUI widgets. They do not communicate with
 
 image:images/groupBoxExample.png[form]
 
-== Image
+=== Image
 [source]
 ----
 image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outline("colour"), line(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val)
@@ -373,7 +373,7 @@ image bounds(x, y, width, height), colour("colour"), file("file name"), shape("t
 Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. For convenience, the file passed to file() should be in the same directory as your Cabbage instrument. 
 
 ---
-=== Identifiers 
+==== Identifiers 
 
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels). 
 
@@ -402,8 +402,8 @@ NOTE: Try to avoid full path names at all costs. They will work fine on a local 
 ==== Example
 
 image:images/imageExample.png[image]
-
-== Keyboard
+  
+===  Keyboard
 [source]
 ----
 keyboard bounds(x, y, width, height), value(note), identchannel("channel"), visible(val)
@@ -412,7 +412,7 @@ keyboard bounds(x, y, width, height), value(note), identchannel("channel"), visi
 Keyboard will display a keyboard that will send MIDI information to your Csound instrument. This component can be used together with a hardware controller. Pressing keys on the actual MIDI keyboard will cause the on-screen keys to react up. 
 
 ---
-=== Identifiers
+====Identifiers
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels)
 
 `value(note)` sets the note on the leftmost side of the keyboard when it appears on-screen. Middle C, 60, is the default. 
@@ -430,7 +430,7 @@ NOTE: The keyboard can be played at different velocities depending on where you 
 image:images/keyboardExample.png[keyboard]
 
 
-== Label
+=== Label
 [source]
 ----
 label bounds(x, y, width, height), text("text"), colour("colour"), fontcolour("colour"), align("position"), identchannel("channel"), alpha(val), visible(val)
@@ -439,7 +439,7 @@ label bounds(x, y, width, height), text("text"), colour("colour"), fontcolour("c
 Labels can be used for placing text on-screen. 
 
 ---
-=== Identifiers
+==== Identifiers
 
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels). 
 
@@ -464,7 +464,7 @@ image:images/labelExample.png[image]
 
 
 
-== Sliders
+=== Sliders
 [source]
 ----
 hslider bounds(x, y, width, height), channel("chan"), text("name"), textbox(val), range(min, max, value, skew, incr), min(val), max(val), 
@@ -474,7 +474,7 @@ textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolo
 Slider can be used to create an on-screen slider. Data can be sent to Csound on the channel specified through the chan string. Presented above is the syntax for a horizontal slider, i.e., hslider. In order to change it to another slider type simple substitute hslider with the appropriate slider type as outlined below. 
 
 ---
-=== Identifiers
+==== Identifiers
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels). 
 
 `channel("chan")` "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode. If you are using a hslider2 or vslider2 widget you will need to pass two channel names, e.g., channel("sliderMin", "slidermax"), as the slider will be sending data over two channels. 
@@ -531,7 +531,7 @@ NOTE: Make sure to use two unique channel names when using hslider2 and vslider2
 
 image:images/sliderExample.png[Sliders]
 
-== Soundfiler
+=== Soundfiler
 [source]
 ----
 soundfiler bounds(x, y, width, height), channel("start", "end"), colour("colour1"), zoom(val), tablenumber(val), file("filename"), scrubberpos(val), identchannel("channel"), alpha(val), visible(val)
@@ -540,7 +540,7 @@ soundfiler bounds(x, y, width, height), channel("start", "end"), colour("colour1
 soundfiler will display the contents of a sound file, or a function table containing a sound file (GEN01 tables). This is a fast waveform viewer that allows users to select regions of the waveform. Unlike the table widget, soundfiler can only display one waveform at a time. 
 
 ---
-=== Identifiers
+====Identifiers
 `bounds(x, y, width, height)` Integer values that set position and size on screen(in pixels)
 
 `tablenumber(val)` Sets the table/tables to be displayed. If multiple tables are specified the tables will be superimposed on top of each other. If multiple tables are specified with a colon between then the tables will be stacked on top of each other along the Y-axis, e.g., tablenumber(1:2:3:4).  
@@ -566,11 +566,11 @@ soundfiler will display the contents of a sound file, or a function table contai
 
 image:images/soundfilerExample.png[table]
 
-== Table (deprecated)
+=== Table (deprecated)
 
 Please use gentable, or soundfiler instead. If you wish to update instrument that used the table widget, you can simply replace table with gentable. The table widget will remain in the code base so that older instruments which use it will continue to work.  
-
-== Text Box
+ 
+=== Text Box
 [source]
 --------------
 textbox bounds(x, y, width, height), file("filename"), colour("colour"), fontcolour("colour"), wrap(val), alpha(val), visible(val)
@@ -579,7 +579,7 @@ textbox bounds(x, y, width, height), file("filename"), colour("colour"), fontcol
 Textbox will display the contents of a text file. This can be useful for placing instructions and information directly on to an instrument.  
 
 ---
-=== Identifiers
+==== Identifiers
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels)
 
 `colour("colour")` This sets the colour of the image if a file name is not passed to file. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.  
@@ -602,7 +602,7 @@ Textbox will display the contents of a text file. This can be useful for placing
 image:images/textboxExample.png[textbox]
 
 
-== Text Editor
+=== Text Editor
 [source]
 --------------
 texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour("colour"), fontcolour("colour"), alpha(val), visible(val) 
@@ -611,7 +611,7 @@ texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour
 *Texteditor can be used to send strings to Csound. Hitting return will send the string to Csound on a named string channel. Pressing the up and down buttons when the texteditor is in focus will toggle through the previous strings that have been sent.*+
 
 ---
-=== Identifiers
+==== Identifiers
 
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels)
 
@@ -634,16 +634,16 @@ image:images/texteditorExample.png[textbox]
 
 
 
-== XY Pad
+=== XY Pad
 [source]
-----------------------------
+-----
 xypad bounds(x, y, width, height), channel("chan1", "chan2"), rangex(min, max, val), rangey(min, max, val), text("name"), identchannel("channel"), colour("colour"), fontcolour("colour"), alpha(val), visible(val)
-----------------------------
+-----
 
 xypad is an x/y controller that sends data to Csound on two named channels. The first channel transmits the current position of the ball on the X axis, while the second transmits the position of the ball on the Y axis. The XY pad can function in two unique modes of automation, free and path based. The two modes can be toggled by clicking on the corresponding icon on the bottom left of the xypad control. With either mode selected you can right-click the xypad and create a trajectory or path for the circle's movement. Release the mouse and the circle will start moving. Once the ball is in full flight you can control the speed of the ball using the XY pad slider that will appear once you hover over it with the mouse. To stop the ball simple left click anywhere on the xy pad canvas with the left mouse button. 
 
 ---
-=== Identifiers
+==== Identifiers
 
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels)
 
@@ -684,6 +684,27 @@ The values passed to bounds() for the child controls can be either fractions pro
 
 The major advantage to using plant abstractions is that you can easily move and resize them without needing to modify the dimensions of the child widgets contained within. You can also save your plants and recall them later from a plant repository. Plants are intended to be reused across instruments so users do not have to keep rebuilding GUIs from scratch. They can also be used to give your plugins a unique look and feel. 
 
+== Macros
+Cabbage specific macros can be used to define a range of difference identifiers, a provide tidy way of achieving a consistent look and feel across your instrument's widgets without having to hard code each and every one of a widget's identifiers. To create a macro one must define it using a #define keyword. The following code will create a macro called SLIDER1 that will define several attributes of a slider widget:
+[source]
+-----
+#define SLIDER1 colour("red"), fontcolour("yellow"), outlinecolour("red"), range(0, 1000, 500)
+-----
+The macro can then be used anywhere else in your Cabbage code by placing it on an appropriate line of Cabbage code. For example, the following code uses the above macro with an rslider.
+[source]
+-----
+rslider bounds(39, 12, 50, 50), channel("rslider"), $SLIDER1
+-----
+You can override any identifiers contained in a macro by placing them in front of the macro name. The following code will override the colour identifier from the macro with a new colour.
+[source]
+-----
+rslider bounds(39, 12, 50, 50), channel("rslider"), colour("purple"), $SLIDER1
+-----
+
+You can use as many macros as you wish in your Cabbage code. 
+
+
+
 == Reserved Channels
 Cabbage reserves several channels which are used to send information to Csound from either the host application, or from Cabbage itself. To retrieve info from any of these channels just use a chnget opcode.
 
@@ -720,7 +741,7 @@ Cabbage reserves several channels which are used to send information to Csound f
 image:images/CabbageStandaloneHost.PNG[Cabbage]
 
 While any text editor can be used to code Cabbage instruments, it's fair to say that most development and prototyping will be done with the main Cabbage host and source code editor. The following is a run down of the various options accessible from the 'Options' menu. 
-
+ 
 === Open Cabbage Instrument
 Use this command to open a cabbage instrument(unified Csound file with a dedicated <Cabbage></Cabbage> section). You may open any .csd file you wish and add a Cabbage section yourself once it's open. Note that if you try to open an existing non-Cabbage .csd file you will need to update its CsOptions section so that Csound doesn't try to write audio to disk itself. 
  

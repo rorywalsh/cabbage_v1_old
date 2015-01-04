@@ -1999,13 +1999,22 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
         propsArray = props.getValueAt(i);
         if(props.getValueAt(i).toString()!="")
         {
-			Logger::writeToLog(cAttr.getStringProp(props.getName(i).toString()+":"+props.getValueAt(i).toString()));
+			//first check to make sure no default values used
 			if(props.getValueAt(i).isString() && 
-				props.getValueAt(i).toString() == cAttr.getStringProp(props.getName(i).toString()))
+				props.getValueAt(i).toString() == cAttr.getStringProp(identifier))
 				{
-					//Logger::writeToLog("setting default values");
+					//cUtils::debug(identifier, cAttr.getStringProp(identifier));
 				}
-			
+			else if(props.getValueAt(i).isDouble() && 
+				props.getValueAt(i).isDouble() == cAttr.getNumProp(identifier))
+				{
+					//cUtils::debug(identifier, cAttr.getNumProp(identifier));
+				}	
+			else if(props.getValueAt(i).isInt() && 
+				props.getValueAt(i).isInt() == cAttr.getNumProp(identifier))
+				{
+					//cUtils::debug(identifier, cAttr.getNumProp(identifier));
+				}		
             else if(props.getName(i).toString()=="top")
                 top = props.getValueAt(i).toString();
             else if(props.getName(i).toString()=="left")

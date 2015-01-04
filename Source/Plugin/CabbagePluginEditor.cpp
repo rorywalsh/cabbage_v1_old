@@ -1271,12 +1271,11 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
         subm.addItem(9, "keyboard");
         subm.addItem(10, "xypad");
         subm.addItem(11, "label");
-        subm.addItem(16, "filebutton");
         subm.addItem(17, "numberbox");
         subm.addItem(18, "texteditor");
         subm.addItem(19, "textbox");
 //subm.addItem(13, "soundfiler");
-        subm.addItem(14, "table");
+        subm.addItem(14, "gentable");
         subm.addItem(15, "Csound message console");
         m.addSubMenu(String("Indigenous"), subm);
         subm.clear();
@@ -1321,7 +1320,7 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
     else if(choice==13)
         insertComponentsFromCabbageText(StringArray(String("soundfiler bounds(")+String(x)+(", ")+String(y)+String(", 360, 160)")), false);
     else if(choice==14)
-        insertComponentsFromCabbageText(StringArray(String("table bounds(")+String(x)+(", ")+String(y)+String(", 260, 160)")), false);
+        insertComponentsFromCabbageText(StringArray(String("gentable bounds(")+String(x)+(", ")+String(y)+String(", 260, 160)")), false);
     else if(choice==15)
         insertComponentsFromCabbageText(StringArray(String("csoundoutput bounds(")+String(x)+(", ")+String(y)+String(", 360, 200)")), false);
     else if(choice==17)
@@ -1559,12 +1558,17 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
 void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 {
 #ifdef Cabbage_Build_Standalone
-    if(getFilter()->compiledOk())
+    if(getFilter()->compiledOk()!=OK)
     {
-        g.setColour (Colours::black);
+        g.setColour (Colours::white);
+		String error;
         //g.setColour (cUtils::getBackgroundSkin());
         g.fillAll();
-        g.drawImage(logo1, 10, 10, getWidth(), getHeight()-60, 0, 0, logo1.getWidth(), logo1.getHeight());
+        //g.drawImage(logo1, 10, 10, getWidth(), getHeight()-60, 0, 0, logo1.getWidth(), logo1.getHeight());
+		for(int i=0;i<getHeight()/10;i++)
+			error+="Csound syntax error.Please check the Csound output console for details.";
+		g.setColour(Colours::red);	
+		g.drawFittedText(error, getLocalBounds().reduced(.8f).withLeft(20), Justification::left, 100, 10); 
     }
     else
     {
@@ -2144,15 +2148,14 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
     for(int y=0; y<tables.size(); y++)
     {
         int tableNumber = tables[y];
-        if(tableNumber>0)
+        tableValues.clear();
+		tableValues = getFilter()->getTableFloats(tableNumber);
+        if(tableNumber>0 && tableValues.size()>0)
         {
             //Logger::writeToLog("Table Number:"+String(tableNumber));
 
             StringArray pFields = getFilter()->getTableStatement(tableNumber);
             int genRoutine = pFields[4].getIntValue();
-
-            tableValues.clear();
-            tableValues = getFilter()->getTableFloats(tableNumber);
 
 			Array<float> ampRange = getAmpRangeArray(cAttr.getFloatArrayProp("amprange"), tableNumber);
 				
@@ -3224,7 +3227,16 @@ void CabbagePluginAudioProcessorEditor::actionListenerCallback (const String& me
         //showMessage(currentLineNumber);
         //Logger::writeToLog("LineNumber:"+String(lineNumber));
         csdArray.addLines(getFilter()->getCsoundInputFileText());
-        csdArray.set(currentLineNumber, CabbageGUIClass::getCabbageCodeFromIdentifiers(propsWindow->updatedIdentifiers));
+		StringArray tokens, macros;
+		tokens.addTokens(csdArray.getReference(currentLineNumber), ", ");
+		for(int i=0;i<tokens.size();i++)
+		{
+			if(tokens[i].substring(0, 1).equalsIgnoreCase("$"))
+				macros.add(tokens[i]);
+		
+		}
+		csdArray.set(currentLineNumber, CabbageGUIClass::getCabbageCodeFromIdentifiers(propsWindow->updatedIdentifiers)+
+												""+macros.joinIntoString(" "));
         getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
         getFilter()->highlightLine(csdArray[currentLineNumber]);
         //Logger::writeToLog(csdArray[currentLineNumber]);

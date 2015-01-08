@@ -989,7 +989,7 @@ void CabbageGUIClass::parse(String inStr, String identifier)
 
             else if(identArray[indx].equalsIgnoreCase("channel")||
                     identArray[indx].equalsIgnoreCase("channels")||
-                    identArray[indx].equalsIgnoreCase("channelarray"))
+                    identArray[indx].equalsIgnoreCase("widgetarray"))
             {
                 var array;
                 array.append(strTokens[0].trim());
@@ -1016,7 +1016,7 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                 }
 
                 cabbageIdentifiers.set(CabbageIDs::channel, array);
-                if(identArray[indx].equalsIgnoreCase("channelarray"))
+                if(identArray[indx].equalsIgnoreCase("widgetarray"))
                 {
                     var channelArray, identChannelArray;
                     int size = strTokens[1].getIntValue();
@@ -1270,7 +1270,7 @@ void CabbageGUIClass::parse(String inStr, String identifier)
 
             else if(identArray[indx].equalsIgnoreCase("bounds"))
             {
-				cUtils::debug(strTokens.size());
+				//cUtils::debug(strTokens.size());
                 if(strTokens.size()<4)
                 {
                     warningMessages+="Not enough paramters passed to bounds(): usage pos(top, left width, height\")\n";

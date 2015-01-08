@@ -1,4 +1,5 @@
 :toc: right
+:title: Cabbage Reference Manual
 :toclevels: 2
 :toc-title: Cabbage Reference Manual
 
@@ -17,7 +18,7 @@ bounds() must be set for every widget. All other identifiers will be given defau
 === Button
 [source]
 ----
-button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), value(val), colour("colour"), fontcolour("colour"), latched(val), identchannel("channel"), alpha(val), visible(val), caption("caption")
+button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), value(val), colour("colour"), fontcolour("colour"), latched(val), identchannel("channel"), alpha(val), visible(val), caption("caption"), widgetarray("chan", number)
 ----
 
 ---
@@ -46,13 +47,15 @@ NOTE: You can create an invisible button by setting the colour to something with
 
 `latched(val)` With latched set to 0 the button will send a message to Csound on the initial mouse press, and once again as soon as the user releases the button. Therefore the button will toggle between 0 and 1 on each click rather than needing two separate mouse clicks. 
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>>  
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
 `caption("caption")` This identifier will place the widget within a groupbox. "caption" is the text that will appear on group box. This identifier is included for legacy purposes only. It is recommended that you use use your own groupbox component as it will give you far more control over how everything appears on your instrument. 
+
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 [icon="images/smallLogo.PNG"]
 NOTE: colour:1() and fontcolour:1() can be set using colour() and fontcolour(). However, it's recommended that you use the numerated colour identifiers in order to make your code as readable a possible. 
@@ -65,7 +68,7 @@ image:images/buttonExample.png[Buttons]
 === Button (File button)
 [source]
 -------------
-filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), mode("mode")
+filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), mode("mode"), widgetarray("chan", number)
 -------------
 
 A filebutton can be used to select files from disk. The filename selected, or created will be sent to Csound on the named channel as a string message. Filebuttons can also be used to select snapshot files for Cabbage to save parameter presets. See the populate identifier below.  
@@ -80,7 +83,7 @@ A filebutton can be used to select files from disk. The filename selected, or cr
 
 `fontcolour("colour")` Sets the colour of the text that appears with the slider. See above for details on valid colours.
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
@@ -93,6 +96,8 @@ A filebutton can be used to select files from disk. The filename selected, or cr
 * *directory*, Will let the browser to select a folder/directory
 * *snapshot*, Will stop the file browser from opening, and instead will write a preset, or snapshot, file to disk with a default file name. The default filename will be the csd filename, with an underscore and number appended to it. For instance, if the filename is CabbageStew.csd, the preset files will be named CabbageStew_0.csd, CabbageStew_1.csd, CabbageStew_2.csd, etc. The snapshot mode provides is a very quick way of saving presets to disk. For more on presets see the Combobox widget reference.     
 
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
+
 ---
 ==== Example
 
@@ -101,7 +106,7 @@ image:images/filebuttonExample.png[Buttons]
 === Button (Information button)
 [source]
 ----
-infobutton bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour") file("file name"), identchannel("chan"), alpha(val), visible(val)
+infobutton bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour") file("file name"), identchannel("chan"), alpha(val), visible(val), widgetarray("chan", number)
 ----
 
 ---
@@ -118,11 +123,13 @@ Infobuttons can be used to open html files in the system's default web browser. 
 
 `file("file name")` Sets the file that will be opened when a user clicks on the button. For convenience, the file passed to the file() identifier should reside in the same directory as the current .csd file. If not you will need to provide a full path to the requested file.  
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
+
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
 ==== Example
@@ -132,7 +139,7 @@ image:images/infobuttonExample.png[csound output]
 === Check Box
 [source]
 -----------------------------------------------------------------------------------------------
-checkbox bounds(x, y, width, height), channel("chan"), text("name"), value(val), caption("Caption"), colour:0("colour"), colour:1("colour"), shape("shape"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val)
+checkbox bounds(x, y, width, height), channel("chan"), text("name"), value(val), caption("Caption"), colour:0("colour"), colour:1("colour"), shape("shape"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), widgetarray("chan", number)
 -----------------------------------------------------------------------------------------------
 
 Checkbox creates a checkbox which functions like a button, but the associated caption will not change when the user checks it. As with all widgets capable of sending data to Csound, the channel string is the channel on which the widget will communicate with Csound. 
@@ -161,11 +168,13 @@ NOTE: You can create an invisible checkbox by setting the colour to something wi
 
 `shape("shape")` Sets the shape of the LED. Default is "square" but users can use "circle" also. 
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
+
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 [icon="images/smallLogo.PNG"]
 NOTE: colour:1() can be set using colour(). However, it's recommended that you use the numerated colour identifiers in order to make your code more readable. 
@@ -178,7 +187,7 @@ image:images/checkboxExample.png[Checkboxes]
 === Combo Box
 [source]
 -------
-combobox bounds(x, y, width, height), channel("chan"), value(val), items("item1", "item2", ...), populate("filetype", "dir"), channeltype("type"), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption")
+combobox bounds(x, y, width, height), channel("chan"), value(val), items("item1", "item2", ...), populate("filetype", "dir"), channeltype("type"), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption"), widgetarray("chan", number)
 -------
 
 ---
@@ -203,11 +212,13 @@ Combobox creates a drop-down list of items which users can choose from. Once the
 
 `fontcolour("colour")` Sets the colour of the text and arrow that appear on the combobox. See above for details on valid colours.
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>>  
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
+
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
 ==== Example
@@ -217,7 +228,7 @@ image:images/comboboxExample.png[Combo]
 === Csound Output Widget
 [source]
 ----
-csoundoutput bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour"), identchannel("channel"), visible(val), alpha(val)
+csoundoutput bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour"), identchannel("channel"), visible(val), alpha(val), widgetarray("chan", number)
 ----
 
 csoundoutput will display Csound output messages within your instrument`s GUI. This widget can be very useful when working in plugin mode and can be invaluable when it comes to de-slugging Cabbage instruments. 
@@ -232,11 +243,13 @@ csoundoutput will display Csound output messages within your instrument`s GUI. T
 
 `fontcolour("colour")` Sets the colour of the text. See above for details on valid colours. 
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
+
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
 ==== Example
@@ -246,7 +259,7 @@ image:images/csoundOutputExample.png[csound output]
 === GenTable
 [source]
 ----
-gentable bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val), scrubberposition(val)
+gentable bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val), scrubberposition(val), widgetarray("chan", number)
 ----
 
 gentable displays the contents of a function table, multiple tables, or files. Function tables that use a negative GEN05, GEN07 or GEN02 can be edited by clicking and dragging on the table. Only tables of size less or equal to 16384 points can be manually edited. If you wish to save any tables that you create you can use one of Csound's built-in table saving opcode "ftsave". If you need only display the contents of a static sound file from disk, use soundfiler as it will be fast and use less CPU. If on the other hand you wish to create some user editable envelopes, or display FFT or live waveform data use table. 
@@ -283,11 +296,13 @@ NOTE: The background grid is disabled when working with a table that use the fil
 
 'fill(val)' This will turn on or off the waveform fill. By default this is set to 1, therefore all table will fill in their envelopes.
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default
+
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 [icon="images/smallLogo.PNG"]
 NOTE: If you need to redraw tables quickly, make sure they don't use negative GEN routines as it will seriously slow down redrawing. 
@@ -328,7 +343,7 @@ image:images/formExample.png[form]
 
 === Group Box
 [source]
-groupbox bounds(x, y, width, height), text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), popup(val), child(val), visible(val), alpha(val), show(val), identchannel("channel")
+groupbox bounds(x, y, width, height), text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), popup(val), child(val), visible(val), alpha(val), show(val), identchannel("channel"), widgetarray("chan", number)
 
 
 Groupbox creates a container for other GUI widgets. They do not communicate with Csound but can be useful for organising widgets into panels.
@@ -357,7 +372,9 @@ Groupbox creates a container for other GUI widgets. They do not communicate with
 
 `child(0)` A value of 1 will cause the popup plant to be a child of the main form. By default, popup plants are not children of the main form and can therefore appear anywhere on screen. If the popup plant is a child of the main form, it can only appear within the bounds of the main form. 
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS 
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>>  
+
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
 ==== Example
@@ -367,7 +384,7 @@ image:images/groupBoxExample.png[form]
 === Image
 [source]
 ----
-image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outline("colour"), line(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val)
+image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outline("colour"), line(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val), widgetarray("chan", number)
 ----
 
 Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. For convenience, the file passed to file() should be in the same directory as your Cabbage instrument. 
@@ -379,6 +396,9 @@ Image creates a static shape or graphic. It can be used to show pictures or it c
 
 `file("filename")` "filename" is the name of the image file to be displayed on the widget. If a full file path is not given, file() will search  in the current directory, i.e., the directory that contains the csd file that is open. It is best to keep all files in the same directory as your csd file, but if you wish to keep them in a sperate folder you can pass a full path to the file() identifier. 
 
+[icon="images/smallLogo.PNG"]
+NOTE: Try to avoid full path names at all costs. They will work fine on a local machine, but will not be valid on another machine.
+
 `shape("type");` "shape" must be either round(with rounded corners, default), sharp(with sharp corners), or ellipse(an elliptical shape)
 
 `colour("colour")` This sets the colour of the image if no file name is given with the file identifier. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.  
@@ -389,14 +409,14 @@ Image creates a static shape or graphic. It can be used to show pictures or it c
 
 `plant("name")` Sets the name of the plant. No two plants can have the same name. See `PLANTS`
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
-[icon="images/smallLogo.PNG"]
-NOTE: Try to avoid full path names at all costs. They will work fine on a local machine, but will not be valid on another machine.
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
+
 
 ---
 ==== Example
@@ -419,7 +439,7 @@ Keyboard will display a keyboard that will send MIDI information to your Csound 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
 
 [icon="images/smallLogo.PNG"]
 NOTE: The keyboard can be played at different velocities depending on where you click on the key with your mouse. Clicking at the top of the key will cause a quieter velocity while clicking on the bottom will cause the note to sound with full velocity. If you wish to play the keyboard like a nutjob in standalone mode, make sure to pass '-m0d' to the CsOptions(disable console messages). The keyboard widget is only provided as a quick and easy means of testing plugins in Cabbage. Treating it as anything more than that could result in severe disappointment!  
@@ -433,7 +453,7 @@ image:images/keyboardExample.png[keyboard]
 === Label
 [source]
 ----
-label bounds(x, y, width, height), text("text"), colour("colour"), fontcolour("colour"), align("position"), identchannel("channel"), alpha(val), visible(val)
+label bounds(x, y, width, height), text("text"), colour("colour"), fontcolour("colour"), align("position"), identchannel("channel"), alpha(val), visible(val), widgetarray("chan", number)
 ----
 
 Labels can be used for placing text on-screen. 
@@ -451,11 +471,13 @@ Labels can be used for placing text on-screen.
 
 `fontcolour("colour")` This sets the colour of the image if no file name is given with the file identifier. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.  
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>>  
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
+
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
 ==== Example
@@ -463,12 +485,11 @@ Labels can be used for placing text on-screen.
 image:images/labelExample.png[image]
 
 
-
 === Sliders
 [source]
 ----
 hslider bounds(x, y, width, height), channel("chan"), text("name"), textbox(val), range(min, max, value, skew, incr), min(val), max(val), 
-textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption")
+textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption"), widgetarray("chan", number)
 ----
 
 Slider can be used to create an on-screen slider. Data can be sent to Csound on the channel specified through the chan string. Presented above is the syntax for a horizontal slider, i.e., hslider. In order to change it to another slider type simple substitute hslider with the appropriate slider type as outlined below. 
@@ -499,13 +520,15 @@ Slider can be used to create an on-screen slider. Data can be sent to Csound on 
 
 `outlinecolour("colour")` Sets the colour of a rotary slider`s tracker outline. This is the line that is drawn around the rslider's tracker. If you don't wish to display the tracker outline set the colour to something with an alpha value of 0. See above for details on valid colours.  
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
 `caption("caption")` This identifier will place the widget within a groupbox. "caption" is the text that will appear on group box. This identifier is included for legacy purposes only. It is recommended that you use use your own groupbox component as it will give you far more control over how everything appears on your instrument. 
+
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 Slider types::
 
@@ -534,13 +557,13 @@ image:images/sliderExample.png[Sliders]
 === Soundfiler
 [source]
 ----
-soundfiler bounds(x, y, width, height), channel("start", "end"), colour("colour1"), zoom(val), tablenumber(val), file("filename"), scrubberpos(val), identchannel("channel"), alpha(val), visible(val)
+soundfiler bounds(x, y, width, height), channel("start", "end"), colour("colour1"), zoom(val), tablenumber(val), file("filename"), scrubberpos(val), identchannel("channel"), alpha(val), visible(val), widgetarray("chan", number)
 ----
 
 soundfiler will display the contents of a sound file, or a function table containing a sound file (GEN01 tables). This is a fast waveform viewer that allows users to select regions of the waveform. Unlike the table widget, soundfiler can only display one waveform at a time. 
 
 ---
-====Identifiers
+==== Identifiers
 `bounds(x, y, width, height)` Integer values that set position and size on screen(in pixels)
 
 `tablenumber(val)` Sets the table/tables to be displayed. If multiple tables are specified the tables will be superimposed on top of each other. If multiple tables are specified with a colon between then the tables will be stacked on top of each other along the Y-axis, e.g., tablenumber(1:2:3:4).  
@@ -555,11 +578,13 @@ soundfiler will display the contents of a sound file, or a function table contai
 
 `zoom(val)` Sets the initial zoom value. Passing a -1 to zoom will cause the zoom buttons to disappear.  
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default
+
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
 ==== Example
@@ -573,7 +598,7 @@ Please use gentable, or soundfiler instead. If you wish to update instrument tha
 === Text Box
 [source]
 --------------
-textbox bounds(x, y, width, height), file("filename"), colour("colour"), fontcolour("colour"), wrap(val), alpha(val), visible(val)
+textbox bounds(x, y, width, height), file("filename"), colour("colour"), fontcolour("colour"), wrap(val), alpha(val), visible(val), widgetarray("chan", number)
 --------------
 
 Textbox will display the contents of a text file. This can be useful for placing instructions and information directly on to an instrument.  
@@ -588,13 +613,15 @@ Textbox will display the contents of a text file. This can be useful for placing
 
 `file("file name")` Set the file that will be opened. This file must reside in the same directory as the current .csd file. Do not pass a full path. Cabbage only needs the name and extension, for example file("help.txt"). 
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
 
 `wrap(val)` Turns text wrapping on of off. This is set to 0 by default, so no wrapping of text is done. 
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
+
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
 ==== Example
@@ -605,7 +632,7 @@ image:images/textboxExample.png[textbox]
 === Text Editor
 [source]
 --------------
-texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour("colour"), fontcolour("colour"), alpha(val), visible(val) 
+texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour("colour"), fontcolour("colour"), alpha(val), visible(val), widgetarray("chan", number) 
 --------------
 
 *Texteditor can be used to send strings to Csound. Hitting return will send the string to Csound on a named string channel. Pressing the up and down buttons when the texteditor is in focus will toggle through the previous strings that have been sent.*+
@@ -621,11 +648,13 @@ texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour
 
 `fontcolour("colour")` Sets the colour of the text that appears with the slider. See above for details on valid colours.
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
+
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
 ==== Example
@@ -637,7 +666,7 @@ image:images/texteditorExample.png[textbox]
 === XY Pad
 [source]
 -----
-xypad bounds(x, y, width, height), channel("chan1", "chan2"), rangex(min, max, val), rangey(min, max, val), text("name"), identchannel("channel"), colour("colour"), fontcolour("colour"), alpha(val), visible(val)
+xypad bounds(x, y, width, height), channel("chan1", "chan2"), rangex(min, max, val), rangey(min, max, val), text("name"), identchannel("channel"), colour("colour"), fontcolour("colour"), alpha(val), visible(val), widgetarray("chan", number)
 -----
 
 xypad is an x/y controller that sends data to Csound on two named channels. The first channel transmits the current position of the ball on the X axis, while the second transmits the position of the ball on the Y axis. The XY pad can function in two unique modes of automation, free and path based. The two modes can be toggled by clicking on the corresponding icon on the bottom left of the xypad control. With either mode selected you can right-click the xypad and create a trajectory or path for the circle's movement. Release the mouse and the circle will start moving. Once the ball is in full flight you can control the speed of the ball using the XY pad slider that will appear once you hover over it with the mouse. To stop the ball simple left click anywhere on the xy pad canvas with the left mouse button. 
@@ -659,7 +688,7 @@ xypad is an x/y controller that sends data to Csound on two named channels. The 
 
 `fontcolour("colour")` This sets the colour of the xypad text label and mode selector labels. See above for details on valid colours.
 
-`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. 
+`identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
@@ -668,21 +697,43 @@ xypad is an x/y controller that sends data to Csound on two named channels. The 
 [icon="images/smallLogo.PNG"]
 NOTE: XY pads range identifiers do not permit the setting of skew factors, or increments. If you wish to set a custom skew factor, or increment value, you will need to do so using Csound code.  
 
+`widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
 ==== Example
 
 image:images/xypadExample.png[xypad]
 
+[[plants]]
 == Plants
 
 Cabbage plants are GUI abstractions that contain one or more controls. These abstractions are used as anchors to the child widgets contained within. All widgets contained within a plant have top and left positions which are relative the the top left position of the parent. Resizing the plant will in turn resize all the widgets contained within. While all widgets can be children of a plant, only group boxes and images can be used as plants themselves. Adding a plant identifier to an image or group box definition will cause them to act as containers. The plant() identifier takes a string that denotes the name of the plant. Plant names must be unique within an instrument or plants will end up being placed on top of each other. When using an image or a group box as a plant, you must enclose the code from the widgets that follow in curly brackets to indicate which controls belong to the plant. In the code below a group box control is set up as a plant, and three child sliders are placed within it.
 
 image:images/plantsExample.png[plants]
 
-The values passed to bounds() for the child controls can be either fractions proportional to the plants overall size and position, or absolute pixel values. For example, `bounds(0, .5, .5, 1)` will cause a child widget to appear half way across the plant, and half way down. While `bounds(10, 10, 200, 200)` will cause the child control to be 10 pixels from the top/left, and have a size of 200x200 pixels.   
+The values passed to bounds() for the child controls are absolute pixel values, from the top left of the parent component. For example, `bounds(10, 10, 50, 50)` will cause a child widget to appear half way across the plant, and half way down. While `bounds(10, 10, 200, 200)` will cause the child control to be 10 pixels from the top/left, and have a size of 200x200 pixels.   
 
 The major advantage to using plant abstractions is that you can easily move and resize them without needing to modify the dimensions of the child widgets contained within. You can also save your plants and recall them later from a plant repository. Plants are intended to be reused across instruments so users do not have to keep rebuilding GUIs from scratch. They can also be used to give your plugins a unique look and feel. 
+
+[[identchannels]]
+== Controlling Widgets from Csound
+All widget identifiers can be updated in real-time if an identifier channel has been set up using an identchannel() identifier. Once an identifier channel has been set up, one can update a widget's identifier using a chnset opcode in Csound, with the appropriate ident-channel string. For example, if one sets up a checkbox with an identifier channel "checkboxIdent", its position can be controlled using Csound and a chnset opcode.
+
+[source]
+----
+chnset "bounds(10, 10, 100, 100)", "checkboxIdent"
+----
+
+To control the position of a checkbox in real-time, one can use the `sprintfk` opcode to dynamically create an identifier string that can be passed to the widget. In this example random values are passed to sprintfk to create a new bounds() strings 5 times a second. `metro(5)`
+
+image:images/randomCheckbox.gif[plants] 
+
+Identifier channels can also be used with <<plants, Plants>>. In the following example, 3 plants, containing 4 hsliders each are placed on top of each other. One has visible() set to 1, while the others have visible() set to 0. When the instrument first launches, the users sees only one of the slider plants. As the user clicks on the button marked toggle, they can show and hide the other plants. 
+
+image:images/togglingPlants.gif[plants] 
+
+While Cabbage comes with several fun animation examples, please keep in mind that it is not a fraemwork for developing animations! The more widgets you manipulate, and the speed at which you modify them at will inevitably cause a drain on the CPU. The key here is to only call chnset when it is absolutely required. 
+
 
 == Macros
 Cabbage specific macros can be used to define a range of difference identifiers, a provide tidy way of achieving a consistent look and feel across your instrument's widgets without having to hard code each and every one of a widget's identifiers. To create a macro one must define it using a #define keyword. The following code will create a macro called SLIDER1 that will define several attributes of a slider widget:
@@ -703,7 +754,20 @@ rslider bounds(39, 12, 50, 50), channel("rslider"), colour("purple"), $SLIDER1
 
 You can use as many macros as you wish in your Cabbage code. 
 
+[[widgetarrays]]
+== Quickly creating multiple widgets
+If you wish to create a large number of widgets you can use the widgetarray() identifier, which takes a base channel name, and the number of widgets to be created. Each widget channel will have an underscore and number appended to them, e.g., chan_1, chan_2. While each identchannel will have a _ident string and number appended to them, e.g., chan_ident1, chan_ident2, etc. The following code will create 100 checkboxes, all sharing the same position.
 
+[source]
+----
+checkbox bounds(10, 10, 50, 50), channelarray("test", 100), value(1)
+----     
+
+The first checkbox widget will have a channel named "test_1", and an ident-channel named "test_ident1". The second widget channel will be named "test2", while its ident-channel will be named "test_ident2", and so on, upwards to 100. The identifiers for the newly created checkboxes can be modified using Csound code. For example, the following code will place the checkboxes around the screen in a 10x10 grid.
+
+image:images/widgetArray1.png[plants]
+
+For more details on how to controls widgets from Csound code look at <<identchannels, Controlling Widgets from Csound>> 
 
 == Reserved Channels
 Cabbage reserves several channels which are used to send information to Csound from either the host application, or from Cabbage itself. To retrieve info from any of these channels just use a chnget opcode.

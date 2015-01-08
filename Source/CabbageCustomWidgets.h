@@ -415,7 +415,7 @@ public:
 		else
 			setupMinMaxValue();
 
-		Logger::writeToLog(String(cAttr.getNumProp(CabbageIDs::value)));
+		//Logger::writeToLog(String(cAttr.getNumProp(CabbageIDs::value)));
         incr = cAttr.getNumProp(CabbageIDs::sliderincr);
         skew = cAttr.getNumProp(CabbageIDs::sliderskew);
         slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
@@ -1153,7 +1153,7 @@ public:
 
     void mouseDown(const MouseEvent& event)
     {
-        Logger::writeToLog("mouse down in groupbox");
+        //Logger::writeToLog("mouse down in groupbox");
         if(event.mods.isPopupMenu())
             sendChangeMessage();
     }
@@ -1541,12 +1541,12 @@ public:
         if(!cAttr.getNumProp(CabbageIDs::visible))
         {
             setVisible(false);
-            Logger::writeToLog("visivle");
+            //Logger::writeToLog("visivle");
         }
         else
         {
             setVisible(true);
-            Logger::writeToLog("visivle");
+            //Logger::writeToLog("visivle");
         }
 
         setText(cAttr.getStringProp(CabbageIDs::text));

@@ -1577,8 +1577,6 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
         g.drawImage (logo2, getWidth() - 100, getHeight()-35, logo2.getWidth()*0.55, logo2.getHeight()*0.55,
                      0, 0, logo2.getWidth(), logo2.getHeight(), true);
         g.setColour(fontColour);
-        //g.drawFittedText(authorText, 10, getHeight()-35, getWidth()*.65, logo.getHeight(), 1, 1);
-        //g.drawLine(10, getHeight()-27, getWidth()-10, getHeight()-27, 0.2);
     }
 
 #else
@@ -2740,7 +2738,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                         if(selectedFiles.size())
                                         {
                                             selectedFile = selectedFiles[0];
-                                            Logger::writeToLog(selectedFile.getFullPathName());
+                                            //Logger::writeToLog(selectedFile.getFullPathName());
                                             getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
                                                     selectedFile.getFullPathName().replace("\\", "\\\\"),
                                                     "string");
@@ -2814,7 +2812,7 @@ void CabbagePluginAudioProcessorEditor::textButtonClicked(Button* button)
                             {
                                 if(i!=radioGroups[id])
                                 {
-                                    Logger::writeToLog("Disabling button:"+String(radioGroups[id]));
+                                    //Logger::writeToLog("Disabling button:"+String(radioGroups[id]));
                                     getFilter()->setParameterNotifyingHost(radioGroups[id], 0.f);
                                     getFilter()->setParameter(radioGroups[id], 0.f);
                                     cabButton->setToggleState(false, dontSendNotification);
@@ -3056,7 +3054,7 @@ void CabbagePluginAudioProcessorEditor::InsertXYPad(CabbageGUIClass &cAttr)
                                           cAttr.getNumProp("valuey")));
         idx = comps.size()-1;
         getFilter()->getXYAutomater(getFilter()->getXYAutomaterSize()-1)->paramIndex = idx;
-        Logger::writeToLog("Number of XYAutos:"+String(getFilter()->getXYAutomaterSize()));
+        //Logger::writeToLog("Number of XYAutos:"+String(getFilter()->getXYAutomaterSize()));
         //set visiblilty
         comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 
@@ -3385,7 +3383,7 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
             float min = getFilter()->getGUICtrls(i).getNumProp("min");
 
             if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="rslider")
-                Logger::writeToLog("slider");
+                //Logger::writeToLog("slider");
 
             if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="xypad")
                 newValue = (jmax(0.f, newValue)/range)+min;

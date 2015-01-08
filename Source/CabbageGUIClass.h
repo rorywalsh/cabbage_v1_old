@@ -70,7 +70,7 @@ public:
         add("channeltype");
         add("channels");
         add("channel");
-        add("channelarray");
+        add("widgetarray");
         add("identchannelarray");
         add("name");
         add("textbox");
@@ -144,7 +144,7 @@ static const Identifier maxvalue = "maxvalue";
 static const Identifier value = "value";
 static const Identifier alpha = "alpha";
 static const Identifier channel = "channel";
-static const Identifier channelarray = "channelarray";
+static const Identifier channelarray = "widgetarray";
 static const Identifier identchannelarray = "identchannelarray";
 static const Identifier outlinecolour = "outlinecolour";
 static const Identifier fillcolour = "fillcolour";

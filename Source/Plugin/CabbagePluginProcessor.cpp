@@ -839,18 +839,6 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                                 oscChannelValues.set(cAttr.getStringArrayPropValue("channel", i), 0.f);
                             }
                         }
-
-                        if(cAttr.getStringProp(CabbageIDs::oscaddress).isNotEmpty() && cAttr.getStringProp(CabbageIDs::oscaddress).isNotEmpty())
-                        {
-//                            oscAddress = cAttr.getStringProp(CabbageIDs::oscaddress);
-//							showMessage(oscAddress);
-//                            oscPort = cAttr.getNumProp(CabbageIDs::oscport);
-//							showMessage(oscPort);
-//                            oscThread->setupSocket(oscAddress, oscPort);
-//                            oscThread->setCsoundChannels(oscChannelIdentifiers);
-//                            oscThread->addChangeListener(this);
-//                            oscThread->startThread();
-                        }
                         csdLine = "";
 
 
@@ -874,7 +862,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         else if(cAttr.getStringProp(String("reltoplant")).equalsIgnoreCase(String("")))
                             cAttr.setStringProp(String("reltoplant"), plantFlag);
 
-                        //if an array of object is being set up...
+                        //if an array of objects is being set up...
                         if(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0)
                         {
                             //showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).joinIntoString(" ")));

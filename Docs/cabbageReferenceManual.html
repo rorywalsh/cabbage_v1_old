@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="Asciidoctor 0.1.4">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cabbage Widgets</title>
+<title>Cabbage Reference Manual</title>
 <style>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -1785,8 +1785,10 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 <li><a href="#_xy_pad">XY Pad</a></li>
 </ul>
 </li>
-<li><a href="#_plants">Plants</a></li>
+<li><a href="#plants">Plants</a></li>
+<li><a href="#identchannels">Controlling Widgets from Csound</a></li>
 <li><a href="#_macros">Macros</a></li>
+<li><a href="#widgetarrays">Quickly creating multiple widgets</a></li>
 <li><a href="#_reserved_channels">Reserved Channels</a></li>
 <li><a href="#_the_cabbage_standalone_host">The Cabbage Standalone Host</a></li>
 <li>
@@ -1822,7 +1824,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 <h3 id="_button">Button</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), value(val), colour("colour"), fontcolour("colour"), latched(val), identchannel("channel"), alpha(val), visible(val), caption("caption")</code></pre>
+<pre class="highlight"><code>button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), value(val), colour("colour"), fontcolour("colour"), latched(val), identchannel("channel"), alpha(val), visible(val), caption("caption"), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <hr>
@@ -1871,7 +1873,7 @@ You can create an invisible button by setting the colour to something with an al
 <p><code>latched(val)</code> With latched set to 0 the button will send a message to Csound on the initial mouse press, and once again as soon as the user releases the button. Therefore the button will toggle between 0 and 1 on each click rather than needing two separate mouse clicks.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
@@ -1881,6 +1883,9 @@ You can create an invisible button by setting the colour to something with an al
 </div>
 <div class="paragraph">
 <p><code>caption("caption")</code> This identifier will place the widget within a groupbox. "caption" is the text that will appear on group box. This identifier is included for legacy purposes only. It is recommended that you use use your own groupbox component as it will give you far more control over how everything appears on your instrument.</p>
+</div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1907,7 +1912,7 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 <h3 id="_button_file_button">Button (File button)</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), mode("mode")</code></pre>
+<pre class="highlight"><code>filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), mode("mode"), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1929,7 +1934,7 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 <p><code>fontcolour("colour")</code> Sets the colour of the text that appears with the slider. See above for details on valid colours.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
@@ -1946,6 +1951,9 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 * <strong>directory</strong>, Will let the browser to select a folder/directory
 * <strong>snapshot</strong>, Will stop the file browser from opening, and instead will write a preset, or snapshot, file to disk with a default file name. The default filename will be the csd filename, with an underscore and number appended to it. For instance, if the filename is CabbageStew.csd, the preset files will be named CabbageStew_0.csd, CabbageStew_1.csd, CabbageStew_2.csd, etc. The snapshot mode provides is a very quick way of saving presets to disk. For more on presets see the Combobox widget reference.</p>
 </div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
+</div>
 <hr>
 </div>
 <div class="sect3">
@@ -1959,7 +1967,7 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 <h3 id="_button_information_button">Button (Information button)</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>infobutton bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour") file("file name"), identchannel("chan"), alpha(val), visible(val)</code></pre>
+<pre class="highlight"><code>infobutton bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour") file("file name"), identchannel("chan"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <hr>
@@ -1984,13 +1992,16 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 <p><code>file("file name")</code> Sets the file that will be opened when a user clicks on the button. For convenience, the file passed to the file() identifier should reside in the same directory as the current .csd file. If not you will need to provide a full path to the requested file.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
 </div>
 <div class="paragraph">
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
 </div>
@@ -2005,7 +2016,7 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 <h3 id="_check_box">Check Box</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>checkbox bounds(x, y, width, height), channel("chan"), text("name"), value(val), caption("Caption"), colour:0("colour"), colour:1("colour"), shape("shape"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val)</code></pre>
+<pre class="highlight"><code>checkbox bounds(x, y, width, height), channel("chan"), text("name"), value(val), caption("Caption"), colour:0("colour"), colour:1("colour"), shape("shape"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2053,13 +2064,16 @@ You can create an invisible checkbox by setting the colour to something with an 
 <p><code>shape("shape")</code> Sets the shape of the LED. Default is "square" but users can use "circle" also.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
 </div>
 <div class="paragraph">
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2085,7 +2099,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <h3 id="_combo_box">Combo Box</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>combobox bounds(x, y, width, height), channel("chan"), value(val), items("item1", "item2", ...), populate("filetype", "dir"), channeltype("type"), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption")</code></pre>
+<pre class="highlight"><code>combobox bounds(x, y, width, height), channel("chan"), value(val), items("item1", "item2", ...), populate("filetype", "dir"), channeltype("type"), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption"), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <hr>
@@ -2122,13 +2136,16 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <p><code>fontcolour("colour")</code> Sets the colour of the text and arrow that appear on the combobox. See above for details on valid colours.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
 </div>
 <div class="paragraph">
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
 </div>
@@ -2143,7 +2160,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <h3 id="_csound_output_widget">Csound Output Widget</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>csoundoutput bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour"), identchannel("channel"), visible(val), alpha(val)</code></pre>
+<pre class="highlight"><code>csoundoutput bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour"), identchannel("channel"), visible(val), alpha(val), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2165,13 +2182,16 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <p><code>fontcolour("colour")</code> Sets the colour of the text. See above for details on valid colours.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
 </div>
 <div class="paragraph">
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
 </div>
@@ -2186,7 +2206,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <h3 id="_gentable">GenTable</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>gentable bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val), scrubberposition(val)</code></pre>
+<pre class="highlight"><code>gentable bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val), scrubberposition(val), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2277,13 +2297,16 @@ The background grid is disabled when working with a table that use the file() id
 <p><em>fill(val)</em> This will turn on or off the waveform fill. By default this is set to 1, therefore all table will fill in their envelopes.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
 </div>
 <div class="paragraph">
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default</p>
+</div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2359,7 +2382,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 <h3 id="_group_box">Group Box</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>groupbox bounds(x, y, width, height), text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), popup(val), child(val), visible(val), alpha(val), show(val), identchannel("channel")</code></pre>
+<pre class="highlight"><code>groupbox bounds(x, y, width, height), text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), popup(val), child(val), visible(val), alpha(val), show(val), identchannel("channel"), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2402,7 +2425,10 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 <p><code>child(0)</code> A value of 1 will cause the popup plant to be a child of the main form. By default, popup plants are not children of the main form and can therefore appear anywhere on screen. If the popup plant is a child of the main form, it can only appear within the bounds of the main form.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
+</div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
 </div>
@@ -2417,7 +2443,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 <h3 id="_image">Image</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outline("colour"), line(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val)</code></pre>
+<pre class="highlight"><code>image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outline("colour"), line(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2431,6 +2457,18 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 <div class="paragraph">
 <p><code>file("filename")</code> "filename" is the name of the image file to be displayed on the widget. If a full file path is not given, file() will search  in the current directory, i.e., the directory that contains the csd file that is open. It is best to keep all files in the same directory as your csd file, but if you wish to keep them in a sperate folder you can pass a full path to the file() identifier.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+Try to avoid full path names at all costs. They will work fine on a local machine, but will not be valid on another machine.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p><code>shape("type");</code> "shape" must be either round(with rounded corners, default), sharp(with sharp corners), or ellipse(an elliptical shape)</p>
@@ -2448,7 +2486,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 <p><code>plant("name")</code> Sets the name of the plant. No two plants can have the same name. See <code>PLANTS</code></p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
@@ -2456,17 +2494,8 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 <div class="paragraph">
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<img src="images/smallLogo.PNG" alt="Note">
-</td>
-<td class="content">
-Try to avoid full path names at all costs. They will work fine on a local machine, but will not be valid on another machine.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
 </div>
@@ -2499,7 +2528,7 @@ Try to avoid full path names at all costs. They will work fine on a local machin
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See IDENTIFIER_CHANNELS</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2525,7 +2554,7 @@ The keyboard can be played at different velocities depending on where you click 
 <h3 id="_label">Label</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>label bounds(x, y, width, height), text("text"), colour("colour"), fontcolour("colour"), align("position"), identchannel("channel"), alpha(val), visible(val)</code></pre>
+<pre class="highlight"><code>label bounds(x, y, width, height), text("text"), colour("colour"), fontcolour("colour"), align("position"), identchannel("channel"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2550,13 +2579,16 @@ The keyboard can be played at different velocities depending on where you click 
 <p><code>fontcolour("colour")</code> This sets the colour of the image if no file name is given with the file identifier. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
 </div>
 <div class="paragraph">
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
 </div>
@@ -2572,7 +2604,7 @@ The keyboard can be played at different velocities depending on where you click 
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>hslider bounds(x, y, width, height), channel("chan"), text("name"), textbox(val), range(min, max, value, skew, incr), min(val), max(val),
-textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption")</code></pre>
+textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption"), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2618,7 +2650,7 @@ textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolo
 <p><code>outlinecolour("colour")</code> Sets the colour of a rotary slider`s tracker outline. This is the line that is drawn around the rslider&#8217;s tracker. If you don&#8217;t wish to display the tracker outline set the colour to something with an alpha value of 0. See above for details on valid colours.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
@@ -2628,6 +2660,9 @@ textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolo
 </div>
 <div class="paragraph">
 <p><code>caption("caption")</code> This identifier will place the widget within a groupbox. "caption" is the text that will appear on group box. This identifier is included for legacy purposes only. It is recommended that you use use your own groupbox component as it will give you far more control over how everything appears on your instrument.</p>
+</div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <div class="dlist">
 <dl>
@@ -2686,16 +2721,17 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <h3 id="_soundfiler">Soundfiler</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>soundfiler bounds(x, y, width, height), channel("start", "end"), colour("colour1"), zoom(val), tablenumber(val), file("filename"), scrubberpos(val), identchannel("channel"), alpha(val), visible(val)</code></pre>
+<pre class="highlight"><code>soundfiler bounds(x, y, width, height), channel("start", "end"), colour("colour1"), zoom(val), tablenumber(val), file("filename"), scrubberpos(val), identchannel("channel"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>soundfiler will display the contents of a sound file, or a function table containing a sound file (GEN01 tables). This is a fast waveform viewer that allows users to select regions of the waveform. Unlike the table widget, soundfiler can only display one waveform at a time.</p>
 </div>
 <hr>
+<div class="sect3">
+<h4 id="_identifiers_12">Identifiers</h4>
 <div class="paragraph">
-<p>====Identifiers
-<code>bounds(x, y, width, height)</code> Integer values that set position and size on screen(in pixels)</p>
+<p><code>bounds(x, y, width, height)</code> Integer values that set position and size on screen(in pixels)</p>
 </div>
 <div class="paragraph">
 <p><code>tablenumber(val)</code> Sets the table/tables to be displayed. If multiple tables are specified the tables will be superimposed on top of each other. If multiple tables are specified with a colon between then the tables will be stacked on top of each other along the Y-axis, e.g., tablenumber(1:2:3:4).</p>
@@ -2716,7 +2752,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p><code>zoom(val)</code> Sets the initial zoom value. Passing a -1 to zoom will cause the zoom buttons to disappear.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
@@ -2724,7 +2760,11 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <div class="paragraph">
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default</p>
 </div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
+</div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_14">Example</h4>
 <div class="paragraph">
@@ -2742,7 +2782,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <h3 id="_text_box">Text Box</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>textbox bounds(x, y, width, height), file("filename"), colour("colour"), fontcolour("colour"), wrap(val), alpha(val), visible(val)</code></pre>
+<pre class="highlight"><code>textbox bounds(x, y, width, height), file("filename"), colour("colour"), fontcolour("colour"), wrap(val), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2750,7 +2790,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_12">Identifiers</h4>
+<h4 id="_identifiers_13">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2764,7 +2804,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p><code>file("file name")</code> Set the file that will be opened. This file must reside in the same directory as the current .csd file. Do not pass a full path. Cabbage only needs the name and extension, for example file("help.txt").</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>wrap(val)</code> Turns text wrapping on of off. This is set to 0 by default, so no wrapping of text is done.</p>
@@ -2774,6 +2814,9 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 <div class="paragraph">
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
 </div>
@@ -2788,7 +2831,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <h3 id="_text_editor">Text Editor</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour("colour"), fontcolour("colour"), alpha(val), visible(val)</code></pre>
+<pre class="highlight"><code>texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour("colour"), fontcolour("colour"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2796,7 +2839,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_13">Identifiers</h4>
+<h4 id="_identifiers_14">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2810,13 +2853,16 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p><code>fontcolour("colour")</code> Sets the colour of the text that appears with the slider. See above for details on valid colours.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
 </div>
 <div class="paragraph">
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
+</div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
 </div>
@@ -2831,7 +2877,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <h3 id="_xy_pad">XY Pad</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>xypad bounds(x, y, width, height), channel("chan1", "chan2"), rangex(min, max, val), rangey(min, max, val), text("name"), identchannel("channel"), colour("colour"), fontcolour("colour"), alpha(val), visible(val)</code></pre>
+<pre class="highlight"><code>xypad bounds(x, y, width, height), channel("chan1", "chan2"), rangex(min, max, val), rangey(min, max, val), text("name"), identchannel("channel"), colour("colour"), fontcolour("colour"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2839,7 +2885,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_14">Identifiers</h4>
+<h4 id="_identifiers_15">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2862,7 +2908,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p><code>fontcolour("colour")</code> This sets the colour of the xypad text label and mode selector labels. See above for details on valid colours.</p>
 </div>
 <div class="paragraph">
-<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes.</p>
+<p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
@@ -2882,6 +2928,9 @@ XY pads range identifiers do not permit the setting of skew factors, or incremen
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
+</div>
 <hr>
 </div>
 <div class="sect3">
@@ -2894,7 +2943,7 @@ XY pads range identifiers do not permit the setting of skew factors, or incremen
 </div>
 </div>
 <div class="sect1">
-<h2 id="_plants">Plants</h2>
+<h2 id="plants">Plants</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Cabbage plants are GUI abstractions that contain one or more controls. These abstractions are used as anchors to the child widgets contained within. All widgets contained within a plant have top and left positions which are relative the the top left position of the parent. Resizing the plant will in turn resize all the widgets contained within. While all widgets can be children of a plant, only group boxes and images can be used as plants themselves. Adding a plant identifier to an image or group box definition will cause them to act as containers. The plant() identifier takes a string that denotes the name of the plant. Plant names must be unique within an instrument or plants will end up being placed on top of each other. When using an image or a group box as a plant, you must enclose the code from the widgets that follow in curly brackets to indicate which controls belong to the plant. In the code below a group box control is set up as a plant, and three child sliders are placed within it.</p>
@@ -2903,10 +2952,38 @@ XY pads range identifiers do not permit the setting of skew factors, or incremen
 <p><span class="image"><img src="images/plantsExample.png" alt="plants"></span></p>
 </div>
 <div class="paragraph">
-<p>The values passed to bounds() for the child controls can be either fractions proportional to the plants overall size and position, or absolute pixel values. For example, <code>bounds(0, .5, .5, 1)</code> will cause a child widget to appear half way across the plant, and half way down. While <code>bounds(10, 10, 200, 200)</code> will cause the child control to be 10 pixels from the top/left, and have a size of 200x200 pixels.</p>
+<p>The values passed to bounds() for the child controls are absolute pixel values, from the top left of the parent component. For example, <code>bounds(10, 10, 50, 50)</code> will cause a child widget to appear half way across the plant, and half way down. While <code>bounds(10, 10, 200, 200)</code> will cause the child control to be 10 pixels from the top/left, and have a size of 200x200 pixels.</p>
 </div>
 <div class="paragraph">
 <p>The major advantage to using plant abstractions is that you can easily move and resize them without needing to modify the dimensions of the child widgets contained within. You can also save your plants and recall them later from a plant repository. Plants are intended to be reused across instruments so users do not have to keep rebuilding GUIs from scratch. They can also be used to give your plugins a unique look and feel.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="identchannels">Controlling Widgets from Csound</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All widget identifiers can be updated in real-time if an identifier channel has been set up using an identchannel() identifier. Once an identifier channel has been set up, one can update a widget&#8217;s identifier using a chnset opcode in Csound, with the appropriate ident-channel string. For example, if one sets up a checkbox with an identifier channel "checkboxIdent", its position can be controlled using Csound and a chnset opcode.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>chnset "bounds(10, 10, 100, 100)", "checkboxIdent"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To control the position of a checkbox in real-time, one can use the <code>sprintfk</code> opcode to dynamically create an identifier string that can be passed to the widget. In this example random values are passed to sprintfk to create a new bounds() strings 5 times a second. <code>metro(5)</code></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/randomCheckbox.gif" alt="plants"></span></p>
+</div>
+<div class="paragraph">
+<p>Identifier channels can also be used with <a href="#plants">Plants</a>. In the following example, 3 plants, containing 4 hsliders each are placed on top of each other. One has visible() set to 1, while the others have visible() set to 0. When the instrument first launches, the users sees only one of the slider plants. As the user clicks on the button marked toggle, they can show and hide the other plants.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/togglingPlants.gif" alt="plants"></span></p>
+</div>
+<div class="paragraph">
+<p>While Cabbage comes with several fun animation examples, please keep in mind that it is not a fraemwork for developing animations! The more widgets you manipulate, and the speed at which you modify them at will inevitably cause a drain on the CPU. The key here is to only call chnset when it is absolutely required.</p>
 </div>
 </div>
 </div>
@@ -2939,6 +3016,28 @@ XY pads range identifiers do not permit the setting of skew factors, or incremen
 </div>
 <div class="paragraph">
 <p>You can use as many macros as you wish in your Cabbage code.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="widgetarrays">Quickly creating multiple widgets</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you wish to create a large number of widgets you can use the widgetarray() identifier, which takes a base channel name, and the number of widgets to be created. Each widget channel will have an underscore and number appended to them, e.g., chan_1, chan_2. While each identchannel will have a _ident string and number appended to them, e.g., chan_ident1, chan_ident2, etc. The following code will create 100 checkboxes, all sharing the same position.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>checkbox bounds(10, 10, 50, 50), channelarray("test", 100), value(1)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The first checkbox widget will have a channel named "test_1", and an ident-channel named "test_ident1". The second widget channel will be named "test2", while its ident-channel will be named "test_ident2", and so on, upwards to 100. The identifiers for the newly created checkboxes can be modified using Csound code. For example, the following code will place the checkboxes around the screen in a 10x10 grid.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/widgetArray1.png" alt="plants"></span></p>
+</div>
+<div class="paragraph">
+<p>For more details on how to controls widgets from Csound code look at <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 </div>
 </div>
@@ -3144,7 +3243,7 @@ Currently this feature is only available on Windows.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-01-04 10:06:41 GMT
+Last updated 2015-01-04 17:05:27 GMT
 </div>
 </div>
 </body>

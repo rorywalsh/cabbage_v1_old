@@ -796,7 +796,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     if(!standaloneMode)
     {
         addFilesToPopupMenu(subMenu, exampleFiles, examplesDir, "*.csd", examplesOffset);
-		subMenu.addItem(3999, "Browse all examples");
+		//subMenu.addItem(3999, "Browse all examples");
         m.addSubMenu(String("Examples"), subMenu);
 				m.addSubMenu(String("New Cabbage..."), subMenu);
         subMenu.clear();

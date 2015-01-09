@@ -785,31 +785,28 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 	{
 	#if defined(LINUX) || defined(MACOSX)
 		examplesBaseDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
-		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples/Examples";
+		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
 	#else
 		examplesBaseDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
-		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples\\Examples";
+		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
 	#endif
 	}
 
     isAFileOpen = true;
     if(!standaloneMode)
     {
-        m.addItem(1, String("Open Cabbage Instrument | Ctrl+o"));
-
-        recentFiles.createPopupMenuItems (recentFilesMenu, 9000, false, true);
-        m.addSubMenu ("Open recent file", recentFilesMenu);
-
-
         addFilesToPopupMenu(subMenu, exampleFiles, examplesDir, "*.csd", examplesOffset);
 		subMenu.addItem(3999, "Browse all examples");
         m.addSubMenu(String("Examples"), subMenu);
-
+				m.addSubMenu(String("New Cabbage..."), subMenu);
         subMenu.clear();
 
         subMenu.addItem(30, String("Effect"));
         subMenu.addItem(31, String("Instrument"));
-        m.addSubMenu(String("New Cabbage..."), subMenu);
+        m.addItem(1, String("Open Cabbage Instrument"));
+
+        recentFiles.createPopupMenuItems (recentFilesMenu, 9000, false, true);
+        m.addSubMenu ("Open recent file", recentFilesMenu);
 
         m.addItem(2, String("View Source Editor"));
         m.addItem(3, String("View Csound output"));

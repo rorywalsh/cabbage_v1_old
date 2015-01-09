@@ -41,8 +41,8 @@ public:
     IdentArray() : StringArray("tablecolour")
     {
         add("tablecolour");
-        add("tablegridcolour");
-        add("alpha");
+		add("tablegridcolour");
+		add("alpha");
         add("bounds");
         add("fontcolour");
         add("fontcolour:1");
@@ -59,7 +59,7 @@ public:
         add("midictrl");
         add("stack");
         add("outlinethickness");
-        add("linethickness");
+		add("linethickness");
         add("trackerthickness");
         add("populate");
         add("range");
@@ -80,7 +80,7 @@ public:
         add("align");
         add("beveltype");
         add("wrap");
-        add("tablebackgroundcolour");
+		add("tablebackgroundcolour");
         add("mode");
         add("tablenumber");
         add("tablenum");
@@ -93,7 +93,7 @@ public:
         add("outlinecolour");
         add("master");
         add("shape");
-        add("rotate");
+		add("rotate");
         add("textcolour");
         add("scale");
         add("key(");
@@ -298,14 +298,12 @@ class CabbageGUIClass : public cUtils
     Array<int> vuConfig;
     Array<int> tableNumbers;
     Array<float> tableChannelValues;
-    IdentArray identArray;
-    String warningMessages;
+	IdentArray identArray;
+	String warningMessages;
 
     //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGUIClass);
 public:
-    String getWarningMessages() {
-        return warningMessages;
-    };
+    String getWarningMessages(){	return warningMessages;	};
     NamedValueSet cabbageIdentifiers;
     CabbageGUIClass(String str, int ID);
     CabbageGUIClass() {};

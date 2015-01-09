@@ -191,25 +191,25 @@ public:
         else return in;
     }
 //
-    static void debug(String message)
-    {
-        Logger::writeToLog(message);
-    }
+	static void debug(String message)
+	{
+		Logger::writeToLog(message);
+	}
 
-    static void debug(float value)
-    {
-        Logger::writeToLog(String(value));
-    }
-
-    static void debug(String message, double value)
-    {
-        Logger::writeToLog(message+":"+String(value));
-    }
-
-    static void debug(String message, String value)
-    {
-        Logger::writeToLog(message+":"+value);
-    }
+	static void debug(float value)
+	{
+		Logger::writeToLog(String(value));
+	}
+	
+	static void debug(String message, double value)
+	{
+		Logger::writeToLog(message+":"+String(value));
+	}
+	
+	static void debug(String message, String value)
+	{
+		Logger::writeToLog(message+":"+value);
+	}
 //===========================================================================================
     static void showMessage(String message)
     {
@@ -221,42 +221,42 @@ public:
     }
 
 
-    static bool compDouble(double x, int y)
-    {
-        if( x > (double)y-0.0001 && x < (double)y+0.0001)
-        {
-            // They are almost equal
-            return true;
-        }
-        else
-        {
-            // They aren't equal at all
-            return false;
-        }
-    }
+	static bool compDouble(double x, int y)
+	{
+		if( x > (double)y-0.0001 && x < (double)y+0.0001) 
+		{
+			// They are almost equal
+			return true;
+		}
+		else
+		{
+			// They aren't equal at all
+			return false;
+		}		
+	}
 
-    static double roundToPrec(double x, int prec)
-    {
-        double power = 1.0;
-        int i;
+	static double roundToPrec(double x, int prec)
+	{
+		double power = 1.0;
+		int i;
 
-        if (prec > 0)
-            for (i = 0; i < prec; i++)
-                power *= 10.0;
-        else if (prec < 0)
-            for (i = 0; i < prec; i++)
-                power /= 10.0;
+		if (prec > 0)
+			for (i = 0; i < prec; i++)
+				power *= 10.0;
+		else if (prec < 0)
+			for (i = 0; i < prec; i++)
+				power /= 10.0;
 
-        if (x > 0)
-            x = floor(x * power + 0.5) / power;
-        else if (x < 0)
-            x = ceil(x * power - 0.5) / power;
+		if (x > 0)
+			x = floor(x * power + 0.5) / power;
+		else if (x < 0)
+			x = ceil(x * power - 0.5) / power;
 
-        if (x == -0)
-            x = 0;
+		if (x == -0)
+			x = 0;
 
-        return x;
-    }
+		return x;
+	}
 
 //===========================================================================================
     static void showMessageWithLocation(String message)
@@ -354,117 +354,117 @@ public:
         return strArray;
     }
 //==========================================================================================
-    static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, int mode, File initialDir, bool useNative, LookAndFeel *look)
-    {
-        const bool selectsDirectories = (FileBrowserComponent::openMode
-                                         | FileBrowserComponent::canSelectFiles & FileBrowserComponent::canSelectDirectories) != 0;
-        const bool selectsFiles       = (FileBrowserComponent::openMode
-                                         | FileBrowserComponent::canSelectFiles & FileBrowserComponent::canSelectFiles) != 0;
-        const bool warnAboutOverwrite = (FileBrowserComponent::openMode
-                                         | FileBrowserComponent::canSelectFiles & FileBrowserComponent::warnAboutOverwriting) != 0;
-        const bool selectMultiple     = (FileBrowserComponent::openMode
-                                         | FileBrowserComponent::canSelectFiles & FileBrowserComponent::canSelectMultipleItems) != 0;
-
-        Array<File> results;
-        //if set to open or browse for files
-        if(mode==1)
-        {
-#ifndef Cabbage_Build_Standalone
-            //in plugin mode it's best to use Cabbage file browser instead of a system one
-            useNative=false;
+static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, int mode, File initialDir, bool useNative, LookAndFeel *look)
+{
+    const bool selectsDirectories = (FileBrowserComponent::openMode
+                        | FileBrowserComponent::canSelectFiles & FileBrowserComponent::canSelectDirectories) != 0;
+    const bool selectsFiles       = (FileBrowserComponent::openMode
+                        | FileBrowserComponent::canSelectFiles & FileBrowserComponent::canSelectFiles) != 0;
+    const bool warnAboutOverwrite = (FileBrowserComponent::openMode
+                        | FileBrowserComponent::canSelectFiles & FileBrowserComponent::warnAboutOverwriting) != 0;
+    const bool selectMultiple     = (FileBrowserComponent::openMode
+                        | FileBrowserComponent::canSelectFiles & FileBrowserComponent::canSelectMultipleItems) != 0;
+	
+	Array<File> results;
+	//if set to open or browse for files
+	if(mode==1)
+	{
+#ifndef Cabbage_Build_Standalone	
+		//in plugin mode it's best to use Cabbage file browser instead of a system one
+		useNative=false;
 #endif
+		
+		if(useNative==false)
+		{
+			FileBrowserComponent browserComponent ( FileBrowserComponent::openMode|
+													FileBrowserComponent::canSelectFiles, 
+													initialDir, 
+													&filter, 
+													nullptr);
+													
+			FileChooserDialogBox box (title, String::empty,
+									  browserComponent, warnAboutOverwrite,
+									  cUtils::getDarkerBackgroundSkin());
+														  
+			box.setLookAndFeel(look);
 
-            if(useNative==false)
-            {
-                FileBrowserComponent browserComponent ( FileBrowserComponent::openMode|
-                                                        FileBrowserComponent::canSelectFiles,
-                                                        initialDir,
-                                                        &filter,
-                                                        nullptr);
+			if (box.show())
+			{
+				for (int i = 0; i < browserComponent.getNumSelectedFiles(); ++i)
+					results.add (browserComponent.getSelectedFile (i));
+			}
+		}	
+		else
+		{
+			FileChooser openFC(title, initialDir, "*.*", true);
+			if(openFC.browseForFileToOpen())
+				results = openFC.getResults();			
+		}
+	}
+	
+	//set to save files
+	if(mode==0)
+	{
+		if(useNative==false)
+		{
+			FileBrowserComponent browserComponent ( FileBrowserComponent::saveMode| 
+													FileBrowserComponent::canSelectFiles, 
+													initialDir, 
+													&filter, 
+													nullptr);
+													
+			FileChooserDialogBox box (title, String::empty,
+									  browserComponent, warnAboutOverwrite,
+									  cUtils::getDarkerBackgroundSkin());
+														  
+			box.setLookAndFeel(look);
 
-                FileChooserDialogBox box (title, String::empty,
-                                          browserComponent, warnAboutOverwrite,
-                                          cUtils::getDarkerBackgroundSkin());
+			if (box.show())
+			{
+				for (int i = 0; i < browserComponent.getNumSelectedFiles(); ++i)
+					results.add (browserComponent.getSelectedFile (i));
+			}
+		}
+		else
+		{
+			FileChooser saveFC(String("Save as..."), File::nonexistent, String(""), true);	
+			if(saveFC.browseForFileToSave(true))
+				results = saveFC.getResults();	
+		}		
+	}	
 
-                box.setLookAndFeel(look);
+	//browse for directory
+	if(mode==2)
+	{
+		if(useNative==false)
+		{
+			FileBrowserComponent browserComponent ( FileBrowserComponent::openMode, 
+													initialDir, 
+													&filter, 
+													nullptr);
+													
+			FileChooserDialogBox box (title, String::empty,
+									  browserComponent, warnAboutOverwrite,
+									  cUtils::getDarkerBackgroundSkin());
+														  
+			box.setLookAndFeel(look);
 
-                if (box.show())
-                {
-                    for (int i = 0; i < browserComponent.getNumSelectedFiles(); ++i)
-                        results.add (browserComponent.getSelectedFile (i));
-                }
-            }
-            else
-            {
-                FileChooser openFC(title, initialDir, "*.*", true);
-                if(openFC.browseForFileToOpen())
-                    results = openFC.getResults();
-            }
-        }
-
-        //set to save files
-        if(mode==0)
-        {
-            if(useNative==false)
-            {
-                FileBrowserComponent browserComponent ( FileBrowserComponent::saveMode|
-                                                        FileBrowserComponent::canSelectFiles,
-                                                        initialDir,
-                                                        &filter,
-                                                        nullptr);
-
-                FileChooserDialogBox box (title, String::empty,
-                                          browserComponent, warnAboutOverwrite,
-                                          cUtils::getDarkerBackgroundSkin());
-
-                box.setLookAndFeel(look);
-
-                if (box.show())
-                {
-                    for (int i = 0; i < browserComponent.getNumSelectedFiles(); ++i)
-                        results.add (browserComponent.getSelectedFile (i));
-                }
-            }
-            else
-            {
-                FileChooser saveFC(String("Save as..."), File::nonexistent, String(""), true);
-                if(saveFC.browseForFileToSave(true))
-                    results = saveFC.getResults();
-            }
-        }
-
-        //browse for directory
-        if(mode==2)
-        {
-            if(useNative==false)
-            {
-                FileBrowserComponent browserComponent ( FileBrowserComponent::openMode,
-                                                        initialDir,
-                                                        &filter,
-                                                        nullptr);
-
-                FileChooserDialogBox box (title, String::empty,
-                                          browserComponent, warnAboutOverwrite,
-                                          cUtils::getDarkerBackgroundSkin());
-
-                box.setLookAndFeel(look);
-
-                if (box.show())
-                {
-                    for (int i = 0; i < browserComponent.getNumSelectedFiles(); ++i)
-                        results.add (browserComponent.getSelectedFile (i));
-                }
-            }
-            else
-            {
-                FileChooser fc(title, File::nonexistent, String(""), true);
-                if(fc.browseForDirectory())
-                    results.add(fc.getResult());
-            }
-        }
-
-        return results;
-    }
+			if (box.show())
+			{
+				for (int i = 0; i < browserComponent.getNumSelectedFiles(); ++i)
+					results.add (browserComponent.getSelectedFile (i));
+			}
+		}
+		else
+		{
+			FileChooser fc(title, File::nonexistent, String(""), true);	
+			if(fc.browseForDirectory())
+				results.add(fc.getResult());	
+		}		
+	}	
+		
+return results;
+}
 //==========================================================================================
     static String cabbageString (String input, Font font, float availableWidth)
     {
@@ -639,24 +639,24 @@ public:
     }
 
 //==========================================================================================
-    Array<float> getAmpRangeArray(Array<float> ranges, int tableNumber)
-    {
-        Array<float> ampRange;
-        int numRangeArrays = ranges.size()/4;
-
-        for(int i=2; i<ranges.size(); i+=4)
-            if(ranges[i]==tableNumber || ranges[i]==-1)
-            {
-                for(int y = i-2; y<=i+1; y++)
-                {
-                    ampRange.add(ranges[y]);
-                    cUtils::debug(ranges[y]);
-                }
-            }
-
-        return ampRange;
-
-    }
+Array<float> getAmpRangeArray(Array<float> ranges, int tableNumber)
+{
+	Array<float> ampRange;
+	int numRangeArrays = ranges.size()/4;
+	
+	for(int i=2;i<ranges.size();i+=4)
+		if(ranges[i]==tableNumber || ranges[i]==-1)
+		{
+			for(int y = i-2;y<=i+1;y++)
+			{
+				ampRange.add(ranges[y]);
+				cUtils::debug(ranges[y]);
+			}
+		}
+		
+	return ampRange;
+	
+}
 
 //======== Check if NaN ====================================================================
     static bool isNumber(double x)
@@ -738,211 +738,211 @@ public:
     }
 
 //====================================================================================
-    static Image getSVGImageFor(String path, String type, AffineTransform affine)
+static Image getSVGImageFor(String path, String type, AffineTransform affine)
+{
+
+    String svgFileName;
+    Image svgImg;
+    if(type.contains("button"))
     {
-
-        String svgFileName;
-        Image svgImg;
-        if(type.contains("button"))
-        {
-            svgFileName = path+"/"+String(type)+".svg";
-            if(File(svgFileName).existsAsFile())
-                svgImg = Image(Image::ARGB, svgButtonWidth, svgButtonHeight, true);//default button size 100px X 50px
-        }
-
-        else if(type.contains("slider"))
-        {
-            svgFileName = path+"/"+String(type)+".svg";
-            if(File(svgFileName).existsAsFile())
-                svgImg = Image(Image::ARGB, svgRSliderDiameter, svgRSliderDiameter, true);//default rotary slider size 150px X 150px
-        }
-
-        else if(type.contains("groupbox"))
-        {
-            svgFileName = path+"/"+String(type)+".svg";
-            if(File(svgFileName).existsAsFile())
-                svgImg = Image(Image::ARGB, svgGroupboxWidth, svgGroupboxHeight, true);//default rotary slider size 150px X 150px
-        }
-
-
-        File svgFile(svgFileName);
-        ScopedPointer<XmlElement> svg (XmlDocument::parse(svgFile.loadFileAsString()));
-        if (svgFile.exists())
-        {
-            if(svg == nullptr)
-                Logger::writeToLog("couldn't parse svg, might not exist");
-            ScopedPointer<Drawable> drawable;
-
-            Graphics graph(svgImg);
-            if (svg != nullptr)
-            {
-                drawable = Drawable::createFromSVG (*svg);
-                drawable->draw(graph, 1.f, affine);
-                return svgImg;
-            }
-        }
-
-        return svgImg;
+        svgFileName = path+"/"+String(type)+".svg";
+        if(File(svgFileName).existsAsFile())
+            svgImg = Image(Image::ARGB, svgButtonWidth, svgButtonHeight, true);//default button size 100px X 50px
     }
+
+    else if(type.contains("slider"))
+    {
+        svgFileName = path+"/"+String(type)+".svg";
+        if(File(svgFileName).existsAsFile())
+            svgImg = Image(Image::ARGB, svgRSliderDiameter, svgRSliderDiameter, true);//default rotary slider size 150px X 150px
+    }
+
+    else if(type.contains("groupbox"))
+    {
+        svgFileName = path+"/"+String(type)+".svg";
+        if(File(svgFileName).existsAsFile())
+            svgImg = Image(Image::ARGB, svgGroupboxWidth, svgGroupboxHeight, true);//default rotary slider size 150px X 150px
+    }
+
+
+    File svgFile(svgFileName);
+    ScopedPointer<XmlElement> svg (XmlDocument::parse(svgFile.loadFileAsString()));
+    if (svgFile.exists())
+    {
+        if(svg == nullptr)
+            Logger::writeToLog("couldn't parse svg, might not exist");
+        ScopedPointer<Drawable> drawable;
+
+        Graphics graph(svgImg);
+        if (svg != nullptr)
+        {
+            drawable = Drawable::createFromSVG (*svg);
+            drawable->draw(graph, 1.f, affine);
+            return svgImg;
+        }
+    }
+
+    return svgImg;
+}
 
 //========= Text button image ========================================================
-    static Image drawTextButtonImage(float width, float height, bool isButtonDown, Colour colour, String svgPath)
+static Image drawTextButtonImage(float width, float height, bool isButtonDown, Colour colour, String svgPath)
+{
+    Image img = Image(Image::ARGB, width, height, true);
+    Graphics g (img);
+    float opacity;
+
+	//if alpha is full draw invible button
+	if(colour.getAlpha()==0x00)
+	{
+		g.fillAll(Colours::transparentBlack);
+		return img;
+	}
+
+
+    if(getSVGImageFor(svgPath, "button_background", AffineTransform::identity).isValid())
     {
-        Image img = Image(Image::ARGB, width, height, true);
-        Graphics g (img);
-        float opacity;
+        //----- If "off"
+        if (isButtonDown == false)
+            g.drawImage(getSVGImageFor(svgPath, "button_background", AffineTransform::identity), 0, 0, width, height, 0, 0, svgButtonWidth, svgButtonHeight, false);
+        else
+            g.drawImage(getSVGImageFor(svgPath, "button_background", AffineTransform::identity), 1, 1, width-2, height-2, 0, 0, svgButtonWidth, svgButtonHeight, false);
+    }
+    else
+    {
 
-        //if alpha is full draw invible button
-        if(colour.getAlpha()==0x00)
+        //----- Outline
+        g.setColour (Colour::fromRGBA (10, 10, 10, 255));
+        g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+
+        //----- If "off"
+        if (isButtonDown == false)
         {
-            g.fillAll(Colours::transparentBlack);
-            return img;
-        }
-
-
-        if(getSVGImageFor(svgPath, "button_background", AffineTransform::identity).isValid())
-        {
-            //----- If "off"
-            if (isButtonDown == false)
-                g.drawImage(getSVGImageFor(svgPath, "button_background", AffineTransform::identity), 0, 0, width, height, 0, 0, svgButtonWidth, svgButtonHeight, false);
-            else
-                g.drawImage(getSVGImageFor(svgPath, "button_background", AffineTransform::identity), 1, 1, width-2, height-2, 0, 0, svgButtonWidth, svgButtonHeight, false);
+            //----- Shadow
+            for (float i=0.01; i<0.05; i+=0.01)
+            {
+                g.setColour (Colour::fromRGBA (0, 0, 0, 255/(i*100)));
+                g.fillRoundedRectangle (width*i, height*i,
+                                        width*0.95, height*0.95, height*0.1);
+                opacity = 0.3;
+            }
         }
         else
-        {
+            opacity = 0.1;
 
-            //----- Outline
-            g.setColour (Colour::fromRGBA (10, 10, 10, 255));
-            g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+        //----- Filling in the button
+        //Colour bg1 = Colour::fromRGBA (25, 25, 28, 255);
+        //Colour bg2 = Colour::fromRGBA (15, 15, 18, 255);
+        Colour bg1 = colour;
+        Colour bg2 = colour.darker();
 
-            //----- If "off"
-            if (isButtonDown == false)
-            {
-                //----- Shadow
-                for (float i=0.01; i<0.05; i+=0.01)
-                {
-                    g.setColour (Colour::fromRGBA (0, 0, 0, 255/(i*100)));
-                    g.fillRoundedRectangle (width*i, height*i,
-                                            width*0.95, height*0.95, height*0.1);
-                    opacity = 0.3;
-                }
-            }
-            else
-                opacity = 0.1;
+        ColourGradient cg = ColourGradient (bg1, 0, 0, bg2, width*0.5, height*0.5, false);
+        g.setGradientFill (cg);
+        g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, height*0.1);
 
-            //----- Filling in the button
-            //Colour bg1 = Colour::fromRGBA (25, 25, 28, 255);
-            //Colour bg2 = Colour::fromRGBA (15, 15, 18, 255);
-            Colour bg1 = colour;
-            Colour bg2 = colour.darker();
+        //----- For emphasising the top and left edges to give the illusion that light is shining on them
+        ColourGradient edgeHighlight = ColourGradient (Colours::whitesmoke, 0, 0,
+                                       Colours::transparentWhite, 0, height*0.1, false);
+        g.setGradientFill (edgeHighlight);
+        g.setOpacity (opacity);
+        g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
 
-            ColourGradient cg = ColourGradient (bg1, 0, 0, bg2, width*0.5, height*0.5, false);
-            g.setGradientFill (cg);
-            g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, height*0.1);
-
-            //----- For emphasising the top and left edges to give the illusion that light is shining on them
-            ColourGradient edgeHighlight = ColourGradient (Colours::whitesmoke, 0, 0,
-                                           Colours::transparentWhite, 0, height*0.1, false);
-            g.setGradientFill (edgeHighlight);
-            g.setOpacity (opacity);
-            g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
-
-            ColourGradient edgeHighlight2 = ColourGradient (Colours::whitesmoke, 0, 0,
-                                            Colours::transparentWhite, height*0.1, 0, false);
-            g.setGradientFill (edgeHighlight2);
-            g.setOpacity (opacity);
-            g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
-        }
-        return img;
+        ColourGradient edgeHighlight2 = ColourGradient (Colours::whitesmoke, 0, 0,
+                                        Colours::transparentWhite, height*0.1, 0, false);
+        g.setGradientFill (edgeHighlight2);
+        g.setOpacity (opacity);
+        g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
     }
+    return img;
+}
 
 //====================================================================================================
-    static Image drawToggleImage (float width, float height, bool isToggleOn, Colour colour, bool isRect, String svgPath)
-    {
-        Image img = Image(Image::ARGB, width, height, true);
-        Graphics g (img);
-        float opacity = 0;
+	static Image drawToggleImage (float width, float height, bool isToggleOn, Colour colour, bool isRect, String svgPath)
+	{
+		Image img = Image(Image::ARGB, width, height, true);
+		Graphics g (img);
+		float opacity = 0;
+		
+		//if alpha is full draw invible button
+		if(colour.getAlpha()==0x00)
+		{
+			g.fillAll(Colours::transparentBlack);
+			return img;
+		}
 
-        //if alpha is full draw invible button
-        if(colour.getAlpha()==0x00)
-        {
-            g.fillAll(Colours::transparentBlack);
-            return img;
-        }
+		if (isRect)   //if rectangular toggle
+		{
+			g.setColour (Colour::fromRGBA (10, 10, 10, 255));
+			g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
 
-        if (isRect)   //if rectangular toggle
-        {
-            g.setColour (Colour::fromRGBA (10, 10, 10, 255));
-            g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+			if (isToggleOn == true)
+			{
+				g.setColour (colour);
+				g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, height*0.1);
+				opacity = 0.4;
+			}
+			else   //off
+			{
+				// Shadow
+				for (float i=0.01; i<0.05; i+=0.01)
+				{
+					g.setColour (Colour::fromRGBA (0, 0, 0, 255/(i*100)));
+					g.fillRoundedRectangle (width*i, height*i,
+											width*0.95, height*0.95, height*0.1);
+				}
+				// Filling in the button
+				Colour bg1 = Colour::fromRGBA (25, 25, 28, 255);
+				Colour bg2 = Colour::fromRGBA (15, 15, 18, 255);
+				ColourGradient cg = ColourGradient (bg1, 0, 0, bg2, width*0.5, height*0.5, false);
+				g.setGradientFill (cg);
+				g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, height*0.1);
+				opacity = 0.2;
+			}
 
-            if (isToggleOn == true)
-            {
-                g.setColour (colour);
-                g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, height*0.1);
-                opacity = 0.4;
-            }
-            else   //off
-            {
-                // Shadow
-                for (float i=0.01; i<0.05; i+=0.01)
-                {
-                    g.setColour (Colour::fromRGBA (0, 0, 0, 255/(i*100)));
-                    g.fillRoundedRectangle (width*i, height*i,
-                                            width*0.95, height*0.95, height*0.1);
-                }
-                // Filling in the button
-                Colour bg1 = Colour::fromRGBA (25, 25, 28, 255);
-                Colour bg2 = Colour::fromRGBA (15, 15, 18, 255);
-                ColourGradient cg = ColourGradient (bg1, 0, 0, bg2, width*0.5, height*0.5, false);
-                g.setGradientFill (cg);
-                g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, height*0.1);
-                opacity = 0.2;
-            }
+			// For emphasising the top and left edges to give the illusion that light is shining on them
+			ColourGradient edgeHighlight = ColourGradient (Colours::whitesmoke, 0, 0,
+										   Colours::transparentWhite, 0, height*0.1, false);
+			g.setGradientFill (edgeHighlight);
+			g.setOpacity (opacity);
+			g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
 
-            // For emphasising the top and left edges to give the illusion that light is shining on them
-            ColourGradient edgeHighlight = ColourGradient (Colours::whitesmoke, 0, 0,
-                                           Colours::transparentWhite, 0, height*0.1, false);
-            g.setGradientFill (edgeHighlight);
-            g.setOpacity (opacity);
-            g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+			ColourGradient edgeHighlight2 = ColourGradient (Colours::whitesmoke, 0, 0,
+											Colours::transparentWhite, height*0.1, 0, false);
+			g.setGradientFill (edgeHighlight2);
+			g.setOpacity (opacity);
+			g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+		}
+		else   //else if round toggle
+		{
+			//base
+			ColourGradient base = ColourGradient (Colours::white, width*-0.3, height*-0.3, Colours::black,
+												  width*0.8, height*0.8, false);
+			g.setGradientFill(base);
+			g.fillEllipse (0, 0, width, height);
 
-            ColourGradient edgeHighlight2 = ColourGradient (Colours::whitesmoke, 0, 0,
-                                            Colours::transparentWhite, height*0.1, 0, false);
-            g.setGradientFill (edgeHighlight2);
-            g.setOpacity (opacity);
-            g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
-        }
-        else   //else if round toggle
-        {
-            //base
-            ColourGradient base = ColourGradient (Colours::white, width*-0.3, height*-0.3, Colours::black,
-                                                  width*0.8, height*0.8, false);
-            g.setGradientFill(base);
-            g.fillEllipse (0, 0, width, height);
+			g.setColour(Colour::fromRGB(70, 70, 70));
+			g.fillEllipse(width*0.04, height*0.04, width*0.92, height*0.92);
 
-            g.setColour(Colour::fromRGB(70, 70, 70));
-            g.fillEllipse(width*0.04, height*0.04, width*0.92, height*0.92);
+			if (isToggleOn)   //on
+			{
+				ColourGradient cg = ColourGradient(colour.withSaturation(0.2), width*0.4, height*0.4, colour,
+												   width*0.8, height*0.8, true);
+				g.setGradientFill (cg);
+				g.fillEllipse(width*0.09, height*0.09, width*0.82, height*0.82);
+			}
+			else   //off
+			{
+				g.setColour(Colours::black);
+				g.fillEllipse(width*0.09, height*0.09, width*0.82, height*0.82);
 
-            if (isToggleOn)   //on
-            {
-                ColourGradient cg = ColourGradient(colour.withSaturation(0.2), width*0.4, height*0.4, colour,
-                                                   width*0.8, height*0.8, true);
-                g.setGradientFill (cg);
-                g.fillEllipse(width*0.09, height*0.09, width*0.82, height*0.82);
-            }
-            else   //off
-            {
-                g.setColour(Colours::black);
-                g.fillEllipse(width*0.09, height*0.09, width*0.82, height*0.82);
-
-                ColourGradient cg = ColourGradient (Colours::white, width*0.4, height*0.4, colour.darker(0.9), width*0.3, height*0.3, true);
-                g.setGradientFill (cg);
-                g.setOpacity(0.4);
-                g.fillEllipse(width*0.1, height*0.1, width*0.8, height*0.8);
-            }
-        }
-        return img;
-    }
+				ColourGradient cg = ColourGradient (Colours::white, width*0.4, height*0.4, colour.darker(0.9), width*0.3, height*0.3, true);
+				g.setGradientFill (cg);
+				g.setOpacity(0.4);
+				g.fillEllipse(width*0.1, height*0.1, width*0.8, height*0.8);
+			}
+		}
+		return img;
+	}
 
 //====================================================================================================
     static void setPreference(ApplicationProperties* appPrefs, String pref, String value)
@@ -951,58 +951,58 @@ public:
     }
 //====================================================================================================
     static void drawSphericalThumb (Graphics& g, const float x, const float y,
-                                    const float w, const float h, const Colour& colour,
-                                    const float outlineThickness)
-    {
-        ColourGradient cg = ColourGradient (Colours::white, 0, 0, colour, w/2, h/2, false);
-        cg.addColour (0.4, Colours::white.overlaidWith (colour));
-        g.setGradientFill (cg);
-        g.fillEllipse (x, y, w, h);
-        g.setOpacity(.4);
-        g.fillEllipse (x+1, y+1, w, h);
-    }
-//====================================================================================================
-    static void drawGlassPointer (Graphics& g, float x, float y, float diameter,
+                             const float w, const float h, const Colour& colour,
+                             const float outlineThickness)
+	{
+		ColourGradient cg = ColourGradient (Colours::white, 0, 0, colour, w/2, h/2, false);
+		cg.addColour (0.4, Colours::white.overlaidWith (colour));
+		g.setGradientFill (cg);
+		g.fillEllipse (x, y, w, h);
+		g.setOpacity(.4);
+		g.fillEllipse (x+1, y+1, w, h);	 
+	}
+//====================================================================================================	
+	static void drawGlassPointer (Graphics& g, float x, float y, float diameter,
                                   const Colour& colour, float outlineThickness, int direction)
-    {
-        if (diameter <= outlineThickness)
-            return;
+	{
+		if (diameter <= outlineThickness)
+			return;
 
-        Path p;
+		Path p;
 
-        p.startNewSubPath (x + diameter * 0.5f, y);
-        p.lineTo (x + diameter*.9f, y + diameter * 0.6f);
-        //    p.lineTo (x + diameter, y + diameter);
-        p.lineTo (diameter*.1f+x, y + diameter*0.6f);
-        //    p.lineTo (x, y + diameter * 0.6f);
-        p.closeSubPath();
+		p.startNewSubPath (x + diameter * 0.5f, y);
+		p.lineTo (x + diameter*.9f, y + diameter * 0.6f);
+	//    p.lineTo (x + diameter, y + diameter);
+		p.lineTo (diameter*.1f+x, y + diameter*0.6f);
+	//    p.lineTo (x, y + diameter * 0.6f);
+		p.closeSubPath();
 
-        p.applyTransform(AffineTransform::rotation (direction * (float_Pi * 0.5f), x + diameter * 0.5f, y + diameter * 0.5f));
+		p.applyTransform(AffineTransform::rotation (direction * (float_Pi * 0.5f), x + diameter * 0.5f, y + diameter * 0.5f));
 
-        {
-            ColourGradient cg (Colours::white.overlaidWith (colour.withMultipliedAlpha (0.7f)), 0, y,
-                               Colours::white.overlaidWith (colour.withMultipliedAlpha (0.3f)), 0, y + diameter, false);
+		{
+			ColourGradient cg (Colours::white.overlaidWith (colour.withMultipliedAlpha (0.7f)), 0, y,
+							   Colours::white.overlaidWith (colour.withMultipliedAlpha (0.3f)), 0, y + diameter, false);
 
-            cg.addColour (0.4, Colours::white.overlaidWith (colour));
+			cg.addColour (0.4, Colours::white.overlaidWith (colour));
 
-            g.setGradientFill (cg);
-            g.fillPath (p);
-        }
+			g.setGradientFill (cg);
+			g.fillPath (p);
+		}
 
-        ColourGradient cg (Colours::transparentBlack,
-                           x + diameter * 0.5f, y + diameter * 0.5f,
-                           Colours::black.withAlpha (0.5f * outlineThickness * colour.getFloatAlpha()),
-                           x - diameter * 0.2f, y + diameter * 0.5f, true);
+		ColourGradient cg (Colours::transparentBlack,
+						   x + diameter * 0.5f, y + diameter * 0.5f,
+						   Colours::black.withAlpha (0.5f * outlineThickness * colour.getFloatAlpha()),
+						   x - diameter * 0.2f, y + diameter * 0.5f, true);
 
-        cg.addColour (0.5, Colours::transparentBlack);
-        cg.addColour (0.7, Colours::black.withAlpha (0.07f * outlineThickness));
+		cg.addColour (0.5, Colours::transparentBlack);
+		cg.addColour (0.7, Colours::black.withAlpha (0.07f * outlineThickness));
 
-        g.setGradientFill (cg);
-        g.fillPath (p);
+		g.setGradientFill (cg);
+		g.fillPath (p);
 
-        g.setColour (Colours::black.withAlpha (0.5f * colour.getFloatAlpha()));
-        g.strokePath (p, PathStrokeType (outlineThickness));
-    }
+		g.setColour (Colours::black.withAlpha (0.5f * colour.getFloatAlpha()));
+		g.strokePath (p, PathStrokeType (outlineThickness));		
+	}
 //=======================================================================================
 //draw buttons for transport controls
     static Image drawSoundfilerButton(String type, String colour)

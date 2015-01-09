@@ -197,9 +197,11 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     File tempAudioFile;
     CriticalSection writerLock;
     AudioFormatWriter::ThreadedWriter* volatile activeWriter;
+	bool firstTime;
 
 
 public:
+	bool isFirstTime(){ return firstTime;	};
     String changeMessage;
     Array<int> dirtyControls;
     bool CSOUND_DEBUG_MODE;

@@ -85,7 +85,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      isWinXP(false),
      ksmpsOffset(0),
      breakCount(0),
-     stopProcessing(false)
+     stopProcessing(false),
+	 firstTime(true)
 {
 //suspendProcessing(true);
     codeEditor = nullptr;
@@ -205,7 +206,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         Logger::writeToLog(inputfile);
         if(csCompileResult==OK)
         {
-
+			firstTime=false;
             //send root directory path to Csound.
             setPlayConfigDetails(getNumberCsoundOutChannels(),
                                  getNumberCsoundOutChannels(),
@@ -300,7 +301,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     yieldCounter(10),
     nativePluginEditor(false),
     averageSampleIndex(0),
-    stopProcessing(false)
+    stopProcessing(false),
+	firstTime(false)
 {
 //Cabbage plugins always try to load a csd file with the same name as the plugin library.
 //Therefore we need to find the name of the library and append a '.csd' to it.
@@ -607,6 +609,7 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
 
     if(csCompileResult==OK)
     {
+		firstTime=false;
         keyboardState.allNotesOff(0);
         keyboardState.reset();
         //simple hack to allow tables to be set up correctly.

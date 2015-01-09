@@ -260,7 +260,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
         break;
     case CommandIDs::editToggleComments:
         result.setInfo (String("Toggle comments"), String("Toggle comments"), CommandCategories::edit, 0);
-        result.addDefaultKeypress ('t', ModifierKeys::commandModifier);
+        result.addDefaultKeypress ('/', ModifierKeys::commandModifier);
         break;
     case CommandIDs::editSearchReplace:
         result.setInfo(String("Search or Replace"), String("Search Replace"), CommandCategories::edit, 0);
@@ -768,9 +768,9 @@ void CodeWindow::showCabbageHelp()
 {
     String path;
 #if defined(LINUX) || defined(MACOSX)
-    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/cabbage.html";
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/cabbageReferenceManual.html";
 #else
-    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\cabbage.html";
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\cabbageReferenceManual.html";
 #endif
 
 

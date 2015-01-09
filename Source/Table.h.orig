@@ -45,19 +45,19 @@ class TableManager : public Component,
     bool shouldShowTableButtons;
     bool shouldShowZoomButtons;
     int mainFooterHeight;
-    Colour gridColour;
-    Colour backgroundColour;
-    int tableIndex;
+	Colour gridColour;
+	Colour backgroundColour;
+	int tableIndex;
 
 public:
     TableManager();
     ~TableManager() {};
-    void paint (Graphics& g);
-    void setGridColour(Colour col);
-    void setOutlineThickness(float thickness);
-    void setFill(bool fill );
-    void setBackgroundColour(Colour col);
-    void repaintAllTables();
+    void paint (Graphics& g);	
+	void setGridColour(Colour col);
+	void setOutlineThickness(float thickness);
+	void setFill(bool fill );
+	void setBackgroundColour(Colour col);
+	void repaintAllTables();
     void resized();
     void setZoomFactor(double zoom);
     void setDrawMode(String mode);
@@ -73,7 +73,7 @@ public:
     void setWaveform(AudioSampleBuffer buffer, int ftNumber);
     void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
     void setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange = true);
-    void setFile(const File file);
+	void setFile(const File file);
     void enableEditMode(StringArray pFields, int ftnumber);
     ScopedPointer<RoundButton> zoomIn, zoomOut;
     OwnedArray<RoundButton> tableButtons;
@@ -83,7 +83,7 @@ public:
     void changeListenerCallback(ChangeBroadcaster *source);
     void bringTableToFront(int ftNumber);
     void configTableSizes(var tableConfig);
-    void setVUGradient(Array<Colour> colour);
+	void setVUGradient(Array<Colour> colour);
     GenTable* getLargestTable();
     GenTable* getTableFromFtNumber(int ftnumber);
 };
@@ -119,7 +119,7 @@ public:
 
     float timeToX (const double time) const
     {
-        return getWidth() * (double) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
+		return getWidth() * (double) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
     }
 
     double xToTime (const float x) const
@@ -141,7 +141,7 @@ public:
     static float pixelToAmp(int height, Range<float> minMax, float sampleVal);
     Array<double> getPfields();
     String changeMessage;
-    Colour gridColour;
+	Colour gridColour;
     int tableNumber, tableSize, genRoutine, realGenRoutine;
     void setRange(Range<double> newRange, bool isScrolling = false);
     Range<double> globalRange;
@@ -149,11 +149,11 @@ public:
     ScopedPointer<ScrollBar> scrollbar;
     void resized();
     Range<double> visibleRange;
-    bool drawGrid;
+	bool drawGrid;
     int scrollbarReduction;
     void showScrollbar(bool show);
     int mainFooterHeight, paintFooterHeight;
-
+	
     HandleViewer* getHandleViewer()
     {
         return handleViewer;
@@ -162,73 +162,73 @@ public:
     void setAmpRanges(Array<float> ampRange);
     void setXPosition(double pos);
     bool drawAsVUMeter;
+	
+	HandleComponent* getCurrentHandle()
+	{
+		if(currentHandle)
+			return currentHandle;
+		else
+		{
+			assert(false);
+			return nullptr;			
+		}
 
-    HandleComponent* getCurrentHandle()
-    {
-        if(currentHandle)
-            return currentHandle;
-        else
-        {
-            assert(false);
-            return nullptr;
-        }
+	}
 
-    }
+	String getCoordinates()
+	{
+		return coordinates;
+	}
+	
+	double getNewRangeStart()
+	{
+		return newRangeStart;
+	}
+	
+	void shouldDrawGrid(bool val)
+	{
+		drawGrid = val;
+	}
+	
+	int displayAsGrid()
+	{
+		return qsteps;
+	}
+	
+	void setTraceThickness(float thickness)
+	{
+	traceThickness = thickness;	
+	}
 
-    String getCoordinates()
-    {
-        return coordinates;
-    }
+	void shouldFillTable(bool fill)
+	{
+	shouldFill = fill;	
+	}
+	
+	void setBackgroundColour(Colour col)
+	{
+		backgroundColour = col;
+	}
 
-    double getNewRangeStart()
-    {
-        return newRangeStart;
-    }
-
-    void shouldDrawGrid(bool val)
-    {
-        drawGrid = val;
-    }
-
-    int displayAsGrid()
-    {
-        return qsteps;
-    }
-
-    void setTraceThickness(float thickness)
-    {
-        traceThickness = thickness;
-    }
-
-    void shouldFillTable(bool fill)
-    {
-        shouldFill = fill;
-    }
-
-    void setBackgroundColour(Colour col)
-    {
-        backgroundColour = col;
-    }
-
-    void setVUGradient(ColourGradient grad)
-    {
-        vuGradient=grad;
-    }
-
+	void setVUGradient(ColourGradient grad)
+	{
+		vuGradient=grad;
+	}
+	
 private:
-    void drawBackgroundGrid();
-    Image backgroundImage;
-    bool shouldFill;
-    float traceThickness;
-    bool paintCachedImage;
-    String coordinates;
-    double newRangeStart;
-    HandleComponent* currentHandle;
+	void drawBackgroundGrid();
+	Image backgroundImage;
+	bool shouldFill;
+	float traceThickness;
+	bool paintCachedImage;
+	String coordinates;
+	double newRangeStart;
+	HandleComponent* currentHandle;
     bool shouldScroll;
     int normalised;
     int imgCount;
     Colour fillColour;
-    Colour backgroundColour;
+	Colour backgroundColour;
     float currentWidth;
     double zoom;
     bool showScroll;
@@ -263,9 +263,9 @@ private:
     double loopStart;
     double currentPlayPosition;
     bool drawWaveform;
-    ColourGradient vuGradient;
+	ColourGradient vuGradient;
 
-    const Image drawGridImage(bool redraw, double width=0.0, double height=0.0, double offset=0.0);
+	const Image drawGridImage(bool redraw, double width=0.0, double height=0.0, double offset=0.0);
 
     Array<float, CriticalSection> waveformBuffer;
     double visibleLength, visibleStart, visibleEnd, maxAmp;
@@ -291,7 +291,7 @@ private:
 //==============================================================================
 class HandleViewer : public Component
 {
-
+		
 public:
     HandleViewer();
     ~HandleViewer();
@@ -305,7 +305,7 @@ public:
     void addHandle(double x, double y, double width, double height, Colour colour);
     void insertHandle(double x, double y, Colour colour);
     double getSnapYPosition(const double y);
-    double getSnapXPosition(const double x);
+	double getSnapXPosition(const double x);
     HandleComponent* getPreviousHandle(HandleComponent* thisHandle);
     HandleComponent* getNextHandle(HandleComponent* thisHandle);
     int getHandleIndex(HandleComponent* thisHandle);
@@ -314,21 +314,21 @@ public:
     void fixEdgePoints(int gen);
     void showHandles(bool show);
     int handleIndex;
-    bool showingGrid;
+	bool showingGrid;
     double tableSize;
     Range<float> minMax;
     Colour colour;
     int handleViewerGen;
-
-    bool isShowingGrid()
-    {
-        return showingGrid;
-    }
-
-    void setShowingGrid(bool val)
-    {
-        showingGrid = val;
-    }
+	
+	bool isShowingGrid()
+	{
+		return showingGrid;
+	}
+	
+	void setShowingGrid(bool val)
+	{
+		showingGrid = val;
+	}
     bool shouldShowHandles;
 
     GenTable* getParentTable()
@@ -349,7 +349,7 @@ public:
     ~HandleComponent();
 
 
-    void setPosition(double x, double y, bool circularEnv);
+	void setPosition(double x, double y, bool circularEnv);
 
     void paint (Graphics& g);
     void removeThisHandle();
@@ -368,37 +368,37 @@ public:
     {
         return findParentComponentOfClass <HandleViewer>();
     };
-
+	
     GenTable* getParentGenTable()
     {
         return findParentComponentOfClass <GenTable>();
-    };
+    };	
 
     TableManager* getParentTableManager()
     {
         return findParentComponentOfClass <TableManager>();
     };
 
-    int getUniqueID()
-    {
-        return uniqueID;
-    }
+	int getUniqueID()
+	{
+		return uniqueID;
+	}
 
-    void setUniqueID(int id)
-    {
-        uniqueID = id;
-    }
+	void setUniqueID(int id)
+	{
+		uniqueID = id;
+	}
 
-    double getDoubleY()
-    {
-        return highResY;
-    }
+	double getDoubleY()
+	{
+		return highResY;
+	}
 
-    double setDoubleY(double y)
-    {
-        highResY = y;
-    }
-
+	double setDoubleY(double y)
+	{
+		highResY = y;
+	}
+	
     HandleComponent* getPreviousHandle();
     HandleComponent* getNextHandle();
     String changeMessage;
@@ -409,8 +409,8 @@ public:
 private:
     Colour colour;
     bool fixed;
-    double highResY;
-    int uniqueID;
+	double highResY;
+	int uniqueID;
 
     ComponentDragger dragger;
     int lastX, lastY;
@@ -428,7 +428,7 @@ class RoundButton : public Component,
 
 {
     String type;
-    String visible;
+	String visible;
     Colour colour;
     int mode;
 public:
@@ -454,8 +454,8 @@ public:
         if(type.contains("zoom"))
         {
             g.fillAll(Colours::transparentBlack);
-            g.setColour(cUtils::getBackgroundSkin());
-            g.fillEllipse(0, 0, getWidth(), getHeight());
+			g.setColour(cUtils::getBackgroundSkin());
+			g.fillEllipse(0, 0, getWidth(), getHeight());
             g.setColour(Colours::white.withAlpha(.8f));
             g.fillEllipse(1, 1, getWidth()-2, getHeight()-2);
             g.setColour(Colours::black);
@@ -466,31 +466,31 @@ public:
         else
         {
             g.fillAll(Colours::transparentBlack);
-            g.setColour(cUtils::getBackgroundSkin());
-            g.fillEllipse(0, 0, getWidth(), getHeight());
+			g.setColour(cUtils::getBackgroundSkin());
+			g.fillEllipse(0, 0, getWidth(), getHeight());
             g.setColour((visible=="foreground" ? colour : colour.withAlpha(.3f)));
             g.fillEllipse(1, 1, getWidth()-2, getHeight()-2);
             g.setColour(colour.contrasting());
             g.drawFittedText(type, 0, 0, getWidth(), getHeight(), Justification::centred, 1);
-            if(visible=="off")
-            {
-                g.setColour(colour.contrasting());
-                g.drawLine(0, 0, getWidth(), getHeight(), 2);
-                g.drawLine(0, getHeight(), getWidth(), 0, 2);
-            }
+			if(visible=="off")
+			{
+				g.setColour(colour.contrasting());
+				g.drawLine(0, 0, getWidth(), getHeight(), 2);
+				g.drawLine(0, getHeight(), getWidth(), 0, 2);	
+			}
         }
     }
 
-    void setVisibilityStatus(String status)
-    {
-        visible = status;
-    }
+	void setVisibilityStatus(String status)
+	{
+		visible = status;
+	}
 
     int getMode()
     {
         return mode;
     }
-
+	
     int setMode(int mod)
     {
         mode=mod;

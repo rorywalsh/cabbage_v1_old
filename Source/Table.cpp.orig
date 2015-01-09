@@ -28,7 +28,7 @@ TableManager::TableManager(): Component(), zoom(0.0), largestTable(0), scrubberP
 {
     addAndMakeVisible(zoomIn = new RoundButton("zoomIn", Colours::white));
     addAndMakeVisible(zoomOut = new RoundButton("zoomOut", Colours::white));
-    //setOpaque(true);
+	//setOpaque(true);
     zoomIn->toFront(false);
     zoomIn->addChangeListener(this);
     zoomOut->toFront(false);
@@ -38,7 +38,7 @@ TableManager::TableManager(): Component(), zoom(0.0), largestTable(0), scrubberP
 //==============================================================================
 void TableManager::paint (Graphics& g)
 {
-    g.fillAll(backgroundColour);
+	g.fillAll(backgroundColour);
 }
 //==============================================================================
 void TableManager::changeListenerCallback(ChangeBroadcaster *source)
@@ -69,56 +69,56 @@ void TableManager::changeListenerCallback(ChangeBroadcaster *source)
                     if(button->getMode()==1)
                     {
                         tables[i]->setVisible(true);
-                        button->setVisibilityStatus("foreground");
-                        tables[i]->setAlpha(1.f);
-
-                        for(int c=0; c<tableButtons.size(); c++)
-                            if(button!=tableButtons[c])
-                            {
-                                tableButtons[c]->setVisibilityStatus("background");
-                                button->setMode(0);
-                            }
-
+						button->setVisibilityStatus("foreground");
+						tables[i]->setAlpha(1.f);
+						
+						for(int c=0; c<tableButtons.size(); c++)
+							if(button!=tableButtons[c])
+							{
+								tableButtons[c]->setVisibilityStatus("background");
+								button->setMode(0);
+							}
+						
                         tables[i]->toFront(true);
                         if(tables[i]->genRoutine != 2)
                             tables[i]->getHandleViewer()->showHandles(true);
                     }
                     else if(button->getMode()==0)
-                    {
+					{
                         tables[i]->setVisible(false);
-                        button->setVisibilityStatus("off");
-                    }
+						button->setVisibilityStatus("off");
+					}
 
                 }
                 else
-                {
+				{
                     tables[i]->getHandleViewer()->showHandles(false);
-                    tables[i]->setAlpha(.5f);
-                }
+					tables[i]->setAlpha(.5f);
+				}
 
             bringButtonsToFront();
         }
         repaint();
     }
-    else
-    {
-        GenTable* table = dynamic_cast<GenTable*>(source);
-        if(table->changeMessage=="updateScrollingPosition")
-            if(table)
-            {
-                for(int i=0; i<tables.size(); i++)
-                {
-                    if(table!=tables[i])
-                    {
-                        float moveBy = table->getNewRangeStart()/ table->visibleRange.getLength();
-                        moveBy = tables[i]->visibleRange.getLength()*moveBy;
-                        tables[i]->setRange(tables[i]->visibleRange.movedToStartAt (moveBy), true);
-                    }
-                }
-
-            }
-    }
-
+	else
+	{
+		GenTable* table = dynamic_cast<GenTable*>(source);
+		if(table->changeMessage=="updateScrollingPosition")
+			if(table)
+			{
+				for(int i=0; i<tables.size(); i++)
+				{
+					if(table!=tables[i])
+					{
+						float moveBy = table->getNewRangeStart()/ table->visibleRange.getLength();
+						moveBy = tables[i]->visibleRange.getLength()*moveBy;
+						tables[i]->setRange(tables[i]->visibleRange.movedToStartAt (moveBy), true);
+					}
+				}
+				
+			}
+	}
+	
 }
 //==============================================================================
 void TableManager::addTable(int sr, const String col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener)
@@ -129,23 +129,23 @@ void TableManager::addTable(int sr, const String col, int gen, Array<float> ampR
     table->addChangeListener(this);
     table->scrollbar->addListener(this);
     table->addChangeListener(listener);
-    if(ampRange.size()==0)
-    {
-        ampRange.add(-1.f);
-        ampRange.add(1.f);
-        ampRange.add(0.f);
-        ampRange.add(0.01);
-    }
+	if(ampRange.size()==0)
+	{
+		ampRange.add(-1.f);
+		ampRange.add(1.f);
+		ampRange.add(0.f);
+		ampRange.add(0.01);
+	}
     table->addTable(sr, col, gen, ampRange);
-    addAndMakeVisible(table);
+	addAndMakeVisible(table);
     tables.add(table);
     RoundButton* button = new RoundButton(String(ftnumber), Colours::findColourForName(col, Colours::white));
     button->addChangeListener(this);
     addAndMakeVisible(button);
     tableButtons.add(button);
     resized();
-
-    bringButtonsToFront();
+	
+	bringButtonsToFront();
 
 }
 //==============================================================================
@@ -193,20 +193,20 @@ void TableManager::setGridColour(Colour col)
     for(int i=0; i<tables.size(); i++)
     {
         tables[i]->gridColour = col;
-        if(col.getAlpha()==0x00)
-            tables[i]->drawGrid = false;
-    }
+		if(col.getAlpha()==0x00)
+			tables[i]->drawGrid = false;
+    }	
 }
 
 void TableManager::setBackgroundColour(Colour col)
-{
-    backgroundColour = col;
+{	
+backgroundColour = col;	
 //    for(int i=0; i<tables.size(); i++)
 //    {
 //        tables[i]->setBackgroundColour(col);
 //		if(col.getAlpha()==0xff)
 //			tables[i]->setOpaque(true);
-//    }
+//    }	
 }
 //==============================================================================
 void TableManager::setRange(double start, double end)
@@ -230,27 +230,27 @@ void TableManager::setOutlineThickness(float thickness)
 {
     for(int i=0; i<tables.size(); i++)
     {
-        tables[i]->setTraceThickness(thickness);
-    }
+            tables[i]->setTraceThickness(thickness);
+    }	
 }
 
 void TableManager::setFill(bool fill)
 {
     for(int i=0; i<tables.size(); i++)
     {
-        tables[i]->shouldFillTable(fill);
-    }
+            tables[i]->shouldFillTable(fill);
+    }	
 }
 
 void TableManager::setVUGradient(Array<Colour> colour)
 {
-
+	
     ColourGradient vuGradient(colour[0], 0.f, 0.f, colour[2], getWidth(), getHeight(), false);
     vuGradient.addColour(.5, colour[1]);
 
     for(int i=0; i<tables.size(); i++)
     {
-        tables[i]->setVUGradient(vuGradient);
+            tables[i]->setVUGradient(vuGradient);
     }
 
 }
@@ -271,12 +271,12 @@ void TableManager::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newR
 
 void TableManager::setScrubberPos(double pos, int ftnumber)
 {
-    if(getTableFromFtNumber(ftnumber))
-    {
-        scrubberPosition = pos/getTableFromFtNumber(ftnumber)->tableSize;
-        for(int i=0; i<tables.size(); i++)
-            tables[i]->setScrubberPos(scrubberPosition);
-    }
+	if(getTableFromFtNumber(ftnumber))
+	{
+		scrubberPosition = pos/getTableFromFtNumber(ftnumber)->tableSize;
+		for(int i=0; i<tables.size(); i++)
+			tables[i]->setScrubberPos(scrubberPosition);
+	}
 }
 
 void TableManager::timerCallback()
@@ -292,11 +292,11 @@ void TableManager::resized()
 
     for(int i =0; i<tables.size(); i++)
     {
-        tables[i]->setBounds(0, 0, getWidth(), getHeight());
+        tables[i]->setBounds(0, 0, getWidth(), getHeight());		
     }
 
-    if(tables.size())
-        tables[tables.size()-1]->shouldDrawGrid(true);
+	if(tables.size())
+		tables[tables.size()-1]->shouldDrawGrid(true);
 
     if(tableConfigList.size()==1)
         shouldShowTableButtons=false;
@@ -367,7 +367,7 @@ GenTable* TableManager::getTableFromFtNumber(int ftnumber)
         if(tables[i]->tableNumber==ftnumber)
             return tables[i];
     }
-    //else return first table, which will be valid
+	//else return first table, which will be valid
     return tables[0];
 }
 
@@ -421,10 +421,10 @@ void TableManager::setWaveform(AudioSampleBuffer buffer, int ftNumber)
 {
     for( int i=0; i<tables.size(); i++)
         if(ftNumber==tables[i]->tableNumber)
-        {
+		{
             tables[i]->setWaveform(buffer);
-            return;
-        }
+			return;
+		}
 }
 
 //==============================================================================
@@ -432,10 +432,10 @@ void TableManager::setFile(const File file)
 {
     for( int i=0; i<tables.size(); i++)
         if(tables[i]->tableNumber==0)
-        {
+		{
             tables[i]->setFile(file);
-            return;
-        }
+			return;
+		}
 }
 
 //==============================================================================
@@ -443,10 +443,10 @@ void TableManager::setWaveform(Array<float, CriticalSection> buffer, int ftNumbe
 {
     for( int i=0; i<tables.size(); i++)
         if(ftNumber==tables[i]->tableNumber)
-        {
+		{
             tables[i]->setWaveform(buffer, updateRange);
-            return;
-        }
+			return;
+		}
 }
 //==============================================================================
 void TableManager::enableEditMode(StringArray pFields, int ftNumber)
@@ -500,9 +500,9 @@ GenTable::GenTable():	thumbnailCache (5),
     quantiseSpace(0.01),
     qsteps(0),
     drawAsVUMeter(false),
-    drawGrid(false),
-    shouldFill(true),
-    vuGradient(Colours::yellow, 0.f, 0.f, Colours::red, getWidth(), getHeight(), false)
+	drawGrid(false),
+	shouldFill(true),
+	vuGradient(Colours::yellow, 0.f, 0.f, Colours::red, getWidth(), getHeight(), false)
 {
     thumbnail=nullptr;
     addAndMakeVisible(scrollbar = new ScrollBar(false));
@@ -517,7 +517,7 @@ GenTable::GenTable():	thumbnailCache (5),
     minMax.setStart(0);
     minMax.setEnd(0);
     handleViewer->minMax = minMax;
-
+	
 }
 //==============================================================================
 GenTable::~GenTable()
@@ -531,7 +531,7 @@ void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRang
 {
     sampleRate = sr;
     colour = Colours::findColourForName(col, Colours::white);
-    currentPositionMarker->setFill(colour.withAlpha(.5f));
+	currentPositionMarker->setFill(colour.withAlpha(.5f));
     genRoutine = abs(igen);
     handleViewer->handleViewerGen = igen;
     realGenRoutine = igen;
@@ -547,10 +547,10 @@ void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRang
         thumbnail->addChangeListener (this);
         setZoomFactor (0.0);
     }
-    else
-        setBufferedToImage(true);
-
-
+	else
+		setBufferedToImage(true);
+		
+	
 }
 //==============================================================================
 void GenTable::setAmpRanges(Array<float> ampRange)
@@ -567,12 +567,12 @@ void GenTable::setAmpRanges(Array<float> ampRange)
         if(ampRange.size()>3)
         {
             quantiseSpace = ampRange[3];
-            //cUtils::debug(minMax.getEnd());
+			//cUtils::debug(minMax.getEnd());
             qsteps = quantiseSpace/minMax.getEnd();
-            if(qsteps==1) {
-                handleViewer->setShowingGrid(true);
+            if(qsteps==1){
+				handleViewer->setShowingGrid(true);
                 handleViewer->showHandles(false);
-            }
+			}
         }
     }
     repaint();
@@ -583,34 +583,34 @@ void GenTable::changeListenerCallback(ChangeBroadcaster *source)
     currentHandle = dynamic_cast<HandleComponent*>(source);
 
     if(currentHandle)
-    {
-        //fill coordinate string and send change message to plugin editor to show bubble
-        coordinates = "";
-        coordinates << roundToIntAccurate(currentHandle->xPosRelative*waveformBuffer.size()) <<
-                    ", " << (float)jlimit(minMax.getStart(), minMax.getEnd(), pixelToAmp(thumbArea.getHeight()-10, minMax, currentHandle->getY()));
+    {			
+		//fill coordinate string and send change message to plugin editor to show bubble
+		coordinates = "";
+		coordinates << roundToIntAccurate(currentHandle->xPosRelative*waveformBuffer.size()) <<
+		 ", " << (float)jlimit(minMax.getStart(), minMax.getEnd(), pixelToAmp(thumbArea.getHeight()-10, minMax, currentHandle->getY()));
 
-        //no need to update function table no movement has taken place
-        if(currentHandle->mouseStatus!="mouseEnter")
-        {
-            changeMessage = "updateFunctionTable";
-            sendChangeMessage();
-        }
-        else {
-            changeMessage = "onMouseEnter";
-            sendChangeMessage();
-
-        }
-
+		//no need to update function table no movement has taken place
+		if(currentHandle->mouseStatus!="mouseEnter")
+		{
+			changeMessage = "updateFunctionTable";
+			sendChangeMessage();
+		}
+		else{
+			changeMessage = "onMouseEnter";
+			sendChangeMessage();
+			
+		}
+			
     }
 }
 //==============================================================================
 void GenTable::resized()
 {
-    if(!displayAsGrid())
-        handleViewer->setSize(getWidth(), getHeight()-paintFooterHeight-10);
-    else
-        handleViewer->setSize(getWidth(), getHeight());
-
+	if(!displayAsGrid())
+		handleViewer->setSize(getWidth(), getHeight()-paintFooterHeight-10);
+	else
+		handleViewer->setSize(getWidth(), getHeight());
+		
     if(scrollbar)
         if(showScroll)
             scrollbar->setBounds (getLocalBounds().withWidth(getWidth()-scrollbarReduction).removeFromBottom (mainFooterHeight-5).reduced(2));
@@ -666,11 +666,11 @@ Array<double> GenTable::getPfields()
 
     for(int i=0; i<handleViewer->handles.size(); i++)
     {
-        currYPos = handleViewer->handles[i]->yPosRelative*handleViewer->getHeight();
+		currYPos = handleViewer->handles[i]->yPosRelative*handleViewer->getHeight();
         if(genRoutine==7 || genRoutine==5)
         {
             currXPos = handleViewer->handles[i]->xPosRelative*waveformBuffer.size();
-
+			
             //add x position
             values.add(jmax(0.0, ceil(currXPos-prevXPos)));
             //hack to prevent csound from bawking with a 0 in gen05
@@ -685,31 +685,31 @@ Array<double> GenTable::getPfields()
         }
         else if(genRoutine==2)
         {
-            if(this->displayAsGrid())
-            {
-                float amp = pixelToAmp(handleViewer->getHeight(), minMax, currYPos);
-                values.add(round(amp));
-            }
-            else
-            {
-                float amp = pixelToAmp(handleViewer->getHeight(), minMax, currYPos);
-                values.add(amp);
-
-            }
+			if(this->displayAsGrid())
+			{
+				float amp = pixelToAmp(handleViewer->getHeight(), minMax, currYPos);
+				values.add(round(amp));
+			}
+			else
+			{
+				float amp = pixelToAmp(handleViewer->getHeight(), minMax, currYPos);
+				values.add(amp);
+			
+			}
         }
     }
-
+	
     return values;
 }
 
 //==============================================================================
 void GenTable::setWaveform(AudioSampleBuffer buffer)
 {
-    //we will deal with large tables as we would a GEN01 for efficiency
+	//we will deal with large tables as we would a GEN01 for efficiency
     if(genRoutine==1 || buffer.getNumSamples()>MAX_TABLE_SIZE)
     {
         tableSize = buffer.getNumSamples();
-        genRoutine=1;
+		genRoutine=1;
         thumbnail->clear();
         repaint();
         thumbnail->reset(buffer.getNumChannels(), 44100, buffer.getNumSamples());
@@ -728,12 +728,12 @@ void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRang
     if(genRoutine != 1)
     {
         waveformBuffer.clear();
-        waveformBuffer = buffer;
-        //waveformBuffer.swapWith(buffer);
+		waveformBuffer = buffer;
+		//waveformBuffer.swapWith(buffer);
         tableSize = waveformBuffer.size();
 
         handleViewer->tableSize = tableSize;
-
+		
         if(updateRange == true)
         {
             const Range<double> newRange (0.0, buffer.size()/sampleRate);
@@ -748,8 +748,8 @@ void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRang
             handleViewer->minMax = minMax;
         }
 
-        //if(genRoutine==2 && qsteps==1)
-        //	drawGridImage(true, getWidth(), getHeight(), 0.0);
+		//if(genRoutine==2 && qsteps==1)
+		//	drawGridImage(true, getWidth(), getHeight(), 0.0);
 
         repaint();
     }
@@ -764,9 +764,9 @@ void GenTable::enableEditMode(StringArray m_pFields)
     if(m_pFields.size()>1)
         pFields = m_pFields;
 
-    //only enable editing on non normalising tables
-    if(realGenRoutine>=0)
-        return;
+	//only enable editing on non normalising tables
+	if(realGenRoutine>=0)
+		return;
 
     Array<float, CriticalSection> pFieldAmps;
     pFieldAmps.add (pFields[5].getFloatValue());
@@ -778,13 +778,13 @@ void GenTable::enableEditMode(StringArray m_pFields)
     normalised = pFields[4].getIntValue();
     double xPos = 0;
     handleViewer->handles.clear();
-    const double thumbHeight = getHeight()-paintFooterHeight-10;
-    int pfieldCount=0;
+	const double thumbHeight = getHeight()-paintFooterHeight-10;
+	int pfieldCount=0;
 
 
     if(pFields.size()>0)
     {
-        const double width = (double(getWidth())/(double)tableSize);
+		const double width = (double(getWidth())/(double)tableSize);
 
         if(genRoutine==7 || genRoutine==5)
         {
@@ -795,7 +795,7 @@ void GenTable::enableEditMode(StringArray m_pFields)
             {
                 xPos = xPos + pFields[i].getFloatValue();
                 pFieldAmpValue = (normalised<0 ? pFields[i+1].getFloatValue() : pFields[i+1].getFloatValue()/pFieldMinMax.getEnd());
-                handleViewer->addHandle(xPos/(double)waveformBuffer.size(), ampToPixel(thumbHeight, minMax, pFieldAmpValue), (width>10 ? width : 15), (width>10 ? 5 : 15), this->colour);
+				handleViewer->addHandle(xPos/(double)waveformBuffer.size(), ampToPixel(thumbHeight, minMax, pFieldAmpValue), (width>10 ? width : 15), (width>10 ? 5 : 15), this->colour);
             }
             handleViewer->fixEdgePoints(genRoutine);
         }
@@ -803,24 +803,24 @@ void GenTable::enableEditMode(StringArray m_pFields)
         {
             float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
             handleViewer->addHandle(0, ampToPixel(thumbHeight, minMax, pFieldAmpValue), width+1, 5, this->colour);
+            
 
-
-            for(double i=6; i<pFields.size(); i++)
+			for(double i=6; i<pFields.size(); i++)
             {
-                pfieldCount++;
+				pfieldCount++;
                 xPos = (i-5.0)/(double(tableSize))*tableSize;
                 pFieldAmpValue = (normalised<0 ? pFields[i].getFloatValue() : pFields[i].getFloatValue()/pFieldMinMax.getEnd());
                 handleViewer->addHandle(xPos/tableSize, ampToPixel(thumbHeight, minMax, pFieldAmpValue), width+1, 5, this->colour);
             }
-
-            //initialise all remaining points in the table if user hasn't
-            for(double i=pfieldCount; i<tableSize; i++)
+			
+			//initialise all remaining points in the table if user hasn't
+			for(double i=pfieldCount; i<tableSize; i++)
             {
                 xPos = (i+1)/(double(tableSize))*tableSize;
                 pFieldAmpValue = pFieldMinMax.getEnd();
                 handleViewer->addHandle(xPos/tableSize, ampToPixel(thumbHeight, minMax, pFieldAmpValue), width+1, 5, this->colour);
-            }
-
+            }			
+			
             handleViewer->fixEdgePoints(genRoutine);
             handleViewer->showHandles(false);
         }
@@ -868,38 +868,38 @@ void GenTable::setZoomFactor (double amount)
 //==============================================================================
 const Image GenTable::drawGridImage(bool redraw, double width, double height, double offset)
 {
-    if(redraw==true)
-    {
-        Image gridImage(Image::RGB, width, height, true);
-        Graphics g(gridImage);
-        const double widthOfGridElement = width/waveformBuffer.size();
+	if(redraw==true)
+	{
+		Image gridImage(Image::RGB, width, height, true);
+		Graphics g(gridImage);
+		const double widthOfGridElement = width/waveformBuffer.size();
+		
+		//g.setColour(Colours::red);
+		//draw grid image
+		for(double i=0;i<waveformBuffer.size();i++)
+		{
+		g.drawImageAt(cUtils::drawToggleImage(widthOfGridElement-3.f, 
+													height, 
+													(waveformBuffer[i]>0.0 ? true : false), 
+													colour, 
+													true, 
+													""), 
+					  i*(widthOfGridElement)+2, 
+					  1.f);
+		}
+		
+		
+		//g.strokePath(p, PathStrokeType(1));
+		//return a clipped image
+		Rectangle<int> clippedImage(offset*-1, 0, width, height);
+		return gridImage.getClippedImage(clippedImage);
+	}
+	else
+	{
+		return Image();
+	}
 
-        //g.setColour(Colours::red);
-        //draw grid image
-        for(double i=0; i<waveformBuffer.size(); i++)
-        {
-            g.drawImageAt(cUtils::drawToggleImage(widthOfGridElement-3.f,
-                                                  height,
-                                                  (waveformBuffer[i]>0.0 ? true : false),
-                                                  colour,
-                                                  true,
-                                                  ""),
-                          i*(widthOfGridElement)+2,
-                          1.f);
-        }
-
-
-        //g.strokePath(p, PathStrokeType(1));
-        //return a clipped image
-        Rectangle<int> clippedImage(offset*-1, 0, width, height);
-        return gridImage.getClippedImage(clippedImage);
-    }
-    else
-    {
-        return Image();
-    }
-
-    return Image();
+ return Image();
 }
 
 //==============================================================================
@@ -937,7 +937,7 @@ void GenTable::mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel
 //==============================================================================
 void GenTable::setRange(Range<double> newRange, bool isScrolling)
 {
-    visibleRange = newRange;
+	visibleRange = newRange;
 
     if(newRange.getLength()>0)
     {
@@ -946,7 +946,7 @@ void GenTable::setRange(Range<double> newRange, bool isScrolling)
         if(genRoutine!=1)
         {
 
-
+			
             visibleStart = visibleRange.getStart()*sampleRate;
             //Logger::writeToLog("VisibleStart:"+String(visibleRange.getStart()));
             visibleEnd = visibleRange.getEnd()*sampleRate;
@@ -978,28 +978,28 @@ void GenTable::paint (Graphics& g)
     thumbArea = getLocalBounds();
     thumbArea.setHeight(getHeight()-paintFooterHeight);
     float prevY=0, prevX=0, currY=0, currX=0;
-    const double scrollingResolution = (zoom == 0 ? 1 : 0.1);
-    const bool interp = (getWidth()<tableSize ? true : false);
-    const double thumbHeight = thumbArea.getHeight()-(showScroll==true? 10 : 0);//scrollbar thickness
-    numPixelsPerIndex = ((double)thumbArea.getWidth() / visibleLength);
-    Path vuPath;
-
-    //don't draw a grid when the table itself is a grid
-    if(drawGrid==true && qsteps!=1)
-    {
-        g.setColour(gridColour);
-        //g.drawImageAt(backgroundImage, 0, 0, true);
-        const double divisors = (getWidth()>300 ? 20.0 : 10.0);
-        for(float i=0; i<getWidth(); i+=(interp ? getWidth()/divisors : numPixelsPerIndex))
-            g.drawVerticalLine(i+1, 0, thumbHeight);
-
-        g.drawVerticalLine(getWidth()-1, 0, thumbHeight);
-
-        for(double i=0; i<=thumbHeight; i+=(getHeight()+2.0)/divisors)
-            g.drawHorizontalLine(i, 1, getWidth());
-
-        g.drawHorizontalLine(thumbHeight-.5, 1, getWidth());
-    }
+	const double scrollingResolution = (zoom == 0 ? 1 : 0.1);
+	const bool interp = (getWidth()<tableSize ? true : false);
+	const double thumbHeight = thumbArea.getHeight()-(showScroll==true? 10 : 0);//scrollbar thickness
+	numPixelsPerIndex = ((double)thumbArea.getWidth() / visibleLength);
+	Path vuPath;
+	
+	//don't draw a grid when the table itself is a grid
+	if(drawGrid==true && qsteps!=1)
+	{
+		g.setColour(gridColour);
+		//g.drawImageAt(backgroundImage, 0, 0, true);
+		const double divisors = (getWidth()>300 ? 20.0 : 10.0);
+		for(float i=0;i<getWidth();i+=(interp ? getWidth()/divisors : numPixelsPerIndex))
+			g.drawVerticalLine(i+1, 0, thumbHeight);
+			
+		g.drawVerticalLine(getWidth()-1, 0, thumbHeight);
+		
+		for(double i=0;i<=thumbHeight;i+=(getHeight()+2.0)/divisors)
+			g.drawHorizontalLine(i, 1, getWidth());			
+		
+		g.drawHorizontalLine(thumbHeight-.5, 1, getWidth());		
+	}
 
     //if gen01 then use an audio thumbnail class
     if(genRoutine==1 || waveformBuffer.size()>MAX_TABLE_SIZE)
@@ -1014,77 +1014,77 @@ void GenTable::paint (Graphics& g)
     //edit handles get placed on the handleViewer, which is placed on top of this component
     else
     {
-        vuPath.startNewSubPath(0, thumbArea.getHeight()+5.f);
-
-        //if drawing VU meter then we don't need a high resolution for the draing.
-        float incr = (tableSize<=2 ? 1 : visibleLength/((double)thumbArea.getWidth()));
+		vuPath.startNewSubPath(0, thumbArea.getHeight()+5.f);
+		
+		//if drawing VU meter then we don't need a high resolution for the draing. 
+		float incr = (tableSize<=2 ? 1 : visibleLength/((double)thumbArea.getWidth())); 
         prevY = ampToPixel(thumbHeight, minMax, waveformBuffer[0]);
-        float midPoint;
-        bool drawTrace=true;
+		float midPoint;
+		bool drawTrace=true;
 
-        if(genRoutine==7 || genRoutine==5 || genRoutine==2 || genRoutine==27) {
-            midPoint = ampToPixel(thumbHeight, minMax, minMax.getStart());
-            drawTrace= false;
-        }
+		if(genRoutine==7 || genRoutine==5 || genRoutine==2 || genRoutine==27){
+			midPoint = ampToPixel(thumbHeight, minMax, minMax.getStart());
+			drawTrace= false;
+		}
+			
+		else
+			midPoint = ampToPixel(thumbHeight, minMax, minMax.getLength()/2.f-minMax.getEnd());
 
-        else
-            midPoint = ampToPixel(thumbHeight, minMax, minMax.getLength()/2.f-minMax.getEnd());
-
-        int gridIndex=ceil(visibleStart);
-        float lineDepth=1;
+		int gridIndex=ceil(visibleStart);
+		float lineDepth=1;
         for(double i=visibleStart; i<=visibleEnd; i+=incr)
         {
-            //when qsteps == 1 we draw a grid
-            if(qsteps==1)
-            {
-                if(cUtils::compDouble(i, gridIndex))
-                {
-                    gridIndex++;
-                    g.drawImageAt(drawGridImage(true, handleViewer->getWidth(), thumbHeight-4, handleViewer->getX()), 0, 0, false);
-                }
-            }
+				//when qsteps == 1 we draw a grid
+				if(qsteps==1)
+				{
+					if(cUtils::compDouble(i, gridIndex))
+					{
+						gridIndex++;
+						g.drawImageAt(drawGridImage(true, handleViewer->getWidth(), thumbHeight-4, handleViewer->getX()), 0, 0, false);
+					}
+				}
+				
+				else
+				{
+					//minMax is the range of the current waveforms amplitude
+					currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
+					if(tableSize<=2)
+					{
+						//if table is size of two or less draw as a VU meter using a path. 
+						vuPath.addRectangle(prevX, prevY, prevX+numPixelsPerIndex, thumbHeight);
+						//vuPath.lineTo(prevX+numPixelsPerIndex, prevY);
+					}
+					else
+					{
+						if(shouldFill)
+						{
+							g.setColour(colour.withAlpha(.2f));
+							g.drawVerticalLine(prevX, (prevY<midPoint ? prevY : midPoint),  (prevY>midPoint ? prevY : midPoint));
+						}
+						if(traceThickness>0)
+						{
+							g.setColour(colour);				
+							//draw trace 
+							currX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);
+							g.drawLine(prevX, prevY, currX, currY, traceThickness);
+						}
+					}
 
-            else
-            {
-                //minMax is the range of the current waveforms amplitude
-                currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
-                if(tableSize<=2)
-                {
-                    //if table is size of two or less draw as a VU meter using a path.
-                    vuPath.addRectangle(prevX, prevY, prevX+numPixelsPerIndex, thumbHeight);
-                    //vuPath.lineTo(prevX+numPixelsPerIndex, prevY);
-                }
-                else
-                {
-                    if(shouldFill)
-                    {
-                        g.setColour(colour.withAlpha(.2f));
-                        g.drawVerticalLine(prevX, (prevY<midPoint ? prevY : midPoint),  (prevY>midPoint ? prevY : midPoint));
-                    }
-                    if(traceThickness>0)
-                    {
-                        g.setColour(colour);
-                        //draw trace
-                        currX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);
-                        g.drawLine(prevX, prevY, currX, currY, traceThickness);
-                    }
-                }
+					prevX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);				
+					prevY = currY;				
 
-                prevX = jmax(0.0, (i-visibleStart)*numPixelsPerIndex);
-                prevY = currY;
+					}
+				}
+		}
 
-            }
+		vuPath.lineTo(prevX, thumbArea.getHeight());
+		vuPath.closeSubPath();
+
+        if(tableSize<=2)
+        {
+            g.setGradientFill(vuGradient);
+			g.fillPath(vuPath);
         }
-    }
-
-    vuPath.lineTo(prevX, thumbArea.getHeight());
-    vuPath.closeSubPath();
-
-    if(tableSize<=2)
-    {
-        g.setGradientFill(vuGradient);
-        g.fillPath(vuPath);
-    }
 
 }
 
@@ -1180,38 +1180,39 @@ void GenTable::setScrubberPos(double pos)
         {
             //take care of scrolling...
             if(timePos<thumbnail->getTotalLength()/25.f)
-            {
+			{
                 setRange (visibleRange.movedToStartAt(0));
-                newRangeStart = 0;
-            }
+				newRangeStart = 0;
+			}
             else if(visibleRange.getEnd()<=thumbnail->getTotalLength() && zoom>0.0)
-            {
+			{
                 setRange (visibleRange.movedToStartAt (jmax(0.0, timePos - (visibleRange.getLength() / 2.0))));
-                newRangeStart = jmax(0.0, timePos - (visibleRange.getLength() / 2.0));
-                changeMessage = "updateScrollingPosition";
-                sendChangeMessage();
-            }
+				newRangeStart = jmax(0.0, timePos - (visibleRange.getLength() / 2.0));
+				changeMessage = "updateScrollingPosition";
+				sendChangeMessage();
+			}
 
-
+		
         }
     }
-    else if(genRoutine==2)
-    {
-        currentPositionMarker->setVisible (true);
-        double waveformLengthSeconds = (double)waveformBuffer.size()/sampleRate;
-        double timePos = pos*waveformLengthSeconds;
-        currentPositionMarker->setRectangle (juce::Rectangle<float> (timeToX (timePos), 0,
-                                             numPixelsPerIndex, thumbArea.getHeight()));
-
-        if(this->showScroll)
-        {
-            if(timePos<(waveformLengthSeconds)/25.f)
-                setRange (visibleRange.movedToStartAt(0));
-            else if(visibleRange.getEnd()<=waveformLengthSeconds && zoom>0.0)
-                setRange (visibleRange.movedToStartAt (jmax(0.0, timePos - (visibleRange.getLength()/2.0))));
-        }
-    }
-
+	else if(genRoutine==2)
+	{
+		currentPositionMarker->setVisible (true);
+		double waveformLengthSeconds = (double)waveformBuffer.size()/sampleRate;		
+		double timePos = pos*waveformLengthSeconds;		
+		currentPositionMarker->setRectangle (juce::Rectangle<float> (timeToX (timePos), 0,
+											 numPixelsPerIndex, thumbArea.getHeight()));
+		
+		if(this->showScroll)
+		{									 
+		if(timePos<(waveformLengthSeconds)/25.f)
+			setRange (visibleRange.movedToStartAt(0));
+		else
+			if(visibleRange.getEnd()<=waveformLengthSeconds && zoom>0.0)
+				setRange (visibleRange.movedToStartAt (jmax(0.0, timePos - (visibleRange.getLength()/2.0))));
+		}		
+	}
+	
 }
 
 
@@ -1245,11 +1246,11 @@ void HandleViewer::addHandle(double x, double y, double width, double height, Co
     {
         //set up handle, and pass relative x and y values as well as gen and colour
         HandleComponent* handle = new HandleComponent(x, y/getHeight(), handles.size(), false, table->genRoutine, colour);
-        const double width = (getWidth()/tableSize);
-        handle->setSize((width>10 ? width+1 : FIXED_WIDTH), (width>10 ? 5 : FIXED_WIDTH));
-        handle->setPosition(getWidth()*x, y, (handle->getWidth()==FIXED_WIDTH ? true : false));
+		const double width = (getWidth()/tableSize);  
+        handle->setSize((width>10 ? width+1 : FIXED_WIDTH), (width>10 ? 5 : FIXED_WIDTH));      
+		handle->setPosition(getWidth()*x, y, (handle->getWidth()==FIXED_WIDTH ? true : false));
 
-        handle->addChangeListener(table);
+		handle->addChangeListener(table);
         handle->status=true;
         handles.add(handle);
         addAndMakeVisible(handles[handles.size()-1]);
@@ -1276,11 +1277,11 @@ void HandleViewer::insertHandle(double x, double y, Colour colour)
 
         HandleComponent* handle = new HandleComponent(x, y/getHeight(), handles.size(), false, table->genRoutine, colour);
 
-        const double width = (getWidth()/tableSize);
+		const double width = (getWidth()/tableSize);         
         handle->setSize((width>10 ? width+1 : FIXED_WIDTH), (width>10 ? 5 : FIXED_WIDTH));
-        handle->setPosition(getWidth()*x, y, (handle->getWidth()==FIXED_WIDTH ? true : false));
+		handle->setPosition(getWidth()*x, y, (handle->getWidth()==FIXED_WIDTH ? true : false));
         handle->addChangeListener(table);
-        handle->setUniqueID(indx);
+		handle->setUniqueID(indx);
         addAndMakeVisible(handle);
         handles.insert(indx, handle);
         handle->status=true;
@@ -1292,11 +1293,11 @@ void HandleViewer::insertHandle(double x, double y, Colour colour)
 //==============================================================================
 void HandleViewer::showHandles(bool show)
 {
-    shouldShowHandles = show;
-    for (int i=0; i<handles.size(); i++)
-    {
-        //handles[i]->setColour(Colours::transparentBlack);
-    }
+    	shouldShowHandles = show;
+    	for (int i=0; i<handles.size(); i++)
+    	{
+    		//handles[i]->setColour(Colours::transparentBlack);
+    	}
 }
 //==============================================================================
 void HandleViewer::mouseDown(const MouseEvent& e)
@@ -1322,63 +1323,63 @@ void HandleViewer::positionHandle(const MouseEvent& e)
     double steps = (minMax.getEnd()/getParentTable()->quantiseSpace);
     double ySnapPos;
 
-    bool handleExists = false;
-
-    if(abs(handleViewerGen)==2)
-        handleExists = true;
-
-
-    for(int i=0; i<handles.size(); i++)
-    {
-        const double handleX = handles[i]->getPosition().getX();
-        const double handleXWidth = handles[i]->getWidth();
-        if(e.x>handleX && e.x<handleX+handleXWidth)
-        {
-            if(steps==1) 	//if toggle mode is enabled..
-            {
-                //cUtils::debug(getSnapYPosition(getHeight()*int(handles[i]->status));
-                handles[i]->status=!handles[i]->status;
-                handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapYPosition(getHeight()*int(handles[i]->status))));
-                handles[i]->setRelativePosition(handles[i]->getPosition().toDouble().withY(getSnapYPosition(getHeight()*double(handles[i]->status))));
-                handles[i]->sendChangeMessage();
-                handleExists=true;
-            }
-            else
-            {
-                handles[i]->setTopLeftPosition(getSnapXPosition(e.x), getSnapYPosition(double(e.y)));
-                Point<double> relPos(handles[i]->getPosition().getX(), handles[i]->getPosition().getY());
-                handles[i]->setRelativePosition(relPos);
-                handles[i]->sendChangeMessage();
-                handleExists=true;
-            }
-        }
-    }
-
-    //if handle doesn't exist, create one
-    if(handleExists==false)
-    {
-        insertHandle(getSnapXPosition(e.x)/(double)getWidth(), getSnapYPosition(e.y), colour);
-    }
-
+	bool handleExists = false;
+	
+	if(abs(handleViewerGen)==2)
+		handleExists = true;
+		
+		
+	for(int i=0; i<handles.size(); i++)
+	{
+		const double handleX = handles[i]->getPosition().getX();
+		const double handleXWidth = handles[i]->getWidth();
+		if(e.x>handleX && e.x<handleX+handleXWidth)
+		{			
+			if(steps==1) 	//if toggle mode is enabled..
+			{
+				//cUtils::debug(getSnapYPosition(getHeight()*int(handles[i]->status));
+				handles[i]->status=!handles[i]->status;
+				handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapYPosition(getHeight()*int(handles[i]->status))));
+				handles[i]->setRelativePosition(handles[i]->getPosition().toDouble().withY(getSnapYPosition(getHeight()*double(handles[i]->status))));
+				handles[i]->sendChangeMessage();
+				handleExists=true;
+			}
+			else
+			{				
+				handles[i]->setTopLeftPosition(getSnapXPosition(e.x), getSnapYPosition(double(e.y)));
+				Point<double> relPos(handles[i]->getPosition().getX(), handles[i]->getPosition().getY());
+				handles[i]->setRelativePosition(relPos);
+				handles[i]->sendChangeMessage();
+				handleExists=true;
+			}
+		}
+	}
+	
+	//if handle doesn't exist, create one	
+	if(handleExists==false)
+	{
+		insertHandle(getSnapXPosition(e.x)/(double)getWidth(), getSnapYPosition(e.y), colour);
+	}
+		
 }
 
 double HandleViewer::getSnapXPosition(const double x)
 {
     if(getWidth()<getParentTable()->tableSize)
-        return x;
-
+		return x;
+	
     double tableSize = getParentTable()->tableSize;
     double jump = (double)getWidth()/(double)getParentTable()->tableSize;
 
     for(double i=0; i<=tableSize; i++)
     {
-        if(x>i*jump && x<(i+1)*jump)
-        {
-            return i*jump;
-        }
+		if(x>i*jump && x<(i+1)*jump)
+		{
+			return i*jump;
+		}
     }
 
-    return getWidth();
+	return getWidth();
 }
 
 double HandleViewer::getSnapYPosition(const double y)
@@ -1388,7 +1389,7 @@ double HandleViewer::getSnapYPosition(const double y)
     double steps = (minMax.getEnd()/getParentTable()->quantiseSpace);
 //	if(steps!=1)
 //		return y;
-
+		
     double jump = (getParentTable()->quantiseSpace/minMax.getEnd())*getHeight();
     for(double c=0; c<=steps; c++)
     {
@@ -1403,20 +1404,20 @@ double HandleViewer::getSnapYPosition(const double y)
 //==============================================================================
 void HandleViewer::resized()
 {
-
+	
     for(int i=0; i<handles.size(); i++)
     {
-        const float width = getWidth()/tableSize;
-        const float height = handles[i]->getHeight();
-        handles[i]->setSize((width>10 ? width : FIXED_WIDTH), (width>10 ? 5 : FIXED_WIDTH));
-        const double handleWidth = handles[i]->getWidth();
-        handles[i]->setPosition(((double)getWidth()*handles[i]->xPosRelative), ((double)getHeight()*handles[i]->yPosRelative), (handleWidth==FIXED_WIDTH ? true : false));
+		const float width = getWidth()/tableSize;
+		const float height = handles[i]->getHeight();
+		handles[i]->setSize((width>10 ? width : FIXED_WIDTH), (width>10 ? 5 : FIXED_WIDTH));
+		const double handleWidth = handles[i]->getWidth();
+		handles[i]->setPosition(((double)getWidth()*handles[i]->xPosRelative), ((double)getHeight()*handles[i]->yPosRelative), (handleWidth==FIXED_WIDTH ? true : false));
 
-        if(handles[i]->getWidth()>15)
-            showHandles(false);
-
-        //handles[i]->setVisible(false);
-
+		if(handles[i]->getWidth()>15)
+			showHandles(false);
+		
+		//handles[i]->setVisible(false);
+		
     }
 }
 //==============================================================================
@@ -1508,26 +1509,26 @@ void HandleComponent::setColour(Colour icolour)
 void HandleComponent::paint (Graphics& g)
 {
     //g.setColour(Colours::transparentBlack);
-    if(abs(genRoutine)!=2)
+	if(abs(genRoutine)!=2)
     {
-        //g.drawLine(0, (getHeight()/2.f), getWidth(), (getHeight()/2.f), 1.f);
-        //g.drawLine(getWidth()/2.f, 0, getWidth()/2.f, getHeight(), 1.f);
-        g.setColour(colour);
-        if(getWidth()<=15)
-        {
-            //g.setColour(colour.withAlpha(.4f));
-            //g.drawLine(0, 7, getWidth(), 7, 1);
-            //g.drawLine(7, 0, 7, getHeight(), 1);
-            g.drawEllipse(3, 3, 9, 9, 1);
-        }
-        else
-        {
-            g.setColour(colour);
-            g.drawRoundedRectangle(getLocalBounds().reduced(1.2f).toFloat(), 2.f, 1.f);
-            g.setColour(colour.withAlpha(.7f));
-            g.drawRoundedRectangle(getLocalBounds().toFloat(), 2.f, 1.f);
-        }
-    }
+		//g.drawLine(0, (getHeight()/2.f), getWidth(), (getHeight()/2.f), 1.f);
+		//g.drawLine(getWidth()/2.f, 0, getWidth()/2.f, getHeight(), 1.f);
+		g.setColour(colour);
+		if(getWidth()<=15)
+		{
+		//g.setColour(colour.withAlpha(.4f));	
+		//g.drawLine(0, 7, getWidth(), 7, 1);
+		//g.drawLine(7, 0, 7, getHeight(), 1);
+		g.drawEllipse(3, 3, 9, 9, 1);		
+		}
+		else
+		{
+			g.setColour(colour);
+			g.drawRoundedRectangle(getLocalBounds().reduced(1.2f).toFloat(), 2.f, 1.f);
+			g.setColour(colour.withAlpha(.7f));
+			g.drawRoundedRectangle(getLocalBounds().toFloat(), 2.f, 1.f);		
+		}
+	}
 }
 
 //==================================================================================
@@ -1539,8 +1540,8 @@ void HandleComponent::removeThisHandle()
 void HandleComponent::mouseEnter (const MouseEvent& e)
 {
     setMouseCursor (MouseCursor::DraggingHandCursor);
-    mouseStatus = "mouseEnter";
-    sendChangeMessage();
+	mouseStatus = "mouseEnter";
+	sendChangeMessage();
 }
 //==================================================================================
 void HandleComponent::mouseUp (const MouseEvent& e)
@@ -1570,13 +1571,13 @@ void HandleComponent::mouseDown (const MouseEvent& e)
     //users can delete handles here, and will be able to set the curve type
     //when gen16 is added to the mix.
 
-    if(getWidth()==FIXED_WIDTH)
-        x = getX();
-    else
-        x = getX()+getWidth()/2.f;
-
+	if(getWidth()==FIXED_WIDTH)
+		x = getX();
+	else 
+		x = getX()+getWidth()/2.f;
+		
     y = getY();
-
+	
 
     setMouseCursor (MouseCursor::DraggingHandCursor);
     dragger.startDraggingComponent (this, e);
@@ -1593,17 +1594,17 @@ void HandleComponent::mouseDown (const MouseEvent& e)
         pop.addItem(4, "Delete");
         pop.showMenuAsync(PopupMenu::Options(), ModalCallbackFunction::forComponent(popupMenuCallback, this));
     }
-
-    mouseStatus = "mouseDown";
-    sendChangeMessage();
+	
+	mouseStatus = "mouseDown";
+	sendChangeMessage();
 }
 //==================================================================================
 void HandleComponent::setPosition(double x, double y, bool circularEnv)
 {
-    if(circularEnv)
-        setTopLeftPosition(x-getWidth()/2.f, y-getHeight()/2.f);
-    else
-        setTopLeftPosition(x, y-getHeight()/2.f);
+if(circularEnv)
+	setTopLeftPosition(x-getWidth()/2.f, y-getHeight()/2.f); 
+else
+    setTopLeftPosition(x, y-getHeight()/2.f); 
 }
 //==================================================================================
 HandleComponent* HandleComponent::getPreviousHandle()
@@ -1634,63 +1635,63 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
     double xPos = x+e.getDistanceFromDragStartX();
     double yPos = y+e.getDistanceFromDragStartY();
 
-    HandleViewer* viewer = getParentHandleViewer();
-    const double handleViewerWidth = viewer->getWidth();
-    const double genTableWidth = getParentGenTable()->getWidth();
+	HandleViewer* viewer = getParentHandleViewer();
+	const double handleViewerWidth = viewer->getWidth();
+	const double genTableWidth = getParentGenTable()->getWidth();
 
-    //if not gen02 it means handles can be moved from left to right
-    if(abs(genRoutine)!=2)
-    {
-        if(getWidth()==FIXED_WIDTH)
-        {
-            const int previousX = previousHandle == 0 ? 0 : previousHandle->getX()+getWidth()/2.f;
-            const int nextX = nextHandle == 0 ? getParentWidth() : nextHandle->getX()+getWidth()/2.f;
+	//if not gen02 it means handles can be moved from left to right
+	if(abs(genRoutine)!=2)
+	{
+		if(getWidth()==FIXED_WIDTH)
+		{
+			const int previousX = previousHandle == 0 ? 0 : previousHandle->getX()+getWidth()/2.f;
+			const int nextX = nextHandle == 0 ? getParentWidth() : nextHandle->getX()+getWidth()/2.f;
 
-            if(fixed && xPos>viewer->getWidth()/2.f)
-            {
-                xPos = x+getWidth()/2.f + handleViewerWidth/genTableWidth;
-            }
+			if(fixed && xPos>viewer->getWidth()/2.f)
+			{
+				xPos = x+getWidth()/2.f + handleViewerWidth/genTableWidth;
+			}
 
-            else if(fixed && xPos<viewer->getWidth()/2.f)
-                xPos = 1.f;
+			else if(fixed && xPos<viewer->getWidth()/2.f)
+				xPos = 1.f;
 
-            else if(previousX>=xPos)
-                xPos = previousX+1;
+			else if(previousX>=xPos)
+				xPos = previousX+1;
 
-            else if(xPos+getWidth() > nextX)
-                xPos = nextX+1;
-        }
-        else
-        {
-            const int previousX = previousHandle == 0 ? 0 : previousHandle->getX()+1;
-            const int nextX = nextHandle == 0 ? getParentWidth() : nextHandle->getX()-1;
-            if(fixed && xPos>viewer->getWidth()/2.f)
-            {
-                xPos = x+getWidth()/2.f + handleViewerWidth/genTableWidth;
-            }
+			else if(xPos+getWidth() > nextX)
+				xPos = nextX+1;
+		}
+		else
+		{
+			const int previousX = previousHandle == 0 ? 0 : previousHandle->getX()+1;
+			const int nextX = nextHandle == 0 ? getParentWidth() : nextHandle->getX()-1;
+			if(fixed && xPos>viewer->getWidth()/2.f)
+			{
+				xPos = x+getWidth()/2.f + handleViewerWidth/genTableWidth;
+			}
 
-            else if(fixed && xPos<viewer->getWidth()/2.f)
-                xPos = 1.f;
+			else if(fixed && xPos<viewer->getWidth()/2.f)
+				xPos = 1.f;
 
-            else if(xPos-(getWidth()/2)<=previousX+getWidth())
-            {
-                xPos = previousX+getWidth()+1;
-            }
+			else if(xPos-(getWidth()/2)<=previousX+getWidth())
+			{
+				xPos = previousX+getWidth()+1;
+			}
 
-            else if(xPos+1 > nextX)
-                xPos = nextX;
-
-        }
-
-    }
-    else
-    {
-        //with a gen02 each handle is fixed in place.
-        xPos = x;
-    }
-
-    yPos = jlimit(0.0, getParentComponent()->getHeight()+0.0, yPos);
-    setPosition(viewer->getSnapXPosition(xPos), viewer->getSnapYPosition(yPos), (getWidth()==FIXED_WIDTH ? true : false));
+			else if(xPos+1 > nextX)
+				xPos = nextX;
+			
+		}
+		
+	}
+	else
+	{
+		//with a gen02 each handle is fixed in place.
+		xPos = x;
+	}
+	
+	yPos = jlimit(0.0, getParentComponent()->getHeight()+0.0, yPos);
+	setPosition(viewer->getSnapXPosition(xPos), viewer->getSnapYPosition(yPos), (getWidth()==FIXED_WIDTH ? true : false));
 
 
     setRelativePosition(Point<double>(viewer->getSnapXPosition(xPos), viewer->getSnapYPosition(yPos)));

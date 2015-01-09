@@ -60,7 +60,7 @@ public:
                                 float maxSliderPos,
                                 const Slider::SliderStyle style,
                                 Slider &slider);
-
+								  
     class SliderLabelComp;
     Label* createSliderTextBox (Slider&) override;
     void drawButtonBackground (Graphics&, Button&, const Colour&, bool, bool);
@@ -143,7 +143,7 @@ public:
 
     const Drawable* getDefaultFolderImage() override;
     const Drawable* getDefaultDocumentFileImage() override;
-    ScopedPointer<Drawable> folderImage, documentImage;
+	ScopedPointer<Drawable> folderImage, documentImage;
     AttributedString createFileChooserHeaderText (const String& title, const String& instructions) override;
 
     void drawFileBrowserRow (Graphics&, int width, int height,

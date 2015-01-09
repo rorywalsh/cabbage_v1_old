@@ -25,6 +25,7 @@ cp cabbage.desktop CabbageBuild/cabbage.desktop
 cp ./build/CabbagePluginSynth.so CabbageBuild/CabbagePluginSynth.so
 cp ./build/CabbagePluginEffect.so CabbageBuild/CabbagePluginEffect.so
 cp -rf ../../Docs/ CabbageBuild/Docs
+cp -rf ../../Examples/ CabbageBuild/Examples
 cp ../../Images/logo_cabbage_black_no_text.png CabbageBuild/logo.png
 sed "s@CURRENTDIR@$(pwd)@" dummy.desktop > CabbageBuild/cabbage.desktop
 cp CabbageBuild/cabbage.desktop ~/.local/share/applications/

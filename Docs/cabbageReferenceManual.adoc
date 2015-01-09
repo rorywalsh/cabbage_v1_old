@@ -18,7 +18,7 @@ bounds() must be set for every widget. All other identifiers will be given defau
 === Button
 [source]
 ----
-button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), value(val), colour("colour"), fontcolour("colour"), latched(val), identchannel("channel"), alpha(val), visible(val), caption("caption"), widgetarray("chan", number)
+button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), value(val), colour("colour"), fontcolour("colour"), latched(val), identchannel("channel"), alpha(val), visible(val), caption("caption"), rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 ----
 
 ---
@@ -49,6 +49,8 @@ NOTE: You can create an invisible button by setting the colour to something with
 
 `identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>>  
 
+`rotate(radians, pivotx, pivoty)` Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
+
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
@@ -65,10 +67,11 @@ NOTE: colour:1() and fontcolour:1() can be set using colour() and fontcolour(). 
 
 image:images/buttonExample.png[Buttons]
 
+[[button]]
 === Button (File button)
 [source]
 -------------
-filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), mode("mode"), widgetarray("chan", number)
+filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), mode("mode"), rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 -------------
 
 A filebutton can be used to select files from disk. The filename selected, or created will be sent to Csound on the named channel as a string message. Filebuttons can also be used to select snapshot files for Cabbage to save parameter presets. See the populate identifier below.  
@@ -84,6 +87,8 @@ A filebutton can be used to select files from disk. The filename selected, or cr
 `fontcolour("colour")` Sets the colour of the text that appears with the slider. See above for details on valid colours.
 
 `identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
+
+`rotate(radians, pivotx, pivoty)` Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
@@ -103,10 +108,11 @@ A filebutton can be used to select files from disk. The filename selected, or cr
 
 image:images/filebuttonExample.png[Buttons]
 
+[[infobutton]]
 === Button (Information button)
 [source]
 ----
-infobutton bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour") file("file name"), identchannel("chan"), alpha(val), visible(val), widgetarray("chan", number)
+infobutton bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour") file("file name"), identchannel("chan"), alpha(val), visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 ----
 
 ---
@@ -129,6 +135,8 @@ Infobuttons can be used to open html files in the system's default web browser. 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
+`rotate(radians, pivotx, pivoty)` Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
+
 `widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
@@ -136,16 +144,17 @@ Infobuttons can be used to open html files in the system's default web browser. 
 
 image:images/infobuttonExample.png[csound output]
 
+[[checkbox]]
 === Check Box
 [source]
 -----------------------------------------------------------------------------------------------
-checkbox bounds(x, y, width, height), channel("chan"), text("name"), value(val), caption("Caption"), colour:0("colour"), colour:1("colour"), shape("shape"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), widgetarray("chan", number)
+checkbox bounds(x, y, width, height), channel("chan"), text("name"), value(val), caption("Caption"), colour:0("colour"), colour:1("colour"), shape("shape"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 -----------------------------------------------------------------------------------------------
 
 Checkbox creates a checkbox which functions like a button, but the associated caption will not change when the user checks it. As with all widgets capable of sending data to Csound, the channel string is the channel on which the widget will communicate with Csound. 
 
 ---
-====Identifiers
+==== Identifiers
 `bounds(x, y, width, height)` integer values that set position and size on screen(in pixels). 
 
 `channel("chan")` "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode. 
@@ -168,6 +177,8 @@ NOTE: You can create an invisible checkbox by setting the colour to something wi
 
 `shape("shape")` Sets the shape of the LED. Default is "square" but users can use "circle" also. 
 
+`rotate(radians, pivotx, pivoty)` Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
+
 `identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>> 
 
 `alpha(val)` A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
@@ -184,10 +195,11 @@ NOTE: colour:1() can be set using colour(). However, it's recommended that you u
 
 image:images/checkboxExample.png[Checkboxes]
 
+[[combobox]]
 === Combo Box
 [source]
 -------
-combobox bounds(x, y, width, height), channel("chan"), value(val), items("item1", "item2", ...), populate("filetype", "dir"), channeltype("type"), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption"), widgetarray("chan", number)
+combobox bounds(x, y, width, height), channel("chan"), value(val), items("item1", "item2", ...), populate("filetype", "dir"), channeltype("type"), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption"), rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 -------
 
 ---
@@ -218,6 +230,8 @@ Combobox creates a drop-down list of items which users can choose from. Once the
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
+`rotate(radians, pivotx, pivoty)` Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
+
 `widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
@@ -225,6 +239,7 @@ Combobox creates a drop-down list of items which users can choose from. Once the
 
 image:images/comboboxExample.png[Combo]
 
+[[csoundoutput]]
 === Csound Output Widget
 [source]
 ----
@@ -256,10 +271,11 @@ csoundoutput will display Csound output messages within your instrument`s GUI. T
 
 image:images/csoundOutputExample.png[csound output]
 
+[[gentable]]
 === GenTable
 [source]
 ----
-gentable bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val), scrubberposition(val), widgetarray("chan", number)
+gentable bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val), scrubberposition(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 ----
 
 gentable displays the contents of a function table, multiple tables, or files. Function tables that use a negative GEN05, GEN07 or GEN02 can be edited by clicking and dragging on the table. Only tables of size less or equal to 16384 points can be manually edited. If you wish to save any tables that you create you can use one of Csound's built-in table saving opcode "ftsave". If you need only display the contents of a static sound file from disk, use soundfiler as it will be fast and use less CPU. If on the other hand you wish to create some user editable envelopes, or display FFT or live waveform data use table. 
@@ -302,6 +318,8 @@ NOTE: The background grid is disabled when working with a table that use the fil
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default
 
+`rotate(radians, pivotx, pivoty)` Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
+
 `widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 [icon="images/smallLogo.PNG"]
@@ -312,7 +330,7 @@ NOTE: If you need to redraw tables quickly, make sure they don't use negative GE
 
 image:images/tableExample.png[table]
 
-
+[[form]]
 === Form
 [source]
 ----
@@ -341,9 +359,10 @@ NOTE: Every plugin must have a unique plugin ID. If you experience problems load
 
 image:images/formExample.png[form]
 
+[[groupbox]]
 === Group Box
 [source]
-groupbox bounds(x, y, width, height), text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), popup(val), child(val), visible(val), alpha(val), show(val), identchannel("channel"), widgetarray("chan", number)
+groupbox bounds(x, y, width, height), text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), popup(val), child(val), visible(val), alpha(val), show(val), identchannel("channel"), rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 
 
 Groupbox creates a container for other GUI widgets. They do not communicate with Csound but can be useful for organising widgets into panels.
@@ -374,6 +393,8 @@ Groupbox creates a container for other GUI widgets. They do not communicate with
 
 `identchannel("channel")` Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <<identchannels,Controlling Widgets from Csound>>  
 
+`rotate(radians, pivotx, pivoty)` Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
+
 `widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
@@ -381,10 +402,11 @@ Groupbox creates a container for other GUI widgets. They do not communicate with
 
 image:images/groupBoxExample.png[form]
 
+[[image]]
 === Image
 [source]
 ----
-image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outline("colour"), line(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val), widgetarray("chan", number)
+image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outline("colour"), line(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 ----
 
 Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. For convenience, the file passed to file() should be in the same directory as your Cabbage instrument. 
@@ -415,6 +437,8 @@ NOTE: Try to avoid full path names at all costs. They will work fine on a local 
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
+`rotate(radians, pivotx, pivoty)` Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
+
 `widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 
@@ -423,6 +447,7 @@ NOTE: Try to avoid full path names at all costs. They will work fine on a local 
 
 image:images/imageExample.png[image]
   
+[[keyboard]]
 ===  Keyboard
 [source]
 ----
@@ -449,11 +474,11 @@ NOTE: The keyboard can be played at different velocities depending on where you 
 
 image:images/keyboardExample.png[keyboard]
 
-
+[[label]]
 === Label
 [source]
 ----
-label bounds(x, y, width, height), text("text"), colour("colour"), fontcolour("colour"), align("position"), identchannel("channel"), alpha(val), visible(val), widgetarray("chan", number)
+label bounds(x, y, width, height), text("text"), colour("colour"), fontcolour("colour"), align("position"), identchannel("channel"), alpha(val), visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 ----
 
 Labels can be used for placing text on-screen. 
@@ -477,6 +502,8 @@ Labels can be used for placing text on-screen.
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
+`rotate(radians, pivotx, pivoty)` Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
+
 `widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
@@ -484,12 +511,12 @@ Labels can be used for placing text on-screen.
 
 image:images/labelExample.png[image]
 
-
+[[vslider]][[vslider2]][[vslider3]][[hslider]][[hslider2]][[hslider3]][[rslider]]
 === Sliders
 [source]
 ----
 hslider bounds(x, y, width, height), channel("chan"), text("name"), textbox(val), range(min, max, value, skew, incr), min(val), max(val), 
-textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption"), widgetarray("chan", number)
+textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption"), rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 ----
 
 Slider can be used to create an on-screen slider. Data can be sent to Csound on the channel specified through the chan string. Presented above is the syntax for a horizontal slider, i.e., hslider. In order to change it to another slider type simple substitute hslider with the appropriate slider type as outlined below. 
@@ -528,6 +555,8 @@ Slider can be used to create an on-screen slider. Data can be sent to Csound on 
 
 `caption("caption")` This identifier will place the widget within a groupbox. "caption" is the text that will appear on group box. This identifier is included for legacy purposes only. It is recommended that you use use your own groupbox component as it will give you far more control over how everything appears on your instrument. 
 
+`rotate(radians, pivotx, pivoty)` Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
+
 `widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 Slider types::
@@ -554,10 +583,11 @@ NOTE: Make sure to use two unique channel names when using hslider2 and vslider2
 
 image:images/sliderExample.png[Sliders]
 
+[[soundfiler]]
 === Soundfiler
 [source]
 ----
-soundfiler bounds(x, y, width, height), channel("start", "end"), colour("colour1"), zoom(val), tablenumber(val), file("filename"), scrubberpos(val), identchannel("channel"), alpha(val), visible(val), widgetarray("chan", number)
+soundfiler bounds(x, y, width, height), channel("start", "end"), colour("colour1"), zoom(val), tablenumber(val), file("filename"), scrubberpos(val), identchannel("channel"), alpha(val), visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 ----
 
 soundfiler will display the contents of a sound file, or a function table containing a sound file (GEN01 tables). This is a fast waveform viewer that allows users to select regions of the waveform. Unlike the table widget, soundfiler can only display one waveform at a time. 
@@ -584,6 +614,8 @@ soundfiler will display the contents of a sound file, or a function table contai
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default
 
+`rotate(radians, pivotx, pivoty)` Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
+
 `widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
@@ -591,14 +623,16 @@ soundfiler will display the contents of a sound file, or a function table contai
 
 image:images/soundfilerExample.png[table]
 
+[[table]]
 === Table (deprecated)
 
 Please use gentable, or soundfiler instead. If you wish to update instrument that used the table widget, you can simply replace table with gentable. The table widget will remain in the code base so that older instruments which use it will continue to work.  
  
+[[textbox]]
 === Text Box
 [source]
 --------------
-textbox bounds(x, y, width, height), file("filename"), colour("colour"), fontcolour("colour"), wrap(val), alpha(val), visible(val), widgetarray("chan", number)
+textbox bounds(x, y, width, height), file("filename"), colour("colour"), fontcolour("colour"), wrap(val), alpha(val), visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 --------------
 
 Textbox will display the contents of a text file. This can be useful for placing instructions and information directly on to an instrument.  
@@ -621,6 +655,8 @@ Textbox will display the contents of a text file. This can be useful for placing
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
+`rotate(radians, pivotx, pivoty)` Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
+
 `widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
@@ -628,11 +664,11 @@ Textbox will display the contents of a text file. This can be useful for placing
 
 image:images/textboxExample.png[textbox]
 
-
+[[texteditor]]
 === Text Editor
 [source]
 --------------
-texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour("colour"), fontcolour("colour"), alpha(val), visible(val), widgetarray("chan", number) 
+texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour("colour"), fontcolour("colour"), alpha(val), visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number) 
 --------------
 
 *Texteditor can be used to send strings to Csound. Hitting return will send the string to Csound on a named string channel. Pressing the up and down buttons when the texteditor is in focus will toggle through the previous strings that have been sent.*+
@@ -654,6 +690,8 @@ texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour
 
 `visible(val)` A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
+`rotate(radians, pivotx, pivoty)` Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
+
 `widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
 ---
@@ -662,7 +700,7 @@ texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour
 image:images/texteditorExample.png[textbox]
 
 
-
+[[xypad]]
 === XY Pad
 [source]
 -----
@@ -705,15 +743,36 @@ NOTE: XY pads range identifiers do not permit the setting of skew factors, or in
 image:images/xypadExample.png[xypad]
 
 [[plants]]
+== The GUI Designer
+Users can enable the GUI designer by turning on "Edit-mode" in the *Options* menu. With edit mode enabled new widgets can be inserted by right-clicking on the instrument's main form and choosing the relevant widget to insert. Widgets are grouped into two categories.
+
+`Indigenous` These are all the standard Cabbage widgets such as rsliders, buttons, etc..
+
+`Homegrown` These are any widgets that you have added to the repository. 
+
+Once a widget has been placed onto the form, an identifier properties dialogue window will open. Identifiers can be modified by clicking on the appropriate property box. Hitting the *Escape* or *Esc* key on the keyboard will update the widget and update the Cabbage code. Clicking on a widget will also highlight the current widget's Cabbage code.    
+
+image:images/editMode.gif[editMode]
+
+Multiple widgets can be selected by dragging over them. Once selected they can be moved around the screen and duplicated, but they can't be resized in a single move. To do this one must group the widgets into a <<plants,Plant>>. Once the widgets have been grouped as a plant, they can be resized by dragging the corner of the plant. The newly created plant can also be added to the Plant repository by right-clicking and selecting the 'Add to Repository' command. 
+
+image:images/editMode2.gif[editMode2]
+
+Note that the GUI designer is there for quickly developing and prototyping GUIs. While it can save some time in the early stages of development, for complex GUIs it is recommended to hard code the widget's attributes.  
+
+
+[[plants]]
 == Plants
 
-Cabbage plants are GUI abstractions that contain one or more controls. These abstractions are used as anchors to the child widgets contained within. All widgets contained within a plant have top and left positions which are relative the the top left position of the parent. Resizing the plant will in turn resize all the widgets contained within. While all widgets can be children of a plant, only group boxes and images can be used as plants themselves. Adding a plant identifier to an image or group box definition will cause them to act as containers. The plant() identifier takes a string that denotes the name of the plant. Plant names must be unique within an instrument or plants will end up being placed on top of each other. When using an image or a group box as a plant, you must enclose the code from the widgets that follow in curly brackets to indicate which controls belong to the plant. In the code below a group box control is set up as a plant, and three child sliders are placed within it.
+Cabbage plants are GUI abstractions that contain one or more controls. These abstractions are used as anchors to the child widgets contained within. All widgets contained within a plant have top and left positions which are relative the the top left position of the parent. Resizing the plant will in turn resize all the widgets contained within. While all widgets can be children of a plant, only group boxes and images can be used as plants themselves. Adding a plant identifier to an image or group box definition will cause them to act as containers. 
+
+The plant() identifier takes a string that denotes the name of the plant. Plant names must be unique within an instrument or plants will end up being placed on top of each other. When using an image or a group box as a plant, you must enclose the code from the widgets that follow in curly brackets to indicate which controls belong to the plant. In the code below a group box control is set up as a plant, and three child sliders are placed within it.
 
 image:images/plantsExample.png[plants]
 
 The values passed to bounds() for the child controls are absolute pixel values, from the top left of the parent component. For example, `bounds(10, 10, 50, 50)` will cause a child widget to appear half way across the plant, and half way down. While `bounds(10, 10, 200, 200)` will cause the child control to be 10 pixels from the top/left, and have a size of 200x200 pixels.   
-
 The major advantage to using plant abstractions is that you can easily move and resize them without needing to modify the dimensions of the child widgets contained within. You can also save your plants and recall them later from a plant repository. Plants are intended to be reused across instruments so users do not have to keep rebuilding GUIs from scratch. They can also be used to give your plugins a unique look and feel. 
+
 
 [[identchannels]]
 == Controlling Widgets from Csound
@@ -733,7 +792,6 @@ Identifier channels can also be used with <<plants, Plants>>. In the following e
 image:images/togglingPlants.gif[plants] 
 
 While Cabbage comes with several fun animation examples, please keep in mind that it is not a fraemwork for developing animations! The more widgets you manipulate, and the speed at which you modify them at will inevitably cause a drain on the CPU. The key here is to only call chnset when it is absolutely required. 
-
 
 == Macros
 Cabbage specific macros can be used to define a range of difference identifiers, a provide tidy way of achieving a consistent look and feel across your instrument's widgets without having to hard code each and every one of a widget's identifiers. To create a macro one must define it using a #define keyword. The following code will create a macro called SLIDER1 that will define several attributes of a slider widget:
@@ -768,6 +826,9 @@ The first checkbox widget will have a channel named "test_1", and an ident-chann
 image:images/widgetArray1.png[plants]
 
 For more details on how to controls widgets from Csound code look at <<identchannels, Controlling Widgets from Csound>> 
+
+[icon="images/smallLogo.PNG"]
+NOTE: Widget arrays don't work with plants!
 
 == Reserved Channels
 Cabbage reserves several channels which are used to send information to Csound from either the host application, or from Cabbage itself. To retrieve info from any of these channels just use a chnget opcode.
@@ -830,7 +891,7 @@ NOTE: One should get into the habit of updating/saving their instruments when th
 
 === Export/Export as...
 
-This command will export your Cabbage instrument as a plugin. Clicking 'synth' or 'effect' will cause Cabbage to create a plugin file in the same directory as the .csd file you are currently using. When 'exporting as...' Cabbage will prompt you to save your plugin in a set location, under a specific name. Once Cabbage has created the plugin it will make a copy of the current .csd file and locate it in the same folder as the plugin. This new .csd file will have the same name as the plugin and should ALWAYS be in the same directory as the plugin file. 
+This command will export your Cabbage instrument as a plugin, that is, it will create a new plugin library file along with a copy of the Csound text file. Clicking 'synth' or 'effect' will cause Cabbage to create a plugin file in the same directory as the .csd file you are currently using. When 'exporting as...' Cabbage will prompt you to save your plugin in a set location, under a specific name. Once Cabbage has created the plugin it will make a copy of the current .csd file and locate it in the same folder as the plugin. This new .csd file will have the same name as the plugin and should ALWAYS be in the same directory as the plugin file. 
 
 [icon="images/smallLogo.PNG"]
 NOTE: You do not need to keep exporting instruments as plugins every time you modify them. You need only modify the associated .csd file. To simplify this task, Cabbage will automatically load the associated .csd file whenever you export as a plugin. On OSX Cabbage can open a plugin's .csd file directly be selecting the plugin when prompted to select a file to open.   

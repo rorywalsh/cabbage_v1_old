@@ -1766,25 +1766,25 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 <li>
 <ul class="sectlevel2">
 <li><a href="#_button">Button</a></li>
-<li><a href="#_button_file_button">Button (File button)</a></li>
-<li><a href="#_button_information_button">Button (Information button)</a></li>
-<li><a href="#_check_box">Check Box</a></li>
-<li><a href="#_combo_box">Combo Box</a></li>
-<li><a href="#_csound_output_widget">Csound Output Widget</a></li>
-<li><a href="#_gentable">GenTable</a></li>
-<li><a href="#_form">Form</a></li>
-<li><a href="#_group_box">Group Box</a></li>
-<li><a href="#_image">Image</a></li>
-<li><a href="#_keyboard">Keyboard</a></li>
-<li><a href="#_label">Label</a></li>
-<li><a href="#_sliders">Sliders</a></li>
-<li><a href="#_soundfiler">Soundfiler</a></li>
-<li><a href="#_table_deprecated">Table (deprecated)</a></li>
-<li><a href="#_text_box">Text Box</a></li>
-<li><a href="#_text_editor">Text Editor</a></li>
-<li><a href="#_xy_pad">XY Pad</a></li>
+<li><a href="#button">Button (File button)</a></li>
+<li><a href="#infobutton">Button (Information button)</a></li>
+<li><a href="#checkbox">Check Box</a></li>
+<li><a href="#combobox">Combo Box</a></li>
+<li><a href="#csoundoutput">Csound Output Widget</a></li>
+<li><a href="#gentable">GenTable</a></li>
+<li><a href="#form">Form</a></li>
+<li><a href="#groupbox">Group Box</a></li>
+<li><a href="#image">Image</a></li>
+<li><a href="#keyboard">Keyboard</a></li>
+<li><a href="#label">Label</a></li>
+<li><a href="#soundfiler">Soundfiler</a></li>
+<li><a href="#table">Table (deprecated)</a></li>
+<li><a href="#textbox">Text Box</a></li>
+<li><a href="#texteditor">Text Editor</a></li>
+<li><a href="#xypad">XY Pad</a></li>
 </ul>
 </li>
+<li><a href="#plants">The GUI Designer</a></li>
 <li><a href="#plants">Plants</a></li>
 <li><a href="#identchannels">Controlling Widgets from Csound</a></li>
 <li><a href="#_macros">Macros</a></li>
@@ -1824,7 +1824,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 <h3 id="_button">Button</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), value(val), colour("colour"), fontcolour("colour"), latched(val), identchannel("channel"), alpha(val), visible(val), caption("caption"), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), value(val), colour("colour"), fontcolour("colour"), latched(val), identchannel("channel"), alpha(val), visible(val), caption("caption"), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <hr>
@@ -1876,6 +1876,9 @@ You can create an invisible button by setting the colour to something with an al
 <p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
+<p><code>rotate(radians, pivotx, pivoty)</code> Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component&#8217;s top-left position.</p>
+</div>
+<div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
 </div>
 <div class="paragraph">
@@ -1909,10 +1912,10 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 </div>
 </div>
 <div class="sect2">
-<h3 id="_button_file_button">Button (File button)</h3>
+<h3 id="button">Button (File button)</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), mode("mode"), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), mode("mode"), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1935,6 +1938,9 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 </div>
 <div class="paragraph">
 <p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
+</div>
+<div class="paragraph">
+<p><code>rotate(radians, pivotx, pivoty)</code> Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component&#8217;s top-left position.</p>
 </div>
 <div class="paragraph">
 <p><code>alpha(val)</code> A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out.</p>
@@ -1964,10 +1970,10 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 </div>
 </div>
 <div class="sect2">
-<h3 id="_button_information_button">Button (Information button)</h3>
+<h3 id="infobutton">Button (Information button)</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>infobutton bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour") file("file name"), identchannel("chan"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>infobutton bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour") file("file name"), identchannel("chan"), alpha(val), visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <hr>
@@ -2001,6 +2007,9 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <div class="paragraph">
+<p><code>rotate(radians, pivotx, pivoty)</code> Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component&#8217;s top-left position.</p>
+</div>
+<div class="paragraph">
 <p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
@@ -2013,19 +2022,20 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 </div>
 </div>
 <div class="sect2">
-<h3 id="_check_box">Check Box</h3>
+<h3 id="checkbox">Check Box</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>checkbox bounds(x, y, width, height), channel("chan"), text("name"), value(val), caption("Caption"), colour:0("colour"), colour:1("colour"), shape("shape"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>checkbox bounds(x, y, width, height), channel("chan"), text("name"), value(val), caption("Caption"), colour:0("colour"), colour:1("colour"), shape("shape"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Checkbox creates a checkbox which functions like a button, but the associated caption will not change when the user checks it. As with all widgets capable of sending data to Csound, the channel string is the channel on which the widget will communicate with Csound.</p>
 </div>
 <hr>
+<div class="sect3">
+<h4 id="_identifiers_4">Identifiers</h4>
 <div class="paragraph">
-<p>====Identifiers
-<code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
+<p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
 </div>
 <div class="paragraph">
 <p><code>channel("chan")</code> "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode.</p>
@@ -2064,6 +2074,9 @@ You can create an invisible checkbox by setting the colour to something with an 
 <p><code>shape("shape")</code> Sets the shape of the LED. Default is "square" but users can use "circle" also.</p>
 </div>
 <div class="paragraph">
+<p><code>rotate(radians, pivotx, pivoty)</code> Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component&#8217;s top-left position.</p>
+</div>
+<div class="paragraph">
 <p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
@@ -2088,6 +2101,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </table>
 </div>
 <hr>
+</div>
 <div class="sect3">
 <h4 id="_example_4">Example</h4>
 <div class="paragraph">
@@ -2096,15 +2110,15 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 </div>
 <div class="sect2">
-<h3 id="_combo_box">Combo Box</h3>
+<h3 id="combobox">Combo Box</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>combobox bounds(x, y, width, height), channel("chan"), value(val), items("item1", "item2", ...), populate("filetype", "dir"), channeltype("type"), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption"), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>combobox bounds(x, y, width, height), channel("chan"), value(val), items("item1", "item2", ...), populate("filetype", "dir"), channeltype("type"), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption"), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_4">Identifiers</h4>
+<h4 id="_identifiers_5">Identifiers</h4>
 <div class="paragraph">
 <p>Combobox creates a drop-down list of items which users can choose from. Once the user selects an item, the index of their selection will be sent to Csound on a channel named by the channel string. The default value is 0.</p>
 </div>
@@ -2145,6 +2159,9 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <div class="paragraph">
+<p><code>rotate(radians, pivotx, pivoty)</code> Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component&#8217;s top-left position.</p>
+</div>
+<div class="paragraph">
 <p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
@@ -2157,7 +2174,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 </div>
 <div class="sect2">
-<h3 id="_csound_output_widget">Csound Output Widget</h3>
+<h3 id="csoundoutput">Csound Output Widget</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>csoundoutput bounds(x, y, width, height), text("name"), colour("colour"), fontcolour("colour"), identchannel("channel"), visible(val), alpha(val), widgetarray("chan", number)</code></pre>
@@ -2168,7 +2185,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_5">Identifiers</h4>
+<h4 id="_identifiers_6">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2203,10 +2220,10 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 </div>
 <div class="sect2">
-<h3 id="_gentable">GenTable</h3>
+<h3 id="gentable">GenTable</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>gentable bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val), scrubberposition(val), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>gentable bounds(x, y, width, height), tableNumber(1, 2, ...), tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise), tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max), zoom(val), outlinethickness(val), identchannel("channel"), alpha(val), visible(val), scrubberposition(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2214,7 +2231,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_6">Identifiers</h4>
+<h4 id="_identifiers_7">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> Integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2306,6 +2323,9 @@ The background grid is disabled when working with a table that use the file() id
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default</p>
 </div>
 <div class="paragraph">
+<p><code>rotate(radians, pivotx, pivoty)</code> Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component&#8217;s top-left position.</p>
+</div>
+<div class="paragraph">
 <p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <div class="admonitionblock note">
@@ -2330,7 +2350,7 @@ If you need to redraw tables quickly, make sure they don&#8217;t use negative GE
 </div>
 </div>
 <div class="sect2">
-<h3 id="_form">Form</h3>
+<h3 id="form">Form</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>form caption("title"), size(Width, Height), pluginid("plug"), colour("colour"), guirefresh(val)</code></pre>
@@ -2341,7 +2361,7 @@ If you need to redraw tables quickly, make sure they don&#8217;t use negative GE
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_7">Identifiers</h4>
+<h4 id="_identifiers_8">Identifiers</h4>
 <div class="paragraph">
 <p><code>caption</code> The string passed to caption will be the string that appears on the main application window.</p>
 </div>
@@ -2379,10 +2399,10 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 </div>
 <div class="sect2">
-<h3 id="_group_box">Group Box</h3>
+<h3 id="groupbox">Group Box</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>groupbox bounds(x, y, width, height), text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), popup(val), child(val), visible(val), alpha(val), show(val), identchannel("channel"), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>groupbox bounds(x, y, width, height), text("Caption"), colour("colour"), fontcolour("colour"), line(value), plant("name"), popup(val), child(val), visible(val), alpha(val), show(val), identchannel("channel"), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2390,7 +2410,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_8">Identifiers</h4>
+<h4 id="_identifiers_9">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2428,6 +2448,9 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 <p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
 </div>
 <div class="paragraph">
+<p><code>rotate(radians, pivotx, pivoty)</code> Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component&#8217;s top-left position.</p>
+</div>
+<div class="paragraph">
 <p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
@@ -2440,10 +2463,10 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 </div>
 <div class="sect2">
-<h3 id="_image">Image</h3>
+<h3 id="image">Image</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outline("colour"), line(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outline("colour"), line(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2451,7 +2474,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_9">Identifiers</h4>
+<h4 id="_identifiers_10">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
 </div>
@@ -2495,6 +2518,9 @@ Try to avoid full path names at all costs. They will work fine on a local machin
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <div class="paragraph">
+<p><code>rotate(radians, pivotx, pivoty)</code> Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component&#8217;s top-left position.</p>
+</div>
+<div class="paragraph">
 <p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
@@ -2507,7 +2533,7 @@ Try to avoid full path names at all costs. They will work fine on a local machin
 </div>
 </div>
 <div class="sect2">
-<h3 id="_keyboard">Keyboard</h3>
+<h3 id="keyboard">Keyboard</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>keyboard bounds(x, y, width, height), value(note), identchannel("channel"), visible(val)</code></pre>
@@ -2551,10 +2577,10 @@ The keyboard can be played at different velocities depending on where you click 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_label">Label</h3>
+<h3 id="label">Label</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>label bounds(x, y, width, height), text("text"), colour("colour"), fontcolour("colour"), align("position"), identchannel("channel"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>label bounds(x, y, width, height), text("text"), colour("colour"), fontcolour("colour"), align("position"), identchannel("channel"), alpha(val), visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2562,7 +2588,7 @@ The keyboard can be played at different velocities depending on where you click 
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_10">Identifiers</h4>
+<h4 id="_identifiers_11">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
 </div>
@@ -2588,6 +2614,9 @@ The keyboard can be played at different velocities depending on where you click 
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <div class="paragraph">
+<p><code>rotate(radians, pivotx, pivoty)</code> Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component&#8217;s top-left position.</p>
+</div>
+<div class="paragraph">
 <p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
@@ -2597,22 +2626,23 @@ The keyboard can be played at different velocities depending on where you click 
 <div class="paragraph">
 <p><span class="image"><img src="images/labelExample.png" alt="image"></span></p>
 </div>
+<div class="paragraph">
+<p><a id="vslider"></a><a id="vslider2"></a><a id="vslider3"></a><a id="hslider"></a><a id="hslider2"></a><a id="hslider3"></a><a id="rslider"></a>
+=== Sliders</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_sliders">Sliders</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>hslider bounds(x, y, width, height), channel("chan"), text("name"), textbox(val), range(min, max, value, skew, incr), min(val), max(val),
-textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption"), widgetarray("chan", number)</code></pre>
+textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolour("colour"), identchannel("channel"), alpha(val), visible(val), caption("caption"), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Slider can be used to create an on-screen slider. Data can be sent to Csound on the channel specified through the chan string. Presented above is the syntax for a horizontal slider, i.e., hslider. In order to change it to another slider type simple substitute hslider with the appropriate slider type as outlined below.</p>
 </div>
 <hr>
+</div>
 <div class="sect3">
-<h4 id="_identifiers_11">Identifiers</h4>
+<h4 id="_identifiers_12">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels).</p>
 </div>
@@ -2660,6 +2690,9 @@ textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolo
 </div>
 <div class="paragraph">
 <p><code>caption("caption")</code> This identifier will place the widget within a groupbox. "caption" is the text that will appear on group box. This identifier is included for legacy purposes only. It is recommended that you use use your own groupbox component as it will give you far more control over how everything appears on your instrument.</p>
+</div>
+<div class="paragraph">
+<p><code>rotate(radians, pivotx, pivoty)</code> Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component&#8217;s top-left position.</p>
 </div>
 <div class="paragraph">
 <p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
@@ -2718,10 +2751,10 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 </div>
 <div class="sect2">
-<h3 id="_soundfiler">Soundfiler</h3>
+<h3 id="soundfiler">Soundfiler</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>soundfiler bounds(x, y, width, height), channel("start", "end"), colour("colour1"), zoom(val), tablenumber(val), file("filename"), scrubberpos(val), identchannel("channel"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>soundfiler bounds(x, y, width, height), channel("start", "end"), colour("colour1"), zoom(val), tablenumber(val), file("filename"), scrubberpos(val), identchannel("channel"), alpha(val), visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2729,7 +2762,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_12">Identifiers</h4>
+<h4 id="_identifiers_13">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> Integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2761,6 +2794,9 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default</p>
 </div>
 <div class="paragraph">
+<p><code>rotate(radians, pivotx, pivoty)</code> Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component&#8217;s top-left position.</p>
+</div>
+<div class="paragraph">
 <p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
@@ -2773,16 +2809,16 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 </div>
 <div class="sect2">
-<h3 id="_table_deprecated">Table (deprecated)</h3>
+<h3 id="table">Table (deprecated)</h3>
 <div class="paragraph">
 <p>Please use gentable, or soundfiler instead. If you wish to update instrument that used the table widget, you can simply replace table with gentable. The table widget will remain in the code base so that older instruments which use it will continue to work.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_text_box">Text Box</h3>
+<h3 id="textbox">Text Box</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>textbox bounds(x, y, width, height), file("filename"), colour("colour"), fontcolour("colour"), wrap(val), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>textbox bounds(x, y, width, height), file("filename"), colour("colour"), fontcolour("colour"), wrap(val), alpha(val), visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2790,7 +2826,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_13">Identifiers</h4>
+<h4 id="_identifiers_14">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2816,6 +2852,9 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <div class="paragraph">
+<p><code>rotate(radians, pivotx, pivoty)</code> Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component&#8217;s top-left position.</p>
+</div>
+<div class="paragraph">
 <p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
@@ -2828,10 +2867,10 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 </div>
 <div class="sect2">
-<h3 id="_text_editor">Text Editor</h3>
+<h3 id="texteditor">Text Editor</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour("colour"), fontcolour("colour"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>texteditor bounds(x, y, width, height), channel("channel"), text("text"), colour("colour"), fontcolour("colour"), alpha(val), visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2839,7 +2878,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_14">Identifiers</h4>
+<h4 id="_identifiers_15">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2862,6 +2901,9 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <div class="paragraph">
+<p><code>rotate(radians, pivotx, pivoty)</code> Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component&#8217;s top-left position.</p>
+</div>
+<div class="paragraph">
 <p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
 </div>
 <hr>
@@ -2874,7 +2916,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 </div>
 <div class="sect2">
-<h3 id="_xy_pad">XY Pad</h3>
+<h3 id="xypad">XY Pad</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>xypad bounds(x, y, width, height), channel("chan1", "chan2"), rangex(min, max, val), rangey(min, max, val), text("name"), identchannel("channel"), colour("colour"), fontcolour("colour"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
@@ -2885,7 +2927,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_identifiers_15">Identifiers</h4>
+<h4 id="_identifiers_16">Identifiers</h4>
 <div class="paragraph">
 <p><code>bounds(x, y, width, height)</code> integer values that set position and size on screen(in pixels)</p>
 </div>
@@ -2943,6 +2985,35 @@ XY pads range identifiers do not permit the setting of skew factors, or incremen
 </div>
 </div>
 <div class="sect1">
+<h2 id="plants">The GUI Designer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Users can enable the GUI designer by turning on "Edit-mode" in the <strong>Options</strong> menu. With edit mode enabled new widgets can be inserted by right-clicking on the instrument&#8217;s main form and choosing the relevant widget to insert. Widgets are grouped into two categories.</p>
+</div>
+<div class="paragraph">
+<p><code>Indigenous</code> These are all the standard Cabbage widgets such as rsliders, buttons, etc..</p>
+</div>
+<div class="paragraph">
+<p><code>Homegrown</code> These are any widgets that you have added to the repository.</p>
+</div>
+<div class="paragraph">
+<p>Once a widget has been placed onto the form, an identifier properties dialogue window will open. Identifiers can be modified by clicking on the appropriate property box. Hitting the <strong>Escape</strong> or <strong>Esc</strong> key on the keyboard will update the widget and update the Cabbage code. Clicking on a widget will also highlight the current widget&#8217;s Cabbage code.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/editMode.gif" alt="editMode"></span></p>
+</div>
+<div class="paragraph">
+<p>Multiple widgets can be selected by dragging over them. Once selected they can be moved around the screen and duplicated, but they can&#8217;t be resized in a single move. To do this one must group the widgets into a <a href="#plants">Plant</a>. Once the widgets have been grouped as a plant, they can be resized by dragging the corner of the plant. The newly created plant can also be added to the Plant repository by right-clicking and selecting the <em>Add to Repository</em> command.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/editMode2.gif" alt="editMode2"></span></p>
+</div>
+<div class="paragraph">
+<p>Note that the GUI designer is there for quickly developing and prototyping GUIs. While it can save some time in the early stages of development, for complex GUIs it is recommended to hard code the widget&#8217;s attributes.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="plants">Plants</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -2952,10 +3023,8 @@ XY pads range identifiers do not permit the setting of skew factors, or incremen
 <p><span class="image"><img src="images/plantsExample.png" alt="plants"></span></p>
 </div>
 <div class="paragraph">
-<p>The values passed to bounds() for the child controls are absolute pixel values, from the top left of the parent component. For example, <code>bounds(10, 10, 50, 50)</code> will cause a child widget to appear half way across the plant, and half way down. While <code>bounds(10, 10, 200, 200)</code> will cause the child control to be 10 pixels from the top/left, and have a size of 200x200 pixels.</p>
-</div>
-<div class="paragraph">
-<p>The major advantage to using plant abstractions is that you can easily move and resize them without needing to modify the dimensions of the child widgets contained within. You can also save your plants and recall them later from a plant repository. Plants are intended to be reused across instruments so users do not have to keep rebuilding GUIs from scratch. They can also be used to give your plugins a unique look and feel.</p>
+<p>The values passed to bounds() for the child controls are absolute pixel values, from the top left of the parent component. For example, <code>bounds(10, 10, 50, 50)</code> will cause a child widget to appear half way across the plant, and half way down. While <code>bounds(10, 10, 200, 200)</code> will cause the child control to be 10 pixels from the top/left, and have a size of 200x200 pixels.
+The major advantage to using plant abstractions is that you can easily move and resize them without needing to modify the dimensions of the child widgets contained within. You can also save your plants and recall them later from a plant repository. Plants are intended to be reused across instruments so users do not have to keep rebuilding GUIs from scratch. They can also be used to give your plugins a unique look and feel.</p>
 </div>
 </div>
 </div>
@@ -3038,6 +3107,18 @@ XY pads range identifiers do not permit the setting of skew factors, or incremen
 </div>
 <div class="paragraph">
 <p>For more details on how to controls widgets from Csound code look at <a href="#identchannels">Controlling Widgets from Csound</a></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+Widget arrays don&#8217;t work with plants!
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -3243,7 +3324,7 @@ Currently this feature is only available on Windows.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-01-04 17:05:27 GMT
+Last updated 2015-01-09 12:33:06 GMT
 </div>
 </div>
 </body>

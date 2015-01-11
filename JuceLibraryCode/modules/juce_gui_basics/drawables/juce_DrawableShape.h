@@ -101,9 +101,6 @@ public:
     /** Sets the fill type with which the outline will be drawn.
         @see setFill
     */
-	
-	void setDashArray(Array<float> array);
-	
     void setStrokeFill (const RelativeFillType& newStrokeFill);
 
     /** Returns the current stroke fill.
@@ -150,6 +147,8 @@ public:
     void paint (Graphics&) override;
     /** @internal */
     bool hitTest (int x, int y) override;
+    /** @internal */
+    bool replaceColour (Colour originalColour, Colour replacementColour) override;
 
 protected:
     //==============================================================================
@@ -167,7 +166,6 @@ protected:
     //==============================================================================
     PathStrokeType strokeType;
     Path path, strokePath;
-	Array<float> dashArray;
 
 private:
     class RelativePositioner;

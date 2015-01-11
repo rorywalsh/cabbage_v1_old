@@ -921,6 +921,7 @@ TextEditor::TextEditor (const String& name,
       totalNumChars (0),
       caretPosition (0),
       passwordCharacter (passwordChar),
+      keyboardType (TextInputTarget::textKeyboard),
       dragType (notDragging)
 {
     setOpaque (true);
@@ -1292,8 +1293,8 @@ void TextEditor::moveCaret (int newCaretPos)
 {
     if (newCaretPos < 0)
         newCaretPos = 0;
-    else if (newCaretPos > getTotalNumChars())
-        newCaretPos = getTotalNumChars();
+    else
+        newCaretPos = jmin (newCaretPos, getTotalNumChars());
 
     if (newCaretPos != getCaretPosition())
     {
@@ -1931,7 +1932,7 @@ bool TextEditor::deleteBackwards (bool moveInWholeWordSteps)
     if (moveInWholeWordSteps)
         moveCaretTo (findWordBreakBefore (getCaretPosition()), true);
     else if (selection.isEmpty() && selection.getStart() > 0)
-        selection.setStart (selection.getEnd() - 1);
+        selection = Range<int> (selection.getEnd() - 1, selection.getEnd());
 
     cut();
     return true;
@@ -1940,7 +1941,7 @@ bool TextEditor::deleteBackwards (bool moveInWholeWordSteps)
 bool TextEditor::deleteForwards (bool /*moveInWholeWordSteps*/)
 {
     if (selection.isEmpty() && selection.getStart() < getTotalNumChars())
-        selection.setEnd (selection.getStart() + 1);
+        selection = Range<int> (selection.getStart(), selection.getStart() + 1);
 
     cut();
     return true;
@@ -2128,7 +2129,7 @@ void TextEditor::enablementChanged()
     repaint();
 }
 
-void TextEditor::setTemporaryUnderlining (const Array <Range<int> >& newUnderlinedSections)
+void TextEditor::setTemporaryUnderlining (const Array<Range<int> >& newUnderlinedSections)
 {
     underlinedSections = newUnderlinedSections;
     repaint();

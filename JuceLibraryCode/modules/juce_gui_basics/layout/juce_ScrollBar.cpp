@@ -191,9 +191,9 @@ void ScrollBar::updateThumbPosition()
                                                               : thumbAreaSize);
 
     LookAndFeel& lf = getLookAndFeel();
-	//RW edit....
-    if (newThumbSize < 15)
-        newThumbSize = jmin (15, thumbAreaSize - 1);
+
+    if (newThumbSize < lf.getMinimumScrollbarThumbSize (*this))
+        newThumbSize = jmin (lf.getMinimumScrollbarThumbSize (*this), thumbAreaSize - 1);
 
     if (newThumbSize > thumbAreaSize)
         newThumbSize = thumbAreaSize;

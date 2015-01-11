@@ -67,7 +67,7 @@ public:
                         selectBasedOnModifiers (item, e.mods);
 
                     if (e.x >= pos.getX())
-                        item->itemClicked (e.withNewPosition (e.getPosition() - pos.getPosition()));
+                        item->itemClicked (e.withNewPosition (e.position - pos.getPosition().toFloat()));
                 }
             }
         }
@@ -92,7 +92,7 @@ public:
             Rectangle<int> pos;
             if (TreeViewItem* const item = findItemAt (e.y, pos))
                 if (e.x >= pos.getX() || ! owner.openCloseButtonsVisible)
-                    item->itemDoubleClicked (e.withNewPosition (e.getPosition() - pos.getPosition()));
+                    item->itemDoubleClicked (e.withNewPosition (e.position - pos.getPosition().toFloat()));
         }
     }
 
@@ -1773,6 +1773,11 @@ TreeViewItem* TreeViewItem::getNextVisibleItem (const bool recurse) const noexce
     return nullptr;
 }
 
+static String escapeSlashesInTreeViewItemName (const String& s)
+{
+    return s.replaceCharacter ('/', '\\');
+}
+
 String TreeViewItem::getItemIdentifierString() const
 {
     String s;
@@ -1780,12 +1785,12 @@ String TreeViewItem::getItemIdentifierString() const
     if (parentItem != nullptr)
         s = parentItem->getItemIdentifierString();
 
-    return s + "/" + getUniqueName().replaceCharacter ('/', '\\');
+    return s + "/" + escapeSlashesInTreeViewItemName (getUniqueName());
 }
 
 TreeViewItem* TreeViewItem::findItemFromIdentifierString (const String& identifierString)
 {
-    const String thisId ("/" + getUniqueName());
+    const String thisId ("/" + escapeSlashesInTreeViewItemName (getUniqueName()));
 
     if (thisId == identifierString)
         return this;

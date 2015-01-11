@@ -97,11 +97,15 @@
 // juce_audio_processors flags:
 
 #ifndef    JUCE_PLUGINHOST_VST
-//#define JUCE_PLUGINHOST_VST
+ #define   JUCE_PLUGINHOST_VST 1
+#endif
+
+#ifndef    JUCE_PLUGINHOST_VST3
+ #define   JUCE_PLUGINHOST_VST3 0
 #endif
 
 #ifndef    JUCE_PLUGINHOST_AU
-//#define JUCE_PLUGINHOST_AU
+ #define   JUCE_PLUGINHOST_AU 1
 #endif
 
 //==============================================================================

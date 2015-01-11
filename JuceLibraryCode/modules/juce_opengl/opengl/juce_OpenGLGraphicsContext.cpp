@@ -38,18 +38,18 @@ struct TextureInfo
 struct CachedImageList  : public ReferenceCountedObject,
                           private ImagePixelData::Listener
 {
-    CachedImageList (size_t totalCacheSizeInPixels = 8 * 1024 * 1024) noexcept
-        : totalSize (0), maxCacheSize (totalCacheSizeInPixels) {}
+    CachedImageList (OpenGLContext& c, size_t totalCacheSizeInPixels = 8 * 1024 * 1024) noexcept
+        : context (c), totalSize (0), maxCacheSize (totalCacheSizeInPixels) {}
 
-    static CachedImageList* get (OpenGLContext& context)
+    static CachedImageList* get (OpenGLContext& c)
     {
         const char cacheValueID[] = "CachedImages";
-        CachedImageList* list = static_cast<CachedImageList*> (context.getAssociatedObject (cacheValueID));
+        CachedImageList* list = static_cast<CachedImageList*> (c.getAssociatedObject (cacheValueID));
 
         if (list == nullptr)
         {
-            list = new CachedImageList();
-            context.setAssociatedObject (cacheValueID, list);
+            list = new CachedImageList (c);
+            c.setAssociatedObject (cacheValueID, list);
         }
 
         return list;
@@ -90,7 +90,7 @@ struct CachedImageList  : public ReferenceCountedObject,
         CachedImage (CachedImageList& list, ImagePixelData* im)
             : owner (list), pixelData (im),
               lastUsed (Time::getCurrentTime()),
-              imageSize (im->width * im->height)
+              imageSize ((size_t) (im->width * im->height))
         {
             pixelData->listeners.add (&owner);
         }
@@ -131,27 +131,44 @@ struct CachedImageList  : public ReferenceCountedObject,
     typedef ReferenceCountedObjectPtr<CachedImageList> Ptr;
 
 private:
+    OpenGLContext& context;
+    OwnedArray<CachedImage> images;
+    size_t totalSize, maxCacheSize;
+
+    bool canUseContext() const noexcept
+    {
+        return OpenGLContext::getCurrentContext() == &context;
+    }
+
     void imageDataChanged (ImagePixelData* im) override
     {
         if (CachedImage* c = findCachedImage (im))
-            c->texture.release();
+            if (canUseContext())
+                c->texture.release();
     }
 
     void imageDataBeingDeleted (ImagePixelData* im) override
     {
         for (int i = images.size(); --i >= 0;)
         {
-            if (images.getUnchecked(i)->pixelData == im)
+            CachedImage& ci = *images.getUnchecked(i);
+
+            if (ci.pixelData == im)
             {
-                totalSize -= images.getUnchecked(i)->imageSize;
-                images.remove (i);
+                if (canUseContext())
+                {
+                    totalSize -= ci.imageSize;
+                    images.remove (i);
+                }
+                else
+                {
+                    ci.pixelData = nullptr;
+                }
+
                 break;
             }
         }
     }
-
-    OwnedArray<CachedImage> images;
-    size_t totalSize, maxCacheSize;
 
     CachedImage* findCachedImage (ImagePixelData* const pixelData) const
     {
@@ -336,30 +353,36 @@ public:
     //==============================================================================
     struct ShaderProgramHolder
     {
-        ShaderProgramHolder (OpenGLContext& context, const char* fragmentShader)
+        ShaderProgramHolder (OpenGLContext& context, const char* fragmentShader, const char* vertexShader)
             : program (context)
         {
             JUCE_CHECK_OPENGL_ERROR
-            program.addVertexShader (OpenGLHelpers::translateVertexShaderToV3 (
-                                     "attribute vec2 position;"
-                                     "attribute vec4 colour;"
-                                     "uniform vec4 screenBounds;"
-                                     "varying " JUCE_MEDIUMP " vec4 frontColour;"
-                                     "varying " JUCE_HIGHP " vec2 pixelPos;"
-                                     "void main()"
-                                     "{"
-                                     " frontColour = colour;"
-                                     " vec2 adjustedPos = position - screenBounds.xy;"
-                                     " pixelPos = adjustedPos;"
-                                     " vec2 scaledPos = adjustedPos / screenBounds.zw;"
-                                     " gl_Position = vec4 (scaledPos.x - 1.0, 1.0 - scaledPos.y, 0, 1.0);"
-                                     "}"));
 
-            if (! program.addFragmentShader (OpenGLHelpers::translateFragmentShaderToV3 (fragmentShader)))
+            if (vertexShader == nullptr)
+                vertexShader = "attribute vec2 position;"
+                               "attribute vec4 colour;"
+                               "uniform vec4 screenBounds;"
+                               "varying " JUCE_MEDIUMP " vec4 frontColour;"
+                               "varying " JUCE_HIGHP " vec2 pixelPos;"
+                               "void main()"
+                               "{"
+                                 "frontColour = colour;"
+                                 "vec2 adjustedPos = position - screenBounds.xy;"
+                                 "pixelPos = adjustedPos;"
+                                 "vec2 scaledPos = adjustedPos / screenBounds.zw;"
+                                 "gl_Position = vec4 (scaledPos.x - 1.0, 1.0 - scaledPos.y, 0, 1.0);"
+                               "}";
+
+            if (program.addVertexShader (OpenGLHelpers::translateVertexShaderToV3 (vertexShader))
+                 && program.addFragmentShader (OpenGLHelpers::translateFragmentShaderToV3 (fragmentShader))
+                 && program.link())
+            {
+                JUCE_CHECK_OPENGL_ERROR
+            }
+            else
+            {
                 lastError = program.getLastError();
-
-            program.link();
-            JUCE_CHECK_OPENGL_ERROR
+            }
         }
 
         OpenGLShaderProgram program;
@@ -368,8 +391,8 @@ public:
 
     struct ShaderBase   : public ShaderProgramHolder
     {
-        ShaderBase (OpenGLContext& context, const char* fragmentShader)
-            : ShaderProgramHolder (context, fragmentShader),
+        ShaderBase (OpenGLContext& context, const char* fragmentShader, const char* vertexShader = nullptr)
+            : ShaderProgramHolder (context, fragmentShader, vertexShader),
               positionAttribute (program, "position"),
               colourAttribute (program, "colour"),
               screenBounds (program, "screenBounds")
@@ -656,11 +679,28 @@ public:
     struct ImageProgram  : public ShaderBase
     {
         ImageProgram (OpenGLContext& context)
-            : ShaderBase (context, JUCE_DECLARE_IMAGE_UNIFORMS JUCE_DECLARE_SWIZZLE_FUNCTION
+            : ShaderBase (context, JUCE_DECLARE_VARYING_COLOUR JUCE_DECLARE_SWIZZLE_FUNCTION
+                          "uniform sampler2D imageTexture;"
+                          "varying " JUCE_HIGHP " vec2 texturePos;"
                           "void main()"
                           "{"
-                            JUCE_CLAMP_TEXTURE_COORD
                             "gl_FragColor = frontColour.a * " JUCE_GET_IMAGE_PIXEL ";"
+                          "}",
+                          "uniform " JUCE_MEDIUMP " vec2 imageLimits;"
+                          JUCE_DECLARE_MATRIX_UNIFORM
+                          "attribute vec2 position;"
+                          "attribute vec4 colour;"
+                          "uniform vec4 screenBounds;"
+                          "varying " JUCE_MEDIUMP " vec4 frontColour;"
+                          "varying " JUCE_HIGHP " vec2 texturePos;"
+                          "void main()"
+                          "{"
+                            "frontColour = colour;"
+                            "vec2 adjustedPos = position - screenBounds.xy;"
+                            "vec2 pixelPos = adjustedPos;"
+                            "texturePos = clamp (" JUCE_MATRIX_TIMES_FRAGCOORD ", vec2 (0, 0), imageLimits);"
+                            "vec2 scaledPos = adjustedPos / screenBounds.zw;"
+                            "gl_Position = vec4 (scaledPos.x - 1.0, 1.0 - scaledPos.y, 0, 1.0);"
                           "}"),
               imageParams (program)
         {}

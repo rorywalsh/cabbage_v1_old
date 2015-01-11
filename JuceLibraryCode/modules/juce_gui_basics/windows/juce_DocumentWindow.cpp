@@ -128,7 +128,7 @@ void DocumentWindow::setMenuBar (MenuBarModel* newMenuBarModel, const int newMen
 
         menuBarModel = newMenuBarModel;
         menuBarHeight = newMenuBarHeight > 0 ? newMenuBarHeight
-                                             : 18;
+                                             : getLookAndFeel().getDefaultMenuBarHeight();
 
         if (menuBarModel != nullptr)
             setMenuBarComponent (new MenuBarComponent (menuBarModel));

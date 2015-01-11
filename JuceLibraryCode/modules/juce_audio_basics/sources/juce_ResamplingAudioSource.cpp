@@ -47,23 +47,28 @@ void ResamplingAudioSource::setResamplingRatio (const double samplesInPerOutputS
     ratio = jmax (0.0, samplesInPerOutputSample);
 }
 
-void ResamplingAudioSource::prepareToPlay (int samplesPerBlockExpected,
-                                           double sampleRate)
+void ResamplingAudioSource::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
     const SpinLock::ScopedLockType sl (ratioLock);
 
     input->prepareToPlay (samplesPerBlockExpected, sampleRate);
 
     buffer.setSize (numChannels, roundToInt (samplesPerBlockExpected * ratio) + 32);
-    buffer.clear();
-    sampsInBuffer = 0;
-    bufferPos = 0;
-    subSampleOffset = 0.0;
 
     filterStates.calloc ((size_t) numChannels);
     srcBuffers.calloc ((size_t) numChannels);
     destBuffers.calloc ((size_t) numChannels);
     createLowPass (ratio);
+
+    flushBuffers();
+}
+
+void ResamplingAudioSource::flushBuffers()
+{
+    buffer.clear();
+    bufferPos = 0;
+    sampsInBuffer = 0;
+    subSampleOffset = 0.0;
     resetFilters();
 }
 
@@ -88,7 +93,7 @@ void ResamplingAudioSource::getNextAudioBlock (const AudioSourceChannelInfo& inf
         lastRatio = localRatio;
     }
 
-    const int sampsNeeded = roundToInt (info.numSamples * localRatio) + 2;
+    const int sampsNeeded = roundToInt (info.numSamples * localRatio) + 3;
 
     int bufferSize = buffer.getNumSamples();
 
@@ -133,8 +138,11 @@ void ResamplingAudioSource::getNextAudioBlock (const AudioSourceChannelInfo& inf
     }
 
     int nextPos = (bufferPos + 1) % bufferSize;
+
     for (int m = info.numSamples; --m >= 0;)
     {
+        jassert (sampsInBuffer > 0 && nextPos != endOfBufferPos);
+
         const float alpha = (float) subSampleOffset;
 
         for (int channel = 0; channel < channelsToProcess; ++channel)
@@ -142,8 +150,6 @@ void ResamplingAudioSource::getNextAudioBlock (const AudioSourceChannelInfo& inf
                                         + alpha * (srcBuffers[channel][nextPos] - srcBuffers[channel][bufferPos]);
 
         subSampleOffset += localRatio;
-
-        jassert (sampsInBuffer > 0);
 
         while (subSampleOffset >= 1.0)
         {
@@ -225,7 +231,8 @@ void ResamplingAudioSource::setFilterCoefficients (double c1, double c2, double 
 
 void ResamplingAudioSource::resetFilters()
 {
-    filterStates.clear ((size_t) numChannels);
+    if (filterStates != nullptr)
+        filterStates.clear ((size_t) numChannels);
 }
 
 void ResamplingAudioSource::applyFilter (float* samples, int num, FilterState& fs)

@@ -26,11 +26,8 @@ class MidiKeyboardUpDownButton  : public Button
 {
 public:
     MidiKeyboardUpDownButton (MidiKeyboardComponent& comp, const int d)
-        : Button (String::empty),
-          owner (comp),
-          delta (d)
+        : Button (String::empty), owner (comp), delta (d)
     {
-        setOpaque (true);
     }
 
     void clicked() override
@@ -60,8 +57,7 @@ private:
 };
 
 //==============================================================================
-MidiKeyboardComponent::MidiKeyboardComponent (MidiKeyboardState& s,
-                                              const Orientation o)
+MidiKeyboardComponent::MidiKeyboardComponent (MidiKeyboardState& s, Orientation o)
     : state (s),
       xOffset (0),
       blackNoteLength (1),
@@ -92,12 +88,12 @@ MidiKeyboardComponent::MidiKeyboardComponent (MidiKeyboardState& s,
     mouseOverNotes.insertMultiple (0, -1, 32);
     mouseDownNotes.insertMultiple (0, -1, 32);
 
-    setOpaque (true);
+    colourChanged();
     setWantsKeyboardFocus (true);
 
     state.addListener (this);
 
-    startTimer (1000 / 20);
+    startTimerHz (20);
 }
 
 MidiKeyboardComponent::~MidiKeyboardComponent()
@@ -169,6 +165,7 @@ void MidiKeyboardComponent::setScrollButtonsVisible (const bool newCanScroll)
 
 void MidiKeyboardComponent::colourChanged()
 {
+    setOpaque (findColour (whiteNoteColourId).isOpaque());
     repaint();
 }
 
@@ -342,7 +339,7 @@ void MidiKeyboardComponent::repaintNote (const int noteNum)
 
 void MidiKeyboardComponent::paint (Graphics& g)
 {
-    g.fillAll (Colours::white.overlaidWith (findColour (whiteNoteColourId)));
+    g.fillAll (findColour (whiteNoteColourId));
 
     const Colour lineColour (findColour (keySeparatorLineColourId));
     const Colour textColour (findColour (textLabelColourId));
@@ -589,61 +586,7 @@ void MidiKeyboardComponent::resized()
                 repaint();
             }
         }
-		
-		const bool showScrollButtons = canScroll && (((int) firstKey) > rangeStart || kx2 > w + xOffset * 2);
-        
-        scrollDown->setVisible (showScrollButtons);
-        scrollUp->setVisible (showScrollButtons);
-        
-        xOffset = 0;
-        
-        if (showScrollButtons)
-        {
-            const int scrollButtonW = jmin (12, w / 2);
-            
-            if (orientation == horizontalKeyboard)
-            {
-                scrollDown->setBounds (0, 0, scrollButtonW, getHeight());
-                scrollUp->setBounds (getWidth() - scrollButtonW, 0, scrollButtonW, getHeight());
-            }
-            else if (orientation == verticalKeyboardFacingLeft)
-            {
-                scrollDown->setBounds (0, 0, getWidth(), scrollButtonW);
-                scrollUp->setBounds (0, getHeight() - scrollButtonW, getWidth(), scrollButtonW);
-            }
-            else
-            {
-                scrollDown->setBounds (0, getHeight() - scrollButtonW, getWidth(), scrollButtonW);
-                scrollUp->setBounds (0, 0, getWidth(), scrollButtonW);
-            }
-            
-            int endOfLastKey, kw;
-            getKeyPos (rangeEnd, endOfLastKey, kw);
-            endOfLastKey += kw;
-            
-            float mousePositionVelocity;
-            const int spaceAvailable = w - scrollButtonW * 2;
-            const int lastStartKey = remappedXYToNote (Point<int> (endOfLastKey - spaceAvailable, 0), mousePositionVelocity) + 1;
-            
-            if (lastStartKey >= 0 && ((int) firstKey) > lastStartKey)
-            {
-                firstKey = (float) jlimit (rangeStart, rangeEnd, lastStartKey);
-                sendChangeMessage();
-            }
-            
-            int newOffset = 0;
-            getKeyPos (((int) firstKey), newOffset, kw);
-            xOffset = newOffset - scrollButtonW;
-        }
-        else
-        {
-            firstKey = (float) rangeStart;
-        }
 
-        
-
-        repaint();		
-/*
         scrollDown->setVisible (canScroll && firstKey > (float) rangeStart);
 
         xOffset = 0;
@@ -694,7 +637,7 @@ void MidiKeyboardComponent::resized()
 
         getKeyPos (rangeEnd, kx2, kw2);
         scrollUp->setVisible (canScroll && kx2 > w);
-        repaint();*/
+        repaint();
     }
 }
 
@@ -870,7 +813,7 @@ void MidiKeyboardComponent::timerCallback()
         const Array<MouseInputSource>& mouseSources = Desktop::getInstance().getMouseSources();
 
         for (MouseInputSource* mi = mouseSources.begin(), * const e = mouseSources.end(); mi != e; ++mi)
-            updateNoteUnderMouse (getLocalPoint (nullptr, mi->getScreenPosition()), mi->isDragging(), mi->getIndex());
+            updateNoteUnderMouse (getLocalPoint (nullptr, mi->getScreenPosition()).roundToInt(), mi->isDragging(), mi->getIndex());
     }
 }
 
@@ -882,8 +825,7 @@ void MidiKeyboardComponent::clearKeyMappings()
     keyPresses.clear();
 }
 
-void MidiKeyboardComponent::setKeyPressForNote (const KeyPress& key,
-                                                const int midiNoteOffsetFromC)
+void MidiKeyboardComponent::setKeyPressForNote (const KeyPress& key, int midiNoteOffsetFromC)
 {
     removeKeyPressForNote (midiNoteOffsetFromC);
 
@@ -939,6 +881,11 @@ bool MidiKeyboardComponent::keyStateChanged (const bool /*isKeyDown*/)
     }
 
     return keyPressUsed;
+}
+
+bool MidiKeyboardComponent::keyPressed (const KeyPress& key)
+{
+    return keyPresses.contains (key);
 }
 
 void MidiKeyboardComponent::focusLost (FocusChangeType)

@@ -163,7 +163,7 @@ void DrawableShape::paint (Graphics& g)
     g.setFillType (mainFill.fill);
     g.fillPath (path);
 
-    if (isStrokeVisible())  
+    if (isStrokeVisible())
     {
         g.setFillType (strokeFill.fill);
         g.fillPath (strokePath);
@@ -175,20 +175,13 @@ void DrawableShape::pathChanged()
     strokeChanged();
 }
 
-void DrawableShape::setDashArray(Array<float> array)
-{
-dashArray = array;	
-}
-
 void DrawableShape::strokeChanged()
 {
-	strokePath.clear();
-    strokeType.createStrokedPath(strokePath, path, AffineTransform::identity, 4.0f);
+    strokePath.clear();
+    strokeType.createStrokedPath (strokePath, path, AffineTransform::identity, 4.0f);
+
     setBoundsToEnclose (getDrawableBounds());
- 
-	if(dashArray.size()>0)
-	strokeType.createDashedStroke (strokePath, path, dashArray.getRawDataPointer(), dashArray.size());
-	repaint();
+    repaint();
 }
 
 Rectangle<float> DrawableShape::getDrawableBounds() const
@@ -458,4 +451,22 @@ void DrawableShape::FillAndStrokeState::setStrokeType (const PathStrokeType& new
                                      ? "miter" : (newStrokeType.getJointStyle() == PathStrokeType::curved ? "curved" : "bevel"), undoManager);
     state.setProperty (capStyle, newStrokeType.getEndStyle() == PathStrokeType::butt
                                      ? "butt" : (newStrokeType.getEndStyle() == PathStrokeType::square ? "square" : "round"), undoManager);
+}
+
+static bool replaceColourInFill (DrawableShape::RelativeFillType& fill, Colour original, Colour replacement)
+{
+    if (fill.fill.colour == original && fill.fill.isColour())
+    {
+        fill = FillType (replacement);
+        return true;
+    }
+
+    return false;
+}
+
+bool DrawableShape::replaceColour (Colour original, Colour replacement)
+{
+    bool changed1 = replaceColourInFill (mainFill,   original, replacement);
+    bool changed2 = replaceColourInFill (strokeFill, original, replacement);
+    return changed1 || changed2;
 }

@@ -22,13 +22,18 @@
   ==============================================================================
 */
 
-class OpenGLContext::CachedImage  : public CachedComponentImage,
-                                    public Thread
+class OpenGLContext::CachedImage  : public CachedComponentImage
+                                 #if JUCE_OPENGL_CREATE_JUCE_RENDER_THREAD
+                                  , private Thread
+                                 #endif
 {
 public:
     CachedImage (OpenGLContext& c, Component& comp,
                  const OpenGLPixelFormat& pixFormat, void* contextToShare)
-        : Thread ("OpenGL Rendering"),
+        :
+         #if JUCE_OPENGL_CREATE_JUCE_RENDER_THREAD
+          Thread ("OpenGL Rendering"),
+         #endif
           context (c), component (comp),
           scale (1.0),
          #if JUCE_OPENGL3
@@ -58,7 +63,7 @@ public:
 
     void start()
     {
-       #if ! JUCE_ANDROID
+       #if JUCE_OPENGL_CREATE_JUCE_RENDER_THREAD
         if (nativeContext != nullptr)
             startThread (6);
        #endif
@@ -66,7 +71,7 @@ public:
 
     void stop()
     {
-       #if ! JUCE_ANDROID
+       #if JUCE_OPENGL_CREATE_JUCE_RENDER_THREAD
         stopThread (10000);
        #endif
         hasInitialised = false;
@@ -95,11 +100,11 @@ public:
     {
         needsUpdate = 1;
 
-       #if JUCE_ANDROID
+       #if JUCE_OPENGL_CREATE_JUCE_RENDER_THREAD
+        notify();
+       #else
         if (nativeContext != nullptr)
             nativeContext->triggerRepaint();
-       #else
-        notify();
        #endif
     }
 
@@ -151,9 +156,19 @@ public:
         {
             // This avoids hogging the message thread when doing intensive rendering.
             if (lastMMLockReleaseTime + 1 >= Time::getMillisecondCounter())
+            {
+               #if JUCE_OPENGL_CREATE_JUCE_RENDER_THREAD
                 wait (2);
+               #else
+                Thread::sleep (2);
+               #endif
+            }
 
+           #if JUCE_OPENGL_CREATE_JUCE_RENDER_THREAD
             mmLock = new MessageManagerLock (this);  // need to acquire this before locking the context.
+           #else
+            mmLock = new MessageManagerLock (Thread::getCurrentThread());
+           #endif
             if (! mmLock->lockWasGained())
                 return false;
 
@@ -262,7 +277,16 @@ public:
         glEnable (GL_TEXTURE_2D);
         clearGLError();
        #endif
-        context.extensions.glActiveTexture (GL_TEXTURE0);
+
+       #if JUCE_WINDOWS
+        // some stupidly old drivers are missing this function, so try to at least avoid a crash here,
+        // but if you hit this assertion you may want to have your own version check before using the
+        // component rendering stuff on such old drivers.
+        jassert (context.extensions.glActiveTexture != nullptr);
+        if (context.extensions.glActiveTexture != nullptr)
+       #endif
+            context.extensions.glActiveTexture (GL_TEXTURE0);
+
         glBindTexture (GL_TEXTURE_2D, cachedImageFrameBuffer.getTextureID());
 
         const Rectangle<int> cacheBounds (cachedImageFrameBuffer.getWidth(), cachedImageFrameBuffer.getHeight());
@@ -322,6 +346,7 @@ public:
     }
 
     //==============================================================================
+   #if JUCE_OPENGL_CREATE_JUCE_RENDER_THREAD
     void run() override
     {
         {
@@ -355,6 +380,7 @@ public:
 
         shutdownOnThread();
     }
+   #endif
 
     void initialiseOnThread()
     {
@@ -434,36 +460,6 @@ public:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CachedImage)
 };
-
-//==============================================================================
-#if JUCE_ANDROID
-void OpenGLContext::NativeContext::contextCreatedCallback()
-{
-    isInsideGLCallback = true;
-
-    if (CachedImage* const c = CachedImage::get (component))
-        c->initialiseOnThread();
-    else
-        jassertfalse;
-
-    isInsideGLCallback = false;
-}
-
-void OpenGLContext::NativeContext::renderCallback()
-{
-    isInsideGLCallback = true;
-
-    if (CachedImage* const c = CachedImage::get (component))
-    {
-        if (c->context.continuousRepaint)
-            c->context.triggerRepaint();
-
-        c->renderFrame();
-    }
-
-    isInsideGLCallback = false;
-}
-#endif
 
 //==============================================================================
 class OpenGLContext::Attachment  : public ComponentMovementWatcher,
@@ -856,27 +852,27 @@ void OpenGLContext::copyTexture (const Rectangle<int>& targetClipArea,
                 ProgramBuilder (OpenGLShaderProgram& prog)
                 {
                     prog.addVertexShader (OpenGLHelpers::translateVertexShaderToV3 (
-                                            "attribute " JUCE_HIGHP " vec2 position;"
-                                            "uniform " JUCE_HIGHP " vec2 screenSize;"
-                                            "varying " JUCE_HIGHP " vec2 pixelPos;"
-                                            "void main()"
-                                            "{"
-                                              "pixelPos = position;"
-                                              JUCE_HIGHP " vec2 scaled = position / (0.5 * screenSize.xy);"
-                                              "gl_Position = vec4 (scaled.x - 1.0, 1.0 - scaled.y, 0, 1.0);"
-                                            "}"));
+                        "attribute " JUCE_HIGHP " vec2 position;"
+                        "uniform " JUCE_HIGHP " vec2 screenSize;"
+                        "uniform " JUCE_HIGHP " float textureBounds[4];"
+                        "uniform " JUCE_HIGHP " vec2 vOffsetAndScale;"
+                        "varying " JUCE_HIGHP " vec2 texturePos;"
+                        "void main()"
+                        "{"
+                          JUCE_HIGHP " vec2 scaled = position / (0.5 * screenSize.xy);"
+                          "gl_Position = vec4 (scaled.x - 1.0, 1.0 - scaled.y, 0, 1.0);"
+                          "texturePos = (position - vec2 (textureBounds[0], textureBounds[1])) / vec2 (textureBounds[2], textureBounds[3]);"
+                          "texturePos = vec2 (texturePos.x, vOffsetAndScale.x + vOffsetAndScale.y * texturePos.y);"
+                        "}"));
 
                     prog.addFragmentShader (OpenGLHelpers::translateFragmentShaderToV3 (
-                                             "uniform sampler2D imageTexture;"
-                                             "uniform " JUCE_HIGHP " float textureBounds[4];"
-                                             "uniform " JUCE_HIGHP " vec2 vOffsetAndScale;"
-                                             "varying " JUCE_HIGHP " vec2 pixelPos;"
-                                             "void main()"
-                                             "{"
-                                               JUCE_HIGHP " vec2 texturePos = (pixelPos - vec2 (textureBounds[0], textureBounds[1]))"
-                                                                                 "/ vec2 (textureBounds[2], textureBounds[3]);"
-                                              "gl_FragColor = texture2D (imageTexture, vec2 (texturePos.x, vOffsetAndScale.x + vOffsetAndScale.y * texturePos.y));"
-                                            "}"));
+                        "uniform sampler2D imageTexture;"
+                        "varying " JUCE_HIGHP " vec2 texturePos;"
+                        "void main()"
+                        "{"
+                          "gl_FragColor = texture2D (imageTexture, texturePos);"
+                        "}"));
+
                     prog.link();
                 }
             };
@@ -944,3 +940,33 @@ void OpenGLContext::copyTexture (const Rectangle<int>& targetClipArea,
 
     JUCE_CHECK_OPENGL_ERROR
 }
+
+//==============================================================================
+#if JUCE_ANDROID
+void OpenGLContext::NativeContext::contextCreatedCallback()
+{
+    isInsideGLCallback = true;
+
+    if (CachedImage* const c = CachedImage::get (component))
+        c->initialiseOnThread();
+    else
+        jassertfalse;
+
+    isInsideGLCallback = false;
+}
+
+void OpenGLContext::NativeContext::renderCallback()
+{
+    isInsideGLCallback = true;
+
+    if (CachedImage* const c = CachedImage::get (component))
+    {
+        if (c->context.continuousRepaint)
+            c->context.triggerRepaint();
+
+        c->renderFrame();
+    }
+
+    isInsideGLCallback = false;
+}
+#endif

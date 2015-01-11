@@ -273,12 +273,12 @@ String SystemStats::getComputerName()
 
 String SystemStats::getUserLanguage()    { return AndroidStatsHelpers::getLocaleValue (false); }
 String SystemStats::getUserRegion()      { return AndroidStatsHelpers::getLocaleValue (true); }
-String SystemStats::getDisplayLanguage() { return getUserLanguage(); }
+String SystemStats::getDisplayLanguage() { return getUserLanguage() + "-" + getUserRegion(); }
 
 //==============================================================================
 void CPUInformation::initialise() noexcept
 {
-    numCpus = jmax (1, sysconf (_SC_NPROCESSORS_ONLN));
+    numCpus = jmax (1, (int) sysconf (_SC_NPROCESSORS_ONLN));
 }
 
 //==============================================================================

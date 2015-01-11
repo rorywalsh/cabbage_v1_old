@@ -43,7 +43,7 @@ JUCE_JNI_CALLBACK (JUCE_ANDROID_ACTIVITY_CLASSNAME, launchApp, void, (JNIEnv* en
 
     JUCEApplicationBase* app = JUCEApplicationBase::createInstance();
     if (! app->initialiseApp())
-        exit (0);
+        exit (app->getApplicationReturnValue());
 
     jassert (MessageManager::getInstance()->isThisTheMessageThread());
 }
@@ -111,7 +111,8 @@ public:
         // NB: must not put this in the initialiser list, as it invokes a callback,
         // which will fail if the peer is only half-constructed.
         view = GlobalRef (android.activity.callObjectMethod (JuceAppActivity.createNewView,
-                                                             component.isOpaque(), (jlong) this));
+                                                             (jboolean) component.isOpaque(),
+                                                             (jlong) this));
 
         if (isFocused())
             handleFocusGain();
@@ -234,14 +235,14 @@ public:
                            view.callIntMethod (ComponentPeerView.getTop));
     }
 
-    Point<int> localToGlobal (Point<int> relativePosition) override
+    Point<float> localToGlobal (Point<float> relativePosition) override
     {
-        return relativePosition + getScreenPosition();
+        return relativePosition + getScreenPosition().toFloat();
     }
 
-    Point<int> globalToLocal (Point<int> screenPosition) override
+    Point<float> globalToLocal (Point<float> screenPosition) override
     {
-        return screenPosition - getScreenPosition();
+        return screenPosition - getScreenPosition().toFloat();
     }
 
     void setMinimised (bool shouldBeMinimised) override
@@ -320,7 +321,7 @@ public:
         lastMousePos = pos;
 
         // this forces a mouse-enter/up event, in case for some reason we didn't get a mouse-up before.
-        handleMouseEvent (index, pos.toInt(), currentModifiers.withoutMouseButtons(), time);
+        handleMouseEvent (index, pos, currentModifiers.withoutMouseButtons(), time);
 
         if (isValidPeer (this))
             handleMouseDragCallback (index, pos, time);
@@ -333,8 +334,8 @@ public:
         jassert (index < 64);
         touchesDown = (touchesDown | (1 << (index & 63)));
         currentModifiers = currentModifiers.withoutMouseButtons().withFlags (ModifierKeys::leftButtonModifier);
-        handleMouseEvent (index, pos.toInt(), currentModifiers.withoutMouseButtons()
-                                                  .withFlags (ModifierKeys::leftButtonModifier), time);
+        handleMouseEvent (index, pos, currentModifiers.withoutMouseButtons()
+                                        .withFlags (ModifierKeys::leftButtonModifier), time);
     }
 
     void handleMouseUpCallback (int index, Point<float> pos, int64 time)
@@ -347,7 +348,7 @@ public:
         if (touchesDown == 0)
             currentModifiers = currentModifiers.withoutMouseButtons();
 
-        handleMouseEvent (index, pos.toInt(), currentModifiers.withoutMouseButtons(), time);
+        handleMouseEvent (index, pos, currentModifiers.withoutMouseButtons(), time);
     }
 
     void handleKeyDownCallback (int k, int kc)
@@ -584,7 +585,7 @@ ComponentPeer* Component::createNewPeer (int styleFlags, void*)
 
 jobject createOpenGLView (ComponentPeer* peer)
 {
-    jobject parentView = static_cast <jobject> (peer->getNativeHandle());
+    jobject parentView = static_cast<jobject> (peer->getNativeHandle());
     return getEnv()->CallObjectMethod (parentView, ComponentPeerView.createGLView);
 }
 
@@ -611,12 +612,12 @@ bool MouseInputSource::SourceList::addSource()
     return true;
 }
 
-Point<int> MouseInputSource::getCurrentRawMousePosition()
+Point<float> MouseInputSource::getCurrentRawMousePosition()
 {
-    return AndroidComponentPeer::lastMousePos.toInt();
+    return AndroidComponentPeer::lastMousePos;
 }
 
-void MouseInputSource::setRawMousePosition (Point<int>)
+void MouseInputSource::setRawMousePosition (Point<float>)
 {
     // not needed
 }

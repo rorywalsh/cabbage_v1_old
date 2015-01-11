@@ -1937,7 +1937,7 @@ float CabbageGUIClass::getFloatArrayPropValue(Identifier prop, int index)
 //===================================================================
 void CabbageGUIClass::setStringProp(Identifier prop, int index, String value)
 {
-    jassert(1)
+
 }
 //===================================================================
 void CabbageGUIClass::setStringProp(Identifier prop, String val)
@@ -1947,7 +1947,7 @@ void CabbageGUIClass::setStringProp(Identifier prop, String val)
 //===================================================================
 String CabbageGUIClass::getColourProp(Identifier prop)
 {
-    jassert(1)
+
     return String::empty;
 }
 //===================================================================

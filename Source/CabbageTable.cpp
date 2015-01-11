@@ -929,7 +929,7 @@ void CabbageTableManager::addTable (String name,
 
 void CabbageTableManager::tableToTop (int tableIndex)
 {
-    jassert(tables[tableIndex])
+
     tables[tableIndex]->toFront(true);
 
     Logger::writeToLog("Table on top is"+String(tables[tableIndex]->tableNumber));

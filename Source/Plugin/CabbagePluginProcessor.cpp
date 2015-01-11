@@ -111,7 +111,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
                 logFile = File(logFileName);
                 fileLogger = new FileLogger(logFile, String("Cabbage Log.."));
                 Logger::setCurrentLogger(fileLogger);
-            }
+            } 
         }
 
 

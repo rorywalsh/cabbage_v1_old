@@ -511,7 +511,7 @@ public:
             setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
         }
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
-        //repaint();
+        repaint();
     }
 
     //---------------------------------------------
@@ -800,7 +800,7 @@ public:
             setVisible(true);
             setEnabled(true);
         }
-        //repaint();
+        repaint();
     }
 
     //---------------------------------------------
@@ -1010,7 +1010,7 @@ public:
             setVisible(true);
             setEnabled(true);
         }
-        //repaint();
+        repaint();
     }
 
 
@@ -1252,7 +1252,7 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-        //repaint();
+        repaint();
     }
 
     //---------------------------------------------
@@ -1677,7 +1677,7 @@ public:
     void setText(String _text)
     {
         text = _text;
-        //repaint();
+        repaint();
     }
 
 
@@ -1705,7 +1705,7 @@ public:
         }
 
         setText(m_cAttr.getStringProp(CabbageIDs::text));
-        //repaint();
+        repaint();
     }
 
 
@@ -1925,7 +1925,7 @@ public:
             setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
         }
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
-        //repaint();
+        repaint();
     }
 
     void paint(Graphics &g)
@@ -2082,7 +2082,7 @@ public:
             rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
             setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
         }
-        //repaint();
+        repaint();
     }
 
     void paint(Graphics &g)
@@ -2355,8 +2355,7 @@ public:
         }
 
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
-
-        //repaint();
+		repaint();
     }
 
 
@@ -2485,8 +2484,7 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
-        //repaint();
+        repaint();
     }
 
 };

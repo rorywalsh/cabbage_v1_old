@@ -1766,7 +1766,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 <li>
 <ul class="sectlevel2">
 <li><a href="#_button">Button</a></li>
-<li><a href="#button">Button (File button)</a></li>
+<li><a href="#filebutton">Button (File button)</a></li>
 <li><a href="#infobutton">Button (Information button)</a></li>
 <li><a href="#checkbox">Check Box</a></li>
 <li><a href="#combobox">Combo Box</a></li>
@@ -1777,6 +1777,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 <li><a href="#image">Image</a></li>
 <li><a href="#keyboard">Keyboard</a></li>
 <li><a href="#label">Label</a></li>
+<li><a href="#rslider">Sliders</a></li>
 <li><a href="#soundfiler">Soundfiler</a></li>
 <li><a href="#table">Table (deprecated)</a></li>
 <li><a href="#textbox">Text Box</a></li>
@@ -1788,6 +1789,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] {
 <li><a href="#plants">Plants</a></li>
 <li><a href="#identchannels">Controlling Widgets from Csound</a></li>
 <li><a href="#_macros">Macros</a></li>
+<li><a href="#presets">Presets</a></li>
 <li><a href="#widgetarrays">Quickly creating multiple widgets</a></li>
 <li><a href="#_reserved_channels">Reserved Channels</a></li>
 <li><a href="#_the_cabbage_standalone_host">The Cabbage Standalone Host</a></li>
@@ -1912,7 +1914,7 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 </div>
 </div>
 <div class="sect2">
-<h3 id="button">Button (File button)</h3>
+<h3 id="filebutton">Button (File button)</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>filebutton bounds(x, y, width, height), channel("chan"), text("offCaption"), populate("filetype", "dir"), value(val), colour("colour"), fontcolour("colour"), identchannel("channel"), alpha(val), visible(val), mode("mode"), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
@@ -1952,10 +1954,20 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 <p><code>populate("filetype", "dir")</code> Sets the type of file to search for, and the initial directory to look in. For example, to set the file type to wave files use "<strong>.wav" as the filetype string. If using the filebutton to record parameter snapshots, you must specify a filetype of "</strong>.snaps", and a mode type of snapshot. If no directory is specified, the file browser will open in the current working directory.</p>
 </div>
 <div class="paragraph">
-<p><code>mode("mode")</code> Set how the button will behave when pressed. Valid modes are:
-* <strong>file</strong>, Default. Will let the browser to select a file
-* <strong>directory</strong>, Will let the browser to select a folder/directory
-* <strong>snapshot</strong>, Will stop the file browser from opening, and instead will write a preset, or snapshot, file to disk with a default file name. The default filename will be the csd filename, with an underscore and number appended to it. For instance, if the filename is CabbageStew.csd, the preset files will be named CabbageStew_0.csd, CabbageStew_1.csd, CabbageStew_2.csd, etc. The snapshot mode provides is a very quick way of saving presets to disk. For more on presets see the Combobox widget reference.</p>
+<p><code>mode("mode")</code> Set how the button will behave when pressed. Valid modes are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>file</strong>, Default. Will let the browser to select a file</p>
+</li>
+<li>
+<p><strong>directory</strong>, Will let the browser to select a folder/directory</p>
+</li>
+<li>
+<p><strong>snapshot</strong>, Will stop the file browser from opening, and instead will write a preset file to disk with a default file name. See <a href="#presets">Presets</a> <a href="#combobox">Combobox</a></p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p><code>widgetarray("chan", number)</code> Creates an number of widgets in a single pass. See <a href="#widgetarrays">Widget Arrays</a></p>
@@ -2135,7 +2147,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <p><code>value(val)</code> val sets the initial state of the widget</p>
 </div>
 <div class="paragraph">
-<p><code>populate("filetype", "dir")</code> This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "*.snaps". When using the populate() identifier you do not need to use the items() identifier. If no directory is specified, Cabbage will look in the current working directory.</p>
+<p><code>populate("filetype", "dir")</code> This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "*.snaps". When using the populate() identifier you do not need to use the items() identifier. If no directory is specified, Cabbage will look in the current working directory. See <a href="#presets">Presets</a> <a href="#filebutton">Filebutton</a></p>
 </div>
 <div class="paragraph">
 <p><code>caption("caption")</code> This identifier lets you place your widget within a groupbox. "caption" is the text that will appear on groupbox. This identifier is useful for naming and containing widgets.</p>
@@ -2626,10 +2638,10 @@ The keyboard can be played at different velocities depending on where you click 
 <div class="paragraph">
 <p><span class="image"><img src="images/labelExample.png" alt="image"></span></p>
 </div>
-<div class="paragraph">
-<p><a id="vslider"></a><a id="vslider2"></a><a id="vslider3"></a><a id="hslider"></a><a id="hslider2"></a><a id="hslider3"></a><a id="rslider"></a>
-=== Sliders</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="rslider">Sliders</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>hslider bounds(x, y, width, height), channel("chan"), text("name"), textbox(val), range(min, max, value, skew, incr), min(val), max(val),
@@ -2640,7 +2652,6 @@ textcolour("colour"), fontcolour("colour"), trackercolour("colour"), outlinecolo
 <p>Slider can be used to create an on-screen slider. Data can be sent to Csound on the channel specified through the chan string. Presented above is the syntax for a horizontal slider, i.e., hslider. In order to change it to another slider type simple substitute hslider with the appropriate slider type as outlined below.</p>
 </div>
 <hr>
-</div>
 <div class="sect3">
 <h4 id="_identifiers_12">Identifiers</h4>
 <div class="paragraph">
@@ -3017,7 +3028,10 @@ XY pads range identifiers do not permit the setting of skew factors, or incremen
 <h2 id="plants">Plants</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Cabbage plants are GUI abstractions that contain one or more controls. These abstractions are used as anchors to the child widgets contained within. All widgets contained within a plant have top and left positions which are relative the the top left position of the parent. Resizing the plant will in turn resize all the widgets contained within. While all widgets can be children of a plant, only group boxes and images can be used as plants themselves. Adding a plant identifier to an image or group box definition will cause them to act as containers. The plant() identifier takes a string that denotes the name of the plant. Plant names must be unique within an instrument or plants will end up being placed on top of each other. When using an image or a group box as a plant, you must enclose the code from the widgets that follow in curly brackets to indicate which controls belong to the plant. In the code below a group box control is set up as a plant, and three child sliders are placed within it.</p>
+<p>Cabbage plants are GUI abstractions that contain one or more controls. These abstractions are used as anchors to the child widgets contained within. All widgets contained within a plant have top and left positions which are relative the the top left position of the parent. Resizing the plant will in turn resize all the widgets contained within. While all widgets can be children of a plant, only group boxes and images can be used as plants themselves. Adding a plant identifier to an image or group box definition will cause them to act as containers.</p>
+</div>
+<div class="paragraph">
+<p>The plant() identifier takes a string that denotes the name of the plant. Plant names must be unique within an instrument or plants will end up being placed on top of each other. When using an image or a group box as a plant, you must enclose the code from the widgets that follow in curly brackets to indicate which controls belong to the plant. In the code below a group box control is set up as a plant, and three child sliders are placed within it.</p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="images/plantsExample.png" alt="plants"></span></p>
@@ -3085,6 +3099,26 @@ The major advantage to using plant abstractions is that you can easily move and 
 </div>
 <div class="paragraph">
 <p>You can use as many macros as you wish in your Cabbage code.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="presets">Presets</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Presets can be saved a restored at any stage using a combination of a filebutton and a combobox. In your preset combobox you should specify a file tyoe of "*.snaps" in the populate() identifier. The filebutton should also use a populate identifier, also set to filtype of "*.snaps". So your combobox and file button code might look like this</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>combobox bounds(178, 286, 100, 25), channel("combobox"), populate("*.snaps")
+filebutton bounds(116, 286, 60, 25), channel("but1"), text("Save"), populate("*.snaps")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Each time a user presets the <em>Save</em> button a file browser dialogue with open, allowing the user to name and save the preset files to disk. If you wish to have the newly saved preset accessible thought the associated combo box you will need to save the files in the same directory as specified in the combox box populate identifier. For ease of use it&#8217;s usually best to work from the current directory.</p>
+</div>
+<div class="paragraph">
+<p>If you wish to quickly write presets to disk, you can add a "mode("snapshot")" identifier to the filebutton. This will disable to file browser dialogue and instead write automatically named files to disk. The new filename will be the csd filename, with an underscore and number appended to it. For instance, if the filename is CabbageStew.csd, the preset files will be named CabbageStew_0.csd, CabbageStew_1.csd, CabbageStew_2.csd, etc. The snapshot mode provides is a very quick way of saving presets to disk.</p>
 </div>
 </div>
 </div>
@@ -3238,7 +3272,7 @@ One should get into the habit of updating/saving their instruments when they mak
 <div class="sect2">
 <h3 id="_export_export_as">Export/Export as&#8230;</h3>
 <div class="paragraph">
-<p>This command will export your Cabbage instrument as a plugin. Clicking <em>synth</em> or <em>effect</em> will cause Cabbage to create a plugin file in the same directory as the .csd file you are currently using. When <em>exporting as&#8230;</em> Cabbage will prompt you to save your plugin in a set location, under a specific name. Once Cabbage has created the plugin it will make a copy of the current .csd file and locate it in the same folder as the plugin. This new .csd file will have the same name as the plugin and should ALWAYS be in the same directory as the plugin file.</p>
+<p>This command will export your Cabbage instrument as a plugin, that is, it will create a new plugin library file along with a copy of the Csound text file. Clicking <em>synth</em> or <em>effect</em> will cause Cabbage to create a plugin file in the same directory as the .csd file you are currently using. When <em>exporting as&#8230;</em> Cabbage will prompt you to save your plugin in a set location, under a specific name. Once Cabbage has created the plugin it will make a copy of the current .csd file and locate it in the same folder as the plugin. This new .csd file will have the same name as the plugin and should ALWAYS be in the same directory as the plugin file.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -3324,7 +3358,7 @@ Currently this feature is only available on Windows.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-01-09 12:33:06 GMT
+Last updated 2015-01-20 13:04:31 GMT
 </div>
 </div>
 </body>

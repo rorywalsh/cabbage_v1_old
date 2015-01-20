@@ -67,7 +67,7 @@ NOTE: colour:1() and fontcolour:1() can be set using colour() and fontcolour(). 
 
 image:images/buttonExample.png[Buttons]
 
-[[button]]
+[[filebutton]]
 === Button (File button)
 [source]
 -------------
@@ -97,9 +97,10 @@ A filebutton can be used to select files from disk. The filename selected, or cr
 `populate("filetype", "dir")` Sets the type of file to search for, and the initial directory to look in. For example, to set the file type to wave files use "*.wav" as the filetype string. If using the filebutton to record parameter snapshots, you must specify a filetype of "*.snaps", and a mode type of snapshot. If no directory is specified, the file browser will open in the current working directory.  
 
 `mode("mode")` Set how the button will behave when pressed. Valid modes are:
+
 * *file*, Default. Will let the browser to select a file
 * *directory*, Will let the browser to select a folder/directory
-* *snapshot*, Will stop the file browser from opening, and instead will write a preset, or snapshot, file to disk with a default file name. The default filename will be the csd filename, with an underscore and number appended to it. For instance, if the filename is CabbageStew.csd, the preset files will be named CabbageStew_0.csd, CabbageStew_1.csd, CabbageStew_2.csd, etc. The snapshot mode provides is a very quick way of saving presets to disk. For more on presets see the Combobox widget reference.     
+* *snapshot*, Will stop the file browser from opening, and instead will write a preset file to disk with a default file name. See <<presets, Presets>> <<combobox, Combobox>> 
 
 `widgetarray("chan", number)` Creates an number of widgets in a single pass. See <<widgetarrays,Widget Arrays>>
 
@@ -214,7 +215,7 @@ Combobox creates a drop-down list of items which users can choose from. Once the
 
 `value(val)` val sets the initial state of the widget
   
-`populate("filetype", "dir")` This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "*.snaps". When using the populate() identifier you do not need to use the items() identifier. If no directory is specified, Cabbage will look in the current working directory.  
+`populate("filetype", "dir")` This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "*.snaps". When using the populate() identifier you do not need to use the items() identifier. If no directory is specified, Cabbage will look in the current working directory. See <<presets, Presets>> <<filebutton, Filebutton>>  
   
 `caption("caption")` This identifier lets you place your widget within a groupbox. "caption" is the text that will appear on groupbox. This identifier is useful for naming and containing widgets.  
 
@@ -511,7 +512,13 @@ Labels can be used for placing text on-screen.
 
 image:images/labelExample.png[image]
 
-[[vslider]][[vslider2]][[vslider3]][[hslider]][[hslider2]][[hslider3]][[rslider]]
+[[vslider]]
+[[vslider2]]
+[[vslider3]]
+[[hslider]]
+[[hslider2]]
+[[hslider3]]
+[[rslider]]
 === Sliders
 [source]
 ----
@@ -811,6 +818,20 @@ rslider bounds(39, 12, 50, 50), channel("rslider"), colour("purple"), $SLIDER1
 -----
 
 You can use as many macros as you wish in your Cabbage code. 
+
+[[presets]]
+== Presets
+Presets can be saved a restored at any stage using a combination of a filebutton and a combobox. In your preset combobox you should specify a file tyoe of "\*.snaps" in the populate() identifier. The filebutton should also use a populate identifier, also set to filtype of "*.snaps". So your combobox and file button code might look like this
+
+[source]
+-----
+combobox bounds(178, 286, 100, 25), channel("combobox"), populate("*.snaps")
+filebutton bounds(116, 286, 60, 25), channel("but1"), text("Save"), populate("*.snaps")
+-----
+
+Each time a user presets the 'Save' button a file browser dialogue with open, allowing the user to name and save the preset files to disk. If you wish to have the newly saved preset accessible thought the associated combo box you will need to save the files in the same directory as specified in the combox box populate identifier. For ease of use it's usually best to work from the current directory.  
+
+If you wish to quickly write presets to disk, you can add a "mode("snapshot")" identifier to the filebutton. This will disable to file browser dialogue and instead write automatically named files to disk. The new filename will be the csd filename, with an underscore and number appended to it. For instance, if the filename is CabbageStew.csd, the preset files will be named CabbageStew_0.csd, CabbageStew_1.csd, CabbageStew_2.csd, etc. The snapshot mode provides is a very quick way of saving presets to disk.  
 
 [[widgetarrays]]
 == Quickly creating multiple widgets

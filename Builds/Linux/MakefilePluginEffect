@@ -64,7 +64,6 @@ OBJECTS := \
   $(OBJDIR)/CabbageTable_d003e736.o \
   $(OBJDIR)/ComponentLayoutEditor_aa38c835.o \
   $(OBJDIR)/csPerfThread_f9d0b9cc.o \
-  $(OBJDIR)/DirectoryContentsComponent_616f5a9f.o \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
@@ -154,11 +153,6 @@ $(OBJDIR)/ComponentLayoutEditor_aa38c835.o: ../../Source/ComponentLayoutEditor.c
 $(OBJDIR)/csPerfThread_f9d0b9cc.o: ../../Source/csPerfThread.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling csPerfThread.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/DirectoryContentsComponent_616f5a9f.o: ../../Source/DirectoryContentsComponent.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling DirectoryContentsComponent.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/CabbagePluginEditor_5a11f64e.o: ../../Source/Plugin/CabbagePluginEditor.cpp

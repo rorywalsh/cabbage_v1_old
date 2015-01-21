@@ -71,7 +71,6 @@ namespace juce
 #include "misc/juce_SplashScreen.h"
 #include "misc/juce_SystemTrayIconComponent.h"
 #include "misc/juce_WebBrowserComponent.h"
-#include "misc/juce_LiveConstantEditor.h"
 #include "misc/juce_AnimatedAppComponent.h"
 
 }

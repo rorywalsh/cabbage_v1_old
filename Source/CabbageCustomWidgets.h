@@ -27,7 +27,7 @@
 #include "Table.h"
 #include "XYPad.h"
 #include "Soundfiler.h"
-#include "DirectoryContentsComponent.h"
+//#include "DirectoryContentsComponent.h"
 
 class InfoWindow   : public DocumentWindow
 {
@@ -1270,43 +1270,43 @@ public:
 //==============================================================================
 // custom directorylist
 //==============================================================================
-class CabbageDirectoryList	:	public Component
-{
-public:
-    ScopedPointer<DirectoryContentsComponent> directoryList;
-    String name, channel, workingDir, fileType;
-//---- constructor -----
-public:
-    CabbageDirectoryList (String _name, String _channel, String _workingDir, String _fileType):
-        name(_name),
-        channel(_channel),
-        workingDir(_workingDir),
-        fileType(_fileType)
-    {
-        setName(name);
-        directoryList = new DirectoryContentsComponent(workingDir, fileType);
-        addAndMakeVisible(directoryList);
-    }
-
-    ~CabbageDirectoryList() {}
-
-    void resized()
-    {
-        directoryList->setBounds(0, 0, getWidth(), getHeight());
-    }
-
-    void paint(Graphics& g) {}
-    const StringArray getListContents()
-    {
-        StringArray test = directoryList->getFunctionTables();
-        //Logger::writeToLog(test.joinIntoString("\n"));
-
-        return directoryList->getFunctionTables();
-    }
-
-private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageDirectoryList);
-};
+//class CabbageDirectoryList	:	public Component
+//{
+//public:
+//    ScopedPointer<DirectoryContentsComponent> directoryList;
+//    String name, channel, workingDir, fileType;
+////---- constructor -----
+//public:
+//    CabbageDirectoryList (String _name, String _channel, String _workingDir, String _fileType):
+//        name(_name),
+//        channel(_channel),
+//        workingDir(_workingDir),
+//        fileType(_fileType)
+//    {
+//        setName(name);
+//        directoryList = new DirectoryContentsComponent(workingDir, fileType);
+//        addAndMakeVisible(directoryList);
+//    }
+//
+//    ~CabbageDirectoryList() {}
+//
+//    void resized()
+//    {
+//        directoryList->setBounds(0, 0, getWidth(), getHeight());
+//    }
+//
+//    void paint(Graphics& g) {}
+//    const StringArray getListContents()
+//    {
+//        StringArray test = directoryList->getFunctionTables();
+//        //Logger::writeToLog(test.joinIntoString("\n"));
+//
+//        return directoryList->getFunctionTables();
+//    }
+//
+//private:
+//    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageDirectoryList);
+//};
 
 //==============================================================================
 // custom CabbageLine

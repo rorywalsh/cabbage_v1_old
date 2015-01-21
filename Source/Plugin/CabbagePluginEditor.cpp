@@ -2231,30 +2231,30 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertDirectoryList(CabbageGUIClass &cAttr)
 {
-    layoutComps.add(new CabbageDirectoryList(cAttr.getStringProp(CabbageIDs::name),
-                    cAttr.getStringProp(CabbageIDs::channel),
-                    cAttr.getStringProp("workingDir"),
-                    cAttr.getStringProp("fileType")));
-
-    //add soundfiler object to main processor..
-    //getFilter()->soundFilers.add(((Soundfiler*)layoutComps[idx])->transportSource);
-    //check to see if widgets is anchored
-    //if it is offset its position accordingly.
-    int idx = layoutComps.size()-1;
-    float left = cAttr.getNumProp(CabbageIDs::left);
-    float top = cAttr.getNumProp(CabbageIDs::top);
-    float width = cAttr.getNumProp(CabbageIDs::width);
-    float height = cAttr.getNumProp(CabbageIDs::height);
-    setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
-    ((CabbageDirectoryList*)layoutComps[idx])->directoryList->addActionListener(this);
-    layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
-    layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
-    layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
-    //if control is not part of a plant, add mouse listener
-    if(cAttr.getStringProp("retoplant").isEmpty())
-        layoutComps[idx]->addMouseListener(this, true);
-    //set visiblilty
-    layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+//    layoutComps.add(new CabbageDirectoryList(cAttr.getStringProp(CabbageIDs::name),
+//                    cAttr.getStringProp(CabbageIDs::channel),
+//                    cAttr.getStringProp("workingDir"),
+//                    cAttr.getStringProp("fileType")));
+//
+//    //add soundfiler object to main processor..
+//    //getFilter()->soundFilers.add(((Soundfiler*)layoutComps[idx])->transportSource);
+//    //check to see if widgets is anchored
+//    //if it is offset its position accordingly.
+//    int idx = layoutComps.size()-1;
+//    float left = cAttr.getNumProp(CabbageIDs::left);
+//    float top = cAttr.getNumProp(CabbageIDs::top);
+//    float width = cAttr.getNumProp(CabbageIDs::width);
+//    float height = cAttr.getNumProp(CabbageIDs::height);
+//    setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
+//    ((CabbageDirectoryList*)layoutComps[idx])->directoryList->addActionListener(this);
+//    layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
+//    layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+//    layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+//    //if control is not part of a plant, add mouse listener
+//    if(cAttr.getStringProp("retoplant").isEmpty())
+//        layoutComps[idx]->addMouseListener(this, true);
+//    //set visiblilty
+//    layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 
 }
 

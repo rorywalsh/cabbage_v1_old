@@ -547,7 +547,7 @@ private:
             if (outputDeviceDropDown == nullptr)
             {
                 outputDeviceDropDown = new ComboBox (String::empty);
-                outputDeviceDropDown->setColour(ComboBox::ColourIds::textColourId,  Colour(200, 200, 200));
+                outputDeviceDropDown->setColour(ComboBox::textColourId,  Colour(200, 200, 200));
                 outputDeviceDropDown->addListener (this);
                 addAndMakeVisible (outputDeviceDropDown);
 

@@ -797,11 +797,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         addFilesToPopupMenu(subMenu, exampleFiles, examplesDir, "*.csd", examplesOffset);
 		//subMenu.addItem(3999, "Browse all examples");
         m.addSubMenu(String("Examples"), subMenu);
-				m.addSubMenu(String("New Cabbage..."), subMenu);
         subMenu.clear();
 
         subMenu.addItem(30, String("Effect"));
         subMenu.addItem(31, String("Instrument"));
+		m.addSubMenu(String("New Cabbage..."), subMenu);
         m.addItem(1, String("Open Cabbage Instrument"));
 
         recentFiles.createPopupMenuItems (recentFilesMenu, 9000, false, true);

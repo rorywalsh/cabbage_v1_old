@@ -1951,7 +1951,7 @@ colour:1() and fontcolour:1() can be set using colour() and fontcolour(). Howeve
 <p><code>visible(val)</code> A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default.</p>
 </div>
 <div class="paragraph">
-<p><code>populate("filetype", "dir")</code> Sets the type of file to search for, and the initial directory to look in. For example, to set the file type to wave files use "<strong>.wav" as the filetype string. If using the filebutton to record parameter snapshots, you must specify a filetype of "</strong>.snaps", and a mode type of snapshot. If no directory is specified, the file browser will open in the current working directory.</p>
+<p><code>populate("filetype", "dir")</code> Sets the type of file to search for, and the initial directory to look in. For example, to set the file type to wave files use "<strong>.wav" as the filetype string. If using the filebutton to record parameter snapshots, you must specify a filetype of "\</strong>.snaps", and a mode type of snapshot. If no directory is specified, the file browser will open in the current working directory.</p>
 </div>
 <div class="paragraph">
 <p><code>mode("mode")</code> Set how the button will behave when pressed. Valid modes are:</p>
@@ -2147,7 +2147,7 @@ colour:1() can be set using colour(). However, it&#8217;s recommended that you u
 <p><code>value(val)</code> val sets the initial state of the widget</p>
 </div>
 <div class="paragraph">
-<p><code>populate("filetype", "dir")</code> This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "*.snaps". When using the populate() identifier you do not need to use the items() identifier. If no directory is specified, Cabbage will look in the current working directory. See <a href="#presets">Presets</a> <a href="#filebutton">Filebutton</a></p>
+<p><code>populate("filetype", "dir")</code> This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "\*.snaps". When using the populate() identifier you do not need to use the items() identifier. If no directory is specified, Cabbage will look in the current working directory. See <a href="#presets">Presets</a> <a href="#filebutton">Filebutton</a></p>
 </div>
 <div class="paragraph">
 <p><code>caption("caption")</code> This identifier lets you place your widget within a groupbox. "caption" is the text that will appear on groupbox. This identifier is useful for naming and containing widgets.</p>
@@ -2317,6 +2317,9 @@ The background grid is disabled when working with a table that use the file() id
 <p><em>scrubberposition(val, tableNum)</em> Sets the scrubber position in samples, from the start of the file. Only valid when displaying a sound file or a GEN01 table. tableNum will determine which table the scrubber will be placed on. If you wish to display a scrubber with other table types(non GEN01) use an image and an identchannel. See the GridSequencer instrument as an example.</p>
 </div>
 <div class="paragraph">
+<p><em>samplerange(min, max)</em> Set the initial range of the samples. For example, samplerange(0, 255) will cause the gentable widget to display only the first 255 samples from a given table.</p>
+</div>
+<div class="paragraph">
 <p><code>zoom(val)</code> Sets the initial zoom value. Passing a -1 to zoom will cause the zoom buttons to disappear.</p>
 </div>
 <div class="paragraph">
@@ -2384,7 +2387,19 @@ If you need to redraw tables quickly, make sure they don&#8217;t use negative GE
 <p><code>pluginid("plug")</code> this unique string must be four characters long. It is the ID given to your plugin when loaded by plugin hosts.</p>
 </div>
 <div class="paragraph">
-<p><code>guirefresh(val)</code> Sets the rate at which Cabbage will update its GUI widgets when controlled by Csound. The value passed represents the number of k-rate cycles to be skipped before the next update. The larger this is the slower the GUI updates will take place, but the less CPU intensive the instrument will be. val should be an integer greater than 1 and is set to 50 by default.</p>
+<p><code>guirefresh(val)</code> Sets the rate at which Cabbage will update its GUI widgets when controlled by Csound. The value passed represents the number of k-rate cycles to be skipped before the next update. The larger this is the slower the GUI updates will take place, but the less CPU intensive the instrument will be. val should be an integer greater than 1 and is set to ksmps x 2 by default.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="images/smallLogo.PNG" alt="Note">
+</td>
+<td class="content">
+For best performance one should set guirefresh to be a factor of ksmps.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p><code>colour("colour")</code> This sets the background colour of the instrument. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create blue. RGBA values are not permitted when setting colours for your main form. If an RGBA value is set, Cabbage will convert it to RGB. The default colour for form is rgb(5, 15, 20).</p>
@@ -2478,7 +2493,7 @@ Every plugin must have a unique plugin ID. If you experience problems loading tw
 <h3 id="image">Image</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outline("colour"), line(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>image bounds(x, y, width, height), colour("colour"), file("file name"), shape("type"), outlinecolour("colour"), outlinethickness(thickness), `plant("name"), identchannel("channel"), visible(val), alpha(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2515,7 +2530,7 @@ Try to avoid full path names at all costs. They will work fine on a local machin
 <p><code>outlinecolour("colour")</code> This sets the outline colour of the image/shape. See above for details on valid colours. .</p>
 </div>
 <div class="paragraph">
-<p><code>linethickness(thickness)</code> This sets the line thickness in pixels.</p>
+<p><code>outlinethickness(thickness)</code> This sets the line thickness in pixels.</p>
 </div>
 <div class="paragraph">
 <p><code>plant("name")</code> Sets the name of the plant. No two plants can have the same name. See <code>PLANTS</code></p>
@@ -2930,7 +2945,7 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <h3 id="xypad">XY Pad</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>xypad bounds(x, y, width, height), channel("chan1", "chan2"), rangex(min, max, val), rangey(min, max, val), text("name"), identchannel("channel"), colour("colour"), fontcolour("colour"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
+<pre class="highlight"><code>xypad bounds(x, y, width, height), channel("chan1", "chan2"), rangex(min, max, val), rangey(min, max, val), text("name"), identchannel("channel"), colour("colour"), fontcolour("colour"), textcolour("colour"), alpha(val), visible(val), widgetarray("chan", number)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2958,7 +2973,10 @@ Make sure to use two unique channel names when using hslider2 and vslider2, othe
 <p><code>colour("colour")</code> This sets the colour of the xypad circle and corresponding number boxes. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.</p>
 </div>
 <div class="paragraph">
-<p><code>fontcolour("colour")</code> This sets the colour of the xypad text label and mode selector labels. See above for details on valid colours.</p>
+<p><code>fontcolour("colour")</code> This sets the colour of the xypad values. See above for details on valid colours.</p>
+</div>
+<div class="paragraph">
+<p><code>textcolour("colour")</code> Sets the colour of the text passed to text(), and also sets the colour of the mode selector.</p>
 </div>
 <div class="paragraph">
 <p><code>identchannel("channel")</code> Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See <a href="#identchannels">Controlling Widgets from Csound</a></p>
@@ -3106,7 +3124,7 @@ The major advantage to using plant abstractions is that you can easily move and 
 <h2 id="presets">Presets</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Presets can be saved a restored at any stage using a combination of a filebutton and a combobox. In your preset combobox you should specify a file tyoe of "*.snaps" in the populate() identifier. The filebutton should also use a populate identifier, also set to filtype of "*.snaps". So your combobox and file button code might look like this</p>
+<p>Presets can be saved a restored at any stage using a combination of a filebutton and a combobox. In your preset combobox you should specify a file tyoe of "*.snaps" in the populate() identifier. The filebutton should also use a populate identifier, also set to filtype of "\*.snaps". So your combobox and file button code might look like this</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3358,7 +3376,7 @@ Currently this feature is only available on Windows.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-01-20 13:04:31 GMT
+Last updated 2015-01-22 12:41:06 GMT
 </div>
 </div>
 </body>

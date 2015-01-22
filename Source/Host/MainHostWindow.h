@@ -27,7 +27,7 @@
 
 #include "FilterGraph.h"
 #include "GraphEditorPanel.h"
-#include "CabbageUtils.h"
+#include "../CabbageUtils.h"
 #include "CabbagePluginListComponent.h"
 
 //==============================================================================

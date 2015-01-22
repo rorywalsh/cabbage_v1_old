@@ -61,7 +61,7 @@ CabbageLookAndFeel::CabbageLookAndFeel()
     setColour(ListBox::backgroundColourId, cUtils::getDarkerBackgroundSkin());
     //setColour(TableListBox::textColourId, Colours::white);
     setColour(ListBox::textColourId, Colours::white);
-    setColour(Label::textColourId, Colours::red);
+    setColour(Label::textColourId, Colours::white);
     setColour(TextButton::textColourOnId, cUtils::getComponentFontColour());
     setColour(TextButton::textColourOffId, cUtils::getComponentFontColour());
     setColour(TextButton::buttonColourId, Colour(20, 20, 20));

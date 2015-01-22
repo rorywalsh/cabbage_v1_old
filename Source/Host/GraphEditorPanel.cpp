@@ -1239,7 +1239,7 @@ GraphDocumentComponent::GraphDocumentComponent (AudioPluginFormatManager& format
     addAndMakeVisible (keyboardComp = new MidiKeyboardComponent (keyState,
             MidiKeyboardComponent::horizontalKeyboard));
 
-	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::whiteNoteColourId, Colours::cornflowerblue.darker(.9f));
+	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::whiteNoteColourId, Colours::white.darker(.3f));
 	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::blackNoteColourId, Colours::green.darker(.9f));
 	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::upDownButtonArrowColourId, Colours::lime);
 	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::upDownButtonBackgroundColourId, Colour(30,30,30));

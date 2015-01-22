@@ -999,10 +999,12 @@ CabbageAudioDeviceSelectorComponent::CabbageAudioDeviceSelectorComponent (AudioD
 CabbageAudioDeviceSelectorComponent::~CabbageAudioDeviceSelectorComponent()
 {
     deviceManager.removeChangeListener (this);
+#ifndef CABBAGE_HOST
     PropertySet* const globalSettings = appProperties->getUserSettings();
     //update settings:
     ScopedPointer<XmlElement> xml (deviceManager.createStateXml());
     globalSettings->setValue ("audioSetup", xml);
+#endif
 }
 
 void CabbageAudioDeviceSelectorComponent::resized()

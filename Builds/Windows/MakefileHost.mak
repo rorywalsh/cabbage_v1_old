@@ -71,7 +71,9 @@ OBJECTS := \
   $(OBJDIR)/GraphEditorPanel_3dbd4872.o \
   $(OBJDIR)/HostStartup_5ce96f96.o \
   $(OBJDIR)/InternalFilters_beb54bdf.o \
+  $(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o \
   $(OBJDIR)/MainHostWindow_e920295a.o \
+  $(OBJDIR)/CabbagePluginListComponent_e920298a.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
   $(OBJDIR)/juce_audio_formats_d349f0c8.o \
@@ -85,6 +87,7 @@ OBJECTS := \
   $(OBJDIR)/juce_gui_basics_a630dd20.o \
   $(OBJDIR)/juce_gui_extra_7767d6a8.o \
 
+
 .PHONY: clean
 
 $(OUTDIR)/$(TARGET): $(OBJECTS) $(LDDEPS) $(RESOURCES)
@@ -96,9 +99,6 @@ $(OUTDIR)/$(TARGET): $(OBJECTS) $(LDDEPS) $(RESOURCES)
 
 clean:
 	@echo Cleaning CabbagePatcher
-	-@rm -f $(OUTDIR)/$(TARGET)
-	-@rm -rf $(OBJDIR)/*
-	-@rm -rf $(OBJDIR)
 	@$(CLEANCMD)
 
 strip:
@@ -109,7 +109,7 @@ $(OBJDIR)/BinaryData_5ba7f54.o: ../../Source/BinaryData.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling BinaryData.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-	
+
 $(OBJDIR)/CabbageLookAndFeel_220a01a6.o: ../../Source/CabbageLookAndFeel.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CabbageLookAndFeel.cpp"
@@ -123,6 +123,16 @@ $(OBJDIR)/FilterGraph_62e9c017.o: ../../Source/Host/FilterGraph.cpp
 $(OBJDIR)/GraphEditorPanel_3dbd4872.o: ../../Source/Host/GraphEditorPanel.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling GraphEditorPanel.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbagePluginListComponent_e920298a.o: ../../Source/Host/CabbagePluginListComponent.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling GraphEditorPanel.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o: ../../Source/CabbageAudioDeviceSelectorComponent.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageAudioDeviceSelectorComponent.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/HostStartup_5ce96f96.o: ../../Source/Host/HostStartup.cpp

@@ -89,8 +89,8 @@ public:
 
     ApplicationCommandManager commandManager;
     ScopedPointer<ApplicationProperties> appProperties;
-    //LookAndFeel_V3 lookAndFeel;
-	CabbageLookAndFeel lookAndFeel;
+    LookAndFeel_V3 lookAndFeel;
+	//CabbageLookAndFeel lookAndFeel;
 
 private:
     ScopedPointer<MainHostWindow> mainWindow;

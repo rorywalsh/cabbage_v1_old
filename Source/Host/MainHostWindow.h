@@ -39,6 +39,7 @@ static const int saveAs                 = 0x30002;
 static const int showPluginListEditor   = 0x30100;
 static const int showAudioSettings      = 0x30200;
 static const int aboutBox               = 0x30300;
+static const int setCabbageFileDirectory               = 0x30400;
 }
 
 ApplicationCommandManager& getCommandManager();
@@ -81,6 +82,8 @@ public:
     void createPlugin (const PluginDescription* desc, int x, int y);
 
     void addPluginsToMenu (PopupMenu& m) const;
+	//add native Cabbage filters to list...nice.
+	void addCabbageNativePluginsToMenu (PopupMenu& m, Array<File> &cabbageFiles) const;
     const PluginDescription* getChosenType (const int menuID) const;
 
     GraphDocumentComponent* getGraphEditor() const;

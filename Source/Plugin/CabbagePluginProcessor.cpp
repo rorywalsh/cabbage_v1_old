@@ -44,7 +44,7 @@ juce_ImplementSingleton (IdentArray);
 // standalone application and the other for the plugin library
 //==============================================================================
 //#ifdef Cabbage_Build_Standalone
-#if defined(Cabbage_Build_Standalone) || defined(Cabbage_Plugin_Host)
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 //===========================================================
 // STANDALONE - CONSTRUCTOR
 //===========================================================
@@ -148,7 +148,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
     csound->SetExternalMidiWriteCallback(WriteMidiData);
 
     csound->SetIsGraphable(0);
-#ifndef Cabbage_Plugin_Host
+#ifndef CABBAGE_HOST
     if(!getPreference(appProperties, "UseCabbageIO"))
     {
         //csoundPerfThread = new CsoundPerformanceThread(csound);
@@ -1310,7 +1310,7 @@ void CabbagePluginAudioProcessor::breakpointCallback(CSOUND *csound, debug_bkpt_
 }
 #endif
 //==============================================================================
-#if defined(Cabbage_Build_Standalone) || defined(Cabbage_Plugin_Host)
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int pluginType)
 {
     return new CabbagePluginAudioProcessor(inputfile, false, pluginType);

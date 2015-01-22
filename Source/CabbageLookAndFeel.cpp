@@ -1466,7 +1466,7 @@ void CabbageLookAndFeel::drawAlertBox (Graphics& g,
                                         textArea.getHeight()).toFloat());
 
     g.setColour (alert.findColour (AlertWindow::outlineColourId));
-    g.drawRect (0, 0, alert.getWidth(), alert.getHeight());
+    g.drawRect(0.0, 0.0, float(alert.getWidth()), float(alert.getHeight()), .1f);
 }
 
 int CabbageLookAndFeel::getAlertBoxWindowFlags()

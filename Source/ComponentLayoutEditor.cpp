@@ -293,7 +293,7 @@ void ChildAlias::mouseDown (const MouseEvent& e)
             //alert.addTextBlock("Enter a name and hit 'escape'(The following symbols not premitted in names:"" $ % ^ & * ( ) - + )");
             alert.addTextEditor("textEditor", "name", "");
             String plantDir;
-#if !defined(AndroidBuild)
+#if !defined(AndroidBuild) && !defined(CABBAGE_HOST)
             plantDir = appProperties->getUserSettings()->getValue("PlantFileDir", "");
             alert.runModalLoop();
 #endif

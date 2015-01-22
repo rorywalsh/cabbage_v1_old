@@ -228,7 +228,7 @@ PopupMenu MainHostWindow::getMenuForIndex (int topLevelMenuIndex, const String& 
         sortTypeMenu.addItem (203, "List plugins by manufacturer",       true, pluginSortMethod == KnownPluginList::sortByManufacturer);
         sortTypeMenu.addItem (204, "List plugins based on the directory structure", true, pluginSortMethod == KnownPluginList::sortByFileSystemLocation);
         menu.addSubMenu ("Plugin menu type", sortTypeMenu);
-
+		menu.addCommandItem (&getCommandManager(), CommandIDs::setCabbageFileDirectory);
         menu.addSeparator();
         menu.addCommandItem (&getCommandManager(), CommandIDs::showAudioSettings);
 
@@ -282,7 +282,7 @@ void MainHostWindow::createPlugin (const PluginDescription* desc, int x, int y)
     GraphDocumentComponent* const graphEditor = getGraphEditor();
 
     if (graphEditor != nullptr)
-        graphEditor->createNewPlugin (desc, x, y);
+        graphEditor->createNewPlugin (desc, x, y, false, "");
 }
 
 void MainHostWindow::addPluginsToMenu (PopupMenu& m) const
@@ -293,6 +293,27 @@ void MainHostWindow::addPluginsToMenu (PopupMenu& m) const
     m.addSeparator();
 
     knownPluginList.addToMenu (m, pluginSortMethod);
+}
+
+//add native filters to list of plugins. 
+void MainHostWindow::addCabbageNativePluginsToMenu (PopupMenu& m, Array<File> &cabbageFiles) const
+{
+	const int menuSize = m.getNumItems();
+	File pluginDir(appProperties->getUserSettings()->getValue("CabbagePluginDirectory"));
+	pluginDir.findChildFiles(cabbageFiles, 2, true, "*.csd");
+
+	StringArray files;
+
+	for (int i = 0; i < cabbageFiles.size(); ++i)
+		files.add(cabbageFiles[i].getFileNameWithoutExtension());
+	
+	files.sort(true);
+	
+	for (int i = 0; i < files.size(); ++i)
+		m.addItem (i + menuSize, files[i]);
+		
+	m.addSeparator();
+	m.setLookAndFeel(&this->getLookAndFeel());
 }
 
 const PluginDescription* MainHostWindow::getChosenType (const int menuID) const
@@ -317,7 +338,8 @@ void MainHostWindow::getAllCommands (Array <CommandID>& commands)
                               CommandIDs::saveAs,
                               CommandIDs::showPluginListEditor,
                               CommandIDs::showAudioSettings,
-                              CommandIDs::aboutBox
+                              CommandIDs::aboutBox,
+							  CommandIDs::setCabbageFileDirectory
                             };
 
     commands.addArray (ids, numElementsInArray (ids));
@@ -360,6 +382,10 @@ void MainHostWindow::getCommandInfo (const CommandID commandID, ApplicationComma
         result.addDefaultKeypress ('a', ModifierKeys::commandModifier);
         break;
 
+	case CommandIDs::setCabbageFileDirectory:
+        result.setInfo ("Set the Cabbage plugin directory", String::empty, category, 0);
+        break;
+		
     case CommandIDs::aboutBox:
         result.setInfo ("About...", String::empty, category, 0);
         break;
@@ -372,7 +398,10 @@ void MainHostWindow::getCommandInfo (const CommandID commandID, ApplicationComma
 bool MainHostWindow::perform (const InvocationInfo& info)
 {
     GraphDocumentComponent* const graphEditor = getGraphEditor();
-
+	String credits;
+	String dir = appProperties->getUserSettings()->getValue("CabbagePluginDirectory", "");
+	FileChooser browser(String("Please select the Cabbage Plugin directoy..."), File(dir), String("*.csd"));
+	
     switch (info.commandID)
     {
     case CommandIDs::open:
@@ -402,6 +431,11 @@ bool MainHostWindow::perform (const InvocationInfo& info)
         showAudioSettings();
         break;
 
+	case CommandIDs::setCabbageFileDirectory:
+		if(browser.browseForDirectory())
+			appProperties->getUserSettings()->setValue("CabbagePluginDirectory", browser.getResult().getFullPathName());	
+		break;
+		
     case CommandIDs::aboutBox:
         // TODO
         break;

@@ -61,7 +61,7 @@ public:
     void mouseDrag(const MouseEvent& e);
     void mouseUp(const MouseEvent& e);
 
-    void createNewPlugin (const PluginDescription* desc, int x, int y);
+    void createNewPlugin (const PluginDescription* desc, int x, int y, bool isNative, String fileName);
 
     FilterComponent* getComponentForFilter (uint32 filterID) const;
     ConnectorComponent* getComponentForConnection (const AudioProcessorGraph::Connection& conn) const;
@@ -112,7 +112,7 @@ public:
     ~GraphDocumentComponent();
 
     //==============================================================================
-    void createNewPlugin (const PluginDescription* desc, int x, int y);
+    void createNewPlugin (const PluginDescription* desc, int x, int y, bool isNative, String filename);
 
     //==============================================================================
     FilterGraph graph;

@@ -897,6 +897,9 @@ void GraphEditorPanel::paint (Graphics& g)
 
 void GraphEditorPanel::mouseDown (const MouseEvent& e)
 {
+	Array<File> cabbageFiles;
+	int numNonNativePlugins;
+	
     if (e.mods.isPopupMenu())
     {
         PopupMenu m;
@@ -904,10 +907,26 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
         if (MainHostWindow* const mainWindow = findParentComponentOfClass<MainHostWindow>())
         {
             mainWindow->addPluginsToMenu (m);
+			mainWindow->addCabbageNativePluginsToMenu(m, cabbageFiles);
 
             const int r = m.show();
 
-            createNewPlugin (mainWindow->getChosenType (r), e.x, e.y);
+			Logger::writeToLog("PopupMenu ID: "+String(r));
+			if(r>0) //make sure we have a valid item index....
+			{
+				if(r<numNonNativePlugins)
+				{
+					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
+					return;
+				}
+				else //if(r>numNonNativePlugins && r<cabbageFiles.size()-4){
+				{ 
+					Logger::writeToLog(cabbageFiles[r-numNonNativePlugins].getFullPathName());
+					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, cabbageFiles[r-numNonNativePlugins].getFullPathName());
+					return;
+				}
+			}
+            //createNewPlugin (mainWindow->getChosenType (r), e.x, e.y);
         }
     }
     else
@@ -970,9 +989,24 @@ void GraphEditorPanel::findLassoItemsInArea (Array <FilterComponent*>& results, 
     }
 }
 
-void GraphEditorPanel::createNewPlugin (const PluginDescription* desc, int x, int y)
+void GraphEditorPanel::createNewPlugin (const PluginDescription* desc, int x, int y, bool isNative, String fileName)
 {
-    graph.addFilter (desc, x / (double) getWidth(), y / (double) getHeight());
+	if(isNative)
+	{
+		PluginDescription descript;
+		descript.fileOrIdentifier = fileName;
+		descript.descriptiveName = "Cabbage Plugin "+File(fileName).getFileNameWithoutExtension();
+		descript.name = File(fileName).getFileNameWithoutExtension();
+		descript.manufacturerName = "Cabbage Foundation";
+		descript.numInputChannels = 2;
+		descript.pluginFormatName = "Cabbage";
+		descript.numOutputChannels = 2;
+		graph.addFilter (&descript, x / (double) getWidth(), y / (double) getHeight());
+	}
+	else
+	{
+		graph.addFilter (desc, x / (double) getWidth(), y / (double) getHeight());
+	}
 }
 
 FilterComponent* GraphEditorPanel::getComponentForFilter (const uint32 filterID) const
@@ -1279,7 +1313,7 @@ void GraphDocumentComponent::resized()
     keyboardComp->setBounds (200, getHeight() - keysHeight, getWidth()-200, keysHeight);
 }
 
-void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int x, int y)
+void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int x, int y, bool isNative, String filename)
 {
-    graphPanel->createNewPlugin (desc, x, y);
+    graphPanel->createNewPlugin (desc, x, y, isNative, filename);
 }

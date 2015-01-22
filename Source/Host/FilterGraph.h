@@ -28,6 +28,8 @@
 class FilterInGraph;
 class FilterGraph;
 
+#include "../Source/Plugin/CabbagePluginProcessor.h"
+
 const char* const filenameSuffix = ".filtergraph";
 const char* const filenameWildcard = "*.filtergraph";
 
@@ -50,6 +52,7 @@ public:
     const AudioProcessorGraph::Node::Ptr getNodeForId (const uint32 uid) const noexcept;
 
     void addFilter (const PluginDescription* desc, double x, double y);
+	void addNativeCabbageFilter (String fileName, double x, double y);
 
     void removeFilter (const uint32 filterUID);
     void disconnectFilter (const uint32 filterUID);
@@ -103,7 +106,9 @@ private:
 
     uint32 lastUID;
     uint32 getNextUID() noexcept;
-
+	uint32 lastNodeID;
+	Array<String> pluginTypes;
+	uint32 nodeId;
     void createNodeFromXml (const XmlElement& xml);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FilterGraph)

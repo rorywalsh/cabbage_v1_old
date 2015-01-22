@@ -31,7 +31,7 @@
 #error "If you're building the audio plugin host, you probably want to enable VST and/or AU support"
 #endif
 
-
+ApplicationProperties* appProperties = nullptr;
 //==============================================================================
 class PluginHostApp  : public JUCEApplication
 {
@@ -93,7 +93,7 @@ public:
     }
 
     ApplicationCommandManager commandManager;
-    ScopedPointer<ApplicationProperties> appProperties;
+    //ScopedPointer<ApplicationProperties> appProperties;
     CabbageLookAndFeel lookAndFeel;
 
 private:
@@ -107,7 +107,7 @@ ApplicationCommandManager& getCommandManager()      {
     return getApp().commandManager;
 }
 ApplicationProperties& getAppProperties()           {
-    return *getApp().appProperties;
+    return *appProperties;
 }
 
 

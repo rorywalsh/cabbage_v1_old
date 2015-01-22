@@ -141,26 +141,6 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     static int OpenMidiOutputDevice(CSOUND * csnd, void **userData, const char *devName);
     static int ReadMidiData(CSOUND *csound, void *userData, unsigned char *mbuf, int nbytes);
     static int WriteMidiData(CSOUND *csound, void *userData, const unsigned char *mbuf, int nbytes);
-
-    int getNumberCsoundOutChannels()
-    {
-        return csound->GetNchnls();
-    }
-
-    int getNumberCsoundInChannels()
-    {
-        //return csound->GetInNchnls();
-    }
-
-    int getCsoundSamplingRate()
-    {
-        return csound->GetSr();
-    }
-
-    int getCsoundKsmpsSize()
-    {
-        return csound->GetKsmps();
-    }
 #endif
     static void YieldCallback(void* data);
     void updateCabbageControls();
@@ -210,6 +190,26 @@ public:
     void continueCsoundDebug();
     void nextCsoundDebug();
     void cleanCsoundDebug();
+	
+    int getNumberCsoundOutChannels()
+    {
+        return csound->GetNchnls();
+    }
+
+    int getNumberCsoundInChannels()
+    {
+        //return csound->GetInNchnls();
+    }
+
+    int getCsoundSamplingRate()
+    {
+        return csound->GetSr();
+    }
+
+    int getCsoundKsmpsSize()
+    {
+        return csound->GetKsmps();
+    }
     //==============================================================================
 
 #if defined(Cabbage_Build_Standalone) || (Cabbage_Plugin_Host)

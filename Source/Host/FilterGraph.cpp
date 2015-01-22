@@ -37,13 +37,13 @@ FilterGraph::FilterGraph (AudioPluginFormatManager& formatManager_)
                          filenameWildcard,
                          "Load a filter graph",
                          "Save a filter graph"),
-      formatManager (formatManager_), lastUID (0)
+    formatManager (formatManager_), lastUID (0)
 {
-    InternalPluginFormat internalFormat;
-
-    addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioInputFilter),  0.5f,  0.1f);
-    addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::midiInputFilter),   0.25f, 0.1f);
-    addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioOutputFilter), 0.5f,  0.9f);
+//    InternalPluginFormat internalFormat;
+//
+//    addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioInputFilter),  0.5f,  0.1f);
+//    addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::midiInputFilter),   0.25f, 0.1f);
+//    addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioOutputFilter), 0.5f,  0.9f);
 
     setChangedFlag (false);
 }
@@ -156,7 +156,7 @@ const AudioProcessorGraph::Connection* FilterGraph::getConnection (const int ind
 }
 
 const AudioProcessorGraph::Connection* FilterGraph::getConnectionBetween (uint32 sourceFilterUID, int sourceFilterChannel,
-                                                                          uint32 destFilterUID, int destFilterChannel) const noexcept
+        uint32 destFilterUID, int destFilterChannel) const noexcept
 {
     return graph.getConnectionBetween (sourceFilterUID, sourceFilterChannel,
                                        destFilterUID, destFilterChannel);
@@ -173,7 +173,7 @@ bool FilterGraph::addConnection (uint32 sourceFilterUID, int sourceFilterChannel
                                  uint32 destFilterUID, int destFilterChannel)
 {
     const bool result = graph.addConnection (sourceFilterUID, sourceFilterChannel,
-                                             destFilterUID, destFilterChannel);
+                        destFilterUID, destFilterChannel);
 
     if (result)
         changed();
@@ -238,7 +238,7 @@ File FilterGraph::getLastDocumentOpened()
 {
     RecentlyOpenedFilesList recentFiles;
     recentFiles.restoreFromString (getAppProperties().getUserSettings()
-                                        ->getValue ("recentFilterGraphFiles"));
+                                   ->getValue ("recentFilterGraphFiles"));
 
     return recentFiles.getFile (0);
 }
@@ -247,12 +247,12 @@ void FilterGraph::setLastDocumentOpened (const File& file)
 {
     RecentlyOpenedFilesList recentFiles;
     recentFiles.restoreFromString (getAppProperties().getUserSettings()
-                                        ->getValue ("recentFilterGraphFiles"));
+                                   ->getValue ("recentFilterGraphFiles"));
 
     recentFiles.addFile (file);
 
     getAppProperties().getUserSettings()
-        ->setValue ("recentFilterGraphFiles", recentFiles.toString());
+    ->setValue ("recentFilterGraphFiles", recentFiles.toString());
 }
 
 //==============================================================================

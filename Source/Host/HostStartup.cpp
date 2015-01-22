@@ -28,7 +28,7 @@
 #include "../CabbageLookAndFeel.h"
 
 #if ! (JUCE_PLUGINHOST_VST || JUCE_PLUGINHOST_VST3 || JUCE_PLUGINHOST_AU)
- #error "If you're building the audio plugin host, you probably want to enable VST and/or AU support"
+#error "If you're building the audio plugin host, you probably want to enable VST and/or AU support"
 #endif
 
 
@@ -43,18 +43,17 @@ public:
         // initialise our settings file..
 
         PropertiesFile::Options options;
-        options.applicationName     = "Cabbage Host";
+        options.applicationName     = "Cabbage Patcher";
         options.filenameSuffix      = "settings";
         options.osxLibrarySubFolder = "Preferences";
 
         appProperties = new ApplicationProperties();
         appProperties->setStorageParameters (options);
 
-
+        LookAndFeel::setDefaultLookAndFeel (&lookAndFeel);
 
         mainWindow = new MainHostWindow();
-        //mainWindow->setUsingNativeTitleBar (true);
-		mainWindow->setLookAndFeel(&lookAndFeel);
+        mainWindow->setUsingNativeTitleBar (false);
 
         commandManager.registerAllCommandsForTarget (this);
         commandManager.registerAllCommandsForTarget (mainWindow);
@@ -62,10 +61,10 @@ public:
         mainWindow->menuItemsChanged();
 
         if (commandLine.isNotEmpty()
-             && ! commandLine.trimStart().startsWith ("-")
-             && mainWindow->getGraphEditor() != nullptr)
+                && ! commandLine.trimStart().startsWith ("-")
+                && mainWindow->getGraphEditor() != nullptr)
             mainWindow->getGraphEditor()->graph.loadFrom (File::getCurrentWorkingDirectory()
-                                                            .getChildFile (commandLine), true);
+                    .getChildFile (commandLine), true);
     }
 
     void shutdown() override
@@ -83,22 +82,33 @@ public:
             JUCEApplicationBase::quit();
     }
 
-    const String getApplicationName() override       { return "Cabbage Host"; }
-    const String getApplicationVersion() override    { return ProjectInfo::versionString; }
-    bool moreThanOneInstanceAllowed() override       { return true; }
+    const String getApplicationName() override       {
+        return "Cabbage Patcher";
+    }
+    const String getApplicationVersion() override    {
+        return ProjectInfo::versionString;
+    }
+    bool moreThanOneInstanceAllowed() override       {
+        return true;
+    }
 
     ApplicationCommandManager commandManager;
     ScopedPointer<ApplicationProperties> appProperties;
-    //LookAndFeel_V3 lookAndFeel;
-	CabbageLookAndFeel lookAndFeel;
+    CabbageLookAndFeel lookAndFeel;
 
 private:
     ScopedPointer<MainHostWindow> mainWindow;
 };
 
-static PluginHostApp& getApp()                      { return *dynamic_cast<PluginHostApp*>(JUCEApplication::getInstance()); }
-ApplicationCommandManager& getCommandManager()      { return getApp().commandManager; }
-ApplicationProperties& getAppProperties()           { return *getApp().appProperties; }
+static PluginHostApp& getApp()                      {
+    return *dynamic_cast<PluginHostApp*>(JUCEApplication::getInstance());
+}
+ApplicationCommandManager& getCommandManager()      {
+    return getApp().commandManager;
+}
+ApplicationProperties& getAppProperties()           {
+    return *getApp().appProperties;
+}
 
 
 // This kicks the whole thing off..

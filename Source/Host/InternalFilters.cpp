@@ -47,7 +47,7 @@ InternalPluginFormat::InternalPluginFormat()
 }
 
 AudioPluginInstance* InternalPluginFormat::createInstanceFromDescription (const PluginDescription& desc,
-                                                                          double /*sampleRate*/, int /*blockSize*/)
+        double /*sampleRate*/, int /*blockSize*/)
 {
     if (desc.name == audioOutDesc.name)
         return new AudioProcessorGraph::AudioGraphIOProcessor (AudioProcessorGraph::AudioGraphIOProcessor::audioOutputNode);
@@ -65,10 +65,14 @@ const PluginDescription* InternalPluginFormat::getDescriptionFor (const Internal
 {
     switch (type)
     {
-        case audioInputFilter:      return &audioInDesc;
-        case audioOutputFilter:     return &audioOutDesc;
-        case midiInputFilter:       return &midiInDesc;
-        default:                    break;
+    case audioInputFilter:
+        return &audioInDesc;
+    case audioOutputFilter:
+        return &audioOutDesc;
+    case midiInputFilter:
+        return &midiInDesc;
+    default:
+        break;
     }
 
     return 0;

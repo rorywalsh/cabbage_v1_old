@@ -59,7 +59,9 @@ CabbageLookAndFeel::CabbageLookAndFeel()
     setColour(DirectoryContentsDisplayComponent::textColourId, Colours::black);
     setColour(DirectoryContentsDisplayComponent::highlightColourId, Colours::whitesmoke);
     setColour(ListBox::backgroundColourId, cUtils::getDarkerBackgroundSkin());
-    setColour(Label::textColourId, cUtils::getComponentFontColour());
+    //setColour(TableListBox::textColourId, Colours::white);
+    setColour(ListBox::textColourId, Colours::white);
+    setColour(Label::textColourId, Colours::red);
     setColour(TextButton::textColourOnId, cUtils::getComponentFontColour());
     setColour(TextButton::textColourOffId, cUtils::getComponentFontColour());
     setColour(TextButton::buttonColourId, Colour(20, 20, 20));
@@ -1263,42 +1265,25 @@ void CabbageLookAndFeel::drawMenuBarItem(Graphics & g, int width, int height, in
 
 //======== Document Window title bar ===================================================================
 void CabbageLookAndFeel::drawDocumentWindowTitleBar (DocumentWindow &window, Graphics &g, int w, int h,
-        int titleSpaceX,
+        int /*titleSpaceX*/,
         int titleSpaceW,
         const Image */*icon*/,
-        bool drawTitleTextOnLeft)
+        bool /*drawTitleTextOnLeft*/)
 {
-    const bool isActive = window.isActiveWindow();
+    window.setUsingNativeTitleBar(false);
 
-    g.setGradientFill (ColourGradient (window.getBackgroundColour(),
-                                       0.0f, 0.0f,
-                                       window.getBackgroundColour().contrasting (isActive ? 0.05f : 0.01f),
-                                       0.0f, (float) h, false));
+    g.setColour (cUtils::getDarkerBackgroundSkin());
     g.fillAll();
 
-    Font font (h * 0.65f, Font::bold);
+    g.setColour (cUtils::getComponentFontColour());
+    Font font = cUtils::getTitleFont();
+#ifndef MACOSX
+    font.setFallbackFontName("Verdana");
+#endif
+    font.setHeight(16);
     g.setFont (font);
-
-    int textW = font.getStringWidth (window.getName());
-    int iconW = 0;
-    int iconH = 0;
-
-
-    textW = jmin (titleSpaceW, textW + iconW);
-    int textX = drawTitleTextOnLeft ? titleSpaceX
-                                    : jmax (titleSpaceX, (w - textW) / 2);
-
-    if (textX + textW > titleSpaceX + titleSpaceW)
-        textX = titleSpaceX + titleSpaceW - textW;
-
-
-
-    if (window.isColourSpecified (DocumentWindow::textColourId) || isColourSpecified (DocumentWindow::textColourId))
-        g.setColour (window.findColour (DocumentWindow::textColourId));
-    else
-        g.setColour (window.getBackgroundColour().contrasting (isActive ? 0.4f : 0.1f));
-
-    g.drawText (window.getName(), textX, 0, textW, h, Justification::centredLeft, true);
+    g.drawText (cUtils::cabbageString(window.getName(), font, titleSpaceW), (w/2)-(titleSpaceW/2),
+                (h/2)-(font.getHeight()/2), titleSpaceW, font.getHeight(), 36, false);
 }
 
 //====== Draw Window Button Normal Image =================================================================
@@ -1482,7 +1467,6 @@ void CabbageLookAndFeel::drawAlertBox (Graphics& g,
 
     g.setColour (alert.findColour (AlertWindow::outlineColourId));
     g.drawRect (0, 0, alert.getWidth(), alert.getHeight());
-
 }
 
 int CabbageLookAndFeel::getAlertBoxWindowFlags()

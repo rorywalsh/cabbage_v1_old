@@ -37,11 +37,11 @@ PluginWindow::PluginWindow (Component* const pluginEditor,
                             WindowFormatType t)
     : DocumentWindow (pluginEditor->getName(), Colours::lightblue,
                       DocumentWindow::minimiseButton | DocumentWindow::closeButton),
-      owner (o),
-      type (t)
+    owner (o),
+    type (t)
 {
     setSize (400, 300);
-	
+
     setContentOwned (pluginEditor, true);
 
     setTopLeftPosition (owner->properties.getWithDefault ("uiLastX", Random::getSystemRandom().nextInt (500)),
@@ -73,7 +73,7 @@ void PluginWindow::closeAllCurrentlyOpenWindows()
 
 //==============================================================================
 class ProcessorProgramPropertyComp : public PropertyComponent,
-                                     private AudioProcessorListener
+    private AudioProcessorListener
 {
 public:
     ProcessorProgramPropertyComp (const String& name, AudioProcessor& p, int index_)
@@ -151,13 +151,13 @@ private:
 
 //==============================================================================
 PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
-                                          WindowFormatType type)
+        WindowFormatType type)
 {
     jassert (node != nullptr);
 
     for (int i = activePluginWindows.size(); --i >= 0;)
         if (activePluginWindows.getUnchecked(i)->owner == node
-             && activePluginWindows.getUnchecked(i)->type == type)
+                && activePluginWindows.getUnchecked(i)->type == type)
             return activePluginWindows.getUnchecked(i);
 
     AudioProcessor* processor = node->getProcessor();
@@ -166,9 +166,9 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
     if (type == Normal)
     {
         ui = processor->createEditorIfNeeded();
-		
-		Logger::writeToLog("Width:"+String(ui->getWidth()));
-		Logger::writeToLog("Height:"+String(ui->getHeight()));
+
+        Logger::writeToLog("Width:"+String(ui->getWidth()));
+        Logger::writeToLog("Height:"+String(ui->getHeight()));
 
         if (ui == nullptr)
             type = Generic;
@@ -212,7 +212,7 @@ void PluginWindow::closeButtonPressed()
 
 //==============================================================================
 class PinComponent   : public Component,
-                       public SettableTooltipClient
+    public SettableTooltipClient
 {
 public:
     PinComponent (FilterGraph& graph_,
@@ -257,7 +257,7 @@ public:
 
         p.addRectangle (w * 0.4f, isInput ? (0.5f * h) : 0.0f, w * 0.2f, h * 0.5f);
 
-        g.setColour (index == FilterGraph::midiChannelNumber ? Colours::red : Colours::green);
+        g.setColour (index == FilterGraph::midiChannelNumber ? Colours::cornflowerblue : Colours::green);
         g.fillPath (p);
     }
 
@@ -308,7 +308,8 @@ public:
           pinSize (16),
           font (13.0f, Font::bold),
           numIns (0),
-          numOuts (0)
+          numOuts (0),
+		  filterIsPartofSelectedGroup(false)
     {
         shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 3, Point<int> (0, 1)));
         setComponentEffect (&shadow);
@@ -323,6 +324,28 @@ public:
 
     void mouseDown (const MouseEvent& e)
     {
+
+        Logger::writeToLog("NodeID: "+String(filterID));
+        getGraphPanel()->selectedFilterCoordinates.clear();
+
+        int numSelected = getGraphPanel()->getLassoSelection().getNumSelected();
+        for(int i=0; i<numSelected; i++)
+        {
+            //check if current filter is part of a group or not, if so add position to coor array
+            if(filterID==getGraphPanel()->getLassoSelection().getSelectedItem(i)->filterID)
+                filterIsPartofSelectedGroup = true;
+            getGraphPanel()->selectedFilterCoordinates.add(getGraphPanel()->getLassoSelection().getSelectedItem(i)->getPosition());
+        }
+
+        if(!filterIsPartofSelectedGroup) {
+            for(int i=0; i<getGraphPanel()->getNumChildComponents(); i++) {
+                //if not part of a group reset colours back to normal
+                getGraphPanel()->getChildComponent(i)->getProperties().set("colour", "");
+                getGraphPanel()->getChildComponent(i)->repaint();
+            }
+            getGraphPanel()->getLassoSelection().deselectAll();
+        }
+
         originalPos = localPointToGlobal (Point<int>());
 
         toFront (true);
@@ -365,14 +388,19 @@ public:
                     else
                     {
                         PluginWindow::WindowFormatType type = processor->hasEditor() ? PluginWindow::Normal
-                                                                                     : PluginWindow::Generic;
+                                                              : PluginWindow::Generic;
 
                         switch (r)
                         {
-                            case 4: type = PluginWindow::Programs; break;
-                            case 5: type = PluginWindow::Parameters; break;
+                        case 4:
+                            type = PluginWindow::Programs;
+                            break;
+                        case 5:
+                            type = PluginWindow::Parameters;
+                            break;
 
-                            default: break;
+                        default:
+                            break;
                         };
 
                         if (PluginWindow* const w = PluginWindow::getWindowFor (f, type))
@@ -392,12 +420,37 @@ public:
             if (getParentComponent() != nullptr)
                 pos = getParentComponent()->getLocalPoint (nullptr, pos);
 
-            graph.setNodePosition (filterID,
-                                   (pos.getX() + getWidth() / 2) / (double) getParentWidth(),
-                                   (pos.getY() + getHeight() / 2) / (double) getParentHeight());
+            int numSelected = getGraphPanel()->getLassoSelection().getNumSelected();
+
+            for(int i=0; i<numSelected; i++)
+                if(filterID==getGraphPanel()->getLassoSelection().getSelectedItem(i)->filterID)
+                    filterIsPartofSelectedGroup = true;
+
+            if(filterIsPartofSelectedGroup)
+			{
+                for(int i=0; i<numSelected; i++)
+                {
+                    int fltID = getGraphPanel()->getLassoSelection().getSelectedItem(i)->filterID;
+                    int filterPosX = getGraphPanel()->selectedFilterCoordinates[i].getX();
+                    int filterPosY = getGraphPanel()->selectedFilterCoordinates[i].getY();
+
+                    //Logger::writeToLog("FilterID from Filter Component MouseDrag:"+String(fltID));
+                    graph.setNodePosition (fltID,
+                                           (filterPosX+e.getDistanceFromDragStartX() + getWidth() / 2) / (double) getParentWidth(),
+                                           (filterPosY+e.getDistanceFromDragStartY() + getHeight() / 2) / (double) getParentHeight());
+                }
+			}
+			
+            else 
+			{
+                graph.setNodePosition (filterID,
+                                       (pos.getX() + getWidth() / 2) / (double) getParentWidth(),
+                                       (pos.getY() + getHeight() / 2) / (double) getParentHeight());
+            }
 
             getGraphPanel()->updateComponents();
         }
+        repaint();
     }
 
     void mouseUp (const MouseEvent& e)
@@ -425,21 +478,38 @@ public:
 
     void paint (Graphics& g)
     {
-        g.setColour (Colours::lightgrey);
+        String outlineColour = getProperties().getWithDefault("colour", "").toString();
+        if(outlineColour.length()>1)
+		{
+            g.setColour(Colour::fromString(outlineColour));
+			
+		}
+        else
+		{
+            g.setColour(filterColour);
+			filterIsPartofSelectedGroup=false;
+		}
+
+
 
         const int x = 4;
         const int y = pinSize;
         const int w = getWidth() - x * 2;
         const int h = getHeight() - pinSize * 2;
 
-        g.fillRect (x, y, w, h);
+        g.drawRoundedRectangle(x, y, w, h, 5, 1.f);
 
-        g.setColour (Colours::black);
-        g.setFont (font);
-        g.drawFittedText (getName(), getLocalBounds().reduced (4, 2), Justification::centred, 2);
+        g.setColour(filterColour);
+        g.fillRoundedRectangle(x, y, w, h, 5);
 
-        g.setColour (Colours::grey);
-        g.drawRect (x, y, w, h);
+        g.setColour (cUtils::getComponentFontColour());
+        g.setFont (cUtils::getComponentFont());
+        g.drawFittedText (getName(),
+                          x + 4, y + 2, w - 8, h - 4,
+                          Justification::centred, 2);
+
+        g.setOpacity(0.2);
+        g.drawRoundedRectangle(x+0.5, y+0.5, w-1, h-1, 5, 1.0f);
     }
 
     void resized()
@@ -542,6 +612,8 @@ public:
 
 private:
     int pinSize;
+    Colour filterColour;
+    bool filterIsPartofSelectedGroup;
     Point<int> originalPos;
     Font font;
     int numIns, numOuts;
@@ -558,7 +630,7 @@ private:
 
 //==============================================================================
 class ConnectorComponent   : public Component,
-                             public SettableTooltipClient
+    public SettableTooltipClient
 {
 public:
     ConnectorComponent (FilterGraph& graph_)
@@ -615,9 +687,9 @@ public:
         getPoints (x1, y1, x2, y2);
 
         if (lastInputX != x1
-             || lastInputY != y1
-             || lastOutputX != x2
-             || lastOutputY != y2)
+                || lastInputY != y1
+                || lastOutputX != x2
+                || lastOutputY != y2)
         {
             resizeToFit();
         }
@@ -661,9 +733,9 @@ public:
     void paint (Graphics& g)
     {
         if (sourceFilterChannel == FilterGraph::midiChannelNumber
-             || destFilterChannel == FilterGraph::midiChannelNumber)
+                || destFilterChannel == FilterGraph::midiChannelNumber)
         {
-            g.setColour (Colours::red);
+            g.setColour (Colours::cornflowerblue);
         }
         else
         {
@@ -758,9 +830,9 @@ public:
                            arrowL, 0.0f);
 
         arrow.applyTransform (AffineTransform::identity
-                                .rotated (float_Pi * 0.5f - (float) atan2 (x2 - x1, y2 - y1))
-                                .translated ((x1 + x2) * 0.5f,
-                                             (y1 + y2) * 0.5f));
+                              .rotated (float_Pi * 0.5f - (float) atan2 (x2 - x1, y2 - y1))
+                              .translated ((x1 + x2) * 0.5f,
+                                           (y1 + y2) * 0.5f));
 
         linePath.addPath (arrow);
         linePath.setUsingNonZeroWinding (true);
@@ -797,7 +869,16 @@ private:
 GraphEditorPanel::GraphEditorPanel (FilterGraph& graph_)
     : graph (graph_)
 {
-	setLookAndFeel(&this->getParentComponent()->getLookAndFeel());
+    InternalPluginFormat internalFormat;
+
+    graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioInputFilter),
+               0.5f, 0.2f);
+
+    graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::midiInputFilter),
+               0.3f, 0.2f);
+
+    graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioOutputFilter),
+               0.5f, 0.8f);
     graph.addChangeListener (this);
     setOpaque (true);
 }
@@ -811,7 +892,7 @@ GraphEditorPanel::~GraphEditorPanel()
 
 void GraphEditorPanel::paint (Graphics& g)
 {
-    g.fillAll (cUtils::getDarkerBackgroundSkin());
+    g.fillAll (Colour(20, 20, 20));
 }
 
 void GraphEditorPanel::mouseDown (const MouseEvent& e)
@@ -828,6 +909,64 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 
             createNewPlugin (mainWindow->getChosenType (r), e.x, e.y);
         }
+    }
+    else
+    {
+        //if((e.mods.getCurrentModifiers().isCtrlDown())&& (e.mods.isLeftButtonDown())){
+        addChildComponent (&lassoComp);
+        lassoComp.beginLasso (e, this);
+        //}
+    }
+
+
+    //deselect all grouped filters and set alpha to normal
+    selectedFilters.deselectAll();
+    for(int i=0; i<getNumChildComponents(); i++)
+    {
+        getChildComponent(i)->getProperties().set("colour", "");
+        getChildComponent(i)->repaint();
+    }
+}
+
+
+void GraphEditorPanel::mouseDrag (const MouseEvent& e)
+{
+//	if(!e.mods.isCommandDown())
+//		myDragger.dragComponent (this, e, nullptr);
+//	else{
+    lassoComp.toFront (false);
+    lassoComp.dragLasso (e);
+//	}
+}
+
+void GraphEditorPanel::mouseUp (const MouseEvent& e)
+{
+    //if a selection has been made update the selected groups alpha setting to highlight selection
+    Logger::writeToLog("Number selected: "+String(selectedFilters.getNumSelected()));
+    for(int i=0; i<selectedFilters.getNumSelected(); i++) {
+        //Logger::writeToLog(getChildComponent(i)->getName());
+        selectedFilters.getSelectedItem(i)->getProperties().set("colour", Colours::yellow.toString());
+        selectedFilters.getSelectedItem(i)->repaint();
+    }
+
+    lassoComp.endLasso();
+    removeChildComponent (&lassoComp);
+}
+
+void GraphEditorPanel::findLassoItemsInArea (Array <FilterComponent*>& results, const Rectangle<int>& area)
+{
+    const Rectangle<int> lasso (area);
+
+    for (int i = 0; i < getNumChildComponents()-1; i++)
+    {
+        FilterComponent* c = (FilterComponent*)getChildComponent(i);
+        if (c->getBounds().intersects (lasso)) {
+            results.addIfNotAlreadyThere(c);
+            selectedFilters.addToSelection(c);
+            Logger::writeToLog(c->getName());
+        }
+        else
+            selectedFilters.deselect(c);
     }
 }
 
@@ -854,9 +993,9 @@ ConnectorComponent* GraphEditorPanel::getComponentForConnection (const AudioProc
     {
         if (ConnectorComponent* const c = dynamic_cast <ConnectorComponent*> (getChildComponent (i)))
             if (c->sourceFilterID == conn.sourceNodeId
-                 && c->destFilterID == conn.destNodeId
-                 && c->sourceFilterChannel == conn.sourceChannelIndex
-                 && c->destFilterChannel == conn.destChannelIndex)
+                    && c->destFilterID == conn.destNodeId
+                    && c->sourceFilterChannel == conn.sourceChannelIndex
+                    && c->destFilterChannel == conn.destChannelIndex)
                 return c;
     }
 
@@ -870,7 +1009,7 @@ PinComponent* GraphEditorPanel::findPinAt (const int x, const int y) const
         if (FilterComponent* fc = dynamic_cast <FilterComponent*> (getChildComponent (i)))
         {
             if (PinComponent* pin = dynamic_cast <PinComponent*> (fc->getComponentAt (x - fc->getX(),
-                                                                                      y - fc->getY())))
+                                    y - fc->getY())))
                 return pin;
         }
     }
@@ -942,8 +1081,8 @@ void GraphEditorPanel::updateComponents()
 }
 
 void GraphEditorPanel::beginConnectorDrag (const uint32 sourceFilterID, const int sourceFilterChannel,
-                                           const uint32 destFilterID, const int destFilterChannel,
-                                           const MouseEvent& e)
+        const uint32 destFilterID, const int destFilterChannel,
+        const MouseEvent& e)
 {
     draggingConnector = dynamic_cast <ConnectorComponent*> (e.originalComponent);
 
@@ -1046,7 +1185,7 @@ void GraphEditorPanel::endDraggingConnector (const MouseEvent& e)
 
 //==============================================================================
 class TooltipBar   : public Component,
-                     private Timer
+    private Timer
 {
 public:
     TooltipBar()
@@ -1086,7 +1225,7 @@ private:
 
 //==============================================================================
 GraphDocumentComponent::GraphDocumentComponent (AudioPluginFormatManager& formatManager,
-                                                AudioDeviceManager* deviceManager_)
+        AudioDeviceManager* deviceManager_)
     : graph (formatManager), deviceManager (deviceManager_)
 {
     addAndMakeVisible (graphPanel = new GraphEditorPanel (graph));
@@ -1098,7 +1237,15 @@ GraphDocumentComponent::GraphDocumentComponent (AudioPluginFormatManager& format
     keyState.addListener (&graphPlayer.getMidiMessageCollector());
 
     addAndMakeVisible (keyboardComp = new MidiKeyboardComponent (keyState,
-                                                                 MidiKeyboardComponent::horizontalKeyboard));
+            MidiKeyboardComponent::horizontalKeyboard));
+
+	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::whiteNoteColourId, Colours::cornflowerblue.darker(.9f));
+	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::blackNoteColourId, Colours::green.darker(.9f));
+	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::upDownButtonArrowColourId, Colours::lime);
+	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::upDownButtonBackgroundColourId, Colour(30,30,30));
+	
+	
+	
 
     addAndMakeVisible (statusBar = new TooltipBar());
 
@@ -1129,7 +1276,7 @@ void GraphDocumentComponent::resized()
 
     graphPanel->setBounds (0, 0, getWidth(), getHeight() - keysHeight);
     statusBar->setBounds (0, getHeight() - keysHeight - statusHeight, getWidth(), statusHeight);
-    keyboardComp->setBounds (0, getHeight() - keysHeight, getWidth(), keysHeight);
+    keyboardComp->setBounds (200, getHeight() - keysHeight, getWidth()-200, keysHeight);
 }
 
 void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int x, int y)

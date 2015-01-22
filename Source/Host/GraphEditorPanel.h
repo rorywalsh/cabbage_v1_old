@@ -32,12 +32,25 @@ class ConnectorComponent;
 class PinComponent;
 
 
+//this get populated whenever we select multiple objects..
+class SelectedComponents   : public SelectedItemSet<FilterComponent*>
+{
+public:
+    void itemSelected (Component* item) {
+        item->repaint ();
+    }
+    void itemDeselected (Component* item) {
+        item->repaint ();
+    }
+};
+
 //==============================================================================
 /**
     A panel that displays and edits a FilterGraph.
 */
 class GraphEditorPanel   : public Component,
-                           public ChangeListener
+    public ChangeListener,
+    public LassoSource <FilterComponent*>
 {
 public:
     GraphEditorPanel (FilterGraph& graph);
@@ -45,6 +58,8 @@ public:
 
     void paint (Graphics& g);
     void mouseDown (const MouseEvent& e);
+    void mouseDrag(const MouseEvent& e);
+    void mouseUp(const MouseEvent& e);
 
     void createNewPlugin (const PluginDescription* desc, int x, int y);
 
@@ -55,6 +70,7 @@ public:
     void resized();
     void changeListenerCallback (ChangeBroadcaster*);
     void updateComponents();
+    void findLassoItemsInArea (Array <FilterComponent*>& results, const Rectangle<int>& area);
 
     //==============================================================================
     void beginConnectorDrag (uint32 sourceFilterID, int sourceFilterChannel,
@@ -62,11 +78,20 @@ public:
                              const MouseEvent& e);
     void dragConnector (const MouseEvent& e);
     void endDraggingConnector (const MouseEvent& e);
-
+    SelectedItemSet <FilterComponent*>& getLassoSelection() {
+        return selectedFilters;
+    }
+    //array holding positions of selected filters
+    Array<Point<int>> selectedFilterCoordinates;
+	
     //==============================================================================
 private:
+
     FilterGraph& graph;
     ScopedPointer<ConnectorComponent> draggingConnector;
+    ComponentDragger myDragger;
+    LassoComponent <FilterComponent*> lassoComp;
+    SelectedComponents selectedFilters;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GraphEditorPanel)
 };
@@ -137,7 +162,9 @@ private:
     AudioProcessorGraph::Node* owner;
     WindowFormatType type;
 
-    float getDesktopScaleFactor() const override     { return 1.0f; }
+    float getDesktopScaleFactor() const override     {
+        return 1.0f;
+    }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginWindow)
 };

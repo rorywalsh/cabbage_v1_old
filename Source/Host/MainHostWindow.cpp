@@ -25,6 +25,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainHostWindow.h"
 #include "InternalFilters.h"
+#include "../CabbageAudioDeviceSelectorComponent.h"
 
 
 //==============================================================================
@@ -32,17 +33,21 @@ class MainHostWindow::PluginListWindow  : public DocumentWindow
 {
 public:
     PluginListWindow (MainHostWindow& owner_, AudioPluginFormatManager& formatManager)
-        : DocumentWindow ("Available Plugins", Colours::white,
+        : DocumentWindow ("Available Plugins", Colours::black,
                           DocumentWindow::minimiseButton | DocumentWindow::closeButton),
-          owner (owner_)
+        owner (owner_)
     {
         const File deadMansPedalFile (getAppProperties().getUserSettings()
-                                        ->getFile().getSiblingFile ("RecentlyCrashedPluginsList"));
+                                      ->getFile().getSiblingFile ("RecentlyCrashedPluginsList"));
 
-        setContentOwned (new PluginListComponent (formatManager,
-                                                  owner.knownPluginList,
-                                                  deadMansPedalFile,
-                                                  getAppProperties().getUserSettings()), true);
+        setContentOwned (new CabbagePluginListComponent (formatManager,
+                         owner.knownPluginList,
+                         deadMansPedalFile,
+                         getAppProperties().getUserSettings()), true);
+
+        getContentComponent()->setColour(Label::textColourId, Colours::red);
+        getContentComponent()->setColour(TextEditor::textColourId, Colours::red);
+        getContentComponent()->lookAndFeelChanged();
 
         setResizable (true, false);
         setResizeLimits (300, 400, 800, 1500);
@@ -65,22 +70,24 @@ public:
     }
 
 private:
-    MainHostWindow& owner; 
+    MainHostWindow& owner;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginListWindow)
 };
 
 //==============================================================================
 MainHostWindow::MainHostWindow()
-    : DocumentWindow (JUCEApplication::getInstance()->getApplicationName(), cUtils::getDarkerBackgroundSkin(),
+    : DocumentWindow (JUCEApplication::getInstance()->getApplicationName(), Colours::black,
                       DocumentWindow::allButtons)
 {
+    setColour(DocumentWindow::textColourId, Colours::whitesmoke);
+    setColour(DocumentWindow::backgroundColourId, cUtils::getDarkerBackgroundSkin());
 
     formatManager.addDefaultFormats();
     formatManager.addFormat (new InternalPluginFormat());
 
     ScopedPointer<XmlElement> savedAudioState (getAppProperties().getUserSettings()
-                                                   ->getXmlValue ("audioDeviceState"));
+            ->getXmlValue ("audioDeviceState"));
 
     deviceManager.initialise (256, 256, savedAudioState, true);
 
@@ -103,7 +110,7 @@ MainHostWindow::MainHostWindow()
         knownPluginList.recreateFromXml (*savedPluginList);
 
     pluginSortMethod = (KnownPluginList::SortMethod) getAppProperties().getUserSettings()
-                            ->getIntValue ("pluginSortMethod", KnownPluginList::sortByManufacturer);
+                       ->getIntValue ("pluginSortMethod", KnownPluginList::sortByManufacturer);
 
     knownPluginList.addChangeListener (this);
 
@@ -111,11 +118,11 @@ MainHostWindow::MainHostWindow()
 
     Process::setPriority (Process::HighPriority);
 
-   #if JUCE_MAC
+#if JUCE_MAC
     setMacMainMenu (this);
-   #else
+#else
     setMenuBar (this);
-   #endif
+#endif
 
     getCommandManager().setFirstCommandTarget (this);
 }
@@ -124,11 +131,11 @@ MainHostWindow::~MainHostWindow()
 {
     pluginListWindow = nullptr;
 
-   #if JUCE_MAC
+#if JUCE_MAC
     setMacMainMenu (nullptr);
-   #else
+#else
     setMenuBar (nullptr);
-   #endif
+#endif
 
     knownPluginList.removeChangeListener (this);
 
@@ -146,7 +153,7 @@ bool MainHostWindow::tryToQuitApplication()
     PluginWindow::closeAllCurrentlyOpenWindows();
 
     if (getGraphEditor() == nullptr
-         || getGraphEditor()->graph.saveIfNeededAndUserAgrees() == FileBasedDocument::savedOk)
+            || getGraphEditor()->graph.saveIfNeededAndUserAgrees() == FileBasedDocument::savedOk)
     {
         JUCEApplication::quit();
         return true;
@@ -188,7 +195,7 @@ PopupMenu MainHostWindow::getMenuForIndex (int topLevelMenuIndex, const String& 
 
         RecentlyOpenedFilesList recentFiles;
         recentFiles.restoreFromString (getAppProperties().getUserSettings()
-                                            ->getValue ("recentFilterGraphFiles"));
+                                       ->getValue ("recentFilterGraphFiles"));
 
         PopupMenu recentFilesMenu;
         recentFiles.createPopupMenuItems (recentFilesMenu, 100, true, true);
@@ -245,14 +252,14 @@ void MainHostWindow::menuItemSelected (int menuItemID, int /*topLevelMenuIndex*/
     {
         RecentlyOpenedFilesList recentFiles;
         recentFiles.restoreFromString (getAppProperties().getUserSettings()
-                                            ->getValue ("recentFilterGraphFiles"));
+                                       ->getValue ("recentFilterGraphFiles"));
 
         if (graphEditor != nullptr && graphEditor->graph.saveIfNeededAndUserAgrees() == FileBasedDocument::savedOk)
             graphEditor->graph.loadFrom (recentFiles.getFile (menuItemID - 100), true);
     }
     else if (menuItemID >= 200 && menuItemID < 210)
     {
-             if (menuItemID == 200)     pluginSortMethod = KnownPluginList::defaultOrder;
+        if (menuItemID == 200)     pluginSortMethod = KnownPluginList::defaultOrder;
         else if (menuItemID == 201)     pluginSortMethod = KnownPluginList::sortAlphabetically;
         else if (menuItemID == 202)     pluginSortMethod = KnownPluginList::sortByCategory;
         else if (menuItemID == 203)     pluginSortMethod = KnownPluginList::sortByManufacturer;
@@ -408,10 +415,10 @@ bool MainHostWindow::perform (const InvocationInfo& info)
 
 void MainHostWindow::showAudioSettings()
 {
-    AudioDeviceSelectorComponent audioSettingsComp (deviceManager,
-                                                    0, 256,
-                                                    0, 256,
-                                                    true, true, true, false);
+    CabbageAudioDeviceSelectorComponent audioSettingsComp (deviceManager,
+            0, 256,
+            0, 256,
+            true, true, true, false);
 
     audioSettingsComp.setSize (500, 450);
 
@@ -419,7 +426,7 @@ void MainHostWindow::showAudioSettings()
     o.content.setNonOwned (&audioSettingsComp);
     o.dialogTitle                   = "Audio Settings";
     o.componentToCentreAround       = this;
-    o.dialogBackgroundColour        = Colours::azure;
+    o.dialogBackgroundColour        = Colour(24, 24, 24);
     o.escapeKeyTriggersCloseButton  = true;
     o.useNativeTitleBar             = false;
     o.resizable                     = false;

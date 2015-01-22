@@ -27,18 +27,18 @@
 
 #include "FilterGraph.h"
 #include "GraphEditorPanel.h"
-#include "../CabbageUtils.h"
-
+#include "CabbageUtils.h"
+#include "CabbagePluginListComponent.h"
 
 //==============================================================================
 namespace CommandIDs
 {
-    static const int open                   = 0x30000;
-    static const int save                   = 0x30001;
-    static const int saveAs                 = 0x30002;
-    static const int showPluginListEditor   = 0x30100;
-    static const int showAudioSettings      = 0x30200;
-    static const int aboutBox               = 0x30300;
+static const int open                   = 0x30000;
+static const int save                   = 0x30001;
+static const int saveAs                 = 0x30002;
+static const int showPluginListEditor   = 0x30100;
+static const int showAudioSettings      = 0x30200;
+static const int aboutBox               = 0x30300;
 }
 
 ApplicationCommandManager& getCommandManager();
@@ -48,10 +48,10 @@ ApplicationProperties& getAppProperties();
 /**
 */
 class MainHostWindow    : public DocumentWindow,
-                          public MenuBarModel,
-                          public ApplicationCommandTarget,
-                          public ChangeListener,
-                          public FileDragAndDropTarget
+    public MenuBarModel,
+    public ApplicationCommandTarget,
+    public ChangeListener,
+    public FileDragAndDropTarget
 {
 public:
     //==============================================================================

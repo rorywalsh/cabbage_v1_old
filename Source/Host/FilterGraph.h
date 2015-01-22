@@ -64,7 +64,7 @@ public:
     const AudioProcessorGraph::Connection* getConnection (const int index) const noexcept;
 
     const AudioProcessorGraph::Connection* getConnectionBetween (uint32 sourceFilterUID, int sourceFilterChannel,
-                                                                 uint32 destFilterUID, int destFilterChannel) const noexcept;
+            uint32 destFilterUID, int destFilterChannel) const noexcept;
 
     bool canConnect (uint32 sourceFilterUID, int sourceFilterChannel,
                      uint32 destFilterUID, int destFilterChannel) const noexcept;

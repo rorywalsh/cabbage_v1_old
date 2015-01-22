@@ -797,6 +797,7 @@ private:
 GraphEditorPanel::GraphEditorPanel (FilterGraph& graph_)
     : graph (graph_)
 {
+	setLookAndFeel(&this->getParentComponent()->getLookAndFeel());
     graph.addChangeListener (this);
     setOpaque (true);
 }
@@ -810,7 +811,7 @@ GraphEditorPanel::~GraphEditorPanel()
 
 void GraphEditorPanel::paint (Graphics& g)
 {
-    g.fillAll (Colours::white);
+    g.fillAll (cUtils::getDarkerBackgroundSkin());
 }
 
 void GraphEditorPanel::mouseDown (const MouseEvent& e)

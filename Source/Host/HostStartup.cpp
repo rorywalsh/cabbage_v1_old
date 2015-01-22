@@ -43,7 +43,7 @@ public:
         // initialise our settings file..
 
         PropertiesFile::Options options;
-        options.applicationName     = "Juce Audio Plugin Host";
+        options.applicationName     = "Cabbage Host";
         options.filenameSuffix      = "settings";
         options.osxLibrarySubFolder = "Preferences";
 
@@ -53,7 +53,7 @@ public:
 
 
         mainWindow = new MainHostWindow();
-        mainWindow->setUsingNativeTitleBar (true);
+        //mainWindow->setUsingNativeTitleBar (true);
 		mainWindow->setLookAndFeel(&lookAndFeel);
 
         commandManager.registerAllCommandsForTarget (this);
@@ -83,14 +83,14 @@ public:
             JUCEApplicationBase::quit();
     }
 
-    const String getApplicationName() override       { return "Juce Plug-In Host"; }
+    const String getApplicationName() override       { return "Cabbage Host"; }
     const String getApplicationVersion() override    { return ProjectInfo::versionString; }
     bool moreThanOneInstanceAllowed() override       { return true; }
 
     ApplicationCommandManager commandManager;
     ScopedPointer<ApplicationProperties> appProperties;
-    LookAndFeel_V3 lookAndFeel;
-	//CabbageLookAndFeel lookAndFeel;
+    //LookAndFeel_V3 lookAndFeel;
+	CabbageLookAndFeel lookAndFeel;
 
 private:
     ScopedPointer<MainHostWindow> mainWindow;

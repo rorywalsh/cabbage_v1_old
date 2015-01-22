@@ -1263,25 +1263,42 @@ void CabbageLookAndFeel::drawMenuBarItem(Graphics & g, int width, int height, in
 
 //======== Document Window title bar ===================================================================
 void CabbageLookAndFeel::drawDocumentWindowTitleBar (DocumentWindow &window, Graphics &g, int w, int h,
-        int /*titleSpaceX*/,
+        int titleSpaceX,
         int titleSpaceW,
         const Image */*icon*/,
-        bool /*drawTitleTextOnLeft*/)
+        bool drawTitleTextOnLeft)
 {
-    window.setUsingNativeTitleBar(false);
+    const bool isActive = window.isActiveWindow();
 
-    g.setColour (cUtils::getDarkerBackgroundSkin());
+    g.setGradientFill (ColourGradient (window.getBackgroundColour(),
+                                       0.0f, 0.0f,
+                                       window.getBackgroundColour().contrasting (isActive ? 0.05f : 0.01f),
+                                       0.0f, (float) h, false));
     g.fillAll();
 
-    g.setColour (cUtils::getComponentFontColour());
-    Font font = cUtils::getTitleFont();
-#ifndef MACOSX
-    font.setFallbackFontName("Verdana");
-#endif
-    font.setHeight(16);
+    Font font (h * 0.65f, Font::bold);
     g.setFont (font);
-    g.drawText (cUtils::cabbageString(window.getName(), font, titleSpaceW), (w/2)-(titleSpaceW/2),
-                (h/2)-(font.getHeight()/2), titleSpaceW, font.getHeight(), 36, false);
+
+    int textW = font.getStringWidth (window.getName());
+    int iconW = 0;
+    int iconH = 0;
+
+
+    textW = jmin (titleSpaceW, textW + iconW);
+    int textX = drawTitleTextOnLeft ? titleSpaceX
+                                    : jmax (titleSpaceX, (w - textW) / 2);
+
+    if (textX + textW > titleSpaceX + titleSpaceW)
+        textX = titleSpaceX + titleSpaceW - textW;
+
+
+
+    if (window.isColourSpecified (DocumentWindow::textColourId) || isColourSpecified (DocumentWindow::textColourId))
+        g.setColour (window.findColour (DocumentWindow::textColourId));
+    else
+        g.setColour (window.getBackgroundColour().contrasting (isActive ? 0.4f : 0.1f));
+
+    g.drawText (window.getName(), textX, 0, textW, h, Justification::centredLeft, true);
 }
 
 //====== Draw Window Button Normal Image =================================================================

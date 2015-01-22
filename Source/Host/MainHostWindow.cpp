@@ -72,7 +72,7 @@ private:
 
 //==============================================================================
 MainHostWindow::MainHostWindow()
-    : DocumentWindow (JUCEApplication::getInstance()->getApplicationName(), Colours::lightgrey,
+    : DocumentWindow (JUCEApplication::getInstance()->getApplicationName(), cUtils::getDarkerBackgroundSkin(),
                       DocumentWindow::allButtons)
 {
 

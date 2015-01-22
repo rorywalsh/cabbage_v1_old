@@ -1296,23 +1296,23 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
     else if(choice==2)
         insertComponentsFromCabbageText(StringArray(String("rslider bounds(")+String(x)+(", ")+String(y)+String(", 50, 50), channel(\"rslider\"), range(0, 100, 0)")), false);
     else if(choice==3)
-        insertComponentsFromCabbageText(StringArray(String("vslider bounds(")+String(x)+(", ")+String(y)+String(", 30, 200), channel(\"vslider\"), range(0, 100, 0), colour(\"white\")")), false);
+        insertComponentsFromCabbageText(StringArray(String("vslider bounds(")+String(x)+(", ")+String(y)+String(", 30, 200), channel(\"vslider\"), range(0, 100, 0)")), false);
     else if(choice==4)
-        insertComponentsFromCabbageText(StringArray(String("hslider bounds(")+String(x)+(", ")+String(y)+String(", 200, 30), channel(\"hslider\"), range(0, 100, 0), colour(\"white\")")), false);
+        insertComponentsFromCabbageText(StringArray(String("hslider bounds(")+String(x)+(", ")+String(y)+String(", 200, 30), channel(\"hslider\"), range(0, 100, 0)")), false);
     else if(choice==5)
         insertComponentsFromCabbageText(StringArray(String("combobox bounds(")+String(x)+(", ")+String(y)+String(", 100, 30), channel(\"combobox\"), items(\"Item 1\", \"Item 2\", \"Item 3\")")), false);
     else if(choice==6)
         insertComponentsFromCabbageText(StringArray(String("checkbox bounds(")+String(x)+(", ")+String(y)+String(", 80, 20), channel(\"checkbox\"), text(\"checkbox\")")), false);
     else if(choice==7)
-        insertComponentsFromCabbageText(StringArray(String("groupbox bounds(")+String(x)+(", ")+String(y)+String(", 200, 150), text(\"groupbox\"), colour(\"black\"), caption(\"groupbBox\")")), false);
+        insertComponentsFromCabbageText(StringArray(String("groupbox bounds(")+String(x)+(", ")+String(y)+String(", 200, 150), text(\"groupbox\")")), false);
     else if(choice==8)
-        insertComponentsFromCabbageText(StringArray(String("image bounds(")+String(x)+(", ")+String(y)+String(", 200, 150), colour(\"white\")")), false);
+        insertComponentsFromCabbageText(StringArray(String("image bounds(")+String(x)+(", ")+String(y)+String(", 200, 150)")), false);
     else if(choice==9)
         insertComponentsFromCabbageText(StringArray(String("keyboard bounds(")+String(x)+(", ")+String(y)+String(", 150, 60)")), false);
     else if(choice==10)
         insertComponentsFromCabbageText(StringArray(String("xypad bounds(")+String(x)+(", ")+String(y)+String(", 200, 200), channel(\"xchan")+String(channelOffset)+("\", \"ychan")+String(channelOffset)+("\"), rangex(0, 100, 0), rangey(0, 100, 0)")), false);
     else if(choice==11)
-        insertComponentsFromCabbageText(StringArray(String("label bounds(")+String(x)+(", ")+String(y)+String(", 50, 15), text(\"Label\"), fontcolour(\"white\")")), false);
+        insertComponentsFromCabbageText(StringArray(String("label bounds(")+String(x)+(", ")+String(y)+String(", 50, 15), text(\"Label\")")), false);
     else if(choice==12)
         insertComponentsFromCabbageText(StringArray(String("infobutton bounds(")+String(x)+(", ")+String(y)+String(", 60, 25), text(\"Info\"), file(\"info.html\")")), false);
     else if(choice==16)
@@ -1324,11 +1324,11 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
     else if(choice==15)
         insertComponentsFromCabbageText(StringArray(String("csoundoutput bounds(")+String(x)+(", ")+String(y)+String(", 360, 200)")), false);
     else if(choice==17)
-        insertComponentsFromCabbageText(StringArray(String("numberbox bounds(")+String(x)+(", ")+String(y)+String(", 40, 20), channel(\"numberbox\"), range(0, 100, 0), colour(\"white\")")), false);
+        insertComponentsFromCabbageText(StringArray(String("numberbox bounds(")+String(x)+(", ")+String(y)+String(", 40, 20), channel(\"numberbox\"), range(0, 100, 0)")), false);
     else if(choice==18)
-        insertComponentsFromCabbageText(StringArray(String("texteditor bounds(")+String(x)+(", ")+String(y)+String(", 40, 20), channel(\"texteditor\"), colour(\"white\")")), false);
+        insertComponentsFromCabbageText(StringArray(String("texteditor bounds(")+String(x)+(", ")+String(y)+String(", 40, 20), channel(\"texteditor\")")), false);
     else if(choice==19)
-        insertComponentsFromCabbageText(StringArray(String("textbox bounds(")+String(x)+(", ")+String(y)+String(", 140, 80), colour(\"white\")")), false);
+        insertComponentsFromCabbageText(StringArray(String("textbox bounds(")+String(x)+(", ")+String(y)+String(", 140, 80)")), false);
 
 
     else if(choice>=100)
@@ -3026,6 +3026,7 @@ void CabbagePluginAudioProcessorEditor::InsertXYPad(CabbageGUIClass &cAttr)
                                           cAttr.getNumProp("decimalplaces"),
                                           cAttr.getStringProp(CabbageIDs::colour),
                                           cAttr.getStringProp(CabbageIDs::fontcolour),
+										  cAttr.getStringProp(CabbageIDs::textcolour),
                                           cAttr.getNumProp("valuex"),
                                           cAttr.getNumProp("valuey")));
         xyPadIndex++;
@@ -3056,6 +3057,7 @@ void CabbagePluginAudioProcessorEditor::InsertXYPad(CabbageGUIClass &cAttr)
                                           cAttr.getNumProp("decimalPlaces"),
                                           cAttr.getStringProp(CabbageIDs::colour),
                                           cAttr.getStringProp(CabbageIDs::fontcolour),
+										  cAttr.getStringProp(CabbageIDs::textcolour),
                                           cAttr.getNumProp("valuex"),
                                           cAttr.getNumProp("valuey")));
         idx = comps.size()-1;
@@ -3478,8 +3480,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 							float bottomVal = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i);
 							float topVal = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i+1);
 
-							slider->setMaxValue(topVal, dontSendNotification);	
-							slider->setMinValue(bottomVal, dontSendNotification);	
+							slider->setMinAndMaxValues(topVal, bottomVal);	
 						
 						}
 #else
@@ -3496,8 +3497,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 						{
 							float bottomVal = getFilter()->getParameter(i);
 							float topVal = getFilter()->getParameter(i+1);
-							slider->setMaxValue(topVal, dontSendNotification);	
-							slider->setMinValue(bottomVal, dontSendNotification);								
+							slider->setMinAndMaxValues(topVal, bottomVal);							
 						}
 #endif
                     }

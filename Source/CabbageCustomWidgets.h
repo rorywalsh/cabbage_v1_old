@@ -584,7 +584,6 @@ public:
             {
                 slider->setSliderStyle(Slider::TwoValueVertical);
                 setupMinMaxValue();
-
             }
             else
             {
@@ -1769,6 +1768,7 @@ public:
                         int minX, int maxX, int minY, int maxY, int index, int dec,
                         String colour,
                         String fontcolour,
+						String textcolour,
                         float xValue,
                         float yValue)
     {
@@ -1778,7 +1778,7 @@ public:
         caption="";
         groupbox = new GroupComponent(String("groupbox_")+name);
         groupbox->setWantsKeyboardFocus(false);
-        xypad = new XYPad(xyAuto, text, minX, maxX, minY, maxY, dec, Colour::fromString(colour), Colour::fromString(fontcolour), xValue, yValue);
+        xypad = new XYPad(xyAuto, text, minX, maxX, minY, maxY, dec, Colour::fromString(colour), Colour::fromString(fontcolour), Colour::fromString(textcolour),xValue, yValue);
         xypad->setWantsKeyboardFocus(false);
         addAndMakeVisible(xypad);
         addAndMakeVisible(groupbox);
@@ -2401,6 +2401,7 @@ public:
         slider->toFront(true);
         label = new Label();
         label->setText(text, dontSendNotification);
+		label->setJustificationType(Justification::centred);
         label->setColour(Label::textColourId, textcolour);
 
         addAndMakeVisible(label);

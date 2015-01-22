@@ -436,6 +436,7 @@ XYPad::XYPad(XYPadAutomation* xyPadAutomationPtr, String title, int minXValue, i
              int numberOfDecimalPlaces,
              Colour ballCol,
              Colour fontCol,
+			 Colour textCol,
              float initXVal,
              float initYVal)
     :
@@ -473,7 +474,9 @@ XYPad::XYPad(XYPadAutomation* xyPadAutomationPtr, String title, int minXValue, i
     //Logger::writeToLog("yRange:"+String(yRange));
     // Colours
     ballColour = ballCol;
-    fontColour = fontCol;
+
+    fontColour = textCol;
+	textColour = fontCol;
     if (fontColour != cUtils::getComponentFontColour())
         toggleColour = fontColour;
     else
@@ -487,7 +490,7 @@ XYPad::XYPad(XYPadAutomation* xyPadAutomationPtr, String title, int minXValue, i
     // Value displays
     for (int i=0; i<2; i++)
     {
-        valueDisplays.add (new XYValueDisplay(ballColour));
+        valueDisplays.add (new XYValueDisplay(textColour));
         addAndMakeVisible (valueDisplays[i]);
     }
 

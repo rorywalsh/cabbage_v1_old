@@ -144,8 +144,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
-        cabbageIdentifiers.set(CabbageIDs::colour, Colour(0, 118, 38).toString());
-        cabbageIdentifiers.set(CabbageIDs::trackercolour, Colours::whitesmoke.toString());
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::whitesmoke.toString());
+        cabbageIdentifiers.set(CabbageIDs::trackercolour, Colour(0, 118, 38).toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::textcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colours::black.brighter(.3f).toString());
@@ -909,9 +909,9 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 
     cabbageIdentifiers.set(CabbageIDs::alpha, 1);
     cabbageIdentifiers.set(CabbageIDs::visible, 1);
-    cabbageIdentifiers.set(CabbageIDs::rotate, 0);
-    cabbageIdentifiers.set(CabbageIDs::pivotx, 0);
-    cabbageIdentifiers.set(CabbageIDs::pivoty, 0);
+    cabbageIdentifiers.set(CabbageIDs::rotate, 0.f);
+    cabbageIdentifiers.set(CabbageIDs::pivotx, 0.f);
+    cabbageIdentifiers.set(CabbageIDs::pivoty, 0.f);
 
 
 //parse the text now that all default values ahve been assigned
@@ -1426,11 +1426,21 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                 cabbageIdentifiers.set(CabbageIDs::rotate, strTokens[0].trim().getFloatValue());
                 if(strTokens.size()==3)
                 {
-                    cabbageIdentifiers.set(CabbageIDs::pivotx, strTokens[1].trim().getIntValue());
-                    cabbageIdentifiers.set(CabbageIDs::pivoty, strTokens[2].trim().getIntValue());
+                    cabbageIdentifiers.set(CabbageIDs::pivotx, strTokens[1].trim().getFloatValue());
+                    cabbageIdentifiers.set(CabbageIDs::pivoty, strTokens[2].trim().getFloatValue());
                 }
             }
-
+			
+            else if(identArray[indx].equalsIgnoreCase("pivoty"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::pivoty, strTokens[0].trim().getFloatValue());
+            }
+			
+            else if(identArray[indx].equalsIgnoreCase("pivotx"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::pivotx, strTokens[0].trim().getFloatValue());
+            }
+			
             else if(identArray[indx].equalsIgnoreCase("midictrl"))
             {
                 if(strTokens.size()<2)
@@ -2012,7 +2022,10 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
     {
         String identifier = props.getName(i).toString();
         propsArray = props.getValueAt(i);
-        if(props.getValueAt(i).toString()!="")
+		
+
+		
+        if((props.getValueAt(i).toString()!=""))
         {
             //first check to make sure no default values used
             if(props.getValueAt(i).isString() &&
@@ -2021,14 +2034,18 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
                 //cUtils::debug(identifier, cAttr.getStringProp(identifier));
             }
             else if(props.getValueAt(i).isDouble() &&
-                    props.getValueAt(i).isDouble() == cAttr.getNumProp(identifier))
+                    double(props.getValueAt(i)) == cAttr.getNumProp(identifier))
             {
                 //cUtils::debug(identifier, cAttr.getNumProp(identifier));
             }
             else if(props.getValueAt(i).isInt() &&
-                    props.getValueAt(i).isInt() == cAttr.getNumProp(identifier))
+                    int(props.getValueAt(i)) == cAttr.getNumProp(identifier))
             {
                 //cUtils::debug(identifier, cAttr.getNumProp(identifier));
+            }
+            else if(props.getValueAt(i).isUndefined())
+            {
+                //cUtils::debug("Undefined value");
             }
             else if(props.getName(i).toString()=="top")
                 top = props.getValueAt(i).toString();

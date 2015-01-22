@@ -213,6 +213,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
                                  getCsoundSamplingRate(),
                                  getCsoundKsmpsSize());
 
+			guiRefreshRate = getCsoundKsmpsSize()*2;
+
             //simple hack to allow tables to be set up correctly.
             csound->PerformKsmps();
             for(int i=0; i<includeFiles.size(); i++)
@@ -400,6 +402,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     csdFile.setAsCurrentWorkingDirectory();
     if(csCompileResult==OK)
     {
+		guiRefreshRate = getCsoundKsmpsSize()*2;
         Logger::writeToLog("compiled Ok");
         keyboardState.allNotesOff(0);
         keyboardState.reset();

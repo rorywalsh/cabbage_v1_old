@@ -289,6 +289,7 @@ public:
           int numberOfDecimalPlaces,
           Colour ballCol,
           Colour fontCol,
+		  Colour textCol,
           float initXVal,
           float initYVal);
     ~XYPad();
@@ -320,7 +321,7 @@ private:
     float ballSize;
     int speed;
     String title, name;
-    Colour ballColour, fontColour, toggleColour;
+    Colour ballColour, fontColour, toggleColour, textColour;
     float yMax, xMax, yMin, xMin;
     float xOut, yOut, xRange, yRange, initX, initY;
     int decimalPlaces;

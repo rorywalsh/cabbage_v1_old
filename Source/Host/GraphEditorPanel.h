@@ -52,6 +52,8 @@ public:
 	void paint (Graphics& g);
 	void getPinPos (const int index, const bool isInput, float& x, float& y);
 	void update();
+	void drawLevelMeter (Graphics& g, float x, float y, int width, int height, float level);
+	void drawMuteIcon(Graphics& g, Rectangle<float> rect, bool state);
 
 private:
     int pinSize;

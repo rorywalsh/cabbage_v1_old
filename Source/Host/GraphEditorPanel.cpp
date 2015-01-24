@@ -306,7 +306,7 @@ FilterComponent::FilterComponent (FilterGraph& graph_, const uint32 filterID_)
 		  rmsRight(0),
 		  isMuted(false),
 		  filterIsPartofSelectedGroup(false),
-		  muteButton(4.f, 25.f, 8.f, 8.f)
+		  muteButton(0.f, 10.f, 8.f, 8.f)
 {
 	shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 3, Point<int> (0, 1)));
 	setComponentEffect (&shadow);
@@ -516,14 +516,69 @@ void FilterComponent::paint (Graphics& g)
 	g.setOpacity(0.2);
 	g.drawRoundedRectangle(x+0.5, y+0.5, w-1, h-1, 5, 1.0f);
 	
-	g.setColour(isMuted ? Colours::green : Colours::red);	
-	g.fillRect(muteButton);
+//	g.setColour(isMuted ? Colours::green : Colours::red);	
+//	g.fillRoundedRectangle(muteButton, 2.f);
 	
-	ColourGradient vuGradient(Colours::lime, 0.f, 0.f, Colours::cornflowerblue, getWidth(), getHeight(), false);
-	g.setGradientFill(vuGradient);
-	g.fillRoundedRectangle(x+4, h+4.f, (getWidth()-15)*rmsLeft, 4.f, 1.f);
-	g.fillRoundedRectangle(x+4, h+9.f, (getWidth()-15)*rmsRight, 4.f, 1.f);
-	
+//	ColourGradient vuGradient(Colours::lime, 0.f, 0.f, Colours::cornflowerblue, getWidth(), getHeight(), false);
+//	g.setGradientFill(vuGradient);
+//	g.fillRoundedRectangle(x+4, h+4.f, (getWidth()-15)*rmsLeft, 4.f, 1.f);
+//	g.fillRoundedRectangle(x+4, h+9.f, (getWidth()-15)*rmsRight, 4.f, 1.f);
+	drawLevelMeter(g, x+8, h+4, getWidth()-30.f, 7,
+                                        (float) exp (log (rmsLeft) / 3.0)); // (add a bit of a skew to make the level more obvious)	
+	drawLevelMeter(g, x+8, h+9, getWidth()-30.f, 7,
+                                        (float) exp (log (rmsRight) / 3.0)); // (add a bit of a skew to make the level more obvious)	
+	drawMuteIcon(g, muteButton, isMuted);
+}
+
+void FilterComponent::drawMuteIcon(Graphics& g, Rectangle<float> rect, bool muted)
+{
+	const float x = rect.getX();
+	const float y = rect.getY();
+	const float w = rect.getWidth()-5.f;
+	const float h = rect.getHeight();
+	g.setColour(muted ? Colours::red : Colours::cornflowerblue);
+	//g.drawRect(x, h/3.3, w/2.f, h/3.3, 1.f);
+	Path p;
+	p.startNewSubPath(x, y+h*.33);
+	p.lineTo(x+w/2.f, y+h*.33);
+	p.lineTo(x+w, y+0.f);
+	p.lineTo(x+w, y+h);
+	p.lineTo(x+w/2.f, y+h*.66);
+	p.lineTo(x, y+h*.66);
+	p.lineTo(x, y+h*.33);
+	p.closeSubPath();
+	g.strokePath(p, PathStrokeType(1));
+	g.fillPath(p);
+	if(muted)
+	{
+		g.setColour(Colours::whitesmoke);
+		g.drawLine(x+0, y+0, x+w, y+h, 2);
+		g.drawLine(x+0, y+h, x+w, y+0, 2);
+	}	
+    
+}
+
+void FilterComponent::drawLevelMeter (Graphics& g, float x, float y, int width, int height, float level)
+{
+	g.fillAll(filterColour);
+    const int totalBlocks = 15;
+    const int numBlocks = roundToInt (totalBlocks * level);
+    const float w = (width - 6.0f) / (float) totalBlocks;
+
+    for (int i = 0; i < totalBlocks; ++i)
+    {
+        if (i >= numBlocks)
+            g.setColour (Colours::lightblue.withAlpha (0.1f));
+        else
+            g.setColour (i < totalBlocks - 1 ? Colours::lime.withAlpha (0.5f)
+                                             : Colours::red);
+
+        g.fillRoundedRectangle (x+3.0f + i * w + w * 0.1f, 
+								y+1, 
+								w * 0.8f, 
+								height/2,
+								.5f);
+    }
 }
 //================================================================================
 void FilterComponent::resized()
@@ -587,7 +642,8 @@ void FilterComponent::update()
 	if (textWidth > 300)
 		h = 100;
 
-	setSize (w, h);
+	setSize (w+20, h);
+	muteButton = Rectangle<float>(w+1, 22.f, 15.f, 15.f);
 
 	PluginWrapperProcessor* tmpPlug = dynamic_cast <PluginWrapperProcessor*> (f->getProcessor());
 	

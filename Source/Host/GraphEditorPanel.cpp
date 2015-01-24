@@ -26,6 +26,7 @@
 #include "GraphEditorPanel.h"
 #include "InternalFilters.h"
 #include "MainHostWindow.h"
+#include "PluginWrapperProcessor.h"
 
 
 //==============================================================================
@@ -295,12 +296,8 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PinComponent)
 };
 
-//==============================================================================
-class FilterComponent    : public Component
-{
-public:
-    FilterComponent (FilterGraph& graph_,
-                     const uint32 filterID_)
+//================================================================================
+FilterComponent::FilterComponent (FilterGraph& graph_, const uint32 filterID_)
         : graph (graph_),
           filterID (filterID_),
           numInputs (0),
@@ -309,324 +306,322 @@ public:
           font (13.0f, Font::bold),
           numIns (0),
           numOuts (0),
+		  rmsLeft(0),
+		  rmsRight(0),
 		  filterIsPartofSelectedGroup(false)
-    {
-        shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 3, Point<int> (0, 1)));
-        setComponentEffect (&shadow);
+{
+	shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 3, Point<int> (0, 1)));
+	setComponentEffect (&shadow);
+	//setSize (150, 90);		
+}
+//================================================================================
+FilterComponent::~FilterComponent()
+{
+	deleteAllChildren();
+}
+//================================================================================	
+void FilterComponent::mouseDown (const MouseEvent& e)
+{
 
-        setSize (150, 60);
-    }
+	Logger::writeToLog("NodeID: "+String(filterID));
+	getGraphPanel()->selectedFilterCoordinates.clear();
 
-    ~FilterComponent()
-    {
-        deleteAllChildren();
-    }
+	int numSelected = getGraphPanel()->getLassoSelection().getNumSelected();
+	for(int i=0; i<numSelected; i++)
+	{
+		//check if current filter is part of a group or not, if so add position to coor array
+		if(filterID==getGraphPanel()->getLassoSelection().getSelectedItem(i)->filterID)
+			filterIsPartofSelectedGroup = true;
+		getGraphPanel()->selectedFilterCoordinates.add(getGraphPanel()->getLassoSelection().getSelectedItem(i)->getPosition());
+	}
 
-    void mouseDown (const MouseEvent& e)
-    {
+	if(!filterIsPartofSelectedGroup) {
+		for(int i=0; i<getGraphPanel()->getNumChildComponents(); i++) {
+			//if not part of a group reset colours back to normal
+			getGraphPanel()->getChildComponent(i)->getProperties().set("colour", "");
+			getGraphPanel()->getChildComponent(i)->repaint();
+		}
+		getGraphPanel()->getLassoSelection().deselectAll();
+	}
 
-        Logger::writeToLog("NodeID: "+String(filterID));
-        getGraphPanel()->selectedFilterCoordinates.clear();
+	originalPos = localPointToGlobal (Point<int>());
 
-        int numSelected = getGraphPanel()->getLassoSelection().getNumSelected();
-        for(int i=0; i<numSelected; i++)
-        {
-            //check if current filter is part of a group or not, if so add position to coor array
-            if(filterID==getGraphPanel()->getLassoSelection().getSelectedItem(i)->filterID)
-                filterIsPartofSelectedGroup = true;
-            getGraphPanel()->selectedFilterCoordinates.add(getGraphPanel()->getLassoSelection().getSelectedItem(i)->getPosition());
-        }
+	toFront (true);
 
-        if(!filterIsPartofSelectedGroup) {
-            for(int i=0; i<getGraphPanel()->getNumChildComponents(); i++) {
-                //if not part of a group reset colours back to normal
-                getGraphPanel()->getChildComponent(i)->getProperties().set("colour", "");
-                getGraphPanel()->getChildComponent(i)->repaint();
-            }
-            getGraphPanel()->getLassoSelection().deselectAll();
-        }
+	if (e.mods.isPopupMenu())
+	{
+		PopupMenu m;
+		m.addItem (1, "Delete this filter");
+		m.addItem (2, "Disconnect all pins");
+		m.addSeparator();
+		m.addItem (3, "Show plugin UI");
+		m.addItem (4, "Show all programs");
+		m.addItem (5, "Show all parameters");
+		m.addItem (6, "Test state save/load");
 
-        originalPos = localPointToGlobal (Point<int>());
+		const int r = m.show();
 
-        toFront (true);
-
-        if (e.mods.isPopupMenu())
-        {
-            PopupMenu m;
-            m.addItem (1, "Delete this filter");
-            m.addItem (2, "Disconnect all pins");
-            m.addSeparator();
-            m.addItem (3, "Show plugin UI");
-            m.addItem (4, "Show all programs");
-            m.addItem (5, "Show all parameters");
-            m.addItem (6, "Test state save/load");
-
-            const int r = m.show();
-
-            if (r == 1)
-            {
-                graph.removeFilter (filterID);
-                return;
-            }
-            else if (r == 2)
-            {
-                graph.disconnectFilter (filterID);
-            }
-            else
-            {
-                if (AudioProcessorGraph::Node::Ptr f = graph.getNodeForId (filterID))
-                {
-                    AudioProcessor* const processor = f->getProcessor();
-                    jassert (processor != nullptr);
-
-                    if (r == 6)
-                    {
-                        MemoryBlock state;
-                        processor->getStateInformation (state);
-                        processor->setStateInformation (state.getData(), (int) state.getSize());
-                    }
-                    else
-                    {
-                        PluginWindow::WindowFormatType type = processor->hasEditor() ? PluginWindow::Normal
-                                                              : PluginWindow::Generic;
-
-                        switch (r)
-                        {
-                        case 4:
-                            type = PluginWindow::Programs;
-                            break;
-                        case 5:
-                            type = PluginWindow::Parameters;
-                            break;
-
-                        default:
-                            break;
-                        };
-
-                        if (PluginWindow* const w = PluginWindow::getWindowFor (f, type))
-                            w->toFront (true);
-                    }
-                }
-            }
-        }
-    }
-
-    void mouseDrag (const MouseEvent& e)
-    {
-        if (! e.mods.isPopupMenu())
-        {
-            Point<int> pos (originalPos + Point<int> (e.getDistanceFromDragStartX(), e.getDistanceFromDragStartY()));
-
-            if (getParentComponent() != nullptr)
-                pos = getParentComponent()->getLocalPoint (nullptr, pos);
-
-            int numSelected = getGraphPanel()->getLassoSelection().getNumSelected();
-
-            for(int i=0; i<numSelected; i++)
-                if(filterID==getGraphPanel()->getLassoSelection().getSelectedItem(i)->filterID)
-                    filterIsPartofSelectedGroup = true;
-
-            if(filterIsPartofSelectedGroup)
+		if (r == 1)
+		{
+			graph.removeFilter (filterID);
+			return;
+		}
+		else if (r == 2)
+		{
+			graph.disconnectFilter (filterID);
+		}
+		else
+		{
+			if (AudioProcessorGraph::Node::Ptr f = graph.getNodeForId (filterID))
 			{
-                for(int i=0; i<numSelected; i++)
-                {
-                    int fltID = getGraphPanel()->getLassoSelection().getSelectedItem(i)->filterID;
-                    int filterPosX = getGraphPanel()->selectedFilterCoordinates[i].getX();
-                    int filterPosY = getGraphPanel()->selectedFilterCoordinates[i].getY();
+				AudioProcessor* const processor = f->getProcessor();
+				jassert (processor != nullptr);
 
-                    //Logger::writeToLog("FilterID from Filter Component MouseDrag:"+String(fltID));
-                    graph.setNodePosition (fltID,
-                                           (filterPosX+e.getDistanceFromDragStartX() + getWidth() / 2) / (double) getParentWidth(),
-                                           (filterPosY+e.getDistanceFromDragStartY() + getHeight() / 2) / (double) getParentHeight());
-                }
+				if (r == 6)
+				{
+					MemoryBlock state;
+					processor->getStateInformation (state);
+					processor->setStateInformation (state.getData(), (int) state.getSize());
+				}
+				else
+				{
+					PluginWindow::WindowFormatType type = processor->hasEditor() ? PluginWindow::Normal
+														  : PluginWindow::Generic;
+
+					switch (r)
+					{
+					case 4:
+						type = PluginWindow::Programs;
+						break;
+					case 5:
+						type = PluginWindow::Parameters;
+						break;
+
+					default:
+						break;
+					};
+
+					if (PluginWindow* const w = PluginWindow::getWindowFor (f, type))
+						w->toFront (true);
+				}
 			}
-			
-            else 
+		}
+	}
+}
+//================================================================================
+void FilterComponent::mouseDrag (const MouseEvent& e)
+{
+	if (! e.mods.isPopupMenu())
+	{
+		Point<int> pos (originalPos + Point<int> (e.getDistanceFromDragStartX(), e.getDistanceFromDragStartY()));
+
+		if (getParentComponent() != nullptr)
+			pos = getParentComponent()->getLocalPoint (nullptr, pos);
+
+		int numSelected = getGraphPanel()->getLassoSelection().getNumSelected();
+
+		for(int i=0; i<numSelected; i++)
+			if(filterID==getGraphPanel()->getLassoSelection().getSelectedItem(i)->filterID)
+				filterIsPartofSelectedGroup = true;
+
+		if(filterIsPartofSelectedGroup)
+		{
+			for(int i=0; i<numSelected; i++)
 			{
-                graph.setNodePosition (filterID,
-                                       (pos.getX() + getWidth() / 2) / (double) getParentWidth(),
-                                       (pos.getY() + getHeight() / 2) / (double) getParentHeight());
-            }
+				int fltID = getGraphPanel()->getLassoSelection().getSelectedItem(i)->filterID;
+				int filterPosX = getGraphPanel()->selectedFilterCoordinates[i].getX();
+				int filterPosY = getGraphPanel()->selectedFilterCoordinates[i].getY();
 
-            getGraphPanel()->updateComponents();
-        }
-        repaint();
-    }
-
-    void mouseUp (const MouseEvent& e)
-    {
-        if (e.mouseWasClicked() && e.getNumberOfClicks() == 2)
-        {
-            if (const AudioProcessorGraph::Node::Ptr f = graph.getNodeForId (filterID))
-                if (PluginWindow* const w = PluginWindow::getWindowFor (f, PluginWindow::Normal))
-                    w->toFront (true);
-        }
-        else if (! e.mouseWasClicked())
-        {
-            graph.setChangedFlag (true);
-        }
-    }
-
-    bool hitTest (int x, int y)
-    {
-        for (int i = getNumChildComponents(); --i >= 0;)
-            if (getChildComponent(i)->getBounds().contains (x, y))
-                return true;
-
-        return x >= 3 && x < getWidth() - 6 && y >= pinSize && y < getHeight() - pinSize;
-    }
-
-    void paint (Graphics& g)
-    {
-        String outlineColour = getProperties().getWithDefault("colour", "").toString();
-        if(outlineColour.length()>1)
-		{
-            g.setColour(Colour::fromString(outlineColour));
-			
+				//Logger::writeToLog("FilterID from Filter Component MouseDrag:"+String(fltID));
+				graph.setNodePosition (fltID,
+									   (filterPosX+e.getDistanceFromDragStartX() + getWidth() / 2) / (double) getParentWidth(),
+									   (filterPosY+e.getDistanceFromDragStartY() + getHeight() / 2) / (double) getParentHeight());
+			}
 		}
-        else
+		
+		else 
 		{
-            g.setColour(filterColour);
-			filterIsPartofSelectedGroup=false;
+			graph.setNodePosition (filterID,
+								   (pos.getX() + getWidth() / 2) / (double) getParentWidth(),
+								   (pos.getY() + getHeight() / 2) / (double) getParentHeight());
 		}
 
+		getGraphPanel()->updateComponents();
+	}
+	repaint();
+}
+//================================================================================
+void FilterComponent::mouseUp (const MouseEvent& e)
+{
+	if (e.mouseWasClicked() && e.getNumberOfClicks() == 2)
+	{
+		if (const AudioProcessorGraph::Node::Ptr f = graph.getNodeForId (filterID))
+			if (PluginWindow* const w = PluginWindow::getWindowFor (f, PluginWindow::Normal))
+				w->toFront (true);
+	}
+	else if (! e.mouseWasClicked())
+	{
+		graph.setChangedFlag (true);
+	}
+}
+//================================================================================
+bool FilterComponent::hitTest (int x, int y)
+{
+	for (int i = getNumChildComponents(); --i >= 0;)
+		if (getChildComponent(i)->getBounds().contains (x, y))
+			return true;
 
+	return x >= 3 && x < getWidth() - 6 && y >= pinSize && y < getHeight() - pinSize;
+}
+//================================================================================
+void FilterComponent::actionListenerCallback (const String &message)
+{
+	rmsLeft = message.substring(0, message.indexOf(" ")).getFloatValue();
+	rmsRight = message.substring(message.indexOf(" ")+1).getFloatValue();
+	repaint();
+}
+//================================================================================
+void FilterComponent::paint (Graphics& g)
+{
+	g.fillAll(filterColour);
+	String outlineColour = getProperties().getWithDefault("colour", "").toString();
+	if(outlineColour.length()>1)
+	{
+		g.setColour(Colour::fromString(outlineColour));
+		
+	}
+	else
+	{
+		g.setColour(filterColour);
+		filterIsPartofSelectedGroup=false;
+	}
 
-        const int x = 4;
-        const int y = pinSize;
-        const int w = getWidth() - x * 2;
-        const int h = getHeight() - pinSize * 2;
+	const int x = 4;
+	const int y = pinSize;
+	const int w = getWidth() - x * 2;
+	const int h = getHeight() - pinSize * 2;
 
-        g.drawRoundedRectangle(x, y, w, h, 5, 1.f);
+	g.drawRoundedRectangle(x, y, w, h, 5, 1.f);
+	g.setColour (cUtils::getComponentFontColour());
+	g.setFont (cUtils::getComponentFont());
+	g.drawFittedText (getName(),
+					  x + 4, y - 2, w - 8, h - 4,
+					  Justification::centred, 2);
 
-        g.setColour(filterColour);
-        g.fillRoundedRectangle(x, y, w, h, 5);
+	g.setOpacity(0.2);
+	g.drawRoundedRectangle(x+0.5, y+0.5, w-1, h-1, 5, 1.0f);
+	
+	//g.setColour(Colours::cornflowerblue);	
+	
+	ColourGradient vuGradient(Colours::lime, 0.f, 0.f, Colours::cornflowerblue, getWidth(), getHeight(), false);
+	g.setGradientFill(vuGradient);
+	g.fillRoundedRectangle(x+4, h+4.f, (getWidth()-15)*rmsLeft, 4.f, 1.f);
+	g.fillRoundedRectangle(x+4, h+9.f, (getWidth()-15)*rmsRight, 4.f, 1.f);
+	
+}
+//================================================================================
+void FilterComponent::resized()
+{
+	for (int i = 0; i < getNumChildComponents(); ++i)
+	{
+		if (PinComponent* const pc = dynamic_cast <PinComponent*> (getChildComponent(i)))
+		{
+			const int total = pc->isInput ? numIns : numOuts;
+			const int index = pc->index == FilterGraph::midiChannelNumber ? (total - 1) : pc->index;
 
-        g.setColour (cUtils::getComponentFontColour());
-        g.setFont (cUtils::getComponentFont());
-        g.drawFittedText (getName(),
-                          x + 4, y + 2, w - 8, h - 4,
-                          Justification::centred, 2);
+			pc->setBounds (proportionOfWidth ((1 + index) / (total + 1.0f)) - pinSize / 2,
+						   pc->isInput ? 0 : (getHeight() - pinSize),
+						   pinSize, pinSize);
+		}
+	}
+}
+//================================================================================
+void FilterComponent::getPinPos (const int index, const bool isInput, float& x, float& y)
+{
+	for (int i = 0; i < getNumChildComponents(); ++i)
+	{
+		if (PinComponent* const pc = dynamic_cast <PinComponent*> (getChildComponent(i)))
+		{
+			if (pc->index == index && isInput == pc->isInput)
+			{
+				x = getX() + pc->getX() + pc->getWidth() * 0.5f;
+				y = getY() + pc->getY() + pc->getHeight() * 0.5f;
+				break;
+			}
+		}
+	}
+}
 
-        g.setOpacity(0.2);
-        g.drawRoundedRectangle(x+0.5, y+0.5, w-1, h-1, 5, 1.0f);
-    }
+//================================================================================
+void FilterComponent::update()
+{
+	const AudioProcessorGraph::Node::Ptr f (graph.getNodeForId (filterID));
 
-    void resized()
-    {
-        for (int i = 0; i < getNumChildComponents(); ++i)
-        {
-            if (PinComponent* const pc = dynamic_cast <PinComponent*> (getChildComponent(i)))
-            {
-                const int total = pc->isInput ? numIns : numOuts;
-                const int index = pc->index == FilterGraph::midiChannelNumber ? (total - 1) : pc->index;
+	if (f == nullptr)
+	{
+		delete this;
+		return;
+	}
 
-                pc->setBounds (proportionOfWidth ((1 + index) / (total + 1.0f)) - pinSize / 2,
-                               pc->isInput ? 0 : (getHeight() - pinSize),
-                               pinSize, pinSize);
-            }
-        }
-    }
+	numIns = f->getProcessor()->getNumInputChannels();
+	if (f->getProcessor()->acceptsMidi())
+		++numIns;
 
-    void getPinPos (const int index, const bool isInput, float& x, float& y)
-    {
-        for (int i = 0; i < getNumChildComponents(); ++i)
-        {
-            if (PinComponent* const pc = dynamic_cast <PinComponent*> (getChildComponent(i)))
-            {
-                if (pc->index == index && isInput == pc->isInput)
-                {
-                    x = getX() + pc->getX() + pc->getWidth() * 0.5f;
-                    y = getY() + pc->getY() + pc->getHeight() * 0.5f;
-                    break;
-                }
-            }
-        }
-    }
+	numOuts = f->getProcessor()->getNumOutputChannels();
+	if (f->getProcessor()->producesMidi())
+		++numOuts;
 
-    void update()
-    {
-        const AudioProcessorGraph::Node::Ptr f (graph.getNodeForId (filterID));
+	int w = 100;
+	int h = 60;
 
-        if (f == nullptr)
-        {
-            delete this;
-            return;
-        }
+	w = jmax (w, (jmax (numIns, numOuts) + 1) * 20);
 
-        numIns = f->getProcessor()->getNumInputChannels();
-        if (f->getProcessor()->acceptsMidi())
-            ++numIns;
+	const int textWidth = font.getStringWidth (f->getProcessor()->getName());
+	w = jmax (w, 16 + jmin (textWidth, 300));
+	if (textWidth > 300)
+		h = 100;
 
-        numOuts = f->getProcessor()->getNumOutputChannels();
-        if (f->getProcessor()->producesMidi())
-            ++numOuts;
+	setSize (w, h);
 
-        int w = 100;
-        int h = 60;
+	PluginWrapperProcessor* tmpPlug = dynamic_cast <PluginWrapperProcessor*> (f->getProcessor());
+	
+	if(tmpPlug)
+	{
+		setName (tmpPlug->getPluginName());
+		tmpPlug->addActionListener(this);
+	}
+	else
+		setName(f->getProcessor()->getName());
 
-        w = jmax (w, (jmax (numIns, numOuts) + 1) * 20);
+	{
+		double x, y;
+		graph.getNodePosition (filterID, x, y);
+		setCentreRelative ((float) x, (float) y);
+	}
 
-        const int textWidth = font.getStringWidth (f->getProcessor()->getName());
-        w = jmax (w, 16 + jmin (textWidth, 300));
-        if (textWidth > 300)
-            h = 100;
+	if (numIns != numInputs || numOuts != numOutputs)
+	{
+		numInputs = numIns;
+		numOutputs = numOuts;
 
-        setSize (w, h);
+		deleteAllChildren();
 
-        setName (f->getProcessor()->getName());
+		int i;
+		for (i = 0; i < f->getProcessor()->getNumInputChannels(); ++i)
+			addAndMakeVisible (new PinComponent (graph, filterID, i, true));
 
-        {
-            double x, y;
-            graph.getNodePosition (filterID, x, y);
-            setCentreRelative ((float) x, (float) y);
-        }
+		if (f->getProcessor()->acceptsMidi())
+			addAndMakeVisible (new PinComponent (graph, filterID, FilterGraph::midiChannelNumber, true));
 
-        if (numIns != numInputs || numOuts != numOutputs)
-        {
-            numInputs = numIns;
-            numOutputs = numOuts;
+		for (i = 0; i < f->getProcessor()->getNumOutputChannels(); ++i)
+			addAndMakeVisible (new PinComponent (graph, filterID, i, false));
 
-            deleteAllChildren();
+		if (f->getProcessor()->producesMidi())
+			addAndMakeVisible (new PinComponent (graph, filterID, FilterGraph::midiChannelNumber, false));
 
-            int i;
-            for (i = 0; i < f->getProcessor()->getNumInputChannels(); ++i)
-                addAndMakeVisible (new PinComponent (graph, filterID, i, true));
-
-            if (f->getProcessor()->acceptsMidi())
-                addAndMakeVisible (new PinComponent (graph, filterID, FilterGraph::midiChannelNumber, true));
-
-            for (i = 0; i < f->getProcessor()->getNumOutputChannels(); ++i)
-                addAndMakeVisible (new PinComponent (graph, filterID, i, false));
-
-            if (f->getProcessor()->producesMidi())
-                addAndMakeVisible (new PinComponent (graph, filterID, FilterGraph::midiChannelNumber, false));
-
-            resized();
-        }
-    }
-
-    FilterGraph& graph;
-    const uint32 filterID;
-    int numInputs, numOutputs;
-
-private:
-    int pinSize;
-    Colour filterColour;
-    bool filterIsPartofSelectedGroup;
-    Point<int> originalPos;
-    Font font;
-    int numIns, numOuts;
-    DropShadowEffect shadow;
-
-    GraphEditorPanel* getGraphPanel() const noexcept
-    {
-        return findParentComponentOfClass<GraphEditorPanel>();
-    }
-
-    FilterComponent (const FilterComponent&);
-    FilterComponent& operator= (const FilterComponent&);
-};
+		resized();
+	}
+}
 
 //==============================================================================
 class ConnectorComponent   : public Component,
@@ -906,11 +901,13 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 
         if (MainHostWindow* const mainWindow = findParentComponentOfClass<MainHostWindow>())
         {
-            mainWindow->addPluginsToMenu (m);
+			mainWindow->addPluginsToMenu (m);
+			numNonNativePlugins = m.getNumItems();
 			mainWindow->addCabbageNativePluginsToMenu(m, cabbageFiles);
-
+			m.addSeparator();
             const int r = m.show();
-
+//			createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
+//			return;
 			Logger::writeToLog("PopupMenu ID: "+String(r));
 			if(r>0) //make sure we have a valid item index....
 			{
@@ -926,7 +923,7 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 					return;
 				}
 			}
-            //createNewPlugin (mainWindow->getChosenType (r), e.x, e.y);
+
         }
     }
     else

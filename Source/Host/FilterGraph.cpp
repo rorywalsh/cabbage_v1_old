@@ -27,6 +27,7 @@
 #include "FilterGraph.h"
 #include "InternalFilters.h"
 #include "GraphEditorPanel.h"
+#include "PluginWrapperProcessor.h"
 
 
 //==============================================================================
@@ -81,13 +82,30 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
         AudioProcessorGraph::Node* node = nullptr;
 
         String errorMessage;
-
-		if(desc->pluginFormatName!="Cabbage")
+		if(desc->pluginFormatName!="Cabbage" && desc->pluginFormatName!="Internal")
         {
-			if (AudioPluginInstance* instance = formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
-				node = graph.addNode (instance);
+			if(PluginWrapperProcessor* instance = new PluginWrapperProcessor(formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
+			{
+			instance->setPlayConfigDetails( desc->numInputChannels, 
+										    desc->numOutputChannels, 
+										    graph.getSampleRate(),
+											graph.getBlockSize());	
+			instance->setPluginName(desc->name); 
+			node = graph.addNode (instance);
+			pluginTypes.add("ThirdParty");
+			ScopedPointer<XmlElement> xmlElem;
+			xmlElem = desc->createXml();
+			String xmlText = xmlElem->createDocument("plugin descriptor");
+			node->properties.set("pluginDesc", xmlText);	
+			
+			}	
 		}
-		else
+		else if(desc->pluginFormatName=="Internal")
+		{
+			if (AudioPluginInstance* instance = formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
+				node = graph.addNode (instance);			
+		}
+		else if(desc->pluginFormatName=="Cabbage")
 		{
 			CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc->fileOrIdentifier, false, AUDIO_PLUGIN);
 			//create GUI for selected plugin...

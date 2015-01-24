@@ -298,19 +298,23 @@ void MainHostWindow::addPluginsToMenu (PopupMenu& m) const
 //add native filters to list of plugins. 
 void MainHostWindow::addCabbageNativePluginsToMenu (PopupMenu& m, Array<File> &cabbageFiles) const
 {
+	Array<File> tempArray;
+	StringArray tempStringArray;
 	const int menuSize = m.getNumItems();
 	File pluginDir(appProperties->getUserSettings()->getValue("CabbagePluginDirectory"));
-	pluginDir.findChildFiles(cabbageFiles, 2, true, "*.csd");
+	pluginDir.findChildFiles(tempArray, 2, true, "*.csd");
 
-	StringArray files;
+	for (int i = 0; i < tempArray.size(); ++i)
+		tempStringArray.add(tempArray[i].getFullPathName());
 
-	for (int i = 0; i < cabbageFiles.size(); ++i)
-		files.add(cabbageFiles[i].getFileNameWithoutExtension());
-	
-	files.sort(true);
-	
-	for (int i = 0; i < files.size(); ++i)
-		m.addItem (i + menuSize, files[i]);
+	tempStringArray.sort(true);
+		
+	for (int i = 0; i < tempStringArray.size(); ++i)
+		cabbageFiles.add(File(tempStringArray[i]));
+			
+		
+	for (int i = 0; i < tempStringArray.size(); ++i)
+		m.addItem (i + menuSize, cabbageFiles[i].getFileNameWithoutExtension());
 		
 	m.addSeparator();
 	m.setLookAndFeel(&this->getLookAndFeel());

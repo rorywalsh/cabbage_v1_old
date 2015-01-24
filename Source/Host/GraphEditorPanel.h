@@ -27,9 +27,51 @@
 
 #include "FilterGraph.h"
 
-class FilterComponent;
+class GraphEditorPanel;
 class ConnectorComponent;
 class PinComponent;
+
+//======================================================================
+// Filter Component, GUI component that represents a processing node
+//======================================================================
+class FilterComponent    : public Component, 
+						   public ActionListener
+{
+public:
+    FilterComponent (FilterGraph& graph_, const uint32 filterID_);
+	~FilterComponent();
+
+    FilterGraph& graph;
+    const uint32 filterID;
+    int numInputs, numOutputs;
+	void mouseDown (const MouseEvent& e);
+	void mouseDrag (const MouseEvent& e);
+	void mouseUp (const MouseEvent& e);
+	bool hitTest (int x, int y);
+	void actionListenerCallback (const String &message);
+	void paint (Graphics& g);
+	void resized();
+	void getPinPos (const int index, const bool isInput, float& x, float& y);
+	void update();
+
+private:
+    int pinSize;
+    Colour filterColour;
+    bool filterIsPartofSelectedGroup;
+    Point<int> originalPos;
+	float rmsLeft, rmsRight;
+    Font font;
+    int numIns, numOuts;
+    DropShadowEffect shadow;
+
+    GraphEditorPanel* getGraphPanel() const noexcept
+    {
+        return findParentComponentOfClass<GraphEditorPanel>();
+    }
+
+    FilterComponent (const FilterComponent&);
+    FilterComponent& operator= (const FilterComponent&);
+};
 
 
 //this get populated whenever we select multiple objects..
@@ -43,7 +85,6 @@ public:
         item->repaint ();
     }
 };
-
 //==============================================================================
 /**
     A panel that displays and edits a FilterGraph.

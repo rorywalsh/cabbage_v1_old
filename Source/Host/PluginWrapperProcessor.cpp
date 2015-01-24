@@ -138,6 +138,7 @@ void PluginWrapperProcessor::releaseResources(){}
 void PluginWrapperProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
     vstInstance->processBlock(buffer,midiMessages);
+	
 	const float rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
 	const float rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
 	

@@ -50,7 +50,6 @@ public:
 	bool hitTest (int x, int y);
 	void actionListenerCallback (const String &message);
 	void paint (Graphics& g);
-	void resized();
 	void getPinPos (const int index, const bool isInput, float& x, float& y);
 	void update();
 
@@ -60,9 +59,12 @@ private:
     bool filterIsPartofSelectedGroup;
     Point<int> originalPos;
 	float rmsLeft, rmsRight;
+	void resized();
     Font font;
     int numIns, numOuts;
     DropShadowEffect shadow;
+	bool isMuted;
+	Rectangle<float> muteButton;
 
     GraphEditorPanel* getGraphPanel() const noexcept
     {

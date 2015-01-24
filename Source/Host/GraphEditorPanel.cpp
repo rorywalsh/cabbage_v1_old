@@ -167,10 +167,6 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
     if (type == Normal)
     {
         ui = processor->createEditorIfNeeded();
-
-        Logger::writeToLog("Width:"+String(ui->getWidth()));
-        Logger::writeToLog("Height:"+String(ui->getHeight()));
-
         if (ui == nullptr)
             type = Generic;
     }
@@ -308,10 +304,13 @@ FilterComponent::FilterComponent (FilterGraph& graph_, const uint32 filterID_)
           numOuts (0),
 		  rmsLeft(0),
 		  rmsRight(0),
-		  filterIsPartofSelectedGroup(false)
+		  isMuted(false),
+		  filterIsPartofSelectedGroup(false),
+		  muteButton(4.f, 25.f, 8.f, 8.f)
 {
 	shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 3, Point<int> (0, 1)));
 	setComponentEffect (&shadow);
+	
 	//setSize (150, 90);		
 }
 //================================================================================
@@ -319,10 +318,16 @@ FilterComponent::~FilterComponent()
 {
 	deleteAllChildren();
 }
+
 //================================================================================	
 void FilterComponent::mouseDown (const MouseEvent& e)
 {
 
+	if(muteButton.contains(e.getPosition().toFloat()))
+	{
+		isMuted=!isMuted;
+	}
+	
 	Logger::writeToLog("NodeID: "+String(filterID));
 	getGraphPanel()->selectedFilterCoordinates.clear();
 
@@ -511,7 +516,8 @@ void FilterComponent::paint (Graphics& g)
 	g.setOpacity(0.2);
 	g.drawRoundedRectangle(x+0.5, y+0.5, w-1, h-1, 5, 1.0f);
 	
-	//g.setColour(Colours::cornflowerblue);	
+	g.setColour(isMuted ? Colours::green : Colours::red);	
+	g.fillRect(muteButton);
 	
 	ColourGradient vuGradient(Colours::lime, 0.f, 0.f, Colours::cornflowerblue, getWidth(), getHeight(), false);
 	g.setGradientFill(vuGradient);
@@ -903,10 +909,11 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
         {
 			mainWindow->addPluginsToMenu (m);
 			numNonNativePlugins = m.getNumItems();
-			mainWindow->addCabbageNativePluginsToMenu(m, cabbageFiles);
+			//mainWindow->addCabbageNativePluginsToMenu(m, cabbageFiles);
 			m.addSeparator();
             const int r = m.show();
-//			createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
+			createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
+			return;
 //			return;
 			Logger::writeToLog("PopupMenu ID: "+String(r));
 			if(r>0) //make sure we have a valid item index....

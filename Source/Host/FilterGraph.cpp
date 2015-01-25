@@ -103,7 +103,10 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 		else if(desc->pluginFormatName=="Internal")
 		{
 			if (AudioPluginInstance* instance = formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
-				node = graph.addNode (instance);			
+			{
+			node = graph.addNode (instance);
+			node->properties.set("pluginType", "Internal");	
+			}				
 		}
 		else if(desc->pluginFormatName=="Cabbage")
 		{

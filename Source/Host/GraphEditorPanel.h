@@ -30,6 +30,9 @@
 class GraphEditorPanel;
 class ConnectorComponent;
 class PinComponent;
+#define INTERNAL 1
+#define CABBAGE 2
+#define THIRDPARTY 3
 
 //======================================================================
 // Filter Component, GUI component that represents a processing node
@@ -54,8 +57,10 @@ public:
 	void update();
 	void drawLevelMeter (Graphics& g, float x, float y, int width, int height, float level);
 	void drawMuteIcon(Graphics& g, Rectangle<float> rect, bool state);
+	
 
 private:
+	int pluginType;
     int pinSize;
     Colour filterColour;
     bool filterIsPartofSelectedGroup;

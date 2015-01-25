@@ -235,6 +235,11 @@ public:
         }
     }
 
+	static double roundToMultiple(double x, double multiple)
+	{
+		return round(x / multiple) * multiple;		
+	}
+
     static double roundToPrec(double x, int prec)
     {
         double power = 1.0;

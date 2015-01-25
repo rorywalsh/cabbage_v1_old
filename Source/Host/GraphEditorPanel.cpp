@@ -305,8 +305,10 @@ FilterComponent::FilterComponent (FilterGraph& graph_, const uint32 filterID_)
 		  rmsLeft(0),
 		  rmsRight(0),
 		  isMuted(false),
+		  isBypassed(false),
 		  filterIsPartofSelectedGroup(false),
-		  muteButton(0.f, 10.f, 8.f, 8.f)
+		  muteButton(0.f, 10.f, 8.f, 8.f),
+		  bypassButton(0.f, 10.f, 8.f, 8.f)
 {
 	shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 3, Point<int> (0, 1)));
 	setComponentEffect (&shadow);
@@ -327,6 +329,11 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 	{
 		isMuted=!isMuted;
 	}
+	
+	if(bypassButton.contains(e.getPosition().toFloat()))
+	{
+		isBypassed=!isBypassed;
+	}	
 	
 	Logger::writeToLog("NodeID: "+String(filterID));
 	getGraphPanel()->selectedFilterCoordinates.clear();
@@ -528,8 +535,35 @@ void FilterComponent::paint (Graphics& g)
 												(float) exp (log (rmsRight) / 3.0)); // (add a bit of a skew to make the level more obvious)	
 			
 		}
+		drawBypassIcon(g, bypassButton, isBypassed);
 		drawMuteIcon(g, muteButton, isMuted);
 	}
+}
+
+void FilterComponent::drawBypassIcon(Graphics& g, Rectangle<float> rect, bool isActive)
+{
+	const float x = rect.getX();
+	const float y = rect.getY();
+	const float w = rect.getWidth()-5.f;
+	const float h = rect.getHeight();
+	const float d = 5; 
+	g.setColour(isActive ? Colours::cornflowerblue : Colours::lime);
+	Path p;
+	p.startNewSubPath(x+5, y+h/2.f+d/2.f);
+	g.drawEllipse(x, y+h/2.f, d, d, 1);
+	g.drawEllipse(x+w, y+h/2.f, d, d, 1.f);	
+	
+	if(!isActive)
+	{
+		p.lineTo(x+w, y+h/2.f+d/2.f);
+	}
+	else
+	{
+		p.addArc(x+w, y+h/2.f+d/2.f, 5, 5, 3.14, 3.14);
+	}
+	
+	p.closeSubPath();
+	g.strokePath(p, PathStrokeType(1));
 }
 
 void FilterComponent::drawMuteIcon(Graphics& g, Rectangle<float> rect, bool muted)
@@ -572,7 +606,7 @@ void FilterComponent::drawLevelMeter (Graphics& g, float x, float y, int width, 
         if (i >= numBlocks)
             g.setColour (Colours::lightblue.withAlpha (0.1f));
         else
-            g.setColour (i < totalBlocks - 1 ? Colours::lime.withAlpha (0.5f)
+            g.setColour (i < totalBlocks - 1 ? (isBypassed ? Colours::cornflowerblue : Colours::lime.withAlpha (0.5f))
                                              : Colours::red);
 
         g.fillRoundedRectangle (x+3.0f + i * w + w * 0.1f, 
@@ -652,6 +686,7 @@ void FilterComponent::update()
 
 	setSize (w+20, h);
 	muteButton = Rectangle<float>(w+1, 22.f, 15.f, 15.f);
+	bypassButton = Rectangle<float>(10, 15.f, 15.f, 15.f);
 
 	PluginWrapperProcessor* tmpPlug = dynamic_cast <PluginWrapperProcessor*> (f->getProcessor());
 	

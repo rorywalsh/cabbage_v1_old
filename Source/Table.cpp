@@ -585,10 +585,15 @@ void GenTable::changeListenerCallback(ChangeBroadcaster *source)
     if(currentHandle)
     {
         //fill coordinate string and send change message to plugin editor to show bubble
+		float curY = (float)jlimit(minMax.getStart(), minMax.getEnd(), pixelToAmp(thumbArea.getHeight()-10, minMax, currentHandle->getY()));
+		curY = cUtils::roundToMultiple(curY, quantiseSpace);
+		
+		
         coordinates = "";
         coordinates << roundToIntAccurate(currentHandle->xPosRelative*waveformBuffer.size()) <<
-                    ", " << (float)jlimit(minMax.getStart(), minMax.getEnd(), pixelToAmp(thumbArea.getHeight()-10, minMax, currentHandle->getY()));
+                    ", " << curY;
 
+		cUtils::debug("coordinates", coordinates);
         //no need to update function table no movement has taken place
         if(currentHandle->mouseStatus!="mouseEnter")
         {
@@ -1386,15 +1391,16 @@ double HandleViewer::getSnapYPosition(const double y)
     //return snapped position if quantise is one
     double ySnapPos = 0;
     double steps = (minMax.getEnd()/getParentTable()->quantiseSpace);
-//	if(steps!=1)
-//		return y;
-
     double jump = (getParentTable()->quantiseSpace/minMax.getEnd())*getHeight();
-    for(double c=0; c<=steps; c++)
-    {
-        if(y > (c*jump)-jump/2.f && y < ((c+1)*jump+(jump/2.f)))
-            ySnapPos = c*jump;
-    }
+	ySnapPos = round(y / jump) * jump;
+//    for(double c=0; c<=steps; c++)
+//    {
+//        if(y >= (c*jump)-jump/2.f && y < ((c+1)*jump+(jump/2.f)))
+//            ySnapPos = c*jump;
+//    }
+ 
+    ySnapPos = round(y / jump) * jump;
+
 
     return ySnapPos;
 
@@ -1575,7 +1581,7 @@ void HandleComponent::mouseDown (const MouseEvent& e)
     else
         x = getX()+getWidth()/2.f;
 
-    y = getY();
+    y = getParentHandleViewer()->getSnapYPosition(getY());
 
 
     setMouseCursor (MouseCursor::DraggingHandCursor);
@@ -1689,11 +1695,11 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
         xPos = x;
     }
 
-    yPos = jlimit(0.0, getParentComponent()->getHeight()+0.0, yPos);
-    setPosition(viewer->getSnapXPosition(xPos), viewer->getSnapYPosition(yPos), (getWidth()==FIXED_WIDTH ? true : false));
+	cUtils::debug("Handle height", getHeight());
 
-
-    setRelativePosition(Point<double>(viewer->getSnapXPosition(xPos), viewer->getSnapYPosition(yPos)));
+	yPos = jlimit(0.0, getParentComponent()->getHeight()+0.0, yPos);
+	setPosition(viewer->getSnapXPosition(xPos), viewer->getSnapYPosition(yPos), (getWidth()==FIXED_WIDTH ? true : false));
+	setRelativePosition(Point<double>(viewer->getSnapXPosition(xPos), viewer->getSnapYPosition(yPos)));
 
     mouseStatus = "mouseDrag";
     sendChangeMessage();

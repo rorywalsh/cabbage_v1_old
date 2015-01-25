@@ -57,6 +57,7 @@ public:
 	void update();
 	void drawLevelMeter (Graphics& g, float x, float y, int width, int height, float level);
 	void drawMuteIcon(Graphics& g, Rectangle<float> rect, bool state);
+	void drawBypassIcon(Graphics& g, Rectangle<float> rect, bool isActive);
 	
 
 private:
@@ -70,8 +71,9 @@ private:
     Font font;
     int numIns, numOuts;
     DropShadowEffect shadow;
-	bool isMuted;
+	bool isMuted, isBypassed;
 	Rectangle<float> muteButton;
+	Rectangle<float> bypassButton;
 
     GraphEditorPanel* getGraphPanel() const noexcept
     {

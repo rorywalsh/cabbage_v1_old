@@ -84,8 +84,9 @@ private:
     FilterComponent& operator= (const FilterComponent&);
 };
 
-
+//==============================================================================
 //this get populated whenever we select multiple objects..
+//==============================================================================
 class SelectedComponents   : public SelectedItemSet<FilterComponent*>
 {
 public:
@@ -97,9 +98,8 @@ public:
     }
 };
 //==============================================================================
-/**
-    A panel that displays and edits a FilterGraph.
-*/
+//   A panel that displays and edits a FilterGraph.
+//==============================================================================
 class GraphEditorPanel   : public Component,
     public ChangeListener,
     public LassoSource <FilterComponent*>
@@ -150,11 +150,9 @@ private:
 
 
 //==============================================================================
-/**
-    A panel that embeds a GraphEditorPanel with a midi keyboard at the bottom.
-
-    It also manages the graph itself, and plays it.
-*/
+//    A panel that embeds a GraphEditorPanel with a midi keyboard at the bottom.
+//    It also manages the graph itself, and plays it.
+//==============================================================================
 class GraphDocumentComponent  : public Component
 {
 public:
@@ -186,7 +184,8 @@ private:
 };
 
 //==============================================================================
-/** A desktop window containing a plugin's UI. */
+// A desktop window containing a plugin's UI. 
+//==============================================================================
 class PluginWindow  : public DocumentWindow
 {
 public:

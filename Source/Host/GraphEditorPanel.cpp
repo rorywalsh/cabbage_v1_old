@@ -312,7 +312,6 @@ FilterComponent::FilterComponent (FilterGraph& graph_, const uint32 filterID_)
 {
 	shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 3, Point<int> (0, 1)));
 	setComponentEffect (&shadow);
-	
 	//setSize (150, 90);		
 }
 //================================================================================
@@ -450,14 +449,17 @@ void FilterComponent::mouseDrag (const MouseEvent& e)
 		{
 			for(int i=0; i<numSelected; i++)
 			{
-				int fltID = getGraphPanel()->getLassoSelection().getSelectedItem(i)->filterID;
+				
+				const int fltID = getGraphPanel()->getLassoSelection().getSelectedItem(i)->filterID;
+				const int width =  getGraphPanel()->getLassoSelection().getSelectedItem(i)->getWidth();
+				const int height =  getGraphPanel()->getLassoSelection().getSelectedItem(i)->getHeight();
 				int filterPosX = getGraphPanel()->selectedFilterCoordinates[i].getX();
 				int filterPosY = getGraphPanel()->selectedFilterCoordinates[i].getY();
 
 				//Logger::writeToLog("FilterID from Filter Component MouseDrag:"+String(fltID));
 				graph.setNodePosition (fltID,
-									   (filterPosX+e.getDistanceFromDragStartX() + getWidth() / 2) / (double) getParentWidth(),
-									   (filterPosY+e.getDistanceFromDragStartY() + getHeight() / 2) / (double) getParentHeight());
+									   (filterPosX+e.getDistanceFromDragStartX() + width / 2) / (double) getParentWidth(),
+									   (filterPosY+e.getDistanceFromDragStartY() + height / 2) / (double) getParentHeight());
 			}
 		}
 		
@@ -539,9 +541,9 @@ void FilterComponent::paint (Graphics& g)
 	{
 		if(!isMuted)
 		{
-			drawLevelMeter(g, x+8, h+4, getWidth()-30.f, 7,
+			drawLevelMeter(g, 16, h+4, getWidth()-32.f, 7,
 												(float) exp (log (rmsLeft) / 3.0)); // (add a bit of a skew to make the level more obvious)	
-			drawLevelMeter(g, x+8, h+9, getWidth()-30.f, 7,
+			drawLevelMeter(g, 16, h+9, getWidth()-32.f, 7,
 												(float) exp (log (rmsRight) / 3.0)); // (add a bit of a skew to make the level more obvious)	
 			
 		}
@@ -607,9 +609,9 @@ void FilterComponent::drawMuteIcon(Graphics& g, Rectangle<float> rect, bool mute
 void FilterComponent::drawLevelMeter (Graphics& g, float x, float y, int width, int height, float level)
 {
 	g.fillAll(filterColour);
-    const int totalBlocks = 15;
+    const int totalBlocks = 20;
     const int numBlocks = roundToInt (totalBlocks * level);
-    const float w = (width - 6.0f) / (float) totalBlocks;
+    const float w = (width) / (float) totalBlocks;
 
     for (int i = 0; i < totalBlocks; ++i)
     {
@@ -619,9 +621,9 @@ void FilterComponent::drawLevelMeter (Graphics& g, float x, float y, int width, 
             g.setColour (i < totalBlocks - 1 ? (isBypassed ? Colours::cornflowerblue : Colours::lime.withAlpha (0.5f))
                                              : Colours::red);
 
-        g.fillRoundedRectangle (x+3.0f + i * w + w * 0.1f, 
+        g.fillRoundedRectangle (x + i * w + w * 0.1f, 
 								y+1, 
-								w * 0.8f, 
+								w, 
 								height/2,
 								.5f);
     }
@@ -688,14 +690,17 @@ void FilterComponent::update()
 
 	w = jmax (w, (jmax (numIns, numOuts) + 1) * 20);
 
-	const int textWidth = font.getStringWidth (f->getProcessor()->getName());
-	w = jmax (w, 16 + jmin (textWidth, 300));
+	const String pluginName = f->properties.getWithDefault("pluginName", "").toString();
+	const int textWidth = font.getStringWidth (pluginName);
+
+	w = jmax (w, jmin (textWidth+50, 300));
+
 	if (textWidth > 300)
 		h = 100;
 
-	setSize (w+20, h);
-	muteButton = Rectangle<float>(w+1, 22.f, 15.f, 15.f);
-	bypassButton = Rectangle<float>(10, 15.f, 15.f, 15.f);
+	setSize (w, h);
+	muteButton = Rectangle<float>(w-20, 20.f, 15.f, 15.f);
+	bypassButton = Rectangle<float>(10, 16.f, 15.f, 15.f);
 
 	PluginWrapper* tmpPlug = dynamic_cast <PluginWrapper*> (f->getProcessor());
 	

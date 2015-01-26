@@ -92,6 +92,7 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 												graph.getBlockSize());
 				instance->setPluginName(desc->name);
 				node = graph.addNode (instance);
+				node->properties.set("pluginName", desc->name);
 			}
 		}
 		else if(desc->pluginFormatName=="Internal")
@@ -100,6 +101,7 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 			{
 				node = graph.addNode (instance);
 				node->properties.set("pluginType", "Internal");
+				node->properties.set("pluginName", desc->name);
 			}
 		}
 	
@@ -400,6 +402,7 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
     node->properties.set ("y", xml.getDoubleAttribute ("y"));
     node->properties.set ("uiLastX", xml.getIntAttribute ("uiLastX"));
     node->properties.set ("uiLastY", xml.getIntAttribute ("uiLastY"));
+	node->properties.set("pluginName", pd.name);
 
 }
 

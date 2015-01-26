@@ -22,20 +22,20 @@ class PluginWrapperEditor  : public AudioProcessorEditor,
 							 public Timer
 {
 public:
-    PluginWrapperEditor (PluginWrapperProcessor&);
+    PluginWrapperEditor (PluginWrapper&);
     ~PluginWrapperEditor();
 
     //==============================================================================
-	PluginWrapperProcessor* getFilter() const
+	PluginWrapper* getFilter() const
     {
-        return static_cast <PluginWrapperProcessor*> (getAudioProcessor());
+        return static_cast <PluginWrapper*> (getAudioProcessor());
     }
 
 	void timerCallback();
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    PluginWrapperProcessor& processor;
+    PluginWrapper& processor;
     AudioProcessorEditor* vstEditor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginWrapperEditor)

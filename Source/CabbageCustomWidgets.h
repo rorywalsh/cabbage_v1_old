@@ -1080,6 +1080,8 @@ public:
     //update control
     void update(CabbageGUIClass m_cAttr)
     {
+		setTransform(AffineTransform::identity);
+		setBounds(m_cAttr.getBounds());
         colour = m_cAttr.getStringProp(CabbageIDs::colour);
         outline = m_cAttr.getStringProp(CabbageIDs::outlinecolour);
         shape = m_cAttr.getStringProp(CabbageIDs::shape);
@@ -1096,10 +1098,12 @@ public:
         if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
         {
             rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
-            setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
-        }
+			transform = AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty));
+            setTransform(transform);
+		}
+		setTransform(transform);
+//		setTransform(AffineTransform::identity);
 
-        setBounds(m_cAttr.getBounds());
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
         {
             setVisible(false);

@@ -327,12 +327,22 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 
 	if(muteButton.contains(e.getPosition().toFloat()))
 	{
-		isMuted=!isMuted;
+		isMuted=!isMuted;		
+		if(PluginWrapper* tmpPtr = dynamic_cast <PluginWrapper*> (graph.getNodeForId (filterID)->getProcessor()))
+		{
+			//tmpPtr
+			tmpPtr->shouldMute(isMuted);
+		}	
 	}
 	
 	if(bypassButton.contains(e.getPosition().toFloat()))
 	{
 		isBypassed=!isBypassed;
+		if(PluginWrapper* tmpPtr = dynamic_cast <PluginWrapper*> (graph.getNodeForId (filterID)->getProcessor()))
+		{
+			//tmpPtr
+			tmpPtr->shouldBypass(isBypassed);
+		}
 	}	
 	
 	Logger::writeToLog("NodeID: "+String(filterID));
@@ -654,17 +664,16 @@ void FilterComponent::update()
 {
 	const AudioProcessorGraph::Node::Ptr f (graph.getNodeForId (filterID));
 
-	if(f->properties.getWithDefault("pluginType","")=="Internal")
-		pluginType = INTERNAL;
-	else
-		pluginType = THIRDPARTY;
-		
-
 	if (f == nullptr)
 	{
 		delete this;
 		return;
 	}
+
+	if(f->properties.getWithDefault("pluginType","")=="Internal")
+		pluginType = INTERNAL;
+	else
+		pluginType = THIRDPARTY;
 
 	numIns = f->getProcessor()->getNumInputChannels();
 	if (f->getProcessor()->acceptsMidi())
@@ -688,7 +697,7 @@ void FilterComponent::update()
 	muteButton = Rectangle<float>(w+1, 22.f, 15.f, 15.f);
 	bypassButton = Rectangle<float>(10, 15.f, 15.f, 15.f);
 
-	PluginWrapperProcessor* tmpPlug = dynamic_cast <PluginWrapperProcessor*> (f->getProcessor());
+	PluginWrapper* tmpPlug = dynamic_cast <PluginWrapper*> (f->getProcessor());
 	
 	if(tmpPlug)
 	{
@@ -698,11 +707,13 @@ void FilterComponent::update()
 	else
 		setName(f->getProcessor()->getName());
 
+
 	{
 		double x, y;
 		graph.getNodePosition (filterID, x, y);
 		setCentreRelative ((float) x, (float) y);
 	}
+	
 
 	if (numIns != numInputs || numOuts != numOutputs)
 	{

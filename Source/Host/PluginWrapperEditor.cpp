@@ -14,7 +14,7 @@
 
 
 //==============================================================================
-PluginWrapperEditor::PluginWrapperEditor (PluginWrapperProcessor& p)
+PluginWrapperEditor::PluginWrapperEditor (PluginWrapper& p)
     : AudioProcessorEditor (&p), processor (p) 
 {
 	vstEditor = 0;

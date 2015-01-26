@@ -83,39 +83,31 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 
         String errorMessage;
 		if(desc->pluginFormatName!="Cabbage" && desc->pluginFormatName!="Internal")
-        {
-			if(PluginWrapperProcessor* instance = new PluginWrapperProcessor(formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
+		{
+			if(PluginWrapper* instance = new PluginWrapper(formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
 			{
-			instance->setPlayConfigDetails( desc->numInputChannels, 
-										    desc->numOutputChannels, 
-										    graph.getSampleRate(),
-											graph.getBlockSize());	
-			instance->setPluginName(desc->name); 
-			node = graph.addNode (instance);
-			pluginTypes.add("ThirdParty");
-			ScopedPointer<XmlElement> xmlElem;
-			xmlElem = desc->createXml();
-			String xmlText = xmlElem->createDocument("plugin descriptor");
-			node->properties.set("pluginDesc", xmlText);	
-			
-			}	
+				instance->setPlayConfigDetails( desc->numInputChannels,
+												desc->numOutputChannels,
+												graph.getSampleRate(),
+												graph.getBlockSize());
+				instance->setPluginName(desc->name);
+				node = graph.addNode (instance);
+			}
 		}
 		else if(desc->pluginFormatName=="Internal")
 		{
 			if (AudioPluginInstance* instance = formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
 			{
-			node = graph.addNode (instance);
-			node->properties.set("pluginType", "Internal");	
-			}				
+				node = graph.addNode (instance);
+				node->properties.set("pluginType", "Internal");
+			}
 		}
+	
 		else if(desc->pluginFormatName=="Cabbage")
 		{
 			CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc->fileOrIdentifier, false, AUDIO_PLUGIN);
 			//create GUI for selected plugin...
-
-			cabbageNativePlugin->createGUI(File(desc->fileOrIdentifier).loadFileAsString(), true);
-			nodeId++;
-			
+			cabbageNativePlugin->createGUI(File(desc->fileOrIdentifier).loadFileAsString(), true);			
 			cabbageNativePlugin->setPlayConfigDetails(cabbageNativePlugin->getNumberCsoundOutChannels(), 
 													  cabbageNativePlugin->getNumberCsoundOutChannels(), 
 													  cabbageNativePlugin->getCsoundSamplingRate(),
@@ -125,7 +117,8 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 			ScopedPointer<XmlElement> xmlElem;
 			xmlElem = desc->createXml();
 			String xmlText = xmlElem->createDocument("plugin descriptor");
-			node->properties.set("pluginDesc", xmlText);			
+			node->properties.set("pluginDesc", xmlText);	
+			nodeId++;		
 		}
 		
         if (node != nullptr)
@@ -325,10 +318,10 @@ void FilterGraph::setLastDocumentOpened (const File& file)
 static XmlElement* createNodeXml (AudioProcessorGraph::Node* const node) noexcept
 {
     AudioPluginInstance* plugin = dynamic_cast <AudioPluginInstance*> (node->getProcessor());
-
+	cUtils::debug("name", node->getProcessor()->getName());
     if (plugin == nullptr)
     {
-        jassertfalse;
+        assert(0);
         return nullptr;
     }
 
@@ -365,18 +358,35 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
     }
 
     String errorMessage;
+	AudioProcessorGraph::Node::Ptr node = nullptr;
+	
+	if(pd.pluginFormatName!="Cabbage" && pd.pluginFormatName!="Internal")
+	{
+		if(PluginWrapper* instance = new PluginWrapper(formatManager.createPluginInstance (pd, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
+		{
+			instance->setPlayConfigDetails( pd.numInputChannels,
+											pd.numOutputChannels,
+											graph.getSampleRate(),
+											graph.getBlockSize());
+			instance->setPluginName(pd.name);
+			node = graph.addNode (instance);
+		}
+	}
+	else if(pd.pluginFormatName=="Internal")
+	{
+		if (AudioPluginInstance* instance = formatManager.createPluginInstance (pd, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
+		{
+			node = graph.addNode (instance);
+			node->properties.set("pluginType", "Internal");
+		}
+	}
 
-    AudioPluginInstance* instance = formatManager.createPluginInstance (pd, graph.getSampleRate(), graph.getBlockSize(), errorMessage);
+	else if(pd.pluginFormatName=="Cabbage")
+	{
+	}	
+	
 
-    if (instance == nullptr)
-    {
-        // xxx handle ins + outs
-    }
-
-    if (instance == nullptr)
-        return;
-
-    AudioProcessorGraph::Node::Ptr node (graph.addNode (instance, xml.getIntAttribute ("uid")));
+    //AudioProcessorGraph::Node::Ptr node (graph.addNode (instance, xml.getIntAttribute ("uid")));
 
     if (const XmlElement* const state = xml.getChildByName ("STATE"))
     {
@@ -390,11 +400,13 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
     node->properties.set ("y", xml.getDoubleAttribute ("y"));
     node->properties.set ("uiLastX", xml.getIntAttribute ("uiLastX"));
     node->properties.set ("uiLastY", xml.getIntAttribute ("uiLastY"));
+
 }
 
 XmlElement* FilterGraph::createXml() const
 {
     XmlElement* xml = new XmlElement ("FILTERGRAPH");
+	cUtils::debug("graph.getNumNodes()", graph.getNumNodes());
 
     for (int i = 0; i < graph.getNumNodes(); ++i)
         xml->addChildElement (createNodeXml (graph.getNode (i)));

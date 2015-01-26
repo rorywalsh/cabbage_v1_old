@@ -14,69 +14,88 @@
 
 
 //==============================================================================
-PluginWrapperProcessor::PluginWrapperProcessor(AudioPluginInstance* instance)
+PluginWrapper::PluginWrapper(AudioPluginInstance* instance)
 {
+	isBypassed = false;
+	isMuted = false;	
 	updateCounter = 0;
 	vstInstance = instance;
 	if(!vstInstance)
 		assert(0);
+		
+	pluginDesc = instance->getPluginDescription();	
+
 }
 
-PluginWrapperProcessor::~PluginWrapperProcessor()
+PluginWrapper::~PluginWrapper()
 {
 }
 
+void PluginWrapper::fillInPluginDescription(PluginDescription & mdescription) const
+{
+mdescription.name = pluginDesc.name;
+mdescription.numInputChannels = pluginDesc.numInputChannels;
+mdescription.numOutputChannels = pluginDesc.numOutputChannels;
+mdescription.uid = pluginDesc.uid;
+mdescription.category = pluginDesc.category;
+mdescription.descriptiveName = pluginDesc.descriptiveName;
+mdescription.fileOrIdentifier = pluginDesc.fileOrIdentifier;
+mdescription.isInstrument = pluginDesc.isInstrument;
+mdescription.pluginFormatName = pluginDesc.pluginFormatName;
+mdescription.version = pluginDesc.version;
+
+}
 //==============================================================================
-const String PluginWrapperProcessor::getName() const
+const String PluginWrapper::getName() const
 {
     return JucePlugin_Name;
 }
 
-int PluginWrapperProcessor::getNumParameters()
+int PluginWrapper::getNumParameters()
 {
     return 0;
 }
 
-float PluginWrapperProcessor::getParameter (int index)
+float PluginWrapper::getParameter (int index)
 {
     return 0.0f;
 }
 
-void PluginWrapperProcessor::setParameter (int index, float newValue)
+void PluginWrapper::setParameter (int index, float newValue)
 {
 }
 
-const String PluginWrapperProcessor::getParameterName (int index)
-{
-    return String();
-}
-
-const String PluginWrapperProcessor::getParameterText (int index)
+const String PluginWrapper::getParameterName (int index)
 {
     return String();
 }
 
-const String PluginWrapperProcessor::getInputChannelName (int channelIndex) const
+const String PluginWrapper::getParameterText (int index)
+{
+    return String();
+}
+
+const String PluginWrapper::getInputChannelName (int channelIndex) const
 {
     return String (channelIndex + 1);
 }
 
-const String PluginWrapperProcessor::getOutputChannelName (int channelIndex) const
+const String PluginWrapper::getOutputChannelName (int channelIndex) const
 {
     return String (channelIndex + 1);
 }
 
-bool PluginWrapperProcessor::isInputChannelStereoPair (int index) const
+bool PluginWrapper::isInputChannelStereoPair (int index) const
 {
     return true;
 }
 
-bool PluginWrapperProcessor::isOutputChannelStereoPair (int index) const
+bool PluginWrapper::isOutputChannelStereoPair (int index) const
 {
     return true;
 }
 
-bool PluginWrapperProcessor::acceptsMidi() const
+bool PluginWrapper::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -85,7 +104,7 @@ bool PluginWrapperProcessor::acceptsMidi() const
    #endif
 }
 
-bool PluginWrapperProcessor::producesMidi() const
+bool PluginWrapper::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -94,38 +113,38 @@ bool PluginWrapperProcessor::producesMidi() const
    #endif
 }
 
-bool PluginWrapperProcessor::silenceInProducesSilenceOut() const
+bool PluginWrapper::silenceInProducesSilenceOut() const
 {
     return false;
 }
 
-double PluginWrapperProcessor::getTailLengthSeconds() const
+double PluginWrapper::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int PluginWrapperProcessor::getNumPrograms()
+int PluginWrapper::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int PluginWrapperProcessor::getCurrentProgram()
+int PluginWrapper::getCurrentProgram()
 {
     return 0;
 }
 
-void PluginWrapperProcessor::setCurrentProgram (int index){}
+void PluginWrapper::setCurrentProgram (int index){}
 
-const String PluginWrapperProcessor::getProgramName (int index)
+const String PluginWrapper::getProgramName (int index)
 {
     return String();
 }
 
-void PluginWrapperProcessor::changeProgramName (int index, const String& newName){}
+void PluginWrapper::changeProgramName (int index, const String& newName){}
 
 //==============================================================================
-void PluginWrapperProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void PluginWrapper::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
@@ -133,11 +152,20 @@ void PluginWrapperProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
 		vstInstance->prepareToPlay(sampleRate,samplesPerBlock);
 }
 
-void PluginWrapperProcessor::releaseResources(){}
+void PluginWrapper::releaseResources(){}
 
-void PluginWrapperProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
+void PluginWrapper::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-    vstInstance->processBlock(buffer,midiMessages);
+	//this processBlock merely processes a loaded VST. 
+	if(!isBypassed)
+	{
+		vstInstance->processBlock(buffer,midiMessages);
+	}
+	
+	if(isMuted)
+		buffer.clear();
+	
+	
 	
 	const float rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
 	const float rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
@@ -152,23 +180,32 @@ void PluginWrapperProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer
 }
 
 //==============================================================================
-bool PluginWrapperProcessor::hasEditor() const
+bool PluginWrapper::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-AudioProcessorEditor* PluginWrapperProcessor::createEditor()
+AudioProcessorEditor* PluginWrapper::createEditor()
 {
     return new PluginWrapperEditor (*this);
 }
 
 //==============================================================================
-void PluginWrapperProcessor::getStateInformation (MemoryBlock& destData){}
-void PluginWrapperProcessor::setStateInformation (const void* data, int sizeInBytes){}
+void PluginWrapper::getStateInformation (MemoryBlock& destData)
+{
+	if(vstInstance)
+		vstInstance->getStateInformation(destData);
+}
+
+void PluginWrapper::setStateInformation (const void* data, int sizeInBytes)
+{
+	if(vstInstance)
+		vstInstance->setStateInformation(data, sizeInBytes);	
+}
 
 //==============================================================================
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter(AudioPluginInstance* instance)
 {
-    return new PluginWrapperProcessor(instance);
+    return new PluginWrapper(instance);
 }

@@ -178,7 +178,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
         }
 
     }
-    else if(File(commandLineParams.trim().removeCharacters("\"")).existsAsFile())
+    else if(File::getCurrentWorkingDirectory().getChildFile (commandLineParams.trim().removeCharacters("\"")).existsAsFile())
     {
         defaultCSDFile = commandLineParams.trim().removeCharacters("\"");;
         openFile(defaultCSDFile);

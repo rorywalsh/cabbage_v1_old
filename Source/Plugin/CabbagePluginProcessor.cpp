@@ -264,7 +264,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         isWinXP = true;
         String path = File(inputfile).getParentDirectory().getFullPathName();
         String fullFileName;
-#ifdef LINUX
+#if defined(LINUX) || defined(MACOSX)
         fullFileName = path+"/CabbageTemp.wav";
 #else
         fullFileName = path+"\\CabbageTemp.wav";

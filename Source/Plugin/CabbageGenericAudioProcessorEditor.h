@@ -45,6 +45,7 @@ class ProcessorParameterPropertyComp   : public PropertyComponent,
             //basicLookAndFeel = new CabbageLookAndFeelBasic();
             setLookAndFeel(basicLookAndFeel);
             this->setColour(Slider::textBoxBackgroundColourId, cUtils::getBackgroundSkin());
+			this->setColour(Slider::thumbColourId, Colours::cornflowerblue);
 
             setRange (0.0, 1.0, 0.0);
             setSliderStyle (Slider::LinearHorizontal);

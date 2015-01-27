@@ -27,6 +27,7 @@
 #include "InternalFilters.h"
 #include "MainHostWindow.h"
 #include "PluginWrapperProcessor.h"
+#include "../Plugin/CabbageGenericAudioProcessorEditor.h"
 
 
 //==============================================================================
@@ -174,7 +175,7 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
     if (ui == nullptr)
     {
         if (type == Generic || type == Parameters)
-            ui = new GenericAudioProcessorEditor (processor);
+            ui = new CabbageGenericAudioProcessorEditor (processor);
         else if (type == Programs)
             ui = new ProgramAudioProcessorEditor (processor);
     }

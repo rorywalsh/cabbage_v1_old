@@ -1904,11 +1904,11 @@ void CabbageLookAndFeelBasic::drawLinearSliderBackground (Graphics &g, int /*x*/
     //For the fill
     //float div = (slider.getValue()-slider.getMinimum()) / (slider.getMaximum()-slider.getMinimum());
     sliderPos = sliderPosProportional * availableWidth;  //div * availableWidth;
-    Colour fillColour = Colours::cornflowerblue.withMultipliedAlpha(0.8f);
-    if (slider.isMouseButtonDown())
-        fillColour = Colours::cornflowerblue.withMultipliedBrightness(2.0f);
+    Colour fillColour = Colours::green.withMultipliedAlpha(0.8f);
+    if (slider.isMouseOver())
+        fillColour = Colours::green.withMultipliedBrightness(2.0f);
     g.setColour(fillColour);
-    //g.fillRoundedRectangle (0, slider.getHeight()*0.4, sliderPos, slider.getHeight()*0.2, slider.getHeight() / 20.0f);
+    g.fillRoundedRectangle (0, slider.getHeight()*0.4, sliderPos, slider.getHeight()*0.2, slider.getHeight() / 20.0f);
 
     //Fill border
     g.setColour(Colours::black);
@@ -1934,11 +1934,12 @@ void CabbageLookAndFeelBasic::drawLinearSliderThumb (Graphics &g, int /*x*/, int
     float destY = ((slider.getHeight() / 2) - (thumbWidth / 2));
 
     //thumb fill
-    ColourGradient thumbColour = ColourGradient(findColour (Slider::thumbColourId), destX, destY,
-                                 Colour::fromRGB(0, 0, 0), destX+thumbWidth, thumbWidth, false);
+    ColourGradient thumbColour = ColourGradient(slider.isMouseOver() ? Colours::cornflowerblue.brighter() : Colours::cornflowerblue.withAlpha(.5f), destX, destY,
+                                 Colours::cornflowerblue, destX+thumbWidth, thumbWidth, false);
+
 
     g.setGradientFill(thumbColour);
-    g.fillRoundedRectangle(destX, destY, thumbWidth, thumbWidth, slider.getHeight() / 20.0f);
+	g.fillRoundedRectangle(destX, destY, thumbWidth, thumbWidth, slider.getHeight() / 20.0f);
 
     //thumb border
     g.setColour(Colours::black);

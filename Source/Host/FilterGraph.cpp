@@ -91,6 +91,7 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 												graph.getSampleRate(),
 												graph.getBlockSize());
 				instance->setPluginName(desc->name);
+				cUtils::debug("num params", instance->getNumParameters());
 				node = graph.addNode (instance);
 				node->properties.set("pluginName", desc->name);
 			}

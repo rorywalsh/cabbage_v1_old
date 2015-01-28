@@ -95,7 +95,7 @@
 
 //==============================================================================
 // juce_audio_processors flags:
-
+#ifndef Cabbage_Build_Standalone
 #ifndef    JUCE_PLUGINHOST_VST
  #define   JUCE_PLUGINHOST_VST 1
 #endif
@@ -107,7 +107,7 @@
 #ifndef    JUCE_PLUGINHOST_AU
  #define   JUCE_PLUGINHOST_AU 1
 #endif
-
+#endif
 //==============================================================================
 // juce_core flags:
 

@@ -9,7 +9,6 @@
 */
 
 #include "PluginWrapperProcessor.h"
-#include "PluginWrapperEditor.h"
 #include "../CabbageUtils.h"
 
 
@@ -22,7 +21,7 @@ PluginWrapper::PluginWrapper(AudioPluginInstance* instance)
 	vstInstance = instance;
 	if(!vstInstance)
 		assert(0);
-		
+	
 	pluginDesc = instance->getPluginDescription();	
 
 }
@@ -47,7 +46,8 @@ mdescription.version = pluginDesc.version;
 //==============================================================================
 const String PluginWrapper::getName() const
 {
-    return JucePlugin_Name;
+    if(vstInstance)
+		return vstInstance->getName();
 }
 
 int PluginWrapper::getNumParameters()
@@ -111,6 +111,7 @@ bool PluginWrapper::isOutputChannelStereoPair (int index) const
 		return true;
 }
 
+	
 bool PluginWrapper::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
@@ -216,7 +217,7 @@ bool PluginWrapper::hasEditor() const
 
 AudioProcessorEditor* PluginWrapper::createEditor()
 {
-    return new PluginWrapperEditor (*this);
+    return vstInstance->createEditor();
 }
 
 //==============================================================================

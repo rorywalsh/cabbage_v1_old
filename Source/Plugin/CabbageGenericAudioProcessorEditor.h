@@ -27,106 +27,77 @@
 
 //#include "FilterGraph.h"
 #include "../CabbageLookAndFeel.h"
+#include "../Host/PluginWrapperProcessor.h"
+
 
 class ProcessorParameterPropertyComp   : public PropertyComponent,
-    public AudioProcessorListener,
-    public Timer
+                                         private AudioProcessorListener,
+                                         private Timer
 {
-//==============================================================================
-    class ParamSlider  : public Slider,
-        public ActionBroadcaster
-        // public ActionListener
-    {
-    public:
-        ParamSlider (AudioProcessor& owner_, const int index_)
-            : owner (owner_),
-              index (index_)
-        {
-            //basicLookAndFeel = new CabbageLookAndFeelBasic();
-            setLookAndFeel(basicLookAndFeel);
-            this->setColour(Slider::textBoxBackgroundColourId, cUtils::getBackgroundSkin());
-			this->setColour(Slider::thumbColourId, Colours::cornflowerblue);
-
-            setRange (0.0, 1.0, 0.0);
-            setSliderStyle (Slider::LinearHorizontal);
-            setTextBoxStyle (Slider::TextBoxLeft, false, 80, 15);
-            setTextBoxIsEditable (false);
-            setScrollWheelEnabled (false);
-        }
-
-        void valueChanged()
-        {
-            //this return the name of the plugin
-            //this calls ProcessorParameterPropertyComp::actionListenerCallbck
-            this->sendActionMessage("");
-            const float newVal = (float) getValue();
-
-            if (owner.getParameter (index) != newVal)
-                owner.setParameter (index, newVal);
-        }
-
-
-        String getTextFromValue (double /*value*/)
-        {
-            return owner.getParameterText (index);
-        }
-
-
-    private:
-        //==============================================================================
-        AudioProcessor& owner;
-        const int index;
-        ScopedPointer<CabbageLookAndFeelBasic> basicLookAndFeel;
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParamSlider);
-    };
-
-
 public:
-    ParamSlider slider;
-    Colour highlightColour;
-    bool moddedText;
-
-    ProcessorParameterPropertyComp (const String& name, AudioProcessor& owner_, const int index_)
+    ProcessorParameterPropertyComp (const String& name, PluginWrapper& p, int paramIndex)
         : PropertyComponent (name),
-          owner (owner_),
-          index (index_),
+          owner (p),
+          index (paramIndex),
           paramHasChanged (false),
-          slider (owner_, index_)
+          slider (p, paramIndex),
+		  lookAndFeelBasic(new CabbageLookAndFeelBasic())
     {
-        moddedText = false;
-        setPreferredHeight(20);
+		setLookAndFeel(lookAndFeelBasic);
         startTimer (100);
-        addAndMakeVisible (&slider);
-        owner_.addListener (this);
-        highlightColour = cUtils::getDarkerBackgroundSkin();
+        addAndMakeVisible (slider);
+		setPreferredHeight(20);
+        owner.vstInstance->addListener (this);
+		slider.setLookAndFeel(lookAndFeelBasic);
+		slider.lookAndFeelChanged();
     }
 
     ~ProcessorParameterPropertyComp()
     {
-        owner.removeListener (this);
+        owner.vstInstance->removeListener (this);
     }
 
-    void refresh()
+    void refresh() override
     {
         paramHasChanged = false;
-        slider.setValue (owner.getParameter (index), sendNotification);
+
+        if (slider.getThumbBeingDragged() < 0)
+            slider.setValue (owner.getParameter (index), dontSendNotification);
+
+        slider.updateText();
     }
 
+    void paint(Graphics &g)
+    {
+        g.fillAll(cUtils::getComponentSkin().darker(.4f)); //background
+        String text = getName();
+        g.setColour(Colours::whitesmoke);
 
-    void audioProcessorChanged (AudioProcessor*)  {}
+        Font font (cUtils::getTitleFont());
+        //font.setFallbackFontName (String("Verdana")); //in case the user doesn't have the first font installed
+        g.setFont (font);
 
-    void audioProcessorParameterChanged (AudioProcessor*, int parameterIndex, float)
+        g.drawFittedText(text, 5, 5,
+                         slider.getPosition().getX(), font.getHeight()-2, Justification::centred, 1);
+
+        //	g.drawFittedText(text, 5, 5,
+        //	font.getStringWidth(text), font.getHeight()-2, Justification::centredTop, 1);
+    }
+	
+    void audioProcessorChanged (AudioProcessor*) override  {}
+
+    void audioProcessorParameterChanged (AudioProcessor*, int parameterIndex, float) override
     {
         if (parameterIndex == index)
             paramHasChanged = true;
     }
 
-    void timerCallback()
+    void timerCallback() override
     {
         if (paramHasChanged)
         {
             refresh();
-            startTimer (1000 / 50);
+            startTimerHz (50);
         }
         else
         {
@@ -134,101 +105,113 @@ public:
         }
     }
 
-    void paint(Graphics &g)
-    {
-        g.fillAll(cUtils::getComponentSkin().darker(.4f)); //background
-        String text = getName();
-        if(moddedText)
-            g.setColour(Colours::yellow);
-        else
-            g.setColour(Colours::whitesmoke);
-
-        Font font (cUtils::getTitleFont());
-        //font.setFallbackFontName (String("Verdana")); //in case the user doesn't have the first font installed
-        g.setFont (font);
-
-        g.drawFittedText(text, 5, 5,
-                         font.getStringWidth(text), font.getHeight()-2, Justification::centredTop, 1);
-
-        //	g.drawFittedText(text, 5, 5,
-        //	font.getStringWidth(text), font.getHeight()-2, Justification::centredTop, 1);
-    }
-
-
 private:
+    //==============================================================================
+    class ParamSlider  : public Slider
+    {
+    public:
+        ParamSlider (PluginWrapper& p, int paramIndex)  : owner (p), index (paramIndex)
+        {
+            const int steps = owner.getParameterNumSteps (index);
 
-    ScopedPointer<CabbageLookAndFeelBasic> basicLookAndFeel;
-    AudioProcessor& owner;
+            if (steps > 1 && steps < 0x7fffffff)
+                setRange (0.0, 1.0, 1.0 / (steps - 1.0));
+            else
+                setRange (0.0, 1.0);
+
+            setSliderStyle (Slider::LinearHorizontal);
+            setTextBoxIsEditable (false);
+            setScrollWheelEnabled (true);
+        }
+
+        void valueChanged() override
+        {
+            const float newVal = (float) getValue();
+
+            if (owner.getParameter (index) != newVal)
+            {
+                owner.setParameterNotifyingHost (index, newVal);
+                updateText();
+            }
+        }
+
+        String getTextFromValue (double /*value*/) override
+        {
+            return owner.getParameterText (index) + " " + owner.getParameterLabel (index).trimEnd();
+        }
+
+    private:
+        //==============================================================================
+        PluginWrapper& owner;
+        const int index;
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParamSlider)
+    };
+
+    PluginWrapper& owner;
     const int index;
     bool volatile paramHasChanged;
+    ParamSlider slider;
+	ScopedPointer<CabbageLookAndFeelBasic> lookAndFeelBasic;
+	
+	
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProcessorParameterPropertyComp);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProcessorParameterPropertyComp)
 };
 
+
+//==============================================================================
 
 class CabbageGenericAudioProcessorEditor      : public AudioProcessorEditor
 {
 public:
-    //==============================================================================
+	CabbageGenericAudioProcessorEditor(PluginWrapper* const p)
+    : AudioProcessorEditor (p)
+	{
+		jassert (p != nullptr);
+		setOpaque (true);
 
-    CabbageGenericAudioProcessorEditor(AudioProcessor* const owner_)
-        : AudioProcessorEditor (owner_)
-    {
-        jassert (owner_ != nullptr);
-        setOpaque (true);
-        basicLookAndFeel = new CabbageLookAndFeelBasic();
-        this->setLookAndFeel(basicLookAndFeel);
-        addAndMakeVisible (&panel);
+		addAndMakeVisible (panel);
+		Array <PropertyComponent*> params;
 
-        Array <PropertyComponent*> params;
+		const int numParams = p->getNumParameters();
+		int totalHeight = 0;
 
-        const int numParams = owner_->getNumParameters();
-        Logger::writeToLog("NumParameters:" +String(numParams));
-        int totalHeight = 0;
+		for (int i = 0; i < numParams; ++i)
+		{
+			String name (p->getParameterName (i));
+			if (name.trim().isEmpty())
+				name = "Unnamed";
 
-        for (int i = 0; i < numParams; ++i)
-        {
-            String name (owner_->getParameterName (i));
-            if (name.trim().isEmpty())
-                name = "Unnamed";
+			ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp (name, *p, i);
+			params.add (pc);
+			totalHeight += pc->getPreferredHeight();
+		}
 
-            ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp (name, *owner_, i);
+		panel.addProperties (params);
 
-            params.add (pc);
-            totalHeight += pc->getPreferredHeight();
-        }
+		setSize (400, jlimit (25, 400, totalHeight));
+	}
 
-        panel.addProperties (params);
+	~CabbageGenericAudioProcessorEditor()
+	{
+	}
 
-        setSize (400, jlimit (25, 400, totalHeight));
-    }
+	void paint (Graphics& g)
+	{
+		g.fillAll (cUtils::getDarkerBackgroundSkin());
+	}
 
-    ~CabbageGenericAudioProcessorEditor()
-    {
-    }
+	void resized()
+	{
+		panel.setBounds (getLocalBounds());
+	}
 
-
-    void paint (Graphics& g)
-    {
-        //background
-        g.setColour(Colour::fromRGB(20, 20, 20));
-        g.fillAll();
-    }
-
-
-    void resized()
-    {
-        panel.setBounds (getLocalBounds());
-    }
-
-
-    ScopedPointer<CabbageLookAndFeelBasic> basicLookAndFeel;
 private:
-    //==============================================================================
-    PropertyPanel panel;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGenericAudioProcessorEditor)
+	PropertyPanel panel;
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGenericAudioProcessorEditor)
 };
+
+
 
 #endif
 

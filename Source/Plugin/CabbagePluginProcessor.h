@@ -114,6 +114,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     bool isWinXP;
     bool isNativeThreadRunning;
     String csoundDebuggerOutput;
+	float rmsLeft, rmsRight;
 
     //============== Csound related variables/methods ==============================
 #ifndef Cabbage_No_Csound
@@ -177,7 +178,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     File tempAudioFile;
     CriticalSection writerLock;
     AudioFormatWriter::ThreadedWriter* volatile activeWriter;
-	bool firstTime;
+	bool firstTime, isBypassed, isMuted;
 
 
 public:
@@ -210,6 +211,18 @@ public:
     {
         return csound->GetKsmps();
     }
+	
+	void shouldBypass(bool val)
+	{
+		const ScopedLock sl (getCallbackLock());
+		isBypassed = val;
+	}
+	
+	void shouldMute(bool val)
+	{
+		const ScopedLock sl (getCallbackLock());
+		isMuted = val;
+	}
     //==============================================================================
 
 #if defined(Cabbage_Build_Standalone) || (Cabbage_Plugin_Host)

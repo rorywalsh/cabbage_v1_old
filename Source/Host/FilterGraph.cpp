@@ -109,19 +109,15 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 		else if(desc->pluginFormatName=="Cabbage")
 		{
 			CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc->fileOrIdentifier, false, AUDIO_PLUGIN);
+			
 			//create GUI for selected plugin...
 			cabbageNativePlugin->createGUI(File(desc->fileOrIdentifier).loadFileAsString(), true);			
 			cabbageNativePlugin->setPlayConfigDetails(cabbageNativePlugin->getNumberCsoundOutChannels(), 
 													  cabbageNativePlugin->getNumberCsoundOutChannels(), 
 													  cabbageNativePlugin->getCsoundSamplingRate(),
 													  cabbageNativePlugin->getCsoundKsmpsSize());
-            node = graph.addNode (cabbageNativePlugin);
-			pluginTypes.add("Cabbage");
-			ScopedPointer<XmlElement> xmlElem;
-			xmlElem = desc->createXml();
-			String xmlText = xmlElem->createDocument("plugin descriptor");
-			node->properties.set("pluginDesc", xmlText);	
-			nodeId++;		
+            node = graph.addNode (cabbageNativePlugin);	
+			node->properties.set("pluginName", cabbageNativePlugin->getPluginName());
 		}
 		
         if (node != nullptr)

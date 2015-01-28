@@ -933,12 +933,20 @@ void CabbageGUIClass::parse(String inStr, String identifier)
     if(str.indexOf(0, ";")!=-1)
         str = str.substring(0, str.indexOf(0, ";"));
 
+    
+    IdentArray identArray;
     //if identifier string is not empty, use that, otherwise
     //search through identArray list of known identifiers
     if(identifier.isNotEmpty())
+    {
+        identArray.clear();
         identArray.add(identifier);
+    }
     else
-        identArray = *IdentArray::getInstance(); // creates the singleton if there isn't already one.
+        IdentArray identArray;
+    
+    //else
+    //    identArray = *IdentArray::getInstance(); // creates the singleton if there isn't already one.
 
 
 

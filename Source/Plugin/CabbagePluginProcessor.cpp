@@ -33,7 +33,7 @@
 CabbageLookAndFeel* lookAndFeel;
 CabbageLookAndFeelBasic* lookAndFeelBasic;
 
-juce_ImplementSingleton (IdentArray);
+//juce_ImplementSingleton (IdentArray);
 
 #if defined(Cabbage_No_Csound)
 #define OK 0
@@ -494,7 +494,7 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 
     xyAutomation.clear();
 
-    IdentArray::deleteInstance();
+    //IdentArray::deleteInstance();
     //const MessageManagerLock mmLock;
     if(csound)
     {
@@ -1894,8 +1894,8 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                         pos = csndIndex*getNumOutputChannels();
                         CSspin[channel+pos] = audioBuffer[i]*cs_scale;
                         audioBuffer[i] = (CSspout[channel+pos]/cs_scale);
-						rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
-						rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
+						//rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
+						//rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
                     }
                 }
                 else

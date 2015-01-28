@@ -205,25 +205,41 @@ public:
     ~CabbageLookAndFeelBasic();
 
     void drawLabel(Graphics&, Label&);
-    virtual void drawLinearSliderBackground (Graphics &g, int x, int y, int width, int height,
+    void drawLinearSliderBackground (Graphics &g, int x, int y, int width, int height,
             float sliderPos,
             float minSliderPos,
             float maxSliderPos,
             const Slider::SliderStyle style,
             Slider &slider);
-    virtual void drawLinearSliderThumb (Graphics &g, int x, int y, int width, int height, float sliderPos,
+    void drawLinearSliderThumb (Graphics &g, int x, int y, int width, int height, float sliderPos,
                                         float minSliderPos,
                                         float maxSliderPos,
                                         const Slider::SliderStyle style,
                                         Slider &slider);
     void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown);
 
-    virtual void drawScrollbar (Graphics &g, ScrollBar &scrollbar, int x, int y, int width, int height,
-                                bool isScrollbarVertical,
-                                int thumbStartPosition,
-                                int thumbSize,
-                                bool isMouseOver,
-                                bool isMouseDown);
+	void drawScrollbar (Graphics& g,
+                                 ScrollBar& scrollbar,
+                                 int x, int y,
+                                 int width, int height,
+                                 bool isScrollbarVertical,
+                                 int thumbStartPosition,
+                                 int thumbSize,
+                                 bool /*isMouseOver*/,
+                                 bool /*isMouseDown*/);
+								 
+    bool areScrollbarButtonsVisible();
+	void drawScrollbarButton (Graphics& g, ScrollBar& scrollbar,
+                                          int width, int height, int buttonDirection,
+                                          bool /*isScrollbarVertical*/,
+                                          bool /*isMouseOverButton*/,
+                                          bool isButtonDown);
+	ImageEffectFilter* getScrollbarEffect();
+	int getMinimumScrollbarThumbSize (ScrollBar& scrollbar);
+	int getDefaultScrollbarWidth();
+	int getScrollbarButtonSize (ScrollBar& scrollbar);
+
+
     void drawDocumentWindowTitleBar (DocumentWindow &window, Graphics &g, int w, int h,
                                      int /*titleSpaceX*/,
                                      int titleSpaceW,

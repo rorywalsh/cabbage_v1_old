@@ -27,6 +27,7 @@
 #include "InternalFilters.h"
 #include "MainHostWindow.h"
 #include "PluginWrapperProcessor.h"
+#include "../Plugin/CabbageGenericAudioProcessorEditor.h"
 
 
 //==============================================================================
@@ -162,6 +163,9 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
             return activePluginWindows.getUnchecked(i);
 
     AudioProcessor* processor = node->getProcessor();
+	
+	PluginWrapper* pw = dynamic_cast<PluginWrapper*>(processor);
+	
     AudioProcessorEditor* ui = nullptr;
 
     if (type == Normal)
@@ -173,8 +177,10 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
 
     if (ui == nullptr)
     {
-        if (type == Generic || type == Parameters)
-            ui = new GenericAudioProcessorEditor (processor);
+        if (type == Generic || type == Parameters && pw)
+		{
+            ui = new CabbageGenericAudioProcessorEditor (pw);
+		}
         else if (type == Programs)
             ui = new ProgramAudioProcessorEditor (processor);
     }
@@ -696,19 +702,24 @@ void FilterComponent::update()
 	w = jmax (w, jmin (textWidth+50, 300));
 
 	if (textWidth > 300)
-		h = 100;
+		h = 160;
 
 	setSize (w, h);
 	muteButton = Rectangle<float>(w-20, 20.f, 15.f, 15.f);
 	bypassButton = Rectangle<float>(10, 16.f, 15.f, 15.f);
 
-	PluginWrapper* tmpPlug = dynamic_cast <PluginWrapper*> (f->getProcessor());
-	
-	if(tmpPlug)
+	if(PluginWrapper* tmpPlug = dynamic_cast <PluginWrapper*> (f->getProcessor()))
 	{
 		setName (tmpPlug->getPluginName());
-		tmpPlug->addActionListener(this);
+		tmpPlug->addActionListener(this);		
 	}
+	
+	else if(CabbagePluginAudioProcessor* tmpPlug = dynamic_cast <CabbagePluginAudioProcessor*> (f->getProcessor()))
+	{
+		setName (tmpPlug->getPluginName());
+		tmpPlug->addActionListener(this);		
+	}	
+
 	else
 		setName(f->getProcessor()->getName());
 
@@ -1024,24 +1035,22 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
         {
 			mainWindow->addPluginsToMenu (m);
 			numNonNativePlugins = m.getNumItems();
-			//mainWindow->addCabbageNativePluginsToMenu(m, cabbageFiles);
 			m.addSeparator();
+			mainWindow->addCabbageNativePluginsToMenu(m, cabbageFiles);
+			
+			
             const int r = m.show();
-			createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
-			return;
-//			return;
-			Logger::writeToLog("PopupMenu ID: "+String(r));
+
 			if(r>0) //make sure we have a valid item index....
 			{
-				if(r<numNonNativePlugins)
+				if(r>numNonNativePlugins && r<cabbageFiles.size()+numNonNativePlugins)
 				{
-					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
+					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, cabbageFiles[r-numNonNativePlugins].getFullPathName());
 					return;
 				}
-				else //if(r>numNonNativePlugins && r<cabbageFiles.size()-4){
+				else 
 				{ 
-					Logger::writeToLog(cabbageFiles[r-numNonNativePlugins].getFullPathName());
-					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, cabbageFiles[r-numNonNativePlugins].getFullPathName());
+					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
 					return;
 				}
 			}
@@ -1116,7 +1125,7 @@ void GraphEditorPanel::createNewPlugin (const PluginDescription* desc, int x, in
 		descript.fileOrIdentifier = fileName;
 		descript.descriptiveName = "Cabbage Plugin "+File(fileName).getFileNameWithoutExtension();
 		descript.name = File(fileName).getFileNameWithoutExtension();
-		descript.manufacturerName = "Cabbage Foundation";
+		descript.manufacturerName = "CabbageAudio";
 		descript.numInputChannels = 2;
 		descript.pluginFormatName = "Cabbage";
 		descript.numOutputChannels = 2;

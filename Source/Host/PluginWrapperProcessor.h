@@ -61,13 +61,13 @@ public:
 	
 	void shouldBypass(bool val)
 	{
-		const ScopedLock sl (callbackLock);
+		const ScopedLock sl (getCallbackLock());
 		isBypassed = val;
 	}
 	
 	void shouldMute(bool val)
 	{
-		const ScopedLock sl (callbackLock);
+		const ScopedLock sl (getCallbackLock());
 		isMuted = val;
 	}
 	

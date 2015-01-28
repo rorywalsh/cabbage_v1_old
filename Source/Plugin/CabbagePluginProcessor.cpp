@@ -86,7 +86,9 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      ksmpsOffset(0),
      breakCount(0),
      stopProcessing(false),
-	 firstTime(true)
+	 firstTime(true),
+	 isMuted(false),
+	 isBypassed(false)
 {
 //suspendProcessing(true);
     codeEditor = nullptr;
@@ -304,7 +306,9 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     nativePluginEditor(false),
     averageSampleIndex(0),
     stopProcessing(false),
-	firstTime(false)
+	firstTime(false),
+	isMuted(false),
+	isBypassed(false)
 {
 //Cabbage plugins always try to load a csd file with the same name as the plugin library.
 //Therefore we need to find the name of the library and append a '.csd' to it.
@@ -1841,7 +1845,9 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 
         if(csCompileResult==OK)
         {
-
+			if(isBypassed==true)
+				return;
+				
             keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
             midiBuffer = midiMessages;
             ccBuffer = midiMessages;
@@ -1866,6 +1872,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                     {
                         sendOutgoingMessagesToCsound();
                         updateCabbageControls();
+						//sendActionMessage(String(rmsLeft)+" "+String(rmsRight));
                     }
 
 
@@ -1887,6 +1894,8 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                         pos = csndIndex*getNumOutputChannels();
                         CSspin[channel+pos] = audioBuffer[i]*cs_scale;
                         audioBuffer[i] = (CSspout[channel+pos]/cs_scale);
+						rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
+						rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
                     }
                 }
                 else
@@ -1898,6 +1907,8 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
             if (activeWriter != 0 && !isWinXP)
                 activeWriter->write (buffer.getArrayOfReadPointers(), buffer.getNumSamples());
 
+			if(isMuted)
+				 buffer.clear();
 
         }//if not compiled just mute output
         else
@@ -2106,10 +2117,7 @@ bool CabbagePluginAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* CabbagePluginAudioProcessor::createEditor()
 {
-    if(!nativePluginEditor)
         return new CabbagePluginAudioProcessorEditor (this);
-    else
-        return new CabbageGenericAudioProcessorEditor (this);
 }
 
 //==============================================================================

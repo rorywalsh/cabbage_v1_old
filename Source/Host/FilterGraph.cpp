@@ -91,6 +91,7 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 												graph.getSampleRate(),
 												graph.getBlockSize());
 				instance->setPluginName(desc->name);
+				cUtils::debug("num params", instance->getNumParameters());
 				node = graph.addNode (instance);
 				node->properties.set("pluginName", desc->name);
 			}
@@ -108,19 +109,15 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 		else if(desc->pluginFormatName=="Cabbage")
 		{
 			CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc->fileOrIdentifier, false, AUDIO_PLUGIN);
+			
 			//create GUI for selected plugin...
 			cabbageNativePlugin->createGUI(File(desc->fileOrIdentifier).loadFileAsString(), true);			
 			cabbageNativePlugin->setPlayConfigDetails(cabbageNativePlugin->getNumberCsoundOutChannels(), 
 													  cabbageNativePlugin->getNumberCsoundOutChannels(), 
 													  cabbageNativePlugin->getCsoundSamplingRate(),
 													  cabbageNativePlugin->getCsoundKsmpsSize());
-            node = graph.addNode (cabbageNativePlugin);
-			pluginTypes.add("Cabbage");
-			ScopedPointer<XmlElement> xmlElem;
-			xmlElem = desc->createXml();
-			String xmlText = xmlElem->createDocument("plugin descriptor");
-			node->properties.set("pluginDesc", xmlText);	
-			nodeId++;		
+            node = graph.addNode (cabbageNativePlugin);	
+			node->properties.set("pluginName", cabbageNativePlugin->getPluginName());
 		}
 		
         if (node != nullptr)
@@ -137,28 +134,6 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
                                          errorMessage);
         }
     }
-}
-
-//adds a new native Cabbage filter. No need to load and plugin dlls here. Sweet! 
-void FilterGraph::addNativeCabbageFilter (String fileName, double x, double y)
-{
-	AudioProcessorGraph::Node* node = nullptr; 
-
-	CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(fileName, false, AUDIO_PLUGIN);
-	//create GUI for selected plugin...
-	cabbageNativePlugin->createGUI(File(fileName).loadFileAsString(), true);
-	node = graph.addNode (cabbageNativePlugin);
-	nodeId++;
-	
-	if (node != nullptr)
-	{
-		node->properties.set ("x", x); 
-		node->properties.set ("y", y);
-		lastNodeID = node->nodeId;
-		changed();
-	}
-	else 
-		cUtils::showMessage("FilterGraph::addNativeCabbageFilter: Couldn't create plugin..");
 }
 
 void FilterGraph::removeFilter (const uint32 id)
@@ -275,6 +250,7 @@ String FilterGraph::getDocumentTitle()
 
 Result FilterGraph::loadDocument (const File& file)
 {
+	graph.clear();
     XmlDocument doc (file);
     ScopedPointer<XmlElement> xml (doc.getDocumentElement());
 
@@ -371,14 +347,15 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
 											graph.getSampleRate(),
 											graph.getBlockSize());
 			instance->setPluginName(pd.name);
-			node = graph.addNode (instance);
+			node = graph.addNode(instance, xml.getIntAttribute ("uid"));
+			cUtils::debug("node->nodeId", node->nodeId);
 		}
 	}
 	else if(pd.pluginFormatName=="Internal")
 	{
 		if (AudioPluginInstance* instance = formatManager.createPluginInstance (pd, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
 		{
-			node = graph.addNode (instance);
+			node = graph.addNode (instance, xml.getIntAttribute ("uid"));
 			node->properties.set("pluginType", "Internal");
 		}
 	}
@@ -443,6 +420,7 @@ void FilterGraph::restoreFromXml (const XmlElement& xml)
 
     forEachXmlChildElementWithTagName (xml, e, "CONNECTION")
     {
+		cUtils::debug("srcFilter", e->getIntAttribute ("srcFilter"));
         addConnection ((uint32) e->getIntAttribute ("srcFilter"),
                        e->getIntAttribute ("srcChannel"),
                        (uint32) e->getIntAttribute ("dstFilter"),

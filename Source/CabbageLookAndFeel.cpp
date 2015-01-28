@@ -1904,11 +1904,11 @@ void CabbageLookAndFeelBasic::drawLinearSliderBackground (Graphics &g, int /*x*/
     //For the fill
     //float div = (slider.getValue()-slider.getMinimum()) / (slider.getMaximum()-slider.getMinimum());
     sliderPos = sliderPosProportional * availableWidth;  //div * availableWidth;
-    Colour fillColour = Colours::cornflowerblue.withMultipliedAlpha(0.8f);
-    if (slider.isMouseButtonDown())
-        fillColour = Colours::cornflowerblue.withMultipliedBrightness(2.0f);
+    Colour fillColour = Colours::green.withMultipliedAlpha(0.8f);
+    if (slider.isMouseOver())
+        fillColour = Colours::green.withMultipliedBrightness(2.0f);
     g.setColour(fillColour);
-    //g.fillRoundedRectangle (0, slider.getHeight()*0.4, sliderPos, slider.getHeight()*0.2, slider.getHeight() / 20.0f);
+    g.fillRoundedRectangle (0, slider.getHeight()*0.4, sliderPos, slider.getHeight()*0.2, slider.getHeight() / 20.0f);
 
     //Fill border
     g.setColour(Colours::black);
@@ -1934,11 +1934,12 @@ void CabbageLookAndFeelBasic::drawLinearSliderThumb (Graphics &g, int /*x*/, int
     float destY = ((slider.getHeight() / 2) - (thumbWidth / 2));
 
     //thumb fill
-    ColourGradient thumbColour = ColourGradient(findColour (Slider::thumbColourId), destX, destY,
-                                 Colour::fromRGB(0, 0, 0), destX+thumbWidth, thumbWidth, false);
+    ColourGradient thumbColour = ColourGradient(slider.isMouseOver() ? Colours::cornflowerblue.brighter() : Colours::cornflowerblue.withAlpha(.5f), destX, destY,
+                                 Colours::cornflowerblue, destX+thumbWidth, thumbWidth, false);
+
 
     g.setGradientFill(thumbColour);
-    g.fillRoundedRectangle(destX, destY, thumbWidth, thumbWidth, slider.getHeight() / 20.0f);
+	g.fillRoundedRectangle(destX, destY, thumbWidth, thumbWidth, slider.getHeight() / 20.0f);
 
     //thumb border
     g.setColour(Colours::black);
@@ -2005,25 +2006,175 @@ void CabbageLookAndFeelBasic::drawButtonBackground (Graphics& g, Button& button,
 }
 
 //======== Scrollbars ==============================================================================
-void CabbageLookAndFeelBasic::drawScrollbar (Graphics &g, ScrollBar &scrollbar, int x, int y, int width,
-        int height,
-        bool isScrollbarVertical,
-        int thumbStartPosition,
-        int thumbSize,
-        bool isMouseOver,
-        bool isMouseDown)
+bool CabbageLookAndFeelBasic::areScrollbarButtonsVisible()
 {
-    g.setColour (Colours::transparentBlack);
-    g.fillAll();
+    return true;
+}
 
-    g.setColour (cUtils::getComponentSkin());
-    g.drawRoundedRectangle (x, y, width, height, 5, 1);
+void CabbageLookAndFeelBasic::drawScrollbarButton (Graphics& g, ScrollBar& scrollbar,
+                                          int width, int height, int buttonDirection,
+                                          bool /*isScrollbarVertical*/,
+                                          bool /*isMouseOverButton*/,
+                                          bool isButtonDown)
+{
+    Path p;
 
-    if (isScrollbarVertical == false) //horizontal
-        g.fillRoundedRectangle (thumbStartPosition+3, 3, thumbSize-6, height-6, 5);
-    else //vertical
-        g.fillRoundedRectangle (3, thumbStartPosition+3, width-6, thumbSize-6, 5);
+    if (buttonDirection == 0)
+        p.addTriangle (width * 0.5f, height * 0.2f,
+                       width * 0.1f, height * 0.7f,
+                       width * 0.9f, height * 0.7f);
+    else if (buttonDirection == 1)
+        p.addTriangle (width * 0.8f, height * 0.5f,
+                       width * 0.3f, height * 0.1f,
+                       width * 0.3f, height * 0.9f);
+    else if (buttonDirection == 2)
+        p.addTriangle (width * 0.5f, height * 0.8f,
+                       width * 0.1f, height * 0.3f,
+                       width * 0.9f, height * 0.3f);
+    else if (buttonDirection == 3)
+        p.addTriangle (width * 0.2f, height * 0.5f,
+                       width * 0.7f, height * 0.1f,
+                       width * 0.7f, height * 0.9f);
 
+    if (isButtonDown)
+        g.setColour (scrollbar.findColour (ScrollBar::thumbColourId).contrasting (0.2f));
+    else
+        g.setColour (scrollbar.findColour (ScrollBar::thumbColourId));
+
+    g.fillPath (p);
+
+    g.setColour (Colour (0x80000000));
+    g.strokePath (p, PathStrokeType (0.5f));
+}
+
+void CabbageLookAndFeelBasic::drawScrollbar (Graphics& g,
+                                 ScrollBar& scrollbar,
+                                 int x, int y,
+                                 int width, int height,
+                                 bool isScrollbarVertical,
+                                 int thumbStartPosition,
+                                 int thumbSize,
+                                 bool /*isMouseOver*/,
+                                 bool /*isMouseDown*/)
+{
+    g.fillAll (scrollbar.findColour (ScrollBar::backgroundColourId));
+
+    Path slotPath, thumbPath;
+
+    const float slotIndent = jmin (width, height) > 15 ? 1.0f : 0.0f;
+    const float slotIndentx2 = slotIndent * 2.0f;
+    const float thumbIndent = slotIndent + 1.0f;
+    const float thumbIndentx2 = thumbIndent * 2.0f;
+
+    float gx1 = 0.0f, gy1 = 0.0f, gx2 = 0.0f, gy2 = 0.0f;
+
+    if (isScrollbarVertical)
+    {
+        slotPath.addRoundedRectangle (x + slotIndent,
+                                      y + slotIndent,
+                                      width - slotIndentx2,
+                                      height - slotIndentx2,
+                                      (width - slotIndentx2) * 0.5f);
+
+        if (thumbSize > 0)
+            thumbPath.addRoundedRectangle (x + thumbIndent,
+                                           thumbStartPosition + thumbIndent,
+                                           width - thumbIndentx2,
+                                           thumbSize - thumbIndentx2,
+                                           (width - thumbIndentx2) * 0.5f);
+        gx1 = (float) x;
+        gx2 = x + width * 0.7f;
+    }
+    else
+    {
+        slotPath.addRoundedRectangle (x + slotIndent,
+                                      y + slotIndent,
+                                      width - slotIndentx2,
+                                      height - slotIndentx2,
+                                      (height - slotIndentx2) * 0.5f);
+
+        if (thumbSize > 0)
+            thumbPath.addRoundedRectangle (thumbStartPosition + thumbIndent,
+                                           y + thumbIndent,
+                                           thumbSize - thumbIndentx2,
+                                           height - thumbIndentx2,
+                                           (height - thumbIndentx2) * 0.5f);
+        gy1 = (float) y;
+        gy2 = y + height * 0.7f;
+    }
+
+    const Colour thumbColour (scrollbar.findColour (ScrollBar::thumbColourId));
+    Colour trackColour1, trackColour2;
+
+    if (scrollbar.isColourSpecified (ScrollBar::trackColourId)
+         || isColourSpecified (ScrollBar::trackColourId))
+    {
+        trackColour1 = trackColour2 = scrollbar.findColour (ScrollBar::trackColourId);
+    }
+    else
+    {
+        trackColour1 = thumbColour.overlaidWith (Colour (0x44000000));
+        trackColour2 = thumbColour.overlaidWith (Colour (0x19000000));
+    }
+
+    g.setGradientFill (ColourGradient (trackColour1, gx1, gy1,
+                                       trackColour2, gx2, gy2, false));
+    g.fillPath (slotPath);
+
+    if (isScrollbarVertical)
+    {
+        gx1 = x + width * 0.6f;
+        gx2 = (float) x + width;
+    }
+    else
+    {
+        gy1 = y + height * 0.6f;
+        gy2 = (float) y + height;
+    }
+
+    g.setGradientFill (ColourGradient (Colours::transparentBlack,gx1, gy1,
+                       Colour (0x19000000), gx2, gy2, false));
+    g.fillPath (slotPath);
+
+    g.setColour (thumbColour);
+    g.fillPath (thumbPath);
+
+    g.setGradientFill (ColourGradient (Colour (0x10000000), gx1, gy1,
+                       Colours::transparentBlack, gx2, gy2, false));
+
+    g.saveState();
+
+    if (isScrollbarVertical)
+        g.reduceClipRegion (x + width / 2, y, width, height);
+    else
+        g.reduceClipRegion (x, y + height / 2, width, height);
+
+    g.fillPath (thumbPath);
+    g.restoreState();
+
+    g.setColour (Colour (0x4c000000));
+    g.strokePath (thumbPath, PathStrokeType (0.4f));
+}
+
+ImageEffectFilter* CabbageLookAndFeelBasic::getScrollbarEffect()
+{
+    return nullptr;
+}
+
+int CabbageLookAndFeelBasic::getMinimumScrollbarThumbSize (ScrollBar& scrollbar)
+{
+    return jmin (scrollbar.getWidth(), scrollbar.getHeight()) * 2;
+}
+
+int CabbageLookAndFeelBasic::getDefaultScrollbarWidth()
+{
+    return 18;
+}
+
+int CabbageLookAndFeelBasic::getScrollbarButtonSize (ScrollBar& scrollbar)
+{
+    return 2 + (scrollbar.isVertical() ? scrollbar.getWidth()
+                                       : scrollbar.getHeight());
 }
 
 //=========== Labels, slider textboxes are also labels =============================================

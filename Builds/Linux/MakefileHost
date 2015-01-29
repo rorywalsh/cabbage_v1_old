@@ -71,8 +71,10 @@ OBJECTS := \
   $(OBJDIR)/CommandManager_f4ac7445.o \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
+  $(OBJDIR)/PluginWrapperProcessor_5t66sdf31b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
   $(OBJDIR)/Table_35ae1cd9.o \
+  $(OBJDIR)/MixerStrip_4j7dh431b.o \
   $(OBJDIR)/SplitComponent_35ae1cd2.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
@@ -236,6 +238,16 @@ $(OBJDIR)/FilterGraph_62e9c017.o: ../../Source/Host/FilterGraph.cpp
 	@echo "Compiling FilterGraph.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/MixerStrip_4j7dh431b.o:../../Source/Host/MixerStrip.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling MixerStrip.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
+$(OBJDIR)/PluginWrapperProcessor_5t66sdf31b.o:../../Source/Host/PluginWrapperProcessor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling PluginWrapperProcessor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
 $(OBJDIR)/GraphEditorPanel_3dbd4872.o: ../../Source/Host/GraphEditorPanel.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling GraphEditorPanel.cpp"

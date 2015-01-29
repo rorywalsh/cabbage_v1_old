@@ -357,7 +357,6 @@
 		51474458B948D9869419D32E /* juce_BigInteger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_BigInteger.h; path = ../../JuceLibraryCode/modules/juce_core/maths/juce_BigInteger.h; sourceTree = SOURCE_ROOT; };
 		5150F22DC7FF8BCF4AAC86BE /* juce_BlowFish.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_BlowFish.cpp; path = ../../JuceLibraryCode/modules/juce_cryptography/encryption/juce_BlowFish.cpp; sourceTree = SOURCE_ROOT; };
 		51F98D3E86A0DF547AD88D00 /* juce_ColourSelector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_ColourSelector.h; path = ../../JuceLibraryCode/modules/juce_gui_extra/misc/juce_ColourSelector.h; sourceTree = SOURCE_ROOT; };
-		5231709680491A6F772AD623 /* CabbagePluginProcessor.cpp.orig */ = {isa = PBXFileReference; lastKnownFileType = text; name = CabbagePluginProcessor.cpp.orig; path = ../../Source/Plugin/CabbagePluginProcessor.cpp.orig; sourceTree = SOURCE_ROOT; };
 		524DCE12B566D95D26091A1F /* juce_OpenGLShaderProgram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_OpenGLShaderProgram.h; path = ../../JuceLibraryCode/modules/juce_opengl/opengl/juce_OpenGLShaderProgram.h; sourceTree = SOURCE_ROOT; };
 		525E726BAAF8586F4A3E88E5 /* juce_FileListComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_FileListComponent.cpp; path = ../../JuceLibraryCode/modules/juce_gui_basics/filebrowser/juce_FileListComponent.cpp; sourceTree = SOURCE_ROOT; };
 		52979AC02359FD89A82BE970 /* juce_DrawableRectangle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_DrawableRectangle.cpp; path = ../../JuceLibraryCode/modules/juce_gui_basics/drawables/juce_DrawableRectangle.cpp; sourceTree = SOURCE_ROOT; };
@@ -1025,7 +1024,6 @@
 				77DD9C2ED0E8D75F12829B2F /* CabbagePluginEditor.cpp */,
 				8F3FA78AF1306C10AC5F453C /* CabbagePluginEditor.h */,
 				1B5D43F2727B5092D99C8B39 /* CabbagePluginProcessor.cpp */,
-				5231709680491A6F772AD623 /* CabbagePluginProcessor.cpp.orig */,
 				637BA59AD18EB001A42EA04C /* CabbagePluginProcessor.h */,
 			);
 			name = Plugin;
@@ -2953,6 +2951,7 @@
 				SDKROOT_ppc = macosx10.5;
 				USER_HEADER_SEARCH_PATHS = "";
 				"USER_HEADER_SEARCH_PATHS[arch=*]" = /Users/walshr/SDKs/vstsdk2.4;
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Debug;
 		};
@@ -3033,6 +3032,7 @@
 				SDKROOT_ppc = macosx10.5;
 				USER_HEADER_SEARCH_PATHS = "";
 				"USER_HEADER_SEARCH_PATHS[arch=*]" = /Users/walshr/SDKs/vstsdk2.4;
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
 		};

@@ -95,18 +95,18 @@
 
 //==============================================================================
 // juce_audio_processors flags:
-#ifndef Cabbage_Build_Standalone
-#ifndef    JUCE_PLUGINHOST_VST
- #define   JUCE_PLUGINHOST_VST 1
-#endif
+#ifdef CABBAGE_HOST
+    #ifndef    JUCE_PLUGINHOST_VST
+     #define   JUCE_PLUGINHOST_VST 1
+    #endif
 
-#ifndef    JUCE_PLUGINHOST_VST3
- #define   JUCE_PLUGINHOST_VST3 0
-#endif
+    #ifndef    JUCE_PLUGINHOST_VST3
+     #define   JUCE_PLUGINHOST_VST3 0
+    #endif
 
-#ifndef    JUCE_PLUGINHOST_AU
- #define   JUCE_PLUGINHOST_AU 1
-#endif
+    #ifndef    JUCE_PLUGINHOST_AU
+     #define   JUCE_PLUGINHOST_AU 1
+    #endif
 #endif
 //==============================================================================
 // juce_core flags:
@@ -172,7 +172,7 @@
 #define JucePlugin_Build_VST              1
 #endif
 #ifndef  JucePlugin_Build_AU
-#define JucePlugin_Build_AU               1
+#define JucePlugin_Build_AU               0
 #endif
 #ifndef  JucePlugin_Build_RTAS
 #define JucePlugin_Build_RTAS             0

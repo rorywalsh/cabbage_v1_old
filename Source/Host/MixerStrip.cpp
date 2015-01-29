@@ -23,7 +23,9 @@
 
 InternalMixerStrip::InternalMixerStrip(String name, int numChannels): 
 mixerName(name), 
-numberOfChannels(numChannels)
+numberOfChannels(numChannels),
+currentGainLevel(1.f),
+range(0, 1, 0.01, .5)
 {
 	for(int i=0;i<numberOfChannels;i++)
 		channelRMS.add(0.f);
@@ -64,14 +66,20 @@ void InternalMixerStrip::mouseDown(const MouseEvent &e)
 {
 	int xPos = jlimit(45.0, getWidth()-10.0, e.getPosition().getX()-2.5);
 	xPos = cUtils::roundToMultiple(xPos, (getWidth()-45.0)/17.0);
+	currentGainLevel = (xPos-45.f)/(getWidth()-55.0);
 	currentGainMarker->setRectangle(Rectangle<float> (xPos, 3, 5, getHeight()-3));	
+	//send message so that we can adjust the level appropriately
+	sendChangeMessage();
 }
 
 void InternalMixerStrip::mouseDrag(const MouseEvent &e)
 {
 	int xPos = jlimit(45.0, getWidth()-10.0, e.getPosition().getX()-2.5);
 	xPos = cUtils::roundToMultiple(xPos, (getWidth()-45.0)/17.0);
+	currentGainLevel = (xPos-45.f)/(getWidth()-55.0);
 	currentGainMarker->setRectangle(Rectangle<float> (xPos, 3, 5, getHeight()-3));
+	//send message so that we can adjust the level appropriately
+	sendChangeMessage();
 }
 
 void InternalMixerStrip::paint(Graphics& g)

@@ -155,8 +155,10 @@ private:
 //==============================================================================
 //   This is the AudioProcessorPlayer that plays our grpah
 //==============================================================================
-class GraphAudioProcessorPlayer  : public AudioProcessorPlayer,
-								   public ChangeBroadcaster
+class GraphAudioProcessorPlayer  :  public AudioProcessorPlayer,
+									public ChangeListener,
+								    public ChangeBroadcaster
+								   
 {
 public:
 	GraphAudioProcessorPlayer();
@@ -169,9 +171,10 @@ public:
     void audioDeviceAboutToStart (AudioIODevice*) override;
     void audioDeviceStopped() override;
     void handleIncomingMidiMessage (MidiInput*, const MidiMessage&) override;
+	void changeListenerCallback (ChangeBroadcaster*);
 	
 	Array<float> getOutputChannelRMS()
-	{
+	{  
 		return outputChannelRMS; 
 	}
 
@@ -187,6 +190,7 @@ private:
     double sampleRate;
     int blockSize;
     bool isPrepared;
+	float inputGainLevel, outputGainLevel;
 
     int numInputChans, numOutputChans;
 	Array<float> inputChannelRMS;

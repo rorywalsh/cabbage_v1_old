@@ -1395,7 +1395,9 @@ GraphAudioProcessorPlayer::GraphAudioProcessorPlayer()
       isPrepared (false),
       numInputChans (0),
       numOutputChans (0),
-	  actionCounter(0)
+	  actionCounter(0),
+	  inputGainLevel(1.f),
+	  outputGainLevel(1.f)
 {
 }
 
@@ -1435,6 +1437,15 @@ void GraphAudioProcessorPlayer::setProcessor (AudioProcessor* const processorToP
     }
 }
 
+//simple and safe method to listen for gain changes...
+void GraphAudioProcessorPlayer::changeListenerCallback (ChangeBroadcaster* source)
+{
+	const ScopedLock sl(getCurrentProcessor()->getCallbackLock());
+	if(((InternalMixerStrip*)source)->isInput())
+		inputGainLevel = ((InternalMixerStrip*)source)->currentGainLevel;
+	else
+		outputGainLevel = ((InternalMixerStrip*)source)->currentGainLevel;	
+}
 //==============================================================================
 void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const inputChannelData,
                                                   const int numInputChannels,
@@ -1446,6 +1457,8 @@ void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const input
     jassert (sampleRate > 0 && blockSize > 0);
 	actionCounter++;
     incomingMidi.clear();
+	float inputBuffer[numSamples];
+	float outputBuffer[numSamples];
     messageCollector.removeNextBlockOfMessages (incomingMidi, numSamples);
     int totalNumChans = 0;
 
@@ -1473,11 +1486,23 @@ void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const input
     }
     else
     {
+				
         for (int i = 0; i < numInputChannels; ++i)
         {
+			//apply gain control on input
+			for(int y=0;y<numSamples;y++)
+				inputBuffer[y] = inputChannelData[i][y]*(exp((inputGainLevel*127)*0.06907))* 0.000145;
+			
             channels[totalNumChans] = outputChannelData[i];
-            memcpy (channels[totalNumChans], inputChannelData[i], sizeof (float) * (size_t) numSamples);
-			inputChannelRMS.getReference(i) = abs(*inputChannelData[i]);
+			
+            memcpy (channels[totalNumChans], inputBuffer, sizeof (float) * (size_t) numSamples);
+			inputChannelRMS.getReference(i) = abs(inputBuffer[0]);
+			
+			for(int y=0;y<numSamples;y++)
+			{
+				channels[totalNumChans][y] = channels[totalNumChans][y]*.0;
+			}
+			
             ++totalNumChans;
         }
 
@@ -1508,8 +1533,10 @@ void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const input
             if (! processor->isSuspended())
             {
                 processor->processBlock (buffer, incomingMidi);
+				//apply gain control on output
+				buffer.applyGain(exp(outputGainLevel*0.7)*0.06);
 				for(int i=0;i<totalNumChans;i++)
-				outputChannelRMS.getReference(i) = buffer.getRMSLevel(i, 0, numSamples);
+					outputChannelRMS.getReference(i) = buffer.getRMSLevel(i, 0, numSamples);				
                 return;
             }
         }
@@ -1597,6 +1624,8 @@ GraphDocumentComponent::GraphDocumentComponent (AudioPluginFormatManager& format
 	
 	graphPlayer.addChangeListener(inputStrip);
 	graphPlayer.addChangeListener(outputStrip);
+	inputStrip->addChangeListener(&graphPlayer);
+	outputStrip->addChangeListener(&graphPlayer);
 	
     graphPanel->updateComponents();
 }

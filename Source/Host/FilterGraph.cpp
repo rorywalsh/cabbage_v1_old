@@ -358,8 +358,8 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
 											graph.getSampleRate(),
 											graph.getBlockSize());
 			instance->setPluginName(desc.name);
-			cUtils::debug("num params", instance->getNumParameters());
-			node = graph.addNode (instance);
+			node = graph.addNode (instance, xml.getIntAttribute ("uid"));
+			
 			node->properties.set("pluginName", desc.name);
 		}
 	}
@@ -367,7 +367,7 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
 	{
 		if (AudioPluginInstance* instance = formatManager.createPluginInstance (desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
 		{
-			node = graph.addNode (instance);
+			node = graph.addNode (instance, xml.getIntAttribute ("uid"));
 			node->properties.set("pluginType", "Internal");
 			node->properties.set("pluginName", desc.name);
 		}
@@ -383,7 +383,7 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
 												  cabbageNativePlugin->getNumberCsoundOutChannels(), 
 												  cabbageNativePlugin->getCsoundSamplingRate(),
 												  cabbageNativePlugin->getCsoundKsmpsSize());
-		node = graph.addNode (cabbageNativePlugin);	
+		node = graph.addNode (cabbageNativePlugin, xml.getIntAttribute ("uid"));	
 		node->properties.set("pluginName", cabbageNativePlugin->getPluginName());
 		//native Cabbage plugins don't have plugin descriptors, so we create one here..
 		ScopedPointer<XmlElement> xmlElem;

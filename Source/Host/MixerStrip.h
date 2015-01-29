@@ -22,8 +22,9 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 
-class InternalMixerStrip : public Component, 
-						 public ChangeListener
+class InternalMixerStrip :  public Component, 
+							public ChangeListener,
+							public ChangeBroadcaster
 {
 public:
 	InternalMixerStrip(String name, int numChannels);
@@ -31,6 +32,7 @@ public:
 	ScopedPointer<Slider> gainSlider;
 	
 	void changeListenerCallback (ChangeBroadcaster*);
+	float currentGainLevel;
 	void paint(Graphics& g);
 	void resized();
 	void drawLevelMeter (Graphics& g, float x, float y, int width, int height, float level);
@@ -39,10 +41,16 @@ public:
 	void mouseDown(const MouseEvent &e);
 	void mouseDrag(const MouseEvent &e);
 	
+	bool isInput()
+	{
+		return mixerName=="Inputs" ? true : false;
+	}
+	
 private:
 	ScopedPointer<DrawableRectangle> currentGainMarker;
 	String mixerName;
 	int numberOfChannels;
+	NormalisableRange<float> range;
 };
 
 #endif

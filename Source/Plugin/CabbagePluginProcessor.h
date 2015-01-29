@@ -191,6 +191,7 @@ public:
     void continueCsoundDebug();
     void nextCsoundDebug();
     void cleanCsoundDebug();
+
 	
     int getNumberCsoundOutChannels()
     {

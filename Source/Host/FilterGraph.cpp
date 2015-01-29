@@ -28,6 +28,7 @@
 #include "InternalFilters.h"
 #include "GraphEditorPanel.h"
 #include "PluginWrapperProcessor.h"
+#include "../Plugin/CabbagePluginProcessor.h"
 
 
 //==============================================================================
@@ -295,24 +296,23 @@ void FilterGraph::setLastDocumentOpened (const File& file)
 //==============================================================================
 static XmlElement* createNodeXml (AudioProcessorGraph::Node* const node) noexcept
 {
-    AudioPluginInstance* plugin = dynamic_cast <AudioPluginInstance*> (node->getProcessor());
-	cUtils::debug("name", node->getProcessor()->getName());
-    if (plugin == nullptr)
-    {
-        assert(0);
-        return nullptr;
-    }
+    PluginDescription pd;
 
+    if(AudioPluginInstance* plugin = dynamic_cast <AudioPluginInstance*> (node->getProcessor()))
+		plugin->fillInPluginDescription (pd);
+	else if(PluginWrapper* plugin = dynamic_cast <PluginWrapper*> (node->getProcessor()))
+		plugin->fillInPluginDescription (pd);
+	else if(CabbagePluginAudioProcessor* plugin = dynamic_cast <CabbagePluginAudioProcessor*> (node->getProcessor()))
+		{
+		//need to fill in description here so details get saved...
+		}
+		
     XmlElement* e = new XmlElement ("FILTER");
     e->setAttribute ("uid", (int) node->nodeId);
     e->setAttribute ("x", node->properties ["x"].toString());
     e->setAttribute ("y", node->properties ["y"].toString());
     e->setAttribute ("uiLastX", node->properties ["uiLastX"].toString());
     e->setAttribute ("uiLastY", node->properties ["uiLastY"].toString());
-
-    PluginDescription pd;
-    plugin->fillInPluginDescription (pd);
-
     e->addChildElement (pd.createXml());
 
     XmlElement* state = new XmlElement ("STATE");

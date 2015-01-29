@@ -715,6 +715,19 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 	csound->Message("\n===Cabbage Warnings===\n");
 
 	for(int i=0; i<csdText.size(); i++)
+    {
+		String temp;
+		//roll any lines with a \ into the next line and remove from csdText array...
+		if(csdText[i].contains(" \\"))
+		{
+			temp = csdText[i+1];
+			csdText.remove(i+1);
+			csdText.set(i, csdText[i]+temp);
+			cUtils::debug(csdText[i]);
+		}
+	}
+
+	for(int i=0; i<csdText.size(); i++)
     {	
 		
         int csdLineNumber=0;

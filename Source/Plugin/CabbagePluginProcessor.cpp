@@ -88,7 +88,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      stopProcessing(false),
 	 firstTime(true),
 	 isMuted(false),
-	 isBypassed(false)
+	 isBypassed(false),
+	 vuCounter(0)
 {
 //suspendProcessing(true);
     codeEditor = nullptr;
@@ -308,7 +309,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     stopProcessing(false),
 	firstTime(false),
 	isMuted(false),
-	isBypassed(false)
+	isBypassed(false),
+	vuCounter(0)
 {
 //Cabbage plugins always try to load a csd file with the same name as the plugin library.
 //Therefore we need to find the name of the library and append a '.csd' to it.
@@ -1872,7 +1874,6 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                     {
                         sendOutgoingMessagesToCsound();
                         updateCabbageControls();
-						//sendActionMessage(String(rmsLeft)+" "+String(rmsRight));
                     }
 
 
@@ -1894,8 +1895,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                         pos = csndIndex*getNumOutputChannels();
                         CSspin[channel+pos] = audioBuffer[i]*cs_scale;
                         audioBuffer[i] = (CSspout[channel+pos]/cs_scale);
-						//rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
-						//rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
+						
                     }
                 }
                 else
@@ -1909,6 +1909,9 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 
 			if(isMuted)
 				 buffer.clear();
+
+		rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
+		rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
 
         }//if not compiled just mute output
         else
@@ -1925,6 +1928,10 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 
 #endif
     }
+
+	vuCounter = (vuCounter>5) ? 0 : vuCounter+1;
+	if(vuCounter==0)
+		sendActionMessage(String(rmsLeft)+" "+String(rmsRight));
 
 #if JucePlugin_ProducesMidiOutput
     if(!midiBuffer.isEmpty())

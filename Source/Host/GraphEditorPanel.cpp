@@ -1386,6 +1386,187 @@ private:
 };
 
 //==============================================================================
+// graph audio player
+//==============================================================================
+GraphAudioProcessorPlayer::GraphAudioProcessorPlayer()
+    : processor (nullptr),
+      sampleRate (0),
+      blockSize (0),
+      isPrepared (false),
+      numInputChans (0),
+      numOutputChans (0),
+	  actionCounter(0)
+{
+}
+
+GraphAudioProcessorPlayer::~GraphAudioProcessorPlayer()
+{
+    setProcessor (nullptr);
+}
+
+//==============================================================================
+void GraphAudioProcessorPlayer::setProcessor (AudioProcessor* const processorToPlay)
+{
+    if (processor != processorToPlay)
+    {
+        if (processorToPlay != nullptr && sampleRate > 0 && blockSize > 0)
+        {
+            processorToPlay->setPlayConfigDetails (numInputChans, numOutputChans, sampleRate, blockSize);
+            processorToPlay->prepareToPlay (sampleRate, blockSize);
+			
+			for(int i=0;i<numInputChans;i++)
+				inputChannelRMS.add(0.f);
+						
+			for(int i=0;i<numOutputChans;i++)
+				outputChannelRMS.add(0.f);
+        }
+
+        AudioProcessor* oldOne;
+
+        {
+            const ScopedLock sl (lock);
+            oldOne = isPrepared ? processor : nullptr;
+            processor = processorToPlay;
+            isPrepared = true;
+        }
+
+        if (oldOne != nullptr)
+            oldOne->releaseResources();
+    }
+}
+
+//==============================================================================
+void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const inputChannelData,
+                                                  const int numInputChannels,
+                                                  float** const outputChannelData,
+                                                  const int numOutputChannels,
+                                                  const int numSamples)
+{
+    // these should have been prepared by audioDeviceAboutToStart()...
+    jassert (sampleRate > 0 && blockSize > 0);
+	actionCounter++;
+    incomingMidi.clear();
+    messageCollector.removeNextBlockOfMessages (incomingMidi, numSamples);
+    int totalNumChans = 0;
+
+    if (numInputChannels > numOutputChannels)
+    {
+        // if there aren't enough output channels for the number of
+        // inputs, we need to create some temporary extra ones (can't
+        // use the input data in case it gets written to)
+        tempBuffer.setSize (numInputChannels - numOutputChannels, numSamples,
+                            false, false, true);
+
+        for (int i = 0; i < numOutputChannels; ++i)
+        {
+            channels[totalNumChans] = outputChannelData[i];
+            memcpy (channels[totalNumChans], inputChannelData[i], sizeof (float) * (size_t) numSamples);
+            ++totalNumChans;
+        }
+
+        for (int i = numOutputChannels; i < numInputChannels; ++i)
+        {
+            channels[totalNumChans] = tempBuffer.getWritePointer (i - numOutputChannels);
+            memcpy (channels[totalNumChans], inputChannelData[i], sizeof (float) * (size_t) numSamples);
+            ++totalNumChans;
+        }
+    }
+    else
+    {
+        for (int i = 0; i < numInputChannels; ++i)
+        {
+            channels[totalNumChans] = outputChannelData[i];
+            memcpy (channels[totalNumChans], inputChannelData[i], sizeof (float) * (size_t) numSamples);
+			inputChannelRMS.getReference(i) = abs(*inputChannelData[i]);
+            ++totalNumChans;
+        }
+
+        for (int i = numInputChannels; i < numOutputChannels; ++i)
+        {
+            channels[totalNumChans] = outputChannelData[i];
+            zeromem (channels[totalNumChans], sizeof (float) * (size_t) numSamples);
+            ++totalNumChans;
+        }
+    }
+
+	//put some breaks on the VU update speed. 
+	if(actionCounter==5){
+		actionCounter=0;
+		sendChangeMessage();
+	}
+		
+		
+    AudioSampleBuffer buffer (channels, totalNumChans, numSamples);
+
+    {
+        const ScopedLock sl (lock);
+
+        if (processor != nullptr)
+        {
+            const ScopedLock sl2 (processor->getCallbackLock());
+
+            if (! processor->isSuspended())
+            {
+                processor->processBlock (buffer, incomingMidi);
+				for(int i=0;i<totalNumChans;i++)
+				outputChannelRMS.getReference(i) = buffer.getRMSLevel(i, 0, numSamples);
+                return;
+            }
+        }
+    }
+
+    for (int i = 0; i < numOutputChannels; ++i)
+        FloatVectorOperations::clear (outputChannelData[i], numSamples);
+}
+
+void GraphAudioProcessorPlayer::audioDeviceAboutToStart (AudioIODevice* const device)
+{
+    const double newSampleRate = device->getCurrentSampleRate();
+    const int newBlockSize     = device->getCurrentBufferSizeSamples();
+    const int numChansIn       = device->getActiveInputChannels().countNumberOfSetBits();
+    const int numChansOut      = device->getActiveOutputChannels().countNumberOfSetBits();
+
+    const ScopedLock sl (lock);
+
+    sampleRate = newSampleRate;
+    blockSize  = newBlockSize;
+    numInputChans  = numChansIn;
+    numOutputChans = numChansOut;
+
+    messageCollector.reset (sampleRate);
+    channels.calloc ((size_t) jmax (numChansIn, numChansOut) + 2);
+
+    if (processor != nullptr)
+    {
+        if (isPrepared)
+            processor->releaseResources();
+
+        AudioProcessor* const oldProcessor = processor;
+        setProcessor (nullptr);
+        setProcessor (oldProcessor);
+    }
+}
+
+void GraphAudioProcessorPlayer::audioDeviceStopped()
+{
+    const ScopedLock sl (lock);
+
+    if (processor != nullptr && isPrepared)
+        processor->releaseResources();
+
+    sampleRate = 0.0;
+    blockSize = 0;
+    isPrepared = false;
+    tempBuffer.setSize (1, 1);
+}
+
+void GraphAudioProcessorPlayer::handleIncomingMidiMessage (MidiInput*, const MidiMessage& message)
+{
+    messageCollector.addMessageToQueue (message);
+}
+
+//==============================================================================
+// graphDocumentComponent. Holds out main GUI objects
 GraphDocumentComponent::GraphDocumentComponent (AudioPluginFormatManager& formatManager,
         AudioDeviceManager* deviceManager_)
     : graph (formatManager), deviceManager (deviceManager_)
@@ -1406,14 +1587,17 @@ GraphDocumentComponent::GraphDocumentComponent (AudioPluginFormatManager& format
 	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::upDownButtonArrowColourId, Colours::lime);
 	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::upDownButtonBackgroundColourId, Colour(30,30,30));
 	
-	
-	
-
     addAndMakeVisible (statusBar = new TooltipBar());
-
     deviceManager->addAudioCallback (&graphPlayer);
     deviceManager->addMidiInputCallback (String::empty, &graphPlayer.getMidiMessageCollector());
 
+	//setup channel strips for inputs and outputs
+	addAndMakeVisible (inputStrip = new InternalMixerStrip("Inputs", deviceManager->getCurrentAudioDevice()->getInputChannelNames().size()));
+	addAndMakeVisible (outputStrip = new InternalMixerStrip("Outputs", deviceManager->getCurrentAudioDevice()->getOutputChannelNames().size()));
+	
+	graphPlayer.addChangeListener(inputStrip);
+	graphPlayer.addChangeListener(outputStrip);
+	
     graphPanel->updateComponents();
 }
 
@@ -1439,6 +1623,8 @@ void GraphDocumentComponent::resized()
     graphPanel->setBounds (0, 0, getWidth(), getHeight() - keysHeight);
     statusBar->setBounds (0, getHeight() - keysHeight - statusHeight, getWidth(), statusHeight);
     keyboardComp->setBounds (200, getHeight() - keysHeight, getWidth()-200, keysHeight);
+	inputStrip->setBounds(0, getHeight() - keysHeight, 200, keysHeight/2);
+	outputStrip->setBounds(0, getHeight() - keysHeight + keysHeight/2.f, 200, keysHeight/2);
 }
 
 void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int x, int y, bool isNative, String filename)

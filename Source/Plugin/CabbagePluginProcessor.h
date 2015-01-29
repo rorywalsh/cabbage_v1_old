@@ -309,7 +309,7 @@ public:
     MidiBuffer ccBuffer;
     bool showMIDI;
     bool yieldCallbackBool;
-    int yieldCounter;
+    int yieldCounter, vuCounter;
     bool nativePluginEditor;
     CabbageMessageQueue messageQueue;
     StringArray scoreEvents;

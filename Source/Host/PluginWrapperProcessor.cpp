@@ -23,7 +23,7 @@ PluginWrapper::PluginWrapper(AudioPluginInstance* instance)
 		assert(0);
 	
 	pluginDesc = instance->getPluginDescription();	
-
+	
 }
 
 PluginWrapper::~PluginWrapper()
@@ -186,7 +186,7 @@ void PluginWrapper::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMes
 	//this processBlock merely processes a loaded VST. 
 	if(!isBypassed)
 	{
-		vstInstance->processBlock(buffer,midiMessages);
+			vstInstance->processBlock(buffer,midiMessages);
 	}
 	
 	if(isMuted)

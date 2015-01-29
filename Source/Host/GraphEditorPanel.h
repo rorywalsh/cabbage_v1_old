@@ -26,9 +26,11 @@
 #define __GRAPHEDITORPANEL_JUCEHEADER__
 
 #include "FilterGraph.h"
+#include "MixerStrip.h"
 
 class GraphEditorPanel;
 class ConnectorComponent;
+class GraphAudioProcessorPlayer;
 class PinComponent;
 #define INTERNAL 1
 #define CABBAGE 2
@@ -79,6 +81,7 @@ private:
     {
         return findParentComponentOfClass<GraphEditorPanel>();
     }
+
 
     FilterComponent (const FilterComponent&);
     FilterComponent& operator= (const FilterComponent&);
@@ -150,6 +153,54 @@ private:
 
 
 //==============================================================================
+//   This is the AudioProcessorPlayer that plays our grpah
+//==============================================================================
+class GraphAudioProcessorPlayer  : public AudioProcessorPlayer,
+								   public ChangeBroadcaster
+{
+public:
+	GraphAudioProcessorPlayer();
+	~GraphAudioProcessorPlayer();
+
+    void setProcessor (AudioProcessor* processorToPlay);
+    AudioProcessor* getCurrentProcessor() const noexcept            { return processor; }
+    MidiMessageCollector& getMidiMessageCollector() noexcept        { return messageCollector; }
+    void audioDeviceIOCallback (const float**, int, float**, int, int) override;
+    void audioDeviceAboutToStart (AudioIODevice*) override;
+    void audioDeviceStopped() override;
+    void handleIncomingMidiMessage (MidiInput*, const MidiMessage&) override;
+	
+	Array<float> getOutputChannelRMS()
+	{
+		return outputChannelRMS; 
+	}
+
+	Array<float> getInputChannelRMS()
+	{
+		return inputChannelRMS; 
+	}
+	
+private:
+    //==============================================================================
+    AudioProcessor* processor;
+    CriticalSection lock;
+    double sampleRate;
+    int blockSize;
+    bool isPrepared;
+
+    int numInputChans, numOutputChans;
+	Array<float> inputChannelRMS;
+	Array<float> outputChannelRMS;
+	int actionCounter;
+    HeapBlock<float*> channels;
+    AudioSampleBuffer tempBuffer;
+
+    MidiBuffer incomingMidi;
+    MidiMessageCollector messageCollector;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GraphAudioProcessorPlayer)
+};
+//==============================================================================
 //    A panel that embeds a GraphEditorPanel with a midi keyboard at the bottom.
 //    It also manages the graph itself, and plays it.
 //==============================================================================
@@ -173,8 +224,10 @@ public:
 private:
     //==============================================================================
     AudioDeviceManager* deviceManager;
-    AudioProcessorPlayer graphPlayer;
+    GraphAudioProcessorPlayer graphPlayer;
     MidiKeyboardState keyState;
+	InternalMixerStrip* inputStrip;
+	InternalMixerStrip* outputStrip; 
 
     GraphEditorPanel* graphPanel;
     Component* keyboardComp;

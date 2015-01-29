@@ -119,6 +119,11 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 													  cabbageNativePlugin->getCsoundKsmpsSize());
             node = graph.addNode (cabbageNativePlugin);	
 			node->properties.set("pluginName", cabbageNativePlugin->getPluginName());
+			//native Cabbage plugins don't have plugin descriptors, so we create one here..
+			ScopedPointer<XmlElement> xmlElem;
+			xmlElem = desc->createXml();
+			String xmlText = xmlElem->createDocument("");
+			node->properties.set("pluginDesc", xmlText);
 		}
 		
         if (node != nullptr)
@@ -304,7 +309,12 @@ static XmlElement* createNodeXml (AudioProcessorGraph::Node* const node) noexcep
 		plugin->fillInPluginDescription (pd);
 	else if(CabbagePluginAudioProcessor* plugin = dynamic_cast <CabbagePluginAudioProcessor*> (node->getProcessor()))
 		{
-		//need to fill in description here so details get saved...
+		//grab description of native plugin for saving...
+		String xmlPluginDescriptor = node->properties.getWithDefault("pluginDesc", "").toString();
+		cUtils::debug(xmlPluginDescriptor);
+		XmlElement* xmlElem;
+		xmlElem = XmlDocument::parse(xmlPluginDescriptor);
+		pd.loadFromXml(*xmlElem);
 		}
 		
     XmlElement* e = new XmlElement ("FILTER");
@@ -327,41 +337,59 @@ static XmlElement* createNodeXml (AudioProcessorGraph::Node* const node) noexcep
 
 void FilterGraph::createNodeFromXml (const XmlElement& xml)
 {
-    PluginDescription pd;
+    PluginDescription desc;
 
     forEachXmlChildElement (xml, e)
     {
-        if (pd.loadFromXml (*e))
+        if (desc.loadFromXml (*e))
             break;
     }
 
-    String errorMessage;
+
 	AudioProcessorGraph::Node::Ptr node = nullptr;
 	
-	if(pd.pluginFormatName!="Cabbage" && pd.pluginFormatName!="Internal")
+	String errorMessage;
+	if(desc.pluginFormatName!="Cabbage" && desc.pluginFormatName!="Internal")
 	{
-		if(PluginWrapper* instance = new PluginWrapper(formatManager.createPluginInstance (pd, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
+		if(PluginWrapper* instance = new PluginWrapper(formatManager.createPluginInstance (desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
 		{
-			instance->setPlayConfigDetails( pd.numInputChannels,
-											pd.numOutputChannels,
+			instance->setPlayConfigDetails( desc.numInputChannels,
+											desc.numOutputChannels,
 											graph.getSampleRate(),
 											graph.getBlockSize());
-			instance->setPluginName(pd.name);
-			node = graph.addNode(instance, xml.getIntAttribute ("uid"));
-			cUtils::debug("node->nodeId", node->nodeId);
+			instance->setPluginName(desc.name);
+			cUtils::debug("num params", instance->getNumParameters());
+			node = graph.addNode (instance);
+			node->properties.set("pluginName", desc.name);
 		}
 	}
-	else if(pd.pluginFormatName=="Internal")
+	else if(desc.pluginFormatName=="Internal")
 	{
-		if (AudioPluginInstance* instance = formatManager.createPluginInstance (pd, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
+		if (AudioPluginInstance* instance = formatManager.createPluginInstance (desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
 		{
-			node = graph.addNode (instance, xml.getIntAttribute ("uid"));
+			node = graph.addNode (instance);
 			node->properties.set("pluginType", "Internal");
+			node->properties.set("pluginName", desc.name);
 		}
 	}
 
-	else if(pd.pluginFormatName=="Cabbage")
+	else if(desc.pluginFormatName=="Cabbage")
 	{
+		CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc.fileOrIdentifier, false, AUDIO_PLUGIN);
+		
+		//create GUI for selected plugin...
+		cabbageNativePlugin->createGUI(File(desc.fileOrIdentifier).loadFileAsString(), true);			
+		cabbageNativePlugin->setPlayConfigDetails(cabbageNativePlugin->getNumberCsoundOutChannels(), 
+												  cabbageNativePlugin->getNumberCsoundOutChannels(), 
+												  cabbageNativePlugin->getCsoundSamplingRate(),
+												  cabbageNativePlugin->getCsoundKsmpsSize());
+		node = graph.addNode (cabbageNativePlugin);	
+		node->properties.set("pluginName", cabbageNativePlugin->getPluginName());
+		//native Cabbage plugins don't have plugin descriptors, so we create one here..
+		ScopedPointer<XmlElement> xmlElem;
+		xmlElem = desc.createXml();
+		String xmlText = xmlElem->createDocument("");
+		node->properties.set("pluginDesc", xmlText);
 	}	
 	
 
@@ -379,7 +407,7 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
     node->properties.set ("y", xml.getDoubleAttribute ("y"));
     node->properties.set ("uiLastX", xml.getIntAttribute ("uiLastX"));
     node->properties.set ("uiLastY", xml.getIntAttribute ("uiLastY"));
-	node->properties.set("pluginName", pd.name);
+	node->properties.set("pluginName", desc.name);
 
 }
 

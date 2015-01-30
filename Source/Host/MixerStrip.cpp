@@ -45,13 +45,13 @@ void InternalMixerStrip::changeListenerCallback (ChangeBroadcaster* source)
 	{
 		const Array<float> inputChannel = ((GraphAudioProcessorPlayer*)source)->getInputChannelRMS();
 		for(int i=0;i<inputChannel.size();i++)
-			channelRMS.getReference(i) =(float) exp (log ( inputChannel[i]*2.f)/3.0);
+			channelRMS.getReference(i) =(float) exp (log ( inputChannel[i])/3.0);
 	}
 	else if(mixerName=="Outputs")
 	{
 		const Array<float> outputChannel = ((GraphAudioProcessorPlayer*)source)->getOutputChannelRMS();
 		for(int i=0;i<outputChannel.size();i++)
-			channelRMS.getReference(i) =(float) exp (log (outputChannel[i]*2.f)/3.0);		
+			channelRMS.getReference(i) = exp (log ( outputChannel[i])/3.0);;		
 	}
 	repaint();
 	//channelRMS.getReference(i) = rmsValues[i].getFloatValue();
@@ -59,15 +59,17 @@ void InternalMixerStrip::changeListenerCallback (ChangeBroadcaster* source)
 
 void InternalMixerStrip::resized()
 {
-	currentGainMarker->setRectangle(Rectangle<float> (getWidth()-10, 3, 5, getHeight()-3));
+	currentGainMarker->setRectangle(Rectangle<float> (cUtils::roundToMultiple(getWidth()-10, (getWidth()-45.0)/17.0),
+	3, 5, getHeight()-3));
 }
 
 void InternalMixerStrip::mouseDown(const MouseEvent &e)
 {
 	int xPos = jlimit(45.0, getWidth()-10.0, e.getPosition().getX()-2.5);
-	xPos = cUtils::roundToMultiple(xPos, (getWidth()-45.0)/17.0);
-	currentGainLevel = (xPos-45.f)/(getWidth()-55.0);
+	xPos = cUtils::roundToMultiple(xPos, (getWidth()-45.0)/51.0);
+	currentGainLevel = jlimit(0.0, 1.0, (xPos-45.f)/(getWidth()-55.0));
 	currentGainMarker->setRectangle(Rectangle<float> (xPos, 3, 5, getHeight()-3));	
+	
 	//send message so that we can adjust the level appropriately
 	sendChangeMessage();
 }
@@ -75,9 +77,10 @@ void InternalMixerStrip::mouseDown(const MouseEvent &e)
 void InternalMixerStrip::mouseDrag(const MouseEvent &e)
 {
 	int xPos = jlimit(45.0, getWidth()-10.0, e.getPosition().getX()-2.5);
-	xPos = cUtils::roundToMultiple(xPos, (getWidth()-45.0)/17.0);
-	currentGainLevel = (xPos-45.f)/(getWidth()-55.0);
+	xPos = cUtils::roundToMultiple(xPos, (getWidth()-45.0)/51.0);
+	currentGainLevel = jlimit(0.0, 1.0, (xPos-45.f)/(getWidth()-55.0));
 	currentGainMarker->setRectangle(Rectangle<float> (xPos, 3, 5, getHeight()-3));
+	
 	//send message so that we can adjust the level appropriately
 	sendChangeMessage();
 }
@@ -100,17 +103,17 @@ void InternalMixerStrip::paint(Graphics& g)
 void InternalMixerStrip::drawLevelMeter (Graphics& g, float x, float y, int width, int height, float level)
 {
 	//g.fillAll(cUtils::getDarkerBackgroundSkin());
-    const int totalBlocks = 16;
-    const float numBlocks = (totalBlocks * level);
+    const int totalBlocks = 50;
+    const int numBlocks = roundToInt(totalBlocks * level)-1;
     const float w = (width) / (float) totalBlocks;
 
-    for (float i = 0; i < totalBlocks; ++i)
+    for (int i = 0; i < totalBlocks; ++i)
     {
         if (i >= numBlocks)
             g.setColour (Colours::lightblue.withAlpha (0.1f));
         else
             g.setColour (i < totalBlocks - 1 ? 
-						Colours::cornflowerblue.interpolatedWith(Colours::lime, (i/numBlocks)) : 
+						Colours::cornflowerblue.interpolatedWith(Colours::lime, ((float)i/(float)numBlocks)) : 
 						Colours::red);
 
         g.fillRoundedRectangle (x + i * w + w * 0.1f, 

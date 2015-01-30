@@ -374,6 +374,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 	originalPos = localPointToGlobal (Point<int>());
 
 	toFront (true);
+	CabbagePluginAudioProcessor* nativeCabbagePlugin = dynamic_cast<CabbagePluginAudioProcessor*>(graph.getNodeForId (filterID)->getProcessor());
 
 	if (e.mods.isPopupMenu())
 	{
@@ -384,6 +385,10 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 		m.addItem (3, "Show plugin UI");
 		m.addItem (4, "Show all programs");
 		m.addItem (5, "Show all parameters");
+		if(nativeCabbagePlugin)
+		{
+			m.addItem (7, "Show source code");
+		}
 		m.addItem (6, "Test state save/load");
 
 		const int r = m.show();
@@ -396,6 +401,21 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 		else if (r == 2)
 		{
 			graph.disconnectFilter (filterID);
+		}
+		else if (r==7)
+		{
+			if(codeWindow==nullptr)
+			{
+				File csdFile = nativeCabbagePlugin->getCsoundInputFile();
+				codeWindow = new CodeWindow(csdFile.getFullPathName());
+				codeWindow->addActionListener(this);
+				codeWindow->setTopLeftPosition(e.getScreenX()-100, e.getScreenY()+100);
+				codeWindow->setVisible(true);	
+				codeWindow->toFront(true);
+				codeWindow->setAlwaysOnTop(true);
+				codeWindow->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
+				codeWindow->textEditor->setAllText(csdFile.loadFileAsString());
+			}			
 		}
 		else
 		{
@@ -616,7 +636,7 @@ void FilterComponent::drawLevelMeter (Graphics& g, float x, float y, int width, 
 {
 	g.fillAll(filterColour);
     const int totalBlocks = 20;
-    const int numBlocks = roundToInt (totalBlocks * level);
+    const int numBlocks = roundToInt (totalBlocks * level)-1;
     const float w = (width) / (float) totalBlocks;
 
     for (int i = 0; i < totalBlocks; ++i)
@@ -1491,7 +1511,7 @@ void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const input
         {
 			//apply gain control on input
 			for(int y=0;y<numSamples;y++)
-				inputBuffer[y] = inputChannelData[i][y]*(exp((inputGainLevel*127)*0.06907))* 0.000145;
+				inputBuffer[y] = inputChannelData[i][y]*inputGainLevel;
 			
             channels[totalNumChans] = outputChannelData[i];
 			
@@ -1534,7 +1554,7 @@ void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const input
             {
                 processor->processBlock (buffer, incomingMidi);
 				//apply gain control on output
-				buffer.applyGain(exp(outputGainLevel*0.7)*0.06);
+				buffer.applyGain(outputGainLevel);
 				for(int i=0;i<totalNumChans;i++)
 					outputChannelRMS.getReference(i) = buffer.getRMSLevel(i, 0, numSamples);				
                 return;

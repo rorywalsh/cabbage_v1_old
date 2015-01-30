@@ -27,6 +27,7 @@
 
 #include "FilterGraph.h"
 #include "MixerStrip.h"
+#include "../Editor/CodeWindow.h"
 
 class GraphEditorPanel;
 class ConnectorComponent;
@@ -63,6 +64,7 @@ public:
 	
 
 private:
+	ScopedPointer<CodeWindow> codeWindow;
 	int pluginType;
     int pinSize;
     Colour filterColour;

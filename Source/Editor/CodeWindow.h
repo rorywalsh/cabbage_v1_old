@@ -194,10 +194,14 @@ public:
 
     void closeButtonPressed()
     {
-        //JUCEApplication::getInstance()->systemRequestedQuit();
+	#ifdef CABBAGE_HOST
+		sendActionMessage("closing editor");
+	#else
         this->setVisible(false);
+	#endif
     }
 
+	void showEditorConsole();
     void codeDocumentTextDeleted(int,int) {}
     void showCabbageHelp();
     void codeDocumentTextInserted(const juce::String &,int) {}

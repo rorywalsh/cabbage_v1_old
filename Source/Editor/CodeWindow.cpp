@@ -93,6 +93,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
         splitWindow->SetSplitBarPosition(this->getHeight()-(this->getHeight()/4));
 
     setContentNonOwned(splitWindow, false);
+	showEditorConsole();
 
 }
 
@@ -104,8 +105,19 @@ CodeWindow::~CodeWindow()
     commandManager.deleteInstance();
     deleteAndZero(textEditor);
 }
-
-
+//==============================================================================
+void CodeWindow::showEditorConsole()
+{
+    if(cUtils::getPreference(appProperties, "ShowEditorConsole")==1)
+    {
+       splitWindow->SetSplitBarPosition(getHeight()-(getHeight()/4));
+#ifdef BUILD_DEBUGGER
+        splitBottomWindow->SetSplitBarPosition(getWidth()/2);
+#endif
+    }
+    else
+        splitWindow->SetSplitBarPosition(getHeight());
+}
 //==============================================================================
 StringArray CodeWindow::getMenuBarNames()
 {
@@ -508,7 +520,6 @@ bool CodeWindow::perform (const InvocationInfo& info)
     {
         //JUCEApplication::getInstance()->systemRequestedQuit();
         textEditor->saveAllFiles();
-        this->setVisible(false);
     }
 
     else if(info.commandID==CommandIDs::editUndo)

@@ -22,19 +22,20 @@
 */
 
 
-#ifndef __CABBAGE_GENERICAUDIOPROCESSOREDITOR_JUCEHEADER__
-#define __CABBAGE_GENERICAUDIOPROCESSOREDITOR_JUCEHEADER__
+#ifndef __PLUGIN_GENERICAUDIOPROCESSOREDITOR_JUCEHEADER__
+#define __PLUGIN_GENERICAUDIOPROCESSOREDITOR_JUCEHEADER__
 
 //#include "FilterGraph.h"
 #include "../CabbageLookAndFeel.h"
+#include "../Host/PluginWrapperProcessor.h"
 
 
-class ProcessorParameterPropertyComp   : public PropertyComponent,
+class PluginProcessorParameterPropertyComp   : public PropertyComponent,
                                          private AudioProcessorListener,
                                          private Timer
 {
 public:
-    ProcessorParameterPropertyComp (const String& name, AudioProcessor& p, int paramIndex)
+    PluginProcessorParameterPropertyComp (const String& name, PluginWrapper& p, int paramIndex)
         : PropertyComponent (name),
           owner (p),
           index (paramIndex),
@@ -46,14 +47,14 @@ public:
         startTimer (100);
         addAndMakeVisible (slider);
 		setPreferredHeight(20);
-        owner.addListener (this);
+        owner.vstInstance->addListener (this);
 		slider.setLookAndFeel(lookAndFeelBasic);
 		slider.lookAndFeelChanged();
     }
 
-    ~ProcessorParameterPropertyComp()
+    ~PluginProcessorParameterPropertyComp()
     {
-        owner.removeListener (this);
+        owner.vstInstance->removeListener (this);
     }
 
     void refresh() override
@@ -109,7 +110,7 @@ private:
     class ParamSlider  : public Slider
     {
     public:
-        ParamSlider (AudioProcessor& p, int paramIndex)  : owner (p), index (paramIndex)
+        ParamSlider (PluginWrapper& p, int paramIndex)  : owner (p), index (paramIndex)
         {
             const int steps = owner.getParameterNumSteps (index);
 
@@ -141,12 +142,12 @@ private:
 
     private:
         //==============================================================================
-        AudioProcessor& owner;
+        PluginWrapper& owner;
         const int index;
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParamSlider)
     };
 
-    AudioProcessor& owner;
+    PluginWrapper& owner;
     const int index;
     bool volatile paramHasChanged;
     ParamSlider slider;
@@ -154,16 +155,16 @@ private:
 	
 	
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProcessorParameterPropertyComp)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginProcessorParameterPropertyComp)
 };
 
 
 //==============================================================================
 
-class CabbageGenericAudioProcessorEditor      : public AudioProcessorEditor
+class PluginGenericAudioProcessorEditor      : public AudioProcessorEditor
 {
 public:
-	CabbageGenericAudioProcessorEditor(AudioProcessor* const p)
+	PluginGenericAudioProcessorEditor(PluginWrapper* const p)
     : AudioProcessorEditor (p)
 	{
 		jassert (p != nullptr);
@@ -181,7 +182,7 @@ public:
 			if (name.trim().isEmpty())
 				name = "Unnamed";
 
-			ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp (name, *p, i);
+			PluginProcessorParameterPropertyComp* const pc = new PluginProcessorParameterPropertyComp (name, *p, i);
 			params.add (pc);
 			totalHeight += pc->getPreferredHeight();
 		}
@@ -191,7 +192,7 @@ public:
 		setSize (400, jlimit (25, 400, totalHeight));
 	}
 
-	~CabbageGenericAudioProcessorEditor()
+	~PluginGenericAudioProcessorEditor()
 	{
 	}
 
@@ -207,7 +208,7 @@ public:
 
 private:
 	PropertyPanel panel;
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGenericAudioProcessorEditor)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginGenericAudioProcessorEditor)
 };
 
 

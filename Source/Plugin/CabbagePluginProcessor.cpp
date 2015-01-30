@@ -1944,7 +1944,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 
 	vuCounter = (vuCounter>5) ? 0 : vuCounter+1;
 	if(vuCounter==0)
-		sendActionMessage(String(rmsLeft)+" "+String(rmsRight));
+		sendActionMessage("rmsValues "+String(rmsLeft)+" "+String(rmsRight));
 
 #if JucePlugin_ProducesMidiOutput
     if(!midiBuffer.isEmpty())

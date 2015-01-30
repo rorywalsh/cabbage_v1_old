@@ -44,7 +44,6 @@ public:
 #else
         manualPath = "Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual/index.html";
 #endif
-
         defaultPropSet->setValue("CsoundHelpDir", manualPath);
         defaultPropSet->setValue("PlantFileDir", homeDir+"/Plants");
         defaultPropSet->setValue("ExamplesDir", homeDir+"/Examples/Examples");
@@ -52,7 +51,7 @@ public:
         defaultPropSet->setValue("ShowEditorConsole", 0);
         defaultPropSet->setValue("ExternalEditor", 0);
         defaultPropSet->setValue("UseCabbageIO", 1);
-        defaultPropSet->setValue("ShowConsoleWithEditor", 0);
+        defaultPropSet->setValue("ShowConsoleWithEditor", 1);
         defaultPropSet->setValue("UsingCabbageCsound", 1);
         defaultPropSet->setValue("AudioEnabled", 1);
         defaultPropSet->setValue("DisableGUIEditModeWarning", 1);
@@ -65,7 +64,6 @@ public:
         defaultPropSet->setValue("EnableNativePopup", 0);
         defaultPropSet->setValue("windowX", 100);
         defaultPropSet->setValue("windowY", 100);
-
         appProperties->getUserSettings()->setFallbackPropertySet(defaultPropSet);
         filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black, getCommandLineParameters());
         filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);

@@ -194,12 +194,12 @@ void PluginWrapper::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMes
 	
 	
 	
-	const float rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
-	const float rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
+	rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
+	rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
 	
 	
 	if(updateCounter==0) 
-		sendActionMessage(String(rmsLeft)+" "+String(rmsRight));
+		sendActionMessage("rmsValues "+String(rmsLeft)+" "+String(rmsRight));
 		
 	updateCounter++;
 	if(updateCounter>5)

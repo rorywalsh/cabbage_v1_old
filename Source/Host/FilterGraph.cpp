@@ -94,6 +94,7 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 				instance->setPluginName(desc->name);
 				cUtils::debug("num params", instance->getNumParameters());
 				node = graph.addNode (instance);
+				node->properties.set("pluginType", "ThirdParty");
 				node->properties.set("pluginName", desc->name);
 			}
 		}
@@ -123,6 +124,7 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 			ScopedPointer<XmlElement> xmlElem;
 			xmlElem = desc->createXml();
 			String xmlText = xmlElem->createDocument("");
+			node->properties.set("pluginType", "Cabbage");
 			node->properties.set("pluginDesc", xmlText);
 		}
 		

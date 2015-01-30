@@ -41,7 +41,8 @@ class PinComponent;
 // Filter Component, GUI component that represents a processing node
 //======================================================================
 class FilterComponent    : public Component, 
-						   public ActionListener
+						   public ActionListener,
+						   public Timer
 {
 public:
     FilterComponent (FilterGraph& graph_, const uint32 filterID_);
@@ -61,7 +62,7 @@ public:
 	void drawLevelMeter (Graphics& g, float x, float y, int width, int height, float level);
 	void drawMuteIcon(Graphics& g, Rectangle<float> rect, bool state);
 	void drawBypassIcon(Graphics& g, Rectangle<float> rect, bool isActive);
-	
+	void timerCallback();
 
 private:
 	ScopedPointer<CodeWindow> codeWindow;
@@ -263,6 +264,7 @@ public:
 
     static void closeCurrentlyOpenWindowsFor (const uint32 nodeId);
     static void closeAllCurrentlyOpenWindows();
+	static void updateWindow(AudioProcessorGraph::Node* node, int nodeId);
 
     void moved() override;
     void closeButtonPressed() override;

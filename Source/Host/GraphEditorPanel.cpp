@@ -28,6 +28,7 @@
 #include "MainHostWindow.h"
 #include "PluginWrapperProcessor.h"
 #include "../Plugin/CabbageGenericAudioProcessorEditor.h"
+#include "../Plugin/PluginGenericAudioProcessorEditor.h"
 
 
 //==============================================================================
@@ -73,6 +74,20 @@ void PluginWindow::closeAllCurrentlyOpenWindows()
     }
 }
 
+void PluginWindow::updateWindow(AudioProcessorGraph::Node* node, int nodeId)
+{
+    for (int i = activePluginWindows.size(); --i >= 0;)
+        if (activePluginWindows.getUnchecked(i)->owner->nodeId == nodeId){
+			 AudioProcessorEditor* ui = nullptr;
+			 activePluginWindows.getUnchecked(i)->setContentOwned(nullptr, false);
+			 ui = node->getProcessor()->createEditor();
+			 if(ui)
+			 activePluginWindows.getUnchecked(i)->setContentOwned(ui, true);
+			 activePluginWindows.getUnchecked(i)->repaint();
+
+
+		}
+}
 //==============================================================================
 class ProcessorProgramPropertyComp : public PropertyComponent,
     private AudioProcessorListener
@@ -162,9 +177,8 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
                 && activePluginWindows.getUnchecked(i)->type == type)
             return activePluginWindows.getUnchecked(i);
 
-    AudioProcessor* processor = node->getProcessor();
-	
-	PluginWrapper* pw = dynamic_cast<PluginWrapper*>(processor);
+    AudioProcessor* processor = node->getProcessor();	
+	PluginWrapper* wrapperPlug = dynamic_cast<PluginWrapper*>(processor);
 	
     AudioProcessorEditor* ui = nullptr;
 
@@ -177,9 +191,12 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
 
     if (ui == nullptr)
     {
-        if (type == Generic || type == Parameters && pw)
+        if (type == Generic || type == Parameters)
 		{
-            ui = new CabbageGenericAudioProcessorEditor (pw);
+			if(wrapperPlug)
+				ui = new PluginGenericAudioProcessorEditor (wrapperPlug);
+			else if(processor)
+				ui = new CabbageGenericAudioProcessorEditor (processor);
 		}
         else if (type == Programs)
             ui = new ProgramAudioProcessorEditor (processor);
@@ -393,6 +410,8 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 
 		const int r = m.show();
 
+		cUtils::debug(r);
+
 		if (r == 1)
 		{
 			graph.removeFilter (filterID);
@@ -415,7 +434,12 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 				codeWindow->setAlwaysOnTop(true);
 				codeWindow->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
 				codeWindow->textEditor->setAllText(csdFile.loadFileAsString());
+				startTimer(100);
 			}			
+		}
+		else if(r == 0)
+		{
+			return;
 		}
 		else
 		{
@@ -529,9 +553,59 @@ bool FilterComponent::hitTest (int x, int y)
 //================================================================================
 void FilterComponent::actionListenerCallback (const String &message)
 {
-	rmsLeft = message.substring(0, message.indexOf(" ")).getFloatValue();
-	rmsRight = message.substring(message.indexOf(" ")+1).getFloatValue();
-	repaint();
+	if(message.contains("rmsValues"))
+	{
+		String newMessage = message.replace("rmsValues ", "");
+		rmsLeft = newMessage.substring(0, newMessage.indexOf(" ")).getFloatValue();
+		rmsRight = newMessage.substring(newMessage.indexOf(" ")+1).getFloatValue();
+		repaint();
+	}
+	else if(message == "closing editor")
+	{
+		codeWindow = nullptr;
+		stopTimer();
+	}
+	else if(message=="fileSaved")
+	{
+		CabbagePluginAudioProcessor* instance = (CabbagePluginAudioProcessor*)(graph.getNodeForId (filterID)->getProcessor());
+
+		String xmlPluginDescriptor = graph.getNodeForId (filterID)->properties.getWithDefault("pluginDesc", "").toString();
+		File file(instance->getCsoundInputFile());
+		file.replaceWithText(codeWindow->csoundDoc.getAllContent());
+		
+		if(instance)
+		{
+			instance->suspendProcessing(true);
+			instance->reCompileCsound(file);
+			instance->setPlayConfigDetails(instance->getNumberCsoundOutChannels(),
+												instance->getNumberCsoundOutChannels(),
+												instance->getCsoundSamplingRate(),
+												instance->getCsoundKsmpsSize());
+												
+			numIns = instance->getNumberCsoundOutChannels();
+			numOuts = instance->getNumberCsoundOutChannels();
+			instance->createGUI(file.loadFileAsString(), true);
+			PluginWindow::updateWindow(graph.getNodeForId(filterID), filterID);
+			update();
+		}
+
+	}
+}
+//================================================================================
+void FilterComponent::timerCallback()
+{
+	if(pluginType==CABBAGE)
+	{
+	CabbagePluginAudioProcessor* instance = (CabbagePluginAudioProcessor*)(graph.getNodeForId (filterID)->getProcessor());
+		
+	if(codeWindow->csoundOutputComponent->getText()!=instance->getCsoundOutput())
+            codeWindow->csoundOutputComponent->setText(instance->getCsoundOutput());
+	
+	if(codeWindow->csoundDebuggerComponent->getText()!=instance->getDebuggerOutput())
+		codeWindow->csoundDebuggerComponent->setText(instance->getDebuggerOutput());
+
+	}
+	
 }
 //================================================================================
 void FilterComponent::paint (Graphics& g)
@@ -700,6 +774,8 @@ void FilterComponent::update()
 
 	if(f->properties.getWithDefault("pluginType","")=="Internal")
 		pluginType = INTERNAL;
+	else if(f->properties.getWithDefault("pluginType","")=="Cabbage")
+		pluginType = CABBAGE;
 	else
 		pluginType = THIRDPARTY;
 

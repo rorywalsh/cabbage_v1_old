@@ -89,7 +89,7 @@ public:
     void setCurrentProgram (int index) override;
     const String getProgramName (int index) override;
     void changeProgramName (int index, const String& newName) override;
-
+	float rmsLeft, rmsRight;
 	ScopedPointer<AudioPluginInstance> vstInstance;
 private:
 	CriticalSection callbackLock;

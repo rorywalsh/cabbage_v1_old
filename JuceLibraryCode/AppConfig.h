@@ -41,7 +41,7 @@
 // juce_audio_devices flags:
 
 #ifndef    JUCE_ASIO
- #ifdef Cabbage_Build_Standalone 
+ #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST) 
    #define JUCE_ASIO 1
  #endif
 #endif

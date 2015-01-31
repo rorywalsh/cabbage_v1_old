@@ -26,52 +26,73 @@ WINDRES = windres.exe
 ifeq ($(CONFIG),Debug)
   BINDIR := build
   LIBDIR := build
-  OBJDIR := build/host/intermediate/Debug
+  OBJDIR := build/intermediate-host/Debug
   OUTDIR := build
 
   ifeq ($(TARGET_ARCH),)
     TARGET_ARCH := -march=pentium4
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -D"CABBAGE_HOST=1" -I $(VST_SDK) -I $(ASIO_SDK) -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
+  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -DCABBAGE_HOST=1 -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DCabbage_GUI_Editor=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -g -ggdb -O -Wno-reorder -Wwrite-strings -Wmain -std=gnu++0x -mstackrealign -static-libgcc -static-libstdc++ -static 
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY) -static
   LDDEPS :=
-  RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -D"CABBAGE_HOST=1" -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DBUILD_DEBUGGER=1 -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
-  TARGET := CabbageHost.exe
+  RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DBUILD_DEBUGGER=1 -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  TARGET := CabbagePatcher.exe
   BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) cabbage32.o -static-libgcc -static-libstdc++ -mstackrealign -static  $(OSCPACK_LIBRARY) 
-endif
+
+endif 
 
 ifeq ($(CONFIG),Release)
   BINDIR := build
   LIBDIR := build
-  OBJDIR := build/host/intermediate/Release
+  OBJDIR := build/intermediate-host/Release
   OUTDIR := build
 
   ifeq ($(TARGET_ARCH),)
-    TARGET_ARCH := -march=pentium4
-    endif
+    TARGET_ARCH := -march=native
+  endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -D"CABBAGE_HOST=1" -I $(VST_SDK) -I $(ASIO_SDK) -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DRELEASE=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
+  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -DCABBAGE_HOST=1 -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DCabbage_GUI_Editor=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -O -Wno-reorder -Wwrite-strings -Wmain -std=gnu++0x -mstackrealign -static-libgcc -static-libstdc++ -static 
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY) -static
   LDDEPS :=
-  RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -D"CABBAGE_HOST=1" -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DBUILD_DEBUGGER=1 -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
-  TARGET := CabbageHost.exe
-  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) cabbage32.o -static-libgcc -static-libstdc++ -mstackrealign -static
-endif
+  RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DBUILD_DEBUGGER=1 -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  TARGET := CabbagePatcher.exe
+  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) cabbage32.o -static-libgcc -static-libstdc++ -mstackrealign -static  $(OSCPACK_LIBRARY)
 
+endif
 
 OBJECTS := \
   $(OBJDIR)/BinaryData_5ba7f54.o \
+  $(OBJDIR)/CabbageCallOutBox_1ced38fd.o \
+  $(OBJDIR)/CabbageGUIClass_79b9049f.o \
   $(OBJDIR)/CabbageLookAndFeel_220a01a6.o \
+  $(OBJDIR)/CabbageMainPanel_12c1333.o \
+  $(OBJDIR)/CabbagePropertiesDialog_5e61b3fd.o \
+  $(OBJDIR)/CabbageTable_d003e736.o \
+  $(OBJDIR)/ComponentLayoutEditor_aa38c835.o \
+  $(OBJDIR)/csPerfThread_f9d0b9cc.o \
+  $(OBJDIR)/DirectoryContentsComponent_616f5a9f.o \
+  $(OBJDIR)/CodeEditor_bb1e171d.o \
+  $(OBJDIR)/CodeWindow_86e6d820.o \
+  $(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o \
+  $(OBJDIR)/CommandManager_f4ac7445.o \
+  $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
+  $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
+  $(OBJDIR)/PluginWrapperProcessor_5t66sdf31b.o \
+  $(OBJDIR)/Soundfiler_35ae1cd0.o \
+  $(OBJDIR)/Table_35ae1cd9.o \
+  $(OBJDIR)/MixerStrip_4j7dh431b.o \
+  $(OBJDIR)/SplitComponent_35ae1cd2.o \
+  $(OBJDIR)/XYPad_6eaa3453.o \
+  $(OBJDIR)/XYPadAutomation_2865c48a.o \
   $(OBJDIR)/FilterGraph_62e9c017.o \
   $(OBJDIR)/GraphEditorPanel_3dbd4872.o \
   $(OBJDIR)/HostStartup_5ce96f96.o \
   $(OBJDIR)/InternalFilters_beb54bdf.o \
-  $(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o \
   $(OBJDIR)/MainHostWindow_e920295a.o \
   $(OBJDIR)/CabbagePluginListComponent_e920298a.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
@@ -91,19 +112,127 @@ OBJECTS := \
 .PHONY: clean
 
 $(OUTDIR)/$(TARGET): $(OBJECTS) $(LDDEPS) $(RESOURCES)
-	@echo Linking CabbagePatcher
+	@echo Linking CabbageHost
 	-@mkdir -p $(BINDIR)
 	-@mkdir -p $(LIBDIR)
 	-@mkdir -p $(OUTDIR)
 	@$(BLDCMD)
 
 clean:
-	@echo Cleaning CabbagePatcher
+	@echo Cleaning CabbageHost
+	-@rm -f $(OUTDIR)/$(TARGET)
+	-@rm -rf $(OBJDIR)/*
+	-@rm -rf $(OBJDIR)
 	@$(CLEANCMD)
 
 strip:
-	@echo Stripping CabbagePatcher
+	@echo Stripping CabbageHost
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
+
+$(OBJDIR)/BinaryData_5ba7f54.o: ../../Source/BinaryData.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling BinaryData.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbageCallOutBox_1ced38fd.o: ../../Source/CabbageCallOutBox.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageCallOutBox.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbageGUIClass_79b9049f.o: ../../Source/CabbageGUIClass.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageGUIClass.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbageLookAndFeel_220a01a6.o: ../../Source/CabbageLookAndFeel.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageLookAndFeel.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbageMainPanel_12c1333.o: ../../Source/CabbageMainPanel.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageMainPanel.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbagePropertiesDialog_5e61b3fd.o: ../../Source/CabbagePropertiesDialog.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbagePropertiesDialog.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbageTable_d003e736.o: ../../Source/CabbageTable.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageTable.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/Table_35ae1cd9.o: ../../Source/Table.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling Table.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ComponentLayoutEditor_aa38c835.o: ../../Source/ComponentLayoutEditor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ComponentLayoutEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/SplitComponent_35ae1cd2.o: ../../Source/Editor/SplitComponent.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling SplitComponent.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o: ../../Source/CabbageAudioDeviceSelectorComponent.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageAudioDeviceSelectorComponent.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/csPerfThread_f9d0b9cc.o: ../../Source/csPerfThread.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling csPerfThread.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/DirectoryContentsComponent_616f5a9f.o: ../../Source/DirectoryContentsComponent.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling DirectoryContentsComponent.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CodeEditor_bb1e171d.o: ../../Source/Editor/CodeEditor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CodeEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CodeWindow_86e6d820.o: ../../Source/Editor/CodeWindow.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CodeWindow.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CommandManager_f4ac7445.o: ../../Source/Editor/CommandManager.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CommandManager.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbagePluginEditor_5a11f64e.o: ../../Source/Plugin/CabbagePluginEditor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbagePluginEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbagePluginProcessor_73d6661b.o: ../../Source/Plugin/CabbagePluginProcessor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbagePluginProcessor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/Soundfiler_35ae1cd0.o: ../../Source/Soundfiler.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling Soundfiler.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/XYPad_6eaa3453.o: ../../Source/XYPad.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling XYPad.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/XYPadAutomation_2865c48a.o: ../../Source/XYPadAutomation.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling XYPadAutomation.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/BinaryData_5ba7f54.o: ../../Source/BinaryData.cpp
 	-@mkdir -p $(OBJDIR)
@@ -120,6 +249,16 @@ $(OBJDIR)/FilterGraph_62e9c017.o: ../../Source/Host/FilterGraph.cpp
 	@echo "Compiling FilterGraph.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/MixerStrip_4j7dh431b.o:../../Source/Host/MixerStrip.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling MixerStrip.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
+$(OBJDIR)/PluginWrapperProcessor_5t66sdf31b.o:../../Source/Host/PluginWrapperProcessor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling PluginWrapperProcessor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
 $(OBJDIR)/GraphEditorPanel_3dbd4872.o: ../../Source/Host/GraphEditorPanel.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling GraphEditorPanel.cpp"

@@ -137,6 +137,9 @@ public:
                              const MouseEvent& e);
     void dragConnector (const MouseEvent& e);
     void endDraggingConnector (const MouseEvent& e);
+	String newFile(String type, String caption);
+	WildcardFileFilter wildcardFilter;
+	
     SelectedItemSet <FilterComponent*>& getLassoSelection() {
         return selectedFilters;
     }

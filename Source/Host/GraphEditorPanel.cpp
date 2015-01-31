@@ -428,7 +428,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 			if(codeWindow==nullptr)
 			{
 				File csdFile = nativeCabbagePlugin->getCsoundInputFile();
-				codeWindow = new CodeWindow(csdFile.getFullPathName());
+				codeWindow = new CodeWindow(csdFile.getFileNameWithoutExtension());
 				codeWindow->addActionListener(this);
 				codeWindow->textEditor->setShowTabButtons(false);
 				codeWindow->setSize(500, 400);
@@ -1097,7 +1097,7 @@ private:
 
 //==============================================================================
 GraphEditorPanel::GraphEditorPanel (FilterGraph& graph_)
-    : graph (graph_)
+    : graph (graph_), wildcardFilter("*.*", "*", "File Filter")
 {
     InternalPluginFormat internalFormat;
 
@@ -1151,6 +1151,34 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 			
 			
             const int r = m.show();
+			bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+			wildcardFilter = WildcardFileFilter("*.csd", "*", ".csd Files");
+			
+			//file new instrument
+			if(r==801)
+			{
+				Array<File> selectedFile = cUtils::launchFileBrowser("Save file as...", wildcardFilter, 0, File(""), showNative, &getLookAndFeel());
+				if(selectedFile.size()>0)
+				{				
+					File csoundFile(selectedFile[0].withFileExtension(String(".csd")));
+					csoundFile.replaceWithText(newFile("instrument", csoundFile.getFileNameWithoutExtension()));
+					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, AUDIO_PLUGIN, csoundFile.getFullPathName());
+				}
+				return;
+			}
+			
+			//file new effect
+			if(r==802)
+			{
+				Array<File> selectedFile = cUtils::launchFileBrowser("Save file as...", wildcardFilter, 0, File(""), showNative, &getLookAndFeel());
+				if(selectedFile.size()>0)
+				{				
+					File csoundFile(selectedFile[0].withFileExtension(String(".csd")));
+					csoundFile.replaceWithText(newFile("effect", csoundFile.getFileNameWithoutExtension()));
+					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, AUDIO_PLUGIN, csoundFile.getFullPathName());
+				}
+				return;
+			}
 
 			if(r>0) //make sure we have a valid item index....
 			{
@@ -1352,6 +1380,80 @@ void GraphEditorPanel::updateComponents()
             comp->setOutput (c->destNodeId, c->destChannelIndex);
         }
     }
+}
+
+
+String GraphEditorPanel::newFile(String type, String caption)
+{
+	String csdText;
+	if(type=="effect")
+	{
+		csdText= 
+		"<Cabbage>\n"
+		"form size(400, 300), caption(\"";
+		csdText = csdText+caption+"\"), pluginID(\"plu1\")\n"
+		"\n"
+		"</Cabbage>\n"
+		"<CsoundSynthesizer>\n"
+		"<CsOptions>\n"
+		"-n -d\n"
+		"</CsOptions>\n"
+		"<CsInstruments>\n"
+		"sr = 44100\n"
+		"ksmps = 64\n"
+		"nchnls = 2\n"
+		"0dbfs=1\n"
+		"\n"
+		"instr 1\n"
+		"a1 inch 1\n"
+		"a2 inch 2\n"
+		"\n"
+		"\n"
+		"outs a1, a2\n"
+		"endin\n"
+		"\n"
+		"</CsInstruments>  \n"
+		"<CsScore>\n"
+		"f1 0 1024 10 1\n"
+		"i1 0 3600\n"
+		"</CsScore>\n"
+		"</CsoundSynthesizer>";
+	}
+	
+	else if(type=="instrument")
+	{
+		csdText= 
+		"<Cabbage>\n"
+		"form size(400, 300), caption(\"";
+		csdText = csdText+caption+"\"), pluginID(\"plu1\")\n"
+		"keyboard bounds(10, 200, 390, 100)\n"
+		"\n"
+
+		"</Cabbage>\n"
+		"<CsoundSynthesizer>\n"
+		"<CsOptions>\n"
+		"-n -d -+rtmidi=NULL -M0 --midi-key-cps=4 --midi-velocity-amp=5\n" 
+		"</CsOptions>\n"
+		"<CsInstruments>\n"
+		"sr = 44100\n"
+		"ksmps = 64\n"
+		"nchnls = 2\n"
+		"0dbfs=1\n"
+		"\n"
+		"instr 1\n"
+		"a1 oscili p5, p4, 1\n"
+		"outs a1, a1"
+		"\n"
+		"endin\n"
+		"\n"
+		"</CsInstruments>  \n"
+		"<CsScore>\n"
+		"f1 0 1024 10 1\n"
+		"f0 3600\n"
+		"</CsScore>\n"
+		"</CsoundSynthesizer>";
+	}
+	return csdText;
 }
 
 void GraphEditorPanel::beginConnectorDrag (const uint32 sourceFilterID, const int sourceFilterChannel,

@@ -2202,5 +2202,3 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
 }
 
 //==============================================================================
-
-

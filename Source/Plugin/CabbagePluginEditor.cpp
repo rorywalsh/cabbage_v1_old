@@ -23,7 +23,7 @@
 #include  "../CabbageCustomWidgets.h"
 
 
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 #include "../ComponentLayoutEditor.h"
 #include "../CabbageMainPanel.h"
 #endif
@@ -98,7 +98,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     this->setLookAndFeel(lookAndFeel);
     Component::setLookAndFeel(lookAndFeel);
     //oldSchoolLook = new OldSchoolLookAndFeel();
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     //determine whether instrument should be opened in GUI mode or not
     componentPanel = new CabbageMainPanel();
     componentPanel->setLookAndFeel(lookAndFeel);

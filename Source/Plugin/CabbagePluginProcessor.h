@@ -27,7 +27,7 @@
 #include "../XYPadAutomation.h"
 #include "../CabbageMessageSystem.h"
 #include "../Soundfiler.h"
-#include "CabbageGenericAudioProcessorEditor.h"
+//#include "CabbageGenericAudioProcessorEditor.h"
 #include "../CabbageLookAndFeel.h"
 
 
@@ -57,7 +57,7 @@
 #define EXTERNAL_PLUGIN 2
 #define AUTOMATION_PLUGIN 3
 
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 class CsoundCodeEditor;
 #endif
 
@@ -226,14 +226,14 @@ public:
 	}
     //==============================================================================
 
-#if defined(Cabbage_Build_Standalone) || (Cabbage_Plugin_Host)
+#if defined(Cabbage_Build_Standalone) || (CABBAGE_HOST)
     CabbagePluginAudioProcessor(String inputfile, bool guiOnOff, int pluginType);
 #else
     CabbagePluginAudioProcessor();
 #endif
     ~CabbagePluginAudioProcessor();
 
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     CsoundCodeEditor* codeEditor;
 #endif
 
@@ -334,7 +334,7 @@ public:
     inline String getCsoundInputFileText()
     {
         String ret="";
-#if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
+#if (defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)) && !defined(AndroidBuild)
         if(codeEditor)
             ret = codeEditor->getAllText();
         else
@@ -346,14 +346,14 @@ public:
     void updateCsoundFile(String text)
     {
         //csdFile.replaceWithText(text);
-#if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
+#if (defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)) && !defined(AndroidBuild)
         codeEditor->setAllText(text);
 #endif
     }
 
     int saveEditorFiles()
     {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
         if(codeEditor)
             return codeEditor->saveAllFiles();
 #endif
@@ -361,7 +361,7 @@ public:
 
     void saveText()
     {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
         codeEditor->textChanged = false;
 #endif
     }
@@ -387,7 +387,7 @@ public:
 
     void highlightLine(String text)
     {
-#if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
+#if (defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)) && !defined(AndroidBuild)
         codeEditor->highlightLine(text);
 #endif
     }

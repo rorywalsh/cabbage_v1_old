@@ -179,6 +179,7 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
 
     AudioProcessor* processor = node->getProcessor();	
 	PluginWrapper* wrapperPlug = dynamic_cast<PluginWrapper*>(processor);
+	//CabbagePluginAudioProcessor* cabbageNode = dynamic_cast<CabbagePluginAudioProcessor*>(processor);
 	
     AudioProcessorEditor* ui = nullptr;
 

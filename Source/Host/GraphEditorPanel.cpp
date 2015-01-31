@@ -38,13 +38,15 @@ static Array <PluginWindow*> activePluginWindows;
 PluginWindow::PluginWindow (Component* const pluginEditor,
                             AudioProcessorGraph::Node* const o,
                             WindowFormatType t)
-    : DocumentWindow (pluginEditor->getName(), Colours::lightblue,
+    : DocumentWindow (pluginEditor->getName(), Colours::black,
                       DocumentWindow::minimiseButton | DocumentWindow::closeButton),
     owner (o),
-    type (t)
+    type (t),
+	basicLookAndFeel(new CabbageLookAndFeelBasic())
 {
     setSize (400, 300);
-
+	this->setTitleBarHeight(18);
+	setLookAndFeel(basicLookAndFeel);
     setContentOwned (pluginEditor, true);
 
     setTopLeftPosition (owner->properties.getWithDefault ("uiLastX", Random::getSystemRandom().nextInt (500)),
@@ -179,7 +181,6 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
 
     AudioProcessor* processor = node->getProcessor();	
 	PluginWrapper* wrapperPlug = dynamic_cast<PluginWrapper*>(processor);
-	//CabbagePluginAudioProcessor* cabbageNode = dynamic_cast<CabbagePluginAudioProcessor*>(processor);
 	
     AudioProcessorEditor* ui = nullptr;
 
@@ -429,6 +430,8 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 				File csdFile = nativeCabbagePlugin->getCsoundInputFile();
 				codeWindow = new CodeWindow(csdFile.getFullPathName());
 				codeWindow->addActionListener(this);
+				codeWindow->textEditor->setShowTabButtons(false);
+				codeWindow->setSize(500, 400);
 				codeWindow->setTopLeftPosition(e.getScreenX()-100, e.getScreenY()+100);
 				codeWindow->setVisible(true);	
 				codeWindow->toFront(true);
@@ -629,6 +632,9 @@ void FilterComponent::paint (Graphics& g)
 	const int w = getWidth() - x * 2;
 	const int h = getHeight() - pinSize * 2;
 
+	g.setColour(cUtils::getComponentSkin().withAlpha(.2f));
+	g.fillRoundedRectangle(x, y, w, h, 5);
+	
 	g.drawRoundedRectangle(x, y, w, h, 5, 1.f);
 	g.setColour (cUtils::getComponentFontColour());
 	g.setFont (cUtils::getComponentFont());
@@ -1096,15 +1102,16 @@ GraphEditorPanel::GraphEditorPanel (FilterGraph& graph_)
     InternalPluginFormat internalFormat;
 
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioInputFilter),
-               0.5f, 0.2f);
+               0.5f, 0.5f);
 
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::midiInputFilter),
-               0.3f, 0.2f);
+               0.47f, 0.5f);
 
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioOutputFilter),
-               0.5f, 0.8f);
+               0.5f, 0.56f);
     graph.addChangeListener (this);
     setOpaque (true);
+	//setSize(10000, 10000);
 }
 
 GraphEditorPanel::~GraphEditorPanel()
@@ -1121,13 +1128,20 @@ void GraphEditorPanel::paint (Graphics& g)
 
 void GraphEditorPanel::mouseDown (const MouseEvent& e)
 {
+	myDragger.startDraggingComponent (this, e);
+	
 	Array<File> cabbageFiles;
 	int numNonNativePlugins;
 	
     if (e.mods.isPopupMenu())
     {
         PopupMenu m;
-
+		PopupMenu subMenu;
+		subMenu.addItem(801, "Instrument");
+		subMenu.addItem(802, "Effect");
+		m.addSubMenu("New", subMenu);
+		m.addSeparator();
+	
         if (MainHostWindow* const mainWindow = findParentComponentOfClass<MainHostWindow>())
         {
 			mainWindow->addPluginsToMenu (m);
@@ -1175,12 +1189,13 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 
 void GraphEditorPanel::mouseDrag (const MouseEvent& e)
 {
-//	if(!e.mods.isCommandDown())
-//		myDragger.dragComponent (this, e, nullptr);
-//	else{
-    lassoComp.toFront (false);
-    lassoComp.dragLasso (e);
-//	}
+	if(!e.mods.isCommandDown())
+		myDragger.dragComponent (this, e, nullptr);
+	else
+	{
+		lassoComp.toFront (false);
+		lassoComp.dragLasso (e);
+	}
 }
 
 void GraphEditorPanel::mouseUp (const MouseEvent& e)
@@ -1700,6 +1715,9 @@ GraphDocumentComponent::GraphDocumentComponent (AudioPluginFormatManager& format
     deviceManager->addChangeListener (graphPanel);
 
     graphPlayer.setProcessor (&graph.getGraph());
+	
+	graphPanel->setSize(6000, 6000);
+	graphPanel->setTopLeftPosition(-2600,-2900);
 
     keyState.addListener (&graphPlayer.getMidiMessageCollector());
 
@@ -1746,7 +1764,7 @@ void GraphDocumentComponent::resized()
     const int keysHeight = 60;
     const int statusHeight = 20;
 
-    graphPanel->setBounds (0, 0, getWidth(), getHeight() - keysHeight);
+    //graphPanel->setBounds (0, 0, getWidth(), getHeight() - keysHeight);
     statusBar->setBounds (0, getHeight() - keysHeight - statusHeight, getWidth(), statusHeight);
     keyboardComp->setBounds (200, getHeight() - keysHeight, getWidth()-200, keysHeight);
 	inputStrip->setBounds(0, getHeight() - keysHeight, 200, keysHeight/2);

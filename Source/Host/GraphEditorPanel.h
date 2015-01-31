@@ -28,6 +28,7 @@
 #include "FilterGraph.h"
 #include "MixerStrip.h"
 #include "../Editor/CodeWindow.h"
+#include "../CabbageLookAndFeel.h"
 
 class GraphEditorPanel;
 class ConnectorComponent;
@@ -207,6 +208,42 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GraphAudioProcessorPlayer)
 };
+
+//==============================================================================
+//    A lightweight component to handle scrolling of graph panel
+//==============================================================================
+class GraphPanelContainer : public Component
+{
+public:
+	GraphPanelContainer(String name):Component(name)
+	{
+
+	}
+
+	~GraphPanelContainer(){}
+
+	void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel)
+	{
+		const int posOffset = 100;
+		const int sizeOffset = posOffset*2;
+			
+		if(wheel.deltaY>0)
+		{
+			getChildComponent(0)->setBounds(getChildComponent(0)->getPosition().x+posOffset, 
+												getChildComponent(0)->getPosition().y+posOffset,
+												getChildComponent(0)->getWidth()-sizeOffset, 
+												getChildComponent(0)->getHeight()-sizeOffset);
+
+		}
+		else
+		{ 
+			getChildComponent(0)->setBounds(getChildComponent(0)->getPosition().x-posOffset, 
+												getChildComponent(0)->getPosition().y-posOffset,
+												getChildComponent(0)->getWidth()+sizeOffset, 
+												getChildComponent(0)->getHeight()+sizeOffset);
+		}
+	}
+};
 //==============================================================================
 //    A panel that embeds a GraphEditorPanel with a midi keyboard at the bottom.
 //    It also manages the graph itself, and plays it.
@@ -231,6 +268,7 @@ public:
 private:
     //==============================================================================
     AudioDeviceManager* deviceManager;
+	GraphPanelContainer* graphPanelContainer;
     GraphAudioProcessorPlayer graphPlayer;
     MidiKeyboardState keyState;
 	InternalMixerStrip* inputStrip;
@@ -273,6 +311,7 @@ public:
 private:
     AudioProcessorGraph::Node* owner;
     WindowFormatType type;
+	ScopedPointer<CabbageLookAndFeelBasic> basicLookAndFeel;
 
     float getDesktopScaleFactor() const override     {
         return 1.0f;

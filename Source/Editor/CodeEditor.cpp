@@ -36,12 +36,20 @@ CsoundCodeEditor::CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTo
     editor[currentEditor]->getDocument().setSavePoint();
 
     openFiles.add("CABBAGE_CSOUND_FILE");
+	
+	helpComp = new HelpComp();
+	searchReplaceComp = new SearchReplaceComp();
+	
+#ifndef CABBAGE_HOST
+	addAndMakeVisible(searchReplaceComp);
+	searchReplaceComp->setVisible(true);
+#endif
 
-    addAndMakeVisible(helpComp = new HelpComp());
-    helpComp->setVisible(false);
-    addAndMakeVisible(searchReplaceComp = new SearchReplaceComp());
+	
+    addAndMakeVisible(helpComp);
+	helpComp->setVisible(false);
     searchReplaceComp->addChangeListener(this);
-    searchReplaceComp->setVisible(true);
+    
 
     editor[currentEditor]->addChangeListener(this);
     editor[currentEditor]->addActionListener(this);
@@ -127,9 +135,9 @@ void CsoundCodeEditor::resized()
     }
     else
     {
-        editor[currentEditor]->setBounds(0, 0, getWidth(), getHeight()-55);
-        searchReplaceComp->setBounds(33, getHeight()-30, getWidth()-33, 30);
-        helpComp->setBounds(33, getHeight()-30, getWidth()-33, 30);
+        editor[currentEditor]->setBounds(0, 0, getWidth(), getHeight() - (helpComp->isVisible() ? 30 : 0));
+        //searchReplaceComp->setBounds(0, getHeight()-30, getWidth()-33, 30);
+        helpComp->setBounds(0, getHeight()-30, getWidth(), 30);
 
     }
 
@@ -487,12 +495,17 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
 {
     if(message.contains("helpDisplay"))
     {
+	#ifdef CABBAGE_HOST
+		helpComp->setVisible(true);
+		resized();
+	#else
         if(!helpComp->isVisible())
         {
             searchReplaceComp->setVisible(false);
             helpComp->setVisible(true);
             resized();
         }
+	#endif
     }
     else if(message.contains("InstrumentBreakpoint"))
     {

@@ -20,7 +20,7 @@
 #include "CodeWindow.h"
 
 //==============================================================================
-CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
+CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
             DocumentWindow::allButtons),
     fontSize(15),
     showOutput(true),
@@ -44,7 +44,11 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 
 #ifdef BUILD_DEBUGGER
     splitBottomWindow = new SplitComponent(*csoundOutputComponent, *csoundDebuggerComponent, true);
-    splitBottomWindow->SetSplitBarPosition(getWidth()/2);
+	#ifdef CABBAGE_HOST
+		splitBottomWindow->SetSplitBarPosition(getWidth());
+	#else
+		splitBottomWindow->SetSplitBarPosition(getWidth()/2);
+	#endif
     splitWindow = new SplitComponent(*textEditor, *splitBottomWindow, false);
 #else
     splitWindow = new SplitComponent(*textEditor, *csoundOutputComponent, false);
@@ -53,7 +57,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
     textEditor->editor[textEditor->currentEditor]->addActionListener(this);
 
     this->setTitleBarHeight(20);
-    this->setColour(DocumentWindow::backgroundColourId, cUtils::getBackgroundSkin());
+    this->setColour(DocumentWindow::backgroundColourId, Colour(20, 20, 20));
 
 
     setMenuBar(this, 25);
@@ -111,6 +115,7 @@ void CodeWindow::showEditorConsole()
     if(cUtils::getPreference(appProperties, "ShowEditorConsole")==1)
     {
        splitWindow->SetSplitBarPosition(getHeight()-(getHeight()/4));
+	   splitBottomWindow->SetSplitBarPosition(getWidth());
 #ifdef BUILD_DEBUGGER
         splitBottomWindow->SetSplitBarPosition(getWidth()/2);
 #endif
@@ -830,7 +835,7 @@ void CodeWindow::setColourScheme(String theme)
         textEditor->editor[textEditor->currentEditor]->setColourScheme(csoundToker.getDefaultColourScheme());
         textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
         textEditor->editor[textEditor->currentEditor]->setColour(CaretComponent::caretColourId, Colours::black);
-        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue);
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::lime);
         appProperties->getUserSettings()->setValue("EditorColourScheme", 0);
         repaint();
     }
@@ -838,8 +843,12 @@ void CodeWindow::setColourScheme(String theme)
     {
         textEditor->editor[textEditor->currentEditor]->setColourScheme(csoundToker.getDarkColourScheme());
         textEditor->editor[textEditor->currentEditor]->setColour(CaretComponent::caretColourId, Colours::white);
-        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
-        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f));
+	#ifdef CABBAGE_HOST
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(30, 30, 30));
+    #else    
+		textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
+    #endif    
+		textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f));
         appProperties->getUserSettings()->setValue("EditorColourScheme", 1);
     }
 }

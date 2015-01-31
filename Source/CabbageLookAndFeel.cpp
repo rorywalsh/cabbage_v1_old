@@ -1089,28 +1089,7 @@ int CabbageLookAndFeel::getDefaultScrollbarWidth()
 {
     return 18;
 }
-//==============================================================================
-void CabbageLookAndFeel::drawStretchableLayoutResizerBar (Graphics& g, int w, int h,
-        bool /*isVerticalBar*/,
-        bool isMouseOver,
-        bool isMouseDragging)
-{
-    float alpha = 0.5f;
-    g.fillAll(cUtils::getDarkerBackgroundSkin());
-    if (isMouseOver || isMouseDragging)
-    {
-        g.fillAll (Colour (40, 40, 40));
-        alpha = 1.0f;
-    }
 
-    const float cx = w * 0.5f;
-    const float cy = h * 0.5f;
-    const float cr = jmin (w, h) * 0.4f;
-
-    g.setColour(Colours::brown);
-
-    g.fillEllipse (cx - cr, cy - cr, cr * 2.0f, cr * 2.0f);
-}
 //======= Scrollbar buttons =======================================================================
 void CabbageLookAndFeel::drawScrollbarButton (Graphics &g, ScrollBar &scrollbar, int width, int height,
         int buttonDirection,
@@ -1271,10 +1250,16 @@ void CabbageLookAndFeel::drawDocumentWindowTitleBar (DocumentWindow &window, Gra
         bool /*drawTitleTextOnLeft*/)
 {
     window.setUsingNativeTitleBar(false);
-
+	
+#ifdef CABBAGE_HOST
+    window.setOpaque(true);
+    g.setColour (cUtils::getComponentSkin());
+    g.fillRoundedRectangle(0, 0, w, h+20, 10);
+#else
     g.setColour (cUtils::getDarkerBackgroundSkin());
     g.fillAll();
-
+#endif	
+	
     g.setColour (cUtils::getComponentFontColour());
     Font font = cUtils::getTitleFont();
 #ifndef MACOSX
@@ -1853,6 +1838,30 @@ void CabbageLookAndFeel::drawTableHeaderColumn (Graphics& g, const String& colum
     g.drawFittedText (columnName, textX, 0, rightOfText - textX, height, Justification::centredLeft, 1);
 }
 
+//==============================================================================
+void CabbageLookAndFeel::drawStretchableLayoutResizerBar (Graphics& g, int w, int h,
+                                                      bool /*isVerticalBar*/,
+                                                      bool isMouseOver,
+                                                      bool isMouseDragging)
+{
+    float alpha = 0.5f;
+
+    if (isMouseOver || isMouseDragging)
+    {
+        g.fillAll (Colour (Colours::cornflowerblue.withAlpha(.5f)));
+        alpha = 1.0f;
+    }
+
+    const float cx = w * 0.5f;
+    const float cy = h * 0.5f;
+    const float cr = jmin (w, h) * 0.4f;
+
+    g.setGradientFill (ColourGradient (Colours::white.withAlpha (alpha), cx + cr * 0.1f, cy + cr,
+                                       Colours::black.withAlpha (alpha), cx, cy - cr * 4.0f,
+                                       true));
+
+    g.fillEllipse (cx - cr, cy - cr, cr * 2.0f, cr * 2.0f);
+}
 /*
   =========================================================================================================
 
@@ -1867,6 +1876,23 @@ CabbageLookAndFeelBasic::CabbageLookAndFeelBasic()
 
 CabbageLookAndFeelBasic::~CabbageLookAndFeelBasic()
 {
+}
+
+//========= Document Window Buttons =======================================================================
+Button* CabbageLookAndFeelBasic::createDocumentWindowButton (int buttonType)
+{
+    ImageButton* button;
+    button = new ImageButton("Button");
+    Image normalImage, isOverImage;
+
+    normalImage = drawWindowButtonNormal(buttonType);
+    isOverImage = drawWindowButtonIsOver(buttonType);
+
+    button->setImages(true, false, true, normalImage, 1, Colours::transparentBlack, isOverImage,
+                      1, Colours::transparentBlack, isOverImage, 1, Colours::transparentBlack, 0);
+
+
+    return button;
 }
 
 //=========== Linear Slider Background ====================================================================
@@ -1914,7 +1940,30 @@ void CabbageLookAndFeelBasic::drawLinearSliderBackground (Graphics &g, int /*x*/
     g.setColour(Colours::black);
     g.drawRoundedRectangle(0.5f, slider.getHeight()*0.3 + 0.5f, sliderPos - 1.0f, slider.getHeight()*0.4 - 1.0f, slider.getHeight() / 20.0f, 1.0f);
 }
+//=================================================================================
+void CabbageLookAndFeelBasic::drawStretchableLayoutResizerBar (Graphics& g, int w, int h,
+                                                      bool /*isVerticalBar*/,
+                                                      bool isMouseOver,
+                                                      bool isMouseDragging)
+{
+    float alpha = 0.5f;
 
+    if (isMouseOver || isMouseDragging)
+    {
+        g.fillAll (Colour (Colours::cornflowerblue.withAlpha(.5f)));
+        alpha = 1.0f;
+    }
+
+    const float cx = w * 0.5f;
+    const float cy = h * 0.5f;
+    const float cr = jmin (w, h) * 0.4f;
+
+    g.setGradientFill (ColourGradient (Colours::white.withAlpha (alpha), cx + cr * 0.1f, cy + cr,
+                                       Colours::black.withAlpha (alpha), cx, cy - cr * 4.0f,
+                                       true));
+
+    g.fillEllipse (cx - cr, cy - cr, cr * 2.0f, cr * 2.0f);
+}
 //=========== Linear Thumb =================================================================================
 void CabbageLookAndFeelBasic::drawLinearSliderThumb (Graphics &g, int /*x*/, int /*y*/, int /*width*/, int /*height*/,
         float sliderPos,
@@ -2223,19 +2272,16 @@ void CabbageLookAndFeelBasic::drawDocumentWindowTitleBar (DocumentWindow &window
         bool /*drawTitleTextOnLeft*/)
 {
     window.setUsingNativeTitleBar(false);
-    window.setOpaque(true);
-    g.setColour (cUtils::getComponentSkin().brighter());
-    g.fillRoundedRectangle(0, 0, w, h+20, 10);
+    g.setColour (cUtils::getComponentSkin().darker(.7f));
+    g.fillAll();
 
     g.setColour (cUtils::getComponentFontColour());
     Font font = cUtils::getTitleFont();
 #ifndef MACOSX
     font.setFallbackFontName("Verdana");
 #endif
-    font.setHeight(16);
     g.setFont (font);
-    g.drawText (cUtils::cabbageString(window.getName(), font, titleSpaceW), (w/2)-(titleSpaceW/2),
-                (h/2)-(font.getHeight()/2), titleSpaceW, font.getHeight(), 36, false);
+    g.drawFittedText(window.getName(), 0, 0, window.getWidth(), window.getTitleBarHeight(), Justification::centred, 2);
 }
 
 //======== Popup Menu background ======================================================================
@@ -2294,7 +2340,7 @@ void CabbageLookAndFeelBasic::drawResizableWindowBorder (Graphics &g, int w, int
         BorderSize< int > &border,
         ResizableWindow &window)
 {
-
+g.fillAll(Colours::transparentBlack);
 }
 
 //======== Popup Menu Items ===========================================================================
@@ -2347,4 +2393,74 @@ void CabbageLookAndFeelBasic::drawPopupMenuItem (Graphics &g, int width, int hei
                     Justification::centredRight,
                     true);
     }
+}
+
+//====== Draw Window Button Normal Image =================================================================
+Image CabbageLookAndFeelBasic::drawWindowButtonNormal(int buttonType)
+{
+    int width, height;
+    width = height = 20;
+    Image img = Image(Image::ARGB, width, height, true);
+    Graphics g (img);
+
+    String str;
+
+    if (buttonType == 1)
+        str << "_";
+    else if (buttonType == 2)
+        str << "+";
+    else if (buttonType == 4)
+        str << "x";
+
+    //----- Background
+    g.setColour (Colours::transparentBlack);
+    g.fillRoundedRectangle(1, 1, width-2, height-2, 2);
+
+    //----- Text symbol
+    Font font = cUtils::getComponentFont();
+    g.setFont (font);
+    g.setColour (cUtils::getComponentFontColour());
+    g.drawText(str, (width/2) - (font.getHeight()/2), (width/2) - (font.getHeight()/2),
+               font.getHeight(), font.getHeight(), 36, false);
+
+    return img;
+}
+
+//====== Draw Window Button Image Is Over ==============================================================
+Image CabbageLookAndFeelBasic::drawWindowButtonIsOver(int buttonType)
+{
+    int width, height;
+    width = height = 20;
+    Image img = Image(Image::ARGB, width, height, true);
+    Graphics g (img);
+
+    String str;
+
+    if (buttonType == 1)
+        str << "_";
+    else if (buttonType == 2)
+        str << "+";
+    else if (buttonType == 4)
+        str << "x";
+
+    //---- Background
+    g.setColour (Colours::transparentBlack);
+    g.fillRoundedRectangle(1, 1, width-2, height-2, 2);
+
+    //---- Text symbol
+    Font font = cUtils::getComponentFont();
+    g.setFont (font);
+    g.setColour (Colours::whitesmoke);
+    g.drawText(str, (width/2) - (font.getHeight()/2), (width/2) - (font.getHeight()/2),
+               font.getHeight(), font.getHeight(), 36, false);
+
+    //---- V lines
+    ColourGradient cg = ColourGradient(Colours::transparentBlack, 0, 0, Colours::transparentBlack,
+                                       0, height, false);
+    cg.addColour (0.5, cUtils::getComponentFontColour());
+    g.setGradientFill (cg);
+    g.drawLine (0, 0, 0, height, 1);
+    g.drawLine (width, 0, width, height, 1);
+
+    return img;
 }

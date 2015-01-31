@@ -267,6 +267,13 @@ public:
                             Image */*image*/,
                             const Colour */*const textColour*/);
 
+	Button* createDocumentWindowButton (int buttonType);
+	Image drawWindowButtonNormal(int buttonType);
+	Image drawWindowButtonIsOver(int buttonType);
+	void drawStretchableLayoutResizerBar (Graphics& g, int w, int h,
+                                                      bool /*isVerticalBar*/,
+                                                      bool isMouseOver,
+                                                      bool isMouseDragging);
 
     juce_UseDebuggingNewOperator
 

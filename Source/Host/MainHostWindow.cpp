@@ -91,6 +91,10 @@ MainHostWindow::MainHostWindow()
 
     deviceManager.initialise (256, 256, savedAudioState, true);
 
+	audioSettingsComp = new CabbageAudioDeviceSelectorComponent(deviceManager,
+	0, 256,	0, 256, true, true, true, false);
+	audioSettingsComp->setSize (500, 450);
+
     setResizable (true, false);
     setResizeLimits (500, 400, 10000, 10000);
     centreWithSize (800, 600);
@@ -218,7 +222,7 @@ PopupMenu MainHostWindow::getMenuForIndex (int topLevelMenuIndex, const String& 
     else if (topLevelMenuIndex == 2)
     {
         // "Options" menu
-
+		menu.addCommandItem (&getCommandManager(), CommandIDs::preferences);
         menu.addCommandItem (&getCommandManager(), CommandIDs::showPluginListEditor);
 
         PopupMenu sortTypeMenu;
@@ -343,6 +347,7 @@ void MainHostWindow::getAllCommands (Array <CommandID>& commands)
                               CommandIDs::showPluginListEditor,
                               CommandIDs::showAudioSettings,
                               CommandIDs::aboutBox,
+							  CommandIDs::preferences,
 							  CommandIDs::setCabbageFileDirectory
                             };
 
@@ -394,6 +399,10 @@ void MainHostWindow::getCommandInfo (const CommandID commandID, ApplicationComma
         result.setInfo ("About...", String::empty, category, 0);
         break;
 
+    case CommandIDs::preferences:
+        result.setInfo ("Preferences", String::empty, category, 0);
+        break;
+		
     default:
         break;
     }
@@ -401,6 +410,7 @@ void MainHostWindow::getCommandInfo (const CommandID commandID, ApplicationComma
 
 bool MainHostWindow::perform (const InvocationInfo& info)
 {
+
     GraphDocumentComponent* const graphEditor = getGraphEditor();
 	String credits;
 	String dir = appProperties->getUserSettings()->getValue("CabbagePluginDirectory", "");
@@ -443,6 +453,15 @@ bool MainHostWindow::perform (const InvocationInfo& info)
     case CommandIDs::aboutBox:
         // TODO
         break;
+		
+	case CommandIDs::preferences:
+        CabbagePreferences* prefWindow;
+		prefWindow = new CabbagePreferences();	
+		prefWindow->addAudioSelector(audioSettingsComp);
+		//prefWindow->addTab(audioSettingsComp);
+		prefWindow->setVisible(true);
+		prefWindow->toFront(true);
+        break;	
 
     default:
         return false;
@@ -461,7 +480,7 @@ void MainHostWindow::showAudioSettings()
     audioSettingsComp.setSize (500, 450);
 
     DialogWindow::LaunchOptions o;
-    o.content.setNonOwned (&audioSettingsComp);
+    o.content.setNonOwned(&audioSettingsComp);
     o.dialogTitle                   = "Audio Settings";
     o.componentToCentreAround       = this;
     o.dialogBackgroundColour        = Colour(24, 24, 24);

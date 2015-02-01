@@ -29,6 +29,7 @@
 #include "GraphEditorPanel.h"
 #include "../CabbageUtils.h"
 #include "CabbagePluginListComponent.h"
+#include "Preferences.h"
 
 //==============================================================================
 namespace CommandIDs
@@ -39,7 +40,8 @@ static const int saveAs                 = 0x30002;
 static const int showPluginListEditor   = 0x30100;
 static const int showAudioSettings      = 0x30200;
 static const int aboutBox               = 0x30300;
-static const int setCabbageFileDirectory               = 0x30400;
+static const int preferences            = 0x30400;
+static const int setCabbageFileDirectory               = 0x30500;
 }
 
 ApplicationCommandManager& getCommandManager();
@@ -91,6 +93,7 @@ public:
 private:
     //==============================================================================
     AudioDeviceManager deviceManager;
+	ScopedPointer<CabbageAudioDeviceSelectorComponent> audioSettingsComp;
     AudioPluginFormatManager formatManager;
 
     OwnedArray <PluginDescription> internalTypes;

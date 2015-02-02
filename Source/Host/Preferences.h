@@ -69,6 +69,7 @@ public:
 	~CabbagePreferences();
 	
 	void addAudioSelector(Component* selector);
+	void addPluginList(Component* selector);
 	void closeButtonPressed();
 
 

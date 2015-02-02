@@ -44,6 +44,13 @@ void CabbagePreferences::addAudioSelector(Component* selector)
 	selector->setBounds(160, 10, 500, 450);
 }	
 
+void CabbagePreferences::addPluginList(Component* plugins)
+{
+	mainComp.addChildComponent(plugins);
+	plugins->setVisible(false);
+	plugins->setBounds(160, 10, 450, 450);
+}	
+
 //====================== Main Component ===================================
 PreferencesComp::PreferencesComp() 
 {
@@ -64,7 +71,10 @@ void PreferencesComp::resized()
 
 void PreferencesComp::actionListenerCallback(const String& message)
 {
-	this->getChildComponent(1)->setVisible(false);
+	int index = message.getIntValue();
+	
+	for(int i=1;i<6;i++)
+		this->getChildComponent(index)->setVisible(index==i ? true : false);
 }
 
 //====================== ListBox Component ===================================

@@ -94,6 +94,9 @@ private:
     //==============================================================================
     AudioDeviceManager deviceManager;
 	ScopedPointer<CabbageAudioDeviceSelectorComponent> audioSettingsComp;
+	ScopedPointer<CabbagePluginListComponent> pluginList;
+	const File deadMansPedalFile;
+	
     AudioPluginFormatManager formatManager;
 
     OwnedArray <PluginDescription> internalTypes;

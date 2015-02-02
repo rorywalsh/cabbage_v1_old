@@ -78,7 +78,9 @@ private:
 //==============================================================================
 MainHostWindow::MainHostWindow()
     : DocumentWindow (JUCEApplication::getInstance()->getApplicationName(), Colours::black,
-                      DocumentWindow::allButtons)
+                      DocumentWindow::allButtons),
+	deadMansPedalFile (getAppProperties().getUserSettings()
+                                      ->getFile().getSiblingFile ("RecentlyCrashedPluginsList"))
 {
     setColour(DocumentWindow::textColourId, Colours::whitesmoke);
     setColour(DocumentWindow::backgroundColourId, cUtils::getDarkerBackgroundSkin());
@@ -94,6 +96,7 @@ MainHostWindow::MainHostWindow()
 	audioSettingsComp = new CabbageAudioDeviceSelectorComponent(deviceManager,
 	0, 256,	0, 256, true, true, true, false);
 	audioSettingsComp->setSize (500, 450);
+	
 
     setResizable (true, false);
     setResizeLimits (500, 400, 10000, 10000);
@@ -117,6 +120,13 @@ MainHostWindow::MainHostWindow()
                        ->getIntValue ("pluginSortMethod", KnownPluginList::sortByManufacturer);
 
     knownPluginList.addChangeListener (this);
+
+
+	pluginList = new CabbagePluginListComponent(formatManager,
+                         knownPluginList,
+                         deadMansPedalFile,
+                         getAppProperties().getUserSettings());
+						 
 
     addKeyListener (getCommandManager().getKeyMappings());
 
@@ -457,6 +467,7 @@ bool MainHostWindow::perform (const InvocationInfo& info)
 	case CommandIDs::preferences:
         CabbagePreferences* prefWindow;
 		prefWindow = new CabbagePreferences();	
+		prefWindow->addAudioSelector(pluginList);
 		prefWindow->addAudioSelector(audioSettingsComp);
 		//prefWindow->addTab(audioSettingsComp);
 		prefWindow->setVisible(true);

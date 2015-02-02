@@ -24,7 +24,7 @@
 #include "../CabbageUtils.h"
 #include "../CabbageAudioDeviceSelectorComponent.h"
 
-ApplicationProperties& getAppProperties();
+//ApplicationProperties& getAppProperties();
 
 
 //================================================================
@@ -33,7 +33,11 @@ class PreferencesComp   : public Component, public ActionListener
 	
 public:
 	PreferencesComp();	
-	~PreferencesComp(){}
+	~PreferencesComp()
+    {
+        audioSelector = nullptr;
+        pluginList = nullptr;
+    }
 	
 	void resized();
 	void actionListenerCallback(const String& message);
@@ -53,9 +57,15 @@ public:
 			StringArray contents;
     };
 	
+    void addComponent(String type, Component* comp);
+    
 private:
 	ListBox prefsListBox;
     ListboxContents listBoxModel;
+    ScopedPointer<Component> audioSelector;
+    ScopedPointer<Component> pluginList;
+    FileSearchPathListComponent csoundPathList;
+    Label preferencesLabel;
 };
 
 //================================================================
@@ -68,12 +78,14 @@ public:
 	CabbagePreferences();	
 	~CabbagePreferences();
 	
-	void addAudioSelector(Component* selector);
 	void addPluginList(Component* selector);
 	void closeButtonPressed();
+    void addComponent(String type, Component* comp);
 
 
 private:
+   
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePreferences);
 
 };

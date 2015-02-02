@@ -103,7 +103,8 @@ public:
     void shutdown() override
     {
         mainWindow = nullptr;
-        appProperties = nullptr;
+        delete appProperties;;
+        
         LookAndFeel::setDefaultLookAndFeel (nullptr);
     }
 
@@ -128,7 +129,7 @@ public:
     ApplicationCommandManager commandManager;
     //ScopedPointer<ApplicationProperties> appProperties;
     CabbageLookAndFeel lookAndFeel;
-	PropertySet* defaultPropSet;
+	ScopedPointer<PropertySet> defaultPropSet;
 
 private:
     ScopedPointer<MainHostWindow> mainWindow;

@@ -144,6 +144,7 @@ MainHostWindow::MainHostWindow()
 MainHostWindow::~MainHostWindow()
 {
     pluginListWindow = nullptr;
+    audioSettingsComp = nullptr;
 
 #if JUCE_MAC
     setMacMainMenu (nullptr);
@@ -467,8 +468,8 @@ bool MainHostWindow::perform (const InvocationInfo& info)
 	case CommandIDs::preferences:
         CabbagePreferences* prefWindow;
 		prefWindow = new CabbagePreferences();	
-		prefWindow->addAudioSelector(pluginList);
-		prefWindow->addAudioSelector(audioSettingsComp);
+		prefWindow->addComponent("pluginList", pluginList);
+		prefWindow->addComponent("audioSelector", audioSettingsComp);
 		//prefWindow->addTab(audioSettingsComp);
 		prefWindow->setVisible(true);
 		prefWindow->toFront(true);

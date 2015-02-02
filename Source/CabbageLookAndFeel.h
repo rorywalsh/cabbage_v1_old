@@ -74,7 +74,7 @@ public:
     void drawBubble (Graphics&, BubbleComponent&, const Point<float>& tip, const Rectangle<float>& body) override;
     Font getSliderPopupFont (Slider&) override;
     int getSliderPopupPlacement (Slider&) override;
-
+    
     void positionComboBoxText (ComboBox& box, Label& label);
     void drawToggleButton (Graphics &g, ToggleButton &button, bool isMouseOverButton, bool isButtonDown);
     void drawTextEditorOutline (Graphics &g, int width, int height, TextEditor &textEditor);
@@ -153,7 +153,7 @@ public:
                              bool isDirectory, bool isItemSelected, int itemIndex,
                              DirectoryContentsDisplayComponent&) override;
 
-    Button* createFileBrowserGoUpButton();
+    Button* createFileBrowserGoUpButton() override;
 
     void layoutFileBrowserComponent (FileBrowserComponent&,
                                      DirectoryContentsDisplayComponent*,

@@ -22,11 +22,11 @@
 
 //===================== Document Window ========================================
 
-CabbagePreferences::CabbagePreferences() : DocumentWindow ("Preferences", Colours::black,
+CabbagePreferences::CabbagePreferences() : DocumentWindow ("Preferences", Colour(20, 20, 20),
 						  DocumentWindow::allButtons)
 {
 		setResizable(false, false);
-		centreWithSize(660, 500);
+		centreWithSize(660, 460);
 		setContentOwned(&mainComp, true);
 		setColour(TabbedComponent::outlineColourId, Colours::black);
 }
@@ -38,10 +38,9 @@ void CabbagePreferences::closeButtonPressed()
 		delete this;
 }
 
-void CabbagePreferences::addAudioSelector(Component* selector)
+void CabbagePreferences::addComponent(String type, Component* comp)
 {
-	mainComp.addAndMakeVisible(selector);
-	selector->setBounds(160, 10, 500, 450);
+    mainComp.addComponent(type, comp);
 }	
 
 void CabbagePreferences::addPluginList(Component* plugins)
@@ -52,29 +51,73 @@ void CabbagePreferences::addPluginList(Component* plugins)
 }	
 
 //====================== Main Component ===================================
-PreferencesComp::PreferencesComp() 
+PreferencesComp::PreferencesComp(): csoundPathList(), preferencesLabel("")
 {
     prefsListBox.setModel (&listBoxModel);
     prefsListBox.setMultipleSelectionEnabled (false);
-
+    prefsListBox.setColour(ListBox::ColourIds::backgroundColourId, Colour(30, 30, 30));
     addAndMakeVisible (prefsListBox);
 	listBoxModel.addActionListener(this);
 	prefsListBox.selectRow(0);
-	setSize(650, 500);
+    csoundPathList.setBounds(170, 30, 480, 420);
+    addAndMakeVisible(csoundPathList);
+    
+    csoundPathList.setVisible(false);
+    
+    preferencesLabel.setBounds(170, 10, 480, 20);
+    preferencesLabel.setJustificationType(Justification::left);
+    addAndMakeVisible(&preferencesLabel);
+    
+    csoundPathList.setColour(FileSearchPathListComponent::backgroundColourId, cUtils::getDarkerBackgroundSkin());
+	setSize(660, 460);
 
+}
+
+void PreferencesComp::addComponent(String type, Component* comp)
+{
+    if( type == "audioSelector")
+    {
+        audioSelector=comp;
+        addAndMakeVisible(audioSelector);
+        audioSelector->setBounds(160, 10, 500, 450);
+    }
+    else if( type == "pluginList")
+    {
+        pluginList=comp;
+        addAndMakeVisible(pluginList);
+        pluginList->setVisible(false);
+        pluginList->setBounds(170, 10, 480, 440);
+    }
 }
 
 void PreferencesComp::resized()
 {
-	prefsListBox.setBounds(10, 10, 160, getHeight()-20);
+    prefsListBox.setBounds(10, 10, 150, getHeight()-20);
 }
 
 void PreferencesComp::actionListenerCallback(const String& message)
 {
-	int index = message.getIntValue();
+	int index = message.getIntValue()+1;
 	
-	for(int i=1;i<6;i++)
-		this->getChildComponent(index)->setVisible(index==i ? true : false);
+    pluginList->setVisible(false);
+    audioSelector->setVisible(false);
+    csoundPathList.setVisible(false);
+    preferencesLabel.setVisible(false);
+    
+    
+    if(index==1) //audioSelector
+        audioSelector->setVisible(true);
+    else if(index==2)
+        pluginList->setVisible(true);
+    else if(index==3)
+    {
+        preferencesLabel.setColour(Label::textColourId, Colours::whitesmoke);
+        preferencesLabel.setText("Cabbage file folders", dontSendNotification);
+        preferencesLabel.setVisible(true);
+        csoundPathList.setVisible(true);
+    }
+    
+    
 }
 
 //====================== ListBox Component ===================================

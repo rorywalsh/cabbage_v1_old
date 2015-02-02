@@ -722,7 +722,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 		{
 			temp = csdText[i+1];
 			csdText.remove(i+1);
-			csdText.set(i, csdText[i]+temp);
+			csdText.set(i, csdText[i].replace(" \\", "")+temp);
 			cUtils::debug(csdText[i]);
 		}
 	}

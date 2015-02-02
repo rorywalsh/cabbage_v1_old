@@ -144,7 +144,7 @@ MainHostWindow::MainHostWindow()
 MainHostWindow::~MainHostWindow()
 {
     pluginListWindow = nullptr;
-    audioSettingsComp = nullptr;
+
 
 #if JUCE_MAC
     setMacMainMenu (nullptr);

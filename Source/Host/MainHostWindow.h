@@ -93,8 +93,8 @@ public:
 private:
     //==============================================================================
     AudioDeviceManager deviceManager;
-	ScopedPointer<CabbageAudioDeviceSelectorComponent> audioSettingsComp;
-	ScopedPointer<CabbagePluginListComponent> pluginList;
+	CabbageAudioDeviceSelectorComponent* audioSettingsComp;
+	CabbagePluginListComponent* pluginList;
 	const File deadMansPedalFile;
 	
     AudioPluginFormatManager formatManager;

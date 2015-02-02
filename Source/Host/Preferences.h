@@ -35,8 +35,7 @@ public:
 	PreferencesComp();	
 	~PreferencesComp()
     {
-        audioSelector = nullptr;
-        pluginList = nullptr;
+
     }
 	
 	void resized();

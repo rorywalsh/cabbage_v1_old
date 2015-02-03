@@ -28,11 +28,17 @@ ApplicationProperties& getAppProperties();
 class CsoundPathList : public FileSearchPathListComponent, public ActionBroadcaster
 {
 	public:
-		CsoundPathList(){};
+		CsoundPathList()
+		{
+				paths.add("/usr/local");
+				paths.add("/usr/lib");
+				numRows=1;
+				
+		};
 		
         int getNumRows()
 		{
-			return 3;
+			return numRows;
 		}
 		
         void paintListBoxItem (int rowNumber, Graphics& g,
@@ -46,11 +52,11 @@ class CsoundPathList : public FileSearchPathListComponent, public ActionBroadcas
 									g.setColour (rowIsSelected ? Colours::black : Colours::green);
 									g.setFont (cUtils::getComponentFont());
 
-									g.drawText (contents[rowNumber],
+									g.drawText (getPath()[rowNumber].getFullPathName(),
 									5, 0, width, height,
 									Justification::centredLeft, true);
 									
-									cUtils::debug(getPath().toString());
+									numRows = getPath().getNumPaths();
 									
 								}
 	
@@ -62,7 +68,8 @@ class CsoundPathList : public FileSearchPathListComponent, public ActionBroadcas
 
 		
 	private:
-			StringArray contents;	
+			StringArray paths;
+			int numRows;	
 };
 
 //================================================================

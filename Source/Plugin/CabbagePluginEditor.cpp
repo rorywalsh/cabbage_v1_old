@@ -2711,6 +2711,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                     {
 										Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file", 
 																									wildcardFilter, 
+																									filetype,
 																									1, 
 																									directory, 
 																									false, 
@@ -2730,6 +2731,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                     {
 										Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file", 
 																									wildcardFilter, 
+																									filetype,
 																									2, 
 																									directory, 
 																									false, 
@@ -2750,6 +2752,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 
 									Array<File> selectedFiles = cUtils::launchFileBrowser("Select a file to save", 
 																								wildcardFilter, 
+																								filetype,
 																								0, 
 																								directory, 
 																								false, 

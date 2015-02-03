@@ -359,7 +359,7 @@ public:
         return strArray;
     }
 //==========================================================================================
-    static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, int mode, File initialDir, bool useNative, LookAndFeel *look)
+    static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, String fileType, int mode, File initialDir, bool useNative, LookAndFeel *look)
     {
         const bool warnAboutOverwrite = true;
         Array<File> results;
@@ -393,7 +393,7 @@ public:
             }
             else
             {
-                FileChooser openFC(title, initialDir, "*.*", true);
+                FileChooser openFC(title, initialDir, fileType, true);
                 if(openFC.browseForFileToOpen())
                     results = openFC.getResults();
             }

@@ -40,7 +40,7 @@ Source: "..\..\Examples\*";               DestDir: "{app}\Examples"; Components:
 Source: "..\..\Docs\*";                   DestDir: "{app}\Docs"; Components: program; Flags: recursesubdirs
 Source: "..\..\..\csoundDocs\*";                   DestDir: "{app}\csoundDocs"; Components: program; Flags: recursesubdirs
 
-;Source: "..\..\..\MingwLibs\libwinpthread-1.dll"; DestDir: "{app}"; Components: program
+Source: "C:\mingw32\bin\libwinpthread-1.dll"; DestDir: "{app}"; Components: program
 ;Source: "..\..\..\MingwLibs\libgomp-1.dll";       DestDir: "{app}"; Components: program
 Source: "C:\mingw32\bin\libgcc_s_dw2-1.dll";  DestDir: "{app}\csound"; Components: program
 Source: "C:\mingw32\bin\libstdc++-6.dll";     DestDir: "{app}\csound"; Components: program
@@ -55,12 +55,11 @@ Source: "..\..\..\csound\build\libcsound64.dll.a";             DestDir: "{app}\c
 Source: "..\..\..\csound\build\libcsnd6.dll.a";             DestDir: "{app}\csound"; Components: csound
 Source: "C:\Program Files (x86)\Mega-Nerd\libsndfile32\bin\libsndfile-1.dll";   DestDir: "{app}\csound"; Components: csound
 Source: "..\..\..\csound\build\csnd6.jar";             DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\test.csd";             DestDir: "{app}\csound"; Components: csound
 Source: "..\..\..\csound\build\csnd6.dll";             DestDir: "{app}\csound"; Components: csound
 Source: "..\..\..\csound\build\libportaudio-2.dll";     DestDir: "{app}\csound"; Components: csound
 Source: "..\..\..\csound\build\pmidi.dll";              DestDir: "{app}\csound"; Components: csound
 Source: "C:/Users/rory/Documents/sourcecode/portmidi/build/libportmidi.dll";              DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\ipmidi.dll";             DestDir: "{app}\csound"; Components: csound
+;Source: "..\..\..\csound\build\ipmidi.dll";             DestDir: "{app}\csound"; Components: csound
 Source: "..\..\..\csound\build\rtpa.dll";               DestDir: "{app}\csound"; Components: csound
 Source: "..\..\..\csound\build\rtwinmm.dll";            DestDir: "{app}\csound"; Components: csound
 ;Source: "..\..\..\csound\build\virtual.dll";            DestDir: "{app}"; Components: csound

@@ -680,7 +680,6 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
         {
             g.setColour(trackColour);
             const float minPos = slider.valueToProportionOfLength(slider.getMinValue())*height;
-            const float maxPos = slider.valueToProportionOfLength(slider.getMaxValue())*height;
             const float currentPos = slider.valueToProportionOfLength(slider.getValue())*height;
             indent.addRoundedRectangle(ix, height-currentPos+sliderRadius*.5f, iw, currentPos-minPos+sliderRadius, 5.0f);
         }
@@ -1974,10 +1973,6 @@ void CabbageLookAndFeelBasic::drawButtonBackground (Graphics& g, Button& button,
 {
     const int w = button.getWidth();
     const int h = button.getHeight();
-
-    const float indent = 2.0f;
-    const int cornerSize = jmin (roundToInt (w * 0.1f),
-                                 roundToInt (h * 0.3f));
 
     g.drawRoundedRectangle(0, 0, w, h, 5, 1.f);
 

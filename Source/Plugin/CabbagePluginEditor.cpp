@@ -570,7 +570,6 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
 
     int xPos= 0;
     int prevXPos=0;
-    int prevYPos = 0;
     signed int curve=0;
     String fStatement = "f"+String(table->tableNumber)+" 0 "+String(table->tableSize)+" -16 ";
     String pFields = "";
@@ -1619,7 +1618,6 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
     float top = cAttr.getNumProp(CabbageIDs::top);
     float width = cAttr.getNumProp(CabbageIDs::width);
     float height = cAttr.getNumProp(CabbageIDs::height);
-    int relY=0,relX=0;
     if(layoutComps.size()>0)
     {
         for(int y=0; y<layoutComps.size(); y++)
@@ -2444,11 +2442,6 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertPopupMenu(CabbageGUIClass &cAttr)
 {
-    float left = cAttr.getNumProp(CabbageIDs::left);
-    float top = cAttr.getNumProp(CabbageIDs::top);
-    float width = cAttr.getNumProp(CabbageIDs::width);
-    float height = cAttr.getNumProp(CabbageIDs::height);
-
     layoutComps.add(new CabbagePopupMenu(cAttr));
 
     int idx = layoutComps.size()-1;

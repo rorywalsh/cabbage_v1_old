@@ -25,20 +25,22 @@
 #include "../CabbageAudioDeviceSelectorComponent.h"
 
 ApplicationProperties& getAppProperties();
-class CsoundPathList : public FileSearchPathListComponent, public ActionBroadcaster
+class CabbageFilesPathList : public FileSearchPathListComponent, public ActionBroadcaster
 {
 	public:
-		CsoundPathList()
+		CabbageFilesPathList()
 		{
-				paths.add("/usr/local");
-				paths.add("/usr/lib");
-				numRows=1;
-				
+            const String folders = getAppProperties().getUserSettings()->getValue("CabbageFilePaths");
+            setPath(FileSearchPath(folders));
+            numRows = getPath().getNumPaths()+1;
+            
 		};
 		
         int getNumRows()
 		{
-			return numRows;
+            //const String folders = getAppProperties().getUserSettings()->getValue("CabbageFilePaths");
+            //setPath(FileSearchPath(folders));
+            return getPath().getNumPaths()+1;
 		}
 		
         void paintListBoxItem (int rowNumber, Graphics& g,
@@ -57,6 +59,9 @@ class CsoundPathList : public FileSearchPathListComponent, public ActionBroadcas
 									Justification::centredLeft, true);
 									
 									numRows = getPath().getNumPaths();
+                                    cUtils::debug("numRows", getPath().getNumPaths());
+                                                  
+                                    getAppProperties().getUserSettings()->setValue("CabbageFilePaths", getPath().toString());
 									
 								}
 	
@@ -108,7 +113,7 @@ private:
     ListboxContents listBoxModel;
     ScopedPointer<Component> audioSelector;
     ScopedPointer<Component> pluginList;
-    CsoundPathList csoundPathList;
+    CabbageFilesPathList cabbageFilesPathList;
     Label preferencesLabel;
 };
 

@@ -361,15 +361,7 @@ public:
 //==========================================================================================
     static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, int mode, File initialDir, bool useNative, LookAndFeel *look)
     {
-        const bool selectsDirectories = (FileBrowserComponent::openMode
-                                         | FileBrowserComponent::canSelectFiles & FileBrowserComponent::canSelectDirectories) != 0;
-        const bool selectsFiles       = (FileBrowserComponent::openMode
-                                         | FileBrowserComponent::canSelectFiles & FileBrowserComponent::canSelectFiles) != 0;
-        const bool warnAboutOverwrite = (FileBrowserComponent::openMode
-                                         | FileBrowserComponent::canSelectFiles & FileBrowserComponent::warnAboutOverwriting) != 0;
-        const bool selectMultiple     = (FileBrowserComponent::openMode
-                                         | FileBrowserComponent::canSelectFiles & FileBrowserComponent::canSelectMultipleItems) != 0;
-
+        const bool warnAboutOverwrite = true;
         Array<File> results;
         //if set to open or browse for files
         if(mode==1)
@@ -647,7 +639,6 @@ public:
     Array<float> getAmpRangeArray(Array<float> ranges, int tableNumber)
     {
         Array<float> ampRange;
-        int numRangeArrays = ranges.size()/4;
 
         for(int i=2; i<ranges.size(); i+=4)
             if(ranges[i]==tableNumber || ranges[i]==-1)
@@ -698,11 +689,12 @@ public:
                 subFolders[i].findChildFiles(filesArray, File::findFiles, false, ext);
                 subMenu.clear();
                 for (fileCnt = noOfFiles; fileCnt < filesArray.size(); fileCnt++)
-                    subMenu.addItem (fileCnt + indexOffset, filesArray[fileCnt].getFileNameWithoutExtension());
+                    subMenu.addItem (fileCnt + indexOffset+ m.getNumItems(), filesArray[fileCnt].getFileNameWithoutExtension());
                 noOfFiles = fileCnt;
                 m.addSubMenu(subFolders[i].getFullPathName().replace(dir, "").replace(pathSlash, "-"), subMenu);
             }
         }
+        subMenu.clear();
     }
 
 //======================================================================================

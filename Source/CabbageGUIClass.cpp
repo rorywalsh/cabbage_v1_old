@@ -1389,14 +1389,12 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                 {
                     float minX = strTokens[0].removeCharacters("()").trim().getFloatValue();
                     float maxX = strTokens[1].removeCharacters("()").trim().getFloatValue();
-                    float valueX = strTokens[2].removeCharacters("()").trim().getFloatValue();
 
                     cabbageIdentifiers.set(CabbageIDs::minx, strTokens[0].trim().getDoubleValue());
                     cabbageIdentifiers.set(CabbageIDs::maxx, strTokens[1].getDoubleValue());
                     cabbageIdentifiers.set(CabbageIDs::valuex, strTokens[2].getDoubleValue());
                     cabbageIdentifiers.set(CabbageIDs::rangex, maxX-minX);
 
-                    float xypadRangeX = maxX-minX;
                     cabbageIdentifiers.set(CabbageIDs::decimalplaces, strTokens[3].trim().getDoubleValue());
                 }
             }
@@ -1410,7 +1408,6 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                 {
                     float minY = strTokens[0].trim().getFloatValue();
                     float maxY = strTokens[1].trim().getFloatValue();
-                    float valueY = strTokens[2].trim().getFloatValue();
 
                     cabbageIdentifiers.set(CabbageIDs::miny, strTokens[0].trim().getDoubleValue());
                     cabbageIdentifiers.set(CabbageIDs::maxy, strTokens[1].trim().getDoubleValue());
@@ -1578,7 +1575,6 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                      identArray[indx].equalsIgnoreCase("tablenumbers")||
                      identArray[indx].equalsIgnoreCase("tablenumbs")))
             {
-                int tableNum = strTokens[0].trim().getIntValue();
                 var value;
                 var tableConfig;
                 //value.append(tableNum);

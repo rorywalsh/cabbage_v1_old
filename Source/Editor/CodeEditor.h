@@ -186,8 +186,8 @@ class FlatButton : public Component,
 {
 public:
     FlatButton(String name, int currentTab, String type): 	name(name),
-        type(type),
         currentTab(currentTab),
+        type(type),
         isMouseDown(false),
         genericColour(Colours::brown)
     {
@@ -266,7 +266,6 @@ public:
 
         else
         {
-            float number = name.substring(6, 5).getDoubleValue();
             if(isMouseDown)
                 g.setColour(genericColour.darker(.2f));
             else

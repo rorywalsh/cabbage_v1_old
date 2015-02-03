@@ -510,13 +510,17 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
     else if(message.contains("InstrumentBreakpoint"))
     {
         String info = message;
-        int instrNumber = message.substring(24).getIntValue();
+
         int lineNumber = message.substring(message.indexOf("_")+1).getIntValue();
         if(breakpointLines.size()>=0)
             if(message.contains("Set"))
+            {
                 breakpointLines.add(lineNumber+1);
+            }
             else
+            {
                 breakpointLines.removeAllInstancesOf(lineNumber+1);
+            }
 
         //cUtils::showMessage(breakpointLines.size());
 

@@ -112,8 +112,6 @@ void CabbageEnvelopeHandleComponent::mouseDrag (const MouseEvent& e)
 
     int leftLimit = previousHandle == 0 ? 0 : previousHandle->getX()+1;
     int rightLimit = nextHandle == 0 ? getParentWidth()-previousHandle->getHeight() : nextHandle->getX()-1;
-    int topLimit = previousHandle == 0 ? 0 : previousHandle->getX()+1;
-    int bottomLimit = nextHandle == 0 ? getParentWidth()-previousHandle->getHeight() : nextHandle->getX()-1;
     int dragX = x+e.getDistanceFromDragStartX();
     int dragY = y+e.getDistanceFromDragStartY();
 
@@ -445,7 +443,9 @@ void Table::paint (Graphics& g)
 
                     if(drawHorizontalSegments==true && fixedEnvelope == true)
                         if(drawFill==true && !toggleMaxMin)
+                        {
                             g.fillRect(0, jmax(handle->getY(), 0),  jmax(handle->getWidth(), 0), jmax(0, getHeight()-1));
+                        }
                         else if(drawFill==true && toggleMaxMin)
                         {
                             //g.setColour(Colours::red);
@@ -631,7 +631,6 @@ void Table::createHandlesFromTable(int points)
     handles.clear();
     Colour col;
     editMode=true;
-    int x;
     float end = getWidth();
     float scaleX = .99;
 

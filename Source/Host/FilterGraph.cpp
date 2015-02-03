@@ -309,7 +309,7 @@ static XmlElement* createNodeXml (AudioProcessorGraph::Node* const node) noexcep
 		plugin->fillInPluginDescription (pd);
 	else if(PluginWrapper* plugin = dynamic_cast <PluginWrapper*> (node->getProcessor()))
 		plugin->fillInPluginDescription (pd);
-	else if(CabbagePluginAudioProcessor* plugin = dynamic_cast <CabbagePluginAudioProcessor*> (node->getProcessor()))
+	else if(dynamic_cast <CabbagePluginAudioProcessor*> (node->getProcessor()))
 		{
 		//grab description of native plugin for saving...
 		String xmlPluginDescriptor = node->properties.getWithDefault("pluginDesc", "").toString();

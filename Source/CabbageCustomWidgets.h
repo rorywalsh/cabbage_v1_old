@@ -220,7 +220,6 @@ private:
             const float currentMouseY = event.getPosition().getY();
             const float leftThumbPosition = getHeight()-valueToProportionOfLength(sliderMin)*getHeight();
             const float rightThumbPosition = getHeight()-valueToProportionOfLength(sliderMax)*getHeight();
-            const int distanceFromStart = event.getDistanceFromDragStartY();
             if(currentMouseY<leftThumbPosition-thumbWidth && currentMouseY>rightThumbPosition+thumbWidth)
             {
                 if(rightThumbPosition>minPosition && leftThumbPosition<maxPosition)
@@ -237,8 +236,6 @@ private:
         const float sliderMax = getMaxValue();
         if(getSliderStyle()==Slider::TwoValueHorizontal)
         {
-            const int minPosition = valueToProportionOfLength(getMinimum())*getWidth();
-            const int maxPosition = valueToProportionOfLength(getMaximum())*getWidth();
             const float currentMouseX = event.getPosition().getX();
             const float bottomThumbPosition = valueToProportionOfLength(sliderMin)*getWidth();
             const float topThumbPosition = valueToProportionOfLength(sliderMax)*getWidth();

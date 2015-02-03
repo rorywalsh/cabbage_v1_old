@@ -1325,7 +1325,7 @@ void HandleViewer::positionHandle(const MouseEvent& e)
 
     //determine whether of not we are in toggle on.off(grid) mode..
     double steps = (minMax.getEnd()/getParentTable()->quantiseSpace);
-    double ySnapPos;
+
 
     bool handleExists = false;
 
@@ -1390,7 +1390,6 @@ double HandleViewer::getSnapYPosition(const double y)
 {
     //return snapped position if quantise is one
     double ySnapPos = 0;
-    double steps = (minMax.getEnd()/getParentTable()->quantiseSpace);
     double jump = (getParentTable()->quantiseSpace/minMax.getEnd())*getHeight();
 	ySnapPos = round(y / jump) * jump;
 //    for(double c=0; c<=steps; c++)

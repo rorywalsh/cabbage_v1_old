@@ -324,14 +324,15 @@ FilterComponent::FilterComponent (FilterGraph& graph_, const uint32 filterID_)
           numInputs (0),
           numOutputs (0),
           pinSize (16),
+		  rmsLeft(0),
           font (13.0f, Font::bold),
+
+		  rmsRight(0),
           numIns (0),
           numOuts (0),
-		  rmsLeft(0),
-		  rmsRight(0),
 		  isMuted(false),
-		  isBypassed(false),
 		  filterIsPartofSelectedGroup(false),
+		  isBypassed(false),
 		  muteButton(0.f, 10.f, 8.f, 8.f),
 		  bypassButton(0.f, 10.f, 8.f, 8.f)
 {
@@ -1147,13 +1148,23 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 			mainWindow->addPluginsToMenu (m);
 			numNonNativePlugins = m.getNumItems();
 			m.addSeparator();
-			mainWindow->addCabbageNativePluginsToMenu(m, cabbageFiles);
+            
+            StringArray filePaths;
+            filePaths.addTokens(appProperties->getUserSettings()->getValue("CabbageFilePaths"), ";");
+           
+            for(int i=0;i<filePaths.size();i++)
+                cUtils::addFilesToPopupMenu(m, cabbageFiles, filePaths[i], "*.csd", 1);
+			//mainWindow->addCabbageNativePluginsToMenu(m, cabbageFiles);
 			
 			
             const int r = m.show();
+            
+            cUtils::debug("menu item", r);
+            
 			bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
 			wildcardFilter = WildcardFileFilter("*.csd", "*", ".csd Files");
 			
+            
 			//file new instrument
 			if(r==801)
 			{

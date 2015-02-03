@@ -695,22 +695,17 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
         }
     }
 
-    int indexOfLastGUICtrl = guiCtrls.size();
-    int indexOfLastLayoutCtrl = guiLayoutCtrls.size();
 
 	String warningMessage;
 
-    int test=100;
-    int checkGUI = isGuiEnabled();
 //setGuiEnabled((false));
     int guiID=0;
     StringArray csdText;
 
-    int lines=1;
+
     String csdLine("");
     csdText.addLines(source);
     bool multiComment = false;
-    bool multiLine = false;
 
 	csound->Message("\n===Cabbage Warnings===\n");
 
@@ -1064,6 +1059,11 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 
 #ifdef Cabbage_Build_Standalone
 
+    int indexOfLastGUICtrl = guiCtrls.size();
+    int indexOfLastLayoutCtrl = guiLayoutCtrls.size();
+    
+    int checkGUI = isGuiEnabled();
+    
     if(this->getActiveEditor())
     {
         CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());

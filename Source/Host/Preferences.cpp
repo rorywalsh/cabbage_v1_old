@@ -25,7 +25,7 @@
 CabbagePreferences::CabbagePreferences() : DocumentWindow ("Preferences", Colour(20, 20, 20),
 						  DocumentWindow::allButtons)
 {
-		setResizable(false, false);
+		setResizable(true, true);
 		centreWithSize(660, 460);
 		setContentOwned(&mainComp, true);
 		setColour(TabbedComponent::outlineColourId, Colours::black);
@@ -47,11 +47,11 @@ void CabbagePreferences::addPluginList(Component* plugins)
 {
 	mainComp.addChildComponent(plugins);
 	plugins->setVisible(false);
-	plugins->setBounds(160, 10, 450, 450);
+	plugins->setBounds(160, 10, getWidth()-170, 450);
 }	
 
 //====================== Main Component ===================================
-PreferencesComp::PreferencesComp(): csoundPathList(), preferencesLabel("")
+PreferencesComp::PreferencesComp(): cabbageFilesPathList(), preferencesLabel("")
 {
     prefsListBox.setModel (&listBoxModel);
     prefsListBox.setMultipleSelectionEnabled (false);
@@ -59,17 +59,17 @@ PreferencesComp::PreferencesComp(): csoundPathList(), preferencesLabel("")
     addAndMakeVisible (prefsListBox);
 	listBoxModel.addActionListener(this);
 	prefsListBox.selectRow(0);
-    csoundPathList.setBounds(170, 30, 480, 420);
-    addAndMakeVisible(csoundPathList);
+    cabbageFilesPathList.setBounds(170, 30, getWidth()-180, 420);
+    addAndMakeVisible(cabbageFilesPathList);
     
-    csoundPathList.setVisible(false);
+    cabbageFilesPathList.setVisible(false);
 
     
-    preferencesLabel.setBounds(170, 10, 480, 20);
+    preferencesLabel.setBounds(170, 10, getWidth()-180, 20);
     preferencesLabel.setJustificationType(Justification::left);
     addAndMakeVisible(&preferencesLabel);
     
-    csoundPathList.setColour(FileSearchPathListComponent::backgroundColourId, cUtils::getDarkerBackgroundSkin());
+    cabbageFilesPathList.setColour(FileSearchPathListComponent::backgroundColourId, cUtils::getDarkerBackgroundSkin());
 	setSize(660, 460);
 
 }
@@ -80,20 +80,28 @@ void PreferencesComp::addComponent(String type, Component* comp)
     {
         audioSelector=comp;
         addAndMakeVisible(audioSelector);
-        audioSelector->setBounds(160, 10, 500, 450);
+        audioSelector->setBounds(160, 10, getWidth()-170, 450);
     }
     else if( type == "pluginList")
     {
         pluginList=comp;
         addAndMakeVisible(pluginList);
         pluginList->setVisible(false);
-        pluginList->setBounds(170, 10, 480, 440);
+        pluginList->setBounds(170, 10, getWidth()-180, 440);
     }
 }
 
 void PreferencesComp::resized()
 {
     prefsListBox.setBounds(10, 10, 150, getHeight()-20);
+    cabbageFilesPathList.setBounds(170, 30, getWidth()-180, getHeight()-50);
+    preferencesLabel.setBounds(170, 10, getWidth()-180, 20);
+    
+    if (pluginList)
+        pluginList->setBounds(170, 10, getWidth()-180, getHeight()-30);
+    if (audioSelector)
+        audioSelector->setBounds(160, 10, getWidth()-170, getHeight()-30);
+    
 }
 
 void PreferencesComp::actionListenerCallback(const String& message)
@@ -102,7 +110,7 @@ void PreferencesComp::actionListenerCallback(const String& message)
 	
     pluginList->setVisible(false);
     audioSelector->setVisible(false);
-    csoundPathList.setVisible(false);
+    cabbageFilesPathList.setVisible(false);
     preferencesLabel.setVisible(false);
     
     
@@ -113,9 +121,9 @@ void PreferencesComp::actionListenerCallback(const String& message)
     else if(index==3)
     {
         preferencesLabel.setColour(Label::textColourId, Colours::whitesmoke);
-        preferencesLabel.setText("Click + to add a Cabbage file folder", dontSendNotification);
+        preferencesLabel.setText("Click + to add folder containing Cabbage .csd files", dontSendNotification);
         preferencesLabel.setVisible(true);
-        csoundPathList.setVisible(true);
+        cabbageFilesPathList.setVisible(true);
     }
     
     
@@ -127,8 +135,8 @@ void PreferencesComp::actionListenerCallback(const String& message)
 PreferencesComp::ListboxContents::ListboxContents()
 {
 	contents.add("Audio Setup");
-	contents.add("Plugins");
-	contents.add("Csound");
+	contents.add("Third Party Plugins");
+	contents.add("Cabbage Plugins");
 	contents.add("Editor");
 	contents.add("General");			
 }

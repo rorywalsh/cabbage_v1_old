@@ -5,9 +5,9 @@
 ; right channel - green
 
 <Cabbage>
-form caption("FFT Spectrum"), size(410, 140), colour( 50, 50, 50),pluginID("spec")                                                                                  
-table   bounds(  0,  0, 410,100), tableNumbers(1,2), tablecolour("yellow","green"), identchannel("ampFFT"), amprange(0,1)
-hslider bounds(  5,105,400, 30), channel("gain"), text("Input Gain"), textBox(1), range(0.1,50.00, 4, 0.5)
+form caption("FFT Spectrum"), size(610, 340), colour( 50, 50, 50), pluginID("spec"), guirefresh(16)
+gentable   bounds(  0,  0, 610,300), tablenumber(1,2), tablecolour("yellow","green"), identchannel("ampFFT"), amprange(0,1,-1), outlinethickness(0), samplerange(0, 512)) 
+hslider bounds(  5,305,400, 30), channel("gain"), text("Gain"), textBox(1), range(1,100.00,1,0.5,0.001)
 </Cabbage>                                                   
 
 <CsoundSynthesizer>                                                                                                 
@@ -24,8 +24,8 @@ nchnls 	= 	2
 0dbfs	=	1
 
 
-giampFFT_L	ftgen	1,0,1024,-2,0
-giampFFT_R	ftgen	2,0,1024,-2,0
+giampFFT_L	ftgen	1,0,1024,2,0
+giampFFT_R	ftgen	2,0,1024,2,0
 
 instr	1
  /* INPUT */
@@ -38,6 +38,7 @@ instr	1
  iwintype	=	1
 
  kgain	chnget	"gain"
+ 
  fsigL	pvsanal	ainL*kgain, ifftsize, ioverlap, iwinsize, iwintype
  fsigR	pvsanal	ainR*kgain, ifftsize, ioverlap, iwinsize, iwintype
  if	metro(10)==1 then

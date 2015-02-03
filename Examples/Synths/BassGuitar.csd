@@ -2,23 +2,26 @@ Physical model of a plucked string with a pickup point. Model is created from fi
 A bandpass filter is employed within the delay buffer used to implement the pluck which facilitates filtering to specific harmonics. Conventional damping effects are still possible when cutoff frequency ratio = 1.
 
 <Cabbage>
-form caption("Bass Guitar"), size(550, 250), pluginID("basg")
-image bounds(  0,  0,550,220), colour("DarkGreen"), shape("rounded"), oulinecolour("white"), line(4)
+form caption("Bass Guitar"), size(550, 240), pluginID("basg")
+
+#define RSliderStyle # colour(150,205,150), textcolour("LightGreen"), outlinecolour(0,0,0), trackercolour(yellow)#
+
+image bounds(  0,  0,550,215),  colour("DarkGreen"), shape("sharp"), outlinecolour("white"), outlinethickness(4)
 groupbox bounds(5, 5, 540,120), colour( 150,255,150,10){
-rslider bounds( 10, 25,60,60), text("Sustain"), colour("Olive"), FontColour("LightGreen"), channel("feedback"), range(0.9,1, 0.999, 2, 0.001)
-rslider bounds( 70, 25,60,60), text("Filt. Ratio"), colour("Olive"), FontColour("LightGreen"), channel("FiltRatio"), range(0.5, 32, 1, 0.5)
-rslider bounds(130, 25,60,60), text("B.width"), colour("Olive"), FontColour("LightGreen"), channel("bw"), range(1, 32, 16)
-rslider bounds(190, 25,60,60), text("Att"), colour("Olive"), FontColour("LightGreen"), channel("att"), range(0, 3, 1,0.5)
-checkbox bounds(260, 35, 30, 30), text("Legato") channel("legato"),FontColour("LightGreen"), colour("yellow")  value(1)
+rslider  bounds( 10, 25,60,60),   text("Sustain"),      channel("feedback"), range(0.9,1, 0.999, 2, 0.001), $RSliderStyle
+rslider  bounds( 70, 25,60,60),   text("Filt. Ratio"), channel("FiltRatio"), range(0.5, 32, 1, 0.5), $RSliderStyle
+rslider  bounds(130, 25,60,60),   text("B.width"),     channel("bw"), range(1, 32, 16), $RSliderStyle
+rslider  bounds(190, 25,60,60),   text("Att"),         channel("att"), range(0, 3, 1,0.5), $RSliderStyle
+checkbox bounds(260, 35, 30, 30), text("Legato")       channel("legato"),FontColour("LightGreen"), colour("yellow")  value(1)
 label    bounds(255, 72, 38, 12), text("Legato"), FontColour("LightGreen")
-rslider bounds(300, 25,60,60), text("Leg.Speed"), colour("Olive"), FontColour("LightGreen"), channel("LegSpeed"), range(0.01,1,0.05,0.5)
-rslider bounds(360, 25,60,60), text("Vib.Depth"), colour("Olive"), FontColour("LightGreen"), channel("VibDep"), range(0, 1, 0.25, 0.75, 0.001)
-rslider bounds(420, 25,60,60), text("Vib.Rate"), colour("Olive"), FontColour("LightGreen"), channel("VibRte"), range(0.5, 20, 3, 0.5)
-rslider bounds(480, 25,60,60), text("Level"), colour("Olive"), FontColour("LightGreen"), channel("level"), range(0, 1, 0.7)
-hslider bounds(15,85,525,40), text("Pickup Position"), colour("Olive"), FontColour("LightGreen"), channel("PickupPos"), range(0.01, 0.99, 0.1)
+rslider  bounds(300, 25,60,60),   text("Leg.Speed"),        channel("LegSpeed"),  range(0.01,1,0.05,0.5), $RSliderStyle
+rslider  bounds(360, 25,60,60),   text("Vib.Depth"),        channel("VibDep"),    range(0, 1, 0.25, 0.75, 0.001), $RSliderStyle
+rslider  bounds(420, 25,60,60),   text("Vib.Rate"),         channel("VibRte"),    range(0.5, 20, 3, 0.5), $RSliderStyle
+rslider  bounds(480, 25,60,60),   text("Level"),            channel("level"),     range(0, 1, 0.7), $RSliderStyle
+hslider  bounds(15,85,525,40),    text("Pickup Position"), channel("PickupPos"), range(0.01, 0.99, 0.1), $RSliderStyle
 }
-keyboard bounds(10, 130, 530,80)
-image bounds(5, 225, 420, 20), colour(75, 85, 90, 50), plant("credit"){
+keyboard bounds(5, 130, 540,80)
+image bounds(5, 218, 380, 20), colour(75, 85, 90, 50), plant("credit"){
 label bounds(0.0, 0.1, .5, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white"), FontColour("LightGreen")
 }
 

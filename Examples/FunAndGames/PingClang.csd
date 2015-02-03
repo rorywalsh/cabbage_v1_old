@@ -36,14 +36,14 @@ image bounds( 0, 0, 0,0), shape("sharp"), colour(  0,230,255), identchannel("blo
                                                              
 image bounds(0,0,0,0), shape("ellipse"), colour(255,230,220), identchannel("ball")	; ball
 
-numberbox  bounds( 20,465,60,34), channel("damping"),    range(0.00, 0.999, 0.1,1,0.001),  fontcolour(white), text("Damping"), colour(0,0,0)
-numberbox  bounds( 90,465,60,34), channel("friction"),   range(0.001, 0.999, 0.03,1,0.001), fontcolour(white), text("Friction"), colour(0,0,0)
-numberbox  bounds(160,465,50,34), channel("speed"),      range(0.01,  20, 1,1,0.01),        fontcolour(white), text("Speed"), colour(0,0,0)
-numberbox  bounds(220,465,40,34), channel("size"),       range(2, 80, 15,1,1),          fontcolour(white), text("Size"), colour(0,0,0)
-numberbox  bounds(270,465,50,34), channel("angle"),      range(0, 5, 3,1,0.001),          fontcolour(white), text("Angle"), colour(0,0,0)
-numberbox  bounds(330,465,70,34), channel("resonance"),  range(0.1, 30, 2,1,0.1),         fontcolour(white), text("Resonance"), colour(0,0,0)
-;numberbox  bounds(410,415,40,34), channel("NBlocks"),    range(0, 7, 5,1,1),        fontcolour(white), text("Blocks"), colour(0,0,0)
-button     bounds(460,473,60,21), text("Notch","Notch"), channel("fundemental"), value(0), fontcolour:0( 50, 50, 50), fontcolour:1(white)
+numberbox  bounds( 20,465,60,34), channel("damping"),    range(0.00, 0.999, 0.1,1,0.001),     textcolour(white),         text("Damping"),   colour(0,0,0)
+numberbox  bounds( 90,465,60,34), channel("friction"),   range(0.001, 0.999, 0.03,1,0.001),   textcolour(white),         text("Friction"),  colour(0,0,0)
+numberbox  bounds(160,465,50,34), channel("speed"),      range(0.01,  20, 1,1,0.01),          textcolour(white),         text("Speed"),     colour(0,0,0)
+numberbox  bounds(220,465,40,34), channel("size"),       range(2, 80, 15,1,1),                textcolour(white),         text("Size"),      colour(0,0,0)
+numberbox  bounds(270,465,50,34), channel("angle"),      range(0, 5, 3,1,0.001),              textcolour(white),         text("Angle"),     colour(0,0,0)
+numberbox  bounds(330,465,70,34), channel("resonance"),  range(0.1, 30, 2,1,0.1),             textcolour(white),         text("Resonance"), colour(0,0,0)
+;numberbox  bounds(410,415,40,34), channel("NBlocks"),    range(0, 7, 5,1,1),                 textcolour(white),         text("Blocks"),    colour(0,0,0)
+button     bounds(460,473,60,21), text("Notch","Notch"), channel("fundemental"), value(0),    fontcolour:0( 50, 50, 50), fontcolour:1(white)
 button     bounds(530,473,60,21), text("New Ball"), channel("NewBall"), value(0), latched(0), fontcolour:0(200,200,200), fontcolour:1(white)
 
 label      bounds(410,466,45,14), text("Blocks"), align(centre), fontcolour(white)
@@ -102,7 +102,6 @@ instr	1	; Track mouse position and clicks and move objects as appropriate
   Smess		sprintfk	"text(%d)",gkNBlocks
   chnset	Smess,"NBlocksID"
  endif
- printk2	gkNBlocks
  
  gkdamping	chnget	"damping"
  gkfriction	chnget	"friction"
@@ -272,7 +271,7 @@ instr	20	; wall ricochet sound effect
   gkactive0 = gkactive0 - 1		;...DECREMENT ACTIVE NOTES COUNTER
  endif
  aenv	expon	giWallFloorAmp,p3,giWallFloorAmp*0.001
- asig	poscil	aenv*((p4/40)^2)*gkspeed,p5
+ asig	poscil	aenv*((p4/50)^2)*gkspeed,p5
  al,ar	pan2	asig,p6
  	outs	al,ar
  	gal	+= al
@@ -298,7 +297,7 @@ instr	$I	; object bounce
   gkactive$N = gkactive$N - 1		;...DECREMENT ACTIVE NOTES COUNTER
  endif
 
- iamp	=	(abs(p5) + abs(p6)) * 0.002				; amplitude dependent upon the speed of the ball at the time of the collision.
+ iamp	=	(abs(p5) + abs(p6)) * 0.006				; amplitude dependent upon the speed of the ball at the time of the collision.
  aenv	expsegr	iamp,p3,iamp*0.001,0.05,iamp*0.001			; amplitude envelope
  kndx	expsegr	(abs(p5)+abs(p6))*0.01,p3,0.0001,0.05,0.0001		; index of modulation envelope. Overall envelope amplitude (therefore spectral brightness) influenced by the speed of the ball when the object was struck. 
  kporttime	linseg	0,0.001,0.05
@@ -308,7 +307,9 @@ instr	$I	; object bounce
  kmod	portk	kmod,kporttime						
  acar	expseg	0.993,0.04,1,5,1					; carrier ratio envelope. Helps to create a bit of spectral distortion when the objecrt is struck
 
- asig 	foscil 	aenv, kcps, acar, kmod, kndx, gisine, 0
+ kampscale	=	(gkspeed-0.01)/(20-0.01)
+ kampscale	scale	kampscale,3,0.1
+ asig 	foscil 	aenv*kampscale, kcps, acar, kmod, kndx, gisine, 0
 
  /* Fundemental notch filtering */
  abr	butbr	asig*3,kcps,kcps*0.1
@@ -384,12 +385,14 @@ instr	1001	; Print and then hide instructions
 
 endin
 
+
 </CsInstruments>  
 
 <CsScore>
-i 1001 0 4		; instructions
+i 1001 0 4		; Instructions fade up then down (currently not working)
 i 999  0    [3600*24*7]	; chorus
 i 1000 0    [3600*24*7]	; reverb
+
 </CsScore>
 
 </CsoundSynthesizer>

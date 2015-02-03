@@ -2,11 +2,12 @@ DopplerSpin.csd
 Written by Iain McCurdy, 2013
 
 ; CONTROLS
-; Frequency of Rotation		--	Frequency of the spinning
-; Central/Edge			--	Listening position in relation to the circulat motion. Can be thought of as a control for the amount of amplitude modulation.
-; Orientation (radians)		--	direction of listeing
-; Panning Width			--	amount of panning directionality in the modulation 
-; Doppler Depth			--	amount of doppler effect (circle size).
+
+; Speed				--	Frequency of the spinning
+; Loc.				--	Listening position in relation to the circular motion (range from ('centre' to 'edge'). Can be thought of as a control for the amount of amplitude modulation.
+; Orient.			--	direction of listening (in radians)
+; Width				--	width of panning directionality in the modulation 
+; Depth				--	depth of doppler effect (circle size).
 ; (Reverb) Scaling		--	a dry/wet mixer. Mixing the dry and wet signals can be used to create chorus effects.
 ; (Reverb) Time			--	amount of amplitude drop off as the source moves away from the source. 
 ; (Reverb) Damping		--	Amount of left-right movement in the output as the source swings past the microphone
@@ -48,23 +49,23 @@ combobox bounds(10, 30, 60,20), channel("input"), value(1), text("left","right",
 line     bounds( 85,  5,  2, 70), colour("Grey")
 label    bounds(185,  4, 90, 15), text("r  e  v  e  r  b"), fontcolour("white")
 checkbox bounds(100, 33,110, 20), text("Reverb On/Off") channel("RvbOnOff"), FontColour("White"), colour("lime")  value(1)
-rslider  bounds(210, 23, 55, 55), channel("RvbScaling"), range(0,1.000,0.3,1,0.001),     text("Scaling"),               TextBox(0), colour( 95, 45,115), trackercolour( 95, 45,115)
-rslider  bounds(270, 23, 55, 55), channel("RvbTime"),    range(0.3,0.990,0.7,1,0.001),   text("Time"),                  TextBox(0), colour( 85, 45,125), trackercolour( 85, 45,125)
-rslider  bounds(330, 23, 55, 55), channel("RvbFilt"), range(20,20000,4000,0.5,0.001),    text("Damping"),               TextBox(0), colour( 75, 45,135), trackercolour( 75, 45,135)
+rslider  bounds(210, 23, 55, 55), channel("RvbScaling"), range(0,1.000,0.3,1,0.001),     text("Scaling"),               TextBox(0), colour( 95, 45,115), trackercolour(white)
+rslider  bounds(270, 23, 55, 55), channel("RvbTime"),    range(0.3,0.990,0.7,1,0.001),   text("Time"),                  TextBox(0), colour( 85, 45,125), trackercolour(white)
+rslider  bounds(330, 23, 55, 55), channel("RvbFilt"), range(20,20000,4000,0.5,0.001),    text("Damping"),               TextBox(0), colour( 75, 45,135), trackercolour(white)
 
 line     bounds(390,  5,  2, 70), colour("Grey")
 label    bounds(410,  4, 90, 15), text("o  u  t  p  u  t"), fontcolour("white")
-rslider  bounds(400, 23, 55, 55), channel("mix"),        range(0,1.000,1,1,0.001),       text("Mix"),                   TextBox(0), colour( 65, 45,145), trackercolour( 65, 45,145)
-rslider  bounds(460, 23, 55, 55), channel("OutGain"),    range(0,1.000,0.7,1,0.001),     text("Level"),                 TextBox(0), colour( 55, 45,155), trackercolour( 65, 45,145)
+rslider  bounds(400, 23, 55, 55), channel("mix"),        range(0,1.000,1,1,0.001),       text("Mix"),                   TextBox(0), colour( 65, 45,145), trackercolour(white)
+rslider  bounds(460, 23, 55, 55), channel("OutGain"),    range(0,1.000,0.7,1,0.001),     text("Level"),                 TextBox(0), colour( 55, 45,155), trackercolour(white)
 line     bounds(520,  5,  2, 70), colour("Grey")
 
 checkbox bounds(530, 33,120, 20), text("Auto-Frequency") channel("AutoFreq"), FontColour("White"), colour("lime")  value(0)
 
-hslider bounds(  5, 80,690, 35), channel("freq"),        range(-10,10.00,0.2,1,0.0001),     text("Frequency of Rotation"), TextBox(1), colour(145, 45, 65), trackercolour(145, 45, 65)
-hslider bounds(  5,110,690, 35), channel("AmpDepth"),    range(0,1.000,0.7,1,0.001),        text("Central/Edge"),          TextBox(1), colour(135, 45, 75), trackercolour(135, 45, 75)
-hslider bounds(  5,140,690, 35), channel("AmpPhase"),    range(0,1.000,0.5,1,0.001),        text("Orientation [radians]"), TextBox(1), colour(125, 45, 85), trackercolour(125, 45, 85)
-hslider bounds(  5,170,690, 35), channel("PanDepth"),    range(0,1.000,1,1,0.001),          text("Panning Width"),         TextBox(1), colour(115, 45, 95), trackercolour(115, 45, 95)
-hslider bounds(  5,200,690, 35), channel("DopDep"),      range(0,0.030,0.003,0.5,0.000001), text("Doppler Depth"),         TextBox(1), colour(105, 45,105), trackercolour(105, 45,105)
+hslider bounds(  5, 80,690, 35), channel("freq"),        range(-10,10.0,0.2,1,0.01),     text("Speed"),         TextBox(1), colour(145, 45, 65), trackercolour(white)	;Frequency of Rotation
+hslider bounds(  5,110,690, 35), channel("AmpDepth"),    range(0,1.000,0.7,1,0.001),        text("Loc."),          TextBox(1), colour(135, 45, 75), trackercolour(white)	;Central/Edge
+hslider bounds(  5,140,690, 35), channel("AmpPhase"),    range(0,1.000,0.5,1,0.001),        text("Orient."),       TextBox(1), colour(125, 45, 85), trackercolour(white)	;Orientation [radians]
+hslider bounds(  5,170,690, 35), channel("PanDepth"),    range(0,1.000,1,1,0.001),          text("Width"),         TextBox(1), colour(115, 45, 95), trackercolour(white)	;Panning Width
+hslider bounds(  5,200,690, 35), channel("DopDep"),      range(0,0.030,0.003,1,0.001), text("Depth"),         TextBox(1), colour(105, 45,105), trackercolour(white)	;Doppler Depth
 
 label   bounds( 5,247, 170, 12), text("Author: Iain McCurdy |2013|"), FontColour("grey")
 

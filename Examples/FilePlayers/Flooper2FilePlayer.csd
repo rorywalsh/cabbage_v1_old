@@ -25,25 +25,25 @@ combobox   bounds(110, 25, 80, 20), channel("mode"), items("Forward", "Backward"
 line       bounds(207, 10,  2, 65), colour("Grey")
                         
 label      bounds(302,  4, 43, 8), text("L   O   O   P"), fontcolour("white")
-rslider    bounds(210, 15, 60, 60), channel("LoopStart"), range(0, 1, 0),                   colour(165, 60, 10), text("Start"),     fontcolour("white"), trackercolour("DarkBrown")
-rslider    bounds(265, 15, 60, 60), channel("LoopEnd"),   range(0, 1, 1),                   colour(165, 60, 10), text("End"),       fontcolour("white"), trackercolour("DarkBrown")
-rslider    bounds(320, 15, 60, 60), channel("crossfade"), range(0, 1.00, 0.01,0.5),         colour(165, 60, 10), text("Fade"),      fontcolour("white"), trackercolour("DarkBrown")
-rslider    bounds(375, 15, 60, 60), channel("inskip"),    range(0, 1.00, 0),                colour(165, 60, 10), text("inskip"),    fontcolour("white"), trackercolour("DarkBrown")
+rslider    bounds(210, 15, 60, 60), channel("LoopStart"), range(0, 1, 0),                   colour(100, 30, 10), text("Start"),     textcolour("white"), trackercolour(175,130,110)
+rslider    bounds(265, 15, 60, 60), channel("LoopEnd"),   range(0, 1, 1),                   colour(100, 30, 10), text("End"),       textcolour("white"), trackercolour(175,130,110)
+rslider    bounds(320, 15, 60, 60), channel("crossfade"), range(0, 1.00, 0.01,0.5),         colour(100, 30, 10), text("Fade"),      textcolour("white"), trackercolour(175,130,110)
+rslider    bounds(375, 15, 60, 60), channel("inskip"),    range(0, 1.00, 0),                colour(100, 30, 10), text("inskip"),    textcolour("white"), trackercolour(175,130,110)
 line       bounds(440, 10,  2, 65), colour("Grey")
 
 label      bounds(475,  4, 53, 8), text("S   P   E   E   D"), fontcolour("white")
-rslider    bounds(445, 15, 60, 60), channel("transpose"), range(-24, 24, 0,1,1),            colour(165, 60, 10), text("Transpose"), fontcolour("white"), trackercolour("DarkBrown")
-rslider    bounds(500, 15, 60, 60), channel("speed"),     range( 0, 4.00, 1, 0.5),          colour(165, 60, 10), text("Speed"),     fontcolour("white"), trackercolour("DarkBrown")
+rslider    bounds(445, 15, 60, 60), channel("transpose"), range(-24, 24, 0,1,1),            colour(100, 30, 10), text("Transpose"), textcolour("white"), trackercolour(175,130,110)
+rslider    bounds(500, 15, 60, 60), channel("speed"),     range( 0, 4.00, 1, 0.5),          colour(100, 30, 10), text("Speed"),     textcolour("white"), trackercolour(175,130,110)
 line       bounds(560, 10,  2, 65), colour("Grey")
 
 label      bounds(576,  4, 90, 8), text("E   N   V   E   L   O   P   E"), fontcolour("white")
-rslider    bounds(565, 15, 60, 60), channel("AttTim"),    range(0, 5, 0, 0.5, 0.001),       colour(165, 60, 10), text("Att.Tim"),   fontcolour("white"), trackercolour("DarkBrown")
-rslider    bounds(620, 15, 60, 60), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001), colour(165, 60, 10), text("Rel.Tim"),   fontcolour("white"), trackercolour("DarkBrown")
+rslider    bounds(565, 15, 60, 60), channel("AttTim"),    range(0, 5, 0, 0.5, 0.001),       colour(100, 30, 10), text("Att.Tim"),   textcolour("white"), trackercolour(175,130,110)
+rslider    bounds(620, 15, 60, 60), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001), colour(100, 30, 10), text("Rel.Tim"),   textcolour("white"), trackercolour(175,130,110)
 line       bounds(680, 10,  2, 65), colour("Grey")
 
 label      bounds(702,  4, 80, 8), text("C   O   N   T   R   O   L"), fontcolour("white")
-rslider    bounds(685, 15, 60, 60), channel("MidiRef"),   range(0,127,60, 1, 1),            colour(165, 60, 10), text("MIDI Ref."), fontcolour("white"), trackercolour("DarkBrown")
-rslider    bounds(740, 15, 60, 60), channel("level"),     range(  0,  3.00, 1, 0.5),        colour(165, 60, 10), text("Level"),     fontcolour("white"), trackercolour("DarkBrown")
+rslider    bounds(685, 15, 60, 60), channel("MidiRef"),   range(0,127,60, 1, 1),            colour(100, 30, 10), text("MIDI Ref."), textcolour("white"), trackercolour(175,130,110)
+rslider    bounds(740, 15, 60, 60), channel("level"),     range(  0,  3.00, 1, 0.5),        colour(100, 30, 10), text("Level"),     textcolour("white"), trackercolour(175,130,110)
 
 keyboard bounds(5, 80, 795, 75)
 }
@@ -192,12 +192,12 @@ instr	3	; sample triggered by midi note
   ifenv		=	0
   iskip		=	0
   if gichans==1 then						; if mono...
-   a1	flooper2	klevel,icps/cpsmidinn(iMidiRef), gkLoopStart*giFileLen, gkLoopEnd*giFileLen, gkcrossfade, gitableL, i(gkinskip)*giFileLen, i(gkmode)-1, ifenv, iskip
-	outs	a1*aenv,a1*aenv					; send mono audio to both outputs 
-  elseif gichans==2 then						; otherwise, if stereo...
-   a1	flooper2	klevel,icps/cpsmidinn(iMidiRef), gkLoopStart*giFileLen, gkLoopEnd*giFileLen, gkcrossfade, gitableL, i(gkinskip)*giFileLen, i(gkmode)-1, ifenv, iskip
-   a2	flooper2	klevel,icps/cpsmidinn(iMidiRef), gkLoopStart*giFileLen, gkLoopEnd*giFileLen, gkcrossfade, gitableR, i(gkinskip)*giFileLen, i(gkmode)-1, ifenv, iskip
- 	outs	a1*aenv,a2*aenv					; send stereo signal to outputs
+   a1	flooper2	klevel*iamp,icps/cpsmidinn(iMidiRef), gkLoopStart*giFileLen, gkLoopEnd*giFileLen, gkcrossfade, gitableL, i(gkinskip)*giFileLen, i(gkmode)-1, ifenv, iskip
+	outs	a1*aenv,a1*aenv			; send mono audio to both outputs 
+  elseif gichans==2 then					; otherwise, if stereo...
+   a1	flooper2	klevel*iamp,icps/cpsmidinn(iMidiRef), gkLoopStart*giFileLen, gkLoopEnd*giFileLen, gkcrossfade, gitableL, i(gkinskip)*giFileLen, i(gkmode)-1, ifenv, iskip
+   a2	flooper2	klevel*iamp,icps/cpsmidinn(iMidiRef), gkLoopStart*giFileLen, gkLoopEnd*giFileLen, gkcrossfade, gitableR, i(gkinskip)*giFileLen, i(gkmode)-1, ifenv, iskip
+ 	outs	a1*aenv,a2*aenv			; send stereo signal to outputs
   endif               
  endif
 

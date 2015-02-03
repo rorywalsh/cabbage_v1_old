@@ -1,15 +1,13 @@
 <Cabbage>
-form size(230, 120), caption("Lo Fi"), pluginID("lofi")
-;image pos(0, 0), size(230, 120), colour("Chocolate"), shape("rounded"), outlinecolour("white"), line(5)
-;image pos(-40,-10), size(300,300), colour(0,  130,230,0), shape("ellipse"), outlinecolour(200, 30,100, 80), line(70)
-;image pos(  0,  0), size(300,300), colour(200, 30, 30,0), shape("ellipse"), outlinecolour(  0,130, 30, 80), line(70)
-;image pos( 40, 10), size(300,300), colour(250,  0, 30,0), shape("ellipse"), outlinecolour(  0,  0, 30, 50), line(70)
-;image pos( 80, 20), size(300,300), colour(  0,  0,255,0), shape("ellipse"), outlinecolour(  0,  0,255, 50), line(70)
-;image pos(120, 30), size(300,300), colour(  0,255,255,0), shape("ellipse"), outlinecolour(  0,255,255, 50), line(70)
-;image pos(160, 40), size(300,300), colour(255,255,  0,0), shape("ellipse"), outlinecolour(255,255,  0, 50), line(70)
-rslider bounds(  5, 31, 80, 80), text("Bits"), channel("bits"), range(1, 16, 16), fontcolour("White"),colour("orange"), trackercolour("brown")
-rslider bounds( 75,  7, 80, 80), text("Foldover"), channel("fold"), range(1, 1024, 0, 0.25), fontcolour("White"),colour("orange"), trackercolour("brown")
-rslider bounds(145, 31, 80, 80), text("Level"), channel("level"), range(0, 1.00, 1), fontcolour("White"),colour("orange"), trackercolour("brown")
+form size(230, 120), caption("Lo Fi"), pluginID("lofi"), scrollbars(0)
+image pos(0, 0), size(230, 120), colour(0,0,0), shape("sharp")
+image bounds(0,0,0,0), shape("ellipse"), widgetarray("boxes",276)
+rslider bounds(  5, 31, 80, 80), text("Bits"), channel("bits"), range(1, 16, 16), textcolour("white"),colour("orange"), trackercolour("brown")
+image   bounds( 30, 94, 30, 15), shape("rounded"), colour("black")
+rslider bounds( 75,  7, 80, 80), text("Foldover"), channel("fold"), range(1, 1024, 0, 0.25), textcolour("White"),colour("orange"), trackercolour("brown")
+image   bounds( 85, 70, 60, 15), shape("rounded"), colour("black")
+rslider bounds(145, 31, 80, 80), text("Level"), channel("level"), range(0, 1.00, 1), textcolour("White"),colour("orange"), trackercolour("brown")
+image   bounds(165, 94, 40, 15), shape("rounded"), colour("black")
 }
 </Cabbage>
 <CsoundSynthesizer>
@@ -35,6 +33,19 @@ opcode	LoFi,a,akk
 endop
 
 instr 1
+
+ ; COSMETIC NONSENSE
+ icount0	=	1		; ROW LOOP
+ loop0:
+ icount		=	1		; COLUMN LOOP
+ loop:
+ Smsg		sprintf	"bounds(%d,%d,10,10), colour(%d,%d,%d,150)",(icount-1)*10,(icount0-1)*10,rnd(255),rnd(255),rnd(255)
+ Schn		sprintf	"boxes_ident%d",icount + ((icount0-1)*23)
+ 		chnset	Smsg,Schn
+ loop_le	icount,1,23,loop	; ROW LOOP
+ loop_le	icount0,1,12,loop0	; COLUMN LOOP
+ 
+ 
 kbits chnget "bits"
 kfold chnget "fold"
 klevel chnget "level"

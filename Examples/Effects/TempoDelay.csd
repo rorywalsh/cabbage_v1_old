@@ -5,18 +5,18 @@ If 'external' is selected as clock source tempo is taken from the host's BPM.
 
 <Cabbage>
 form caption("Tempo Delay") size(565, 90), pluginID("TDel")
-image pos(0, 0), size(565, 90), colour("LightBlue"), shape("rounded"), outlinecolour("white"), line(4) 
-rslider bounds(10, 11, 70, 70), text("Tempo"), 		fontcolour("black"), 		channel("tempo"), 	range(40, 500, 90, 1, 1),   colour(100,100,255),trackercolour(100,100,150)
-rslider bounds(75, 11, 70, 70), text("Rhy.Mult."),	fontcolour("black"), 		channel("RhyMlt"), 	range(1, 16, 4, 1, 1),      colour(100,100,255),trackercolour(100,100,150)
-rslider bounds(140, 11, 70, 70), text("Damping"), 	fontcolour("black"), 		channel("damp"), 	range(20,20000, 20000,0.5), colour(100,100,255),trackercolour(100,100,150)
-rslider bounds(205, 11, 70, 70), text("Feedback"), 	fontcolour("black"), 		channel("fback"), 	range(0, 1.00, 0.8),        colour(100,100,255),trackercolour(100,100,150)
-rslider bounds(270, 11, 70, 70), text("Width"),	fontcolour("black"), 			channel("width"), 	range(0,  1.00, 1),         colour(100,100,255),trackercolour(100,100,150)
+image pos(0, 0), size(565, 90), colour("LightBlue"), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
+rslider bounds(10, 11, 70, 70), text("Tempo"), 		textcolour("black"), 		channel("tempo"), 	range(40, 500, 90, 1, 1),   colour(100,100,255),trackercolour(100,100,150)
+rslider bounds(75, 11, 70, 70), text("Rhy.Mult."),	textcolour("black"), 		channel("RhyMlt"), 	range(1, 16, 4, 1, 1),      colour(100,100,255),trackercolour(100,100,150)
+rslider bounds(140, 11, 70, 70), text("Damping"), 	textcolour("black"), 		channel("damp"), 	range(20,20000, 20000,0.5), colour(100,100,255),trackercolour(100,100,150)
+rslider bounds(205, 11, 70, 70), text("Feedback"), 	textcolour("black"), 		channel("fback"), 	range(0, 1.00, 0.8),        colour(100,100,255),trackercolour(100,100,150)
+rslider bounds(270, 11, 70, 70), text("Width"),	textcolour("black"), 			channel("width"), 	range(0,  1.00, 1),         colour(100,100,255),trackercolour(100,100,150)
 label  bounds(342,  10, 75, 12), text("Clock Source"), FontColour("black")
-button bounds(340,  22, 80, 20), text("Internal","External"), channel("ClockSource"), value(0), fontcolour("lime")
+button bounds(340,  22, 80, 20), text("Internal","External"), channel("ClockSource"), value(0), fontcolour:0("lime"), fontcolour:1("lime")
 label  bounds(345,  45, 70, 12), text("Delay Type"), FontColour("black")
-button bounds(340,  57, 80, 20), text("Simple","Ping-pong"), channel("DelType"), value(1), fontcolour("lime")
-rslider bounds(420, 11, 70, 70), text("Mix"), 		fontcolour("black"), 		channel("mix"), 	range(0, 1.00, 0.5), colour(100,100,255),trackercolour(100,100,150)
-rslider bounds(485, 11, 70, 70), text("Level"),		fontcolour("black"), 		channel("level"), 	range(0, 1.00, 1),   colour(100,100,255),trackercolour(100,100,150)
+button bounds(340,  57, 80, 20), text("Simple","Ping-pong"), channel("DelType"), value(1), fontcolour:0("lime"), fontcolour:1("lime")
+rslider bounds(420, 11, 70, 70), text("Mix"), 		textcolour("black"), 		channel("mix"), 	range(0, 1.00, 0.5), colour(100,100,255),trackercolour(100,100,150)
+rslider bounds(485, 11, 70, 70), text("Level"),		textcolour("black"), 		channel("level"), 	range(0, 1.00, 1),   colour(100,100,255),trackercolour(100,100,150)
 }
 
 hostbpm channel("bpm")

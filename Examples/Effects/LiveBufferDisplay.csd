@@ -1,12 +1,11 @@
 <Cabbage>
-form caption("Live Buffer Display"), size(610, 185), pluginID("LiBT"), colour("DarkSLateGrey")
-table      bounds(  5,  5,600,120), channel("table1"), tableNumbers(1), tablecolour("lime"), amprange(-1,1), identchannel(table), readonly(1)
-;soundfiler bounds(  5,  5,600,120), channel("pos1","end1"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255), 
+form caption("Live Buffer Display"), size(610, 185), pluginID("LiBT"), colour("DarkSLateGrey"), guirefresh(32)
+gentable      bounds(  5,  5,600,120), tablenumber(1), tablecolour("lime"), amprange(-1,1,1), identchannel(table), zoom(-1)
 
 hslider    bounds(  0,120, 610, 35), channel("ptr"),    range(0, 1.00, 1)
-label      bounds(184,150, 60,  12), text("Pointer"), fontcolour("white")
+label      bounds(205,150,200,  12), text("Pointer"), fontcolour("white")
 
-checkbox bounds(  5,150, 70, 20), channel("freeze"), text("Freeze")
+checkbox bounds(  5,150, 70, 20), channel("freeze"), text("Freeze"), fontcolour("white")
 
 </Cabbage>
                     
@@ -19,7 +18,7 @@ checkbox bounds(  5,150, 70, 20), channel("freeze"), text("Freeze")
 <CsInstruments>
 
 sr 		= 	44100	; SAMPLE RATE
-ksmps 		= 	128	; NUMBER OF AUDIO SAMPLES IN EACH CONTROL CYCLE
+ksmps 		= 	32	; NUMBER OF AUDIO SAMPLES IN EACH CONTROL CYCLE
 nchnls 		= 	2	; NUMBER OF CHANNELS (1=MONO)
 0dbfs		=	1	; MAXIMUM AMPLITUDE
 			
@@ -56,7 +55,7 @@ instr	1
 	 	tablew	kval,kcount,giDispBuffer
 	 loop_lt	kcount,1,iDispTabLen,loop	
 
-	 if metro(10)==1 then
+	 if metro(kr/32)==1 then
        	  chnset	"tablenumber(1)", "table"	; update table display	
 	 endif
 	else	

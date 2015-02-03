@@ -13,9 +13,9 @@
 <Cabbage>
 form caption("Bounce") size(610, 360), pluginID("bnce")
 
-; box 1
-image    bounds(  0,  0,230,250), colour(200,100,100,200),    shape("rounded"), oulinecolour("white"), line(0)
-xypad    bounds(  0,  0,230,250), colour(200,100,100,200), channel("x1", "y1"), rangex(0, 1.00, 0), rangey(0, 1, 0)
+; box 1 image    bounds(  0,  0,230,250), colour(200,100,100,200), 
+shape("rounded"), ouTlinecolour("white"), outlinethickness(0) 
+xypad    bounds(  0, 0,230,250), colour(200,100,100,200), channel("x1", "y1"), rangex(0, 1.00, 0), rangey(0, 1, 0)
 
 ; box 2
 image    bounds(230,  0,270,250), colour(100,200,200,200),shape("rounded"), oulinecolour("white"), line(0)
@@ -94,39 +94,34 @@ instr	1
  ; box 1
  kx	chnget	"x1"						; read in x and y position for this box
  ky	chnget	"y1"
+ kMOUSE_DOWN_LEFT	chnget	"MOUSE_DOWN_LEFT"
+ kMOUSE_DOWN_RIGHT	chnget	"MOUSE_DOWN_RIGHT"
+ 
+ kClickSum	=	kMOUSE_DOWN_LEFT+kMOUSE_DOWN_RIGHT
+ kClickSum	=	1-kClickSum
+ 
  ktrig1,ktrig2,ktrig3,ktrig4	XYPadEdgeTriggers	kx,ky	; call UDO that senses barrier collisions
- schedkwhen	ktrig1,0,0,101,0,2.5,ky,kx  			; trigger instruments
- schedkwhen	ktrig2,0,0,101,0,2.5,ky,kx 
- schedkwhen	ktrig3,0,0,101,0,2.5,kx,kx 
- schedkwhen	ktrig4,0,0,101,0,2.5,kx,kx 
+ schedkwhen	(ktrig1+ktrig2+ktrig3+ktrig4)*kClickSum,0,0,101,0,2.5,ky,kx  			; trigger instruments
 
 
  ; box 2
  kx	chnget	"x2"						; read in x and y position for this box
  ky	chnget	"y2"
  ktrig1,ktrig2,ktrig3,ktrig4	XYPadEdgeTriggers	kx,ky	; call UDO that senses barrier collisions	
- schedkwhen	ktrig1,0,0,102,0,1.5,ky,kx 			; trigger instruments
- schedkwhen	ktrig2,0,0,102,0,1.5,ky,kx 
- schedkwhen	ktrig3,0,0,102,0,1.5,kx,kx 
- schedkwhen	ktrig4,0,0,102,0,1.5,kx,kx 
+ schedkwhen	(ktrig1+ktrig2+ktrig3+ktrig4)*kClickSum,0,0,102,0,1.5,ky,kx 			; trigger instruments
 
  ; box 3
  kx	chnget	"x3"						; read in x and y position for this box
  ky	chnget	"y3"
  ktrig1,ktrig2,ktrig3,ktrig4	XYPadEdgeTriggers	kx,ky	; call UDO that senses barrier collisions
- schedkwhen	ktrig1,0,0,103,0,0.1,ky,kx 			; trigger instruments 
- schedkwhen	ktrig2,0,0,103,0,0.1,ky,kx 
- schedkwhen	ktrig3,0,0,103,0,0.1,kx,kx 
- schedkwhen	ktrig4,0,0,103,0,0.1,kx,kx 
+ schedkwhen	(ktrig1+ktrig2+ktrig3+ktrig4)*kClickSum,0,0,103,0,0.1,ky,kx 			; trigger instruments 
 
  ; box 4
  kx	chnget	"x4"						; read in x and y position for this box
  ky	chnget	"y4"
  ktrig1,ktrig2,ktrig3,ktrig4	XYPadEdgeTriggers	kx,ky	; call UDO that senses barrier collisions
- schedkwhen	ktrig1,0,0,104,0,0.2,ky,kx  			; trigger instruments
- schedkwhen	ktrig2,0,0,104,0,0.2,ky,kx 
- schedkwhen	ktrig3,0,0,104,0,0.2,kx,kx 
- schedkwhen	ktrig4,0,0,104,0,0.2,kx,kx 
+ schedkwhen	(ktrig1+ktrig2+ktrig3+ktrig4)*kClickSum,0,0,104,0,0.2,ky,kx  			; trigger instruments
+
 endin
 
 ; SCALE FOR REFLECTION DEPENDENT UPON MIDI NOTE NUMBER (LESS DAMPING FOR HIGHER NOTES)

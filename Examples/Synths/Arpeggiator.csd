@@ -1,19 +1,21 @@
 <Cabbage>
 form caption("Arpeggiator") size(700, 440), pluginID("arpe")
 
+#define RSliderStyle #trackercolour(0,255,255), colour(100,100,140), outlinecolour(20,20,20)#
+                      
 groupbox bounds( 5,  0, 690, 100), text("Arpeggiator"),{
-rslider  bounds( 10, 30, 60, 60), text("Interval"), channel("intvl"), range(-36, 36, 7, 1, 1)
-rslider  bounds( 60, 30, 60, 60), text("Cycles"), channel("cycles"), range(0, 32, 5, 1, 1)
+rslider  bounds( 10, 30, 60, 60), text("Interval"), channel("intvl"), range(-36, 36, 7, 1, 1), $RSliderStyle
+rslider  bounds( 60, 30, 60, 60), text("Cycles"), channel("cycles"), range(0, 32, 5, 1, 1), $RSliderStyle
 label    bounds(122, 29, 65, 12), text("Cycle Mode") 
 combobox bounds(120, 42, 70, 20), channel("CyUpDn"), value(2), text("Up","Up-Down")
-rslider  bounds(190, 30, 60, 60), text("Tempo"), channel("tempo"), range(1, 500,120, 1, 1)
+rslider  bounds(190, 30, 60, 60), text("Tempo"), channel("tempo"), range(1, 500,120, 1, 1), $RSliderStyle
 label    bounds(243, 29, 65, 12), text("Tempo Mlt."), 
 combobox bounds(255, 42, 40, 20), channel("TempoMlt"), value(4), text("1/4","1/3","1/2","1","3/2","2","3","4")
 checkbox bounds(310, 40, 30, 30), colour("yellow"), channel("hold"),  value(1)
 label    bounds(308, 77, 30, 12), text("Hold")
 label    bounds(367, 29, 55, 12), text("Arp.Mode")
 combobox bounds(350, 42, 90, 20), channel("mode"), value(6), text("Up","Down","Up<->Down","Random Dir.","Random Pick","Seq. Play")
-rslider  bounds(440, 30, 60, 60), text("Swing"), channel("swing"), range(0, 1.00, 0)
+rslider  bounds(440, 30, 60, 60), text("Swing"), channel("swing"), range(0, 1.00, 0), $RSliderStyle
 label    bounds(505, 29, 78, 13), text("Clock Source")
 button   bounds(505, 42, 80, 20), text("Internal","External"), channel("ClockSource"), value(0)
 checkbox bounds(597, 40, 30, 30), colour("red"), channel("pause"), value(0)
@@ -24,20 +26,20 @@ label    bounds(643, 77, 40, 12), text("On/Off")
 
 groupbox bounds(  5,105, 690, 220), text("Synth"), {
 label    bounds(101,132, 25,  12), text("VCA")
-rslider  bounds( 10,150, 60, 60), text("Att."), channel("Aatt"),range(0.001, 2, 0.001, 0.5)
-rslider  bounds( 60,150, 60, 60), text("Dec."), channel("Adec"),range(0.001, 2, 0.001, 0.5)
-rslider  bounds(110,150, 60, 60), text("Sus."), channel("Asus"), range(0,     1.00, 1)
-rslider  bounds(160,150, 60, 60), text("Rel."), channel("Arel"), range(0.001, 2, 0.001, 0.5)
+rslider  bounds( 10,150, 60, 60), text("Att."), channel("Aatt"),range(0.001, 2, 0.001, 0.5), $RSliderStyle
+rslider  bounds( 60,150, 60, 60), text("Dec."), channel("Adec"),range(0.001, 2, 0.001, 0.5), $RSliderStyle
+rslider  bounds(110,150, 60, 60), text("Sus."), channel("Asus"), range(0,     1.00, 1), $RSliderStyle
+rslider  bounds(160,150, 60, 60), text("Rel."), channel("Arel"), range(0.001, 2, 0.001, 0.5), $RSliderStyle
 line bounds(230, 140, 2, 70), colour("Grey")
 
 label    bounds(408,132,  25,  12), text("VCF")
-rslider  bounds(240,150, 60, 60), text("Env.Amt"), channel("EnvAmt"),	range(0.001, 2, 0.5)
-rslider  bounds(290,150, 60, 60), text("Att."), channel("att"), 		range(0.001, 2, 0.001, 0.5)
-rslider  bounds(340,150, 60, 60), text("Dec."), channel("dec"), 		range(0.001, 2, 0.5, 0.5)
-rslider  bounds(390,150, 60, 60), text("Sus."), channel("sus"), 		range(0,     1.00, 0.5)
-rslider  bounds(440,150, 60, 60), text("Rel."), channel("rel"),		range(0.001, 2, 0.1, 0.5)
-rslider  bounds(490,150, 60, 60), text("Res."), channel("res"),		range(0,     1.00, 0.5)
-rslider  bounds(540,150, 60, 60), text("Dist."), channel("dist"), 		range(0,     1.00, 0)
+rslider  bounds(240,150, 60, 60), text("Env.Amt"), channel("EnvAmt"),	range(0.001, 2, 0.5), $RSliderStyle
+rslider  bounds(290,150, 60, 60), text("Att."), channel("att"), 		range(0.001, 2, 0.001, 0.5), $RSliderStyle
+rslider  bounds(340,150, 60, 60), text("Dec."), channel("dec"), 		range(0.001, 2, 0.5, 0.5), $RSliderStyle
+rslider  bounds(390,150, 60, 60), text("Sus."), channel("sus"), 		range(0,     1.00, 0.5), $RSliderStyle
+rslider  bounds(440,150, 60, 60), text("Rel."), channel("rel"),		range(0.001, 2, 0.1, 0.5), $RSliderStyle
+rslider  bounds(490,150, 60, 60), text("Res."), channel("res"),		range(0,     1.00, 0.5), $RSliderStyle
+rslider  bounds(540,150, 60, 60), text("Dist."), channel("dist"), 		range(0,     1.00, 0), $RSliderStyle
 checkbox bounds(600,158, 30, 30), colour("yellow"), channel("KybdTrk"),  value(1)
 label    bounds(597,198, 35, 12), text("Track")
 label    bounds(645,147, 35, 12), text("Type")
@@ -46,8 +48,8 @@ combobox bounds(640,160, 45, 20), channel("FiltType"), value(1), text("LPF","BPF
 line bounds( 15,220,670, 2), colour("Grey")
 
 label    bounds( 54,230,  25,  12), text("LFO")
-rslider  bounds( 10,250, 60, 60), text("Depth"), channel("LFOdep"), 	range(0,     0.5, 0.15)
-rslider  bounds( 60,250, 60, 60), text("Rate"), channel("LFOrate"),	range(0.001, 5,   0.07)
+rslider  bounds( 10,250, 60, 60), text("Depth"), channel("LFOdep"), 	range(0,     0.5, 0.15), $RSliderStyle
+rslider  bounds( 60,250, 60, 60), text("Rate"), channel("LFOrate"),	range(0.001, 5,   0.07), $RSliderStyle
 line bounds(130, 240, 2, 70), colour("Grey")
 
 label    bounds(245,230,  70,  12), text("Oscillator")
@@ -58,24 +60,25 @@ label    bounds(235,248, 40, 12), text("Octave")
 combobox bounds(225,260, 65, 20), channel("OctTrans"), value(5), text("-6","-5","-4","-3","-2","-1","0","1","2","3","4","5","6")
 label    bounds(227,283, 60, 12), text("Semitones")
 combobox bounds(225,295, 65, 20), channel("SemiTrans"), value(12), text("-11","-10","-9","-8","-7","-6","-5","-4","-3","-2","-1","0","1","2","3","4","5","6","7","8","9","10","11")
-rslider  bounds(300,250, 60, 60), text("Port."), channel("NotePort"), 	range(0, 1.00,   0, 0.5)
-rslider  bounds(350,250, 60, 60), text("Level"), channel("SynLev"),	range(0, 1.00,   0.3)
+rslider  bounds(300,250, 60, 60), text("Port."), channel("NotePort"), 	range(0, 1.00,   0, 0.5), $RSliderStyle
+rslider  bounds(350,250, 60, 60), text("Level"), channel("SynLev"),	range(0, 1.00,   0.3), $RSliderStyle
 line bounds(420, 240, 2, 70), colour("Grey")
 
 label    bounds(442,230, 55, 12), text("Freq.Shift")
-rslider  bounds(440,250, 60, 60), text("Freq."), channel("FShift"),	range(-1000, 1000, 0)
+rslider  bounds(440,250, 60, 60), text("Freq."), channel("FShift"),	range(-1000, 1000, 0), $RSliderStyle
+button   bounds(465,244,  8,  7), text(""), channel("ZeroFS"), value(0), colour:0("white"), colour:1("white")
 line bounds(515, 240, 2, 70), colour("Grey")
 
 label    bounds(585,230, 40, 12), text("Delay")
-rslider  bounds(530,250, 60, 60), text("Mix"), channel("DryWet"),	range(0,  1.00,   0.1)
-rslider  bounds(580,250, 60, 60), text("Time"), channel("DlyTim"),	range(1, 16,   4,1,1)
-rslider  bounds(630,250, 60, 60), text("F.back"), channel("DlyFB"),	range(0,  1.00,   0.5)
+rslider  bounds(530,250, 60, 60), text("Mix"), channel("DryWet"),	range(0,  1.00,   0.1), $RSliderStyle
+rslider  bounds(580,250, 60, 60), text("Time"), channel("DlyTim"),	range(1, 16,   4,1,1), $RSliderStyle
+rslider  bounds(630,250, 60, 60), text("F.back"), channel("DlyFB"),	range(0,  1.00,   0.5), $RSliderStyle
 }
 
 keyboard pos(5, 330), size(690, 80)
 infobutton bounds(5,415, 70, 20), text("Help"), file("ArpeggiatorHelp.html")
-image bounds(80, 415, 215, 20), colour(75, 85, 90, 100), plant("credit"), line(0){
-label bounds(0.03, 0.1, .9, .7), text("Author: Iain McCurdy |2012|"), colour("white")
+image bounds(80, 415, 215, 20), colour(50,50,50), plant("credit"), line(0){
+label bounds(0.03, 0.1, .9, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white"), colour(50,50,50)
 hostbpm channel("bpm")
 </Cabbage>
 
@@ -195,17 +198,11 @@ instr	ScanWidgets
 	gkDryWet	chnget	"DryWet"
 	gkDlyTim	chnget	"DlyTim"
 	gkDlyFB		chnget	"DlyFB"	
-
-	/*
-	kx1		chnget	"x1"
-	ky1		chnget	"y1"
-	kx1		logcurve	kx1,0.1
-	ky1		logcurve	ky1,0.1
-	kx1		scale	kx1, 2, 0.001
-	ky1		scale	ky1, 2, 0.001
-			chnset	kx1, "att"
-			chnset	ky1, "dec"
-	*/
+	gkZeroFS	chnget	"ZeroFS"
+	kzero		=	0
+	if changed(gkZeroFS)==1 then
+	 chnset	kzero,"FShift"
+	endif
 endin
 
 instr	ScanMIDI	;SCAN INCOMING MIDI AND TRIGGER NOTES IN INSTRUMENT 'NoteLayer'
@@ -267,6 +264,7 @@ endin
 
 instr	Arpeggiator	
 	krelease	release				;SENSE END OF NOTE (1)
+	kporttime	linseg	0,0.001,0.05
 
 	ktrans		=	((gkOctTrans-7)*12)+(gkSemiTrans-12)
 
@@ -590,6 +588,7 @@ instr	Arpeggiator
 	
 	/*FREQUENCY SHIFTER*/
 	if gkFShift==0 kgoto SKIP_FSHIFT			;IF F.SHIFT VALUE = 0, BYPASS THE EFFECT
+	gkFShift	portk	gkFShift,kporttime
 	a1	FreqShifter	a1,gkFShift,gisine		;CALL UDO
 	SKIP_FSHIFT:
 	

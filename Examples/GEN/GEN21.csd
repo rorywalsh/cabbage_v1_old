@@ -10,7 +10,7 @@
 <Cabbage>
 form caption("GEN21"), size(410, 220), pluginID("gn21"), colour( 40,110, 80)
 
-table bounds(  5,  5, 400, 120), tableNumbers(1), tablecolour("lime"), identchannel("table1"), amprange(-1,1), drawmode(1)
+gentable bounds(  5,  5, 400, 120), tablenumber(1), tablecolour("lime"), identchannel("table1"), amprange(-1,1,1)
 
 combobox bounds( 10, 130, 200,20), channel("dist"), value(1), text("Uniform [pos.]","Linear [pos.]","Triangular [pos. and neg.]","Exponential [pos.]","Biexponential [pos. and neg.]","Gaussian [pos. and neg.]","Cauchy [pos. and neg.]","Cauchy [pos.]","Beta","Weibull","Poisson")
 

@@ -18,56 +18,58 @@
 <Cabbage>
 form caption("Bouncing Object"), size(390, 635), pluginID("bnOb")
 
+#define RSliderStyle # trackercolour(255,255,255), colour(100,200,140), outlinecolour(40,40,40), textcolour(white) #
+
 image      bounds(  5,  5,380, 70), colour( 50,100, 70), outlinecolour("white"), line(2), shape("sharp"),plant("main"){
 filebutton bounds(  5,  8, 80, 25), text("Open File","Open File"), fontcolour("white") channel("filename"), shape("ellipse")
 button     bounds(  5, 37, 80, 25), channel("GestureTrigger"), text("Trigger","Trigger"), value(0), latched(0)
-rslider    bounds( 90,  5, 60, 60), channel("dur"), text("Duration"), range(0.1, 20.00,  4,0.25), colour( 10,110, 80,200), trackercolour("white")
-label    bounds(150, 12, 65, 12), text("Input:"),  FontColour("white")
-combobox bounds(150, 25, 65, 20), channel("input"), value(2), text("Sample", "Sine", "Saw", "Square", "Tri", "Noise")
+rslider    bounds( 90,  5, 60, 60), channel("dur"), text("Duration"), range(0.1, 20.00,  4,0.25), $RSliderStyle
+label      bounds(150, 12, 65, 12), text("Input:"),  FontColour("white")
+combobox   bounds(150, 25, 65, 20), channel("input"), value(2), text("Sample", "Sine", "Saw", "Square", "Tri", "Noise")
 
 label    bounds(220, 12, 90, 12), text("Filter Type:"),  FontColour("white")
 combobox bounds(220, 25, 90, 20), channel("FiltType"), value(1), text("Lowpass", "Bandpass", "Reson", "Highpass", "Moogladder")
-rslider  bounds(310,  5, 60, 60), channel("bandwidth"), text("Bandwidth"), range(0.05, 2, 0.1, 0.25),   colour( 10,110, 80,200), trackercolour("white")
+rslider  bounds(310,  5, 60, 60), identchannel("bandwidth"), text("Bandwidth"), range(0.05, 2, 0.1, 0.25), $RSliderStyle
 }
 
-image   bounds(  5, 80,380, 90), colour( 50,100, 70), oulinecolour("white"), line(2), shape("sharp"),plant("time"){
+image   bounds(  5, 80,380, 90), colour( 50,100, 70), outlinecolour("white"), line(2), shape("sharp"),plant("time"){
 label   bounds(  0,  3,170, 12), text("Time Gap"),  FontColour("white")
-rslider bounds(  0, 20, 60, 60), channel("TimeS"), text("Start"), range(0.01, 1.00,  0.5), colour( 10,110, 80,200), trackercolour("white")
-rslider bounds( 55, 20, 60, 60), channel("TimeE"), text("End"),   range(0.01, 1.00,  0.05), colour( 10,110, 80,200), trackercolour("white")
-rslider bounds(110, 20, 60, 60), channel("TimeC"), text("Curve"), range(  -40, 40.00,-0.4), colour( 10,110, 80,200), trackercolour("white")
-table   bounds(175,  5,200, 80), channel("table1"), tableNumbers(1), tablecolour("lime"), identchannel("table1"), amprange(0,1)
+rslider bounds(  0, 20, 60, 60), channel("TimeS"), text("Start"), range(0.01, 1.00,  0.5), $RSliderStyle
+rslider bounds( 55, 20, 60, 60), channel("TimeE"), text("End"),   range(0.01, 1.00,  0.05), $RSliderStyle
+rslider bounds(110, 20, 60, 60), channel("TimeC"), text("Curve"), range(  -40, 40.00,-0.4), $RSliderStyle
+gentable   bounds(175,  5,200, 80), identchannel("table1"), tableNumbers(1), tablecolour("lime"), amprange(0.01,1,1), zoom(-1)
 }
 
-image   bounds(  5,175,380, 90), colour( 50,100, 70), oulinecolour("white"), line(2), shape("sharp"),plant("Transpose"){
+image   bounds(  5,175,380, 90), colour( 50,100, 70), outlinecolour("white"), line(2), shape("sharp"),plant("Transpose"){
 label   bounds(  0,  3,170, 12), text("Transpose"),  FontColour("white")
-rslider bounds(  0, 20, 60, 60), channel("TransS"), text("Start"), range(-48, 48,  0), colour( 10,110, 80,200), trackercolour("white")
-rslider bounds( 55, 20, 60, 60), channel("TransE"), text("End"),   range(-48, 48,  0), colour( 10,110, 80,200), trackercolour("white")
-rslider bounds(110, 20, 60, 60), channel("TransC"), text("Curve"), range(  -40, 40.00, 0), colour( 10,110, 80,200), trackercolour("white")
-table   bounds(175,  5,200, 80), channel("table2"), tableNumbers(2), tablecolour("yellow"), identchannel("table2")`, amprange(-48,48)
+rslider bounds(  0, 20, 60, 60), channel("TransS"), text("Start"), range(-48, 48,  0), $RSliderStyle
+rslider bounds( 55, 20, 60, 60), channel("TransE"), text("End"),   range(-48, 48,  0), $RSliderStyle
+rslider bounds(110, 20, 60, 60), channel("TransC"), text("Curve"), range(  -40, 40.00, 0), $RSliderStyle
+gentable   bounds(175,  5,200, 80), identchannel("table2"), tableNumbers(2), tablecolour("yellow"), amprange(-48,48,2), zoom(-1)
 }
 
-image   bounds(  5,270,380, 90), colour( 50,100, 70), oulinecolour("white"), line(2), shape("sharp"),plant("Filter"){
+image   bounds(  5,270,380, 90), colour( 50,100, 70), outlinecolour("white"), line(2), shape("sharp"),plant("Filter"){
 label   bounds(  0,  3,170, 12), text("Filter"),  FontColour("white")
-rslider bounds(  0, 20, 60, 60), channel("FilterS"), text("Start"), range(4, 14.00,  14), colour( 10,110, 80,200), trackercolour("white")
-rslider bounds( 55, 20, 60, 60), channel("FilterE"), text("End"),   range(4, 14.00,  5), colour( 10,110, 80,200), trackercolour("white")
-rslider bounds(110, 20, 60, 60), channel("FilterC"), text("Curve"), range(-40, 40.00,-2), colour( 10,110, 80,200), trackercolour("white")
-table   bounds(175,  5,200, 80), channel("table3"), tableNumbers(3), tablecolour("LightBlue"), identchannel("table3")`, amprange(4,14)
+rslider bounds(  0, 20, 60, 60), channel("FilterS"), text("Start"), range(4, 14.00,  14), $RSliderStyle
+rslider bounds( 55, 20, 60, 60), channel("FilterE"), text("End"),   range(4, 14.00,  5), $RSliderStyle
+rslider bounds(110, 20, 60, 60), channel("FilterC"), text("Curve"), range(-40, 40.00,-2), $RSliderStyle
+gentable   bounds(175,  5,200, 80), identchannel("table3"), tableNumbers(3), tablecolour("LightBlue"), amprange(4,14,3), zoom(-1)
 }
 
-image   bounds(  5,365,380, 90), colour( 50,100, 70), oulinecolour("white"), line(2), shape("sharp"),plant("Amp"){
+image   bounds(  5,365,380, 90), colour( 50,100, 70), outlinecolour("white"), line(2), shape("sharp"),plant("Amp"){
 label   bounds(  0,  3,170, 12), text("Gesture Amplitude Envelope"),  FontColour("white")
-rslider bounds(  0, 20, 60, 60), channel("AmpS"), text("Start"), range(0, 1,  1), colour( 10,110, 80,200), trackercolour("white")
-rslider bounds( 55, 20, 60, 60), channel("AmpE"), text("End"),   range(0, 1,0.5), colour( 10,110, 80,200), trackercolour("white")
-rslider bounds(110, 20, 60, 60), channel("AmpC"), text("Curve"), range(-40, 40.00, 0), colour( 10,110, 80,200), trackercolour("white")
-table   bounds(175,  5,200, 80), channel("table4"), tableNumbers(4), tablecolour("Pink"), identchannel("table4")`, amprange(0,1)
+rslider bounds(  0, 20, 60, 60), channel("AmpS"), text("Start"), range(0, 1,  1), $RSliderStyle
+rslider bounds( 55, 20, 60, 60), channel("AmpE"), text("End"),   range(0, 1,0.5), $RSliderStyle
+rslider bounds(110, 20, 60, 60), channel("AmpC"), text("Curve"), range(-40, 40.00, 0), $RSliderStyle
+gentable   bounds(175,  5,200, 80), identchannel("table4"), tableNumbers(4), tablecolour("Pink"), amprange(0,1,4), zoom(-1)
 }
 
-image   bounds(  5,460,380, 90), colour( 50,100, 70), oulinecolour("white"), line(2), shape("sharp"),plant("ElementAmp"){
+image   bounds(  5,460,380, 90), colour( 50,100, 70), outlinecolour("white"), line(2), shape("sharp"),plant("ElementAmp"){
 label   bounds(  0,  3,170, 12), text("Element Amplitude Envelope"),  FontColour("white")
-rslider bounds(  0, 20, 60, 60), channel("ElementAmpS"), text("Start"), range(0, 1,  1), colour( 10,110, 80,200), trackercolour("white")
-rslider bounds( 55, 20, 60, 60), channel("ElementAmpE"), text("End"),   range(0, 1,  1), colour( 10,110, 80,200), trackercolour("white")
-rslider bounds(110, 20, 60, 60), channel("ElementAmpC"), text("Curve"), range(-40, 40.00, 0), colour( 10,110, 80,200), trackercolour("white")
-table   bounds(175,  5,200, 80), channel("table5"), tableNumbers(5), tablecolour("Orange"), identchannel("table5")`, amprange(0,1)
+rslider bounds(  0, 20, 60, 60), channel("ElementAmpS"), text("Start"), range(0, 1,  1), $RSliderStyle
+rslider bounds( 55, 20, 60, 60), channel("ElementAmpE"), text("End"),   range(0, 1,  1), $RSliderStyle
+rslider bounds(110, 20, 60, 60), channel("ElementAmpC"), text("Curve"), range(-40, 40.00, 0), $RSliderStyle
+gentable   bounds(175,  5,200, 80), identchannel("table5"), tableNumbers(5), tablecolour("Orange"), amprange(0,1,5), zoom(-1)
 }
 
 keyboard bounds(  0,555,390, 80)
@@ -193,7 +195,7 @@ instr	2
  event_i	"i",3,0,i(gkdur)*ivel,inum
 endin
 
-instr	3
+instr	3	; TRIGGERS GESTURE
  iInSkip	=	(i(gkdur)-p3)/i(gkdur)
  iOffset	=	p4-60
  itrans		tablei	0,gitrans,1
@@ -213,7 +215,7 @@ endin
 
 
 
-instr	4
+instr	4	; INDIVIDUAL IMPULSE SOUNDS
  if giReady==1||i(gkinput)!=1 then						; i.e. if a file has been loaded
   if i(gkinput)==1 then
    ifn		=		101

@@ -1,18 +1,18 @@
 <Cabbage>
 form caption("Envelope Follower") size(440, 100), pluginID("envf")
-image pos(0, 0), size(440, 100), colour("brown"), shape("rounded"), outlinecolour("white"), line(4)
+image pos(0, 0), size(440, 100), colour("brown"), shape("rounded"), outlinecolour("white"), outlinethickness(4)
 checkbox bounds(15, 70, 15, 15), channel("lev1"), value(0), colour(200,220,0,255),shape("ellipse")
 checkbox bounds(15, 55, 15, 15), channel("lev2"), value(0), colour(250,190,0,255),shape("ellipse")
 checkbox bounds(15, 40, 15, 15), channel("lev3"), value(0), colour(255,120,0,255),shape("ellipse")
 checkbox bounds(15, 25, 15, 15), channel("lev4"), value(0), colour(255, 60,0,255),shape("ellipse")
 checkbox bounds(15, 10, 15, 15), channel("lev5"), value(0), colour(255,  0,0,255),shape("ellipse")
-rslider bounds( 40, 11, 75, 75), text("Sensitivity"), channel("sens"),  range(0, 1, 0.65),                   colour(255,100,100), fontcolour(255,255,200), trackercolour(255,255,150)
-rslider bounds(110,  6, 45, 45), text("Att."),        channel("att"),   range(0.001, 0.5, 0.01, 0.5, 0.001), colour(255,200,100), fontcolour(255,255,200), trackercolour(255,255,150)
-rslider bounds(110, 51, 45, 45), text("Dec."),        channel("rel"),   range(0.001, 0.5, 0.2, 0.5, 0.001),  colour(255,200,100), fontcolour(255,255,200), trackercolour(255,255,150)
-rslider bounds(150, 11, 75, 75), text("Frequency"),   channel("freq"),  range(10, 10000, 1000, 0.5),         colour(255,100,100), fontcolour(255,255,200), trackercolour(255,255,150)
-rslider bounds(220, 11, 75, 75), text("Resonance"),   channel("res"),   range(0,  1, 0.75),                  colour(255,100,100), fontcolour(255,255,200), trackercolour(255,255,150)
-rslider bounds(290, 11, 75, 75), text("Distortion"),  channel("dist"),  range(0,  1.00, 0),                  colour(255,100,100), fontcolour(255,255,200), trackercolour(255,255,150)
-rslider bounds(360, 11, 75, 75), text("Level"),       channel("level"), range(0, 1.00, 1),                   colour(255,200,100), fontcolour(255,255,200), trackercolour(255,255,150)
+rslider bounds( 40, 11, 75, 75), text("Sensitivity"), channel("sens"),  range(0, 1, 0.65),                   colour(255,100,100), textcolour(255,255,200), trackercolour(255,255,150)
+rslider bounds(110,  6, 45, 45), text("Att."),        channel("att"),   range(0.001, 0.5, 0.01, 0.5, 0.001), colour(255,200,100), textcolour(255,255,200), trackercolour(255,255,150)
+rslider bounds(110, 51, 45, 45), text("Dec."),        channel("rel"),   range(0.001, 0.5, 0.2, 0.5, 0.001),  colour(255,200,100), textcolour(255,255,200), trackercolour(255,255,150)
+rslider bounds(150, 11, 75, 75), text("Frequency"),   channel("freq"),  range(10, 10000, 1000, 0.5),         colour(255,100,100), textcolour(255,255,200), trackercolour(255,255,150)
+rslider bounds(220, 11, 75, 75), text("Resonance"),   channel("res"),   range(0,  1, 0.75),                  colour(255,100,100), textcolour(255,255,200), trackercolour(255,255,150)
+rslider bounds(290, 11, 75, 75), text("Distortion"),  channel("dist"),  range(0,  1.00, 0),                  colour(255,100,100), textcolour(255,255,200), trackercolour(255,255,150)
+rslider bounds(360, 11, 75, 75), text("Level"),       channel("level"), range(0, 1.00, 1),                   colour(255,200,100), textcolour(255,255,200), trackercolour(255,255,150)
 }
 </Cabbage>
 <CsoundSynthesizer>

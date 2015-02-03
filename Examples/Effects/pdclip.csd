@@ -1,12 +1,12 @@
 <Cabbage>
 form caption("pdclip") size(315, 90), pluginID("pdcl")
-label        bounds(-30, -4,315, 90), colour(20,100,100, 0), fontcolour(70,150,150,200), text("pdclip"), shape("rounded"), outlinecolour("white"), line(4) 
-image        bounds(  0,  0,315, 90), colour(10,100,200,200), shape("rounded"), outlinecolour("white"), line(4) 
-rslider      bounds( 10, 11, 70, 70), text("Width"), channel("width"), range(0, 1.00, 0),fontcolour("white"),       colour(20, 70,120), trackercolour(255,255,25)
-rslider      bounds( 75, 11, 70, 70), text("Centre"), channel("center"), range(-1.00, 1.00, 0),fontcolour("white"), colour(20, 70,120), trackercolour(255,255,25)
+label        bounds(-30, -4,315, 90), colour(20,100,100, 0), fontcolour(70,150,150,200), text("pdclip"), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
+image        bounds(  0,  0,315, 90), colour(10,100,200,200), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
+rslider      bounds( 10, 11, 70, 70), text("Width"),  channel("width"),  range(0, 1.00, 0),     textcolour("black"), colour(5, 30,80), trackercolour(255,255,25), outlinecolour(30,30,50)
+rslider      bounds( 75, 11, 70, 70), text("Centre"), channel("center"), range(-1.00, 1.00, 0), textcolour("black"), colour(5, 30,80), trackercolour(255,255,25), outlinecolour(30,30,50)
+rslider      bounds(235, 11, 70, 70), text("Level"),  channel("level"),  range(0, 1.00, 0.7),   textcolour("black"), colour(5, 30,80), trackercolour(255,255,25), outlinecolour(30,30,50)
 combobox     bounds(150, 20, 80, 20), channel("bipolar"), value(2), text("Unipolar", "Bipolar")
-checkbox     bounds(150, 48,130, 12), channel("TestTone"), FontColour("white"),  value(0), text("Sine Tone"), colour(yellow)
-rslider      bounds(235, 11, 70, 70), text("Level"), channel("level"), range(0, 1.00, 0.7),fontcolour("white"),     colour(20, 70,120), trackercolour(255,255,25)
+checkbox     bounds(150, 48,130, 12), channel("TestTone"), FontColour("black"),  value(0), text("Sine Tone"), colour(yellow)
 }
 </Cabbage>
 

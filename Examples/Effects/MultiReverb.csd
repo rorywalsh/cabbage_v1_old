@@ -3,15 +3,15 @@ Pitch Mod. is only used by reverbsc.
 
 <Cabbage>
 form caption("Multi Reverb") size(415, 90), pluginID("Rvrb")
-image  bounds(  7, 22, 73, 45), colour( 39, 31, 20), shape("rounded"), outlinecolour(white), line(1) 
-image  bounds(  0,  0,415, 90), colour( 39, 31, 20), shape("rounded"), outlinecolour("white"), line(4) 
-label  bounds( 24, 26, 40, 12), text("Type:"), fontColour(white)
-button bounds( 11, 40, 66, 20), text("screverb","freeverb"), channel("type"), value(0), fontcolour("lime")
-rslider bounds( 80, 11, 70, 70), text("Size"), 		fontcolour(white), 		channel("fblvl"), 	range(0, 1.00, 0.8), colour( 79, 81, 70), trackercolour(240,210,170)
-rslider bounds(145, 11, 70, 70), text("Damping"), 	fontcolour(white), 		channel("fco"), 	range(0, 1.00, 0.6), colour( 79, 81, 70), trackercolour(240,210,170)
-rslider bounds(210, 11, 70, 70), text("Pitch Mod."), 	fontcolour(white), 		channel("pitchm"), 	range(0, 20.0, 1),   colour( 79, 81, 70), trackercolour(240,210,170)
-rslider bounds(275, 11, 70, 70), text("Mix"), 		fontcolour(white), 		channel("mix"), 	range(0, 1.00, 1),   colour( 79, 81, 70), trackercolour(240,210,170)
-rslider bounds(340, 11, 70, 70), text("Level"),	 	fontcolour(white), 		channel("amp"), 	range(0, 1.00, 1),   colour( 79, 81, 70), trackercolour(240,210,170)
+image  bounds(  7, 22, 73, 45), colour( 39, 31, 20), shape("rounded"), outlinecolour(white), outlinethickness(1) 
+image  bounds(  0,  0,415, 90), colour( 39, 31, 20), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
+button bounds( 11, 20, 66, 20), text("screverb","screverb"), channel("scType"),   value(1), fontcolour:0(50,50,50), fontcolour:1("lime"), radiogroup(1)
+button bounds( 11, 40, 66, 20), text("freeverb","freeverb"), channel("freeType"), value(0), fontcolour:0(50,50,50), fontcolour:1("lime"), radiogroup(1)
+rslider bounds( 80, 11, 70, 70), text("Size"), 		textcolour(white), 		channel("fblvl"), 	range(0, 1.00, 0.8), colour( 79, 81, 70), trackercolour(240,210,170)
+rslider bounds(145, 11, 70, 70), text("Damping"), 	textcolour(white), 		channel("fco"), 	range(0, 1.00, 0.6), colour( 79, 81, 70), trackercolour(240,210,170)
+rslider bounds(210, 11, 70, 70), text("Pitch Mod."), 	textcolour(white), 		channel("pitchm"), 	range(0, 20.0, 1),   colour( 79, 81, 70), trackercolour(240,210,170)
+rslider bounds(275, 11, 70, 70), text("Mix"), 		textcolour(white), 		channel("mix"), 	range(0, 1.00, 1),   colour( 79, 81, 70), trackercolour(240,210,170)
+rslider bounds(340, 11, 70, 70), text("Level"),	 	textcolour(white), 		channel("amp"), 	range(0, 1.00, 1),   colour( 79, 81, 70), trackercolour(240,210,170)
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -30,7 +30,12 @@ nchnls 		= 	2	;NUMBER OF CHANNELS (2=STEREO)
 ;Author: Iain McCurdy (2012)
 
 instr	1
-	ktype		chnget	"type"				;READ WIDGETS...
+	kscType		chnget	"scType"
+	kfreeType	chnget	"freeType"
+	ktype		=	(kscType==1?0:1)
+;	ktype		chnget	"type"				;READ WIDGETS...
+
+
 	kfblvl		chnget	"fblvl"				;
 	kfco		chnget	"fco"				;
 	kpitchm		chnget	"pitchm"	        	;

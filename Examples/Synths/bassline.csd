@@ -1,7 +1,9 @@
 <Cabbage>
 form caption("Bassline") size(615, 250), pluginID("basl"), guirefresh(64)
 
-image    bounds(  0,  0,615,220), colour("grey"), shape("rounded"), oulinecolour("white"), line(4)
+#define RSliderStyle # trackercolour(255,255,255), colour(  0, 55,100), textcolour(0,0,0), outlinecolour(50,50,50)#
+
+image    bounds(  0,  0,615,220), colour("grey"), shape("sharp"), outlinecolour("white"), line(4)
 checkbox bounds( 64,  8,  4,  4), channel("Act1"),  value(0), colour("yellow"), shape("ellipse")
 checkbox bounds( 99,  8,  4,  4), channel("Act2"),  value(0), colour("yellow"), shape("ellipse")
 checkbox bounds(134,  8,  4,  4), channel("Act3"),  value(0), colour("yellow"), shape("ellipse")
@@ -20,22 +22,22 @@ checkbox bounds(554,  8,  4,  4), channel("Act15"), value(0), colour("yellow"), 
 checkbox bounds(589,  8,  4,  4), channel("Act16"), value(0), colour("yellow"), shape("ellipse")
 
 label    bounds( 10, 23, 40, 12), text("Note"), FontColour("black")
-rslider  bounds( 45, 15, 45, 45), text("1"), FontColour("black"),  channel("Note1"),  range(24, 96, 60, 1, 1)
-rslider  bounds( 80, 15, 45, 45), text("2"),  channel("Note2"), FontColour("black"),  range(24, 96, 60, 1, 1)
-rslider  bounds(115, 15, 45, 45), text("3"),  channel("Note3"), FontColour("black"),  range(24, 96, 60, 1, 1)
-rslider  bounds(150, 15, 45, 45), text("4"),  channel("Note4"), FontColour("black"),  range(24, 96, 60, 1, 1)
-rslider  bounds(185, 15, 45, 45), text("5"),  channel("Note5"), FontColour("black"),  range(24, 96, 60, 1, 1)
-rslider  bounds(220, 15, 45, 45), text("6"),  channel("Note6"), FontColour("black"),  range(24, 96, 60, 1, 1)
-rslider  bounds(255, 15, 45, 45), text("7"),  channel("Note7"), FontColour("black"),  range(24, 96, 60, 1, 1)
-rslider  bounds(290, 15, 45, 45), text("8"),  channel("Note8"), FontColour("black"),  range(24, 96, 60, 1, 1)
-rslider  bounds(325, 15, 45, 45), text("9"),  channel("Note9"), FontColour("black"),  range(24, 96, 60, 1, 1)
-rslider  bounds(360, 15, 45, 45), text("10"), channel("Note10"), FontColour("black"), range(24, 96, 60, 1, 1)
-rslider  bounds(395, 15, 45, 45), text("11"), channel("Note11"), FontColour("black"), range(24, 96, 60, 1, 1)
-rslider  bounds(430, 15, 45, 45), text("12"), channel("Note12"), FontColour("black"), range(24, 96, 60, 1, 1)
-rslider  bounds(465, 15, 45, 45), text("13"), channel("Note13"), FontColour("black"), range(24, 96, 60, 1, 1)
-rslider  bounds(500, 15, 45, 45), text("14"), channel("Note14"), FontColour("black"), range(24, 96, 60, 1, 1)
-rslider  bounds(535, 15, 45, 45), text("15"), channel("Note15"), FontColour("black"), range(24, 96, 60, 1, 1)
-rslider  bounds(570, 15, 45, 45), text("16"), channel("Note16"), FontColour("black"), range(24, 96, 60, 1, 1)
+rslider  bounds( 45, 15, 45, 45), text("1"),  channel("Note1"),  range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds( 80, 15, 45, 45), text("2"),  channel("Note2"),  range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(115, 15, 45, 45), text("3"),  channel("Note3"),  range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(150, 15, 45, 45), text("4"),  channel("Note4"),  range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(185, 15, 45, 45), text("5"),  channel("Note5"),  range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(220, 15, 45, 45), text("6"),  channel("Note6"),  range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(255, 15, 45, 45), text("7"),  channel("Note7"),  range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(290, 15, 45, 45), text("8"),  channel("Note8"),  range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(325, 15, 45, 45), text("9"),  channel("Note9"),  range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(360, 15, 45, 45), text("10"), channel("Note10"), range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(395, 15, 45, 45), text("11"), channel("Note11"), range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(430, 15, 45, 45), text("12"), channel("Note12"), range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(465, 15, 45, 45), text("13"), channel("Note13"), range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(500, 15, 45, 45), text("14"), channel("Note14"), range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(535, 15, 45, 45), text("15"), channel("Note15"), range(24, 96, 60, 1, 1), $RSliderStyle
+rslider  bounds(570, 15, 45, 45), text("16"), channel("Note16"), range(24, 96, 60, 1, 1), $RSliderStyle
 
 label    bounds( 10, 62, 40, 12), text("On/Off"), fontcolour("black"), FontColour("black")
 checkbox bounds( 61, 62, 12, 12), channel("On1"),  value(0)
@@ -91,23 +93,24 @@ checkbox bounds(516, 98, 12, 12), channel("Acc14"), value(0)
 checkbox bounds(551, 98, 12, 12), channel("Acc15"), value(0)
 checkbox bounds(586, 98, 12, 12), channel("Acc16"), value(0)
 
-button   bounds( 10,120, 60, 25), colour:0("Red"), colour:1("Green"), text("Stop","Run"), channel("OnOff"), value(1)
-combobox bounds( 10,150, 60, 15), channel("Waveform"), value(1), text("saw","square","triangle","PWM","noise")
-rslider  bounds( 20,170, 40, 40), text("P.W."),  channel("pw"),  range(0.01,0.99, 0.25), FontColour("black")
-rslider  bounds( 70,120, 60, 60), text("Vol."),  channel("Vol"),  range(0, 5.00, 1), FontColour("black")
-rslider  bounds(120,120, 60, 60), text("Cutoff"),  channel("CfBase"),  range(4.00, 14, 8), FontColour("black")
-rslider  bounds(170,120, 60, 60), text("Env.Mod"),  channel("CfEnv"),  range(0, 10.00, 4), FontColour("black")
-rslider  bounds(220,120, 60, 60), text("Res."),  channel("Res"),  range(0,0.98, .4), FontColour("black")
-rslider  bounds(270,120, 60, 60), text("Dist."),  channel("Dist"),  range(0,1.00, 0), FontColour("black")
-rslider  bounds(320,120, 60, 60), text("Decay"),  channel("Decay"),  range(0.10, 5, .3, 0.25), FontColour("black")
-rslider  bounds(370,120, 60, 60), text("Accent"),  channel("Accent"),  range(0, 1.00, .5), FontColour("black")
-rslider  bounds(420,120, 60, 60), text("Tempo"),  channel("Tempo"),  range(1, 500, 110, 1, 1), FontColour("black"), FontColour("black")
-button   bounds(480,120, 60, 15), text("Reset"), channel("Reset"), value(0), latched(0)
-button   bounds(540,120, 60, 15), text("Random"), channel("Rnd"), value(0), latched(0)
-button   bounds(480,140, 60, 15), text("-semi"), channel("SemiDn"), value(0), latched(0)
-button   bounds(540,140, 60, 15), text("+semi"), channel("SemiUp"), value(0), latched(0)
-button   bounds(480,160, 60, 15), text("-oct"), channel("OctDn"), value(0), latched(0)
-button   bounds(540,160, 60, 15), text("+oct"), channel("OctUp"), value(0), latched(0)
+button   bounds( 10,120, 60, 25), fontcolour:0(100,100,100), fontcolour:1(150,255,150), colour:0(0,30,0), colour:1(0,150,0), text("Play","Play"), channel("Play"), latched(1), radiogroup(1), identchannel("PlayButton")
+button   bounds( 10,150, 60, 25), fontcolour:0(100,100,100), fontcolour:1(255,150,150), colour:0(30,0,0), colour:1(150,0,0), text("Stop","Stop"), channel("Stop"), latched(1), radiogroup(1), value(1), identchannel("StopButton")
+combobox bounds( 10,190, 60, 15), channel("Waveform"), value(1), text("saw","square","triangle","PWM","noise")
+rslider  bounds( 80,180, 40, 40), text("P.W."),    channel("pw"),      range(0.01,0.99, 0.25),   $RSliderStyle
+rslider  bounds( 70,120, 60, 60), text("Vol."),    channel("Vol"),     range(0, 5.00, 1),        $RSliderStyle
+rslider  bounds(120,120, 60, 60), text("Cutoff"),  channel("CfBase"),  range(4.00, 14, 8),       $RSliderStyle
+rslider  bounds(170,120, 60, 60), text("Env.Mod"), channel("CfEnv"),   range(0, 10.00, 4),       $RSliderStyle
+rslider  bounds(220,120, 60, 60), text("Res."),    channel("Res"),     range(0,0.98, .4),        $RSliderStyle
+rslider  bounds(270,120, 60, 60), text("Dist."),   channel("Dist"),    range(0,1.00, 0),         $RSliderStyle
+rslider  bounds(320,120, 60, 60), text("Decay"),   channel("Decay"),   range(0.10, 5, .3, 0.25,0.0001), $RSliderStyle
+rslider  bounds(370,120, 60, 60), text("Accent"),  channel("Accent"),  range(0, 1.00, .5),       $RSliderStyle
+rslider  bounds(420,120, 60, 60), text("Tempo"),   channel("Tempo"),   range(1, 500, 110, 1, 1), $RSliderStyle
+button   bounds(480,120, 60, 15), text("Reset"),   channel("Reset"),  value(0), latched(0)
+button   bounds(540,120, 60, 15), text("Random"),  channel("Rnd"),    value(0), latched(0)
+button   bounds(480,140, 60, 15), text("-semi"),   channel("SemiDn"), value(0), latched(0)
+button   bounds(540,140, 60, 15), text("+semi"),   channel("SemiUp"), value(0), latched(0)
+button   bounds(480,160, 60, 15), text("-oct"),    channel("OctDn"),  value(0), latched(0)
+button   bounds(540,160, 60, 15), text("+oct"),    channel("OctUp"),  value(0), latched(0)
 
 button bounds(280, 185, 80, 20), text("Internal","External"), channel("ClockSource"), value(0)
 label  bounds(281, 205, 75, 12), text("Clock Source"), FontColour("black")
@@ -158,7 +161,16 @@ endop
 instr	1	;BASSLINE INSTRUMENT
 	kporttime	linseg	0,0.001,0.01	;PORTAMENTO TIME RAMPS UP QUICKLY FROM ZERO TO A HELD VALUE
 	;READ IN WIDGETS...
-	gkOnOff		chnget	"OnOff"
+	;gkOnOff		chnget	"OnOff"
+	gkPlay		chnget	"Play"
+	gkStop		chnget	"Stop"
+	if trigger(gkPlay,0.5,0)==1 then
+	 gkOnOff	=	1
+	elseif trigger(gkStop,0.5,0)==1 then
+	 gkOnOff	=	0
+	endif
+	gkOnOff	init	0
+
 	gkNote1		chnget	"Note1"
 	gkNote2		chnget	"Note2"
 	gkNote3		chnget	"Note3"

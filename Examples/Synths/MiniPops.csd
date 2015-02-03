@@ -9,37 +9,37 @@
 <Cabbage>
 form size(840,250), caption("Mini Pops"), pluginID("MPop"), colour(255,255,205), guirefresh(64)
 
-checkbox bounds( 12,  6,   47,   47), colour("tomato"), channel("Act1"),  value(0), shape("ellipse")
-checkbox bounds( 67,  6,   47,   47), colour("tomato"), channel("Act2"),  value(0), shape("ellipse")
-checkbox bounds(122,  6,   47,   47), colour("tomato"), channel("Act3"),  value(0), shape("ellipse")
-checkbox bounds(177,  6,   47,   47), colour("tomato"), channel("Act4"),  value(0), shape("ellipse")
-checkbox bounds(232,  6,   47,   47), colour("tomato"), channel("Act5"),  value(0), shape("ellipse")
-checkbox bounds(287,  6,   47,   47), colour("tomato"), channel("Act6"),  value(0), shape("ellipse")
-checkbox bounds(342,  6,   47,   47), colour("tomato"), channel("Act7"),  value(0), shape("ellipse")
-checkbox bounds(397,  6,   47,   47), colour("tomato"), channel("Act8"),  value(0), shape("ellipse")
-checkbox bounds(452,  6,   47,   47), colour("tomato"), channel("Act9"),  value(0), shape("ellipse")
-checkbox bounds(507,  6,   47,   47), colour("tomato"), channel("Act10"),  value(0), shape("ellipse")
-checkbox bounds(562,  6,   47,   47), colour("tomato"), channel("Act11"),  value(0), shape("ellipse")
-checkbox bounds(617,  6,   47,   47), colour("tomato"), channel("Act12"),  value(0), shape("ellipse")
-checkbox bounds(672,  6,   47,   47), colour("tomato"), channel("Act13"),  value(0), shape("ellipse")
-checkbox bounds(727,  6,   47,   47), colour("tomato"), channel("Act14"),  value(0), shape("ellipse")
-checkbox bounds(782,  6,   47,   47), colour("tomato"), channel("Act15"),  value(0), shape("ellipse")
+checkbox bounds( 13,  6,   45,   44), colour("tomato"), channel("Act1"),  value(0), shape("ellipse")
+checkbox bounds( 68,  6,   45,   44), colour("tomato"), channel("Act2"),  value(0), shape("ellipse")
+checkbox bounds(123,  6,   45,   44), colour("tomato"), channel("Act3"),  value(0), shape("ellipse")
+checkbox bounds(178,  6,   45,   44), colour("tomato"), channel("Act4"),  value(0), shape("ellipse")
+checkbox bounds(233,  6,   45,   44), colour("tomato"), channel("Act5"),  value(0), shape("ellipse")
+checkbox bounds(288,  6,   45,   44), colour("tomato"), channel("Act6"),  value(0), shape("ellipse")
+checkbox bounds(343,  6,   45,   44), colour("tomato"), channel("Act7"),  value(0), shape("ellipse")
+checkbox bounds(398,  6,   45,   44), colour("tomato"), channel("Act8"),  value(0), shape("ellipse")
+checkbox bounds(453,  6,   45,   44), colour("tomato"), channel("Act9"),  value(0), shape("ellipse")
+checkbox bounds(508,  6,   45,   44), colour("tomato"), channel("Act10"),  value(0), shape("ellipse")
+checkbox bounds(563,  6,   45,   44), colour("tomato"), channel("Act11"),  value(0), shape("ellipse")
+checkbox bounds(618,  6,   45,   44), colour("tomato"), channel("Act12"),  value(0), shape("ellipse")
+checkbox bounds(673,  6,   45,   44), colour("tomato"), channel("Act13"),  value(0), shape("ellipse")
+checkbox bounds(728,  6,   45,   44), colour("tomato"), channel("Act14"),  value(0), shape("ellipse")
+checkbox bounds(783,  6,   45,   44), colour("tomato"), channel("Act15"),  value(0), shape("ellipse")
 
-rslider  bounds(  5,  5, 60, 60), text("Bass Drum"),  FontColour("black"), colour(240,200,105), channel("bassdrum"),    range(0, 1, 0.6), trackercolour(white)
-rslider  bounds( 60,  5, 60, 60), text("Snare 1"),    FontColour("black"), colour(240,200,105), channel("snare1"),      range(0, 1, 0.6), trackercolour(255,255,205)
-rslider  bounds(115,  5, 60, 60), text("Snare 2"),    FontColour("black"), colour(240,200,105), channel("snare2"),      range(0, 1, 0.6), trackercolour(255,255,205)
-rslider  bounds(170,  5, 60, 60), text("Rimshot"),    FontColour("black"), colour(240,200,105), channel("rimshot"),     range(0, 1, 0.6), trackercolour(255,255,205)
-rslider  bounds(225,  5, 60, 60), text("Cymbal 1"),   FontColour("black"), colour(240,200,105), channel("cymbal1"),     range(0, 1, 0.6), trackercolour(255,255,205)
-rslider  bounds(280,  5, 60, 60), text("Cymbal 2"),   FontColour("black"), colour(240,200,105), channel("cymbal2"),     range(0, 1, 0.6), trackercolour(255,255,205)
-rslider  bounds(335,  5, 60, 60), text("Bongo 1"),    FontColour("black"), colour(240,200,105), channel("bongo1"),      range(0, 1, 0.6), trackercolour(255,255,205)
-rslider  bounds(390,  5, 60, 60), text("Bongo 2"),    FontColour("black"), colour(240,200,105), channel("bongo2"),      range(0, 1, 0.6), trackercolour(255,255,205)
-rslider  bounds(445,  5, 60, 60), text("Bongo 3"),    FontColour("black"), colour(240,200,105), channel("bongo3"),      range(0, 1, 0.6), trackercolour(255,255,205)
-rslider  bounds(500,  5, 60, 60), text("Claves"),     FontColour("black"), colour(240,200,105), channel("claves"),      range(0, 1, 0.6), trackercolour(255,255,205)
-rslider  bounds(555,  5, 60, 60), text("Cowbell"),    FontColour("black"), colour(240,200,105), channel("cowbell"),     range(0, 1, 0.6), trackercolour(255,255,205)
-rslider  bounds(610,  5, 60, 60), text("Guiro"),      FontColour("black"), colour(240,200,105), channel("guiro"),       range(0, 1, 0.6), trackercolour(255,255,205)
-rslider  bounds(665,  5, 60, 60), text("Maracas"),    FontColour("black"), colour(240,200,105), channel("maracas"),     range(0, 1, 0.6), trackercolour(255,255,205)
-rslider  bounds(720,  5, 60, 60), text("Quijada"),    FontColour("black"), colour(240,200,105), channel("quijada"),     range(0, 1, 0.6), trackercolour(255,255,205)
-rslider  bounds(775,  5, 60, 60), text("Tamb."),      FontColour("black"), colour(240,200,105), channel("tambourine"),  range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(  5,  5, 60, 60), text("Bass Drum"),  textcolour("black"), colour(240,200,105), channel("bassdrum"),    range(0, 1, 0.6), trackercolour(white)
+rslider  bounds( 60,  5, 60, 60), text("Snare 1"),    textcolour("black"), colour(240,200,105), channel("snare1"),      range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(115,  5, 60, 60), text("Snare 2"),    textcolour("black"), colour(240,200,105), channel("snare2"),      range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(170,  5, 60, 60), text("Rimshot"),    textcolour("black"), colour(240,200,105), channel("rimshot"),     range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(225,  5, 60, 60), text("Cymbal 1"),   textcolour("black"), colour(240,200,105), channel("cymbal1"),     range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(280,  5, 60, 60), text("Cymbal 2"),   textcolour("black"), colour(240,200,105), channel("cymbal2"),     range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(335,  5, 60, 60), text("Bongo 1"),    textcolour("black"), colour(240,200,105), channel("bongo1"),      range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(390,  5, 60, 60), text("Bongo 2"),    textcolour("black"), colour(240,200,105), channel("bongo2"),      range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(445,  5, 60, 60), text("Bongo 3"),    textcolour("black"), colour(240,200,105), channel("bongo3"),      range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(500,  5, 60, 60), text("Claves"),     textcolour("black"), colour(240,200,105), channel("claves"),      range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(555,  5, 60, 60), text("Cowbell"),    textcolour("black"), colour(240,200,105), channel("cowbell"),     range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(610,  5, 60, 60), text("Guiro"),      textcolour("black"), colour(240,200,105), channel("guiro"),       range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(665,  5, 60, 60), text("Maracas"),    textcolour("black"), colour(240,200,105), channel("maracas"),     range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(720,  5, 60, 60), text("Quijada"),    textcolour("black"), colour(240,200,105), channel("quijada"),     range(0, 1, 0.6), trackercolour(255,255,205)
+rslider  bounds(775,  5, 60, 60), text("Tamb."),      textcolour("black"), colour(240,200,105), channel("tambourine"),  range(0, 1, 0.6), trackercolour(255,255,205)
 
 checkbox bounds( 13, 66, 60, 10), text("mute"), channel("mute1"), fontcolour("black"), colour(red),value(0)
 checkbox bounds( 13, 78, 60, 10), text("solo"), channel("solo1"), fontcolour("black"), colour(lime),value(0)
@@ -84,16 +84,16 @@ label    bounds( 28, 29, 60, 12), text("Lower"), fontcolour(205,0,0), align("lef
 checkbox bounds(130,  2,  7,  7), channel("DistOn"), value(0), colour(red), shape("ellipse")
 checkbox bounds(190,  2,  7,  7), channel("FoldOn"), value(0), colour(red), shape("ellipse")
 
-rslider  bounds( 85,  5, 60, 60), text("O.D."), FontColour("black"), colour(255,235,140), trackercolour(120,100, 52), channel("dist"),      range(0, 1, 0)
-rslider  bounds(145,  5, 60, 60), text("Dec."), FontColour("black"), colour(255,235,140), trackercolour(120,100, 52), channel("fold"),      range(0, 1, 0, 0.5, 0.0001)
+rslider  bounds( 85,  5, 60, 60), text("O.D."), textcolour("black"), colour(200,160, 80), trackercolour(120,100, 52), outlinecolour(60,50,26), channel("dist"),      range(0, 1, 0)
+rslider  bounds(145,  5, 60, 60), text("Dec."), textcolour("black"), colour(200,160, 80), trackercolour(120,100, 52), outlinecolour(60,50,26), channel("fold"),      range(0, 1, 0, 0.5, 0.0001)
 
 checkbox bounds(131,  2,  6,  6), channel("DistOn"), value(0), colour(red), shape("ellipse")
 checkbox bounds(191,  2,  6,  6), channel("FoldOn"), value(0), colour(red), shape("ellipse")
 
 checkbox bounds( 15, 45, 70, 12), channel("cutup"), text("Mash"), fontcolour("black"), colour("yellow"),value(0)
 
-rslider  bounds(  0, 70, 70, 70), text("Volume"),     FontColour("black"), colour(255,235,140), trackercolour(120,100, 52), channel("volume"),      range(0, 1.00, .4)
-rslider  bounds( 70, 70, 70, 70), text("Tempo"),      FontColour("black"), colour(255,235,140), trackercolour(120,100, 52), channel("tempo"),       range(40, 480, 115, 1, 1)
+rslider  bounds(  0, 70, 70, 70), text("Volume"),     textcolour("black"), colour(200,160, 80), trackercolour(120,100, 52), outlinecolour(60,50,26), channel("volume"),      range(0, 1.00, .4)
+rslider  bounds( 70, 70, 70, 70), text("Tempo"),      textcolour("black"), colour(200,160, 80), trackercolour(120,100, 52), outlinecolour(60,50,26), channel("tempo"),       range(40, 480, 115, 1, 1)
 checkbox bounds(153, 77, 45, 45), channel("OnOff"), fontcolour("black"), colour("yellow"),value(1)
 label    bounds(148,127, 60, 11), text("Start/Stop"),     FontColour("black"), align("left")
 }
@@ -1369,7 +1369,7 @@ instr	3	; rhythm sequencer instrument
 	; macro within which an instrument is scanned
 #define	SCAN_INSTRUMENT(NAME'NUM)
 	#
-	ktrigger	timedseq	kphase+0.99, gi$NAME$NUM, kp$NAME_1, kp$NAME_2,kp$NAME_3,kp$NAME_4	; read table using phasor
+	ktrigger	timedseq	kphase+0.99, gi$NAME.$NUM, kp$NAME._1, kp$NAME._2,kp$NAME._3,kp$NAME._4	; read table using phasor
 	ktrigger$NAME	=	ktrigger$NAME + ktrigger							; add trigger for this instrument to the accumulator for all instruments 
 	#
 	

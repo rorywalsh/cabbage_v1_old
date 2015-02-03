@@ -18,10 +18,10 @@ Number of partials in the chosen algorithm is printed to the GUI for the user's 
 
 <Cabbage>
 form caption("Rubbed Resonators"), size(540, 320), pluginID("RubR")
-image pos(0, 0),                   size(540, 290), colour("Sienna"), shape("rounded"), oulinecolour("brown"), line(4)
+image pos(0, 0),                   size(540, 290), colour("Sienna"), shape("sharp"), oulinecolour("brown"), outlinethickness(4)
 
-;IMPULSE
-groupbox bounds(10, 10, 260, 90), text("Impulse"), fontcolour("white"), plant("impulse"){
+;EXCITATION
+groupbox bounds(10, 10, 260, 90), text("Excitation"), fontcolour("white"), plant("excitation"){
 rslider bounds(  0, 25,60,60), text("Amp."), colour("Chocolate"), channel("ImpDB"), range(-70, 0, 0)
 rslider bounds( 50, 25,60,60), text("HPF"), colour("Chocolate"), channel("HPF"), range(20, 20000, 20, 0.5)
 rslider bounds(100, 25,60,60), text("LPF"), colour("Chocolate"), channel("LPF"), range(20, 20000, 20000, 0.5)
@@ -33,15 +33,16 @@ rslider bounds(200, 25,60,60), text("Jit. Rate"), channel("JitRte"), colour("Cho
 groupbox bounds(270, 10,260, 90), text("Resonators"), fontcolour("white"), plant("resonators"){
 label    bounds( 40, 21, 70, 12), text("Instrument"), fontcolour("white")
 combobox bounds( 10, 36,140, 25), channel("sound"), value(4), text("Single", "Dahina", "Banyan", "Xylophone", "Tibetan Bowl 180mm", "Spinel Sphere", "Pot Lid", "Red Cedar Wood Plate", "Tubular Bell", "Redwood Wood Plate", "Douglas Fir Wood Plate", "Uniform Wooden Bar", "Uniform Aluminium Bar", "Vibraphone 1", "Vibraphone 2", "Chalandi Plates", "Tibetan Bowl 152mm", "Tibetan Bowl 140mm", "Wine Glass", "Small Handbell", "Albert Clock Bell", "Wood Block","Harmonic 10","Harmonic 20","Harmonic 30","Harmonic Odd 10","Harmonic Odd 20")
-label    bounds( 44, 62, 70, 12), text("N.Partials"), fontcolour("white")
-rslider  bounds( 64, 58, 70, 30), text("."), TextBox(1), channel("npartials"), range(1, 10000, 1, 1, 1)
+label    bounds(  6, 62,120, 12), text("Number of Partials:"), fontcolour("white")
+numberbox  bounds( 121, 62, 29, 13), channel("npartials"), range(1, 10000, 1, 1, 1)
+
 rslider  bounds(150, 25, 60, 60), text("Q"), colour("orange"), channel("Q"), range(50, 10000, 2000, 0.5)
 rslider  bounds(200, 25, 60, 60), text("Bright"), colour("orange"), channel("bright"), range(-4.00, 4, 0)
 }
 
 ;POLYPHONY
 groupbox bounds( 10,100,220, 90), text("Polyphony"), fontcolour("white"), plant("polyphony"){
-button   bounds( 10, 25, 80, 20), text("poly","mono"), channel("monopoly"), value(0), fontcolour("lime")
+button   bounds( 10, 25, 80, 20), text("poly","mono"), channel("monopoly"), value(0)
 hslider  bounds(  5, 43, 90, 38), colour("chocolate"), channel("GlissTime"), range(0.005,  2, 0.1, 0.25, 0.001)
 label    bounds( 22, 74, 58, 12), text("Gliss Time")
 rslider  bounds( 95, 25, 60, 60), text("Poly.Limit"), channel("PolyLimit"), range(0, 20, 5,1,1), colour("chocolate")
@@ -179,7 +180,7 @@ giNoteActive	ftgen	0,0,128,2,0
 gkbright	init	0
 gasend		init	0
 gkactive 	init 	0	; total number of active notes
-gkPolyLimit	init	1
+gkPolyLimit	init	5
 
 ;--UDOS--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 opcode	SineVoice,a,kkkiiii

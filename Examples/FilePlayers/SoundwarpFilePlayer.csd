@@ -11,32 +11,32 @@ checkbox   bounds(  5,218, 95, 17), channel("PlayStop"), text("Play/Stop"), font
 checkbox   bounds(  5,238,100, 17), channel("freeze"), text("Freeze"), colour("LightBlue"), fontcolour("white")
 
 label      bounds(245,184,180, 8), text("G   R   A   I   N   S"), fontcolour("white")
-rslider    bounds( 90,195, 60, 60), channel("overlap"),     range( 1, 100, 20, 1,1),             colour( 50,110, 80), text("Overlaps"),     fontcolour("white"), trackercolour(150,210,180)
-rslider    bounds(145,195, 60, 60), channel("grsize"),      range( 1, 40000, 800, 0.5,1),       colour( 50,110, 80), text("Size"),         fontcolour("white"), trackercolour(150,210,180)
-rslider    bounds(200,195, 60, 60), channel("grsizeOS"),    range( 0, 2.00,   0.5,  0.5),        colour( 50,110, 80), text("Size OS"),      fontcolour("white"), trackercolour(150,210,180)
-rslider    bounds(255,195, 60, 60), channel("transpose"),   range(-48, 48, 0,1,0.001),               colour( 50,110, 80), text("Transpose"),    fontcolour("white"), trackercolour(150,210,180)
+rslider    bounds( 90,195, 60, 60), channel("overlap"),     range( 1, 100, 20, 1,1),            colour( 50,110, 80), text("Overlaps"),     textcolour("white"), trackercolour(150,210,180)
+rslider    bounds(145,195, 60, 60), channel("grsize"),      range( 1, 40000, 800, 0.5,1),       colour( 50,110, 80), text("Size"),         textcolour("white"), trackercolour(150,210,180)
+rslider    bounds(200,195, 60, 60), channel("grsizeOS"),    range( 0, 2.00,   0.5,  0.5),       colour( 50,110, 80), text("Size OS"),      textcolour("white"), trackercolour(150,210,180)
+rslider    bounds(255,195, 60, 60), channel("transpose"),   range(-48, 48, 0,1,0.001),          colour( 50,110, 80), text("Transpose"),    textcolour("white"), trackercolour(150,210,180)
 
 label      bounds(337,198, 35, 10), text("M o d e"), fontcolour("white")
 combobox   bounds(318,208, 74, 17), channel("mode"), items("Speed", "Pointer", "Region"), value(1), fontcolour("white")
 label      bounds(334,227, 40, 10), text("S h a p e"), fontcolour("white")
 combobox   bounds(318,237, 74, 17), channel("shape"), items("Hanning", "Perc.1", "Perc.2", "Gate", "Rev.Perc.1", "Rev.Perc.2"), value(1), fontcolour("white")
 
-rslider    bounds(395,195, 60, 60), channel("speed"),       range( 0.00, 5.00, 1,0.5,0.001),           colour( 50,110, 80), text("Speed"),        fontcolour("white"), trackercolour(150,210,180), visible(1), identchannel("SpeedID")
-rslider    bounds(395,195, 60, 60), channel("ptr"),         range(     0,1.00, 0.5,1,0.001),            colour( 50,110, 80), text("Pointer"),      fontcolour("white"), trackercolour(150,210,180), visible(0), identchannel("PtrID")
-rslider    bounds(450,195, 60, 60), channel("ptrOS"),       range(     0, 1.000, 0, 0.5, 0.001),              colour( 50,110, 80), text("Ptr.OS"),       fontcolour("white"), trackercolour(150,210,180), visible(0), identchannel("PtrOSID")
-rslider    bounds(505,195, 60, 60), channel("inskip"),      range(     0, 1.00, 0),              colour( 50,110, 80), text("inskip"),       fontcolour("white"), trackercolour(150,210,180), visible(1), identchannel("inskipID")
+rslider    bounds(395,195, 60, 60), channel("speed"),       range( 0.00, 5.00, 1,0.5,0.001),           colour( 50,110, 80), text("Speed"),   textcolour("white"), trackercolour(150,210,180), visible(1), identchannel("SpeedID")
+rslider    bounds(395,195, 60, 60), channel("ptr"),         range(     0,1.00, 0.5,1,0.001),           colour( 50,110, 80), text("Pointer"), textcolour("white"), trackercolour(150,210,180), visible(0), identchannel("PtrID")
+rslider    bounds(450,195, 60, 60), channel("ptrOS"),       range(     0, 1.000, 0, 0.5, 0.001),       colour( 50,110, 80), text("Ptr.OS"),  textcolour("white"), trackercolour(150,210,180), visible(0), identchannel("PtrOSID")
+rslider    bounds(505,195, 60, 60), channel("inskip"),      range(     0, 1.00, 0),                    colour( 50,110, 80), text("inskip"),  textcolour("white"), trackercolour(150,210,180), visible(1), identchannel("inskipID")
 
 line       bounds(565,190,  2, 65), colour("Grey")
 
 label      bounds(565,184,120, 8), text("E   N   V   E   L   O   P   E"), fontcolour("white")
-rslider    bounds(568,195, 60, 60), channel("AttTim"),    range(0, 5.00, 0.01, 0.5, 0.001),        colour( 50,110, 80), text("Att.Tim"),   fontcolour("white"),trackercolour(150,210,180)
-rslider    bounds(620,195, 60, 60), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001), colour( 50,110, 80), text("Rel.Tim"),   fontcolour("white"),trackercolour(150,210,180)
+rslider    bounds(568,195, 60, 60), channel("AttTim"),    range(0, 5.00, 0.01, 0.5, 0.001),  colour( 50,110, 80), text("Att.Tim"), textcolour("white"), trackercolour(150,210,180)
+rslider    bounds(620,195, 60, 60), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001),  colour( 50,110, 80), text("Rel.Tim"), textcolour("white"), trackercolour(150,210,180)
 
 line       bounds(681,190,  2, 65), colour("Grey")
 
 label      bounds(702,184, 80, 8), text("C   O   N   T   R   O   L"), fontcolour("white")
-rslider    bounds(685,195, 60, 60), channel("MidiRef"),   range(0,127,60, 1, 1),            colour( 50,110, 80), text("MIDI Ref."), fontcolour("white"),trackercolour(150,210,180)
-rslider    bounds(740,195, 60, 60), channel("level"),     range(  0,  1.00, 0.4, 0.5),        colour( 50,110, 80), text("Level"),     fontcolour("white"),trackercolour(150,210,180)
+rslider    bounds(685,195, 60, 60), channel("MidiRef"),   range(0,127,60, 1, 1),            colour( 50,110, 80), text("MIDI Ref."), textcolour("white"), trackercolour(150,210,180)
+rslider    bounds(740,195, 60, 60), channel("level"),     range(  0,  1.00, 0.4, 0.5),      colour( 50,110, 80), text("Level"),     textcolour("white"), trackercolour(150,210,180)
 
 keyboard   bounds(5,260,795, 75)
 </Cabbage>
@@ -280,11 +280,11 @@ instr	3
   klevel	portk	gklevel/(i(gkoverlap)^0.25), kporttime		; apply portamento smoothing to changes in level
 
   if gichans==1 then						; if mono...
-   a1	sndwarp		klevel, kwarp, iFrqRatio, gitableL, ibeg, i(gkgrsize), i(gkgrsize) * i(gkgrsizeOS), i(gkoverlap), iwfn, imode
+   a1	sndwarp		klevel*iamp, kwarp, iFrqRatio, gitableL, ibeg, i(gkgrsize), i(gkgrsize) * i(gkgrsizeOS), i(gkoverlap), iwfn, imode
  	outs	a1*aenv,a1*aenv					; send mono audio to both outputs 
   elseif gichans==2 then						; otherwise, if stereo...
-   a1	sndwarp		klevel, kwarp, iFrqRatio, gitableL, ibeg, i(gkgrsize), i(gkgrsize) * i(gkgrsizeOS), i(gkoverlap), iwfn, imode
-   a2	sndwarp		klevel, kwarp, iFrqRatio, gitableR, ibeg, i(gkgrsize), i(gkgrsize) * i(gkgrsizeOS), i(gkoverlap), iwfn, imode
+   a1	sndwarp		klevel*iamp, kwarp, iFrqRatio, gitableL, ibeg, i(gkgrsize), i(gkgrsize) * i(gkgrsizeOS), i(gkoverlap), iwfn, imode
+   a2	sndwarp		klevel*iamp, kwarp, iFrqRatio, gitableR, ibeg, i(gkgrsize), i(gkgrsize) * i(gkgrsizeOS), i(gkoverlap), iwfn, imode
  	outs	a1*aenv,a2*aenv					; send stereo signal to outputs
   endif
   rireturn

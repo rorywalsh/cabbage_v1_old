@@ -1,18 +1,17 @@
 <Cabbage>
 form caption("Band Filter"), colour("DarkSlateGrey"), size(470, 360), pluginID("band")  
-xypad bounds(5, 5, 350, 350), channel("cf", "bw"), rangex(0, 1, 0.5), rangey(0, 1, 0.3), text("x:cutoff | y:bandwidth"), colour("white")
-
+xypad bounds(5, 5, 350, 350), channel("cf", "bw"), rangex(0, 1, 0.5), rangey(0, 1, 0.3), text("x:cutoff | y:bandwidth"),colour(127,159,159)
 checkbox bounds(370, 10, 20, 20), channel("balance"), FontColour("white"),  value(0)
 label    bounds(395, 15, 55, 15), text("Balance"), FontColour("white")
 
 label   bounds(375,  43, 75, 15), text("Filter Type"), FontColour("white")
 combobox bounds(370,  60,85, 20), channel("type"), value(1), text("reson", "butterbp", "areson", "butterbr")
 
-rslider bounds(368, 93, 90, 90), text("Mix"),		fontcolour("white"), 		channel("mix"), 	range(0, 1.00, 1), trackercolour("white")
-rslider bounds(368,190, 90, 90), text("Level"),		fontcolour("white"), 		channel("level"), 	range(0, 1.00, 1), trackercolour("white")
+rslider bounds(368, 93, 90, 90), text("Mix"),		colour(27,59,59),trackercolour(127,159,159),textcolour("white"),fontcolour("white"), 		channel("mix"), 	range(0, 1.00, 1)
+rslider bounds(368,190, 90, 90), text("Level"),		colour(27,59,59),trackercolour(127,159,159),textcolour("white"),fontcolour("white"), 		channel("level"), 	range(0, 1.00, 1)
 
-rslider bounds(360,283, 50, 30), text("CF"),		fontcolour("white"), TextBox(1),		channel("cfDisp"), 	range(1, 20000, 1)
-rslider bounds(415,283, 50, 30), text("BW"),		fontcolour("white"), TextBox(1),		channel("bwDisp"), 	range(1, 20000, 1)
+numberbox  bounds(360,283, 50, 30), text("CF"), textcolour("white"), channel("cfDisp"), range(1, 20000, 1, 1, 1)
+numberbox  bounds(415,283, 50, 30), text("BW"), textcolour("white"), channel("bwDisp"), range(1, 20000, 1, 1, 1)
 
 image bounds(75, 343, 315, 18), colour(75, 85, 90, 100), plant("credit"), line(0){
 }

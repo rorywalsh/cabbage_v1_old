@@ -35,11 +35,11 @@ label   bounds(140,  3, 18, 22), text("N"), fontcolour(violet)
 
 label   bounds( 81, 24,  78, 8), text("Iain McCurdy [2013]"), FontColour("white")
 
-rslider bounds(  3, 45, 55, 55), channel("base"), textBox(1), range(0, 127,36, 1,1),fontcolour(138, 54, 15),colour(orange), trackercolour(orange)
+rslider bounds(  3, 45, 55, 55), channel("base"), textBox(1), range(0, 127,36, 1,1),fontcolour("white"),textcolour("white"),colour(orange), trackercolour(orange)
 label   bounds( 19, 34, 30, 10), text("BASE"), fontcolour(white)
-rslider bounds( 52, 45, 55, 55), channel("rate"), textBox(1), range(0.1, 5.00, 0.5, 0.5, 0.01),fontcolour(138, 54, 15),colour(orange), trackercolour(orange)
+rslider bounds( 52, 45, 55, 55), channel("rate"), textBox(1), range(0.1, 5.00, 0.5, 0.5, 0.01),fontcolour("white"),textcolour("white"),colour(orange), trackercolour(orange)
 label   bounds( 68, 34, 30, 10), text("RATE"), fontcolour(white)
-rslider bounds(102, 45, 55, 54), channel("level"), textBox(1), range(0, 1.00, 0.5, 0.5, 0.01),fontcolour(138, 54, 15),colour(orange), trackercolour(orange)
+rslider bounds(102, 45, 55, 54), channel("level"), textBox(1), range(0, 1.00, 0.5, 0.5, 0.01),fontcolour("white"),textcolour("white"),colour(orange), trackercolour(orange)
 label   bounds(115, 34, 30, 10), text("LEVEL"), fontcolour(white)
 
 

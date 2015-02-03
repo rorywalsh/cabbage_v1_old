@@ -5,32 +5,33 @@
 ; Mouse Scrubber activates by right-clicking and dragging over the waveform.
 
 <Cabbage>
-form caption("Mincer File Player") size(570,340), colour(0,0,0) pluginID("Minc"), guirefresh(10) 
-image bounds(  0,  0,570,340), colour( 50,100,100), outlinecolour("White"), line(3), shape("sharp")
+form caption("Mincer File Player") size(570,350), colour(0,0,0) pluginID("Minc"), guirefresh(10) 
+image bounds(  0,  0,570,350), colour( 50,100,100), outlinecolour("White"), line(3), shape("sharp")
 
 soundfiler bounds(  5,  5,560,150), channel("beg","len"), channel("pos1","end1"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255), 
 
 hslider    bounds(  0,150,570, 30), channel("pointer"), range( 0,  1.00, 0.1), colour( 40, 80, 80),  trackercolour("white"), fontcolour("white")
 label      bounds(241,172, 88, 12), text("Manual Pointer"), fontcolour("white")
 
-filebutton bounds(  5,190, 80, 25), text("Open File","Open File"), fontcolour("white"), populate("*"), channel("filename"), shape("ellipse")
+filebutton bounds(  5,190, 80, 25), text("Open File","Open File"), fontcolour("white"), channel("filename"), shape("ellipse")
 
 checkbox bounds(  5,223,120, 12), text("Manual Pointer"), channel("r1"), fontcolour("white"), colour(yellow)
 checkbox bounds(  5,237,120, 12), text("Mouse Scrubber"), channel("r2"), fontcolour("white"), colour(yellow), value(1) 
+label    bounds( 19,251,100, 10), text("[right click and drag]"), fontcolour("white")
 
 checkbox   bounds(125,223, 60, 12), channel("lock"), text("Lock"), colour("yellow"), fontcolour("white"), value(1)
 
 label      bounds(105,188, 48, 12), text("FFT Size"), fontcolour("white")
 combobox   bounds( 95,200, 70, 20), channel("FFTSize"), items("32768", "16384", "8192", "4096", "2048", "1024", "512", "256", "128", "64", "32", "16", "8", "4"), value(5), fontcolour("white")
 
-rslider    bounds(175,185, 70, 70), channel("transpose"), range(-48, 48, 0,1,1),            colour( 40, 80, 80)), trackercolour("white"), text("Transpose"), fontcolour("white")
-rslider    bounds(240,185, 70, 70), channel("portamento"),range(0, 0.500,0.05),         colour( 40, 80, 80)), trackercolour("white"), text("Port.Time"), fontcolour("white")
-rslider    bounds(305,185, 70, 70), channel("AttTim"),    range(0, 5, 0, 0.5, 0.001),       colour( 40, 80, 80),  trackercolour("white"), text("Att.Tim"),   fontcolour("white")
-rslider    bounds(370,185, 70, 70), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001), colour( 40, 80, 80),  trackercolour("white"), text("Rel.Tim"),   fontcolour("white")
-rslider    bounds(435,185, 70, 70), channel("MidiRef"),   range(0,127,60, 1, 1),            colour( 40, 80, 80),  trackercolour("white"), text("MIDI Ref."), fontcolour("white")
-rslider    bounds(500,185, 70, 70), channel("level"),     range(  0,  3.00, 1, 0.5),        colour( 40, 80, 80),  trackercolour("white"), text("Level"),     fontcolour("white")
+rslider    bounds(175,185, 70, 70), channel("transpose"), range(-48, 48, 0,1,1),            colour( 40, 80, 80)), trackercolour("white"), text("Transpose"), textcolour("white")
+rslider    bounds(240,185, 70, 70), channel("portamento"),range(0, 0.500,0.05),             colour( 40, 80, 80)), trackercolour("white"), text("Port.Time"), textcolour("white")
+rslider    bounds(305,185, 70, 70), channel("AttTim"),    range(0, 5, 0, 0.5, 0.001),       colour( 40, 80, 80),  trackercolour("white"), text("Att.Tim"),   textcolour("white")
+rslider    bounds(370,185, 70, 70), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001), colour( 40, 80, 80),  trackercolour("white"), text("Rel.Tim"),   textcolour("white")
+rslider    bounds(435,185, 70, 70), channel("MidiRef"),   range(0,127,60, 1, 1),            colour( 40, 80, 80),  trackercolour("white"), text("MIDI Ref."), textcolour("white")
+rslider    bounds(500,185, 70, 70), channel("level"),     range(  0,  3.00, 1, 0.5),        colour( 40, 80, 80),  trackercolour("white"), text("Level"),     textcolour("white")
 
-keyboard bounds( 5,260, 560, 75)
+keyboard bounds( 5,270, 560, 75)
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -210,11 +211,11 @@ instr	3	; midi triggered instrument
   RESTART:
   iFileLen	=	ftlen(gitableL)/sr
   if gichans=1 then
-   a1	mincer		gapointer*iFileLen, gklevel, iFrqRatio, gitableL, gklock, giFFTSizes[i(gkFFTSize)-1]
+   a1	mincer		gapointer*iFileLen, gklevel*iamp, iFrqRatio, gitableL, gklock, giFFTSizes[i(gkFFTSize)-1]
   	outs	a1*aenv,a1*aenv
   elseif gichans=2 then
-   a1	mincer		gapointer*iFileLen, gklevel, iFrqRatio, gitableL, gklock, giFFTSizes[i(gkFFTSize)-1]
-   a2	mincer		gapointer*iFileLen, gklevel, iFrqRatio, gitableR, gklock, giFFTSizes[i(gkFFTSize)-1]
+   a1	mincer		gapointer*iFileLen, gklevel*iamp, iFrqRatio, gitableL, gklock, giFFTSizes[i(gkFFTSize)-1]
+   a2	mincer		gapointer*iFileLen, gklevel*iamp, iFrqRatio, gitableR, gklock, giFFTSizes[i(gkFFTSize)-1]
   	outs	a1*aenv,a2*aenv
   endif
  endif

@@ -11,7 +11,7 @@
 
 <Cabbage>
 form caption("Powershape") size(300,110), pluginID("pshp")
-image               bounds(0, 0,300,110), colour("Brown"), shape("rounded"), outlinecolour("white"), line(4) 
+image               bounds(0, 0,300,110), colour("Brown"), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
 checkbox bounds(10,  8,130, 12), channel("TestTone"), FontColour("white"),  value(0), text("Sine Tone"), colour(yellow)
 hslider bounds(  5, 18,290, 40),          colour("white"), trackercolour("white"), channel("amount"), range(1.001, 1000, 1, 0.5,0.001)
 label   bounds(129, 50, 40, 11), text("Amount"), fontcolour("white")
@@ -45,7 +45,8 @@ instr	1
 	gkTestTone	chnget	"TestTone"
 	if gkTestTone==1 then						; if test tone selected...
 	 koct	rspline	4,8,0.2,0.5						
-	 asigL		poscil	1,cpsoct(koct),gisine			; ...generate a tone
+	 ;asigL		poscil	1,cpsoct(koct),gisine			; ...generate a tone
+	 asigL		vco2	1,cpsoct(koct),4,0.5
 	 asigR		=	asigL					; right channel equal to left channel
 	else								; otherwise...
 	 asigL, asigR	ins						; read live inputs

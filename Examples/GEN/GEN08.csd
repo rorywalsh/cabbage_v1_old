@@ -12,14 +12,14 @@
 <Cabbage>
 form caption("GEN08"), size(410, 300), pluginID("gn08"), colour(120,70,170,150)
 
-table bounds(  5,  5, 400, 120), identchannel("table1"), tableNumbers(1), tablecolour("yellow"), amprange(-1,1)
+gentable bounds(  5,  5, 400, 120), identchannel("table1"), tablenumber(1), tablecolour("yellow"), amprange(-1,1,1), outlinethickness(2), tablegridcolour(0,0,0,0), zoom(-1)
 
-rslider bounds( 15,130, 80, 80), channel("nodes"), text("Nodes"), textBox(1), range(1, 16, 16,1,1), colour(160,110,210,200), trackercolour("yellow")
-rslider bounds( 75,130, 80, 80), channel("wrap"), text("Repeat"), textBox(1), range(2, 16,16,1,1), colour(160,110,210,200), trackercolour("yellow")
-rslider bounds(135,130, 80, 80), channel("speed"), text("Speed"), textBox(1), range(1, 5.00, 1),   colour(160,110,210,200), trackercolour("yellow")
-rslider bounds(195,130, 80, 80), channel("level"), text("Level"), textBox(1), range(0, 1.00,0.1),   colour(160,110,210,200), trackercolour("yellow")
-rslider bounds(255,130, 80, 80), channel("reverb"), text("Reverb"), textBox(1), range(0, 1.00,0.1),   colour(160,110,210,200), trackercolour("yellow")
-rslider bounds(315,130, 80, 80), channel("EnvShape"), text("Env.Shape"), textBox(1), range(0, 2.00,0.5),   colour(160,110,210,200), trackercolour("yellow")
+rslider bounds( 15,130, 80, 80), channel("nodes"), text("Nodes"), textBox(1), range(1, 16, 16,1,1),        colour(160,110,210,200), trackercolour("yellow"), outlinecolour(100,100,100)
+rslider bounds( 75,130, 80, 80), channel("wrap"), text("Repeat"), textBox(1), range(2, 16,16,1,1),         colour(160,110,210,200), trackercolour("yellow"), outlinecolour(100,100,100)
+rslider bounds(135,130, 80, 80), channel("speed"), text("Speed"), textBox(1), range(1, 5.00, 1),           colour(160,110,210,200), trackercolour("yellow"), outlinecolour(100,100,100)
+rslider bounds(195,130, 80, 80), channel("level"), text("Level"), textBox(1), range(0, 1.00,0.1),          colour(160,110,210,200), trackercolour("yellow"), outlinecolour(100,100,100)
+rslider bounds(255,130, 80, 80), channel("reverb"), text("Reverb"), textBox(1), range(0, 1.00,0.1),        colour(160,110,210,200), trackercolour("yellow"), outlinecolour(100,100,100)
+rslider bounds(315,130, 80, 80), channel("EnvShape"), text("Env.Shape"), textBox(1), range(0, 2.00,0.5),   colour(160,110,210,200), trackercolour("yellow"), outlinecolour(100,100,100)
 
 keyboard bounds(  0,220,410, 80)
 </Cabbage>
@@ -40,7 +40,7 @@ nchnls 		= 	2	; NUMBER OF CHANNELS (1=MONO)
 		zakinit	16,16
 
 ; default waveform		
-giwave	ftgen	1,0, 512, -8, 0, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16, 0
+giwave	ftgen	1,0, 512, 8, 0, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16,rnd(2)-1, 512/16, 0
 
 instr	1
 	; read in widgets
@@ -114,68 +114,68 @@ $ReadStr(16)
 	; 1 node
 	#define	N	#1#
 	if i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1),   iftlen/($N+1),   0
 
 	#define	N	#2#
 	; 2 nodes
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2),   iftlen/($N+1),   0
 
 	#define	N	#3#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3),   iftlen/($N+1),   0
 
 	#define	N	#4#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4),   iftlen/($N+1),   0
 
 	#define	N	#5#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5),   iftlen/($N+1),   0
 
 	#define	N	#6#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6),   iftlen/($N+1),   0
 
 	#define	N	#7#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7),   iftlen/($N+1),   0
 
 	#define	N	#8#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8),   iftlen/($N+1),   0
 
 	#define	N	#9#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9),   iftlen/($N+1),   0
 
 	#define	N	#10#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10),   iftlen/($N+1),   0
 
 	#define	N	#11#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10), iftlen/($N+1),i(kstr11),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10), iftlen/($N+1),i(kstr11),   iftlen/($N+1),   0
 
 	#define	N	#12#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10), iftlen/($N+1),i(kstr11), iftlen/($N+1),i(kstr12),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10), iftlen/($N+1),i(kstr11), iftlen/($N+1),i(kstr12),   iftlen/($N+1),   0
 
 	#define	N	#13#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10), iftlen/($N+1),i(kstr11), iftlen/($N+1),i(kstr12), iftlen/($N+1),i(kstr13),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10), iftlen/($N+1),i(kstr11), iftlen/($N+1),i(kstr12), iftlen/($N+1),i(kstr13),   iftlen/($N+1),   0
 
 	#define	N	#14#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10), iftlen/($N+1),i(kstr11), iftlen/($N+1),i(kstr12), iftlen/($N+1),i(kstr13), iftlen/($N+1),i(kstr14),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10), iftlen/($N+1),i(kstr11), iftlen/($N+1),i(kstr12), iftlen/($N+1),i(kstr13), iftlen/($N+1),i(kstr14),   iftlen/($N+1),   0
 
 	#define	N	#15#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10), iftlen/($N+1),i(kstr11), iftlen/($N+1),i(kstr12), iftlen/($N+1),i(kstr13), iftlen/($N+1),i(kstr14), iftlen/($N+1),i(kstr15),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10), iftlen/($N+1),i(kstr11), iftlen/($N+1),i(kstr12), iftlen/($N+1),i(kstr13), iftlen/($N+1),i(kstr14), iftlen/($N+1),i(kstr15),   iftlen/($N+1),   0
 
 	#define	N	#16#
 	elseif i(gknodes)==$N then
-	 giwave	ftgen	1,0, iftlen, -8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10), iftlen/($N+1),i(kstr11), iftlen/($N+1),i(kstr12), iftlen/($N+1),i(kstr13), iftlen/($N+1),i(kstr14), iftlen/($N+1),i(kstr15), iftlen/($N+1),i(kstr16),   iftlen/($N+1),   0
+	 giwave	ftgen	1,0, iftlen, 8, 0, iftlen/($N+1),i(kstr1), iftlen/($N+1),i(kstr2), iftlen/($N+1),i(kstr3), iftlen/($N+1),i(kstr4), iftlen/($N+1),i(kstr5), iftlen/($N+1),i(kstr6), iftlen/($N+1),i(kstr7), iftlen/($N+1),i(kstr8), iftlen/($N+1),i(kstr9), iftlen/($N+1),i(kstr10), iftlen/($N+1),i(kstr11), iftlen/($N+1),i(kstr12), iftlen/($N+1),i(kstr13), iftlen/($N+1),i(kstr14), iftlen/($N+1),i(kstr15), iftlen/($N+1),i(kstr16),   iftlen/($N+1),   0
 
 	endif
 	
@@ -191,7 +191,9 @@ gaSendL,gaSendR	init	0	; initialise reverb send variables
 instr	3
 	icps	cpsmidi					; CPS from midi note played
 	iamp	ampmidi	1				; amplitude from midi note velocity 
-	a1	oscili	iamp*gklevel,icps/4,giwave	; audio oscillator read GEN10 wave created
+	
+	a1	oscili	iamp*gklevel,icps/4,giwave	; audio oscillator read GEN08 wave created
+		
 	a2	delay	-a1,0.01
 
 	aenv	expsegr	0.01,2*i(gkEnvShape),1,4*i(gkEnvShape),0.01	; amplitude envelope to prevent clicks

@@ -13,30 +13,30 @@ image bounds(610, 20,70,70), colour(250,250,100), shape(ellipse)			; sun
 image bounds( 30,50,40,40), colour(240,240,240), shape(ellipse), identchannel(cloud1_a)
 image bounds( 50,30,60,60), colour(240,240,240), shape(ellipse), identchannel(cloud1_b)
 image bounds( 90,50,40,40), colour(240,240,240), shape(ellipse), identchannel(cloud1_c)
-image bounds( 52,70,56,20), colour(240,240,240), shape(sharp), identchannel(cloud1_d)
+image bounds( 52,70,56,20), colour(240,240,240), shape(sharp),   identchannel(cloud1_d)
 
 image bounds(125, 90, 60,60), colour(240,240,240), shape(ellipse), identchannel(cloud2_a)
 image bounds(155, 60, 90,90), colour(240,240,240), shape(ellipse), identchannel(cloud2_b)
 image bounds(215, 90, 60,60), colour(240,240,240), shape(ellipse), identchannel(cloud2_c)
-image bounds(160,120, 80,30), colour(240,240,240), shape(sharp), identchannel(cloud2_d)
+image bounds(160,120, 80,30), colour(240,240,240), shape(sharp),   identchannel(cloud2_d)
 
 image bounds(290, 80, 25, 25), colour(240,240,240), shape(ellipse), identchannel(cloud3_a)
 image bounds(305, 65, 35, 35), colour(240,240,240), shape(ellipse), identchannel(cloud3_b)
 image bounds(330, 80, 25, 25), colour(240,240,240), shape(ellipse), identchannel(cloud3_c)
-image bounds(302, 90, 36, 15), colour(240,240,240), shape(sharp), identchannel(cloud3_d)
+image bounds(302, 90, 36, 15), colour(240,240,240), shape(sharp),   identchannel(cloud3_d)
 
 ; WINDMILL 1
 image bounds( 96,150,  8,200), colour(white), shape(sharp) 				; post
 image bounds( 92,142, 16, 16), colour(white), shape(ellipse)				; joint
 image bounds( 98,154,  0,  0), colour(white), shape(ellipse), identchannel("Axle1")	; axle
-image bounds(  0,  0,  0,  0), colour(white), shape(ellipse), channelarray("CircleSix1",6)
+image bounds(  0,  0,  0,  0), colour(white), shape(ellipse), widgetarray("CircleSix1",6)
 
 
 ; WINDMILL 3
 image bounds(548,220, 4, 200), colour(white), shape(sharp) 				; post
 image bounds(546,216, 8,   8), colour(white), shape(ellipse)				; joint
 image bounds(548,224,  0,  0), colour(white), shape(ellipse),   identchannel("Axle3")	; axle
-image bounds(  0,  0,  0,  0), colour(white), shape(ellipse), channelarray("CircleNine3",9)
+image bounds(  0,  0,  0,  0), colour(white), shape(ellipse), widgetarray("CircleNine3",9)
 
 
 ; HILLS
@@ -50,14 +50,14 @@ image bounds(296,170, 8, 200), colour(white), shape(sharp) 				; post
 image bounds(296,368, 8,   4), colour(white), shape(ellipse) 				; base
 image bounds(292,162,16,  16), colour(white), shape(ellipse)				; joint
 image bounds(298,174,  0,  0), colour(white), shape(ellipse),   identchannel("Axle2")	; axle
-image bounds(  0,  0,  0,  0), colour(white), shape(ellipse), channelarray("CircleSeven2",7)
+image bounds(  0,  0,  0,  0), colour(white), shape(ellipse), widgetarray("CircleSeven2",7)
 
 
 ; WINDMILL 4
 image bounds(594,470, 12, 200), colour(white), shape(sharp) 				; post
 image bounds(588,458, 24, 24), colour(white), shape(ellipse)				; joint
 image bounds(600,474,  0,  0), colour(white), shape(ellipse),   identchannel("Axle4")	; axle
-image bounds(  0,  0,  0,  0), colour(white), shape(ellipse), channelarray("CircleSeven4",7)
+image bounds(  0,  0,  0,  0), colour(white), shape(ellipse), widgetarray("CircleSeven4",7)
 
 ; BLACK OUT SCREEN
 image bounds(  0,  0,700,500), colour("black"), shape(sharp), identchannel("Blackout")
@@ -127,7 +127,7 @@ instr	1
  endif       
              
  ; MACRO FOR AN INDIVIDUAL CIRCLE
- #define INDIVIDUAL_CIRCLE(N'P'NUMBER)
+ #define INDIVIDUAL_CIRCLE(N'P'NUMBER'WIDTH'X'Y'NUM)
  #
 
  kwidth$N	=	$WIDTH
@@ -142,7 +142,7 @@ instr	1
 
  if kRefreshTrig==1 then
   Smess$N	sprintfk	"bounds(%d,%d,%d,%d), colour(%d,%d,%d)", kx$N+$X+kX_Offset+(kAxleLenMax*kSwing2)-(ksize*0.5) - (ksize*0.5*abs(kSwing2)), ky$N+$Y-(ksize*0.5), ksize*ktilt, ksize, kR, kG, kB
-  Sident	sprintfk	"Circle$NUMBER%d_ident%d",$NUM,$N
+  Sident	sprintfk	"Circle$NUMBER.%d_ident%d",$NUM,$N
   chnset	Smess$N,Sident
  endif
  #
@@ -150,47 +150,47 @@ instr	1
 
 
 
- #define CIRCLE_OF_FIVE(SIZE'WIDTH'X'Y)
+ #define CIRCLE_OF_FIVE(SIZE'WIDTH'X'Y'NUM)
  #
-  $INDIVIDUAL_CIRCLE(1'0/5'Five)
-  $INDIVIDUAL_CIRCLE(2'1/5'Five)
-  $INDIVIDUAL_CIRCLE(3'2/5'Five)
-  $INDIVIDUAL_CIRCLE(4'3/5'Five)
-  $INDIVIDUAL_CIRCLE(5'4/5'Five)
- #
-
- #define CIRCLE_OF_SIX(SIZE'WIDTH'X'Y)
- #
-  $INDIVIDUAL_CIRCLE(1'0/6'Six)
-  $INDIVIDUAL_CIRCLE(2'1/6'Six)
-  $INDIVIDUAL_CIRCLE(3'2/6'Six)
-  $INDIVIDUAL_CIRCLE(4'3/6'Six)
-  $INDIVIDUAL_CIRCLE(5'4/6'Six)
-  $INDIVIDUAL_CIRCLE(6'5/6'Six)
+  $INDIVIDUAL_CIRCLE(1'0/5'Five'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(2'1/5'Five'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(3'2/5'Five'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(4'3/5'Five'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(5'4/5'Five'$WIDTH'$X'$Y'$NUM)
  #
 
- #define CIRCLE_OF_SEVEN(SIZE'WIDTH'X'Y)
+ #define CIRCLE_OF_SIX(SIZE'WIDTH'X'Y'NUM)
  #
-  $INDIVIDUAL_CIRCLE(1'0/7'Seven)
-  $INDIVIDUAL_CIRCLE(2'1/7'Seven)
-  $INDIVIDUAL_CIRCLE(3'2/7'Seven)
-  $INDIVIDUAL_CIRCLE(4'3/7'Seven)
-  $INDIVIDUAL_CIRCLE(5'4/7'Seven)
-  $INDIVIDUAL_CIRCLE(6'5/7'Seven)
-  $INDIVIDUAL_CIRCLE(7'6/7'Seven)
+  $INDIVIDUAL_CIRCLE(1'0/6'Six'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(2'1/6'Six'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(3'2/6'Six'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(4'3/6'Six'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(5'4/6'Six'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(6'5/6'Six'$WIDTH'$X'$Y'$NUM)
  #
 
- #define CIRCLE_OF_NINE(SIZE'WIDTH'X'Y)
+ #define CIRCLE_OF_SEVEN(SIZE'WIDTH'X'Y'NUM)
  #
-  $INDIVIDUAL_CIRCLE(1'0/9'Nine)
-  $INDIVIDUAL_CIRCLE(2'1/9'Nine)
-  $INDIVIDUAL_CIRCLE(3'2/9'Nine)
-  $INDIVIDUAL_CIRCLE(4'3/9'Nine)
-  $INDIVIDUAL_CIRCLE(5'4/9'Nine)
-  $INDIVIDUAL_CIRCLE(6'5/9'Nine)
-  $INDIVIDUAL_CIRCLE(7'6/9'Nine)
-  $INDIVIDUAL_CIRCLE(8'7/9'Nine)
-  $INDIVIDUAL_CIRCLE(9'8/9'Nine)
+  $INDIVIDUAL_CIRCLE(1'0/7'Seven'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(2'1/7'Seven'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(3'2/7'Seven'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(4'3/7'Seven'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(5'4/7'Seven'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(6'5/7'Seven'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(7'6/7'Seven'$WIDTH'$X'$Y'$NUM)
+ #
+
+ #define CIRCLE_OF_NINE(SIZE'WIDTH'X'Y'NUM)
+ #
+  $INDIVIDUAL_CIRCLE(1'0/9'Nine'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(2'1/9'Nine'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(3'2/9'Nine'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(4'3/9'Nine'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(5'4/9'Nine'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(6'5/9'Nine'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(7'6/9'Nine'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(8'7/9'Nine'$WIDTH'$X'$Y'$NUM)
+  $INDIVIDUAL_CIRCLE(9'8/9'Nine'$WIDTH'$X'$Y'$NUM)
  #
 
 
@@ -231,27 +231,27 @@ instr	1
  kspeed	rspline	-5,5,0.025,0.1
  kSwing	rspline	-0.95,0.95,0.05,0.2
  kspeed	=	kspeed * krms
- kSwing	=	kSwing * krms
+ ;kSwing	=	kSwing * krms
 
  ;         NUM  X   Y SIZE WIDTH R G B Ax_WID AX_LEN
  $WINDMILL(1  '100'150'20'50'255'70'70'8'30)
  ;               SIZE'WIDTH'X'Y
- $CIRCLE_OF_SIX(ksize'kMaxWidth'kX'kY)
+ $CIRCLE_OF_SIX(ksize'kMaxWidth'kX'kY'1)
 
  ;         NUM  X   Y SIZE WIDTH R G B Ax_WID AX_LEN
  $WINDMILL(2  '300'170'40'80'70'70'255'8'30)
  ;                SIZE'WIDTH'X'Y
- $CIRCLE_OF_SEVEN(ksize'kMaxWidth'kX'kY)
+ $CIRCLE_OF_SEVEN(ksize'kMaxWidth'kX'kY'2)
 
  ;         NUM  X   Y SIZE WIDTH R G B Ax_WID AX_LEN
  $WINDMILL(3  '550'220'12'30'255'0'200'4'15)
  ;               SIZE'WIDTH'X'Y
- $CIRCLE_OF_NINE(ksize'kMaxWidth'kX'kY)
+ $CIRCLE_OF_NINE(ksize'kMaxWidth'kX'kY'3)
 
  ;         NUM  X   Y SIZE WIDTH R G B Ax_WID AX_LEN
  $WINDMILL(4  '600'470'90'200'200'  0'250'12'50)
  ;                SIZE'WIDTH'X'Y
- $CIRCLE_OF_SEVEN(ksize'kMaxWidth'kX'kY)
+ $CIRCLE_OF_SEVEN(ksize'kMaxWidth'kX'kY'4)
 endin
 
 

@@ -5,7 +5,7 @@
 <Cabbage>
 form caption("GEN10"), size(410, 340), pluginID("gn10"), colour("20,70,170,150")
 
-table bounds(  5,  5, 400, 120), identchannel("table1"), tableNumbers(1), tablecolour("yellow")
+gentable bounds(  5,  5, 400, 120), identchannel("table1"), tablenumber(1), tablecolour("yellow"), zoom(-1)
 
 rslider bounds(  5,130, 50, 70), channel("str1"), text("Str.1"), textBox(1), range(-1.00, 1.00, 1), colour(100,100,250,200)
 rslider bounds( 55,130, 50, 70), channel("str2"), text("Str.2"), textBox(1), range(-1.00, 1.00, 0), colour(100,100,250,200)

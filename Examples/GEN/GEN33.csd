@@ -17,23 +17,25 @@ thereby implementing a kind of velocity to brightness mechanism.
 
 <Cabbage>
 form caption("GEN33"), size(520, 320), pluginID("gn33")
-table bounds(  0,  0, 520, 120), identchannel("table1"), tableNumbers(1), tablecolour("yellow")
+gentable bounds(  0,  0, 520, 120), identchannel("table1"), tablenumber(1), tablecolour("yellow"), zoom(-1)
 
 
 groupbox bounds(0, 120,370,120), text("Manual Control"), plant("Manual"), fontcolour("white"){
 checkbox bounds( 10, 30,110, 20), channel("ManualOnOff"),  value(0), text("Test On/Off")
 label    bounds( 10, 50,140, 11), text("Source")
 combobox bounds( 10, 61,140, 20), channel("source"), value(1), text("Tubular Bell","Chalandi Plates","Tibetan Bowl 180mm","Tibetan Bowl 152mm","Tibetan Bowl 140mm","Small Handbell","Spinel Sphere","Clarinet")
-rslider bounds(  70, 81, 30, 30), text("."),		fontcolour(0,0,0,255), textbox(1),		channel("NumPartials"), 	range(0, 100, 0,1,1)
-label    bounds( 10, 81,140, 11), text("Number of Harms."), fontcolour("white")
-rslider  bounds(150, 30, 80, 80), channel("nh"), text("Num.Harms."), textBox(1), range(1,25,25,1,1), TrackerColour("yellow")
-rslider  bounds(220, 30, 80, 80), channel("amp"), text("Amp."), textBox(1), range(0,1.000,0.1,0.5), TrackerColour("yellow")
-rslider  bounds(290, 30, 80, 80), channel("frq"), text("Freq."), textBox(1), range(0.5,100.000,10,0.5), TrackerColour("yellow")
+
+label     bounds( 10, 82,100, 11), text("Maximum Harms:"), fontcolour("white"), align(left)
+numberbox bounds( 110, 81, 40, 15), text(""), fontcolour(white), channel("NumPartials"), range(0, 100, 0,1,1)
+
+rslider  bounds(150, 30, 80, 80), channel("nh"), text("Num.Harms."), textBox(1), range(1,25,25,1,1), TrackerColour("yellow"), colour(200,200,200)
+rslider  bounds(220, 30, 80, 80), channel("amp"), text("Amp."), textBox(1), range(0,1.000,0.1,0.5), TrackerColour("yellow"), colour(200,200,200)
+rslider  bounds(290, 30, 80, 80), channel("frq"), text("Freq."), textBox(1), range(0.5,100.000,10,0.5), TrackerColour("yellow"), colour(200,200,200)
 }
 
 groupbox bounds(370,120,150,120), text("MIDI [Keyboard]"), plant("MIDI"), fontcolour("white"){
-rslider  bounds(  0, 30, 80, 80), channel("SusTim"), text("Sus.Time"), textBox(1), range(0.1,15.00,8,0.5), TrackerColour("yellow")
-rslider  bounds( 70, 30, 80, 80), channel("RelTim"), text("Rel.Tim"),  textBox(1), range(0.1,15.00,8,0.5), TrackerColour("yellow")
+rslider  bounds(  0, 30, 80, 80), channel("SusTim"), text("Sus.Time"), textBox(1), range(0.1,15.00,8,0.5), TrackerColour("yellow"), colour(200,200,200)
+rslider  bounds( 70, 30, 80, 80), channel("RelTim"), text("Rel.Tim"),  textBox(1), range(0.1,15.00,8,0.5), TrackerColour("yellow"), colour(200,200,200)
 }
 
 keyboard bounds(  0,240,520, 80)
@@ -203,6 +205,7 @@ instr	1	; manual instrument
   giwave	ftgen	1,0, giTabSize,-33,gisource,i(gknh),1,-1  ; create a GEN33 function table / waveform from the source function table data and make use of the user defined number of partials
  rireturn
  
+ 
  if ktrig==1 then				; if a widget for 'Num.Harms' or 'Manual On/Off' has been changed...
    chnset	"tablenumber(1)", "table1"	; ...update table display	
  endif
@@ -233,6 +236,7 @@ instr	3	; midi / keyboard instrument
  endif
  ktrig	=	0	
 
+ ; CREATE SOME SOUND
  inum	notnum						; midi note number
  aL	oscili	gkamp,gkfrq*semitone(inum-72),iwave	; create an audio oscilator
  aR	oscili	gkamp,gkfrq*semitone(inum-72),iwave,0.13; create an audio oscilator

@@ -12,13 +12,13 @@
 
 ; 		The frequency of the audio oscillator is always scaled down according to the lowest partial number defined. This is to ensure that an audible fundemental is always played, something that may not otherwise occur if all partial numbers are high.
 ; 		The user can choose between three opcodes for synthesis: oscil, oscili or poscil. 
-;		The interpolating opcodes oscili and poscil are less likely to produce quantisation effects when small table sizes are used.
+;		The interpolating opcodes oscili and poscil are less likely to produce quantisation artifacts when small table sizes are used.
 ;		The waveform can be played back using oscbnk (if 'voices' is greater than 1), in which case 'spread' and 'speed' can be used to modify the texture of the tone cluster.
 
 <Cabbage>
 form caption("GEN09"), size(420, 555), pluginID("gn09")
 
-table bounds( 10,  5, 400, 120), channel("table"), tableNumbers(8), tablecolour("LightBlue"), identchannel("table")
+gentable bounds( 10,  5, 400, 120), tablenumber(8), tablecolour("LightBlue"), identchannel("table"), zoom(-1)
 
 rslider bounds( 13,130, 43, 43), channel("pn1"), range(1, 200, 1,1,1), colour(230,230,230,200)
 rslider bounds( 63,130, 43, 43), channel("pn2"), range(1, 200, 2,1,1), colour(230,230,230,200)

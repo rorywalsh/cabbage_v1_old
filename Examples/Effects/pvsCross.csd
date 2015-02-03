@@ -2,18 +2,18 @@ pvsCross
 
 <Cabbage>
 form caption("pvsCross") size(370, 90), pluginID("crss")
-image            bounds(0, 0, 370, 90), colour("Cream"), outlinecolour("silver"), line(5)
+image            bounds(0, 0, 370, 90), colour("Cream"), outlinecolour("silver"), outlinethickness(5)
 
 ; filter switches
-checkbox bounds( 10, 25, 94, 15), text("Swap Inputs"), channel("swap"), FontColour(50,50,50), colour("lime")
+checkbox bounds( 10, 25, 94, 15), text("Swap Inputs"), channel("swap"), fontcolour(138, 54, 15), colour("lime")
 
 line     bounds(115, 10,165, 3), colour("Grey")
 
-label   bounds(160,  5, 75, 12), text("M  I  X  E  R"), fontcolour("black"), colour("Cream")
-rslider bounds(100,18, 75, 65), text("Source"),     channel("src_lev"),       range(0, 1.00, 0), fontcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
-rslider bounds(160,18, 75, 65), text("Dest."),      channel("dst_lev"),       range(0, 1.00, 0), fontcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
-rslider bounds(220,18, 75, 65), text("Cross"),      channel("cross_lev"),       range(0, 1.00, 1), fontcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
-rslider bounds(285, 8, 75, 75), text("Level"),      channel("lev"),       range(0, 1.00, 0.5), fontcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
+label   bounds(160,  5, 75, 12), text("M  I  X  E  R"), fontcolour(78, 24,  7), colour("Cream")
+rslider bounds(100,18, 75, 65), text("Source"),     channel("src_lev"),   range(0, 1.00, 0),   textcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
+rslider bounds(160,18, 75, 65), text("Dest."),      channel("dst_lev"),   range(0, 1.00, 0),   textcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
+rslider bounds(220,18, 75, 65), text("Cross"),      channel("cross_lev"), range(0, 1.00, 1),   textcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
+rslider bounds(285, 8, 75, 75), text("Level"),      channel("lev"),       range(0, 1.00, 0.5), textcolour(138, 54, 15), colour("chocolate"), trackercolour(138, 54, 15)
 </Cabbage>
 <CsoundSynthesizer>
 

@@ -1,6 +1,5 @@
 waveset.csd
 
-reinit seems a bit disruptive in Cabbage 3.03?
 'freeze' is not technically a freeze but instead a very large number of repeats.
 
 Waveset opcode can be reinitialised by three different methods:
@@ -13,16 +12,16 @@ or by the dynamics of the input sound (the threshold of this dynamic triggereing
 
 <Cabbage>
 form caption("waveset") size(510, 90), pluginID("wset")
-image pos(0, 0), size(510, 90), colour("Green"), shape("rounded"), outlinecolour("Grey"), line(4) 
-rslider bounds(5, 10, 70, 70),   text("Repeats"), channel("repeats"), range(1, 100, 1, 1, 1),   colour("yellow"), fontcolour("white")
-rslider bounds(70, 10, 70, 70),  text("Mult."),   channel("mult"),    range(1, 100, 1, 0.5, 1), colour("yellow"), fontcolour("white")
+image pos(0, 0), size(510, 90), colour("Green"), shape("rounded"), outlinecolour("Grey"), outlinethickness(4) 
+rslider bounds(5, 10, 70, 70),   text("Repeats"), channel("repeats"), range(1, 100, 1, 1, 1),   colour("yellow"), textcolour("white"), trackercolour("white")
+rslider bounds(70, 10, 70, 70),  text("Mult."),   channel("mult"),    range(1, 100, 1, 0.5, 1), colour("yellow"), textcolour("white"), trackercolour("white")
 checkbox bounds(140, 23, 100, 30),          channel("freeze"), text("Freeze"), value(0), colour("red"), fontcolour("white"), shape("ellipse")
 line bounds(220, 2, 3, 86), colour("Grey")
 button bounds(235, 15, 45,45), channel("reset"), text("Reset","Reset"), fontcolour("yellow")
-rslider bounds(290, 10, 70, 70), text("Threshold"),  channel("thresh"), range(0, 1.00, 1), colour("orange"), fontcolour("white")
-rslider bounds(355, 10, 70, 70), text("Metro Rate"), channel("rate"),   range(0, 5.00, 0), colour("orange"), fontcolour("white")
+rslider bounds(290, 10, 70, 70), text("Threshold"),  channel("thresh"), range(0, 1.00, 1), colour("orange"), textcolour("white"), trackercolour("white")
+rslider bounds(355, 10, 70, 70), text("Metro Rate"), channel("rate"),   range(0, 5.00, 0), colour("orange"), textcolour("white"), trackercolour("white")
 line bounds(430, 2, 3, 86), colour("Grey")
-rslider bounds(435,  10, 70, 70), text("Level"), channel("level"), range(0, 1.00, 0.7), colour(255,150, 50), fontcolour("white")
+rslider bounds(435,  10, 70, 70), text("Level"), channel("level"), range(0, 1.00, 0.7), colour(255,150, 50), textcolour("white"), trackercolour("white")
 }
 </Cabbage>
 

@@ -10,7 +10,7 @@
 <Cabbage>
 form caption("GEN41"), size(420, 395), pluginID("gn41"), colour(120,70,170,150)
 
-table bounds(  5,  5, 410, 120), identchannel("table1"), tableNumbers(1), tablecolour("yellow"), amprange(24,72)
+gentable bounds(  5,  5, 410, 115), identchannel("table1"), tablenumber(1), tablecolour("yellow"), amprange(24,72,1), zoom(-1)
 
 groupbox bounds(0, 125,420,170), text("Histogram"), plant("histogram"), fontcolour("white"){
 rslider bounds(  0, 25, 70, 70), channel("prob1"), text("Prob. 1"), textBox(1), range(0, 100, 24,1,1), colour(160,110,210,200), trackercolour("white")

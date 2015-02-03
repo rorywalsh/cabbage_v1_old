@@ -27,6 +27,7 @@ form caption("Delay Grain") size(410, 540), pluginID("DGrn")
 
 hslider  bounds(  5,  5, 400, 25), channel("GSize1"), range(0.005, 2, 0.01, 0.5, 0.0001)
 hslider  bounds(  5, 20, 400, 25), channel("GSize2"), range(0.005, 2, 0.09, 0.5, 0.0001)
+
 label    bounds(161, 39,  90, 11), text("G R A I N   S I Z E"), fontcolour(105,105,255)
 
 hslider  bounds(  5, 60, 400, 25), channel("Dens"), range(0.2, 2000, 50,0.5,0.001)

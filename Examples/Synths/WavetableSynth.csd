@@ -1,4 +1,5 @@
 ; WavetableSynth.csd
+; Written by Iain McCurdy, 2012.
 
 ; Implements wavetable synthesis a spectral morphing based on note played.
 ; This can be used to maintain a convincing spectral appearance fo an instrument imitation across a range of note.
@@ -21,60 +22,60 @@
 
 <Cabbage>
 form caption("Wavetable Synth") size(675, 320), pluginID("wtsy")
-image pos(0, 0), size(675, 290), colour("brown"), shape("rounded"), oulinecolour("maroon"), line(4)	
-image   bounds(160,  6,240, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;modulation
-image   bounds(405,  6,140, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;polyphony
-image   bounds(550,  6,110, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;pitch bend
-image   bounds( 15,103,110, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;noise attack
-image   bounds(130,103,155, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;quality
-image   bounds(290,103,110, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;reverb
-image   bounds(405,103,260, 88), colour("brown"), shape("rounded"), oulinecolour("white"), line(1)	;output
-combobox caption("Instrument"), channel("Instr"),  bounds(10, 10, 140, 80)  value(1), text("Clarinet", "Bass Clarinet", "C.bass Clarinet", "Oboe", "Bassoon", "C.bassoon", "Violin", "Cello", "Piccolo", "Flute", "Alto Flute", "Bass Flute", "Ahh", "Horn P", "Horn F", "B.Trb.Harmon Mute", "B.Trb.Cup Mute", "B.Trb.Open")
-label   bounds(170, 80, 40, 12), text("Mod.")
-label   bounds(250, 11, 80, 15), text("Modulation")
-label   bounds(438, 11, 75, 15), text("Polyphony")
-label   bounds(566, 11, 75, 15), text("Pitch Bend")
-label   bounds( 43,107, 60, 15), text("Attack")
-label   bounds(178,107, 60, 15), text("Quality")
-label   bounds(200,175, 16, 11), text("EQ")
-label   bounds(314,107, 60, 15), text("Reverb")
-label   bounds(502,107, 60, 15), text("Output")
+image pos(0, 0), size(675, 290), colour(150,100,70), shape("sharp"),   outlinecolour("maroon"), outlinethickness(2)	
+image   bounds(160,  6,240, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;modulation
+image   bounds(405,  6,140, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;polyphony
+image   bounds(550,  6,110, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;pitch bend
+image   bounds( 15,103,110, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;noise attack
+image   bounds(130,103,155, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;quality
+image   bounds(290,103,110, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;reverb
+image   bounds(405,103,260, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;output
+combobox caption("Instrument"), fontcolour("white"), channel("Instr"),  bounds(10, 10, 140, 80)  value(1), text("Clarinet", "Bass Clarinet", "C.bass Clarinet", "Oboe", "Bassoon", "C.bassoon", "Violin", "Cello", "Piccolo", "Flute", "Alto Flute", "Bass Flute", "Ahh", "Horn P", "Horn F", "B.Trb.Harmon Mute", "B.Trb.Cup Mute", "B.Trb.Open")
+label   bounds(168, 80, 28, 12), text("Mod."),       fontcolour(white)
+label   bounds(250, 11, 80, 15), text("Modulation"), fontcolour(white)
+label   bounds(438, 11, 75, 15), text("Polyphony"),  fontcolour(white)
+label   bounds(566, 11, 75, 15), text("Pitch Bend"), fontcolour(white)
+label   bounds( 43,107, 60, 15), text("Attack"),     fontcolour(white)
+label   bounds(178,107, 60, 15), text("Quality"),    fontcolour(white)
+label   bounds(200,175, 16, 11), text("EQ"),         fontcolour(white)
+label   bounds(314,107, 60, 15), text("Reverb"),     fontcolour(white)
+label   bounds(502,107, 60, 15), text("Output"),     fontcolour(white)
 
 ;MODULATION
-vslider bounds(160,-10, 40, 90), channel("moddep"), range(0, 1, 0.4),midCtrl(1, 1)
-rslider bounds(190, 32, 60, 60), text("Vib."), channel("vibdep"), range(0, 1, 0.15)
-rslider bounds(240, 32, 60, 60), text("Trem."), channel("tremdep"), range(0, 1, 0.4)
-rslider bounds(290, 32, 60, 60), text("Tone"), channel("tonedep"), range(0, 4, 2)
-rslider bounds(340, 32, 60, 60), text("Rate"), channel("ModRte"), range(0, 16, 4.25, 0.5)
+vslider bounds(160, 10, 40, 80), channel("moddep"), range(0, 1, 0.4),midCtrl(1, 1), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(190, 32, 60, 60), text("Vib."),  channel("vibdep"),  range(0, 1, 0.15),       colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(240, 32, 60, 60), text("Trem."), channel("tremdep"), range(0, 1, 0.4),        colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(290, 32, 60, 60), text("Tone"),  channel("tonedep"), range(0, 4, 2),          colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(340, 32, 60, 60), text("Rate"),  channel("ModRte"),  range(0, 16, 4.25, 0.5), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
 
 ;POLYPHONY
-button   bounds(415, 40, 70, 25), text("poly","mono"), channel("monopoly"), value(1), fontcolour("lime")
-rslider  bounds(485, 32, 60, 60), text("Leg.Time"), channel("LegTim"), range(0.001, 2, 0.002, 0.5, 0.001)
+button   bounds(415, 40, 70, 25), text("poly","mono"), channel("monopoly"), value(1)
+rslider  bounds(485, 32, 60, 60), text("Leg.Time"),    channel("LegTim"), range(0.001, 2, 0.002, 0.5, 0.001), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
 
 ;PITCH BEND
-rslider  bounds(550, 32, 60, 60), text("<"), channel("BendDn"), range(0, 1, 1)
-rslider  bounds(600, 32, 60, 60), text(">"), channel("BendUp"), range(0, 1, 0)
+rslider  bounds(550, 32, 60, 60), text("<"), channel("BendDn"), range(0, 1, 1), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider  bounds(600, 32, 60, 60), text(">"), channel("BendUp"), range(0, 1, 0), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
 
 ;NOISE ATTACK
-rslider bounds( 15,127, 60, 60), text("Amp."), channel("NAttAmp"), range(0,  4.00, 0.5)
-rslider bounds( 65,127, 60, 60), text("Time"), channel("NAttTim"), range(0.001,0.5,0.05,0.5)
+rslider bounds( 15,127, 60, 60), text("Amp."), channel("NAttAmp"), range(0,  4.00, 0.5),      colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds( 65,127, 60, 60), text("Time"), channel("NAttTim"), range(0.001,0.5,0.05,0.5), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
 
 ;QUALITY
-rslider bounds(130,127, 60, 60), text("Noise"), channel("NoiseAmp"), range(0,5,0.01,0.5,0.0001)
-vslider bounds(183,110, 30, 70), text(""), channel("EQ_Lo"), range(500,10000,2000,0.5,0.01)
-vslider bounds(203,110, 30, 70), text(""), channel("EQ_Hi"), range(20,5000,200,0.5,0.01)
-rslider bounds(225,127, 60, 60), text("Drop"), channel("drop"), range(0,0.5,0.05,0.5,0.0001)
+rslider bounds(130,127, 60, 60), text("Noise"), channel("NoiseAmp"), range(0,5,0.01,0.5,0.0001),     colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+vslider bounds(183,120, 30, 65), text(""),      channel("EQ_Lo"),    range(500,10000,2000,0.5,0.01), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+vslider bounds(203,120, 30, 65), text(""),      channel("EQ_Hi"),    range(20,5000,200,0.5,0.01),    colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(225,127, 60, 60), text("Drop"),  channel("drop"),     range(0,0.5,0.05,0.5,0.0001),   colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
 
 ;REVERB
-rslider bounds(290,127, 60, 60), text("Mix"), channel("RvbMix"), range(0, 1.00, 1)
-rslider bounds(340,127, 60, 60), text("Size"), channel("RvbSize"), range(0.3, 1.00, 0.4)
+rslider bounds(290,127, 60, 60), text("Mix"),  channel("RvbMix"),  range(0, 1.00, 1),     colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(340,127, 60, 60), text("Size"), channel("RvbSize"), range(0.3, 1.00, 0.4), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
 
 ;OUTPUT
-rslider bounds(405,127, 60, 60), text("Tone"),   channel("bright"),  range(0, 1.00, 1)
-rslider bounds(455,127, 60, 60), text("Shift"),  channel("shift"),   range(-36, 36.00, 0,1,0.001)
-rslider bounds(505,127, 60, 60), text("Jitter"), channel("jitter"),  range(0, 1.00, 0.4)
-rslider bounds(555,127, 60, 60), text("Pan"),    channel("pan"),     range(0, 1.00, 0.5)
-rslider bounds(605,127, 60, 60), text("Level"),  channel("level"),   range(0, 2.00, 1)
+rslider bounds(405,127, 60, 60), text("Tone"),   channel("bright"),  range(0, 1.00, 1),            colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(455,127, 60, 60), text("Shift"),  channel("shift"),   range(-36, 36.00, 0,1,0.001), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(505,127, 60, 60), text("Jitter"), channel("jitter"),  range(0, 1.00, 0.4),          colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(555,127, 60, 60), text("Pan"),    channel("pan"),     range(0, 1.00, 0.5),          colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(605,127, 60, 60), text("Level"),  channel("level"),   range(0, 2.00, 1),            colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
 
 keyboard pos(10, 200), size(655, 80)
 image bounds(5, 295, 180, 20), colour(75, 85, 90, 100), plant("credit"){
@@ -90,7 +91,7 @@ label bounds(0.03, 0.2, .9, .6), text("Author: Iain McCurdy |2012|"), fontcolour
 <CsInstruments>
 
 sr 		= 	44100
-ksmps 		= 	16
+ksmps 		= 	32
 nchnls 		= 	2
 0dbfs		=	1	;MAXIMUM AMPLITUDE
 seed	0

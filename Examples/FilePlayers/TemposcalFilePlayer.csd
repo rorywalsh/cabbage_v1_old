@@ -22,12 +22,12 @@ checkbox   bounds( 95, 60,100, 15), channel("freeze"), text("Freeze"), colour("L
 label      bounds(105,  8, 48, 12), text("FFT Size"), fontcolour("white")
 combobox   bounds( 95, 20, 70, 20), channel("FFTSize"), items("32768", "16384", "8192", "4096", "2048", "1024", "512", "256", "128", "64", "32"), value(5), fontcolour("white")
 
-rslider    bounds(175,  5, 70, 70), channel("transpose"), range(-48, 48, 0,1,1),            colour( 50, 90, 90)), trackercolour("silver"), text("Transpose"), fontcolour("white")
-rslider    bounds(240,  5, 70, 70), channel("speed"),     range( -2,  2.00, 1),             colour( 50, 90, 90),  trackercolour("silver"), text("Speed"),     fontcolour("white")
-rslider    bounds(305,  5, 70, 70), channel("AttTim"),    range(0, 5, 0, 0.5, 0.001),       colour( 50, 90, 90),  trackercolour("silver"), text("Att.Tim"),   fontcolour("white")
-rslider    bounds(370,  5, 70, 70), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001), colour( 50, 90, 90),  trackercolour("silver"), text("Rel.Tim"),   fontcolour("white")
-rslider    bounds(435,  5, 70, 70), channel("MidiRef"),   range(0,127,60, 1, 1),            colour( 50, 90, 90), trackercolour("silver"), text("MIDI Ref."), fontcolour("white")
-rslider    bounds(500,  5, 70, 70), channel("level"),     range(  0,  3.00, 1, 0.5),        colour( 50, 90, 90),  trackercolour("silver"), text("Level"),     fontcolour("white")
+rslider    bounds(175,  5, 70, 70), channel("transpose"), range(-48, 48, 0,1,1),            colour( 50, 90, 90)), trackercolour("silver"), text("Transpose"), textcolour("white")
+rslider    bounds(240,  5, 70, 70), channel("speed"),     range( -2,  2.00, 1),             colour( 50, 90, 90),  trackercolour("silver"), text("Speed"),     textcolour("white")
+rslider    bounds(305,  5, 70, 70), channel("AttTim"),    range(0, 5, 0, 0.5, 0.001),       colour( 50, 90, 90),  trackercolour("silver"), text("Att.Tim"),   textcolour("white")
+rslider    bounds(370,  5, 70, 70), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001), colour( 50, 90, 90),  trackercolour("silver"), text("Rel.Tim"),   textcolour("white")
+rslider    bounds(435,  5, 70, 70), channel("MidiRef"),   range(0,127,60, 1, 1),            colour( 50, 90, 90), trackercolour("silver"),  text("MIDI Ref."), textcolour("white")
+rslider    bounds(500,  5, 70, 70), channel("level"),     range(  0,  3.00, 1, 0.5),        colour( 50, 90, 90),  trackercolour("silver"), text("Level"),     textcolour("white")
 
 keyboard bounds( 5, 80, 560, 75)
 }
@@ -154,11 +154,11 @@ instr	3	; midi triggered instrument
   endif
   RESTART:
   if gichans=1 then
-   a1	temposcal	gkspeed*gkfreeze, gklevel, iFrqRatio, gitableL, gklock, giFFTSizes[i(gkFFTSize)-1]
+   a1	temposcal	gkspeed*gkfreeze, gklevel*iamp, iFrqRatio, gitableL, gklock, giFFTSizes[i(gkFFTSize)-1]
   	outs	a1*aenv,a1*aenv
   elseif gichans=2 then
-   a1	temposcal	gkspeed*gkfreeze, gklevel, iFrqRatio, gitableL, gklock, giFFTSizes[i(gkFFTSize)-1]
-   a2	temposcal	gkspeed*gkfreeze, gklevel, iFrqRatio, gitableR, gklock, giFFTSizes[i(gkFFTSize)-1]
+   a1	temposcal	gkspeed*gkfreeze, gklevel*iamp, iFrqRatio, gitableL, gklock, giFFTSizes[i(gkFFTSize)-1]
+   a2	temposcal	gkspeed*gkfreeze, gklevel*iamp, iFrqRatio, gitableR, gklock, giFFTSizes[i(gkFFTSize)-1]
   	outs	a1*aenv,a2*aenv
   endif
  endif

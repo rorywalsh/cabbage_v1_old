@@ -13,7 +13,7 @@ The offset value is subtracted so that the envelope can experience values of zer
 <Cabbage>
 form caption("GEN05"), size(245, 370), pluginID("gn05"), colour(13, 50, 67,50)
 
-table bounds( 10,  5, 225, 120), channel("table"), tableNumbers(1), tablecolour("silver"), identchannel("table"), amprange(0,1.1)
+gentable bounds( 10,  5, 225, 120), tablenumber(1), tablecolour("silver"), identchannel("table"), amprange(0,1.1,1), zoom(-1)
 
 rslider bounds( 10,130, 50, 70), channel("val1"), text("Value.1"), textBox(1), range(0, 1, 0), colour(100,130,130,250), trackercolour("silver")
 rslider bounds( 70,130, 50, 70), channel("val2"), text("Value.2"), textBox(1), range(0, 1, 1), colour(100,130,130,250), trackercolour("silver")

@@ -49,16 +49,14 @@ Size		--	room size
 <Cabbage>
 form caption("Oscillator Bank Synth") size(525, 330), pluginID("oscb")
 
-image bounds(  0,  0,525, 330), colour( 0, 0, 50), shape("sharp"), oulinecolour("white"), line(0)
-
 ;OSCILLATOR
 groupbox bounds(  0,  0,525, 85), text("Oscillators"), fontcolour("white") plant("oscillators"){
-rslider  bounds(  5, 25, 55, 55), fontcolour("white"), text("Amp."),    channel("amp"),   range(0, 1.00, 0.2),                trackercolour("white") colour(LightBlue)
+rslider  bounds(  5, 25, 55, 55), fontcolour("white"), text("Amp."),    channel("amp"),   range(0, 1.00, 0.4),                trackercolour("white") colour(LightBlue)
 rslider  bounds( 50, 25, 55, 55), fontcolour("white"), text("N.Oscs."), channel("NOscs"), range(1, 100, 10, 1, 1),             trackercolour("white") colour(LightBlue)
 rslider  bounds( 95, 25, 55, 55), fontcolour("white"), text("Spread"),  channel("fmd"),   range(0, 1.00, 0.005,0.25,0.000001), trackercolour("white") colour(LightBlue)
 rslider  bounds(140, 25, 55, 55), fontcolour("white"), text("Speed"),   channel("mvt"),   range(0, 100.000, 1, 0.25,0.0001),   trackercolour("white") colour(LightBlue)
 rslider  bounds(185, 25, 55, 55), fontcolour("white"), text("Width"),   channel("width"), range(0, 1.000, 1, 1,0.001),         trackercolour("white") colour(LightBlue)
-combobox bounds(240, 25, 80,18), channel("waveform"), value(1), text("saw", "square", "organ", "eee", "ooh", "Clarinet","Bass Clarinet", "C.Bass Clarinet","Oboe","Bassoon","C.Bassoon",Violin","Cello","Piccolo","Flute","Alto Flute","Bass Flute", "Ahh", "Horn P", "Horn F", "B.Tbn.Harmon", "B.Tbn.Straight", "B.Tbn.Open")
+combobox bounds(240, 25, 80, 20), channel("waveform"), value(1), text("saw", "square", "organ", "eee", "ooh", "Clarinet","Bass Clarinet", "C.Bass Clarinet","Oboe","Bassoon","C.Bassoon",Violin","Cello","Piccolo","Flute","Alto Flute","Bass Flute", "Ahh", "Horn P", "Horn F", "B.Tbn.Harmon", "B.Tbn.Straight", "B.Tbn.Open")
 checkbox bounds(240, 50, 85, 13), text("Legato"), colour("yellow"), channel("legato"),  value(0)
 checkbox bounds(240, 65, 85, 13), text("Mono"), colour("yellow"), channel("mono"),  value(0)
 rslider  bounds(292, 44, 38, 38), fontcolour("white"), text("Time"),    channel("LegTim"),      range(0, 4.00, 0.09, 0.5, 0.01), trackercolour("white") colour(LightBlue)
@@ -79,7 +77,7 @@ rslider bounds(140, 25, 55, 55), fontcolour("white"), text("Rel."), channel("ARe
 
 ;FILTER
 groupbox bounds(0, 85, 290, 85), text("Filter Envelope"), fontcolour("white"){
-rslider bounds(  5, 110, 55, 55), fontcolour("white"), text("Filter"), channel("cf"), range(0, 10.00, 6),       trackercolour("white") colour(LightBlue)
+rslider bounds(  5, 110, 55, 55), fontcolour("white"), text("Filter"), channel("cf"), range(0, 10.00, 5.2),     trackercolour("white") colour(LightBlue)
 rslider bounds( 50, 110, 55, 55), fontcolour("white"), text("Env."), channel("FEnvAmt"), range(0, 10.00, 1.16), trackercolour("white") colour(LightBlue)
 rslider bounds( 95, 110, 55, 55), fontcolour("white"), text("Att."), channel("FAtt"), range(0, 8.00, 0.1,0.5),  trackercolour("white") colour(LightBlue)
 rslider bounds(140, 110, 55, 55), fontcolour("white"), text("Dec."), channel("FDec"), range(0, 8.00, 1,0.5),    trackercolour("white") colour(LightBlue)
@@ -89,7 +87,7 @@ rslider bounds(230, 110, 55, 55), fontcolour("white"), text("Rel."), channel("FR
 
 ;FILTER
 groupbox bounds(  0,170, 90, 85), text("Filter"), plant("Filter"){
-rslider bounds( 17,  25,  55, 55), fontcolour("white"), text("Layers"), channel("FiltLayers"), range(1, 10, 1,1,1), trackercolour("white") colour(LightBlue)
+rslider bounds( 17,  25,  55, 55), fontcolour("white"), text("Layers"), channel("FiltLayers"), range(1, 10, 4,1,1), trackercolour("white") colour(LightBlue)
 }
 
 ;FILTER LFO
@@ -802,8 +800,8 @@ instr	2	; triggered by instr 2
 	aR 	tonex 		aR, kCF,i(gkFiltLayers)
 	rireturn
 	
-	aL	=	aL*aenv*gkamp*p5
-	aR	=	aR*aenv*gkamp*p5
+	aL	=	aL*aenv*gkamp*p5*0.2
+	aR	=	aR*aenv*gkamp*p5*0.2
 	
 		outs		aL, aR	;SEND AUDIO TO THE OUTPUTS. RESCALE EACH CHANNEL WITH NOTE VELOCITY, AMPLITUDE ENVELOPE AND AMP CONTROL WIDGET.
 	gasendL	=	gasendL+(aL*gkRvbMix)

@@ -9,24 +9,27 @@ The sound file can be played back using the Play/Stop button (and the 'Transpose
 Note that for 'reverse' to be effective either 'loop' needs to be active or inskip needs to be something other than zero
 
 <Cabbage>
-form caption("Diskin File Player") size(675, 160), pluginID("DkPl")
-image                    bounds(  0,  0,675, 160), colour( 70, 30, 30), outlinecolour("White"), line(3)	; main panel colouration    
+form caption("Diskin File Player") size(675, 310), pluginID("DkPl")
+image                    bounds(  0,  0,675, 310), colour( 70, 30, 30), shape("sharp"), outlinecolour("White"), line(3)	; main panel colouration    
 
+soundfiler           bounds(  5,  5,665,140), channel("beg","len"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255)
+
+image bounds(0,150,675,160), colour(0,0,0,0), plant("controls"){
 filebutton bounds(  5,  5, 80, 25), text("Open File","Open File"), fontcolour("white") channel("filename"), shape("ellipse")
 checkbox   bounds(  5, 40, 95, 25), channel("PlayStop"), text("Play/Stop"), colour("lime"), fontcolour("white")
 checkbox   bounds(105,  5,100, 15), channel("loop"), text("Loop On/Off"), colour("yellow"), fontcolour("white")
 checkbox   bounds(105, 22,100, 15), channel("reverse"), text("Reverse"), colour("yellow"), fontcolour("white")
 label      bounds(118, 40, 75, 12), text("Interpolation"), fontcolour("white")
 combobox   bounds(105, 53,100, 20), channel("interp"), items("No interp.", "Linear", "Cubic", "Point Sinc"), value(3), fontcolour("white")
-rslider    bounds(215,  5, 70, 70), channel("transpose"), range(-24, 24, 0,1,1),            colour( 90, 50, 50), trackercolour("silver"), text("Transpose"), fontcolour("white")
-rslider    bounds(280,  5, 70, 70), channel("speed"),     range( -4,  4.00, 1),             colour( 90, 50, 50), trackercolour("silver"), text("Speed"), fontcolour("white")
-rslider    bounds(345,  5, 70, 70), channel("inskip"),    range(  0,  1.00, 0),             colour( 90, 50, 50), trackercolour("silver"), text("In Skip"), fontcolour("white")
-rslider    bounds(410,  5, 70, 70), channel("AttTim"),    range(0, 5, 0, 0.5, 0.001),       colour( 90, 50, 50), trackercolour("silver"), text("Att.Tim"),   fontcolour("white")
-rslider    bounds(475,  5, 70, 70), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001), colour( 90, 50, 50), trackercolour("silver"), text("Rel.Tim"),   fontcolour("white")
-rslider    bounds(540,  5, 70, 70), channel("MidiRef"),   range(0,127,60, 1, 1),            colour( 90, 50, 50), trackercolour("silver"), text("MIDI Ref."), fontcolour("white")
-rslider    bounds(605,  5, 70, 70), channel("level"),     range(  0,  3.00, 1, 0.5),        colour( 90, 50, 50), trackercolour("silver"), text("Level"), fontcolour("white")
-
+rslider    bounds(215,  5, 70, 70), channel("transpose"), range(-24, 24, 0,1,1),            colour( 90, 50, 50), trackercolour("silver"), text("Transpose"), textcolour("white")
+rslider    bounds(280,  5, 70, 70), channel("speed"),     range( -4,  4.00, 1),             colour( 90, 50, 50), trackercolour("silver"), text("Speed"),     textcolour("white")
+rslider    bounds(345,  5, 70, 70), channel("inskip"),    range(  0,  1.00, 0),             colour( 90, 50, 50), trackercolour("silver"), text("In Skip"),   textcolour("white")
+rslider    bounds(410,  5, 70, 70), channel("AttTim"),    range(0, 5, 0, 0.5, 0.001),       colour( 90, 50, 50), trackercolour("silver"), text("Att.Tim"),   textcolour("white")
+rslider    bounds(475,  5, 70, 70), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001), colour( 90, 50, 50), trackercolour("silver"), text("Rel.Tim"),   textcolour("white")
+rslider    bounds(540,  5, 70, 70), channel("MidiRef"),   range(0,127,60, 1, 1),            colour( 90, 50, 50), trackercolour("silver"), text("MIDI Ref."), textcolour("white")
+rslider    bounds(605,  5, 70, 70), channel("level"),     range(  0,  3.00, 1, 0.5),        colour( 90, 50, 50), trackercolour("silver"), text("Level"),     textcolour("white")
 keyboard bounds( 5, 80, 665, 75)
+}
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -56,6 +59,10 @@ instr	1
  gkreverse	chnget	"reverse"
  gklevel	chnget	"level"
  gSfilepath	chnget	"filename"		; read in file path string from filebutton widget 
+ if changed:k(gSfilepath)==1 then		; call instrument to update waveform viewer  
+  event "i",99,0,0
+ endif
+ 
  ktrig		trigger	gkPlayStop,0.5,0	; if play/stop button toggles from low (0) to high (1) generate a '1' trigger
  schedkwhen	ktrig,0,0,2,0,-1		; start instrument 2
  
@@ -128,12 +135,17 @@ instr	3
   iNChns	filenchnls	gSfilepath			; derive the number of channels (mono=1 / stereo=2) from the chosen  sound file
   if iNChns==2 then						; if stereo...
    a1,a2	diskin2	gSfilepath,ispeed*(1-(gkreverse*2)),iinskip*iFileLen,i(gkloop),0,giInterpArr[i(gkinterp)-1]	; use stereo diskin2
-  	outs	a1*gklevel*aenv, a2*gklevel*aenv				; send audio to outputs
+  	outs	a1*gklevel*aenv*iamp, a2*gklevel*aenv*iamp	; send audio to outputs
   elseif iNChns==1 then						; if mono
    a1		diskin2	gSfilepath,ispeed*(1-(gkreverse*2)),iinskip*iFileLen,i(gkloop),0,giInterpArr[i(gkinterp)-1]	; use mono diskin2
-  	outs	a1*gklevel*aenv, a1*gklevel*aenv				; send audio to outputs
+  	outs	a1*gklevel*aenv*iamp, a1*gklevel*aenv*iamp	; send audio to outputs
   endif
  endif
+endin
+
+instr	99
+ Smessage sprintfk "file(%s)", gSfilepath			; print sound file image to fileplayer
+ chnset Smessage, "filer1"
 endin
 
 </CsInstruments>  

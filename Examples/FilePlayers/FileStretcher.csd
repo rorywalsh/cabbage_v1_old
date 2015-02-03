@@ -26,8 +26,8 @@ form caption("File Stretcher") size(580,230), colour(0,0,0) pluginID("FiSt"), gu
 image                bounds(  0,  0,580,230), colour(50,50,60), outlinecolour("White"), line(3), shape("sharp")
 
 
-soundfiler           bounds(  5,  5,570,150), channel("beg","len"), channel("pos1","end1"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255)
-label bounds(6, 4, 560, 14), text(no file), align(left), colour(0,0,0,0), fontcolour(200,200,200), identchannel("stringbox")
+soundfiler           bounds(  5,  5,570,150), channel("beg","len"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255)
+label bounds(6, 4, 560, 14), text(""), align(left), colour(0,0,0,0), fontcolour(200,200,200), identchannel("stringbox")
 label      bounds( 6, 20,450, 13), text("Click and drag on waveform to select sound portion for time stretching..."), align(left), colour("black"), fontcolour("white"), visible(0), identchannel("InstructionID")
 
 filebutton bounds( 10,160, 80, 25), text("OPEN FILE","OPEN FILE"), fontcolour(255,255,100) channel("filename"), shape("ellipse"), channel("beg","len")
@@ -36,15 +36,15 @@ button     bounds( 95,190, 80, 25), text("STOP","STOP"), channel("Stop"), value(
 button     bounds( 10,190, 80, 25), text("RECORD","RECORD"), channel("Record"), value(0), latched(0), fontcolour(255,100,100)
 
 
-rslider    bounds(210,160, 60, 60), text("Duration"), channel("Duration"), range(0.1, 60.00, 3,0.5,0.001), colour(50,50,60), trackercolour("white"), fontcolour("white")
+rslider    bounds(210,160, 60, 60), text("Duration"), channel("Duration"), range(0.1, 60.00, 3,0.5,0.001), colour(30,30,40), trackercolour("white"), fontcolour("white"), outlinecolour(150,150,150)
 ;numberbox  bounds(180,160,110, 35), text("Stretched Duration"), channel("Duration"), range(0.1, 800.00, 3,1,0.001), colour(0,0,0), fontcolour("white"), textbox(1)
 label      bounds(300,160, 80, 13), text("FFT Size"), fontcolour("white")
 combobox   bounds(300,177, 80, 17), channel("FFTSize"), items("32768", "16384", "8192", "4096", "2048", "1024", "512", "256", "128", "64", "32"), value(5), fontcolour("white")
 checkbox   bounds(300,198, 95, 15), channel("lock"), text("Phase Lock"), fontcolour("white"), colour(255,0,0)
 
-rslider    bounds(390,160, 60, 60), text("Aud.Lev."), channel("Level"), range(0, 1.00, 0.9), colour(50,50,60), trackercolour("white"), fontcolour("white")
-rslider    bounds(450,160, 60, 60), text("Jit.Dep."), channel("JitDep"), range(0, 1.00, 0.2), colour(50,50,60), trackercolour("white"), fontcolour("white")
-rslider    bounds(510,160, 60, 60), text("Jit.Rte."), channel("JitRte"), range(0.5, 100.00, 2,0.5), colour(50,50,60), trackercolour("white"), fontcolour("white")
+rslider    bounds(390,160, 60, 60), text("Aud.Lev."), channel("Level"),  range(0, 1.00, 0.9),       colour(30,30,40), trackercolour("white"), fontcolour("white"), outlinecolour(150,150,150)
+rslider    bounds(450,160, 60, 60), text("Jit.Dep."), channel("JitDep"), range(0, 1.00, 0.2),       colour(30,30,40), trackercolour("white"), fontcolour("white"), outlinecolour(150,150,150)
+rslider    bounds(510,160, 60, 60), text("Jit.Rte."), channel("JitRte"), range(0.5, 100.00, 2,0.5), colour(30,30,40), trackercolour("white"), fontcolour("white"), outlinecolour(150,150,150)
 
 ; csoundoutput bounds(230,160, 330, 140), text("Csound Output")
 
@@ -125,7 +125,6 @@ instr	99	; load sound file
  
  Smessage sprintfk "text(%s)",Sname
  chnset Smessage, "stringbox"
- print i(gkAttack)
  if i(gkAttack)==0 then						; Reveal instruction when a file is opened for the first time
   chnset "visible(1)", "InstructionID"
  endif	

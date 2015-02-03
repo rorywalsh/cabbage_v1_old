@@ -11,22 +11,22 @@ form caption("Formant Filter"), colour("SlateGrey"), size(550, 300), pluginID("f
 
 xypad bounds(5, 5, 350, 260), channel("x", "y"), rangex(0, 1, 0.5), rangey(0, 1, 0), text("upper edge:A E I | lower :U O"), fontcolour("white")
 
-vslider bounds(360,  0, 30,140), text("f1"), channel("f1"), range(0, 1.00, 1), fontcolour("white")
-vslider bounds(380,  0, 30,140), text("f2"), channel("f2"), range(0, 1.00, 1), fontcolour("white")
-vslider bounds(400,  0, 30,140), text("f3"), channel("f3"), range(0, 1.00, 1), fontcolour("white")
-vslider bounds(420,  0, 30,140), text("f4"), channel("f4"), range(0, 1.00, 1), fontcolour("white")
-vslider bounds(440,  0, 30,140), text("f5"), channel("f5"), range(0, 1.00, 1), fontcolour("white")
+vslider bounds(360,  0, 30,140), text("f1"), channel("f1"), range(0, 1.00, 1), textcolour("white")
+vslider bounds(380,  0, 30,140), text("f2"), channel("f2"), range(0, 1.00, 1), textcolour("white")
+vslider bounds(400,  0, 30,140), text("f3"), channel("f3"), range(0, 1.00, 1), textcolour("white")
+vslider bounds(420,  0, 30,140), text("f4"), channel("f4"), range(0, 1.00, 1), textcolour("white")
+vslider bounds(440,  0, 30,140), text("f5"), channel("f5"), range(0, 1.00, 1), textcolour("white")
 combobox bounds(365, 155,100, 20), channel("voice"), value(1), text("bass", "tenor", "countertenor", "alto", "soprano")
 combobox bounds(365, 185,100, 20), channel("filter"), value(1), text("reson 1", "reson 2", "butterworth")
 checkbox bounds(365, 215,100, 20), colour("yellow"), channel("balance"),  value(0), text("Balance"), fontcolour("white")
-button   bounds(365, 245,100, 20), text("Live Input","Noise Input"), channel("input"), value(0), fontcolour("lime")
+button   bounds(365, 245,100, 20), text("Live Input","Noise Input"), channel("input"), value(0)
 
-rslider bounds(480,  5, 60, 60), text("BW.Mult"), channel("BWMlt"), range(0.01, 4, 1, 0.4), fontcolour("white")
-rslider bounds(480, 70, 60, 60), text("Freq.Mult"), channel("FrqMlt"), range(0.25, 4, 1, 0.4), fontcolour("white")
-rslider bounds(480,140, 60, 60), text("Mix"), channel("mix"), range(0, 1.00, 1), fontcolour("white")
-rslider bounds(480,210, 60, 60), text("Gain"), channel("gain"), range(0, 5.00, 1, 0.5), fontcolour("white")
+rslider bounds(480,  5, 60, 60), text("BW.Mult"),   channel("BWMlt"),  range(0.01, 4, 1, 0.4), textcolour("white")
+rslider bounds(480, 70, 60, 60), text("Freq.Mult"), channel("FrqMlt"), range(0.25, 4, 1, 0.4), textcolour("white")
+rslider bounds(480,140, 60, 60), text("Mix"),       channel("mix"),    range(0, 1.00, 1),      textcolour("white")
+rslider bounds(480,210, 60, 60), text("Gain"),      channel("gain"),   range(0, 5.00, 1, 0.5), textcolour("white")
 
-image bounds( 5, 275, 350, 18), colour(75, 85, 90, 100), plant("credit"), line(0){
+image bounds( 5, 275, 350, 18), colour(75, 85, 90, 100), plant("credit"), outlinethickness(0){
 label bounds(0.03, 0.1, .6, .8), text("Author: Iain McCurdy |2012|"), fontcolour("white")
 }
 </Cabbage>
@@ -82,7 +82,7 @@ giTBWI	ftgen	0, 0, 8, -2,	5, 120,	100,	100,	100,	100	;BAND WIDTH
 giTBWO	ftgen	0, 0, 8, -2,	5, 130,	120,	120,	120,	120	;BAND WIDTH                                         
 giTBWU	ftgen	0, 0, 8, -2,	5, 140,	120,	120,	120,	120	;BAND WIDTH
 ;COUNTER TENOR
-giCTFA	ftgen	0, 0, 8, -2,	5, 660,	440,	270,	430,	370	;FREQ
+giCTFA	ftgen	0, 0, 8, -2,	5, 660,		440,	270,	430,	370	;FREQ
 giCTFE	ftgen	0, 0, 8, -2,	5, 1120,	1800,	1850,	820,	630	;FREQ
 giCTFI	ftgen	0, 0, 8, -2,	5, 2750,	2700,	2900,	2700,	2750	;FREQ
 giCTFO	ftgen	0, 0, 8, -2,	5, 3000,	3000,	3350,	3000,	3000	;FREQ
@@ -100,7 +100,7 @@ giTBWI	ftgen	0, 0, 8, -2,	5, 120,	100,	100,	100,	100	;BAND WIDTH
 giTBWO	ftgen	0, 0, 8, -2,	5, 130,	120,	120,	120,	120	;BAND WIDTH
 giTBWU	ftgen	0, 0, 8, -2,	5, 140,	120,	120,	120,	120	;BAND WIDTH
 ;ALTO
-giAFA	ftgen	0, 0, 8, -2,	5, 800,	400,	350,	450,	325	;FREQ
+giAFA	ftgen	0, 0, 8, -2,	5, 800,		400,	350,	450,	325	;FREQ
 giAFE	ftgen	0, 0, 8, -2,	5, 1150,	1600,	1700,	800,	700	;FREQ
 giAFI	ftgen	0, 0, 8, -2,	5, 2800,	2700,	2700,	2830,	2530	;FREQ
 giAFO	ftgen	0, 0, 8, -2,	5, 3500,	3300,	3700,	3500,	2500	;FREQ
@@ -118,7 +118,7 @@ giABWI	ftgen	0, 0, 8, -2,	5, 170,	120,	120,	100,	170	;BAND WIDTH
 giABWO	ftgen	0, 0, 8, -2,	5, 180,	150,	150,	130,	180	;BAND WIDTH
 giABWU	ftgen	0, 0, 8, -2,	5, 200,	200,	200,	135,	200	;BAND WIDTH
 ;SOPRANO
-giSFA	ftgen	0, 0, 8, -2,	5, 800,	350,	270,	450,	325	;FREQ
+giSFA	ftgen	0, 0, 8, -2,	5, 800,		350,	270,	450,	325	;FREQ
 giSFE	ftgen	0, 0, 8, -2,	5, 1150,	2000,	2140,	800,	700	;FREQ
 giSFI	ftgen	0, 0, 8, -2,	5, 2900,	2800,	2950,	2830,	2700	;FREQ
 giSFO	ftgen	0, 0, 8, -2,	5, 3900,	3600,	3900,	3800,	3800	;FREQ
@@ -178,16 +178,16 @@ instr	2
 	#
 	invals		table		0, giBFA+((i(gkvoice)-1)*15)+$N-1					;NUMBER OF DATA ELEMENTS IN EACH TABLE
 	invals	=	invals-1									;
-	kfreq$N_U	tablei		1+(kx*(3/5)*invals),giBFA+((i(gkvoice)-1)*15)+$N-1			;READ DATA FOR FREQUENCY (UPPER EDGE OF PANEL)
-	kfreq$N_L	tablei		1+(((1-kx)*(1/5))+(4/5)*invals),giBFA+((i(gkvoice)-1)*15)+$N-1	;READ DATA FOR FREQUENCY (LOWER EDGE OF PANEL)
-	kfreq$N		ntrpol		kfreq$N_L, kfreq$N_U, ky					;INTERPOLATE BETWEEN UPPER VALUE AND LOWER VALUE (DETERMINED BY Y-LOCATION ON PANEL)                          
+	kfreq$N._U	tablei		1+(kx*(3/5)*invals),giBFA+((i(gkvoice)-1)*15)+$N-1			;READ DATA FOR FREQUENCY (UPPER EDGE OF PANEL)
+	kfreq$N._L	tablei		1+(((1-kx)*(1/5))+(4/5)*invals),giBFA+((i(gkvoice)-1)*15)+$N-1	;READ DATA FOR FREQUENCY (LOWER EDGE OF PANEL)
+	kfreq$N		ntrpol		kfreq$N._L, kfreq$N._U, ky					;INTERPOLATE BETWEEN UPPER VALUE AND LOWER VALUE (DETERMINED BY Y-LOCATION ON PANEL)                          
 	kfreq$N		=		kfreq$N * gkFrqMlt						;MULTIPLY FREQUENCY VALUE BY VALUE FROM 'Frequency Multiply' SLIDER
-	kdbamp$N_U	tablei		1+(kx*(3/5)*invals),giBDbA+((i(gkvoice)-1)*15)+$N-1		;READ DATA FOR INTENSITY (UPPER EDGE OF PANEL)                                      
-	kdbamp$N_L	tablei		1+(((1-kx)*(1/5))+(4/5)*invals),giBDbA+((i(gkvoice)-1)*15)+$N-1	;READ DATA FOR INTENSITY (LOWER EDGE OF PANEL)                                      
-	kdbamp$N	ntrpol		kdbamp$N_L, kdbamp$N_U, ky                   			;INTERPOLATE BETWEEN UPPER VALUE AND LOWER VALUE (DETERMINED BY Y-LOCATION ON PANEL)
-	kbw$N_U		tablei		1+(kx*(3/5)*invals),giBBWA+((i(gkvoice)-1)*15)+$N-1		;READ DATA FOR BANDWIDTH (UPPER EDGE OF PANEL)                                      
-	kbw$N_L		tablei		1+(((1-kx)*(1/5))+(4/5)*invals),giBBWA+((i(gkvoice)-1)*15)+$N-1	;READ DATA FOR BANDWIDTH (LOWER EDGE OF PANEL)                                      
-	kbw$N		ntrpol		kbw$N_L, kbw$N_U, ky						;INTERPOLATE BETWEEN UPPER VALUE AND LOWER VALUE (DETERMINED BY Y-LOCATION ON PANEL)
+	kdbamp$N._U	tablei		1+(kx*(3/5)*invals),giBDbA+((i(gkvoice)-1)*15)+$N-1		;READ DATA FOR INTENSITY (UPPER EDGE OF PANEL)                                      
+	kdbamp$N._L	tablei		1+(((1-kx)*(1/5))+(4/5)*invals),giBDbA+((i(gkvoice)-1)*15)+$N-1	;READ DATA FOR INTENSITY (LOWER EDGE OF PANEL)                                      
+	kdbamp$N	ntrpol		kdbamp$N._L, kdbamp$N._U, ky                   			;INTERPOLATE BETWEEN UPPER VALUE AND LOWER VALUE (DETERMINED BY Y-LOCATION ON PANEL)
+	kbw$N._U	tablei		1+(kx*(3/5)*invals),giBBWA+((i(gkvoice)-1)*15)+$N-1		;READ DATA FOR BANDWIDTH (UPPER EDGE OF PANEL)                                      
+	kbw$N._L	tablei		1+(((1-kx)*(1/5))+(4/5)*invals),giBBWA+((i(gkvoice)-1)*15)+$N-1	;READ DATA FOR BANDWIDTH (LOWER EDGE OF PANEL)                                      
+	kbw$N		ntrpol		kbw$N._L, kbw$N._U, ky						;INTERPOLATE BETWEEN UPPER VALUE AND LOWER VALUE (DETERMINED BY Y-LOCATION ON PANEL)
 	kbw$N		=		kbw$N * gkBWMlt							;MULTIPLY BANDWIDTH VALUE BY VALUE FROM 'Bandwidth Multiply' SLIDER
 	#												;END OF MACRO!
 

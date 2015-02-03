@@ -1,22 +1,63 @@
+InharmonicAdditiveSynth.csd
+Written by Iain McCurdy, 2012.
+
+This instrument takes information about modal frequency values for a sound (in the form of a list of values in a GEN 02 
+function table and transfers it into a GEN 09 function table for efficient playback by a single oscillator opcode.
+GEN 09 demands partial numbers to be integers (if we want ot avoid unwanted artefacts in the sound) so all modal 
+frequencies are multiplied by a large number before being rounded to integers  for the GEN 09 table in order to reduce 
+the loss of precision. There is a trade off in that we need this multiplier value to be large to minimise quantisation
+but if it is very large we need to use a higher quality oscillator opcode (more CPU drain) and/or a larger function table
+size for the GEN 09 tables (longer load time when the example is started).
+
+If the size chosen for the GEN 09 tables is too small, aliasing artefacts will result when it is played back.
+
+Amplitude Envelope
+------------------
+Att.	-	Attack time in seconds
+Dec.	-	Decay time in seconds
+Sus.	-	Sustain level
+Rel.	-	Release time
+Level	-	Output amplitude level
+
+Instrument
+----------
+Select a GEN09 function table corresponding to a instrument or object
+
+Filter Envelope (Lowpass)
+-------------------------
+Amount	-	Amount of influence of the envelope (in octaves)
+Dec.	-	Decay time in seconds
+Sus.	-	Sustain level
+Rel.	-	Release time in seconds
+Offset	-	Filter offset value (in octaves)
+
+Chorus
+------
+Mix	-	Dry/Wet mix of the chorus effect
+Depth	-	Depth of the modulations of the chorus effect
+Rate	-	Rate of modulation
+
+
 <Cabbage>
 form caption("Inharmonic Synth"), size(445, 320), pluginID("InSy")
 image pos(0, 0), size(445, 290), colour("black"), shape("rounded"), oulinecolour("brown"), line(4)
-combobox caption("Instrument"), channel("Instr"),  pos(275, 10), size(160, 90), value(4), text("Bass Guitar", "Dahina", "Banyan", "Xylophone", "Tibetan Bowl 180mm", "Spinel Sphere", "Pot Lid", "Red Cedar Wood Plate", "Tubular Bell", "Redwood Wood Plate", "Douglas Fir Wood Plate", "Uniform Wooden Bar", "Uniform Aluminium Bar", "Vibraphone 1", "Vibraphone 2", "Chladni Plate", "Tibetan Bowl 152mm", "Tibetan Bowl 140mm", "Wine Glass", "Small Handbell", "Albert Clock Bell", "Wood Block")
+combobox caption("Instrument"), channel("Instr"),  pos(275, 10), size(160, 90), value(5), text("Bass Guitar", "Dahina", "Banyan", "Xylophone", "Tibetan Bowl 180mm", "Spinel Sphere", "Pot Lid", "Red Cedar Wood Plate", "Tubular Bell", "Redwood Wood Plate", "Douglas Fir Wood Plate", "Uniform Wooden Bar", "Uniform Aluminium Bar", "Vibraphone 1", "Vibraphone 2", "Chladni Plate", "Tibetan Bowl 152mm", "Tibetan Bowl 140mm", "Wine Glass", "Small Handbell", "Albert Clock Bell", "Wood Block")
 
-groupbox bounds(10, 10, 260, 90), text("Filter Envelope"), plant("filterenv"){
-rslider bounds(  0, 25,60,60), text("Amount"), colour("cornflowerblue"), trackercolour("cornflowerblue"), channel("FAmt"), range(0, 1.00, 0.7)
-rslider bounds( 50, 25,60,60), text("Dec."),   colour("cornflowerblue"), trackercolour("cornflowerblue"), channel("FDec"), range(0, 1.00, 0.45)
-rslider bounds(100, 25,60,60), text("Sus."),   colour("cornflowerblue"), trackercolour("cornflowerblue"), channel("FSus"), range(0, 1.00, 0)
-rslider bounds(150, 25,60,60), text("Rel."),   colour("cornflowerblue"), trackercolour("cornflowerblue"), channel("FRel"), range(0, 1.00, 0.45)
-rslider bounds(200, 25,60,60), text("Shape"),  colour("cornflowerblue"), trackercolour("cornflowerblue"), channel("FShp"), range(-50, 50.0, -16)
+
+groupbox bounds(10, 10,260, 90), text("Amplitude Envelope"), plant("ampenv"){
+rslider bounds(  0, 25, 60, 60), text("Att."),  channel("AAtt"), colour("red"), trackercolour("red"), range(0.0001,1.00,0.0001,0.25,0.0001)
+rslider bounds( 50, 25, 60, 60), text("Dec."),  channel("ADec"), colour("red"), trackercolour("red"), range(0.001,30.00,7,0.5)
+rslider bounds(100, 25, 60, 60), text("Sus."),   channel("ASus"), colour("red"), trackercolour("red"), range(0, 1.00, 0)
+rslider bounds(150, 25, 60, 60), text("Rel."),   channel("ARel"), colour("red"), trackercolour("red"), range(0.01, 30.00, 7,0.5)
+rslider bounds(200, 25, 60, 60), text("Level"), channel("Lev"),  colour("maroon"), trackercolour("maroon"), range(0, 5.00, 0.1,0.5)
 }
 
-groupbox bounds(10,105, 260, 90), text("Amplitude Envelope"), plant("ampenv"){
-rslider bounds(  0, 25,60,60), text("Att."),  channel("AAtt"), colour("red"), trackercolour("red"), range(0, 1.00, 0)
-rslider bounds( 50, 25,60,60), text("Dec."),  channel("ADec"), colour("red"), trackercolour("red"), range(0, 1.00, 0.45)
-rslider bounds(100, 25,60,60), text("Sus"),   channel("ASus"), colour("red"), trackercolour("red"), range(0, 1.00, 0)
-rslider bounds(150, 25,60,60), text("Rel"),   channel("ARel"), colour("red"), trackercolour("red"), range(0, 1.00, 0.45)
-rslider bounds(200, 25,60,60), text("Level"), channel("Lev"),  colour("maroon"), trackercolour("maroon"), range(0, 5.00, 0.1,0.5)
+groupbox bounds(10,105,260, 90), text("Filter Envelope"), plant("filterenv"){
+rslider bounds(  0, 25, 60, 60), text("Amount"),  colour("cornflowerblue"), trackercolour("cornflowerblue"), channel("FAmt"), range(0, 10.0, 8)
+rslider bounds( 50, 25, 60, 60), text("Dec."),   colour("cornflowerblue"), trackercolour("cornflowerblue"), channel("FDec"), range(0.001,30.00,7,0.5)
+rslider bounds(100, 25, 60, 60), text("Sus."),   colour("cornflowerblue"), trackercolour("cornflowerblue"), channel("FSus"), range(0,1.00,0)
+rslider bounds(150, 25, 60, 60), text("Rel."),   colour("cornflowerblue"), trackercolour("cornflowerblue"), channel("FRel"), range(0.1,30.00,7,0.5)
+rslider bounds(200, 25, 60, 60), text("Offset"),  colour("cornflowerblue"), trackercolour("cornflowerblue"), channel("F_OS"), range(-4,10.0, 0)
 }
 
 groupbox bounds(275,105, 160, 90), text("Chorus"), plant("cho"){
@@ -39,10 +80,13 @@ label bounds(0.03, 0.15, .9, .7), text("Author: Iain McCurdy |2012|"), fontcolou
 <CsInstruments>
 
 sr 		= 	44100
-ksmps 		= 	64
+ksmps 		= 	32
 nchnls 		= 	2
 0dbfs		=	1	;MAXIMUM AMPLITUDE
-massign	0,2
+
+massign	0,2					;MIDI NOTES TO INSTRUMENT 2
+giTableSize	=	131073			;FUNCTION TABLE SIZE - THIS NEEDS TO BE FAIRLY LARGE IN ORDER TO ACCOMMODATE ACCURATE REPRESENTATION OF UPPER PARTIALS. IF THIS IS TOO LOW ALIASING WILL OCCUR WHEN HIGHER NOTES ARE PLAYED
+giRtosScale	=	1000			;SCALING FACTOR APPLIED TO RATIOS WRITTEN TO GEN09 FUNCTION TABLE. THIS IS BASICALLY A PRECISION CONTROL ON HOW MUCH PARTIAL FREQUENCIES WILL BE QUANTISED (ROUNDED UP OR DOWN) BEFORE BEING WRITTEN TO THE GEN 09 FUNCTION TABLE
 
 ;Author: Iain McCurdy (2012)
 
@@ -93,49 +137,47 @@ girtos21	ftgen	0,0,-22,-2, 2.043260,1.482916,1.000000,3.328848,4.761811,1.477056
 girtos22	ftgen	0,0,4,-2,	915/915,1540/915,1863/915,3112/915
 ;=================================================================================================================================================================================
 
-giTableSize	=	131073
-
 ;=================================================================================================================================================================================
 ;GEN09 FUNCTION TABLE VERSIONS OF THE MODAL FREQUENCY TABLES
 ;THESE AREN'T ACTUALLY NEEDED AS THE TABLES ARE CALCULATED IN INSTRUMENT 2 BUT IF INSTRUMENT 2 IS OMITTED THESE TABLES WILL BE NEEDED
 ;NOTE THAT PARTIAL NUMBER HAVE BEEN MULTIPLIED BY giRtosScale AND THAT THE FREQUENCY OF ANY OSCILLATOR THAT USES THESE TABLES WILL HAVE TO BE DIVIDED BY THE SAME NUMBER 
-giwave1		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2000,1.000,0,	 3000,1.000,0,	 4000,1.000,0,	 5000,1.000,0,	 6000,1.000,0,	 7000,1.000,0,	 8000,1.000,0,	 9000,1.000,0,	 10000,1.000,0,	 11000,1.000,0,	 12000,1.000,0,	 13000,1.000,0,	 14000,1.000,0,	 15000,1.000,0,	 16000,1.000,0,	 17000,1.000,0,	 18000,1.000,0,	 19000,1.000,0,	 20000,1.000,0
-giwave2		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2890,1.000,0,	 4950,1.000,0,	 6990,1.000,0,	 8010,1.000,0,	 9020,1.000,0
-giwave3		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2000,1.000,0,	 3010,1.000,0,	 4010,1.000,0,	 4690,1.000,0,	 5630,1.000,0	 
-giwave4		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 3932,1.000,0,	 9538,1.000,0,	 16688,1.000,0,	 24566,1.000,0,	 31147,1.000,0
-giwave5		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2778,0.500,0,	 5180,0.250,0,	 8162,0.125,0,	 11660,0.062,0,	 15638,0.031,0,	 19990,0.016,0
-giwave6		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1026,1.000,0,	 1422,1.000,0,	 1447,1.000,0,	 1466,1.000,0,	 1499,1.000,0,	 1789,1.000,0,	 1876,1.000,0,	 1964,1.000,0,	 1978,1.000,0,	 2033,1.000,0,	 2145,1.000,0,	 2156,1.000,0,	 2253,1.000,0,	 2290,1.000,0,	 2333,1.000,0,	 2456,1.000,0,	 2492,1.000,0,	 2566,1.000,0,	 2605,1.000,0,	 2669,1.000,0,	 2714,1.000,0
-giwave7		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 3200,1.000,0,	 6230,1.000,0,	 6270,1.000,0,	 9920,1.000,0,	 14150,1.000,0
-giwave8		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1470,1.000,0,	 2090,1.000,0,	 2560,1.000,0
-giwave9		ftgen	0, 0, giTableSize, 9, 622,1.000,0,	 1231,1.000,0,	 2000,1.000,0,	 2931,1.000,0,	 4016,1.000,0,	 5180,1.000,0,	 6437,1.000,0,	 7755,1.000,0,	 11034,1.000,0,	 12025,1.000,0
-giwave10	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1470,1.000,0,	 2110,1.000,0,	 2570,1.000,0
-giwave11	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1420,1.000,0,	 2110,1.000,0,	 2470,1.000,0
-giwave12	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2572,1.000,0,	 4644,1.000,0,	 6984,1.000,0,	 9723,1.000,0,	 12000,1.000,0
-giwave13	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2756,1.000,0,	 5423,1.000,0,	 8988,1.000,0,	 13448,1.000,0,	 18680,1.000,0
-giwave14	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 3984,1.000,0,	 10668,1.000,0,	 17979,1.000,0,	 23679,1.000,0,	 33642,1.000,0
-giwave15	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 3997,1.000,0,	 9469,1.000,0,	 15566,1.000,0,	 20863,1.000,0,	 29440,1.000,0
-giwave16	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1725,1.000,0,	 5806,1.000,0,	 7419,1.000,0,	 13919,1.000,0
-giwave17	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2662,1.000,0,	 4837,1.000,0,	 7515,1.000,0,	 10640,1.000,0,	 14210,1.000,0,	 18140,1.000,0
-giwave18	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2765,1.000,0,	 5121,1.000,0,	 7806,1.000,0,	 10784,1.000,0
-giwave19	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2320,1.000,0,	 4250,1.000,0,	 6630,1.000,0,	 9380,1.000,0
-giwave20	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1001,0.833,0,	 1793,0.694,0,	 1800,0.579,0,	 2520,0.482,0,	 2522,0.402,0,	 2990,0.335,0,	 2994,0.279,0,	 3785,0.233,0,	 3806,0.194,0,	 4568,0.162,0,	 4575,0.135,0,	 5029,0.112,0,	 5045,0.093,0,	 6075,0.078,0,	 5909,0.065,0,	 6412,0.054,0,	 6443,0.045,0,	 7082,0.038,0,	 7092,0.031,0,	 7318,0.026,0,	 7555,0.022,0
-giwave21	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1001,0.833,0,	 1793,0.694,0,	 1800,0.579,0,	 2520,0.482,0,	 2522,0.402,0,	 2990,0.335,0,	 2994,0.279,0,	 3785,0.233,0,	 3806,0.194,0,	 4568,0.162,0,	 4575,0.135,0,	 5029,0.112,0,	 5045,0.093,0,	 6075,0.078,0,	 5909,0.065,0,	 6412,0.054,0,	 6443,0.045,0,	 7082,0.038,0,	 7092,0.031,0,	 7318,0.026,0,	 7555,0.022,0
-giwave22	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1001,0.833,0,	 1793,0.694,0,	 1800,0.579,0,	 2520,0.482,0,	 2522,0.402,0,	 2990,0.335,0,	 2994,0.279,0,	 3785,0.233,0,	 3806,0.194,0,	 4568,0.162,0,	 4575,0.135,0,	 5029,0.112,0,	 5045,0.093,0,	 6075,0.078,0,	 5909,0.065,0,	 6412,0.054,0,	 6443,0.045,0,	 7082,0.038,0,	 7092,0.031,0,	 7318,0.026,0,	 7555,0.022,0
+giwave1		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2000,0.667,0,	 3000,0.444,0,	 4000,0.296,0,	 5000,0.198,0,	 6000,0.132,0,	 7000,0.088,0,	 8000,0.059,0,	 9000,0.039,0,	 10000,0.026,0,	 11000,0.017,0,	 12000,0.012,0,	 13000,0.008,0,	 14000,0.005,0,	 15000,0.003,0,	 16000,0.002,0,	 17000,0.002,0,	 18000,0.001,0,	 19000,0.001,0,	 20000,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave2		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2890,0.500,0,	 4950,0.250,0,	 6990,0.125,0,	 8010,0.062,0,	 9020,0.031,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave3		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2000,0.667,0,	 3010,0.444,0,	 4010,0.296,0,	 4690,0.198,0,	 5630,0.132,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave4		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 3932,0.500,0,	 9538,0.250,0,	 16688,0.125,0,	 24566,0.062,0,	 31147,0.031,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave5		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2778,0.500,0,	 5181,0.250,0,	 8163,0.125,0,	 11661,0.062,0,	 15638,0.031,0,	 19990,0.016,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave6		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1027,1.000,0,	 1422,1.000,0,	 1448,1.000,0,	 1466,1.000,0,	 1499,1.000,0,	 1789,1.000,0,	 1877,1.000,0,	 1965,1.000,0,	 1979,1.000,0,	 2033,1.000,0,	 2145,1.000,0,	 2156,1.000,0,	 2253,1.000,0,	 2291,1.000,0,	 2333,1.000,0,	 2457,1.000,0,	 2493,1.000,0,	 2566,1.000,0,	 2606,1.000,0,	 2669,1.000,0,	 2714,1.000,0
+giwave7		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 3200,0.833,0,	 6230,0.694,0,	 6270,0.579,0,	 9920,0.482,0,	 14150,0.402,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave8		ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1470,0.667,0,	 2090,0.444,0,	 2560,0.296,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave9		ftgen	0, 0, giTableSize, 9, 622,1.000,0,	 1231,1.000,0,	 2000,1.000,0,	 2931,1.000,0,	 4016,1.000,0,	 5181,1.000,0,	 6437,1.000,0,	 7755,1.000,0,	 11034,1.000,0,	 12025,1.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave10	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1470,1.000,0,	 2110,1.000,0,	 2570,1.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave11	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1420,1.000,0,	 2110,1.000,0,	 2470,1.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave12	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2572,0.667,0,	 4644,0.444,0,	 6984,0.296,0,	 9723,0.198,0,	 0,0.132,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave13	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2756,1.000,0,	 5423,1.000,0,	 8988,1.000,0,	 13448,1.000,0,	 18680,1.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave14	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 3984,0.500,0,	 10668,0.250,0,	 17979,0.125,0,	 23679,0.062,0,	 33642,0.031,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave15	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 3997,0.500,0,	 9469,0.250,0,	 15566,0.125,0,	 20863,0.062,0,	 29440,0.031,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave16	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1726,0.667,0,	 5806,0.444,0,	 7419,0.296,0,	 13919,0.198,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave17	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2662,0.500,0,	 4838,0.250,0,	 7516,0.125,0,	 10640,0.062,0,	 14210,0.031,0,	 18140,0.016,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave18	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2765,0.500,0,	 5121,0.250,0,	 7807,0.125,0,	 10784,0.062,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave19	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 2320,1.000,0,	 4250,1.000,0,	 6630,1.000,0,	 9380,1.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
+giwave20	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1002,0.833,0,	 1794,0.694,0,	 1801,0.579,0,	 2520,0.482,0,	 2522,0.402,0,	 2991,0.335,0,	 2994,0.279,0,	 3786,0.233,0,	 3806,0.194,0,	 4569,0.162,0,	 4575,0.135,0,	 5030,0.112,0,	 5046,0.093,0,	 6076,0.078,0,	 5909,0.065,0,	 6412,0.054,0,	 6443,0.045,0,	 7083,0.038,0,	 7092,0.031,0,	 7319,0.026,0,	 7555,0.022,0
+giwave21	ftgen	0, 0, giTableSize, 9, 2043,1.000,0,	 1483,0.909,0,	 1000,0.826,0,	 3329,0.751,0,	 4762,0.683,0,	 1477,0.621,0,	 612,0.564,0,	 2661,0.513,0,	 1003,0.467,0,	 4024,0.424,0,	 254,0.386,0,	 2044,0.350,0,	 4032,0.319,0,	 2659,0.290,0,	 4776,0.263,0,	 5500,0.239,0,	 3331,0.218,0,	 810,0.198,0,	 2391,0.180,0,	 254,0.164,0,	 1901,0.149,0,	 2367,0.135,0
+giwave22	ftgen	0, 0, giTableSize, 9, 1000,1.000,0,	 1683,0.909,0,	 2036,0.826,0,	 3401,0.751,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0,	 0,0.000,0
 ;=================================================================================================================================================================================
 
 gisine		ftgen	0,0,4096,10,1				;A SINE WAVE
-giRtosScale	=	100					;SCALING FACTOR APPLIED TO RATIOS WRITTEN TO GEN09 FUNCTION TABLE
 								;FREQUENCY OF AUDIO OSCILLATOR WILL BE DIVIDED BY THIS VALUE
 								;TOO LOW A VALUE HERE WILL RESULT IN QUANTISATION OF PARTIAL FREQUENCIES
 								;TOO HIGH A VALUE WILL RESULT IN HIGHER PARTIALS BEING POORLY REPRESENTED IN THE TABLE, LEADING TO ALIASING 
-gilfoshape	ftgen	0, 0, 4096, 19, 0.5, 1, 180, 1	;U-SHAPE PARABOLA (USED BY THE CHORUS EFFECT)
-gidurscal	ftgen	0, 0, 128, -16, 10, 128, -4, 0.1	;A FUNCTION USED TO RESCALE ENVELOPE DURATIONS ACCORDING TO NOTE PLAYED
+gilfoshape	ftgen	0, 0, 4096, 19, 0.5, 1, 180, 1		;U-SHAPE PARABOLA (USED BY THE CHORUS EFFECT)
+gidurscal	ftgen	0, 0, 128, -16, 3, 128, -4, 0.2		;A FUNCTION USED TO RESCALE ENVELOPE DURATIONS ACCORDING TO NOTE PLAYED
 givelscal	ftgen	0, 0, 128, -16, 0, 128, -4, 1		;A FUNCTION USED TO REMAP MIDI VELOCITY VALUES - THE CURVATURE OF THIS FUNCTION CAN BE CHANGED TO TAKE ACCOUNT OF THE VARYING VELOCITY RESPONSE OF DIFFERENT MIDI KEYBOARDS
 gasend		init	0
 
 instr	CreateGEN09Tables	;DERIVE GEN09 FUNCTION TABLE WAVEFORMS FROM THE GEN02 FUNCTION TABLES OF MODAL FREQUENCY RATIOS
-;A MACRO IS DEFINED THAT READS A SINGLE MODAL FERQUENCY RATIO FROM A TABLE 
-#define	PARTIAL(PartNum)
+;A MACRO IS DEFINED THAT READS A SINGLE MODAL FREQUENCY RATIO FROM A TABLE 
+
+#define	PARTIAL(WaveNum'PartNum)
 	#
 	if $PartNum<=inratios then				;IF COUNTER IS WITHIN THE LIMITS OF THE NUMBER OF DEFINED MODAL FREQUENCY RATIOS...
 	 irto$PartNum	table	$PartNum-1,girtos$WaveNum	;...READ A VALUE FROM THE TABLE
@@ -153,33 +195,33 @@ instr	CreateGEN09Tables	;DERIVE GEN09 FUNCTION TABLE WAVEFORMS FROM THE GEN02 FU
 	inratios	=	ftlen(girtos$WaveNum)
 	iampscal	=	$AmpScal			;AMPLITUDE SCALING 
 	iamp		=	1				;PARTIAL STRENGTH OF FIRST PARTIAL
-	$PARTIAL(1)						;MACRO EXPANDED FOR EACH PARTIAL...
-	$PARTIAL(2)
-	$PARTIAL(3)
-	$PARTIAL(4)
-	$PARTIAL(5)
-	$PARTIAL(6)
-	$PARTIAL(7)
-	$PARTIAL(8)
-	$PARTIAL(9)
-	$PARTIAL(10)
-	$PARTIAL(11)
-	$PARTIAL(12)                          
-	$PARTIAL(13)
-	$PARTIAL(14)
-	$PARTIAL(15)
-	$PARTIAL(16)
-	$PARTIAL(17)
-	$PARTIAL(18)                                                                                                                                                         
-	$PARTIAL(19)
-	$PARTIAL(20)
-	$PARTIAL(21)
-	$PARTIAL(22)                                                                                                                                                            
+	$PARTIAL($WaveNum'1)						;MACRO EXPANDED FOR EACH PARTIAL...
+	$PARTIAL($WaveNum'2)
+	$PARTIAL($WaveNum'3)
+	$PARTIAL($WaveNum'4)
+	$PARTIAL($WaveNum'5)
+	$PARTIAL($WaveNum'6)
+	$PARTIAL($WaveNum'7)
+	$PARTIAL($WaveNum'8)
+	$PARTIAL($WaveNum'9)
+	$PARTIAL($WaveNum'10)
+	$PARTIAL($WaveNum'11)
+	$PARTIAL($WaveNum'12)                          
+	$PARTIAL($WaveNum'13)
+	$PARTIAL($WaveNum'14)
+	$PARTIAL($WaveNum'15)
+	$PARTIAL($WaveNum'16)
+	$PARTIAL($WaveNum'17)
+	$PARTIAL($WaveNum'18)                                                                                                                                                         
+	$PARTIAL($WaveNum'19)
+	$PARTIAL($WaveNum'20)
+	$PARTIAL($WaveNum'21)
+	$PARTIAL($WaveNum'22)                                                                                                                                                            
 	;GENERATE A GEN09 FUNCTION TABLE (ALL PHASES ARE SET TO ZERO)
 	giwave$WaveNum	ftgen	0,0,giTableSize,9, irto1,iamp1,0, irto2,iamp2,0, irto3,iamp3,0, irto4,iamp4,0, irto5,iamp5,0, irto6,iamp6,0, irto7,iamp7,0, irto8,iamp8,0, irto9,iamp9,0, irto10,iamp10,0, irto11,iamp11,0, irto12,iamp12,0, irto13,iamp13,0, irto14,iamp14,0, irto15,iamp15,0, irto16,iamp16,0, irto17,iamp17,0, irto18,iamp18,0, irto19,iamp19,0, irto20,iamp20,0, irto21,iamp21,0, irto22,iamp22,0 	
 
 	;UNCOMMENT THE FOLLOWING LINE IF YOU WISH TO WRITE GENERATED TABLES TO A TEXT FILE FOR LATER USE
-	;fprints "GEN09InharmonicTables.txt", "giwave$WaveNum%tftgen%t0, 0, 131072, 9, %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0%n", irto1,iamp1, irto2,iamp2, irto3,iamp3, irto4,iamp4, irto5,iamp5, irto6,iamp6, irto7,iamp7, irto8,iamp8, irto9,iamp9, irto10,iamp10, irto11,iamp11, irto12,iamp12, irto13,iamp13, irto14,iamp14, irto15,iamp15, irto16,iamp16, irto17,iamp17, irto18,iamp18, irto19,iamp19, irto20,iamp20, irto21,iamp21, irto22,iamp22
+	;fprints "GEN09InharmonicTables.txt", "giwave$WaveNum%tftgen%t0, 0, giTableSize, 9, %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0,%t %d,%5.3f,0%n", irto1,iamp1, irto2,iamp2, irto3,iamp3, irto4,iamp4, irto5,iamp5, irto6,iamp6, irto7,iamp7, irto8,iamp8, irto9,iamp9, irto10,iamp10, irto11,iamp11, irto12,iamp12, irto13,iamp13, irto14,iamp14, irto15,iamp15, irto16,iamp16, irto17,iamp17, irto18,iamp18, irto19,iamp19, irto20,iamp20, irto21,iamp21, irto22,iamp22
 	#	
 	;EXPAND MACRO FOR EACH WAVEFORM TO BE CREATED
 	;ARG1 = A COUNTER, SHOULD CORRESPOND TO NUMBER APPENDED TO 'girtos' FOR THE TABLE HANDLE OF THE REQUIRED MODAL FREQUENCIES TABLE
@@ -208,6 +250,7 @@ instr	CreateGEN09Tables	;DERIVE GEN09 FUNCTION TABLE WAVEFORMS FROM THE GEN02 FU
 	$WAVEFORM(22' 1.1)
 endin
 
+
 instr	1	; Read in widgets
 	gkInstr	chnget	"Instr"
 	gkAAtt	chnget	"AAtt"
@@ -215,51 +258,38 @@ instr	1	; Read in widgets
 	gkASus	chnget	"ASus"
 	gkARel	chnget	"ARel"
 	gkLev	chnget	"Lev"
-	gkFAmt	chnget	"FAmt"
 	gkFDec	chnget	"FDec"
 	gkFSus	chnget	"FSus"
 	gkFRel	chnget	"FRel"
-	gkFShp	chnget	"FShp"
+	gkFAmt	chnget	"FAmt"
+	gkF_OS	chnget	"F_OS"
 endin
 
 instr	2	;SOUND GENERATING INSTRUMENT
-	iAAtt	=	( (i(gkAAtt)^3)*(15-0.001))+0.002
-	iADec	=	( (i(gkADec)^3)*(15-0.001))+0.002
-	iARel	=	( (i(gkARel)^3)*(15-0.001))+0.002
-	iFDec	=	( (i(gkFDec)^3)*(15-0.001))+0.002
-	iFRel	=	( (i(gkFRel)^3)*(15-0.001))+0.002
 
 	icps	cpsmidi						;READ CPS VALUE IN FROM MIDI KEYBOARD
 	inum	notnum						;READ MIDI NOTE NUMBER
 	ivel	veloc	0,1					;READ MIDI VELOCITY
 	ivel	table	ivel,givelscal,1			;REMAP MIDI VELOCITY - SEE TABLE givelscal ABOVE
 	iscale	table	inum,gidurscal				;DURATIONAL RESCALING ACCORDING TO NOTE PLAYED - HIGHER NOTE WILL DECAY QUICKER IN REFLECTION OF REAL-WORLD CHARACTERISTICS
-
-	iOffset	=		0.001
-	aenv	expsegr		iOffset,iAAtt,1,iADec*iscale,i(gkASus)+iOffset,iARel*iscale,iOffset	;AMPLITUDE ENVELOPE WITH MIDI SENSING RELEASE SEGEMENT
-	aenv	=	aenv - iOffset
-	asig	poscil3		gkLev*aenv*ivel*0.2,icps/giRtosScale,giwave1+i(gkInstr)-1				;AUDIO OSCILLATOR poscil3 USED FOR IMPROVED FIDELITY OVER OTHER OSCILLATORS. FREQUENCY IS SCALED DOWN ACCORIND TO THE VALUE OF giRtosScale DEFINED IN THE HEADER
-
-	;UNFORTUNATELY transegr DOESN'T SEEM TO WORK SO IN THE MEANTIME THIS RATHER PROTRACTED ALTERNATIVE WILL ACT AS A SUBSTITUTE 
-	iFlev1	limit		cpsoct((i(gkFAmt)*10*ivel)+4),icps,sr/2	;DERIVE STARTING FILTER VALUE IN CPS FROM FLTK KNOB (RANGE 0 TO 1). LIMIT IT BETWEEN FUNDEMENTAL FREQ. AND NYQUIST.
-	iFsus	=		icps+cpsoct((i(gkFSus)*10)+4)			;DERIVE FILTER SUSTAIN VALUE IN CPS FROM FLTK KNOB VALUE (RANGE 0 - 1)
-	iFend	=		icps						;FINAL FILTER ENVELOPE VALUE IS ALWAYS FUNDEMENTAL FREQUENCY
 	
-	krel	release						;SENSE WHEN A NOTE HAS BEEN RELEASED. 1=NOTE_RELEASED 0=NOTE_BEING_HELD
-	if krel==0 then						;IF NOTE IS BEGIN HELD...
-	  kcf	transeg		iFlev1,iFDec*iscale,i(gkFShp),iFsus	;CREATE ADS (ATTACK-DECAY-SUSTAIN) PART OF ENVELOPE
-	else							;OTHERWISE (WE ARE IN THE RELEASE STAGE)
-	  ktrig	changed		krel				;INSTIGATE A SHORT REINITIALISATION TO DERIVE AN I-TIME VALUE OF THE CURRENT AMPLITUDE VALUE FOR THE STARTING POINT OF THE RELEASE ENVELOPE 
-	  if	ktrig==1 then					;
-	    reinit	StartRel
-	  endif
-	  StartRel:
-	  kcf	transeg		i(kcf),iFRel*iscale,i(gkFShp),iFend		;RELEASE STAGE OF THE ENVELOPE. 'i(kcf)' AS THE STARTING VALUE ENSURES THAT IT ALWAYS PICKS UP FROM WHERE THE 'ADS' PART OF THE ENVELOPE LEFT OFF.
-	  rireturn
-	endif
+	iAAtt	=		i(gkAAtt)*iscale
+	iADec	=		i(gkADec)*iscale
+	iARel	=		i(gkARel)*iscale
+	kenv	linsegr		0,iAAtt,1,iADec,i(gkASus),iARel,0	;AMPLITUDE ENVELOPE WITH MIDI SENSING RELEASE SEGEMENT
+	kenv	expcurve	kenv,64
+	aenv	interp		kenv
+	asig	poscil3		gkLev*ivel*aenv*0.8,icps/giRtosScale,giwave1+i(gkInstr)-1				;AUDIO OSCILLATOR poscil3 USED FOR IMPROVED FIDELITY OVER OTHER OSCILLATORS. FREQUENCY IS SCALED DOWN ACCORIND TO THE VALUE OF giRtosScale DEFINED IN THE HEADER
 	
-	;asig	butlp		asig, kcf
-	asig	clfilt		asig, kcf, 0, 2					;LOW PASS FILTER THE SOUND (SUBTRACTIVE SYNTHESIS)
+	iFDec	=		i(gkFDec)*iscale
+	iFSus	=		i(gkFSus)
+	iFRel	=		i(gkFRel)*iscale
+	iFRel	=		iFRel > iARel ? iARel : iFRel
+	kcf_env	linsegr		1,iFDec,iFSus,iFRel,0
+	kcf_env	expcurve	kcf_env,8	
+	kcf_oct	limit	octcps(icps*0.25) + gkF_OS + (gkFAmt*kcf_env*ivel), 4, 14
+	;asig	clfilt		asig, cpsoct(kcf_oct), 0, 2					;LOW PASS FILTER THE SOUND (SUBTRACTIVE SYNTHESIS)
+	asig	tone		asig, cpsoct(kcf_oct)						;LOW PASS FILTER THE SOUND (SUBTRACTIVE SYNTHESIS)
 	gasend	=	gasend+asig
 
 endin
@@ -299,49 +329,51 @@ endin
 
 instr	1000	; Preset (change sliders when a new instrument is selected)
  ktrig	changed	gkInstr
+; gkInstr	init	5
+; ktrig		init	1
  if ktrig==1 then
   reinit SetPreset
   SetPreset:
-  #define PRESET(N'FAmt'FDec'FSus'FRel'FShp'AAtt'ADec'ASus'ARel'ChoMix'ChoDep'ChoRte)
+  #define PRESET(N'AAtt'ADec'ASus'ARel'FAmt'FDec'FSus'FRel'F_OS'ChoMix'ChoDep'ChoRte)
   #
   if i(gkInstr)==$N then
-   chnset	$FAmt, "FAmt"  
-   chnset	$FDec, "FDec"  
-   chnset	$FSus, "FSus"  
-   chnset	$FRel, "FRel"  
-   chnset	$FShp, "FShp"  
    chnset	$AAtt, "AAtt"  
    chnset	$ADec, "ADec"  
    chnset	$ASus, "ASus"  
    chnset	$ARel, "ARel"  
+   chnset	$FAmt, "FAmt"  
+   chnset	$FDec, "FDec"  
+   chnset	$FSus, "FSus"  
+   chnset	$FRel, "FRel"  
+   chnset	$F_OS, "F_OS"  
    chnset	$ChoMix, "ChoMix"  
    chnset	$ChoDep, "ChoDep"  
    chnset	$ChoRte, "ChoRte"
   endif
   #
-  ;      (N 'FAmt'FDec'FSus'FRel'FShp'AAtt'ADec'ASus'ARel'ChoMix'ChoDep'ChoRte)
-  $PRESET(1 '0.7 '0.80'0   '0.25'-16 '0   '0.80'0   '0.25'0.5   '0.01  '0.96)	; plucked string
-  $PRESET(2 '0.5 '0.25'0   '0.08'-16 '0   '0.37'0   '0.08'0.5   '0.01  '0.96)	; dahina
-  $PRESET(3 '0.7 '0.45'0   '0.45'-16 '0   '0.45'0   '0.45'0.5   '0.01  '0.96)	; banyan
-  $PRESET(4 '0.7 '0.22'0   '0.22'-16 '0   '0.35'0   '0.35'0.5   '0.01  '0.96)	; xylophone
-  $PRESET(5 '0.7 '0.60'0   '0.60'-5  '0   '0.76'0   '0.76'0.5   '0.065 '0.13)	; tibetan bowl (180mm)
-  $PRESET(6 '0.7 '0.10'0   '0.10'-25 '0   '0.15'0   '0.15'0.5   '0.01  '0.96)	; spinel sphere with diameter of 3.6675mm
-  $PRESET(7 '0.7 '0.50'0   '0.50'-7  '0   '0.70'0   '0.70'0.5   '0.01  '0.96)	; pot lid
-  $PRESET(8 '0.7 '0.22'0   '0.22'-16 '0   '0.35'0   '0.35'0.5   '0.01  '0.96)	; red cedar wood plate
-  $PRESET(9 '0.7 '0.85'0   '0.85'-16 '0   '0.85'0   '0.85'0.5   '0.01  '0.96)	; tubular bell
-  $PRESET(10'0.7 '0.22'0   '0.22'-16 '0   '0.35'0   '0.35'0.5   '0.01  '0.96)	; redwood wood plate
-  $PRESET(11'0.7 '0.22'0   '0.22'-16 '0   '0.35'0   '0.35'0.5   '0.01  '0.96)	; douglas fir wood plate
-  $PRESET(12'0.7 '0.22'0   '0.22'-16 '0   '0.35'0   '0.35'0.5   '0.01  '0.96)	; uniform wooden bar
-  $PRESET(13'0.7 '0.60'0   '0.60'-5  '0   '0.76'0   '0.76'0.5   '0.065 '0.13)	; uniform aluminum bar
-  $PRESET(14'0.6 '0.60'0   '0.14'-5  '0.05'0.76'0   '0.40'0.5   '0.065 '0.13)	; vibraphone 1
-  $PRESET(15'0.6 '0.60'0   '0.14'-5  '0.05'0.76'0   '0.40'0.5   '0.065 '0.13)	; vibraphone 2
-  $PRESET(16'0.7 '0.50'0   '0.50'-7  '0   '0.70'0   '0.70'0.5   '0.01  '0.96)	; Chladni plate
-  $PRESET(17'0.7 '0.60'0   '0.60'-5  '0   '0.76'0   '0.76'0.5   '0.065 '0.13)	; tibetan bowl (152 mm)
-  $PRESET(18'0.7 '0.60'0   '0.60'-5  '0   '0.76'0   '0.76'0.5   '0.065 '0.13)	; tibetan bowl (140 mm)
-  $PRESET(19'0.7 '0.50'0   '0.50'-7  '0   '0.70'0   '0.70'0.5   '0.01  '0.96)	; wine glass
-  $PRESET(20'0.7 '0.85'0   '0.85'-16 '0   '0.85'0   '0.85'0.5   '0.01  '0.96)	; small handbell
-  $PRESET(21'0.7 '0.85'0   '0.85'-16 '0   '0.85'0   '0.85'0.5   '0.01  '0.96)	; albert clock bell belfast
-  $PRESET(22'0.7 '0.14'0   '0.14'-50 '0   '0.19'0   '0.19'0.5   '0.01  '0.96)	; wood block
+  ;      (N 'AAtt  'ADec'ASus'ARel'FAmt'FDec'FSus'FRel'F_OS'ChoMix'ChoDep'ChoRte)
+  $PRESET(1 '0.0001'16.0'0   '0.60'4.8 '2.01'0   '0.60'1   '0.5   '0.01  '0.96)	; plucked string
+  $PRESET(2 '0.0001'1.70'0   '1.70'2.02'0.27'0   '0.27'0   '0.5   '0.01  '0.96)	; dahina
+  $PRESET(3 '0.0001'0.45'0   '0.45'0.7 '0.45'0   '0.45'0   '0.5   '0.01  '0.96)	; banyan
+  $PRESET(4 '0.0050'1.90'0   '1.90'3.5 '1.27'0   '1.27'-2  '0.5   '0.01  '0.96)	; xylophone
+  $PRESET(5 '0.0001'15.0'0   '15.0'8   '3.00'0   '3.00'0.3 '0.5   '0.065 '0.13)	; tibetan bowl (180mm)
+  $PRESET(6 '0.0001'0.26'0   '0.26'8   '0.05'0   '0.05'-4  '0.5   '0.01  '0.96)	; spinel sphere with diameter of 3.6675mm
+  $PRESET(7 '0.0001'7   '0   '7   '7.6 '7   '0   '7   '-4  '0.5   '0.01  '0.96)	; pot lid
+  $PRESET(8 '0.0001'0.70'0   '0.70'8   '0.47'0   '0.47'-4  '0.5   '0.01  '0.96)	; red cedar wood plate
+  $PRESET(9 '0.0001'15.0'0   '15.0'8   '6.00'0   '6.00'2   '0.5   '0.01  '0.96)	; tubular bell
+  $PRESET(10'0.0001'0.70'0   '0.70'8   '0.47'0   '0.47'-4  '0.5   '0.01  '0.96)	; redwood wood plate
+  $PRESET(11'0.0001'0.70'0   '0.70'8   '0.47'0   '0.47'-4  '0.5   '0.01  '0.96)	; douglas fir wood plate
+  $PRESET(12'0.0001'0.70'0   '0.70'8   '0.47'0   '0.47'-4  '0.5   '0.01  '0.96)	; uniform wooden bar
+  $PRESET(13'0.0001'15.0'0   '15.0'8   '6.00'0   '6.00'2   '0.5   '0.065 '0.13)	; uniform aluminum bar
+  $PRESET(14'0.01  '15.0'0   '15.0'8.6 '6.80'0   '6.80'-4  '0.5   '0.065 '0.13)	; vibraphone 1
+  $PRESET(15'0.01  '15.0'0   '15.0'8.6 '6.80'0   '6.80'-4  '0.5   '0.065 '0.13)	; vibraphone 2
+  $PRESET(16'0.0001'3.2 '0   '3.2 '5.6 '2.90'0   '2.90'-4  '0.5   '0.01  '0.96)	; Chladni plate
+  $PRESET(17'0.0001'15.0'0   '15.0'8   '3.00'0   '3.00'0.3 '0.5   '0.065 '0.13)	; tibetan bowl (152 mm)
+  $PRESET(18'0.0001'15.0'0   '15.0'8   '3.00'0   '3.00'0.3 '0.5   '0.065 '0.13)	; tibetan bowl (140 mm)
+  $PRESET(19'0.0001'7   '0   '7   '5.6 '7   '0   '7   '-4  '0.5   '0.01  '0.96)	; wine glass
+  $PRESET(20'0.0001'15  '0   '15  '5.6 '12  '0   '12  '-4  '0.5   '0.01  '0.96)	; small handbell
+  $PRESET(21'0.0001'15.0'0   '15.0'8   '6.00'0   '6.00'2   '0.5   '0.01  '0.96)	; albert clock bell belfast
+  $PRESET(22'0.0001'0.26'0   '0.26'8   '0.05'0   '0.05'-4  '0.5   '0.01  '0.96)	; wood block
   rireturn
  endif
 endin
@@ -350,10 +382,10 @@ endin
 </CsInstruments>
 
 <CsScore>
-i "CreateGEN09Tables" 0 0
+;i "CreateGEN09Tables" 0 0
 i 1 0 [60*60*24*7]
 i 3 0 [60*60*24*7]
-i 1000 0 [60*60*24*7]
+i 1000 0.1 [60*60*24*7]
 </CsScore>
 
 </CsoundSynthesizer>

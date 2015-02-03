@@ -1,19 +1,25 @@
 ; pvsBuffer.csd (for Cabbage)
 ; Writes audio into a circular FFT buffer.
 ; Read speed can be modified as can the frequencies.
-; Take Care! Feedback values above 1 are intended to be used only when transposition if not unison. 
+; Take Care! Feedback values above 1 are intended to be used only when transposition is not unison. 
 
 <Cabbage>
-form caption("pvsBuffer") size(580,90), pluginID("buff")
-image             bounds(0, 0, 580, 90), colour(100, 80, 80,125), shape("rounded"), outlinecolour("white"), line(4) 
-rslider bounds(10, 11, 70, 70),  text("Speed"),     channel("speed"),     range(0, 4, 1, 0.5, 0.0001), fontcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
-rslider bounds(80, 11, 70, 70),  text("Buf. Size"), channel("buflen"),    range(0.10, 8.00, 1, 0.5),   fontcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
-rslider bounds(150, 11, 70, 70), text("Semitones"), channel("semis"),     range(-24, 24, 0, 1, 1),     fontcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
-rslider bounds(220, 11, 70, 70), text("Cents"),     channel("cents"),     range(-100, 100, 0, 1, 1),   fontcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
-rslider bounds(290, 11, 70, 70), text("Feedback"),  channel("FB"),        range(0, 1.50, 0),           fontcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
-rslider bounds(360, 11, 70, 70), text("FFT Size"),  channel("att_table"), range(1, 8, 5, 1,1),         fontcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
-rslider bounds(430, 11, 70, 70), text("Mix"),       channel("mix"),       range(0, 1.00, 1),           fontcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
-rslider bounds(500, 11, 70, 70), text("Level"),     channel("lev"),       range(0, 1.00, 0.5),         fontcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
+form caption("pvsBuffer") size(580,135), pluginID("buff")
+image             bounds(0, 0, 580, 135), colour(100, 80, 80,125), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
+
+label             bounds(10, 97, 48,10), text("RECORD"), align(right), fontcolour(white)
+label             bounds(10,112, 48,10), text("PLAY"),   align(right), fontcolour(white)
+image             bounds( 70,101, 490, 3), colour(255, 50, 50), shape("sharp"), identchannel("RecIndic")
+image             bounds( 70,116, 490, 3), colour( 55,250, 50), shape("sharp"), identchannel("PlayIndic")
+
+rslider bounds(10, 11, 70, 70),  text("Speed"),     channel("speed"),     range(0, 4, 1, 0.5, 0.0001), textcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
+rslider bounds(80, 11, 70, 70),  text("Buf. Size"), channel("buflen"),    range(0.10,20.00, 5, 0.5),   textcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
+rslider bounds(150, 11, 70, 70), text("Semitones"), channel("semis"),     range(-24, 24, 0, 1, 1),     textcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
+rslider bounds(220, 11, 70, 70), text("Cents"),     channel("cents"),     range(-100, 100, 0, 1, 1),   textcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
+rslider bounds(290, 11, 70, 70), text("Feedback"),  channel("FB"),        range(0, 1.50, 0),           textcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
+rslider bounds(360, 11, 70, 70), text("FFT Size"),  channel("att_table"), range(1, 8, 5, 1,1),         textcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
+rslider bounds(430, 11, 70, 70), text("Mix"),       channel("mix"),       range(0, 1.00, 1),           textcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
+rslider bounds(500, 11, 70, 70), text("Level"),     channel("lev"),       range(0, 1.00, 0.5),         textcolour("white"),    colour(100, 80, 80,  5) trackercolour(silver)
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>
@@ -39,7 +45,7 @@ giFFTattributes6	ftgen	0, 0, 4, -2, 2048, 512, 2048, 1
 giFFTattributes7	ftgen	0, 0, 4, -2, 4096,1024, 4096, 1
 giFFTattributes8	ftgen	0, 0, 4, -2, 8192,2048, 8192, 1
 
-opcode	pvsbuffer_module,a,akkkkkkiiii
+opcode	pvsbuffer_module,akk,akkkkkkiiii
 	ain,kspeed,kbuflen,kscale,kfeedback,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype	xin
 	kPhOffset	=	0
 	ktrig		changed		kbuflen
@@ -54,18 +60,18 @@ opcode	pvsbuffer_module,a,akkkkkkiiii
 	iphasor		ftgen		0, 0, 65536, 7, 0, 65536, 1			;WAVE SHAPE FOR A MOVING PHASE POINTER
 	aread 		osciliktp 	kspeed/ibuflen, iphasor, kPhOffset		;CREATE MOVING POINTER TO READ FROM BUFFER
 	kread		downsamp	aread
-	kread		=		kread * ibuflen					;RESCALE READ POINTER WITH PHASOR RANGE SLIDER
+	kread		=		kread * ibuflen
 	aFB		init		0
 	f_anal 		pvsanal		ain+aFB, iFFTsize, ioverlap, iwinsize, iwintype	;ANALYSE THE AUDIO SIGNAL THAT WAS CREATED IN INSTRUMENT 1. OUTPUT AN F-SIGNAL.
-	ibuffer,ktime  	pvsbuffer   	f_anal, ibuflen					;BUFFER FSIG
+	ibuffer,ktime  	pvsbuffer   	f_anal, ibuflen					;BUFFER FSIG	
 	rireturn
 	khandle		init 		ibuffer						;INITIALISE HANDLE TO BUFFER
-	f_buf  		pvsbufread  	kread , khandle					;READ BUFFER
+	f_buf  		pvsbufread  	kread , khandle			;READ BUFFER
 	f_scale		pvscale 	f_buf, kscale					;RESCALE FREQUENCIES
 	aresyn 		pvsynth  	f_scale			                   	;RESYNTHESIZE THE f-SIGNAL AS AN AUDIO SIGNAL	
 	aFB		dcblock2	aresyn * kfeedback				;CREATE FEEDBACK SIGNAL FOR NEXT PASS AND BLOCK DC OFFSET ACCUMULATION
 	amix		ntrpol		ain, aresyn, kmix				;CREATE DRY/WET MIX
-			xout		amix*klev	
+			xout		amix*klev,ktime/ibuflen,kread/ibuflen
 endop
 
 instr	1
@@ -102,9 +108,17 @@ instr	1
 	iwintype	table	3, giFFTattributes1 + i(katt_table) - 1
 	/*-------------------*/
 	
-	aoutL		pvsbuffer_module	ainL,kspeed,kbuflen,kscale,kfeedback,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype
-	aoutR		pvsbuffer_module	ainR,kspeed,kbuflen,kscale,kfeedback,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype
+	aoutL,kwrite,kread		pvsbuffer_module	ainL,kspeed,kbuflen,kscale,kfeedback,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype
+	aoutR,k1,k1			pvsbuffer_module	ainR,kspeed,kbuflen,kscale,kfeedback,kmix,klev,iFFTsize,ioverlap,iwinsize,iwintype
 			outs	aoutL,aoutR
+
+	ktrig	metro	kr/(ksmps*2)
+	if ktrig==1 then
+	 Smsg	sprintfk	"size(%d,3)",kwrite*490
+	 chnset	Smsg,"RecIndic" 
+	 Smsg	sprintfk	"size(%d,3)",kread*490
+	 chnset	Smsg,"PlayIndic" 
+	endif
 endin
 
 </CsInstruments>

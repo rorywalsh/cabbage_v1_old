@@ -11,17 +11,18 @@
   
 
 <Cabbage>
-form caption("Bubbles"), scrollbars(0), size(1000, 540), pluginID("Bubl"),colour(0,0,0), guirefresh(32)				; guirefresh might have some bearing on the smoothness of movement of the balloons (traded against CPU efficiency)
-label                         bounds(  0,250,1000, 30), text("Burst the Bubbles..."), align(centre), fontcolour(white), identchannel("instructions")		; Instructions
+form caption("Bubbles"), scrollbars(0), size(1000, 540), pluginID("Bubl"),colour(170,170,255), guirefresh(32)				; guirefresh might have some bearing on the smoothness of movement of the balloons (traded against CPU efficiency)
+label bounds(  0,250,1000, 30), text("Burst the Bubbles..."), align(centre), fontcolour(0,0,0,0), identchannel("instructions")		; Instructions
 
-image bounds(  0,  0,  0, 0), colour(0,0,0), shape("ellipse"), channelarray("bubble",10)	; The bubbles
-image bounds(  0,  0,  0, 0), colour(0,0,0), shape("ellipse"), channelarray("specular",10)	; Specular highlights
+image bounds(  0,  0,  0, 0), colour(0,0,0), shape("ellipse"), widgetarray("bubble",10)		; The bubbles
+image bounds(  0,  0,  0, 0), colour(0,0,0), shape("ellipse"), widgetarray("specular",10)	; Specular highlights
 
-label    bounds(  5,  2, 45, 15), text("Burst:"), align(left), fontcolour(255,255,255,100)					; Burst label
-label    bounds( 50,  2, 40, 15), text("0"), align(left), fontcolour(255,255,255,150), identchannel("burstID")			; Burst value
-label    bounds( 90,  2, 55, 15), text("Missed:"), align(left), fontcolour(255,255,255,100)					; Missed label
-label    bounds(145,  2, 40, 15), text("0"), align(left), fontcolour(255,255,255,150), identchannel("missedID")			; Missed value
+label    bounds(  5,  2, 45, 15), text("Burst:"), align(left), fontcolour(0,0,0,100)					; Burst label
+label    bounds( 50,  2, 40, 15), text("0"), align(left), fontcolour(0,0,0,150), identchannel("burstID")			; Burst value
+label    bounds( 90,  2, 55, 15), text("Missed:"), align(left), fontcolour(0,0,0,100)					; Missed label
+label    bounds(145,  2, 40, 15), text("0"), align(left), fontcolour(0,0,0,150), identchannel("missedID")			; Missed value
 
+label    bounds(  1,530,100, 10), text("Iain McCurdy 2014"), align(left), fontcolour(255,255,255,150)
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -133,7 +134,7 @@ instr	$INSTR
  
  if gkRefreshTrig==1 then											; If a trigger has been generated...
   Sbubble	sprintfk "bubble_ident%d",$N
-  Smessage sprintfk "bounds(%d,%d,%d,%d),colour(%d,%d,%d,%d), line(0)", kx$N, ky, ksize_x, ksize_y,iR,iG,iB,int(iAlpha)	; Create a string with updated attributes that will be sent to the widget.
+  Smessage sprintfk "bounds(%d,%d,%d,%d),colour(%d,%d,%d,%d), outlinethickness(0)", kx$N, ky, ksize_x, ksize_y,iR,iG,iB,int(iAlpha)	; Create a string with updated attributes that will be sent to the widget.
   chnset Smessage, Sbubble												; Send updated attributes to the widget.
 
   Sspecular	sprintfk "specular_ident%d",$N
@@ -153,7 +154,7 @@ instr	$INSTR
   
   if kdist<=(isize_x*0.5) then	; if distance of mouse click is less than or equal to radius of the bubble...
    event	"i",200,0,0.4,(gkMOUSE_X-kx$N)/isize_x, 1-(ky/gipanel_height), isize_norm, kx$N/gipanel_width	; Create a 'burst' sound and send current mouse x and y locations and size (normalised)
-   chnset "line(1), colour(0,0,0,0),outlinecolour(40,40,40)", Sbubble						; Send updated attributes to the widget, i.e. 'burst' bubble.
+   chnset "outlinethickness(1), colour(0,0,0,0),outlinecolour(240,240,240)", Sbubble						; Send updated attributes to the widget, i.e. 'burst' bubble.
    chnset "bounds(0,0,0,0)", Sspecular										; Send updated attributes to the widget, i.e.render specular highligh invisiblee.
    ;chnset "bounds(0,0,0,0)", Sbubble										; Send updated attributes to the widget, i.e. 'burst' bubble.
    turnoff
@@ -252,27 +253,23 @@ endin
 
 
 instr	2000	; Print initial text instructions then fading away.
- kAlpha		transeg	0,0.75,4,255, p3-1.5,0,255, 0.75,-4,-1 ; Colour alpha decreases as event progresses, i.e. transparency increases
- 
- ktrig	metro	10						; Create a metronome which will define the rate of graphical update of the text
+ kAlpha	transeg	0,0.75,4,255, p3-1.5,0,255, 0.75,-4,-1 ; Colour alpha decreases as event progresses, i.e. transparency increases
+
+ ktrig	metro	ksmps*0.5					; Create a metronome which will define the rate of graphical update of the text
  
  if ktrig==1 then						; If a trigger has been generated...
-  reinit	UPDATE_TEXT					; Begin a reinitialisation pass that will allow graphical update of text
-  UPDATE_TEXT:							; A label. Begin reinitialisation from here.
-   Smessage1 sprintfk "fontcolour(255,255,255,%d)",i(kAlpha)	; Create a string with updated attributes that will be sent to the instructions widget.
-   chnset Smessage1, "instructions"														; Send updated attributes to the widget.
-  rireturn							; Return from reinitialisation pass.
+   Smess1 sprintfk "fontcolour(0,0,50,%d)",kAlpha		; Create a string with updated attributes that will be sent to the instructions widget.
+   chnset Smess1, "instructions"														; Send updated attributes to the widget.
  endif
 
  event_i	"i",1,p3-2,3600					; Start bubbles once instructions have vanished.
- 
 endin
 
 </CsInstruments>
 
 <CsScore>
-i 1000 0 3600		; Reverb
-i 2000 0 3		; Instructions
+i 1000 0 [3600*24*7]	; Reverb
+i 2000 0 3		; Instructions fade up then down (currently not working)
 </CsScore>
 
 </CsoundSynthesizer>

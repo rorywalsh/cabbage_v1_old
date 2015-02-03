@@ -10,8 +10,8 @@
 ; The reason 5 circles created, and triggering cycles through these, is to allow circles to overlap. It is assumed that the user won't trigger more that five at once.
 
 <Cabbage>
-form caption("Pebbles in a Pond"), scrollbars(0), size(900, 520), pluginID("Pond"),colour(0,0,0), guirefresh(128)
-image bounds(0,0,0,0), colour(0,0,0), channelarray("circle",70), shape("ellipse"), outlinecolour("white"), line(0)
+form caption("Pebbles in a Pond"), scrollbars(0), size(900, 520), pluginID("Pond"),colour(0,10,20), guirefresh(128)
+image bounds(0,0,0,0), colour(0,0,0), widgetarray("circle",70), shape("ellipse"), outlinecolour("white"), line(0)
 label    bounds(  0, 0,0, 0), text("Drop a pebble into the pond..."), align(centre), fontcolour(0,0,0,0), identchannel("instructions")
 </Cabbage>
 
@@ -61,8 +61,8 @@ instr	2	; Draw an expanding circle and create a 'plip' sound
  iVertPosInit	init	p5
 
  ; Normalised x/y position (range 0 - 1)
- iXNorm	=	iHorPosInit/giPanelSizeX
- iYNorm	=	iVertPosInit/giPanelSizeY
+ iXNorm	limit	iHorPosInit/giPanelSizeX, 0.001,1
+ iYNorm	limit	iVertPosInit/giPanelSizeY, 0.001,1
  
  ; Draw an expanding and fading circle 
  kSize		transeg	giSizeInit,p3-0.1,giCurve,giSizeFinal, 0.1, giCurve, 1, 1,giCurve,1		; Circle diameter increasing as time progress

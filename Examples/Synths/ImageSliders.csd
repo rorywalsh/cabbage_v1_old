@@ -13,9 +13,9 @@
 ; The two rows of 10 sliders vary the strengths of 10 partials for two additive tones.
 
 <Cabbage>
-form caption("Image Sliders"), scrollbars(0), size(610, 640), pluginID("ExSl"),colour(0,0,0), guirefresh(64)
-image bounds(0,0,0,0), channelarray("slider",20)
-label      bounds(170,310,250, 20), text("Click and drag anywhere..."), fontcolour("white"), visible(1), identchannel("instruction")
+form caption("Image Sliders"), scrollbars(0), size(610, 540), pluginID("ExSl"),colour(0,0,0), guirefresh(64)
+image bounds(0,0,0,0), widgetarray("slider",20)
+label      bounds(170,255,250, 20), text("Click and drag anywhere..."), fontcolour("white"), visible(1), identchannel("instruction")
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -36,7 +36,7 @@ giAmpCurve	ftgen	1,0,-20000,-16, 1,100,0,1, 900,-3,0.2,19000,0,0.2
 gaSendL,gaSendR	init	0						; Global audio send variables used to send audio to the reverb effect.
 
 giwidth		=	50	; Slider width
-giheight	=	300	; Slider height
+giheight	=	250	; Slider height
 
 instr	1 
  kMOUSE_X		chnget	"MOUSE_X"		; Read in mouse X position (in pixels across the panel)
@@ -89,16 +89,16 @@ $SLIDER_UP(550'10'100'200' 30'10)
 
 ; Expand the macro for each slider with relevant substitution values
 ;            x    y   r   g   b   n
-$SLIDER_DOWN( 10'320'255'255'  0'11)
-$SLIDER_DOWN( 70'320'255'  0'127'12)
-$SLIDER_DOWN(130'320'128'255'  0'13)
-$SLIDER_DOWN(190'320'128'128'128'14)
-$SLIDER_DOWN(250'320'204'102'  0'15)
-$SLIDER_DOWN(310'320'153'  0' 76'16)
-$SLIDER_DOWN(370'320'  0'255'  0'17)
-$SLIDER_DOWN(430'320'255'153'153'18)
-$SLIDER_DOWN(490'320'178'102'255'19)
-$SLIDER_DOWN(550'320'255'255'255'20)
+$SLIDER_DOWN( 10'270'255'255'  0'11)
+$SLIDER_DOWN( 70'270'255'  0'127'12)
+$SLIDER_DOWN(130'270'128'255'  0'13)
+$SLIDER_DOWN(190'270'128'128'128'14)
+$SLIDER_DOWN(250'270'204'102'  0'15)
+$SLIDER_DOWN(310'270'153'  0' 76'16)
+$SLIDER_DOWN(370'270'  0'255'  0'17)
+$SLIDER_DOWN(430'270'255'153'153'18)
+$SLIDER_DOWN(490'270'178'102'255'19)
+$SLIDER_DOWN(550'270'255'255'255'20)
 
 
 
@@ -153,7 +153,7 @@ instr	99 ; melt instruction after the first click
  kOffInstruction	trigger	gkMOUSE_DOWN_LEFT,0.5,0
  iTime	=	5
  kalpha	expsegr	255,iTime,1
- ky	linsegr	310,iTime,410
+ ky	linsegr	255,iTime,355
  Sfade	sprintfk	"fontcolour(255,255,255,%d), bounds(170,%d,250, 20)",kalpha,ky
  chnset	Sfade,"instruction"
  if kOffInstruction==1 then

@@ -11,8 +11,8 @@ User	-	an LFO shape (best understood when using tremolo function)
 		and duty emphasis (emphasis of high state/loud against low state/quiet)
 
 <Cabbage>
-form caption("Autopan / Tremolo") size(565, 102), pluginID("aptr")
-image pos( 0,  0),                size(565, 102),     colour("Maroon"), shape("rounded"), outlinecolour("white"), line(4) 
+form caption("Autopan / Tremolo") size(565, 102), pluginID("aptr"), guirefresh(32)
+image pos( 0,  0),                size(565, 102),     colour("Maroon"), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
 rslider  bounds(  5,  6, 90, 90), text("Freq.[Hz]"),  channel("rate"),  range(0.1, 50, 0.5, 0.5),   textBox(1), trackercolour("tomato")
 rslider  bounds( 80,  6, 90, 90), text("Tempo[BPM]"), channel("tempo"), range(6, 3000, 30, 0.5, 1), textBox(1), trackercolour("tomato")
 rslider  bounds(175,  6, 90, 90), text("Depth"),      channel("depth"), range(0, 1.00, 1, 0.5),     textBox(1), trackercolour("tomato")
@@ -60,7 +60,8 @@ opcode	PanTrem,aa,aakkkKkK
 	elseif iwave==5 then				;or if 'user' has been chosen...
 	 aphs	phasor	krate				;create a linear pointer from 0 to 1 
 	 aphs 	pdhalf	aphs, kbias			;distort the linearity using pdhalf
-	 klfo	tablei	aphs,gihanning,1		;read 
+	 kphs	downsamp	aphs			;downsample to krate
+	 klfo	tablei	kphs,gihanning,1		;read 
 	 klfo	pow	klfo,kduty
 	 klfo	=	((klfo*2)-1)*kdepth
 	else						;otherwise (use lfo opcode)
@@ -79,7 +80,9 @@ opcode	PanTrem,aa,aakkkKkK
 		chnset	kindicator,"indicator"
 	elseif kmode=1 then	;TREM			;IF TREMELO MODE IS CHOSEN FROM BUTTON BANK...
 		kindicator	=	(klfo>0.5?1:0)
-		chnset	kindicator,"indicator"
+		if changed:k(kindicator)==1 then
+		 chnset	kindicator,"indicator"
+		endif
 		klfo	=	klfo+(0.5-(kdepth*0.5))	;MODIFY LFO AT ZERO DEPTH VALUE IS 1 AND AT MAX DEPTH CENTRE OF MODULATION IS 0.5
 		alfo	interp	klfo			;INTERPOLATE K-RATE LFO AND CREATE A-RATE VARIABLE
 		aoutL	=	ainL*(alfo^2)		;REDEFINE GLOBAL AUDIO LEFT CHANNEL SIGNAL WITH TREMELO

@@ -1,5 +1,15 @@
 FileRecorder.csd
 
+Written by Iain McCurdy, 2014
+
+Records audio to a file on disk. 
+
+The audio file name includes the date and time. (This idea comes courtesy of Rory Walsh.)
+
+Toggling record off and on will append the new recording onto the end of the previously recorded audio.
+To start a new file, click 'New File'.
+
+
 <Cabbage>
 form caption("File Recorder") size(230, 45), colour(0,0,0) pluginID("FRec")
 image               bounds(  0,  0,230, 45), colour(100,100,100), outlinecolour("White"), line(3)

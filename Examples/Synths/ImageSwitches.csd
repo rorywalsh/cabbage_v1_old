@@ -1,6 +1,8 @@
 ; ImageSwitches.csd
 ; Written by Iain McCurdy, 2014
 
+; Uses Cabbage image widgets as switches.
+
 ; This example presents an alternative way of imagining intervals and chords spread across octaves. 
 ; Each row represents a complete chromatic scale and there are 9 rows therefore 9 octaves.
 ; 
@@ -151,12 +153,12 @@ label bounds(390, 18, 30, 20), text("A#")
 label bounds(425, 18, 30, 20), text("B")
 
 ; SOUND ATTRIBUTES
-rslider  bounds( 25,365, 60, 60), text("SOUND"), channel("SoundSelect"), range(1,11,2,1,1), colour("DarkGrey"), trackercolour("white")
-rslider  bounds( 85,365, 60, 60), text("LEVEL"), channel("Level"), range(0,1.00,0.9), colour("DarkGrey"), trackercolour("white")
-rslider  bounds(145,365, 60, 60), text("OCTAVE"),    channel("Octave"), range(-3, 3,0,1,1),colour("DarkGrey"),trackercolour("white")
-rslider  bounds(205,365, 60, 60), text("SEMITONE"),  channel("Semitone"), range(-11, 11,0,1,1),colour("DarkGrey"),trackercolour("white")
-rslider  bounds(265,365, 60, 60), text("MODIFY"),  channel("Modifier"), range(0, 1.00,0),colour("DarkGrey"),trackercolour("white")
-rslider  bounds(325,365, 60, 60), text("REVERB"),  channel("Reverb"), range(0, 1.00,0.5),colour("DarkGrey"),trackercolour("white")
+rslider  bounds( 25,365, 60, 60), text("SOUND"),           channel("SoundSelect"), range(1,11,2,1,1),    colour("DarkGrey"),  trackercolour("white"), outlinecolour(100,100,100)
+rslider  bounds( 85,365, 60, 60), text("LEVEL"),           channel("Level"),       range(0,1.00,0.9),    colour("DarkGrey"),  trackercolour("white"), outlinecolour(100,100,100)
+rslider  bounds(145,365, 60, 60), text("OCTAVE"),          channel("Octave"),      range(-3, 3,0,1,1),   colour("DarkGrey"),  trackercolour("white"), outlinecolour(100,100,100)
+rslider  bounds(205,365, 60, 60), text("SEMITONE"),        channel("Semitone"),    range(-11, 11,0,1,1), colour("DarkGrey"),  trackercolour("white"), outlinecolour(100,100,100)
+rslider  bounds(265,365, 60, 60), text("MODIFY"),          channel("Modifier"),    range(0, 1.00,0),     colour("DarkGrey"),  trackercolour("white"), outlinecolour(100,100,100)
+rslider  bounds(325,365, 60, 60), text("REVERB"),          channel("Reverb"),      range(0, 1.00,0.5),   colour("DarkGrey"),  trackercolour("white"), outlinecolour(100,100,100)
 button   bounds(390,365, 70, 25), text("STRIKE","STRIKE"), channel("Strike"), value(0), latched(0)
 
 </Cabbage>                                                                                                          
@@ -198,6 +200,8 @@ instr	1
  kMOUSE_DOWN_LEFT	chnget	"MOUSE_DOWN_LEFT"
  kMOUSE_DOWN_MIDDLE	chnget	"MOUSE_DOWN_MIDDLE"
  kMOUSE_DOWN_RIGHT	chnget	"MOUSE_DOWN_RIGHT"
+
+ kClick	trigger	kMOUSE_DOWN_LEFT,0.5,2
  
 #define	SENSE_INSIDE(N'X'Y'X_SIZE'Y_SIZE)
 #
@@ -205,13 +209,14 @@ instr	1
 
  ; SENSE INSIDE
  if kMOUSE_X>=$X && kMOUSE_X<=($X+$X_SIZE) && kMOUSE_Y>=$Y && kMOUSE_Y<=($Y+$Y_SIZE) then
-  kInside$N	=	1	; If mouse pointer is within this circle indicator flag (kInside$N) is '1'
+  kInside$N	=	1	; If mouse pointer is within this square indicator flag (kInside$N) is '1'
  else
-  kInside$N	=	0	; If mouse pointer is outside this circle indicator flag (kInside$N) is '0'
+  kInside$N	=	0	; If mouse pointer is outside this square indicator flag (kInside$N) is '0'
  endif
+ 
 
  ; TURN LIGHT ON OR OFF
- if kInside$N==1 then
+ if kInside$N==1&&kClick=1 then
   k$N	UnlatchedToLatched	kMOUSE_DOWN_LEFT
 
   							; (so that clicking can toggle circles on and off)
@@ -368,7 +373,7 @@ opcode	uniform_wooden_bar, a, akk
 #define	MODE_PARTIAL(FRQ)
 	#
 	kfrq	=	kbasfrq*$FRQ
-	if sr/kfrq>=$M_PI then
+	if (sr/kfrq)>=$M_PI then
 	 asig	mode	ain, kfrq, kq
 	 amix	=	amix + asig
 	endif
@@ -389,7 +394,7 @@ opcode	red_cedar_wood_plate, a, akk
 #define	MODE_PARTIAL(FRQ)
 	#
 	kfrq	=	kbasfrq*$FRQ
-	if sr/kfrq>=$M_PI then
+	if (sr/kfrq)>=$M_PI then
 	 asig	mode	ain, kfrq, kq
 	 amix	=	amix + asig
 	endif
@@ -417,6 +422,8 @@ giSoftSaw	ftgen	0,0,131072,10,1,1/8,1/16,1/32,1/64,1/128,1/256
 
 
 instr	2	; produce a sound
+ kporttime	linseg	0,0.001,1
+ 
  iCF_Time	=	0.05			; cross-fade time (when changing 'SOUND' selector
  
  kSoundSelect	chnget	"SoundSelect"
@@ -429,8 +436,11 @@ instr	2	; produce a sound
  kChangeTrans	changed	kOctave,kSemitone,kSoundSelect	; Impulse generated when transposition is changed (used to retrigger percussive sounds)
  kStrike	trigger	kStrike+kChangeTrans, 0.5, 0	; Impulse generated when 'STRIKE' button is clicked
  kModifier	chnget	"Modifier"
- 
- 
+
+ kModifier	portk	kModifier,0.1*kporttime
+ kOctave	portk	kOctave,0.002*kporttime
+ kSemitone	portk	kSemitone,0.002*kporttime
+
  ; A MECHANISM IS IMPLEMENTED TO PREVENT CLICKS WHEN CHANGING 'SOUND'
  kEnv2	init	0			;
  ksmooth	init	1		;
@@ -475,7 +485,7 @@ instr	2	; produce a sound
    reinit RESTART_HSBOSCIL
   endif
   RESTART_HSBOSCIL:
-  asig	hsboscil	0.04*kEnv, ktone+(kdtn/1000), kbrite, cpsmidinn(p4+11)*octave(i(kOctave))*semitone(i(kSemitone)), gisine, gihann, i(kocts), 0
+  asig	hsboscil	0.04*kEnv, ktone+(kdtn/1000), kbrite, cpsmidinn(p4+11)*octave(i(kOctave))*semitone(i(kSemitone)), gisine, gihann, i(kocts), -1
   rireturn
 
 
@@ -491,7 +501,7 @@ instr	2	; produce a sound
   kngain	=	0.05
   kvibf	=	0.2
   kvamp	=	0.05
-  asig	wgflute 0.04*kEnv, cpsmidinn(p4+12)*cent(kdtn)*octave(kOctave)*semitone(kSemitone), kjet, 0.1, 0.1, kngain, kvibf, kvamp, gisine
+  asig	wgflute 0.04*kEnv, cpsmidinn(p4+12)*cent(kdtn)*octave(kOctave)*semitone(kSemitone-1.55), kjet, 0.1, 0.1, kngain, kvibf, kvamp, gisine
 
 
  elseif kSoundSelectD==6 then	; wgclar
@@ -499,7 +509,7 @@ instr	2	; produce a sound
   kngain	scale	kModifier,0.9,0.05		;0.05
   kvibf	=	0
   kvamp	=	0
-  asig	wgclar	0.1, cpsmidinn(p4+12)*cent(kdtn)*octave(kOctave)*semitone(kSemitone), kstiff, 0.1, 0.1, kngain, kvibf, kvamp, gisine, 1
+  asig	wgclar	0.1, cpsmidinn(p4+12)*cent(kdtn)*octave(kOctave)*semitone(kSemitone-1), kstiff, 0.1, 0.1, kngain, kvibf, kvamp, gisine, 1
   asig	dcblock2	asig*kEnv
 
 
@@ -508,7 +518,7 @@ instr	2	; produce a sound
   krat	scale	kModifier,0.8,0.127236	;	0.127236
   kvibf	=	rnd(1)+randomi(1,4,0.2,1)
   kvamp	=	0.001
-  asig	wgbow	0.1*kEnv, cpsmidinn(p4+12)*cent(kdtn)*octave(kOctave)*semitone(kSemitone), kpres, krat, kvibf, kvamp, gisine, 1
+  asig	wgbow	0.1*kEnv, cpsmidinn(p4+12)*cent(kdtn)*octave(kOctave)*semitone(kSemitone-1.1), kpres, krat, kvibf, kvamp, gisine, 1
 
 
  elseif kSoundSelectD==8 then 	; struck wooden bar
@@ -546,7 +556,7 @@ instr	2	; produce a sound
   aImpls	Oscil1a	0.3,300,giImp
   rireturn
   kLPF		scale	kModifier, 20000,3000
-  asig		wguide1	aImpls,cpsmidinn(p4+11)*octave(kOctave)*semitone(kSemitone), kLPF, 0.99995  
+  asig		wguide1	aImpls,cpsmidinn(p4+11)*octave(kOctave)*semitone(kSemitone+0.5), kLPF, 0.99995  
   kdltim	trandom	kStrike,0.001,0.0501
   asig		vdelay	asig,kdltim*1000,0.0501*1000
   asig		dcblock2	asig
@@ -571,8 +581,9 @@ instr	2	; produce a sound
 
  endif
 
- gkLevel	chnget	"Level"
- asig	=	asig * gkLevel
+ kLevel	chnget	"Level"
+ kLevel	portk	kLevel,0.05*kporttime
+ asig	=	asig * kLevel
 
 
  iSide	random	0,1

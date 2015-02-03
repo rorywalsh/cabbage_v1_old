@@ -27,33 +27,33 @@
 
 <Cabbage>
 form caption("Frequency Shifter") size(500,180), pluginID("fshi")
-image                               bounds( 0,  0, 500,180), colour("darkslategrey"), outlinecolour("silver"), line(6), shape("rounded")
+image                               bounds( 0,  0, 500,180), colour("darkslategrey"), outlinecolour("silver"), outlinethickness(6), shape("rounded")
 label    bounds(14,  7, 45, 11), text("INPUT"), fontcolour("white")
 combobox bounds(10, 18, 65, 20), channel("input"), value(1), text("Live","Tone","Noise")
 label    bounds(14, 42, 55, 11), text("POLARITY"), fontcolour("white")
 combobox bounds(10, 53, 65, 20), channel("polarity"), value(1), text("Positive","Negative","Dual")
-rslider bounds( 75, 10, 70, 70), text("Mix"),      channel("mix"),    range(0, 1.00, 0.5),     colour("darkslategrey"), fontcolour("white), trackercolour("yellow")
-rslider bounds(145, 10, 70, 70), text("Freq."),    channel("freq"),   range(-4000, 4000, -50), colour("darkslategrey"), fontcolour("white), trackercolour("yellow")
-rslider bounds(215, 10, 70, 70), text("Mult."),    channel("mult"),   range(-1, 1.00, 0.1),    colour("darkslategrey"), fontcolour("white), trackercolour("yellow")
-rslider bounds(285, 10, 70, 70), text("Feedback"), channel("fback"),  range(0, 0.75, 0.6),     colour("darkslategrey"), fontcolour("white), trackercolour("yellow")
-rslider bounds(355, 10, 70, 70), text("Level"),    channel("level"),  range(0, 1.00, 1),       colour("darkslategrey"), fontcolour("white), trackercolour("yellow")
+rslider bounds( 75, 10, 70, 70), text("Mix"),      channel("mix"),    range(0, 1.00, 0.5),     colour(27,59,59), textcolour("white), trackercolour(255,255,100)
+rslider bounds(145, 10, 70, 70), text("Freq."),    channel("freq"),   range(-4000, 4000, -50), colour(27,59,59), textcolour("white), trackercolour(255,255,100)
+rslider bounds(215, 10, 70, 70), text("Mult."),    channel("mult"),   range(-1, 1.00, 0.1),    colour(27,59,59), textcolour("white), trackercolour(255,255,100)
+rslider bounds(285, 10, 70, 70), text("Feedback"), channel("fback"),  range(0, 0.75, 0.6),     colour(27,59,59), textcolour("white), trackercolour(255,255,100)
+rslider bounds(355, 10, 70, 70), text("Level"),    channel("level"),  range(0, 1.00, 1),       colour(27,59,59), textcolour("white), trackercolour(255,255,100)
 
 checkbox bounds(425, 20, 12, 12), channel("r1") fontcolour("white") colour(yellow) value(1)
 checkbox bounds(425, 32, 12, 12), channel("r2") fontcolour("white") colour(yellow) 
 label    bounds(438, 21, 55,  9), text("DUAL MONO"), fontcolour("white")
 label    bounds(437, 33, 40,  9), text("STEREO"), fontcolour("white")
 
-button   bounds(425, 50, 65, 20), colour("Green"), text("Zero Freq", "Zero Freq"), channel("Zerofreq"), value(0)
+button   bounds(425, 50, 65, 20), colour("Green"), text("Zero Freq", "Zero Freq"), channel("Zerofreq"), value(0), latched(0)
 
 line     bounds( 10, 90, 480, 2), colour("Grey")
 checkbox bounds( 10,100,150, 20), channel("ModOnOff") text("LFO Modulate Freq."), fontcolour("white") colour(lime) value(0)
 label    bounds( 23,127, 45, 11), text("SHAPE"), fontcolour("white")
 combobox bounds( 10,138, 85, 20), channel("LFOShape"), value(7), text("Sine","Triangle","Square","Saw Up","Saw Down","Rand.S&H","Rand.Spline")
-rslider bounds( 145,100, 70, 70), text("Rate"),     channel("LFORate"),  range(0, 30,  1.5, 0.5, 0.001), colour("lightslategrey"), fontcolour("white), trackercolour("yellow")
-rslider bounds( 215,100, 70, 70), text("Min"),      channel("LFOMin"),   range(-2000, 2000, -600),       colour("lightslategrey"), fontcolour("white), trackercolour("yellow")
-rslider bounds( 285,100, 70, 70), text("Max"),      channel("LFOMax"),   range(-2000, 2000,  600),       colour("lightslategrey"), fontcolour("white), trackercolour("yellow")
-rslider bounds( 355,100, 70, 70), text("Pan Mod."), channel("PanSpread"),range(0, 1.00, 1),              colour("lightslategrey"), fontcolour("white), trackercolour("yellow")
-button   bounds(425,100, 65, 20), colour("Green"), text("Sync LFO", "Sync LFO"), channel("SyncLFO"), value(0)
+rslider bounds( 145,100, 70, 70), text("Rate"),     channel("LFORate"),  range(0, 30,  1.5, 0.5, 0.001), colour("lightslategrey"), textcolour("white), trackercolour(255,255,100)
+rslider bounds( 215,100, 70, 70), text("Min"),      channel("LFOMin"),   range(-2000, 2000, -600),       colour("lightslategrey"), textcolour("white), trackercolour(255,255,100)
+rslider bounds( 285,100, 70, 70), text("Max"),      channel("LFOMax"),   range(-2000, 2000,  600),       colour("lightslategrey"), textcolour("white), trackercolour(255,255,100)
+rslider bounds( 355,100, 70, 70), text("Pan Mod."), channel("PanSpread"),range(0, 1.00, 1),              colour("lightslategrey"), textcolour("white), trackercolour(255,255,100)
+button   bounds(425,100, 65, 20), colour("Green"), text("Sync LFO", "Sync LFO"), channel("SyncLFO"), value(0), latched(0)
 
 </Cabbage>
 <CsoundSynthesizer>
@@ -78,10 +78,8 @@ gishapes	ftgen	0,0,8,-2,0,1,2,4,5
 
 opcode	FreqShifter,a,akkkki
 	adry,kmix,kfreq,kmult,kfback,ifn	xin			;READ IN INPUT ARGUMENTS
-	iWet	ftgenonce	0,0,1024,-7,0,512,1,512,1	;RESCALING FUNCTION FOR WET LEVEL CONTROL
-	iDry	ftgenonce	0,0,1024,-7,1,512,1,512,0	;RESCALING FUNCTION FOR DRY LEVEL CONTROL
-	kWet	table	kmix, iWet, 1				;RESCALE WET LEVEL CONTROL ACCORDING TO FUNCTION TABLE giWet
-	kDry	table	kmix, iDry, 1				;RESCALE DRY LEVEL CONTROL ACCORDING TO FUNCTION TABLE giWet
+	kWet	limit	kmix*2,0,1
+	kDry	limit	(1-kmix)*2,0,1
 	aFS	init	0					;INITILISE FEEDBACK SIGNAL (FOR FIRST K-PASS)
 	ain	=	adry + (aFS * kfback)			;ADD FEEDBACK SIGNAL TO INPUT (AMOUNT OF FEEDBACK CONTROLLED BY 'Feedback Gain' SLIDER)
 	areal, aimag hilbert ain				;HILBERT OPCODE OUTPUTS TWO PHASE SHIFTED SIGNALS, EACH 90 OUT OF PHASE WITH EACH OTHER

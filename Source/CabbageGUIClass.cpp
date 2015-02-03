@@ -1362,8 +1362,22 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                     tempArray.add(strTokens[1].trim());
                     if(strTokens.size()>2)
                     {
-                        cabbageIdentifiers.set(CabbageIDs::value, strTokens[2].trim().getDoubleValue());
-                        tempArray.add(strTokens[2].trim());
+						if(strTokens[2].contains(":") && strTokens.size()>0)
+						{
+							//split string into two
+							StringArray values;
+							values.addTokens(strTokens[2], ":", "");
+							if(values.size()==2)
+							{
+								 cabbageIdentifiers.set(CabbageIDs::minvalue, values[0].trim().getFloatValue());
+								 cabbageIdentifiers.set(CabbageIDs::maxvalue, values[1].trim().getFloatValue());
+							}
+						}
+						else
+						{
+							cabbageIdentifiers.set(CabbageIDs::value, strTokens[2].trim().getDoubleValue());
+							tempArray.add(strTokens[2].trim());
+						}
                     }
 
 

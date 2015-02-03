@@ -15,12 +15,12 @@ If this becomes a problem, simply raise the value for excursion, even while the 
 
 <Cabbage>
 form caption("Splat!"), size(700,500), colour(230,230,230),guirefresh(64)
-image bounds(0,   0, 0, 0), colour(white), shape(ellipse), channelarray("fly",50)
-numberbox  bounds(  5,465,60,34), channel("Population"),    range(1, 50, 10,1,1),  fontcolour(black), text("Population"), colour(0,0,0)
-numberbox  bounds( 70,465,60,34), channel("Liveliness"),    range(0.1,10.00, 4,1,0.1),  fontcolour(black), text("Liveliness"), colour(0,0,0)
-numberbox  bounds(135,465,60,34), channel("Excursion"),    range(2,300, 50,1,1),  fontcolour(black), text("Excursion"), colour(0,0,0)
-numberbox  bounds(200,465,60,34), channel("FlySize"),    range(1,10, 5,1,0.001),  fontcolour(black), text("Fly Size"), colour(0,0,0)
-numberbox  bounds(265,465,80,34), channel("SwarmSpeed"),    range(0.1,10, 0.3,1,0.001),  fontcolour(black), text("Swarm Speed"), colour(0,0,0)
+image bounds(0,   0, 0, 0), colour(white), shape(ellipse), widgetarray("fly",50)
+numberbox  bounds(  5,465,60,34), channel("Population"),    range(1, 50, 10,1,1),       textcolour(black), fontcolour(black), text("Population"), colour(white)
+numberbox  bounds( 70,465,60,34), channel("Liveliness"),    range(0.1,10.00, 4,1,0.1),  textcolour(black), fontcolour(black), text("Liveliness"), colour(white)
+numberbox  bounds(135,465,60,34), channel("Excursion"),     range(2,300, 50,1,1),       textcolour(black), fontcolour(black), text("Excursion"),  colour(white)
+numberbox  bounds(200,465,60,34), channel("FlySize"),       range(1,10, 5,1,0.001),     textcolour(black), fontcolour(black), text("Fly Size"),   colour(white)
+numberbox  bounds(265,465,80,34), channel("SwarmSpeed"),    range(0.1,10, 0.3,1,0.001), textcolour(black), fontcolour(black), text("Swarm Speed"),colour(white)
 label    bounds(  0, 0,  0, 0), text("Click swarm to splat. Click again to unsplat."), align(centre), fontcolour(white), identchannel("instructions1")		; Instructions
 label    bounds(350,489,100, 10), text("Iain McCurdy 2014"), align(left), fontcolour(0,0,0,150)
 </Cabbage>
@@ -28,7 +28,7 @@ label    bounds(350,489,100, 10), text("Iain McCurdy 2014"), align(left), fontco
 <CsoundSynthesizer>
 
 <CsOptions>
--n -+rtmidi=NULL -M0
+-n -+rtmidi=NULL -M0 -dm0
 </CsOptions>
 
 <CsInstruments>
@@ -86,7 +86,7 @@ instr	1
   event	"i",10,0,0					; call instrument that hides all active flies. This is done so to ensure that deactivated flies are no longer visible. Flies that should be active flies will be made visible immediately after in this instrument.
  endif
  
- if trigger(kSplat,0.5,0)==1 then			; if a splatting has been made...
+ if trigger(kSplat,0.5,0)==1 then			; if a succesful splatting has been made...
   event	"i",20,0,0					; call the instrument that splats all active flies
  endif
 
@@ -103,12 +103,13 @@ instr	1
  ; macro for moving and printing an individual fly and creating its buzzing sound
  #define Fly(N)
  # 
+ iN	=	$N
  if gkPopulation < $N goto SKIP						; if this fly is not active skip passed all fly generation code to the end of the instrument
 
  if kSplat==0 then							; if flies are living...
   kX	rspline	-kExcursion,kExcursion,kLiveliness,kLiveliness*2	; variables for fly movement within the swarm
   kY	rspline	-kExcursion,kExcursion,kLiveliness,kLiveliness*2
-  kDist	rspline	1,2,0.02,0.03						; z-plane distance of the fly. Really just a bit of size modulation.
+  kDist	rspline	0.5,1.5,0.02,0.03						; z-plane distance of the fly. Really just a bit of size modulation.
  endif
 
  kamp	=	((kY*0.5)/kExcursion) + 0.5				; amplitude of the buzzing sound varie according to the distance of the fly along the y-axis from the front of the swarm
@@ -120,9 +121,11 @@ instr	1
  aMixL	+=	aL							; add fly's buzz to the stereo mix
  aMixR	+=	aR
 
+ kFlySize$N	scale	(kFlySize-1)/9,3,0.5	
+
  kRefreshTrig	metro	ksmps,$N/giMaxFlies				; frame rate with which flies will be graphically moved. A different trigger (each with a different phase offset) for each fly so that all chnsets don't happen at the same time and cripple performance.
  if kRefreshTrig==1 && kSplat==0 then					; if a refresh trigger has occured...
- 	Smess	sprintfk	"bounds(%d,%d,%d,%d), colour(0,0,0,200)",kOffX+kX,kOffY+kY,kDist,kDist	; generate message for fly widget
+ 	Smess	sprintfk	"bounds(%d,%d,%d,%d), colour(0,0,0,200)",kOffX+kX,kOffY+kY,kDist*kFlySize$N,kDist*kFlySize$N	; generate message for fly widget
  	Sident	sprintfk	"fly_ident%d", $N							; generate ident string appropriate to this fly
  	chnset Smess, Sident						; update the fly
  endif
@@ -312,18 +315,18 @@ instr	20	; graphically splat flies
  SKIP:
 endin
 
-instr	21	; splat sound effect
+instr	21	; splat sound effect 
  idur	scale_i	rnd(1)^2,0.15,0.08	; random duration
  p3	=	idur			; assign to p3
  imin	random	8,10			; minimum frequency for splat filter (in oct)
- anoise	dust2	10,100*gkPopulation	; some crackly noise the desity of which is partially dependent upon the fly population
+ anoise	dust2	10,100*gkPopulation	; some crackly noise, the density of which is dependent upon the fly population
  kcf	random	cpsoct(imin),cpsoct(imin+3)	; cutoff frequency is a random function moving to a new value every k-cycle
  anoise	moogladder	anoise,kcf,0.7	; filter the crackly noise using moogladder to give it a bit of squelch
  anoise	buthp	anoise,200		; highpass filter to remove some of the lower frequencies
  aenv	expon	1,p3,0.1		; amplitude envelope which will give the splat sound a percussive shape
  anoise	*=	aenv			; apply envelope
  	outch	1,anoise		; send this signal to the left channel
-
+ 
  anoise	dust2	10,1000			; repeat for the left channel. Doing both channels completely seperately create a nice stereo effect
  kcf	random	cpsoct(imin),cpsoct(imin+3)
  anoise	moogladder	anoise,kcf,0.7
@@ -356,7 +359,7 @@ endin
 </CsInstruments>  
 
 <CsScore>
-i 1001 0 3
+i 1001 0 3		; Instructions fade up then down (currently not working)
 </CsScore>
 
 </CsoundSynthesizer>

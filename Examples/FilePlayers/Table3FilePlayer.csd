@@ -26,25 +26,25 @@ label      bounds(178,184, 45, 8), text("L   O   O   P"), fontcolour("white")
 groupbox   bounds(100,200,100, 50), plant("looping"), text("Looping Mode"), fontcolour("white"){
 combobox   bounds( 10, 25, 80, 20), channel("mode"), items("Forward", "Backward", "Fwd./Bwd."), value(1), fontcolour("white")
 }
-rslider    bounds(205,195, 60, 60), channel("LoopStart"), range(0, 1, 0),                   colour(50, 50, 90), text("Start"),     fontcolour("white"), trackercolour(210,210,250)
-rslider    bounds(260,195, 60, 60), channel("LoopEnd"),   range(0, 1, 1),                   colour(50, 50, 90), text("End"),       fontcolour("white"), trackercolour(210,210,250)
+rslider    bounds(205,195, 60, 60), channel("LoopStart"), range(0, 1, 0),                   colour(60, 60,100), text("Start"),     textcolour("white"), trackercolour(210,210,250)
+rslider    bounds(260,195, 60, 60), channel("LoopEnd"),   range(0, 1, 1),                   colour(60, 60,100), text("End"),       textcolour("white"), trackercolour(210,210,250)
 
 line       bounds(320,190,  2, 65), colour("Grey")
 
 label      bounds(354,184, 55, 8), text("S   P   E   E   D"), fontcolour("white")
-rslider    bounds(325,195, 60, 60), channel("transpose"), range(-24, 24, 0,1,1),            colour(50, 50, 90), text("Transpose"), fontcolour("white"), trackercolour(210,210,250)
-rslider    bounds(380,195, 60, 60), channel("speed"),     range(0, 4.00, 1, 0.5, 0.001),               colour(50, 50, 90), text("Speed"),     fontcolour("white"), trackercolour(210,210,250)
+rslider    bounds(325,195, 60, 60), channel("transpose"), range(-24, 24, 0,1,1),            colour(60, 60,100), text("Transpose"), textcolour("white"), trackercolour(210,210,250)
+rslider    bounds(380,195, 60, 60), channel("speed"),     range(0, 4.00, 1, 0.5, 0.001),    colour(60, 60,100), text("Speed"),     textcolour("white"), trackercolour(210,210,250)
 
 line       bounds(440,190,  2, 65), colour("Grey")
 
 label      bounds(456,184, 90, 8), text("E   N   V   E   L   O   P   E"), fontcolour("white")
-rslider    bounds(445,195, 60, 60), channel("AttTim"),    range(0, 5, 0.01, 0.5, 0.001),       colour(50, 50, 90), text("Att.Tim"),   fontcolour("white"), trackercolour(210,210,250)
-rslider    bounds(500,195, 60, 60), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001), colour(50, 50, 90), text("Rel.Tim"),   fontcolour("white"), trackercolour(210,210,250)
+rslider    bounds(445,195, 60, 60), channel("AttTim"),    range(0, 5, 0.01, 0.5, 0.001),    colour(60, 60,100), text("Att.Tim"),   textcolour("white"), trackercolour(210,210,250)
+rslider    bounds(500,195, 60, 60), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001), colour(60, 60,100), text("Rel.Tim"),   textcolour("white"), trackercolour(210,210,250)
 line       bounds(560,190,  2, 65), colour("Grey")
 
 label      bounds(581,184, 80, 8), text("C   O   N   T   R   O   L"), fontcolour("white")
-rslider    bounds(565,195, 60, 60), channel("MidiRef"),   range(0,127,60, 1, 1),            colour(50, 50, 90), text("MIDI Ref."), fontcolour("white"), trackercolour(210,210,250)
-rslider    bounds(620,195, 60, 60), channel("level"),     range(  0,  3.00, 1, 0.5),        colour(50, 50, 90), text("Level"),     fontcolour("white"), trackercolour(210,210,250)
+rslider    bounds(565,195, 60, 60), channel("MidiRef"),   range(0,127,60, 1, 1),            colour(60, 60,100), text("MIDI Ref."), textcolour("white"), trackercolour(210,210,250)
+rslider    bounds(620,195, 60, 60), channel("level"),     range(  0,  3.00, 1, 0.5),        colour(60, 60,100), text("Level"),     textcolour("white"), trackercolour(210,210,250)
 
 keyboard bounds(5,260, 675, 75)
 </Cabbage>

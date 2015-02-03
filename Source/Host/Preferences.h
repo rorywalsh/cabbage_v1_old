@@ -24,8 +24,46 @@
 #include "../CabbageUtils.h"
 #include "../CabbageAudioDeviceSelectorComponent.h"
 
-//ApplicationProperties& getAppProperties();
+ApplicationProperties& getAppProperties();
+class CsoundPathList : public FileSearchPathListComponent, public ActionBroadcaster
+{
+	public:
+		CsoundPathList(){};
+		
+        int getNumRows()
+		{
+			return 3;
+		}
+		
+        void paintListBoxItem (int rowNumber, Graphics& g,
+                               int width, int height, bool rowIsSelected)	
+								{
+									if (rowIsSelected)
+										g.fillAll (Colours::cornflowerblue);
+									else
+										g.fillAll(Colour(50, 50, 50));
 
+									g.setColour (rowIsSelected ? Colours::black : Colours::green);
+									g.setFont (cUtils::getComponentFont());
+
+									g.drawText (contents[rowNumber],
+									5, 0, width, height,
+									Justification::centredLeft, true);
+									
+									cUtils::debug(getPath().toString());
+									
+								}
+	
+		void listBoxItemClicked(int row, const MouseEvent &)
+		{
+			sendActionMessage(String(row));
+		}	
+
+
+		
+	private:
+			StringArray contents;	
+};
 
 //================================================================
 class PreferencesComp   : public Component, public ActionListener
@@ -63,7 +101,7 @@ private:
     ListboxContents listBoxModel;
     ScopedPointer<Component> audioSelector;
     ScopedPointer<Component> pluginList;
-    FileSearchPathListComponent csoundPathList;
+    CsoundPathList csoundPathList;
     Label preferencesLabel;
 };
 

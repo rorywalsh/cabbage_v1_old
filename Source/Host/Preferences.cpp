@@ -63,6 +63,7 @@ PreferencesComp::PreferencesComp(): csoundPathList(), preferencesLabel("")
     addAndMakeVisible(csoundPathList);
     
     csoundPathList.setVisible(false);
+
     
     preferencesLabel.setBounds(170, 10, 480, 20);
     preferencesLabel.setJustificationType(Justification::left);
@@ -112,7 +113,7 @@ void PreferencesComp::actionListenerCallback(const String& message)
     else if(index==3)
     {
         preferencesLabel.setColour(Label::textColourId, Colours::whitesmoke);
-        preferencesLabel.setText("Cabbage file folders", dontSendNotification);
+        preferencesLabel.setText("Click + to add a Cabbage file folder", dontSendNotification);
         preferencesLabel.setVisible(true);
         csoundPathList.setVisible(true);
     }

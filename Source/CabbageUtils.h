@@ -689,7 +689,7 @@ public:
                 subFolders[i].findChildFiles(filesArray, File::findFiles, false, ext);
                 subMenu.clear();
                 for (fileCnt = noOfFiles; fileCnt < filesArray.size(); fileCnt++)
-                    subMenu.addItem (fileCnt + indexOffset+ m.getNumItems(), filesArray[fileCnt].getFileNameWithoutExtension());
+                    subMenu.addItem (fileCnt + indexOffset, filesArray[fileCnt].getFileNameWithoutExtension());
                 noOfFiles = fileCnt;
                 m.addSubMenu(subFolders[i].getFullPathName().replace(dir, "").replace(pathSlash, "-"), subMenu);
             }

@@ -157,7 +157,12 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
 
     String defaultCSDFile;
-    //showMessage(commandLineParams);
+    
+#if defined(MACOSX)
+    //hocus pocus for OSX. It seems to append some gibbrish to the command line flags
+    commandLineParams = commandLineParams.substring(0, commandLineParams.indexOf("-")-1);
+#endif
+    
     if(commandLineParams.contains("--export-VSTi"))
     {
         String inputFileName = commandLineParams.substring(commandLineParams.indexOf("--export-VSTi")+13).trim().removeCharacters("\"");

@@ -933,17 +933,27 @@ void CabbageGUIClass::parse(String inStr, String identifier)
     if(str.indexOf(0, ";")!=-1)
         str = str.substring(0, str.indexOf(0, ";"));
 
+    StringArray identArray;
     
-    IdentArray identArray;
+    String parameters;
     //if identifier string is not empty, use that, otherwise
     //search through identArray list of known identifiers
     if(identifier.isNotEmpty())
     {
-        identArray.clear();
-        identArray.add(identifier);
+        while(identifier.indexOf("(")>0)
+        {
+            parameters = identifier.substring(identifier.indexOf("("), identifier.indexOf(")")+1);
+            identifier = identifier.replace(parameters, "").replace(",", " ");
+        }
+        identArray.addTokens(identifier, " ");
     }
     else
-        IdentArray identArray;
+    {
+        IdentArray idententifiers;
+        identArray = idententifiers;
+    }
+    
+
     
     //else
     //    identArray = *IdentArray::getInstance(); // creates the singleton if there isn't already one.
@@ -962,6 +972,7 @@ void CabbageGUIClass::parse(String inStr, String identifier)
 
     for(int indx=0; indx<identArray.size(); indx++)
     {
+        //cUtils::debug(identArray[indx]);
         //check to see if identifier is part of input string..turn to lowercase first..
         //Logger::writeToLog("index:"+String(indx)+" arrayItem:"+identArray.getReference(indx)+" line:\n"+str);
         //int identPos = str.toLowerCase().replaceCharacters("()", "  ").indexOfWholeWordIgnoreCase(identArray[indx]);

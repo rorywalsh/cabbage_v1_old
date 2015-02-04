@@ -81,6 +81,7 @@ public:
 
     bool tryToQuitApplication();
 
+	void launchPreferencesDialogue();
     void createPlugin (const PluginDescription* desc, int x, int y);
 
     void addPluginsToMenu (PopupMenu& m) const;

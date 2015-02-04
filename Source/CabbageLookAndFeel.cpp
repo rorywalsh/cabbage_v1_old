@@ -1422,22 +1422,22 @@ void CabbageLookAndFeel::drawAlertBox (Graphics& g,
         uint32 colour;
         char character;
 
-        if (alert.getAlertType() == AlertWindow::WarningIcon)
-        {
+//        if (alert.getAlertType() == AlertWindow::WarningIcon)
+//        {
             Image logo = ImageCache::getFromMemory (BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize);
             g.setOpacity(.2f);
             g.drawImage(logo, -300, -100, 600, 500, 0, 0, logo.getWidth(), logo.getHeight());
-
-        }
-        else
-        {
-            colour    = alert.getAlertType() == AlertWindow::InfoIcon ? (uint32) 0x605555ff : (uint32) 0x40b69900;
-            character = alert.getAlertType() == AlertWindow::InfoIcon ? 'i' : '?';
-
-            icon.addEllipse ((float) iconRect.getX(), (float) iconRect.getY(),
-                             (float) iconRect.getWidth(), (float) iconRect.getHeight());
-
-        }
+//
+//        }
+//        else
+//        {
+//            colour    = alert.getAlertType() == AlertWindow::InfoIcon ? (uint32) 0x605555ff : (uint32) 0x40b69900;
+//            character = alert.getAlertType() == AlertWindow::InfoIcon ? 'i' : '?';
+//
+//            icon.addEllipse ((float) iconRect.getX(), (float) iconRect.getY(),
+//                             (float) iconRect.getWidth(), (float) iconRect.getHeight());
+//
+//        }
 
         iconSpaceUsed = iconWidth;
     }
@@ -1449,8 +1449,8 @@ void CabbageLookAndFeel::drawAlertBox (Graphics& g,
                                         textArea.getWidth() - iconSpaceUsed,
                                         textArea.getHeight()).toFloat());
 
-    g.setColour (alert.findColour (AlertWindow::outlineColourId));
-    g.drawRect(0.0, 0.0, float(alert.getWidth()), float(alert.getHeight()), .1f);
+    g.setColour (Colours::white);
+    g.drawRect(0.0, 0.0, float(alert.getWidth()), float(alert.getHeight()), .5f);
 }
 
 int CabbageLookAndFeel::getAlertBoxWindowFlags()

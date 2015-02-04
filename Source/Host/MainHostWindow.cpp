@@ -93,10 +93,7 @@ MainHostWindow::MainHostWindow()
 
     deviceManager.initialise (256, 256, savedAudioState, true);
 
-	audioSettingsComp = new CabbageAudioDeviceSelectorComponent(deviceManager,
-	0, 256,	0, 256, true, true, true, false);
-	audioSettingsComp->setSize (500, 450);
-	
+
 
     setResizable (true, false);
     setResizeLimits (500, 400, 10000, 10000);
@@ -122,10 +119,7 @@ MainHostWindow::MainHostWindow()
     knownPluginList.addChangeListener (this);
 
 
-	pluginList = new CabbagePluginListComponent(formatManager,
-                         knownPluginList,
-                         deadMansPedalFile,
-                         getAppProperties().getUserSettings());
+
 						 
 
     addKeyListener (getCommandManager().getKeyMappings());
@@ -143,8 +137,6 @@ MainHostWindow::MainHostWindow()
 
 MainHostWindow::~MainHostWindow()
 {
-    pluginListWindow = nullptr;
-
 
 #if JUCE_MAC
     setMacMainMenu (nullptr);
@@ -302,43 +294,84 @@ void MainHostWindow::createPlugin (const PluginDescription* desc, int x, int y)
 
 void MainHostWindow::addPluginsToMenu (PopupMenu& m) const
 {
+	PopupMenu menu;
+    knownPluginList.addToMenu (menu, pluginSortMethod);
+	m.addSubMenu("Third Party", menu);
+	
+	menu.clear();
+	m.addSeparator();
     for (int i = 0; i < internalTypes.size(); ++i)
-        m.addItem (i + 1, internalTypes.getUnchecked(i)->name);
+        menu.addItem (i + 9000, internalTypes.getUnchecked(i)->name);
 
-    m.addSeparator();
-
-    knownPluginList.addToMenu (m, pluginSortMethod);
+	m.addSubMenu("Input/Outputs", menu);
 }
 
 //add native filters to list of plugins. 
 void MainHostWindow::addCabbageNativePluginsToMenu (PopupMenu& m, Array<File> &cabbageFiles) const
 {
-	Array<File> tempArray;
-	StringArray tempStringArray;
-	const int menuSize = m.getNumItems();
-	File pluginDir(appProperties->getUserSettings()->getValue("CabbagePluginDirectory"));
-	pluginDir.findChildFiles(tempArray, 2, true, "*.csd");
+	int menuSize = m.getNumItems();
+	
+	PopupMenu menu;
+	PopupMenu subMenu;
+	int fileCnt=0;
+	
+	FileSearchPath filePaths(appProperties->getUserSettings()->getValue("CabbageFilePaths"));
 
-	for (int i = 0; i < tempArray.size(); ++i)
-		tempStringArray.add(tempArray[i].getFullPathName());
-
-	tempStringArray.sort(true);
+	//add all files in root of specifed directories
+	for(int i=0;i<filePaths.getNumPaths();i++)
+	{
+		File pluginDir(filePaths[i]);
+		pluginDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
 		
-	for (int i = 0; i < tempStringArray.size(); ++i)
-		cabbageFiles.add(File(tempStringArray[i]));
+	}
+		
+	for (int i = 0; i < cabbageFiles.size(); ++i)
+		menu.addItem (i+1, cabbageFiles[i].getFileNameWithoutExtension());
+
+	
+	//fileCnt = cabbageFiles.size();
+
+	//increment menu size and serach recursively through all subfolders in specified dirs
+	for(int i=0;i<filePaths.getNumPaths();i++)
+	{
+		Array<File> subFolders;
+		File searchDir(filePaths[i]);
+		subFolders.add(searchDir);
+		searchDir.findChildFiles(subFolders, File::findDirectories, true);	
+		
+		//remove parent dirs from array
+		for(int p=0;p<filePaths.getNumPaths();p++)
+			subFolders.removeAllInstancesOf(filePaths[p]);
+		
+        PopupMenu subMenu;
+        for (int subs = 0; subs < subFolders.size(); subs++)
+        {	
+			cUtils::debug(subFolders[subs].getFullPathName());
+			fileCnt = cabbageFiles.size();
+			subFolders[subs].findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
+			subMenu.clear();
 			
+			for (int fileIndex=fileCnt+1; fileIndex < cabbageFiles.size(); fileIndex++)
+				subMenu.addItem (fileIndex+1, cabbageFiles[fileIndex].getFileNameWithoutExtension());
+			
+
+				menu.addSubMenu(subFolders[subs].getFileNameWithoutExtension(), subMenu);	
+		}	
+
+        subMenu.clear();
+	}
+
 		
-	for (int i = 0; i < tempStringArray.size(); ++i)
-		m.addItem (i + menuSize, cabbageFiles[i].getFileNameWithoutExtension());
-		
-	m.addSeparator();
-	m.setLookAndFeel(&this->getLookAndFeel());
+	menu.addSeparator();
+	menu.setLookAndFeel(&this->getLookAndFeel());
+	m.addSubMenu("Cabbage files", menu);
+
 }
 
 const PluginDescription* MainHostWindow::getChosenType (const int menuID) const
 {
-    if (menuID >= 1 && menuID < 1 + internalTypes.size())
-        return internalTypes [menuID - 1];
+    if (menuID >= 9000 && menuID < 9000 + internalTypes.size())
+        return internalTypes [menuID - 9000];
 
     return knownPluginList.getType (knownPluginList.getIndexChosenByMenu (menuID));
 }
@@ -466,13 +499,7 @@ bool MainHostWindow::perform (const InvocationInfo& info)
         break;
 		
 	case CommandIDs::preferences:
-        CabbagePreferences* prefWindow;
-		prefWindow = new CabbagePreferences();	
-		prefWindow->addComponent("pluginList", pluginList);
-		prefWindow->addComponent("audioSelector", audioSettingsComp);
-		//prefWindow->addTab(audioSettingsComp);
-		prefWindow->setVisible(true);
-		prefWindow->toFront(true);
+		launchPreferencesDialogue();
         break;	
 
     default:
@@ -480,6 +507,23 @@ bool MainHostWindow::perform (const InvocationInfo& info)
     }
 
     return true;
+}
+
+void MainHostWindow::launchPreferencesDialogue()
+{
+	CabbageAudioDeviceSelectorComponent* audioSettingsComp = new CabbageAudioDeviceSelectorComponent(deviceManager,
+																					0, 256,	0, 256, true, true, true, false);
+	audioSettingsComp->setSize (500, 450);
+	CabbagePluginListComponent* pluginList = new CabbagePluginListComponent(formatManager,
+																			knownPluginList,
+																			deadMansPedalFile,
+																			getAppProperties().getUserSettings());		
+	CabbagePreferences* prefWindow;
+	prefWindow = new CabbagePreferences();	
+	prefWindow->addComponent("pluginList", pluginList);
+	prefWindow->addComponent("audioSelector", audioSettingsComp);
+	prefWindow->setVisible(true);
+	prefWindow->toFront(true);
 }
 
 void MainHostWindow::showAudioSettings()

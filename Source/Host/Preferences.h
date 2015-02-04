@@ -85,7 +85,8 @@ public:
 	PreferencesComp();	
 	~PreferencesComp()
     {
-
+		audioSelector = nullptr;
+		pluginList = nullptr;
     }
 	
 	void resized();
@@ -115,6 +116,7 @@ private:
     ScopedPointer<Component> pluginList;
     CabbageFilesPathList cabbageFilesPathList;
     Label preferencesLabel;
+	Label preferencesInfo;
 };
 
 //================================================================

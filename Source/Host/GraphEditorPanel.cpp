@@ -349,7 +349,8 @@ FilterComponent::~FilterComponent()
 //================================================================================	
 void FilterComponent::mouseDown (const MouseEvent& e)
 {
-
+	filterIsPartofSelectedGroup=false;
+	
 	if(muteButton.contains(e.getPosition().toFloat()))
 	{
 		isMuted=!isMuted;		
@@ -382,10 +383,11 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 		getGraphPanel()->selectedFilterCoordinates.add(getGraphPanel()->getLassoSelection().getSelectedItem(i)->getPosition());
 	}
 
+
 	if(!filterIsPartofSelectedGroup) {
 		for(int i=0; i<getGraphPanel()->getNumChildComponents(); i++) {
 			//if not part of a group reset colours back to normal
-			getGraphPanel()->getChildComponent(i)->getProperties().set("colour", "");
+			getGraphPanel()->getChildComponent(i)->getProperties().set("selected", 0);
 			getGraphPanel()->getChildComponent(i)->repaint();
 		}
 		getGraphPanel()->getLassoSelection().deselectAll();
@@ -615,19 +617,8 @@ void FilterComponent::timerCallback()
 //================================================================================
 void FilterComponent::paint (Graphics& g)
 {
-	g.fillAll(filterColour);
-	String outlineColour = getProperties().getWithDefault("colour", "").toString();
-	if(outlineColour.length()>1)
-	{
-		g.setColour(Colour::fromString(outlineColour));
-		
-	}
-	else
-	{
-		g.setColour(filterColour);
-		filterIsPartofSelectedGroup=false;
-	}
-
+	int selected = getProperties().getWithDefault("selected", 0);
+	
 	const int x = 4;
 	const int y = pinSize;
 	const int w = getWidth() - x * 2;
@@ -644,6 +635,7 @@ void FilterComponent::paint (Graphics& g)
 					  Justification::centred, 2);
 
 	g.setOpacity(0.2);
+	g.setColour(selected==1 ? Colours::yellow : cUtils::getComponentFontColour().withAlpha(.3f));
 	g.drawRoundedRectangle(x+0.5, y+0.5, w-1, h-1, 5, 1.0f);
 	if(pluginType!=INTERNAL)
 	{
@@ -1145,21 +1137,18 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 	
         if (MainHostWindow* const mainWindow = findParentComponentOfClass<MainHostWindow>())
         {
-			mainWindow->addPluginsToMenu (m);
+	
 			numNonNativePlugins = m.getNumItems();
 			m.addSeparator();
             
-            StringArray filePaths;
-            filePaths.addTokens(appProperties->getUserSettings()->getValue("CabbageFilePaths"), ";");
-           
-            for(int i=0;i<filePaths.size();i++)
-                cUtils::addFilesToPopupMenu(m, cabbageFiles, filePaths[i], "*.csd", 1);
-			//mainWindow->addCabbageNativePluginsToMenu(m, cabbageFiles);
-			
+			mainWindow->addCabbageNativePluginsToMenu(m, cabbageFiles);
+	
+			mainWindow->addPluginsToMenu (m);
 			
             const int r = m.show();
             
             cUtils::debug("menu item", r);
+			cUtils::debug("cabbageFiles", cabbageFiles[r-1].getFullPathName());
             
 			bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
 			wildcardFilter = WildcardFileFilter("*.csd", "*", ".csd Files");
@@ -1193,9 +1182,9 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 
 			if(r>0) //make sure we have a valid item index....
 			{
-				if(r>numNonNativePlugins && r<cabbageFiles.size()+numNonNativePlugins)
+				if(r<cabbageFiles.size()+1)
 				{
-					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, cabbageFiles[r-numNonNativePlugins].getFullPathName());
+					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, cabbageFiles[r-1].getFullPathName());
 					return;
 				}
 				else 
@@ -1209,20 +1198,22 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
     }
     else
     {
-        //if((e.mods.getCurrentModifiers().isCtrlDown())&& (e.mods.isLeftButtonDown())){
-        addChildComponent (&lassoComp);
-        lassoComp.beginLasso (e, this);
-        //}
+		//deselect all grouped filters and set alpha to normal
+		selectedFilters.deselectAll();
+		for(int i=0; i<getNumChildComponents(); i++)
+		{
+			getChildComponent(i)->getProperties().set("selected", 0);
+			getChildComponent(i)->repaint();
+		}
+
+        if((e.mods.getCurrentModifiers().isCtrlDown()))
+		{
+			addChildComponent (&lassoComp);
+			lassoComp.beginLasso (e, this);
+		}
     }
 
 
-    //deselect all grouped filters and set alpha to normal
-    selectedFilters.deselectAll();
-    for(int i=0; i<getNumChildComponents(); i++)
-    {
-        getChildComponent(i)->getProperties().set("colour", "");
-        getChildComponent(i)->repaint();
-    }
 }
 
 
@@ -1243,7 +1234,7 @@ void GraphEditorPanel::mouseUp (const MouseEvent& e)
     Logger::writeToLog("Number selected: "+String(selectedFilters.getNumSelected()));
     for(int i=0; i<selectedFilters.getNumSelected(); i++) {
         //Logger::writeToLog(getChildComponent(i)->getName());
-        selectedFilters.getSelectedItem(i)->getProperties().set("colour", Colours::yellow.toString());
+        selectedFilters.getSelectedItem(i)->getProperties().set("selected", 1);
         selectedFilters.getSelectedItem(i)->repaint();
     }
 

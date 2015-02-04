@@ -508,6 +508,7 @@ public :
 
             Array<File> selectedFiles = cUtils::launchFileBrowser("Select a file",
                                         wildcardFilter,
+										"",
                                         1,
                                         File(""),
                                         false,

@@ -1493,7 +1493,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
 		this->setAlwaysOnTop(false);
 		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
 		wildcardFilter = WildcardFileFilter("*.csd", "*", ".csd Files");
-		Array<File> selectedFile = cUtils::launchFileBrowser("Open a .csd file", wildcardFilter, 1, currentDir, showNative, &getLookAndFeel());
+		Array<File> selectedFile = cUtils::launchFileBrowser("Open a .csd file", wildcardFilter, "*.csd", 1, currentDir, showNative, &getLookAndFeel());
       
         if(selectedFile.size()>0)
         {

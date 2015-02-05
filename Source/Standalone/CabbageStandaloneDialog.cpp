@@ -1584,7 +1584,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
 #ifdef LINUX
     //FileChooser saveFC(String("Save as..."), File::nonexistent, String(""), UseNativeDialogue);
 	bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
-	Array<File> selectedFile = cUtils::launchFileBrowser("Save a file..", wildcardFilter, 0, File("*"), showNative, &getLookAndFeel());
+	Array<File> selectedFile = cUtils::launchFileBrowser("Save a file..", wildcardFilter, "*.*", 0, File("*"), showNative, &getLookAndFeel());
  
     String VST;
     Logger::writeToLog(currentApplicationDirectory);

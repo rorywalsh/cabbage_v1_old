@@ -1,25 +1,20 @@
 /*
-  ==============================================================================
+  Copyright (c) 2013 - Raw Material Software Ltd, Rory Walsh
 
-   This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+  Cabbage is free software; you can redistribute it
+  and/or modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+  Cabbage is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Lesser General Public License for more details.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
-
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-   ------------------------------------------------------------------------------
-
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
-
-  ==============================================================================
+  You should have received a copy of the GNU Lesser General Public
+  License along with Csound; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+  02111-1307 USA
 */
 
 #ifndef __FILTERGRAPH_JUCEHEADER__
@@ -38,7 +33,8 @@ const char* const filenameWildcard = "*.filtergraph";
 /**
     A collection of filters and some connections between them.
 */
-class FilterGraph   : public FileBasedDocument
+class FilterGraph   : public FileBasedDocument,
+					  public ChangeListener
 {
 public:
     //==============================================================================
@@ -63,6 +59,17 @@ public:
     void setNodePosition (const int nodeId, double x, double y);
     void getNodePosition (const int nodeId, double& x, double& y) const;
 
+	void changeListenerCallback (ChangeBroadcaster*);
+	
+	int getLastMovedNodeId()
+	{
+		return lastChangedNodeId;
+	}
+
+	int getLastMovedNodeParameterIndex()
+	{
+		return lastChangedNodeParameter;
+	}	
     //==============================================================================
     int getNumConnections() const noexcept;
     const AudioProcessorGraph::Connection* getConnection (const int index) const noexcept;
@@ -104,7 +111,8 @@ private:
     AudioPluginFormatManager& formatManager;
     AudioProcessorGraph graph;
 	OwnedArray<NodeAudioProcessorListener> audioProcessorListeners;
-
+	int lastChangedNodeId;
+	int lastChangedNodeParameter;
     uint32 lastUID;
     uint32 getNextUID() noexcept;
 	uint32 lastNodeID;

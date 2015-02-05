@@ -274,7 +274,7 @@ public:
                                           bool /*isVerticalBar*/,
                                           bool isMouseOver,
                                           bool isMouseDragging);
-
+	void drawToggleButton (Graphics &g, ToggleButton &button, bool /*isMouseOverButton*/, bool /*isButtonDown*/);
     juce_UseDebuggingNewOperator
 
 

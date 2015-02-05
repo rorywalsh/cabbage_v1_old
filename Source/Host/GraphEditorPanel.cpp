@@ -24,7 +24,7 @@
 #include "PluginWrapperProcessor.h"
 #include "../Plugin/CabbageGenericAudioProcessorEditor.h"
 #include "../Plugin/PluginGenericAudioProcessorEditor.h"
-
+#include "NativeParametersPanel.h"
 
 //==============================================================================
 class PluginWindow;
@@ -40,6 +40,9 @@ PluginWindow::PluginWindow (Component* const pluginEditor,
 	basicLookAndFeel(new CabbageLookAndFeelBasic())
 {
     setSize (400, 300);
+	
+	
+	
 	this->setTitleBarHeight(18);
 	setLookAndFeel(basicLookAndFeel);
     setContentOwned (pluginEditor, true);
@@ -47,7 +50,7 @@ PluginWindow::PluginWindow (Component* const pluginEditor,
     setTopLeftPosition (owner->properties.getWithDefault ("uiLastX", Random::getSystemRandom().nextInt (500)),
                         owner->properties.getWithDefault ("uiLastY", Random::getSystemRandom().nextInt (500)));
     setVisible (true);
-
+	setAlwaysOnTop(true);
     activePluginWindows.add (this);
 }
 
@@ -191,9 +194,15 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
         if (type == Generic || type == Parameters || type == midiLearn)
 		{
 			if(wrapperPlug)
+			{
 				ui = new PluginGenericAudioProcessorEditor (wrapperPlug, type == midiLearn ? true : false);
+				
+			}
 			else if(processor)
+			{
 				ui = new CabbageGenericAudioProcessorEditor (processor, type == midiLearn ? true : false);
+				
+			}
 		}
         else if (type == Programs)
             ui = new ProgramAudioProcessorEditor (processor);
@@ -469,6 +478,11 @@ void GraphEditorPanel::resized()
 void GraphEditorPanel::changeListenerCallback (ChangeBroadcaster*)
 {
     updateComponents();
+}
+
+void GraphEditorPanel::actionListenerCallback (const String &message)
+{
+	
 }
 
 void GraphEditorPanel::updateComponents()
@@ -943,10 +957,6 @@ void GraphAudioProcessorPlayer::audioDeviceStopped()
     tempBuffer.setSize (1, 1);
 }
 
-void GraphAudioProcessorPlayer::handleIncomingMidiMessage (MidiInput*, const MidiMessage& message)
-{
-    messageCollector.addMessageToQueue (message);
-}
 
 //==============================================================================
 // graphDocumentComponent. Holds out main GUI objects
@@ -1020,6 +1030,14 @@ void GraphDocumentComponent::resized()
 void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int x, int y, bool isNative, String filename)
 {
     graphPanel->createNewPlugin (desc, x, y, isNative, filename);
+}
+
+void GraphDocumentComponent::showNativeParameters()
+{
+	NativeParametersPanel* panel = new NativeParametersPanel(&graph);
+	addAndMakeVisible(panel);
+	panel->setLookAndFeel(&getLookAndFeel());
+	panel->setBounds(0, 0, 250, getHeight()-60);
 }
 
 void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const MidiMessage &message)

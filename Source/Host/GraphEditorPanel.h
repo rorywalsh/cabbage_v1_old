@@ -52,6 +52,7 @@ public:
 //==============================================================================
 class GraphEditorPanel   : public Component,
     public ChangeListener,
+	public ActionListener,
     public LassoSource <FilterComponent*>
 {
 public:
@@ -71,6 +72,13 @@ public:
 
     void resized();
     void changeListenerCallback (ChangeBroadcaster*);
+	void actionListenerCallback (const String &message);
+	
+	void enabledMIDILearn(bool val)
+	{
+		midiLearn=val;
+	}
+	
     void updateComponents();
     void findLassoItemsInArea (Array <FilterComponent*>& results, const Rectangle<int>& area);
 
@@ -89,10 +97,12 @@ public:
     //array holding positions of selected filters
     Array<Point<int>> selectedFilterCoordinates;
 	
+	
     //==============================================================================
 private:
 
     FilterGraph& graph;
+	bool midiLearn;
     ScopedPointer<ConnectorComponent> draggingConnector;
     ComponentDragger myDragger;
     LassoComponent <FilterComponent*> lassoComp;
@@ -107,8 +117,7 @@ private:
 //==============================================================================
 class GraphAudioProcessorPlayer  :  public AudioProcessorPlayer,
 									public ChangeListener,
-								    public ChangeBroadcaster,
-									public MidiInputCallback
+								    public ChangeBroadcaster
 								   
 {
 public:
@@ -121,8 +130,9 @@ public:
     void audioDeviceIOCallback (const float**, int, float**, int, int) override;
     void audioDeviceAboutToStart (AudioIODevice*) override;
     void audioDeviceStopped() override;
-    void handleIncomingMidiMessage (MidiInput*, const MidiMessage&) override;
+
 	void changeListenerCallback (ChangeBroadcaster*);
+	void actionListenerCallback (const String &message);
 	
 	Array<float> getOutputChannelRMS()
 	{  
@@ -210,7 +220,7 @@ public:
     //==============================================================================
     FilterGraph graph;
 	void handleIncomingMidiMessage (MidiInput*, const MidiMessage&) override;
-
+	void showNativeParameters();
     //==============================================================================
     void resized();
 
@@ -233,7 +243,7 @@ private:
 //==============================================================================
 // A desktop window containing a plugin's UI. 
 //==============================================================================
-class PluginWindow  : public DocumentWindow
+class PluginWindow  : public DocumentWindow, public ActionBroadcaster
 {
 public:
     enum WindowFormatType

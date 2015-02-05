@@ -253,6 +253,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 						break;
 					case 8:
 						type = PluginWindow::midiLearn;
+						getGraphPanel()->enabledMIDILearn(true);
 						break;
 
 					default:
@@ -261,6 +262,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 
 					if (PluginWindow* const w = PluginWindow::getWindowFor (f, type))
 						w->toFront (true);
+						
 				}
 			}
 		}

@@ -2218,6 +2218,54 @@ int CabbageLookAndFeelBasic::getScrollbarButtonSize (ScrollBar& scrollbar)
                 : scrollbar.getHeight());
 }
 
+//======= Toggle Buttons ========================================================================
+void CabbageLookAndFeelBasic::drawToggleButton (Graphics &g, ToggleButton &button, bool /*isMouseOverButton*/, bool /*isButtonDown*/)
+{
+    int destWidth, destHeight;
+    destHeight = button.getHeight();
+    if (button.getButtonText().length() > 0)
+        destWidth = destHeight;
+    else
+        destWidth = button.getWidth();
+
+    int destX = 0;
+    int destY = 0;
+    bool isToggleOn;
+
+    if (button.getToggleState() == true)
+        isToggleOn = true;
+    else
+        isToggleOn = false;
+
+    bool isRECT = button.getProperties().getWithDefault("isRect", 0);
+    String svgPath = button.getProperties().getWithDefault("svgpath", "");
+
+    //----- Creating the image
+    Image newButton;
+    if(!button.getToggleState())
+        newButton = cUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonColourId), isRECT, svgPath);
+    else
+        newButton = cUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonOnColourId), isRECT, svgPath);
+
+
+
+    //----- Drawing image
+    g.drawImage (newButton, destX, destY, destWidth, destHeight, 0, 0, destWidth, destHeight, false);
+
+    //----- Text
+    if (button.getButtonText().length() > 0)
+    {
+        Justification just (1); //left
+        //g.setFont (cUtils::getComponentFont());
+        g.setColour (button.findColour(ToggleButton::textColourId));
+        //g.setColour(Colours::white);
+        String name;
+        name << button.getButtonText();
+        name = cUtils::cabbageString (name, cUtils::getComponentFont(), (button.getWidth()-(destWidth+5))); //shortening string if too long
+
+        g.drawText (name, destWidth+5, destY, button.getWidth(), button.getHeight(), just, false);
+    }
+}
 //=========== Labels, slider textboxes are also labels =============================================
 void CabbageLookAndFeelBasic::drawLabel (Graphics &g, Label &label)
 {

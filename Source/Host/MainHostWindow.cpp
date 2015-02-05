@@ -117,13 +117,7 @@ MainHostWindow::MainHostWindow()
                        ->getIntValue ("pluginSortMethod", KnownPluginList::sortByManufacturer);
 
     knownPluginList.addChangeListener (this);
-
-
-
-						 
-
     addKeyListener (getCommandManager().getKeyMappings());
-
     Process::setPriority (Process::HighPriority);
 
 #if JUCE_MAC
@@ -226,18 +220,18 @@ PopupMenu MainHostWindow::getMenuForIndex (int topLevelMenuIndex, const String& 
     {
         // "Options" menu
 		menu.addCommandItem (&getCommandManager(), CommandIDs::preferences);
-        menu.addCommandItem (&getCommandManager(), CommandIDs::showPluginListEditor);
-
-        PopupMenu sortTypeMenu;
-        sortTypeMenu.addItem (200, "List plugins in default order",      true, pluginSortMethod == KnownPluginList::defaultOrder);
-        sortTypeMenu.addItem (201, "List plugins in alphabetical order", true, pluginSortMethod == KnownPluginList::sortAlphabetically);
-        sortTypeMenu.addItem (202, "List plugins by category",           true, pluginSortMethod == KnownPluginList::sortByCategory);
-        sortTypeMenu.addItem (203, "List plugins by manufacturer",       true, pluginSortMethod == KnownPluginList::sortByManufacturer);
-        sortTypeMenu.addItem (204, "List plugins based on the directory structure", true, pluginSortMethod == KnownPluginList::sortByFileSystemLocation);
-        menu.addSubMenu ("Plugin menu type", sortTypeMenu);
-		menu.addCommandItem (&getCommandManager(), CommandIDs::setCabbageFileDirectory);
-        menu.addSeparator();
-        menu.addCommandItem (&getCommandManager(), CommandIDs::showAudioSettings);
+//        menu.addCommandItem (&getCommandManager(), CommandIDs::showPluginListEditor);
+//
+//        PopupMenu sortTypeMenu;
+//        sortTypeMenu.addItem (200, "List plugins in default order",      true, pluginSortMethod == KnownPluginList::defaultOrder);
+//        sortTypeMenu.addItem (201, "List plugins in alphabetical order", true, pluginSortMethod == KnownPluginList::sortAlphabetically);
+//        sortTypeMenu.addItem (202, "List plugins by category",           true, pluginSortMethod == KnownPluginList::sortByCategory);
+//        sortTypeMenu.addItem (203, "List plugins by manufacturer",       true, pluginSortMethod == KnownPluginList::sortByManufacturer);
+//        sortTypeMenu.addItem (204, "List plugins based on the directory structure", true, pluginSortMethod == KnownPluginList::sortByFileSystemLocation);
+//        menu.addSubMenu ("Plugin menu type", sortTypeMenu);
+//		menu.addCommandItem (&getCommandManager(), CommandIDs::setCabbageFileDirectory);
+//        menu.addSeparator();
+//        menu.addCommandItem (&getCommandManager(), CommandIDs::showAudioSettings);
 
         menu.addSeparator();
         menu.addCommandItem (&getCommandManager(), CommandIDs::aboutBox);
@@ -495,7 +489,7 @@ bool MainHostWindow::perform (const InvocationInfo& info)
 		break;
 		
     case CommandIDs::aboutBox:
-        // TODO
+        graphEditor->showNativeParameters();
         break;
 		
 	case CommandIDs::preferences:

@@ -456,6 +456,12 @@ void FilterGraph::restoreFromXml (const XmlElement& xml)
 	graph.removeIllegalConnections();
 }
 
+void FilterGraph::changeListenerCallback(ChangeBroadcaster* source)
+{
+	 lastChangedNodeId = ((NodeAudioProcessorListener*)source)->nodeId;
+	 lastChangedNodeParameter = ((NodeAudioProcessorListener*)source)->parameterIndex;
+}
+
 //==========================================================================
 // parameter callback for node, used to map midi messages to parameters
 //==========================================================================
@@ -464,5 +470,6 @@ void NodeAudioProcessorListener::audioProcessorParameterChanged(AudioProcessor* 
 	cUtils::debug("NodeID", this->nodeId);
 	cUtils::debug("Processor", processor->getName());
 	cUtils::debug("Parameter", processor->getParameterName(parameterIndex));
+	
 }
 

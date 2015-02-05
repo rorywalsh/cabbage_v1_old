@@ -29,22 +29,20 @@
 #include "../CabbageLookAndFeel.h"
 #include "../Host/PluginWrapperProcessor.h"
 
-
 class PluginProcessorParameterPropertyComp   : public PropertyComponent,
                                          private AudioProcessorListener,
                                          private Timer,
 										 public ActionBroadcaster
 {
 public:
-    PluginProcessorParameterPropertyComp (const String& name, PluginWrapper& p, int paramIndex, bool _midiLearn)
+    PluginProcessorParameterPropertyComp (const String& name, PluginWrapper& p, int paramIndex)
         : PropertyComponent (name),
           owner (p),
           index (paramIndex),
           paramHasChanged (false),
           slider (p, paramIndex),
 		  lookAndFeelBasic(new CabbageLookAndFeelBasic()),
-		  midiLearn(_midiLearn),
-		  midiLearnColour(cUtils::getComponentSkin().darker(.4f))
+		  active(false)
     {
 		setLookAndFeel(lookAndFeelBasic);
         startTimer (100);
@@ -70,22 +68,21 @@ public:
         slider.updateText();
     }
 
-	void mouseDown(const MouseEvent &e)
+	void setActive(bool val)
 	{
-		if(midiLearn)
-		{
-			midiLearnColour = Colours::yellow;
-			repaint();
-		}
+		active = val;
+		repaint();
 	}
 
     void paint(Graphics &g)
     {
         g.fillAll(cUtils::getComponentSkin().darker(.4f)); //background
 		
-		g.setColour(midiLearnColour);
-		g.drawRect(this->getLocalBounds().withWidth(slider.getPosition().getX()-5.f), 1.f);
-
+		if(active == true)
+		{
+			g.setColour(Colours::yellow);
+			g.drawRect(getLocalBounds().withLeft(5).withWidth(slider.getPosition().getX()-15.f), 1.f);
+		}
 		
         String text = getName();
         g.setColour(Colours::whitesmoke);
@@ -151,7 +148,7 @@ private:
 
                 if(PluginProcessorParameterPropertyComp* propComp = findParentComponentOfClass <PluginProcessorParameterPropertyComp>())
 				{
-					propComp->sendActionMessage("parameter Index:"+String(index));
+					propComp->sendActionMessage(String(index));
 				}
 				
 				updateText();
@@ -174,7 +171,7 @@ private:
     const int index;
     bool volatile paramHasChanged;
     ParamSlider slider;
-	bool midiLearn;
+	bool active;
 	Colour midiLearnColour;
 	ScopedPointer<CabbageLookAndFeelBasic> lookAndFeelBasic;
 	
@@ -187,7 +184,8 @@ private:
 //==============================================================================
 
 class PluginGenericAudioProcessorEditor : 	public AudioProcessorEditor,
-											public ActionListener
+											public ActionListener,
+											public ActionBroadcaster
 {
 public:
 	PluginGenericAudioProcessorEditor(PluginWrapper* const p, bool midiLearn)
@@ -207,19 +205,24 @@ public:
 			if (name.trim().isEmpty())
 				name = "Unnamed";
 
-			PluginProcessorParameterPropertyComp* const pc = new PluginProcessorParameterPropertyComp (name, *p, i, midiLearn);
-			pc->addActionListener(this);
+			PluginProcessorParameterPropertyComp* const pc = new PluginProcessorParameterPropertyComp (name, *p, i);
+			
+			if(midiLearn)
+				pc->addActionListener(this);
+				
 			params.add (pc);
 			totalHeight += pc->getPreferredHeight();
 		}
 
-		panel.addProperties (params);
+		
+		panel.addProperties(params);
 
 		setSize (400, jlimit (25, 400, totalHeight));
 	}
 
 	~PluginGenericAudioProcessorEditor()
 	{
+		sendActionMessage("shutting down generic interface");
 	}
 
 	void paint (Graphics& g)
@@ -229,13 +232,15 @@ public:
 
 	void resized()
 	{
-		panel.setBounds (getLocalBounds());
+		panel.setBounds (getLocalBounds().withHeight(getHeight()));
 	}
 
 	void actionListenerCallback (const String &message)
 	{
-		
-		cUtils::debug(message);
+		int index = message.getIntValue();
+		for(int i=0;i<params.size();i++)
+			((PluginProcessorParameterPropertyComp*)params.getReference(i))->setActive(index==i ? true : false);
+
 	}
 private:
 	PropertyPanel panel;

@@ -103,7 +103,7 @@ public:
         add("colour:1");
         add("text");
     }
-
+    
     ~IdentArray()
     {
 

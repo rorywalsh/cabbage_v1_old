@@ -157,8 +157,8 @@ PreferencesComp::ListboxContents::ListboxContents()
 	contents.add("Audio Setup");
 	contents.add("Third Party Plugins");
 	contents.add("Cabbage Plugins");
-	contents.add("Editor");
-	contents.add("General");			
+	//contents.add("Editor");
+	//contents.add("General");			
 }
 
 int PreferencesComp::ListboxContents::getNumRows()

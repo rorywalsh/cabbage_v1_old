@@ -1249,7 +1249,7 @@ void CabbageLookAndFeel::drawDocumentWindowTitleBar (DocumentWindow &window, Gra
         bool /*drawTitleTextOnLeft*/)
 {
     window.setUsingNativeTitleBar(false);
-
+	
 #ifdef CABBAGE_HOST
     window.setOpaque(true);
     g.setColour (cUtils::getComponentSkin());
@@ -1257,8 +1257,8 @@ void CabbageLookAndFeel::drawDocumentWindowTitleBar (DocumentWindow &window, Gra
 #else
     g.setColour (cUtils::getDarkerBackgroundSkin());
     g.fillAll();
-#endif
-
+#endif	
+	
     g.setColour (cUtils::getComponentFontColour());
     Font font = cUtils::getTitleFont();
 #ifndef MACOSX
@@ -1424,9 +1424,9 @@ void CabbageLookAndFeel::drawAlertBox (Graphics& g,
 
 //        if (alert.getAlertType() == AlertWindow::WarningIcon)
 //        {
-        Image logo = ImageCache::getFromMemory (BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize);
-        g.setOpacity(.2f);
-        g.drawImage(logo, -300, -100, 600, 500, 0, 0, logo.getWidth(), logo.getHeight());
+            Image logo = ImageCache::getFromMemory (BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize);
+            g.setOpacity(.2f);
+            g.drawImage(logo, -300, -100, 600, 500, 0, 0, logo.getWidth(), logo.getHeight());
 //
 //        }
 //        else
@@ -1489,11 +1489,11 @@ int CabbageLookAndFeel::getTabButtonSpaceAroundImage()
 int CabbageLookAndFeel::getTabButtonBestWidth (TabBarButton& button, int tabDepth)
 {
     int width = Font (tabDepth * 0.6f).getStringWidth (button.getButtonText().trim())
-                + getTabButtonOverlap (tabDepth) * 2;
+                   + getTabButtonOverlap (tabDepth) * 2;
 
     if (Component* const extraComponent = button.getExtraComponent())
         width += button.getTabbedButtonBar().isVertical() ? extraComponent->getHeight()
-                 : extraComponent->getWidth();
+                                                          : extraComponent->getWidth();
 
     return jlimit (tabDepth * 2, tabDepth * 8, width);
 }
@@ -1508,38 +1508,22 @@ Rectangle<int> CabbageLookAndFeel::getTabButtonExtraComponentBounds (const TabBa
     {
         switch (orientation)
         {
-        case TabbedButtonBar::TabsAtBottom:
-        case TabbedButtonBar::TabsAtTop:
-            extraComp = textArea.removeFromLeft   (comp.getWidth());
-            break;
-        case TabbedButtonBar::TabsAtLeft:
-            extraComp = textArea.removeFromBottom (comp.getHeight());
-            break;
-        case TabbedButtonBar::TabsAtRight:
-            extraComp = textArea.removeFromTop    (comp.getHeight());
-            break;
-        default:
-            jassertfalse;
-            break;
+            case TabbedButtonBar::TabsAtBottom:
+            case TabbedButtonBar::TabsAtTop:     extraComp = textArea.removeFromLeft   (comp.getWidth()); break;
+            case TabbedButtonBar::TabsAtLeft:    extraComp = textArea.removeFromBottom (comp.getHeight()); break;
+            case TabbedButtonBar::TabsAtRight:   extraComp = textArea.removeFromTop    (comp.getHeight()); break;
+            default:                             jassertfalse; break;
         }
     }
     else
     {
         switch (orientation)
         {
-        case TabbedButtonBar::TabsAtBottom:
-        case TabbedButtonBar::TabsAtTop:
-            extraComp = textArea.removeFromRight  (comp.getWidth());
-            break;
-        case TabbedButtonBar::TabsAtLeft:
-            extraComp = textArea.removeFromTop    (comp.getHeight());
-            break;
-        case TabbedButtonBar::TabsAtRight:
-            extraComp = textArea.removeFromBottom (comp.getHeight());
-            break;
-        default:
-            jassertfalse;
-            break;
+            case TabbedButtonBar::TabsAtBottom:
+            case TabbedButtonBar::TabsAtTop:     extraComp = textArea.removeFromRight  (comp.getWidth()); break;
+            case TabbedButtonBar::TabsAtLeft:    extraComp = textArea.removeFromTop    (comp.getHeight()); break;
+            case TabbedButtonBar::TabsAtRight:   extraComp = textArea.removeFromBottom (comp.getHeight()); break;
+            default:                             jassertfalse; break;
         }
     }
 
@@ -1563,41 +1547,41 @@ void CabbageLookAndFeel::createTabButtonShape (TabBarButton& button, Path& p, bo
 
     switch (button.getTabbedButtonBar().getOrientation())
     {
-    case TabbedButtonBar::TabsAtLeft:
-        p.startNewSubPath (w, 0.0f);
-        p.lineTo (0.0f, indent);
-        p.lineTo (0.0f, h - indent);
-        p.lineTo (w, h);
-        p.lineTo (w + overhang, h + overhang);
-        p.lineTo (w + overhang, -overhang);
-        break;
+        case TabbedButtonBar::TabsAtLeft:
+            p.startNewSubPath (w, 0.0f);
+            p.lineTo (0.0f, indent);
+            p.lineTo (0.0f, h - indent);
+            p.lineTo (w, h);
+            p.lineTo (w + overhang, h + overhang);
+            p.lineTo (w + overhang, -overhang);
+            break;
 
-    case TabbedButtonBar::TabsAtRight:
-        p.startNewSubPath (0.0f, 0.0f);
-        p.lineTo (w, indent);
-        p.lineTo (w, h - indent);
-        p.lineTo (0.0f, h);
-        p.lineTo (-overhang, h + overhang);
-        p.lineTo (-overhang, -overhang);
-        break;
+        case TabbedButtonBar::TabsAtRight:
+            p.startNewSubPath (0.0f, 0.0f);
+            p.lineTo (w, indent);
+            p.lineTo (w, h - indent);
+            p.lineTo (0.0f, h);
+            p.lineTo (-overhang, h + overhang);
+            p.lineTo (-overhang, -overhang);
+            break;
 
-    case TabbedButtonBar::TabsAtBottom:
-        p.startNewSubPath (0.0f, 0.0f);
-        p.lineTo (indent, h);
-        p.lineTo (w - indent, h);
-        p.lineTo (w, 0.0f);
-        p.lineTo (w + overhang, -overhang);
-        p.lineTo (-overhang, -overhang);
-        break;
+        case TabbedButtonBar::TabsAtBottom:
+            p.startNewSubPath (0.0f, 0.0f);
+            p.lineTo (indent, h);
+            p.lineTo (w - indent, h);
+            p.lineTo (w, 0.0f);
+            p.lineTo (w + overhang, -overhang);
+            p.lineTo (-overhang, -overhang);
+            break;
 
-    default:
-        p.startNewSubPath (0.0f, h);
-        p.lineTo (indent, 0.0f);
-        p.lineTo (w - indent, 0.0f);
-        p.lineTo (w, h);
-        p.lineTo (w + overhang, h + overhang);
-        p.lineTo (-overhang, h + overhang);
-        break;
+        default:
+            p.startNewSubPath (0.0f, h);
+            p.lineTo (indent, 0.0f);
+            p.lineTo (w - indent, 0.0f);
+            p.lineTo (w, h);
+            p.lineTo (w + overhang, h + overhang);
+            p.lineTo (-overhang, h + overhang);
+            break;
     }
 
     p.closeSubPath();
@@ -1606,19 +1590,19 @@ void CabbageLookAndFeel::createTabButtonShape (TabBarButton& button, Path& p, bo
 }
 
 void CabbageLookAndFeel::fillTabButtonShape (TabBarButton& button, Graphics& g, const Path& path,
-        bool /*isMouseOver*/, bool /*isMouseDown*/)
+                                         bool /*isMouseOver*/, bool /*isMouseDown*/)
 {
     const Colour tabBackground (button.getTabBackgroundColour());
     const bool isFrontTab = button.isFrontTab();
 
     g.setColour (isFrontTab ? tabBackground
-                 : tabBackground.withMultipliedAlpha (0.9f));
+                            : tabBackground.withMultipliedAlpha (0.9f));
 
     g.fillPath (path);
 
     g.setColour (button.findColour (isFrontTab ? TabbedButtonBar::frontOutlineColourId
-                                    : TabbedButtonBar::tabOutlineColourId, false)
-                 .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
+                                               : TabbedButtonBar::tabOutlineColourId, false)
+                    .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
 
     g.strokePath (path, PathStrokeType (isFrontTab ? 1.0f : 0.5f));
 }
@@ -1640,28 +1624,20 @@ void CabbageLookAndFeel::drawTabButtonText (TabBarButton& button, Graphics& g, b
 
     switch (button.getTabbedButtonBar().getOrientation())
     {
-    case TabbedButtonBar::TabsAtLeft:
-        t = t.rotated (float_Pi * -0.5f).translated (area.getX(), area.getBottom());
-        break;
-    case TabbedButtonBar::TabsAtRight:
-        t = t.rotated (float_Pi *  0.5f).translated (area.getRight(), area.getY());
-        break;
-    case TabbedButtonBar::TabsAtTop:
-    case TabbedButtonBar::TabsAtBottom:
-        t = t.translated (area.getX(), area.getY());
-        break;
-    default:
-        jassertfalse;
-        break;
+        case TabbedButtonBar::TabsAtLeft:   t = t.rotated (float_Pi * -0.5f).translated (area.getX(), area.getBottom()); break;
+        case TabbedButtonBar::TabsAtRight:  t = t.rotated (float_Pi *  0.5f).translated (area.getRight(), area.getY()); break;
+        case TabbedButtonBar::TabsAtTop:
+        case TabbedButtonBar::TabsAtBottom: t = t.translated (area.getX(), area.getY()); break;
+        default:                            jassertfalse; break;
     }
 
     Colour col;
 
     if (button.isFrontTab() && (button.isColourSpecified (TabbedButtonBar::frontTextColourId)
-                                || isColourSpecified (TabbedButtonBar::frontTextColourId)))
+                                    || isColourSpecified (TabbedButtonBar::frontTextColourId)))
         col = findColour (TabbedButtonBar::frontTextColourId);
     else if (button.isColourSpecified (TabbedButtonBar::tabTextColourId)
-             || isColourSpecified (TabbedButtonBar::tabTextColourId))
+                 || isColourSpecified (TabbedButtonBar::tabTextColourId))
         col = findColour (TabbedButtonBar::tabTextColourId);
     else
         col = button.getTabBackgroundColour().contrasting();
@@ -1685,7 +1661,7 @@ void CabbageLookAndFeel::drawTabButton (TabBarButton& button, Graphics& g, bool 
 
     const Rectangle<int> activeArea (button.getActiveArea());
     tabShape.applyTransform (AffineTransform::translation ((float) activeArea.getX(),
-                             (float) activeArea.getY()));
+                                                           (float) activeArea.getY()));
 
     DropShadow (Colours::black.withAlpha (0.5f), 2, Point<int> (0, 1)).drawForPath (g, tabShape);
 
@@ -1704,34 +1680,33 @@ void CabbageLookAndFeel::drawTabAreaBehindFrontButton (TabbedButtonBar& bar, Gra
 
     switch (bar.getOrientation())
     {
-    case TabbedButtonBar::TabsAtLeft:
-        gradient.point1.x = (float) w;
-        gradient.point2.x = w * (1.0f - shadowSize);
-        shadowRect.setBounds ((int) gradient.point2.x, 0, w - (int) gradient.point2.x, h);
-        line.setBounds (w - 1, 0, 1, h);
-        break;
+        case TabbedButtonBar::TabsAtLeft:
+            gradient.point1.x = (float) w;
+            gradient.point2.x = w * (1.0f - shadowSize);
+            shadowRect.setBounds ((int) gradient.point2.x, 0, w - (int) gradient.point2.x, h);
+            line.setBounds (w - 1, 0, 1, h);
+            break;
 
-    case TabbedButtonBar::TabsAtRight:
-        gradient.point2.x = w * shadowSize;
-        shadowRect.setBounds (0, 0, (int) gradient.point2.x, h);
-        line.setBounds (0, 0, 1, h);
-        break;
+        case TabbedButtonBar::TabsAtRight:
+            gradient.point2.x = w * shadowSize;
+            shadowRect.setBounds (0, 0, (int) gradient.point2.x, h);
+            line.setBounds (0, 0, 1, h);
+            break;
 
-    case TabbedButtonBar::TabsAtTop:
-        gradient.point1.y = (float) h;
-        gradient.point2.y = h * (1.0f - shadowSize);
-        shadowRect.setBounds (0, (int) gradient.point2.y, w, h - (int) gradient.point2.y);
-        line.setBounds (0, h - 1, w, 1);
-        break;
+        case TabbedButtonBar::TabsAtTop:
+            gradient.point1.y = (float) h;
+            gradient.point2.y = h * (1.0f - shadowSize);
+            shadowRect.setBounds (0, (int) gradient.point2.y, w, h - (int) gradient.point2.y);
+            line.setBounds (0, h - 1, w, 1);
+            break;
 
-    case TabbedButtonBar::TabsAtBottom:
-        gradient.point2.y = h * shadowSize;
-        shadowRect.setBounds (0, 0, w, (int) gradient.point2.y);
-        line.setBounds (0, 0, w, 1);
-        break;
+        case TabbedButtonBar::TabsAtBottom:
+            gradient.point2.y = h * shadowSize;
+            shadowRect.setBounds (0, 0, w, (int) gradient.point2.y);
+            line.setBounds (0, 0, w, 1);
+            break;
 
-    default:
-        break;
+        default: break;
     }
 
     g.setGradientFill (gradient);
@@ -1836,9 +1811,9 @@ void CabbageLookAndFeel::drawTableHeaderColumn (Graphics& g, const String& colum
 
 //==============================================================================
 void CabbageLookAndFeel::drawStretchableLayoutResizerBar (Graphics& g, int w, int h,
-        bool /*isVerticalBar*/,
-        bool isMouseOver,
-        bool isMouseDragging)
+                                                      bool /*isVerticalBar*/,
+                                                      bool isMouseOver,
+                                                      bool isMouseDragging)
 {
     float alpha = 0.5f;
 
@@ -1938,9 +1913,9 @@ void CabbageLookAndFeelBasic::drawLinearSliderBackground (Graphics &g, int /*x*/
 }
 //=================================================================================
 void CabbageLookAndFeelBasic::drawStretchableLayoutResizerBar (Graphics& g, int w, int h,
-        bool /*isVerticalBar*/,
-        bool isMouseOver,
-        bool isMouseDragging)
+                                                      bool /*isVerticalBar*/,
+                                                      bool isMouseOver,
+                                                      bool isMouseDragging)
 {
     float alpha = 0.5f;
 
@@ -1984,7 +1959,7 @@ void CabbageLookAndFeelBasic::drawLinearSliderThumb (Graphics &g, int /*x*/, int
 
 
     g.setGradientFill(thumbColour);
-    g.fillRoundedRectangle(destX, destY, thumbWidth, thumbWidth, slider.getHeight() / 20.0f);
+	g.fillRoundedRectangle(destX, destY, thumbWidth, thumbWidth, slider.getHeight() / 20.0f);
 
     //thumb border
     g.setColour(Colours::black);
@@ -2053,10 +2028,10 @@ bool CabbageLookAndFeelBasic::areScrollbarButtonsVisible()
 }
 
 void CabbageLookAndFeelBasic::drawScrollbarButton (Graphics& g, ScrollBar& scrollbar,
-        int width, int height, int buttonDirection,
-        bool /*isScrollbarVertical*/,
-        bool /*isMouseOverButton*/,
-        bool isButtonDown)
+                                          int width, int height, int buttonDirection,
+                                          bool /*isScrollbarVertical*/,
+                                          bool /*isMouseOverButton*/,
+                                          bool isButtonDown)
 {
     Path p;
 
@@ -2089,14 +2064,14 @@ void CabbageLookAndFeelBasic::drawScrollbarButton (Graphics& g, ScrollBar& scrol
 }
 
 void CabbageLookAndFeelBasic::drawScrollbar (Graphics& g,
-        ScrollBar& scrollbar,
-        int x, int y,
-        int width, int height,
-        bool isScrollbarVertical,
-        int thumbStartPosition,
-        int thumbSize,
-        bool /*isMouseOver*/,
-        bool /*isMouseDown*/)
+                                 ScrollBar& scrollbar,
+                                 int x, int y,
+                                 int width, int height,
+                                 bool isScrollbarVertical,
+                                 int thumbStartPosition,
+                                 int thumbSize,
+                                 bool /*isMouseOver*/,
+                                 bool /*isMouseDown*/)
 {
     g.fillAll (scrollbar.findColour (ScrollBar::backgroundColourId));
 
@@ -2148,7 +2123,7 @@ void CabbageLookAndFeelBasic::drawScrollbar (Graphics& g,
     Colour trackColour1, trackColour2;
 
     if (scrollbar.isColourSpecified (ScrollBar::trackColourId)
-            || isColourSpecified (ScrollBar::trackColourId))
+         || isColourSpecified (ScrollBar::trackColourId))
     {
         trackColour1 = trackColour2 = scrollbar.findColour (ScrollBar::trackColourId);
     }
@@ -2174,14 +2149,14 @@ void CabbageLookAndFeelBasic::drawScrollbar (Graphics& g,
     }
 
     g.setGradientFill (ColourGradient (Colours::transparentBlack,gx1, gy1,
-                                       Colour (0x19000000), gx2, gy2, false));
+                       Colour (0x19000000), gx2, gy2, false));
     g.fillPath (slotPath);
 
     g.setColour (thumbColour);
     g.fillPath (thumbPath);
 
     g.setGradientFill (ColourGradient (Colour (0x10000000), gx1, gy1,
-                                       Colours::transparentBlack, gx2, gy2, false));
+                       Colours::transparentBlack, gx2, gy2, false));
 
     g.saveState();
 
@@ -2215,7 +2190,7 @@ int CabbageLookAndFeelBasic::getDefaultScrollbarWidth()
 int CabbageLookAndFeelBasic::getScrollbarButtonSize (ScrollBar& scrollbar)
 {
     return 2 + (scrollbar.isVertical() ? scrollbar.getWidth()
-                : scrollbar.getHeight());
+                                       : scrollbar.getHeight());
 }
 
 //=========== Labels, slider textboxes are also labels =============================================
@@ -2332,7 +2307,7 @@ void CabbageLookAndFeelBasic::drawResizableWindowBorder (Graphics &g, int w, int
         BorderSize< int > &border,
         ResizableWindow &window)
 {
-    g.fillAll(Colours::transparentBlack);
+g.fillAll(Colours::transparentBlack);
 }
 
 //======== Popup Menu Items ===========================================================================

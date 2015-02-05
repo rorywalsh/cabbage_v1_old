@@ -1,25 +1,20 @@
 /*
-  ==============================================================================
+  Copyright (c) 2013 - Raw Material Software Ltd, Rory Walsh
 
-   This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+  Cabbage is free software; you can redistribute it
+  and/or modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+  Cabbage is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Lesser General Public License for more details.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
-
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-   ------------------------------------------------------------------------------
-
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
-
-  ==============================================================================
+  You should have received a copy of the GNU Lesser General Public
+  License along with Csound; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+  02111-1307 USA
 */
 
 #ifndef __GRAPHEDITORPANEL_JUCEHEADER__
@@ -29,67 +24,15 @@
 #include "MixerStrip.h"
 #include "../Editor/CodeWindow.h"
 #include "../CabbageLookAndFeel.h"
+#include "FilterComponent.h"
 
-class GraphEditorPanel;
-class ConnectorComponent;
+
 class GraphAudioProcessorPlayer;
-class PinComponent;
+
+
 #define INTERNAL 1
 #define CABBAGE 2
 #define THIRDPARTY 3
-
-//======================================================================
-// Filter Component, GUI component that represents a processing node
-//======================================================================
-class FilterComponent    : public Component, 
-						   public ActionListener,
-						   public Timer
-{
-public:
-    FilterComponent (FilterGraph& graph_, const uint32 filterID_);
-	~FilterComponent();
-
-    FilterGraph& graph;
-    const uint32 filterID;
-    int numInputs, numOutputs;
-	void mouseDown (const MouseEvent& e);
-	void mouseDrag (const MouseEvent& e);
-	void mouseUp (const MouseEvent& e);
-	bool hitTest (int x, int y);
-	void actionListenerCallback (const String &message);
-	void paint (Graphics& g);
-	void getPinPos (const int index, const bool isInput, float& x, float& y);
-	void update();
-	void drawLevelMeter (Graphics& g, float x, float y, int width, int height, float level);
-	void drawMuteIcon(Graphics& g, Rectangle<float> rect, bool state);
-	void drawBypassIcon(Graphics& g, Rectangle<float> rect, bool isActive);
-	void timerCallback();
-
-private:
-	ScopedPointer<CodeWindow> codeWindow;
-	int pluginType;
-    int pinSize;
-    Colour filterColour;
-    bool filterIsPartofSelectedGroup;
-    Point<int> originalPos;
-	float rmsLeft, rmsRight;
-	void resized();
-    Font font;
-    int numIns, numOuts;
-    DropShadowEffect shadow;
-	bool isMuted, isBypassed;
-	Rectangle<float> muteButton;
-	Rectangle<float> bypassButton;
-
-    GraphEditorPanel* getGraphPanel() const noexcept
-    {
-        return findParentComponentOfClass<GraphEditorPanel>();
-    }
-
-
-    FilterComponent (const FilterComponent&);
-    FilterComponent& operator= (const FilterComponent&);
-};
 
 //==============================================================================
 //this get populated whenever we select multiple objects..
@@ -164,7 +107,8 @@ private:
 //==============================================================================
 class GraphAudioProcessorPlayer  :  public AudioProcessorPlayer,
 									public ChangeListener,
-								    public ChangeBroadcaster
+								    public ChangeBroadcaster,
+									public MidiInputCallback
 								   
 {
 public:
@@ -251,7 +195,8 @@ public:
 //    A panel that embeds a GraphEditorPanel with a midi keyboard at the bottom.
 //    It also manages the graph itself, and plays it.
 //==============================================================================
-class GraphDocumentComponent  : public Component
+class GraphDocumentComponent  : public Component,
+								public MidiInputCallback
 {
 public:
     //==============================================================================
@@ -264,6 +209,7 @@ public:
 
     //==============================================================================
     FilterGraph graph;
+	void handleIncomingMidiMessage (MidiInput*, const MidiMessage&) override;
 
     //==============================================================================
     void resized();
@@ -295,7 +241,8 @@ public:
         Normal = 0,
         Generic,
         Programs,
-        Parameters
+        Parameters,
+		midiLearn
     };
 
     PluginWindow (Component* pluginEditor, AudioProcessorGraph::Node*, WindowFormatType);

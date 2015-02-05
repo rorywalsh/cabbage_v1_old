@@ -32,16 +32,19 @@
 
 class PluginProcessorParameterPropertyComp   : public PropertyComponent,
                                          private AudioProcessorListener,
-                                         private Timer
+                                         private Timer,
+										 public ActionBroadcaster
 {
 public:
-    PluginProcessorParameterPropertyComp (const String& name, PluginWrapper& p, int paramIndex)
+    PluginProcessorParameterPropertyComp (const String& name, PluginWrapper& p, int paramIndex, bool _midiLearn)
         : PropertyComponent (name),
           owner (p),
           index (paramIndex),
           paramHasChanged (false),
           slider (p, paramIndex),
-		  lookAndFeelBasic(new CabbageLookAndFeelBasic())
+		  lookAndFeelBasic(new CabbageLookAndFeelBasic()),
+		  midiLearn(_midiLearn),
+		  midiLearnColour(cUtils::getComponentSkin().darker(.4f))
     {
 		setLookAndFeel(lookAndFeelBasic);
         startTimer (100);
@@ -67,9 +70,23 @@ public:
         slider.updateText();
     }
 
+	void mouseDown(const MouseEvent &e)
+	{
+		if(midiLearn)
+		{
+			midiLearnColour = Colours::yellow;
+			repaint();
+		}
+	}
+
     void paint(Graphics &g)
     {
         g.fillAll(cUtils::getComponentSkin().darker(.4f)); //background
+		
+		g.setColour(midiLearnColour);
+		g.drawRect(this->getLocalBounds().withWidth(slider.getPosition().getX()-5.f), 1.f);
+
+		
         String text = getName();
         g.setColour(Colours::whitesmoke);
 
@@ -131,7 +148,13 @@ private:
             if (owner.getParameter (index) != newVal)
             {
                 owner.setParameterNotifyingHost (index, newVal);
-                updateText();
+
+                if(PluginProcessorParameterPropertyComp* propComp = findParentComponentOfClass <PluginProcessorParameterPropertyComp>())
+				{
+					propComp->sendActionMessage("parameter Index:"+String(index));
+				}
+				
+				updateText();
             }
         }
 
@@ -151,6 +174,8 @@ private:
     const int index;
     bool volatile paramHasChanged;
     ParamSlider slider;
+	bool midiLearn;
+	Colour midiLearnColour;
 	ScopedPointer<CabbageLookAndFeelBasic> lookAndFeelBasic;
 	
 	
@@ -161,18 +186,18 @@ private:
 
 //==============================================================================
 
-class PluginGenericAudioProcessorEditor      : public AudioProcessorEditor
+class PluginGenericAudioProcessorEditor : 	public AudioProcessorEditor,
+											public ActionListener
 {
 public:
-	PluginGenericAudioProcessorEditor(PluginWrapper* const p)
-    : AudioProcessorEditor (p)
+	PluginGenericAudioProcessorEditor(PluginWrapper* const p, bool midiLearn)
+    : AudioProcessorEditor (p), midiLearnMode(midiLearn)
 	{
 		jassert (p != nullptr);
 		setOpaque (true);
 
 		addAndMakeVisible (panel);
-		Array <PropertyComponent*> params;
-
+		
 		const int numParams = p->getNumParameters();
 		int totalHeight = 0;
 
@@ -182,7 +207,8 @@ public:
 			if (name.trim().isEmpty())
 				name = "Unnamed";
 
-			PluginProcessorParameterPropertyComp* const pc = new PluginProcessorParameterPropertyComp (name, *p, i);
+			PluginProcessorParameterPropertyComp* const pc = new PluginProcessorParameterPropertyComp (name, *p, i, midiLearn);
+			pc->addActionListener(this);
 			params.add (pc);
 			totalHeight += pc->getPreferredHeight();
 		}
@@ -206,8 +232,15 @@ public:
 		panel.setBounds (getLocalBounds());
 	}
 
+	void actionListenerCallback (const String &message)
+	{
+		
+		cUtils::debug(message);
+	}
 private:
 	PropertyPanel panel;
+	Array <PropertyComponent*> params;
+	bool midiLearnMode;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginGenericAudioProcessorEditor)
 };
 

@@ -79,8 +79,8 @@ public:
         oncolour(cAttr.getStringProp(CabbageIDs::oncolour)),
         onfontcolour(cAttr.getStringProp(CabbageIDs::onfontcolour)),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+		pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+		pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
     {
         setName(name);
         offX=offY=offWidth=offHeight=0;
@@ -346,8 +346,8 @@ public:
         value(cAttr.getNumProp(CabbageIDs::value)),
         textLabel(new Label()),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+		pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+		pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
     {
         setName(name);
 
@@ -689,9 +689,9 @@ public:
         }
         resizeCount++;
         this->setWantsKeyboardFocus(false);
-
+		
         if(rotate!=0)
-            setTransform(AffineTransform::rotation(rotate, getX()+pivotx, pivoty+getY()));
+            setTransform(AffineTransform::rotation(rotate, getX()+pivotx, pivoty+getY()));		
     }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageSlider);
@@ -720,8 +720,8 @@ public:
         oncolour(cAttr.getStringProp(CabbageIDs::oncolour)),
         isRect(cAttr.getStringProp(CabbageIDs::shape).equalsIgnoreCase("square")),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+		pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+		pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
     {
         setName(name);
         offX=offY=offWidth=offHeight=0;
@@ -901,8 +901,8 @@ public:
         colour(cAttr.getStringProp(CabbageIDs::colour)),
         fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+		pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+		pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
     {
         setName(name);
         offX=offY=offWidth=offHeight=0;
@@ -1045,8 +1045,8 @@ public:
         line(cAttr.getNumProp(CabbageIDs::outlinethickness)),
         transform(AffineTransform::identity),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+		pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+		pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
 
     {
         setName(name);
@@ -1077,7 +1077,7 @@ public:
     //update control
     void update(CabbageGUIClass m_cAttr)
     {
-        setBounds(m_cAttr.getBounds());
+		setBounds(m_cAttr.getBounds());
         colour = m_cAttr.getStringProp(CabbageIDs::colour);
         outline = m_cAttr.getStringProp(CabbageIDs::outlinecolour);
         shape = m_cAttr.getStringProp(CabbageIDs::shape);
@@ -1094,9 +1094,9 @@ public:
         if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
         {
             rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
-            transform = AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty));
+			transform = AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty));
             setTransform(transform);
-        }
+		}
 
 
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
@@ -1179,14 +1179,14 @@ public:
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         text(cAttr.getStringProp(CabbageIDs::text)),
         colour(cAttr.getStringProp(CabbageIDs::colour)),
-        left(cAttr.getNumProp(CabbageIDs::left)),
-        top(cAttr.getNumProp(CabbageIDs::top)),
+		left(cAttr.getNumProp(CabbageIDs::left)),
+		top(cAttr.getNumProp(CabbageIDs::top)),
         fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
         GroupComponent(cAttr.getStringProp(CabbageIDs::name)),
         line(cAttr.getNumProp(CabbageIDs::linethickness)),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+		pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+		pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
     {
         toBack();
         offX=offY=offWidth=offHeight=0;
@@ -1209,8 +1209,8 @@ public:
         this->toFront(true);
 
         if(rotate!=0)
-            setTransform(AffineTransform::rotation(rotate, left+pivotx, pivoty+top));
-
+            setTransform(AffineTransform::rotation(rotate, left+pivotx, pivoty+top));		
+		
     }
     //---------------------------------------------
     ~CabbageGroupbox()
@@ -1364,7 +1364,7 @@ class CabbageGenTable	:	public Component,
     float zoom, rotate;
     float startpos, endpos;
     double sampleRate;
-    int pivotx, pivoty;
+	int pivotx, pivoty;
     double scrubberPos;
     Array<float> ampRanges;
 //---- constructor -----
@@ -1375,8 +1375,8 @@ public:
         zoom(cAttr.getNumProp(CabbageIDs::zoom)),
         scrubberPos(cAttr.getNumProp(CabbageIDs::scrubberposition)),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+		pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+		pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
         startpos(-1),
         endpos(-1)
     {
@@ -1500,7 +1500,7 @@ class CabbageSoundfiler	:	public Component,
     String fontcolour;
     String file;
     float zoom, rotate;
-    int pivotx, pivoty;
+	int pivotx, pivoty;
     double sampleRate;
     float scrubberPos;
 //---- constructor -----
@@ -1511,8 +1511,8 @@ public:
         zoom(cAttr.getNumProp(CabbageIDs::zoom)),
         scrubberPos(cAttr.getNumProp(CabbageIDs::scrubberposition)),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+		pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+		pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
     {
         setName(cAttr.getStringProp(CabbageIDs::name));
         soundFiler = new Soundfiler(44100, Colour::fromString(colour), Colour::fromString(fontcolour));
@@ -1521,7 +1521,7 @@ public:
         sampleRate = 44100;
         soundFiler->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
-
+		
         //if no channels are set remove the selectable range feature
 
         if(cAttr.getNumProp(CabbageIDs::scrubberposition)<0)
@@ -1617,7 +1617,7 @@ private:
 class CabbageLabel	:	public Component
 {
     float rotate;
-    int pivotx, pivoty;
+	int pivotx, pivoty;
 public:
     CabbageLabel (CabbageGUIClass &cAttr)
         : text(cAttr.getStringProp(CabbageIDs::text)),
@@ -1626,8 +1626,8 @@ public:
           align(cAttr.getStringProp(CabbageIDs::align)),
           textAlign(Justification::centred),
           rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-          pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-          pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+		  pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+		pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
     {
         if(!cAttr.getNumProp(CabbageIDs::visible))
         {
@@ -1767,7 +1767,7 @@ public:
                         int minX, int maxX, int minY, int maxY, int index, int dec,
                         String colour,
                         String fontcolour,
-                        String textcolour,
+						String textcolour,
                         float xValue,
                         float yValue)
     {
@@ -1863,8 +1863,8 @@ public:
         editor(new TextEditor(String("editor_"))),
         groupbox(new GroupComponent(String("groupbox_"))),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+		pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+		pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
         lookAndFeel(new LookAndFeel_V1()),
         fontcolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
         colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::colour))),
@@ -1999,8 +1999,8 @@ public:
         type(cAttr.getStringProp(CabbageIDs::type)),
         editor(new TextEditor(String("editor_"))),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+		pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+		pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
         groupbox(new GroupComponent(String("groupbox_"))),
         lookAndFeel(new LookAndFeel_V1()),
         fontcolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
@@ -2354,7 +2354,7 @@ public:
         }
 
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
-        repaint();
+		repaint();
     }
 
 
@@ -2388,8 +2388,8 @@ public:
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         name(cAttr.getStringProp(CabbageIDs::name)),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+		pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+		pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
 
     {
         setName(name);
@@ -2400,7 +2400,7 @@ public:
         slider->toFront(true);
         label = new Label();
         label->setText(text, dontSendNotification);
-        label->setJustificationType(Justification::centred);
+		label->setJustificationType(Justification::centred);
         label->setColour(Label::textColourId, textcolour);
 
         addAndMakeVisible(label);

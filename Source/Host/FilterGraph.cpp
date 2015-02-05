@@ -41,12 +41,6 @@ FilterGraph::FilterGraph (AudioPluginFormatManager& formatManager_)
                          "Save a filter graph"),
     formatManager (formatManager_), lastUID (0)
 {
-//    InternalPluginFormat internalFormat;
-//
-//    addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioInputFilter),  0.5f,  0.1f);
-//    addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::midiInputFilter),   0.25f, 0.1f);
-//    addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioOutputFilter), 0.5f,  0.9f);
-
     setChangedFlag (false);
 }
 
@@ -133,6 +127,9 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
             node->properties.set ("x", x);
             node->properties.set ("y", y);
 			lastNodeID = node->nodeId;
+			//create node listener with unique nodeID;
+			audioProcessorListeners.add(new NodeAudioProcessorListener(node->nodeId));
+			node->getProcessor()->addListener(audioProcessorListeners[audioProcessorListeners.size()-1]);
             changed();
         }
         else
@@ -456,6 +453,16 @@ void FilterGraph::restoreFromXml (const XmlElement& xml)
                        (uint32) e->getIntAttribute ("dstFilter"),
                        e->getIntAttribute ("dstChannel"));
     }
-
-    graph.removeIllegalConnections();
+	graph.removeIllegalConnections();
 }
+
+//==========================================================================
+// parameter callback for node, used to map midi messages to parameters
+//==========================================================================
+void NodeAudioProcessorListener::audioProcessorParameterChanged(AudioProcessor* processor, int parameterIndex, float newValue)
+{
+	cUtils::debug("NodeID", this->nodeId);
+	cUtils::debug("Processor", processor->getName());
+	cUtils::debug("Parameter", processor->getParameterName(parameterIndex));
+}
+

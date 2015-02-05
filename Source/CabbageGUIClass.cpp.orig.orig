@@ -934,7 +934,7 @@ void CabbageGUIClass::parse(String inStr, String identifier)
         str = str.substring(0, str.indexOf(0, ";"));
 
     StringArray identArray;
-
+    
     String parameters;
     //if identifier string is not empty, use that, otherwise
     //search through identArray list of known identifiers
@@ -952,9 +952,9 @@ void CabbageGUIClass::parse(String inStr, String identifier)
         IdentArray idententifiers;
         identArray = idententifiers;
     }
+    
 
-
-
+    
     //else
     //    identArray = *IdentArray::getInstance(); // creates the singleton if there isn't already one.
 
@@ -1362,22 +1362,22 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                     tempArray.add(strTokens[1].trim());
                     if(strTokens.size()>2)
                     {
-                        if(strTokens[2].contains(":") && strTokens.size()>0)
-                        {
-                            //split string into two
-                            StringArray values;
-                            values.addTokens(strTokens[2], ":", "");
-                            if(values.size()==2)
-                            {
-                                cabbageIdentifiers.set(CabbageIDs::minvalue, values[0].trim().getFloatValue());
-                                cabbageIdentifiers.set(CabbageIDs::maxvalue, values[1].trim().getFloatValue());
-                            }
-                        }
-                        else
-                        {
-                            cabbageIdentifiers.set(CabbageIDs::value, strTokens[2].trim().getDoubleValue());
-                            tempArray.add(strTokens[2].trim());
-                        }
+						if(strTokens[2].contains(":") && strTokens.size()>0)
+						{
+							//split string into two
+							StringArray values;
+							values.addTokens(strTokens[2], ":", "");
+							if(values.size()==2)
+							{
+								 cabbageIdentifiers.set(CabbageIDs::minvalue, values[0].trim().getFloatValue());
+								 cabbageIdentifiers.set(CabbageIDs::maxvalue, values[1].trim().getFloatValue());
+							}
+						}
+						else
+						{
+							cabbageIdentifiers.set(CabbageIDs::value, strTokens[2].trim().getDoubleValue());
+							tempArray.add(strTokens[2].trim());
+						}
                     }
 
 
@@ -1460,17 +1460,17 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                     cabbageIdentifiers.set(CabbageIDs::pivoty, strTokens[2].trim().getFloatValue());
                 }
             }
-
+			
             else if(identArray[indx].equalsIgnoreCase("pivoty"))
             {
                 cabbageIdentifiers.set(CabbageIDs::pivoty, strTokens[0].trim().getFloatValue());
             }
-
+			
             else if(identArray[indx].equalsIgnoreCase("pivotx"))
             {
                 cabbageIdentifiers.set(CabbageIDs::pivotx, strTokens[0].trim().getFloatValue());
             }
-
+			
             else if(identArray[indx].equalsIgnoreCase("midictrl"))
             {
                 if(strTokens.size()<2)
@@ -2051,9 +2051,9 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
     {
         String identifier = props.getName(i).toString();
         propsArray = props.getValueAt(i);
+		
 
-
-
+		
         if((props.getValueAt(i).toString()!=""))
         {
             //first check to make sure no default values used

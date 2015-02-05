@@ -47,7 +47,7 @@ public:
         addAndMakeVisible (slider);
 		setPreferredHeight(20);
         owner.addListener (this);
-		slider.setLookAndFeel(lookAndFeelBasic);
+		//slider.setLookAndFeel(lookAndFeelBasic);
 		slider.lookAndFeelChanged();
     }
 
@@ -163,8 +163,8 @@ private:
 class CabbageGenericAudioProcessorEditor      : public AudioProcessorEditor
 {
 public:
-	CabbageGenericAudioProcessorEditor(AudioProcessor* const p)
-    : AudioProcessorEditor (p)
+	CabbageGenericAudioProcessorEditor(AudioProcessor* const p, bool midiLearn)
+    : AudioProcessorEditor (p), midiLearnMode(midiLearn)
 	{
 		jassert (p != nullptr);
 		setOpaque (true);
@@ -207,6 +207,7 @@ public:
 
 private:
 	PropertyPanel panel;
+	bool midiLearnMode;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGenericAudioProcessorEditor)
 };
 

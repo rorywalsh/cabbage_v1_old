@@ -27,6 +27,7 @@
 
 class FilterInGraph;
 class FilterGraph;
+class NodeAudioProcessorListener;
 
 #include "../Source/Plugin/CabbagePluginProcessor.h"
 
@@ -82,7 +83,6 @@ public:
 
     void clear();
 
-
     //==============================================================================
 
     XmlElement* createXml() const;
@@ -103,6 +103,7 @@ private:
     //==============================================================================
     AudioPluginFormatManager& formatManager;
     AudioProcessorGraph graph;
+	OwnedArray<NodeAudioProcessorListener> audioProcessorListeners;
 
     uint32 lastUID;
     uint32 getNextUID() noexcept;
@@ -113,6 +114,24 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FilterGraph)
 };
+
+//==============================================================================
+// set one of these up for each node, this way we can tell which instance of a
+// plugin is triggering the callback
+//==============================================================================
+class NodeAudioProcessorListener : public AudioProcessorListener,
+										public ChangeBroadcaster
+{
+
+public:
+	NodeAudioProcessorListener(int _nodeID):nodeId(_nodeID){}
+    void audioProcessorChanged (AudioProcessor* processor){	   this->removeAllChangeListeners();	}
+    void audioProcessorParameterChanged(AudioProcessor* processor, int parameterIndex, float newValue);
+
+	int nodeId;
+	int parameterIndex;
+};
+
 
 
 #endif   // __FILTERGRAPH_JUCEHEADER__

@@ -74,7 +74,7 @@ public:
     void drawBubble (Graphics&, BubbleComponent&, const Point<float>& tip, const Rectangle<float>& body) override;
     Font getSliderPopupFont (Slider&) override;
     int getSliderPopupPlacement (Slider&) override;
-
+    
     void positionComboBoxText (ComboBox& box, Label& label);
     void drawToggleButton (Graphics &g, ToggleButton &button, bool isMouseOverButton, bool isButtonDown);
     void drawTextEditorOutline (Graphics &g, int width, int height, TextEditor &textEditor);
@@ -206,38 +206,38 @@ public:
 
     void drawLabel(Graphics&, Label&);
     void drawLinearSliderBackground (Graphics &g, int x, int y, int width, int height,
-                                     float sliderPos,
-                                     float minSliderPos,
-                                     float maxSliderPos,
-                                     const Slider::SliderStyle style,
-                                     Slider &slider);
+            float sliderPos,
+            float minSliderPos,
+            float maxSliderPos,
+            const Slider::SliderStyle style,
+            Slider &slider);
     void drawLinearSliderThumb (Graphics &g, int x, int y, int width, int height, float sliderPos,
-                                float minSliderPos,
-                                float maxSliderPos,
-                                const Slider::SliderStyle style,
-                                Slider &slider);
+                                        float minSliderPos,
+                                        float maxSliderPos,
+                                        const Slider::SliderStyle style,
+                                        Slider &slider);
     void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown);
 
-    void drawScrollbar (Graphics& g,
-                        ScrollBar& scrollbar,
-                        int x, int y,
-                        int width, int height,
-                        bool isScrollbarVertical,
-                        int thumbStartPosition,
-                        int thumbSize,
-                        bool /*isMouseOver*/,
-                        bool /*isMouseDown*/);
-
+	void drawScrollbar (Graphics& g,
+                                 ScrollBar& scrollbar,
+                                 int x, int y,
+                                 int width, int height,
+                                 bool isScrollbarVertical,
+                                 int thumbStartPosition,
+                                 int thumbSize,
+                                 bool /*isMouseOver*/,
+                                 bool /*isMouseDown*/);
+								 
     bool areScrollbarButtonsVisible();
-    void drawScrollbarButton (Graphics& g, ScrollBar& scrollbar,
-                              int width, int height, int buttonDirection,
-                              bool /*isScrollbarVertical*/,
-                              bool /*isMouseOverButton*/,
-                              bool isButtonDown);
-    ImageEffectFilter* getScrollbarEffect();
-    int getMinimumScrollbarThumbSize (ScrollBar& scrollbar);
-    int getDefaultScrollbarWidth();
-    int getScrollbarButtonSize (ScrollBar& scrollbar);
+	void drawScrollbarButton (Graphics& g, ScrollBar& scrollbar,
+                                          int width, int height, int buttonDirection,
+                                          bool /*isScrollbarVertical*/,
+                                          bool /*isMouseOverButton*/,
+                                          bool isButtonDown);
+	ImageEffectFilter* getScrollbarEffect();
+	int getMinimumScrollbarThumbSize (ScrollBar& scrollbar);
+	int getDefaultScrollbarWidth();
+	int getScrollbarButtonSize (ScrollBar& scrollbar);
 
 
     void drawDocumentWindowTitleBar (DocumentWindow &window, Graphics &g, int w, int h,
@@ -267,13 +267,13 @@ public:
                             Image */*image*/,
                             const Colour */*const textColour*/);
 
-    Button* createDocumentWindowButton (int buttonType);
-    Image drawWindowButtonNormal(int buttonType);
-    Image drawWindowButtonIsOver(int buttonType);
-    void drawStretchableLayoutResizerBar (Graphics& g, int w, int h,
-                                          bool /*isVerticalBar*/,
-                                          bool isMouseOver,
-                                          bool isMouseDragging);
+	Button* createDocumentWindowButton (int buttonType);
+	Image drawWindowButtonNormal(int buttonType);
+	Image drawWindowButtonIsOver(int buttonType);
+	void drawStretchableLayoutResizerBar (Graphics& g, int w, int h,
+                                                      bool /*isVerticalBar*/,
+                                                      bool isMouseOver,
+                                                      bool isMouseDragging);
 
     juce_UseDebuggingNewOperator
 

@@ -436,7 +436,7 @@ XYPad::XYPad(XYPadAutomation* xyPadAutomationPtr, String title, int minXValue, i
              int numberOfDecimalPlaces,
              Colour ballCol,
              Colour fontCol,
-             Colour textCol,
+			 Colour textCol,
              float initXVal,
              float initYVal)
     :
@@ -476,7 +476,7 @@ XYPad::XYPad(XYPadAutomation* xyPadAutomationPtr, String title, int minXValue, i
     ballColour = ballCol;
 
     fontColour = textCol;
-    textColour = fontCol;
+	textColour = fontCol;
     if (fontColour != cUtils::getComponentFontColour())
         toggleColour = fontColour;
     else

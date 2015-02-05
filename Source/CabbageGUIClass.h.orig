@@ -41,8 +41,8 @@ public:
     IdentArray() : StringArray("tablecolour")
     {
         add("tablecolour");
-		add("tablegridcolour");
-		add("alpha");
+        add("tablegridcolour");
+        add("alpha");
         add("bounds");
         add("fontcolour");
         add("fontcolour:1");
@@ -54,12 +54,9 @@ public:
         add("radiogroup");
         add("max");
         add("value");
-        add("tabpage");
         add("guirefresh");
-        add("midictrl");
-        add("stack");
         add("outlinethickness");
-		add("linethickness");
+        add("linethickness");
         add("trackerthickness");
         add("populate");
         add("range");
@@ -71,42 +68,27 @@ public:
         add("channels");
         add("channel");
         add("widgetarray");
-        add("identchannelarray");
-        add("name");
         add("textbox");
         add("caption");
         add("kind");
-        add("config");
         add("align");
-        add("beveltype");
         add("wrap");
-		add("tablebackgroundcolour");
+        add("tablebackgroundcolour");
         add("mode");
         add("tablenumber");
-        add("tablenum");
         add("tablenumbers");
-        add("tablenums");
         add("fill");
         add("logger");
         add("file");
         add("svgpath");
         add("outlinecolour");
-        add("master");
         add("shape");
-		add("rotate");
+        add("rotate");
         add("textcolour");
-        add("scale");
-        add("key(");
         add("pluginid");
         add("trackercolour");
-        add("preset");
         add("popup");
-        add("include");
         add("show");
-        add("author");
-        add("drawmode");
-        add("resizemode");
-        add("readonly");
         add("latched");
         add("identchannel");
         add("visible");
@@ -115,20 +97,18 @@ public:
         add("zoom");
         add("samplerange");
         add("scrollbars");
-        add("socket");
 
         add("colour");
         add("colour:0");
         add("colour:1");
         add("text");
     }
+
     ~IdentArray()
     {
-// this ensures that no dangling pointers are left when the
-// singleton is deleted.
-        clearSingletonInstance();
+
     }
-    juce_DeclareSingleton (IdentArray, false)
+
 };
 
 namespace CabbageIDs
@@ -298,12 +278,13 @@ class CabbageGUIClass : public cUtils
     Array<int> vuConfig;
     Array<int> tableNumbers;
     Array<float> tableChannelValues;
-	IdentArray identArray;
-	String warningMessages;
+    String warningMessages;
 
     //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGUIClass);
 public:
-    String getWarningMessages(){	return warningMessages;	};
+    String getWarningMessages() {
+        return warningMessages;
+    };
     NamedValueSet cabbageIdentifiers;
     CabbageGUIClass(String str, int ID);
     CabbageGUIClass() {};

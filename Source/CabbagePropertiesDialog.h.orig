@@ -117,12 +117,12 @@ public:
                     attributeNames[i].equalsIgnoreCase("popup") ||
                     attributeNames[i].equalsIgnoreCase("comborange") ||
                     attributeNames[i].equalsIgnoreCase("basetype") ||
-					attributeNames[i].equalsIgnoreCase("rangey") ||
-					attributeNames[i].equalsIgnoreCase("rangex") ||
-					attributeNames[i].equalsIgnoreCase("xyautoindex") ||
+                    attributeNames[i].equalsIgnoreCase("rangey") ||
+                    attributeNames[i].equalsIgnoreCase("rangex") ||
+                    attributeNames[i].equalsIgnoreCase("xyautoindex") ||
                     attributeNames[i].equalsIgnoreCase("decimalplaces"))
             {
-				//hide these identifiers from the properties component
+                //hide these identifiers from the properties component
                 comps[i]->setPreferredHeight(0);
                 hiddenComponents++;
             }
@@ -474,14 +474,14 @@ class FileBrowserField : public Component,
     public ActionBroadcaster,
     public ActionListener
 {
-WildcardFileFilter wildcardFilter;
-ScopedPointer<CabbageLookAndFeel> lookAndFeel;
+    WildcardFileFilter wildcardFilter;
+    ScopedPointer<CabbageLookAndFeel> lookAndFeel;
 
 public :
 
-    FileBrowserField(String name, String string):name(name), Component("FileBrowserField"), 
-												wildcardFilter("*", "*", "File filter"),
-												lookAndFeel(new CabbageLookAndFeel())
+    FileBrowserField(String name, String string):name(name), Component("FileBrowserField"),
+        wildcardFilter("*", "*", "File filter"),
+        lookAndFeel(new CabbageLookAndFeel())
     {
         addAndMakeVisible(textField = new TextField(name));
         textField->addActionListener(this);
@@ -501,17 +501,18 @@ public :
 #if !defined(AndroidBuild)
 
         //FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.*"), UseNativeDialogue);
-		
-        if(!e.mods.isCtrlDown())
-		{
-		//wildcardFilter = WildcardFileFilter("*", directory.getFullPathName(), "File fitler");
 
-		Array<File> selectedFiles = cUtils::launchFileBrowser("Select a file", 
-																	wildcardFilter, 
-																	1, 
-																	File(""), 
-																	false, 
-																	lookAndFeel);
+        if(!e.mods.isCtrlDown())
+        {
+            //wildcardFilter = WildcardFileFilter("*", directory.getFullPathName(), "File fitler");
+
+            Array<File> selectedFiles = cUtils::launchFileBrowser("Select a file",
+                                        wildcardFilter,
+                                        "",
+                                        1,
+                                        File(""),
+                                        false,
+                                        lookAndFeel);
             if(selectedFiles.size()>0)
             {
                 value.resize(0);
@@ -522,8 +523,8 @@ public :
                 textField->setText(value[0]);
                 this->getTopLevelComponent()->grabKeyboardFocus();
             }
-			
-		}
+
+        }
 #endif
     }
 

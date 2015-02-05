@@ -193,12 +193,12 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         }
         if(partOfSelection==false)
         {
-            if(getLayoutEditor())
-            {
-                getLayoutEditor()->selectedFilters.deselectAll();
-                getLayoutEditor()->resetAllBorders();
-                numSelected = 0;
-            }
+			if(getLayoutEditor())
+			{
+				getLayoutEditor()->selectedFilters.deselectAll();
+				getLayoutEditor()->resetAllBorders();
+				numSelected = 0;				
+			}
         }
     }
 
@@ -230,10 +230,10 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         {
             //add original position of selected filters to vector
             //Logger::writeToLog("ChildAlias MouseDown MultiSel:\n"+cUtils::getBoundsString(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds()));
-            if(getLayoutEditor()->getLassoSelection().getSelectedItem(i))
-                getLayoutEditor()->selectedCompsOrigCoordinates.add(
-                    getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds());
-            getLayoutEditor()->selectedLineNumbers.add(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
+           if(getLayoutEditor()->getLassoSelection().getSelectedItem(i))
+			getLayoutEditor()->selectedCompsOrigCoordinates.add(
+									getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds());
+									getLayoutEditor()->selectedLineNumbers.add(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
         }
     }
 
@@ -480,7 +480,7 @@ void ChildAlias::mouseDrag (const MouseEvent& e)
                         selectedCompsPosY = selectedCompsPosY/gridSize*gridSize;
                         selectedCompsPosX = selectedCompsPosX+dragX;
                         selectedCompsPosX = selectedCompsPosX/gridSize*gridSize;
-                        //needs fixing for multiple objects. For now leaving it disabled...
+						//needs fixing for multiple objects. For now leaving it disabled...
                         //restrictBounds(selectedCompsPosX, selectedCompsPosY);
                         c->setTopLeftPosition(selectedCompsPosX, selectedCompsPosY);
                         c->applyToTarget("");
@@ -520,7 +520,7 @@ void ChildAlias::mouseDrag (const MouseEvent& e)
 
 void ChildAlias::restrictBounds(int &x, int &y)
 {
-    //this is kak when dealing with multiple objects....
+	//this is kak when dealing with multiple objects....
     if(x>getParentComponent()->getWidth()-this->getWidth())
         x = getParentComponent()->getWidth()-this->getWidth();
     if(x<0)

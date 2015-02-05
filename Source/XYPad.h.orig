@@ -289,7 +289,7 @@ public:
           int numberOfDecimalPlaces,
           Colour ballCol,
           Colour fontCol,
-          Colour textCol,
+		  Colour textCol,
           float initXVal,
           float initYVal);
     ~XYPad();

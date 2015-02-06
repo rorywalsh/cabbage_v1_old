@@ -25,9 +25,11 @@
 #include "../Editor/CodeWindow.h"
 #include "../CabbageLookAndFeel.h"
 #include "FilterComponent.h"
+#include "NativeParametersPanel.h"
 
 
 class GraphAudioProcessorPlayer;
+
 
 
 #define INTERNAL 1
@@ -220,7 +222,18 @@ public:
     //==============================================================================
     FilterGraph graph;
 	void handleIncomingMidiMessage (MidiInput*, const MidiMessage&) override;
-	void showNativeParameters();
+	void showNativePluginParameterPanel(bool show);
+	
+	bool isNativeParameterPanelShowing()
+	{
+		return pluginParametersPanel->isVisible();
+	}
+	
+	void updateNativeParametersPanel()
+	{
+		pluginParametersPanel->update();
+	}
+	
     //==============================================================================
     void resized();
 
@@ -232,7 +245,7 @@ private:
     MidiKeyboardState keyState;
 	InternalMixerStrip* inputStrip;
 	InternalMixerStrip* outputStrip; 
-
+	NativeParametersPanel* pluginParametersPanel;
     GraphEditorPanel* graphPanel;
     Component* keyboardComp;
     Component* statusBar;

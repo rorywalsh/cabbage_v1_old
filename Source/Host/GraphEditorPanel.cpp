@@ -39,10 +39,7 @@ PluginWindow::PluginWindow (Component* const pluginEditor,
     type (t),
 	basicLookAndFeel(new CabbageLookAndFeelBasic())
 {
-    setSize (400, 300);
-	
-	
-	
+    setSize (400, 300);	
 	this->setTitleBarHeight(18);
 	setLookAndFeel(basicLookAndFeel);
     setContentOwned (pluginEditor, true);
@@ -339,6 +336,7 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 				else 
 				{ 
 					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
+					findParentComponentOfClass<GraphDocumentComponent>()->updateNativeParametersPanel();
 					return;
 				}
 			}
@@ -966,6 +964,9 @@ GraphDocumentComponent::GraphDocumentComponent (AudioPluginFormatManager& format
 {
     addAndMakeVisible (graphPanel = new GraphEditorPanel (graph));
 
+	addAndMakeVisible(pluginParametersPanel = new NativeParametersPanel(&graph));
+
+
     deviceManager->addChangeListener (graphPanel);
 
     graphPlayer.setProcessor (&graph.getGraph());
@@ -1025,6 +1026,8 @@ void GraphDocumentComponent::resized()
     keyboardComp->setBounds (200, getHeight() - keysHeight, getWidth()-200, keysHeight);
 	inputStrip->setBounds(0, getHeight() - keysHeight, 200, keysHeight/2);
 	outputStrip->setBounds(0, getHeight() - keysHeight + keysHeight/2.f, 200, keysHeight/2);
+	pluginParametersPanel->setLookAndFeel(&getLookAndFeel());
+	pluginParametersPanel->setBounds(0, 0, 250, getHeight()-60);	
 }
 
 void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int x, int y, bool isNative, String filename)
@@ -1032,12 +1035,12 @@ void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int
     graphPanel->createNewPlugin (desc, x, y, isNative, filename);
 }
 
-void GraphDocumentComponent::showNativeParameters()
+void GraphDocumentComponent::showNativePluginParameterPanel(bool show)
 {
-	NativeParametersPanel* panel = new NativeParametersPanel(&graph);
-	addAndMakeVisible(panel);
-	panel->setLookAndFeel(&getLookAndFeel());
-	panel->setBounds(0, 0, 250, getHeight()-60);
+	if(show)
+		pluginParametersPanel->setVisible(true);
+	else
+		pluginParametersPanel->setVisible(false);
 }
 
 void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const MidiMessage &message)

@@ -489,7 +489,8 @@ bool MainHostWindow::perform (const InvocationInfo& info)
 		break;
 		
     case CommandIDs::aboutBox:
-        graphEditor->showNativeParameters();
+		graphEditor->updateNativeParametersPanel();
+        graphEditor->showNativePluginParameterPanel(!graphEditor->isNativeParameterPanelShowing());
         break;
 		
 	case CommandIDs::preferences:

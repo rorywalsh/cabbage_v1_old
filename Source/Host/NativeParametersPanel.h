@@ -30,14 +30,16 @@ class NativeParametersPanel   : public Component,
 {
 public:
     NativeParametersPanel(FilterGraph* graph);
+	
 
     void paint (Graphics& g) override;
     void resized() override;
     void timerCallback() override;
+	void update();
 	
 private:
     ConcertinaPanel concertinaPanel;
-	ScopedPointer<FilterGraph> filterGraph;
+	FilterGraph* filterGraph;
 
     void addPanel (PropertyPanel* panel);
 	

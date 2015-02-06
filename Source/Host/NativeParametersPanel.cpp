@@ -60,6 +60,42 @@ NativeParametersPanel::NativeParametersPanel(FilterGraph* graph) : filterGraph(g
 	startTimer (300);
 }
 
+void NativeParametersPanel::update()
+{
+	
+	for(int i=0;i<concertinaPanel.getNumPanels();i++)
+		concertinaPanel.removePanel(concertinaPanel.getPanel(i));
+	
+	PropertyPanel* panel = new PropertyPanel ("Plugins");
+
+	Array <PropertyComponent*> params;
+
+	for(int i=0;i<filterGraph->getNumFilters();i++)
+	{	
+		PluginWrapper* plugin = dynamic_cast<PluginWrapper*>(filterGraph->getNode(i)->getProcessor());
+		
+		if(plugin)
+		{
+			int numParams = plugin->getNumParameters();
+			params.clear();
+			for (int i = 0; i < numParams; ++i)
+			{
+				String name (plugin->getParameterName (i));
+				if (name.trim().isEmpty())
+					name = "Unnamed";
+
+				PluginProcessorParameterPropertyComp* const pc = new PluginProcessorParameterPropertyComp (name, *plugin, i);
+				params.add (pc);
+			}
+			panel->addSection (filterGraph->getNode(i)->getProcessor()->getName(), params, true);
+		}
+	}
+	//panel->addSection ("Section 1", createSliders (4), true);
+	//panel->addSection ("Section 2", createSliders (3), true);
+	addPanel (panel);
+}
+
+
 void NativeParametersPanel::paint (Graphics& g)
 {
 	g.fillAll (Colour::greyLevel (0.2f));

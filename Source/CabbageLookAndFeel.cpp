@@ -1911,16 +1911,17 @@ void CabbageLookAndFeelBasic::drawLinearSliderBackground (Graphics &g, int /*x*/
     float sliderPosProportional;
     if (slider.isMouseButtonDown())
     {
-        Point<int> mousePos = slider.getMouseXYRelative();
+        Point<float> mousePos = slider.getMouseXYRelative().toFloat();
         slider.setEnabled(true);
-        if ((mousePos.getX() >= 0) && (mousePos.getX() <= availableWidth))
+        if ((mousePos.getX() >= 0) && (mousePos.getX() < availableWidth))
         {
-            sliderPosProportional = mousePos.getX() / availableWidth;
+            sliderPosProportional = mousePos.getX() / (availableWidth-1.f);
 
             slider.setValue(slider.proportionOfLengthToValue(sliderPosProportional)); //takes into account the skew factor
         }
     }
     slider.setEnabled (false); // disabling slider
+	cUtils::debug("Slider value", slider.getValue());
     sliderPosProportional = slider.valueToProportionOfLength(slider.getValue()); // Final slider position in proportion to length...
 
     //For the fill
@@ -1936,6 +1937,87 @@ void CabbageLookAndFeelBasic::drawLinearSliderBackground (Graphics &g, int /*x*/
     g.setColour(Colours::black);
     g.drawRoundedRectangle(0.5f, slider.getHeight()*0.3 + 0.5f, sliderPos - 1.0f, slider.getHeight()*0.4 - 1.0f, slider.getHeight() / 20.0f, 1.0f);
 }
+
+//========= linear slider ================================================================================
+void CabbageLookAndFeelBasic::drawLinearSlider (Graphics& g, int x, int y, int width, int height,
+        float sliderPos, float minSliderPos, float maxSliderPos,
+        const Slider::SliderStyle style, Slider& slider)
+{
+    // g.fillAll (slider.findColour (Slider::backgroundColourId));
+
+    if (style == Slider::LinearBar || style == Slider::LinearBarVertical)
+    {
+        g.setColour(slider.findColour (Slider::thumbColourId));
+        g.fillRoundedRectangle(x, y, width, height, 3);
+    }
+    else
+    {
+        drawLinearSliderBackground (g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
+        drawLinearSliderThumb (g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
+    }
+}
+
+//=========== Linear Thumb =================================================================================
+void CabbageLookAndFeelBasic::drawLinearSliderThumb (Graphics &g, int x, int y, int width, int height,
+        float sliderPos,
+        float /*minSliderPos*/,
+        float /*maxSliderPos*/,
+        const Slider::SliderStyle style,
+        Slider &slider)
+{
+    const float sliderRadius = (float) (getSliderThumbRadius (slider) - 2);
+    float sliderWidth, sliderHeight;
+
+
+    Colour knobColour (LookAndFeelHelpers::createBaseColour (slider.findColour (Slider::thumbColourId),
+                       slider.hasKeyboardFocus (false) && slider.isEnabled(),
+                       slider.isMouseOverOrDragging() && slider.isEnabled(),
+                       slider.isMouseButtonDown() && slider.isEnabled()));
+
+    const float outlineThickness = slider.isEnabled() ? 0.8f : 0.3f;
+
+    if (style == Slider::LinearHorizontal || style == Slider::LinearVertical)
+    {
+        float kx, ky;
+
+        if (style == Slider::LinearVertical)
+        {
+            kx = x + width * 0.5f;
+            ky = sliderPos;
+            sliderWidth = sliderRadius * 2.0f;
+            sliderHeight = sliderRadius * 1.5f;
+
+        }
+        else
+        {
+            kx = sliderPos;
+            ky = y + height * 0.5f;
+            sliderWidth = sliderRadius * 1.5f;
+            sliderHeight = sliderRadius * 2.0f;
+        }
+
+
+		ColourGradient thumbColour = ColourGradient(slider.isMouseOver() ? Colours::cornflowerblue.brighter() : Colours::cornflowerblue.withAlpha(.5f), kx - sliderRadius, ky - sliderRadius,
+		Colours::cornflowerblue, kx+sliderRadius, sliderRadius, false);
+		g.setGradientFill(thumbColour);
+
+		g.setGradientFill(thumbColour);
+		g.fillRoundedRectangle(kx - sliderRadius*1.5f, ky - sliderRadius, sliderRadius*1.8f, sliderRadius*1.8f, sliderRadius / 20.0f);
+
+		//thumb border
+		//g.setColour(Colours::black);
+		//g.drawRoundedRectangle(destX + 0.5f, destY + 0.5f, thumbWidth - 1.0f, thumbWidth - 1.0f, slider.getHeight() / 20.0f, 1.0f);
+
+//        cUtils::drawSphericalThumb(g,
+//                                    kx - sliderRadius,
+//                                    ky - sliderRadius,
+//                                    sliderWidth,
+//                                    sliderHeight,
+//                                    knobColour, outlineThickness);
+    }
+
+}
+
 //=================================================================================
 void CabbageLookAndFeelBasic::drawStretchableLayoutResizerBar (Graphics& g, int w, int h,
         bool /*isVerticalBar*/,
@@ -1959,36 +2041,6 @@ void CabbageLookAndFeelBasic::drawStretchableLayoutResizerBar (Graphics& g, int 
                                        true));
 
     g.fillEllipse (cx - cr, cy - cr, cr * 2.0f, cr * 2.0f);
-}
-//=========== Linear Thumb =================================================================================
-void CabbageLookAndFeelBasic::drawLinearSliderThumb (Graphics &g, int /*x*/, int /*y*/, int /*width*/, int /*height*/,
-        float sliderPos,
-        float /*minSliderPos*/,
-        float /*maxSliderPos*/,
-        const Slider::SliderStyle /*style*/,
-        Slider &slider)
-{
-    //h sliders
-    float thumbWidth = slider.getHeight() * 0.7f;
-    float div = (slider.getValue()-slider.getMinimum()) / (slider.getMaximum()-slider.getMinimum());
-    float availableWidth = slider.getWidth() * 0.65f;
-    sliderPos = div * availableWidth;
-    float sliderPosProportional = sliderPos / availableWidth;
-
-    float destX = (sliderPos - (sliderPosProportional * thumbWidth));
-    float destY = ((slider.getHeight() / 2) - (thumbWidth / 2));
-
-    //thumb fill
-    ColourGradient thumbColour = ColourGradient(slider.isMouseOver() ? Colours::cornflowerblue.brighter() : Colours::cornflowerblue.withAlpha(.5f), destX, destY,
-                                 Colours::cornflowerblue, destX+thumbWidth, thumbWidth, false);
-
-
-    g.setGradientFill(thumbColour);
-    g.fillRoundedRectangle(destX, destY, thumbWidth, thumbWidth, slider.getHeight() / 20.0f);
-
-    //thumb border
-    g.setColour(Colours::black);
-    g.drawRoundedRectangle(destX + 0.5f, destY + 0.5f, thumbWidth - 1.0f, thumbWidth - 1.0f, slider.getHeight() / 20.0f, 1.0f);
 }
 
 //=========================================================================================================

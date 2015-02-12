@@ -77,7 +77,7 @@ OBJECTS := \
   $(OBJDIR)/MixerStrip_4j7dh431b.o \
   $(OBJDIR)/MixerStrip_3sd4331b.o \
   $(OBJDIR)/SplitComponent_35ae1cd2.o \
-  $(OBJDIR)/NativeParametersPanel_62ns9s3s7.o \
+  $(OBJDIR)/SidebarPanel_1s9s3s7.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
   $(OBJDIR)/FilterComponent_62dsj37.o \
@@ -246,9 +246,9 @@ $(OBJDIR)/FilterGraph_62e9c017.o: ../../Source/Host/FilterGraph.cpp
 	@echo "Compiling FilterGraph.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/NativeParametersPanel_62ns9s3s7.o: ../../Source/Host/NativeParametersPanel.cpp
+$(OBJDIR)/SidebarPanel_1s9s3s7.o: ../../Source/Host/SidebarPanel.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling NativeParametersPanel.cpp"
+	@echo "Compiling SidebarPanel.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 	
 $(OBJDIR)/MixerStrip_4j7dh431b.o:../../Source/Host/MixerStrip.cpp

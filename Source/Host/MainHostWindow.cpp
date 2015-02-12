@@ -256,7 +256,10 @@ void MainHostWindow::menuItemSelected (int menuItemID, int /*topLevelMenuIndex*/
                                        ->getValue ("recentFilterGraphFiles"));
 
         if (graphEditor != nullptr && graphEditor->graph.saveIfNeededAndUserAgrees() == FileBasedDocument::savedOk)
+		{
             graphEditor->graph.loadFrom (recentFiles.getFile (menuItemID - 100), true);
+			graphEditor->addPluginsToSidebarPanel();
+		}
     }
     else if (menuItemID >= 200 && menuItemID < 210)
     {
@@ -458,8 +461,10 @@ bool MainHostWindow::perform (const InvocationInfo& info)
     {
     case CommandIDs::open:
         if (graphEditor != nullptr && graphEditor->graph.saveIfNeededAndUserAgrees() == FileBasedDocument::savedOk)
+		{
             graphEditor->graph.loadFromUserSpecifiedFile (true);
-
+			graphEditor->addPluginsToSidebarPanel();
+		}
         break;
 
     case CommandIDs::save:
@@ -489,8 +494,8 @@ bool MainHostWindow::perform (const InvocationInfo& info)
 		break;
 		
     case CommandIDs::aboutBox:
-		graphEditor->updateNativeParametersPanel();
-        graphEditor->showNativePluginParameterPanel(!graphEditor->isNativeParameterPanelShowing());
+		//graphEditor->updateNativeParametersPanel();
+        //graphEditor->showSidebarPanel(!graphEditor->isSidebarPanelShowing());
         break;
 		
 	case CommandIDs::preferences:

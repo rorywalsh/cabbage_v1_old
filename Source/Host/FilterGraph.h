@@ -101,6 +101,7 @@ public:
     Result saveDocument (const File& file);
     File getLastDocumentOpened();
     void setLastDocumentOpened (const File& file);
+	void createNodeFromXml (const XmlElement& xml);
 
     /** The special channel index used to refer to a filter's midi channel.
     */
@@ -118,7 +119,7 @@ private:
 	uint32 lastNodeID;
 	Array<String> pluginTypes;
 	uint32 nodeId;
-    void createNodeFromXml (const XmlElement& xml);
+    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FilterGraph)
 };

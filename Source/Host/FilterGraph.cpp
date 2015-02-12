@@ -86,7 +86,7 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 												graph.getSampleRate(),
 												graph.getBlockSize());
 				instance->setPluginName(desc->name);
-				cUtils::debug("num params", instance->getNumParameters());
+				//cUtils::debug("num params", instance->getNumParameters());
 				node = graph.addNode (instance);
 				node->properties.set("pluginType", "ThirdParty");
 				node->properties.set("pluginName", desc->name);
@@ -105,7 +105,7 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 		else if(desc->pluginFormatName=="Cabbage")
 		{
 			CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc->fileOrIdentifier, false, AUDIO_PLUGIN);
-			
+			int numChannels = cabbageNativePlugin->getNumberCsoundOutChannels();
 			//create GUI for selected plugin...
 			cabbageNativePlugin->createGUI(File(desc->fileOrIdentifier).loadFileAsString(), true);			
 			cabbageNativePlugin->setPlayConfigDetails(cabbageNativePlugin->getNumberCsoundOutChannels(), 
@@ -389,6 +389,7 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
 		xmlElem = desc.createXml();
 		String xmlText = xmlElem->createDocument("");
 		node->properties.set("pluginDesc", xmlText);
+		node->properties.set("pluginType", "Cabbage");
 	}	
 	
 
@@ -467,9 +468,8 @@ void FilterGraph::changeListenerCallback(ChangeBroadcaster* source)
 //==========================================================================
 void NodeAudioProcessorListener::audioProcessorParameterChanged(AudioProcessor* processor, int parameterIndex, float newValue)
 {
-	cUtils::debug("NodeID", this->nodeId);
-	cUtils::debug("Processor", processor->getName());
-	cUtils::debug("Parameter", processor->getParameterName(parameterIndex));
-	
+//	cUtils::debug("NodeID", this->nodeId);
+//	cUtils::debug("Processor", processor->getName());
+//	cUtils::debug("Parameter", processor->getParameterName(parameterIndex));
 }
 

@@ -1903,9 +1903,9 @@ void CabbageLookAndFeelBasic::drawLinearSliderBackground (Graphics &g, int /*x*/
     slider.setTextBoxStyle (Slider::TextBoxRight, true, slider.getWidth()*0.25, 15);
     float availableWidth = slider.getWidth() * 0.65f;
     g.setColour(Colour::fromRGB(20, 20, 20));
-    g.fillRoundedRectangle (0, slider.getHeight()*0.3, availableWidth, slider.getHeight()*0.4, slider.getHeight() / 20.0f);
-    g.setColour(Colour::fromRGB(10, 10, 10));
-    g.drawRoundedRectangle (0.25f, slider.getHeight()*0.3 + 0.25f, availableWidth - 0.5f, slider.getHeight()*0.4 - 0.5f, slider.getHeight() / 20.0f, 0.5f);
+    g.fillRoundedRectangle (slider.getWidth()*.03, slider.getHeight()*0.3, availableWidth-slider.getWidth()*.01, slider.getHeight()*0.4, slider.getHeight() / 20.0f);
+//    g.setColour(Colour::fromRGB(10, 10, 10));
+//    g.drawRoundedRectangle (slider.getWidth()*.1, slider.getHeight()*0.3 + 0.25f, availableWidth - slider.getWidth()*.1f, slider.getHeight()*0.4 - 0.5f, slider.getHeight() / 20.0f, 0.5f);
 
     // Slider is enabled and value changed only if mouse click is within the actual slider area...
     float sliderPosProportional;
@@ -1921,7 +1921,6 @@ void CabbageLookAndFeelBasic::drawLinearSliderBackground (Graphics &g, int /*x*/
         }
     }
     slider.setEnabled (false); // disabling slider
-	cUtils::debug("Slider value", slider.getValue());
     sliderPosProportional = slider.valueToProportionOfLength(slider.getValue()); // Final slider position in proportion to length...
 
     //For the fill
@@ -1931,11 +1930,11 @@ void CabbageLookAndFeelBasic::drawLinearSliderBackground (Graphics &g, int /*x*/
     if (slider.isMouseOver())
         fillColour = Colours::green.withMultipliedBrightness(2.0f);
     g.setColour(fillColour);
-    g.fillRoundedRectangle (0, slider.getHeight()*0.4, sliderPos, slider.getHeight()*0.2, slider.getHeight() / 20.0f);
+    g.fillRoundedRectangle (slider.getWidth()*.03, slider.getHeight()*0.4, sliderPos, slider.getHeight()*0.2, slider.getHeight() / 20.0f);
 
     //Fill border
-    g.setColour(Colours::black);
-    g.drawRoundedRectangle(0.5f, slider.getHeight()*0.3 + 0.5f, sliderPos - 1.0f, slider.getHeight()*0.4 - 1.0f, slider.getHeight() / 20.0f, 1.0f);
+//    g.setColour(Colours::black);
+//    g.drawRoundedRectangle(12.5f, slider.getHeight()*0.3 + 0.5f, sliderPos - 1.0f, slider.getHeight()*0.4 - 1.0f, slider.getHeight() / 20.0f, 1.0f);
 }
 
 //========= linear slider ================================================================================
@@ -2002,11 +2001,11 @@ void CabbageLookAndFeelBasic::drawLinearSliderThumb (Graphics &g, int x, int y, 
 		g.setGradientFill(thumbColour);
 
 		g.setGradientFill(thumbColour);
-		g.fillRoundedRectangle(kx - sliderRadius*1.5f, ky - sliderRadius, sliderRadius*1.8f, sliderRadius*1.8f, sliderRadius / 20.0f);
+		g.fillRoundedRectangle(kx - sliderRadius*1.4f, ky - sliderRadius, sliderRadius*1.5f, sliderRadius*1.5f, sliderRadius / 20.0f);
 
 		//thumb border
-		//g.setColour(Colours::black);
-		//g.drawRoundedRectangle(destX + 0.5f, destY + 0.5f, thumbWidth - 1.0f, thumbWidth - 1.0f, slider.getHeight() / 20.0f, 1.0f);
+		g.setColour(Colours::black);
+		g.drawRoundedRectangle((kx - sliderRadius*1.4f)+1.f, (ky - sliderRadius)+1, sliderRadius*1.5f, sliderRadius*1.5f, sliderRadius / 20.0f, 1.0f);
 
 //        cUtils::drawSphericalThumb(g,
 //                                    kx - sliderRadius,

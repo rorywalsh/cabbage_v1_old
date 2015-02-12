@@ -25,7 +25,7 @@
 #include "../Editor/CodeWindow.h"
 #include "../CabbageLookAndFeel.h"
 #include "FilterComponent.h"
-#include "NativeParametersPanel.h"
+#include "SidebarPanel.h"
 
 
 class GraphAudioProcessorPlayer;
@@ -55,7 +55,8 @@ public:
 class GraphEditorPanel   : public Component,
     public ChangeListener,
 	public ActionListener,
-    public LassoSource <FilterComponent*>
+    public LassoSource <FilterComponent*>,
+	public DragAndDropTarget
 {
 public:
     GraphEditorPanel (FilterGraph& graph);
@@ -75,10 +76,23 @@ public:
     void resized();
     void changeListenerCallback (ChangeBroadcaster*);
 	void actionListenerCallback (const String &message);
+	void updateNode (const int nodeID, const int inChannels, const int outChannels);
 	
 	void enabledMIDILearn(bool val)
 	{
 		midiLearn=val;
+	}
+
+    bool isInterestedInDragSource (const SourceDetails &dragSourceDetails) override
+    {
+        return true;
+    }
+
+	
+	void itemDropped (const DragAndDropTarget::SourceDetails& dragSourceDetails)
+	{
+		if(FileTreeComponent* fileComp = dynamic_cast<FileTreeComponent*>(dragSourceDetails.sourceComponent.get()))			
+			cUtils::showMessage(fileComp->getSelectedFile().getFullPathName());	
 	}
 	
     void updateComponents();
@@ -222,17 +236,25 @@ public:
     //==============================================================================
     FilterGraph graph;
 	void handleIncomingMidiMessage (MidiInput*, const MidiMessage&) override;
-	void showNativePluginParameterPanel(bool show);
 	
-	bool isNativeParameterPanelShowing()
+	void showSidebarPanel(bool show);
+	
+	bool isSidebarPanelShowing()
 	{
-		return pluginParametersPanel->isVisible();
+		return sidebarPanel->isVisible();
 	}
 	
-	void updateNativeParametersPanel()
+	void updateSidebarPluginsPanel(int nodeId=-1)
 	{
-		pluginParametersPanel->update();
+		sidebarPanel->showParametersForNode(nodeId);
 	}
+	
+	void addPluginsToSidebarPanel()
+	{
+		sidebarPanel->updatePluginParameters();
+	}
+	
+	void showParametersForFilterNode(int id);
 	
     //==============================================================================
     void resized();
@@ -245,7 +267,7 @@ private:
     MidiKeyboardState keyState;
 	InternalMixerStrip* inputStrip;
 	InternalMixerStrip* outputStrip; 
-	NativeParametersPanel* pluginParametersPanel;
+	SidebarPanel* sidebarPanel;
     GraphEditorPanel* graphPanel;
     Component* keyboardComp;
     Component* statusBar;
@@ -256,7 +278,7 @@ private:
 //==============================================================================
 // A desktop window containing a plugin's UI. 
 //==============================================================================
-class PluginWindow  : public DocumentWindow, public ActionBroadcaster
+class PluginWindow  : public DocumentWindow, public ActionBroadcaster, private Timer
 {
 public:
     enum WindowFormatType
@@ -280,9 +302,11 @@ public:
     void moved() override;
     void closeButtonPressed() override;
 
+	void timerCallback();
 
 private:
     AudioProcessorGraph::Node* owner;
+	Component* editor;
     WindowFormatType type;
 	ScopedPointer<CabbageLookAndFeelBasic> basicLookAndFeel;
 

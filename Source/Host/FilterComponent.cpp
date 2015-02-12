@@ -113,7 +113,6 @@ FilterComponent::FilterComponent (FilterGraph& graph_, const uint32 filterID_)
 {
 	shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 3, Point<int> (0, 1)));
 	setComponentEffect (&shadow);
-	//setSize (150, 90);		
 }
 //================================================================================
 FilterComponent::~FilterComponent()
@@ -146,7 +145,6 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 		}
 	}	
 	
-	Logger::writeToLog("NodeID: "+String(filterID));
 	getGraphPanel()->selectedFilterCoordinates.clear();
 
 	int numSelected = getGraphPanel()->getLassoSelection().getNumSelected();
@@ -173,8 +171,13 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 	toFront (true);
 	CabbagePluginAudioProcessor* nativeCabbagePlugin = dynamic_cast<CabbagePluginAudioProcessor*>(graph.getNodeForId (filterID)->getProcessor());
 
+	if (graph.getNodeForId(filterID)->properties.getWithDefault("pluginType", "")!="Internal")
+		findParentComponentOfClass<GraphDocumentComponent>()->updateSidebarPluginsPanel(filterID);
+
+		
 	if (e.mods.isPopupMenu())
-	{
+	{	
+		
 		PopupMenu m;
 		m.addItem (1, "Delete this filter");
 		m.addItem (2, "Disconnect all pins");
@@ -363,19 +366,34 @@ void FilterComponent::actionListenerCallback (const String &message)
 		file.replaceWithText(codeWindow->csoundDoc.getAllContent());
 		
 		if(instance)
-		{
-			instance->suspendProcessing(true);
-			instance->reCompileCsound(file);
-			instance->setPlayConfigDetails(instance->getNumberCsoundOutChannels(),
-												instance->getNumberCsoundOutChannels(),
-												instance->getCsoundSamplingRate(),
-												instance->getCsoundKsmpsSize());
-												
-			numIns = instance->getNumberCsoundOutChannels();
-			numOuts = instance->getNumberCsoundOutChannels();
-			instance->createGUI(file.loadFileAsString(), true);
-			PluginWindow::updateWindow(graph.getNodeForId(filterID), filterID);
-			update();
+		{		
+			const int currentChannelCount = graph.getNodeForId(filterID)->getProcessor()->getNumOutputChannels();		
+			const int newChannelCount = cUtils::getNchnlsFromFile(file.loadFileAsString());
+			
+			if((getGraphPanel()!=nullptr) && (currentChannelCount!=newChannelCount))
+			{
+				codeWindow = nullptr;
+				//stopTimer();
+				getGraphPanel()->updateNode(filterID, newChannelCount, newChannelCount);
+			}
+			else
+			{
+				instance->suspendProcessing(true);
+				instance->reCompileCsound(file);				
+				instance->setPlayConfigDetails(instance->getNumberCsoundOutChannels(),
+													instance->getNumberCsoundOutChannels(),
+													instance->getCsoundSamplingRate(),
+													instance->getCsoundKsmpsSize());
+				
+				
+				
+				numIns = instance->getNumberCsoundOutChannels();
+				numOuts = instance->getNumberCsoundOutChannels();
+				instance->createGUI(file.loadFileAsString(), true);
+				PluginWindow::updateWindow(graph.getNodeForId(filterID), filterID);
+				update();
+				graph.changed();
+			}
 		}
 
 	}
@@ -557,7 +575,9 @@ void FilterComponent::update()
 	if(f->properties.getWithDefault("pluginType","")=="Internal")
 		pluginType = INTERNAL;
 	else if(f->properties.getWithDefault("pluginType","")=="Cabbage")
+	{
 		pluginType = CABBAGE;
+	}
 	else
 		pluginType = THIRDPARTY;
 

@@ -492,6 +492,7 @@ public:
         setBounds(m_cAttr.getBounds());
         slider->setName(m_cAttr.getStringProp(CabbageIDs::text));
         slider->setSkewFactor(m_cAttr.getNumProp(CabbageIDs::sliderskew));
+		textLabel->setColour(Label::textColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::textcolour)));
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
         {
             setVisible(false);

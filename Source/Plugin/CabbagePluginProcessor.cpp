@@ -149,18 +149,8 @@ vuCounter(0)
     csound->SetExternalMidiReadCallback(ReadMidiData);
     csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
     csound->SetExternalMidiWriteCallback(WriteMidiData);
-    
-    csound->SetIsGraphable(0);
-#ifndef CABBAGE_HOST
-    if(!getPreference(appProperties, "UseCabbageIO"))
-    {
-        //csoundPerfThread = new CsoundPerformanceThread(csound);
-        //csoundPerfThread->SetProcessCallback(CabbagePluginAudioProcessor::YieldCallback, (void*)this);
-    }
-#endif
-    
-    if(pluginType==AUTOMATION_PLUGIN)
-        isAutomator = true;
+	csound->SetIsGraphable(0);
+
     
     csoundChanList = NULL;
     numCsoundChannels = 0;
@@ -176,7 +166,9 @@ vuCounter(0)
         
 #ifdef CSOUND6
         csoundParams = new CSOUND_PARAMS();
+		#ifndef CABBAGE_HOST
         csoundParams->nchnls_override = this->getNumOutputChannels();
+		#endif
         csoundParams->displays = 0;
         csound->SetParams(csoundParams);
 #endif
@@ -398,7 +390,9 @@ vuCounter(0)
     startTimer(20);
 #ifdef CSOUND6
     csoundParams = new CSOUND_PARAMS();
+	#ifndef CABBAGE_HOST
     csoundParams->nchnls_override = this->getNumOutputChannels();
+	#endif
     csoundParams->displays = 0;
     csound->SetParams(csoundParams);
 #endif
@@ -491,21 +485,13 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
     stopProcessing = true;
     removeAllChangeListeners();
     
-    //    oscThread->stopThread(10);
 #ifndef Cabbage_No_Csound
     
     xyAutomation.clear();
     
-    //IdentArray::deleteInstance();
-    //const MessageManagerLock mmLock;
     if(csound)
     {
-        //if(csoundPerfThread)
-        //{
-        //    csoundPerfThread->Stop();
-        //    csoundPerfThread = nullptr;
-        //}
-        //csound->SetHostImplementedMIDIIO(false);
+		this->getCallbackLock().enter();
         csound->DeleteChannelList(csoundChanList);
         Logger::writeToLog("about to cleanup Csound");
         //csoundDebugContinue(csound);
@@ -514,6 +500,7 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
         
         //csound->Reset();
         //csoundDebuggerClean(csound->GetCsound());
+		
         csound = nullptr;
         Logger::writeToLog("Csound cleaned up");
     }
@@ -550,7 +537,8 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
 #ifndef Cabbage_No_Csound
     
     stopProcessing = true;
-    //getCallbackLock().enter();
+    getCallbackLock().enter();
+	numChannelsChanged();
     midiOutputBuffer.clear();
     //csound->DeleteChannelList(csoundChanList);
     
@@ -559,7 +547,9 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
     breakCount = 0;
 #ifdef CSOUND6
     csoundParams = new CSOUND_PARAMS();
+	#ifndef CABBAGE_HOST
     csoundParams->nchnls_override =2;
+	#endif
     csoundParams->displays = 0;
     csound->SetParams(csoundParams);
 #endif
@@ -1255,6 +1245,7 @@ void CabbagePluginAudioProcessor::messageCallback(CSOUND* csound, int /*attr*/, 
         vsnprintf(msg, MAX_BUFFER_SIZE, fmt, args);
         
         ud->debugMessage += String(msg); //We have to append the incoming msg
+		//const MessageManagerLock mmLock;
         ud->csoundOutput += ud->debugMessage;
         ud->debugMessageArray.add(ud->debugMessage);
         if(ud->createLog)
@@ -1904,9 +1895,12 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                 {
                     for(int channel = 0; channel < getNumOutputChannels(); channel++ )
                     {
+						int num = getNumOutputChannels();
                         audioBuffer = buffer.getWritePointer(channel,0);
+						int chanNum = buffer.getNumChannels();
                         pos = csndIndex*getNumOutputChannels();
-                        CSspin[channel+pos] = audioBuffer[i]*cs_scale;
+                        float samp = audioBuffer[i]*cs_scale;
+						CSspin[channel+pos] = samp;
                         audioBuffer[i] = (CSspout[channel+pos]/cs_scale);
                         
                     }

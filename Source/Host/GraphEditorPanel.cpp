@@ -24,7 +24,7 @@
 #include "PluginWrapperProcessor.h"
 #include "../Plugin/CabbageGenericAudioProcessorEditor.h"
 #include "../Plugin/PluginGenericAudioProcessorEditor.h"
-#include "NativeParametersPanel.h"
+#include "SidebarPanel.h"
 
 //==============================================================================
 class PluginWindow;
@@ -37,11 +37,12 @@ PluginWindow::PluginWindow (Component* const pluginEditor,
                       DocumentWindow::minimiseButton | DocumentWindow::closeButton),
     owner (o),
     type (t),
+	editor(pluginEditor),	
 	basicLookAndFeel(new CabbageLookAndFeelBasic())
 {
     setSize (400, 300);	
 	this->setTitleBarHeight(18);
-	setLookAndFeel(basicLookAndFeel);
+	//setLookAndFeel(basicLookAndFeel);
     setContentOwned (pluginEditor, true);
 
     setTopLeftPosition (owner->properties.getWithDefault ("uiLastX", Random::getSystemRandom().nextInt (500)),
@@ -49,6 +50,13 @@ PluginWindow::PluginWindow (Component* const pluginEditor,
     setVisible (true);
 	setAlwaysOnTop(true);
     activePluginWindows.add (this);
+	startTimer(100);
+}
+
+void PluginWindow::timerCallback()
+{
+	this->getContentComponent()->setTopLeftPosition(0, 18);
+	stopTimer();
 }
 
 void PluginWindow::closeCurrentlyOpenWindowsFor (const uint32 nodeId)
@@ -241,13 +249,13 @@ GraphEditorPanel::GraphEditorPanel (FilterGraph& graph_)
     InternalPluginFormat internalFormat;
 
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioInputFilter),
-               0.5f, 0.5f);
+               0.51f, 0.5f);
 
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::midiInputFilter),
-               0.47f, 0.5f);
+               0.49f, 0.5f);
 
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioOutputFilter),
-               0.5f, 0.56f);
+               0.51f, 0.56f);
     graph.addChangeListener (this);
     setOpaque (true);
 	//setSize(10000, 10000);
@@ -293,9 +301,6 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 			
             const int r = m.show();
             
-            cUtils::debug("menu item", r);
-			cUtils::debug("cabbageFiles", cabbageFiles[r-1].getFullPathName());
-            
 			bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
 			wildcardFilter = WildcardFileFilter("*.csd", "*", ".csd Files");
 			
@@ -336,7 +341,7 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 				else 
 				{ 
 					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
-					findParentComponentOfClass<GraphDocumentComponent>()->updateNativeParametersPanel();
+					findParentComponentOfClass<GraphDocumentComponent>()->addPluginsToSidebarPanel();
 					return;
 				}
 			}
@@ -378,9 +383,7 @@ void GraphEditorPanel::mouseDrag (const MouseEvent& e)
 void GraphEditorPanel::mouseUp (const MouseEvent& e)
 {
     //if a selection has been made update the selected groups alpha setting to highlight selection
-    Logger::writeToLog("Number selected: "+String(selectedFilters.getNumSelected()));
     for(int i=0; i<selectedFilters.getNumSelected(); i++) {
-        //Logger::writeToLog(getChildComponent(i)->getName());
         selectedFilters.getSelectedItem(i)->getProperties().set("selected", 1);
         selectedFilters.getSelectedItem(i)->repaint();
     }
@@ -399,7 +402,6 @@ void GraphEditorPanel::findLassoItemsInArea (Array <FilterComponent*>& results, 
         if (c->getBounds().intersects (lasso)) {
             results.addIfNotAlreadyThere(c);
             selectedFilters.addToSelection(c);
-            Logger::writeToLog(c->getName());
         }
         else
             selectedFilters.deselect(c);
@@ -480,6 +482,43 @@ void GraphEditorPanel::changeListenerCallback (ChangeBroadcaster*)
 
 void GraphEditorPanel::actionListenerCallback (const String &message)
 {
+
+}
+
+void GraphEditorPanel::updateNode (const int nodeID, const int inChannels, const int outChannels)
+{
+	
+	ScopedPointer<XmlElement> temp(graph.createXml());
+	const XmlElement tempXml (*temp);
+	
+	graph.removeFilter(nodeID);
+	
+	forEachXmlChildElementWithTagName (tempXml, e, "FILTER")
+	{			
+		if(nodeID==e->getIntAttribute("uid"))
+		{
+			double origX = e->getDoubleAttribute("x");
+			double origY = e->getDoubleAttribute("y");
+			e->setAttribute("x", origX);
+			e->setAttribute("y", origY);
+			cUtils::debug(e->getIntAttribute("uid"));
+			e->setAttribute("numInputs", inChannels);
+			e->setAttribute("numOutputs", outChannels); 
+			graph.createNodeFromXml(*e);
+			graph.changed();
+		}
+	}	
+
+	forEachXmlChildElementWithTagName (tempXml, e, "CONNECTION")
+	{
+		if(e->getIntAttribute ("srcFilter")==nodeID || e->getIntAttribute ("dstFilter")==nodeID)
+		{
+			graph.addConnection((uint32) e->getIntAttribute ("srcFilter"),
+								e->getIntAttribute ("srcChannel"),
+								(uint32) e->getIntAttribute ("dstFilter"),
+								e->getIntAttribute ("dstChannel"));
+		}
+	}	
 	
 }
 
@@ -964,7 +1003,7 @@ GraphDocumentComponent::GraphDocumentComponent (AudioPluginFormatManager& format
 {
     addAndMakeVisible (graphPanel = new GraphEditorPanel (graph));
 
-	addAndMakeVisible(pluginParametersPanel = new NativeParametersPanel(&graph));
+	addAndMakeVisible(sidebarPanel = new SidebarPanel(&graph));
 
 
     deviceManager->addChangeListener (graphPanel);
@@ -1026,8 +1065,8 @@ void GraphDocumentComponent::resized()
     keyboardComp->setBounds (200, getHeight() - keysHeight, getWidth()-200, keysHeight);
 	inputStrip->setBounds(0, getHeight() - keysHeight, 200, keysHeight/2);
 	outputStrip->setBounds(0, getHeight() - keysHeight + keysHeight/2.f, 200, keysHeight/2);
-	pluginParametersPanel->setLookAndFeel(&getLookAndFeel());
-	pluginParametersPanel->setBounds(0, 0, 250, getHeight()-60);	
+	sidebarPanel->setLookAndFeel(&getLookAndFeel());
+	sidebarPanel->setBounds(0, 0, 250, getHeight()-60);	
 }
 
 void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int x, int y, bool isNative, String filename)
@@ -1035,12 +1074,12 @@ void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int
     graphPanel->createNewPlugin (desc, x, y, isNative, filename);
 }
 
-void GraphDocumentComponent::showNativePluginParameterPanel(bool show)
+void GraphDocumentComponent::showSidebarPanel(bool show)
 {
 	if(show)
-		pluginParametersPanel->setVisible(true);
+		sidebarPanel->setVisible(true);
 	else
-		pluginParametersPanel->setVisible(false);
+		sidebarPanel->setVisible(false);
 }
 
 void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const MidiMessage &message)

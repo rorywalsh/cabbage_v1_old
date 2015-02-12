@@ -54,7 +54,8 @@ class MainHostWindow    : public DocumentWindow,
     public MenuBarModel,
     public ApplicationCommandTarget,
     public ChangeListener,
-    public FileDragAndDropTarget
+    public FileDragAndDropTarget,
+	public DragAndDropContainer
 {
 public:
     //==============================================================================

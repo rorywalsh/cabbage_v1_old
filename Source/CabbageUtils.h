@@ -485,6 +485,22 @@ public:
     }
 
 
+    static int getNchnlsFromFile(String csdText)
+    {
+        StringArray array;
+		array.addLines(csdText);
+		
+		for(int i=0;i<array.size();i++)
+		{
+			if(array[i].contains("nchnls"))
+			{
+				String channels = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
+				return channels.trim().getIntValue();
+			}
+		}
+		return 2;
+    }
+
     static int getNumberOfDecimalPlaces(StringArray array)
     {
         int longest=0;

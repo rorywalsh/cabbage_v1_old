@@ -21,6 +21,7 @@
 #include "FilterGraph.h"
 #include "SidebarPanel.h"
 #include "../Plugin/PluginGenericAudioProcessorEditor.h"
+#include "../Plugin/CabbageGenericAudioProcessorEditor.h"
 
 
 //==============================================================================
@@ -29,7 +30,8 @@ filterGraph(graph),
 previousFilterNodeId(-99),
 thread ("file preview"),
 directoryList (nullptr, thread),
-fileTreeComp ("", directoryList, 400)
+fileTreeComp (*this, "", directoryList),
+canResize(false)
 {
 	setOpaque (true);
 	addAndMakeVisible (concertinaPanel);	
@@ -40,6 +42,7 @@ fileTreeComp ("", directoryList, 400)
 	fileTreeComp.setText(File::getSpecialLocation (File::userHomeDirectory).getFileNameWithoutExtension());
 
 	fileTreeComp.fileComp.addListener (this);	
+	
 	
 	PropertyPanel* panel = new PropertyPanel ("Plugins");
 
@@ -79,7 +82,6 @@ fileTreeComp ("", directoryList, 400)
 	
 	concertinaPanel.addPanel(1, filePanel, false);
 	
-	
 }
 
 SidebarPanel::~SidebarPanel()
@@ -95,27 +97,45 @@ void SidebarPanel::updatePluginParameters()
 	
 	const int numPanels = concertinaPanel.getNumPanels();
 
-	int i = filterGraph->getNumFilters()-1;
+	int index = filterGraph->getNumFilters()-1;
 	
-	{	
-		PluginWrapper* plugin = dynamic_cast<PluginWrapper*>(filterGraph->getNode(i)->getProcessor());
-		
-		if(plugin)
+	
+	//----------------------------------------------------
+	PluginWrapper* wrapper = dynamic_cast<PluginWrapper*>(filterGraph->getNode(index)->getProcessor());
+	if(wrapper)
+	{
+		int numParams = wrapper->getNumParameters();
+		params.clear();
+		for (int i = 0; i < numParams; ++i)
 		{
-			int numParams = plugin->getNumParameters();
-			params.clear();
-			for (int i = 0; i < numParams; ++i)
-			{
-				String name (plugin->getParameterName (i));
-				if (name.trim().isEmpty())
-					name = "Unnamed";
+			String name (wrapper->getParameterName (i));
+			if (name.trim().isEmpty())
+				name = "Unnamed";
 
-				PluginProcessorParameterPropertyComp* const pc = new PluginProcessorParameterPropertyComp (name, *plugin, i);
-				params.add (pc);
-			}
-
-			panel->addSection (filterGraph->getNode(i)->getProcessor()->getName(), params, false);
+			PluginProcessorParameterPropertyComp* const pc = new PluginProcessorParameterPropertyComp(name, *wrapper, i);
+			params.add (pc);
 		}
+
+		panel->addSection (filterGraph->getNode(index)->getProcessor()->getName(), params, false);
+	}
+
+	//----------------------------------------------------
+	CabbagePluginAudioProcessor* internalCabbage = dynamic_cast<CabbagePluginAudioProcessor*>(filterGraph->getNode(index)->getProcessor());
+	if(internalCabbage)
+	{
+		int numParams = internalCabbage->getNumParameters();
+		params.clear();
+		for (int i = 0; i < numParams; ++i)
+		{
+			String name (internalCabbage->getParameterName (i));
+			if (name.trim().isEmpty())
+				name = "Unnamed";
+
+			ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp(name, *internalCabbage, i);
+			params.add (pc);
+		}
+
+		panel->addSection (filterGraph->getNode(index)->getProcessor()->getName(), params, false);
 	}
 
 	for(int y=0;y<panel->getSectionNames().size()-1;y++)
@@ -161,6 +181,12 @@ void SidebarPanel::showParametersForNode(int nodeId)
 			
 }
 
+void SidebarPanel::upButtonPressed()
+{
+	directoryList.setDirectory(directoryList.getDirectory().getParentDirectory(), true, true);
+	fileTreeComp.setText(directoryList.getDirectory().getFileNameWithoutExtension());
+}
+
 
 void SidebarPanel::paint (Graphics& g)
 {
@@ -169,6 +195,7 @@ void SidebarPanel::paint (Graphics& g)
 
 void SidebarPanel::resized()
 {
+	fileTreeComp.setPreferredHeight(getLocalBounds().reduced(4).getHeight()-40);
 	concertinaPanel.setBounds (getLocalBounds().reduced (4));
 }
 
@@ -177,14 +204,74 @@ void SidebarPanel::timerCallback()
 
 }
 
+void SidebarPanel::mouseEnter(const MouseEvent& event)
+{
+	const int xPos = event.getPosition().getX();
+	
+	if(!event.mods.isLeftButtonDown() && xPos>getWidth()-10)
+	{
+		setMouseCursor (MouseCursor::LeftRightResizeCursor);
+		canResize=true;
+	}
+	else
+		setMouseCursor (MouseCursor::NormalCursor);
+}
+
+void SidebarPanel::mouseDrag(const MouseEvent& event)
+{
+	if(canResize)
+		this->setSize(event.getPosition().getX(), this->getHeight());
+}
+
+void SidebarPanel::mouseUp(const MouseEvent& event)
+{
+	canResize = false;
+}
+
 void SidebarPanel::addPluginPanel (PropertyPanel* panel)
 {
 	concertinaPanel.addPanel(0, panel, false);
-	//concertinaPanel.setMaximumPanelSize (panel, panel->getTotalContentHeight());
+	concertinaPanel.setPanelHeaderSize (panel, 20);
 	concertinaPanel.expandPanelFully(concertinaPanel.getPanel(0), true);
 }
 
 void SidebarPanel::selectionChanged()
 {
 	//cUtils::debug(fileTreeComp.fileComp.getSelectedFile().getFullPathName());
+}
+
+//==============================================================================
+FileTreePropertyComponent::FileTreePropertyComponent(SidebarPanel &ownerPanel, String name, DirectoryContentsList &_listToShow):
+PropertyComponent(name, 1000),
+fileComp(_listToShow), 
+upButton (String::empty, DrawableButton::ImageOnButtonBackground),
+currentDir(""),
+owner(ownerPanel),
+standardLookAndFeel(new LookAndFeel_V2())
+{
+
+	addAndMakeVisible(fileComp);
+	addAndMakeVisible(currentDir);
+	currentDir.setLookAndFeel(standardLookAndFeel);
+	
+	currentDir.setColour(Label::backgroundColourId, Colours::white);
+	
+	fileComp.setDragAndDropDescription("FileBrowser");
+	
+	addAndMakeVisible (upButton);
+	upButton.addListener (this);
+
+	Path arrowPath;
+	arrowPath.addArrow (Line<float> (50.0f, 100.0f, 50.0f, 0.0f), 40.0f, 100.0f, 50.0f);
+	DrawablePath arrowImage;
+	arrowImage.setFill (Colours::white);
+	arrowImage.setPath (arrowPath);
+	upButton.setImages (&arrowImage);
+	fileComp.setColour (FileTreeComponent::backgroundColourId, Colours::black);	
+	fileComp.setColour (TreeView::linesColourId, Colours::white); 
+}
+
+void FileTreePropertyComponent::buttonClicked (Button* button)
+{
+	owner.upButtonPressed();
 }

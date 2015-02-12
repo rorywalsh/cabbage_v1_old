@@ -172,7 +172,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 	CabbagePluginAudioProcessor* nativeCabbagePlugin = dynamic_cast<CabbagePluginAudioProcessor*>(graph.getNodeForId (filterID)->getProcessor());
 
 	if (graph.getNodeForId(filterID)->properties.getWithDefault("pluginType", "")!="Internal")
-		findParentComponentOfClass<GraphDocumentComponent>()->updateSidebarPluginsPanel(filterID);
+		findParentComponentOfClass<GraphDocumentComponent>()->expandParametersInPluginsPanel(filterID);
 
 		
 	if (e.mods.isPopupMenu())

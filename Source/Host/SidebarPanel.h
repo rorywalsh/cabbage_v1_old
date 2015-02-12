@@ -23,43 +23,20 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "FilterGraph.h"
 
+class SidebarPanel;
+
 class FileTreePropertyComponent : public PropertyComponent,
 								  public Button::Listener
 {
 public:
-	FileTreePropertyComponent(String name, DirectoryContentsList &_listToShow, int height):
-	PropertyComponent(name, height),
-	fileComp(_listToShow), 
-	upButton (String::empty, DrawableButton::ImageOnButtonBackground),
-	currentDir("")
-	{
-		
-		addAndMakeVisible(fileComp);
-		addAndMakeVisible(currentDir);
-		fileComp.setDragAndDropDescription("FileBrowser");
-		
-		addAndMakeVisible (upButton);
-		upButton.addListener (this);
-
-        Path arrowPath;
-        arrowPath.addArrow (Line<float> (50.0f, 100.0f, 50.0f, 0.0f), 40.0f, 100.0f, 50.0f);
-        DrawablePath arrowImage;
-        arrowImage.setFill (Colours::white);
-        arrowImage.setPath (arrowPath);
-        upButton.setImages (&arrowImage);
-		fileComp.setColour (FileTreeComponent::backgroundColourId, Colours::black);	
-		fileComp.setColour (TreeView::linesColourId, Colours::white); 
-	}
+	FileTreePropertyComponent(SidebarPanel &ownerPanel, String name, DirectoryContentsList &_listToShow);
 	
 	~FileTreePropertyComponent()
 	{
 	}
 	
 	
-	void buttonClicked (Button* button)
-	{
-		
-	}
+	void buttonClicked (Button* button);
 	
 	void setText(String text)
 	{
@@ -70,7 +47,7 @@ public:
 	{
 		fileComp.setBounds(getLocalBounds().withTop(30));
 		upButton.setBounds(getWidth()-40, 5, 40, 20); 
-		currentDir.setBounds(5, 5, getWidth()-40, 20);
+		currentDir.setBounds(5, 5, getWidth()-50, 20);
 	}
 	
 	void refresh(){}
@@ -86,7 +63,8 @@ public:
 private:
 	DrawableButton upButton;
 	Label currentDir;
-	
+	ScopedPointer<LookAndFeel_V2> standardLookAndFeel;
+	SidebarPanel &owner;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FileTreePropertyComponent);
 	
@@ -110,6 +88,11 @@ public:
     void fileClicked (const File&, const MouseEvent&) override          {}
     void fileDoubleClicked (const File&) override                       {}
     void browserRootChanged (const File&) override                      {}
+	void mouseDrag(const MouseEvent& event);
+	void mouseEnter(const MouseEvent& event);
+	void mouseUp(const MouseEvent& event);
+	void upButtonPressed();
+	
 	
 private:
     ConcertinaPanel concertinaPanel;
@@ -119,6 +102,7 @@ private:
 	FilterGraph* filterGraph;
 	int previousFilterNodeId;
     void addPluginPanel (PropertyPanel* panel);
+	bool canResize;
 	
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SidebarPanel);
 };

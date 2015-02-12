@@ -244,7 +244,7 @@ public:
 		return sidebarPanel->isVisible();
 	}
 	
-	void updateSidebarPluginsPanel(int nodeId=-1)
+	void expandParametersInPluginsPanel(int nodeId=-1)
 	{
 		sidebarPanel->showParametersForNode(nodeId);
 	}
@@ -253,8 +253,6 @@ public:
 	{
 		sidebarPanel->updatePluginParameters();
 	}
-	
-	void showParametersForFilterNode(int id);
 	
     //==============================================================================
     void resized();

@@ -193,22 +193,30 @@ public:
 //
     static void debug(String message)
     {
+		#ifndef DEBUG
         Logger::writeToLog(message);
+		#endif
     }
 
     static void debug(float value)
     {
+		#ifndef DEBUG
         Logger::writeToLog(String(value));
+		#endif
     }
 
     static void debug(String message, double value)
     {
+		#ifndef DEBUG
         Logger::writeToLog(message+":"+String(value));
+		#endif
     }
 
     static void debug(String message, String value)
     {
+		#ifndef DEBUG
         Logger::writeToLog(message+":"+value);
+		#endif
     }
 //===========================================================================================
     static void showMessage(String message)

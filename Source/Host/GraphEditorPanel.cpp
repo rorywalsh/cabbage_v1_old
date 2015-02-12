@@ -249,13 +249,13 @@ GraphEditorPanel::GraphEditorPanel (FilterGraph& graph_)
     InternalPluginFormat internalFormat;
 
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioInputFilter),
-               0.51f, 0.5f);
+               0.55f, 0.5f);
 
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::midiInputFilter),
-               0.49f, 0.5f);
+               0.53f, 0.5f);
 
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioOutputFilter),
-               0.51f, 0.56f);
+               0.55f, 0.56f);
     graph.addChangeListener (this);
     setOpaque (true);
 	//setSize(10000, 10000);
@@ -336,6 +336,7 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 				if(r<cabbageFiles.size()+1)
 				{
 					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, cabbageFiles[r-1].getFullPathName());
+					findParentComponentOfClass<GraphDocumentComponent>()->addPluginsToSidebarPanel();
 					return;
 				}
 				else 

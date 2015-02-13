@@ -1083,7 +1083,7 @@ void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const
 	if(message.isController()){
 		//if MIDI learn is turned on
 		if(midiLearnEnabled){
-			int nodeId = graph.getLastMovedNodeId()-1;
+			int nodeId = graph.getLastMovedNodeId();
 			int parameterIndex = graph.getLastMovedNodeParameterIndex();
 			
 			for(int i=0;i<graph.midiMappings.size();i++)
@@ -1093,11 +1093,11 @@ void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const
 					graph.midiMappings.getReference(i).nodeId = nodeId;
 					graph.midiMappings.getReference(i).parameterIndex = parameterIndex;
 					
-					if(graph.getGraph().getNode(nodeId))
+					if(graph.getGraph().getNodeForId(nodeId))
 					{
-						graph.getGraph().getNode(nodeId)->getProcessor()->setParameterNotifyingHost(parameterIndex, message.getControllerValue()/127.f);
-						graph.getGraph().getNode(nodeId)->getProcessor()->setParameter(parameterIndex, message.getControllerValue()/127.f);
-						Logger::writeToLog("exists");
+						graph.getGraph().getNodeForId(nodeId)->getProcessor()->setParameterNotifyingHost(parameterIndex, message.getControllerValue()/127.f);
+						graph.getGraph().getNodeForId(nodeId)->getProcessor()->setParameter(parameterIndex, message.getControllerValue()/127.f);
+						//Logger::writeToLog("exists");
 						addNewMapping=false;
 					}
 				}
@@ -1106,22 +1106,19 @@ void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const
 			if(addNewMapping)
 			{
 				if(nodeId>0)
-				{
 					graph.midiMappings.add(CabbageMidiMapping(nodeId, parameterIndex, message.getChannel(), message.getControllerNumber()));
-					cUtils::debug("nodeId", nodeId);
-				}
 			}
 		}
 		else
 		{ //mid learn disabled
-			for(int i=0;i<graph.midiMappings.size()-1;i++)
+			for(int i=0;i<graph.midiMappings.size();i++)
 			{
 				if(doMidiMappingsMatch(i, message.getChannel(), message.getControllerNumber()))
 				{
-					if(graph.getGraph().getNode(graph.midiMappings.getReference(i).nodeId))
+					if(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId))
 					{
-						graph.getGraph().getNode(graph.midiMappings.getReference(i).nodeId)->getProcessor()->setParameterNotifyingHost(graph.midiMappings.getReference(i).parameterIndex, message.getControllerValue()/127.f);
-						graph.getGraph().getNode(graph.midiMappings.getReference(i).nodeId)->getProcessor()->setParameter(graph.midiMappings.getReference(i).parameterIndex, message.getControllerValue()/127.f);
+						graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->setParameterNotifyingHost(graph.midiMappings.getReference(i).parameterIndex, message.getControllerValue()/127.f);
+						graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->setParameter(graph.midiMappings.getReference(i).parameterIndex, message.getControllerValue()/127.f);
 					}
 				}		
 					

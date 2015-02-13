@@ -89,7 +89,10 @@ void SidebarPanel::updatePluginParameters()
 		if (name.trim().isEmpty())
 			name = "Unnamed";
 
-		ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp(name, *filterGraph->getNode(index)->getProcessor(), i);
+		ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp(name, 
+																					  *filterGraph->getNode(index)->getProcessor(),
+																					  i,
+																					  filterGraph->getNode(index)->nodeId);
 		pc->addChangeListener(this);
 		params.add (pc);
 	}
@@ -160,13 +163,24 @@ void SidebarPanel::paint (Graphics& g)
 void SidebarPanel::toggleMIDILearn()
 {
 	midiLearn=!midiLearn;
+	
+	if(midiLearn)
+		cUtils::showMessage("To assign MIDI controllers to plugin parameters\nfirst select the parameter, then move the MIDI controller.");
+	
 	repaint();
 }
 
 void SidebarPanel::changeListenerCallback (ChangeBroadcaster* source)
 {
-	ProcessorParameterPropertyComp* comp = (ProcessorParameterPropertyComp*)source;
-	midiBubble.showAt(comp, AttributedString(comp->getName()), 250);
+	if(midiLearn)
+	{
+		ProcessorParameterPropertyComp* comp = (ProcessorParameterPropertyComp*)source;
+		String text = filterGraph->findControllerForparameter(comp->getNodeId(), comp->getParamIndex());
+		if(text.isEmpty())
+			text = "Unassigned";
+			
+		midiBubble.showAt(comp, AttributedString(text), 1000);
+	}
 }
 
 void SidebarPanel::resized()

@@ -103,6 +103,8 @@ public:
 
     void clear();
 
+	String findControllerForparameter(int32 nodeID, int parameterIndex);
+
     //==============================================================================
 
     XmlElement* createXml() const;

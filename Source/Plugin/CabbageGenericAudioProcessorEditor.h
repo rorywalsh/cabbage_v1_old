@@ -32,12 +32,14 @@
 class ProcessorParameterPropertyComp   : public PropertyComponent,
                                          private AudioProcessorListener,
                                          private Timer,
-										 public ChangeBroadcaster
+										 public ChangeBroadcaster,
+										 public ActionListener
 {
 public:
-    ProcessorParameterPropertyComp (const String& name, AudioProcessor& p, int paramIndex)
+    ProcessorParameterPropertyComp (const String& name, AudioProcessor& p, int paramIndex, int Id)
         : PropertyComponent (name),
           owner (p),
+		  nodeId(Id),
           index (paramIndex),
           paramHasChanged (false),
           slider (p, paramIndex),
@@ -56,6 +58,7 @@ public:
 		
         owner.addListener (this);
 		slider.lookAndFeelChanged();
+		slider.addActionListener(this);
     }
 
     ~ProcessorParameterPropertyComp()
@@ -67,6 +70,9 @@ public:
 		else
 			owner.removeListener (this);
     }
+
+	int32 getNodeId(){	return nodeId;	}
+	int getParamIndex(){	return index;	}
 
     void refresh() override
     {
@@ -110,6 +116,11 @@ public:
 		}
     }
 
+	void actionListenerCallback(const String &message)
+	{
+		sendChangeMessage();
+	}
+	
     void timerCallback() override
     {
         if (paramHasChanged)
@@ -125,7 +136,7 @@ public:
 
 private:
     //==============================================================================
-    class ParamSlider  : public Slider
+    class ParamSlider  : public Slider, public ActionBroadcaster
     {
     public:
         ParamSlider (AudioProcessor& p, int paramIndex)  : owner (p), index (paramIndex)
@@ -153,6 +164,11 @@ private:
             }
         }
 
+		void mouseEnter(const MouseEvent& e)
+		{
+            sendActionMessage("midiPopup");
+		}
+
         String getTextFromValue (double /*value*/) override
         {
             return owner.getParameterText (index) + " " + owner.getParameterLabel (index).trimEnd();
@@ -167,6 +183,7 @@ private:
 
     AudioProcessor& owner;
     const int index;
+	int32 nodeId;
     bool volatile paramHasChanged;
 	bool midiLearnEnabled;
 	Colour midiLearnColour;
@@ -202,7 +219,7 @@ public:
 			if (name.trim().isEmpty())
 				name = "Unnamed";
 
-			ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp (name, *p, i);
+			ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp (name, *p, i, -1);
 			params.add (pc);
 			totalHeight += pc->getPreferredHeight();
 		}

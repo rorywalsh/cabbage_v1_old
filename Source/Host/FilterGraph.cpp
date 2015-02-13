@@ -142,6 +142,23 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
     }
 }
 
+String FilterGraph::findControllerForparameter(int32 nodeID, int paramIndex)
+{
+	for(int i=0;i<midiMappings.size();i++)
+	{
+		cUtils::debug(midiMappings.getReference(i).nodeId);
+		cUtils::debug(midiMappings.getReference(i).parameterIndex);
+		
+		if(midiMappings.getReference(i).nodeId==nodeID && midiMappings.getReference(i).parameterIndex==paramIndex)
+		{
+			String midiInfo = "CC:"+String(midiMappings.getReference(i).controller)+" Chan:"+String(midiMappings.getReference(i).channel);
+			return midiInfo;
+		}
+	}
+	return String::empty;
+}
+
+
 void FilterGraph::removeFilter (const uint32 id)
 {
     PluginWindow::closeCurrentlyOpenWindowsFor (id);
@@ -434,6 +451,18 @@ XmlElement* FilterGraph::createXml() const
         xml->addChildElement (e);
     }
 
+    for (int i = 0; i < midiMappings.size(); ++i)
+    {
+		//add midi mapping to here, might not be easy...
+        XmlElement* e = new XmlElement ("MIDI_MAPPINGS");
+        e->setAttribute ("NodeId", midiMappings.getReference(i).nodeId);
+		e->setAttribute ("ParameterIndex", midiMappings.getReference(i).parameterIndex);
+		e->setAttribute ("Channel", midiMappings.getReference(i).channel);
+		e->setAttribute ("Controller", midiMappings.getReference(i).controller);
+		
+        xml->addChildElement (e);
+    }
+	
     return xml;
 }
 
@@ -456,6 +485,15 @@ void FilterGraph::restoreFromXml (const XmlElement& xml)
                        e->getIntAttribute ("dstChannel"));
     }
 	graph.removeIllegalConnections();
+	
+    forEachXmlChildElementWithTagName (xml, e, "MIDI_MAPPINGS")
+    {
+		midiMappings.add(CabbageMidiMapping(e->getIntAttribute ("NodeId"), 
+											e->getIntAttribute ("ParameterIndex"), 
+											e->getIntAttribute ("Channel"),
+											e->getIntAttribute ("Controller")));
+    }	
+	
 }
 
 void FilterGraph::changeListenerCallback(ChangeBroadcaster* source)
@@ -467,8 +505,9 @@ void FilterGraph::changeListenerCallback(ChangeBroadcaster* source)
 //==========================================================================
 // parameter callback for node, used to map midi messages to parameters
 //==========================================================================
-void NodeAudioProcessorListener::audioProcessorParameterChanged(AudioProcessor* processor, int parameterIndex, float newValue)
+void NodeAudioProcessorListener::audioProcessorParameterChanged(AudioProcessor* processor, int index, float newValue)
 {
+	parameterIndex = index;
 	sendChangeMessage();
 }
 

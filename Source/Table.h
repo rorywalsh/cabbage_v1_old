@@ -152,12 +152,13 @@ public:
     bool drawGrid;
     int scrollbarReduction;
     void showScrollbar(bool show);
-    int mainFooterHeight, paintFooterHeight;
+    int mainFooterHeight, paintFooterHeight, zoomButtonsOffset;
 
     HandleViewer* getHandleViewer()
     {
         return handleViewer;
     }
+	
     double quantiseSpace;
     void setAmpRanges(Array<float> ampRange);
     void setXPosition(double pos);

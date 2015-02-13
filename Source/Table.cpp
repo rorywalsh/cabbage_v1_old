@@ -173,7 +173,8 @@ void TableManager::setZoomFactor(double newZoom)
         {
             showZoomButtons(false);
             tables[i]->showScrollbar(false);
-            //tables[i]->setZoomFactor(abs(newZoom));
+            tables[i]->zoomButtonsOffset=0;
+			tables[i]->resized();
         }
         else
             tables[i]->setZoomFactor(newZoom);
@@ -500,6 +501,7 @@ GenTable::GenTable():	thumbnailCache (5),
     quantiseSpace(0.01),
     qsteps(0),
     drawAsVUMeter(false),
+	zoomButtonsOffset(10),
     drawGrid(false),
     shouldFill(true),
     vuGradient(Colours::yellow, 0.f, 0.f, Colours::red, getWidth(), getHeight(), false)
@@ -585,7 +587,7 @@ void GenTable::changeListenerCallback(ChangeBroadcaster *source)
     if(currentHandle)
     {
         //fill coordinate string and send change message to plugin editor to show bubble
-        float curY = (float)jlimit(minMax.getStart(), minMax.getEnd(), pixelToAmp(thumbArea.getHeight()-10, minMax, currentHandle->getY()));
+        float curY = (float)jlimit(minMax.getStart(), minMax.getEnd(), pixelToAmp(thumbArea.getHeight()-zoomButtonsOffset, minMax, currentHandle->getY()));
         curY = cUtils::roundToMultiple(curY, quantiseSpace);
 
 
@@ -612,7 +614,7 @@ void GenTable::changeListenerCallback(ChangeBroadcaster *source)
 void GenTable::resized()
 {
     if(!displayAsGrid())
-        handleViewer->setSize(getWidth(), getHeight()-paintFooterHeight-10);
+        handleViewer->setSize(getWidth(), getHeight()-paintFooterHeight-zoomButtonsOffset);
     else
         handleViewer->setSize(getWidth(), getHeight());
 
@@ -783,7 +785,7 @@ void GenTable::enableEditMode(StringArray m_pFields)
     normalised = pFields[4].getIntValue();
     double xPos = 0;
     handleViewer->handles.clear();
-    const double thumbHeight = getHeight()-paintFooterHeight-10;
+    const double thumbHeight = getHeight()-paintFooterHeight-zoomButtonsOffset;
     int pfieldCount=0;
 
 

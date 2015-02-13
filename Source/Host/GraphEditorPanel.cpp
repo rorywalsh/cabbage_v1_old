@@ -23,7 +23,6 @@
 #include "MainHostWindow.h"
 #include "PluginWrapperProcessor.h"
 #include "../Plugin/CabbageGenericAudioProcessorEditor.h"
-#include "../Plugin/PluginGenericAudioProcessorEditor.h"
 #include "SidebarPanel.h"
 
 //==============================================================================
@@ -183,7 +182,7 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
             return activePluginWindows.getUnchecked(i);
 
     AudioProcessor* processor = node->getProcessor();	
-	PluginWrapper* wrapperPlug = dynamic_cast<PluginWrapper*>(processor);
+	//PluginWrapper* wrapperPlug = dynamic_cast<PluginWrapper*>(processor);
 	
     AudioProcessorEditor* ui = nullptr;
 
@@ -196,17 +195,11 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
 
     if (ui == nullptr)
     {
-        if (type == Generic || type == Parameters || type == midiLearn)
+        if (type == Generic || type == Parameters)
 		{
-			if(wrapperPlug)
-			{
-				ui = new PluginGenericAudioProcessorEditor (wrapperPlug, type == midiLearn ? true : false);
-				
-			}
-			else if(processor)
+			if(processor)
 			{
 				ui = new CabbageGenericAudioProcessorEditor (processor, type == midiLearn ? true : false);
-				
 			}
 		}
         else if (type == Programs)
@@ -336,13 +329,13 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 				if(r<cabbageFiles.size()+1)
 				{
 					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, cabbageFiles[r-1].getFullPathName());
-					findParentComponentOfClass<GraphDocumentComponent>()->addPluginsToSidebarPanel();
+					findParentComponentOfClass<GraphDocumentComponent>()->addRemovePluginsInSidebarPanel();
 					return;
 				}
 				else 
 				{ 
 					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
-					findParentComponentOfClass<GraphDocumentComponent>()->addPluginsToSidebarPanel();
+					findParentComponentOfClass<GraphDocumentComponent>()->addRemovePluginsInSidebarPanel();
 					return;
 				}
 			}
@@ -1000,7 +993,9 @@ void GraphAudioProcessorPlayer::audioDeviceStopped()
 // graphDocumentComponent. Holds out main GUI objects
 GraphDocumentComponent::GraphDocumentComponent (AudioPluginFormatManager& formatManager,
         AudioDeviceManager* deviceManager_)
-    : graph (formatManager), deviceManager (deviceManager_)
+: graph (formatManager), 
+deviceManager (deviceManager_),
+midiLearnEnabled(false)
 {
     addAndMakeVisible (graphPanel = new GraphEditorPanel (graph));
 
@@ -1085,11 +1080,62 @@ void GraphDocumentComponent::showSidebarPanel(bool show)
 
 void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const MidiMessage &message)
 {
-	if(message.isController())
-	{
-		//if controller has already been used reassign it
-		cUtils::debug("Channel: ", message.getChannel());
-		cUtils::debug("Controller: ", message.getControllerNumber());
-		cUtils::debug("Value: ", message.getControllerValue());
+	if(message.isController()){
+		//if MIDI learn is turned on
+		if(midiLearnEnabled){
+			int nodeId = graph.getLastMovedNodeId()-1;
+			int parameterIndex = graph.getLastMovedNodeParameterIndex();
+			
+			for(int i=0;i<graph.midiMappings.size();i++)
+			{
+				if(doMidiMappingsMatch(i, message.getChannel(), message.getControllerNumber()))
+				{
+					graph.midiMappings.getReference(i).nodeId = nodeId;
+					graph.midiMappings.getReference(i).parameterIndex = parameterIndex;
+					
+					if(graph.getGraph().getNode(nodeId))
+					{
+						graph.getGraph().getNode(nodeId)->getProcessor()->setParameterNotifyingHost(parameterIndex, message.getControllerValue()/127.f);
+						graph.getGraph().getNode(nodeId)->getProcessor()->setParameter(parameterIndex, message.getControllerValue()/127.f);
+						Logger::writeToLog("exists");
+						addNewMapping=false;
+					}
+				}
+			}		
+			
+			if(addNewMapping)
+			{
+				if(nodeId>0)
+				{
+					graph.midiMappings.add(CabbageMidiMapping(nodeId, parameterIndex, message.getChannel(), message.getControllerNumber()));
+					cUtils::debug("nodeId", nodeId);
+				}
+			}
+		}
+		else
+		{ //mid learn disabled
+			for(int i=0;i<graph.midiMappings.size()-1;i++)
+			{
+				if(doMidiMappingsMatch(i, message.getChannel(), message.getControllerNumber()))
+				{
+					if(graph.getGraph().getNode(graph.midiMappings.getReference(i).nodeId))
+					{
+						graph.getGraph().getNode(graph.midiMappings.getReference(i).nodeId)->getProcessor()->setParameterNotifyingHost(graph.midiMappings.getReference(i).parameterIndex, message.getControllerValue()/127.f);
+						graph.getGraph().getNode(graph.midiMappings.getReference(i).nodeId)->getProcessor()->setParameter(graph.midiMappings.getReference(i).parameterIndex, message.getControllerValue()/127.f);
+					}
+				}		
+					
+			}
+		}
+		
 	}
+addNewMapping=true;
+}
+
+bool GraphDocumentComponent::doMidiMappingsMatch(int i, int channel, int controller)
+{
+	if((graph.midiMappings.getReference(i).channel==channel)&&(graph.midiMappings.getReference(i).controller==controller))
+		return true;
+	else 
+		return false;
 }

@@ -34,14 +34,16 @@
 //==============================================================================
 namespace CommandIDs
 {
-static const int open                   = 0x30000;
-static const int save                   = 0x30001;
-static const int saveAs                 = 0x30002;
-static const int showPluginListEditor   = 0x30100;
-static const int showAudioSettings      = 0x30200;
-static const int aboutBox               = 0x30300;
-static const int preferences            = 0x30400;
-static const int setCabbageFileDirectory               = 0x30500;
+	static const int open                   = 0x30000;
+	static const int save                   = 0x30001;
+	static const int saveAs                 = 0x30002;
+	static const int showPluginListEditor   = 0x30100;
+	static const int showAudioSettings      = 0x30200;
+	static const int aboutBox               = 0x30300;
+	static const int preferences            = 0x30400;
+	static const int setCabbageFileDirectory= 0x30500;
+	static const int viewSidepanel          = 0x30600;
+	static const int midiLearn	            = 0x30700;
 }
 
 ApplicationCommandManager& getCommandManager();

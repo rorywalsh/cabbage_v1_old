@@ -200,6 +200,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 		if (r == 1)
 		{
 			graph.removeFilter (filterID);
+			findParentComponentOfClass<GraphDocumentComponent>()->addRemovePluginsInSidebarPanel();
 			return;
 		}
 		else if (r == 2)

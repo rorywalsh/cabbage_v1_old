@@ -20,7 +20,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "FilterGraph.h"
 #include "SidebarPanel.h"
-#include "../Plugin/PluginGenericAudioProcessorEditor.h"
 #include "../Plugin/CabbageGenericAudioProcessorEditor.h"
 
 
@@ -31,10 +30,16 @@ previousFilterNodeId(-99),
 thread ("file preview"),
 directoryList (nullptr, thread),
 fileTreeComp (*this, "", directoryList),
-canResize(false)
+canResize(false),
+midiBubble(250)
 {
 	setOpaque (true);
 	addAndMakeVisible (concertinaPanel);	
+	
+    midiBubble.setColour(BubbleComponent::backgroundColourId, Colours::white);
+    midiBubble.setBounds(0, 0, 50, 20);
+    addChildComponent(midiBubble);
+    midiBubble.setAlwaysOnTop(true);	
 	
 	directoryList.setDirectory (File::getSpecialLocation (File::userHomeDirectory), true, true);
 	thread.startThread (3);
@@ -47,30 +52,6 @@ canResize(false)
 	PropertyPanel* panel = new PropertyPanel ("Plugins");
 
 	Array <PropertyComponent*> params;
-	
-
-	for(int i=0;i<graph->getNumFilters();i++)
-	{	
-		PluginWrapper* plugin = dynamic_cast<PluginWrapper*>(graph->getNode(i)->getProcessor());
-		
-		if(plugin)
-		{
-			int numParams = plugin->getNumParameters();
-			params.clear();
-			for (int i = 0; i < numParams; ++i)
-			{
-				String name (plugin->getParameterName (i));
-				if (name.trim().isEmpty())
-					name = "Unnamed";
-
-				PluginProcessorParameterPropertyComp* const pc = new PluginProcessorParameterPropertyComp (name, *plugin, i);
-				params.add (pc);
-			}
-
-			panel->addSection (graph->getNode(i)->getProcessor()->getName(), params, true);
-		}
-	}
-
 
 	addPluginPanel (panel);
 
@@ -92,51 +73,28 @@ SidebarPanel::~SidebarPanel()
 void SidebarPanel::updatePluginParameters()
 {	
 	PropertyPanel* panel = (PropertyPanel*)concertinaPanel.getPanel(0);
+	//panel->clear();
 
 	Array <PropertyComponent*> params;
 	
 	const int numPanels = concertinaPanel.getNumPanels();
 
 	int index = filterGraph->getNumFilters()-1;
-	
-	
-	//----------------------------------------------------
-	PluginWrapper* wrapper = dynamic_cast<PluginWrapper*>(filterGraph->getNode(index)->getProcessor());
-	if(wrapper)
+
+	int numParams = filterGraph->getNode(index)->getProcessor()->getNumParameters();
+	params.clear();
+	for (int i = 0; i < numParams; ++i)
 	{
-		int numParams = wrapper->getNumParameters();
-		params.clear();
-		for (int i = 0; i < numParams; ++i)
-		{
-			String name (wrapper->getParameterName (i));
-			if (name.trim().isEmpty())
-				name = "Unnamed";
+		String name (filterGraph->getNode(index)->getProcessor()->getParameterName (i));
+		if (name.trim().isEmpty())
+			name = "Unnamed";
 
-			PluginProcessorParameterPropertyComp* const pc = new PluginProcessorParameterPropertyComp(name, *wrapper, i);
-			params.add (pc);
-		}
-
-		panel->addSection (filterGraph->getNode(index)->getProcessor()->getName(), params, false);
+		ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp(name, *filterGraph->getNode(index)->getProcessor(), i);
+		pc->addChangeListener(this);
+		params.add (pc);
 	}
 
-	//----------------------------------------------------
-	CabbagePluginAudioProcessor* internalCabbage = dynamic_cast<CabbagePluginAudioProcessor*>(filterGraph->getNode(index)->getProcessor());
-	if(internalCabbage)
-	{
-		int numParams = internalCabbage->getNumParameters();
-		params.clear();
-		for (int i = 0; i < numParams; ++i)
-		{
-			String name (internalCabbage->getParameterName (i));
-			if (name.trim().isEmpty())
-				name = "Unnamed";
-
-			ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp(name, *internalCabbage, i);
-			params.add (pc);
-		}
-
-		panel->addSection (filterGraph->getNode(index)->getProcessor()->getName(), params, false);
-	}
+	panel->addSection (filterGraph->getNode(index)->getProcessor()->getName(), params, false);
 
 	for(int y=0;y<panel->getSectionNames().size()-1;y++)
 		panel->setSectionOpen(y, false, true);
@@ -191,6 +149,24 @@ void SidebarPanel::upButtonPressed()
 void SidebarPanel::paint (Graphics& g)
 {
 	g.fillAll (Colour::greyLevel (0.2f));
+	
+	if(midiLearn)
+	{
+		g.setColour(Colours::yellow);
+		g.drawRect(getLocalBounds().reduced(.8), 4.f);		
+	}		
+}
+
+void SidebarPanel::toggleMIDILearn()
+{
+	midiLearn=!midiLearn;
+	repaint();
+}
+
+void SidebarPanel::changeListenerCallback (ChangeBroadcaster* source)
+{
+	ProcessorParameterPropertyComp* comp = (ProcessorParameterPropertyComp*)source;
+	midiBubble.showAt(comp, AttributedString(comp->getName()), 250);
 }
 
 void SidebarPanel::resized()

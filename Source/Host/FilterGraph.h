@@ -29,6 +29,19 @@ class NodeAudioProcessorListener;
 const char* const filenameSuffix = ".filtergraph";
 const char* const filenameWildcard = "*.filtergraph";
 
+//simple class to hold midi mappings
+class CabbageMidiMapping  
+{
+public:
+	CabbageMidiMapping(int nodeID, int paramIndex, int chan, int ctrl):
+														channel(chan),
+														controller(ctrl),
+														nodeId(nodeID),
+														parameterIndex(paramIndex){}
+	
+int channel, controller, nodeId, parameterIndex;
+};
+
 //==============================================================================
 /**
     A collection of filters and some connections between them.
@@ -106,6 +119,7 @@ public:
     /** The special channel index used to refer to a filter's midi channel.
     */
     static const int midiChannelNumber;
+	Array<CabbageMidiMapping> midiMappings;
 
 private:
     //==============================================================================

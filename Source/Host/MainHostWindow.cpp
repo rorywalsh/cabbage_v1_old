@@ -123,7 +123,7 @@ MainHostWindow::MainHostWindow()
 #if JUCE_MAC
     setMacMainMenu (this);
 #else
-    setMenuBar (this);
+    setMenuBar (this, 24);
 #endif
 
     getCommandManager().setFirstCommandTarget (this);
@@ -180,7 +180,7 @@ void MainHostWindow::changeListenerCallback (ChangeBroadcaster*)
 
 StringArray MainHostWindow::getMenuBarNames()
 {
-    const char* const names[] = { "File", "Plugins", "Options", nullptr };
+    const char* const names[] = { "File", "View", "Options", nullptr };
 
     return StringArray (names);
 }
@@ -209,30 +209,13 @@ PopupMenu MainHostWindow::getMenuForIndex (int topLevelMenuIndex, const String& 
     }
     else if (topLevelMenuIndex == 1)
     {
-        // "Plugins" menu
-        PopupMenu pluginsMenu;
-        addPluginsToMenu (pluginsMenu);
-        menu.addSubMenu ("Create plugin", pluginsMenu);
-        menu.addSeparator();
-        menu.addItem (250, "Delete all plugins");
+		menu.addCommandItem (&getCommandManager(), CommandIDs::viewSidepanel);
     }
     else if (topLevelMenuIndex == 2)
     {
         // "Options" menu
 		menu.addCommandItem (&getCommandManager(), CommandIDs::preferences);
-//        menu.addCommandItem (&getCommandManager(), CommandIDs::showPluginListEditor);
-//
-//        PopupMenu sortTypeMenu;
-//        sortTypeMenu.addItem (200, "List plugins in default order",      true, pluginSortMethod == KnownPluginList::defaultOrder);
-//        sortTypeMenu.addItem (201, "List plugins in alphabetical order", true, pluginSortMethod == KnownPluginList::sortAlphabetically);
-//        sortTypeMenu.addItem (202, "List plugins by category",           true, pluginSortMethod == KnownPluginList::sortByCategory);
-//        sortTypeMenu.addItem (203, "List plugins by manufacturer",       true, pluginSortMethod == KnownPluginList::sortByManufacturer);
-//        sortTypeMenu.addItem (204, "List plugins based on the directory structure", true, pluginSortMethod == KnownPluginList::sortByFileSystemLocation);
-//        menu.addSubMenu ("Plugin menu type", sortTypeMenu);
-//		menu.addCommandItem (&getCommandManager(), CommandIDs::setCabbageFileDirectory);
-//        menu.addSeparator();
-//        menu.addCommandItem (&getCommandManager(), CommandIDs::showAudioSettings);
-
+		menu.addCommandItem (&getCommandManager(), CommandIDs::midiLearn);
         menu.addSeparator();
         menu.addCommandItem (&getCommandManager(), CommandIDs::aboutBox);
     }
@@ -246,8 +229,7 @@ void MainHostWindow::menuItemSelected (int menuItemID, int /*topLevelMenuIndex*/
 
     if (menuItemID == 250)
     {
-        if (graphEditor != nullptr)
-            graphEditor->graph.clear();
+        //graphEditor->showSidebarPanel(!graphEditor->isSidebarPanelShowing());
     }
     else if (menuItemID >= 100 && menuItemID < 200)
     {
@@ -258,7 +240,7 @@ void MainHostWindow::menuItemSelected (int menuItemID, int /*topLevelMenuIndex*/
         if (graphEditor != nullptr && graphEditor->graph.saveIfNeededAndUserAgrees() == FileBasedDocument::savedOk)
 		{
             graphEditor->graph.loadFrom (recentFiles.getFile (menuItemID - 100), true);
-			graphEditor->addPluginsToSidebarPanel();
+			graphEditor->addRemovePluginsInSidebarPanel();
 		}
     }
     else if (menuItemID >= 200 && menuItemID < 210)
@@ -389,6 +371,8 @@ void MainHostWindow::getAllCommands (Array <CommandID>& commands)
                               CommandIDs::showAudioSettings,
                               CommandIDs::aboutBox,
 							  CommandIDs::preferences,
+							  CommandIDs::viewSidepanel,
+							  CommandIDs::midiLearn,
 							  CommandIDs::setCabbageFileDirectory
                             };
 
@@ -443,6 +427,16 @@ void MainHostWindow::getCommandInfo (const CommandID commandID, ApplicationComma
     case CommandIDs::preferences:
         result.setInfo ("Preferences", String::empty, category, 0);
         break;
+
+    case CommandIDs::viewSidepanel:
+        result.setInfo ("View Sidepanl", String::empty, category, 0);
+		result.defaultKeypresses.add (KeyPress('l', ModifierKeys::commandModifier, 0));
+        break;
+
+    case CommandIDs::midiLearn:
+        result.setInfo ("MIDI Learn", String::empty, category, 0);
+		result.defaultKeypresses.add (KeyPress('m', ModifierKeys::commandModifier, 0));
+        break;
 		
     default:
         break;
@@ -463,7 +457,7 @@ bool MainHostWindow::perform (const InvocationInfo& info)
         if (graphEditor != nullptr && graphEditor->graph.saveIfNeededAndUserAgrees() == FileBasedDocument::savedOk)
 		{
             graphEditor->graph.loadFromUserSpecifiedFile (true);
-			graphEditor->addPluginsToSidebarPanel();
+			graphEditor->addRemovePluginsInSidebarPanel();
 		}
         break;
 
@@ -497,11 +491,20 @@ bool MainHostWindow::perform (const InvocationInfo& info)
 		//graphEditor->updateNativeParametersPanel();
         //graphEditor->showSidebarPanel(!graphEditor->isSidebarPanelShowing());
         break;
+
+    case CommandIDs::viewSidepanel:
+		//graphEditor->updateNativeParametersPanel();
+        graphEditor->showSidebarPanel(!graphEditor->isSidebarPanelShowing());
+        break;
 		
 	case CommandIDs::preferences:
 		launchPreferencesDialogue();
         break;	
 
+	case CommandIDs::midiLearn:
+		graphEditor->toggleMIDILearn();
+        break;	
+		
     default:
         return false;
     }

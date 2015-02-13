@@ -236,6 +236,7 @@ public:
     //==============================================================================
     FilterGraph graph;
 	void handleIncomingMidiMessage (MidiInput*, const MidiMessage&) override;
+	bool doMidiMappingsMatch(int i, int channel, int controller);
 	
 	void showSidebarPanel(bool show);
 	
@@ -249,9 +250,15 @@ public:
 		sidebarPanel->showParametersForNode(nodeId);
 	}
 	
-	void addPluginsToSidebarPanel()
+	void addRemovePluginsInSidebarPanel()
 	{
 		sidebarPanel->updatePluginParameters();
+	}
+	
+	void toggleMIDILearn()
+	{
+		midiLearnEnabled=!midiLearnEnabled;
+		sidebarPanel->toggleMIDILearn();
 	}
 	
     //==============================================================================
@@ -269,6 +276,8 @@ private:
     GraphEditorPanel* graphPanel;
     Component* keyboardComp;
     Component* statusBar;
+	bool midiLearnEnabled;
+	bool addNewMapping;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GraphDocumentComponent)
 };

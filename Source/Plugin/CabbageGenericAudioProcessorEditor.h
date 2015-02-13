@@ -27,11 +27,12 @@
 
 //#include "FilterGraph.h"
 #include "../CabbageLookAndFeel.h"
-
+#include "../Host/PluginWrapperProcessor.h"
 
 class ProcessorParameterPropertyComp   : public PropertyComponent,
                                          private AudioProcessorListener,
-                                         private Timer
+                                         private Timer,
+										 public ChangeBroadcaster
 {
 public:
     ProcessorParameterPropertyComp (const String& name, AudioProcessor& p, int paramIndex)
@@ -40,20 +41,31 @@ public:
           index (paramIndex),
           paramHasChanged (false),
           slider (p, paramIndex),
+		  midiLearnEnabled(false),
 		  lookAndFeelBasic(new CabbageLookAndFeelBasic())
     {
 		setLookAndFeel(lookAndFeelBasic);
         startTimer (100);
         addAndMakeVisible (slider);
 		setPreferredHeight(20);
+		
+		if(PluginWrapper* wrapper = dynamic_cast<PluginWrapper*>(&p))
+		{
+			wrapper->vstInstance->addListener (this);
+		}
+		
         owner.addListener (this);
-		//slider.setLookAndFeel(lookAndFeelBasic);
 		slider.lookAndFeelChanged();
     }
 
     ~ProcessorParameterPropertyComp()
     {
-        owner.removeListener (this);
+		if(PluginWrapper* wrapper = dynamic_cast<PluginWrapper*>(&owner))
+		{
+			wrapper->vstInstance->removeListener (this);
+		}
+		else
+			owner.removeListener (this);
     }
 
     void refresh() override
@@ -68,19 +80,23 @@ public:
 
     void paint(Graphics &g)
     {
-        g.fillAll(cUtils::getComponentSkin().darker(.4f)); //background
+        g.fillAll(cUtils::getComponentSkin().darker(.4f)); 
+		
+		if(midiLearnEnabled == true)
+		{
+			g.setColour(Colours::yellow);
+			g.drawRect(getLocalBounds().withLeft(5).withWidth(slider.getPosition().getX()-15.f), 1.f);
+		}		
+		
         String text = getName();
         g.setColour(Colours::whitesmoke);
 
         Font font (cUtils::getTitleFont());
-        //font.setFallbackFontName (String("Verdana")); //in case the user doesn't have the first font installed
         g.setFont (font);
 
         g.drawFittedText(text, 5, 5,
                          slider.getPosition().getX(), font.getHeight()-2, Justification::centred, 1);
 
-        //	g.drawFittedText(text, 5, 5,
-        //	font.getStringWidth(text), font.getHeight()-2, Justification::centredTop, 1);
     }
 	
     void audioProcessorChanged (AudioProcessor*) override  {}
@@ -88,7 +104,10 @@ public:
     void audioProcessorParameterChanged (AudioProcessor*, int parameterIndex, float) override
     {
         if (parameterIndex == index)
+		{
             paramHasChanged = true;
+			sendChangeMessage();
+		}
     }
 
     void timerCallback() override
@@ -149,6 +168,8 @@ private:
     AudioProcessor& owner;
     const int index;
     bool volatile paramHasChanged;
+	bool midiLearnEnabled;
+	Colour midiLearnColour;
     ParamSlider slider;
 	ScopedPointer<CabbageLookAndFeelBasic> lookAndFeelBasic;
 	

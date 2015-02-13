@@ -72,7 +72,8 @@ private:
 //==============================================================================
 class SidebarPanel   : public Component,
 								private Timer,
-								public FileBrowserListener
+								public FileBrowserListener,
+								public ChangeListener
 {
 public:
     SidebarPanel(FilterGraph* graph);
@@ -91,11 +92,15 @@ public:
 	void mouseDrag(const MouseEvent& event);
 	void mouseEnter(const MouseEvent& event);
 	void mouseUp(const MouseEvent& event);
-	void upButtonPressed();
+	void upButtonPressed();	
+	void toggleMIDILearn();
+	
+	void changeListenerCallback (ChangeBroadcaster*);
 	
 	
 private:
     ConcertinaPanel concertinaPanel;
+	BubbleMessageComponent midiBubble;
 	DirectoryContentsList directoryList;
 	FileTreePropertyComponent fileTreeComp;
 	TimeSliceThread thread;
@@ -103,6 +108,7 @@ private:
 	int previousFilterNodeId;
     void addPluginPanel (PropertyPanel* panel);
 	bool canResize;
+	bool midiLearn;
 	
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SidebarPanel);
 };

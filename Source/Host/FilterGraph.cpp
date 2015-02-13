@@ -129,6 +129,7 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 			lastNodeID = node->nodeId;
 			//create node listener with unique nodeID;
 			audioProcessorListeners.add(new NodeAudioProcessorListener(node->nodeId));
+			audioProcessorListeners[audioProcessorListeners.size()-1]->addChangeListener(this);
 			node->getProcessor()->addListener(audioProcessorListeners[audioProcessorListeners.size()-1]);
             changed();
         }
@@ -468,8 +469,6 @@ void FilterGraph::changeListenerCallback(ChangeBroadcaster* source)
 //==========================================================================
 void NodeAudioProcessorListener::audioProcessorParameterChanged(AudioProcessor* processor, int parameterIndex, float newValue)
 {
-//	cUtils::debug("NodeID", this->nodeId);
-//	cUtils::debug("Processor", processor->getName());
-//	cUtils::debug("Parameter", processor->getParameterName(parameterIndex));
+	sendChangeMessage();
 }
 

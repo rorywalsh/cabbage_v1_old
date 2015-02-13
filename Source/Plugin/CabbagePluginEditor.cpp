@@ -675,8 +675,11 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 			pCnt=i;
 		}
 		
-		fStatement.add(String(1));
-		fStatement.add(String(evt.p[pCnt]));
+		if(table->genRoutine!=2)
+		{
+			fStatement.add(String(1));
+			fStatement.add(String(evt.p[pCnt]));			
+		}
 
         //now set table number and set score char to f
         fStatement.set(1, String(table->tableNumber));

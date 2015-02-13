@@ -193,28 +193,42 @@ public:
 //
     static void debug(String message)
     {
-		#ifndef DEBUG
+		#ifdef DEBUG
         Logger::writeToLog(message);
 		#endif
     }
 
     static void debug(float value)
     {
-		#ifndef DEBUG
+		#ifdef DEBUG
         Logger::writeToLog(String(value));
 		#endif
     }
 
     static void debug(String message, double value)
     {
-		#ifndef DEBUG
+		#ifdef DEBUG
         Logger::writeToLog(message+":"+String(value));
 		#endif
     }
 
+    static void debug(float val, String value)
+    {
+		#ifdef DEBUG
+        Logger::writeToLog(String(val)+":"+value);
+		#endif
+    }
+	
+    static void debug(float val, float value)
+    {
+		#ifdef DEBUG
+        Logger::writeToLog(String(val)+":"+String(value));
+		#endif
+    }
+	
     static void debug(String message, String value)
     {
-		#ifndef DEBUG
+		#ifdef DEBUG
         Logger::writeToLog(message+":"+value);
 		#endif
     }

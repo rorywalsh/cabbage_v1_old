@@ -1698,7 +1698,8 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
 
     cUtils::debug("Handle height", getHeight());
 
-    yPos = jlimit(0.0, getParentComponent()->getHeight()+0.0, yPos);
+    yPos = jlimit(0.0, getParentComponent()->getHeight()+0.0, yPos+(getHeight()/2.f));
+		
     setPosition(viewer->getSnapXPosition(xPos), viewer->getSnapYPosition(yPos), (getWidth()==FIXED_WIDTH ? true : false));
     setRelativePosition(Point<double>(viewer->getSnapXPosition(xPos), viewer->getSnapYPosition(yPos)));
 

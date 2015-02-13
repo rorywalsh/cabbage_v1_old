@@ -574,6 +574,7 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
     String fStatement = "f"+String(table->tableNumber)+" 0 "+String(table->tableSize)+" -16 ";
     String pFields = "";
     //Logger::writeToLog(fStatement);
+	
     float xAxisRescaleFactor = (float)table->tableSize/(float)table->getWidth();
     for(int i=0; i<points.size()-1; i++)
     {
@@ -614,6 +615,7 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
         handleYPos = points.getReference(points.size()-1).point.getY();
     else
         handleYPos = 0;
+		
     float yAmp = table->convertPixelToAmp(handleYPos);
 
     pFields = pFields + String(yAmp);
@@ -665,8 +667,16 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 
 
         StringArray fStatement;
-        for(int i=0; i<evt.pcnt; i++)
+		int pCnt=0;
+        for(int i=0; i<evt.pcnt-1; i++)
+		{
             fStatement.add(String(evt.p[i]));
+			cUtils::debug(i, fStatement[i]);
+			pCnt++;
+		}
+		
+		fStatement.add(String(1));
+		fStatement.add(String(evt.p[pCnt]));
 
         //now set table number and set score char to f
         fStatement.set(1, String(table->tableNumber));

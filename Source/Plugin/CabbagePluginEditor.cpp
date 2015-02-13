@@ -672,7 +672,7 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 		{
             fStatement.add(String(evt.p[i]));
 			cUtils::debug(i, fStatement[i]);
-			pCnt++;
+			pCnt=i;
 		}
 		
 		fStatement.add(String(1));

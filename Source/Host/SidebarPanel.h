@@ -49,6 +49,7 @@ public:
 	void refresh(){}
 	void buttonClicked (Button* button);
 	void sliderValueChanged (Slider* sliderThatWasMoved);
+	void sliderDragEnded (Slider *);
 	
 	void setTimeLabel(String value){ 	timeLabel.setText(value, dontSendNotification);	}
 	void setBeatsLabel(String value){ 	beatsLabel.setText(value, dontSendNotification);	}
@@ -62,7 +63,7 @@ public:
 	}
 	
 private:
-	Slider bpmSlider;
+	Slider bpmSlider, timeSigNum, timeSigDen;
 	DrawableButton playButton;
 	DrawableButton stopButton;
 	SidebarPanel &owner;
@@ -136,6 +137,7 @@ public:
     void resized() override;
     void timerCallback() override;
 	void showParametersForNode(int nodeID=-1);
+	void removeFromPluginParameters();
 	void updatePluginParameters();
     void selectionChanged() override;
     void fileClicked (const File&, const MouseEvent&) override          {}

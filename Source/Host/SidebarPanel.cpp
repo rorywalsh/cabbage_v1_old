@@ -73,12 +73,13 @@ midiBubble(250)
 	concertinaPanel.expandPanelFully(concertinaPanel.getPanel(TRANSPORT_CONTROLS), true);
 	
 }
-
+//=================================================================
 SidebarPanel::~SidebarPanel()
 {	
 	fileTreeComp.fileComp.removeListener(this);
 }
 
+//=================================================================
 void SidebarPanel::updatePluginParameters()
 {	
 	PropertyPanel* panel = (PropertyPanel*)concertinaPanel.getPanel(PLUGIN_PARAMS);
@@ -86,8 +87,6 @@ void SidebarPanel::updatePluginParameters()
 
 	Array <PropertyComponent*> params;
 	
-	const int numPanels = concertinaPanel.getNumPanels();
-
 	int index = filterGraph->getNumFilters()-1;
 
 	int numParams = filterGraph->getNode(index)->getProcessor()->getNumParameters();
@@ -106,18 +105,56 @@ void SidebarPanel::updatePluginParameters()
 		params.add (pc);
 	}
 
-	panel->addSection (filterGraph->getNode(index)->getProcessor()->getName(), params, false);
+	panel->addSection(filterGraph->getNode(index)->getProcessor()->getName(), params, false);
+
 
 	for(int y=0;y<panel->getSectionNames().size()-1;y++)
 		panel->setSectionOpen(y, false, true);
 		
 	panel->setSectionOpen(panel->getSectionNames().size()-1, true, true);
 
-	concertinaPanel.expandPanelFully(concertinaPanel.getPanel(0), true);
+	concertinaPanel.expandPanelFully(concertinaPanel.getPanel(PLUGIN_PARAMS), true);
 
 }
 
+//=================================================================
+void SidebarPanel::removeFromPluginParameters()
+{	
+	PropertyPanel* panel = (PropertyPanel*)concertinaPanel.getPanel(PLUGIN_PARAMS);
+	panel->clear();
 
+	Array <PropertyComponent*> params;
+	
+	const int numPanels = concertinaPanel.getNumPanels();
+
+	for(int index=0;index<filterGraph->getNumFilters();index++)
+	{ 
+		int numParams = filterGraph->getNode(index)->getProcessor()->getNumParameters();
+		const AudioProcessorGraph::Node::Ptr f = filterGraph->getNode(index);
+		params.clear();
+		
+		for (int i = 0; i < numParams; ++i)
+		{
+			String name (filterGraph->getNode(index)->getProcessor()->getParameterName (i));
+			if (name.trim().isEmpty())
+				name = "Unnamed";
+
+			ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp(name, 
+																						  *filterGraph->getNode(index)->getProcessor(),
+																						  i,
+																						  filterGraph->getNode(index)->nodeId);
+			pc->addChangeListener(this);
+			params.add (pc);
+		}
+		
+		if(f->properties.getWithDefault("pluginType", "")!="Internal")
+			panel->addSection(filterGraph->getNode(index)->getProcessor()->getName(), params, false);	
+	}
+
+	
+	concertinaPanel.expandPanelFully(concertinaPanel.getPanel(PLUGIN_PARAMS), true);	
+}
+//=================================================================
 void SidebarPanel::showParametersForNode(int nodeId)
 {	
 	const int numPanels = concertinaPanel.getNumPanels();
@@ -168,7 +205,8 @@ void SidebarPanel::stopButtonPressed()
 	filterGraph->setIsPlaying(false, true);
 	transportControls.setTimeIsRunning(false);
 	transportControls.setTimeLabel("00 : 00 : 00");
-	transportControls.repaint();
+	transportControls.setBeatsLabel("Bar 1 : 1");
+	repaint();
 	stopTimer();
 }
 
@@ -184,7 +222,7 @@ void SidebarPanel::playButtonPressed()
 {
 	filterGraph->setIsPlaying(true);
 	transportControls.setTimeIsRunning(true);
-	startTimer(100);
+	startTimer(10);
 }
 
 
@@ -244,7 +282,15 @@ void SidebarPanel::timerCallback()
 	const int minutes = (ellapsedTime / 60) % 60;
 	const int seconds = ellapsedTime % 60;		
 	String time = String::formatted("%02d", hours)+" : "+String::formatted("%02d", minutes)+" : "+String::formatted("%02d", seconds);
-	transportControls.setTimeLabel(time);	
+	transportControls.setTimeLabel(time);
+
+	const int elaspsedQNs = filterGraph->getPPQPosition();
+	const int bars = (elaspsedQNs/4);
+	const int beats = elaspsedQNs%4;
+	
+	String ppqPos = "Bar "+String(bars+1)+":"+String(beats+1);	
+	transportControls.setBeatsLabel(String(ppqPos));
+
 }
 
 //--------------------------------------------------------------------
@@ -345,22 +391,40 @@ standardLookAndFeel(new LookAndFeel_V2())
 	bpmSlider.setVelocityBasedMode(true);
 	bpmSlider.setColour(Slider::ColourIds::thumbColourId, Colours::black);
 	bpmSlider.setColour(Slider::ColourIds::textBoxTextColourId, Colours::white);
-	//bpmSlider.setVelocityModeParameters(0.5);
+	bpmSlider.setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::black);
+	
+	timeSigNum.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
+	timeSigNum.setRange(1, 24, 1);
+	timeSigNum.setValue(4, dontSendNotification);
+	timeSigNum.addListener(this);
+	timeSigNum.setColour(Slider::ColourIds::thumbColourId, Colours::black);
+	timeSigNum.setColour(Slider::ColourIds::textBoxTextColourId, Colours::white);
+	timeSigNum.setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::black);
+		
+	timeSigDen.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
+	timeSigDen.setRange(1, 24, 1);
+	timeSigDen.setValue(4, dontSendNotification);
+	timeSigDen.addListener(this);
+	timeSigDen.setColour(Slider::ColourIds::thumbColourId, Colours::black);
+	timeSigDen.setColour(Slider::ColourIds::textBoxTextColourId, Colours::white);
+	timeSigDen.setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::black);
+	
+	bpmSlider.setVelocityModeParameters(0.9);
 	bpmSlider.setTextValueSuffix(" BPM");
 	
-	timeLabel.setJustificationType(Justification::centred);
+	timeLabel.setJustificationType(Justification::left);
 	timeLabel.setFont(Font(24, 1));
 	timeLabel.setLookAndFeel(standardLookAndFeel);
 	timeLabel.setColour(Label::backgroundColourId, Colours::black);
 	timeLabel.setColour(Label::textColourId, Colours::cornflowerblue);
 	timeLabel.setText("00 : 00 : 00", dontSendNotification);
 	
-	beatsLabel.setJustificationType(Justification::centred);
-	beatsLabel.setFont(Font(20, 1));
+	beatsLabel.setJustificationType(Justification::right);
+	beatsLabel.setFont(Font(18, 1));
 	beatsLabel.setLookAndFeel(standardLookAndFeel);
 	beatsLabel.setColour(Label::backgroundColourId, Colours::black);
 	beatsLabel.setColour(Label::textColourId, Colours::cornflowerblue);
-	beatsLabel.setText("00:00:00", dontSendNotification);
+	beatsLabel.setText("Bar 1:1", dontSendNotification);
 		
 	
 	playButton.setLookAndFeel(&lookAndFeel);	
@@ -400,6 +464,8 @@ standardLookAndFeel(new LookAndFeel_V2())
 	addAndMakeVisible (bpmLabel);
 	addAndMakeVisible (timeLabel);
 	addAndMakeVisible (beatsLabel);
+	addAndMakeVisible (timeSigNum);
+	addAndMakeVisible (timeSigDen);
 	
 	
 	playButton.addListener (this);	
@@ -407,6 +473,11 @@ standardLookAndFeel(new LookAndFeel_V2())
 }
 
 void TransportComponent::sliderValueChanged(Slider* slider)
+{
+	//owner.setCurrentBPM(slider->getValue());
+}
+
+void TransportComponent::sliderDragEnded(Slider* slider)
 {
 	owner.setCurrentBPM(slider->getValue());
 }
@@ -416,8 +487,11 @@ void TransportComponent::resized()
 	stopButton.setBounds(5, 5, BUTTON_SIZE, BUTTON_SIZE);
 	playButton.setBounds(BUTTON_SIZE+10, 5, BUTTON_SIZE, BUTTON_SIZE);
 	timeLabel.setBounds(BUTTON_SIZE*2+20, 5, getWidth()-(BUTTON_SIZE*2+45), 30);
-	beatsLabel.setBounds(BUTTON_SIZE*2+20, 30, getWidth()-(BUTTON_SIZE*2+45), 20);
-	bpmSlider.setBounds(5, BUTTON_SIZE+10, BUTTON_SIZE*2, 20);
+	beatsLabel.setBounds(BUTTON_SIZE*2+75, 30, getWidth()-(BUTTON_SIZE*2+100), 20);
+	timeSigNum.setBounds(BUTTON_SIZE*2+25, 35, 25, 15);
+	timeSigDen.setBounds(BUTTON_SIZE*2+50, 35, 25, 15);
+	
+	bpmSlider.setBounds(8, BUTTON_SIZE+8, BUTTON_SIZE*2, 20);
 	
 	Path timeBox;
 	timeBox.addRoundedRectangle(BUTTON_SIZE*2+15, 5, getWidth()-(BUTTON_SIZE*2+30), 50, 5);

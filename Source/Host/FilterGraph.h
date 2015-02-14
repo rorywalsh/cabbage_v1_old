@@ -49,7 +49,7 @@ int channel, controller, nodeId, parameterIndex;
 */
 class FilterGraph   : public FileBasedDocument,
 					  public ChangeListener,
-					  public Timer
+					  public HighResolutionTimer
 {
 	
 public:
@@ -125,7 +125,7 @@ public:
 	Array<CabbageMidiMapping> midiMappings;
 	
 	//------- play info and timer stuff ---------------
-	void timerCallback();
+	void hiResTimerCallback();
 	
 	class AudioPlaybackHead: public AudioPlayHead
 	{
@@ -137,8 +137,13 @@ public:
 			}
 			
 			void setIsPlaying(bool val){  playHeadPositionInfo.isPlaying=val;	}
+			
 			void setTimeInSeconds(int val){  playHeadPositionInfo.timeInSeconds=val;	}
 			int getTimeInSeconds(){  return playHeadPositionInfo.timeInSeconds;	}
+			
+			void setPPQPosition(int val){  playHeadPositionInfo.ppqPosition=val;	}
+			int getPPQPosition(){  return playHeadPositionInfo.ppqPosition;	}
+			
 		
 		private:
 			AudioPlayHead::CurrentPositionInfo playHeadPositionInfo;
@@ -146,7 +151,8 @@ public:
 
 	void setIsPlaying(bool value, bool reset=false);
 	
-	int getTimeInSeconds(){		audioPlayHead.getTimeInSeconds();	}	
+	int getTimeInSeconds(){		audioPlayHead.getTimeInSeconds();	}
+	int getPPQPosition(){		audioPlayHead.getPPQPosition();	}	
 	void setBPM(int bpm);
 
 private:
@@ -164,10 +170,9 @@ private:
 	Array<String> pluginTypes;
 	uint32 nodeId;
 	float PPQN, currentBPM, playPosition;
+	int ppqPosition, subTicks;
 	int timeInSeconds; 
 	
-    
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FilterGraph)
 };
 

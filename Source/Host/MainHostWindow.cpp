@@ -240,7 +240,7 @@ void MainHostWindow::menuItemSelected (int menuItemID, int /*topLevelMenuIndex*/
         if (graphEditor != nullptr && graphEditor->graph.saveIfNeededAndUserAgrees() == FileBasedDocument::savedOk)
 		{
             graphEditor->graph.loadFrom (recentFiles.getFile (menuItemID - 100), true);
-			graphEditor->addRemovePluginsInSidebarPanel();
+			graphEditor->updatePluginsInSidebarPanel();
 		}
     }
     else if (menuItemID >= 200 && menuItemID < 210)
@@ -457,7 +457,7 @@ bool MainHostWindow::perform (const InvocationInfo& info)
         if (graphEditor != nullptr && graphEditor->graph.saveIfNeededAndUserAgrees() == FileBasedDocument::savedOk)
 		{
             graphEditor->graph.loadFromUserSpecifiedFile (true);
-			graphEditor->addRemovePluginsInSidebarPanel();
+			graphEditor->updatePluginsInSidebarPanel();
 		}
         break;
 

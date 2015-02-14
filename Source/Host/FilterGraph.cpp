@@ -45,13 +45,18 @@ FilterGraph::FilterGraph (AudioPluginFormatManager& formatManager_)
 	timeInSeconds(0),
 	currentBPM(60),
 	playPosition(0),
-	PPQN(24)
+	PPQN(24),
+	ppqPosition(1),
+	subTicks(0)
 {
+	startTimer(0);
+	stopTimer();	
     setChangedFlag (false);
 }
 
 FilterGraph::~FilterGraph()
 {
+	stopTimer();
     graph.clear();
 }
 
@@ -83,8 +88,7 @@ void FilterGraph::setIsPlaying(bool value, bool reset)
 	audioPlayHead.setIsPlaying(value);
 	if(value == true)
 	{
-		startTimer(60.f/(currentBPM * PPQN));
-		cUtils::debug(60.f/(currentBPM * PPQN));
+		startTimer(100*(60.f/currentBPM));
 	}
 	else
 		stopTimer();
@@ -92,32 +96,43 @@ void FilterGraph::setIsPlaying(bool value, bool reset)
 	if(reset==true)
 	{
 		timeInSeconds=0;
+		audioPlayHead.setPPQPosition(0);
 		audioPlayHead.setTimeInSeconds(0);
+		ppqPosition=0;
+		timeInSeconds=0;
+		
 	}
 }
 //------------------------------------------
 void FilterGraph::setBPM(int bpm)
 {		
 	currentBPM = bpm;	
+	
 	if(isTimerRunning())
 	{
 		stopTimer();
-		startTimer(60.f/(currentBPM * PPQN));
+		startTimer(100*(60.f/currentBPM));
 	}
 }
 //------------------------------------------
-void FilterGraph::timerCallback()
+void FilterGraph::hiResTimerCallback()
 {
 	if(playPosition==0)
 	{
 		timeInSeconds++;
 		audioPlayHead.setTimeInSeconds(timeInSeconds);
 	}
-	
-	
-	playPosition = (playPosition==PPQN-1 ? 0 : playPosition+1);
-	
 
+	
+	if(subTicks==0)
+	{
+		audioPlayHead.setPPQPosition(ppqPosition);
+		ppqPosition++;	
+	}
+	
+	subTicks = (subTicks > 9 ? 0 : subTicks+1);
+	playPosition = (playPosition > 1 ? 0 : playPosition+((float)getTimerInterval()/1000.f));
+	
 }
 //==============================================================================
 void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)

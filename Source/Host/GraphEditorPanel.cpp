@@ -329,13 +329,13 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 				if(r<cabbageFiles.size()+1)
 				{
 					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, cabbageFiles[r-1].getFullPathName());
-					findParentComponentOfClass<GraphDocumentComponent>()->addRemovePluginsInSidebarPanel();
+					findParentComponentOfClass<GraphDocumentComponent>()->updatePluginsInSidebarPanel();
 					return;
 				}
 				else 
 				{ 
 					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
-					findParentComponentOfClass<GraphDocumentComponent>()->addRemovePluginsInSidebarPanel();
+					findParentComponentOfClass<GraphDocumentComponent>()->updatePluginsInSidebarPanel();
 					return;
 				}
 			}

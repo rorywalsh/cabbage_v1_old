@@ -22,9 +22,61 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "FilterGraph.h"
+#include "../CabbageLookAndFeel.h"
+
+#define FILE_BROWSER 2
+#define TRANSPORT_CONTROLS 0
+#define PLUGIN_PARAMS 1
+#define BUTTON_SIZE 30
 
 class SidebarPanel;
 
+//==============================================================================
+// transport prop
+//==============================================================================
+class TransportComponent : public PropertyComponent,
+							public Button::Listener,
+							public Slider::Listener
+{
+public:
+	TransportComponent(SidebarPanel &ownerPanel, String name);
+	
+	~TransportComponent()
+	{
+	}
+	
+	void resized();
+	void refresh(){}
+	void buttonClicked (Button* button);
+	void sliderValueChanged (Slider* sliderThatWasMoved);
+	
+	void setTimeLabel(String value){ 	timeLabel.setText(value, dontSendNotification);	}
+	void setBeatsLabel(String value){ 	beatsLabel.setText(value, dontSendNotification);	}
+	
+	void setTimeIsRunning(bool value)
+	{
+		if(value)
+			timeLabel.setColour(Label::textColourId, Colours::yellow);
+		else
+			timeLabel.setColour(Label::textColourId, Colours::cornflowerblue);
+	}
+	
+private:
+	Slider bpmSlider;
+	DrawableButton playButton;
+	DrawableButton stopButton;
+	SidebarPanel &owner;
+	Label bpmLabel;
+	Label timeLabel;
+	Label beatsLabel;
+	CabbageLookAndFeelBasic lookAndFeel;
+	DrawablePath timingInfoBox;
+	ScopedPointer<LookAndFeel_V2> standardLookAndFeel;
+};
+
+//==============================================================================
+// file browser comp
+//==============================================================================
 class FileTreePropertyComponent : public PropertyComponent,
 								  public Button::Listener
 {
@@ -94,7 +146,10 @@ public:
 	void mouseUp(const MouseEvent& event);
 	void upButtonPressed();	
 	void toggleMIDILearn();
-	
+	void stopButtonPressed();
+	void playButtonPressed();
+	void pauseButtonPressed();
+	void setCurrentBPM(int bpm);
 	void changeListenerCallback (ChangeBroadcaster*);
 	
 	
@@ -103,6 +158,7 @@ private:
 	BubbleMessageComponent midiBubble;
 	DirectoryContentsList directoryList;
 	FileTreePropertyComponent fileTreeComp;
+	TransportComponent transportControls;
 	TimeSliceThread thread;
 	FilterGraph* filterGraph;
 	int previousFilterNodeId;

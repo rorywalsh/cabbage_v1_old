@@ -39,7 +39,13 @@ FilterGraph::FilterGraph (AudioPluginFormatManager& formatManager_)
                          filenameWildcard,
                          "Load a filter graph",
                          "Save a filter graph"),
-    formatManager (formatManager_), lastUID (0)
+    formatManager (formatManager_), 
+	lastUID (0),
+	audioPlayHead(),
+	timeInSeconds(0),
+	currentBPM(60),
+	playPosition(0),
+	PPQN(24)
 {
     setChangedFlag (false);
 }
@@ -53,7 +59,6 @@ uint32 FilterGraph::getNextUID() noexcept
 {
     return ++lastUID;
 }
-
 //==============================================================================
 int FilterGraph::getNumFilters() const noexcept
 {
@@ -70,6 +75,51 @@ const AudioProcessorGraph::Node::Ptr FilterGraph::getNodeForId (const uint32 uid
     return graph.getNodeForId (uid);
 }
 
+//==============================================================================
+// transport methods
+//==============================================================================
+void FilterGraph::setIsPlaying(bool value, bool reset)
+{
+	audioPlayHead.setIsPlaying(value);
+	if(value == true)
+	{
+		startTimer(60.f/(currentBPM * PPQN));
+		cUtils::debug(60.f/(currentBPM * PPQN));
+	}
+	else
+		stopTimer();
+		
+	if(reset==true)
+	{
+		timeInSeconds=0;
+		audioPlayHead.setTimeInSeconds(0);
+	}
+}
+//------------------------------------------
+void FilterGraph::setBPM(int bpm)
+{		
+	currentBPM = bpm;	
+	if(isTimerRunning())
+	{
+		stopTimer();
+		startTimer(60.f/(currentBPM * PPQN));
+	}
+}
+//------------------------------------------
+void FilterGraph::timerCallback()
+{
+	if(playPosition==0)
+	{
+		timeInSeconds++;
+		audioPlayHead.setTimeInSeconds(timeInSeconds);
+	}
+	
+	
+	playPosition = (playPosition==PPQN-1 ? 0 : playPosition+1);
+	
+
+}
+//==============================================================================
 void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 {
     if (desc != nullptr)
@@ -89,6 +139,7 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 				//cUtils::debug("num params", instance->getNumParameters());
 				node = graph.addNode (instance);
 				node->properties.set("pluginType", "ThirdParty");
+				node->getProcessor()->setPlayHead(&audioPlayHead);
 				node->properties.set("pluginName", desc->name);
 			}
 		}
@@ -120,6 +171,7 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 			String xmlText = xmlElem->createDocument("");
 			node->properties.set("pluginType", "Cabbage");
 			node->properties.set("pluginDesc", xmlText);
+			node->getProcessor()->setPlayHead(&audioPlayHead);
 		}
 		
         if (node != nullptr)
@@ -142,6 +194,7 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
     }
 }
 
+//==============================================================================
 String FilterGraph::findControllerForparameter(int32 nodeID, int paramIndex)
 {
 	for(int i=0;i<midiMappings.size();i++)
@@ -159,6 +212,7 @@ String FilterGraph::findControllerForparameter(int32 nodeID, int paramIndex)
 }
 
 
+//==============================================================================
 void FilterGraph::removeFilter (const uint32 id)
 {
     PluginWindow::closeCurrentlyOpenWindowsFor (id);
@@ -203,7 +257,6 @@ void FilterGraph::getNodePosition (const int nodeId, double& x, double& y) const
     }
 }
 
-//==============================================================================
 int FilterGraph::getNumConnections() const noexcept
 {
     return graph.getNumConnections();
@@ -352,6 +405,7 @@ static XmlElement* createNodeXml (AudioProcessorGraph::Node* const node) noexcep
     return e;
 }
 
+//==============================================================================
 void FilterGraph::createNodeFromXml (const XmlElement& xml)
 {
     PluginDescription desc;
@@ -361,7 +415,6 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
         if (desc.loadFromXml (*e))
             break;
     }
-
 
 	AudioProcessorGraph::Node::Ptr node = nullptr;
 	
@@ -378,6 +431,7 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
 			node = graph.addNode (instance, xml.getIntAttribute ("uid"));
 			
 			node->properties.set("pluginName", desc.name);
+			node->getProcessor()->setPlayHead(&audioPlayHead);
 		}
 	}
 	else if(desc.pluginFormatName=="Internal")
@@ -408,6 +462,7 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
 		String xmlText = xmlElem->createDocument("");
 		node->properties.set("pluginDesc", xmlText);
 		node->properties.set("pluginType", "Cabbage");
+		node->getProcessor()->setPlayHead(&audioPlayHead);
 	}	
 	
 
@@ -429,6 +484,7 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
 
 }
 
+//==============================================================================
 XmlElement* FilterGraph::createXml() const
 {
     XmlElement* xml = new XmlElement ("FILTERGRAPH");

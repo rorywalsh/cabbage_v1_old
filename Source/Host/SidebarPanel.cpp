@@ -31,6 +31,7 @@ thread ("file preview"),
 directoryList (nullptr, thread),
 fileTreeComp (*this, "", directoryList),
 canResize(false),
+transportControls(*this, ""),
 midiBubble(250)
 {
 	setOpaque (true);
@@ -49,6 +50,13 @@ midiBubble(250)
 	fileTreeComp.fileComp.addListener (this);	
 	
 	
+	PropertyPanel* transportPanel = new PropertyPanel ("Transport Controls");
+	Array <PropertyComponent*> transport;
+	transport.add(&transportControls);
+	transportPanel->addProperties(transport);		
+	concertinaPanel.addPanel(TRANSPORT_CONTROLS, transportPanel, false);
+	concertinaPanel.setMaximumPanelSize(concertinaPanel.getPanel(TRANSPORT_CONTROLS), 70);
+	
 	PropertyPanel* panel = new PropertyPanel ("Plugins");
 
 	Array <PropertyComponent*> params;
@@ -61,7 +69,8 @@ midiBubble(250)
 	singleParams.add(&fileTreeComp);
 	filePanel->addProperties(singleParams);	
 	
-	concertinaPanel.addPanel(1, filePanel, false);
+	concertinaPanel.addPanel(FILE_BROWSER, filePanel, false);
+	concertinaPanel.expandPanelFully(concertinaPanel.getPanel(TRANSPORT_CONTROLS), true);
 	
 }
 
@@ -72,7 +81,7 @@ SidebarPanel::~SidebarPanel()
 
 void SidebarPanel::updatePluginParameters()
 {	
-	PropertyPanel* panel = (PropertyPanel*)concertinaPanel.getPanel(0);
+	PropertyPanel* panel = (PropertyPanel*)concertinaPanel.getPanel(PLUGIN_PARAMS);
 	//panel->clear();
 
 	Array <PropertyComponent*> params;
@@ -131,7 +140,7 @@ void SidebarPanel::showParametersForNode(int nodeId)
 			}
 		}
 	
-	if(PropertyPanel* propPanel = (PropertyPanel*)concertinaPanel.getPanel(0))
+	if(PropertyPanel* propPanel = (PropertyPanel*)concertinaPanel.getPanel(PLUGIN_PARAMS))
 	{
 		for(int i=0;i<propPanel->getSectionNames().size();i++)
 			propPanel->setSectionOpen(i, false, false);
@@ -142,13 +151,48 @@ void SidebarPanel::showParametersForNode(int nodeId)
 			
 }
 
+//--------------------------------------------------------------------
+//move the file browser root to a parent directory
+//--------------------------------------------------------------------
 void SidebarPanel::upButtonPressed()
 {
 	directoryList.setDirectory(directoryList.getDirectory().getParentDirectory(), true, true);
 	fileTreeComp.setText(directoryList.getDirectory().getFileNameWithoutExtension());
 }
 
+//--------------------------------------------------------------------
+// transport methods
+//--------------------------------------------------------------------
+void SidebarPanel::stopButtonPressed()
+{
+	filterGraph->setIsPlaying(false, true);
+	transportControls.setTimeIsRunning(false);
+	transportControls.setTimeLabel("00 : 00 : 00");
+	transportControls.repaint();
+	stopTimer();
+}
 
+void SidebarPanel::pauseButtonPressed()
+{
+	filterGraph->setIsPlaying(false);
+	transportControls.setTimeIsRunning(false);
+	transportControls.repaint();
+	stopTimer();
+}
+
+void SidebarPanel::playButtonPressed()
+{
+	filterGraph->setIsPlaying(true);
+	transportControls.setTimeIsRunning(true);
+	startTimer(100);
+}
+
+
+void SidebarPanel::setCurrentBPM(int bpm)
+{
+	filterGraph->setBPM(bpm);
+}
+//--------------------------------------------------------------------
 void SidebarPanel::paint (Graphics& g)
 {
 	g.fillAll (Colour::greyLevel (0.2f));
@@ -160,6 +204,9 @@ void SidebarPanel::paint (Graphics& g)
 	}		
 }
 
+//--------------------------------------------------------------------
+//called when a users presses the play button
+//--------------------------------------------------------------------
 void SidebarPanel::toggleMIDILearn()
 {
 	midiLearn=!midiLearn;
@@ -169,7 +216,7 @@ void SidebarPanel::toggleMIDILearn()
 	
 	repaint();
 }
-
+//--------------------------------------------------------------------
 void SidebarPanel::changeListenerCallback (ChangeBroadcaster* source)
 {
 	if(midiLearn)
@@ -182,18 +229,25 @@ void SidebarPanel::changeListenerCallback (ChangeBroadcaster* source)
 		midiBubble.showAt(comp, AttributedString(text), 1000);
 	}
 }
-
+//--------------------------------------------------------------------
 void SidebarPanel::resized()
 {
 	fileTreeComp.setPreferredHeight(getLocalBounds().reduced(4).getHeight()-40);
 	concertinaPanel.setBounds (getLocalBounds().reduced (4));
 }
 
+//--------------------------------------------------------------------
 void SidebarPanel::timerCallback()
 {
-
+	const int ellapsedTime = filterGraph->getTimeInSeconds();	
+	const int hours = (ellapsedTime / 60 / 60) % 24;
+	const int minutes = (ellapsedTime / 60) % 60;
+	const int seconds = ellapsedTime % 60;		
+	String time = String::formatted("%02d", hours)+" : "+String::formatted("%02d", minutes)+" : "+String::formatted("%02d", seconds);
+	transportControls.setTimeLabel(time);	
 }
 
+//--------------------------------------------------------------------
 void SidebarPanel::mouseEnter(const MouseEvent& event)
 {
 	const int xPos = event.getPosition().getX();
@@ -206,30 +260,32 @@ void SidebarPanel::mouseEnter(const MouseEvent& event)
 	else
 		setMouseCursor (MouseCursor::NormalCursor);
 }
-
+//--------------------------------------------------------------------
 void SidebarPanel::mouseDrag(const MouseEvent& event)
 {
 	if(canResize)
 		this->setSize(event.getPosition().getX(), this->getHeight());
 }
-
+//--------------------------------------------------------------------
 void SidebarPanel::mouseUp(const MouseEvent& event)
 {
 	canResize = false;
 }
-
+//--------------------------------------------------------------------
 void SidebarPanel::addPluginPanel (PropertyPanel* panel)
 {
-	concertinaPanel.addPanel(0, panel, false);
+	concertinaPanel.addPanel(PLUGIN_PARAMS, panel, false);
 	concertinaPanel.setPanelHeaderSize (panel, 20);
-	concertinaPanel.expandPanelFully(concertinaPanel.getPanel(0), true);
+	concertinaPanel.expandPanelFully(concertinaPanel.getPanel(PLUGIN_PARAMS), true);
 }
-
+//--------------------------------------------------------------------
 void SidebarPanel::selectionChanged()
 {
 	//cUtils::debug(fileTreeComp.fileComp.getSelectedFile().getFullPathName());
 }
 
+//==============================================================================
+//File browser property
 //==============================================================================
 FileTreePropertyComponent::FileTreePropertyComponent(SidebarPanel &ownerPanel, String name, DirectoryContentsList &_listToShow):
 PropertyComponent(name, 1000),
@@ -257,6 +313,7 @@ standardLookAndFeel(new LookAndFeel_V2())
 	arrowImage.setFill (Colours::white);
 	arrowImage.setPath (arrowPath);
 	upButton.setImages (&arrowImage);
+	
 	fileComp.setColour (FileTreeComponent::backgroundColourId, Colours::black);	
 	fileComp.setColour (TreeView::linesColourId, Colours::white); 
 }
@@ -264,4 +321,125 @@ standardLookAndFeel(new LookAndFeel_V2())
 void FileTreePropertyComponent::buttonClicked (Button* button)
 {
 	owner.upButtonPressed();
+}
+
+//==============================================================================
+//transport controls
+//==============================================================================
+TransportComponent::TransportComponent(SidebarPanel &ownerPanel, String name):
+owner(ownerPanel),
+PropertyComponent(name, 70),
+lookAndFeel(),
+playButton("playButton", DrawableButton::ImageOnButtonBackground),
+stopButton("stopButton", DrawableButton::ImageOnButtonBackground),
+bpmSlider("bpmSlider"),
+timeLabel("TimeLabel"),
+beatsLabel("beatsLabel"),
+timingInfoBox(),
+standardLookAndFeel(new LookAndFeel_V2())
+{
+	bpmSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
+	bpmSlider.setRange(1, 500, 1);
+	bpmSlider.setValue(60, dontSendNotification);
+	bpmSlider.addListener(this);
+	bpmSlider.setVelocityBasedMode(true);
+	bpmSlider.setColour(Slider::ColourIds::thumbColourId, Colours::black);
+	bpmSlider.setColour(Slider::ColourIds::textBoxTextColourId, Colours::white);
+	//bpmSlider.setVelocityModeParameters(0.5);
+	bpmSlider.setTextValueSuffix(" BPM");
+	
+	timeLabel.setJustificationType(Justification::centred);
+	timeLabel.setFont(Font(24, 1));
+	timeLabel.setLookAndFeel(standardLookAndFeel);
+	timeLabel.setColour(Label::backgroundColourId, Colours::black);
+	timeLabel.setColour(Label::textColourId, Colours::cornflowerblue);
+	timeLabel.setText("00 : 00 : 00", dontSendNotification);
+	
+	beatsLabel.setJustificationType(Justification::centred);
+	beatsLabel.setFont(Font(20, 1));
+	beatsLabel.setLookAndFeel(standardLookAndFeel);
+	beatsLabel.setColour(Label::backgroundColourId, Colours::black);
+	beatsLabel.setColour(Label::textColourId, Colours::cornflowerblue);
+	beatsLabel.setText("00:00:00", dontSendNotification);
+		
+	
+	playButton.setLookAndFeel(&lookAndFeel);	
+	playButton.setColour(TextButton::buttonColourId, Colours::white);
+	playButton.setColour(TextButton::buttonOnColourId, Colours::yellow);
+	playButton.setClickingTogglesState(true);
+	
+	stopButton.setLookAndFeel(&lookAndFeel);	
+	stopButton.setColour(TextButton::buttonColourId, Colours::white);	
+	
+	Path playPath;
+	playPath.addTriangle(0, 0, BUTTON_SIZE, BUTTON_SIZE/2, 0, BUTTON_SIZE);
+	DrawablePath playImage;
+	playImage.setFill(Colours::green.darker(.9f));
+	playImage.setPath(playPath);
+	
+	Path pausePath;
+	pausePath.addRectangle(0, 0, BUTTON_SIZE*.4, BUTTON_SIZE);
+	pausePath.addRectangle(BUTTON_SIZE*.5, 0, BUTTON_SIZE*.4, BUTTON_SIZE);
+	DrawablePath pauseImage;
+	pauseImage.setFill(Colours::green.darker(.9f));
+	pauseImage.setPath(pausePath);
+	
+	playButton.setImages(&playImage, &playImage, &pauseImage, &playImage, &pauseImage);
+
+	Path stopPath;
+	stopPath.addRectangle(0, 0, BUTTON_SIZE, BUTTON_SIZE);
+	DrawablePath stopImage;
+	stopImage.setFill(Colours::green.darker(.9f));
+	stopImage.setPath(stopPath);
+	stopButton.setImages(&stopImage);	
+	
+	addAndMakeVisible (timingInfoBox);
+	addAndMakeVisible (playButton);
+	addAndMakeVisible (stopButton);
+	addAndMakeVisible (bpmSlider);
+	addAndMakeVisible (bpmLabel);
+	addAndMakeVisible (timeLabel);
+	addAndMakeVisible (beatsLabel);
+	
+	
+	playButton.addListener (this);	
+	stopButton.addListener (this);	
+}
+
+void TransportComponent::sliderValueChanged(Slider* slider)
+{
+	owner.setCurrentBPM(slider->getValue());
+}
+
+void TransportComponent::resized()
+{
+	stopButton.setBounds(5, 5, BUTTON_SIZE, BUTTON_SIZE);
+	playButton.setBounds(BUTTON_SIZE+10, 5, BUTTON_SIZE, BUTTON_SIZE);
+	timeLabel.setBounds(BUTTON_SIZE*2+20, 5, getWidth()-(BUTTON_SIZE*2+45), 30);
+	beatsLabel.setBounds(BUTTON_SIZE*2+20, 30, getWidth()-(BUTTON_SIZE*2+45), 20);
+	bpmSlider.setBounds(5, BUTTON_SIZE+10, BUTTON_SIZE*2, 20);
+	
+	Path timeBox;
+	timeBox.addRoundedRectangle(BUTTON_SIZE*2+15, 5, getWidth()-(BUTTON_SIZE*2+30), 50, 5);
+	timingInfoBox.setPath(timeBox);
+	timingInfoBox.setFill(Colours::black);
+	
+	timingInfoBox.setBounds(BUTTON_SIZE*2+15, 5, getWidth()-(BUTTON_SIZE*2+30), 50);
+	
+}
+
+void TransportComponent::buttonClicked (Button* button)
+{
+	if(button->getName()=="stopButton")
+	{
+		playButton.setToggleState(false, sendNotification);
+		owner.stopButtonPressed();
+	}
+	else if(button->getName()=="playButton")
+	{
+		if(button->getToggleState())
+			owner.playButtonPressed();
+		else
+			owner.pauseButtonPressed();
+	}
 }

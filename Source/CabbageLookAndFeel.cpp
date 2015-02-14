@@ -2044,58 +2044,49 @@ void CabbageLookAndFeelBasic::drawStretchableLayoutResizerBar (Graphics& g, int 
 
 //=========================================================================================================
 void CabbageLookAndFeelBasic::drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
-        bool isMouseOverButton,
-        bool isButtonDown)
-{
-    const int w = button.getWidth();
-    const int h = button.getHeight();
+                               bool isMouseOverButton, bool isButtonDown)
+    {
+        Colour baseColour (backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+                           .withMultipliedAlpha (button.isEnabled() ? 0.9f : 0.5f));
 
-    g.drawRoundedRectangle(0, 0, w, h, 5, 1.f);
+        if (isButtonDown || isMouseOverButton)
+            baseColour = baseColour.contrasting (isButtonDown ? 0.2f : 0.1f);
 
-    g.setColour(cUtils::getComponentSkin());
-    g.fillRoundedRectangle(0, 0, w, h, 5);
+        const bool flatOnLeft   = button.isConnectedOnLeft();
+        const bool flatOnRight  = button.isConnectedOnRight();
+        const bool flatOnTop    = button.isConnectedOnTop();
+        const bool flatOnBottom = button.isConnectedOnBottom();
 
-    g.setColour (cUtils::getComponentFontColour());
-    g.setFont (cUtils::getComponentFont());
-    g.drawFittedText (button.getName(),
-                      0 + 4, 0 + 2, w - 8, h - 4,
-                      Justification::centred, 2);
+        const float width  = button.getWidth() - 1.0f;
+        const float height = button.getHeight() - 1.0f;
 
-    g.setOpacity(0.2);
-    g.drawRoundedRectangle(0.5, 0.5, w-1, h-1, 5, 1.0f);
-    /*
-    	Colour bc (backgroundColour);
-
-        Path p;
-        p.addRoundedRectangle (indent, indent,
-                               width - indent * 2.0f,
-                               height - indent * 2.0f,
-                               (float) cornerSize);
-        g.setColour (bc.withSaturation(0.f));
-        g.strokePath (p, PathStrokeType (2.0f));
-
-
-
-
-        if (isMouseOverButton)
+        if (width > 0 && height > 0)
         {
-            if (isButtonDown)
-                bc = bc.brighter();
-            else if (bc.getBrightness() > 0.5f)
-                bc = bc.darker (0.3f);
-            else
-                bc = bc.brighter (0.3f);
+            const float cornerSize = jmin (5.0f, jmin (width, height) * 0.45f);
+            const float lineThickness = cornerSize * 0.1f;
+            const float halfThickness = lineThickness * 0.5f;
+
+            Path outline;
+            outline.addRoundedRectangle (0.5f + halfThickness, 0.5f + halfThickness, width - lineThickness, height - lineThickness,
+                                         cornerSize, cornerSize,
+                                         ! (flatOnLeft  || flatOnTop),
+                                         ! (flatOnRight || flatOnTop),
+                                         ! (flatOnLeft  || flatOnBottom),
+                                         ! (flatOnRight || flatOnBottom));
+
+            const Colour outlineColour (button.findColour (button.getToggleState() ? TextButton::textColourOnId
+                                                                                   : TextButton::textColourOffId));
+
+            g.setColour (baseColour);
+            g.fillPath (outline);
+
+            if (! button.getToggleState())
+            {
+                g.setColour (outlineColour);
+                g.strokePath (outline, PathStrokeType (lineThickness));
+            }
         }
-    	//Logger::writeToLog(backgroundColour.toDisplayString(false));
-        g.setColour (bc);
-        g.fillPath (p);
-
-
-
-        g.setColour (bc.withSaturation ((isMouseOverButton) ? 0.1f : 0.0f));
-        g.strokePath (p, PathStrokeType ((isMouseOverButton) ? 2.0f : 2.0f));
-    	 */
-}
+    }
 
 //======== Scrollbars ==============================================================================
 bool CabbageLookAndFeelBasic::areScrollbarButtonsVisible()

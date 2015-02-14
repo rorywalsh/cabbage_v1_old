@@ -26,6 +26,7 @@ class NodeAudioProcessorListener;
 
 #include "../Source/Plugin/CabbagePluginProcessor.h"
 
+
 const char* const filenameSuffix = ".filtergraph";
 const char* const filenameWildcard = "*.filtergraph";
 
@@ -47,8 +48,10 @@ int channel, controller, nodeId, parameterIndex;
     A collection of filters and some connections between them.
 */
 class FilterGraph   : public FileBasedDocument,
-					  public ChangeListener
+					  public ChangeListener,
+					  public Timer
 {
+	
 public:
     //==============================================================================
     FilterGraph (AudioPluginFormatManager& formatManager);
@@ -118,15 +121,40 @@ public:
     void setLastDocumentOpened (const File& file);
 	void createNodeFromXml (const XmlElement& xml);
 
-    /** The special channel index used to refer to a filter's midi channel.
-    */
     static const int midiChannelNumber;
 	Array<CabbageMidiMapping> midiMappings;
+	
+	//------- play info and timer stuff ---------------
+	void timerCallback();
+	
+	class AudioPlaybackHead: public AudioPlayHead
+	{
+		public:
+			bool getCurrentPosition (CurrentPositionInfo &result)
+			{
+				result = playHeadPositionInfo;
+				return true;
+			}
+			
+			void setIsPlaying(bool val){  playHeadPositionInfo.isPlaying=val;	}
+			void setTimeInSeconds(int val){  playHeadPositionInfo.timeInSeconds=val;	}
+			int getTimeInSeconds(){  return playHeadPositionInfo.timeInSeconds;	}
+		
+		private:
+			AudioPlayHead::CurrentPositionInfo playHeadPositionInfo;
+	};
+
+	void setIsPlaying(bool value, bool reset=false);
+	
+	int getTimeInSeconds(){		audioPlayHead.getTimeInSeconds();	}	
+	void setBPM(int bpm);
 
 private:
     //==============================================================================
     AudioPluginFormatManager& formatManager;
     AudioProcessorGraph graph;
+	AudioPlaybackHead audioPlayHead;
+	
 	OwnedArray<NodeAudioProcessorListener> audioProcessorListeners;
 	int lastChangedNodeId;
 	int lastChangedNodeParameter;
@@ -135,6 +163,9 @@ private:
 	uint32 lastNodeID;
 	Array<String> pluginTypes;
 	uint32 nodeId;
+	float PPQN, currentBPM, playPosition;
+	int timeInSeconds; 
+	
     
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FilterGraph)

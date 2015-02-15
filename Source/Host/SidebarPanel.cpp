@@ -334,7 +334,10 @@ void SidebarPanel::mouseEnter(const MouseEvent& event)
 void SidebarPanel::mouseDrag(const MouseEvent& event)
 {
 	if(canResize)
+	{
 		this->setSize(event.getPosition().getX(), this->getHeight());
+		sendActionMessage("SidebarWidth:"+String(event.getPosition().getX()));
+	}
 }
 //--------------------------------------------------------------------
 void SidebarPanel::mouseUp(const MouseEvent& event)

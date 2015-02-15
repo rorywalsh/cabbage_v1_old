@@ -20,12 +20,14 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "FilterGraph.h"
 #include "BottomPanel.h"
+#include "GraphEditorPanel.h"
 #include "../Plugin/CabbageGenericAudioProcessorEditor.h"
 #include "../CabbageGUIClass.h"
 
 
 //==============================================================================
-BottomPanel::BottomPanel(FilterGraph* graph)
+BottomPanel::BottomPanel(FilterGraph* graph):
+canResize(false)
 {
 
 	
@@ -36,9 +38,49 @@ BottomPanel::~BottomPanel()
 
 }
 
+void BottomPanel::actionListenerCallback (const String &message)
+{
+	if(message.contains("SidebarWidth:"))
+	{
+		GraphDocumentComponent* parent =findParentComponentOfClass<GraphDocumentComponent>();
+		if(parent)
+		{
+			String subStr = message.substring(message.indexOf(":")+1);
+			setBounds(subStr.getIntValue(), getPosition().getY(), parent->getWidth()-subStr.getIntValue(), getHeight());		
+		}
+	}
+}
+
 void BottomPanel::paint(Graphics &g)
 {
 	g.fillAll(Colour::greyLevel (0.2f));
 	g.setColour(Colour(30, 30, 30));
 	g.fillRect(5, 5, getWidth()-10, getHeight()-10);	
+}
+
+//--------------------------------------------------------------------
+void BottomPanel::mouseEnter(const MouseEvent& event)
+{
+	const int yPos = event.getPosition().getY();
+	startingYPos = getPosition().getY();
+	
+	if(!event.mods.isLeftButtonDown() && yPos<10)
+	{
+		setMouseCursor (MouseCursor::UpDownResizeCursor);
+		canResize=true;
+	}
+	else
+		setMouseCursor (MouseCursor::NormalCursor);
+}
+//--------------------------------------------------------------------
+void BottomPanel::mouseDrag(const MouseEvent& event)
+{
+	const int keysHeight = 60;
+	if(canResize)
+	{
+		GraphDocumentComponent* parent =findParentComponentOfClass<GraphDocumentComponent>();
+		cUtils::debug(parent->getHeight()-(startingYPos+event.getDistanceFromDragStartY()));
+		const int newHeight = parent->getHeight()-(startingYPos+event.getDistanceFromDragStartY())-keysHeight;
+		setBounds(getPosition().getX(), startingYPos+event.getDistanceFromDragStartY(), getWidth(), newHeight);
+	}
 }

@@ -1019,6 +1019,7 @@ midiLearnEnabled(false)
 	addAndMakeVisible(sidebarPanel = new SidebarPanel(&graph));
 	addAndMakeVisible(bottomPanel = new BottomPanel(&graph));
 
+	sidebarPanel->addActionListener(bottomPanel);
 
     deviceManager->addChangeListener (graphPanel);
 

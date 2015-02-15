@@ -26,15 +26,20 @@
 
 
 //==============================================================================
-class BottomPanel   : public Component
+class BottomPanel   : public Component,
+					  public ActionListener
 {
 public:
     BottomPanel(FilterGraph* graph);
 	~BottomPanel();
 	void paint(Graphics &g);
+	void actionListenerCallback (const String &message);
+	void mouseDrag(const MouseEvent& event);
+	void mouseEnter(const MouseEvent& event);
 	
 private:
-	
+	bool canResize;
+	int startingYPos;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BottomPanel);
 };
 

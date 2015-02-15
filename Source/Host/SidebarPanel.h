@@ -130,7 +130,8 @@ class SidebarPanel   : public Component,
 								private Timer,
 								public FileBrowserListener,
 								public ChangeListener,
-								public ActionListener
+								public ActionListener,
+								public ActionBroadcaster
 {
 public:
     SidebarPanel(FilterGraph* graph);

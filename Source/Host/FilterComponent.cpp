@@ -640,9 +640,9 @@ void FilterComponent::update()
 	if(f->properties.getWithDefault("pluginType","")=="Internal")
 		pluginType = INTERNAL;
 	else if(f->properties.getWithDefault("pluginType","")=="Cabbage")
-	{
 		pluginType = CABBAGE;
-	}
+	else if(f->properties.getWithDefault("pluginType","")=="SoundfilePlayer")
+		pluginType = SOUNDFILER;
 	else
 		pluginType = THIRDPARTY;
 
@@ -683,6 +683,12 @@ void FilterComponent::update()
 		tmpPlug->addActionListener(this);		
 	}	
 
+	else if(AudioFilePlaybackProcessor* tmpPlug = dynamic_cast <AudioFilePlaybackProcessor*> (f->getProcessor()))
+	{
+		setName (pluginName);
+		tmpPlug->addActionListener(this);		
+	}
+	
 	else
 		setName(f->getProcessor()->getName());
 
@@ -703,16 +709,19 @@ void FilterComponent::update()
 
 		int i;
 		for (i = 0; i < f->getProcessor()->getNumInputChannels(); ++i)
-			addAndMakeVisible (new PinComponent (graph, filterID, i, true));
+			if(pluginType!=SOUNDFILER)
+				addAndMakeVisible (new PinComponent (graph, filterID, i, true));
 
 		if (f->getProcessor()->acceptsMidi())
-			addAndMakeVisible (new PinComponent (graph, filterID, FilterGraph::midiChannelNumber, true));
+			if(pluginType!=SOUNDFILER)
+				addAndMakeVisible (new PinComponent (graph, filterID, FilterGraph::midiChannelNumber, true));
 
 		for (i = 0; i < f->getProcessor()->getNumOutputChannels(); ++i)
 			addAndMakeVisible (new PinComponent (graph, filterID, i, false));
 
 		if (f->getProcessor()->producesMidi())
-			addAndMakeVisible (new PinComponent (graph, filterID, FilterGraph::midiChannelNumber, false));
+			if(pluginType!=SOUNDFILER)
+				addAndMakeVisible (new PinComponent (graph, filterID, FilterGraph::midiChannelNumber, false));
 
 		resized();
 	}

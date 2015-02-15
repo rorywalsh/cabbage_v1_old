@@ -281,6 +281,8 @@ void MainHostWindow::addPluginsToMenu (PopupMenu& m) const
 	m.addSeparator();
     for (int i = 0; i < internalTypes.size(); ++i)
         menu.addItem (i + 9000, internalTypes.getUnchecked(i)->name);
+		
+	menu.addItem(10000, "Soundfile player");
 
 	m.addSubMenu("Input/Outputs", menu);
 }

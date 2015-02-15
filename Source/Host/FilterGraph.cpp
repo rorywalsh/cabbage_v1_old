@@ -29,6 +29,7 @@
 #include "GraphEditorPanel.h"
 #include "PluginWrapperProcessor.h"
 #include "../Plugin/CabbagePluginProcessor.h"
+#include "AudioFilePlaybackProcessor.h"
 
 
 //==============================================================================
@@ -142,7 +143,9 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
         AudioProcessorGraph::Node* node = nullptr;
 
         String errorMessage;
-		if(desc->pluginFormatName!="Cabbage" && desc->pluginFormatName!="Internal")
+		if( desc->pluginFormatName!="Cabbage" && 
+			desc->pluginFormatName!="SoundfilePlayer" &&
+			desc->pluginFormatName!="Internal")
 		{
 			if(PluginWrapper* instance = new PluginWrapper(formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
 			{
@@ -167,7 +170,27 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 				node->properties.set("pluginName", desc->name);
 			}
 		}
-	
+
+		else if(desc->pluginFormatName=="SoundfilePlayer")
+		{
+			if (AudioFilePlaybackProcessor* soundfiler = new AudioFilePlaybackProcessor())
+			{
+				soundfiler->setPlayConfigDetails(2,
+												2,
+												graph.getSampleRate(),
+												graph.getBlockSize());
+
+				node = graph.addNode (soundfiler);
+				node->properties.set("pluginType", "SoundfilePlayer");
+				node->properties.set("pluginName", "Soundfile Player");
+				ScopedPointer<XmlElement> xmlElem;
+				xmlElem = desc->createXml();
+				String xmlText = xmlElem->createDocument("");
+				node->properties.set("pluginType", "SoundfilePlayer");
+				node->properties.set("pluginDesc", xmlText);
+				node->getProcessor()->setPlayHead(&audioPlayHead);
+			}
+		}	
 		else if(desc->pluginFormatName=="Cabbage")
 		{
 			CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc->fileOrIdentifier, false, AUDIO_PLUGIN);

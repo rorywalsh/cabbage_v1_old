@@ -333,10 +333,17 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 					return;
 				}
 				else 
-				{ 
-					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
-					findParentComponentOfClass<GraphDocumentComponent>()->updatePluginsInSidebarPanel();
-					return;
+				{
+					if(r==10000)
+					{
+						createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, "soundfile player");
+					}
+					else
+					{
+						createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
+						findParentComponentOfClass<GraphDocumentComponent>()->updatePluginsInSidebarPanel();
+						return;						
+					}
 				}
 			}
 
@@ -407,12 +414,22 @@ void GraphEditorPanel::createNewPlugin (const PluginDescription* desc, int x, in
 	if(isNative)
 	{
 		PluginDescription descript;
-		descript.fileOrIdentifier = fileName;
-		descript.descriptiveName = "Cabbage Plugin "+File(fileName).getFileNameWithoutExtension();
-		descript.name = File(fileName).getFileNameWithoutExtension();
-		descript.manufacturerName = "CabbageAudio";
-		descript.numInputChannels = 2;
-		descript.pluginFormatName = "Cabbage";
+		if(fileName=="soundfile player")
+		{
+			descript.descriptiveName = "Soundfile player";
+			descript.name = "SoundfilePlayer";
+			descript.pluginFormatName = "SoundfilePlayer";
+		}
+		else
+		{
+			descript.fileOrIdentifier = fileName;
+			descript.descriptiveName = "Cabbage Plugin "+File(fileName).getFileNameWithoutExtension();
+			descript.name = File(fileName).getFileNameWithoutExtension();
+			descript.manufacturerName = "CabbageAudio";
+			descript.pluginFormatName = "Cabbage";		
+		}
+
+		descript.numInputChannels = 2;		
 		descript.numOutputChannels = 2;
 		graph.addFilter (&descript, x / (double) getWidth(), y / (double) getHeight());
 	}
@@ -1000,6 +1017,7 @@ midiLearnEnabled(false)
     addAndMakeVisible (graphPanel = new GraphEditorPanel (graph));
 
 	addAndMakeVisible(sidebarPanel = new SidebarPanel(&graph));
+	addAndMakeVisible(bottomPanel = new BottomPanel(&graph));
 
 
     deviceManager->addChangeListener (graphPanel);
@@ -1063,6 +1081,7 @@ void GraphDocumentComponent::resized()
 	outputStrip->setBounds(0, getHeight() - keysHeight + keysHeight/2.f, 200, keysHeight/2);
 	sidebarPanel->setLookAndFeel(&getLookAndFeel());
 	sidebarPanel->setBounds(0, 0, 250, getHeight()-60);	
+	bottomPanel->setBounds(250, getHeight()-160, getWidth()-250, 100);
 }
 
 void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int x, int y, bool isNative, String filename)

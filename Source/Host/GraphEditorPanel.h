@@ -26,15 +26,11 @@
 #include "../CabbageLookAndFeel.h"
 #include "FilterComponent.h"
 #include "SidebarPanel.h"
+#include "BottomPanel.h"
 
 
 class GraphAudioProcessorPlayer;
 
-
-
-#define INTERNAL 1
-#define CABBAGE 2
-#define THIRDPARTY 3
 
 //==============================================================================
 //this get populated whenever we select multiple objects..
@@ -278,6 +274,7 @@ private:
 	InternalMixerStrip* inputStrip;
 	InternalMixerStrip* outputStrip; 
 	SidebarPanel* sidebarPanel;
+	BottomPanel* bottomPanel;
     GraphEditorPanel* graphPanel;
     Component* keyboardComp;
     Component* statusBar;

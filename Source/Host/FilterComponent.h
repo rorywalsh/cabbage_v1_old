@@ -24,13 +24,15 @@
 #include "../Editor/CodeWindow.h"
 #include "../CabbageLookAndFeel.h"
 #include "PluginWrapperProcessor.h"
+#include "AudioFilePlaybackProcessor.h"
 
 class GraphEditorPanel;
 
 
 #define INTERNAL 1
 #define CABBAGE 2
-#define THIRDPARTY 3
+#define SOUNDFILER 3
+#define THIRDPARTY 4
 
 //======================================================================
 // Filter Component, GUI component that represents a processing node

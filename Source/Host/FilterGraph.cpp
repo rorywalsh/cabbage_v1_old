@@ -569,10 +569,30 @@ void FilterGraph::restoreFromXml (const XmlElement& xml)
 
 void FilterGraph::changeListenerCallback(ChangeBroadcaster* source)
 {
-	 lastChangedNodeId = ((NodeAudioProcessorListener*)source)->nodeId;
-	 lastChangedNodeParameter = ((NodeAudioProcessorListener*)source)->parameterIndex;
+	if(NodeAudioProcessorListener* listener = dynamic_cast<NodeAudioProcessorListener*>(source))
+	{
+		lastChangedNodeId = listener->nodeId;
+		lastChangedNodeParameter = listener->parameterIndex;
+	}
+	else if(CabbagePropertiesPanel* props = dynamic_cast<CabbagePropertiesPanel*>(source))
+	{
+		CabbagePluginAudioProcessor* processor = dynamic_cast<CabbagePluginAudioProcessor*>(getNodeForId(this->getEditedNodeId())->getProcessor());
+		if(processor)
+		{
+			CabbagePluginAudioProcessorEditor* editor = (CabbagePluginAudioProcessorEditor*)processor->getActiveEditor();
+			if(editor)
+			{
+				editor->propsWindow->updatePropertyPanel(props);
+				editor->propsWindow->updateIdentifiers();
+			}				
+		}
+	}
 }
 
+void FilterGraph::actionListenerCallback (const String &message)
+{
+	sendActionMessage(message);
+}
 //==========================================================================
 // parameter callback for node, used to map midi messages to parameters
 //==========================================================================

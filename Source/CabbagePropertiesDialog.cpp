@@ -19,6 +19,7 @@
 */
 
 #include "CabbagePropertiesDialog.h"
+#include "./Host/SidebarPanel.h"
 
 ControlProperty::ControlProperty(String name, var _value):
     PropertyComponent(name),
@@ -59,6 +60,14 @@ ControlProperty::ControlProperty(String name, var _value):
 
 }
 
+ControlProperty::~ControlProperty()
+{
+//	textField = nullptr;
+//	textComboField = nullptr;
+//	colourField = nullptr;
+}
+
+
 void ControlProperty::actionListenerCallback (const String& message)
 {
 //when a user clicks escape from a propery component this method is called.
@@ -76,6 +85,14 @@ void ControlProperty::actionListenerCallback (const String& message)
         CabbagePropertiesDialog* parentWindow = findParentComponentOfClass <CabbagePropertiesDialog>();
         if(parentWindow)
             parentWindow->updateIdentifiers();
+			
+#ifdef CABBAGE_HOST
+        SidebarPanel* parentPanel = findParentComponentOfClass <SidebarPanel>();
+        if(parentPanel)
+		{
+            parentPanel->updateWidgetProperties();
+		}		
+#endif			
     }
 }
 
@@ -90,17 +107,29 @@ void ControlProperty::resized()
 
 void ControlProperty::paint(Graphics &g)
 {
+#ifndef CABBAGE_HOST
     g.setColour (Colour(10, 10, 10));
     g.fillAll();
-
     g.setColour (Colours::orange);
     g.setFont (cUtils::getComponentFont());
-
     const Rectangle<int> r (5, 0, getWidth()/2, getHeight()-2);
-
     g.drawFittedText(name,
                      r,
                      Justification::centred, 2);
     g.setColour (Colours::black);
     g.drawRect(0, 0, getWidth(), getHeight(), 1);
+#else
+    g.setColour (Colour(10, 10, 10));
+    g.fillAll();
+    g.setColour (Colours::green);
+    g.setFont (cUtils::getComponentFont());
+    const Rectangle<int> r (5, 0, getWidth()/2, getHeight()-2);
+    g.drawFittedText(name,
+                     r,
+                     Justification::centred, 2);
+    g.setColour (Colours::black);
+    g.drawRect(0, 0, getWidth(), getHeight(), 1);
+#endif
+	
+
 }

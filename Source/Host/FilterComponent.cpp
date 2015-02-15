@@ -200,7 +200,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 		if (r == 1)
 		{
 			graph.removeFilter (filterID);
-			findParentComponentOfClass<GraphDocumentComponent>()->removePluginsInSidebarPanel();
+			findParentComponentOfClass<GraphDocumentComponent>()->refreshPluginsInSidebarPanel();
 			return;
 		}
 		else if (r == 2)
@@ -222,6 +222,10 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 				codeWindow->setAlwaysOnTop(true);
 				codeWindow->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
 				codeWindow->textEditor->setAllText(csdFile.loadFileAsString());
+				
+				CabbagePluginAudioProcessor* const processor = (CabbagePluginAudioProcessor*)graph.getNodeForId (filterID)->getProcessor();
+				processor->codeEditor = codeWindow->textEditor;
+				
 				startTimer(100);
 			}			
 		}
@@ -343,6 +347,35 @@ bool FilterComponent::hitTest (int x, int y)
 
 	return x >= 3 && x < getWidth() - 6 && y >= pinSize && y < getHeight() - pinSize;
 }
+
+//================================================================================
+void FilterComponent::enableEditMode(bool enable)
+{
+	const AudioProcessorGraph::Node::Ptr f = graph.getNodeForId (filterID);
+	if(f->properties.getWithDefault("pluginType","")=="Cabbage")
+	{	
+		if(enable==true)
+		{
+			if (PluginWindow* const w = PluginWindow::getWindowFor (f, PluginWindow::Normal))
+				w->toFront (true);
+				
+			if(f->getProcessor()->getActiveEditor())
+			{					
+				((CabbagePluginAudioProcessorEditor*)f->getProcessor()->getActiveEditor())->addActionListener(&graph);
+				((CabbagePluginAudioProcessorEditor*)f->getProcessor()->getActiveEditor())->setEditMode(true);
+				((CabbagePluginAudioProcessor*)f->getProcessor())->setGuiEnabled(true);	
+			}			
+		}
+		else
+		{
+			if(f->getProcessor()->getActiveEditor())
+			{
+				((CabbagePluginAudioProcessorEditor*)f->getProcessor()->getActiveEditor())->setEditMode(false);
+				((CabbagePluginAudioProcessor*)f->getProcessor())->setGuiEnabled(false);	
+			}		
+		}
+	}
+}
 //================================================================================
 void FilterComponent::actionListenerCallback (const String &message)
 {
@@ -355,16 +388,27 @@ void FilterComponent::actionListenerCallback (const String &message)
 	}
 	else if(message == "closing editor")
 	{
+		enableEditMode(false);		
 		codeWindow = nullptr;
 		stopTimer();
 	}
-	else if(message=="fileSaved")
+	else if(message == "enableEditMode")
+	{
+		enableEditMode(true);
+		graph.setEditedNodeId(filterID);
+	}
+	else if(message == "disableEditMode")
+	{
+		enableEditMode(false);		
+	}
+	else if(message.contains("fileSave"))
 	{
 		CabbagePluginAudioProcessor* instance = (CabbagePluginAudioProcessor*)(graph.getNodeForId (filterID)->getProcessor());
-
+		enableEditMode(false);		
 		String xmlPluginDescriptor = graph.getNodeForId (filterID)->properties.getWithDefault("pluginDesc", "").toString();
 		File file(instance->getCsoundInputFile());
 		file.replaceWithText(codeWindow->csoundDoc.getAllContent());
+		graph.setEditedNodeId(filterID);
 		
 		if(instance)
 		{		
@@ -374,27 +418,47 @@ void FilterComponent::actionListenerCallback (const String &message)
 			if((getGraphPanel()!=nullptr) && (currentChannelCount!=newChannelCount))
 			{
 				codeWindow = nullptr;
-				//stopTimer();
+				enableEditMode(false);
 				getGraphPanel()->updateNode(filterID, newChannelCount, newChannelCount);
 			}
 			else
 			{
+				
 				instance->suspendProcessing(true);
 				instance->reCompileCsound(file);				
 				instance->setPlayConfigDetails(instance->getNumberCsoundOutChannels(),
 													instance->getNumberCsoundOutChannels(),
 													instance->getCsoundSamplingRate(),
-													instance->getCsoundKsmpsSize());
-				
-				
+													instance->getCsoundKsmpsSize());				
 				
 				numIns = instance->getNumberCsoundOutChannels();
 				numOuts = instance->getNumberCsoundOutChannels();
 				instance->createGUI(file.loadFileAsString(), true);
-				PluginWindow::updateWindow(graph.getNodeForId(filterID), filterID);
+				
+				
+				if(instance->getActiveEditor() != nullptr)
+					PluginWindow::getWindowFor (graph.getNodeForId(filterID), PluginWindow::Normal);
+				
+				if(codeWindow)
+				{
+					codeWindow->setName(file.getFileName());
+					codeWindow->setText(file.loadFileAsString(), file.getFullPathName());
+
+					codeWindow->textEditor->textChanged = false;
+					instance->codeEditor = codeWindow->textEditor;
+				}
+					
 				update();
 				graph.changed();
 			}
+			findParentComponentOfClass<GraphDocumentComponent>()->refreshPluginsInSidebarPanel();
+		}
+		
+		if(message == "fileSaveAndClose")
+		{
+			enableEditMode(false);		
+			codeWindow = nullptr;
+			stopTimer();			
 		}
 
 	}

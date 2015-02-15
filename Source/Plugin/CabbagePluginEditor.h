@@ -117,7 +117,8 @@ class CabbagePluginAudioProcessorEditor  : public AudioProcessorEditor,
     public KeyListener,
     public ChangeBroadcaster,
     public ChangeListener,
-    public ActionListener
+    public ActionListener,
+	public ActionBroadcaster
 
 {
 public:

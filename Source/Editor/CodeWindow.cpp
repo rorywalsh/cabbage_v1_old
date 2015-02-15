@@ -29,6 +29,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
     firstTime(true),
     font(String("Courier New"), 15, 1),
     isColumnModeEnabled(false),
+	isEditModeEnabled(false),
     isInstrTabEnabled(false)
 {
     setApplicationCommandManagerToWatch(&commandManager);
@@ -143,6 +144,7 @@ void CodeWindow::getAllCommands (Array <CommandID>& commands)
         CommandIDs::fileOpen,
         CommandIDs::fileSave,
         CommandIDs::fileSaveAs,
+		CommandIDs::fileSaveAndClose,
         CommandIDs::fileCloseAux,
         CommandIDs::fileQuit,
         CommandIDs::fileKeyboardShorts,
@@ -155,6 +157,7 @@ void CodeWindow::getAllCommands (Array <CommandID>& commands)
         CommandIDs::editToggleComments,
         CommandIDs::editZoomIn,
         CommandIDs::editZoomOut,
+		CommandIDs::editMode,
         CommandIDs::whiteBackground,
         CommandIDs::blackBackground,
         CommandIDs::insertFromRepo,
@@ -238,6 +241,10 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
         result.setInfo (String("Save as"), String("Save file as.."), CommandCategories::file, 0);
         result.addDefaultKeypress ('s', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
         break;
+    case CommandIDs::fileSaveAndClose:
+        result.setInfo (String("Save and close"), String("Save and close.."), CommandCategories::file, 0);
+        result.addDefaultKeypress ('s', ModifierKeys::altModifier | ModifierKeys::commandModifier);
+        break;
     case CommandIDs::fileQuit:
         result.setInfo (String("Close editor"), String("Close"), CommandCategories::file, 0);
         result.addDefaultKeypress ('q', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
@@ -291,6 +298,11 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
         result.setInfo (String("Zoom out"), String("Zoom out"), CommandCategories::edit, 0);
         result.addDefaultKeypress (']', ModifierKeys::commandModifier);
         break;
+    case CommandIDs::editMode:
+        result.setInfo (String("Edit mode"), String("Edit Mode"), CommandCategories::edit, 0);
+        result.setTicked(isEditModeEnabled);
+        result.addDefaultKeypress ('e', ModifierKeys::commandModifier);
+		break;
     case CommandIDs::whiteBackground:
         result.setInfo (String("White background"), String("White scheme"), CommandCategories::edit, 0);
         break;
@@ -404,6 +416,7 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
 
         m1.addCommandItem(&commandManager, CommandIDs::fileSave);
         m1.addCommandItem(&commandManager, CommandIDs::fileSaveAs);
+		m1.addCommandItem(&commandManager, CommandIDs::fileSaveAndClose);
         m1.addCommandItem(&commandManager, CommandIDs::fileQuit);
         return m1;
     }
@@ -416,6 +429,10 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
         m1.addCommandItem(&commandManager, CommandIDs::editCopy);
         m1.addCommandItem(&commandManager, CommandIDs::editPaste);
         m1.addSeparator();
+#ifdef CABBAGE_HOST
+		m1.addCommandItem(&commandManager, CommandIDs::editMode);
+		m1.addSeparator();
+#endif
         m1.addCommandItem(&commandManager, CommandIDs::editToggleComments);
         m1.addCommandItem(&commandManager, CommandIDs::editSearchReplace);
         m1.addCommandItem(&commandManager, CommandIDs::editColumnEdit);
@@ -500,7 +517,22 @@ bool CodeWindow::perform (const InvocationInfo& info)
         }
         else
         {
+			isEditModeEnabled=false;
             sendActionMessage("fileSaved");
+        }
+    }
+    else if(info.commandID==CommandIDs::fileSaveAndClose)
+    {
+        Logger::writeToLog("fileSaved");
+        if(textEditor->currentEditor!=0)
+        {
+            cUtils::showMessage("Saving an auxillary file!");
+            textEditor->saveAuxFile();
+        }
+        else
+        {
+			isEditModeEnabled=false;
+            sendActionMessage("fileSaveAndClose");
         }
     }
     else if(info.commandID==CommandIDs::fileSaveAs)
@@ -592,6 +624,15 @@ bool CodeWindow::perform (const InvocationInfo& info)
             textEditor->enableColumnEdit(true);
 
         isColumnModeEnabled=!isColumnModeEnabled;
+
+    }
+    else if(info.commandID==CommandIDs::editMode)
+    {
+        isEditModeEnabled=!isEditModeEnabled;
+		if(isEditModeEnabled)
+			sendActionMessage("enableEditMode");
+		else
+			sendActionMessage("disableEditMode");
 
     }
     else if(info.commandID==CommandIDs::editZoomOut)

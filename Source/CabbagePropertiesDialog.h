@@ -46,12 +46,7 @@ public:
     //constructor for ControlProperty
     ControlProperty(String name, var value);
 
-    ~ControlProperty()
-    {
-        textField = nullptr;
-        textComboField = nullptr;
-        colourField = nullptr;
-    }
+    ~ControlProperty();
 
     void paint(Graphics &g);
     void resized();
@@ -71,22 +66,25 @@ public:
 };
 
 
-class CabbagePropertiesPanel : public PropertyPanel
+class CabbagePropertiesPanel : public PropertyPanel, 
+								public ChangeBroadcaster
 {
 public:
-    CabbagePropertiesPanel() : PropertyPanel()
+    CabbagePropertiesPanel(String name) : PropertyPanel(name)
     {
         setSize(200, 500);
         //juceLookAndFeel = new LookAndFeel_V1();
         //setLookAndFeel(juceLookAndFeel);
-
     }
 
 
 
     void paint(Graphics &g)
     {
-        g.setColour (Colours::black);
+        g.setColour(Colours::white);
+#ifdef CABBAGE_HOST
+        g.drawFittedText("Press ESC to update widget parameters", 0, getHeight()-25, getWidth(), 16, Justification::centred, 1, 1);		
+#endif		
     }
 
     ///Update properties based on state of Cabbage widget
@@ -119,6 +117,7 @@ public:
                     attributeNames[i].equalsIgnoreCase("basetype") ||
                     attributeNames[i].equalsIgnoreCase("rangey") ||
                     attributeNames[i].equalsIgnoreCase("rangex") ||
+					attributeNames[i].equalsIgnoreCase("widgetarray") ||
                     attributeNames[i].equalsIgnoreCase("xyautoindex") ||
                     attributeNames[i].equalsIgnoreCase("decimalplaces"))
             {
@@ -130,7 +129,7 @@ public:
         }
 
         //adding 30 to show update text message
-        setSize(200, (30+(comps.size()-hiddenComponents)*22));
+        setSize(200, (30+(comps.size()-hiddenComponents)*22)+22);
         Logger::writeToLog(String(this->getHeight()));
         addProperties(comps);
         repaint();
@@ -219,14 +218,14 @@ class CabbagePropertiesDialog : public DocumentWindow,
     public ActionBroadcaster
 {
 public:
-    CabbagePropertiesDialog(String name):DocumentWindow (name, Colour(20, 20, 20),
+    CabbagePropertiesDialog(String name):DocumentWindow ("Properties", Colour(20, 20, 20),
                 DocumentWindow::minimiseButton
                 | DocumentWindow::closeButton),
         cAttr("", -99)
     {
         //setSize(500, 300);
         lookAndFeel = new CabbageLookAndFeel();
-        propsPanel = new CabbagePropertiesPanel();
+        propsPanel = new CabbagePropertiesPanel("");
         propsPanel->setLookAndFeel(lookAndFeel);
         setSize(200, propsPanel->getHeight());
 #ifndef LINUX
@@ -247,14 +246,23 @@ public:
 
     void updateProps(CabbageGUIClass &cAttr)
     {
+#ifndef CABBAGE_HOST
         propsPanel = nullptr;
-        propsPanel = new CabbagePropertiesPanel();
+        propsPanel = new CabbagePropertiesPanel("");
 
         propsPanel->updateProperties(cAttr);
         setContentNonOwned(nullptr, false);
         setContentNonOwned(propsPanel, true);
-
+#endif
     }
+
+	void updatePropertyPanel(CabbagePropertiesPanel* panel)
+	{
+		if(panel!=nullptr)  
+		{
+			propsPanel = panel;				
+		}
+	}
 
     void updateIdentifiers()
     {
@@ -274,16 +282,17 @@ public:
         return false;
     }
 
+
     void paint(Graphics& g)
     {
         g.fillAll(Colours::black);
         g.setColour(Colour(40, 40, 40));
-        g.fillRoundedRectangle(10,  getHeight()-26, getWidth()-20, 20, 2);
+        //g.fillRoundedRectangle(10,  getHeight()-26, getWidth()-20, 20, 2);
         g.setColour(Colours::white);
         g.drawFittedText("Press ESC to update", 0, getHeight()-25, getWidth(), 16, Justification::centred, 1, 1);
     }
 
-    ScopedPointer<CabbagePropertiesPanel> propsPanel;
+    CabbagePropertiesPanel* propsPanel;
     ScopedPointer<CabbageLookAndFeel> lookAndFeel;
     NamedValueSet updatedIdentifiers;
     CabbageGUIClass cAttr;
@@ -386,7 +395,8 @@ public :
 
 class TextField : public TextEditor,
     public ChangeBroadcaster,
-    public ActionBroadcaster
+    public ActionBroadcaster,
+	public Timer
 {
 public:
     TextField(String name):TextEditor(""),
@@ -399,13 +409,29 @@ public:
         setColour(TextEditor::highlightColourId, Colours::cornflowerblue);
         setColour(TextEditor::highlightedTextColourId, Colours::white);
         setColour(TextEditor::outlineColourId, Colours::black);
+#ifndef CABBAGE_HOST
         setColour(TextEditor::focusedOutlineColourId, Colours::orange);
+#else
+		setColour(TextEditor::focusedOutlineColourId, Colours::whitesmoke);
+#endif
     }
+	
     ~TextField()
     {
-
+		removeAllActionListeners();
+		removeAllChangeListeners();
     }
 
+
+	bool getWantsKeyboardFocus()
+	{
+		return true;
+	}
+	
+	void paint(Graphics &g)
+	{
+		g.fillAll(Colours::black);
+	}
 
     void updateText()
     {
@@ -465,6 +491,18 @@ public:
 
     }
 
+	void mouseDown(const MouseEvent& event)
+	{
+		startTimer(100);
+	}
+
+	
+	void timerCallback()
+	{
+		stopTimer();
+		grabKeyboardFocus();
+	}
+	
     var value;
     String name;
 };
@@ -590,7 +628,7 @@ public:
         textEditor.setColour(TextEditor::backgroundColourId, Colour(20, 20, 20));
         textEditor.setColour(TextEditor::highlightColourId, Colours::cornflowerblue);
         textEditor.setColour(TextEditor::highlightedTextColourId, Colours::white);
-        textEditor.setColour(TextEditor::outlineColourId, Colours::black);
+        textEditor.setColour(TextEditor::outlineColourId, Colours::white);
         textEditor.setMultiLine(true);
 
         if(value.size()==0)
@@ -602,7 +640,7 @@ public:
             }
 
         textEditor.setText(text.trim());
-        textEditor.setBounds(0, 100, 150, 70);
+        textEditor.setBounds(0, 102, 150, 70);
         juce::Rectangle<int> rectum(0, 100, 100, 70);
         CabbageCallOutBox callOut (textEditor, rectum, nullptr);
         callOut.setLookAndFeel(lookAndFeelBasic);

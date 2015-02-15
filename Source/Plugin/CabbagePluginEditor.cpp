@@ -42,7 +42,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
       keyIsPressed(false),
 	  wildcardFilter("*.*", "*", "File Filter"),
       currentLineNumber(0),
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
       propsWindow(new CabbagePropertiesDialog("Properties")),
 #endif
       xyPadIndex(0),
@@ -79,9 +79,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     addChildComponent(popupBubble);
     popupBubble->setAlwaysOnTop(true);
 
-
-
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     propsWindow->setAlwaysOnTop(true);
     propsWindow->setVisible(false);
     propsWindow->centreWithSize(5,5);
@@ -144,7 +142,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     getFilter()->setHaveXYAutoBeenCreated(true);
 
 
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     componentPanel->addActionListener(this);
     if(!ownerFilter->isGuiEnabled())
     {
@@ -219,7 +217,7 @@ void CabbagePluginAudioProcessorEditor::resized()
 
     componentPanel->setTopLeftPosition(0, 0);
 
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     layoutEditor->setTopLeftPosition(0, 0);
     if(componentPanel->getWidth()<this->getWidth()+18 && componentPanel->getHeight()<this->getHeight()+18)
         viewport->setScrollBarsShown(false, false);
@@ -354,7 +352,7 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
     if(filter)
         updateGUIControls();
 
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     ComponentLayoutEditor* le = dynamic_cast<ComponentLayoutEditor*>(source);
     if(le)
     {
@@ -703,7 +701,7 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 //=======================================================
 void CabbagePluginAudioProcessorEditor::addToRepository(String entryName)
 {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     StringArray csdArray;
     StringArray plantText;
     csdArray.addLines(getFilter()->getCsoundInputFileText());
@@ -739,7 +737,7 @@ void CabbagePluginAudioProcessorEditor::addToRepository(String entryName)
 //=======================================================
 void CabbagePluginAudioProcessorEditor::convertIntoPlant()
 {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     StringArray csdArray;
     StringArray boundsForSelectComps;
     StringArray newPlantText;
@@ -828,7 +826,7 @@ void CabbagePluginAudioProcessorEditor::convertIntoPlant()
 //===================================================================
 void CabbagePluginAudioProcessorEditor::breakUpPlant()
 {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     StringArray csdArray;
     StringArray brokenPlant;
     csdArray.addLines(getFilter()->getCsoundInputFileText());
@@ -880,7 +878,7 @@ void CabbagePluginAudioProcessorEditor::breakUpPlant()
 //===========================================================
 void CabbagePluginAudioProcessorEditor::populateLineNumberArray(StringArray csdArray)
 {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     lineNumbers.clear();
     for(int i=0; i<csdArray.size(); i++)
     {
@@ -909,7 +907,7 @@ void CabbagePluginAudioProcessorEditor::populateLineNumberArray(StringArray csdA
 //========================================================
 void CabbagePluginAudioProcessorEditor::deleteComponents()
 {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     StringArray csdArray;
     StringArray boundsForSelectComps;
     csdArray.addLines(getFilter()->getCsoundInputFileText());
@@ -1016,7 +1014,7 @@ void CabbagePluginAudioProcessorEditor::deleteComponents()
 //========================================================
 void CabbagePluginAudioProcessorEditor::duplicateComponents()
 {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     StringArray csdArray;
     StringArray boundsForSelectComps;
     lineNumbers.clear();
@@ -1101,7 +1099,7 @@ void CabbagePluginAudioProcessorEditor::updateSizesAndPositionsOfComponents(int 
 {
     newLine = 0;
 	
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     StringArray csdArray;
     StringArray boundsForSelectComps;
     lineNumbers.clear();
@@ -1152,9 +1150,12 @@ void CabbagePluginAudioProcessorEditor::updateSizesAndPositionsOfComponents(int 
     }
 
     CabbageGUIClass cAttr(csdArray[currentLineNumber], -99);
+	sendActionMessage(csdArray[currentLineNumber]);
     propsWindow->updateProps(cAttr);
+#ifndef CABBAGE_HOST
     propsWindow->setVisible(true);
     propsWindow->toFront(true);
+#endif
     getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
     getFilter()->highlightLine(csdArray[currentLineNumber+newLine]);
     //getFilter()->setGuiEnabled(true);
@@ -1262,7 +1263,7 @@ void CabbagePluginAudioProcessorEditor::mouseUp(const MouseEvent& event)
 //==============================================================================
 void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
 {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     ScopedPointer<XmlElement> xml;
     xml = new XmlElement("PLANTS");
     PopupMenu m;
@@ -1365,10 +1366,10 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
 
 void CabbagePluginAudioProcessorEditor::setEditMode(bool on)
 {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     if(on)
     {
-        getFilter()->setGuiEnabled(true);;
+        getFilter()->setGuiEnabled(true);
         componentPanel->toBack();
         layoutEditor->setEnabled(true);
         layoutEditor->updateFrames();
@@ -1497,7 +1498,7 @@ void CabbagePluginAudioProcessorEditor::positionComponentWithinPlant(String type
 //==============================================================================
 void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringArray text, bool useOffset)
 {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 //offset the new object by a random value each time so they don't overlap exactly
     int offset;
     if(useOffset)
@@ -1556,6 +1557,7 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
     //currentLineNumber = getFilter()->getCurrentLine();
     getFilter()->createGUI(text.joinIntoString("\n"), false);
     CabbageGUIClass cAttr(currentText, -99);
+	sendActionMessage(currentText);
     propsWindow->updateProps(cAttr);
     getFilter()->sendActionMessage("GUI Updated, controls added, resized");
 
@@ -1858,7 +1860,7 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
         fontColour = cUtils::getComponentFontColour();
     authorText = cAttr.getStringProp("author");
 
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     viewportComponent->setBounds(0, 0, this->getWidth(), this->getHeight());
     layoutEditor->setBounds(left, top, width, height);
     formPic = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
@@ -3237,7 +3239,7 @@ void CabbagePluginAudioProcessorEditor::actionListenerCallback (const String& me
 //START OF TEST FOR MESSAGES FROM THE PROPS DIALOG
     if(message == "Message sent from PropertiesDialog")
     {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
         csdArray.clear();
         //showMessage(currentLineNumber);
         //Logger::writeToLog("LineNumber:"+String(lineNumber));
@@ -3277,7 +3279,7 @@ void CabbagePluginAudioProcessorEditor::actionListenerCallback (const String& me
 //=============================================================================
 void CabbagePluginAudioProcessorEditor::updateSize()
 {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     if(!getFilter()->getCsoundInputFile().loadFileAsString().isEmpty())
     {
         //break up lines in csd file into a string array
@@ -3839,7 +3841,7 @@ getFilter()->dirtyControls.clear();
 //==============================================================================
 void CabbagePluginAudioProcessorEditor::updateLayoutEditorFrames()
 {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     layoutEditor->updateFrames();
 #endif
 }

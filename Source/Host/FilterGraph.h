@@ -25,6 +25,8 @@ class FilterGraph;
 class NodeAudioProcessorListener;
 
 #include "../Source/Plugin/CabbagePluginProcessor.h"
+#include "../Source/Plugin/CabbagePluginEditor.h"
+#include "../CabbagePropertiesDialog.h"
 
 
 const char* const filenameSuffix = ".filtergraph";
@@ -49,7 +51,9 @@ int channel, controller, nodeId, parameterIndex;
 */
 class FilterGraph   : public FileBasedDocument,
 					  public ChangeListener,
-					  public HighResolutionTimer
+					  public HighResolutionTimer,
+					  public ActionBroadcaster,
+					  public ActionListener
 {
 	
 public:
@@ -76,6 +80,7 @@ public:
     void getNodePosition (const int nodeId, double& x, double& y) const;
 
 	void changeListenerCallback (ChangeBroadcaster*);
+	void actionListenerCallback (const String &message);
 	
 	int getLastMovedNodeId()
 	{
@@ -150,10 +155,12 @@ public:
 	};
 
 	void setIsPlaying(bool value, bool reset=false);
+	void setBPM(int bpm);
 	
 	int getTimeInSeconds(){		audioPlayHead.getTimeInSeconds();	}
-	int getPPQPosition(){		audioPlayHead.getPPQPosition();	}	
-	void setBPM(int bpm);
+	int getPPQPosition(){		audioPlayHead.getPPQPosition();		}	
+	void setEditedNodeId(int id){	IdForNodeBeingEdited=id;		}
+	int getEditedNodeId(){	return IdForNodeBeingEdited;			}
 
 private:
     //==============================================================================
@@ -164,6 +171,7 @@ private:
 	OwnedArray<NodeAudioProcessorListener> audioProcessorListeners;
 	int lastChangedNodeId;
 	int lastChangedNodeParameter;
+	int IdForNodeBeingEdited;
     uint32 lastUID;
     uint32 getNextUID() noexcept;
 	uint32 lastNodeID;

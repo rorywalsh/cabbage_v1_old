@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2013 - Raw Material Software Ltd, Rory Walsh
+  Copyright (c) 2015 - Rory Walsh
 
   Cabbage is free software; you can redistribute it
   and/or modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@
 #include "FilterGraph.h"
 #include "SidebarPanel.h"
 #include "../Plugin/CabbageGenericAudioProcessorEditor.h"
+#include "../CabbageGUIClass.h"
 
 
 //==============================================================================
@@ -49,6 +50,7 @@ midiBubble(250)
 
 	fileTreeComp.fileComp.addListener (this);	
 	
+	filterGraph->addActionListener(this);
 	
 	PropertyPanel* transportPanel = new PropertyPanel ("Transport Controls");
 	Array <PropertyComponent*> transport;
@@ -118,7 +120,7 @@ void SidebarPanel::updatePluginParameters()
 }
 
 //=================================================================
-void SidebarPanel::removeFromPluginParameters()
+void SidebarPanel::refreshPluginParameters()
 {	
 	PropertyPanel* panel = (PropertyPanel*)concertinaPanel.getPanel(PLUGIN_PARAMS);
 	panel->clear();
@@ -267,6 +269,23 @@ void SidebarPanel::changeListenerCallback (ChangeBroadcaster* source)
 		midiBubble.showAt(comp, AttributedString(text), 1000);
 	}
 }
+
+void SidebarPanel::actionListenerCallback (const String &message)
+{
+	if(concertinaPanel.getPanel(WIDGET_PROPS))
+	{
+		((CabbagePropertiesPanel*)concertinaPanel.getPanel(WIDGET_PROPS))->removeAllChangeListeners();
+		concertinaPanel.removePanel(concertinaPanel.getPanel(WIDGET_PROPS));
+	}
+				
+	CabbageGUIClass cAttr(message, -1);
+	CabbagePropertiesPanel* panel = new CabbagePropertiesPanel("Widget Properties");
+	panel->updateProperties(cAttr);	
+	panel->addChangeListener(filterGraph);
+	
+	concertinaPanel.addPanel(WIDGET_PROPS, panel, true);
+	concertinaPanel.expandPanelFully(concertinaPanel.getPanel(WIDGET_PROPS), true);
+}
 //--------------------------------------------------------------------
 void SidebarPanel::resized()
 {
@@ -274,6 +293,11 @@ void SidebarPanel::resized()
 	concertinaPanel.setBounds (getLocalBounds().reduced (4));
 }
 
+void SidebarPanel::updateWidgetProperties()
+{
+	CabbagePropertiesPanel* panel = (CabbagePropertiesPanel*)concertinaPanel.getPanel(WIDGET_PROPS);
+	panel->sendChangeMessage();
+}
 //--------------------------------------------------------------------
 void SidebarPanel::timerCallback()
 {

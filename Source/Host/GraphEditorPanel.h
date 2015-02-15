@@ -250,9 +250,9 @@ public:
 		sidebarPanel->showParametersForNode(nodeId);
 	}
 	
-	void removePluginsInSidebarPanel()
+	void refreshPluginsInSidebarPanel()
 	{
-		sidebarPanel->removeFromPluginParameters();
+		sidebarPanel->refreshPluginParameters();
 	}
 	
 	void updatePluginsInSidebarPanel()

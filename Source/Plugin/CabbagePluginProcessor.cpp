@@ -1052,7 +1052,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     }
     
     
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     
     if(this->getActiveEditor())
     {
@@ -1769,7 +1769,7 @@ bool CabbagePluginAudioProcessor::producesMidi() const
 
 void CabbagePluginAudioProcessor::setGuiEnabled(bool val)
 {
-#if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
+#if (defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)) && !defined(AndroidBuild)
     guiON = val;
     CabbagePluginAudioProcessorEditor* editor = dynamic_cast< CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
     if(editor)

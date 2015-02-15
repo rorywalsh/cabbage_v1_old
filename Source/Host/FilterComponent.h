@@ -58,6 +58,7 @@ public:
 	void drawMuteIcon(Graphics& g, Rectangle<float> rect, bool state);
 	void drawBypassIcon(Graphics& g, Rectangle<float> rect, bool isActive);
 	void timerCallback();
+	void enableEditMode(bool enable);
 
 private:
 	ScopedPointer<CodeWindow> codeWindow;

@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2013 - Raw Material Software Ltd, Rory Walsh
+  Copyright (c) 2015 - Rory Walsh
 
   Cabbage is free software; you can redistribute it
   and/or modify it under the terms of the GNU Lesser General Public
@@ -24,9 +24,12 @@
 #include "FilterGraph.h"
 #include "../CabbageLookAndFeel.h"
 
-#define FILE_BROWSER 2
 #define TRANSPORT_CONTROLS 0
 #define PLUGIN_PARAMS 1
+#define FILE_BROWSER 2
+#define WIDGET_PROPS 3
+
+
 #define BUTTON_SIZE 30
 
 class SidebarPanel;
@@ -126,7 +129,8 @@ private:
 class SidebarPanel   : public Component,
 								private Timer,
 								public FileBrowserListener,
-								public ChangeListener
+								public ChangeListener,
+								public ActionListener
 {
 public:
     SidebarPanel(FilterGraph* graph);
@@ -137,8 +141,9 @@ public:
     void resized() override;
     void timerCallback() override;
 	void showParametersForNode(int nodeID=-1);
-	void removeFromPluginParameters();
+	void refreshPluginParameters();
 	void updatePluginParameters();
+	void updateWidgetProperties();
     void selectionChanged() override;
     void fileClicked (const File&, const MouseEvent&) override          {}
     void fileDoubleClicked (const File&) override                       {}
@@ -146,6 +151,7 @@ public:
 	void mouseDrag(const MouseEvent& event);
 	void mouseEnter(const MouseEvent& event);
 	void mouseUp(const MouseEvent& event);
+	
 	void upButtonPressed();	
 	void toggleMIDILearn();
 	void stopButtonPressed();
@@ -153,6 +159,7 @@ public:
 	void pauseButtonPressed();
 	void setCurrentBPM(int bpm);
 	void changeListenerCallback (ChangeBroadcaster*);
+	void actionListenerCallback (const String &message);
 	
 	
 private:
@@ -160,6 +167,7 @@ private:
 	BubbleMessageComponent midiBubble;
 	DirectoryContentsList directoryList;
 	FileTreePropertyComponent fileTreeComp;
+	
 	TransportComponent transportControls;
 	TimeSliceThread thread;
 	FilterGraph* filterGraph;

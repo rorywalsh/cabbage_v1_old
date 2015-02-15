@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2007 Rory Walsh
+  Copyright (C) 2015 Rory Walsh
 
   Cabbage is free software; you can redistribute it
   and/or modify it under the terms of the GNU Lesser General Public

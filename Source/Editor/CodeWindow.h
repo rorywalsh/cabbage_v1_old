@@ -245,6 +245,7 @@ public:
     bool isColumnModeEnabled;
     bool isInstrTabEnabled;
     bool isCsoundOutputEnabled;
+	bool isEditModeEnabled;
 };
 
 

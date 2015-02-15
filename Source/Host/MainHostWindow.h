@@ -44,6 +44,7 @@ namespace CommandIDs
 	static const int setCabbageFileDirectory= 0x30500;
 	static const int viewSidepanel          = 0x30600;
 	static const int midiLearn	            = 0x30700;
+	static const int viewBottomPanel          = 0x30800;
 }
 
 ApplicationCommandManager& getCommandManager();

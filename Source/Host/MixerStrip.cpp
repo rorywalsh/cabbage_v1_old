@@ -87,10 +87,11 @@ void InternalMixerStrip::mouseDrag(const MouseEvent &e)
 
 void InternalMixerStrip::paint(Graphics& g)
 {
-	g.fillAll(cUtils::getDarkerBackgroundSkin());
+	
+	g.fillAll(Colour::greyLevel (0.2f));
 	g.setColour(Colours::whitesmoke);
 	g.drawFittedText(mixerName,
-					  0, 0, 40, getHeight(),
+					  5, 0, 35, getHeight(),
 					  Justification::centred, 2);
 	
 	for(int i=0;i<numberOfChannels;i++)

@@ -18,8 +18,8 @@
 */
 
 #include "FilterComponent.h"
-#include "GraphEditorPanel.h"
 #include "MainHostWindow.h"
+#include "GraphEditorPanel.h"
 
 //==============================================================================
 // Pin Component.
@@ -172,7 +172,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 	CabbagePluginAudioProcessor* nativeCabbagePlugin = dynamic_cast<CabbagePluginAudioProcessor*>(graph.getNodeForId (filterID)->getProcessor());
 
 	if (graph.getNodeForId(filterID)->properties.getWithDefault("pluginType", "")!="Internal")
-		findParentComponentOfClass<GraphDocumentComponent>()->expandParametersInPluginsPanel(filterID);
+		getGraphDocument()->expandParametersInPluginsPanel(filterID);
 
 		
 	if (e.mods.isPopupMenu())
@@ -200,7 +200,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 		if (r == 1)
 		{
 			graph.removeFilter (filterID);
-			findParentComponentOfClass<GraphDocumentComponent>()->refreshPluginsInSidebarPanel();
+			getGraphDocument()->refreshPluginsInSidebarPanel();
 			return;
 		}
 		else if (r == 2)
@@ -388,7 +388,8 @@ void FilterComponent::actionListenerCallback (const String &message)
 	}
 	else if(message == "closing editor")
 	{
-		enableEditMode(false);		
+		enableEditMode(false);	
+		getGraphDocument()->disableWidetPropertiesInSidebarPanel();	
 		codeWindow = nullptr;
 		stopTimer();
 	}
@@ -399,7 +400,8 @@ void FilterComponent::actionListenerCallback (const String &message)
 	}
 	else if(message == "disableEditMode")
 	{
-		enableEditMode(false);		
+		enableEditMode(false);	
+		getGraphDocument()->disableWidetPropertiesInSidebarPanel();
 	}
 	else if(message.contains("fileSave"))
 	{
@@ -451,7 +453,7 @@ void FilterComponent::actionListenerCallback (const String &message)
 				update();
 				graph.changed();
 			}
-			findParentComponentOfClass<GraphDocumentComponent>()->refreshPluginsInSidebarPanel();
+			getGraphDocument()->refreshPluginsInSidebarPanel();
 		}
 		
 		if(message == "fileSaveAndClose")

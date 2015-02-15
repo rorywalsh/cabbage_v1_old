@@ -210,6 +210,7 @@ PopupMenu MainHostWindow::getMenuForIndex (int topLevelMenuIndex, const String& 
     else if (topLevelMenuIndex == 1)
     {
 		menu.addCommandItem (&getCommandManager(), CommandIDs::viewSidepanel);
+		menu.addCommandItem (&getCommandManager(), CommandIDs::viewBottomPanel);
     }
     else if (topLevelMenuIndex == 2)
     {
@@ -374,6 +375,7 @@ void MainHostWindow::getAllCommands (Array <CommandID>& commands)
                               CommandIDs::aboutBox,
 							  CommandIDs::preferences,
 							  CommandIDs::viewSidepanel,
+							  CommandIDs::viewBottomPanel,
 							  CommandIDs::midiLearn,
 							  CommandIDs::setCabbageFileDirectory
                             };
@@ -431,8 +433,13 @@ void MainHostWindow::getCommandInfo (const CommandID commandID, ApplicationComma
         break;
 
     case CommandIDs::viewSidepanel:
-        result.setInfo ("View Sidepanl", String::empty, category, 0);
+        result.setInfo ("View Sidepanel", String::empty, category, 0);
 		result.defaultKeypresses.add (KeyPress('l', ModifierKeys::commandModifier, 0));
+        break;
+
+    case CommandIDs::viewBottomPanel:
+        result.setInfo ("View Bottom Panel", String::empty, category, 0);
+		result.defaultKeypresses.add (KeyPress('b', ModifierKeys::commandModifier, 0));
         break;
 
     case CommandIDs::midiLearn:
@@ -495,8 +502,11 @@ bool MainHostWindow::perform (const InvocationInfo& info)
         break;
 
     case CommandIDs::viewSidepanel:
-		//graphEditor->updateNativeParametersPanel();
         graphEditor->showSidebarPanel(!graphEditor->isSidebarPanelShowing());
+        break;
+		
+    case CommandIDs::viewBottomPanel:
+        graphEditor->showBottomPanel(!graphEditor->isBottomPanelShowing());
         break;
 		
 	case CommandIDs::preferences:

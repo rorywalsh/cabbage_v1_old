@@ -47,7 +47,10 @@ void BottomPanel::actionListenerCallback (const String &message)
 		{
 			String subStr = message.substring(message.indexOf(":")+1);
 			setBounds(subStr.getIntValue(), getPosition().getY(), parent->getWidth()-subStr.getIntValue(), getHeight());		
+			parent->getKeyboardComponent()->setBounds(subStr.getIntValue(), parent->getKeyboardComponent()->getPosition().getY(), parent->getWidth()-subStr.getIntValue()-200, parent->getKeyboardComponent()->getHeight());
+			//parent->getKeyboardComponent()->setLowestVisibleKey(40);
 		}
+		
 	}
 }
 
@@ -79,8 +82,11 @@ void BottomPanel::mouseDrag(const MouseEvent& event)
 	if(canResize)
 	{
 		GraphDocumentComponent* parent =findParentComponentOfClass<GraphDocumentComponent>();
-		cUtils::debug(parent->getHeight()-(startingYPos+event.getDistanceFromDragStartY()));
-		const int newHeight = parent->getHeight()-(startingYPos+event.getDistanceFromDragStartY())-keysHeight;
-		setBounds(getPosition().getX(), startingYPos+event.getDistanceFromDragStartY(), getWidth(), newHeight);
+		if(parent)
+		{
+		//cUtils::debug(parent->getHeight()-(startingYPos+event.getDistanceFromDragStartY()));
+			const int newHeight = parent->getHeight()-(startingYPos+event.getDistanceFromDragStartY())-keysHeight;
+			setBounds(getPosition().getX(), startingYPos+event.getDistanceFromDragStartY(), getWidth(), newHeight);
+		}
 	}
 }

@@ -1075,13 +1075,12 @@ void GraphDocumentComponent::resized()
     const int keysHeight = 60;
     const int statusHeight = 20;
 
-    //graphPanel->setBounds (0, 0, getWidth(), getHeight() - keysHeight);
     statusBar->setBounds (0, getHeight() - keysHeight - statusHeight, getWidth(), statusHeight);
-    keyboardComp->setBounds (200, getHeight() - keysHeight, getWidth()-200, keysHeight);
-	inputStrip->setBounds(0, getHeight() - keysHeight, 200, keysHeight/2);
-	outputStrip->setBounds(0, getHeight() - keysHeight + keysHeight/2.f, 200, keysHeight/2);
+    keyboardComp->setBounds (250, getHeight() - keysHeight, getWidth()-450, keysHeight);
+	inputStrip->setBounds(getWidth()-200, getHeight() - keysHeight, 200, 30);
+	outputStrip->setBounds(getWidth()-200, getHeight() - keysHeight/2, 200, 30);
 	sidebarPanel->setLookAndFeel(&getLookAndFeel());
-	sidebarPanel->setBounds(0, 0, 250, getHeight()-60);	
+	sidebarPanel->setBounds(0, 0, 250, getHeight());	
 	bottomPanel->setBounds(250, getHeight()-160, getWidth()-250, 100);
 }
 
@@ -1093,9 +1092,29 @@ void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int
 void GraphDocumentComponent::showSidebarPanel(bool show)
 {
 	if(show)
+	{
 		sidebarPanel->setVisible(true);
+		if(bottomPanel->isVisible())
+			bottomPanel->setBounds(sidebarPanel->getWidth(), bottomPanel->getPosition().getY(), getWidth()-sidebarPanel->getWidth(), bottomPanel->getHeight());
+		if(keyboardComp->isVisible())
+			keyboardComp->setBounds(sidebarPanel->getWidth()+5, keyboardComp->getPosition().getY(), getWidth()-sidebarPanel->getWidth()-10, keyboardComp->getHeight());		
+	}
 	else
+	{
 		sidebarPanel->setVisible(false);
+		if(bottomPanel->isVisible())
+			bottomPanel->setBounds(0, bottomPanel->getPosition().getY(), getWidth(), bottomPanel->getHeight());
+		if(keyboardComp->isVisible())
+			keyboardComp->setBounds(0, keyboardComp->getPosition().getY(), getWidth(), keyboardComp->getHeight());
+	}
+}
+
+void GraphDocumentComponent::showBottomPanel(bool show)
+{
+	if(show)
+		bottomPanel->setVisible(true);
+	else
+		bottomPanel->setVisible(false);
 }
 
 void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const MidiMessage &message)

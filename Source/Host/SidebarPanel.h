@@ -152,7 +152,7 @@ public:
 	void mouseDrag(const MouseEvent& event);
 	void mouseEnter(const MouseEvent& event);
 	void mouseUp(const MouseEvent& event);
-	
+	void disablePropertiesPanel();
 	void upButtonPressed();	
 	void toggleMIDILearn();
 	void stopButtonPressed();

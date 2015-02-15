@@ -27,7 +27,7 @@
 #include "AudioFilePlaybackProcessor.h"
 
 class GraphEditorPanel;
-
+class GraphDocumentComponent;
 
 #define INTERNAL 1
 #define CABBAGE 2
@@ -61,6 +61,11 @@ public:
 	void drawBypassIcon(Graphics& g, Rectangle<float> rect, bool isActive);
 	void timerCallback();
 	void enableEditMode(bool enable);
+
+	GraphDocumentComponent* getGraphDocument()
+	{
+		return findParentComponentOfClass<GraphDocumentComponent>();
+	}
 
 private:
 	ScopedPointer<CodeWindow> codeWindow;

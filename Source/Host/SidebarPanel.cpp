@@ -344,6 +344,17 @@ void SidebarPanel::mouseUp(const MouseEvent& event)
 {
 	canResize = false;
 }
+
+//--------------------------------------------------------------------
+void SidebarPanel::disablePropertiesPanel()
+{
+	if(concertinaPanel.getPanel(WIDGET_PROPS))
+	{
+		((CabbagePropertiesPanel*)concertinaPanel.getPanel(WIDGET_PROPS))->removeAllChangeListeners();
+		concertinaPanel.removePanel(concertinaPanel.getPanel(WIDGET_PROPS));
+	}
+
+}
 //--------------------------------------------------------------------
 void SidebarPanel::addPluginPanel (PropertyPanel* panel)
 {

@@ -235,10 +235,16 @@ public:
 	bool doMidiMappingsMatch(int i, int channel, int controller);
 	
 	void showSidebarPanel(bool show);
+	void showBottomPanel(bool show);
 	
 	bool isSidebarPanelShowing()
 	{
 		return sidebarPanel->isVisible();
+	}
+	
+	bool isBottomPanelShowing()
+	{
+		return bottomPanel->isVisible();
 	}
 	
 	void expandParametersInPluginsPanel(int nodeId=-1)
@@ -255,12 +261,19 @@ public:
 	{
 		sidebarPanel->updatePluginParameters();
 	}
+
+	void disableWidetPropertiesInSidebarPanel()
+	{
+		sidebarPanel->disablePropertiesPanel();
+	}
 	
 	void toggleMIDILearn()
 	{
 		midiLearnEnabled=!midiLearnEnabled;
 		sidebarPanel->toggleMIDILearn();
 	}
+	
+	MidiKeyboardComponent* getKeyboardComponent(){	return keyboardComp;	}
 	
     //==============================================================================
     void resized();
@@ -276,7 +289,7 @@ private:
 	SidebarPanel* sidebarPanel;
 	BottomPanel* bottomPanel;
     GraphEditorPanel* graphPanel;
-    Component* keyboardComp;
+    MidiKeyboardComponent* keyboardComp;
     Component* statusBar;
 	bool midiLearnEnabled;
 	bool addNewMapping;

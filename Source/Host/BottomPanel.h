@@ -27,7 +27,8 @@
 
 //==============================================================================
 class BottomPanel   : public Component,
-					  public ActionListener
+					  public ActionListener,
+					  public Timer
 {
 public:
     BottomPanel(FilterGraph* graph);
@@ -36,10 +37,68 @@ public:
 	void actionListenerCallback (const String &message);
 	void mouseDrag(const MouseEvent& event);
 	void mouseEnter(const MouseEvent& event);
+	void addComponentToPanel(Component* comp);
+	void removeComponentFromPanel(String name);
+	void showComponentInPanel(String compName);
+	int getNumberComponents(){	return numberOfComponents;	}
+	void resized();
+	void timerCallback();
+	
+	class Container : public Component
+	{
+		public:
+			Container(){}
+			
+			~Container(){}
+
+			BottomPanel* getParentPanel()
+			{
+				return findParentComponentOfClass<BottomPanel>();	
+			}
+			
+			void paint(Graphics &g)
+			{
+				g.fillAll(Colour::greyLevel (0.2f));
+			}
+	};
+	
+	class BorderComponent : public Component
+	{
+	public:
+		BorderComponent(String name):Component(name){}
+		
+		void paint(Graphics& g)
+		{
+			g.fillAll(Colour::greyLevel (0.2f));
+		}		
+	};
+	
+	class ListboxContents  : public ListBoxModel, public ActionBroadcaster
+    {
+		public:
+			ListboxContents();		
+			int getNumRows() override;
+			void paintListBoxItem (int rowNumber, Graphics& g,
+                               int width, int height, bool rowIsSelected) override;		
+			void listBoxItemClicked(int row, const MouseEvent &);		
+			void addRow(String rowName);
+			void removeRow(String rowName);
+			private:
+				StringArray contents;
+    };
 	
 private:
+	ListBox listBox;
+	BorderComponent bottomBorder;
+	BorderComponent topBorder;
+	int indexOfCompToScrollTo, currentYPos, indexOfCurrentComp;
+	float animateIndex;
+    ListboxContents listBoxModel;
 	bool canResize;
 	int startingYPos;
+	Viewport viewport;
+	Container container;
+	int numberOfComponents;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BottomPanel);
 };
 

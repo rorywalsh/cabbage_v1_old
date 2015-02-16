@@ -21,7 +21,8 @@ rmsLeft(0),
 rmsRight(0),
 updateCounter(0)
 {
-	setupAudioFile("/home/rory/Documents/BeesInMarch4.wav");
+	//setupAudioFile(File("/home/rory/Documents/BeesInMarch4.wav"));
+	bufferingAudioFileSource = nullptr;
 }
 
 AudioFilePlaybackProcessor::~AudioFilePlaybackProcessor()
@@ -31,24 +32,30 @@ AudioFilePlaybackProcessor::~AudioFilePlaybackProcessor()
 	fileSource= nullptr;
 }
 
-void AudioFilePlaybackProcessor::setupAudioFile (String _audioFile)
+void AudioFilePlaybackProcessor::setupAudioFile (File soundfile)
 {
-    File audioFile (_audioFile);
-	if(audioFile.exists())Logger::writeToLog("File exists");
-    AudioFormatManager formatManager;
-    formatManager.registerBasicFormats();   
-    AudioFormatReader* reader = formatManager.createReaderFor (audioFile);   
-    if (reader != 0)
-    {
-        fileSource = new AudioFormatReaderSource (reader, true);
-		bufferingAudioFileSource = new BufferingAudioSource(fileSource, thread, true, 32768, 2);
-		//bufferingAudioFileSource->prepareToPlay(512, reader->sampleRate);
-		thread.startThread();
-    }
+	if(soundfile.exists())
+	{
+		AudioFormatManager formatManager;
+		formatManager.registerBasicFormats();   
+		AudioFormatReader* reader = formatManager.createReaderFor (soundfile);   
+		if (reader != 0)
+		{
+			fileSource = new AudioFormatReaderSource (reader, true);
+			bufferingAudioFileSource = new BufferingAudioSource(fileSource, thread, true, 32768, 2);
+			samplingRate =reader->sampleRate;
+			thread.startThread();
+			currentFile = soundfile.getFullPathName();
+		}		
+	}
 }
+
+
 
 void AudioFilePlaybackProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+	if(sampleRate==0)
+		sampleRate = samplingRate;
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 	if(bufferingAudioFileSource)
@@ -57,36 +64,39 @@ void AudioFilePlaybackProcessor::prepareToPlay (double sampleRate, int samplesPe
 
 void AudioFilePlaybackProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-	AudioSampleBuffer output (2, buffer.getNumSamples());
-	sourceChannelInfo.buffer = &output;
-	sourceChannelInfo.startSample = 0;
-	sourceChannelInfo.numSamples = output.getNumSamples();
+	if(bufferingAudioFileSource)
+	{
+		AudioSampleBuffer output (2, buffer.getNumSamples());
+		sourceChannelInfo.buffer = &output;
+		sourceChannelInfo.startSample = 0;
+		sourceChannelInfo.numSamples = output.getNumSamples();
 
-	if(isSourcePlaying)
-		bufferingAudioFileSource->getNextAudioBlock(sourceChannelInfo); 
-	else
-		output.clear();
+		if(isSourcePlaying)
+			bufferingAudioFileSource->getNextAudioBlock(sourceChannelInfo); 
+		else
+			output.clear();
 
-    for (int channel = 0; channel < getNumInputChannels(); ++channel)
-    {
-		buffer.copyFrom(channel, 0, output, channel, 0, sourceChannelInfo.numSamples);
-    }
+		for (int channel = 0; channel < getNumInputChannels(); ++channel)
+		{
+			buffer.copyFrom(channel, 0, output, channel, 0, sourceChannelInfo.numSamples);
+		}
 
-    for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
-    {
-        buffer.clear (i, 0, buffer.getNumSamples());
-    }
-	
-	rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
-	rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
-	
-	
-	if(updateCounter==0) 
-		sendActionMessage("rmsValues "+String(rmsLeft)+" "+String(rmsRight));
+		for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+		{
+			buffer.clear (i, 0, buffer.getNumSamples());
+		}
 		
-	updateCounter++;
-	if(updateCounter>5)
-		updateCounter=0;	
+		rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
+		rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
+		
+		
+		if(updateCounter==0) 
+			sendActionMessage("rmsValues "+String(rmsLeft)+" "+String(rmsRight));
+			
+		updateCounter++;
+		if(updateCounter>5)
+			updateCounter=0;	
+	}
 	
 }
 
@@ -205,12 +215,26 @@ void AudioFilePlaybackProcessor::getStateInformation (MemoryBlock& destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+	XmlElement xml ("SOUNDFILER_PLUGIN_SETTINGS");
+	xml.setAttribute("Soundfile", currentFile);	
+	copyXmlToBinary (xml, destData);
 }
 
 void AudioFilePlaybackProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+	ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+	if (xmlState->hasTagName ("SOUNDFILER_PLUGIN_SETTINGS"))
+	{	
+		for(int i=0; i<xmlState->getNumAttributes(); i++)
+		{
+			if(xmlState->getAttributeName(i)=="Soundfile")
+			{
+				setupAudioFile(File(xmlState->getAttributeValue(i)));
+			}
+		}		
+	}
 }
 
 //==============================================================================

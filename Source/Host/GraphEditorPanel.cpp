@@ -22,6 +22,7 @@
 #include "InternalFilters.h"
 #include "MainHostWindow.h"
 #include "PluginWrapperProcessor.h"
+#include "AudioFilePlaybackEditor.h"
 #include "../Plugin/CabbageGenericAudioProcessorEditor.h"
 #include "SidebarPanel.h"
 
@@ -369,7 +370,11 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 
 }
 
-
+GraphDocumentComponent* GraphEditorPanel::getGraphDocument()
+{
+		return findParentComponentOfClass<GraphDocumentComponent>();
+}
+	
 void GraphEditorPanel::mouseDrag (const MouseEvent& e)
 {
 	if(!e.mods.isCommandDown())
@@ -1052,6 +1057,8 @@ midiLearnEnabled(false)
 	inputStrip->addChangeListener(&graphPlayer);
 	outputStrip->addChangeListener(&graphPlayer);
 	
+	showBottomPanel(false);
+	
     graphPanel->updateComponents();
 }
 
@@ -1081,12 +1088,30 @@ void GraphDocumentComponent::resized()
 	outputStrip->setBounds(getWidth()-200, getHeight() - keysHeight/2, 200, 30);
 	sidebarPanel->setLookAndFeel(&getLookAndFeel());
 	sidebarPanel->setBounds(0, 0, 250, getHeight());	
-	bottomPanel->setBounds(250, getHeight()-160, getWidth()-250, 100);
+	bottomPanel->setBounds(250, getHeight()-260, getWidth()-250, 200);
 }
 
 void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int x, int y, bool isNative, String filename)
 {
     graphPanel->createNewPlugin (desc, x, y, isNative, filename);
+}
+
+void GraphDocumentComponent::addComponentToBottomPanel(Component* component)
+{
+	component->setSize(bottomPanel->getWidth(), bottomPanel->getHeight());		
+	component->setComponentID(component->getName());
+	bottomPanel->addComponentToPanel(component);	
+	showBottomPanel(true);
+}
+
+void GraphDocumentComponent::removeComponentFromBottomPanel(String compName)
+{
+	bottomPanel->removeComponentFromPanel(compName);	
+}
+
+void GraphDocumentComponent::showComponentInBottomPanel(String compName)
+{
+	bottomPanel->showComponentInPanel(compName);	
 }
 
 void GraphDocumentComponent::showSidebarPanel(bool show)

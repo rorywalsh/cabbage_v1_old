@@ -169,11 +169,14 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 	originalPos = localPointToGlobal (Point<int>());
 
 	toFront (true);
+	
 	CabbagePluginAudioProcessor* nativeCabbagePlugin = dynamic_cast<CabbagePluginAudioProcessor*>(graph.getNodeForId (filterID)->getProcessor());
 
 	if (graph.getNodeForId(filterID)->properties.getWithDefault("pluginType", "")!="Internal")
 		getGraphDocument()->expandParametersInPluginsPanel(filterID);
 
+	if (pluginType==SOUNDFILER)	
+		getGraphDocument()->showComponentInBottomPanel("Soundfile Player:"+String(filterID));		
 		
 	if (e.mods.isPopupMenu())
 	{	
@@ -182,16 +185,22 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 		m.addItem (1, "Delete this filter");
 		m.addItem (2, "Disconnect all pins");
 		m.addSeparator();
-		m.addItem (3, "Show plugin UI");
+		
+		if(pluginType!=SOUNDFILER)
+		{
+			m.addItem (3, "Show plugin UI");
+			m.addItem (5, "Show all parameters");
+		}
 		//m.addItem (4, "Show all programs");
-		m.addItem (5, "Show all parameters");
-		m.addItem (8, "Assign MIDI");
-		if(nativeCabbagePlugin)
+		
+		
+		//m.addItem (8, "Assign MIDI");
+		if(pluginType == CABBAGE)
 		{
 			m.addItem (7, "Show source code");
 		}
 		
-		m.addItem (6, "Test state save/load");
+		//m.addItem (6, "Test state save/load");
 
 		const int r = m.show();
 
@@ -201,6 +210,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 		{
 			graph.removeFilter (filterID);
 			getGraphDocument()->refreshPluginsInSidebarPanel();
+			getGraphDocument()->removeComponentFromBottomPanel("Soundfile Player:"+String(filterID));				
 			return;
 		}
 		else if (r == 2)
@@ -258,10 +268,6 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 						break;
 					case 5:
 						type = PluginWindow::Parameters;
-						break;
-					case 8:
-						type = PluginWindow::midiLearn;
-						getGraphPanel()->enabledMIDILearn(true);
 						break;
 
 					default:
@@ -644,7 +650,13 @@ void FilterComponent::update()
 	else if(f->properties.getWithDefault("pluginType","")=="Cabbage")
 		pluginType = CABBAGE;
 	else if(f->properties.getWithDefault("pluginType","")=="SoundfilePlayer")
+	{
 		pluginType = SOUNDFILER;
+		AudioProcessorEditor* ui = nullptr;
+		ui = f->getProcessor()->createEditorIfNeeded();
+		ui->setName("Soundfile Player:"+String( f->nodeId));
+		getGraphDocument()->addComponentToBottomPanel(ui);		
+	}
 	else
 		pluginType = THIRDPARTY;
 

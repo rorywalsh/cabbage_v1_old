@@ -135,6 +135,87 @@ void FilterGraph::hiResTimerCallback()
 	playPosition = (playPosition > 1 ? 0 : playPosition+((float)getTimerInterval()/1000.f));
 	
 }
+
+AudioProcessorGraph::Node* FilterGraph::createNode(const PluginDescription* desc)
+{
+	AudioProcessorGraph::Node* node = nullptr;
+	String errorMessage;
+	
+	if( desc->pluginFormatName!="Cabbage" && 
+		desc->pluginFormatName!="SoundfilePlayer" &&
+		desc->pluginFormatName!="Internal")
+	{
+		if(PluginWrapper* instance = new PluginWrapper(formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
+		{
+			instance->setPlayConfigDetails( desc->numInputChannels,
+											desc->numOutputChannels,
+											graph.getSampleRate(),
+											graph.getBlockSize());
+			instance->setPluginName(desc->name);
+			//cUtils::debug("num params", instance->getNumParameters());
+			node = graph.addNode (instance);
+			node->properties.set("pluginType", "ThirdParty");
+			node->getProcessor()->setPlayHead(&audioPlayHead);
+			node->properties.set("pluginName", desc->name);
+		}
+	}
+	
+	else if(desc->pluginFormatName=="SoundfilePlayer")
+	{
+		if (AudioFilePlaybackProcessor* soundfiler = new AudioFilePlaybackProcessor())
+		{
+			soundfiler->setPlayConfigDetails(2,
+											2,
+											graph.getSampleRate(),
+											graph.getBlockSize());
+
+			node = graph.addNode (soundfiler);
+			node->properties.set("pluginType", "SoundfilePlayer");
+			node->properties.set("pluginName", "Soundfile Player");
+			ScopedPointer<XmlElement> xmlElem;
+			xmlElem = desc->createXml();
+			String xmlText = xmlElem->createDocument("");
+			node->properties.set("pluginType", "SoundfilePlayer");
+			node->properties.set("pluginDesc", xmlText);
+			node->getProcessor()->setPlayHead(&audioPlayHead);
+			return node;
+		}
+	}
+	
+	else if(desc->pluginFormatName=="Internal")
+	{
+			if (AudioPluginInstance* instance = formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
+			{
+			node = graph.addNode (instance);
+			node->properties.set("pluginType", "Internal");
+			node->properties.set("pluginName", desc->name);
+			}
+	}
+
+	else if(desc->pluginFormatName=="Cabbage")
+	{
+		CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc->fileOrIdentifier, false, AUDIO_PLUGIN);
+		int numChannels = cabbageNativePlugin->getNumberCsoundOutChannels();
+		//create GUI for selected plugin...
+		cabbageNativePlugin->createGUI(File(desc->fileOrIdentifier).loadFileAsString(), true);			
+		cabbageNativePlugin->setPlayConfigDetails(cabbageNativePlugin->getNumberCsoundOutChannels(), 
+												  cabbageNativePlugin->getNumberCsoundOutChannels(), 
+												  cabbageNativePlugin->getCsoundSamplingRate(),
+												  cabbageNativePlugin->getCsoundKsmpsSize());
+		node = graph.addNode (cabbageNativePlugin);	
+		node->properties.set("pluginName", cabbageNativePlugin->getPluginName());
+		//native Cabbage plugins don't have plugin descriptors, so we create one here..
+		ScopedPointer<XmlElement> xmlElem;
+		xmlElem = desc->createXml();
+		String xmlText = xmlElem->createDocument("");
+		node->properties.set("pluginType", "Cabbage");
+		node->properties.set("pluginDesc", xmlText);
+		node->getProcessor()->setPlayHead(&audioPlayHead);
+	}
+			
+	return node;
+}
+
 //==============================================================================
 void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 {
@@ -142,76 +223,8 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
     {
         AudioProcessorGraph::Node* node = nullptr;
 
-        String errorMessage;
-		if( desc->pluginFormatName!="Cabbage" && 
-			desc->pluginFormatName!="SoundfilePlayer" &&
-			desc->pluginFormatName!="Internal")
-		{
-			if(PluginWrapper* instance = new PluginWrapper(formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
-			{
-				instance->setPlayConfigDetails( desc->numInputChannels,
-												desc->numOutputChannels,
-												graph.getSampleRate(),
-												graph.getBlockSize());
-				instance->setPluginName(desc->name);
-				//cUtils::debug("num params", instance->getNumParameters());
-				node = graph.addNode (instance);
-				node->properties.set("pluginType", "ThirdParty");
-				node->getProcessor()->setPlayHead(&audioPlayHead);
-				node->properties.set("pluginName", desc->name);
-			}
-		}
-		else if(desc->pluginFormatName=="Internal")
-		{
-			if (AudioPluginInstance* instance = formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
-			{
-				node = graph.addNode (instance);
-				node->properties.set("pluginType", "Internal");
-				node->properties.set("pluginName", desc->name);
-			}
-		}
-
-		else if(desc->pluginFormatName=="SoundfilePlayer")
-		{
-			if (AudioFilePlaybackProcessor* soundfiler = new AudioFilePlaybackProcessor())
-			{
-				soundfiler->setPlayConfigDetails(2,
-												2,
-												graph.getSampleRate(),
-												graph.getBlockSize());
-
-				node = graph.addNode (soundfiler);
-				node->properties.set("pluginType", "SoundfilePlayer");
-				node->properties.set("pluginName", "Soundfile Player");
-				ScopedPointer<XmlElement> xmlElem;
-				xmlElem = desc->createXml();
-				String xmlText = xmlElem->createDocument("");
-				node->properties.set("pluginType", "SoundfilePlayer");
-				node->properties.set("pluginDesc", xmlText);
-				node->getProcessor()->setPlayHead(&audioPlayHead);
-			}
-		}	
-		else if(desc->pluginFormatName=="Cabbage")
-		{
-			CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc->fileOrIdentifier, false, AUDIO_PLUGIN);
-			int numChannels = cabbageNativePlugin->getNumberCsoundOutChannels();
-			//create GUI for selected plugin...
-			cabbageNativePlugin->createGUI(File(desc->fileOrIdentifier).loadFileAsString(), true);			
-			cabbageNativePlugin->setPlayConfigDetails(cabbageNativePlugin->getNumberCsoundOutChannels(), 
-													  cabbageNativePlugin->getNumberCsoundOutChannels(), 
-													  cabbageNativePlugin->getCsoundSamplingRate(),
-													  cabbageNativePlugin->getCsoundKsmpsSize());
-            node = graph.addNode (cabbageNativePlugin);	
-			node->properties.set("pluginName", cabbageNativePlugin->getPluginName());
-			//native Cabbage plugins don't have plugin descriptors, so we create one here..
-			ScopedPointer<XmlElement> xmlElem;
-			xmlElem = desc->createXml();
-			String xmlText = xmlElem->createDocument("");
-			node->properties.set("pluginType", "Cabbage");
-			node->properties.set("pluginDesc", xmlText);
-			node->getProcessor()->setPlayHead(&audioPlayHead);
-		}
-		
+		node = createNode(desc);
+					
         if (node != nullptr)
         {
             node->properties.set ("x", x);
@@ -227,7 +240,7 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
         {
             AlertWindow::showMessageBox (AlertWindow::WarningIcon,
                                          TRANS("Couldn't create filter"),
-                                         errorMessage);
+                                         "Error loading plugin");
         }
     }
 }
@@ -415,7 +428,8 @@ static XmlElement* createNodeXml (AudioProcessorGraph::Node* const node) noexcep
 		plugin->fillInPluginDescription (pd);
 	else if(PluginWrapper* plugin = dynamic_cast <PluginWrapper*> (node->getProcessor()))
 		plugin->fillInPluginDescription (pd);
-	else if(dynamic_cast <CabbagePluginAudioProcessor*> (node->getProcessor()))
+	else if(dynamic_cast <CabbagePluginAudioProcessor*> (node->getProcessor())||
+			dynamic_cast <AudioFilePlaybackProcessor*> (node->getProcessor()))
 		{
 		//grab description of native plugin for saving...
 		String xmlPluginDescriptor = node->properties.getWithDefault("pluginDesc", "").toString();
@@ -457,54 +471,7 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
 	AudioProcessorGraph::Node::Ptr node = nullptr;
 	
 	String errorMessage;
-	if(desc.pluginFormatName!="Cabbage" && desc.pluginFormatName!="Internal")
-	{
-		if(PluginWrapper* instance = new PluginWrapper(formatManager.createPluginInstance (desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
-		{
-			instance->setPlayConfigDetails( desc.numInputChannels,
-											desc.numOutputChannels,
-											graph.getSampleRate(),
-											graph.getBlockSize());
-			instance->setPluginName(desc.name);
-			node = graph.addNode (instance, xml.getIntAttribute ("uid"));
-			
-			node->properties.set("pluginName", desc.name);
-			node->getProcessor()->setPlayHead(&audioPlayHead);
-		}
-	}
-	else if(desc.pluginFormatName=="Internal")
-	{
-		if (AudioPluginInstance* instance = formatManager.createPluginInstance (desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
-		{
-			node = graph.addNode (instance, xml.getIntAttribute ("uid"));
-			node->properties.set("pluginType", "Internal");
-			node->properties.set("pluginName", desc.name);
-		}
-	}
-
-	else if(desc.pluginFormatName=="Cabbage")
-	{
-		CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc.fileOrIdentifier, false, AUDIO_PLUGIN);
-		
-		//create GUI for selected plugin...
-		cabbageNativePlugin->createGUI(File(desc.fileOrIdentifier).loadFileAsString(), true);			
-		cabbageNativePlugin->setPlayConfigDetails(cabbageNativePlugin->getNumberCsoundOutChannels(), 
-												  cabbageNativePlugin->getNumberCsoundOutChannels(), 
-												  cabbageNativePlugin->getCsoundSamplingRate(),
-												  cabbageNativePlugin->getCsoundKsmpsSize());
-		node = graph.addNode (cabbageNativePlugin, xml.getIntAttribute ("uid"));	
-		node->properties.set("pluginName", cabbageNativePlugin->getPluginName());
-		//native Cabbage plugins don't have plugin descriptors, so we create one here..
-		ScopedPointer<XmlElement> xmlElem;
-		xmlElem = desc.createXml();
-		String xmlText = xmlElem->createDocument("");
-		node->properties.set("pluginDesc", xmlText);
-		node->properties.set("pluginType", "Cabbage");
-		node->getProcessor()->setPlayHead(&audioPlayHead);
-	}	
-	
-
-    //AudioProcessorGraph::Node::Ptr node (graph.addNode (instance, xml.getIntAttribute ("uid")));
+	node = createNode(&desc);
 
     if (const XmlElement* const state = xml.getChildByName ("STATE"))
     {

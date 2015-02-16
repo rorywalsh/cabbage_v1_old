@@ -23,6 +23,7 @@
 class FilterInGraph;
 class FilterGraph;
 class NodeAudioProcessorListener;
+class GraphDocumentComponent;
 
 #include "../Source/Plugin/CabbagePluginProcessor.h"
 #include "../Source/Plugin/CabbagePluginEditor.h"
@@ -69,6 +70,10 @@ public:
     const AudioProcessorGraph::Node::Ptr getNodeForId (const uint32 uid) const noexcept;
 
     void addFilter (const PluginDescription* desc, double x, double y);
+	
+	
+	AudioProcessorGraph::Node* createNode(const PluginDescription* desc);
+	
 	void addNativeCabbageFilter (String fileName, double x, double y);
 
     void removeFilter (const uint32 filterUID);
@@ -125,6 +130,7 @@ public:
     File getLastDocumentOpened();
     void setLastDocumentOpened (const File& file);
 	void createNodeFromXml (const XmlElement& xml);
+
 
     static const int midiChannelNumber;
 	Array<CabbageMidiMapping> midiMappings;

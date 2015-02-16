@@ -27,9 +27,30 @@
 
 //==============================================================================
 BottomPanel::BottomPanel(FilterGraph* graph):
-canResize(false)
+canResize(false),
+viewport(),
+container(),
+numberOfComponents(0),
+indexOfCompToScrollTo(0),
+indexOfCurrentComp(0),
+animateIndex(10),
+bottomBorder("bottomBorder"),
+topBorder("topBorder")
 {
-
+    listBox.setModel (&listBoxModel);
+    listBox.setMultipleSelectionEnabled (false);
+    listBox.setColour(ListBox::ColourIds::backgroundColourId, Colour(30, 30, 30));
+    addAndMakeVisible (listBox);
+	listBoxModel.addActionListener(this);
+	listBox.selectRow(0);
+	
+	addAndMakeVisible(&bottomBorder);
+	addAndMakeVisible(&topBorder);
+	topBorder.addMouseListener(this, true);
+	topBorder.setAlwaysOnTop(true);
+	bottomBorder.setAlwaysOnTop(true);
+	
+	addAndMakeVisible(&container);
 	
 }
 //=================================================================
@@ -37,7 +58,92 @@ BottomPanel::~BottomPanel()
 {	
 
 }
+//=================================================================
+void BottomPanel::resized()
+{
+	listBox.setBounds(5, 10, 110, getHeight()-40);
+	const int numChildren = container.getNumChildComponents();
+	container.setBounds(120, 5, getWidth()-125, numChildren*190);
+	bottomBorder.setBounds(0, getHeight()-5, getWidth(), 5);
+	topBorder.setBounds(0, 0, getWidth(), 5);
+}
+//=================================================================
+void BottomPanel::addComponentToPanel(Component* comp)
+{
+	if(container.getIndexOfChildComponent(comp)==-1)
+	{
+		comp->setBounds(0, 0, container.getWidth(), 190);
+		container.addAndMakeVisible(comp);
 
+		const int numChildren = container.getNumChildComponents();
+		container.setSize(container.getWidth(), numChildren*190);
+		
+		
+		for(int i=0;i<numChildren;i++)
+		{
+			container.getChildComponent(i)->setBounds(0, i*190, container.getWidth(), 190);
+		}
+
+		const int yPos = getPosition().getY();
+		container.setTopLeftPosition(container.getPosition().withY(5-((numChildren-1)*190)));		
+		indexOfCurrentComp = numChildren-1;
+		currentYPos = container.getPosition().getY();
+		listBoxModel.addRow(comp->getName());
+		listBox.updateContent();	
+		listBox.selectRow(listBoxModel.getNumRows()-1);	
+	}
+}
+
+void BottomPanel::showComponentInPanel(String compName)
+{
+	int numChildren = container.getNumChildComponents();
+
+	for(int i=0;i<numChildren;i++)
+	{
+		if(container.getChildComponent(i)->getComponentID()==compName)
+		{
+			indexOfCompToScrollTo = i;
+			listBox.selectRow(i);	
+			startTimer(10);
+		}
+	}	
+
+}
+
+void BottomPanel::removeComponentFromPanel(String compName)
+{
+	int numChildren = container.getNumChildComponents();
+
+	for(int i=0;i<numChildren;i++)
+	{
+		if(container.getChildComponent(i)->getComponentID()==compName)
+		{
+			container.removeChildComponent(i);
+			listBoxModel.removeRow(compName);
+			listBox.updateContent();
+			i=numChildren+1;
+		}
+	}		
+	
+	//when we remove one we need to rearrange the remaining ones...
+	numChildren = container.getNumChildComponents();
+	for(int i=0;i<numChildren;i++)
+	{
+		container.getChildComponent(i)->setBounds(0, i*190, container.getWidth(), 190);
+	}
+	
+	if(container.getNumChildComponents()>0)
+	{
+		container.setTopLeftPosition(container.getPosition().getX(), 5);
+		listBox.selectRow(0);	
+	}
+	else
+		this->setVisible(false);
+		
+		
+		
+}
+//=================================================================
 void BottomPanel::actionListenerCallback (const String &message)
 {
 	if(message.contains("SidebarWidth:"))
@@ -49,33 +155,63 @@ void BottomPanel::actionListenerCallback (const String &message)
 			setBounds(subStr.getIntValue(), getPosition().getY(), parent->getWidth()-subStr.getIntValue(), getHeight());		
 			parent->getKeyboardComponent()->setBounds(subStr.getIntValue(), parent->getKeyboardComponent()->getPosition().getY(), parent->getWidth()-subStr.getIntValue()-200, parent->getKeyboardComponent()->getHeight());
 			//parent->getKeyboardComponent()->setLowestVisibleKey(40);
-		}
-		
+		}		
+	}
+	
+	if(message.contains("ListBox:"))
+	{
+		String subStr = message.substring(message.indexOf(":")+1);
+		indexOfCompToScrollTo = subStr.getIntValue();
+		//container.setTopLeftPosition(container.getPosition().getX(), 5+(-indexOfCompToScrollTo*190));	
+		startTimer(100);
+	}
+}
+//=================================================================
+void BottomPanel::timerCallback()
+{
+	
+	//cUtils::debug("yPosOfCurrentComp", currentYPos);
+	//cUtils::debug("indexOfCompToScrollTo", indexOfCompToScrollTo*190);
+	
+	const float move = (indexOfCurrentComp-indexOfCompToScrollTo)*190;
+	const float finalPosition = -indexOfCompToScrollTo*190+5;
+	float moveFrom = (indexOfCurrentComp*190)*(animateIndex/10.f);
+	
+	container.setTopLeftPosition(container.getPosition().getX(), finalPosition);
+			
+	animateIndex--;
+	
+	if(animateIndex<0)
+	{
+		animateIndex=10;
+		stopTimer();
+		indexOfCurrentComp = indexOfCompToScrollTo;
 	}
 }
 
+//=================================================================
 void BottomPanel::paint(Graphics &g)
 {
 	g.fillAll(Colour::greyLevel (0.2f));
 	g.setColour(Colour(30, 30, 30));
 	g.fillRect(5, 5, getWidth()-10, getHeight()-10);	
 }
-
-//--------------------------------------------------------------------
+//=================================================================
 void BottomPanel::mouseEnter(const MouseEvent& event)
 {
 	const int yPos = event.getPosition().getY();
 	startingYPos = getPosition().getY();
 	
-	if(!event.mods.isLeftButtonDown() && yPos<10)
+	if(event.eventComponent->getName()=="topBorder")
 	{
-		setMouseCursor (MouseCursor::UpDownResizeCursor);
+		cUtils::debug("Should show cursor");
+		event.eventComponent->setMouseCursor (MouseCursor::UpDownResizeCursor);
 		canResize=true;
 	}
 	else
 		setMouseCursor (MouseCursor::NormalCursor);
 }
-//--------------------------------------------------------------------
+//=================================================================
 void BottomPanel::mouseDrag(const MouseEvent& event)
 {
 	const int keysHeight = 60;
@@ -90,3 +226,45 @@ void BottomPanel::mouseDrag(const MouseEvent& event)
 		}
 	}
 }
+
+//====================== ListBox Component ===================================
+// when a user clicks on an item in the listbox, the CabbagePreferencesComp will update
+// what the users see
+BottomPanel::ListboxContents::ListboxContents()
+{
+	contents.clear();	
+}
+
+void BottomPanel::ListboxContents::addRow(String rowName)
+{
+	contents.add(rowName);
+}
+
+void BottomPanel::ListboxContents::removeRow(String rowName)
+{
+	contents.removeString(rowName);
+}
+
+int BottomPanel::ListboxContents::getNumRows()
+{
+	return contents.size();
+}
+
+void BottomPanel::ListboxContents::paintListBoxItem (int rowNumber, Graphics& g,
+					   int width, int height, bool rowIsSelected)
+{
+	if (rowIsSelected)
+		g.fillAll (Colours::cornflowerblue);
+
+	g.setColour (rowIsSelected ? Colours::black : Colours::green);
+	g.setFont (cUtils::getComponentFont());
+
+	g.drawText (contents[rowNumber],
+				5, 0, width, height,
+				Justification::centredLeft, true);
+}
+
+void BottomPanel::ListboxContents::listBoxItemClicked(int row, const MouseEvent &)
+{
+	sendActionMessage("ListBox:"+String(row));
+}		

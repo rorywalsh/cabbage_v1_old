@@ -68,8 +68,9 @@ public:
 	bool silenceInProducesSilenceOut(void)const {return true;}
 	double getTailLengthSeconds(void)const { return 1.f; }
 
+	String getCurrentFile(){		return currentFile;		}
 	
-	void setupAudioFile(String _audioFile);
+	void setupAudioFile (File soundfile);
 	bool isSourcePlaying;
 	int sourceSampleRate;
 	BufferingAudioSource* bufferingAudioFileSource;
@@ -78,8 +79,10 @@ private:
 	AudioSourceChannelInfo sourceChannelInfo;
 	PositionableAudioSource* fileSource;
 	AudioSampleBuffer* audioBuffer;
+	int samplingRate;
     TimeSliceThread thread;
 	float rmsLeft, rmsRight;
+	String currentFile;
 	int updateCounter;
 	//PositionableAudioSource* currentAudioFileSource;
 	

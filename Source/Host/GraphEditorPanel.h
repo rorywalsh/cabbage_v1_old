@@ -30,7 +30,7 @@
 
 
 class GraphAudioProcessorPlayer;
-
+class GraphDocumentComponent;
 
 //==============================================================================
 //this get populated whenever we select multiple objects..
@@ -73,6 +73,8 @@ public:
     void changeListenerCallback (ChangeBroadcaster*);
 	void actionListenerCallback (const String &message);
 	void updateNode (const int nodeID, const int inChannels, const int outChannels);
+
+	GraphDocumentComponent* getGraphDocument();
 	
 	void enabledMIDILearn(bool val)
 	{
@@ -87,8 +89,8 @@ public:
 	
 	void itemDropped (const DragAndDropTarget::SourceDetails& dragSourceDetails)
 	{
-		if(FileTreeComponent* fileComp = dynamic_cast<FileTreeComponent*>(dragSourceDetails.sourceComponent.get()))			
-			cUtils::showMessage(fileComp->getSelectedFile().getFullPathName());	
+	//	if(FileTreeComponent* fileComp = dynamic_cast<FileTreeComponent*>(dragSourceDetails.sourceComponent.get()))			
+	//		cUtils::showMessage(fileComp->getSelectedFile().getFullPathName());	
 	}
 	
     void updateComponents();
@@ -246,6 +248,10 @@ public:
 	{
 		return bottomPanel->isVisible();
 	}
+	
+	void addComponentToBottomPanel(Component* component);
+	void removeComponentFromBottomPanel(String component);
+	void showComponentInBottomPanel(String component);
 	
 	void expandParametersInPluginsPanel(int nodeId=-1)
 	{

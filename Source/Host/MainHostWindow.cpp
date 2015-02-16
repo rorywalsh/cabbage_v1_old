@@ -285,7 +285,7 @@ void MainHostWindow::addPluginsToMenu (PopupMenu& m) const
 		
 	menu.addItem(10000, "Soundfile player");
 
-	m.addSubMenu("Input/Outputs", menu);
+	m.addSubMenu("Devices", menu);
 }
 
 //add native filters to list of plugins. 

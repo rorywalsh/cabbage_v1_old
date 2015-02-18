@@ -149,7 +149,7 @@ void FilterGraph::hiResTimerCallback()
 	
 }
 
-AudioProcessorGraph::Node* FilterGraph::createNode(const PluginDescription* desc, int uid)
+AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* desc, int uid)
 {
 	AudioProcessorGraph::Node* node = nullptr;
 	String errorMessage;
@@ -212,7 +212,11 @@ AudioProcessorGraph::Node* FilterGraph::createNode(const PluginDescription* desc
 	{
 			if (AudioPluginInstance* instance = formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
 			{
-			node = graph.addNode (instance);
+			if(uid!=-1)										  
+				node = graph.addNode (instance, uid);
+			else
+				node = graph.addNode (instance);
+
 			node->properties.set("pluginType", "Internal");
 			node->properties.set("pluginName", desc->name);
 			}

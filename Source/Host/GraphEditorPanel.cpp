@@ -252,7 +252,7 @@ GraphEditorPanel::GraphEditorPanel (FilterGraph& graph_)
                0.55f, 0.56f);
 
 				
-//	//each patch has an automation track
+	//each patch has an automation track
 //	PluginDescription descript;
 //	descript.descriptiveName = "Automation Track";
 //	descript.name = "AutomationTrack";

@@ -99,7 +99,7 @@ void AutomationProcessor::addAutomatableNode(String nodeName,
 	newTableAdded = true;	
 	messageQueue.addOutgoingTableUpdateMessageToQueue(statement, id);
 	sendOutgoingMessagesToCsound();
-	//getEditor()->updateComboBoxItems();
+	getEditor()->updateComboBoxItems();
 		
 }
 
@@ -176,7 +176,7 @@ if(csCompileResult==OK)
 		csound->PerformKsmps();
 		const int gen = automatableNodes.getReference(automatableNodes.size()-1).genRoutine;
 		const int tableNum = automatableNodes.getReference(automatableNodes.size()-1).fTableNumber;
-		//getEditor()->addTable(tableNum, gen);	
+		getEditor()->addTable(tableNum, gen);	
 		newTableAdded = false;	
 	}
 }

@@ -72,7 +72,7 @@ public:
     void addFilter (const PluginDescription* desc, double x, double y);
 	
 	
-	AudioProcessorGraph::Node* createNode(const PluginDescription* desc, int uid=-1);
+	AudioProcessorGraph::Node::Ptr createNode(const PluginDescription* desc, int uid=-1);
 	
 	void addNativeCabbageFilter (String fileName, double x, double y);
 

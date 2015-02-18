@@ -53,6 +53,8 @@ using namespace std;
 #define svgGroupboxWidth 1000
 #define svgGroupboxHeight 800
 
+#define OK 0
+
 class KeyboardShortcutKeys
 {
 public:

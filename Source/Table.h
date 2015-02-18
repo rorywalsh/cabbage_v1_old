@@ -64,12 +64,13 @@ public:
     void bringButtonsToFront();
     void setAmpRanges(Array<float> ampRange);
     void timerCallback();
+	void updateScrollbars();
     void setRange(double start, double end);
     ScopedPointer<DrawableRectangle> currentPositionMarker;
     double getLengthInSamples();
     void setScrubberPos(double pos, int tableNum);
     void scroll(double newRangeStart);
-    void addTable(int sr, const String col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener);
+    void addTable(int sr, const Colour col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener);
     void setWaveform(AudioSampleBuffer buffer, int ftNumber);
     void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
     void setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange = true);
@@ -136,7 +137,7 @@ public:
     Point<int> tableTopAndHeight;
     void setWaveform(Array<float, CriticalSection> buffer, bool updateRange = true);
     void createImage(String filename);
-    void addTable(int sr, const String col, int gen, Array<float> ampRange);
+    void addTable(int sr, const Colour col, int gen, Array<float> ampRange);
     static float ampToPixel(int height, Range<float> minMax, float sampleVal);
     static float pixelToAmp(int height, Range<float> minMax, float sampleVal);
     Array<double> getPfields();

@@ -35,9 +35,6 @@ CabbageLookAndFeelBasic* lookAndFeelBasic;
 
 //juce_ImplementSingleton (IdentArray);
 
-#if defined(Cabbage_No_Csound)
-#define OK 0
-#endif
 
 //==============================================================================
 // There are two different CabbagePluginAudioProcessor constructors. One for the
@@ -698,7 +695,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     
     int lines=1;
     String csdLine("");
-    csdText.addLines(source);
+    csdText.addLines(source.replace("\t", " "));
     bool multiComment = false;
     bool multiLine = false;
     

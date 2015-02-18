@@ -33,7 +33,8 @@ directoryList (nullptr, thread),
 fileTreeComp (*this, "", directoryList),
 canResize(false),
 transportControls(*this, ""),
-midiBubble(250)
+midiBubble(250),
+midiLearn(false)
 {
 	setOpaque (true);
 	addAndMakeVisible (concertinaPanel);	
@@ -259,9 +260,17 @@ void SidebarPanel::toggleMIDILearn()
 //--------------------------------------------------------------------
 void SidebarPanel::changeListenerCallback (ChangeBroadcaster* source)
 {
+	ProcessorParameterPropertyComp* comp = (ProcessorParameterPropertyComp*)source;
+	
+	if(comp->changeMessage=="add automation")
+	{
+		filterGraph->addNodesToAutomationTrack(comp->getNodeId(), comp->getParamIndex());
+		comp->changeMessage="";
+	}
+
 	if(midiLearn)
 	{
-		ProcessorParameterPropertyComp* comp = (ProcessorParameterPropertyComp*)source;
+		
 		String text = filterGraph->findControllerForparameter(comp->getNodeId(), comp->getParamIndex());
 		if(text.isEmpty())
 			text = "Unassigned";

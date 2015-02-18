@@ -121,7 +121,7 @@ void TableManager::changeListenerCallback(ChangeBroadcaster *source)
 
 }
 //==============================================================================
-void TableManager::addTable(int sr, const String col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener)
+void TableManager::addTable(int sr, const Colour col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener)
 {
     GenTable* table = new GenTable();
     table->tableNumber = ftnumber;
@@ -136,10 +136,11 @@ void TableManager::addTable(int sr, const String col, int gen, Array<float> ampR
         ampRange.add(0.f);
         ampRange.add(0.01);
     }
+	
     table->addTable(sr, col, gen, ampRange);
     addAndMakeVisible(table);
     tables.add(table);
-    RoundButton* button = new RoundButton(String(ftnumber), Colours::findColourForName(col, Colours::white));
+    RoundButton* button = new RoundButton(String(ftnumber), col);
     button->addChangeListener(this);
     addAndMakeVisible(button);
     tableButtons.add(button);
@@ -180,6 +181,17 @@ void TableManager::setZoomFactor(double newZoom)
             tables[i]->setZoomFactor(newZoom);
     }
 }
+
+void TableManager::updateScrollbars()
+{
+    for(int i=0; i<tables.size()-1; i++)
+    {
+		tables[i]->showScrollbar(false);
+	}
+	
+	tables[tables.size()-1]->showScrollbar(true);
+}
+
 //==============================================================================
 void TableManager::repaintAllTables()
 {
@@ -272,7 +284,13 @@ void TableManager::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newR
 
 void TableManager::setScrubberPos(double pos, int ftnumber)
 {
-    if(getTableFromFtNumber(ftnumber))
+	if(ftnumber==-1)
+	{
+		scrubberPosition = pos/tables[0]->tableSize;
+		tables[0]->setScrubberPos(scrubberPosition);	 
+	}
+		 
+    else if(getTableFromFtNumber(ftnumber))
     {
         scrubberPosition = pos/getTableFromFtNumber(ftnumber)->tableSize;
         for(int i=0; i<tables.size(); i++)
@@ -529,15 +547,15 @@ GenTable::~GenTable()
         thumbnail->removeChangeListener (this);
 }
 //==============================================================================
-void GenTable::addTable(int sr, const String col, int igen, Array<float> ampRange)
+void GenTable::addTable(int sr, const Colour col, int igen, Array<float> ampRange)
 {
     sampleRate = sr;
-    colour = Colours::findColourForName(col, Colours::white);
-    currentPositionMarker->setFill(colour.withAlpha(.5f));
+    colour = col;
+    currentPositionMarker->setFill(colour.brighter());
     genRoutine = abs(igen);
     handleViewer->handleViewerGen = igen;
     realGenRoutine = igen;
-    handleViewer->colour = Colours::findColourForName(col, Colours::white);
+    handleViewer->colour = col;
 
     setAmpRanges(ampRange);
 
@@ -1202,13 +1220,13 @@ void GenTable::setScrubberPos(double pos)
 
         }
     }
-    else if(genRoutine==2)
+    else// if(genRoutine==2)
     {
         currentPositionMarker->setVisible (true);
         double waveformLengthSeconds = (double)waveformBuffer.size()/sampleRate;
         double timePos = pos*waveformLengthSeconds;
         currentPositionMarker->setRectangle (juce::Rectangle<float> (timeToX (timePos), 0,
-                                             numPixelsPerIndex, thumbArea.getHeight()));
+                                             (genRoutine==2 ? numPixelsPerIndex : 2), thumbArea.getHeight()));
 
         if(this->showScroll)
         {

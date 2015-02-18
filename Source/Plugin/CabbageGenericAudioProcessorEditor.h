@@ -36,6 +36,8 @@ class ProcessorParameterPropertyComp   : public PropertyComponent,
 										 public ActionListener
 {
 public:
+	String changeMessage;
+
     ProcessorParameterPropertyComp (const String& name, AudioProcessor& p, int paramIndex, int Id)
         : PropertyComponent (name),
           owner (p),
@@ -44,6 +46,8 @@ public:
           paramHasChanged (false),
           slider (p, paramIndex),
 		  midiLearnEnabled(false),
+		  isBeingAutomated(false),
+		  changeMessage(""),
 		  lookAndFeelBasic(new CabbageLookAndFeelBasic())
     {
 		setLookAndFeel(lookAndFeelBasic);
@@ -70,6 +74,34 @@ public:
 		else
 			owner.removeListener (this);
     }
+
+	void mouseDown(const MouseEvent& event)
+	{
+		if(event.mods.isPopupMenu())
+		{
+			PopupMenu m;
+			if(!isBeingAutomated)
+				m.addItem(1, "Add automation");
+			else
+				m.addItem(2, "Remove automation");
+			
+			if(int item = m.show())
+			{
+				if(item==1)
+				{
+					isBeingAutomated=true;
+					changeMessage="add automation";
+					sendChangeMessage();
+				}
+				else
+				{
+					isBeingAutomated=false;
+					changeMessage="remove automation";
+					sendChangeMessage();					
+				}
+			}			
+		}
+	}
 
 	int32 getNodeId(){	return nodeId;	}
 	int getParamIndex(){	return index;	}
@@ -116,9 +148,10 @@ public:
 		}
     }
 
+		
 	void actionListenerCallback(const String &message)
 	{
-		sendChangeMessage();
+		//sendChangeMessage();
 	}
 	
     void timerCallback() override
@@ -184,14 +217,13 @@ private:
     AudioProcessor& owner;
     const int index;
 	int32 nodeId;
+
     bool volatile paramHasChanged;
+	bool isBeingAutomated;
 	bool midiLearnEnabled;
 	Colour midiLearnColour;
     ParamSlider slider;
 	ScopedPointer<CabbageLookAndFeelBasic> lookAndFeelBasic;
-	
-	
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProcessorParameterPropertyComp)
 };
 

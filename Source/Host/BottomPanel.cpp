@@ -66,6 +66,11 @@ void BottomPanel::resized()
 	container.setBounds(120, 5, getWidth()-125, numChildren*190);
 	bottomBorder.setBounds(0, getHeight()-5, getWidth(), 5);
 	topBorder.setBounds(0, 0, getWidth(), 5);
+	
+	for(int i=0;i<numChildren;i++)
+	{
+			container.getChildComponent(i)->setBounds(0, i*190, container.getWidth(), 190);
+	}		
 }
 //=================================================================
 void BottomPanel::addComponentToPanel(Component* comp)
@@ -134,8 +139,9 @@ void BottomPanel::removeComponentFromPanel(String compName)
 	
 	if(container.getNumChildComponents()>0)
 	{
-		container.setTopLeftPosition(container.getPosition().getX(), 5);
+		indexOfCompToScrollTo=0;
 		listBox.selectRow(0);	
+		startTimer(10);
 	}
 	else
 		this->setVisible(false);
@@ -162,8 +168,8 @@ void BottomPanel::actionListenerCallback (const String &message)
 	{
 		String subStr = message.substring(message.indexOf(":")+1);
 		indexOfCompToScrollTo = subStr.getIntValue();
-		//container.setTopLeftPosition(container.getPosition().getX(), 5+(-indexOfCompToScrollTo*190));	
-		startTimer(100);
+		container.setTopLeftPosition(container.getPosition().getX(), 5+(-indexOfCompToScrollTo*190));	
+		//startTimer(100);
 	}
 }
 //=================================================================
@@ -174,10 +180,13 @@ void BottomPanel::timerCallback()
 	//cUtils::debug("indexOfCompToScrollTo", indexOfCompToScrollTo*190);
 	
 	const float move = (indexOfCurrentComp-indexOfCompToScrollTo)*190;
-	const float finalPosition = -indexOfCompToScrollTo*190+5;
+	const float finalPosition = -indexOfCompToScrollTo*190;
 	float moveFrom = (indexOfCurrentComp*190)*(animateIndex/10.f);
 	
-	container.setTopLeftPosition(container.getPosition().getX(), finalPosition);
+	container.setTopLeftPosition(container.getPosition().getX(), finalPosition+5);
+			
+	stopTimer();	
+	resized();
 			
 	animateIndex--;
 	

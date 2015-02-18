@@ -30,6 +30,7 @@
 #include "PluginWrapperProcessor.h"
 #include "../Plugin/CabbagePluginProcessor.h"
 #include "AudioFilePlaybackProcessor.h"
+#include "AutomationProcessor.h"
 
 
 //==============================================================================
@@ -79,6 +80,18 @@ const AudioProcessorGraph::Node::Ptr FilterGraph::getNode (const int index) cons
 const AudioProcessorGraph::Node::Ptr FilterGraph::getNodeForId (const uint32 uid) const noexcept
 {
     return graph.getNodeForId (uid);
+}
+
+//==============================================================================
+void FilterGraph::addNodesToAutomationTrack(int32 id, int index)
+{
+	//if there is an automation device, if not forget it..
+	if(getNodeForId(automationNodeID))
+	{
+	AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
+	node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);	
+	}
+
 }
 
 //==============================================================================
@@ -136,31 +149,40 @@ void FilterGraph::hiResTimerCallback()
 	
 }
 
-AudioProcessorGraph::Node* FilterGraph::createNode(const PluginDescription* desc)
+AudioProcessorGraph::Node* FilterGraph::createNode(const PluginDescription* desc, int uid)
 {
 	AudioProcessorGraph::Node* node = nullptr;
 	String errorMessage;
 	
-	if( desc->pluginFormatName!="Cabbage" && 
-		desc->pluginFormatName!="SoundfilePlayer" &&
-		desc->pluginFormatName!="Internal")
+
+	if(desc->pluginFormatName=="AutomationTrack")
 	{
-		if(PluginWrapper* instance = new PluginWrapper(formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
+		if (AutomationProcessor* automation = new AutomationProcessor())
 		{
-			instance->setPlayConfigDetails( desc->numInputChannels,
-											desc->numOutputChannels,
+			automation->setPlayConfigDetails(2,
+											2,
 											graph.getSampleRate(),
 											graph.getBlockSize());
-			instance->setPluginName(desc->name);
-			//cUtils::debug("num params", instance->getNumParameters());
-			node = graph.addNode (instance);
-			node->properties.set("pluginType", "ThirdParty");
+
+			if(uid!=-1)
+				node = graph.addNode (automation, uid);
+			else
+				node = graph.addNode (automation);
+				
+			automationNodeID = node->nodeId;
+			node->properties.set("pluginType", "AutomationTrack");
+			node->properties.set("pluginName", "AutomationTrack");
+			ScopedPointer<XmlElement> xmlElem;
+			xmlElem = desc->createXml();
+			String xmlText = xmlElem->createDocument("");
+			node->properties.set("pluginType", "AutomationTrack");
+			node->properties.set("pluginDesc", xmlText);
 			node->getProcessor()->setPlayHead(&audioPlayHead);
-			node->properties.set("pluginName", desc->name);
+			return node;
 		}
 	}
 	
-	else if(desc->pluginFormatName=="SoundfilePlayer")
+	if(desc->pluginFormatName=="SoundfilePlayer")
 	{
 		if (AudioFilePlaybackProcessor* soundfiler = new AudioFilePlaybackProcessor())
 		{
@@ -169,7 +191,11 @@ AudioProcessorGraph::Node* FilterGraph::createNode(const PluginDescription* desc
 											graph.getSampleRate(),
 											graph.getBlockSize());
 
-			node = graph.addNode (soundfiler);
+			if(uid!=-1)
+				node = graph.addNode (soundfiler, uid);
+			else
+				node = graph.addNode (soundfiler);
+				
 			node->properties.set("pluginType", "SoundfilePlayer");
 			node->properties.set("pluginName", "Soundfile Player");
 			ScopedPointer<XmlElement> xmlElem;
@@ -202,7 +228,12 @@ AudioProcessorGraph::Node* FilterGraph::createNode(const PluginDescription* desc
 												  cabbageNativePlugin->getNumberCsoundOutChannels(), 
 												  cabbageNativePlugin->getCsoundSamplingRate(),
 												  cabbageNativePlugin->getCsoundKsmpsSize());
-		node = graph.addNode (cabbageNativePlugin);	
+												  
+		if(uid!=-1)										  
+			node = graph.addNode (cabbageNativePlugin, uid);	
+		else
+			node = graph.addNode (cabbageNativePlugin);	
+			
 		node->properties.set("pluginName", cabbageNativePlugin->getPluginName());
 		//native Cabbage plugins don't have plugin descriptors, so we create one here..
 		ScopedPointer<XmlElement> xmlElem;
@@ -212,7 +243,24 @@ AudioProcessorGraph::Node* FilterGraph::createNode(const PluginDescription* desc
 		node->properties.set("pluginDesc", xmlText);
 		node->getProcessor()->setPlayHead(&audioPlayHead);
 	}
-			
+	
+	else //all third party plugins get wrapped into a PluginWrapper...
+	{
+		if(PluginWrapper* instance = new PluginWrapper(formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
+		{
+			instance->setPlayConfigDetails( desc->numInputChannels,
+											desc->numOutputChannels,
+											graph.getSampleRate(),
+											graph.getBlockSize());
+			instance->setPluginName(desc->name);
+			//cUtils::debug("num params", instance->getNumParameters());
+			node = graph.addNode (instance);
+			node->properties.set("pluginType", "ThirdParty");
+			node->getProcessor()->setPlayHead(&audioPlayHead);
+			node->properties.set("pluginName", desc->name);
+		}
+	}
+		
 	return node;
 }
 
@@ -429,15 +477,17 @@ static XmlElement* createNodeXml (AudioProcessorGraph::Node* const node) noexcep
 	else if(PluginWrapper* plugin = dynamic_cast <PluginWrapper*> (node->getProcessor()))
 		plugin->fillInPluginDescription (pd);
 	else if(dynamic_cast <CabbagePluginAudioProcessor*> (node->getProcessor())||
-			dynamic_cast <AudioFilePlaybackProcessor*> (node->getProcessor()))
-		{
+			dynamic_cast <AudioFilePlaybackProcessor*> (node->getProcessor())||
+			dynamic_cast <AutomationProcessor*> (node->getProcessor()))
+	{
 		//grab description of native plugin for saving...
 		String xmlPluginDescriptor = node->properties.getWithDefault("pluginDesc", "").toString();
 		cUtils::debug(xmlPluginDescriptor);
 		XmlElement* xmlElem;
 		xmlElem = XmlDocument::parse(xmlPluginDescriptor);
 		pd.loadFromXml(*xmlElem);
-		}
+	}
+	
 		
     XmlElement* e = new XmlElement ("FILTER");
     e->setAttribute ("uid", (int) node->nodeId);
@@ -471,7 +521,7 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
 	AudioProcessorGraph::Node::Ptr node = nullptr;
 	
 	String errorMessage;
-	node = createNode(&desc);
+	node = createNode(&desc, xml.getIntAttribute ("uid"));
 
     if (const XmlElement* const state = xml.getChildByName ("STATE"))
     {
@@ -553,17 +603,31 @@ void FilterGraph::restoreFromXml (const XmlElement& xml)
 											e->getIntAttribute ("ParameterIndex"), 
 											e->getIntAttribute ("Channel"),
 											e->getIntAttribute ("Controller")));
-    }	
-	
+    }		
 }
 
 void FilterGraph::changeListenerCallback(ChangeBroadcaster* source)
 {
-	if(NodeAudioProcessorListener* listener = dynamic_cast<NodeAudioProcessorListener*>(source))
+	
+	if(AutomationProcessor* automation = dynamic_cast<AutomationProcessor*>(source))
+	{
+		const int numNodesBeingAutomated = automation->getNumberOfAutomatableNodes();
+		for(int i=0;i<numNodesBeingAutomated;i++)
+		{
+			const int thisNodeID = automation->getAutomatableNode(i).nodeID;
+			const int paramIndex = automation->getAutomatableNode(i).parameterIndex;
+			float value = automation->getAutomatableNode(i).value;
+			//graph.getNodeForId(thisNodeID)->getProcessor()->setParameter(paramIndex, value);
+			graph.getNodeForId(thisNodeID)->getProcessor()->setParameterNotifyingHost(paramIndex, value);	
+		}
+	}
+	
+	else if(NodeAudioProcessorListener* listener = dynamic_cast<NodeAudioProcessorListener*>(source))
 	{
 		lastChangedNodeId = listener->nodeId;
 		lastChangedNodeParameter = listener->parameterIndex;
 	}
+	
 	else if(CabbagePropertiesPanel* props = dynamic_cast<CabbagePropertiesPanel*>(source))
 	{
 		CabbagePluginAudioProcessor* processor = dynamic_cast<CabbagePluginAudioProcessor*>(getNodeForId(this->getEditedNodeId())->getProcessor());

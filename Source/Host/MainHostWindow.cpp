@@ -284,6 +284,7 @@ void MainHostWindow::addPluginsToMenu (PopupMenu& m) const
         menu.addItem (i + 9000, internalTypes.getUnchecked(i)->name);
 		
 	menu.addItem(10000, "Soundfile player");
+	menu.addItem(10001, "Automation track");
 
 	m.addSubMenu("Devices", menu);
 }

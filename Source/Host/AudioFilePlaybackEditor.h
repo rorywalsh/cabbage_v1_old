@@ -54,6 +54,7 @@ public:
 	
 	~WaveformDisplay()
 	{	
+		stopTimer();
 	}
 	
 

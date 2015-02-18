@@ -2150,7 +2150,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 	if(cAttr.getStringProp(CabbageIDs::file).isNotEmpty())
 	{
 			table->addTable(44100, 
-							cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, 0), 
+							Colours::findColourForName(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, 0), Colours::white), 
 							1,
 							Array<float>(),
 							0, this);	
@@ -2179,7 +2179,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 			if(getFilter()->compiledOk()==OK)
 			{
 				table->addTable(44100, 
-								cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y+fileTable), 
+								Colours::findColourForName(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y+fileTable), Colours::white), 
 								(tableValues.size()>=MAX_TABLE_SIZE ? 1 : genRoutine),
 								ampRange,
 								tableNumber, this);

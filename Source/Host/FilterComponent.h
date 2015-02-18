@@ -25,6 +25,7 @@
 #include "../CabbageLookAndFeel.h"
 #include "PluginWrapperProcessor.h"
 #include "AudioFilePlaybackProcessor.h"
+#include "AutomationProcessor.h"
 
 class GraphEditorPanel;
 class GraphDocumentComponent;
@@ -33,13 +34,15 @@ class GraphDocumentComponent;
 #define CABBAGE 2
 #define SOUNDFILER 3
 #define THIRDPARTY 4
+#define AUTOMATION 5
 
 //======================================================================
 // Filter Component, GUI component that represents a processing node
 //======================================================================
 class FilterComponent    : public Component, 
 						   public ActionListener,
-						   public Timer
+						   public Timer,
+						   public ChangeListener
 {
 public:
     FilterComponent (FilterGraph& graph_, const uint32 filterID_);
@@ -61,6 +64,7 @@ public:
 	void drawBypassIcon(Graphics& g, Rectangle<float> rect, bool isActive);
 	void timerCallback();
 	void enableEditMode(bool enable);
+	void changeListenerCallback(ChangeBroadcaster* source);
 
 	GraphDocumentComponent* getGraphDocument()
 	{

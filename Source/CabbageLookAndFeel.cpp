@@ -1135,7 +1135,7 @@ void CabbageLookAndFeel::drawPopupMenuBackground(Graphics &g, int width, int hei
     g.fillAll();
 
     g.setColour (cUtils::getComponentSkin());
-    g.drawRect (0, -5, width, height+5, 1); //dont want to see top line
+    g.drawRect (0, 0, width, height, 1); //dont want to see top line
 }
 
 //====== Returns image of a check mark ==============================================

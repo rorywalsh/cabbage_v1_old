@@ -72,7 +72,7 @@ public:
     void addFilter (const PluginDescription* desc, double x, double y);
 	
 	
-	AudioProcessorGraph::Node* createNode(const PluginDescription* desc);
+	AudioProcessorGraph::Node* createNode(const PluginDescription* desc, int uid=-1);
 	
 	void addNativeCabbageFilter (String fileName, double x, double y);
 
@@ -131,6 +131,7 @@ public:
     void setLastDocumentOpened (const File& file);
 	void createNodeFromXml (const XmlElement& xml);
 
+	void addNodesToAutomationTrack(int32 id, int index);
 
     static const int midiChannelNumber;
 	Array<CabbageMidiMapping> midiMappings;
@@ -173,6 +174,7 @@ private:
     AudioPluginFormatManager& formatManager;
     AudioProcessorGraph graph;
 	AudioPlaybackHead audioPlayHead;
+	int32 automationNodeID;
 	
 	OwnedArray<NodeAudioProcessorListener> audioProcessorListeners;
 	int lastChangedNodeId;

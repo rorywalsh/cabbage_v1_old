@@ -171,13 +171,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 	toFront (true);
 	
 	CabbagePluginAudioProcessor* nativeCabbagePlugin = dynamic_cast<CabbagePluginAudioProcessor*>(graph.getNodeForId (filterID)->getProcessor());
-
-	if (graph.getNodeForId(filterID)->properties.getWithDefault("pluginType", "")!="Internal")
-		getGraphDocument()->expandParametersInPluginsPanel(filterID);
-
-	if (pluginType==SOUNDFILER)	
-		getGraphDocument()->showComponentInBottomPanel("Soundfile Player:"+String(filterID));		
-		
+	
 	if (e.mods.isPopupMenu())
 	{	
 		
@@ -281,6 +275,12 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 			}
 		}
 	}
+	
+	if (graph.getNodeForId(filterID)->properties.getWithDefault("pluginType", "")!="Internal")
+		getGraphDocument()->expandParametersInPluginsPanel(filterID);
+
+	if (pluginType==SOUNDFILER)	
+		getGraphDocument()->showComponentInBottomPanel("Soundfile Player:"+String(filterID));		
 }
 //================================================================================
 void FilterComponent::mouseDrag (const MouseEvent& e)
@@ -382,6 +382,12 @@ void FilterComponent::enableEditMode(bool enable)
 		}
 	}
 }
+void FilterComponent::changeListenerCallback(ChangeBroadcaster* source)
+{
+	//so far only automation tracks call this change method so it's ok to old-style cast. 
+	//cUtils::debug(((AutomationProcessor*)source)->getAutomationValue());
+	
+}
 //================================================================================
 void FilterComponent::actionListenerCallback (const String &message)
 {
@@ -471,6 +477,7 @@ void FilterComponent::actionListenerCallback (const String &message)
 
 	}
 }
+
 //================================================================================
 void FilterComponent::timerCallback()
 {
@@ -649,6 +656,15 @@ void FilterComponent::update()
 		pluginType = INTERNAL;
 	else if(f->properties.getWithDefault("pluginType","")=="Cabbage")
 		pluginType = CABBAGE;
+	else if(f->properties.getWithDefault("pluginType","")=="AutomationTrack")
+	{
+		pluginType = AUTOMATION;
+		((AutomationProcessor*)f->getProcessor())->addChangeListener(&graph);
+		AudioProcessorEditor* ui = nullptr;
+		ui = f->getProcessor()->createEditorIfNeeded();
+		ui->setName("AutomationTrack");		
+		getGraphDocument()->addComponentToBottomPanel(ui);	
+	}
 	else if(f->properties.getWithDefault("pluginType","")=="SoundfilePlayer")
 	{
 		pluginType = SOUNDFILER;
@@ -702,6 +718,12 @@ void FilterComponent::update()
 		setName (pluginName);
 		tmpPlug->addActionListener(this);		
 	}
+	
+	else if(AutomationProcessor* tmpPlug = dynamic_cast <AutomationProcessor*> (f->getProcessor()))
+	{
+		setName (pluginName);
+		//tmpPlug->addActionListener(this);		
+	}	
 	
 	else
 		setName(f->getProcessor()->getName());

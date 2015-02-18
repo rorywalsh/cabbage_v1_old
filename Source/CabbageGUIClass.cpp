@@ -929,7 +929,7 @@ void CabbageGUIClass::parse(String inStr, String identifier)
 {
     //Logger::writeToLog(str);
     //remove any text after a semicolon and take out tabs..
-    String str = inStr.removeCharacters("\t");
+    String str = inStr.replace("\t", " ");
     if(str.indexOf(0, ";")!=-1)
         str = str.substring(0, str.indexOf(0, ";"));
 
@@ -965,6 +965,7 @@ void CabbageGUIClass::parse(String inStr, String identifier)
 
     //Logger::writeToLog(String(identArray.size()));
     //retrieve paramters consisting of strings
+	
     StringArray strTokens, tempTokens;
     tempTokens.addTokens(str, ", \t", "\"");
     typeOfWidget = tempTokens[0];

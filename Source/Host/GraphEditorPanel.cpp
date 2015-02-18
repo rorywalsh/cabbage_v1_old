@@ -250,6 +250,17 @@ GraphEditorPanel::GraphEditorPanel (FilterGraph& graph_)
 
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioOutputFilter),
                0.55f, 0.56f);
+
+				
+//	//each patch has an automation track
+//	PluginDescription descript;
+//	descript.descriptiveName = "Automation Track";
+//	descript.name = "AutomationTrack";
+//	descript.pluginFormatName = "AutomationTrack";
+//
+//	graph.addFilter (&descript, 0.0f, 0.0f);
+	
+	
     graph.addChangeListener (this);
     setOpaque (true);
 	//setSize(10000, 10000);
@@ -339,6 +350,10 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 					{
 						createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, "soundfile player");
 					}
+					if(r==10001)
+					{
+						createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, "automation track");
+					}
 					else
 					{
 						createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
@@ -424,6 +439,12 @@ void GraphEditorPanel::createNewPlugin (const PluginDescription* desc, int x, in
 			descript.descriptiveName = "Soundfile player";
 			descript.name = "SoundfilePlayer";
 			descript.pluginFormatName = "SoundfilePlayer";
+		}
+		else if(fileName=="automation track")
+		{
+			descript.descriptiveName = "Automation track";
+			descript.name = "AutomationTrack";
+			descript.pluginFormatName = "AutomationTrack";
 		}
 		else
 		{

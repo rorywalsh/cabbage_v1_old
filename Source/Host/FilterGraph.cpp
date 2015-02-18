@@ -258,7 +258,11 @@ AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* 
 											graph.getBlockSize());
 			instance->setPluginName(desc->name);
 			//cUtils::debug("num params", instance->getNumParameters());
-			node = graph.addNode (instance);
+			if(uid!=-1)										  
+				node = graph.addNode (instance, uid);	
+			else
+				node = graph.addNode (instance);				
+
 			node->properties.set("pluginType", "ThirdParty");
 			node->getProcessor()->setPlayHead(&audioPlayHead);
 			node->properties.set("pluginName", desc->name);

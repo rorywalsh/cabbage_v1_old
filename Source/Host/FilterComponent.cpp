@@ -517,7 +517,7 @@ void FilterComponent::paint (Graphics& g)
 	g.setOpacity(0.2);
 	g.setColour(selected==1 ? Colours::yellow : cUtils::getComponentFontColour().withAlpha(.3f));
 	g.drawRoundedRectangle(x+0.5, y+0.5, w-1, h-1, 5, 1.0f);
-	if(pluginType!=INTERNAL)
+	if(pluginType!=INTERNAL && pluginType!=AUTOMATION)
 	{
 		if(!isMuted)
 		{
@@ -745,18 +745,19 @@ void FilterComponent::update()
 
 		int i;
 		for (i = 0; i < f->getProcessor()->getNumInputChannels(); ++i)
-			if(pluginType!=SOUNDFILER)
+			if(pluginType!=SOUNDFILER &&pluginType!=AUTOMATION)
 				addAndMakeVisible (new PinComponent (graph, filterID, i, true));
 
 		if (f->getProcessor()->acceptsMidi())
-			if(pluginType!=SOUNDFILER)
+			if(pluginType!=SOUNDFILER && pluginType!=AUTOMATION)
 				addAndMakeVisible (new PinComponent (graph, filterID, FilterGraph::midiChannelNumber, true));
 
 		for (i = 0; i < f->getProcessor()->getNumOutputChannels(); ++i)
-			addAndMakeVisible (new PinComponent (graph, filterID, i, false));
+			if(pluginType!=AUTOMATION)
+				addAndMakeVisible (new PinComponent (graph, filterID, i, false));
 
 		if (f->getProcessor()->producesMidi())
-			if(pluginType!=SOUNDFILER)
+			if(pluginType!=SOUNDFILER && pluginType!=AUTOMATION)
 				addAndMakeVisible (new PinComponent (graph, filterID, FilterGraph::midiChannelNumber, false));
 
 		resized();

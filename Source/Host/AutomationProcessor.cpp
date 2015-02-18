@@ -69,7 +69,7 @@ AutomationEditor* AutomationProcessor::getEditor()
 	if((AutomationEditor*)this->getActiveEditor())
 		return (AutomationEditor*)this->getActiveEditor();
 	else
-		assert(0);
+		return nullptr;
 }
 
 void AutomationProcessor::addAutomatableNode(String nodeName, 
@@ -99,7 +99,8 @@ void AutomationProcessor::addAutomatableNode(String nodeName,
 	newTableAdded = true;	
 	messageQueue.addOutgoingTableUpdateMessageToQueue(statement, id);
 	sendOutgoingMessagesToCsound();
-	getEditor()->updateComboBoxItems();
+	if(AutomationEditor* editor = getEditor())
+		editor->updateComboBoxItems();
 		
 }
 
@@ -176,7 +177,8 @@ if(csCompileResult==OK)
 		csound->PerformKsmps();
 		const int gen = automatableNodes.getReference(automatableNodes.size()-1).genRoutine;
 		const int tableNum = automatableNodes.getReference(automatableNodes.size()-1).fTableNumber;
-		getEditor()->addTable(tableNum, gen);	
+		if(AutomationEditor* editor = getEditor())
+			editor->addTable(tableNum, gen);	
 		newTableAdded = false;	
 	}
 }

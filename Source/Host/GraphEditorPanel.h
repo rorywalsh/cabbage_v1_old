@@ -252,6 +252,7 @@ public:
 	void addComponentToBottomPanel(Component* component);
 	void removeComponentFromBottomPanel(String component);
 	void showComponentInBottomPanel(String component);
+	void removeAllComponentsFromBottomPanel();
 	
 	void expandParametersInPluginsPanel(int nodeId=-1)
 	{
@@ -272,6 +273,9 @@ public:
 	{
 		sidebarPanel->disablePropertiesPanel();
 	}
+	
+	
+	
 	
 	void toggleMIDILearn()
 	{

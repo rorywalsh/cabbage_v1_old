@@ -252,7 +252,7 @@ GraphEditorPanel::GraphEditorPanel (FilterGraph& graph_)
                0.55f, 0.56f);
 
 				
-	//each patch has an automation track
+//	//each patch has an automation track
 //	PluginDescription descript;
 //	descript.descriptiveName = "Automation Track";
 //	descript.name = "AutomationTrack";
@@ -1135,6 +1135,10 @@ void GraphDocumentComponent::showComponentInBottomPanel(String compName)
 	bottomPanel->showComponentInPanel(compName);	
 }
 
+void GraphDocumentComponent::removeAllComponentsFromBottomPanel()
+{
+	bottomPanel->removeAllComponentsFromPanel();
+}
 void GraphDocumentComponent::showSidebarPanel(bool show)
 {
 	if(show)

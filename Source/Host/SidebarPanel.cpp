@@ -93,6 +93,10 @@ void SidebarPanel::updatePluginParameters()
 	int index = filterGraph->getNumFilters()-1;
 
 	int numParams = filterGraph->getNode(index)->getProcessor()->getNumParameters();
+	
+	if(numParams==0)
+		return;
+	
 	params.clear();
 	for (int i = 0; i < numParams; ++i)
 	{
@@ -369,6 +373,9 @@ void SidebarPanel::addPluginPanel (PropertyPanel* panel)
 {
 	concertinaPanel.addPanel(PLUGIN_PARAMS, panel, false);
 	concertinaPanel.setPanelHeaderSize (panel, 20);
+	
+	concertinaPanel.setMaximumPanelSize(concertinaPanel.getPanel(PLUGIN_PARAMS), 370);
+	
 	concertinaPanel.expandPanelFully(concertinaPanel.getPanel(PLUGIN_PARAMS), true);
 }
 //--------------------------------------------------------------------

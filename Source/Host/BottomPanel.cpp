@@ -37,12 +37,12 @@ animateIndex(10),
 bottomBorder("bottomBorder"),
 topBorder("topBorder")
 {
-    listBox.setModel (&listBoxModel);
-    listBox.setMultipleSelectionEnabled (false);
-    listBox.setColour(ListBox::ColourIds::backgroundColourId, Colour(30, 30, 30));
-    addAndMakeVisible (listBox);
+//    listBox.setModel (&listBoxModel);
+//    listBox.setMultipleSelectionEnabled (false);
+//    listBox.setColour(ListBox::ColourIds::backgroundColourId, Colour(30, 30, 30));
+//    addAndMakeVisible (listBox);
 	listBoxModel.addActionListener(this);
-	listBox.selectRow(0);
+//	listBox.selectRow(0);
 	
 	addAndMakeVisible(&bottomBorder);
 	addAndMakeVisible(&topBorder);
@@ -50,7 +50,10 @@ topBorder("topBorder")
 	topBorder.setAlwaysOnTop(true);
 	bottomBorder.setAlwaysOnTop(true);
 	
-	addAndMakeVisible(&container);
+	
+	addAndMakeVisible(&viewport);
+	viewport.setViewedComponent(&container, true);
+	viewport.setScrollBarsShown(false, false);
 	
 }
 //=================================================================
@@ -61,16 +64,28 @@ BottomPanel::~BottomPanel()
 //=================================================================
 void BottomPanel::resized()
 {
-	listBox.setBounds(5, 10, 110, getHeight()-40);
+	//listBox.setBounds(5, 10, 110, getHeight()-40);
 	const int numChildren = container.getNumChildComponents();
-	container.setBounds(120, 5, getWidth()-125, numChildren*190);
+	
+	viewport.setBounds(0, 5, getWidth()-5, getHeight()-10);
 	bottomBorder.setBounds(0, getHeight()-5, getWidth(), 5);
 	topBorder.setBounds(0, 0, getWidth(), 5);
+	
+	if(container.getHeight()>viewport.getHeight())
+	{
+		viewport.setScrollBarsShown(true, false);
+		container.setBounds(0, 0, getWidth()-24, numChildren*190);
+	}
+	else
+		container.setBounds(0, 0, getWidth()-5, numChildren*190);
+		
+	//if(viewport.isHorizontalScrollBarShown())
 	
 	for(int i=0;i<numChildren;i++)
 	{
 			container.getChildComponent(i)->setBounds(0, i*190, container.getWidth(), 190);
-	}		
+	}	
+	
 }
 //=================================================================
 void BottomPanel::addComponentToPanel(Component* comp)
@@ -89,14 +104,14 @@ void BottomPanel::addComponentToPanel(Component* comp)
 			container.getChildComponent(i)->setBounds(0, i*190, container.getWidth(), 190);
 		}
 
-		const int yPos = getPosition().getY();
-		container.setTopLeftPosition(container.getPosition().withY(5-((numChildren-1)*190)));		
-		indexOfCurrentComp = numChildren-1;
-		currentYPos = container.getPosition().getY();
-		listBoxModel.addRow(comp->getName());
-		listBox.updateContent();	
-		listBox.selectRow(listBoxModel.getNumRows()-1);	
 	}
+	resized();
+}
+
+void BottomPanel::removeAllComponentsFromPanel()
+{
+	this->removeAllChildren();
+	setVisible(false);
 }
 
 void BottomPanel::showComponentInPanel(String compName)
@@ -108,8 +123,8 @@ void BottomPanel::showComponentInPanel(String compName)
 		if(container.getChildComponent(i)->getComponentID()==compName)
 		{
 			indexOfCompToScrollTo = i;
-			listBox.selectRow(i);	
-			startTimer(10);
+			//listBox.selectRow(i);	
+			//startTimer(10);
 		}
 	}	
 
@@ -124,8 +139,8 @@ void BottomPanel::removeComponentFromPanel(String compName)
 		if(container.getChildComponent(i)->getComponentID()==compName)
 		{
 			container.removeChildComponent(i);
-			listBoxModel.removeRow(compName);
-			listBox.updateContent();
+//			listBoxModel.removeRow(compName);
+//			listBox.updateContent();
 			i=numChildren+1;
 		}
 	}		
@@ -140,8 +155,8 @@ void BottomPanel::removeComponentFromPanel(String compName)
 	if(container.getNumChildComponents()>0)
 	{
 		indexOfCompToScrollTo=0;
-		listBox.selectRow(0);	
-		startTimer(10);
+//		listBox.selectRow(0);	
+//		startTimer(10);
 	}
 	else
 		this->setVisible(false);
@@ -162,14 +177,6 @@ void BottomPanel::actionListenerCallback (const String &message)
 			parent->getKeyboardComponent()->setBounds(subStr.getIntValue(), parent->getKeyboardComponent()->getPosition().getY(), parent->getWidth()-subStr.getIntValue()-200, parent->getKeyboardComponent()->getHeight());
 			//parent->getKeyboardComponent()->setLowestVisibleKey(40);
 		}		
-	}
-	
-	if(message.contains("ListBox:"))
-	{
-		String subStr = message.substring(message.indexOf(":")+1);
-		indexOfCompToScrollTo = subStr.getIntValue();
-		container.setTopLeftPosition(container.getPosition().getX(), 5+(-indexOfCompToScrollTo*190));	
-		//startTimer(100);
 	}
 }
 //=================================================================
@@ -203,7 +210,7 @@ void BottomPanel::paint(Graphics &g)
 {
 	g.fillAll(Colour::greyLevel (0.2f));
 	g.setColour(Colour(30, 30, 30));
-	g.fillRect(5, 5, getWidth()-10, getHeight()-10);	
+	g.fillRect(0, 5, getWidth()-5, getHeight()-10);	
 }
 //=================================================================
 void BottomPanel::mouseEnter(const MouseEvent& event)

@@ -113,6 +113,7 @@ basicLook()
 
 AudioFilePlaybackEditor::~AudioFilePlaybackEditor()
 {
+	waveformDisplay->stopTimer();
 }
 
 //==============================================================================

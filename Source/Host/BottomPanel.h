@@ -40,6 +40,7 @@ public:
 	void addComponentToPanel(Component* comp);
 	void removeComponentFromPanel(String name);
 	void showComponentInPanel(String compName);
+	void removeAllComponentsFromPanel();
 	int getNumberComponents(){	return numberOfComponents;	}
 	void resized();
 	void timerCallback();
@@ -88,7 +89,7 @@ public:
     };
 	
 private:
-	ListBox listBox;
+	//ListBox listBox;
 	BorderComponent bottomBorder;
 	BorderComponent topBorder;
 	int indexOfCompToScrollTo, currentYPos, indexOfCurrentComp;

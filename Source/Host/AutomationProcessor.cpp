@@ -37,10 +37,8 @@ updateCount(0)
     csound->SetParams(csoundParams);
 
     File csdFile("/Users/walshr/sourcecode/cabbageaudio/cabbage/Source/Host/AutomationTrack.csd");
-
-	
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
-    //csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
+
     if(csCompileResult==OK)
     {
         Logger::writeToLog("compiled Ok");
@@ -61,8 +59,8 @@ updateCount(0)
 
 AutomationProcessor::~AutomationProcessor()
 {
-    if(getEditor())
-        delete getEditor();
+if(getEditor())
+    delete getEditor();
 }
 
 
@@ -180,7 +178,7 @@ if(csCompileResult==OK)
 		const int gen = automatableNodes.getReference(automatableNodes.size()-1).genRoutine;
 		const int tableNum = automatableNodes.getReference(automatableNodes.size()-1).fTableNumber;
 		if(AutomationEditor* editor = getEditor())
-			editor->addTable(tableNum, gen);	
+			editor->addTable(tableNum, gen);
 		newTableAdded = false;	
 	}
 }
@@ -195,11 +193,9 @@ void AutomationProcessor::updateAutomationValues()
 	
 	//put the brakes on this. No need to update that often...
 	updateCount = (updateCount>100 ? 0:updateCount+1);
-	
+    scrubberPosition = csound->GetChannel("scrubberPosition");
 	if(updateCount==0)
-		getEditor()->updateScrubberPosition(csound->GetChannel("scrubberPosition"), automatableNodes.getReference(0).fTableNumber);
-
-	sendChangeMessage();
+        sendChangeMessage();
 }
 
 //==============================================================================

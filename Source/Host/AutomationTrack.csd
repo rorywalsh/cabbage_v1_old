@@ -27,8 +27,9 @@ endin
 instr 1
 	kValue table3 gkIndex, p4, 1
 	SChannel sprintfk "auto_%d", p4
-	prints SChannel
-	chnset kValue, SChannel
+	;kValue randi 1, 1
+	chnset abs(kValue), SChannel
+	;printk2 kValue
 endin
 
 </CsInstruments>

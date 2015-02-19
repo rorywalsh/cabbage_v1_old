@@ -31,7 +31,8 @@
 */
 class AutomationEditor  : public AudioProcessorEditor,
 						  public Button::Listener,
-						  public ChangeListener
+						  public ChangeListener,
+                          public Timer
 {
 public:
     AutomationEditor (AutomationProcessor&);
@@ -51,12 +52,15 @@ public:
 	void updatefTableData(GenTable* table);
 	void addTable(int tableNumber, int genRoutine);	
 	void updateComboBoxItems();
-	void updateScrubberPosition(double position, int ftable);
+	void updateScrubberPosition(double position);
+    
+    void timerCallback();
 	
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     AutomationProcessor& processor;
+    int tableNumber;
     TableManager tableManager;
 	ComboBox autoCombo;
 	CabbageLookAndFeelBasic basicLook;

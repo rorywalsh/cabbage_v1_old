@@ -146,6 +146,7 @@ MainHostWindow::~MainHostWindow()
 
 void MainHostWindow::closeButtonPressed()
 {
+    getGraphDocument()->removeAllComponentsFromBottomPanel();
     tryToQuitApplication();
 }
 
@@ -153,8 +154,8 @@ bool MainHostWindow::tryToQuitApplication()
 {
     PluginWindow::closeAllCurrentlyOpenWindows();
 
-    if (getGraphEditor() == nullptr
-            || getGraphEditor()->graph.saveIfNeededAndUserAgrees() == FileBasedDocument::savedOk)
+    if (getGraphDocument() == nullptr
+            || getGraphDocument()->graph.saveIfNeededAndUserAgrees() == FileBasedDocument::savedOk)
     {
         JUCEApplication::quit();
         return true;
@@ -226,7 +227,7 @@ PopupMenu MainHostWindow::getMenuForIndex (int topLevelMenuIndex, const String& 
 
 void MainHostWindow::menuItemSelected (int menuItemID, int /*topLevelMenuIndex*/)
 {
-    GraphDocumentComponent* const graphEditor = getGraphEditor();
+    GraphDocumentComponent* const graphEditor = getGraphDocument();
 
     if (menuItemID == 250)
     {
@@ -267,7 +268,7 @@ void MainHostWindow::menuItemSelected (int menuItemID, int /*topLevelMenuIndex*/
 
 void MainHostWindow::createPlugin (const PluginDescription* desc, int x, int y)
 {
-    GraphDocumentComponent* const graphEditor = getGraphEditor();
+    GraphDocumentComponent* const graphEditor = getGraphDocument();
 
     if (graphEditor != nullptr)
         graphEditor->createNewPlugin (desc, x, y, false, "");
@@ -457,7 +458,7 @@ void MainHostWindow::getCommandInfo (const CommandID commandID, ApplicationComma
 bool MainHostWindow::perform (const InvocationInfo& info)
 {
 
-    GraphDocumentComponent* const graphEditor = getGraphEditor();
+    GraphDocumentComponent* const graphEditor = getGraphDocument();
 	String credits;
 	String dir = appProperties->getUserSettings()->getValue("CabbagePluginDirectory", "");
 	FileChooser browser(String("Please select the Cabbage Plugin directoy..."), File(dir), String("*.csd"));
@@ -570,7 +571,7 @@ void MainHostWindow::showAudioSettings()
     getAppProperties().getUserSettings()->setValue ("audioDeviceState", audioState);
     getAppProperties().getUserSettings()->saveIfNeeded();
 
-    GraphDocumentComponent* const graphEditor = getGraphEditor();
+    GraphDocumentComponent* const graphEditor = getGraphDocument();
 
     if (graphEditor != nullptr)
         graphEditor->graph.removeIllegalConnections();
@@ -595,7 +596,7 @@ void MainHostWindow::fileDragExit (const StringArray&)
 
 void MainHostWindow::filesDropped (const StringArray& files, int x, int y)
 {
-    GraphDocumentComponent* const graphEditor = getGraphEditor();
+    GraphDocumentComponent* const graphEditor = getGraphDocument();
 
     if (graphEditor != nullptr)
     {
@@ -617,7 +618,7 @@ void MainHostWindow::filesDropped (const StringArray& files, int x, int y)
     }
 }
 
-GraphDocumentComponent* MainHostWindow::getGraphEditor() const
+GraphDocumentComponent* MainHostWindow::getGraphDocument() const
 {
     return dynamic_cast <GraphDocumentComponent*> (getContentComponent());
 }

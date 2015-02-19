@@ -98,8 +98,8 @@ public:
 
         if (commandLine.isNotEmpty()
                 && ! commandLine.trimStart().startsWith ("-")
-                && mainWindow->getGraphEditor() != nullptr)
-            mainWindow->getGraphEditor()->graph.loadFrom (File::getCurrentWorkingDirectory()
+                && mainWindow->getGraphDocument() != nullptr)
+            mainWindow->getGraphDocument()->graph.loadFrom (File::getCurrentWorkingDirectory()
                     .getChildFile (commandLine), true);
     }
 

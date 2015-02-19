@@ -93,7 +93,7 @@ public:
 	void addCabbageNativePluginsToMenu (PopupMenu& m, Array<File> &cabbageFiles) const;
     const PluginDescription* getChosenType (const int menuID) const;
 
-    GraphDocumentComponent* getGraphEditor() const;
+    GraphDocumentComponent* getGraphDocument() const;
 
 private:
     //==============================================================================

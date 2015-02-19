@@ -134,9 +134,16 @@ public:
 	float automationCurveValue;
 	void addAutomatableNode(String nodeName, String parameterString, int32 id, int index, int gen=-1, String statement="");
 	
+    const double getScrubberPosition()
+    {
+        //const MessageManagerLock lock;
+        return scrubberPosition;
+    }
+    
 private:
     bool csoundStatus;
 	ScopedPointer<XmlElement> xmlState;
+    double scrubberPosition;
 	Array<AutomatableNode> automatableNodes;
 	AudioPlayHead::CurrentPositionInfo hostInfo;
 	std::vector<MYFLT> temp;

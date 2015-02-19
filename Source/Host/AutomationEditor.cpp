@@ -79,11 +79,11 @@ basicLook()
 	ampRange.add(1);
 	ampRange.add(-1);	
 	
-	if(getFilter())
-	{
-		for(int i=0;i<getFilter()->getNumberOfAutomatableNodes();i++)
-			addTable(getFilter()->getAutomatableNode(i).fTableNumber, getFilter()->getAutomatableNode(i).genRoutine); 
-	}
+//	if(getFilter())
+//	{
+//		for(int i=0;i<getFilter()->getNumberOfAutomatableNodes();i++)
+//			addTable(getFilter()->getAutomatableNode(i).fTableNumber, getFilter()->getAutomatableNode(i).genRoutine); 
+//	}
 	
 	updateComboBoxItems();
 	
@@ -92,6 +92,7 @@ basicLook()
 
 AutomationEditor::~AutomationEditor()
 {
+    getFilter()->editorBeingDeleted(this);
 }
 
 //==============================================================================
@@ -132,13 +133,15 @@ void AutomationEditor::changeListenerCallback(ChangeBroadcaster* source)
 	}	
 }
 //==============================================================================
-void AutomationEditor::addTable(int tableNumber, int genRoutine)
+void AutomationEditor::addTable(int tableN, int genRoutine)
 {
 	
 	const Colour tableColour(Colour(Random::getSystemRandom().nextInt(200)+55,
 							 Random::getSystemRandom().nextInt(200)+55,
 							 Random::getSystemRandom().nextInt(200)+55));
 	
+    tableNumber = tableN;
+    
 	Array <float, CriticalSection> tableValues;
 	//tableValues.clear();
 	tableValues = getFilter()->getTableFloats(tableNumber);
@@ -164,12 +167,18 @@ void AutomationEditor::addTable(int tableNumber, int genRoutine)
 			tableManager.setBackgroundColour(Colour(10, 10, 10));				
 			tableManager.showTableButtons(false);
 			tableManager.bringTableToFront(tableNumber);
-            tableManager.setOutlineThickness(0.f);
+            //tableManager.setOutlineThickness(0.f);
 		}
 	}
 
 	
 	
+}
+
+//==============================================================================
+void AutomationEditor::timerCallback()
+{
+    tableManager.setScrubberPos(getFilter()->getScrubberPosition(), tableNumber);
 }
 //==============================================================================
 void AutomationEditor::buttonClicked(Button* button)
@@ -180,29 +189,31 @@ void AutomationEditor::buttonClicked(Button* button)
 		{
 			getFilter()->suspendProcessing(false);	
 			getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 1.0, "");
+            startTimer(100);
 		}	
 		else
 		{
 			getFilter()->suspendProcessing(true);	
 			getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 0.0, "");
+            stopTimer();
 		}
 	}
 	
 	if(button->getName()=="stopButton")
 	{
 		getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 0.0, "");
-		getFilter()->suspendProcessing(true);	
+		getFilter()->suspendProcessing(true);
+        stopTimer();
 		if(playButton.getToggleState()==true)
 			playButton.setToggleState(false, dontSendNotification);
 	}
 	
 }
 //==============================================================================
-void AutomationEditor::updateScrubberPosition(double position, int ftable)
+void AutomationEditor::updateScrubberPosition(double position)
 {
-	tableManager.setScrubberPos(position, ftable);
+	//tableManager.setScrubberPos(position, tableNumber);
 }
-
 //================================================================================
 void AutomationEditor::updatefTableData(GenTable* table)
 {

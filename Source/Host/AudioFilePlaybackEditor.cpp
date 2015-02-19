@@ -114,6 +114,7 @@ basicLook()
 AudioFilePlaybackEditor::~AudioFilePlaybackEditor()
 {
 	waveformDisplay->stopTimer();
+    getFilter()->editorBeingDeleted(this);
 }
 
 //==============================================================================

@@ -202,7 +202,9 @@ CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
     layoutComps.clear(true);
     getFilter()->removeChangeListener(this);
     removeAllChangeListeners();
-    //getFilter()->editorBeingDeleted(this);
+    
+    getFilter()->editorBeingDeleted(this);
+    
     if(presetFileText.length()>1)
         SnapShotFile.replaceWithText(presetFileText);
 

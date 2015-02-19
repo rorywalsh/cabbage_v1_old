@@ -104,7 +104,7 @@ public:
     /** Opens or closes one of the sections.
         The index is from 0 up to the number of items returned by getSectionNames().
     */
-    void setSectionOpen (int sectionIndex, bool shouldBeOpen);
+    void setSectionOpen (int sectionIndex, bool shouldBeOpen, bool shouldScroll);
 
     /** Enables or disables one of the sections.
         The index is from 0 up to the number of items returned by getSectionNames().

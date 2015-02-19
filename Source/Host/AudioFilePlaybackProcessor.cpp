@@ -23,6 +23,10 @@ updateCounter(0)
 {
 	//setupAudioFile(File("/home/rory/Documents/BeesInMarch4.wav"));
 	bufferingAudioFileSource = nullptr;
+	parameterNames.add("Volume");
+	parameterNames.add("Pan");
+	parameterNames.add("StartStop");
+	parameterNames.add("Position");	
 }
 
 AudioFilePlaybackProcessor::~AudioFilePlaybackProcessor()
@@ -108,7 +112,7 @@ const String AudioFilePlaybackProcessor::getName() const
 
 int AudioFilePlaybackProcessor::getNumParameters()
 {
-    return 0;
+    return 	parameterNames.size();
 }
 
 float AudioFilePlaybackProcessor::getParameter (int index)
@@ -122,7 +126,7 @@ void AudioFilePlaybackProcessor::setParameter (int index, float newValue)
 
 const String AudioFilePlaybackProcessor::getParameterName (int index)
 {
-    return String::empty;
+    return 	parameterNames.getReference(index);
 }
 
 const String AudioFilePlaybackProcessor::getParameterText (int index)

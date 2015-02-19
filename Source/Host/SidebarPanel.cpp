@@ -112,7 +112,7 @@ void SidebarPanel::updatePluginParameters()
 		params.add (pc);
 	}
 
-	panel->addSection(filterGraph->getNode(index)->getProcessor()->getName(), params, false);
+	panel->addSection(filterGraph->getNode(index)->properties.getWithDefault("pluginName", ""), params, false);
 
 
 	for(int y=0;y<panel->getSectionNames().size()-1;y++)

@@ -50,6 +50,8 @@ public:
 		  changeMessage(""),
 		  lookAndFeelBasic(new CabbageLookAndFeelBasic())
     {
+		//test fo the name of the parameter, if it's a button create a button...
+		//of if the number of steps is 2 then create a button. 
 		setLookAndFeel(lookAndFeelBasic);
         startTimer (100);
         addAndMakeVisible (slider);

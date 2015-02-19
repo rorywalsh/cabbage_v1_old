@@ -145,8 +145,7 @@ void FilterGraph::hiResTimerCallback()
 	}
 	
 	subTicks = (subTicks > 9 ? 0 : subTicks+1);
-	playPosition = (playPosition > 1 ? 0 : playPosition+((float)getTimerInterval()/1000.f));
-	
+	playPosition = (playPosition > 1 ? 0 : playPosition+((float)getTimerInterval()/1000.f));	
 }
 
 AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* desc, int uid)

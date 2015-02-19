@@ -84,6 +84,7 @@ private:
 	float rmsLeft, rmsRight;
 	String currentFile;
 	int updateCounter;
+	StringArray parameterNames;
 	//PositionableAudioSource* currentAudioFileSource;
 	
 

@@ -30,9 +30,9 @@ filterGraph(graph),
 previousFilterNodeId(-99),
 thread ("file preview"),
 directoryList (nullptr, thread),
-fileTreeComp (*this, "", directoryList),
+fileTreeComp (*this, "Browser", directoryList),
 canResize(false),
-transportControls(*this, ""),
+transportControls(*this, "Test"),
 midiBubble(250),
 midiLearn(false)
 {

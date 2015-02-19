@@ -36,8 +36,8 @@ updateCount(0)
     csoundParams->displays = 0;
     csound->SetParams(csoundParams);
 
-    
-	File csdFile("/home/rory/Desktop/test.csd");
+    File csdFile("/Users/walshr/sourcecode/cabbageaudio/cabbage/Source/Host/AutomationTrack.csd");
+
 	
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
     //csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
@@ -61,6 +61,8 @@ updateCount(0)
 
 AutomationProcessor::~AutomationProcessor()
 {
+    if(getEditor())
+        delete getEditor();
 }
 
 

@@ -135,9 +135,9 @@ void AutomationEditor::changeListenerCallback(ChangeBroadcaster* source)
 void AutomationEditor::addTable(int tableNumber, int genRoutine)
 {
 	
-	const Colour tableColour(Colour(Random::getSystemRandom().nextInt(255),
-							 Random::getSystemRandom().nextInt(255),
-							 Random::getSystemRandom().nextInt(255)));
+	const Colour tableColour(Colour(Random::getSystemRandom().nextInt(200)+55,
+							 Random::getSystemRandom().nextInt(200)+55,
+							 Random::getSystemRandom().nextInt(200)+55));
 	
 	Array <float, CriticalSection> tableValues;
 	//tableValues.clear();
@@ -151,7 +151,7 @@ void AutomationEditor::addTable(int tableNumber, int genRoutine)
 		if(getFilter()->compiledOk()==OK)
 		{
 			tableManager.addTable(44100, 
-							tableColour, 
+							tableColour.brighter(),
 							genRoutine,
 							ampRange,
 							tableNumber, this);
@@ -164,6 +164,7 @@ void AutomationEditor::addTable(int tableNumber, int genRoutine)
 			tableManager.setBackgroundColour(Colour(10, 10, 10));				
 			tableManager.showTableButtons(false);
 			tableManager.bringTableToFront(tableNumber);
+            tableManager.setOutlineThickness(0.f);
 		}
 	}
 

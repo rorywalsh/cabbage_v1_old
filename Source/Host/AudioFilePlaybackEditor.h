@@ -103,6 +103,7 @@ public:
 	DrawableButton zoomInButton;
 	DrawableButton zoomOutButton;
 	CabbageLookAndFeelBasic basicLook;
+	DrawableButton linkToTransport; 
     Colour tableColour;
     double zoom;
 };

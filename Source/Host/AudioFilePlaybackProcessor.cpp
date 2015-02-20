@@ -42,7 +42,7 @@ void AudioFilePlaybackProcessor::setupAudioFile (File soundfile)
 	{
 		AudioFormatManager formatManager;
 		formatManager.registerBasicFormats();   
-		AudioFormatReader* reader = formatManager.createReaderFor (soundfile);   
+		AudioFormatReader* reader = formatManager.createReaderFor(soundfile);   
 		if (reader != 0)
 		{
 			fileSource = new AudioFormatReaderSource (reader, true);
@@ -74,6 +74,9 @@ void AudioFilePlaybackProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
 		sourceChannelInfo.buffer = &output;
 		sourceChannelInfo.startSample = 0;
 		sourceChannelInfo.numSamples = output.getNumSamples();
+
+		if(bufferingAudioFileSource->getNextReadPosition()>=bufferingAudioFileSource->getTotalLength())
+			bufferingAudioFileSource->setNextReadPosition(0);
 
 		if(isSourcePlaying)
 			bufferingAudioFileSource->getNextAudioBlock(sourceChannelInfo); 

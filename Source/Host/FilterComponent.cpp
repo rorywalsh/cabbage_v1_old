@@ -719,14 +719,7 @@ void FilterComponent::update()
 		tmpPlug->addActionListener(this);		
 	}
 	
-	else if(AutomationProcessor* tmpPlug = dynamic_cast <AutomationProcessor*> (f->getProcessor()))
-	{
-		setName (pluginName);
-		//tmpPlug->addActionListener(this);		
-	}	
-	
-	else
-		setName(f->getProcessor()->getName());
+	setName(pluginName);
 
 
 	{

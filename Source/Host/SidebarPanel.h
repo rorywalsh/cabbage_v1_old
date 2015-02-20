@@ -101,7 +101,7 @@ public:
 	
 	void resized()
 	{
-		fileComp.setBounds(getLocalBounds().withTop(30));
+		fileComp.setBounds(getLocalBounds().removeFromBottom(20).withTop(30));
 		upButton.setBounds(getWidth()-40, 5, 40, 20); 
 		currentDir.setBounds(5, 5, getWidth()-50, 20);
 	}

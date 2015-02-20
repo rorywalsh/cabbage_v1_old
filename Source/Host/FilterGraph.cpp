@@ -200,7 +200,6 @@ AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* 
 			ScopedPointer<XmlElement> xmlElem;
 			xmlElem = desc->createXml();
 			String xmlText = xmlElem->createDocument("");
-			node->properties.set("pluginType", "SoundfilePlayer");
 			node->properties.set("pluginDesc", xmlText);
 			node->getProcessor()->setPlayHead(&audioPlayHead);
 			return node;

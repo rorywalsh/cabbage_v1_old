@@ -112,7 +112,8 @@ void SidebarPanel::updatePluginParameters()
 		params.add (pc);
 	}
 
-	panel->addSection(filterGraph->getNode(index)->properties.getWithDefault("pluginName", ""), params, false);
+	const String pluginName = filterGraph->getNode(index)->properties.getWithDefault("pluginName", "");
+	panel->addSection(pluginName, params, false);
 
 
 	for(int y=0;y<panel->getSectionNames().size()-1;y++)
@@ -155,7 +156,10 @@ void SidebarPanel::refreshPluginParameters()
 		}
 		
 		if(f->properties.getWithDefault("pluginType", "")!="Internal")
-			panel->addSection(filterGraph->getNode(index)->getProcessor()->getName(), params, false);	
+		{
+			const String pluginName = filterGraph->getNode(index)->properties.getWithDefault("pluginName", "");
+			panel->addSection(pluginName, params, false);	
+		}
 	}
 
 	
@@ -482,21 +486,21 @@ standardLookAndFeel(new LookAndFeel_V2())
 		
 	
 	playButton.setLookAndFeel(&lookAndFeel);	
-	playButton.setColour(TextButton::buttonColourId, Colours::white);
+	playButton.setColour(TextButton::buttonColourId, Colours::green.darker(.8f));
 	playButton.setColour(TextButton::buttonOnColourId, Colours::yellow);
 	playButton.setClickingTogglesState(true);
 	
 	stopButton.setLookAndFeel(&lookAndFeel);	
-	stopButton.setColour(TextButton::buttonColourId, Colours::white);	
+	stopButton.setColour(TextButton::buttonColourId, Colours::green.darker(.8f));	
 	
 	
-	playButton.setImages(cUtils::createPlayButtonPath(30), 
-						 cUtils::createPlayButtonPath(30), 
+	playButton.setImages(cUtils::createPlayButtonPath(30, Colours::white), 
+						 cUtils::createPlayButtonPath(30, Colours::white), 
 						 cUtils::createPauseButtonPath(30), 
-						 cUtils::createPlayButtonPath(30), 
-						 cUtils::createPlayButtonPath(30));
+						 cUtils::createPauseButtonPath(30), 
+						 cUtils::createPauseButtonPath(30));
 
-	stopButton.setImages(cUtils::createStopButtonPath(30));	
+	stopButton.setImages(cUtils::createStopButtonPath(30, Colours::white));	
 	
 	addAndMakeVisible (timingInfoBox);
 	addAndMakeVisible (playButton);

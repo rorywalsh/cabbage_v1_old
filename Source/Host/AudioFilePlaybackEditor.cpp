@@ -189,6 +189,7 @@ stopButton("stopButton", DrawableButton::ImageOnButtonBackground),
 openButton("openButton", DrawableButton::ImageOnButtonBackground),
 zoomInButton("zoomInButton", DrawableButton::ImageOnButtonBackground),
 zoomOutButton("zoomOutButton", DrawableButton::ImageOnButtonBackground),
+linkToTransport("linkToTransportButton", DrawableButton::ImageOnButtonBackground),
 basicLook(),
 zoom(0)
 {
@@ -211,12 +212,15 @@ zoom(0)
 	addAndMakeVisible(&zoomInButton);
 	zoomOutButton.addListener(this);
 	addAndMakeVisible(&zoomOutButton);	
-
+	linkToTransport.addListener(this);
+	addAndMakeVisible(&linkToTransport);	
+	
 	playButton.setLookAndFeel(&basicLook);
 	stopButton.setLookAndFeel(&basicLook);
 	openButton.setLookAndFeel(&basicLook);
 	zoomOutButton.setLookAndFeel(&basicLook);
 	zoomInButton.setLookAndFeel(&basicLook);
+	linkToTransport.setLookAndFeel(&basicLook);
 	
 	zoomOutButton.getProperties().set("isRounded", true);
 	zoomInButton.getProperties().set("isRounded", true);
@@ -226,19 +230,24 @@ zoom(0)
 	playButton.setColour(TextButton::buttonOnColourId, Colours::yellow);
 	zoomOutButton.setColour(TextButton::buttonColourId, Colours::white);
 	zoomInButton.setColour(TextButton::buttonColourId, Colours::white);
+	linkToTransport.setColour(TextButton::buttonColourId, Colours::green.darker(.9f));
+	linkToTransport.setColour(TextButton::buttonOnColourId, Colours::cornflowerblue);
 	
 	playButton.setClickingTogglesState(true);	
 	
-	stopButton.setColour(TextButton::buttonColourId, Colours::white);	
+	stopButton.setColour(TextButton::buttonColourId, Colours::white);
 	
-	playButton.setImages(cUtils::createPlayButtonPath(25), 
-						 cUtils::createPlayButtonPath(25), 
+	linkToTransport.setImages(cUtils::createPlayButtonPath(25, Colours::white));
+	
+	
+	playButton.setImages(cUtils::createPlayButtonPath(25, Colours::green.darker(.9f)), 
+						 cUtils::createPlayButtonPath(25, Colours::green.darker(.9f)), 
 						 cUtils::createPauseButtonPath(25), 
-						 cUtils::createPlayButtonPath(25), 
+						 cUtils::createPlayButtonPath(25, Colours::green.darker(.9f)), 
 						 cUtils::createPauseButtonPath(25));
 
 	openButton.setImages(cUtils::createOpenButtonPath(25));		
-	stopButton.setImages(cUtils::createStopButtonPath(25));
+	stopButton.setImages(cUtils::createStopButtonPath(25, Colours::green.darker(.9f)));
 	
 	zoomInButton.setImages(cUtils::createZoomInButtonPath(25));
 	zoomOutButton.setImages(cUtils::createZoomOutButtonPath(25));
@@ -268,6 +277,7 @@ void AudioFilePlaybackEditor::resized()
 	openButton.setBounds(3, ((BUTTON_SIZE)*2)+5, BUTTON_SIZE, BUTTON_SIZE);
 	zoomInButton.setBounds(3, ((BUTTON_SIZE)*3)+5, BUTTON_SIZE, BUTTON_SIZE);
 	zoomOutButton.setBounds(3, ((BUTTON_SIZE)*4)+5, BUTTON_SIZE, BUTTON_SIZE);
+	linkToTransport.setBounds(3, ((BUTTON_SIZE)*5)+5, BUTTON_SIZE, BUTTON_SIZE);
 }
 //==============================================================================
 void AudioFilePlaybackEditor::paint (Graphics& g)
@@ -346,10 +356,15 @@ void AudioFilePlaybackEditor::buttonClicked(Button *button)
 				waveformDisplay->source = getFilter()->bufferingAudioFileSource;
 				waveformDisplay->setFile(fc.getResult());	
 			}
-					
-			//waveformDisplay->setZoomFactor(1);
+
 		}	
 	}
 			
-
+	else if(button->getName()=="linkToTransportButton")
+	{
+		if(button->getToggleState()==true)
+			button->setToggleState(false, dontSendNotification);
+		else
+			button->setToggleState(true, dontSendNotification);
+	}
 }

@@ -1208,12 +1208,12 @@ public:
     }
 //====================================================================================================
 
-	static const DrawablePath* createPlayButtonPath(int buttonSize)
+	static const DrawablePath* createPlayButtonPath(int buttonSize, Colour col)
 	{
 		Path playPath;
 		playPath.addTriangle(0, 0, buttonSize, buttonSize/2, 0, buttonSize);
 		DrawablePath* playImage = new DrawablePath();
-		playImage->setFill(Colours::green.darker(.9f));	
+		playImage->setFill(col);	
 		playImage->setPath(playPath);	
 		return playImage;		
 	}
@@ -1255,13 +1255,13 @@ public:
 		return zoomImage;		
 	}	
 	
-	static const DrawablePath* createStopButtonPath(int buttonSize)
+	static const DrawablePath* createStopButtonPath(int buttonSize, Colour col)
 	{
 		Path stopPath;
 		stopPath.addRectangle(0, 0, buttonSize, buttonSize);
 		DrawablePath* stopImage = new DrawablePath();
 		stopImage->setPath(stopPath);	
-		stopImage->setFill(Colours::green.darker(.9f));	
+		stopImage->setFill(col);	
 		return stopImage;
 	}
 

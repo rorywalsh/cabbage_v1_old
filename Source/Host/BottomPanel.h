@@ -74,27 +74,11 @@ public:
 		}		
 	};
 	
-	class ListboxContents  : public ListBoxModel, public ActionBroadcaster
-    {
-		public:
-			ListboxContents();		
-			int getNumRows() override;
-			void paintListBoxItem (int rowNumber, Graphics& g,
-                               int width, int height, bool rowIsSelected) override;		
-			void listBoxItemClicked(int row, const MouseEvent &);		
-			void addRow(String rowName);
-			void removeRow(String rowName);
-			private:
-				StringArray contents;
-    };
-	
+
 private:
-	//ListBox listBox;
-	//BorderComponent bottomBorder;
 	BorderComponent topBorder;
 	int indexOfCompToScrollTo, currentYPos, indexOfCurrentComp;
 	float animateIndex;
-    ListboxContents listBoxModel;
 	bool canResize;
 	int startingYPos;
 	Viewport viewport;

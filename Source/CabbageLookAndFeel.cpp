@@ -2062,7 +2062,8 @@ void CabbageLookAndFeelBasic::drawButtonBackground (Graphics& g, Button& button,
 
         if (width > 0 && height > 0)
         {
-            const float cornerSize = jmin (5.0f, jmin (width, height) * 0.45f);
+			const bool drawRounded = button.getProperties().getWithDefault("isRounded", false);
+            const float cornerSize = jmin ((drawRounded ? 15.0f : 5.f), jmin (width, height) * 0.45f);
             const float lineThickness = cornerSize * 0.1f;
             const float halfThickness = lineThickness * 0.5f;
 

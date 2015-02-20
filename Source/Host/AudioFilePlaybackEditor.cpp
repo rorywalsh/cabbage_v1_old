@@ -27,6 +27,8 @@ AudioProcessorEditor (ownerFilter),
 playButton("playButton", DrawableButton::ImageOnButtonBackground),
 stopButton("stopButton", DrawableButton::ImageOnButtonBackground),
 openButton("openButton", DrawableButton::ImageOnButtonBackground),
+zoomInButton("zoomInButton", DrawableButton::ImageOnButtonBackground),
+zoomOutButton("zoomOutButton", DrawableButton::ImageOnButtonBackground),
 basicLook()
 {
     AudioFormatManager formatManager;
@@ -39,70 +41,47 @@ basicLook()
 	addAndMakeVisible(&stopButton);
 	openButton.addListener(this);
 	addAndMakeVisible(&openButton);
-	
+	zoomInButton.addListener(this);
+	addAndMakeVisible(&zoomInButton);
+	zoomOutButton.addListener(this);
+	addAndMakeVisible(&zoomOutButton);	
 
 	playButton.setLookAndFeel(&basicLook);
 	stopButton.setLookAndFeel(&basicLook);
 	openButton.setLookAndFeel(&basicLook);
+	zoomOutButton.setLookAndFeel(&basicLook);
+	zoomInButton.setLookAndFeel(&basicLook);
 	
-	openButton.setColour(TextButton::buttonColourId, Colours::white);
+	zoomOutButton.getProperties().set("isRounded", true);
+	zoomInButton.getProperties().set("isRounded", true);
 	
+	openButton.setColour(TextButton::buttonColourId, Colours::white);	
 	playButton.setColour(TextButton::buttonColourId, Colours::white);
 	playButton.setColour(TextButton::buttonOnColourId, Colours::yellow);
+	zoomOutButton.setColour(TextButton::buttonColourId, Colours::white);
+	zoomInButton.setColour(TextButton::buttonColourId, Colours::white);
+	
 	playButton.setClickingTogglesState(true);	
 	
 	stopButton.setColour(TextButton::buttonColourId, Colours::white);	
 	
-	Path playPath;
-	playPath.addTriangle(0, 0, BUTTON_SIZE, BUTTON_SIZE/2, 0, BUTTON_SIZE);
-	DrawablePath playImage;
-	playImage.setFill(Colours::green.darker(.9f));
-	playImage.setPath(playPath);
-	
-	Path pausePath;
-	pausePath.addRectangle(0, 0, BUTTON_SIZE*.4, BUTTON_SIZE);
-	pausePath.addRectangle(BUTTON_SIZE*.5, 0, BUTTON_SIZE*.4, BUTTON_SIZE);
-	DrawablePath pauseImage;
-	pauseImage.setFill(Colours::green.darker(.9f));
-	pauseImage.setPath(pausePath);
-	playButton.setImages(&playImage, &playImage, &pauseImage, &playImage, &pauseImage);
-	
-	Path stopPath;
-	stopPath.addRectangle(0, 0, BUTTON_SIZE, BUTTON_SIZE);
-	DrawablePath stopImage;
-	stopImage.setFill(Colours::green.darker(.9f));
-	stopImage.setPath(stopPath);
-	stopButton.setImages(&stopImage);		
-	
-	Path openPath;
-	DrawablePath openImage;
+	playButton.setImages(cUtils::createPlayButtonPath(25), 
+						 cUtils::createPlayButtonPath(25), 
+						 cUtils::createPauseButtonPath(25), 
+						 cUtils::createPlayButtonPath(25), 
+						 cUtils::createPauseButtonPath(25));
 
-	openPath.startNewSubPath(4, 2);
-	openPath.lineTo(18, 2);
-	openPath.lineTo(18, 5);
-	openPath.lineTo(22, 5);
-	openPath.lineTo(22, BUTTON_SIZE-5);
-	openPath.lineTo(4, BUTTON_SIZE-5);
-	openPath.lineTo(4, 2);
-	openImage.setPath(openPath);
+	openButton.setImages(cUtils::createOpenButtonPath(25));		
+	stopButton.setImages(cUtils::createStopButtonPath(25));
 	
-    openPath.startNewSubPath(8, 7);
-    openPath.lineTo(24, 7);
-    openPath.closeSubPath();
-
-	openImage.setFill(Colours::white);
-	openImage.setStrokeFill(Colours::green.darker(.9f));
-	openImage.setStrokeThickness(4);	
+	zoomInButton.setImages(cUtils::createZoomInButtonPath(25));
+	zoomOutButton.setImages(cUtils::createZoomOutButtonPath(25));
 	
-	
-	
-	openButton.setImages(&openImage);		
-	
-	viewport = new Viewport();
+	//viewport = new Viewport();
 	waveformDisplay->setBounds(10, 10, 500, 200);
-	viewport->setViewedComponent(waveformDisplay, false);
-	viewport->setScrollBarsShown(true, true);
-	addAndMakeVisible(viewport);
+	//viewport->setViewedComponent(waveformDisplay, false);
+	//viewport->setScrollBarsShown(true, true);
+	addAndMakeVisible(waveformDisplay);
     setSize (500, 250);
 
 	if(File(getFilter()->getCurrentFile()).existsAsFile())
@@ -120,12 +99,13 @@ AudioFilePlaybackEditor::~AudioFilePlaybackEditor()
 //==============================================================================
 void AudioFilePlaybackEditor::resized()
 {
-	waveformDisplay->setBounds(waveformDisplay->getBounds().withWidth(getWidth()-20).withHeight(getHeight()-50));
-	viewport->setBounds(10, 10, getWidth()-20, getHeight()-50);
-	
-	stopButton.setBounds(10, getHeight()-35, BUTTON_SIZE, BUTTON_SIZE);
-	playButton.setBounds(BUTTON_SIZE+15, getHeight()-35, BUTTON_SIZE, BUTTON_SIZE);
-	openButton.setBounds((BUTTON_SIZE*2)+20, getHeight()-35, BUTTON_SIZE, BUTTON_SIZE);
+	waveformDisplay->setBounds(BUTTON_SIZE+7, 5, getWidth()-(BUTTON_SIZE+12), getHeight()-10);
+	//viewport->setBounds(BUTTON_SIZE+7, 5, getWidth()-20, getHeight()-10);	
+	stopButton.setBounds(3, 5, BUTTON_SIZE, BUTTON_SIZE);
+	playButton.setBounds(3, BUTTON_SIZE+5, BUTTON_SIZE, BUTTON_SIZE);
+	openButton.setBounds(3, ((BUTTON_SIZE)*2)+5, BUTTON_SIZE, BUTTON_SIZE);
+	zoomInButton.setBounds(3, ((BUTTON_SIZE)*3)+5, BUTTON_SIZE, BUTTON_SIZE);
+	zoomOutButton.setBounds(3, ((BUTTON_SIZE)*4)+5, BUTTON_SIZE, BUTTON_SIZE);
 }
 //==============================================================================
 void AudioFilePlaybackEditor::paint (Graphics& g)

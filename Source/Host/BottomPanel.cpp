@@ -92,16 +92,17 @@ void BottomPanel::addComponentToPanel(Component* comp)
 {
 	if(container.getIndexOfChildComponent(comp)==-1)
 	{
-		comp->setBounds(0, 0, container.getWidth(), 190);
+		//comp->setBounds(0, 0, viewport.getWidth(), 190);
 		container.addAndMakeVisible(comp);
 
 		const int numChildren = container.getNumChildComponents();
-		container.setSize(container.getWidth(), numChildren*190);
+		container.setSize(viewport.getWidth(), numChildren*190);
 		
+		//cUtils::showMessage(viewport.getWidth());		
 		
 		for(int i=0;i<numChildren;i++)
 		{
-			container.getChildComponent(i)->setBounds(0, i*190, container.getWidth(), 190);
+			container.getChildComponent(i)->setBounds(0, i*190, viewport.getWidth(), 190);
 		}
 
 	}

@@ -1207,6 +1207,111 @@ public:
         else return img;
     }
 //====================================================================================================
+
+	static const DrawablePath* createPlayButtonPath(int buttonSize)
+	{
+		Path playPath;
+		playPath.addTriangle(0, 0, buttonSize, buttonSize/2, 0, buttonSize);
+		DrawablePath* playImage = new DrawablePath();
+		playImage->setFill(Colours::green.darker(.9f));	
+		playImage->setPath(playPath);	
+		return playImage;		
+	}
+
+	static const DrawablePath* createPauseButtonPath(int buttonSize)
+	{
+		Path pausePath;
+		pausePath.addRectangle(0, 0, buttonSize*.4, buttonSize);
+		pausePath.addRectangle(buttonSize*.5, 0, buttonSize*.4, buttonSize);
+		DrawablePath* pauseImage = new DrawablePath();;
+		pauseImage->setPath(pausePath);
+		return pauseImage;		
+	}
+
+	static const DrawablePath* createZoomInButtonPath(int buttonSize)
+	{
+		Path zoomInPath;
+		//zoomInPath.addEllipse(-100, -100, buttonSize+100, buttonSize+100);
+		zoomInPath.addRectangle(0, buttonSize/3, buttonSize, buttonSize/3);
+		zoomInPath.addRectangle(buttonSize/3, 0, buttonSize/3, buttonSize);
+		DrawablePath* zoomImage = new DrawablePath();
+		zoomImage->setFill(Colours::green.darker(.9f));
+		//zoomImage->setStrokeFill(Colours::green.darker(.9f));
+		//zoomImage->setStrokeThickness(4);
+		zoomImage->setPath(zoomInPath);
+		return zoomImage;		
+	}
+	
+	static const DrawablePath* createZoomOutButtonPath(int buttonSize)
+	{
+		Path zoomInPath;
+		//zoomInPath.addEllipse(-100, -100, buttonSize+100, buttonSize+100);
+		zoomInPath.addRectangle(0, buttonSize/3, buttonSize, buttonSize/3);
+		DrawablePath* zoomImage = new DrawablePath();
+		zoomImage->setFill(Colours::green.darker(.9f));
+		//zoomImage->setStrokeFill(Colours::green.darker(.9f));
+		//zoomImage->setStrokeThickness(4);
+		zoomImage->setPath(zoomInPath);
+		return zoomImage;		
+	}	
+	
+	static const DrawablePath* createStopButtonPath(int buttonSize)
+	{
+		Path stopPath;
+		stopPath.addRectangle(0, 0, buttonSize, buttonSize);
+		DrawablePath* stopImage = new DrawablePath();
+		stopImage->setPath(stopPath);	
+		stopImage->setFill(Colours::green.darker(.9f));	
+		return stopImage;
+	}
+
+	static const DrawablePath* createOpenButtonPath(int buttonSize)
+	{
+		Path openPath;
+		openPath.startNewSubPath(4, 2);
+		openPath.lineTo(18, 2);
+		openPath.lineTo(18, 5);
+		openPath.lineTo(22, 5);
+		openPath.lineTo(22, buttonSize-5);
+		openPath.lineTo(4, buttonSize-5);
+		openPath.lineTo(4, 2);
+		//openPath.startNewSubPath(8, 7);
+		//openPath.lineTo(24, 7);
+		openPath.closeSubPath();
+		DrawablePath* openImage = new DrawablePath();;
+		openImage->setPath(openPath);
+		openImage->setFill(Colours::white);
+		openImage->setStrokeFill(Colours::green.darker(.9f));
+		openImage->setStrokeThickness(4);
+		return openImage;
+	}
+	
+	static void drawBypassIcon(Graphics& g, Rectangle<float> rect, bool isActive)
+	{
+		const float x = rect.getX();
+		const float y = rect.getY();
+		const float w = rect.getWidth()-5.f;
+		const float h = rect.getHeight();
+		const float d = 5; 
+		g.setColour(isActive ? Colours::cornflowerblue : Colours::lime);
+		Path p;
+		p.startNewSubPath(x+5, y+h/2.f+d/2.f);
+		g.drawEllipse(x, y+h/2.f, d, d, 1);
+		g.drawEllipse(x+w, y+h/2.f, d, d, 1.f);	
+		
+		if(!isActive)
+		{
+			p.lineTo(x+w, y+h/2.f+d/2.f);
+		}
+		else
+		{
+			p.addArc(x+w, y+h/2.f+d/2.f, 5, 5, 3.14, 3.14);
+		}
+		
+		p.closeSubPath();
+		g.strokePath(p, PathStrokeType(1));
+	}	
+//====================================================================================================
     static String returnFullPathForFile(String file, String fullPath)
     {
         String pic;

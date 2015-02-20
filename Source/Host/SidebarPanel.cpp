@@ -32,7 +32,7 @@ thread ("file preview"),
 directoryList (nullptr, thread),
 fileTreeComp (*this, "Browser", directoryList),
 canResize(false),
-transportControls(*this, "Test"),
+transportControls(*this, " "),
 midiBubble(250),
 midiLearn(false)
 {
@@ -489,27 +489,14 @@ standardLookAndFeel(new LookAndFeel_V2())
 	stopButton.setLookAndFeel(&lookAndFeel);	
 	stopButton.setColour(TextButton::buttonColourId, Colours::white);	
 	
-	Path playPath;
-	playPath.addTriangle(0, 0, BUTTON_SIZE, BUTTON_SIZE/2, 0, BUTTON_SIZE);
-	DrawablePath playImage;
-	playImage.setFill(Colours::green.darker(.9f));
-	playImage.setPath(playPath);
 	
-	Path pausePath;
-	pausePath.addRectangle(0, 0, BUTTON_SIZE*.4, BUTTON_SIZE);
-	pausePath.addRectangle(BUTTON_SIZE*.5, 0, BUTTON_SIZE*.4, BUTTON_SIZE);
-	DrawablePath pauseImage;
-	pauseImage.setFill(Colours::green.darker(.9f));
-	pauseImage.setPath(pausePath);
-	
-	playButton.setImages(&playImage, &playImage, &pauseImage, &playImage, &pauseImage);
+	playButton.setImages(cUtils::createPlayButtonPath(30), 
+						 cUtils::createPlayButtonPath(30), 
+						 cUtils::createPauseButtonPath(30), 
+						 cUtils::createPlayButtonPath(30), 
+						 cUtils::createPlayButtonPath(30));
 
-	Path stopPath;
-	stopPath.addRectangle(0, 0, BUTTON_SIZE, BUTTON_SIZE);
-	DrawablePath stopImage;
-	stopImage.setFill(Colours::green.darker(.9f));
-	stopImage.setPath(stopPath);
-	stopButton.setImages(&stopImage);	
+	stopButton.setImages(cUtils::createStopButtonPath(30));	
 	
 	addAndMakeVisible (timingInfoBox);
 	addAndMakeVisible (playButton);

@@ -211,6 +211,7 @@ class AudioFilePlaybackEditor  : public AudioProcessorEditor,
 public:
     AudioFilePlaybackEditor (AudioFilePlaybackProcessor* ownerFilter);
     ~AudioFilePlaybackEditor();
+	const DrawablePath* createZoomInButtonPath(int buttonSize);
 
     //CabbagePluginAudioProcessor* filter;
     AudioFilePlaybackProcessor* getFilter() const
@@ -236,6 +237,8 @@ public:
 	DrawableButton playButton;
 	DrawableButton stopButton;
 	DrawableButton openButton;
+	DrawableButton zoomInButton;
+	DrawableButton zoomOutButton;
 	ScopedPointer<Viewport> viewport;
 	CabbageLookAndFeelBasic basicLook;
 };

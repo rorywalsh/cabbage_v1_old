@@ -139,6 +139,7 @@ MainHostWindow::~MainHostWindow()
 #endif
 
     knownPluginList.removeChangeListener (this);
+    internalTypes.clear();
 
     getAppProperties().getUserSettings()->setValue ("mainWindowPos", getWindowStateAsString());
     clearContentComponent();

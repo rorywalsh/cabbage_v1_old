@@ -34,23 +34,13 @@ numberOfComponents(0),
 indexOfCompToScrollTo(0),
 indexOfCurrentComp(0),
 animateIndex(10),
-bottomBorder("bottomBorder"),
+//bottomBorder("bottomBorder"),
 topBorder("topBorder")
 {
-//    listBox.setModel (&listBoxModel);
-//    listBox.setMultipleSelectionEnabled (false);
-//    listBox.setColour(ListBox::ColourIds::backgroundColourId, Colour(30, 30, 30));
-//    addAndMakeVisible (listBox);
 	listBoxModel.addActionListener(this);
-//	listBox.selectRow(0);
-	
-	addAndMakeVisible(&bottomBorder);
 	addAndMakeVisible(&topBorder);
 	topBorder.addMouseListener(this, true);
 	topBorder.setAlwaysOnTop(true);
-	bottomBorder.setAlwaysOnTop(true);
-	
-	
 	addAndMakeVisible(&viewport);
 	viewport.setViewedComponent(&container, true);
 	viewport.setScrollBarsShown(false, false);
@@ -68,12 +58,12 @@ void BottomPanel::resized()
 	const int numChildren = container.getNumChildComponents();
 	
 	viewport.setBounds(0, 5, getWidth()-5, getHeight()-10);
-	bottomBorder.setBounds(0, getHeight()-5, getWidth(), 5);
+	//bottomBorder.setBounds(0, getHeight()-5, getWidth(), 5);
 	topBorder.setBounds(0, 0, getWidth(), 5);
 	
 	if(container.getHeight()>viewport.getHeight())
 	{
-		viewport.setScrollBarsShown(true, false);
+		viewport.setScrollBarsShown(true, true);
 		container.setBounds(0, 0, getWidth()-24, numChildren*190);
 	}
 	else

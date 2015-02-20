@@ -21,19 +21,185 @@
 #include "AudioFilePlaybackEditor.h"
 
 #define BUTTON_SIZE 25
+WaveformDisplay::WaveformDisplay(AudioFormatManager& formatManager, BufferingAudioSource *source, int sr, Colour col):
+thumbnailCache(15),
+thumbnail (16, formatManager, thumbnailCache),
+source(source),
+tableColour(col),
+sampleRate(sr),
+scrollbar(false),
+currentPlayPosition(0)
+{
+    thumbnail.addChangeListener(this);
+    currentPositionMarker.setFill (Colours::lime);
+    addAndMakeVisible(currentPositionMarker);
+    addAndMakeVisible (scrollbar);
+    scrollbar.setRangeLimits (visibleRange);
+    scrollbar.setAutoHide (false);
+    scrollbar.addListener (this);
+}
+
+WaveformDisplay::~WaveformDisplay()
+{
+    stopTimer();
+}
+
+void WaveformDisplay::resized()
+{
+    scrollbar.setBounds (getLocalBounds().removeFromBottom (20).reduced (2));
+}
+
+void WaveformDisplay::setScrubberPos(double pos)
+{
+    currentPositionMarker.setVisible (true);
+    //pos = (pos/(thumbnail.getTotalLength()*sampleRate))*thumbnail.getTotalLength();
+    currentPositionMarker.setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 0,
+                                                          1.5f, (float) (getHeight() - scrollbar.getHeight())));
+}
+
+void WaveformDisplay::changeListenerCallback (ChangeBroadcaster*)
+{
+    repaint();
+}
+
+void WaveformDisplay::setFile (const File& file)
+{
+    AudioFormatManager format;
+    format.registerBasicFormats();
+    AudioFormatReader* reader = format.createReaderFor(file);
+    
+    if(reader)
+    {
+        AudioSampleBuffer buffer(reader->numChannels, reader->lengthInSamples);
+        buffer.clear();
+        buffer.setSize(reader->numChannels, reader->lengthInSamples);
+        reader->read(&buffer,0, buffer.getNumSamples(), 0, true, true);
+        setWaveform(buffer, reader->numChannels);
+    }
+    
+    delete reader;
+}
+
+void WaveformDisplay::setWaveform(AudioSampleBuffer buffer, int channels)
+{
+    thumbnail.clear();
+    thumbnail.reset(channels, 44100, buffer.getNumSamples());
+    thumbnail.addBlock(0, buffer, 0, buffer.getNumSamples());
+    const Range<double> newRange (0.0, thumbnail.getTotalLength());
+    scrollbar.setRangeLimits (newRange);
+    setRange (newRange);
+}
+
+void WaveformDisplay::setZoomFactor (double amount)
+{
+    if (thumbnail.getTotalLength() > 0)
+    {
+        const double newScale = jmax (0.001, thumbnail.getTotalLength() * (1.0 - jlimit (0.0, 0.99, amount)));
+        const double timeAtCentre = xToTime (getWidth() / 2.0f);
+        setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
+    }
+}
+
+void WaveformDisplay::setRange (Range<double> newRange)
+{
+    visibleRange = newRange;
+    scrollbar.setCurrentRange (visibleRange);
+    repaint();
+}
+
+void WaveformDisplay::paint (Graphics& g)
+{
+    g.fillAll (Colour(20, 20, 20));
+    g.setColour (tableColour);
+    
+    
+    
+    if (thumbnail.getTotalLength() > 0)
+    {
+        Rectangle<int> thumbArea (getLocalBounds());
+        thumbArea.removeFromBottom (scrollbar.getHeight() + 4);
+        thumbnail.drawChannels (g, thumbArea.reduced (2),
+                                visibleRange.getStart(), visibleRange.getEnd(), 1.0f);
+    }
+    else
+    {
+        g.setFont (14.0f);
+        g.drawFittedText ("(No audio file selected)", getLocalBounds(), Justification::centred, 2);
+    }
+    
+}
+
+void WaveformDisplay::timerCallback()
+{
+    if(thumbnail.getTotalLength()>0)
+    {
+        currentPlayPosition = source->getNextReadPosition()/sampleRate;
+        setScrubberPos(currentPlayPosition);
+    }
+}
+
+void WaveformDisplay::mouseDown (const MouseEvent& e)
+{
+    if(thumbnail.getTotalLength()>0)
+    {
+        source->setNextReadPosition (jmax (0.0, xToTime ((float) e.x)*sampleRate));
+        currentPlayPosition = jmax (0.0, xToTime ((float) e.x));
+        setScrubberPos(currentPlayPosition);
+    }
+}
+
+void WaveformDisplay::mouseDrag (const MouseEvent& e)
+{
+    if(thumbnail.getTotalLength()>0)
+    {
+        source->setNextReadPosition (jmax (0.0, xToTime ((float) e.x)*sampleRate));
+        currentPlayPosition = jmax (0.0, xToTime ((float) e.x));
+        setScrubberPos(currentPlayPosition);
+    }
+}
+
+void WaveformDisplay::resetPlaybackPosition()
+{
+    currentPlayPosition=0;
+}
+
+float WaveformDisplay::timeToX (const double time) const
+{
+    return getWidth() * (float) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
+}
+
+double WaveformDisplay::xToTime (const float x) const
+{
+    return (x / getWidth()) * (visibleRange.getLength()) + visibleRange.getStart();
+}
+
+void WaveformDisplay::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
+{
+    if (scrollBarThatHasMoved == &scrollbar)
+        setRange (visibleRange.movedToStartAt (newRangeStart));
+}
+
+
+
 //==============================================================================
-AudioFilePlaybackEditor::AudioFilePlaybackEditor (AudioFilePlaybackProcessor* ownerFilter): 
-AudioProcessorEditor (ownerFilter), 
+AudioFilePlaybackEditor::AudioFilePlaybackEditor (AudioFilePlaybackProcessor* ownerFilter):
+AudioProcessorEditor (ownerFilter),
 playButton("playButton", DrawableButton::ImageOnButtonBackground),
 stopButton("stopButton", DrawableButton::ImageOnButtonBackground),
 openButton("openButton", DrawableButton::ImageOnButtonBackground),
 zoomInButton("zoomInButton", DrawableButton::ImageOnButtonBackground),
 zoomOutButton("zoomOutButton", DrawableButton::ImageOnButtonBackground),
-basicLook()
+basicLook(),
+zoom(0)
 {
     AudioFormatManager formatManager;
-    formatManager.registerBasicFormats();  
-	waveformDisplay = new WaveformDisplay(formatManager, getFilter()->bufferingAudioFileSource, getFilter()->sourceSampleRate);
+    formatManager.registerBasicFormats();
+    
+    tableColour = Colour(Random::getSystemRandom().nextInt(255),
+                         Random::getSystemRandom().nextInt(255),
+                         Random::getSystemRandom().nextInt(255));
+    
+	waveformDisplay = new WaveformDisplay(formatManager, getFilter()->bufferingAudioFileSource, getFilter()->sourceSampleRate, tableColour);
 	setOpaque(false);
 	playButton.addListener(this);
 	addAndMakeVisible(&playButton);
@@ -76,30 +242,26 @@ basicLook()
 	
 	zoomInButton.setImages(cUtils::createZoomInButtonPath(25));
 	zoomOutButton.setImages(cUtils::createZoomOutButtonPath(25));
-	
-	//viewport = new Viewport();
-	waveformDisplay->setBounds(10, 10, 500, 200);
-	//viewport->setViewedComponent(waveformDisplay, false);
-	//viewport->setScrollBarsShown(true, true);
+	//waveformDisplay->setBounds(10, 10, 500, 200);
 	addAndMakeVisible(waveformDisplay);
     setSize (500, 250);
 
 	if(File(getFilter()->getCurrentFile()).existsAsFile())
 		waveformDisplay->setFile(File(getFilter()->getCurrentFile()));
-	//waveformDisplay->setZoomFactor(1);
+
 
 }
 
 AudioFilePlaybackEditor::~AudioFilePlaybackEditor()
 {
-	waveformDisplay->stopTimer();
     getFilter()->editorBeingDeleted(this);
+	waveformDisplay->stopTimer();
 }
 
 //==============================================================================
 void AudioFilePlaybackEditor::resized()
 {
-	waveformDisplay->setBounds(BUTTON_SIZE+7, 5, getWidth()-(BUTTON_SIZE+12), getHeight()-10);
+	waveformDisplay->setBounds(BUTTON_SIZE+7, 5, getWidth()-(BUTTON_SIZE+12), getHeight()-14);
 	//viewport->setBounds(BUTTON_SIZE+7, 5, getWidth()-20, getHeight()-10);	
 	stopButton.setBounds(3, 5, BUTTON_SIZE, BUTTON_SIZE);
 	playButton.setBounds(3, BUTTON_SIZE+5, BUTTON_SIZE, BUTTON_SIZE);
@@ -111,6 +273,8 @@ void AudioFilePlaybackEditor::resized()
 void AudioFilePlaybackEditor::paint (Graphics& g)
 {
 	g.fillAll(Colours::black);
+    g.setColour(tableColour);
+    g.drawRect(0, 0, getWidth(), getHeight());
 }
 //==============================================================================
 void AudioFilePlaybackEditor::itemDropped (const DragAndDropTarget::SourceDetails& dragSourceDetails)
@@ -143,8 +307,21 @@ void AudioFilePlaybackEditor::buttonClicked(Button *button)
 			getFilter()->isSourcePlaying=!getFilter()->isSourcePlaying;			
 		}
 	}
-	
-	if(button->getName()=="stopButton")
+
+    else if(button->getName()=="zoomInButton")
+    {
+        zoom=jmin(1.0, zoom+.1);
+        
+        waveformDisplay->setZoomFactor(zoom);
+    }
+    
+    else if(button->getName()=="zoomOutButton")
+    {
+        zoom=jmin(0.0, zoom-.1);
+        waveformDisplay->setZoomFactor(zoom);
+    }
+    
+	else if(button->getName()=="stopButton")
 	{
 		if(getFilter()->bufferingAudioFileSource)
 		{

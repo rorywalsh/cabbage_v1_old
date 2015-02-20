@@ -90,7 +90,7 @@ public:
 	
 private:
 	//ListBox listBox;
-	BorderComponent bottomBorder;
+	//BorderComponent bottomBorder;
 	BorderComponent topBorder;
 	int indexOfCompToScrollTo, currentYPos, indexOfCurrentComp;
 	float animateIndex;

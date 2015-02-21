@@ -24,6 +24,8 @@
 #include "AudioFilePlaybackProcessor.h"
 #include "../CabbageLookAndFeel.h"
 
+class AudioFilePlaybackEditor;
+
 class WaveformDisplay : public Component,
 						public Timer,
 						public ChangeListener,
@@ -109,6 +111,10 @@ public:
 		void paint (Graphics& g);
 		void mouseDown(const MouseEvent& e);
 		
+		AudioFilePlaybackEditor* getEditor()
+		{
+			return this->findParentComponentOfClass<AudioFilePlaybackEditor>();
+		}
 		
 	private:
 		OwnedArray<Handle> handles;

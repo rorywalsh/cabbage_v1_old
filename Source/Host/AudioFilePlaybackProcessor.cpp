@@ -23,6 +23,8 @@ updateCounter(0),
 beatOffset(0),
 gain(1.f),
 pan(.5f),
+envPointIncr(0),
+sampleIndex(0),
 isLinkedToMasterTransport(false)
 {
 	//setupAudioFile(File("/home/rory/Documents/BeesInMarch4.wav"));
@@ -97,8 +99,39 @@ void AudioFilePlaybackProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
 		playSoundFile(buffer);
 }
 
+float AudioFilePlaybackProcessor::getGainEnvelop(int index)
+{ 
+	float currentAmp = 0.f;
+	if(envPointIncr<envPoints.size()-1)
+	{
+		if(index<envPoints[envPointIncr+1].getX()*bufferingAudioFileSource->getTotalLength()*44100)
+		{
+			const float amp1 = 1.f-envPoints[envPointIncr].getY();
+			const float amp2 = 1.f-envPoints[envPointIncr+1].getY();
+			int totalLength = bufferingAudioFileSource->getTotalLength();
+			int duration = envPoints[envPointIncr+1].getX()*totalLength-envPoints[envPointIncr].getX()*totalLength;
+			float scale =  (float(index)/float(duration));
+			//cUtils::debug(scale);
+			currentAmp = amp1 +scale*(amp2-amp1);
+			//cUtils::debug(currentAmp);
+			return currentAmp;
+		}
+		else
+			envPointIncr++;
+	}
+	else return 0.f;
+}
+
+void AudioFilePlaybackProcessor::addEnvDataPoint(Point<double> point)
+{
+	envPoints.add(point);
+	cUtils::debug("posY", 1-point.getY());
+	cUtils::debug("posX", point.getX()*bufferingAudioFileSource->getTotalLength());
+}
+	
 void AudioFilePlaybackProcessor::playSoundFile(AudioSampleBuffer& buffer)
 {
+	float* audioBuffer;
 	if(bufferingAudioFileSource)
 	{
 		AudioSampleBuffer output (2, buffer.getNumSamples());
@@ -107,7 +140,11 @@ void AudioFilePlaybackProcessor::playSoundFile(AudioSampleBuffer& buffer)
 		sourceChannelInfo.numSamples = output.getNumSamples();
 
 		if(bufferingAudioFileSource->getNextReadPosition()>=bufferingAudioFileSource->getTotalLength())
+		{
 			bufferingAudioFileSource->setNextReadPosition(0);
+			envPointIncr=0;
+			sampleIndex=0;
+		}
 
 		if(isSourcePlaying)
 			bufferingAudioFileSource->getNextAudioBlock(sourceChannelInfo); 
@@ -116,7 +153,15 @@ void AudioFilePlaybackProcessor::playSoundFile(AudioSampleBuffer& buffer)
 
 		for (int channel = 0; channel < getNumInputChannels(); ++channel)
 		{
-			output.applyGain(gain);
+			//output.applyGain(gain);
+			audioBuffer = output.getWritePointer(channel, 0);
+			
+			for(int i=0;i<buffer.getNumSamples();i++)
+			{
+				audioBuffer[i] = audioBuffer[i]*getGainEnvelop(sampleIndex);
+				sampleIndex++;
+			}
+				
 			buffer.copyFrom(channel, 0, output, channel, 0, sourceChannelInfo.numSamples);
 		}
 

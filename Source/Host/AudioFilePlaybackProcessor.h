@@ -96,7 +96,14 @@ public:
 	BufferingAudioSource* bufferingAudioFileSource;
 	AudioPlayHead::CurrentPositionInfo hostInfo;
 	void playSoundFile(AudioSampleBuffer& buffer);
+	float getGainEnvelop(int index);
 	
+	void addEnvDataPoint(Point<double> point);
+	
+	void clearEnvDataPoint()
+	{
+		envPoints.clear();
+	}	
 private:
 	AudioSourceChannelInfo sourceChannelInfo;
 	PositionableAudioSource* fileSource;
@@ -110,6 +117,8 @@ private:
 	bool isLinkedToMasterTransport;
 	StringArray parameterNames;
 	float gain, pan;
+	Array<Point<double>> envPoints;
+	int envPointIncr, sampleIndex;
 	//PositionableAudioSource* currentAudioFileSource;
 	
 

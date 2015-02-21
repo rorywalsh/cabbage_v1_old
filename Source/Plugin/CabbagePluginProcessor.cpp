@@ -1894,7 +1894,6 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                     {
 						int num = getNumOutputChannels();
                         audioBuffer = buffer.getWritePointer(channel,0);
-						int chanNum = buffer.getNumChannels();
                         pos = csndIndex*getNumOutputChannels();
                         float samp = audioBuffer[i]*cs_scale;
 						CSspin[channel+pos] = samp;

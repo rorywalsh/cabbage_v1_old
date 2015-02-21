@@ -74,6 +74,8 @@ OBJECTS := \
   $(OBJDIR)/PluginWrapperProcessor_5t66sdf31b.o \
   $(OBJDIR)/AudioFilePlaybackProcessor_ie83ukyw.o \
   $(OBJDIR)/AudioFilePlaybackEditor_8e3udga.o \
+  $(OBJDIR)/AutomationEditor_2j8hjkd2.o \
+  $(OBJDIR)/AutomationProcessor_s358esga.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
   $(OBJDIR)/Table_35ae1cd9.o \
   $(OBJDIR)/MixerStrip_4j7dh431b.o \
@@ -253,6 +255,17 @@ $(OBJDIR)/AudioFilePlaybackEditor_8e3udga.o: ../../Source/Host/AudioFilePlayback
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling AudioFilePlaybackEditor.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
+$(OBJDIR)/AutomationProcessor_s358esga.o: ../../Source/Host/AutomationProcessor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling AutomationProcessor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/AutomationEditor_2j8hjkd2.o: ../../Source/Host/AutomationEditor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling AutomationEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
 	
 $(OBJDIR)/FilterGraph_62e9c017.o: ../../Source/Host/FilterGraph.cpp
 	-@mkdir -p $(OBJDIR)

@@ -216,18 +216,21 @@ void WaveformDisplay::GainEnvelope::mouseDown(const MouseEvent& e)
 	handle->setRelativePosition(e.getPosition().toDouble(), getWidth(), getHeight());
 	handles.insert(indx, handle);
 	repaint();
+	resized();
 }
 
 void WaveformDisplay::GainEnvelope::resized()
 {
+	getEditor()->getFilter()->clearEnvDataPoint();
 	for(int i=0;i<handles.size();i++)
 	{
 		const double xPos = handles[i]->getRelativePosition().getX()*getWidth()-5;
 		const double yPos = handles[i]->getRelativePosition().getY()*getHeight();
 		handles[i]->setTopLeftPosition(xPos, yPos);
+		getEditor()->getFilter()->addEnvDataPoint(handles[i]->getRelativePosition());
 	}
 }
-	
+ 
 void WaveformDisplay::GainEnvelope::paint(Graphics& g)
 {			
 	g.fillAll(Colours::transparentBlack);

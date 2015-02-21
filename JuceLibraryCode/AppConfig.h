@@ -195,19 +195,34 @@
 #ifndef  JucePlugin_PluginCode
 #define JucePlugin_PluginCode             'RORY'
 #endif
-#ifndef  JucePlugin_MaxNumInputChannels
-#define JucePlugin_MaxNumInputChannels    8
-#endif
-#ifndef  JucePlugin_MaxNumOutputChannels
-#define JucePlugin_MaxNumOutputChannels   8
-#endif
-#ifndef  JucePlugin_PreferredChannelConfigurations
-#define JucePlugin_PreferredChannelConfigurations  {2,2}, {4,4}, {6,6}, {8,8}
+
+
+#ifdef CABBAGE_HOST
+	#ifndef  JucePlugin_MaxNumInputChannels
+	#define JucePlugin_MaxNumInputChannels    8
+	#endif
+	#ifndef  JucePlugin_MaxNumOutputChannels
+	#define JucePlugin_MaxNumOutputChannels   8
+	#endif
+	#ifndef  JucePlugin_PreferredChannelConfigurations
+	#define JucePlugin_PreferredChannelConfigurations  {2,2}, {4,4}, {6,6}, {8,8}
+	#endif
+
+#else
+	#ifndef  JucePlugin_MaxNumInputChannels
+	#define JucePlugin_MaxNumInputChannels    2
+	#endif
+	#ifndef  JucePlugin_MaxNumOutputChannels
+	#define JucePlugin_MaxNumOutputChannels   2
+	#endif
+	#ifndef  JucePlugin_PreferredChannelConfigurations
+	#define JucePlugin_PreferredChannelConfigurations  {2,2}
+	#endif
 #endif
 
 #ifdef Cabbage_Plugin_LV2
-#define JucePlugin_LV2URI               "urn:cabbage:plugin"
-#define JucePlugin_WantsLV2TimePos      1
+	#define JucePlugin_LV2URI               "urn:cabbage:plugin"
+	#define JucePlugin_WantsLV2TimePos      1
 #endif 
 
 #ifdef Cabbage_Plugin_Synth

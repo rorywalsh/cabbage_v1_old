@@ -116,9 +116,9 @@ void CodeWindow::showEditorConsole()
     if(cUtils::getPreference(appProperties, "ShowEditorConsole")==1)
     {
        splitWindow->SetSplitBarPosition(getHeight()-(getHeight()/4));
-	   splitBottomWindow->SetSplitBarPosition(getWidth());
+	   //splitBottomWindow->SetSplitBarPosition(getWidth());
 #ifdef BUILD_DEBUGGER
-        splitBottomWindow->SetSplitBarPosition(getWidth()/2);
+       // splitBottomWindow->SetSplitBarPosition(getWidth()/2);
 #endif
     }
     else

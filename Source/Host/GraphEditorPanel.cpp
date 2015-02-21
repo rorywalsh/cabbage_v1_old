@@ -1117,6 +1117,7 @@ void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int
     graphPanel->createNewPlugin (desc, x, y, isNative, filename);
 }
 
+
 void GraphDocumentComponent::addComponentToBottomPanel(Component* component)
 {
 	component->setSize(bottomPanel->getWidth(), bottomPanel->getHeight());

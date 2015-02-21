@@ -37,8 +37,28 @@ public:
 
     //==============================================================================
     const String getName() const;
+	
+	void setBeatOffset(int offset)
+	{
+		beatOffset = offset;
+	}
 
-    int getNumParameters();
+	void linkToMasterTransport(bool val)
+	{
+		isLinkedToMasterTransport = val;
+	} 
+
+	bool linkedToMasterTransport()
+	{
+		return isLinkedToMasterTransport;
+	}
+ 
+	int getBeatsOffset()
+	{
+		return beatOffset;
+	}
+ 
+	int getNumParameters();
 
     float getParameter (int index);
     void setParameter (int index, float newValue);
@@ -74,6 +94,8 @@ public:
 	bool isSourcePlaying;
 	int sourceSampleRate;
 	BufferingAudioSource* bufferingAudioFileSource;
+	AudioPlayHead::CurrentPositionInfo hostInfo;
+	void playSoundFile(AudioSampleBuffer& buffer);
 	
 private:
 	AudioSourceChannelInfo sourceChannelInfo;
@@ -82,9 +104,12 @@ private:
 	int samplingRate;
     TimeSliceThread thread;
 	float rmsLeft, rmsRight;
+	int beatOffset;
 	String currentFile;
 	int updateCounter;
+	bool isLinkedToMasterTransport;
 	StringArray parameterNames;
+	float gain, pan;
 	//PositionableAudioSource* currentAudioFileSource;
 	
 

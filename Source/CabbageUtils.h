@@ -1264,7 +1264,31 @@ public:
 		stopImage->setFill(col);	
 		return stopImage;
 	}
+	
+	static const DrawablePath* createDisabledStopButtonPath(float buttonSize, Colour col1, Colour col2)
+	{
+		Path stopPath;
+		stopPath.addRectangle(0, 0, buttonSize, buttonSize);		
+		stopPath.addLineSegment(Line<float>(0.f, 0.f, buttonSize, buttonSize), 1.f);
+		stopPath.addLineSegment(Line<float>(buttonSize, 0.f, 0.f, buttonSize), 1.f);
+		DrawablePath* stopImage = new DrawablePath();
+		stopImage->setFill(Colours::red);
+		stopImage->setStrokeFill(col2);
+		stopImage->setPath(stopPath);	
+		return stopImage;
+	}	
 
+	static const DrawablePath* createEnvelopeButtonPath(float buttonSize, Colour col)
+	{
+		Path path;
+		path.addLineSegment(Line<float>(0.f, 0.f, buttonSize, buttonSize), 1.f);
+		path.addLineSegment(Line<float>(buttonSize, 0.f, 0.f, buttonSize), 1.f);
+		DrawablePath* image = new DrawablePath();
+		image->setFill(col);
+		image->setPath(path);	
+		return image;
+	}
+	
 	static const DrawablePath* createOpenButtonPath(int buttonSize)
 	{
 		Path openPath;

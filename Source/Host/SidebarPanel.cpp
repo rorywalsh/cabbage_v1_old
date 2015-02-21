@@ -216,7 +216,7 @@ void SidebarPanel::stopButtonPressed()
 	filterGraph->setIsPlaying(false, true);
 	transportControls.setTimeIsRunning(false);
 	transportControls.setTimeLabel("00 : 00 : 00");
-	transportControls.setBeatsLabel("Bar 1 : 1");
+	transportControls.setBeatsLabel("Beat 1");
 	repaint();
 	stopTimer();
 }
@@ -329,7 +329,7 @@ void SidebarPanel::timerCallback()
 	const int bars = (elaspsedQNs/4);
 	const int beats = elaspsedQNs%4;
 	
-	String ppqPos = "Bar "+String(bars+1)+":"+String(beats+1);	
+	String ppqPos = "Beat "+String(elaspsedQNs);	
 	transportControls.setBeatsLabel(String(ppqPos));
 
 }
@@ -482,7 +482,7 @@ standardLookAndFeel(new LookAndFeel_V2())
 	beatsLabel.setLookAndFeel(standardLookAndFeel);
 	beatsLabel.setColour(Label::backgroundColourId, Colours::black);
 	beatsLabel.setColour(Label::textColourId, Colours::cornflowerblue);
-	beatsLabel.setText("Bar 1:1", dontSendNotification);
+	beatsLabel.setText("Beat 1", dontSendNotification);
 		
 	
 	playButton.setLookAndFeel(&lookAndFeel);	
@@ -509,8 +509,8 @@ standardLookAndFeel(new LookAndFeel_V2())
 	addAndMakeVisible (bpmLabel);
 	addAndMakeVisible (timeLabel);
 	addAndMakeVisible (beatsLabel);
-	addAndMakeVisible (timeSigNum);
-	addAndMakeVisible (timeSigDen);
+//	addAndMakeVisible (timeSigNum);
+//	addAndMakeVisible (timeSigDen);
 	
 	
 	playButton.addListener (this);	
@@ -533,8 +533,8 @@ void TransportComponent::resized()
 	playButton.setBounds(BUTTON_SIZE+10, 5, BUTTON_SIZE, BUTTON_SIZE);
 	timeLabel.setBounds(BUTTON_SIZE*2+20, 5, getWidth()-(BUTTON_SIZE*2+45), 30);
 	beatsLabel.setBounds(BUTTON_SIZE*2+75, 30, getWidth()-(BUTTON_SIZE*2+100), 20);
-	timeSigNum.setBounds(BUTTON_SIZE*2+25, 35, 25, 15);
-	timeSigDen.setBounds(BUTTON_SIZE*2+50, 35, 25, 15);
+//	timeSigNum.setBounds(BUTTON_SIZE*2+25, 35, 25, 15);
+//	timeSigDen.setBounds(BUTTON_SIZE*2+50, 35, 25, 15);
 	
 	bpmSlider.setBounds(8, BUTTON_SIZE+8, BUTTON_SIZE*2, 20);
 	

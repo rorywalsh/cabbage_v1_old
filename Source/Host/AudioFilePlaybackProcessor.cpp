@@ -19,14 +19,16 @@ isSourcePlaying(false),
 sourceSampleRate(44100),
 rmsLeft(0),
 rmsRight(0),
-updateCounter(0)
+updateCounter(0),
+beatOffset(0),
+gain(1.f),
+pan(.5f),
+isLinkedToMasterTransport(false)
 {
 	//setupAudioFile(File("/home/rory/Documents/BeesInMarch4.wav"));
 	bufferingAudioFileSource = nullptr;
-	parameterNames.add("Volume");
+	parameterNames.add("Gain");
 	parameterNames.add("Pan");
-	parameterNames.add("StartStop");
-	parameterNames.add("Position");	
 }
 
 AudioFilePlaybackProcessor::~AudioFilePlaybackProcessor()
@@ -68,6 +70,35 @@ void AudioFilePlaybackProcessor::prepareToPlay (double sampleRate, int samplesPe
 
 void AudioFilePlaybackProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
+	if(isLinkedToMasterTransport)
+	{
+		if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition(hostInfo))
+		{
+			if((!hostInfo.isPlaying && hostInfo.ppqPosition==0))
+			{
+				bufferingAudioFileSource->setNextReadPosition(0);
+			}
+			
+			if(hostInfo.isPlaying && hostInfo.ppqPosition>=beatOffset)
+			{
+				playSoundFile(buffer);
+			}
+			else
+			{
+				for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+				{
+					buffer.clear (i, 0, buffer.getNumSamples());
+				}			
+			}
+				
+		}
+	}
+	else
+		playSoundFile(buffer);
+}
+
+void AudioFilePlaybackProcessor::playSoundFile(AudioSampleBuffer& buffer)
+{
 	if(bufferingAudioFileSource)
 	{
 		AudioSampleBuffer output (2, buffer.getNumSamples());
@@ -85,6 +116,7 @@ void AudioFilePlaybackProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
 
 		for (int channel = 0; channel < getNumInputChannels(); ++channel)
 		{
+			output.applyGain(gain);
 			buffer.copyFrom(channel, 0, output, channel, 0, sourceChannelInfo.numSamples);
 		}
 
@@ -103,10 +135,8 @@ void AudioFilePlaybackProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
 		updateCounter++;
 		if(updateCounter>5)
 			updateCounter=0;	
-	}
-	
+	}	
 }
-
 //==============================================================================
 const String AudioFilePlaybackProcessor::getName() const
 {
@@ -120,11 +150,18 @@ int AudioFilePlaybackProcessor::getNumParameters()
 
 float AudioFilePlaybackProcessor::getParameter (int index)
 {
-    return 0.0f;
+    if(index==0)
+		return gain;
+	else
+		return pan;
 }
 
 void AudioFilePlaybackProcessor::setParameter (int index, float newValue)
 {
+	if(index==0)
+		gain = newValue;
+	else if(index==1)
+		gain = newValue;
 }
 
 const String AudioFilePlaybackProcessor::getParameterName (int index)
@@ -219,27 +256,24 @@ AudioProcessorEditor* AudioFilePlaybackProcessor::createEditor()
 //==============================================================================
 void AudioFilePlaybackProcessor::getStateInformation (MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
 	XmlElement xml ("SOUNDFILER_PLUGIN_SETTINGS");
 	xml.setAttribute("Soundfile", currentFile);	
+	xml.setAttribute("gain", gain);
+	xml.setAttribute("pan", pan);
+	xml.setAttribute("isLinkedToMasterTransport", this->isLinkedToMasterTransport);
+	xml.setAttribute("beatOffset", this->beatOffset);
 	copyXmlToBinary (xml, destData);
 }
 
 void AudioFilePlaybackProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
 	ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 	if (xmlState->hasTagName ("SOUNDFILER_PLUGIN_SETTINGS"))
 	{	
-		for(int i=0; i<xmlState->getNumAttributes(); i++)
-		{
-			if(xmlState->getAttributeName(i)=="Soundfile")
-			{
-				setupAudioFile(File(xmlState->getAttributeValue(i)));
-			}
-		}		
+		setupAudioFile(xmlState->getStringAttribute("Soundfile"));
+		gain = xmlState->getDoubleAttribute("gain");
+		pan = xmlState->getDoubleAttribute("pan");
+		isLinkedToMasterTransport = (bool)xmlState->getIntAttribute("isLinkedToMasterTransport");
+		beatOffset = xmlState->getIntAttribute("beatOffset");
 	}
 }

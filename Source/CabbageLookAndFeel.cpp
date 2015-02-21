@@ -1947,7 +1947,7 @@ void CabbageLookAndFeelBasic::drawLinearSlider (Graphics& g, int x, int y, int w
     if (style == Slider::LinearBar || style == Slider::LinearBarVertical)
     {
         g.setColour(slider.findColour (Slider::thumbColourId));
-        g.fillRoundedRectangle(x, y, width, height, 3);
+        g.fillRoundedRectangle(x, y, width, height, 2);
     }
     else
     {
@@ -2047,7 +2047,7 @@ void CabbageLookAndFeelBasic::drawButtonBackground (Graphics& g, Button& button,
                                bool isMouseOverButton, bool isButtonDown)
     {
         Colour baseColour (backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
-                           .withMultipliedAlpha (button.isEnabled() ? 0.9f : 0.5f));
+                           .withMultipliedAlpha (button.isEnabled() ? 0.9f : 0.2f));
 
         if (isButtonDown || isMouseOverButton)
             baseColour = baseColour.contrasting (isButtonDown ? 0.2f : 0.1f);

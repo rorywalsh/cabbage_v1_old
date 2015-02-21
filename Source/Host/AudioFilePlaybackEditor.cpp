@@ -20,6 +20,7 @@
 #include "AudioFilePlaybackProcessor.h"
 #include "AudioFilePlaybackEditor.h"
 
+
 #define BUTTON_SIZE 25
 WaveformDisplay::WaveformDisplay(AudioFormatManager& formatManager, BufferingAudioSource *source, int sr, Colour col):
 thumbnailCache(15),
@@ -31,12 +32,14 @@ scrollbar(false),
 currentPlayPosition(0)
 {
     thumbnail.addChangeListener(this);
+	addAndMakeVisible(gainEnvelope);
     currentPositionMarker.setFill (Colours::lime);
     addAndMakeVisible(currentPositionMarker);
     addAndMakeVisible (scrollbar);
     scrollbar.setRangeLimits (visibleRange);
     scrollbar.setAutoHide (false);
     scrollbar.addListener (this);
+	resized();
 }
 
 WaveformDisplay::~WaveformDisplay()
@@ -47,6 +50,7 @@ WaveformDisplay::~WaveformDisplay()
 void WaveformDisplay::resized()
 {
     scrollbar.setBounds (getLocalBounds().removeFromBottom (20).reduced (2));
+	gainEnvelope.setSize(getWidth(), getHeight()-20);
 }
 
 void WaveformDisplay::setScrubberPos(double pos)
@@ -54,7 +58,7 @@ void WaveformDisplay::setScrubberPos(double pos)
     currentPositionMarker.setVisible (true);
     //pos = (pos/(thumbnail.getTotalLength()*sampleRate))*thumbnail.getTotalLength();
     currentPositionMarker.setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 0,
-                                                          1.5f, (float) (getHeight() - scrollbar.getHeight())));
+                                                          1.5f, (float) (getHeight() - (scrollbar.getHeight()+5))));
 }
 
 void WaveformDisplay::changeListenerCallback (ChangeBroadcaster*)
@@ -104,6 +108,17 @@ void WaveformDisplay::setRange (Range<double> newRange)
 {
     visibleRange = newRange;
     scrollbar.setCurrentRange (visibleRange);
+	
+	const double visibleStart = visibleRange.getStart();
+	const double visibleEnd = visibleRange.getEnd();
+	const double visibleLength = visibleRange.getLength();
+	
+	const double newWidth = double(getWidth())*(double(thumbnail.getTotalLength())/visibleLength);
+	const double leftOffset = newWidth*(visibleStart/(double)thumbnail.getTotalLength());
+	gainEnvelope.setSize(newWidth, gainEnvelope.getHeight());
+	gainEnvelope.setTopLeftPosition(-leftOffset, 0);	
+	
+	
     repaint();
 }
 
@@ -179,8 +194,54 @@ void WaveformDisplay::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double n
         setRange (visibleRange.movedToStartAt (newRangeStart));
 }
 
+//------------------------------------------------------------------------------
+void WaveformDisplay::GainEnvelope::mouseDown(const MouseEvent& e)
+{
+	int indx;
+	const int x = e.getPosition().getX();
+	for (int i=1; i<handles.size(); i++)
+	{
+		cUtils::debug("handle0X", handles[i-1]->getX());
+		cUtils::debug("handle1X", handles[i]->getX());
+		cUtils::debug("mouseX", x);
+		if (x >= handles[i-1]->getX() && x < handles[i]->getX())
+		{
+			indx = i;
+		}
+	}	
+	
+	Handle* handle = new Handle();		
+	addAndMakeVisible(handle);
+	handle->setTopLeftPosition(e.getPosition().getX(), e.getPosition().getY());
+	handle->setRelativePosition(e.getPosition().toDouble(), getWidth(), getHeight());
+	handles.insert(indx, handle);
+	repaint();
+}
 
-
+void WaveformDisplay::GainEnvelope::resized()
+{
+	for(int i=0;i<handles.size();i++)
+	{
+		const double xPos = handles[i]->getRelativePosition().getX()*getWidth()-5;
+		const double yPos = handles[i]->getRelativePosition().getY()*getHeight();
+		handles[i]->setTopLeftPosition(xPos, yPos);
+	}
+}
+	
+void WaveformDisplay::GainEnvelope::paint(Graphics& g)
+{			
+	g.fillAll(Colours::transparentBlack);
+	Path path;
+	g.setColour(Colours::cornflowerblue);
+	path.startNewSubPath(handles[0]->getPosition().translated(2.5, 2.5).toFloat());
+	for(int i=0;i<handles.size()-1;i++)
+	{
+		path.lineTo(handles[i]->getPosition().translated(2.5, 2.5).toFloat());
+	}
+	path.lineTo(handles[handles.size()-1]->getPosition().translated(2.5, 2.5).toFloat());
+	g.strokePath(path, PathStrokeType(2));
+}
+	
 //==============================================================================
 AudioFilePlaybackEditor::AudioFilePlaybackEditor (AudioFilePlaybackProcessor* ownerFilter):
 AudioProcessorEditor (ownerFilter),
@@ -191,6 +252,9 @@ zoomInButton("zoomInButton", DrawableButton::ImageOnButtonBackground),
 zoomOutButton("zoomOutButton", DrawableButton::ImageOnButtonBackground),
 linkToTransport("linkToTransportButton", DrawableButton::ImageOnButtonBackground),
 basicLook(),
+beatOffset("beatOffet"),
+fileNameLabel(""),
+gainEnvelopeButton("gainEnvelope", DrawableButton::ImageOnButtonBackground),
 zoom(0)
 {
     AudioFormatManager formatManager;
@@ -203,17 +267,19 @@ zoom(0)
 	waveformDisplay = new WaveformDisplay(formatManager, getFilter()->bufferingAudioFileSource, getFilter()->sourceSampleRate, tableColour);
 	setOpaque(false);
 	playButton.addListener(this);
-	addAndMakeVisible(&playButton);
+	addAndMakeVisible(playButton);
 	stopButton.addListener(this);
-	addAndMakeVisible(&stopButton);
+	addAndMakeVisible(stopButton);
 	openButton.addListener(this);
-	addAndMakeVisible(&openButton);
+	addAndMakeVisible(openButton);
 	zoomInButton.addListener(this);
-	addAndMakeVisible(&zoomInButton);
+	addAndMakeVisible(zoomInButton);
 	zoomOutButton.addListener(this);
-	addAndMakeVisible(&zoomOutButton);	
+	addAndMakeVisible(zoomOutButton);	
 	linkToTransport.addListener(this);
-	addAndMakeVisible(&linkToTransport);	
+	addAndMakeVisible(linkToTransport);	
+	gainEnvelopeButton.addListener(this);
+	addAndMakeVisible(gainEnvelopeButton);	
 	
 	playButton.setLookAndFeel(&basicLook);
 	stopButton.setLookAndFeel(&basicLook);
@@ -221,6 +287,18 @@ zoom(0)
 	zoomOutButton.setLookAndFeel(&basicLook);
 	zoomInButton.setLookAndFeel(&basicLook);
 	linkToTransport.setLookAndFeel(&basicLook);
+	gainEnvelopeButton.setLookAndFeel(&basicLook);
+	
+	addAndMakeVisible(beatOffset);
+	beatOffset.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
+	beatOffset.setRange(0, 10000, 1);
+	beatOffset.setValue(0, dontSendNotification);
+	beatOffset.addListener(this);
+	beatOffset.setVelocityBasedMode(true);
+	beatOffset.setColour(Slider::ColourIds::thumbColourId, Colours::black);
+	beatOffset.setColour(Slider::ColourIds::textBoxTextColourId, Colours::white);
+	beatOffset.setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::black);	
+	beatOffset.setTextValueSuffix(" Beats Offset");
 	
 	zoomOutButton.getProperties().set("isRounded", true);
 	zoomInButton.getProperties().set("isRounded", true);
@@ -235,6 +313,11 @@ zoom(0)
 	
 	playButton.setClickingTogglesState(true);	
 	
+	addAndMakeVisible(fileNameLabel);
+	
+	fileNameLabel.setInterceptsMouseClicks(false, false);
+	fileNameLabel.setJustificationType(Justification::right);
+	
 	stopButton.setColour(TextButton::buttonColourId, Colours::white);
 	
 	linkToTransport.setImages(cUtils::createPlayButtonPath(25, Colours::white));
@@ -244,10 +327,21 @@ zoom(0)
 						 cUtils::createPlayButtonPath(25, Colours::green.darker(.9f)), 
 						 cUtils::createPauseButtonPath(25), 
 						 cUtils::createPlayButtonPath(25, Colours::green.darker(.9f)), 
-						 cUtils::createPauseButtonPath(25));
+						 cUtils::createPauseButtonPath(25),
+						 cUtils::createPlayButtonPath(25, Colours::green.darker(.9f)));
 
 	openButton.setImages(cUtils::createOpenButtonPath(25));		
-	stopButton.setImages(cUtils::createStopButtonPath(25, Colours::green.darker(.9f)));
+	stopButton.setImages(cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
+						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
+						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
+						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
+						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
+						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
+						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f))
+						 );
+	
+	gainEnvelopeButton.setImages(cUtils::createEnvelopeButtonPath(25, Colours::yellow));
+	gainEnvelopeButton.setClickingTogglesState(true);
 	
 	zoomInButton.setImages(cUtils::createZoomInButtonPath(25));
 	zoomOutButton.setImages(cUtils::createZoomOutButtonPath(25));
@@ -255,10 +349,26 @@ zoom(0)
 	addAndMakeVisible(waveformDisplay);
     setSize (500, 250);
 
+	beatOffset.toFront(true);
+
 	if(File(getFilter()->getCurrentFile()).existsAsFile())
+	{
 		waveformDisplay->setFile(File(getFilter()->getCurrentFile()));
+		fileNameLabel.setText(getFilter()->getCurrentFile(), dontSendNotification);
+		fileNameLabel.toFront(true);
+	}
 
-
+	if(getFilter()->linkedToMasterTransport()==true)
+	{
+		linkToTransport.setToggleState(true, dontSendNotification);
+		getFilter()->linkToMasterTransport(true);
+		getFilter()->isSourcePlaying=true;	
+		waveformDisplay->startTimer(10);
+		playButton.setEnabled(false);
+		stopButton.setEnabled(false);
+	}
+		
+	beatOffset.setValue(getFilter()->getBeatsOffset());	
 }
 
 AudioFilePlaybackEditor::~AudioFilePlaybackEditor()
@@ -278,6 +388,9 @@ void AudioFilePlaybackEditor::resized()
 	zoomInButton.setBounds(3, ((BUTTON_SIZE)*3)+5, BUTTON_SIZE, BUTTON_SIZE);
 	zoomOutButton.setBounds(3, ((BUTTON_SIZE)*4)+5, BUTTON_SIZE, BUTTON_SIZE);
 	linkToTransport.setBounds(3, ((BUTTON_SIZE)*5)+5, BUTTON_SIZE, BUTTON_SIZE);
+	gainEnvelopeButton.setBounds(3, ((BUTTON_SIZE)*6)+5, BUTTON_SIZE, BUTTON_SIZE);
+	beatOffset.setBounds(35, 7, 100, 20);
+	fileNameLabel.setBounds((getWidth()/2), 7, (getWidth()/2)-5, 14);
 }
 //==============================================================================
 void AudioFilePlaybackEditor::paint (Graphics& g)
@@ -300,7 +413,11 @@ void AudioFilePlaybackEditor::itemDropped (const DragAndDropTarget::SourceDetail
 		}	
 	}
 }
-	
+
+void AudioFilePlaybackEditor::sliderValueChanged (Slider* slider)
+{
+	getFilter()->setBeatOffset(slider->getValue());
+}	
 //==============================================================================
 void AudioFilePlaybackEditor::buttonClicked(Button *button)
 {
@@ -363,8 +480,27 @@ void AudioFilePlaybackEditor::buttonClicked(Button *button)
 	else if(button->getName()=="linkToTransportButton")
 	{
 		if(button->getToggleState()==true)
+		{
+			waveformDisplay->resetPlaybackPosition();
+			getFilter()->bufferingAudioFileSource->setNextReadPosition(0);	
+			playButton.setToggleState(false, dontSendNotification);
 			button->setToggleState(false, dontSendNotification);
+			getFilter()->linkToMasterTransport(false);
+			getFilter()->isSourcePlaying=false;	
+			playButton.setEnabled(true);
+			stopButton.setEnabled(true);
+		}
 		else
+		{
+			waveformDisplay->resetPlaybackPosition();
+			waveformDisplay->startTimer(10);
+			getFilter()->bufferingAudioFileSource->setNextReadPosition(0);	
+			playButton.setToggleState(false, dontSendNotification);
 			button->setToggleState(true, dontSendNotification);
+			getFilter()->linkToMasterTransport(true);
+			getFilter()->isSourcePlaying=true;	
+			playButton.setEnabled(false);
+			stopButton.setEnabled(false);
+		}
 	}
 }

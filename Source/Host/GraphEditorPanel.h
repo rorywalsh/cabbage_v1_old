@@ -273,10 +273,7 @@ public:
 	{
 		sidebarPanel->disablePropertiesPanel();
 	}
-	
-	
-	
-	
+
 	void toggleMIDILearn()
 	{
 		midiLearnEnabled=!midiLearnEnabled;

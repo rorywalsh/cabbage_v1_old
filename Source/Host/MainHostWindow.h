@@ -82,7 +82,6 @@ public:
     void getAllCommands (Array <CommandID>& commands);
     void getCommandInfo (CommandID commandID, ApplicationCommandInfo& result);
     bool perform (const InvocationInfo& info);
-
     bool tryToQuitApplication();
 
 	void launchPreferencesDialogue();
@@ -94,6 +93,7 @@ public:
     const PluginDescription* getChosenType (const int menuID) const;
 
     GraphDocumentComponent* getGraphDocument() const;
+	
 
 private:
     //==============================================================================
@@ -101,7 +101,7 @@ private:
 	CabbageAudioDeviceSelectorComponent* audioSettingsComp;
 	CabbagePluginListComponent* pluginList;
 	const File deadMansPedalFile;
-	
+	TooltipWindow tooltipWindow;
     AudioPluginFormatManager formatManager;
 
     OwnedArray <PluginDescription> internalTypes;

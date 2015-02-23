@@ -25,6 +25,7 @@ gain(1.f),
 pan(.5f),
 envPointIncr(0),
 sampleIndex(0),
+gainOutputValue(1),
 isLinkedToMasterTransport(false)
 {
 	//setupAudioFile(File("/home/rory/Documents/BeesInMarch4.wav"));
@@ -57,6 +58,7 @@ void AudioFilePlaybackProcessor::setupAudioFile (File soundfile)
 			samplingRate =reader->sampleRate;
 			thread.startThread();
 			currentFile = soundfile.getFullPathName();
+			totalLength = bufferingAudioFileSource->getTotalLength();
 		}		
 	}
 }
@@ -104,34 +106,23 @@ void AudioFilePlaybackProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
 
 float AudioFilePlaybackProcessor::getGainEnvelop(int& index)
 { 
-	float currentAmp = 0.f;
-	const int totalLength = bufferingAudioFileSource->getTotalLength();
-	int duration = envPoints[envPointIncr+1].getX()*totalLength-envPoints[envPointIncr].getX()*totalLength;;
+	const int duration = envPoints[envPointIncr+1].getX()*totalLength-envPoints[envPointIncr].getX()*totalLength;;
 	
 	if(envPointIncr<envPoints.size()-1)
 	{
-		int nextHandlePosition = envPoints[envPointIncr+1].getX()*totalLength;
 		if(index<duration)
 		{
 			const float amp1 = 1.f-envPoints[envPointIncr].getY();
 			const float amp2 = 1.f-envPoints[envPointIncr+1].getY();
-			int duration = envPoints[envPointIncr+1].getX()*totalLength-envPoints[envPointIncr].getX()*totalLength;
 			float scale =  (float(index)/float(duration));
-			//cUtils::debug(scale);
-
-			//currentAmp = amp1 +scale*(amp2-amp1);
-			 return amp1 + (float(index)/float(duration))*(amp2-amp1); 
-			//cUtils::debug(currentAmp);
-			//return currentAmp;
+			gainOutputValue = amp1 + (float(index)/float(duration))*(amp2-amp1); 
+			return gainOutputValue;
 		}
 		else
 		{
-			cUtils::debug("duration", duration);
 			envPointIncr++;
-			cUtils::debug("index", index);
-			cUtils::debug("numberPoints", envPoints.size());
-			cUtils::debug("envPointIncr", envPointIncr);
 			index=0;
+			return gainOutputValue;
 		}
 	}
 	else return 0.f;
@@ -144,7 +135,7 @@ void AudioFilePlaybackProcessor::addEnvDataPoint(Point<double> point)
 	
 void AudioFilePlaybackProcessor::playSoundFile(AudioSampleBuffer& buffer)
 {
-	float *audioBufferL, *audioBufferR;
+	float *audioFileBuffer, *audioOutputBuffer;
 	if(bufferingAudioFileSource)
 	{
 		AudioSampleBuffer output (2, buffer.getNumSamples());
@@ -163,24 +154,24 @@ void AudioFilePlaybackProcessor::playSoundFile(AudioSampleBuffer& buffer)
 			bufferingAudioFileSource->getNextAudioBlock(sourceChannelInfo); 
 		else
 			output.clear();
-
-
-		//output.applyGain(gain);
-		audioBufferL = output.getWritePointer(0, 0);
-		audioBufferR = output.getWritePointer(1, 0);
 		
 		for(int i=0;i<buffer.getNumSamples();i++)
 		{
-			float gainValue = getGainEnvelop(sampleIndex);
-			audioBufferL[i] = audioBufferL[i]*gainValue;
-			audioBufferR[i] = audioBufferR[i]*gainValue;
+			float gainValue = getGainEnvelop(sampleIndex)*gain;
+			for (int channel = 0; channel < output.getNumChannels(); ++channel)
+			{
+				audioFileBuffer = output.getWritePointer(channel, 0);
+				audioOutputBuffer = buffer.getWritePointer(channel, 0);
+				audioOutputBuffer[i] = audioFileBuffer[i]*gainValue;
+			}
+
 			sampleIndex++;
 		}
 
-		for (int channel = 0; channel < getNumOutputChannels(); ++channel)
-		{
-			buffer.copyFrom(channel, 0, output, channel, 0, sourceChannelInfo.numSamples);
-		}
+//		for (int channel = 0; channel < getNumOutputChannels(); ++channel)
+//		{
+//			buffer.copyFrom(channel, 0, output, channel, 0, sourceChannelInfo.numSamples);
+//		}
 
 		for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
 		{

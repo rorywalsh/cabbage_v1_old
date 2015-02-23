@@ -39,6 +39,7 @@ currentPlayPosition(0)
     scrollbar.setRangeLimits (visibleRange);
     scrollbar.setAutoHide (false);
     scrollbar.addListener (this);
+	this->setOpaque(true);
 	resized();
 }
 
@@ -146,11 +147,11 @@ void WaveformDisplay::paint (Graphics& g)
 
 void WaveformDisplay::timerCallback()
 {
-    if(thumbnail.getTotalLength()>0 && getEditor()->getFilter()->isSourcePlaying==true)
-    {
-        currentPlayPosition = source->getNextReadPosition()/sampleRate;
-        setScrubberPos(currentPlayPosition);
-    }
+//    if(thumbnail.getTotalLength()>0 && getEditor()->getFilter()->isSourcePlaying==true)
+//    {
+//        currentPlayPosition = source->getNextReadPosition()/sampleRate;
+//        setScrubberPos(currentPlayPosition);
+//    }
 }
 
 void WaveformDisplay::mouseDown (const MouseEvent& e)
@@ -268,7 +269,7 @@ zoom(0)
                          Random::getSystemRandom().nextInt(255));
     
 	waveformDisplay = new WaveformDisplay(formatManager, getFilter()->bufferingAudioFileSource, getFilter()->sourceSampleRate, tableColour);
-	setOpaque(false);
+	setOpaque(true);
 	playButton.addListener(this);
 	addAndMakeVisible(playButton);
 	stopButton.addListener(this);
@@ -366,7 +367,7 @@ zoom(0)
 		linkToTransport.setToggleState(true, dontSendNotification);
 		getFilter()->linkToMasterTransport(true);
 		getFilter()->isSourcePlaying=true;	
-		waveformDisplay->startTimer(10);
+		waveformDisplay->startTimer(50);
 		playButton.setEnabled(false);
 		stopButton.setEnabled(false);
 	}
@@ -430,7 +431,7 @@ void AudioFilePlaybackEditor::buttonClicked(Button *button)
 		if(getFilter()->bufferingAudioFileSource)
 		{
 			if(!getFilter()->isSourcePlaying)
-				waveformDisplay->startTimer(10);
+				waveformDisplay->startTimer(50);
 			else
 				waveformDisplay->stopTimer();
 
@@ -496,7 +497,7 @@ void AudioFilePlaybackEditor::buttonClicked(Button *button)
 		else
 		{
 			waveformDisplay->resetPlaybackPosition();
-			waveformDisplay->startTimer(10);
+			waveformDisplay->startTimer(50);
 			getFilter()->bufferingAudioFileSource->setNextReadPosition(0);	
 			playButton.setToggleState(false, dontSendNotification);
 			button->setToggleState(true, dontSendNotification);

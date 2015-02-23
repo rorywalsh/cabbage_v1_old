@@ -115,6 +115,8 @@ private:
 	String currentFile;
 	int updateCounter;
 	int numFileChannels;
+	int totalLength;
+	float gainOutputValue;
 	bool isLinkedToMasterTransport;
 	StringArray parameterNames;
 	float gain, pan;

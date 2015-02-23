@@ -583,17 +583,18 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 
         deviceManager->initialise(filter->getNumInputChannels(),
                                   filter->getNumOutputChannels(), savedState, false);
+								  
+		filter->createGUI(csdFile.loadFileAsString(), true);						  
     }
     else
     {
         //deviceManager->closeAudioDevice();
+		filter->createGUI(csdFile.loadFileAsString(), true);
         filter->reCompileCsound(csdFile);
     }
-//	filter->sendChangeMessage();
-    filter->createGUI(csdFile.loadFileAsString(), true);
+    
 
     setName(filter->getPluginName());
-
     int runningCabbageProcess = getPreference(appProperties, "UseCabbageIO");
 
     setContentOwned (filter->createEditorIfNeeded(), true);

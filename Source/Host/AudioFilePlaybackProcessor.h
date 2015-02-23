@@ -96,7 +96,7 @@ public:
 	BufferingAudioSource* bufferingAudioFileSource;
 	AudioPlayHead::CurrentPositionInfo hostInfo;
 	void playSoundFile(AudioSampleBuffer& buffer);
-	float getGainEnvelop(int index);
+	float getGainEnvelop(int& index);
 	
 	void addEnvDataPoint(Point<double> point);
 	
@@ -114,6 +114,7 @@ private:
 	int beatOffset;
 	String currentFile;
 	int updateCounter;
+	int numFileChannels;
 	bool isLinkedToMasterTransport;
 	StringArray parameterNames;
 	float gain, pan;

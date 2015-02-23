@@ -36,6 +36,7 @@ isLinkedToMasterTransport(false)
 AudioFilePlaybackProcessor::~AudioFilePlaybackProcessor()
 {
 	thread.stopThread(10);
+	isSourcePlaying = false;
 	delete bufferingAudioFileSource;
 	fileSource= nullptr;
 }
@@ -50,6 +51,8 @@ void AudioFilePlaybackProcessor::setupAudioFile (File soundfile)
 		if (reader != 0)
 		{
 			fileSource = new AudioFormatReaderSource (reader, true);
+			numFileChannels = reader->numChannels;
+			//setting up buffer with two channels, regardless of the number of channels in our soundfile
 			bufferingAudioFileSource = new BufferingAudioSource(fileSource, thread, true, 32768, 2);
 			samplingRate =reader->sampleRate;
 			thread.startThread();
@@ -64,8 +67,7 @@ void AudioFilePlaybackProcessor::prepareToPlay (double sampleRate, int samplesPe
 {
 	if(sampleRate==0)
 		sampleRate = samplingRate;
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+
 	if(bufferingAudioFileSource)
 		bufferingAudioFileSource->prepareToPlay(samplesPerBlock, sampleRate);
 }
@@ -79,6 +81,7 @@ void AudioFilePlaybackProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
 			if((!hostInfo.isPlaying && hostInfo.ppqPosition==0))
 			{
 				bufferingAudioFileSource->setNextReadPosition(0);
+				sampleIndex=0;
 			}
 			
 			if(hostInfo.isPlaying && hostInfo.ppqPosition>=beatOffset)
@@ -99,25 +102,37 @@ void AudioFilePlaybackProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
 		playSoundFile(buffer);
 }
 
-float AudioFilePlaybackProcessor::getGainEnvelop(int index)
+float AudioFilePlaybackProcessor::getGainEnvelop(int& index)
 { 
 	float currentAmp = 0.f;
+	const int totalLength = bufferingAudioFileSource->getTotalLength();
+	int duration = envPoints[envPointIncr+1].getX()*totalLength-envPoints[envPointIncr].getX()*totalLength;;
+	
 	if(envPointIncr<envPoints.size()-1)
 	{
-		if(index<envPoints[envPointIncr+1].getX()*bufferingAudioFileSource->getTotalLength()*44100)
+		int nextHandlePosition = envPoints[envPointIncr+1].getX()*totalLength;
+		if(index<duration)
 		{
 			const float amp1 = 1.f-envPoints[envPointIncr].getY();
 			const float amp2 = 1.f-envPoints[envPointIncr+1].getY();
-			int totalLength = bufferingAudioFileSource->getTotalLength();
 			int duration = envPoints[envPointIncr+1].getX()*totalLength-envPoints[envPointIncr].getX()*totalLength;
 			float scale =  (float(index)/float(duration));
 			//cUtils::debug(scale);
-			currentAmp = amp1 +scale*(amp2-amp1);
+
+			//currentAmp = amp1 +scale*(amp2-amp1);
+			 return amp1 + (float(index)/float(duration))*(amp2-amp1); 
 			//cUtils::debug(currentAmp);
-			return currentAmp;
+			//return currentAmp;
 		}
 		else
+		{
+			cUtils::debug("duration", duration);
 			envPointIncr++;
+			cUtils::debug("index", index);
+			cUtils::debug("numberPoints", envPoints.size());
+			cUtils::debug("envPointIncr", envPointIncr);
+			index=0;
+		}
 	}
 	else return 0.f;
 }
@@ -125,13 +140,11 @@ float AudioFilePlaybackProcessor::getGainEnvelop(int index)
 void AudioFilePlaybackProcessor::addEnvDataPoint(Point<double> point)
 {
 	envPoints.add(point);
-	cUtils::debug("posY", 1-point.getY());
-	cUtils::debug("posX", point.getX()*bufferingAudioFileSource->getTotalLength());
 }
 	
 void AudioFilePlaybackProcessor::playSoundFile(AudioSampleBuffer& buffer)
 {
-	float* audioBuffer;
+	float *audioBufferL, *audioBufferR;
 	if(bufferingAudioFileSource)
 	{
 		AudioSampleBuffer output (2, buffer.getNumSamples());
@@ -151,17 +164,21 @@ void AudioFilePlaybackProcessor::playSoundFile(AudioSampleBuffer& buffer)
 		else
 			output.clear();
 
-		for (int channel = 0; channel < getNumInputChannels(); ++channel)
+
+		//output.applyGain(gain);
+		audioBufferL = output.getWritePointer(0, 0);
+		audioBufferR = output.getWritePointer(1, 0);
+		
+		for(int i=0;i<buffer.getNumSamples();i++)
 		{
-			//output.applyGain(gain);
-			audioBuffer = output.getWritePointer(channel, 0);
-			
-			for(int i=0;i<buffer.getNumSamples();i++)
-			{
-				audioBuffer[i] = audioBuffer[i]*getGainEnvelop(sampleIndex);
-				sampleIndex++;
-			}
-				
+			float gainValue = getGainEnvelop(sampleIndex);
+			audioBufferL[i] = audioBufferL[i]*gainValue;
+			audioBufferR[i] = audioBufferR[i]*gainValue;
+			sampleIndex++;
+		}
+
+		for (int channel = 0; channel < getNumOutputChannels(); ++channel)
+		{
 			buffer.copyFrom(channel, 0, output, channel, 0, sourceChannelInfo.numSamples);
 		}
 

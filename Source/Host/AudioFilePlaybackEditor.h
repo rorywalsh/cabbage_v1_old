@@ -136,6 +136,11 @@ public:
     void resized() override;
 
 	BufferingAudioSource* source;
+
+	AudioFilePlaybackEditor* getEditor()
+	{
+		return this->findParentComponentOfClass<AudioFilePlaybackEditor>();
+	}	
 	
 private:
     

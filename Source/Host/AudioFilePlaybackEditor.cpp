@@ -146,7 +146,7 @@ void WaveformDisplay::paint (Graphics& g)
 
 void WaveformDisplay::timerCallback()
 {
-    if(thumbnail.getTotalLength()>0)
+    if(thumbnail.getTotalLength()>0 && getEditor()->getFilter()->isSourcePlaying==true)
     {
         currentPlayPosition = source->getNextReadPosition()/sampleRate;
         setScrubberPos(currentPlayPosition);

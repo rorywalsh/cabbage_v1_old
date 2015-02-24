@@ -133,8 +133,6 @@ void SidebarPanel::refreshPluginParameters()
 
 	Array <PropertyComponent*> params;
 	
-	const int numPanels = concertinaPanel.getNumPanels();
-
 	for(int index=0;index<filterGraph->getNumFilters();index++)
 	{ 
 		int numParams = filterGraph->getNode(index)->getProcessor()->getNumParameters();
@@ -167,8 +165,7 @@ void SidebarPanel::refreshPluginParameters()
 }
 //=================================================================
 void SidebarPanel::showParametersForNode(int nodeId)
-{	
-	const int numPanels = concertinaPanel.getNumPanels();
+{
 	int indexOfNode = 0;
 	int pluginFilters=0;
 
@@ -326,8 +323,6 @@ void SidebarPanel::timerCallback()
 	transportControls.setTimeLabel(time);
 
 	const int elaspsedQNs = filterGraph->getPPQPosition();
-	const int bars = (elaspsedQNs/4);
-	const int beats = elaspsedQNs%4;
 	
 	String ppqPos = "Beat "+String(elaspsedQNs);	
 	transportControls.setBeatsLabel(String(ppqPos));

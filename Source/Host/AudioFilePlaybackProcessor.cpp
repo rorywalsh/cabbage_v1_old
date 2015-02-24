@@ -182,7 +182,7 @@ void AudioFilePlaybackProcessor::playSoundFile(AudioSampleBuffer& buffer)
 		rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
 		
 		
-		if(updateCounter==0) 
+		if(updateCounter==0)
 			sendActionMessage("rmsValues "+String(rmsLeft)+" "+String(rmsRight));
 			
 		updateCounter++;

@@ -635,8 +635,6 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
         //init all channels with their init val
         for(int i=0; i<guiCtrls.size(); i++)
         {
-			cUtils::debug(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel), 
-					guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
             csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
         }

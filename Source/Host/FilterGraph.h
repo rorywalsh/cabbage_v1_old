@@ -164,8 +164,8 @@ public:
 	void setIsPlaying(bool value, bool reset=false);
 	void setBPM(int bpm);
 	
-	int getTimeInSeconds(){		audioPlayHead.getTimeInSeconds();	}
-	int getPPQPosition(){		audioPlayHead.getPPQPosition();		}	
+	int getTimeInSeconds(){		return audioPlayHead.getTimeInSeconds();	}
+	int getPPQPosition(){		return audioPlayHead.getPPQPosition();		}
 	void setEditedNodeId(int id){	IdForNodeBeingEdited=id;		}
 	int getEditedNodeId(){	return IdForNodeBeingEdited;			}
 

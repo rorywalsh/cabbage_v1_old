@@ -113,6 +113,7 @@ FilterComponent::FilterComponent (FilterGraph& graph_, const uint32 filterID_)
 {
 	shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 3, Point<int> (0, 1)));
 	setComponentEffect (&shadow);
+    
 }
 //================================================================================
 FilterComponent::~FilterComponent()

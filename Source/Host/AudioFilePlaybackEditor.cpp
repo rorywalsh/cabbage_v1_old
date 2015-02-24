@@ -39,7 +39,7 @@ currentPlayPosition(0)
     scrollbar.setRangeLimits (visibleRange);
     scrollbar.setAutoHide (false);
     scrollbar.addListener (this);
-	this->setOpaque(true);
+	setOpaque(true);
 	resized();
 }
 
@@ -128,7 +128,7 @@ void WaveformDisplay::paint (Graphics& g)
     g.fillAll (Colour(20, 20, 20));
     g.setColour (tableColour);
     
-    
+    //cUtils::debug("repainting");
     
     if (thumbnail.getTotalLength() > 0)
     {
@@ -147,11 +147,11 @@ void WaveformDisplay::paint (Graphics& g)
 
 void WaveformDisplay::timerCallback()
 {
-//    if(thumbnail.getTotalLength()>0 && getEditor()->getFilter()->isSourcePlaying==true)
-//    {
-//        currentPlayPosition = source->getNextReadPosition()/sampleRate;
-//        setScrubberPos(currentPlayPosition);
-//    }
+    if(thumbnail.getTotalLength()>0 && getEditor()->getFilter()->isSourcePlaying==true)
+    {
+        currentPlayPosition = source->getNextReadPosition()/sampleRate;
+        setScrubberPos(currentPlayPosition);
+    }
 }
 
 void WaveformDisplay::mouseDown (const MouseEvent& e)

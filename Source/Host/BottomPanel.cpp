@@ -38,6 +38,7 @@ topBorder("topBorder")
 {
 	addAndMakeVisible(&topBorder);
 	this->setName("bottomPanel");
+    setOpaque(true);
 	topBorder.addMouseListener(this, true);
 	topBorder.setAlwaysOnTop(true);
 	addAndMakeVisible(&viewport);

@@ -24,8 +24,9 @@ beatOffset(0),
 gain(1.f),
 pan(.5f),
 envPointIncr(0),
-sampleIndex(0),
+gainSampleIndex(0),
 gainOutputValue(1),
+shouldLoop(false),
 isLinkedToMasterTransport(false)
 {
 	//setupAudioFile(File("/home/rory/Documents/BeesInMarch4.wav"));
@@ -62,9 +63,7 @@ void AudioFilePlaybackProcessor::setupAudioFile (File soundfile)
 		}		
 	}
 }
-
-
-
+//==============================================================================
 void AudioFilePlaybackProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 	if(sampleRate==0)
@@ -73,37 +72,101 @@ void AudioFilePlaybackProcessor::prepareToPlay (double sampleRate, int samplesPe
 	if(bufferingAudioFileSource)
 		bufferingAudioFileSource->prepareToPlay(samplesPerBlock, sampleRate);
 }
-
+//==============================================================================
 void AudioFilePlaybackProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-	if(isLinkedToMasterTransport)
+	if(bufferingAudioFileSource)
 	{
-		if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition(hostInfo))
+		if(isLinkedToMasterTransport)
 		{
-			if((!hostInfo.isPlaying && hostInfo.ppqPosition==0))
+			if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition(hostInfo))
 			{
-				bufferingAudioFileSource->setNextReadPosition(0);
-				sampleIndex=0;
-			}
-			
-			if(hostInfo.isPlaying && hostInfo.ppqPosition>=beatOffset)
-			{
-				playSoundFile(buffer);
-			}
-			else
-			{
-				for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+				if((!hostInfo.isPlaying && hostInfo.ppqPosition==0))
 				{
-					buffer.clear (i, 0, buffer.getNumSamples());
-				}			
-			}
+					bufferingAudioFileSource->setNextReadPosition(0);
+					isSourcePlaying=true;
+					gainSampleIndex=0;
+				}
 				
+				if(hostInfo.isPlaying && hostInfo.ppqPosition>=beatOffset)
+				{
+					if(isSourcePlaying)
+						playSoundFile(buffer);
+				}
+				else
+				{
+					for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+					{
+						buffer.clear (i, 0, buffer.getNumSamples());
+					}			
+				}
+					
+			}
 		}
+		else
+		{
+			if(isSourcePlaying)
+				playSoundFile(buffer, false);
+		}
+
 	}
 	else
-		playSoundFile(buffer);
+		buffer.clear();
 }
+//==============================================================================	
+void AudioFilePlaybackProcessor::playSoundFile(AudioSampleBuffer& buffer, bool isLinked)
+{
+	float *audioFileBuffer, *audioOutputBuffer;
+	if(bufferingAudioFileSource)
+	{
+		AudioSampleBuffer output (2, buffer.getNumSamples());
+		sourceChannelInfo.buffer = &output;
+		sourceChannelInfo.startSample = 0;
+		sourceChannelInfo.numSamples = output.getNumSamples();
 
+		if(bufferingAudioFileSource->getNextReadPosition()>=bufferingAudioFileSource->getTotalLength())
+		{
+			envPointIncr=0;
+			gainSampleIndex=0;
+			bufferingAudioFileSource->setNextReadPosition(0);
+			if(!shouldLoop)
+				isSourcePlaying=false;
+		}
+
+
+			bufferingAudioFileSource->getNextAudioBlock(sourceChannelInfo); 
+			for(int i=0;i<buffer.getNumSamples();i++)
+			{
+				float gainValue = getGainEnvelop(gainSampleIndex)*gain;
+				for (int channel = 0; channel < output.getNumChannels(); ++channel)
+				{
+					audioFileBuffer = output.getWritePointer(channel, 0);
+					audioOutputBuffer = buffer.getWritePointer(channel, 0);
+					audioOutputBuffer[i] = audioFileBuffer[i]*gainValue;
+				}
+				
+				gainSampleIndex++;
+			}
+
+			for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+			{
+				buffer.clear (i, 0, buffer.getNumSamples());
+			}					
+
+		
+		rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
+		rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
+		
+		
+		if(updateCounter==0) 
+			sendActionMessage("rmsValues "+String(rmsLeft)+" "+String(rmsRight));
+			
+		updateCounter++;
+		if(updateCounter>5)
+			updateCounter=0;	
+	}	
+}
+//==============================================================================
 float AudioFilePlaybackProcessor::getGainEnvelop(int& index)
 { 
 	const int duration = envPoints[envPointIncr+1].getX()*totalLength-envPoints[envPointIncr].getX()*totalLength;;
@@ -131,64 +194,6 @@ float AudioFilePlaybackProcessor::getGainEnvelop(int& index)
 void AudioFilePlaybackProcessor::addEnvDataPoint(Point<double> point)
 {
 	envPoints.add(point);
-}
-	
-void AudioFilePlaybackProcessor::playSoundFile(AudioSampleBuffer& buffer)
-{
-	float *audioFileBuffer, *audioOutputBuffer;
-	if(bufferingAudioFileSource)
-	{
-		AudioSampleBuffer output (2, buffer.getNumSamples());
-		sourceChannelInfo.buffer = &output;
-		sourceChannelInfo.startSample = 0;
-		sourceChannelInfo.numSamples = output.getNumSamples();
-
-		if(bufferingAudioFileSource->getNextReadPosition()>=bufferingAudioFileSource->getTotalLength())
-		{
-			bufferingAudioFileSource->setNextReadPosition(0);
-			envPointIncr=0;
-			sampleIndex=0;
-		}
-
-		if(isSourcePlaying)
-			bufferingAudioFileSource->getNextAudioBlock(sourceChannelInfo); 
-		else
-			output.clear();
-		
-		for(int i=0;i<buffer.getNumSamples();i++)
-		{
-			float gainValue = getGainEnvelop(sampleIndex)*gain;
-			for (int channel = 0; channel < output.getNumChannels(); ++channel)
-			{
-				audioFileBuffer = output.getWritePointer(channel, 0);
-				audioOutputBuffer = buffer.getWritePointer(channel, 0);
-				audioOutputBuffer[i] = audioFileBuffer[i]*gainValue;
-			}
-
-			sampleIndex++;
-		}
-
-//		for (int channel = 0; channel < getNumOutputChannels(); ++channel)
-//		{
-//			buffer.copyFrom(channel, 0, output, channel, 0, sourceChannelInfo.numSamples);
-//		}
-
-		for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
-		{
-			buffer.clear (i, 0, buffer.getNumSamples());
-		}
-		
-		rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
-		rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
-		
-		
-		if(updateCounter==0) 
-			sendActionMessage("rmsValues "+String(rmsLeft)+" "+String(rmsRight));
-			
-		updateCounter++;
-		if(updateCounter>5)
-			updateCounter=0;	
-	}	
 }
 //==============================================================================
 const String AudioFilePlaybackProcessor::getName() const

@@ -58,6 +58,16 @@ public:
 		return beatOffset;
 	}
  
+ 	void setLooping(bool loop)
+	{
+		shouldLoop = loop;
+	}
+	
+	void resetGainEnv()
+	{
+		gainSampleIndex=0;
+	}
+	
 	int getNumParameters();
 
     float getParameter (int index);
@@ -94,8 +104,15 @@ public:
 	bool isSourcePlaying;
 	int sourceSampleRate;
 	BufferingAudioSource* bufferingAudioFileSource;
+	
+	void setBufferingReadPosition(int pos)
+	{
+		if(bufferingAudioFileSource)
+			bufferingAudioFileSource->setNextReadPosition(pos);
+	}
+	
 	AudioPlayHead::CurrentPositionInfo hostInfo;
-	void playSoundFile(AudioSampleBuffer& buffer);
+	void playSoundFile(AudioSampleBuffer& buffer, bool isLinked=true);
 	float getGainEnvelop(int& index);
 	
 	void addEnvDataPoint(Point<double> point);
@@ -107,6 +124,7 @@ public:
 private:
 	AudioSourceChannelInfo sourceChannelInfo;
 	PositionableAudioSource* fileSource;
+	bool shouldLoop;
 	AudioSampleBuffer* audioBuffer;
 	int samplingRate;
     TimeSliceThread thread;
@@ -121,7 +139,7 @@ private:
 	StringArray parameterNames;
 	float gain, pan;
 	Array<Point<double>> envPoints;
-	int envPointIncr, sampleIndex;
+	int envPointIncr, gainSampleIndex;
 	//PositionableAudioSource* currentAudioFileSource;
 	
 

@@ -63,6 +63,21 @@ public:
 		shouldLoop = loop;
 	}
 	
+	bool getLooping()
+	{
+		return shouldLoop;
+	}
+
+	bool shouldShowGainEnv()
+	{
+		return showGainEnv;
+	}
+	
+	void setShowGainEnv(bool val)
+	{
+		showGainEnv = val;
+	}
+	
 	void resetGainEnv()
 	{
 		gainSampleIndex=0;
@@ -114,13 +129,23 @@ public:
 	AudioPlayHead::CurrentPositionInfo hostInfo;
 	void playSoundFile(AudioSampleBuffer& buffer, bool isLinked=true);
 	float getGainEnvelop(int& index);
-	
 	void addEnvDataPoint(Point<double> point);
 	
 	void clearEnvDataPoint()
 	{
 		envPoints.clear();
 	}	
+	
+	Point<double> getEnvPoint(int index)
+	{
+		return envPoints[index];
+	}
+
+	int getEnvPointSize()
+	{
+		return envPoints.size();
+	}
+	
 private:
 	AudioSourceChannelInfo sourceChannelInfo;
 	PositionableAudioSource* fileSource;
@@ -134,6 +159,7 @@ private:
 	int updateCounter;
 	int numFileChannels;
 	int totalLength;
+	bool showGainEnv;
 	float gainOutputValue;
 	bool isLinkedToMasterTransport;
 	StringArray parameterNames;

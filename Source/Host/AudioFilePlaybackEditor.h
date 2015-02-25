@@ -51,7 +51,12 @@ public:
 		void mouseDown(const MouseEvent& e);
 		Handle* getPreviousHandle(Handle* thisHandle);
 		int getHandleIndex(Handle* thisHandle);
+		void removeHandle(Handle* handle);
+		Handle* getLastHandle();
+		Handle* getFirstHandle();
 		Handle* getNextHandle(Handle* thisHandle);
+		void createGainEnvStartEndPoint();
+		void addHandle(Point<double> pos, bool resize=true);
 		
 		AudioFilePlaybackEditor* getEditor()
 		{
@@ -63,6 +68,7 @@ public:
 		
 	};
 	
+	GainEnvelope gainEnvelope;
 	void showGainEnvelope(bool show);
     void setScrubberPos(double pos);
     void changeListenerCallback (ChangeBroadcaster*);
@@ -89,7 +95,7 @@ private:
     //Slider& zoomSlider;
 	ScrollBar scrollbar;
     AudioThumbnailCache thumbnailCache;
-	GainEnvelope gainEnvelope;
+	
     AudioThumbnail thumbnail;
     double startTime, endTime;
 	Rectangle<int> localBounds;
@@ -111,15 +117,14 @@ public:
 	compY(0),
 	compX(0)
 	{
-	setSize(5, 5);	
+	setSize(8, 8);	
 	}
 	
 	void paint (Graphics& g)
 	{
 		g.fillAll(Colours::transparentBlack);
 		g.setColour(Colours::white);
-		g.fillEllipse(0, 0, 5, 5);
-		
+		g.fillEllipse(0, 0, 8, 8);
 	}
 
 	void setRelativePosition(Point<double> pos, double width, double height)
@@ -136,37 +141,76 @@ public:
 
 	void mouseDown(const MouseEvent &e)
 	{
+		if(e.mods.isPopupMenu() && (this!=owner->getFirstHandle() || this!=owner->getLastHandle()))
+		{
+			PopupMenu pop;
+			pop.addItem(99, "Delete");
+			
+			if(pop.show()==99)
+			{
+				owner->removeHandle(this);
+			}
+		}
+		
 		compX = getX();
 		compY = getY();
 		setMouseCursor (MouseCursor::DraggingHandCursor);
-		dragger.startDraggingComponent (this, e);	
-			
+		dragger.startDraggingComponent (this, e);				
 		constrainer.setMinimumWidth(200);
 	}
 
 	void mouseEnter(const MouseEvent &e)
 	{
-		constrainer.setMinimumOnscreenAmounts(100, 2000, 100, 100);
+		constrainer.setMinimumOnscreenAmounts(owner->getHeight(), 
+											  owner->getWidth(), 
+											  owner->getHeight(), 
+											  1);
 		setMouseCursor (MouseCursor::DraggingHandCursor);		
 	}
 
 	void mouseDrag(const MouseEvent &e)
 	{
+		
+		//when a handle is dragged, we update its position and send a message
+		//to Cabbage to update the Csound function table(CabbagePluginEditor.cpp)
+		const Handle* previousHandle = owner->getPreviousHandle(this);
+		const Handle* nextHandle = owner->getNextHandle(this);
+
 		setMouseCursor (MouseCursor::DraggingHandCursor);
+
 		double xPos = compX+e.getDistanceFromDragStartX();
-		double yPos = compY+e.getDistanceFromDragStartY();		
-		setRelativePosition(Point<double>(xPos, yPos), owner->getWidth(), owner->getHeight());
-		dragger.dragComponent (this, e, &constrainer);
+		double yPos = jlimit(-4.0, owner->getHeight()-4.0, compY+e.getDistanceFromDragStartY());
+		
+		
+		if(this==owner->getFirstHandle() || this==owner->getLastHandle())
+		{			
+			setRelativePosition(Point<double>((this==owner->getLastHandle() ? owner->getWidth() : 0), yPos), owner->getWidth(), owner->getHeight());
+			dragger.dragComponent (this, e.withNewPosition(Point<float>(compX, e.getPosition().getY())), &constrainer);
+		}
+		else
+		{
+			if((xPos>(previousHandle->getX()-4)) && (xPos<nextHandle->getX()))
+			{
+				cUtils::debug("Owner height", owner->getHeight());
+				cUtils::debug("yPos", yPos);
+				setRelativePosition(Point<double>(xPos, yPos), owner->getWidth(), owner->getHeight());
+				dragger.dragComponent (this, e, &constrainer);
+			}
+		}
+		
+		
 		owner->repaint();
 	}
 	
 	void mouseUp(const MouseEvent &e)
 	{
 		owner->resized();
+		owner->repaint();
 	}
 	
 	double xPosRelative, yPosRelative, compX, compY;
 	ComponentDragger dragger;
+	int uid;
 	ComponentBoundsConstrainer constrainer;
 	WaveformDisplay::GainEnvelope* owner;
 

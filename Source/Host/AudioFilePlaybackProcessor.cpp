@@ -21,7 +21,7 @@ rmsLeft(0),
 rmsRight(0),
 updateCounter(0),
 beatOffset(0),
-gain(1.f),
+gain(.5f),
 pan(.5f),
 envPointIncr(0),
 gainSampleIndex(0),
@@ -119,10 +119,10 @@ void AudioFilePlaybackProcessor::playSoundFile(AudioSampleBuffer& buffer, bool i
 	float *audioFileBuffer, *audioOutputBuffer;
 	if(bufferingAudioFileSource)
 	{
-		AudioSampleBuffer output (2, buffer.getNumSamples());
-		sourceChannelInfo.buffer = &output;
+		AudioSampleBuffer fillBuffer (2, buffer.getNumSamples());
+		sourceChannelInfo.buffer = &fillBuffer;
 		sourceChannelInfo.startSample = 0;
-		sourceChannelInfo.numSamples = output.getNumSamples();
+		sourceChannelInfo.numSamples = fillBuffer.getNumSamples();
 
 		if(bufferingAudioFileSource->getNextReadPosition()>=bufferingAudioFileSource->getTotalLength())
 		{
@@ -137,12 +137,12 @@ void AudioFilePlaybackProcessor::playSoundFile(AudioSampleBuffer& buffer, bool i
 			bufferingAudioFileSource->getNextAudioBlock(sourceChannelInfo); 
 			for(int i=0;i<buffer.getNumSamples();i++)
 			{
-				float gainValue = getGainEnvelop(gainSampleIndex)*gain;
-				for (int channel = 0; channel < output.getNumChannels(); ++channel)
+				float gainValue = getGainEnvelop(gainSampleIndex)*(gain*2);
+				for (int channel = 0; channel < fillBuffer.getNumChannels(); ++channel)
 				{
-					audioFileBuffer = output.getWritePointer(channel, 0);
+					audioFileBuffer = fillBuffer.getWritePointer(channel, 0);
 					audioOutputBuffer = buffer.getWritePointer(channel, 0);
-					audioOutputBuffer[i] = audioFileBuffer[i]*gainValue;
+					audioOutputBuffer[i] = audioFileBuffer[i]*gainValue*(channel==0.f ? pan : 1.f-pan);
 				}
 				
 				gainSampleIndex++;
@@ -219,7 +219,7 @@ void AudioFilePlaybackProcessor::setParameter (int index, float newValue)
 	if(index==0)
 		gain = newValue;
 	else if(index==1)
-		gain = newValue;
+		pan = newValue;
 }
 
 const String AudioFilePlaybackProcessor::getParameterName (int index)
@@ -229,7 +229,10 @@ const String AudioFilePlaybackProcessor::getParameterName (int index)
 
 const String AudioFilePlaybackProcessor::getParameterText (int index)
 {
-    return String::empty;
+    if(index==0)
+		return String(gain*2, 2);
+	else
+		return String(((pan)*2)-1, 2);
 }
 
 const String AudioFilePlaybackProcessor::getInputChannelName (int channelIndex) const
@@ -318,8 +321,21 @@ void AudioFilePlaybackProcessor::getStateInformation (MemoryBlock& destData)
 	xml.setAttribute("Soundfile", currentFile);	
 	xml.setAttribute("gain", gain);
 	xml.setAttribute("pan", pan);
+	xml.setAttribute("showGainEnv", showGainEnv);
 	xml.setAttribute("isLinkedToMasterTransport", this->isLinkedToMasterTransport);
+	xml.setAttribute("shouldLoop", this->shouldLoop);
 	xml.setAttribute("beatOffset", this->beatOffset);
+	
+	
+	StringArray points;
+	//add envelop points if there are any
+	for(int i=0;i<envPoints.size();i++)
+	{
+		points.add(String(envPoints[i].getX()));
+		points.add(String(envPoints[i].getY()));
+	} 
+	
+	xml.setAttribute("envPoints", points.joinIntoString(" "));
 	copyXmlToBinary (xml, destData);
 }
 
@@ -332,6 +348,17 @@ void AudioFilePlaybackProcessor::setStateInformation (const void* data, int size
 		gain = xmlState->getDoubleAttribute("gain");
 		pan = xmlState->getDoubleAttribute("pan");
 		isLinkedToMasterTransport = (bool)xmlState->getIntAttribute("isLinkedToMasterTransport");
+		shouldLoop = (bool)xmlState->getIntAttribute("shouldLoop");
 		beatOffset = xmlState->getIntAttribute("beatOffset");
+		showGainEnv = (bool)xmlState->getIntAttribute("showGainEnv");
+		StringArray points;
+		points.addTokens(xmlState->getStringAttribute("envPoints")," ");
+		
+		for(int i=0;i<points.size();i+=2)
+		{
+			Point<double> data(points[i].getDoubleValue(), points[i+1].getDoubleValue());
+			envPoints.add(data);
+		}
+		
 	}
 }

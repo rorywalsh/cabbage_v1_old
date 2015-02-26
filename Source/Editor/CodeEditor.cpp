@@ -164,6 +164,8 @@ void CsoundCodeEditor::resized()
 void CsoundCodeEditor::paint(Graphics& g)
 {
     g.fillAll(cUtils::getDarkerBackgroundSkin());
+	
+#ifndef CABBAGE_HOST
     if(editor[currentEditor] != 0)
     {
         g.setColour(juce::Colours::white);
@@ -204,8 +206,7 @@ void CsoundCodeEditor::paint(Graphics& g)
 
         }
     }
-    //g.setColour(Colour(10, 10, 10));
-    //g.fillRect(0, 200, getWidth(), getHeight()-200);
+#endif
 }
 
 

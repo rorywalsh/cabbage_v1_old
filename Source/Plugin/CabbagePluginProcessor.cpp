@@ -529,7 +529,7 @@ void CabbagePluginAudioProcessor::YieldCallback(void* data)
 //============================================================================
 //RECOMPILE CSOUND. THIS IS CALLED FROM THE PLUGIN HOST WHEN UDPATES ARE MADE ON THE FLY
 //============================================================================
-void CabbagePluginAudioProcessor::reCompileCsound(File file)
+int CabbagePluginAudioProcessor::reCompileCsound(File file)
 {
 #ifndef Cabbage_No_Csound
     
@@ -649,7 +649,7 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
         
         stopProcessing = false;
         
-        return;
+        return csCompileResult;
     }
     else
     {
@@ -657,7 +657,8 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
         csoundStatus=false;
     }
     getCallbackLock().exit();
-    
+	
+    return csCompileResult;
 #endif
 }
 //===========================================================
@@ -701,8 +702,22 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     bool multiComment = false;
     bool multiLine = false;
     
-    csound->Message("\n===Cabbage Warnings===\n");
-    
+    //csound->Message("\n===Cabbage Warnings===\n");
+    int lineWhichCabbageSectionStarts = 0;
+	int lineWhichCabbageSectionEnds = csdText.size();
+    for(int i=0; i<csdText.size(); i++)
+    {
+		if(csdText[i].contains("<Cabbage>"))
+			lineWhichCabbageSectionStarts=i;
+		else if(csdText[i].contains("</Cabbage>"))
+			lineWhichCabbageSectionEnds=i;
+	}	
+	
+	csdText.removeRange(0, lineWhichCabbageSectionStarts);
+	csdText.removeRange(lineWhichCabbageSectionEnds+1, 99999);
+	
+	cUtils::debug(csdText.size());
+	
     for(int i=0; i<csdText.size(); i++)
     {
         String temp;
@@ -720,7 +735,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     {
         
         int csdLineNumber=0;
-#if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
+#if (defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)) && !defined(AndroidBuild)
         if(!refresh)
         {
             StringArray fullText;
@@ -1021,7 +1036,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
         else break;
     } //end of scan through entire csd text, control vectors are now populated
     
-    csound->Message("===End of Cabbage warnings===\n");
+    //csound->Message("===End of Cabbage warnings===\n");
     //init all channels with their init val, and set parameters
     for(int i=0; i<guiCtrls.size(); i++)
     {

@@ -60,6 +60,7 @@ void WaveformDisplay::setScrubberPos(double pos)
     //pos = (pos/(thumbnail.getTotalLength()*sampleRate))*thumbnail.getTotalLength();
     currentPositionMarker.setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 0,
                                                           1.5f, (float) (getHeight() - (scrollbar.getHeight()+5))));
+	this->getEditor()->setCurrentPosition(String(pos, 4));
 }
 
 void WaveformDisplay::changeListenerCallback (ChangeBroadcaster*)
@@ -339,6 +340,7 @@ linkToTransport("linkToTransportButton", DrawableButton::ImageOnButtonBackground
 basicLook(),
 beatOffset("beatOffet"),
 fileNameLabel(""),
+currentPositionLabel(""),
 beatOffsetLabel("beatOffsetLabel"),
 gainEnvelopeButton("gainEnvelopeButton", DrawableButton::ImageOnButtonBackground),
 zoom(0)
@@ -415,6 +417,8 @@ zoom(0)
 	
 	addAndMakeVisible(fileNameLabel);
 	addAndMakeVisible(beatOffsetLabel);
+	addAndMakeVisible(currentPositionLabel);
+	currentPositionLabel.setJustificationType(Justification::centred);
 	beatOffsetLabel.setJustificationType(Justification::right);
 	
 	fileNameLabel.setInterceptsMouseClicks(false, false);
@@ -514,6 +518,7 @@ void AudioFilePlaybackEditor::resized()
 	zoomOutButton.setBounds(3+BUTTON_SIZE, ((BUTTON_SIZE)*2)+5, BUTTON_SIZE, BUTTON_SIZE);
 	linkToTransport.setBounds(3, ((BUTTON_SIZE)*3)+5, BUTTON_SIZE, BUTTON_SIZE);
 	gainEnvelopeButton.setBounds(3+BUTTON_SIZE, ((BUTTON_SIZE)*3)+5, BUTTON_SIZE, BUTTON_SIZE);
+	currentPositionLabel.setBounds(0, ((BUTTON_SIZE)*4)+5, (BUTTON_SIZE*2)+7, 12);
 	beatOffsetLabel.setBounds(0, getHeight()-45, BUTTON_SIZE*2, 12);
 	beatOffset.setBounds(3, getHeight()-30, BUTTON_SIZE*2, 20);
 	fileNameLabel.setBounds((getWidth()/2), 7, (getWidth()/2)-5, 14);

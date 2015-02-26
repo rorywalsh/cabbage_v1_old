@@ -1229,17 +1229,6 @@ public:
     //update control
     void update(CabbageGUIClass m_cAttr)
     {
-        setColour(TextButton::buttonColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
-        setColour(GroupComponent::textColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
-        setBounds(m_cAttr.getBounds());
-        setText(m_cAttr.getStringProp(CabbageIDs::text));
-        setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
-
-        if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
-        {
-            rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
-            setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
-        }
 
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
         {
@@ -1251,7 +1240,24 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-        repaint();
+		
+		if(isEnabled())
+		{
+			setColour(TextButton::buttonColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
+			setColour(GroupComponent::textColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
+			setBounds(m_cAttr.getBounds());
+			setText(m_cAttr.getStringProp(CabbageIDs::text));
+			setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
+
+			if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
+			{
+				rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
+				setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
+			}
+
+			repaint();
+		
+		}
     }
 
     //---------------------------------------------

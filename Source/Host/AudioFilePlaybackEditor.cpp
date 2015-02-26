@@ -50,8 +50,8 @@ WaveformDisplay::~WaveformDisplay()
 
 void WaveformDisplay::resized()
 {
-    scrollbar.setBounds (getLocalBounds().removeFromBottom (20).reduced (2));
-	gainEnvelope.setSize(getWidth(), getHeight()-20);
+    scrollbar.setBounds (getLocalBounds().removeFromBottom (14).reduced (2));
+	gainEnvelope.setSize(getWidth(), getHeight()-14);
 }
 
 void WaveformDisplay::setScrubberPos(double pos)
@@ -66,6 +66,12 @@ void WaveformDisplay::changeListenerCallback (ChangeBroadcaster*)
 {
     repaint();
 }
+
+void WaveformDisplay::showGainEnvelope(bool show)
+{
+	gainEnvelope.setVisible(show);
+}
+
 
 void WaveformDisplay::setFile (const File& file)
 {
@@ -125,7 +131,7 @@ void WaveformDisplay::setRange (Range<double> newRange)
 
 void WaveformDisplay::paint (Graphics& g)
 {
-    g.fillAll (Colour(20, 20, 20));
+    g.fillAll (Colour(10, 10, 10));
     g.setColour (tableColour);
     
     //cUtils::debug("repainting");
@@ -176,7 +182,7 @@ void WaveformDisplay::mouseDrag (const MouseEvent& e)
 
 void WaveformDisplay::resetPlaybackPosition()
 {
-    currentPlayPosition=0;
+	setScrubberPos(0);
 }
 
 float WaveformDisplay::timeToX (const double time) const
@@ -196,6 +202,23 @@ void WaveformDisplay::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double n
 }
 
 //------------------------------------------------------------------------------
+WaveformDisplay::GainEnvelope::GainEnvelope()
+{
+
+}
+
+void WaveformDisplay::GainEnvelope::createGainEnvStartEndPoint()
+{
+	Handle* leftMostHandle = new Handle(this);
+	addAndMakeVisible(leftMostHandle);
+	leftMostHandle->setRelativePosition(Point<double>(0, 0), 1, 1);
+	Handle* rightMostHandle = new Handle(this);
+	addAndMakeVisible(rightMostHandle);
+	rightMostHandle->setRelativePosition(Point<double>(1, 0), 1, 1);
+	handles.add(leftMostHandle);
+	handles.add(rightMostHandle);		
+}
+
 void WaveformDisplay::GainEnvelope::mouseDown(const MouseEvent& e)
 {
 	int indx;
@@ -211,7 +234,7 @@ void WaveformDisplay::GainEnvelope::mouseDown(const MouseEvent& e)
 		}
 	}	
 	
-	Handle* handle = new Handle();		
+	Handle* handle = new Handle(this);		
 	addAndMakeVisible(handle);
 	handle->setTopLeftPosition(e.getPosition().getX(), e.getPosition().getY());
 	handle->setRelativePosition(e.getPosition().toDouble(), getWidth(), getHeight());
@@ -220,12 +243,69 @@ void WaveformDisplay::GainEnvelope::mouseDown(const MouseEvent& e)
 	resized();
 }
 
+void WaveformDisplay::GainEnvelope::addHandle(Point<double> pos, bool resize)
+{
+	Handle* handle = new Handle(this);		
+	addAndMakeVisible(handle);
+	handle->setRelativePosition(Point<double>(pos.getX(), pos.getY()), 1.0, 1.0);
+	handles.add(handle);
+	repaint();
+	if(resize)
+		resized();	
+} 
+
+int WaveformDisplay::GainEnvelope::getHandleIndex(Handle* thisHandle)
+{
+    return handles.indexOf(thisHandle);
+}
+
+void WaveformDisplay::GainEnvelope::removeHandle(Handle* handle)
+{
+    if (handles.size() > 0)
+    {
+        handles.removeObject(handle, true);
+    }	
+	
+	repaint();
+	resized();
+}
+	
+Handle* WaveformDisplay::GainEnvelope::getLastHandle()
+{
+    return handles.getUnchecked(handles.size()-1);
+}
+
+Handle* WaveformDisplay::GainEnvelope::getFirstHandle()
+{
+    return handles.getUnchecked(0);
+}
+
+Handle* WaveformDisplay::GainEnvelope::getPreviousHandle(Handle* thisHandle)
+{
+    int thisHandleIndex = handles.indexOf(thisHandle);
+
+    if(thisHandleIndex <= 0)
+        return 0;
+    else
+        return handles.getUnchecked(thisHandleIndex-1);
+}
+
+Handle* WaveformDisplay::GainEnvelope::getNextHandle(Handle* thisHandle)
+{
+    int thisHandleIndex = handles.indexOf(thisHandle);
+
+    if(thisHandleIndex == -1 || thisHandleIndex >= handles.size()-1)
+        return 0;
+    else
+        return handles.getUnchecked(thisHandleIndex+1);
+}
+
 void WaveformDisplay::GainEnvelope::resized()
 {
 	getEditor()->getFilter()->clearEnvDataPoint();
 	for(int i=0;i<handles.size();i++)
 	{
-		const double xPos = handles[i]->getRelativePosition().getX()*getWidth()-5;
+		const double xPos = handles[i]->getRelativePosition().getX()*getWidth()-((i==0 || i==handles.size()-1) ? 4 : 0);
 		const double yPos = handles[i]->getRelativePosition().getY()*getHeight();
 		handles[i]->setTopLeftPosition(xPos, yPos);
 		getEditor()->getFilter()->addEnvDataPoint(handles[i]->getRelativePosition());
@@ -240,9 +320,9 @@ void WaveformDisplay::GainEnvelope::paint(Graphics& g)
 	path.startNewSubPath(handles[0]->getPosition().translated(2.5, 2.5).toFloat());
 	for(int i=0;i<handles.size()-1;i++)
 	{
-		path.lineTo(handles[i]->getPosition().translated(2.5, 2.5).toFloat());
+		path.lineTo(handles[i]->getPosition().translated(4, 4).toFloat());
 	}
-	path.lineTo(handles[handles.size()-1]->getPosition().translated(2.5, 2.5).toFloat());
+	path.lineTo(handles[handles.size()-1]->getPosition().translated(4, 4).toFloat());
 	g.strokePath(path, PathStrokeType(2));
 }
 	
@@ -253,12 +333,14 @@ playButton("playButton", DrawableButton::ImageOnButtonBackground),
 stopButton("stopButton", DrawableButton::ImageOnButtonBackground),
 openButton("openButton", DrawableButton::ImageOnButtonBackground),
 zoomInButton("zoomInButton", DrawableButton::ImageOnButtonBackground),
+loopButton("loopButton", DrawableButton::ImageOnButtonBackground),
 zoomOutButton("zoomOutButton", DrawableButton::ImageOnButtonBackground),
 linkToTransport("linkToTransportButton", DrawableButton::ImageOnButtonBackground),
 basicLook(),
 beatOffset("beatOffet"),
 fileNameLabel(""),
-gainEnvelopeButton("gainEnvelope", DrawableButton::ImageOnButtonBackground),
+beatOffsetLabel("beatOffsetLabel"),
+gainEnvelopeButton("gainEnvelopeButton", DrawableButton::ImageOnButtonBackground),
 zoom(0)
 {
     AudioFormatManager formatManager;
@@ -284,6 +366,8 @@ zoom(0)
 	addAndMakeVisible(linkToTransport);	
 	gainEnvelopeButton.addListener(this);
 	addAndMakeVisible(gainEnvelopeButton);	
+	loopButton.addListener(this);
+	addAndMakeVisible(loopButton);	
 	
 	playButton.setLookAndFeel(&basicLook);
 	stopButton.setLookAndFeel(&basicLook);
@@ -292,32 +376,46 @@ zoom(0)
 	zoomInButton.setLookAndFeel(&basicLook);
 	linkToTransport.setLookAndFeel(&basicLook);
 	gainEnvelopeButton.setLookAndFeel(&basicLook);
+	loopButton.setLookAndFeel(&basicLook);
+	
 	
 	addAndMakeVisible(beatOffset);
 	beatOffset.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
-	beatOffset.setRange(0, 10000, 1);
+	beatOffset.setRange(0, 99000, 1);
 	beatOffset.setValue(0, dontSendNotification);
 	beatOffset.addListener(this);
 	beatOffset.setVelocityBasedMode(true);
 	beatOffset.setColour(Slider::ColourIds::thumbColourId, Colours::black);
 	beatOffset.setColour(Slider::ColourIds::textBoxTextColourId, Colours::white);
 	beatOffset.setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::black);	
-	beatOffset.setTextValueSuffix(" Beats Offset");
 	
+	beatOffsetLabel.setText("Cue:", dontSendNotification);
 	zoomOutButton.getProperties().set("isRounded", true);
 	zoomInButton.getProperties().set("isRounded", true);
 	
 	openButton.setColour(TextButton::buttonColourId, Colours::white);	
 	playButton.setColour(TextButton::buttonColourId, Colours::white);
+	playButton.setColour(TextButton::buttonColourId, Colours::white);
+	gainEnvelopeButton.setColour(TextButton::buttonColourId, Colours::white);
+	loopButton.setColour(TextButton::buttonColourId, Colours::white);
+	loopButton.setColour(TextButton::buttonOnColourId, Colours::cornflowerblue);
+	gainEnvelopeButton.setColour(TextButton::buttonOnColourId, Colours::cornflowerblue);
+	
 	playButton.setColour(TextButton::buttonOnColourId, Colours::yellow);
 	zoomOutButton.setColour(TextButton::buttonColourId, Colours::white);
 	zoomInButton.setColour(TextButton::buttonColourId, Colours::white);
 	linkToTransport.setColour(TextButton::buttonColourId, Colours::green.darker(.9f));
-	linkToTransport.setColour(TextButton::buttonOnColourId, Colours::cornflowerblue);
+	linkToTransport.setColour(TextButton::buttonOnColourId, Colours::green.darker(.9f));
 	
 	playButton.setClickingTogglesState(true);	
+	loopButton.setClickingTogglesState(true);	
+	gainEnvelopeButton.setClickingTogglesState(true);	
+	
+	linkToTransport.setColour(TextButton::buttonOnColourId, Colours::cornflowerblue);
 	
 	addAndMakeVisible(fileNameLabel);
+	addAndMakeVisible(beatOffsetLabel);
+	beatOffsetLabel.setJustificationType(Justification::right);
 	
 	fileNameLabel.setInterceptsMouseClicks(false, false);
 	fileNameLabel.setJustificationType(Justification::right);
@@ -326,13 +424,12 @@ zoom(0)
 	
 	linkToTransport.setImages(cUtils::createPlayButtonPath(25, Colours::white));
 	
-	
 	playButton.setImages(cUtils::createPlayButtonPath(25, Colours::green.darker(.9f)), 
 						 cUtils::createPlayButtonPath(25, Colours::green.darker(.9f)), 
 						 cUtils::createPauseButtonPath(25), 
 						 cUtils::createPlayButtonPath(25, Colours::green.darker(.9f)), 
 						 cUtils::createPauseButtonPath(25),
-						 cUtils::createPlayButtonPath(25, Colours::green.darker(.9f)));
+						 cUtils::createPauseButtonPath(25));
 
 	openButton.setImages(cUtils::createOpenButtonPath(25));		
 	stopButton.setImages(cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
@@ -343,14 +440,32 @@ zoom(0)
 						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
 						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f))
 						 );
+
 	
-	gainEnvelopeButton.setImages(cUtils::createEnvelopeButtonPath(25, Colours::yellow));
+	loopButton.setImages(cUtils::createLoopButtonPath());
+	
+	gainEnvelopeButton.setImages(cUtils::createEnvelopeButtonPath(Colours::green.darker(.9f)));
 	gainEnvelopeButton.setClickingTogglesState(true);
 	
 	zoomInButton.setImages(cUtils::createZoomInButtonPath(25));
 	zoomOutButton.setImages(cUtils::createZoomOutButtonPath(25));
 	//waveformDisplay->setBounds(10, 10, 500, 200);
+	
+	
+	if(getFilter()->getEnvPointSize()>0)
+	{
+		for(int i=0;i<getFilter()->getEnvPointSize();i++)
+			waveformDisplay->gainEnvelope.addHandle(getFilter()->getEnvPoint(i), false);
+	}
+	else
+		waveformDisplay->gainEnvelope.createGainEnvStartEndPoint();
+		
 	addAndMakeVisible(waveformDisplay);
+	waveformDisplay->showGainEnvelope(false);
+	
+	
+	
+
     setSize (500, 250);
 
 	beatOffset.toFront(true);
@@ -372,7 +487,12 @@ zoom(0)
 		stopButton.setEnabled(false);
 	}
 		
-	beatOffset.setValue(getFilter()->getBeatsOffset());	
+	if(getFilter()->getLooping()==true)			
+		loopButton.setToggleState(true, sendNotification);	
+
+	if(getFilter()->shouldShowGainEnv()==true)
+		gainEnvelopeButton.setToggleState(true, sendNotification);	
+	
 }
 
 AudioFilePlaybackEditor::~AudioFilePlaybackEditor()
@@ -384,16 +504,18 @@ AudioFilePlaybackEditor::~AudioFilePlaybackEditor()
 //==============================================================================
 void AudioFilePlaybackEditor::resized()
 {
-	waveformDisplay->setBounds(BUTTON_SIZE+7, 5, getWidth()-(BUTTON_SIZE+12), getHeight()-14);
+	waveformDisplay->setBounds(BUTTON_SIZE*2+7, 5, getWidth()-(BUTTON_SIZE*2+12), getHeight()-14);
 	//viewport->setBounds(BUTTON_SIZE+7, 5, getWidth()-20, getHeight()-10);	
 	stopButton.setBounds(3, 5, BUTTON_SIZE, BUTTON_SIZE);
-	playButton.setBounds(3, BUTTON_SIZE+5, BUTTON_SIZE, BUTTON_SIZE);
-	openButton.setBounds(3, ((BUTTON_SIZE)*2)+5, BUTTON_SIZE, BUTTON_SIZE);
-	zoomInButton.setBounds(3, ((BUTTON_SIZE)*3)+5, BUTTON_SIZE, BUTTON_SIZE);
-	zoomOutButton.setBounds(3, ((BUTTON_SIZE)*4)+5, BUTTON_SIZE, BUTTON_SIZE);
-	linkToTransport.setBounds(3, ((BUTTON_SIZE)*5)+5, BUTTON_SIZE, BUTTON_SIZE);
-	gainEnvelopeButton.setBounds(3, ((BUTTON_SIZE)*6)+5, BUTTON_SIZE, BUTTON_SIZE);
-	beatOffset.setBounds(35, 7, 100, 20);
+	playButton.setBounds(3+BUTTON_SIZE, 5, BUTTON_SIZE, BUTTON_SIZE);
+	loopButton.setBounds(3, ((BUTTON_SIZE)*1)+5, BUTTON_SIZE, BUTTON_SIZE);
+	openButton.setBounds(3+BUTTON_SIZE, ((BUTTON_SIZE)*1)+5, BUTTON_SIZE, BUTTON_SIZE);
+	zoomInButton.setBounds(3, ((BUTTON_SIZE)*2)+5, BUTTON_SIZE, BUTTON_SIZE);
+	zoomOutButton.setBounds(3+BUTTON_SIZE, ((BUTTON_SIZE)*2)+5, BUTTON_SIZE, BUTTON_SIZE);
+	linkToTransport.setBounds(3, ((BUTTON_SIZE)*3)+5, BUTTON_SIZE, BUTTON_SIZE);
+	gainEnvelopeButton.setBounds(3+BUTTON_SIZE, ((BUTTON_SIZE)*3)+5, BUTTON_SIZE, BUTTON_SIZE);
+	beatOffsetLabel.setBounds(0, getHeight()-45, BUTTON_SIZE*2, 12);
+	beatOffset.setBounds(3, getHeight()-30, BUTTON_SIZE*2, 20);
 	fileNameLabel.setBounds((getWidth()/2), 7, (getWidth()/2)-5, 14);
 }
 //==============================================================================
@@ -422,6 +544,7 @@ void AudioFilePlaybackEditor::sliderValueChanged (Slider* slider)
 {
 	getFilter()->setBeatOffset(slider->getValue());
 }	
+
 //==============================================================================
 void AudioFilePlaybackEditor::buttonClicked(Button *button)
 {
@@ -452,6 +575,17 @@ void AudioFilePlaybackEditor::buttonClicked(Button *button)
         waveformDisplay->setZoomFactor(zoom);
     }
     
+    else if(button->getName()=="gainEnvelopeButton")
+    {
+		waveformDisplay->showGainEnvelope(button->getToggleState());
+		getFilter()->setShowGainEnv(button->getToggleState());
+    }
+	
+    else if(button->getName()=="loopButton")
+    {
+		getFilter()->setLooping(button->getToggleState());
+    }
+	
 	else if(button->getName()=="stopButton")
 	{
 		if(getFilter()->bufferingAudioFileSource)
@@ -459,8 +593,9 @@ void AudioFilePlaybackEditor::buttonClicked(Button *button)
 			playButton.setToggleState(false, dontSendNotification);
 			waveformDisplay->stopTimer();
 			getFilter()->isSourcePlaying=false;
+			getFilter()->resetGainEnv();
 			waveformDisplay->resetPlaybackPosition();
-			getFilter()->bufferingAudioFileSource->setNextReadPosition(0);	
+			getFilter()->setBufferingReadPosition(0);
 		}	
 	}
 	
@@ -486,7 +621,8 @@ void AudioFilePlaybackEditor::buttonClicked(Button *button)
 		if(button->getToggleState()==true)
 		{
 			waveformDisplay->resetPlaybackPosition();
-			getFilter()->bufferingAudioFileSource->setNextReadPosition(0);	
+			getFilter()->setBufferingReadPosition(0);	
+			getFilter()->resetGainEnv();
 			playButton.setToggleState(false, dontSendNotification);
 			button->setToggleState(false, dontSendNotification);
 			getFilter()->linkToMasterTransport(false);
@@ -497,8 +633,9 @@ void AudioFilePlaybackEditor::buttonClicked(Button *button)
 		else
 		{
 			waveformDisplay->resetPlaybackPosition();
+			getFilter()->resetGainEnv();
 			waveformDisplay->startTimer(50);
-			getFilter()->bufferingAudioFileSource->setNextReadPosition(0);	
+			getFilter()->setBufferingReadPosition(0);	
 			playButton.setToggleState(false, dontSendNotification);
 			button->setToggleState(true, dontSendNotification);
 			getFilter()->linkToMasterTransport(true);

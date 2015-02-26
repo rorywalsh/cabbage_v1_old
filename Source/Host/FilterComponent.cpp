@@ -397,7 +397,7 @@ void FilterComponent::actionListenerCallback (const String &message)
 		String newMessage = message.replace("rmsValues ", "");
 		rmsLeft = newMessage.substring(0, newMessage.indexOf(" ")).getFloatValue();
 		rmsRight = newMessage.substring(newMessage.indexOf(" ")+1).getFloatValue();
-		repaint();
+		repaint(16, getHeight() - pinSize * 2, getWidth()-32.f, 20);
 	}
 	else if(message == "closing editor")
 	{

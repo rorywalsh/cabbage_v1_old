@@ -58,6 +58,31 @@ public:
 		return beatOffset;
 	}
  
+ 	void setLooping(bool loop)
+	{
+		shouldLoop = loop;
+	}
+	
+	bool getLooping()
+	{
+		return shouldLoop;
+	}
+
+	bool shouldShowGainEnv()
+	{
+		return showGainEnv;
+	}
+	
+	void setShowGainEnv(bool val)
+	{
+		showGainEnv = val;
+	}
+	
+	void resetGainEnv()
+	{
+		gainSampleIndex=0;
+	}
+	
 	int getNumParameters();
 
     float getParameter (int index);
@@ -94,19 +119,37 @@ public:
 	bool isSourcePlaying;
 	int sourceSampleRate;
 	BufferingAudioSource* bufferingAudioFileSource;
-	AudioPlayHead::CurrentPositionInfo hostInfo;
-	void playSoundFile(AudioSampleBuffer& buffer);
-	float getGainEnvelop(int& index);
 	
+	void setBufferingReadPosition(int pos)
+	{
+		if(bufferingAudioFileSource)
+			bufferingAudioFileSource->setNextReadPosition(pos);
+	}
+	
+	AudioPlayHead::CurrentPositionInfo hostInfo;
+	void playSoundFile(AudioSampleBuffer& buffer, bool isLinked=true);
+	float getGainEnvelop(int& index);
 	void addEnvDataPoint(Point<double> point);
 	
 	void clearEnvDataPoint()
 	{
 		envPoints.clear();
 	}	
+	
+	Point<double> getEnvPoint(int index)
+	{
+		return envPoints[index];
+	}
+
+	int getEnvPointSize()
+	{
+		return envPoints.size();
+	}
+	
 private:
 	AudioSourceChannelInfo sourceChannelInfo;
 	PositionableAudioSource* fileSource;
+	bool shouldLoop;
 	AudioSampleBuffer* audioBuffer;
 	int samplingRate;
     TimeSliceThread thread;
@@ -116,12 +159,13 @@ private:
 	int updateCounter;
 	int numFileChannels;
 	int totalLength;
+	bool showGainEnv;
 	float gainOutputValue;
 	bool isLinkedToMasterTransport;
 	StringArray parameterNames;
 	float gain, pan;
 	Array<Point<double>> envPoints;
-	int envPointIncr, sampleIndex;
+	int envPointIncr, gainSampleIndex;
 	//PositionableAudioSource* currentAudioFileSource;
 	
 

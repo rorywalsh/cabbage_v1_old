@@ -1254,7 +1254,43 @@ public:
 		zoomImage->setPath(zoomInPath);
 		return zoomImage;		
 	}	
-	
+
+	static const DrawablePath* createLoopButtonPath()
+	{	
+		Path path;
+		path.startNewSubPath(60, 0);
+		path.lineTo(100, 0);
+		path.closeSubPath();
+		path.startNewSubPath(100, 0);
+		path.lineTo(100, 80);
+		path.closeSubPath();
+		path.startNewSubPath(100, 80);
+		path.lineTo(120, 80);
+		path.lineTo(100, 100);
+		path.lineTo(80, 80);
+		path.closeSubPath();
+
+		path.startNewSubPath(60, 100);
+		path.lineTo(20, 100);
+		path.closeSubPath();
+		path.startNewSubPath(20, 100);
+		path.lineTo(20, 20);
+		path.closeSubPath();
+		path.startNewSubPath(20, 20);
+		path.lineTo(0, 20);
+		path.lineTo(20, 0);
+		path.lineTo(40, 20);
+		path.closeSubPath();
+		AffineTransform transform(AffineTransform::identity);
+		path.applyTransform(transform.rotated(float_Pi/2.f));
+		DrawablePath* image = new DrawablePath();
+		image->setFill(Colours::white);
+		image->setStrokeThickness(25.f);
+		image->setStrokeFill(Colours::green.darker(.9f));
+		image->setPath(path);	
+		return image;
+	}
+
 	static const DrawablePath* createStopButtonPath(int buttonSize, Colour col)
 	{
 		Path stopPath;
@@ -1278,13 +1314,27 @@ public:
 		return stopImage;
 	}	
 
-	static const DrawablePath* createEnvelopeButtonPath(float buttonSize, Colour col)
+	static const DrawablePath* createEnvelopeButtonPath(Colour col)
 	{
 		Path path;
-		path.addLineSegment(Line<float>(0.f, 0.f, buttonSize, buttonSize), 1.f);
-		path.addLineSegment(Line<float>(buttonSize, 0.f, 0.f, buttonSize), 1.f);
+		path.addEllipse(-10, 70, 25, 25);
+		path.startNewSubPath(10, 70);
+		path.lineTo(45, 10);		
+		path.closeSubPath();
+		path.addEllipse(35, 25, 25, 25);
+		path.startNewSubPath(40, 10);
+		path.lineTo(70, 80);		
+		path.closeSubPath();
+		path.addEllipse(65, 75, 25, 25);
+		path.startNewSubPath(70, 80);
+		path.lineTo(120, 10);
+		path.closeSubPath();
+		path.addEllipse(115, 5, 25, 25);
+
 		DrawablePath* image = new DrawablePath();
-		image->setFill(col);
+		image->setFill(Colours::white);
+		image->setStrokeThickness(25.f);
+		image->setStrokeFill(col);
 		image->setPath(path);	
 		return image;
 	}

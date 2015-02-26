@@ -2046,7 +2046,7 @@ void CabbageLookAndFeelBasic::drawStretchableLayoutResizerBar (Graphics& g, int 
 void CabbageLookAndFeelBasic::drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
                                bool isMouseOverButton, bool isButtonDown)
     {
-        Colour baseColour (backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+        Colour baseColour (backgroundColour.withMultipliedSaturation (1.3f)
                            .withMultipliedAlpha (button.isEnabled() ? 0.9f : 0.2f));
 
         if (isButtonDown || isMouseOverButton)

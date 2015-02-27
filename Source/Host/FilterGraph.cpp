@@ -223,11 +223,11 @@ AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* 
 	else if(desc->pluginFormatName=="Cabbage")
 	{
 		CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc->fileOrIdentifier, false, AUDIO_PLUGIN);
-		int numChannels = cabbageNativePlugin->getNumberCsoundOutChannels();
+		int numChannels = cUtils::getNchnlsFromFile(desc->fileOrIdentifier);
 		//create GUI for selected plugin...
 		cabbageNativePlugin->createGUI(File(desc->fileOrIdentifier).loadFileAsString(), true);			
-		cabbageNativePlugin->setPlayConfigDetails(cabbageNativePlugin->getNumberCsoundOutChannels(), 
-												  cabbageNativePlugin->getNumberCsoundOutChannels(), 
+		cabbageNativePlugin->setPlayConfigDetails(numChannels, 
+												  numChannels, 
 												  cabbageNativePlugin->getCsoundSamplingRate(),
 												  cabbageNativePlugin->getCsoundKsmpsSize());
 												  

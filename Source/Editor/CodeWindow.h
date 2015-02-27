@@ -56,6 +56,7 @@ public:
 
     String getText()
     {
+		const MessageManagerLock lock;
         return textEditor->getText();
     }
 

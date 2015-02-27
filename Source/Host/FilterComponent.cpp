@@ -440,9 +440,9 @@ void FilterComponent::actionListenerCallback (const String &message)
 			{
 				
 				instance->suspendProcessing(true);
-				instance->reCompileCsound(file);				
-				instance->setPlayConfigDetails(instance->getNumberCsoundOutChannels(),
-													instance->getNumberCsoundOutChannels(),
+				instance->reCompileCsound(file);
+				instance->setPlayConfigDetails(newChannelCount,
+													newChannelCount,
 													instance->getCsoundSamplingRate(),
 													instance->getCsoundKsmpsSize());				
 				
@@ -486,6 +486,7 @@ void FilterComponent::timerCallback()
 	{
 	CabbagePluginAudioProcessor* instance = (CabbagePluginAudioProcessor*)(graph.getNodeForId (filterID)->getProcessor());
 		
+
 	if(codeWindow->csoundOutputComponent->getText()!=instance->getCsoundOutput())
             codeWindow->csoundOutputComponent->setText(instance->getCsoundOutput());
 	

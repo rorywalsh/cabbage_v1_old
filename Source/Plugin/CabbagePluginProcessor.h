@@ -260,7 +260,7 @@ public:
     int performEntireScore();
     void startRecording();
     void stopRecording();
-    void reCompileCsound(File file);
+    int reCompileCsound(File file);
     void setupNativePluginEditor();
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock);

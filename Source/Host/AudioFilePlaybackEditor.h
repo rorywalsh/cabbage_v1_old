@@ -240,6 +240,10 @@ public:
 	void resized();
 	void buttonClicked(Button *button);
 	ScopedPointer<WaveformDisplay> waveformDisplay;
+	void setCurrentPosition(String pos)
+	{
+		currentPositionLabel.setText(pos, dontSendNotification);
+	}
 
     bool isInterestedInDragSource (const SourceDetails &dragSourceDetails) override
     {
@@ -254,12 +258,14 @@ private:
 	DrawableButton playButton;
 	Label fileNameLabel;
 	Label beatOffsetLabel;
+	Label currentPositionLabel;
 	DrawableButton stopButton;
 	DrawableButton openButton;
 	DrawableButton zoomInButton;
 	DrawableButton gainEnvelopeButton;
 	DrawableButton loopButton;	
 	DrawableButton zoomOutButton;
+	
 	CabbageLookAndFeelBasic basicLook;
 	Slider beatOffset;
 	DrawableButton linkToTransport; 

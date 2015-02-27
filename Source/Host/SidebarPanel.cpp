@@ -80,6 +80,8 @@ midiLearn(false)
 SidebarPanel::~SidebarPanel()
 {	
 	fileTreeComp.fileComp.removeListener(this);
+    for(int i=0;i<concertinaPanel.getNumPanels();i++)
+        concertinaPanel.removePanel(concertinaPanel.getPanel(i));
 }
 
 //=================================================================

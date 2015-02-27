@@ -850,8 +850,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         subMenu.addItem(15, TRANS("Plugin Synth"));
         subMenu.addItem(16, TRANS("Plugin Effect"));
 #ifdef MACOSX
-        subMenu.addItem(150, TRANS("Plugin Synth(Csound bundle)"));
-        subMenu.addItem(160, TRANS("Plugin Effect(Csound bundle)"));
+        //subMenu.addItem(150, TRANS("Plugin Synth(Csound bundle)"));
+        //subMenu.addItem(160, TRANS("Plugin Effect(Csound bundle)"));
 #endif
 #endif
         m.addSubMenu(TRANS("Export..."), subMenu);
@@ -992,9 +992,6 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         credits.append("\t\t\t\t\tIain McCurdy\n", 2056);
         credits.append("\t\t\t\t\tDamien Rennick\n\n", 2056);
         credits.append("\t\t\t\t\tGiorgio Zucco\n", 2056);
-        credits.append("\t\t\t\t\tNil Geisweiller\n", 2056);
-        credits.append("\t\t\t\t\tDave Philips\n", 2056);
-        credits.append("\t\t\t\t\tEamon Brady\n\n", 2056);
         credits.append("\t\t\t\tUser Forum:\n", 2056);
         credits.append("\t\t\t\t\twww.thecabbagefoundation.org", 2056);
         String title(CABBAGE_VERSION);

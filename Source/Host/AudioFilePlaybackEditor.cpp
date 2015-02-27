@@ -210,10 +210,10 @@ WaveformDisplay::GainEnvelope::GainEnvelope()
 
 void WaveformDisplay::GainEnvelope::createGainEnvStartEndPoint()
 {
-	Handle* leftMostHandle = new Handle(this);
+	EnvelopHandle* leftMostHandle = new EnvelopHandle(this);
 	addAndMakeVisible(leftMostHandle);
 	leftMostHandle->setRelativePosition(Point<double>(0, 0), 1, 1);
-	Handle* rightMostHandle = new Handle(this);
+	EnvelopHandle* rightMostHandle = new EnvelopHandle(this);
 	addAndMakeVisible(rightMostHandle);
 	rightMostHandle->setRelativePosition(Point<double>(1, 0), 1, 1);
 	handles.add(leftMostHandle);
@@ -235,7 +235,7 @@ void WaveformDisplay::GainEnvelope::mouseDown(const MouseEvent& e)
 		}
 	}	
 	
-	Handle* handle = new Handle(this);		
+	EnvelopHandle* handle = new EnvelopHandle(this);
 	addAndMakeVisible(handle);
 	handle->setTopLeftPosition(e.getPosition().getX(), e.getPosition().getY());
 	handle->setRelativePosition(e.getPosition().toDouble(), getWidth(), getHeight());
@@ -246,7 +246,7 @@ void WaveformDisplay::GainEnvelope::mouseDown(const MouseEvent& e)
 
 void WaveformDisplay::GainEnvelope::addHandle(Point<double> pos, bool resize)
 {
-	Handle* handle = new Handle(this);		
+	EnvelopHandle* handle = new EnvelopHandle(this);
 	addAndMakeVisible(handle);
 	handle->setRelativePosition(Point<double>(pos.getX(), pos.getY()), 1.0, 1.0);
 	handles.add(handle);
@@ -255,12 +255,12 @@ void WaveformDisplay::GainEnvelope::addHandle(Point<double> pos, bool resize)
 		resized();	
 } 
 
-int WaveformDisplay::GainEnvelope::getHandleIndex(Handle* thisHandle)
+int WaveformDisplay::GainEnvelope::getHandleIndex(EnvelopHandle* thisHandle)
 {
     return handles.indexOf(thisHandle);
 }
 
-void WaveformDisplay::GainEnvelope::removeHandle(Handle* handle)
+void WaveformDisplay::GainEnvelope::removeHandle(EnvelopHandle* handle)
 {
     if (handles.size() > 0)
     {
@@ -271,17 +271,17 @@ void WaveformDisplay::GainEnvelope::removeHandle(Handle* handle)
 	resized();
 }
 	
-Handle* WaveformDisplay::GainEnvelope::getLastHandle()
+EnvelopHandle* WaveformDisplay::GainEnvelope::getLastHandle()
 {
     return handles.getUnchecked(handles.size()-1);
 }
 
-Handle* WaveformDisplay::GainEnvelope::getFirstHandle()
+EnvelopHandle* WaveformDisplay::GainEnvelope::getFirstHandle()
 {
     return handles.getUnchecked(0);
 }
 
-Handle* WaveformDisplay::GainEnvelope::getPreviousHandle(Handle* thisHandle)
+EnvelopHandle* WaveformDisplay::GainEnvelope::getPreviousHandle(EnvelopHandle* thisHandle)
 {
     int thisHandleIndex = handles.indexOf(thisHandle);
 
@@ -291,7 +291,7 @@ Handle* WaveformDisplay::GainEnvelope::getPreviousHandle(Handle* thisHandle)
         return handles.getUnchecked(thisHandleIndex-1);
 }
 
-Handle* WaveformDisplay::GainEnvelope::getNextHandle(Handle* thisHandle)
+EnvelopHandle* WaveformDisplay::GainEnvelope::getNextHandle(EnvelopHandle* thisHandle)
 {
     int thisHandleIndex = handles.indexOf(thisHandle);
 

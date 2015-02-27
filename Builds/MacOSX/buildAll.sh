@@ -82,3 +82,25 @@ then
 	rm -rf 	cp -rf ./build/Release/Cabbage.app/
 fi
 
+if [ $1 == "debug" ]
+then
+	echo "Building All 32Bit Debug"
+	xcodebuild -project Cabbage.xcodeproj/ ARCHS=i386 ONLY_ACTIVE_ARCH=NO -configuration Debug
+	xcodebuild -project CabbagePlugin.xcodeproj/ ARCHS=i386 ONLY_ACTIVE_ARCH=NO -configuration Debug GCC_PREPROCESSOR_DEFINITIONS="Cabbage_Plugin_Synth=1 USE_DOUBLE=1 CSOUND6=1 MACOSX=1"
+	cp -rf ./build/Debug/CabbagePlugin.component/ ./build/Debug/Cabbage.app/Contents/CabbagePluginSynth.component
+	rm -rf ./build/Debug/CabbagePluginSynth.dat/CabbagePlugin.component	
+	xcodebuild -project CabbagePlugin.xcodeproj/ -configuration Debug ARCHS=i386 ONLY_ACTIVE_ARCH=NO GCC_PREPROCESSOR_DEFINITIONS="MACOSX=1 USE_DOUBLE=1"
+	cp -rf ./build/Debug/CabbagePlugin.component/ ./build/Debug/Cabbage.app/Contents/CabbagePluginEffect.component
+	rm -rf ./build/Debug/CabbagePluginEffect.component
+	rm -rf ~/Library/Audio/Plug-Ins/VST/CabbagePlugin.vst
+
+	echo "Bundling all files"	
+	cp -rf ../../Docs ./build/Debug/Cabbage.app/Contents/MacOS/Docs
+	cp -rf ../../Examples ./build/Debug/Cabbage.app/Contents/MacOS/Examples
+	cp opcodes.txt ./build/Debug/Cabbage.app/Contents/MacOS/opcodes.txt 
+
+	cp -rf ./build/Debug/Cabbage.app/ ./build/Debug/Cabbage32.app	
+	rm -rf 	cp -rf ./build/Debug/Cabbage.app/
+
+fi
+

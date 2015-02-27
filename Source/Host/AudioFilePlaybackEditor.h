@@ -25,7 +25,7 @@
 #include "../CabbageLookAndFeel.h"
 
 class AudioFilePlaybackEditor;
-class Handle;
+class EnvelopHandle;
 
 class WaveformDisplay : public Component,
 						public Timer,
@@ -49,12 +49,12 @@ public:
 		void resized();		
 		void paint (Graphics& g);
 		void mouseDown(const MouseEvent& e);
-		Handle* getPreviousHandle(Handle* thisHandle);
-		int getHandleIndex(Handle* thisHandle);
-		void removeHandle(Handle* handle);
-		Handle* getLastHandle();
-		Handle* getFirstHandle();
-		Handle* getNextHandle(Handle* thisHandle);
+		EnvelopHandle* getPreviousHandle(EnvelopHandle* thisHandle);
+		int getHandleIndex(EnvelopHandle* thisHandle);
+		void removeHandle(EnvelopHandle* handle);
+		EnvelopHandle* getLastHandle();
+		EnvelopHandle* getFirstHandle();
+		EnvelopHandle* getNextHandle(EnvelopHandle* thisHandle);
 		void createGainEnvStartEndPoint();
 		void addHandle(Point<double> pos, bool resize=true);
 		
@@ -64,7 +64,7 @@ public:
 		}
 		
 	private:
-		OwnedArray<Handle> handles;
+		OwnedArray<EnvelopHandle> handles;
 		
 	};
 	
@@ -109,10 +109,10 @@ private:
 };
 
 //handle class
-class Handle : public Component
+class EnvelopHandle : public Component
 {
 public:
-	Handle(WaveformDisplay::GainEnvelope* env):
+	EnvelopHandle(WaveformDisplay::GainEnvelope* env):
 	owner(env),
 	compY(0),
 	compX(0)
@@ -173,8 +173,8 @@ public:
 		
 		//when a handle is dragged, we update its position and send a message
 		//to Cabbage to update the Csound function table(CabbagePluginEditor.cpp)
-		const Handle* previousHandle = owner->getPreviousHandle(this);
-		const Handle* nextHandle = owner->getNextHandle(this);
+		const EnvelopHandle* previousHandle = owner->getPreviousHandle(this);
+		const EnvelopHandle* nextHandle = owner->getNextHandle(this);
 
 		setMouseCursor (MouseCursor::DraggingHandCursor);
 

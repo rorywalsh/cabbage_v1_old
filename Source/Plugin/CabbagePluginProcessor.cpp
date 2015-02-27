@@ -130,11 +130,8 @@ vuCounter(0)
     csound->setOpenSlCallbacks(); // for android audio to work
 #endif
     
-#ifdef CSOUND6
     csound->SetHostImplementedMIDIIO(true);
-    
-    
-#endif
+
     csound->Reset();
     //Logger::writeToLog(csound->GetEnv("OPCODEDIR64"));
 #ifdef CSOUND5
@@ -161,14 +158,16 @@ vuCounter(0)
         File(inputfile).setAsCurrentWorkingDirectory();
         
         
-#ifdef CSOUND6
+
         csoundParams = new CSOUND_PARAMS();
 		#ifndef CABBAGE_HOST
         csoundParams->nchnls_override = this->getNumOutputChannels();
 		#endif
         csoundParams->displays = 0;
         csound->SetParams(csoundParams);
-#endif
+        csound->SetOption((char*)"-n");
+        csound->SetOption((char*)"-d");
+
         StringArray lines, includeFiles;
         lines.addLines(File(inputfile).loadFileAsString());
         
@@ -385,14 +384,16 @@ vuCounter(0)
     numCsoundChannels = 0;
     csndIndex = 32;
     startTimer(20);
-#ifdef CSOUND6
+
     csoundParams = new CSOUND_PARAMS();
 	#ifndef CABBAGE_HOST
     csoundParams->nchnls_override = this->getNumOutputChannels();
 	#endif
     csoundParams->displays = 0;
     csound->SetParams(csoundParams);
-#endif
+    csound->SetOption((char*)"-n");
+    csound->SetOption((char*)"-d");
+
     
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
     //csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
@@ -542,14 +543,16 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
     csound->Reset();
     ksmpsOffset = 0;
     breakCount = 0;
-#ifdef CSOUND6
+
     csoundParams = new CSOUND_PARAMS();
 	#ifndef CABBAGE_HOST
     csoundParams->nchnls_override =2;
 	#endif
     csoundParams->displays = 0;
     csound->SetParams(csoundParams);
-#endif
+    csound->SetOption((char*)"-n");
+    csound->SetOption((char*)"-d");
+
     
     csound->SetHostImplementedMIDIIO(true);
     xyAutosCreated = false;

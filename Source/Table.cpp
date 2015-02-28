@@ -24,7 +24,7 @@
 //==============================================================================
 TableManager::TableManager(): Component(), zoom(0.0), largestTable(0), scrubberPosition(0),
     scrubberFreq(0), shouldShowTableButtons(true), shouldShowZoomButtons(true), tableIndex(0),
-    mainFooterHeight(25), backgroundColour(cUtils::getDarkerBackgroundSkin())
+    mainFooterHeight(25), backgroundColour(cUtils::getDarkerBackgroundSkin()), scrollbarEnabled(true)
 {
     addAndMakeVisible(zoomIn = new RoundButton("zoomIn", Colours::white));
     addAndMakeVisible(zoomOut = new RoundButton("zoomOut", Colours::white));
@@ -172,7 +172,7 @@ void TableManager::setZoomFactor(double newZoom)
     {
         if(newZoom<0 || tables[i]->tableSize<=2)
         {
-            showZoomButtons(false);
+            showZoomButtons(scrollbarEnabled==true ? false : false);
             tables[i]->showScrollbar(false);
             tables[i]->zoomButtonsOffset=0;
 			tables[i]->resized();
@@ -368,6 +368,15 @@ void TableManager::showZoomButtons(bool show)
     resized();
 }
 
+void TableManager::showScrollbar(bool show)
+{
+	scrollbarEnabled = false;
+    for(int i =0; i<tables.size(); i++)
+    {
+        tables[i]->showScrollbar(show);
+    }
+}
+
 void TableManager::showTableButtons(bool show)
 {
     shouldShowTableButtons = show;
@@ -483,7 +492,7 @@ void TableManager::bringTableToFront(int ftNumber)
         if(shouldShowTableButtons == true)
             tables[i]->scrollbarReduction = (tables.size()*20)+50;
         else
-            tables[i]->scrollbarReduction = 50;
+            tables[i]->scrollbarReduction = (shouldShowZoomButtons==true ? 50 : 0);
 
         if(ftNumber==tables[i]->tableNumber)
         {
@@ -527,7 +536,7 @@ GenTable::GenTable():	thumbnailCache (5),
     thumbnail=nullptr;
     addAndMakeVisible(scrollbar = new ScrollBar(false));
     scrollbar->setRangeLimits (visibleRange);
-    //scrollbar->setAutoHide (false);
+    scrollbar->setAutoHide (false);
     scrollbar->addListener(this);
     addAndMakeVisible(currentPositionMarker);
 
@@ -1132,12 +1141,15 @@ void GenTable::mouseDown (const MouseEvent& e)
 {
     if(!e.mods.isPopupMenu())
     {
+		if(genRoutine==1)
+		{
         regionWidth = (1.01-zoom)*1.5;
         currentPlayPosition = jmax (0.0, xToTime ((float) e.x));
         loopStart = e.x;
         loopLength =  0;
         repaint();
-        sendChangeMessage();
+        sendChangeMessage();		
+		}
     }
 }
 //==============================================================================
@@ -1243,6 +1255,7 @@ void GenTable::setScrubberPos(double pos)
 //==============================================================================
 void GenTable::mouseUp(const MouseEvent& e)
 {
+if(genRoutine==1)
     sendChangeMessage();
 }
 

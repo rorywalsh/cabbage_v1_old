@@ -48,6 +48,7 @@ class TableManager : public Component,
     Colour gridColour;
     Colour backgroundColour;
     int tableIndex;
+	bool scrollbarEnabled;
 
 public:
     TableManager();
@@ -61,6 +62,7 @@ public:
     void resized();
     void setZoomFactor(double zoom);
     void setDrawMode(String mode);
+	void showScrollbar(bool show);
     void bringButtonsToFront();
     void setAmpRanges(Array<float> ampRange);
     void timerCallback();

@@ -74,6 +74,7 @@ OBJECTS := \
   $(OBJDIR)/PluginWrapperProcessor_5t66sdf31b.o \
   $(OBJDIR)/AudioFilePlaybackProcessor_ie83ukyw.o \
   $(OBJDIR)/AudioFilePlaybackEditor_8e3udga.o \
+  $(OBJDIR)/BreakpointEnvelop_fdj8dsj37.o \
   $(OBJDIR)/AutomationEditor_2j8hjkd2.o \
   $(OBJDIR)/AutomationProcessor_s358esga.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
@@ -246,6 +247,11 @@ $(OBJDIR)/FilterComponent_62dsj37.o: ../../Source/Host/FilterComponent.cpp
 	@echo "Compiling FilterComponent.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/BreakpointEnvelop_fdj8dsj37.o: ../../Source/Host/BreakpointEnvelope.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling BreakpointEnvelop.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
 $(OBJDIR)/AudioFilePlaybackProcessor_ie83ukyw.o: ../../Source/Host/AudioFilePlaybackProcessor.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling AudioFilePlaybackProcessor.cpp"

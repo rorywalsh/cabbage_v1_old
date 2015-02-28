@@ -23,9 +23,9 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AudioFilePlaybackProcessor.h"
 #include "../CabbageLookAndFeel.h"
+#include "BreakpointEnvelope.h"
 
 class AudioFilePlaybackEditor;
-class EnvelopHandle;
 
 class WaveformDisplay : public Component,
 						public Timer,
@@ -36,39 +36,9 @@ public:
     WaveformDisplay(AudioFormatManager& formatManager, BufferingAudioSource *source, int sr, Colour col);
     ~WaveformDisplay();
 	
-	class GainEnvelope : public Component
-	{			
-	public:
-		GainEnvelope();
-		
-		~GainEnvelope()
-		{
-			handles.clear();
-		}
-		
-		void resized();		
-		void paint (Graphics& g);
-		void mouseDown(const MouseEvent& e);
-		EnvelopHandle* getPreviousHandle(EnvelopHandle* thisHandle);
-		int getHandleIndex(EnvelopHandle* thisHandle);
-		void removeHandle(EnvelopHandle* handle);
-		EnvelopHandle* getLastHandle();
-		EnvelopHandle* getFirstHandle();
-		EnvelopHandle* getNextHandle(EnvelopHandle* thisHandle);
-		void createGainEnvStartEndPoint();
-		void addHandle(Point<double> pos, bool resize=true);
-		
-		AudioFilePlaybackEditor* getEditor()
-		{
-			return this->findParentComponentOfClass<AudioFilePlaybackEditor>();
-		}
-		
-	private:
-		OwnedArray<EnvelopHandle> handles;
-		
-	};
+
 	
-	GainEnvelope gainEnvelope;
+	BreakpointEnvelope gainEnvelope;
 	void showGainEnvelope(bool show);
     void setScrubberPos(double pos);
     void changeListenerCallback (ChangeBroadcaster*);
@@ -108,113 +78,7 @@ private:
     void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart) override;
 };
 
-//handle class
-class EnvelopHandle : public Component
-{
-public:
-	EnvelopHandle(WaveformDisplay::GainEnvelope* env):
-	owner(env),
-	compY(0),
-	compX(0)
-	{
-	setSize(8, 8);	
-	}
-	
-	void paint (Graphics& g)
-	{
-		g.fillAll(Colours::transparentBlack);
-		g.setColour(Colours::white);
-		g.fillEllipse(0, 0, 8, 8);
-	}
 
-	void setRelativePosition(Point<double> pos, double width, double height)
-	{
-		//convert position so that it's scaled between 0 and 1
-		xPosRelative = jlimit(0.0, 1.0, pos.getX()/width);
-		yPosRelative = jlimit(0.0, 1.0, pos.getY()/height);
-	} 
-	
-	Point<double> getRelativePosition()
-	{
-		return Point<double>(xPosRelative, yPosRelative);
-	} 
-
-	void mouseDown(const MouseEvent &e)
-	{
-		if(e.mods.isPopupMenu() && (this!=owner->getFirstHandle() || this!=owner->getLastHandle()))
-		{
-			PopupMenu pop;
-			pop.addItem(99, "Delete");
-			
-			if(pop.show()==99)
-			{
-				owner->removeHandle(this);
-			}
-		}
-		
-		compX = getX();
-		compY = getY();
-		setMouseCursor (MouseCursor::DraggingHandCursor);
-		dragger.startDraggingComponent (this, e);				
-		constrainer.setMinimumWidth(200);
-	}
-
-	void mouseEnter(const MouseEvent &e)
-	{
-		constrainer.setMinimumOnscreenAmounts(owner->getHeight(), 
-											  owner->getWidth(), 
-											  owner->getHeight(), 
-											  1);
-		setMouseCursor (MouseCursor::DraggingHandCursor);		
-	}
-
-	void mouseDrag(const MouseEvent &e)
-	{
-		
-		//when a handle is dragged, we update its position and send a message
-		//to Cabbage to update the Csound function table(CabbagePluginEditor.cpp)
-		const EnvelopHandle* previousHandle = owner->getPreviousHandle(this);
-		const EnvelopHandle* nextHandle = owner->getNextHandle(this);
-
-		setMouseCursor (MouseCursor::DraggingHandCursor);
-
-		double xPos = compX+e.getDistanceFromDragStartX();
-		double yPos = jlimit(-4.0, owner->getHeight()-4.0, compY+e.getDistanceFromDragStartY());
-		
-		
-		if(this==owner->getFirstHandle() || this==owner->getLastHandle())
-		{			
-			setRelativePosition(Point<double>((this==owner->getLastHandle() ? owner->getWidth() : 0), yPos), owner->getWidth(), owner->getHeight());
-			dragger.dragComponent (this, e.withNewPosition(Point<float>(compX, e.getPosition().getY())), &constrainer);
-		}
-		else
-		{
-			if((xPos>(previousHandle->getX()-4)) && (xPos<nextHandle->getX()))
-			{
-				cUtils::debug("Owner height", owner->getHeight());
-				cUtils::debug("yPos", yPos);
-				setRelativePosition(Point<double>(xPos, yPos), owner->getWidth(), owner->getHeight());
-				dragger.dragComponent (this, e, &constrainer);
-			}
-		}
-		
-		
-		owner->repaint();
-	}
-	
-	void mouseUp(const MouseEvent &e)
-	{
-		owner->resized();
-		owner->repaint();
-	}
-	
-	double xPosRelative, yPosRelative, compX, compY;
-	ComponentDragger dragger;
-	int uid;
-	ComponentBoundsConstrainer constrainer;
-	WaveformDisplay::GainEnvelope* owner;
-
-};
 //==============================================================================
 /**
 */
@@ -255,7 +119,7 @@ public:
 
 
 private:
-	DrawableButton playButton;
+	
 	Label fileNameLabel;
 	Label beatOffsetLabel;
 	Label currentPositionLabel;
@@ -265,10 +129,12 @@ private:
 	DrawableButton gainEnvelopeButton;
 	DrawableButton loopButton;	
 	DrawableButton zoomOutButton;
-	
+	DrawableButton linkToTransport; 
+	DrawableButton playButton;
 	CabbageLookAndFeelBasic basicLook;
 	Slider beatOffset;
-	DrawableButton linkToTransport; 
+	
+
     Colour tableColour;
     double zoom;
 };

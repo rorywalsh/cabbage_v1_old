@@ -18,7 +18,8 @@
 /**
 */
 class AudioFilePlaybackProcessor  : public AudioProcessor,
-									public ActionBroadcaster
+									public ActionBroadcaster,
+									public ChangeListener
 {
 public:
     //==============================================================================
@@ -98,7 +99,7 @@ public:
 
     bool acceptsMidi() const;
     bool producesMidi() const;
-
+	void changeListenerCallback(ChangeBroadcaster* source);
 
     //==============================================================================
     int getNumPrograms();
@@ -130,6 +131,7 @@ public:
 	void playSoundFile(AudioSampleBuffer& buffer, bool isLinked=true);
 	float getGainEnvelop(int& index);
 	void addEnvDataPoint(Point<double> point);
+	void updateEnvPoints(Array<Point<double>> points);
 	
 	void clearEnvDataPoint()
 	{

@@ -27,14 +27,19 @@ AudioProcessorEditor(&p),
 processor(p),
 tableManager(),
 popupBubble(500),
+autoCombo(),
+zoom(0),
+basicLook(),
 playButton("playButton", DrawableButton::ImageOnButtonBackground),
 stopButton("stopButton", DrawableButton::ImageOnButtonBackground),
-autoCombo(),
-basicLook()
+zoomInButton("zoomInButton", DrawableButton::ImageOnButtonBackground),
+loopButton("loopButton", DrawableButton::ImageOnButtonBackground),
+zoomOutButton("zoomOutButton", DrawableButton::ImageOnButtonBackground),
+linkToTransport("linkToTransportButton", DrawableButton::ImageOnButtonBackground)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
+	tableManager.showZoomButtons(false);
 	addAndMakeVisible(&tableManager);
+	
 
     popupBubble.setColour(BubbleComponent::backgroundColourId, Colours::white);
     popupBubble.setBounds(0, 0, 50, 20);
@@ -44,46 +49,77 @@ basicLook()
 	setOpaque(false);
 	
 	playButton.addListener(this);
-	addAndMakeVisible(&playButton);
+	addAndMakeVisible(playButton);
 	stopButton.addListener(this);
-	addAndMakeVisible(&stopButton);
+	addAndMakeVisible(stopButton);
+	zoomInButton.addListener(this);
+	addAndMakeVisible(zoomInButton);
+	zoomOutButton.addListener(this);
+	addAndMakeVisible(zoomOutButton);	
+	linkToTransport.addListener(this);
+	addAndMakeVisible(linkToTransport);	
+	loopButton.addListener(this);
+	addAndMakeVisible(loopButton);	
+	
 	playButton.setLookAndFeel(&basicLook);
-	stopButton.setLookAndFeel(&basicLook);	
+	stopButton.setLookAndFeel(&basicLook);
+	zoomOutButton.setLookAndFeel(&basicLook);
+	zoomInButton.setLookAndFeel(&basicLook);
+	linkToTransport.setLookAndFeel(&basicLook);
+	loopButton.setLookAndFeel(&basicLook);
+	
+	zoomOutButton.getProperties().set("isRounded", true);
+	zoomInButton.getProperties().set("isRounded", true);
+	
 	playButton.setColour(TextButton::buttonColourId, Colours::white);
+	playButton.setColour(TextButton::buttonColourId, Colours::white);
+	loopButton.setColour(TextButton::buttonColourId, Colours::white);
+	loopButton.setColour(TextButton::buttonOnColourId, Colours::cornflowerblue);
+	
 	playButton.setColour(TextButton::buttonOnColourId, Colours::yellow);
+	zoomOutButton.setColour(TextButton::buttonColourId, Colours::white);
+	zoomInButton.setColour(TextButton::buttonColourId, Colours::white);
+	linkToTransport.setColour(TextButton::buttonColourId, Colours::green.darker(.9f));
+	linkToTransport.setColour(TextButton::buttonOnColourId, Colours::green.darker(.9f));
+	
 	playButton.setClickingTogglesState(true);	
-	stopButton.setColour(TextButton::buttonColourId, Colours::white);	
+	loopButton.setClickingTogglesState(true);	
 	
-	Path playPath;
-	playPath.addTriangle(0, 0, BUTTON_SIZE, BUTTON_SIZE/2, 0, BUTTON_SIZE);
-	DrawablePath playImage;
-	playImage.setFill(Colours::green.darker(.9f));
-	playImage.setPath(playPath);
+	linkToTransport.setColour(TextButton::buttonOnColourId, Colours::cornflowerblue);
+
+
 	
-	Path pausePath;
-	pausePath.addRectangle(0, 0, BUTTON_SIZE*.4, BUTTON_SIZE);
-	pausePath.addRectangle(BUTTON_SIZE*.5, 0, BUTTON_SIZE*.4, BUTTON_SIZE);
-	DrawablePath pauseImage;
-	pauseImage.setFill(Colours::green.darker(.9f));
-	pauseImage.setPath(pausePath);
-	playButton.setImages(&playImage, &playImage, &pauseImage, &playImage, &pauseImage);
+	stopButton.setColour(TextButton::buttonColourId, Colours::white);
 	
-	Path stopPath;
-	stopPath.addRectangle(0, 0, BUTTON_SIZE, BUTTON_SIZE);
-	DrawablePath stopImage;
-	stopImage.setFill(Colours::green.darker(.9f));
-	stopImage.setPath(stopPath);
-	stopButton.setImages(&stopImage);	
+	linkToTransport.setImages(cUtils::createPlayButtonPath(25, Colours::white));
+	
+	playButton.setImages(cUtils::createPlayButtonPath(25, Colours::green.darker(.9f)), 
+						 cUtils::createPlayButtonPath(25, Colours::green.darker(.9f)), 
+						 cUtils::createPauseButtonPath(25), 
+						 cUtils::createPlayButtonPath(25, Colours::green.darker(.9f)), 
+						 cUtils::createPauseButtonPath(25),
+						 cUtils::createPauseButtonPath(25));
+
+	
+	stopButton.setImages(cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
+						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
+						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
+						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
+						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
+						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f)),
+						 cUtils::createStopButtonPath(25, Colours::green.darker(.9f))
+						 );
+
+	
+	loopButton.setImages(cUtils::createLoopButtonPath());
+	
+
+	zoomInButton.setImages(cUtils::createZoomInButtonPath(25));
+	zoomOutButton.setImages(cUtils::createZoomOutButtonPath(25));
 	
 	ampRange.add(0);
 	ampRange.add(1);
 	ampRange.add(-1);	
-	
-//	if(getFilter())
-//	{
-//		for(int i=0;i<getFilter()->getNumberOfAutomatableNodes();i++)
-//			addTable(getFilter()->getAutomatableNode(i).fTableNumber, getFilter()->getAutomatableNode(i).genRoutine); 
-//	}
 	
 	updateComboBoxItems();
 	
@@ -103,10 +139,18 @@ void AutomationEditor::paint (Graphics& g)
 
 void AutomationEditor::resized()
 {
-	tableManager.setBounds(10, 10, getWidth()-20, getHeight()-50);
-	stopButton.setBounds(10, getHeight()-35, BUTTON_SIZE, BUTTON_SIZE);
-	playButton.setBounds(BUTTON_SIZE+15, getHeight()-35, BUTTON_SIZE, BUTTON_SIZE);
-	autoCombo.setBounds((BUTTON_SIZE*3)+20, getHeight()-35, BUTTON_SIZE*10, BUTTON_SIZE);
+	tableManager.setBounds(BUTTON_SIZE+7, 5, getWidth()-(BUTTON_SIZE+12), getHeight()-40);
+	//tableManager.setBounds(10, 10, getWidth()-5-, getHeight()-50);
+	//viewport->setBounds(BUTTON_SIZE+7, 5, getWidth()-20, getHeight()-10);	
+	
+	playButton.setBounds(3, 5, BUTTON_SIZE, BUTTON_SIZE);
+	stopButton.setBounds(3, ((BUTTON_SIZE)*1)+5, BUTTON_SIZE, BUTTON_SIZE);
+	loopButton.setBounds(3, ((BUTTON_SIZE)*2)+5, BUTTON_SIZE, BUTTON_SIZE);
+	linkToTransport.setBounds(3, ((BUTTON_SIZE)*3)+5, BUTTON_SIZE, BUTTON_SIZE);
+	zoomInButton.setBounds(3, ((BUTTON_SIZE)*4)+5, BUTTON_SIZE, BUTTON_SIZE);
+	zoomOutButton.setBounds(3, ((BUTTON_SIZE)*5)+5, BUTTON_SIZE, BUTTON_SIZE);
+	
+	autoCombo.setBounds(BUTTON_SIZE+7, getHeight()-35, BUTTON_SIZE*12, BUTTON_SIZE);
 }
 //==============================================================================
 void AutomationEditor::updateComboBoxItems()
@@ -167,6 +211,7 @@ void AutomationEditor::addTable(int tableN, int genRoutine)
 			tableManager.setBackgroundColour(Colour(10, 10, 10));				
 			tableManager.showTableButtons(false);
 			tableManager.bringTableToFront(tableNumber);
+			tableManager.showScrollbar(true);
             //tableManager.setOutlineThickness(0.f);
 		}
 	}
@@ -199,7 +244,7 @@ void AutomationEditor::buttonClicked(Button* button)
 		}
 	}
 	
-	if(button->getName()=="stopButton")
+	else if(button->getName()=="stopButton")
 	{
 		getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 0.0, "");
 		getFilter()->suspendProcessing(true);
@@ -207,6 +252,18 @@ void AutomationEditor::buttonClicked(Button* button)
 		if(playButton.getToggleState()==true)
 			playButton.setToggleState(false, dontSendNotification);
 	}
+	
+    else if(button->getName()=="zoomInButton")
+    {
+        zoom=jmin(1.0, zoom+.1);        
+        tableManager.setZoomFactor(zoom);
+    }
+    
+    else if(button->getName()=="zoomOutButton")
+    {
+        zoom=jmin(0.0, zoom-.1);
+        tableManager.setZoomFactor(zoom);
+    }	
 	
 }
 //==============================================================================

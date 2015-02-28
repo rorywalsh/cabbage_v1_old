@@ -10,6 +10,7 @@
 
 #include "AudioFilePlaybackProcessor.h"
 #include "AudioFilePlaybackEditor.h"
+#include "BreakpointEnvelope.h"
 
 
 //==============================================================================
@@ -194,6 +195,17 @@ float AudioFilePlaybackProcessor::getGainEnvelop(int& index)
 void AudioFilePlaybackProcessor::addEnvDataPoint(Point<double> point)
 {
 	envPoints.add(point);
+}
+
+void AudioFilePlaybackProcessor::updateEnvPoints(Array<Point<double>> points)
+{
+	envPoints.swapWith(points);
+}
+
+void AudioFilePlaybackProcessor::changeListenerCallback(ChangeBroadcaster* source)
+{
+	if(BreakpointEnvelope* gainEnv = (BreakpointEnvelope*)source)
+		updateEnvPoints(gainEnv->getHandlePoints());
 }
 //==============================================================================
 const String AudioFilePlaybackProcessor::getName() const

@@ -66,8 +66,15 @@ private:
 	CabbageLookAndFeelBasic basicLook;
 	Array<float> ampRange;
 	var tableNumbers;
-	DrawableButton playButton;
+	float zoom;
+
 	DrawableButton stopButton;
+	DrawableButton zoomInButton;
+	DrawableButton loopButton;	
+	DrawableButton zoomOutButton;
+	DrawableButton linkToTransport; 
+	DrawableButton playButton;
+	
 	
 	BubbleMessageComponent popupBubble;
 	TextButton button;

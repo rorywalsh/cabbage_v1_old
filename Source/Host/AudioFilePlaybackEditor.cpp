@@ -40,12 +40,14 @@ currentPlayPosition(0)
     scrollbar.setAutoHide (false);
     scrollbar.addListener (this);
 	setOpaque(true);
-	resized();
+	resized();	
+
 }
 
 WaveformDisplay::~WaveformDisplay()
 {
     stopTimer();
+	gainEnvelope.removeAllChangeListeners();
 }
 
 void WaveformDisplay::resized()
@@ -60,7 +62,9 @@ void WaveformDisplay::setScrubberPos(double pos)
     //pos = (pos/(thumbnail.getTotalLength()*sampleRate))*thumbnail.getTotalLength();
     currentPositionMarker.setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 0,
                                                           1.5f, (float) (getHeight() - (scrollbar.getHeight()+5))));
-	this->getEditor()->setCurrentPosition(String(pos, 4));
+	
+	//attention.....
+	//this->getEditor()->setCurrentPosition(String(pos, 4));
 }
 
 void WaveformDisplay::changeListenerCallback (ChangeBroadcaster*)
@@ -203,129 +207,7 @@ void WaveformDisplay::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double n
 }
 
 //------------------------------------------------------------------------------
-WaveformDisplay::GainEnvelope::GainEnvelope()
-{
 
-}
-
-void WaveformDisplay::GainEnvelope::createGainEnvStartEndPoint()
-{
-	EnvelopHandle* leftMostHandle = new EnvelopHandle(this);
-	addAndMakeVisible(leftMostHandle);
-	leftMostHandle->setRelativePosition(Point<double>(0, 0), 1, 1);
-	EnvelopHandle* rightMostHandle = new EnvelopHandle(this);
-	addAndMakeVisible(rightMostHandle);
-	rightMostHandle->setRelativePosition(Point<double>(1, 0), 1, 1);
-	handles.add(leftMostHandle);
-	handles.add(rightMostHandle);		
-}
-
-void WaveformDisplay::GainEnvelope::mouseDown(const MouseEvent& e)
-{
-	int indx;
-	const int x = e.getPosition().getX();
-	for (int i=1; i<handles.size(); i++)
-	{
-		cUtils::debug("handle0X", handles[i-1]->getX());
-		cUtils::debug("handle1X", handles[i]->getX());
-		cUtils::debug("mouseX", x);
-		if (x >= handles[i-1]->getX() && x < handles[i]->getX())
-		{
-			indx = i;
-		}
-	}	
-	
-	EnvelopHandle* handle = new EnvelopHandle(this);
-	addAndMakeVisible(handle);
-	handle->setTopLeftPosition(e.getPosition().getX(), e.getPosition().getY());
-	handle->setRelativePosition(e.getPosition().toDouble(), getWidth(), getHeight());
-	handles.insert(indx, handle);
-	repaint();
-	resized();
-}
-
-void WaveformDisplay::GainEnvelope::addHandle(Point<double> pos, bool resize)
-{
-	EnvelopHandle* handle = new EnvelopHandle(this);
-	addAndMakeVisible(handle);
-	handle->setRelativePosition(Point<double>(pos.getX(), pos.getY()), 1.0, 1.0);
-	handles.add(handle);
-	repaint();
-	if(resize)
-		resized();	
-} 
-
-int WaveformDisplay::GainEnvelope::getHandleIndex(EnvelopHandle* thisHandle)
-{
-    return handles.indexOf(thisHandle);
-}
-
-void WaveformDisplay::GainEnvelope::removeHandle(EnvelopHandle* handle)
-{
-    if (handles.size() > 0)
-    {
-        handles.removeObject(handle, true);
-    }	
-	
-	repaint();
-	resized();
-}
-	
-EnvelopHandle* WaveformDisplay::GainEnvelope::getLastHandle()
-{
-    return handles.getUnchecked(handles.size()-1);
-}
-
-EnvelopHandle* WaveformDisplay::GainEnvelope::getFirstHandle()
-{
-    return handles.getUnchecked(0);
-}
-
-EnvelopHandle* WaveformDisplay::GainEnvelope::getPreviousHandle(EnvelopHandle* thisHandle)
-{
-    int thisHandleIndex = handles.indexOf(thisHandle);
-
-    if(thisHandleIndex <= 0)
-        return 0;
-    else
-        return handles.getUnchecked(thisHandleIndex-1);
-}
-
-EnvelopHandle* WaveformDisplay::GainEnvelope::getNextHandle(EnvelopHandle* thisHandle)
-{
-    int thisHandleIndex = handles.indexOf(thisHandle);
-
-    if(thisHandleIndex == -1 || thisHandleIndex >= handles.size()-1)
-        return 0;
-    else
-        return handles.getUnchecked(thisHandleIndex+1);
-}
-
-void WaveformDisplay::GainEnvelope::resized()
-{
-	getEditor()->getFilter()->clearEnvDataPoint();
-	for(int i=0;i<handles.size();i++)
-	{
-		const double xPos = handles[i]->getRelativePosition().getX()*getWidth()-((i==0 || i==handles.size()-1) ? 4 : 0);
-		const double yPos = handles[i]->getRelativePosition().getY()*getHeight();
-		handles[i]->setTopLeftPosition(xPos, yPos);
-		getEditor()->getFilter()->addEnvDataPoint(handles[i]->getRelativePosition());
-	}
-}
- 
-void WaveformDisplay::GainEnvelope::paint(Graphics& g)
-{			
-	g.fillAll(Colours::transparentBlack);
-	Path path;
-	g.setColour(Colours::cornflowerblue);
-	path.startNewSubPath(handles[0]->getPosition().translated(2.5, 2.5).toFloat());
-	for(int i=0;i<handles.size()-1;i++)
-	{
-		path.lineTo(handles[i]->getPosition().translated(4, 4).toFloat());
-	}
-	path.lineTo(handles[handles.size()-1]->getPosition().translated(4, 4).toFloat());
-	g.strokePath(path, PathStrokeType(2));
-}
 	
 //==============================================================================
 AudioFilePlaybackEditor::AudioFilePlaybackEditor (AudioFilePlaybackProcessor* ownerFilter):
@@ -353,6 +235,8 @@ zoom(0)
                          Random::getSystemRandom().nextInt(255));
     
 	waveformDisplay = new WaveformDisplay(formatManager, getFilter()->bufferingAudioFileSource, getFilter()->sourceSampleRate, tableColour);
+	
+	
 	setOpaque(true);
 	playButton.addListener(this);
 	addAndMakeVisible(playButton);
@@ -467,7 +351,8 @@ zoom(0)
 	addAndMakeVisible(waveformDisplay);
 	waveformDisplay->showGainEnvelope(false);
 	
-	
+	if(getFilter())
+		waveformDisplay->gainEnvelope.addChangeListener(getFilter());
 	
 
     setSize (500, 250);

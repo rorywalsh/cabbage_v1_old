@@ -36,7 +36,11 @@ updateCount(0)
     csoundParams->displays = 0;
     csound->SetParams(csoundParams);
 
+#if defined(MACOSX)
     File csdFile("/Users/walshr/sourcecode/cabbageaudio/cabbage/Source/Host/AutomationTrack.csd");
+#else
+    File csdFile("/home/rory/sourcecode/cabbageaudio/cabbage/Source/Host/AutomationTrack.csd");
+#endif
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
 
     if(csCompileResult==OK)

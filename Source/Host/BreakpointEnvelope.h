@@ -30,7 +30,7 @@ class BreakpointEnvelope : public Component,
 						   public ChangeBroadcaster
 {			
 public:
-	BreakpointEnvelope();
+	BreakpointEnvelope(Colour col);
 	
 	~BreakpointEnvelope()
 	{
@@ -46,12 +46,16 @@ public:
 	EnvelopHandle* getLastHandle();
 	EnvelopHandle* getFirstHandle();
 	EnvelopHandle* getNextHandle(EnvelopHandle* thisHandle);
-	void createGainEnvStartEndPoint();
+	void createEnvStartEndPoint(int amp = 1);
+	void showBubble(EnvelopHandle* handle);
 	void addHandle(Point<double> pos, bool resize=true);
 	Array<Point<double>> getHandlePoints();
 	
+	
 private:
 	OwnedArray<EnvelopHandle> handles;
+	BubbleMessageComponent popupBubble;
+	Colour colour;
 	
 };
 
@@ -60,10 +64,11 @@ private:
 class EnvelopHandle : public Component
 {
 public:
-	EnvelopHandle(BreakpointEnvelope* env):
+	EnvelopHandle(BreakpointEnvelope* env, Colour col):
 	owner(env),
 	compY(0),
-	compX(0)
+	compX(0),
+	shape(1)
 	{
 	setSize(8, 8);	
 	}
@@ -113,7 +118,8 @@ public:
 											  owner->getWidth(), 
 											  owner->getHeight(), 
 											  1);
-		setMouseCursor (MouseCursor::DraggingHandCursor);		
+		setMouseCursor (MouseCursor::DraggingHandCursor);	
+		owner->showBubble(this);
 	}
 
 	void mouseDrag(const MouseEvent &e)
@@ -123,11 +129,9 @@ public:
 		//to Cabbage to update the Csound function table(CabbagePluginEditor.cpp)
 		const EnvelopHandle* previousHandle = owner->getPreviousHandle(this);
 		const EnvelopHandle* nextHandle = owner->getNextHandle(this);
-
 		setMouseCursor (MouseCursor::DraggingHandCursor);
-
 		double xPos = compX+e.getDistanceFromDragStartX();
-		double yPos = jlimit(-4.0, owner->getHeight()-4.0, compY+e.getDistanceFromDragStartY());
+		double yPos = jlimit(-4.0, owner->getHeight()-4.0, compY+e.getDistanceFromDragStartY());		
 		
 		
 		if(this==owner->getFirstHandle() || this==owner->getLastHandle())
@@ -144,7 +148,9 @@ public:
 			}
 		}
 		
+		owner->showBubble(this);
 		
+		this->setSize(8, 8);
 		owner->repaint();
 	}
 	
@@ -156,6 +162,8 @@ public:
 	
 	double xPosRelative, yPosRelative, compX, compY;
 	ComponentDragger dragger;
+	Colour colour;
+	int shape;
 	int uid;
 	ComponentBoundsConstrainer constrainer;
 	BreakpointEnvelope* owner;

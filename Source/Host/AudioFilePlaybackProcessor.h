@@ -117,8 +117,6 @@ public:
 	String getCurrentFile(){		return currentFile;		}
 	
 	void setupAudioFile (File soundfile);
-	bool isSourcePlaying;
-	int sourceSampleRate;
 	BufferingAudioSource* bufferingAudioFileSource;
 	
 	void setBufferingReadPosition(int pos)
@@ -148,10 +146,15 @@ public:
 		return envPoints.size();
 	}
 	
+	bool isSourcePlaying;
+	int sourceSampleRate;
+	
 private:
 	AudioSourceChannelInfo sourceChannelInfo;
 	PositionableAudioSource* fileSource;
 	bool shouldLoop;
+	bool isLinkedToMasterTransport;
+	
 	AudioSampleBuffer* audioBuffer;
 	int samplingRate;
     TimeSliceThread thread;
@@ -163,7 +166,7 @@ private:
 	int totalLength;
 	bool showGainEnv;
 	float gainOutputValue;
-	bool isLinkedToMasterTransport;
+	
 	StringArray parameterNames;
 	float gain, pan;
 	Array<Point<double>> envPoints;

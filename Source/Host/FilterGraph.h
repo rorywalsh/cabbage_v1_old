@@ -92,6 +92,7 @@ public:
 		return lastChangedNodeId;
 	}
 
+
 	int getLastMovedNodeParameterIndex()
 	{
 		return lastChangedNodeParameter;
@@ -117,6 +118,8 @@ public:
     void clear();
 
 	String findControllerForparameter(int32 nodeID, int parameterIndex);
+
+	void updateAutomatedNodes(int nodeId, int parameterIndex, float value);
 
     //==============================================================================
 

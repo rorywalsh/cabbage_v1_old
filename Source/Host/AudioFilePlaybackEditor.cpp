@@ -29,7 +29,8 @@ source(source),
 tableColour(col),
 sampleRate(sr),
 scrollbar(false),
-currentPlayPosition(0)
+currentPlayPosition(0),
+gainEnvelope(Colours::cornflowerblue)
 {
     thumbnail.addChangeListener(this);
 	addAndMakeVisible(gainEnvelope);
@@ -346,7 +347,7 @@ zoom(0)
 			waveformDisplay->gainEnvelope.addHandle(getFilter()->getEnvPoint(i), false);
 	}
 	else
-		waveformDisplay->gainEnvelope.createGainEnvStartEndPoint();
+		waveformDisplay->gainEnvelope.createEnvStartEndPoint();
 		
 	addAndMakeVisible(waveformDisplay);
 	waveformDisplay->showGainEnvelope(false);

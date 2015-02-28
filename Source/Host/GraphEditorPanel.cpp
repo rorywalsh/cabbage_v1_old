@@ -1103,7 +1103,7 @@ void GraphDocumentComponent::resized()
     const int keysHeight = 60;
     const int statusHeight = 20;
 
-   // statusBar->setBounds (0, getHeight() - keysHeight - statusHeight, getWidth(), statusHeight);
+    //statusBar->setBounds (0, getHeight() - keysHeight - statusHeight, getWidth(), statusHeight);
     keyboardComp->setBounds (250, getHeight() - keysHeight, getWidth()-450, keysHeight);
 	inputStrip->setBounds(getWidth()-200, getHeight() - keysHeight, 200, 30);
 	outputStrip->setBounds(getWidth()-200, getHeight() - keysHeight/2, 200, 30);

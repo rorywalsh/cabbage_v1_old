@@ -21,9 +21,8 @@
 #define AUTOMATIONPLUGINPROCESSOR_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include <csound.hpp>
-#include "../CabbageUtils.h"
-#include "../CabbageMessageSystem.h"
+#include "FilterGraph.h"
+
 
 
 class AutomationEditor;
@@ -31,7 +30,8 @@ class AutomationEditor;
 /**
 */
 class AutomationProcessor  : public AudioProcessor,
-							 public ChangeBroadcaster
+							 public ChangeBroadcaster,
+							 public ChangeListener
 {
 public:
 
@@ -40,13 +40,9 @@ public:
 	public:
 		int32 nodeID;
 		int parameterIndex;
-		int fTableNumber;
-		int genRoutine;
 		String nodeName;
 		String parametername;
-		String fStatement;
 		int size;
-		String channelName;
 		float value;
 
 		AutomatableNode(String node, String name, int32 id, int index):
@@ -55,14 +51,24 @@ public:
 		{}
 	};
 
-
+	class AbstractEnvelope
+	{
+	public:
+		AbstractEnvelope():shape(1), currentPointIndex(0), currentSampleIndex(0)
+		{
+		cUtils::debug("Why is this being called so often?");	
+		}
+		Array<float> envPoints;
+		int shape, currentPointIndex, currentSampleIndex; 		
+	};
 
     //==============================================================================
-    AutomationProcessor();
+    AutomationProcessor(FilterGraph* filterGraph);
     ~AutomationProcessor();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+	void generateEnvelope(AudioSampleBuffer& buffer);
     void releaseResources() override;
 	XmlElement* createAutomationXML(AutomationProcessor::AutomatableNode node);
     void processBlock (AudioSampleBuffer&, MidiBuffer&) override;
@@ -100,17 +106,15 @@ public:
 
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
-    void setStateInformation (const void* data, int sizeInBytes) override;
-	
-	const Array<float, CriticalSection> getTableFloats(int tableNum);
-	const Array<double, CriticalSection> getTable(int tableNum);
-	StringArray getTableStatement(int tableNum);
-	
+    void setStateInformation (const void* data, int sizeInBytes) override;	
 	void sendOutgoingMessagesToCsound();
 	AutomatableNode getAutomatableNode(int index);
 	int getNumberOfAutomatableNodes();
-	void updateAutomatableNodefStatement(int tableNumber, String fstatement);
 	void updateAutomationValues();
+	void updateEnvPoints(int env, Array<Point<double>> points);
+	void changeListenerCallback(ChangeBroadcaster* source);	
+	float getGainEnvelop(int envIndex);
+	
 	
 	float getAutomationValue()
 	{
@@ -118,21 +122,9 @@ public:
 		return automationCurveValue;
 	}
 	
-	bool compiledOk()
-	{
-		return csCompileResult;
-	}
-
-    CSOUND* getCsoundStruct()
-    {
-        return csound->GetCsound();
-    }
-	
-	AutomationEditor* getEditor();
-	
-	CabbageMessageQueue messageQueue;
+	AutomationEditor* getEditor();	
 	float automationCurveValue;
-	void addAutomatableNode(String nodeName, String parameterString, int32 id, int index, int gen=-1, String statement="");
+	void addAutomatableNode(String nodeName, String parameterString, int32 id, int index);
 	
     const double getScrubberPosition()
     {
@@ -140,27 +132,23 @@ public:
         return scrubberPosition;
     }
     
+	bool isSourcePlaying;
 private:
-    bool csoundStatus;
+	bool shouldLoop;
+	bool isLinkedToMasterTransport;
+	FilterGraph* graph;
+	
+	int sourceSampleRate;
 	ScopedPointer<XmlElement> xmlState;
     double scrubberPosition;
 	Array<AutomatableNode> automatableNodes;
 	AudioPlayHead::CurrentPositionInfo hostInfo;
-	std::vector<MYFLT> temp;
 	bool newTableAdded;
+	float totalLength;
 	int updateCount;
-	
-    int csCompileResult;
-    ScopedPointer<CSOUND_PARAMS> csoundParams;
-    MYFLT cs_scale;
-    ScopedPointer<Csound> csound;                           //Csound instance
-    MYFLT *CSspin, *CSspout;        //Csound audio IO pointers
-    int csndIndex;                          //Csound sample counter
-    int csdKsmps;
-    int CSCompResult;                       //result of Csound performKsmps
-	int pos;
-    controlChannelInfo_s* csoundChanList;
-    int numCsoundChannels;          //number of Csound channels
+	int envSampleIndex;
+	Array<AbstractEnvelope> envelopes;
+
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AutomationProcessor)

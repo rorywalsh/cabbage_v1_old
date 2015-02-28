@@ -21,12 +21,174 @@
 #include "AutomationEditor.h"
 
 #define BUTTON_SIZE 25
+AutomationDisplay::AutomationDisplay(AutomationEditor* editor):
+scrollbar(false),
+currentPlayPosition(0),
+owner(editor)
+{
+	totalLength = 10.f;
+	tableColour = Colours::lime;
+	sampleRate = 44100;
+	
+    currentPositionMarker.setFill (Colours::lime);
+    addAndMakeVisible(currentPositionMarker);
+    addAndMakeVisible (scrollbar);
+
+    scrollbar.setAutoHide (false);
+    scrollbar.addListener (this);
+	setOpaque(true);
+	resized();
+	setSize(500, 200);	
+	
+    const Range<double> newRange (0.0, totalLength);
+    scrollbar.setRangeLimits (newRange);
+    setRange (newRange);	
+
+}
+
+AutomationDisplay::~AutomationDisplay()
+{
+    stopTimer();
+	for(int i=0;i<automationEnvelopes.size();i++)
+		automationEnvelopes[i]->removeAllChangeListeners();
+}
+
+
+void AutomationDisplay::addNewAutomationEnvelope(Colour envColour)
+{
+	automationEnvelopes.add(new BreakpointEnvelope(envColour));
+	
+	automationEnvelopes[automationEnvelopes.size()-1]->createEnvStartEndPoint(0);	
+	automationEnvelopes[automationEnvelopes.size()-1]->addChangeListener(owner->getFilter());	
+	addAndMakeVisible(automationEnvelopes[automationEnvelopes.size()-1]);
+	setZoomFactor(0);
+	resized();
+}
+
+void AutomationDisplay::bringEnvelopeToFront(int index)
+{
+	for(int i=0;i<automationEnvelopes.size();i++)
+		automationEnvelopes[i]->setAlpha(.3f);
+		
+	automationEnvelopes[index]->setAlpha(1.f);
+	automationEnvelopes[index]->toFront(true);
+}
+
+void AutomationDisplay::resized()
+{
+    scrollbar.setBounds (getLocalBounds().removeFromBottom (18).reduced (2));
+	for(int i=0;i<automationEnvelopes.size();i++)
+		automationEnvelopes[i]->setSize(getWidth(), getHeight()-18);
+}
+
+void AutomationDisplay::setScrubberPos(double pos)
+{
+    currentPositionMarker.setVisible (true);
+    //pos = (pos/(thumbnail.getTotalLength()*sampleRate))*thumbnail.getTotalLength();
+    currentPositionMarker.setRectangle (Rectangle<float> (timeToX (pos) - 0.75f, 0,
+                                                          1.5f, (float) (getHeight() - (scrollbar.getHeight()+5))));
+}
+
+void AutomationDisplay::changeListenerCallback (ChangeBroadcaster*)
+{
+    repaint();
+}
+
+void AutomationDisplay::setZoomFactor (double amount)
+{
+    if (totalLength > 0)
+    {
+        const double newScale = jmax (0.001, totalLength * (1.0 - jlimit (0.0, 0.99, amount)));
+        const double timeAtCentre = xToTime (getWidth() / 2.0f);
+        setRange (Range<double> (timeAtCentre - newScale * 0.5, timeAtCentre + newScale * 0.5));
+    }
+}
+
+void AutomationDisplay::setRange (Range<double> newRange)
+{
+    visibleRange = newRange;
+    scrollbar.setCurrentRange (visibleRange);
+	
+	const double visibleStart = visibleRange.getStart();
+	const double visibleEnd = visibleRange.getEnd();
+	const double visibleLength = visibleRange.getLength();
+	
+	const double newWidth = double(getWidth())*(double(totalLength)/visibleLength);
+	const double leftOffset = newWidth*(visibleStart/(double)totalLength);
+	
+	
+	for(int i=0;i<automationEnvelopes.size();i++)
+	{
+		
+		automationEnvelopes[i]->setSize(newWidth, automationEnvelopes[i]->getHeight());
+		automationEnvelopes[i]->setTopLeftPosition(-leftOffset, 0);
+		
+	}	
+	
+	
+    repaint();
+}
+
+void AutomationDisplay::paint (Graphics& g)
+{
+    g.fillAll (Colour(10, 10, 10));
+    g.setColour (tableColour);
+}
+
+void AutomationDisplay::timerCallback()
+{
+    if(totalLength>0)
+    {
+        currentPlayPosition = owner->getFilter()->getScrubberPosition();
+        //setScrubberPos(currentPlayPosition);
+    }
+}
+
+void AutomationDisplay::mouseDown (const MouseEvent& e)
+{
+    if(totalLength>0)
+    {
+        currentPlayPosition = jmax (0.0, xToTime ((float) e.x));
+        setScrubberPos(currentPlayPosition);
+    }
+}
+
+void AutomationDisplay::mouseDrag (const MouseEvent& e)
+{
+    if(totalLength>0)
+    {
+        currentPlayPosition = jmax (0.0, xToTime ((float) e.x));
+        setScrubberPos(currentPlayPosition);
+    }
+}
+
+void AutomationDisplay::resetPlaybackPosition()
+{
+	setScrubberPos(0);
+}
+
+float AutomationDisplay::timeToX (const double time) const
+{
+    return getWidth() * (float) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
+}
+
+double AutomationDisplay::xToTime (const float x) const
+{
+    return (x / getWidth()) * (visibleRange.getLength()) + visibleRange.getStart();
+}
+
+void AutomationDisplay::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
+{
+    if (scrollBarThatHasMoved == &scrollbar)
+        setRange (visibleRange.movedToStartAt (newRangeStart));
+}
+
+
+
 //==============================================================================
 AutomationEditor::AutomationEditor (AutomationProcessor& p): 
 AudioProcessorEditor(&p), 
 processor(p),
-tableManager(),
-popupBubble(500),
 autoCombo(),
 zoom(0),
 basicLook(),
@@ -35,17 +197,21 @@ stopButton("stopButton", DrawableButton::ImageOnButtonBackground),
 zoomInButton("zoomInButton", DrawableButton::ImageOnButtonBackground),
 loopButton("loopButton", DrawableButton::ImageOnButtonBackground),
 zoomOutButton("zoomOutButton", DrawableButton::ImageOnButtonBackground),
-linkToTransport("linkToTransportButton", DrawableButton::ImageOnButtonBackground)
+linkToTransport("linkToTransportButton", DrawableButton::ImageOnButtonBackground),
+automationDisplay(this)
 {
-	tableManager.showZoomButtons(false);
-	addAndMakeVisible(&tableManager);
-	
 
-    popupBubble.setColour(BubbleComponent::backgroundColourId, Colours::white);
-    popupBubble.setBounds(0, 0, 50, 20);
-    addChildComponent(popupBubble);
+	addAndMakeVisible(automationDisplay);
+	//automationDisplay.envelope.createGainEnvStartEndPoint();
+	
+//	if(processor.getEnvPointSize()>0)
+//	{
+//		for(int i=0;i<processor.getEnvPointSize();i++)
+//			waveformDisplay->gainEnvelope.addHandle(getFilter()->getEnvPoint(i), false);
+//	}
+//	else	
 	addAndMakeVisible(autoCombo);
-    popupBubble.setAlwaysOnTop(true);
+	autoCombo.addListener(this);
 	setOpaque(false);
 	
 	playButton.addListener(this);
@@ -128,7 +294,7 @@ linkToTransport("linkToTransportButton", DrawableButton::ImageOnButtonBackground
 
 AutomationEditor::~AutomationEditor()
 {
-    getFilter()->editorBeingDeleted(this);
+    processor.editorBeingDeleted(this);
 }
 
 //==============================================================================
@@ -139,7 +305,7 @@ void AutomationEditor::paint (Graphics& g)
 
 void AutomationEditor::resized()
 {
-	tableManager.setBounds(BUTTON_SIZE+7, 5, getWidth()-(BUTTON_SIZE+12), getHeight()-40);
+	automationDisplay.setBounds(BUTTON_SIZE+7, 5, getWidth()-(BUTTON_SIZE+12), getHeight()-40);
 	//tableManager.setBounds(10, 10, getWidth()-5-, getHeight()-50);
 	//viewport->setBounds(BUTTON_SIZE+7, 5, getWidth()-20, getHeight()-10);	
 	
@@ -156,9 +322,9 @@ void AutomationEditor::resized()
 void AutomationEditor::updateComboBoxItems()
 {
 	autoCombo.clear();
-	for(int i=0;i<getFilter()->getNumberOfAutomatableNodes();i++)
+	for(int i=0;i<processor.getNumberOfAutomatableNodes();i++)
 	{
-		String info = getFilter()->getAutomatableNode(i).nodeName+": "+getFilter()->getAutomatableNode(i).parametername;
+		String info = processor.getAutomatableNode(i).nodeName+": "+processor.getAutomatableNode(i).parametername;
 		autoCombo.addItem(info, i+1);
 		autoCombo.setSelectedId(i+1);
 	}
@@ -167,63 +333,20 @@ void AutomationEditor::updateComboBoxItems()
 //==============================================================================
 void AutomationEditor::changeListenerCallback(ChangeBroadcaster* source)
 {
-	GenTable* genTable = dynamic_cast<GenTable*>(source);
-	if(genTable)
-	{
-		if((genTable->getCurrentHandle() && genTable->displayAsGrid()!=1))
-			popupBubble.showAt(genTable->getCurrentHandle(), AttributedString(genTable->getCoordinates()), 1050);		
-		if(genTable->changeMessage == "updateFunctionTable")
-			updatefTableData(genTable);
-	}	
+
 }
 //==============================================================================
-void AutomationEditor::addTable(int tableN, int genRoutine)
+void AutomationEditor::addTable(Colour tableColour)
 {
 	
-	const Colour tableColour(Colour(Random::getSystemRandom().nextInt(200)+55,
-							 Random::getSystemRandom().nextInt(200)+55,
-							 Random::getSystemRandom().nextInt(200)+55));
-	
-    tableNumber = tableN;
-    
-	Array <float, CriticalSection> tableValues;
-	//tableValues.clear();
-	tableValues = getFilter()->getTableFloats(tableNumber);
-	if(tableValues.size()>0)
-	{
-		tableManager.setZoomFactor(0);
-		StringArray pFields = getFilter()->getTableStatement(tableNumber);
-		int genRoutine = pFields[4].getIntValue();
-	
-		if(getFilter()->compiledOk()==OK)
-		{
-			tableManager.addTable(44100, 
-							tableColour.brighter(),
-							genRoutine,
-							ampRange,
-							tableNumber, this);
-							
-			tableNumbers.append(tableNumber);
-			tableManager.setWaveform(tableValues, tableNumber);
-			tableManager.enableEditMode(pFields, tableNumber);
-			tableManager.setOutlineThickness(1);		
-			tableManager.setGridColour(Colour(20, 20, 20));		
-			tableManager.setBackgroundColour(Colour(10, 10, 10));				
-			tableManager.showTableButtons(false);
-			tableManager.bringTableToFront(tableNumber);
-			tableManager.showScrollbar(true);
-            //tableManager.setOutlineThickness(0.f);
-		}
-	}
-
-	
+	automationDisplay.addNewAutomationEnvelope(tableColour);
 	
 }
 
 //==============================================================================
 void AutomationEditor::timerCallback()
 {
-    tableManager.setScrubberPos(getFilter()->getScrubberPosition(), tableNumber);
+   // automationDisplay.setScrubberPos(processor.getScrubberPosition());
 }
 //==============================================================================
 void AutomationEditor::buttonClicked(Button* button)
@@ -232,110 +355,50 @@ void AutomationEditor::buttonClicked(Button* button)
 	{
 		if(button->getToggleState()==true)
 		{
-			getFilter()->suspendProcessing(false);	
-			getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 1.0, "");
+			processor.suspendProcessing(false);	
             startTimer(100);
 		}	
 		else
 		{
-			getFilter()->suspendProcessing(true);	
-			getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 0.0, "");
+			processor.suspendProcessing(true);	
             stopTimer();
 		}
+		
+		getFilter()->isSourcePlaying=!getFilter()->isSourcePlaying;		
 	}
 	
 	else if(button->getName()=="stopButton")
 	{
-		getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 0.0, "");
-		getFilter()->suspendProcessing(true);
+		processor.suspendProcessing(true);
         stopTimer();
 		if(playButton.getToggleState()==true)
 			playButton.setToggleState(false, dontSendNotification);
+			
+		getFilter()->isSourcePlaying=false;
 	}
 	
     else if(button->getName()=="zoomInButton")
     {
         zoom=jmin(1.0, zoom+.1);        
-        tableManager.setZoomFactor(zoom);
+        automationDisplay.setZoomFactor(zoom);
     }
     
     else if(button->getName()=="zoomOutButton")
     {
         zoom=jmin(0.0, zoom-.1);
-        tableManager.setZoomFactor(zoom);
+        automationDisplay.setZoomFactor(zoom);
     }	
 	
 }
+
+void AutomationEditor::comboBoxChanged (ComboBox* combo)
+{
+	automationDisplay.bringEnvelopeToFront(combo->getSelectedItemIndex());
+}
+
 //==============================================================================
 void AutomationEditor::updateScrubberPosition(double position)
 {
 	//tableManager.setScrubberPos(position, tableNumber);
 }
 //================================================================================
-void AutomationEditor::updatefTableData(GenTable* table)
-{
-#ifndef Cabbage_No_Csound
-
-    Array<double> pFields = table->getPfields();
-    if( table->genRoutine==5 || table->genRoutine==7 || table->genRoutine==2)
-    {
-        FUNC *ftpp;
-        EVTBLK  evt;
-        memset(&evt, 0, sizeof(EVTBLK));
-        evt.pcnt = 5+pFields.size();
-        evt.opcod = 'f';
-        evt.p[0]=0;
-
-        //setting table number to 0.
-        evt.p[1]=0;
-        evt.p[2]=0;
-        evt.p[3]=table->tableSize;
-        evt.p[4]=table->realGenRoutine;
-        if(table->genRoutine==5)
-        {
-            for(int i=0; i<pFields.size()-1; i++)
-                evt.p[5+i]= jmax(0.00001, pFields[i+1]);
-        }
-        else if(table->genRoutine==7)
-        {
-            for(int i=0; i<pFields.size()-1; i++)
-                evt.p[5+i]= pFields[i+1];
-        }
-        else
-        {
-            for(int i=0; i<pFields.size(); i++)
-                evt.p[5+i] = pFields[i];
-        }
-
-
-        StringArray fStatement;
-		int pCnt=0;
-        for(int i=0; i<evt.pcnt-1; i++)
-		{
-            fStatement.add(String(evt.p[i]));
-			cUtils::debug(i, fStatement[i]);
-			pCnt=i;
-		}
-		
-		if(table->genRoutine!=2)
-		{
-			fStatement.add(String(1));
-			fStatement.add(String(evt.p[pCnt]));			
-		}
-
-        //now set table number and set score char to f
-        fStatement.set(1, String(table->tableNumber));
-        fStatement.set(0, "f");
-
-        //Logger::writeToLog(fStatement.joinIntoString(" "));
-        getFilter()->getCsoundStruct()->hfgens( getFilter()->getCsoundStruct(), &ftpp, &evt, 1);
-        Array<float, CriticalSection> points;
-
-        points = Array<float, CriticalSection>(ftpp->ftable, ftpp->flen);
-        table->setWaveform(points, false);
-        //table->enableEditMode(fStatement);
-
-        getFilter()->messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement.joinIntoString(" "), table->tableNumber);
-    }
-#endif
-}

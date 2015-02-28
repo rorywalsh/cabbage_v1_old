@@ -16,7 +16,9 @@
 //==============================================================================
 AudioFilePlaybackProcessor::AudioFilePlaybackProcessor():
 thread("audio file playback"), 
-isSourcePlaying(false), 
+isSourcePlaying(false),
+shouldLoop(false),
+isLinkedToMasterTransport(false), 
 sourceSampleRate(44100),
 rmsLeft(0),
 rmsRight(0),
@@ -26,9 +28,7 @@ gain(.5f),
 pan(.5f),
 envPointIncr(0),
 gainSampleIndex(0),
-gainOutputValue(1),
-shouldLoop(false),
-isLinkedToMasterTransport(false)
+gainOutputValue(1)
 {
 	//setupAudioFile(File("/home/rory/Documents/BeesInMarch4.wav"));
 	bufferingAudioFileSource = nullptr;

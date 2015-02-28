@@ -156,7 +156,7 @@ AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* 
 
 	if(desc->pluginFormatName=="AutomationTrack")
 	{
-		if (AutomationProcessor* automation = new AutomationProcessor())
+		if (AutomationProcessor* automation = new AutomationProcessor(this))
 		{
 			automation->setPlayConfigDetails(2,
 											2,
@@ -612,23 +612,15 @@ void FilterGraph::restoreFromXml (const XmlElement& xml)
     }		
 }
 
-void FilterGraph::changeListenerCallback(ChangeBroadcaster* source)
+void FilterGraph::updateAutomatedNodes(int nodeId, int parameterIndex, float value)
 {
-	
-	if(AutomationProcessor* automation = dynamic_cast<AutomationProcessor*>(source))
-	{
-		const int numNodesBeingAutomated = automation->getNumberOfAutomatableNodes();
-		for(int i=0;i<numNodesBeingAutomated;i++)
-		{
-			const int thisNodeID = automation->getAutomatableNode(i).nodeID;
-			const int paramIndex = automation->getAutomatableNode(i).parameterIndex;
-			float value = automation->getAutomatableNode(i).value;
-			//graph.getNodeForId(thisNodeID)->getProcessor()->setParameter(paramIndex, value);
-			graph.getNodeForId(thisNodeID)->getProcessor()->setParameterNotifyingHost(paramIndex, value);	
-		}
-	}
-	
-	else if(NodeAudioProcessorListener* listener = dynamic_cast<NodeAudioProcessorListener*>(source))
+	graph.getNodeForId(nodeId)->getProcessor()->setParameterNotifyingHost(parameterIndex, value);	
+}
+
+
+void FilterGraph::changeListenerCallback(ChangeBroadcaster* source)
+{	
+	if(NodeAudioProcessorListener* listener = dynamic_cast<NodeAudioProcessorListener*>(source))
 	{
 		lastChangedNodeId = listener->nodeId;
 		lastChangedNodeParameter = listener->parameterIndex;

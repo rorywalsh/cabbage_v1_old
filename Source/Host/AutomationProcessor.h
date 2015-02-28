@@ -22,6 +22,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "FilterGraph.h"
+#include <csound.hpp>
+#include "../CabbageMessageSystem.h"
+#include "BreakpointEnvelope.h"
 
 
 
@@ -40,11 +43,15 @@ public:
 	public:
 		int32 nodeID;
 		int parameterIndex;
+		int fTableNumber;
+		int genRoutine;
 		String nodeName;
 		String parametername;
+		String fStatement;
 		int size;
+		String channelName;
 		float value;
-
+		
 		AutomatableNode(String node, String name, int32 id, int index):
 		nodeID(id), parameterIndex(index), nodeName(node), parametername(name),
 		size(4096)
@@ -111,6 +118,8 @@ public:
 	AutomatableNode getAutomatableNode(int index);
 	int getNumberOfAutomatableNodes();
 	void updateAutomationValues();
+	void updatefTableData(BreakpointEnvelope* table);
+	void updateAutomatableNodefStatement(int tableNumber, String newStatement);
 	void updateEnvPoints(int env, Array<Point<double>> points);
 	void changeListenerCallback(ChangeBroadcaster* source);	
 	float getGainEnvelop(int envIndex);
@@ -122,9 +131,14 @@ public:
 		return automationCurveValue;
 	}
 	
-	AutomationEditor* getEditor();	
+	CSOUND* getCsoundStruct()
+	{
+		return csound->GetCsound();
+	}	
+	
+	AutomationEditor* getEditor();
 	float automationCurveValue;
-	void addAutomatableNode(String nodeName, String parameterString, int32 id, int index);
+	void addAutomatableNode(String nodeName, String parameterString, int32 id, int index, int gen=-1, String statement="");
 	
     const double getScrubberPosition()
     {
@@ -133,11 +147,11 @@ public:
     }
     
 	bool isSourcePlaying;
+	CabbageMessageQueue messageQueue;
 private:
 	bool shouldLoop;
 	bool isLinkedToMasterTransport;
-	FilterGraph* graph;
-	
+	FilterGraph* graph;	
 	int sourceSampleRate;
 	ScopedPointer<XmlElement> xmlState;
     double scrubberPosition;
@@ -149,6 +163,20 @@ private:
 	int envSampleIndex;
 	Array<AbstractEnvelope> envelopes;
 
+	//=== Csound stuff ======
+	std::vector<MYFLT> temp;
+	bool csoundStatus;
+	int csCompileResult;
+	ScopedPointer<CSOUND_PARAMS> csoundParams;
+	MYFLT cs_scale;
+	ScopedPointer<Csound> csound; //Csound instance
+	MYFLT *CSspin, *CSspout; //Csound audio IO pointers
+	int csndIndex; //Csound sample counter
+	int csdKsmps;
+	int CSCompResult; //result of Csound performKsmps
+	int pos;
+	controlChannelInfo_s* csoundChanList;
+	int numCsoundChannels; //number of Csound channels
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AutomationProcessor)

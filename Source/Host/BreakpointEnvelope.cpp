@@ -19,8 +19,9 @@
 
 #include "BreakpointEnvelope.h"
 
-BreakpointEnvelope::BreakpointEnvelope(Colour col):
+BreakpointEnvelope::BreakpointEnvelope(Colour col, int Id):
 colour(col),
+uid(Id),
 popupBubble(500)
 {
     popupBubble.setColour(BubbleComponent::backgroundColourId, Colours::white);
@@ -54,15 +55,63 @@ void BreakpointEnvelope::showBubble(EnvelopHandle* handle)
 //	popupBubble.showAt(handle, AttributedString(message), 1050); 	
 }
 
+//==============================================================================
+float BreakpointEnvelope::ampToPixel(int height, Range<float> minMax, float sampleVal)
+{
+    //caluclate amp value based on pixel...
+    float amp =  (sampleVal-minMax.getStart()) / minMax.getLength();
+    return jmax(0.f, ((1-amp) * height));
+}
+
+float BreakpointEnvelope::pixelToAmp(int height, Range<float> minMax, float pixelY)
+{
+    //caluclate pixel value based on amp...
+    float amp =  ((1-(pixelY/height))*minMax.getLength())+minMax.getStart();
+    return amp;
+}
+
+Array<double> BreakpointEnvelope::getEnvelopeAsPfields()
+{
+    Array<double> values;
+    double prevXPos=0, currXPos=0, currYPos=0;
+	int genRoutine = 7;
+	Range<float> minMax;
+	minMax.setStart(0);
+	minMax.setEnd(1);
+    
+	for(int i=0; i<handles.size(); i++)
+    {
+        currYPos = handles[i]->getRelativePosition().getY()*getHeight();
+        if(genRoutine==7)
+        {
+            currXPos = handles[i]->getRelativePosition().getX()*4096;
+
+            //add x position
+            values.add(jmax(0.0, ceil(currXPos-prevXPos)));
+            //hack to prevent csound from bawking with a 0 in gen05
+            float amp = pixelToAmp(getHeight(), minMax, currYPos);
+            if(genRoutine==5)
+                amp = jmax(0.001f, amp);
+            else
+                amp = jmax(0.f, amp);
+            //add y position
+            values.add(amp);
+            prevXPos = roundToIntAccurate(handles[i]->getRelativePosition().getX()*4096);
+        }
+    }
+
+    return values;
+}
+
 void BreakpointEnvelope::mouseDown(const MouseEvent& e)
 {
 	int indx;
 	const int x = e.getPosition().getX();
 	for (int i=1; i<handles.size(); i++)
 	{
-		cUtils::debug("handle0X", handles[i-1]->getX());
-		cUtils::debug("handle1X", handles[i]->getX());
-		cUtils::debug("mouseX", x);
+//		cUtils::debug("handle0X", handles[i-1]->getX());
+//		cUtils::debug("handle1X", handles[i]->getX());
+//		cUtils::debug("mouseX", x);
 		if (x >= handles[i-1]->getX() && x < handles[i]->getX())
 		{
 			indx = i;

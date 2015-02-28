@@ -30,7 +30,7 @@ class BreakpointEnvelope : public Component,
 						   public ChangeBroadcaster
 {			
 public:
-	BreakpointEnvelope(Colour col);
+	BreakpointEnvelope(Colour col, int uid);
 	
 	~BreakpointEnvelope()
 	{
@@ -50,13 +50,20 @@ public:
 	void showBubble(EnvelopHandle* handle);
 	void addHandle(Point<double> pos, bool resize=true);
 	Array<Point<double>> getHandlePoints();
+	Array<double> getEnvelopeAsPfields();
+	float pixelToAmp(int height, Range<float> minMax, float pixelY);
+	float ampToPixel(int height, Range<float> minMax, float sampleVal);
 	
+	int getUid()
+	{
+		return uid;
+	}
 	
 private:
 	OwnedArray<EnvelopHandle> handles;
 	BubbleMessageComponent popupBubble;
 	Colour colour;
-	
+	int uid;
 };
 
 

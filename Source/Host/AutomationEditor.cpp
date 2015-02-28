@@ -54,10 +54,9 @@ AutomationDisplay::~AutomationDisplay()
 }
 
 
-void AutomationDisplay::addNewAutomationEnvelope(Colour envColour)
+void AutomationDisplay::addNewAutomationEnvelope(Colour envColour, int tableNumber)
 {
-	automationEnvelopes.add(new BreakpointEnvelope(envColour));
-	
+	automationEnvelopes.add(new BreakpointEnvelope(envColour, tableNumber));	
 	automationEnvelopes[automationEnvelopes.size()-1]->createEnvStartEndPoint(0);	
 	automationEnvelopes[automationEnvelopes.size()-1]->addChangeListener(owner->getFilter());	
 	addAndMakeVisible(automationEnvelopes[automationEnvelopes.size()-1]);
@@ -336,17 +335,17 @@ void AutomationEditor::changeListenerCallback(ChangeBroadcaster* source)
 
 }
 //==============================================================================
-void AutomationEditor::addTable(Colour tableColour)
+void AutomationEditor::addTable(Colour tableColour, int tableNumber)
 {
 	
-	automationDisplay.addNewAutomationEnvelope(tableColour);
+	automationDisplay.addNewAutomationEnvelope(tableColour, tableNumber);
 	
 }
 
 //==============================================================================
 void AutomationEditor::timerCallback()
 {
-   // automationDisplay.setScrubberPos(processor.getScrubberPosition());
+   automationDisplay.setScrubberPos(processor.getScrubberPosition());
 }
 //==============================================================================
 void AutomationEditor::buttonClicked(Button* button)
@@ -357,11 +356,14 @@ void AutomationEditor::buttonClicked(Button* button)
 		{
 			processor.suspendProcessing(false);	
             startTimer(100);
+			getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 1.0, "");
 		}	
 		else
 		{
-			processor.suspendProcessing(true);	
+			getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 0.0, "");
+			//processor.suspendProcessing(true);	
             stopTimer();
+			
 		}
 		
 		getFilter()->isSourcePlaying=!getFilter()->isSourcePlaying;		
@@ -369,12 +371,13 @@ void AutomationEditor::buttonClicked(Button* button)
 	
 	else if(button->getName()=="stopButton")
 	{
-		processor.suspendProcessing(true);
         stopTimer();
 		if(playButton.getToggleState()==true)
 			playButton.setToggleState(false, dontSendNotification);
 			
+		getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 0.0, "");
 		getFilter()->isSourcePlaying=false;
+		
 	}
 	
     else if(button->getName()=="zoomInButton")

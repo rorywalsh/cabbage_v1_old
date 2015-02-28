@@ -30,7 +30,7 @@ tableColour(col),
 sampleRate(sr),
 scrollbar(false),
 currentPlayPosition(0),
-gainEnvelope(Colours::cornflowerblue)
+gainEnvelope(Colours::cornflowerblue, -1)
 {
     thumbnail.addChangeListener(this);
 	addAndMakeVisible(gainEnvelope);

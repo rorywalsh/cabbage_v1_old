@@ -9,7 +9,8 @@ nchnls 	= 	2
 0dbfs	=	1
 
 ;this instrument is used for the automation
-;track. For now each table is 4096 in size.  
+;track. Each table is 4096 in size but uses cubic interpolation
+;during playback.  
 ;Each time a new automation track is added another 
 ;instance of instr1 is created with a unique channel
 ;and table number.
@@ -17,10 +18,20 @@ nchnls 	= 	2
 gkIndex init 0
 
 instr 1000
-	kIsPlaying chnget "isPlaying"
+kIsPlaying chnget "isPlaying"
+reset:
+	prints "Instrument 10 starting"
+	
 	if kIsPlaying ==1 then
 		gkIndex phasor .01
-		chnset gkIndex*4096, "scrubberPosition"
+		chnset gkIndex*10, "scrubberPosition"
+	endif
+
+	printk2 kIsPlaying
+
+	if changed:k(kIsPlaying)==1 && kIsPlaying==0 then
+	printks "Resetting\n", 0
+	reinit reset 	;reinit if user presses stop
 	endif
 endin
 
@@ -29,7 +40,7 @@ instr 1
 	SChannel sprintfk "auto_%d", p4
 	;kValue randi 1, 1
 	chnset abs(kValue), SChannel
-	;printk2 kValue
+	;printk, 1, kValue
 endin
 
 </CsInstruments>

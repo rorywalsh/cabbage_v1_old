@@ -32,7 +32,37 @@ isSourcePlaying(false),
 shouldLoop(false),
 isLinkedToMasterTransport(false)
 {
+	csound = new Csound();
+	csound->SetHostData(this);
+	csoundParams = new CSOUND_PARAMS();
+	csoundParams->nchnls_override = this->getNumOutputChannels();
+	csoundParams->displays = 0;
+	csound->SetParams(csoundParams);
+	
+	#if defined(MACOSX)
+		File csdFile("/Users/walshr/sourcecode/cabbageaudio/cabbage/Source/Host/AutomationTrack.csd");
+	#else
+		File csdFile("/home/rory/sourcecode/cabbageaudio/cabbage/Source/Host/AutomationTrack.csd");
+	#endif
+	
+	csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
+	
+	if(csCompileResult==OK)
+	{
+		Logger::writeToLog("compiled Ok");
+		csdKsmps = csound->GetKsmps();
+		if(csound->GetSpout()==nullptr);
+		CSspout = csound->GetSpout();
+		CSspin = csound->GetSpin();
+		cs_scale = csound->Get0dBFS();
+		csndIndex = csound->GetKsmps();
+		this->setLatencySamples(csound->GetKsmps());
+		updateHostDisplay();
+		csoundStatus = true;
+	}
+	
 	suspendProcessing(true);
+
 }
 
 AutomationProcessor::~AutomationProcessor()
@@ -52,29 +82,36 @@ AutomationEditor* AutomationProcessor::getEditor()
 		return nullptr;
 }
 
-void AutomationProcessor::addAutomatableNode(String nodeName, 
-											 String parameterName, 
-											 int32 id, 
-											 int index)
+void AutomationProcessor::addAutomatableNode(String nodeName,
+											String parameterName,
+											int32 id,
+											int index,
+											int gen,
+											String statement)
 {
-	
+	const String tableNumber(String(id)+String::formatted("%03d", index));
+	if(statement.isEmpty())
+	{
+		statement = "f"+tableNumber+" 0 4096 -7 0 4096 0";
+	}	
+	const String channel("auto_"+tableNumber);
 	AutomationProcessor::AutomatableNode node(nodeName, parameterName, id, index);
+	node.fStatement = statement;
+	node.channelName = channel;	
+	node.genRoutine = -7;
+	node.fTableNumber = tableNumber.getIntValue();
 	
 	automatableNodes.add(node);		
 	newTableAdded = true;		
-	envelopes.add(AbstractEnvelope());
-	
-    const Colour tableColour = Colour(Random::getSystemRandom().nextInt(255),
-                         Random::getSystemRandom().nextInt(255),
-                         Random::getSystemRandom().nextInt(255));
-    	
+	envelopes.add(AbstractEnvelope());    	
 
 	if(AutomationEditor* editor = getEditor())
 	{
-		editor->updateComboBoxItems();
-		editor->addTable(tableColour);
-		newTableAdded = false;			
+		editor->updateComboBoxItems();		
 	}
+	
+	messageQueue.addOutgoingTableUpdateMessageToQueue(statement, tableNumber.getIntValue());
+	sendOutgoingMessagesToCsound();
 		
 }
 
@@ -86,23 +123,6 @@ AutomationProcessor::AutomatableNode AutomationProcessor::getAutomatableNode(int
 int AutomationProcessor::getNumberOfAutomatableNodes()
 {
 	return automatableNodes.size();
-}
-
-//==============================================================================
-void AutomationProcessor::updateAutomationValues()
-{
-	//put the brakes on this. No need to update that often...
-	updateCount = (updateCount>5 ? 0:updateCount+1);
-    scrubberPosition = envSampleIndex/44100.f;
-	if(updateCount==0)
-	{
-		for(int i=0;i<automatableNodes.size();i++)
-			graph->updateAutomatedNodes(automatableNodes.getReference(i).nodeID, 
-										automatableNodes.getReference(i).parameterIndex, 
-										automatableNodes.getReference(i).value);
-		
-		
-	}
 }
 
 void AutomationProcessor::updateEnvPoints(int env, Array<Point<double>> points)
@@ -120,86 +140,179 @@ void AutomationProcessor::updateEnvPoints(int env, Array<Point<double>> points)
 void AutomationProcessor::changeListenerCallback(ChangeBroadcaster* source)
 {
 	if(BreakpointEnvelope* gainEnv = (BreakpointEnvelope*)source)
+	{
 		updateEnvPoints(0, gainEnv->getHandlePoints());
+		updatefTableData(gainEnv);
+	}
 }
 
-float AutomationProcessor::getGainEnvelop(int envIndex)
-{ 
-//	int currentPointIndex = envelopes[envIndex].currentPointIndex;
-//	
-//	int duration = envelopes[envIndex].envPoints[currentPointIndex*2+2]*
-//									totalLength-envelopes[envIndex].envPoints[currentPointIndex*2]*totalLength;;
-//
-//	duration = duration*44100;
-//	float gainOutputValue;
-//	AbstractEnvelope currentEnv(envelopes[envIndex]);
-//
-//	if(currentEnv.currentPointIndex<currentEnv.envPoints.size()/2)
-//	{
-//		const int index = currentEnv.currentSampleIndex;
-//		if(index<duration)
-//		{
-//			const float amp1 = 1.f-currentEnv.envPoints[currentPointIndex*2];
-//			const float amp2 = 1.f-currentEnv.envPoints[currentPointIndex*2+2];
-//			float scale =  (float(index)/float(duration));
-//			gainOutputValue = amp1 + (float(index)/float(duration))*(amp2-amp1); 
-//			envelopes.getReference(envIndex).currentSampleIndex++;
-//			return gainOutputValue;
-//		}
-//		else
-//		{
-//			envelopes.getReference(envIndex).currentPointIndex+1;
-//			envelopes.getReference(envIndex).currentSampleIndex=0;
-//			return gainOutputValue;
-//		}
-//	}
-//	else 
-		return 0.f;		
-}
-
-void AutomationProcessor::generateEnvelope(AudioSampleBuffer& buffer)
+void AutomationProcessor::updateAutomationValues()
 {
-	for(int i=0;i<buffer.getNumSamples();i++)
+	//put the brakes on this. No need to update that often...
+	updateCount = (updateCount>100 ? 0:updateCount+1);
+    scrubberPosition = csound->GetChannel("scrubberPosition");
+	
+	if(updateCount==0)
 	{
 		for(int i=0;i<automatableNodes.size();i++)
-			automatableNodes.getReference(i).value  = getGainEnvelop(i);
-		
-		envSampleIndex++;
-		if(envSampleIndex>totalLength*44100)
-			envSampleIndex=0;
-
+		{
+			String test = automatableNodes.getReference(i).channelName; 
+			graph->updateAutomatedNodes(automatableNodes.getReference(i).nodeID, 
+										automatableNodes.getReference(i).parameterIndex, 
+										csound->GetChannel(automatableNodes.getReference(i).channelName.toUTF8().getAddress()));
+		}								
 	}
-	//buffer.clear();
 }
-	
+
+void AutomationProcessor::updatefTableData(BreakpointEnvelope* table)
+{
+#ifndef Cabbage_No_Csound
+	int genRoutine = -7;
+    Array<double> pFields = table->getEnvelopeAsPfields();
+    if( genRoutine==-7)
+    {
+        FUNC *ftpp;
+        EVTBLK  evt;
+        memset(&evt, 0, sizeof(EVTBLK));
+        evt.pcnt = 5+pFields.size();
+        evt.opcod = 'f';
+        evt.p[0]=0;
+
+        //setting table number to 0.
+        evt.p[1]=0;
+        evt.p[2]=0;
+        evt.p[3]=4096;
+        evt.p[4]=genRoutine;
+        if(genRoutine==5)
+        {
+            for(int i=0; i<pFields.size()-1; i++)
+                evt.p[5+i]= jmax(0.00001, pFields[i+1]);
+        }
+        else if(genRoutine==-7)
+        {
+            for(int i=0; i<pFields.size()-1; i++)
+                evt.p[5+i]= pFields[i+1];
+        }
+        else
+        {
+            for(int i=0; i<pFields.size(); i++)
+                evt.p[5+i] = pFields[i];
+        }
+
+
+        StringArray fStatement;
+		int pCnt=0;
+        for(int i=0; i<evt.pcnt-1; i++)
+		{
+            fStatement.add(String(evt.p[i]));
+			//cUtils::debug(i, fStatement[i]);
+			pCnt=i;
+		}
+
+        //now set table number and set score char to f
+        fStatement.set(1, String(table->getUid()));
+        fStatement.set(0, "f");
+
+        //Logger::writeToLog(fStatement.joinIntoString(" "));
+        messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement.joinIntoString(" "), table->getUid());
+    }
+#endif
+}
+
+void AutomationProcessor::sendOutgoingMessagesToCsound()
+{
+	if(csCompileResult==OK)
+	{
+		if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+		{
+			csound->SetChannel(CabbageIDs::hostbpm.toUTF8(), hostInfo.bpm);
+			csound->SetChannel(CabbageIDs::timeinseconds.toUTF8(), hostInfo.timeInSeconds);
+			csound->SetChannel(CabbageIDs::isplaying.toUTF8(), hostInfo.isPlaying);
+			csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
+			csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
+			csound->SetChannel(CabbageIDs::timeinsamples.toUTF8(), hostInfo.timeInSamples);
+			csound->SetChannel(CabbageIDs::timeSigDenom.toUTF8(), hostInfo.timeSigDenominator);
+			csound->SetChannel(CabbageIDs::timeSigNum.toUTF8(), hostInfo.timeSigNumerator);
+		}
+		for(int i=0; i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue(); i++)
+		{
+			//update Csound function tables with values from table widget
+			if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="updateTable")
+			{
+				//Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.toUTF8());
+				const int tableNum = messageQueue.getOutgoingChannelMessageFromQueue(i).tableNumber;
+				//update table data for saving...
+				updateAutomatableNodefStatement(tableNum, messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement);
+				csound->InputMessage(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.getCharPointer());
+			}
+			//catch string messags
+			else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type==CabbageIDs::stringchannel)
+			{
+				Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName);
+				Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);
+				csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
+				messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal.toUTF8().getAddress());
+			}
+			else
+				csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
+			messageQueue.getOutgoingChannelMessageFromQueue(i).value);
+			}
+			messageQueue.flushOutgoingChannelMessages();
+		}
+		
+		if(newTableAdded == true)
+		{
+			//call performKsmps to instantiate new tables...
+			const String iStatement("i1 0 36000 "+String(automatableNodes.getReference(automatableNodes.size()-1).fTableNumber));
+			csound->InputMessage(iStatement.toUTF8().getAddress());
+			csound->PerformKsmps();
+			const int gen = automatableNodes.getReference(automatableNodes.size()-1).genRoutine;
+			const int tableNum = automatableNodes.getReference(automatableNodes.size()-1).fTableNumber;
+			if(AutomationEditor* editor = getEditor())
+			{
+			const Colour tableColour = Colour(Random::getSystemRandom().nextInt(255),
+                         Random::getSystemRandom().nextInt(255),
+                         Random::getSystemRandom().nextInt(255));
+			editor->addTable(tableColour, tableNum);
+			}
+			
+			newTableAdded = false;
+		}
+}	
+
+void AutomationProcessor::updateAutomatableNodefStatement(int tableNumber, String newStatement)
+{
+	for(int i=0;i<automatableNodes.size();i++)
+	{
+		if(automatableNodes.getReference(i).fTableNumber==tableNumber)
+		automatableNodes.getReference(i).fStatement = newStatement;
+	}
+}	
 //==============================================================================
 void AutomationProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-		if(isLinkedToMasterTransport)
+		int numSamples = buffer.getNumSamples();
+		if(isSuspended()==false)
 		{
-			if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition(hostInfo))
+			if(csCompileResult==OK)
 			{
-				if((!hostInfo.isPlaying && hostInfo.ppqPosition==0))
-				{
-					isSourcePlaying=true;
-					envSampleIndex=0;
-				}
-				
-				if(hostInfo.isPlaying)
-				{
-					if(isSourcePlaying)
-						generateEnvelope(buffer);
-				}					
+					for(int i=0; i<numSamples; i++, csndIndex++)
+					{
+						if(csndIndex == csdKsmps)
+						{
+							getCallbackLock().enter(); 
+							sendOutgoingMessagesToCsound();
+							updateAutomationValues();								
+							csCompileResult = csound->PerformKsmps();   					
+							getCallbackLock().exit();
+							csndIndex = 0;
+						}
+						
+						buffer.clear();	   
+					}
+
 			}
 		}
-		else
-		{
-			if(isSourcePlaying)
-				generateEnvelope(buffer);
-		}
-	
-	updateAutomationValues();	
-	//buffer.clear();
 		
 }
 //==============================================================================
@@ -224,6 +337,8 @@ XmlElement* AutomationProcessor::createAutomationXML(AutomationProcessor::Automa
 	innerXml->setAttribute("parameterName", node.parametername);
 	innerXml->setAttribute("nodeId", node.nodeID);
 	innerXml->setAttribute("parameterId", node.parameterIndex);
+	innerXml->setAttribute("genRoutine", node.genRoutine);
+	innerXml->setAttribute("fStatement", node.fStatement);	
 	return innerXml;
 }
 //==============================================================================
@@ -243,8 +358,10 @@ void AutomationProcessor::setStateInformation (const void* data, int sizeInBytes
 				const String nodeName = e->getStringAttribute("nodename");
 				const String parametername = e->getStringAttribute("parameterName");
 				const int nodeID = e->getIntAttribute("nodeId");
-				const int parameterIndex = e->getIntAttribute("parameterId");			
-				addAutomatableNode(nodeName, parametername, nodeID, parameterIndex);
+				const int parameterIndex = e->getIntAttribute("parameterId");
+				const int genRoutine = e->getIntAttribute("genRoutine");
+				const String fStatement = e->getStringAttribute("fStatement");				
+				addAutomatableNode(nodeName, parametername, nodeID, parameterIndex, genRoutine, fStatement);
 			}	 
 		}
 	}

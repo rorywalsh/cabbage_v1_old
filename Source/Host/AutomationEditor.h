@@ -48,7 +48,7 @@ public:
     void mouseDrag (const MouseEvent& e);
     void resetPlaybackPosition();
     void resized() override;
-	void addNewAutomationEnvelope(Colour envColour);
+	void addNewAutomationEnvelope(Colour envColour, int tableNumber);
 	void bringEnvelopeToFront(int index);
 
 private:
@@ -86,7 +86,7 @@ public:
     void resized() override;
 	void buttonClicked(Button*);	
 	void changeListenerCallback(ChangeBroadcaster* source);
-	void addTable(Colour tableColour);	
+	void addTable(Colour tableColour, int tableNumber);
 	void updateComboBoxItems();
 	void updateScrubberPosition(double position);
     void timerCallback();

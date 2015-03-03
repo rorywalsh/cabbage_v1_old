@@ -63,9 +63,8 @@ public:
 	public:
 		AbstractEnvelope():shape(1), currentPointIndex(0), currentSampleIndex(0)
 		{
-		cUtils::debug("Why is this being called so often?");	
 		}
-		Array<float> envPoints;
+		Array<double> envPoints;
 		int shape, currentPointIndex, currentSampleIndex; 		
 	};
 
@@ -77,7 +76,7 @@ public:
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
 	void generateEnvelope(AudioSampleBuffer& buffer);
     void releaseResources() override;
-	XmlElement* createAutomationXML(AutomationProcessor::AutomatableNode node);
+	XmlElement* createAutomationXML(AutomationProcessor::AutomatableNode node, int index);
     void processBlock (AudioSampleBuffer&, MidiBuffer&) override;
 
     //==============================================================================
@@ -124,6 +123,15 @@ public:
 	void changeListenerCallback(ChangeBroadcaster* source);	
 	float getGainEnvelop(int envIndex);
 	
+	const AbstractEnvelope getEnvelope(int index)
+	{
+		return envelopes.getReference(index);
+	}
+
+	int getNumberOfEnvelopes()
+	{
+		return envelopes.size();
+	}
 	
 	float getAutomationValue()
 	{

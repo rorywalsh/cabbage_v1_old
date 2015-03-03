@@ -30,7 +30,7 @@ class BreakpointEnvelope : public Component,
 						   public ChangeBroadcaster
 {			
 public:
-	BreakpointEnvelope(Colour col, int uid);
+	BreakpointEnvelope(Colour col, int uid, int tableNumber);
 	
 	~BreakpointEnvelope()
 	{
@@ -59,11 +59,17 @@ public:
 		return uid;
 	}
 	
+	int getTableNumber()
+	{
+		return tableNumber;
+	}
+	
 private:
 	OwnedArray<EnvelopHandle> handles;
 	BubbleMessageComponent popupBubble;
+	
 	Colour colour;
-	int uid;
+	int uid, tableNumber;
 };
 
 

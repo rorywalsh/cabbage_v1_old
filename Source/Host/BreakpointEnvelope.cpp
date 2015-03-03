@@ -19,9 +19,10 @@
 
 #include "BreakpointEnvelope.h"
 
-BreakpointEnvelope::BreakpointEnvelope(Colour col, int Id):
+BreakpointEnvelope::BreakpointEnvelope(Colour col, int Id, int tableNum):
 colour(col),
 uid(Id),
+tableNumber(tableNum),
 popupBubble(500)
 {
     popupBubble.setColour(BubbleComponent::backgroundColourId, Colours::white);

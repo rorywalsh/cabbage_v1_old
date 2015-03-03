@@ -56,8 +56,9 @@ AutomationDisplay::~AutomationDisplay()
 
 void AutomationDisplay::addNewAutomationEnvelope(Colour envColour, int tableNumber)
 {
-	automationEnvelopes.add(new BreakpointEnvelope(envColour, tableNumber));	
-	automationEnvelopes[automationEnvelopes.size()-1]->createEnvStartEndPoint(0);	
+	
+	automationEnvelopes.add(new BreakpointEnvelope(envColour, automationEnvelopes.size(), tableNumber));	
+	//automationEnvelopes[automationEnvelopes.size()-1]->createEnvStartEndPoint(0);	
 	automationEnvelopes[automationEnvelopes.size()-1]->addChangeListener(owner->getFilter());	
 	addAndMakeVisible(automationEnvelopes[automationEnvelopes.size()-1]);
 	setZoomFactor(0);
@@ -287,6 +288,7 @@ automationDisplay(this)
 	ampRange.add(-1);	
 	
 	updateComboBoxItems();
+	addTablesOnStartup();
 	
     setSize (200, 400);		
 }
@@ -328,7 +330,36 @@ void AutomationEditor::updateComboBoxItems()
 		autoCombo.setSelectedId(i+1);
 	}
 }
+
+//==============================================================================
+void AutomationEditor::addTablesOnStartup()
+{
 	
+	cUtils::debug(processor.getNumberOfAutomatableNodes());
+	cUtils::debug(processor.getNumberOfEnvelopes());
+	
+	for(int i=0;i<processor.getNumberOfAutomatableNodes();i++)
+	{
+		int tableNumber = processor.getAutomatableNode(i).fTableNumber;
+		automationDisplay.addNewAutomationEnvelope(cUtils::getRandomColour(), tableNumber);
+		const int index = automationDisplay.getNumberOfEnvelopes()-1;
+		
+		
+	if(processor.getEnvelope(index).envPoints.size()>0)
+	{
+		for(int y=0;y<processor.getEnvelope(index).envPoints.size();y+=2)
+		{
+			Point<double> point(processor.getEnvelope(index).envPoints[y], processor.getEnvelope(index).envPoints[y+1]);
+			automationDisplay.getAutomationEnvelope(index)->addHandle(point, false);
+			
+			//automationDisplay.automationEnvelopes[i].addHandle(, false);
+		}
+			
+	}
+	else
+		automationDisplay.getAutomationEnvelope(index)->createEnvStartEndPoint();
+	}
+}	
 //==============================================================================
 void AutomationEditor::changeListenerCallback(ChangeBroadcaster* source)
 {
@@ -396,7 +427,8 @@ void AutomationEditor::buttonClicked(Button* button)
 
 void AutomationEditor::comboBoxChanged (ComboBox* combo)
 {
-	automationDisplay.bringEnvelopeToFront(combo->getSelectedItemIndex());
+	if(combo->getSelectedItemIndex()>-1 && combo->getSelectedItemIndex()>0<=automationDisplay.getNumberOfEnvelopes())
+		automationDisplay.bringEnvelopeToFront(combo->getSelectedItemIndex());
 }
 
 //==============================================================================

@@ -139,10 +139,10 @@ void AutomationProcessor::updateEnvPoints(int env, Array<Point<double>> points)
 
 void AutomationProcessor::changeListenerCallback(ChangeBroadcaster* source)
 {
-	if(BreakpointEnvelope* gainEnv = (BreakpointEnvelope*)source)
+	if(BreakpointEnvelope* env = (BreakpointEnvelope*)source)
 	{
-		updateEnvPoints(0, gainEnv->getHandlePoints());
-		updatefTableData(gainEnv);
+		updateEnvPoints(env->getUid(), env->getHandlePoints());
+		updatefTableData(env);
 	}
 }
 
@@ -156,7 +156,6 @@ void AutomationProcessor::updateAutomationValues()
 	{
 		for(int i=0;i<automatableNodes.size();i++)
 		{
-			String test = automatableNodes.getReference(i).channelName; 
 			graph->updateAutomatedNodes(automatableNodes.getReference(i).nodeID, 
 										automatableNodes.getReference(i).parameterIndex, 
 										csound->GetChannel(automatableNodes.getReference(i).channelName.toUTF8().getAddress()));
@@ -210,11 +209,12 @@ void AutomationProcessor::updatefTableData(BreakpointEnvelope* table)
 		}
 
         //now set table number and set score char to f
-        fStatement.set(1, String(table->getUid()));
+        fStatement.set(1, String(table->getTableNumber()));
         fStatement.set(0, "f");
 
         //Logger::writeToLog(fStatement.joinIntoString(" "));
         messageQueue.addOutgoingTableUpdateMessageToQueue(fStatement.joinIntoString(" "), table->getUid());
+		sendOutgoingMessagesToCsound();
     }
 #endif
 }
@@ -242,6 +242,7 @@ void AutomationProcessor::sendOutgoingMessagesToCsound()
 				//Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.toUTF8());
 				const int tableNum = messageQueue.getOutgoingChannelMessageFromQueue(i).tableNumber;
 				//update table data for saving...
+				cUtils::debug("fstatement", messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement);
 				updateAutomatableNodefStatement(tableNum, messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement);
 				csound->InputMessage(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.getCharPointer());
 			}
@@ -270,10 +271,8 @@ void AutomationProcessor::sendOutgoingMessagesToCsound()
 			const int tableNum = automatableNodes.getReference(automatableNodes.size()-1).fTableNumber;
 			if(AutomationEditor* editor = getEditor())
 			{
-			const Colour tableColour = Colour(Random::getSystemRandom().nextInt(255),
-                         Random::getSystemRandom().nextInt(255),
-                         Random::getSystemRandom().nextInt(255));
-			editor->addTable(tableColour, tableNum);
+
+			editor->addTable(cUtils::getRandomColour(), tableNum);
 			}
 			
 			newTableAdded = false;
@@ -322,46 +321,70 @@ void AutomationProcessor::getStateInformation (MemoryBlock& destData)
 	
 	for(int i=0;i<automatableNodes.size();i++)
 	{
-		cUtils::showMessage(createAutomationXML (automatableNodes.getReference(i))->getAllSubText());
-		xml.addChildElement (createAutomationXML (automatableNodes.getReference(i)));
+		xml.addChildElement (createAutomationXML (automatableNodes.getReference(i), i));
 	}	
 
-	xml.writeToFile(File("/home/rory/Desktop/output.txt"), String::empty); 
+	xml.writeToFile(File("/home/rory/Desktop/automationProc.txt"), String::empty); 
 	copyXmlToBinary (xml, destData);
 }
 //==============================================================================
-XmlElement* AutomationProcessor::createAutomationXML(AutomationProcessor::AutomatableNode node)
+XmlElement* AutomationProcessor::createAutomationXML(AutomationProcessor::AutomatableNode node, int index)
 {
-	XmlElement* innerXml = new XmlElement ("NODES");
+	XmlElement* innerXml = nullptr;
+	innerXml = new XmlElement ("NODES");
 	innerXml->setAttribute("nodeName", node.nodeName);
 	innerXml->setAttribute("parameterName", node.parametername);
 	innerXml->setAttribute("nodeId", node.nodeID);
 	innerXml->setAttribute("parameterId", node.parameterIndex);
 	innerXml->setAttribute("genRoutine", node.genRoutine);
 	innerXml->setAttribute("fStatement", node.fStatement);	
+	
+	cUtils::debug(index);
+	cUtils::debug(this->getNumberOfEnvelopes());
+	StringArray points;
+	//add envelop points if there are any
+	for(int i=0;i<envelopes.getReference(index).envPoints.size();i+=2)
+	{
+		points.add(String(envelopes.getReference(index).envPoints[i]));
+		points.add(String(envelopes.getReference(index).envPoints[i+1]));
+	} 
+	
+	innerXml->setAttribute("envPoints", points.joinIntoString(" "));	
+	
 	return innerXml;
 }
 //==============================================================================
 void AutomationProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
 	ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
-	// check we're looking at the right kind of document..
-	//cUtils::showMessage(xmlState->getNumAttributes());
-		 
-	// check we're looking at the right kind of document..
+
+	int nodeCount = 0;	 
+	
 	if (xmlState->hasTagName ("AUTOMATION_PLUGIN_SETTINGS"))
 	{
 		forEachXmlChildElement(*xmlState, e)
 		{
 			if (e->hasTagName ("NODES"))
 			{	
-				const String nodeName = e->getStringAttribute("nodename");
+				const String nodeName = e->getStringAttribute("nodeName");
 				const String parametername = e->getStringAttribute("parameterName");
 				const int nodeID = e->getIntAttribute("nodeId");
 				const int parameterIndex = e->getIntAttribute("parameterId");
 				const int genRoutine = e->getIntAttribute("genRoutine");
 				const String fStatement = e->getStringAttribute("fStatement");				
 				addAutomatableNode(nodeName, parametername, nodeID, parameterIndex, genRoutine, fStatement);
+				
+				Array<Point<double>> envPoints;
+				StringArray points;
+				points.addTokens(e->getStringAttribute("envPoints")," ");
+				
+				for(int i=0;i<points.size();i+=2)
+				{
+					Point<double> data(points[i].getDoubleValue(), points[i+1].getDoubleValue());
+					envPoints.add(data);
+				}				
+				updateEnvPoints(nodeCount, envPoints);
+				nodeCount++;
 			}	 
 		}
 	}

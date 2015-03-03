@@ -48,8 +48,17 @@ public:
     void mouseDrag (const MouseEvent& e);
     void resetPlaybackPosition();
     void resized() override;
-	void addNewAutomationEnvelope(Colour envColour, int tableNumber);
+	void addNewAutomationEnvelope(Colour envColour, int tableNumber=-1);
 	void bringEnvelopeToFront(int index);
+	int getNumberOfEnvelopes()
+	{
+		return automationEnvelopes.size();
+	}
+
+	BreakpointEnvelope* getAutomationEnvelope(int index)
+	{
+		return automationEnvelopes[index];
+	}
 
 private:
 	OwnedArray<BreakpointEnvelope> automationEnvelopes;
@@ -91,6 +100,7 @@ public:
 	void updateScrubberPosition(double position);
     void timerCallback();
 	void comboBoxChanged(ComboBox* combo);
+	void addTablesOnStartup();
 	
     AutomationProcessor* getFilter() const
     {

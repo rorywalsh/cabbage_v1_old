@@ -286,6 +286,14 @@ public:
 
         return x;
     }
+//===========================================================================================
+	static const Colour getRandomColour()
+	{
+		const Colour colour = Colour(Random::getSystemRandom().nextInt(255),
+                         Random::getSystemRandom().nextInt(255),
+                         Random::getSystemRandom().nextInt(255));	
+		return colour;
+	}
 
 //===========================================================================================
     static void showMessageWithLocation(String message)

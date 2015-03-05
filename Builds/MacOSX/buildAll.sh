@@ -104,3 +104,21 @@ then
 
 fi
 
+if [ $1 == "10_6" ]
+then
+	echo "Building All 32Bit"
+	xcodebuild -project Cabbage10_6.xcodeproj/ ONLY_ACTIVE_ARCH=NO 
+	xcodebuild -project CabbagePlugin10_6.xcodeproj/ ARCHS=i386 ONLY_ACTIVE_ARCH=NO GCC_PREPROCESSOR_DEFINITIONS="Cabbage_Plugin_Synth=1 USE_DOUBLE=1 CSOUND6=1 MACOSX=1"
+	cp -rf ./build/Debug/CabbagePlugin.component/ ./build/Debug/Cabbage.app/Contents/CabbagePluginSynth.component
+	rm -rf ./build/Debug/CabbagePluginSynth.dat/CabbagePlugin.component	
+	xcodebuild -project CabbagePlugin10_6.xcodeproj/ ONLY_ACTIVE_ARCH=NO GCC_PREPROCESSOR_DEFINITIONS="MACOSX=1 USE_DOUBLE=1"
+	cp -rf ./build/Debug/CabbagePlugin.component/ ./build/Debug/Cabbage.app/Contents/CabbagePluginEffect.component
+	rm -rf ./build/Debug/CabbagePluginEffect.component
+	rm -rf ~/Library/Audio/Plug-Ins/VST/CabbagePlugin.vst
+
+	echo "Bundling all files"	
+	cp -rf ../../Docs ./build/Debug/Cabbage.app/Contents/MacOS/Docs
+	cp -rf ../../Examples ./ß/Debug/Cabbage.app/Contents/MacOS/Examples
+	cp opcodes.txt ./build/Debug/Cabbage.app/Contents/MacOS/opcodes.txt 
+
+fi

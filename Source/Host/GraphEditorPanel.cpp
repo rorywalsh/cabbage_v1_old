@@ -1186,7 +1186,7 @@ void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const
 					if(graph.getGraph().getNodeForId(nodeId))
 					{
 						graph.getGraph().getNodeForId(nodeId)->getProcessor()->setParameterNotifyingHost(parameterIndex, message.getControllerValue()/127.f);
-						graph.getGraph().getNodeForId(nodeId)->getProcessor()->setParameter(parameterIndex, message.getControllerValue()/127.f);
+						//graph.getGraph().getNodeForId(nodeId)->getProcessor()->setParameter(parameterIndex, message.getControllerValue()/127.f);
 						//Logger::writeToLog("exists");
 						addNewMapping=false;
 					}
@@ -1208,7 +1208,7 @@ void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const
 					if(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId))
 					{
 						graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->setParameterNotifyingHost(graph.midiMappings.getReference(i).parameterIndex, message.getControllerValue()/127.f);
-						graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->setParameter(graph.midiMappings.getReference(i).parameterIndex, message.getControllerValue()/127.f);
+						//graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->setParameter(graph.midiMappings.getReference(i).parameterIndex, message.getControllerValue()/127.f);
 					}
 				}		
 					

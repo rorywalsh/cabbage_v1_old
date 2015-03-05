@@ -41,9 +41,12 @@ public:
 														channel(chan),
 														controller(ctrl),
 														nodeId(nodeID),
-														parameterIndex(paramIndex){}
+														parameterIndex(paramIndex),
+														isController(true){}
 	
 int channel, controller, nodeId, parameterIndex;
+bool isController;
+
 };
 
 //==============================================================================

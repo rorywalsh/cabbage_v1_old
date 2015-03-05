@@ -58,7 +58,7 @@ void AutomationDisplay::addNewAutomationEnvelope(Colour envColour, int tableNumb
 {
 	
 	automationEnvelopes.add(new BreakpointEnvelope(envColour, automationEnvelopes.size(), tableNumber));	
-	//automationEnvelopes[automationEnvelopes.size()-1]->createEnvStartEndPoint(0);	
+	automationEnvelopes[automationEnvelopes.size()-1]->createEnvStartEndPoint(0);	
 	automationEnvelopes[automationEnvelopes.size()-1]->addChangeListener(owner->getFilter());	
 	addAndMakeVisible(automationEnvelopes[automationEnvelopes.size()-1]);
 	setZoomFactor(0);
@@ -345,19 +345,19 @@ void AutomationEditor::addTablesOnStartup()
 		const int index = automationDisplay.getNumberOfEnvelopes()-1;
 		
 		
-	if(processor.getEnvelope(index).envPoints.size()>0)
-	{
-		for(int y=0;y<processor.getEnvelope(index).envPoints.size();y+=2)
+		if(processor.getEnvelope(index).envPoints.size()>0)
 		{
-			Point<double> point(processor.getEnvelope(index).envPoints[y], processor.getEnvelope(index).envPoints[y+1]);
-			automationDisplay.getAutomationEnvelope(index)->addHandle(point, false);
-			
-			//automationDisplay.automationEnvelopes[i].addHandle(, false);
+			for(int y=0;y<processor.getEnvelope(index).envPoints.size();y+=2)
+			{
+				Point<double> point(processor.getEnvelope(index).envPoints[y], 1.0-processor.getEnvelope(index).envPoints[y+1]);
+				automationDisplay.getAutomationEnvelope(index)->addHandle(point, false);
+				
+				//automationDisplay.automationEnvelopes[i].addHandle(, false);
+			}
+				
 		}
-			
-	}
-	else
-		automationDisplay.getAutomationEnvelope(index)->createEnvStartEndPoint();
+		//else
+		//	automationDisplay.getAutomationEnvelope(index)->createEnvStartEndPoint();
 	}
 }	
 //==============================================================================

@@ -49,6 +49,7 @@ FilterGraph::FilterGraph (AudioPluginFormatManager& formatManager_)
 	playPosition(0),
 	PPQN(24),
 	ppqPosition(1),
+	automationNodeID(-1),
 	subTicks(0)
 {
 	startTimer(0);
@@ -85,11 +86,25 @@ const AudioProcessorGraph::Node::Ptr FilterGraph::getNodeForId (const uint32 uid
 //==============================================================================
 void FilterGraph::addNodesToAutomationTrack(int32 id, int index)
 {
-	//if there is an automation device, if not forget it..
+	//if there is an automation device, otherwise create one. Only one permitted in each patch..
 	if(getNodeForId(automationNodeID))
 	{
 	AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
 	node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);	
+	}
+	else
+	{
+		PluginDescription descript;	
+		descript.descriptiveName = "Automation track";
+		descript.name = "AutomationTrack";
+		descript.pluginFormatName = "AutomationTrack";		
+		descript.numInputChannels = 2;		
+		descript.numOutputChannels = 2;
+		addFilter(&descript, 0.50f, 0.5f);
+
+		AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
+		node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);	
+
 	}
 
 }

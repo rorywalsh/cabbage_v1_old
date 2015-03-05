@@ -131,8 +131,9 @@ void BreakpointEnvelope::mouseDown(const MouseEvent& e)
 void BreakpointEnvelope::addHandle(Point<double> pos, bool resize)
 {
 	EnvelopHandle* handle = new EnvelopHandle(this, colour);
+	double yOffset = 8.f/(double)getHeight();
 	addAndMakeVisible(handle);
-	handle->setRelativePosition(Point<double>(pos.getX(), pos.getY()), 1.0, 1.0);
+	handle->setRelativePosition(Point<double>(pos.getX(), pos.getY()-yOffset), 1.0, 1.0);
 	handles.add(handle);
 	repaint();
 	if(resize)

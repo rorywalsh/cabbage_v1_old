@@ -1863,23 +1863,28 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     else
     {
 #ifndef Cabbage_No_Csound
-        
+		//if no inputs are used clear buffer in case it's not empty..
+		if(getNumInputChannels()==0)
+			buffer.clear();
+				
         if(csCompileResult==OK)
         {
             if(isBypassed==true)
                 return;
             
+			
+			
             keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
             midiBuffer = midiMessages;
-            ccBuffer = midiMessages;
-            
-            //if no inputs are used clear buffer in case it's not empty..
-            if(getNumInputChannels()==0)
-                buffer.clear();
+			//midiBuffer.clear();
             
 #if JucePlugin_ProducesMidiOutput
             if(!midiOutputBuffer.isEmpty())
+			{
                 midiMessages.swapWith(midiOutputBuffer);
+			}
+			else
+				midiMessages.clear();
 #endif
             
             for(int i=0; i<numSamples; i++, csndIndex++)
@@ -1953,76 +1958,9 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     vuCounter = (vuCounter>5) ? 0 : vuCounter+1;
     if(vuCounter==0)
         sendActionMessage("rmsValues "+String(rmsLeft)+" "+String(rmsRight));
-    
-#if JucePlugin_ProducesMidiOutput
-    if(!midiBuffer.isEmpty())
-        midiMessages.swapWith(midiOutputBuffer);
-#endif
 }
 
-//==============================================================================
-// breakpoint functions
-//==============================================================================
-void CabbagePluginAudioProcessor::setCsoundInstrumentBreakpoint(int instr, int line=0)
-{
-#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
-    getCallbackLock().enter();
-    if(breakpointInstruments.size()==0)
-        csoundDebuggerInit(csound->GetCsound());
-    csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
-    csoundSetInstrumentBreakpoint(csound->GetCsound(), instr, 0);
-    breakpointInstruments.add(instr);
-    getCallbackLock().exit();
-#endif
-}
 
-void CabbagePluginAudioProcessor::removeCsoundInstrumentBreakpoint(int instr)
-{
-#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
-    getCallbackLock().enter();
-    breakpointInstruments.removeAllInstancesOf(instr);
-    if(breakpointInstruments.size()==0)
-        breakCount=0;
-    csoundDebuggerInit(csound->GetCsound());
-    csoundRemoveInstrumentBreakpoint(csound->GetCsound(), instr);
-    getCallbackLock().exit();
-#endif
-}
-
-void CabbagePluginAudioProcessor::continueCsoundDebug()
-{
-#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
-    
-    if(breakpointInstruments.size()>0)
-    {
-        getCallbackLock().enter();
-        csoundDebugContinue(csound->GetCsound());
-        getCallbackLock().exit();
-    }
-    
-#endif
-}
-
-void CabbagePluginAudioProcessor::nextCsoundDebug()
-{
-#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
-    //not yet implemented....
-    if(breakpointInstruments.size()>0)
-    {
-        getCallbackLock().enter();
-        //csoundDebugNext(csound->GetCsound());
-        getCallbackLock().exit();
-    }
-    
-#endif
-}
-
-void CabbagePluginAudioProcessor::cleanCsoundDebug()
-{
-#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
-    csoundClearBreakpoints(csound->GetCsound());
-#endif
-}
 //==============================================================================
 // MIDI functions
 //==============================================================================
@@ -2208,5 +2146,66 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
         }
     }
 }
-
 //==============================================================================
+// breakpoint functions
+//==============================================================================
+void CabbagePluginAudioProcessor::setCsoundInstrumentBreakpoint(int instr, int line=0)
+{
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
+    getCallbackLock().enter();
+    if(breakpointInstruments.size()==0)
+        csoundDebuggerInit(csound->GetCsound());
+    csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
+    csoundSetInstrumentBreakpoint(csound->GetCsound(), instr, 0);
+    breakpointInstruments.add(instr);
+    getCallbackLock().exit();
+#endif
+}
+
+void CabbagePluginAudioProcessor::removeCsoundInstrumentBreakpoint(int instr)
+{
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
+    getCallbackLock().enter();
+    breakpointInstruments.removeAllInstancesOf(instr);
+    if(breakpointInstruments.size()==0)
+        breakCount=0;
+    csoundDebuggerInit(csound->GetCsound());
+    csoundRemoveInstrumentBreakpoint(csound->GetCsound(), instr);
+    getCallbackLock().exit();
+#endif
+}
+
+void CabbagePluginAudioProcessor::continueCsoundDebug()
+{
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
+    
+    if(breakpointInstruments.size()>0)
+    {
+        getCallbackLock().enter();
+        csoundDebugContinue(csound->GetCsound());
+        getCallbackLock().exit();
+    }
+    
+#endif
+}
+
+void CabbagePluginAudioProcessor::nextCsoundDebug()
+{
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
+    //not yet implemented....
+    if(breakpointInstruments.size()>0)
+    {
+        getCallbackLock().enter();
+        //csoundDebugNext(csound->GetCsound());
+        getCallbackLock().exit();
+    }
+    
+#endif
+}
+
+void CabbagePluginAudioProcessor::cleanCsoundDebug()
+{
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
+    csoundClearBreakpoints(csound->GetCsound());
+#endif
+}

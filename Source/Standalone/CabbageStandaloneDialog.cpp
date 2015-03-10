@@ -991,7 +991,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         credits.append("\t\t\t\tSpecial thanks to:\n", 2056);
         credits.append("\t\t\t\t\tIain McCurdy\n", 2056);
         credits.append("\t\t\t\t\tDamien Rennick\n\n", 2056);
-        credits.append("\t\t\t\t\tGiorgio Zucco\n", 2056);
+        credits.append("\t\t\t\t\tDave Philips\n", 2056);
+		credits.append("\t\t\t\t\tGiorgio Zucco\n\n", 2056);
         credits.append("\t\t\t\tUser Forum:\n", 2056);
         credits.append("\t\t\t\t\twww.thecabbagefoundation.org", 2056);
         String title(CABBAGE_VERSION);

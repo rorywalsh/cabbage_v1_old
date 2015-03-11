@@ -114,6 +114,7 @@ vuCounter(0)
             }
         }
     
+	ipConnection = nullptr;
     
 #ifndef Cabbage_No_Csound
     //don't start of run Csound in edit mode
@@ -862,6 +863,9 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         
                         if(tokes[0].equalsIgnoreCase(String("oscserver")))
                         {
+							
+							ipConnection = 
+							
                             for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channel).size(); i++)
                             {
                                 oscChannelIdentifiers.add(cAttr.getStringArrayPropValue("channel", i));

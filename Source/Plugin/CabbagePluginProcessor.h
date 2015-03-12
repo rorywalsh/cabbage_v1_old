@@ -211,11 +211,7 @@ public:
             owner.appendMessage ("Connection #" + String (ourNumber) + " - connection lost");
         }
 
-        void messageReceived (const MemoryBlock& message)
-        {
-			//cUtils::debug(message.toString());
-            //owner.appendMessage ("Connection #" + String (ourNumber) + " - message received: " + message.toString());
-        }
+        void messageReceived (const MemoryBlock& message);
 
     private:
         CabbagePluginAudioProcessor& owner;

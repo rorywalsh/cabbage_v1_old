@@ -477,6 +477,8 @@ vuCounter(0)
 //===========================================================
 CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 {
+	if(server)
+		closeInterprocess();
     deleteAndZero(lookAndFeel);
     deleteAndZero(lookAndFeelBasic);
     Logger::setCurrentLogger (nullptr);
@@ -1117,6 +1119,14 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 }
 
 //============= deal with interprocess communication =========================
+void CabbagePluginAudioProcessor::CabbageInterprocessConnection::messageReceived(const MemoryBlock& message)
+{
+	StringArray data;
+	data.addTokens(message.toString(), " ");
+	owner.messageQueue.addOutgoingChannelMessageToQueue(data[0], data[1].getFloatValue(), "float");
+	//owner.appendMessage ("Connection #" + String (ourNumber) + " - message received: " + message.toString());
+}
+
 void CabbagePluginAudioProcessor::openInterprocess (bool asSocket, bool asSender, String address, int port)
 {
         closeInterprocess();
@@ -1679,7 +1689,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
 				socketChannelValues.set(socketChannelIdentifiers[i], channelValue);
 				//MemoryBlock messageData (socketChannelValues.getWithDefault(socketChannelIdentifiers[i], ""), sizeof(float));
 				//
-				const String message (socketChannelIdentifiers[i] + ":" + String(channelValue));
+				const String message (socketChannelIdentifiers[i] + " " + String(channelValue));
 				MemoryBlock messageData(message.toUTF8(), message.getNumBytesAsUTF8());
 				for (int i = activeConnections.size(); --i >= 0;)
 				{

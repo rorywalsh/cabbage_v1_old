@@ -61,6 +61,7 @@ public:
         add("populate");
         add("range");
         add("amprange");
+		add("address");
         add("rangex");
         add("rangey");
         add("plant");
@@ -217,8 +218,8 @@ static const Identifier endpos = "endpos";
 static const Identifier show = "show";
 static const Identifier child = "child";
 static const Identifier scrollbars = "scrollbars";
-static const Identifier oscport = "oscport";
-static const Identifier oscaddress = "oscaddress";
+static const Identifier socketport = "socketport";
+static const Identifier socketaddress = "socketaddress";
 
 //type of widgets/controls/messages
 static const String combobox = "combobox";

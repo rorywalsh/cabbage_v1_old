@@ -80,11 +80,11 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 
 
     }
-    else if(strTokens[0].trim() == "oscserver")
+    else if(strTokens[0].trim() == "socketsend" || strTokens[0].trim() == "socketreceive")
     {
         cabbageIdentifiers.set(CabbageIDs::basetype, "layout");
-        cabbageIdentifiers.set(CabbageIDs::oscaddress, "");
-        cabbageIdentifiers.set(CabbageIDs::oscaddress, 0);
+        cabbageIdentifiers.set(CabbageIDs::socketaddress, "");
+        cabbageIdentifiers.set(CabbageIDs::socketport, 0);
     }
     else if(strTokens[0].trim() == "vslider" || strTokens[0].trim() == "vslider2" ||  strTokens[0].trim() == "vslider3")
     {
@@ -1267,15 +1267,15 @@ void CabbageGUIClass::parse(String inStr, String identifier)
             //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             //numeric paramters
             //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            else if(identArray[indx].equalsIgnoreCase("socket"))
+            else if(identArray[indx].equalsIgnoreCase("address"))
             {
                 if(strTokens.size()>=2)
                 {
                     //sizeText = identArray.getReference(indx)+tstr+")";
                     String address = strTokens[0].trim();
                     int port = strTokens[1].trim().getIntValue();
-                    cabbageIdentifiers.set(CabbageIDs::oscaddress, address);
-                    cabbageIdentifiers.set(CabbageIDs::oscport, port);
+                    cabbageIdentifiers.set(CabbageIDs::socketaddress, address);
+                    cabbageIdentifiers.set(CabbageIDs::socketport, port);
                 }
             }
 

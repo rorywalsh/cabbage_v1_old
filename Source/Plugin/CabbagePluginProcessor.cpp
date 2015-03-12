@@ -114,8 +114,7 @@ vuCounter(0)
             }
         }
     
-	ipConnection = nullptr;
-    
+   
 #ifndef Cabbage_No_Csound
     //don't start of run Csound in edit mode
     setOpcodeDirEnv();
@@ -810,7 +809,8 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                     //vector too, as can the editor button.
                     if(tokes[0].equalsIgnoreCase(String("form"))
                        ||tokes[0].equalsIgnoreCase(String("image"))
-                       ||tokes[0].equalsIgnoreCase(String("oscserver"))
+                       ||tokes[0].equalsIgnoreCase(String("socketsend"))
+					   ||tokes[0].equalsIgnoreCase(String("socketreceive"))
                        ||tokes[0].equalsIgnoreCase(String("keyboard"))
                        ||tokes[0].equalsIgnoreCase(String("gentable"))
                        ||tokes[0].equalsIgnoreCase(String("csoundoutput"))
@@ -861,20 +861,37 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         //showMessage(cAttr.getStringProp("type"));
                         
                         
-                        if(tokes[0].equalsIgnoreCase(String("oscserver")))
+                        if(tokes[0].equalsIgnoreCase(String("socketsend")))
                         {
+							//set up server...
+							server = new CabbageInterprocessConnectionServer (*this);
 							
-							ipConnection = 
-							
+							openInterprocess(true, true, cAttr.getStringProp(CabbageIDs::socketaddress),
+															cAttr.getNumProp(CabbageIDs::socketport));
+															
                             for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channel).size(); i++)
                             {
-                                oscChannelIdentifiers.add(cAttr.getStringArrayPropValue("channel", i));
+                                socketChannelIdentifiers.add(cAttr.getStringArrayPropValue("channel", i));
                                 Logger::writeToLog(cAttr.getStringArrayPropValue("channel", i));
-                                oscChannelValues.set(cAttr.getStringArrayPropValue("channel", i), 0.f);
+                                socketChannelValues.set(cAttr.getStringArrayPropValue("channel", i), 0.f);
                             }
+
                         }
                         csdLine = "";
-                        
+
+                        if(tokes[0].equalsIgnoreCase(String("socketreceive")))
+                        {
+							server = new CabbageInterprocessConnectionServer (*this);
+							openInterprocess(true, false, cAttr.getStringProp(CabbageIDs::socketaddress),
+															cAttr.getNumProp(CabbageIDs::socketport));
+															
+                            for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channel).size(); i++)
+                            {
+                                socketChannelIdentifiers.add(cAttr.getStringArrayPropValue("channel", i));
+                                Logger::writeToLog(cAttr.getStringArrayPropValue("channel", i));
+                                socketChannelValues.set(cAttr.getStringArrayPropValue("channel", i), 0.f);
+                            }
+						}                        
                         
                         //set up stuff for tables
                         if(tokes[0].equalsIgnoreCase(String("table")))
@@ -1098,6 +1115,76 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     
 #endif
 }
+
+//============= deal with interprocess communication =========================
+void CabbagePluginAudioProcessor::openInterprocess (bool asSocket, bool asSender, String address, int port)
+{
+        closeInterprocess();
+
+        // Make the appropriate bits of UI visible..
+
+
+        // and try to open the socket or pipe...
+        bool openedOk = false;
+
+        if (asSender)
+        {
+            // if we're connecting to an existing server, we can just create a connection object
+            // directly.
+            ScopedPointer<CabbageInterprocessConnection> newConnection (new CabbageInterprocessConnection (*this));
+
+            if (asSocket)
+            {
+                openedOk = newConnection->connectToSocket(address,
+                                                           port,
+                                                           1000);
+            }
+            else
+            {
+               // openedOk = newConnection->connectToPipe ("pipeName", 100);
+            }
+
+            if (openedOk)
+			{
+				cUtils::debug("adding new connection");
+                activeConnections.add (newConnection.release());
+				
+			}
+			else
+				cUtils::debug("Couldn't create connection?");
+        }
+        else
+        {
+            // if we're starting up a server, we need to tell the server to start waiting for
+            // clients to connect. It'll then create connection objects for us when clients arrive.
+            if (asSocket)
+            {
+                openedOk = server->beginWaitingForSocket (port);
+
+                if (openedOk)
+                    appendMessage ("Waiting for another app to connect to this socket..");
+            }
+            else
+            {
+                ScopedPointer<CabbageInterprocessConnection> newConnection (new CabbageInterprocessConnection (*this));
+
+                openedOk = newConnection->createPipe ("pipeName", 100);
+
+                if (openedOk)
+                {
+                    appendMessage ("Waiting for another app to connect to this pipe..");
+                    activeConnections.add (newConnection.release());
+                }
+            }
+        }
+
+        if (! openedOk)
+        {
+            AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                              "Interprocess Comms Demo",
+                                              "Failed to open the socket or pipe...");
+        }
+    }
 
 //============================================================================
 //dynamically remove components from editor window, used in EDIT mode
@@ -1581,6 +1668,32 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
     String chanName, channelMessage;
     if(csCompileResult==OK)
     {
+		for(int i=0;i<socketChannelIdentifiers.size();i++)
+		{
+			//showMessage(oscChannelIdentifiers[i]);
+			float currentVal = (float)socketChannelValues.getWithDefault(socketChannelIdentifiers[i], -9999);
+			float channelValue = csound->GetChannel(socketChannelIdentifiers[i].getCharPointer());
+			
+			if(currentVal != channelValue)
+			{
+				socketChannelValues.set(socketChannelIdentifiers[i], channelValue);
+				//MemoryBlock messageData (socketChannelValues.getWithDefault(socketChannelIdentifiers[i], ""), sizeof(float));
+				//
+				const String message (socketChannelIdentifiers[i] + ":" + String(channelValue));
+				MemoryBlock messageData(message.toUTF8(), message.getNumBytesAsUTF8());
+				for (int i = activeConnections.size(); --i >= 0;)
+				{
+					if (! activeConnections[i]->sendMessage (messageData))
+					{
+						// the write failed, so indicate that the connection has broken..
+						appendMessage ("send message failed!");
+					}
+				}
+
+			}
+		}		
+		
+		
         //update all control widgets
         for(int index=0; index<getGUICtrlsSize(); index++)
         {

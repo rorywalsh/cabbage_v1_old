@@ -97,10 +97,10 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 
 	NamedValueSet macroText;
 
-    StringArray oscChannelIdentifiers;
-    NamedValueSet oscChannelValues;
-    String oscAddress;
-    int oscPort;
+    StringArray socketChannelIdentifiers;
+    NamedValueSet socketChannelValues;
+    String socketAddress;
+    int scoketPort;
 
     ScopedPointer<FileLogger> fileLogger;
     bool createLog;
@@ -182,6 +182,80 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 
 
 public:
+
+	//------------------------------- interprocess comms -------------------------------
+	void appendMessage (const String& message)
+    {
+		cUtils::debug(message);
+    }
+
+
+    class CabbageInterprocessConnection  : public InterprocessConnection
+    {
+    public:
+        CabbageInterprocessConnection (CabbagePluginAudioProcessor& owner_)
+            : InterprocessConnection (true),
+              owner (owner_)
+        {
+            static int totalConnections = 0;
+            ourNumber = ++totalConnections;
+        }
+
+        void connectionMade()
+        {
+            owner.appendMessage ("Connection #" + String (ourNumber) + " - connection started");
+        }
+
+        void connectionLost()
+        {
+            owner.appendMessage ("Connection #" + String (ourNumber) + " - connection lost");
+        }
+
+        void messageReceived (const MemoryBlock& message)
+        {
+			//cUtils::debug(message.toString());
+            //owner.appendMessage ("Connection #" + String (ourNumber) + " - message received: " + message.toString());
+        }
+
+    private:
+        CabbagePluginAudioProcessor& owner;
+        int ourNumber;
+    };
+
+    class CabbageInterprocessConnectionServer   : public InterprocessConnectionServer
+    {
+    public:
+        CabbageInterprocessConnectionServer (CabbagePluginAudioProcessor& owner_)
+            : owner (owner_)
+        {
+        }
+
+        InterprocessConnection* createConnectionObject()
+        {
+            CabbageInterprocessConnection* newConnection = new CabbageInterprocessConnection (owner);
+
+            owner.activeConnections.add (newConnection);
+            return newConnection;
+        }
+
+    private:
+        CabbagePluginAudioProcessor& owner;
+    };
+
+	OwnedArray <CabbageInterprocessConnection, CriticalSection> activeConnections;
+	ScopedPointer<CabbageInterprocessConnectionServer> server;
+	void openInterprocess (bool asSocket, bool asSender, String address, int port);
+	
+	void closeInterprocess()
+	{
+        server->stop();
+        activeConnections.clear();	
+		
+	}
+
+
+	//--------------------------------------------------------------
+	
 	bool isFirstTime(){ return firstTime;	};
     String changeMessage;
     Array<int> dirtyControls;
@@ -191,6 +265,8 @@ public:
     void continueCsoundDebug();
     void nextCsoundDebug();
     void cleanCsoundDebug();
+	
+	
 
 	
     int getNumberCsoundOutChannels()
@@ -596,6 +672,8 @@ public:
     {
         return true;
     }
+
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePluginAudioProcessor);
 

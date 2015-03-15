@@ -203,12 +203,14 @@ public:
 
         void connectionMade()
         {
-            owner.appendMessage ("Connection #" + String (ourNumber) + " - connection started");
+			const String message = "Connection #" + String (ourNumber) + " - connection started";
+			owner.csound->Message(message.toUTF8());
         }
 
         void connectionLost()
         {
-            owner.appendMessage ("Connection #" + String (ourNumber) + " - connection lost");
+            const String message = "Connection #" + String (ourNumber) + " - connection lost";
+			owner.csound->Message(message.toUTF8());
         }
 
         void messageReceived (const MemoryBlock& message);

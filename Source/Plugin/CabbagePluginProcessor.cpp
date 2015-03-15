@@ -477,8 +477,7 @@ vuCounter(0)
 //===========================================================
 CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 {
-	if(server)
-		closeInterprocess();
+	
     deleteAndZero(lookAndFeel);
     deleteAndZero(lookAndFeelBasic);
     Logger::setCurrentLogger (nullptr);
@@ -719,7 +718,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 	csdText.removeRange(0, lineWhichCabbageSectionStarts);
 	csdText.removeRange(lineWhichCabbageSectionEnds+1, 99999);
 	
-	cUtils::debug(csdText.size());
+	//cUtils::debug(csdText.size());
 	
     for(int i=0; i<csdText.size(); i++)
     {
@@ -730,7 +729,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
             temp = csdText[i+1];
             csdText.remove(i+1);
             csdText.set(i, csdText[i].replace(" \\", " ")+temp);
-            cUtils::debug(csdText[i]);
+            //cUtils::debug(csdText[i]);
         }
     }
     
@@ -867,8 +866,9 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         {
 							//set up server...
 							server = new CabbageInterprocessConnectionServer (*this);
-							
-							openInterprocess(true, true, cAttr.getStringProp(CabbageIDs::socketaddress),
+							socketChannelIdentifiers.clear();
+							socketChannelValues.clear();
+							openInterprocess(false, true, cAttr.getStringProp(CabbageIDs::socketaddress),
 															cAttr.getNumProp(CabbageIDs::socketport));
 															
                             for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channel).size(); i++)
@@ -877,14 +877,15 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                                 Logger::writeToLog(cAttr.getStringArrayPropValue("channel", i));
                                 socketChannelValues.set(cAttr.getStringArrayPropValue("channel", i), 0.f);
                             }
-
+							//cUtils::debug(socketChannelValues.size());
                         }
-                        csdLine = "";
-
-                        if(tokes[0].equalsIgnoreCase(String("socketreceive")))
+						else if(tokes[0].equalsIgnoreCase(String("socketreceive")))
                         {
 							server = new CabbageInterprocessConnectionServer (*this);
-							openInterprocess(true, false, cAttr.getStringProp(CabbageIDs::socketaddress),
+							socketChannelIdentifiers.clear();
+							socketChannelValues.clear();
+							
+							openInterprocess(false, false, cAttr.getStringProp(CabbageIDs::socketaddress),
 															cAttr.getNumProp(CabbageIDs::socketport));
 															
                             for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channel).size(); i++)
@@ -893,7 +894,12 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                                 Logger::writeToLog(cAttr.getStringArrayPropValue("channel", i));
                                 socketChannelValues.set(cAttr.getStringArrayPropValue("channel", i), 0.f);
                             }
-						}                        
+							//cUtils::debug(socketChannelValues.size());
+						} 
+						
+						
+                        csdLine = "";
+                      
                         
                         //set up stuff for tables
                         if(tokes[0].equalsIgnoreCase(String("table")))
@@ -914,9 +920,11 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         }
                         else if(cAttr.getStringProp(String("reltoplant")).equalsIgnoreCase(String("")))
                             cAttr.setStringProp(String("reltoplant"), plantFlag);
-                        
+                         						
+						
                         //if an array of objects is being set up...
-                        if(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0)
+                        if((cAttr.getStringArrayProp(CabbageIDs::identchannelarray).size()>0) &&
+						(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0))
                         {
                             //showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).joinIntoString(" ")));
                             //showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()));
@@ -924,7 +932,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             {
                                 CabbageGUIClass copy = cAttr;
                                 copy.setStringProp(CabbageIDs::channel, cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
-                                copy.setStringProp(CabbageIDs::identchannel, cAttr.getStringArrayProp(CabbageIDs::identchannelarray).getReference(i));
+								copy.setStringProp(CabbageIDs::identchannel, cAttr.getStringArrayProp(CabbageIDs::identchannelarray).getReference(i));
                                 //Logger::writeToLog(cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
                                 guiLayoutCtrls.add(copy);
                                 guiID++;
@@ -1151,17 +1159,16 @@ void CabbagePluginAudioProcessor::openInterprocess (bool asSocket, bool asSender
             }
             else
             {
-               // openedOk = newConnection->connectToPipe ("pipeName", 100);
+                openedOk = newConnection->connectToPipe ("CabbagePipe", 100);
             }
 
             if (openedOk)
 			{
-				cUtils::debug("adding new connection");
                 activeConnections.add (newConnection.release());
 				
 			}
 			else
-				cUtils::debug("Couldn't create connection?");
+				csound->Message("Couldn't create connection?");
         }
         else
         {
@@ -1172,17 +1179,17 @@ void CabbagePluginAudioProcessor::openInterprocess (bool asSocket, bool asSender
                 openedOk = server->beginWaitingForSocket (port);
 
                 if (openedOk)
-                    appendMessage ("Waiting for another app to connect to this socket..");
+                    csound->Message("Waiting for another app to connect to Cabbage server..");
             }
             else
             {
                 ScopedPointer<CabbageInterprocessConnection> newConnection (new CabbageInterprocessConnection (*this));
 
-                openedOk = newConnection->createPipe ("pipeName", 100);
+                openedOk = newConnection->createPipe ("CabbagePipe", 100);
 
                 if (openedOk)
                 {
-                    appendMessage ("Waiting for another app to connect to this pipe..");
+                    csound->Message("Waiting for another app to connect to Cabbage server..");
                     activeConnections.add (newConnection.release());
                 }
             }
@@ -1190,11 +1197,9 @@ void CabbagePluginAudioProcessor::openInterprocess (bool asSocket, bool asSender
 
         if (! openedOk)
         {
-            AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
-                                              "Interprocess Comms Demo",
-                                              "Failed to open the socket or pipe...");
+			csound->Message("Failed to open pipe...");
         }
-    }
+}
 
 //============================================================================
 //dynamically remove components from editor window, used in EDIT mode
@@ -1696,13 +1701,21 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
 					if (! activeConnections[i]->sendMessage (messageData))
 					{
 						// the write failed, so indicate that the connection has broken..
-						appendMessage ("send message failed!");
+						//csound->Message("Cabbage is trying to output a message to another process but can't because it can't find a connection!");
 					}
 				}
 
 			}
 		}		
 		
+		{
+			char string[1024] = {0};
+            csound->GetStringChannel("HappyDays", string);
+			const String message = String(string);
+			//cUtils::debug(message);
+			csound->SetChannel("HappyDays", "");
+			
+		}    		
 		
         //update all control widgets
         for(int index=0; index<getGUICtrlsSize(); index++)

@@ -538,7 +538,7 @@ void GraphEditorPanel::updateNode (const int nodeID, const int inChannels, const
 			double origY = e->getDoubleAttribute("y");
 			e->setAttribute("x", origX);
 			e->setAttribute("y", origY);
-			cUtils::debug(e->getIntAttribute("uid"));
+			//cUtils::debug(e->getIntAttribute("uid"));
 			e->setAttribute("numInputs", inChannels);
 			e->setAttribute("numOutputs", outChannels); 
 			graph.createNodeFromXml(*e);

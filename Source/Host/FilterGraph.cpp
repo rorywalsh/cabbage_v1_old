@@ -319,8 +319,8 @@ String FilterGraph::findControllerForparameter(int32 nodeID, int paramIndex)
 {
 	for(int i=0;i<midiMappings.size();i++)
 	{
-		cUtils::debug(midiMappings.getReference(i).nodeId);
-		cUtils::debug(midiMappings.getReference(i).parameterIndex);
+		//cUtils::debug(midiMappings.getReference(i).nodeId);
+		//cUtils::debug(midiMappings.getReference(i).parameterIndex);
 		
 		if(midiMappings.getReference(i).nodeId==nodeID && midiMappings.getReference(i).parameterIndex==paramIndex)
 		{
@@ -503,7 +503,7 @@ static XmlElement* createNodeXml (AudioProcessorGraph::Node* const node) noexcep
 	{
 		//grab description of native plugin for saving...
 		String xmlPluginDescriptor = node->properties.getWithDefault("pluginDesc", "").toString();
-		cUtils::debug(xmlPluginDescriptor);
+		//cUtils::debug(xmlPluginDescriptor);
 		XmlElement* xmlElem;
 		xmlElem = XmlDocument::parse(xmlPluginDescriptor);
 		pd.loadFromXml(*xmlElem);
@@ -564,7 +564,7 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
 XmlElement* FilterGraph::createXml() const
 {
     XmlElement* xml = new XmlElement ("FILTERGRAPH");
-	cUtils::debug("graph.getNumNodes()", graph.getNumNodes());
+	//cUtils::debug("graph.getNumNodes()", graph.getNumNodes());
 
     for (int i = 0; i < graph.getNumNodes(); ++i)
         xml->addChildElement (createNodeXml (graph.getNode (i)));
@@ -610,7 +610,7 @@ void FilterGraph::restoreFromXml (const XmlElement& xml)
 
     forEachXmlChildElementWithTagName (xml, e, "CONNECTION")
     {
-		cUtils::debug("srcFilter", e->getIntAttribute ("srcFilter"));
+		//cUtils::debug("srcFilter", e->getIntAttribute ("srcFilter"));
         addConnection ((uint32) e->getIntAttribute ("srcFilter"),
                        e->getIntAttribute ("srcChannel"),
                        (uint32) e->getIntAttribute ("dstFilter"),

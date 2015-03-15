@@ -2937,8 +2937,16 @@ void CabbagePluginAudioProcessorEditor::toggleButtonClicked(Button* button)
 void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 {
     String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
-    if(File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::workingdir))!=true)
-        cAttr.setStringProp(CabbageIDs::workingdir, currentFileLocation);
+	String path = cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::workingdir), currentFileLocation);
+	
+	
+	if(File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::workingdir))==false)
+	{
+		if(File::isAbsolutePath(path)!=true)
+			cAttr.setStringProp(CabbageIDs::workingdir, currentFileLocation);
+		else
+			cAttr.setStringProp(CabbageIDs::workingdir, path);
+	}
 
     //if not svg files are set, try using the global theme...
     cAttr.setStringProp(CabbageIDs::svgpath, (cAttr.getStringProp(CabbageIDs::svgpath).isNotEmpty() ?

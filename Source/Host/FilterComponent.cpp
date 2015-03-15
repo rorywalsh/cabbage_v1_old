@@ -199,7 +199,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 
 		const int r = m.show();
 
-		cUtils::debug(r);
+		//cUtils::debug(r);
 
 		if (r == 1)
 		{

@@ -69,6 +69,7 @@ public:
         add("channels");
         add("channel");
         add("widgetarray");
+		add("channelarray");
         add("textbox");
         add("caption");
         add("kind");

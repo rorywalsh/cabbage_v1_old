@@ -1057,8 +1057,9 @@ public:
         //if widget is a plant intercept mouse events
         if(cAttr.getStringProp(CabbageIDs::plant).isNotEmpty())
             this->setInterceptsMouseClicks(true, true);
-        //repaint();
+        
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
+
     }
     ~CabbageImage()
     {
@@ -1110,6 +1111,7 @@ public:
             setEnabled(true);
             setVisible(true);
         }
+		
         repaint();
     }
 

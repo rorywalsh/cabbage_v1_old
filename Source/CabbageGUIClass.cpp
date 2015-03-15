@@ -1014,6 +1014,7 @@ void CabbageGUIClass::parse(String inStr, String identifier)
 
             else if(identArray[indx].equalsIgnoreCase("channel")||
                     identArray[indx].equalsIgnoreCase("channels")||
+					identArray[indx].equalsIgnoreCase("channelarray")||
                     identArray[indx].equalsIgnoreCase("widgetarray"))
             {
                 var array;
@@ -1039,6 +1040,24 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                             array.append(strTokens[i].trim());
                         }
                 }
+				
+                if(identArray[indx].equalsIgnoreCase("channelarray"))
+                {
+					//if there are already channels declared we want to keep them
+					array.resize(0);
+					for(int i=0;i<getStringArrayProp(CabbageIDs::channel).size();i++)
+						array.append(getStringArrayPropValue(CabbageIDs::channel, i));
+						
+                    var channelArray, identChannelArray;
+                    int size = strTokens[1].getIntValue();
+                    for(int i=0; i<size; i++)
+                    {
+                        array.append(strTokens[0]+String(i+1));
+                    }
+                    cabbageIdentifiers.set(CabbageIDs::channel, array);
+					//identifiers that appear more than once need to use indx-- so we can check for another instance
+					indx--;					
+                }				
 
                 cabbageIdentifiers.set(CabbageIDs::channel, array);
                 if(identArray[indx].equalsIgnoreCase("widgetarray"))

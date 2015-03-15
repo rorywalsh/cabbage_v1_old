@@ -58,7 +58,7 @@ void BottomPanel::resized()
 	viewport.setBounds(0, 5, getWidth()-5, getHeight()-10);
 	topBorder.setBounds(0, 0, getWidth(), 5);
 
-	cUtils::debug(getWidth(), getHeight());	
+	//cUtils::debug(getWidth(), getHeight());	
 	if(container.getHeight()>viewport.getHeight())
 	{
 		viewport.setScrollBarsShown(true, false);
@@ -198,10 +198,10 @@ void BottomPanel::mouseEnter(const MouseEvent& event)
 {
 	const int yPos = event.getPosition().getY();
 	startingYPos = getPosition().getY();
-	cUtils::debug(event.eventComponent->getName());
+	//cUtils::debug(event.eventComponent->getName());
 	if(event.eventComponent->getName()=="topBorder")
 	{
-		cUtils::debug("Should show cursor");
+		//cUtils::debug("Should show cursor");
 		event.eventComponent->setMouseCursor (MouseCursor::UpDownResizeCursor);
 		canResize=true;
 	}

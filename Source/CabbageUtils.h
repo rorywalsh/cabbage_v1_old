@@ -520,10 +520,11 @@ public:
     static int getNchnlsFromFile(String csdText)
     {
         StringArray array;
-		array.addLines(csdText);
+		array.addLines(File(csdText).loadFileAsString());
 		
 		for(int i=0;i<array.size();i++)
 		{
+			cUtils::debug(array.joinIntoString(" "));
 			if(array[i].contains("nchnls"))
 			{
 				String channels = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));

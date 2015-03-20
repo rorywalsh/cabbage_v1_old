@@ -1929,7 +1929,10 @@ String CabbageGUIClass::getStringArrayPropValue(Identifier prop, int index)
 //===================================================================
 void CabbageGUIClass::setStringArrayProp(Identifier prop, var value)
 {
+	cUtils::debug(value.size());
+	cabbageIdentifiers.remove(prop);
     cabbageIdentifiers.set(prop, value);
+	cUtils::debug(cabbageIdentifiers.getWithDefault(prop, "").size());
     //cabbageIdentifiers.set(prop, value);
 }
 //===================================================================

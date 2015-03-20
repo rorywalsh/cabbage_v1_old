@@ -1657,6 +1657,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
         if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox &&
            getGUICtrls(index).getStringProp(CabbageIDs::channeltype)==CabbageIDs::stringchannel)
         {
+			cUtils::debug(getGUICtrls(index).getStringArrayProp(CabbageIDs::text).size());
             stringMessage = getGUICtrls(index).getStringArrayPropValue(CabbageIDs::text, newValue-1);
             messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel),
                                                           stringMessage, CabbageIDs::stringchannel);
@@ -1708,14 +1709,14 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
 			}
 		}		
 		
-		{
-			char string[1024] = {0};
-            csound->GetStringChannel("HappyDays", string);
-			const String message = String(string);
-			//cUtils::debug(message);
-			csound->SetChannel("HappyDays", "");
-			
-		}    		
+//		{
+//			char string[1024] = {0};
+//            csound->GetStringChannel("HappyDays", string);
+//			const String message = String(string);
+//			//cUtils::debug(message);
+//			csound->SetChannel("HappyDays", "");
+//			
+//		}    		
 		
         //update all control widgets
         for(int index=0; index<getGUICtrlsSize(); index++)

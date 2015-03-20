@@ -970,11 +970,10 @@ public:
                     filename = dirFiles[i].getFileName();
                 combo->addItem(filename, i+1);
                 fileNames.append(filename);
-                cAttr.setStringArrayPropValue(CabbageIDs::text, i, filename);
+                //cAttr.setStringArrayPropValue(CabbageIDs::text, i, filename);
             }
         }
-        cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
-        //cUtils::showMessage(cAttr.getStringArrayPropValue(CabbageIDs::text, 1));
+        //cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
         combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);
 
     }

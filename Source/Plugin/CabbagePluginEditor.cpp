@@ -2972,6 +2972,13 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
     comps[idx]->getProperties().set(CabbageIDs::index, idx);
     //set visiblilty
     comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+	
+	var items;
+	for( int i=0;i<((CabbageComboBox*)comps[idx])->combo->getNumItems();i++)
+		items.append(((CabbageComboBox*)comps[idx])->combo->getItemText(i));
+	
+	getFilter()->getGUICtrls(idx).setStringArrayProp(CabbageIDs::text, items);
+	
 
 }
 

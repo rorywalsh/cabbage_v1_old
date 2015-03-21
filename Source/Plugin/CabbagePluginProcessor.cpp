@@ -217,13 +217,23 @@ vuCounter(0)
             csound->SetScoreOffsetSeconds(0);
             csound->RewindScore();
             
-            
-#ifdef WIN32
-            csound->SetChannel("CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());
-#else
-            csound->SetChannel("CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().toUTF8().getAddress());
-#endif
-            Logger::writeToLog("Csound compiled your file");
+			char path[4096] = {0};
+			
+	#ifdef WIN32
+			
+			csound->GetStringChannel("CSD_PATH", path);
+			if(String(path).isNotEmpty())
+				File(path).getParentDirectory().setAsCurrentWorkingDirectory();
+			else 
+				csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());
+	#else
+			csound->GetStringChannel("CSD_PATH", path);
+			if(String(path).isNotEmpty())
+				File(path).getParentDirectory().setAsCurrentWorkingDirectory();
+			else 
+				csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());
+	#endif
+				Logger::writeToLog("Csound compiled your file");
             
             //csound->SetYieldCallback(CabbagePluginAudioProcessor::yieldCallback);
             if(csound->GetSpout()==nullptr);
@@ -334,7 +344,7 @@ vuCounter(0)
         Logger::writeToLog("File doesn't exist"+String(csdFile.getFullPathName()));
     }
     
-    File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
+    //File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
     csdFile.setAsCurrentWorkingDirectory();
     
     
@@ -424,11 +434,22 @@ vuCounter(0)
         csoundStatus = true;
         debugMessageArray.add(VERSION);
         debugMessageArray.add(String("\n"));
-#ifdef WIN32
-        csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());
-#else
-        csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());
-#endif
+		char path[4096] = {0};
+			
+	#ifdef WIN32
+			
+			csound->GetStringChannel("CSD_PATH", path);
+			if(String(path).isNotEmpty())
+				File(path).getParentDirectory().setAsCurrentWorkingDirectory();
+			else 
+				csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());
+	#else
+			csound->GetStringChannel("CSD_PATH", path);
+			if(String(path).isNotEmpty())
+				File(path).getParentDirectory().setAsCurrentWorkingDirectory();
+			else 
+				csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());
+	#endif
         
         if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
         {

@@ -194,6 +194,8 @@ vuCounter(0)
         
         csCompileResult = csound->Compile(const_cast<char*>(inputfile.toUTF8().getAddress()));
         
+        File(inputfile).getParentDirectory().setAsCurrentWorkingDirectory();
+
         Logger::writeToLog(inputfile);
         if(csCompileResult==OK)
         {
@@ -407,7 +409,7 @@ vuCounter(0)
     
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
     //csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
-    csdFile.setAsCurrentWorkingDirectory();
+    csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
     if(csCompileResult==OK)
     {
         guiRefreshRate = getCsoundKsmpsSize()*2;
@@ -591,6 +593,7 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
     CSspin = nullptr;
     
     csCompileResult = csound->Compile(const_cast<char*>(file.getFullPathName().toUTF8().getAddress()));
+    file.getParentDirectory().setAsCurrentWorkingDirectory();
     
 #ifdef BUILD_DEBUGGER
     for(int i=0; i<breakpointInstruments.size(); i++)

@@ -1462,7 +1462,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
         csdFile = File(_csdfile);
         originalCsdFile = csdFile;
         lastSaveTime = csdFile.getLastModificationTime();
-        csdFile.setAsCurrentWorkingDirectory();
+        csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
         resetFilter(true);
     }
     else
@@ -1475,7 +1475,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
             csdFile = openFC.getResult();
             originalCsdFile = openFC.getResult();
             lastSaveTime = csdFile.getLastModificationTime();
-            csdFile.setAsCurrentWorkingDirectory();
+            csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
             if(csdFile.getFileExtension()==(".vst"))
             {
                 String csd = csdFile.getFullPathName();

@@ -1490,6 +1490,7 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 #ifdef Cabbage_Build_Standalone
         setParameterNotifyingHost(xyPad->paramIndex, xyPad->getXValue());
         setParameterNotifyingHost(xyPad->paramIndex+1, xyPad->getYValue());
+        sendChangeMessage();
 #else
         if(xyPad->getMinimumXValue()>=0)
             xVal = (xyPad->getXValue()/xyPad->getXRange())+(fabs(xyPad->getMinimumXValue())/xyPad->getXRange());
@@ -1501,27 +1502,12 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
         else
             yVal = (xyPad->getYValue()/xyPad->getYRange())-(fabs(xyPad->getMinimumYValue())/xyPad->getYRange());
         
-        //Logger::writeToLog("Param:"+String(xyPad->paramIndex)+"  xyPadXVal:"+String(xVal));
-        //Logger::writeToLog("Param:"+String(xyPad->paramIndex+1)+"  xyPadYVal:"+String(yVal));
-        
         setParameterNotifyingHost(xyPad->paramIndex, xVal);
         setParameterNotifyingHost(xyPad->paramIndex+1, yVal);
+        sendChangeMessage();
 #endif
     }
     
-    //    OscThread* oscObject = dynamic_cast< OscThread*>(source);
-    //    if(oscObject)
-    //    {
-    //        for(int i=0; i<oscObject->getMessages().getNumberOfOutgoingChannelMessagesInQueue(); i++)
-    //        {
-    //            //csound-> oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).channelName,
-    //            //											  oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).value, "float");
-    //            csound->SetChannel(oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
-    //                               oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).value);
-    //            //Logger::writeToLog("OSC invoming messages");
-    //        }
-    //        oscObject->flushOSCMessages();
-    //    }
     
 }
 
@@ -1705,6 +1691,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
 void CabbagePluginAudioProcessor::updateCabbageControls()
 {
 #ifndef Cabbage_No_Csound
+    bool shouldUpdate = false;
     String chanName, channelMessage;
     if(csCompileResult==OK)
     {
@@ -1759,6 +1746,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                     //Logger::writeToLog("value:"+String(value));
                     guiCtrls.getReference(index).setNumProp(CabbageIDs::value, value);
                     dirtyControls.addIfNotAlreadyThere(index);
+                    shouldUpdate = true;
                 }
             }
             
@@ -1773,6 +1761,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                     guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
                     guiCtrls.getReference(index).parse(" "+channelMessage, "");
                     dirtyControls.addIfNotAlreadyThere(index);
+                    shouldUpdate = true;
                 }
                 //else
                 //guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
@@ -1793,6 +1782,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                     //String test = getGUILayoutCtrls(index).getStringArrayPropValue(CabbageIDs::channel, y);
                     float value = csound->GetChannel(guiLayoutCtrls[index].getStringArrayPropValue(CabbageIDs::channel, y).getCharPointer());
                     guiLayoutCtrls[index].setTableChannelValues(y, value);
+                    shouldUpdate=true;
                 }
             }
             
@@ -1806,7 +1796,8 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 if(channelMessage.isNotEmpty())
                 {
                     guiLayoutCtrls.getReference(index).parse(" "+channelMessage, channelMessage);
-                    guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
+                    guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage,channelMessage.trim());
+                    shouldUpdate=true;
                 }
                 //else
                 //	guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
@@ -1814,7 +1805,8 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 csound->SetChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
             }
         }
-        sendChangeMessage();
+        if(shouldUpdate)
+            sendChangeMessage();
     }
 #endif
 }
@@ -2080,7 +2072,6 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                 {
                     for(int channel = 0; channel < getNumOutputChannels(); channel++ )
                     {
-						int num = getNumOutputChannels();
                         audioBuffer = buffer.getWritePointer(channel,0);
                         pos = csndIndex*getNumOutputChannels();
                         float samp = audioBuffer[i]*cs_scale;

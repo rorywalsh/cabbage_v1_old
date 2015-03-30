@@ -1912,6 +1912,8 @@ void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIClass &cAtt
     layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+	((CabbageTextbox*)layoutComps[idx])->editor->setText(getFilter()->getCsoundOutput());
+
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //      Textbox widget.

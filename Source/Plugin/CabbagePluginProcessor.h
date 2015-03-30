@@ -335,7 +335,6 @@ public:
     void startRecording();
     void stopRecording();
     int reCompileCsound(File file);
-    void setupNativePluginEditor();
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock);
     void releaseResources();
@@ -569,11 +568,8 @@ public:
         return changeMessageType;
     }
 
-    inline String getCsoundOutput()
-    {
-        return csoundOutput;
-    }
-
+    String getCsoundOutput();
+	
     inline String getDebuggerOutput()
     {
         return csoundDebuggerOutput;

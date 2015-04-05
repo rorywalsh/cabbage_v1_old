@@ -785,14 +785,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 #endif
 
 	String examplesDir = appProperties->getUserSettings()->getValue("ExamplesDir", "");
-	String examplesBaseDir = appProperties->getUserSettings()->getValue("ExamplesDir", "");
+	cUtils::debug("Example Directory:"+dir);
 	if(!File(examplesDir).exists())
 	{
 	#if defined(LINUX) || defined(MACOSX)
-		examplesBaseDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
 		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
 	#else
-		examplesBaseDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
 		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
 	#endif
 	}
@@ -908,7 +906,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         //preferences....
         subMenu.addItem(203, "Set Cabbage Plant Directory");
         subMenu.addItem(200, "Set Csound Manual Directory");
-//        subMenu.addItem(205, "Set Examples Directory");
+        subMenu.addItem(205, "Set Examples Directory");
         if(!getPreference(appProperties, "DisablePluginInfo"))
             subMenu.addItem(201, String("Disable Export Plugin Info"), true, false);
         else
@@ -978,7 +976,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
 	else if(options==3999)
 	{
-		openFile(examplesBaseDir);
+		openFile(examplesDir);
 	}
 
     else if(options>=9000)
@@ -1313,7 +1311,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     else if(options==205)
     {
         String dir = getPreference(appProperties, "ExamplesDir", "");
-        FileChooser browser(String("Please select your Examples directory..."), File(dir), String("*.csd"), UseNativeDialogue);
+		cUtils::debug("Example Directory:"+dir);
+        FileChooser browser(String("Please select your Examples directory..."), File(dir), String("*.*"), UseNativeDialogue);
         if(browser.browseForDirectory())
         {
             setPreference(appProperties, "ExamplesDir", browser.getResult().getFullPathName());

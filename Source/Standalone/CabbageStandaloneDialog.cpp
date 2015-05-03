@@ -785,7 +785,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 #endif
 
 	String examplesDir = appProperties->getUserSettings()->getValue("ExamplesDir", "");
-	cUtils::debug("Example Directory:"+dir);
+	//cUtils::debug("Example Directory:"+dir);
 	if(!File(examplesDir).exists())
 	{
 	#if defined(LINUX) || defined(MACOSX)

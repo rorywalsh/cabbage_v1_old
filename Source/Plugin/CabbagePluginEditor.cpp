@@ -3608,6 +3608,8 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                             getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::vslider)
                     {
                         ((CabbageSlider*)comps[i])->update(getFilter()->getGUICtrls(i));
+                        String sliderText = getFilter()->getGUICtrls(i).getStringArrayPropValue(CabbageIDs::text, getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value));
+                        ((CabbageSlider*)comps[i])->setLabelText(sliderText);
                     }
 
                     else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::button)

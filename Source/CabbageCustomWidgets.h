@@ -481,6 +481,11 @@ public:
         return channel;
     }
 
+    void setLabelText(String label)
+    {
+        textLabel->setText(label, NotificationType::dontSendNotification);
+    }
+    
     //update controls
     void update(CabbageGUIClass m_cAttr)
     {

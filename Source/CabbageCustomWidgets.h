@@ -483,7 +483,7 @@ public:
 
     void setLabelText(String label)
     {
-        textLabel->setText(label, NotificationType::dontSendNotification);
+        textLabel->setText(label, dontSendNotification);
     }
     
     //update controls

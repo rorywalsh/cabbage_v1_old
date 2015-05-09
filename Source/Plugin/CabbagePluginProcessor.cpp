@@ -565,9 +565,10 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
 	numChannelsChanged();
     midiOutputBuffer.clear();
     //csound->DeleteChannelList(csoundChanList);
-	csound->DestroyMessageBuffer();
 
-    csound->Reset();
+	
+	//csound->DestroyMessageBuffer();
+    //csound->Reset();
     ksmpsOffset = 0;
     breakCount = 0;
 
@@ -596,7 +597,7 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
     CSspout = nullptr;
     CSspin = nullptr;
     
-    csCompileResult = csound->Compile(const_cast<char*>(file.getFullPathName().toUTF8().getAddress()));
+    csCompileResult = csound->CompileCsd(const_cast<char*>(file.getFullPathName().toUTF8().getAddress()));
     file.getParentDirectory().setAsCurrentWorkingDirectory();
     
 #ifdef BUILD_DEBUGGER

@@ -565,7 +565,8 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
 	numChannelsChanged();
     midiOutputBuffer.clear();
     //csound->DeleteChannelList(csoundChanList);
-    
+	csound->DestroyMessageBuffer();
+
     csound->Reset();
     ksmpsOffset = 0;
     breakCount = 0;

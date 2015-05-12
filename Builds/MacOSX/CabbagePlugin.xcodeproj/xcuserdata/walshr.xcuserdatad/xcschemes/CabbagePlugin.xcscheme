@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "AEC40B28A38308B0167313D3"
+               BlueprintIdentifier = "6DFAA96236C47CDC2EAAE109"
                BuildableName = "CabbagePlugin.component"
                BlueprintName = "CabbagePlugin"
                ReferencedContainer = "container:CabbagePlugin.xcodeproj">
@@ -29,6 +29,15 @@
       buildConfiguration = "Debug">
       <Testables>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "6DFAA96236C47CDC2EAAE109"
+            BuildableName = "CabbagePlugin.component"
+            BlueprintName = "CabbagePlugin"
+            ReferencedContainer = "container:CabbagePlugin.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
@@ -39,15 +48,15 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "AEC40B28A38308B0167313D3"
+            BlueprintIdentifier = "6DFAA96236C47CDC2EAAE109"
             BuildableName = "CabbagePlugin.component"
             BlueprintName = "CabbagePlugin"
             ReferencedContainer = "container:CabbagePlugin.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -57,15 +66,15 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "AEC40B28A38308B0167313D3"
+            BlueprintIdentifier = "6DFAA96236C47CDC2EAAE109"
             BuildableName = "CabbagePlugin.component"
             BlueprintName = "CabbagePlugin"
             ReferencedContainer = "container:CabbagePlugin.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

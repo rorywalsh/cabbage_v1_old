@@ -300,6 +300,7 @@ private:
     Component* statusBar;
 	bool midiLearnEnabled;
 	bool addNewMapping;
+	bool audioDeviceOk;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GraphDocumentComponent)
 };

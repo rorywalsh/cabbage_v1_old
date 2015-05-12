@@ -91,15 +91,13 @@ MainHostWindow::MainHostWindow()
     ScopedPointer<XmlElement> savedAudioState (getAppProperties().getUserSettings()
             ->getXmlValue ("audioDeviceState"));
 
-    deviceManager.initialise (256, 256, savedAudioState, true);
-
-
 
     setResizable (true, false);
     setResizeLimits (500, 400, 10000, 10000);
     centreWithSize (800, 600);
-
-    setContentOwned (new GraphDocumentComponent (formatManager, &deviceManager), false);
+	
+	deviceManager.initialise(256, 256, savedAudioState, true);
+	setContentOwned (new GraphDocumentComponent (formatManager, &deviceManager), false);
 
     restoreWindowStateFromString (getAppProperties().getUserSettings()->getValue ("mainWindowPos"));
 

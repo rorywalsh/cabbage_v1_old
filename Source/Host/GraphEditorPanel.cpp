@@ -1069,14 +1069,30 @@ midiLearnEnabled(false)
     deviceManager->addMidiInputCallback (String::empty, &graphPlayer.getMidiMessageCollector());
 	deviceManager->addMidiInputCallback (String::empty, this);
 
-	//setup channel strips for inputs and outputs
-	addAndMakeVisible (inputStrip = new InternalMixerStrip("Inputs", deviceManager->getCurrentAudioDevice()->getInputChannelNames().size()));
-	addAndMakeVisible (outputStrip = new InternalMixerStrip("Outputs", deviceManager->getCurrentAudioDevice()->getOutputChannelNames().size()));
+	int inChannels, outChannels;
+	if(!deviceManager->getCurrentAudioDevice())
+	{
+		cUtils::showMessage("Cabbage could not open the last known audio device. Please select a new audio device from the preferences menu and resart");
+		inChannels = outChannels = 2;
+		//dummy strips until user restarts application...
+		addAndMakeVisible (inputStrip = new InternalMixerStrip("Inputs", inChannels));
+		addAndMakeVisible (outputStrip = new InternalMixerStrip("Outputs", outChannels));
+	}
+	else
+	{
+		inChannels = deviceManager->getCurrentAudioDevice()->getInputChannelNames().size();
+		outChannels = deviceManager->getCurrentAudioDevice()->getOutputChannelNames().size();
+		//setup channel strips for inputs and outputs
+		addAndMakeVisible (inputStrip = new InternalMixerStrip("Inputs", inChannels));
+		addAndMakeVisible (outputStrip = new InternalMixerStrip("Outputs", outChannels));
+		graphPlayer.addChangeListener(inputStrip);
+		graphPlayer.addChangeListener(outputStrip);
+		inputStrip->addChangeListener(&graphPlayer);
+		outputStrip->addChangeListener(&graphPlayer);		
+	}
+
 	
-	graphPlayer.addChangeListener(inputStrip);
-	graphPlayer.addChangeListener(outputStrip);
-	inputStrip->addChangeListener(&graphPlayer);
-	outputStrip->addChangeListener(&graphPlayer);
+
 	
 	showBottomPanel(false);
 	

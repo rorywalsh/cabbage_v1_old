@@ -96,7 +96,13 @@ MainHostWindow::MainHostWindow()
     setResizeLimits (500, 400, 10000, 10000);
     centreWithSize (800, 600);
 	
-	deviceManager.initialise(256, 256, savedAudioState, true);
+	deviceManager.initialise(2, 2, savedAudioState, true);
+	
+	//deviceManager.initialiseWithDefaultDevices(8, 8);
+	
+	//if(!deviceManager.getCurrentAudioDevice())
+	//	deviceManager.initialiseWithDefaultDevices(2, 2);
+	
 	setContentOwned (new GraphDocumentComponent (formatManager, &deviceManager), false);
 
     restoreWindowStateFromString (getAppProperties().getUserSettings()->getValue ("mainWindowPos"));
@@ -140,6 +146,8 @@ MainHostWindow::~MainHostWindow()
     internalTypes.clear();
 
     getAppProperties().getUserSettings()->setValue ("mainWindowPos", getWindowStateAsString());
+	ScopedPointer<XmlElement> audioState (deviceManager.createStateXml());
+	getAppProperties().getUserSettings()->setValue ("audioDeviceState", audioState);		
     clearContentComponent();
 }
 
@@ -531,7 +539,7 @@ bool MainHostWindow::perform (const InvocationInfo& info)
 void MainHostWindow::launchPreferencesDialogue()
 {
 	CabbageAudioDeviceSelectorComponent* audioSettingsComp = new CabbageAudioDeviceSelectorComponent(deviceManager,
-																					0, 256,	0, 256, true, true, true, false);
+																					0, 32,	0, 32, true, true, true, false);
 	audioSettingsComp->setSize (500, 450);
 	CabbagePluginListComponent* pluginList = new CabbagePluginListComponent(formatManager,
 																			knownPluginList,
@@ -543,13 +551,15 @@ void MainHostWindow::launchPreferencesDialogue()
 	prefWindow->addComponent("audioSelector", audioSettingsComp);
 	prefWindow->setVisible(true);
 	prefWindow->toFront(true);
+
 }
+
 
 void MainHostWindow::showAudioSettings()
 {
     CabbageAudioDeviceSelectorComponent audioSettingsComp (deviceManager,
-            0, 256,
-            0, 256,
+            0, 32,
+            0, 32,
             true, true, true, false);
 
     audioSettingsComp.setSize (500, 450);

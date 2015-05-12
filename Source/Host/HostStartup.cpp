@@ -43,7 +43,7 @@ public:
         // initialise our settings file..
 
         PropertiesFile::Options options;
-        options.applicationName     = "Cabbage Patcher";
+        options.applicationName     = "CabbageHost";
         options.filenameSuffix      = "settings";
         options.osxLibrarySubFolder = "Preferences";
 

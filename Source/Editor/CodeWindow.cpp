@@ -46,7 +46,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
 #ifdef BUILD_DEBUGGER
     splitBottomWindow = new SplitComponent(*csoundOutputComponent, *csoundDebuggerComponent, true);
 	#ifdef CABBAGE_HOST
-		splitBottomWindow->SetSplitBarPosition(getWidth());
+		splitBottomWindow->SetSplitBarPosition(getWidth()/2);
 	#else
 		splitBottomWindow->SetSplitBarPosition(getWidth()/2);
 	#endif

@@ -219,6 +219,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 				File csdFile = nativeCabbagePlugin->getCsoundInputFile();
 				codeWindow = new CodeWindow(csdFile.getFileNameWithoutExtension());
 				codeWindow->addActionListener(this);
+				codeWindow->splitBottomWindow->SetSplitBarPosition(codeWindow->getWidth()/3);
 				codeWindow->textEditor->setShowTabButtons(false);
 				codeWindow->setSize(500, 400);
 				codeWindow->setTopLeftPosition(e.getScreenX()-100, e.getScreenY()+100);

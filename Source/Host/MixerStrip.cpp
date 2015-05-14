@@ -41,17 +41,20 @@ InternalMixerStrip::~InternalMixerStrip()
 	
 void InternalMixerStrip::changeListenerCallback (ChangeBroadcaster* source)
 {
+    /* limiting mixer strip to 2 channels due to isses on OSX. Needs investigation */
 	if(mixerName=="Inputs")
 	{
 		const Array<float> inputChannel = ((GraphAudioProcessorPlayer*)source)->getInputChannelRMS();
 		for(int i=0;i<inputChannel.size();i++)
-			channelRMS.getReference(i) =(float) exp (log ( inputChannel[i])/3.0);
+            if(i<numberOfChannels)
+                channelRMS.getReference(i) = (float) exp (log ( inputChannel[i])/3.0);
 	}
 	else if(mixerName=="Outputs")
 	{
 		const Array<float> outputChannel = ((GraphAudioProcessorPlayer*)source)->getOutputChannelRMS();
 		for(int i=0;i<outputChannel.size();i++)
-			channelRMS.getReference(i) = exp (log ( outputChannel[i])/3.0);;		
+            if(i<numberOfChannels)
+                channelRMS.getReference(i) = exp (log ( outputChannel[i])/3.0);;
 	}
 	repaint();
 	//channelRMS.getReference(i) = rmsValues[i].getFloatValue();

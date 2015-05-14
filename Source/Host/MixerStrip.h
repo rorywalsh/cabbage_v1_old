@@ -36,7 +36,7 @@ public:
 	void paint(Graphics& g);
 	void resized();
 	void drawLevelMeter (Graphics& g, float x, float y, int width, int height, float level);
-	Array<float> channelRMS;
+	Array<float, CriticalSection> channelRMS;
 	StringArray rmsValues;
 	void mouseDown(const MouseEvent &e);
 	void mouseDrag(const MouseEvent &e);

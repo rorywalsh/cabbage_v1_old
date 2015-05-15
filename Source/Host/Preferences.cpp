@@ -22,13 +22,15 @@
 
 //===================== Document Window ========================================
 
-CabbagePreferences::CabbagePreferences() : DocumentWindow ("Preferences", Colour(20, 20, 20),
-						  DocumentWindow::allButtons)
+CabbagePreferences::CabbagePreferences()
+//: DocumentWindow ("Preferences", Colour(20, 20, 20), DocumentWindow::allButtons)
 {
-		setResizable(true, true);
-		centreWithSize(660, 460);
-		setContentOwned(&mainComp, true);
-		setColour(TabbedComponent::outlineColourId, Colours::black);
+		//setResizable(true, true);
+		//centreWithSize(660, 460);
+		//setContentOwned(&mainComp, true);
+		//setColour(TabbedComponent::outlineColourId, Colours::black);
+    addAndMakeVisible(mainComp);
+    setSize(660, 460);
 }
 	
 CabbagePreferences::~CabbagePreferences(){}

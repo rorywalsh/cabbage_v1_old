@@ -146,8 +146,6 @@ MainHostWindow::~MainHostWindow()
     internalTypes.clear();
 
     getAppProperties().getUserSettings()->setValue ("mainWindowPos", getWindowStateAsString());
-	ScopedPointer<XmlElement> audioState (deviceManager.createStateXml());
-	getAppProperties().getUserSettings()->setValue ("audioDeviceState", audioState);		
     clearContentComponent();
 }
 
@@ -545,12 +543,16 @@ void MainHostWindow::launchPreferencesDialogue()
 																			knownPluginList,
 																			deadMansPedalFile,
 																			getAppProperties().getUserSettings());		
-	CabbagePreferences* prefWindow;
+	ScopedPointer<CabbagePreferences> prefWindow;
 	prefWindow = new CabbagePreferences();	
 	prefWindow->addComponent("pluginList", pluginList);
 	prefWindow->addComponent("audioSelector", audioSettingsComp);
-	prefWindow->setVisible(true);
-	prefWindow->toFront(true);
+
+    DialogWindow::showModalDialog("Preferences", prefWindow, this, Colours::black, true);
+
+    ScopedPointer<XmlElement> audioState (deviceManager.createStateXml());
+    getAppProperties().getUserSettings()->setValue ("audioDeviceState", audioState);
+    getAppProperties().saveIfNeeded();
 
 }
 

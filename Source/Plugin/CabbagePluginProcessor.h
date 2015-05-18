@@ -40,7 +40,7 @@
 
 #include "csdl.h"
 //#include "cwindow.h"
-#include "../csPerfThread.hpp"
+
 #endif
 
 //#ifndef Cabbage_Build_Standalone

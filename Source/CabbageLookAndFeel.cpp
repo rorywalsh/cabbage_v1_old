@@ -1262,7 +1262,6 @@ void CabbageLookAndFeel::drawDocumentWindowTitleBar (DocumentWindow &window, Gra
     g.setColour (cUtils::getComponentFontColour());
     Font font = cUtils::getTitleFont();
 #ifndef MACOSX
-    asfsdf
     font.setFallbackFontName("Verdana");
 #endif
     font.setHeight(16);

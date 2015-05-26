@@ -158,6 +158,11 @@ public:
 		return inputChannelRMS; 
 	}
 	
+    void suspendProcessing(bool suspend)
+    {
+        processor->suspendProcessing(suspend);
+    }
+    
 private:
     //==============================================================================
     AudioProcessor* processor;
@@ -282,6 +287,11 @@ public:
 	
 	MidiKeyboardComponent* getKeyboardComponent(){	return keyboardComp;	}
 	
+    void suspendProcessing(bool suspend)
+    {
+        graphPlayer.suspendProcessing(suspend);        
+    }
+    
     //==============================================================================
     void resized();
 

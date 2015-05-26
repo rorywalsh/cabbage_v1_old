@@ -39,18 +39,16 @@
 #endif
 
 #include "csdl.h"
-//#include "cwindow.h"
-#include "../csPerfThread.hpp"
-#endif
+
 
 //#ifndef Cabbage_Build_Standalone
 //#include "../Editor/CabbageEditorWindow.h"
 //#endif
 
 #ifdef Cabbage64Bit
-#define CABBAGE_VERSION "Cabbage(64bit) v0.5.14 Alpha"
+#define CABBAGE_VERSION "Cabbage(64bit) v0.5.14 Beta"
 #else
-#define CABBAGE_VERSION "Cabbage(32bit) v0.5.14 Alpha"
+#define CABBAGE_VERSION "Cabbage(32bit) v0.5.14 Beta"
 #endif
 
 #define AUDIO_PLUGIN 1

@@ -64,7 +64,7 @@ Source: "..\..\..\csound\build\rtpa.dll";               DestDir: "{app}\csound";
 Source: "..\..\..\csound\build\rtwinmm.dll";            DestDir: "{app}\csound"; Components: csound
 ;Source: "..\..\..\csound\build\virtual.dll";            DestDir: "{app}"; Components: csound
 Source: "C:\Users\rory\Documents\sourcecode\liblo-0.28\src\.libs\liblo-7.dll";        DestDir: "{app}\csound"; Components: csoundOpcodes
-Source: "..\..\..\csound\build\_jcsound6.dll";            DestDir: "{app}\csound"; Components: csound
+;Source: "..\..\..\csound\build\_jcsound6.dll";            DestDir: "{app}\csound"; Components: csound
 Source: "..\..\..\csound\build\py.dll";             DestDir: "{app}\csound"; Components: python  
 Source: "..\..\..\csound\build\signalflowgraph.dll"; DestDir: "{app}\csound"; Components: csound
 Source: "..\..\..\csound\build\serial.dll"; DestDir: "{app}\csound"; Components: csound

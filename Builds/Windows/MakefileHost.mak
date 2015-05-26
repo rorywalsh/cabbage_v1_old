@@ -83,12 +83,21 @@ OBJECTS := \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/PluginWrapperProcessor_5t66sdf31b.o \
+  $(OBJDIR)/AudioFilePlaybackProcessor_ie83ukyw.o \
+  $(OBJDIR)/AudioFilePlaybackEditor_8e3udga.o \
+  $(OBJDIR)/BreakpointEnvelop_fdj8dsj37.o \
+  $(OBJDIR)/AutomationEditor_2j8hjkd2.o \
+  $(OBJDIR)/AutomationProcessor_s358esga.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
   $(OBJDIR)/Table_35ae1cd9.o \
   $(OBJDIR)/MixerStrip_4j7dh431b.o \
+  $(OBJDIR)/Preferences_3sd4331b.o \
   $(OBJDIR)/SplitComponent_35ae1cd2.o \
+  $(OBJDIR)/SidebarPanel_1s9s3s7.o \
+  $(OBJDIR)/BottomPanel_78s9s3s7.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
+  $(OBJDIR)/FilterComponent_62dsj37.o \
   $(OBJDIR)/FilterGraph_62e9c017.o \
   $(OBJDIR)/GraphEditorPanel_3dbd4872.o \
   $(OBJDIR)/HostStartup_5ce96f96.o \
@@ -244,14 +253,60 @@ $(OBJDIR)/CabbageLookAndFeel_220a01a6.o: ../../Source/CabbageLookAndFeel.cpp
 	@echo "Compiling CabbageLookAndFeel.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/FilterComponent_62dsj37.o: ../../Source/Host/FilterComponent.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling FilterComponent.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/BreakpointEnvelop_fdj8dsj37.o: ../../Source/Host/BreakpointEnvelope.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling BreakpointEnvelop.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
+$(OBJDIR)/AudioFilePlaybackProcessor_ie83ukyw.o: ../../Source/Host/AudioFilePlaybackProcessor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling AudioFilePlaybackProcessor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/AudioFilePlaybackEditor_8e3udga.o: ../../Source/Host/AudioFilePlaybackEditor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling AudioFilePlaybackEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
+$(OBJDIR)/AutomationProcessor_s358esga.o: ../../Source/Host/AutomationProcessor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling AutomationProcessor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/AutomationEditor_2j8hjkd2.o: ../../Source/Host/AutomationEditor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling AutomationEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+	
 $(OBJDIR)/FilterGraph_62e9c017.o: ../../Source/Host/FilterGraph.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling FilterGraph.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/SidebarPanel_1s9s3s7.o: ../../Source/Host/SidebarPanel.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling SidebarPanel.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
+$(OBJDIR)/BottomPanel_78s9s3s7.o: ../../Source/Host/BottomPanel.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling BottomPanel.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
 $(OBJDIR)/MixerStrip_4j7dh431b.o:../../Source/Host/MixerStrip.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling MixerStrip.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/Preferences_3sd4331b.o:../../Source/Host/Preferences.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling Preferences.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 	
 $(OBJDIR)/PluginWrapperProcessor_5t66sdf31b.o:../../Source/Host/PluginWrapperProcessor.cpp
@@ -348,5 +403,3 @@ $(OBJDIR)/juce_gui_extra_7767d6a8.o: ../../JuceLibraryCode/modules/juce_gui_extr
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling juce_gui_extra.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
--include $(OBJECTS:%.o=%.d)

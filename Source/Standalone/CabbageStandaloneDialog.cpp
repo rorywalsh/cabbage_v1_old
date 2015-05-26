@@ -199,7 +199,11 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
     //opens a default file that matches the name of the current executable
     //this can be used to create more 'standalone' like apps
+    #ifndef Cabbage64Bit
     if(File(File::getSpecialLocation(File::currentExecutableFile)).getFileNameWithoutExtension()!="Cabbage")
+    #else
+    if(File(File::getSpecialLocation(File::currentExecutableFile)).getFileNameWithoutExtension()!="Cabbage64")
+    #endif
     {
         if(File(defaultCSDFile).existsAsFile())
         {

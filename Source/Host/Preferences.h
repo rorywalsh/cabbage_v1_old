@@ -120,7 +120,7 @@ private:
 };
 
 //================================================================
-class CabbagePreferences   : public DocumentWindow
+class CabbagePreferences   : public Component
 {
 	
 	PreferencesComp mainComp;

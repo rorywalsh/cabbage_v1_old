@@ -48,7 +48,10 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable>
+      <PathRunnable
+         FilePath = "/Users/walshr/sourcecode/JUCE/examples/audio plugin host/Builds/MacOSX/build/Debug/Plugin Host.app">
+      </PathRunnable>
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6DFAA96236C47CDC2EAAE109"
@@ -56,7 +59,7 @@
             BlueprintName = "CabbagePlugin"
             ReferencedContainer = "container:CabbagePlugin.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

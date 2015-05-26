@@ -42,7 +42,7 @@
 		5D410A300D26D5C7814A16FE /* juce_AAX_Wrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = E7476C44AC4D6B4CAF07EC89 /* juce_AAX_Wrapper.mm */; };
 		5E5351F928E75A3CB1C5BCB2 /* CabbageGUIClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A892EB9E80B9D9EBD8D75F20 /* CabbageGUIClass.cpp */; };
 		5FBC3E6E5BB9117DF978F49A /* Table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60A5314356E60BA34728C56C /* Table.cpp */; };
-		615CAEC31B0254700022B57F /* CsoundLib64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 615CAEC21B0254700022B57F /* CsoundLib64.framework */; };
+		613496E21B092094005F97F1 /* CsoundLib64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 613496E11B092094005F97F1 /* CsoundLib64.framework */; };
 		6A46E7B7BF485880047D5FC1 /* AUMIDIEffectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F7E8FECC72DF24243A0CF9C /* AUMIDIEffectBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		6DD4C9203E1C61CC888DDC91 /* AUScopeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AF7B934D8439EE5FFE3FABA /* AUScopeElement.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		70840B68B55060FE7F8B3226 /* AUBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B1F37A32F7389091529F322 /* AUBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -86,6 +86,18 @@
 		FCDD149663E0F69D24BF7F58 /* juce_graphics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 805A4441F729CED062389CAC /* juce_graphics.mm */; };
 		FDFA88DBA2B8E8C8A5579460 /* CarbonEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27A79602B389CA7DB7D8E119 /* CarbonEventHandler.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		613496E31B0920E9005F97F1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		006A3F87F0687ED19E9FDE99 /* juce_PositionableAudioSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_PositionableAudioSource.h; path = ../../JuceLibraryCode/modules/juce_audio_basics/sources/juce_PositionableAudioSource.h; sourceTree = SOURCE_ROOT; };
@@ -460,7 +472,7 @@
 		60A5314356E60BA34728C56C /* Table.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Table.cpp; path = ../../Source/Table.cpp; sourceTree = SOURCE_ROOT; };
 		60EDB33DC66C04A995532A1C /* juce_AudioUnitPluginFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_AudioUnitPluginFormat.h; path = ../../JuceLibraryCode/modules/juce_audio_processors/format_types/juce_AudioUnitPluginFormat.h; sourceTree = SOURCE_ROOT; };
 		61301C10155AD442503B870F /* BinaryData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BinaryData.h; path = ../../Source/BinaryData.h; sourceTree = SOURCE_ROOT; };
-		615CAEC21B0254700022B57F /* CsoundLib64.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CsoundLib64.framework; path = ../../../../../../../Library/Frameworks/CsoundLib64.framework; sourceTree = "<group>"; };
+		613496E11B092094005F97F1 /* CsoundLib64.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CsoundLib64.framework; path = ../../../../csound/build/CsoundLib64.framework; sourceTree = "<group>"; };
 		617854619A363E67CFF2F5FE /* juce_TabbedComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_TabbedComponent.h; path = ../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_TabbedComponent.h; sourceTree = SOURCE_ROOT; };
 		61E21AD1DDAA5A616E654D08 /* juce_Singleton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_Singleton.h; path = ../../JuceLibraryCode/modules/juce_core/memory/juce_Singleton.h; sourceTree = SOURCE_ROOT; };
 		6201CFF9232045EACEBB9297 /* juce_mac_Threads.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = juce_mac_Threads.mm; path = ../../JuceLibraryCode/modules/juce_core/native/juce_mac_Threads.mm; sourceTree = SOURCE_ROOT; };
@@ -1091,7 +1103,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				615CAEC31B0254700022B57F /* CsoundLib64.framework in Frameworks */,
+				613496E21B092094005F97F1 /* CsoundLib64.framework in Frameworks */,
 				27F2200FB289F4720E6BCD1E /* Accelerate.framework in Frameworks */,
 				41F6F8C439144D0E52B10959 /* AudioToolbox.framework in Frameworks */,
 				74591BD9A2F8E72D938B354E /* AudioUnit.framework in Frameworks */,
@@ -1578,7 +1590,7 @@
 		4AF9FD9CC441555B214C0193 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				615CAEC21B0254700022B57F /* CsoundLib64.framework */,
+				613496E11B092094005F97F1 /* CsoundLib64.framework */,
 				B63ACD81C2D783A653180EAC /* Accelerate.framework */,
 				58A92582E67494BED4B38754 /* AudioToolbox.framework */,
 				BC4825F6BFE398BA71F75E6F /* AudioUnit.framework */,
@@ -3040,6 +3052,7 @@
 				A41EE784C3D2087F1F1D3541 /* Sources */,
 				4F9E6C5A58203147F485BBDF /* Frameworks */,
 				C4C537B97E9250B8596E348E /* Post-build script */,
+				613496E31B0920E9005F97F1 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -3195,6 +3208,12 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/Headers,
+					/Users/walshr/SDKs/vstsdk2.4,
+				);
 				PRODUCT_NAME = CabbagePlugin;
 				WARNING_CFLAGS = "-Wreorder";
 				ZERO_LINK = NO;
@@ -3204,6 +3223,7 @@
 		76A8885ABE965BB23C3787FF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -3214,6 +3234,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					/Users/walshr/sourcecode/csound/build,
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -3250,6 +3271,7 @@
 		F7DB10AC953562A94FD12A48 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -3260,6 +3282,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					/Users/walshr/sourcecode/csound/build,
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -3308,6 +3331,12 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/Headers,
+					/Users/walshr/SDKs/vstsdk2.4,
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = CabbagePlugin;
 				WARNING_CFLAGS = "-Wreorder";

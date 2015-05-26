@@ -32,10 +32,11 @@
 
 
 #ifndef Cabbage_No_Csound
-#ifdef AndroidBuild
-#include "AndroidCsound.hpp"
-#else
-#include <csound.hpp>
+    #ifdef AndroidBuild
+    #include "AndroidCsound.hpp"
+    #else
+    #include <csound.hpp>
+    #endif
 #endif
 
 #include "csdl.h"

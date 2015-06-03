@@ -2145,7 +2145,8 @@ int CabbagePluginAudioProcessor::ReadMidiData(CSOUND* /*csound*/, void *userData
             else if(message.isPitchWheel())
             {
                 *mbuf++ = (unsigned char)0xE0 + message.getChannel()-1;
-                *mbuf++ = (unsigned char)message.getPitchWheelValue();
+                *mbuf++ = (unsigned char)((pitch_bend >> 7) & 0xFF);
+                *mbuf++ = (unsigned char)(pitch_bend & 0xFF);
                 cnt += 3;
             }
             

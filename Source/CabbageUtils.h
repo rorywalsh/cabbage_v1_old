@@ -534,6 +534,34 @@ public:
 		return 2;
     }
 
+    static float getKrFromFile(String csdText, int sr)
+    {
+        StringArray array;
+		array.addLines(File(csdText).loadFileAsString());
+		
+		for(int i=0;i<array.size();i++)
+		{
+			cUtils::debug(array.joinIntoString(" "));
+			if(array[i].contains("kr"))
+			{
+				String kr = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
+				return kr.trim().getIntValue();
+			}
+		}
+		
+        for(int i=0;i<array.size();i++)
+		{
+			cUtils::debug(array.joinIntoString(" "));
+			if(array[i].contains("ksmps"))
+			{
+				String ksmps = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
+				return sr/(ksmps.trim().getDoubleValue());
+			}
+		}
+		
+		return 689;
+    }
+	
     static int getNumberOfDecimalPlaces(StringArray array)
     {
         int longest=0;

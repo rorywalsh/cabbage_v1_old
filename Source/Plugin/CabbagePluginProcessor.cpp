@@ -165,8 +165,13 @@ vuCounter(0)
         csoundParams->nchnls_override = this->getNumOutputChannels();
 		#endif
         csoundParams->displays = 0;
-        csound->SetParams(csoundParams);
-        csound->SetOption((char*)"-n");
+		
+		csoundParams->sample_rate_override = this->getSampleRate();
+		csoundParams->control_rate_override = cUtils::getKrFromFile(inputfile, (int)getSampleRate());
+        
+		csound->SetParams(csoundParams);
+        
+		csound->SetOption((char*)"-n");
         csound->SetOption((char*)"-d");
 
         StringArray lines, includeFiles;
@@ -192,10 +197,10 @@ vuCounter(0)
         
         includeFiles.removeDuplicates(0);
         
-        
         csCompileResult = csound->Compile(const_cast<char*>(inputfile.toUTF8().getAddress()));
-        
-        File(inputfile).getParentDirectory().setAsCurrentWorkingDirectory();
+	       
+			
+		File(inputfile).getParentDirectory().setAsCurrentWorkingDirectory();
 
         Logger::writeToLog(inputfile);
         if(csCompileResult==OK)
@@ -401,8 +406,9 @@ vuCounter(0)
 
     csoundParams = new CSOUND_PARAMS();
 	#ifndef CABBAGE_HOST
-    csoundParams->nchnls_override = this->getNumOutputChannels();
+	csoundParams->nchnls_override = this->getNumOutputChannels();
 	#endif
+	csoundParams->sample_rate_override = this->getSampleRate();
     csoundParams->displays = 0;
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
@@ -577,25 +583,26 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
     csoundParams->nchnls_override =2;
 	#endif
     csoundParams->displays = 0;
-    csound->SetParams(csoundParams);
-    csound->SetOption((char*)"-n");
-    csound->SetOption((char*)"-d");
+  //  csound->SetParams(csoundParams);
+   // csound->SetOption((char*)"-n");
+   // csound->SetOption((char*)"-d");
 
     
-    csound->SetHostImplementedMIDIIO(true);
+   // csound->SetHostImplementedMIDIIO(true);
     xyAutosCreated = false;
     //csound->SetMessageCallback(CabbagePluginAudioProcessor::messageCallback);
     numCsoundChannels = 0;
     //csound->SetParams(csoundParams);
     //csound->SetMessageCallback(CabbagePluginAudioProcessor::messageCallback);
 	csound->CreateMessageBuffer(0);
-    csound->SetExternalMidiInOpenCallback(OpenMidiInputDevice);
-    csound->SetExternalMidiReadCallback(ReadMidiData);
-    csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
-    csound->SetExternalMidiWriteCallback(WriteMidiData);
+   // csound->SetExternalMidiInOpenCallback(OpenMidiInputDevice);
+   // csound->SetExternalMidiReadCallback(ReadMidiData);
+   // csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
+   // csound->SetExternalMidiWriteCallback(WriteMidiData);
     
-    CSspout = nullptr;
-    CSspin = nullptr;
+    //CSspout = nullptr;
+    //CSspin = nullptr;
+	//csound->Stop();
     
     csCompileResult = csound->CompileCsd(const_cast<char*>(file.getFullPathName().toUTF8().getAddress()));
     file.getParentDirectory().setAsCurrentWorkingDirectory();

@@ -542,7 +542,7 @@ public:
 		for(int i=0;i<array.size();i++)
 		{
 			cUtils::debug(array.joinIntoString(" "));
-			if(array[i].contains("kr"))
+			if(array[i].removeCharacters(" ").contains("kr="))
 			{
 				String kr = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
 				return kr.trim().getIntValue();
@@ -552,7 +552,7 @@ public:
         for(int i=0;i<array.size();i++)
 		{
 			cUtils::debug(array.joinIntoString(" "));
-			if(array[i].contains("ksmps"))
+			if(array[i].removeCharacters(" ").contains("ksmps="))
 			{
 				String ksmps = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
 				return sr/(ksmps.trim().getDoubleValue());

@@ -524,8 +524,8 @@ public:
 		
 		for(int i=0;i<array.size();i++)
 		{
-			cUtils::debug(array.joinIntoString(" "));
-			if(array[i].contains("nchnls"))
+			//cUtils::debug(array.joinIntoString(" "));
+			if(array[i].contains("nchnls") && array[i].contains("="))
 			{
 				String channels = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
 				return channels.trim().getIntValue();
@@ -534,15 +534,15 @@ public:
 		return 2;
     }
 
-    static float getKrFromFile(String csdText, int sr)
+    static float getKrFromFile(String csdFile, float sr)
     {
         StringArray array;
-		array.addLines(File(csdText).loadFileAsString());
+		array.addLines(File(csdFile).loadFileAsString());
 		
 		for(int i=0;i<array.size();i++)
 		{
-			cUtils::debug(array.joinIntoString(" "));
-			if(array[i].removeCharacters(" ").contains("kr="))
+			//cUtils::debug(array.joinIntoString(" "));
+			if(array[i].contains("kr") && array[i].contains("="))
 			{
 				String kr = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
 				return kr.trim().getIntValue();
@@ -551,15 +551,15 @@ public:
 		
         for(int i=0;i<array.size();i++)
 		{
-			cUtils::debug(array.joinIntoString(" "));
-			if(array[i].removeCharacters(" ").contains("ksmps="))
+			//cUtils::debug(array[i]);
+			if(array[i].contains("ksmps") && array[i].contains("="))
 			{
 				String ksmps = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
 				return sr/(ksmps.trim().getDoubleValue());
 			}
 		}
 		
-		return 689;
+		return sr/64.f;
     }
 	
     static int getNumberOfDecimalPlaces(StringArray array)

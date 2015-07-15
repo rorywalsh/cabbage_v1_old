@@ -48,7 +48,7 @@ public:
         defaultPropSet->setValue("PlantFileDir", homeDir+"/Plants");
         defaultPropSet->setValue("ExamplesDir", homeDir+"/Examples/Examples");
         defaultPropSet->setValue("DisablePluginInfo", 0);
-        defaultPropSet->setValue("ShowEditorConsole", 0);
+        defaultPropSet->setValue("ShowEditorConsole", 1);
         defaultPropSet->setValue("ExternalEditor", 0);
         defaultPropSet->setValue("UseCabbageIO", 1);
         defaultPropSet->setValue("ShowConsoleWithEditor", 0);

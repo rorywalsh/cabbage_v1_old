@@ -56,6 +56,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
 #endif
     splitWindow->SetFitToParent(false);
     textEditor->editor[textEditor->currentEditor]->addActionListener(this);
+	//splitBottomWindow->SetSplitBarPosition(getWidth());
 
     this->setTitleBarHeight(20);
     this->setColour(DocumentWindow::backgroundColourId, Colour(20, 20, 20));

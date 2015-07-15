@@ -1413,7 +1413,7 @@ void StandaloneFilterWindow::showEditorConsole()
     {
         cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
 #ifdef BUILD_DEBUGGER
-        cabbageCsoundEditor->splitBottomWindow->SetSplitBarPosition(cabbageCsoundEditor->getWidth()/2);
+        cabbageCsoundEditor->splitBottomWindow->SetSplitBarPosition(cabbageCsoundEditor->getWidth());
 #endif
     }
     else

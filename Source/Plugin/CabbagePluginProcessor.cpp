@@ -411,7 +411,7 @@ vuCounter(0)
 	#endif
 
 	csoundParams->sample_rate_override = this->getSampleRate();
-	csoundParams->control_rate_override = cUtils::getKrFromFile(file.getFullPathName(), (int)getSampleRate());
+	csoundParams->control_rate_override = cUtils::getKrFromFile(csdFile.getFullPathName(), (int)getSampleRate());
    
 
     csoundParams->displays = 0;

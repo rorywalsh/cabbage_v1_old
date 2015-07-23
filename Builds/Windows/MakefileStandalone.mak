@@ -72,7 +72,6 @@ OBJECTS := \
   $(OBJDIR)/CabbagePropertiesDialog_5e61b3fd.o \
   $(OBJDIR)/CabbageTable_d003e736.o \
   $(OBJDIR)/ComponentLayoutEditor_aa38c835.o \
-  $(OBJDIR)/csPerfThread_f9d0b9cc.o \
   $(OBJDIR)/DirectoryContentsComponent_616f5a9f.o \
   $(OBJDIR)/CodeEditor_bb1e171d.o \
   $(OBJDIR)/CodeWindow_86e6d820.o \
@@ -168,11 +167,6 @@ $(OBJDIR)/Table_35ae1cd9.o: ../../Source/Table.cpp
 $(OBJDIR)/ComponentLayoutEditor_aa38c835.o: ../../Source/ComponentLayoutEditor.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling ComponentLayoutEditor.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/csPerfThread_f9d0b9cc.o: ../../Source/csPerfThread.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling csPerfThread.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/DirectoryContentsComponent_616f5a9f.o: ../../Source/DirectoryContentsComponent.cpp

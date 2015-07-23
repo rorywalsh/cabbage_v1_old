@@ -74,7 +74,6 @@ OBJECTS := \
   $(OBJDIR)/CabbagePropertiesDialog_5e61b3fd.o \
   $(OBJDIR)/CabbageTable_d003e736.o \
   $(OBJDIR)/ComponentLayoutEditor_aa38c835.o \
-  $(OBJDIR)/csPerfThread_f9d0b9cc.o \
   $(OBJDIR)/DirectoryContentsComponent_616f5a9f.o \
   $(OBJDIR)/CodeEditor_bb1e171d.o \
   $(OBJDIR)/CodeWindow_86e6d820.o \
@@ -191,11 +190,6 @@ $(OBJDIR)/SplitComponent_35ae1cd2.o: ../../Source/Editor/SplitComponent.cpp
 $(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o: ../../Source/CabbageAudioDeviceSelectorComponent.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CabbageAudioDeviceSelectorComponent.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/csPerfThread_f9d0b9cc.o: ../../Source/csPerfThread.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling csPerfThread.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/DirectoryContentsComponent_616f5a9f.o: ../../Source/DirectoryContentsComponent.cpp

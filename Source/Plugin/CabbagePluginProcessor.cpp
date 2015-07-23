@@ -379,6 +379,8 @@ vuCounter(0)
     //csound->setOpenSlCallbacks(); // for android audio to work
 #endif
     
+	cabbageCsoundEditor = nullptr;
+	
     csound->SetHostImplementedMIDIIO(true);
     //csound->Reset();
     //csound->PreCompile();
@@ -1176,7 +1178,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 //===========================================================
 void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
 {
-#if !defined(Cabbage_Build_Standalone) && !(CABBAGE_HOST)	
+#if !defined(Cabbage_Build_Standalone)	
 	if(!cabbageCsoundEditor)
 	{
 		cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
@@ -1188,8 +1190,10 @@ void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
 		cabbageCsoundEditor->textEditor->editor[0]->loadContent(csdFile.loadFileAsString());
 		codeEditor = cabbageCsoundEditor->textEditor;
 	}
-		
-	codeEditor->setVisible(true);
+	else
+	{		
+		codeEditor->setVisible(true);	
+	}
 #endif
 }
 

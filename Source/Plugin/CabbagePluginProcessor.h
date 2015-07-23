@@ -312,8 +312,10 @@ public:
 //#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     CsoundCodeEditor* codeEditor;
 //#else
+
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
 	CodeWindow* cabbageCsoundEditor;
-//#endif
+#endif
 	
 
     bool compiledOk()

@@ -131,14 +131,8 @@ vuCounter(0)
 #endif
     
     csound->SetHostImplementedMIDIIO(true);
-
     csound->Reset();
-    //Logger::writeToLog(csound->GetEnv("OPCODEDIR64"));
-#ifdef CSOUND5
-    csound->PreCompile();
-#endif
     csound->SetHostData(this);
-    //csound->SetMessageCallback(CabbagePluginAudioProcessor::messageCallback);
 	csound->CreateMessageBuffer(0);
     csound->SetExternalMidiInOpenCallback(OpenMidiInputDevice);
     csound->SetExternalMidiReadCallback(ReadMidiData);
@@ -411,7 +405,7 @@ vuCounter(0)
 	#endif
 
 	csoundParams->sample_rate_override = this->getSampleRate();
-	csoundParams->control_rate_override = cUtils::getKrFromFile(file.getFullPathName(), (int)getSampleRate());
+	csoundParams->control_rate_override = cUtils::getKrFromFile(csdFile.getFullPathName(), (int)getSampleRate());
    
 
     csoundParams->displays = 0;
@@ -576,14 +570,27 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
 	numChannelsChanged();
     midiOutputBuffer.clear();
     //csound->DeleteChannelList(csoundChanList);
-
+	
+	cUtils::debug(file.loadFileAsString());
 	
 	csound->DestroyMessageBuffer();
     csound = nullptr;
 	csound = new Csound();
-	//csound->Reset();
+	csound->Reset();
     ksmpsOffset = 0;
     breakCount = 0;
+
+    csound->SetHostImplementedMIDIIO(true);
+    csound->Reset();
+    csound->SetHostData(this);
+	csound->CreateMessageBuffer(0);
+    csound->SetExternalMidiInOpenCallback(OpenMidiInputDevice);
+    csound->SetExternalMidiReadCallback(ReadMidiData);
+    csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
+    csound->SetExternalMidiWriteCallback(WriteMidiData);
+	//csound->SetIsGraphable(0);
+
+
 
 	csoundParams = nullptr;
     csoundParams = new CSOUND_PARAMS();
@@ -591,30 +598,15 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
     csoundParams->nchnls_override =2;
 	#endif
     csoundParams->displays = 0;
-	
-
 	csoundParams->sample_rate_override = this->getSampleRate();
-	csoundParams->control_rate_override = cUtils::getKrFromFile(file.getFullPathName(), (int)getSampleRate());
-        	
-	
-	csoundParams->sample_rate_override = this->getSampleRate();
-	csoundParams->control_rate_override = cUtils::getKrFromFile(file.loadFileAsString(), (int)getSampleRate());	
+	csoundParams->control_rate_override = cUtils::getKrFromFile(file.getFullPathName(), (int)getSampleRate());	
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
-    csound->SetOption((char*)"-d");
-
-    
+    csound->SetOption((char*)"-d");    
     csound->SetHostImplementedMIDIIO(true);
     xyAutosCreated = false;
-    //csound->SetMessageCallback(CabbagePluginAudioProcessor::messageCallback);
     numCsoundChannels = 0;
-    //csound->SetParams(csoundParams);
-    //csound->SetMessageCallback(CabbagePluginAudioProcessor::messageCallback);
-	csound->CreateMessageBuffer(0);
-    csound->SetExternalMidiInOpenCallback(OpenMidiInputDevice);
-    csound->SetExternalMidiReadCallback(ReadMidiData);
-    csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
-    csound->SetExternalMidiWriteCallback(WriteMidiData);
+
     
     CSspout = nullptr;
     CSspin = nullptr;
@@ -882,6 +874,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                        ||tokes[0].equalsIgnoreCase(String("infobutton"))
                        ||tokes[0].equalsIgnoreCase(String("filebutton"))
                        ||tokes[0].equalsIgnoreCase(String("soundfiler"))
+					   ||tokes[0].equalsIgnoreCase(String("sourcebutton"))
                        ||tokes[0].equalsIgnoreCase(String("texteditor"))
                        ||tokes[0].equalsIgnoreCase(String("popupmenu"))
                        ||tokes[0].equalsIgnoreCase(String("snapshot"))
@@ -1150,7 +1143,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     }
     
     
-#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+//#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     
     if(this->getActiveEditor())
     {
@@ -1175,6 +1168,157 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
         
     }
     
+//#endif
+}
+
+//===========================================================
+// SHOW SOURCE EDITOR
+//===========================================================
+void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
+{
+	if(!cabbageCsoundEditor)
+	{
+		cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
+		cabbageCsoundEditor->setVisible(true);
+		cabbageCsoundEditor->toFront(true);
+		//setupWindowDimensions();
+		cabbageCsoundEditor->addActionListener(this);
+		cabbageCsoundEditor->setLookAndFeel(looky);
+		cabbageCsoundEditor->textEditor->editor[0]->loadContent(csdFile.loadFileAsString());
+		codeEditor = cabbageCsoundEditor->textEditor;
+	}
+		
+	codeEditor->setVisible(true);
+}
+
+void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
+{
+	
+#if !defined(Cabbage_Build_Stanalone) && !defined(CABBAGE_HOST)
+	if(message=="closing editor")
+	{
+		delete cabbageCsoundEditor;
+		cabbageCsoundEditor = nullptr;
+	}
+	
+    if(message == "GUI Update, PropsPanel")
+    {
+        //if something changes in the properties panel we need to update our GUI so
+        //that the changes are reflected in the on screen components
+        createGUI(csdFile.loadFileAsString(), true);
+        if(cabbageCsoundEditor)
+        {
+            //cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
+            cabbageCsoundEditor->textEditor->highlightLine(getCurrentLineText());
+        }
+    }
+
+    else if(message == "Score Updated")
+    {
+        if(cabbageCsoundEditor)
+        {
+            //cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
+            cabbageCsoundEditor->textEditor->highlightLine(getCurrentLineText());
+        }
+    }
+
+    else if(message == "GUI Updated, controls added, resized")
+    {
+        //no need to update our entire GUI here as only on-screen sizes change
+        setCurrentLine(getCurrentLine()+1);
+        if(cabbageCsoundEditor)
+        {
+            //cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
+            cabbageCsoundEditor->textEditor->highlightLine(getCurrentLineText());
+        }
+    }
+
+    else if(message == "GUI Updated, controls deleted")
+    {
+        //controls have already been deleted, we just need to update our file
+        if(cabbageCsoundEditor)
+            cabbageCsoundEditor->csoundDoc.replaceAllContent(csdFile.loadFileAsString());
+    }
+
+    else if(message.equalsIgnoreCase("fileSaved"))
+    {
+        //saveFile();
+		if(csdFile.hasWriteAccess())
+		{
+        csdFile.replaceWithText(cabbageCsoundEditor->getText());
+		}
+		
+		createGUI(csdFile.loadFileAsString(), true);
+        reCompileCsound(csdFile);
+		
+        if(isGuiEnabled())
+        {
+            startTimer(100);
+            ((CabbagePluginAudioProcessorEditor*)getActiveEditor())->setEditMode(false);
+            setGuiEnabled(false);
+        }
+    }
+
+
+    else if(message.contains("ContinueDebug"))
+    {
+        continueCsoundDebug();
+    }
+
+    else if(message.contains("RemoveAllBreakpoints"))
+    {
+        cleanCsoundDebug();
+    }
+
+    else if(message.contains("NextDebug"))
+    {
+        nextCsoundDebug();
+    }
+
+    else if(message.contains("InstrumentBreakpoint"))
+    {
+        if(message.contains("Set"))
+        {
+            int instrNumber = message.substring(24).getIntValue();
+            setCsoundInstrumentBreakpoint(instrNumber, 0);
+        }
+        else
+        {
+            int instrNumber = message.substring(27).getIntValue();
+            removeCsoundInstrumentBreakpoint(instrNumber);
+
+        }
+    }
+
+    else if(message.contains("fileUpdateGUI"))
+    {
+        createGUI(cabbageCsoundEditor->getText(), true);
+        csdFile.replaceWithText(cabbageCsoundEditor->getText());
+        if(cabbageCsoundEditor)
+        {
+            cabbageCsoundEditor->setName(csdFile.getFullPathName());
+        }
+    }
+
+    else if(message.contains("MENU COMMAND: toggle edit"))
+    {
+      if(isGuiEnabled())
+                {
+                    ((CabbagePluginAudioProcessorEditor*)getActiveEditor())->setEditMode(false);
+                    setGuiEnabled(false);
+                    //filter->suspendProcessing(false);
+                }
+                else
+                {
+                    ((CabbagePluginAudioProcessorEditor*)getActiveEditor())->setEditMode(true);
+                    setGuiEnabled(true);
+                    //filter->suspendProcessing(true);
+
+                    //stopTimer();
+                    //setPreference(appProperties, "ExternalEditor", 0);
+                }
+    }
+	
 #endif
 }
 

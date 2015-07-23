@@ -195,7 +195,7 @@ public:
 
     void closeButtonPressed()
     {
-	#ifdef CABBAGE_HOST
+	#if defined(CABBAGE_HOST) || !defined(Cabbage_Build_Standalone)
 		sendActionMessage("closing editor");
 	#else
         this->setVisible(false);

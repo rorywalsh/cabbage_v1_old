@@ -23,10 +23,11 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../CabbageUtils.h"
 #include "../CabbageGUIClass.h"
-#include "../Editor/CodeEditor.h"
 #include "../XYPadAutomation.h"
 #include "../CabbageMessageSystem.h"
 #include "../Soundfiler.h"
+#include "../Editor/CodeWindow.h"
+#include "../Editor/CodeEditor.h"
 //#include "CabbageGenericAudioProcessorEditor.h"
 #include "../CabbageLookAndFeel.h"
 
@@ -42,9 +43,9 @@
 #include "csdl.h"
 
 
-//#ifndef Cabbage_Build_Standalone
-//#include "../Editor/CabbageEditorWindow.h"
-//#endif
+#ifndef Cabbage_Build_Standalone
+class CodeWindow;
+#endif
 
 #ifdef Cabbage64Bit
 #define CABBAGE_VERSION "Cabbage(64bit) v0.5.14 Beta"
@@ -56,9 +57,9 @@
 #define EXTERNAL_PLUGIN 2
 #define AUTOMATION_PLUGIN 3
 
-#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
-class CsoundCodeEditor;
-#endif
+//#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+//class CsoundCodeEditor;
+//#endif
 
 #if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
 #include <csdebug.h>
@@ -73,7 +74,8 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     public ChangeBroadcaster,
     public Timer,
     public ActionBroadcaster,
-    public ChangeListener
+    public ChangeListener,
+	public ActionListener
 {
     //==============================================================================
     File csdFile;
@@ -262,7 +264,8 @@ public:
     void continueCsoundDebug();
     void nextCsoundDebug();
     void cleanCsoundDebug();
-	
+	void createAndShowSourceEditor(LookAndFeel* looky);
+	void actionListenerCallback (const String& message);
 	
 
 	
@@ -306,9 +309,12 @@ public:
 #endif
     ~CabbagePluginAudioProcessor();
 
-#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+//#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     CsoundCodeEditor* codeEditor;
-#endif
+//#else
+	CodeWindow* cabbageCsoundEditor;
+//#endif
+	
 
     bool compiledOk()
     {

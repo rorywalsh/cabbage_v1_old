@@ -19,6 +19,10 @@
 
 #include "CodeWindow.h"
 
+#ifndef Cabbage_Build_Standalone
+ApplicationProperties* appProperties = nullptr;
+#endif
+
 //==============================================================================
 CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
             DocumentWindow::allButtons),
@@ -32,6 +36,19 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
 	isEditModeEnabled(false),
     isInstrTabEnabled(false)
 {
+	
+#ifndef Cabbage_Build_Standalone
+	PropertiesFile::Options options;
+	options.applicationName     = "Cabbage";
+	options.filenameSuffix      = "settings";
+	options.osxLibrarySubFolder = "Preferences";
+
+	appProperties = new ApplicationProperties();
+	//set fallback file for default properties...
+
+	appProperties->setStorageParameters (options);	
+#endif
+	
     setApplicationCommandManagerToWatch(&commandManager);
     commandManager.registerAllCommandsForTarget(this);
     addKeyListener(commandManager.getKeyMappings());
@@ -110,6 +127,8 @@ CodeWindow::~CodeWindow()
     setApplicationCommandManagerToWatch(nullptr);
     commandManager.deleteInstance();
     deleteAndZero(textEditor);
+	deleteAndZero(appProperties);
+	appProperties = nullptr;
 }
 //==============================================================================
 void CodeWindow::showEditorConsole()

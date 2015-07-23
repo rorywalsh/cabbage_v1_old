@@ -273,6 +273,10 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
     {
         InsertInfoButton(cAttr);
     }
+    else if(cAttr.getStringProp(CabbageIDs::type)==String("sourcebutton"))
+    {
+        InsertSourceButton(cAttr);
+    }
     else if(cAttr.getStringProp(CabbageIDs::type)==String("filebutton"))
     {
         InsertFileButton(cAttr);
@@ -2045,6 +2049,42 @@ void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
 
+
+//+++++++++++++++++++++++++++++++++++++++++++
+//                       insert file button
+//+++++++++++++++++++++++++++++++++++++++++++
+void CabbagePluginAudioProcessorEditor::InsertSourceButton(CabbageGUIClass &cAttr)
+{
+    //if not svg files are set, try using the global theme...
+    cAttr.setStringProp(CabbageIDs::svgpath, (cAttr.getStringProp(CabbageIDs::svgpath).isNotEmpty() ?
+                        cAttr.getStringProp(CabbageIDs::svgpath) :
+                        globalSVGPath));
+
+    layoutComps.add(new CabbageButton(cAttr));
+    int idx = layoutComps.size()-1;
+
+    float left = cAttr.getNumProp(CabbageIDs::left);
+    float top = cAttr.getNumProp(CabbageIDs::top);
+    float width = cAttr.getNumProp(CabbageIDs::width);
+    float height = cAttr.getNumProp(CabbageIDs::height);
+    setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
+    ((CabbageButton*)layoutComps[idx])->button->addListener(this);
+    ((CabbageButton*)layoutComps[idx])->button->setName("sourcebutton");
+    if(cAttr.getStringArrayProp(CabbageIDs::text).size()>0)
+        ((CabbageButton*)layoutComps[idx])->button->setButtonText(cAttr.getStringArrayPropValue("text", cAttr.getNumProp(CabbageIDs::value)));
+#ifdef Cabbage_Build_Standalone
+    ((CabbageButton*)layoutComps[idx])->button->setWantsKeyboardFocus(true);
+#endif
+    ((CabbageButton*)layoutComps[idx])->button->getProperties().set(String("index"), idx);
+    //if control is not part of a plant, add mouse listener
+    if(cAttr.getStringProp("reltoplant").isEmpty())
+        layoutComps[idx]->addMouseListener(this, true);
+    layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+    layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+
+    //set visiblilty
+    layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+}
 //+++++++++++++++++++++++++++++++++++++++++++
 //                       insert record button
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -2602,9 +2642,9 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
             if(dynamic_cast<TextButton*>(button)) //check what type of button it is
             {
                 //deal with non-interactive buttons first..
-                if(button->getName()=="source")
+                if(button->getName()=="sourcebutton")
                 {
-//                              getFilter()->createAndShowSourceEditor(lookAndFeel);
+                              getFilter()->createAndShowSourceEditor(lookAndFeel);
                 }
                 else if(button->getName()=="infobutton")
                 {

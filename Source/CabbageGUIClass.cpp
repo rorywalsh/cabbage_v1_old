@@ -162,19 +162,28 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
 
-    else if(strTokens[0].trim() == "source")
+    else if(strTokens[0].trim() == "sourcebutton")
     {
-        /*	  cabbageIdentifiers.set("basetype", "layout");
-              top = 10;
-              left = 10;
-              width = 400;
-              height = 240;
-              channel = "";
-              name = "source";
-        	  caption = "";
-        	  type = name;
-              //name.append(String(ID), 1024);
-        	   */
+        top = 10;
+        left = 10;
+        width = 600;
+        height = 440;
+        //name.append(String(ID), 1024);
+        cabbageIdentifiers.set(CabbageIDs::top, 10);
+        cabbageIdentifiers.set(CabbageIDs::left, 10);
+        cabbageIdentifiers.set(CabbageIDs::width, 80);
+        cabbageIdentifiers.set(CabbageIDs::height, 40);
+        cabbageIdentifiers.set(CabbageIDs::text, "");
+        cabbageIdentifiers.set(CabbageIDs::caption, "");
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
+        cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::oncolour, Colours::black.toString());
+        cabbageIdentifiers.set(CabbageIDs::onfontcolour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::type, "sourcebutton");
+        cabbageIdentifiers.set(CabbageIDs::name, "sourcebutton");
+        cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+        cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+        cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
 
     //===============info button==================//

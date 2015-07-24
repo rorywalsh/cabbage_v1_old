@@ -42,10 +42,8 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
 	options.applicationName     = "Cabbage";
 	options.filenameSuffix      = "settings";
 	options.osxLibrarySubFolder = "Preferences";
-
 	appProperties = new ApplicationProperties();
 	//set fallback file for default properties...
-
 	appProperties->setStorageParameters (options);	
 #endif
 	
@@ -127,8 +125,11 @@ CodeWindow::~CodeWindow()
     setApplicationCommandManagerToWatch(nullptr);
     commandManager.deleteInstance();
     deleteAndZero(textEditor);
+	
+#ifndef Cabbage_Build_Standalone 	
 	deleteAndZero(appProperties);
 	appProperties = nullptr;
+#endif
 }
 //==============================================================================
 void CodeWindow::showEditorConsole()

@@ -3,6 +3,8 @@
 #include "../CabbageUtils.h"
 #include "../CabbageLookAndFeel.h"
 
+
+
 ApplicationProperties* appProperties = nullptr;
 PropertySet* defaultPropSet = nullptr;
 String currentApplicationDirectory;
@@ -76,6 +78,8 @@ public:
     void shutdown()
     {
         filterWindow = 0;// = nullptr;
+		if(appProperties==nullptr)
+			cUtils::debug("null");
         appProperties->closeFiles();
         deleteAndZero(appProperties);
         deleteAndZero(defaultPropSet);

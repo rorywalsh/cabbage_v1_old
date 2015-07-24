@@ -574,8 +574,8 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
 	cUtils::debug(file.loadFileAsString());
 	
 	csound->DestroyMessageBuffer();
-    csound = nullptr;
-	csound = new Csound();
+    //csound = nullptr;
+	//csound = new Csound();
 	csound->Reset();
     ksmpsOffset = 0;
     breakCount = 0;

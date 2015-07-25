@@ -2412,6 +2412,14 @@ void CabbagePluginAudioProcessor::getStateInformation (MemoryBlock& destData)
             Logger::writeToLog("filebutton_"+guiLayoutCtrls[i].getStringProp(CabbageIDs::channel));
             Logger::writeToLog(String(string));
         }
+		else if(guiLayoutCtrls[i].getStringProp(CabbageIDs::type)==CabbageIDs::sourcebutton)
+        {
+            xml.setAttribute("sourcebutton", csdFile.getFullPathName());
+        }
+		
+		
+		
+		
     
     // then use this helper function to stuff it into the binary blob and return it..
     copyXmlToBinary (xml, destData);
@@ -2445,7 +2453,13 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
                     //Logger::writeToLog(xmlState->getAttributeValue(i));
                     csound->SetChannel(channel.toUTF8().getAddress(), xmlState->getAttributeValue(i).toUTF8().getAddress());
                 }
-                
+               else  if(xmlState->getAttributeName(i).contains("sourcebutton"))
+                {
+					//showMessage(xmlState->getAttributeValue(i));
+					csdFile = File(xmlState->getAttributeValue(i));
+					createGUI(csdFile.loadFileAsString(), true);
+					reCompileCsound(csdFile);
+				}                
             }
         }
     }

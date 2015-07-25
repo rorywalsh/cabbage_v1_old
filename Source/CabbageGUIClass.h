@@ -237,6 +237,7 @@ static const String soundfiler = "sounfiler";
 static const String button = "button";
 static const String infobutton = "infobutton";
 static const String filebutton = "filebutton";
+static const String sourcebutton = "sourcebutton";
 static const String texteditor = "texteditor";
 static const String table = "table";
 static const String gentable = "gentable";

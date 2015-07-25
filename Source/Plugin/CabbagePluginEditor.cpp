@@ -197,6 +197,13 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
 //============================================================================
 CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
 {
+	if(getFilter()->cabbageCsoundEditor)
+	{
+		this->sendActionMessage("closing editor");
+		delete getFilter()->cabbageCsoundEditor;
+		//hack to prevent crash if editor is still open
+		sleep(1);
+	}
     comps.clear(true);
     subPatches.clear(true);
     layoutComps.clear(true);
@@ -204,7 +211,7 @@ CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
     removeAllChangeListeners();
     
     getFilter()->editorBeingDeleted(this);
-    
+
     if(presetFileText.length()>1)
         SnapShotFile.replaceWithText(presetFileText);
 

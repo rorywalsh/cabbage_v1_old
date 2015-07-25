@@ -509,13 +509,14 @@ vuCounter(0)
 //===========================================================
 CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 {
+	//deleteAndZero(cabbageCsoundEditor);
 	
     deleteAndZero(lookAndFeel);
     deleteAndZero(lookAndFeelBasic);
     Logger::setCurrentLogger (nullptr);
     stopProcessing = true;
     removeAllChangeListeners();
-    
+	
 #ifndef Cabbage_No_Csound
     
     xyAutomation.clear();
@@ -573,7 +574,7 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
     midiOutputBuffer.clear();
     //csound->DeleteChannelList(csoundChanList);
 	
-	cUtils::debug(file.loadFileAsString());
+	//cUtils::debug(file.loadFileAsString());
 	
 	csound->DestroyMessageBuffer();
     //csound = nullptr;
@@ -1190,10 +1191,6 @@ void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
 		cabbageCsoundEditor->textEditor->editor[0]->loadContent(csdFile.loadFileAsString());
 		codeEditor = cabbageCsoundEditor->textEditor;
 	}
-	else
-	{		
-		codeEditor->setVisible(true);	
-	}
 #endif
 }
 
@@ -1201,6 +1198,26 @@ void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
 {
 	
 #if !defined(Cabbage_Build_Standalone)
+
+	if(message=="open file")
+	{
+		WildcardFileFilter wildcardFilter = WildcardFileFilter("*.csd", "", "File filter");
+		Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file", 
+																	wildcardFilter, 
+																	"*.csd",
+																	1, 
+																	File("").getParentDirectory(), 
+																	false, 
+																	&cabbageCsoundEditor->getLookAndFeel());
+																	
+		if(selectedFiles.size())
+		{
+			csdFile = selectedFiles[0];
+			cabbageCsoundEditor->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());		
+			createGUI(selectedFiles[0].loadFileAsString(), true);
+			reCompileCsound(csdFile);		
+		}		
+	}
 
 	if(message=="closing editor")
 	{

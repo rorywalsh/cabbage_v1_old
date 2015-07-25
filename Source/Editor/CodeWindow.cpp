@@ -121,15 +121,14 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
 //==============================================================================
 CodeWindow::~CodeWindow()
 {
+#ifndef Cabbage_Build_Standalone 	
+	deleteAndZero(appProperties);
+	appProperties = nullptr;
+#endif	
     setMenuBar(nullptr);
     setApplicationCommandManagerToWatch(nullptr);
     commandManager.deleteInstance();
     deleteAndZero(textEditor);
-	
-#ifndef Cabbage_Build_Standalone 	
-	deleteAndZero(appProperties);
-	appProperties = nullptr;
-#endif
 }
 //==============================================================================
 void CodeWindow::showEditorConsole()
@@ -251,7 +250,11 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
         result.addDefaultKeypress ('n', ModifierKeys::commandModifier);
         break;
     case CommandIDs::fileOpen:
+#ifdef Cabbage_Build_Standalone
         result.setInfo (String("Open Auxiliary file"), String("Open a file"), CommandCategories::file, 0);
+#else
+        result.setInfo (String("Open file"), String("Open a file"), CommandCategories::file, 0);
+#endif	
         result.addDefaultKeypress ('o', ModifierKeys::commandModifier);
         break;
     case CommandIDs::fileSave:
@@ -563,6 +566,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
     }
     else if(info.commandID==CommandIDs::fileOpen)
     {
+#ifdef Cabbage_Build_Standalone
         FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.csd;*.py;*.txt"), UseNativeDialogue);
         if(openFC.browseForFileToOpen())
         {
@@ -572,6 +576,9 @@ bool CodeWindow::perform (const InvocationInfo& info)
             this->setName(openFC.getResult().getFullPathName());
             textEditor->showTab(openFC.getResult().getFileName());
         }
+#else
+		sendActionMessage("open file");
+#endif
 
     }
     else if(info.commandID==CommandIDs::fileQuit)

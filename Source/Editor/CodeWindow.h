@@ -173,6 +173,12 @@ public:
         return findFirstTargetParentComponent();
     }
 
+	void focusOfChildComponentChanged(FocusChangeType cause)
+	{
+		//if(cause==focusChangedByMouseClick)
+		//	sendActionMessage("closing editor");
+	} 	
+
     void getCommandInfo (const CommandID commandID, ApplicationCommandInfo& result);
     PopupMenu getMenuForIndex (int topLevelMenuIndex, const String& menuName);
     bool perform (const InvocationInfo& info);

@@ -1179,7 +1179,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 //===========================================================
 void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
 {
-#if !defined(Cabbage_Build_Standalone)	
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) 
 	if(!cabbageCsoundEditor)
 	{
 		cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
@@ -1197,7 +1197,7 @@ void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
 void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
 {
 	
-#if !defined(Cabbage_Build_Standalone)
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) 
 
 	if(message=="open file")
 	{

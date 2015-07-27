@@ -197,7 +197,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
 //============================================================================
 CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
 {
-#ifndef Cabbage_Build_Standalone
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) 
 	if(getFilter()->cabbageCsoundEditor)
 	{
 		this->sendActionMessage("closing editor");

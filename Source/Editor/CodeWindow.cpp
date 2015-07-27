@@ -19,7 +19,7 @@
 
 #include "CodeWindow.h"
 
-#ifndef Cabbage_Build_Standalone
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) 
 ApplicationProperties* appProperties = nullptr;
 #endif
 

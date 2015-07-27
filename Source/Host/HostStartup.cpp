@@ -43,7 +43,7 @@ public:
         // initialise our settings file..
 
         PropertiesFile::Options options;
-        options.applicationName     = "CabbageHost";
+        options.applicationName     = "CabbageStudio";
         options.filenameSuffix      = "settings";
         options.osxLibrarySubFolder = "Preferences";
 
@@ -120,7 +120,7 @@ public:
     }
 
     const String getApplicationName() override       {
-        return "Cabbage Patcher";
+        return "Cabbage Studio";
     }
     const String getApplicationVersion() override    {
         return ProjectInfo::versionString;

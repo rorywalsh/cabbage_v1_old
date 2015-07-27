@@ -197,6 +197,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
 //============================================================================
 CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
 {
+#ifndef Cabbage_Build_Standalone
 	if(getFilter()->cabbageCsoundEditor)
 	{
 		this->sendActionMessage("closing editor");
@@ -204,6 +205,7 @@ CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
 		//hack to prevent crash if editor is still open
 		sleep(1);
 	}
+#endif
     comps.clear(true);
     subPatches.clear(true);
     layoutComps.clear(true);

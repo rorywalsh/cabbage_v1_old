@@ -3675,6 +3675,12 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                         getFilter()->getGUICtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
                     }
 
+                    else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::numberbox)
+                    {
+                        ((CabbageNumberBox*)comps[i])->update(getFilter()->getGUICtrls(i));
+                        getFilter()->getGUICtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
+                    }
+
                     else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::combobox)
                     {
                         ((CabbageComboBox*)comps[i])->update(getFilter()->getGUICtrls(i));

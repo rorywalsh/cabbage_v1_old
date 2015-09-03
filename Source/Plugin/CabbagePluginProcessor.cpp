@@ -584,7 +584,6 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
     breakCount = 0;
 
     csound->SetHostImplementedMIDIIO(true);
-    csound->Reset();
     csound->SetHostData(this);
 	csound->CreateMessageBuffer(0);
     csound->SetExternalMidiInOpenCallback(OpenMidiInputDevice);

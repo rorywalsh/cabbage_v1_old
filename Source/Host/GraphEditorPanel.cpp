@@ -1105,8 +1105,10 @@ GraphDocumentComponent::~GraphDocumentComponent()
     deviceManager->removeMidiInputCallback (String::empty, &graphPlayer.getMidiMessageCollector());
 	deviceManager->removeMidiInputCallback (String::empty, this);
     deviceManager->removeChangeListener (graphPanel);
-
-    deleteAllChildren();
+ 
+	#ifndef WIN32
+	deleteAllChildren();
+	#endif
 
     graphPlayer.setProcessor (nullptr);
     keyState.removeListener (&graphPlayer.getMidiMessageCollector());

@@ -203,7 +203,9 @@ CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
 		this->sendActionMessage("closing editor");
 		delete getFilter()->cabbageCsoundEditor;
 		//hack to prevent crash if editor is still open
-		sleep(1);
+		#ifndef WIN32
+        sleep(1);
+        #endif
 	}
 #endif
     comps.clear(true);

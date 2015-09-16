@@ -224,7 +224,7 @@ PopupMenu MainHostWindow::getMenuForIndex (int topLevelMenuIndex, const String& 
 		menu.addCommandItem (&getCommandManager(), CommandIDs::preferences);
 		menu.addCommandItem (&getCommandManager(), CommandIDs::midiLearn);
         menu.addSeparator();
-        menu.addCommandItem (&getCommandManager(), CommandIDs::aboutBox);
+        menu.addCommandItem (&getCommandManager(), CommandIDs::showAboutBox);
     }
 
     return menu;
@@ -291,7 +291,7 @@ void MainHostWindow::addPluginsToMenu (PopupMenu& m) const
         menu.addItem (i + 9000, internalTypes.getUnchecked(i)->name);
 		
 	menu.addItem(10000, "Soundfile player");
-	menu.addItem(10001, "Automation track");
+	//menu.addItem(10001, "Automation track");
 
 	m.addSubMenu("Devices", menu);
 }
@@ -305,7 +305,21 @@ void MainHostWindow::addCabbageNativePluginsToMenu (PopupMenu& m, Array<File> &c
 	PopupMenu subMenu;
 	int fileCnt=0;
 	
-	FileSearchPath filePaths(appProperties->getUserSettings()->getValue("CabbageFilePaths"));
+	
+	String examplesDir;
+	//cUtils::debug("Example Directory:"+dir);
+	if(!File(examplesDir).exists())
+	{
+	#if defined(LINUX) || defined(MACOSX)
+		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
+	#else
+		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
+	#endif
+	}	
+	
+	FileSearchPath filePaths(examplesDir);
+
+	//cUtils::showMessage(examplesDir);
 
 	//add all files in root of specifed directories
 	for(int i=0;i<filePaths.getNumPaths();i++)
@@ -380,7 +394,7 @@ void MainHostWindow::getAllCommands (Array <CommandID>& commands)
                               CommandIDs::saveAs,
                               CommandIDs::showPluginListEditor,
                               CommandIDs::showAudioSettings,
-                              CommandIDs::aboutBox,
+                              CommandIDs::showAboutBox,
 							  CommandIDs::preferences,
 							  CommandIDs::viewSidepanel,
 							  CommandIDs::viewBottomPanel,
@@ -432,7 +446,7 @@ void MainHostWindow::getCommandInfo (const CommandID commandID, ApplicationComma
         result.setInfo ("Set the Cabbage plugin directory", String::empty, category, 0);
         break;
 		
-    case CommandIDs::aboutBox:
+    case CommandIDs::showAboutBox:
         result.setInfo ("About...", String::empty, category, 0);
         break;
 
@@ -506,9 +520,8 @@ bool MainHostWindow::perform (const InvocationInfo& info)
 			appProperties->getUserSettings()->setValue("CabbagePluginDirectory", browser.getResult().getFullPathName());	
 		break;
 		
-    case CommandIDs::aboutBox:
-		//graphEditor->updateNativeParametersPanel();
-        //graphEditor->showSidebarPanel(!graphEditor->isSidebarPanelShowing());
+    case CommandIDs::showAboutBox:
+		cUtils::showMessage("About", "Cabbage Studio v0.1 Beta"); 
         break;
 
     case CommandIDs::viewSidepanel:

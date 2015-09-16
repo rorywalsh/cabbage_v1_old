@@ -244,6 +244,14 @@ public:
 
     }
 
+    static void showMessage(String title, String message)
+    {
+        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                          title,
+                                          message,
+                                          "Ok");
+
+    }
 
     static bool compDouble(double x, int y)
     {

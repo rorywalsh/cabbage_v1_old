@@ -65,7 +65,7 @@ public:
         defaultPropSet->setValue("CabbageFilePaths", documentsFolder);
         defaultPropSet->setValue("CsoundHelpDir", manualPath);
         defaultPropSet->setValue("PlantFileDir", homeDir+"/Plants");
-        defaultPropSet->setValue("ExamplesDir", homeDir+"/Examples/Examples");
+        defaultPropSet->setValue("ExamplesDir", homeDir+"/Examples");
         defaultPropSet->setValue("DisablePluginInfo", 0);
         defaultPropSet->setValue("ShowEditorConsole", 0);
         defaultPropSet->setValue("ExternalEditor", 0);

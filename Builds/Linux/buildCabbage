@@ -21,7 +21,7 @@ make -f MakefilePluginSynth -j8 CONFIG=Release
 rm -rf CabbageBuild
 mkdir CabbageBuild
 cp ./build/Cabbage CabbageBuild/Cabbage
-cp cabbage.desktop CabbageBuild/cabbage.desktop
+#cp cabbage.desktop CabbageBuild/cabbage.desktop
 cp ./build/CabbagePluginSynth.so CabbageBuild/CabbagePluginSynth.so
 cp ./build/CabbagePluginEffect.so CabbageBuild/CabbagePluginEffect.so
 cp -rf ../../Docs/ CabbageBuild/Docs

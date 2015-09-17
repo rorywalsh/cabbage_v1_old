@@ -61,7 +61,7 @@ public:
         add("populate");
         add("range");
         add("amprange");
-        add("address");
+		add("address");
         add("rangex");
         add("rangey");
         add("plant");
@@ -69,7 +69,7 @@ public:
         add("channels");
         add("channel");
         add("widgetarray");
-        add("channelarray");
+		add("channelarray");
         add("textbox");
         add("caption");
         add("kind");
@@ -285,8 +285,7 @@ class CabbageGUIClass : public cUtils
 
     //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGUIClass);
 public:
-    String getWarningMessages()
-    {
+    String getWarningMessages() {
         return warningMessages;
     };
     NamedValueSet cabbageIdentifiers;

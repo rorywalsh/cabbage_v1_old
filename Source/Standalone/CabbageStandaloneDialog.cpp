@@ -1977,9 +1977,6 @@ void StandaloneFilterWindow::batchProcess(String type, bool dir)
 #endif
 }
 
-//==============================================================================
-// Batch process multiple csd files to convert them to plugins libs.
-//==============================================================================
 void StandaloneFilterWindow::m_ShowMessage(String message, LookAndFeel* lookAndFeel, String title)
 {
     if(getPreference(appProperties, "EnableNativePopups"))

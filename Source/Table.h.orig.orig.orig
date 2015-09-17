@@ -48,7 +48,7 @@ class TableManager : public Component,
     Colour gridColour;
     Colour backgroundColour;
     int tableIndex;
-    bool scrollbarEnabled;
+	bool scrollbarEnabled;
 
 public:
     TableManager();
@@ -62,11 +62,11 @@ public:
     void resized();
     void setZoomFactor(double zoom);
     void setDrawMode(String mode);
-    void showScrollbar(bool show);
+	void showScrollbar(bool show);
     void bringButtonsToFront();
     void setAmpRanges(Array<float> ampRange);
     void timerCallback();
-    void updateScrollbars();
+	void updateScrollbars();
     void setRange(double start, double end);
     ScopedPointer<DrawableRectangle> currentPositionMarker;
     double getLengthInSamples();
@@ -161,7 +161,7 @@ public:
     {
         return handleViewer;
     }
-
+	
     double quantiseSpace;
     void setAmpRanges(Array<float> ampRange);
     void setXPosition(double pos);

@@ -136,7 +136,7 @@ void TableManager::addTable(int sr, const Colour col, int gen, Array<float> ampR
         ampRange.add(0.f);
         ampRange.add(0.01);
     }
-
+	
     table->addTable(sr, col, gen, ampRange);
     addAndMakeVisible(table);
     tables.add(table);
@@ -175,7 +175,7 @@ void TableManager::setZoomFactor(double newZoom)
             showZoomButtons(scrollbarEnabled==true ? false : false);
             tables[i]->showScrollbar(false);
             tables[i]->zoomButtonsOffset=0;
-            tables[i]->resized();
+			tables[i]->resized();
         }
         else
             tables[i]->setZoomFactor(newZoom);
@@ -186,10 +186,10 @@ void TableManager::updateScrollbars()
 {
     for(int i=0; i<tables.size()-1; i++)
     {
-        tables[i]->showScrollbar(false);
-    }
-
-    tables[tables.size()-1]->showScrollbar(true);
+		tables[i]->showScrollbar(false);
+	}
+	
+	tables[tables.size()-1]->showScrollbar(true);
 }
 
 //==============================================================================
@@ -284,12 +284,12 @@ void TableManager::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newR
 
 void TableManager::setScrubberPos(double pos, int ftnumber)
 {
-    if(ftnumber==-1)
-    {
-        scrubberPosition = pos/tables[0]->tableSize;
-        tables[0]->setScrubberPos(scrubberPosition);
-    }
-
+	if(ftnumber==-1)
+	{
+		scrubberPosition = pos/tables[0]->tableSize;
+		tables[0]->setScrubberPos(scrubberPosition);	 
+	}
+		 
     else if(getTableFromFtNumber(ftnumber))
     {
         scrubberPosition = pos/getTableFromFtNumber(ftnumber)->tableSize;
@@ -370,7 +370,7 @@ void TableManager::showZoomButtons(bool show)
 
 void TableManager::showScrollbar(bool show)
 {
-    scrollbarEnabled = false;
+	scrollbarEnabled = false;
     for(int i =0; i<tables.size(); i++)
     {
         tables[i]->showScrollbar(show);
@@ -528,7 +528,7 @@ GenTable::GenTable():	thumbnailCache (5),
     quantiseSpace(0.01),
     qsteps(0),
     drawAsVUMeter(false),
-    zoomButtonsOffset(10),
+	zoomButtonsOffset(10),
     drawGrid(false),
     shouldFill(true),
     vuGradient(Colours::yellow, 0.f, 0.f, Colours::red, getWidth(), getHeight(), false)
@@ -598,8 +598,7 @@ void GenTable::setAmpRanges(Array<float> ampRange)
             quantiseSpace = ampRange[3];
             //cUtils::debug(minMax.getEnd());
             qsteps = quantiseSpace/minMax.getEnd();
-            if(qsteps==1)
-            {
+            if(qsteps==1) {
                 handleViewer->setShowingGrid(true);
                 handleViewer->showHandles(false);
             }
@@ -630,8 +629,7 @@ void GenTable::changeListenerCallback(ChangeBroadcaster *source)
             changeMessage = "updateFunctionTable";
             sendChangeMessage();
         }
-        else
-        {
+        else {
             changeMessage = "onMouseEnter";
             sendChangeMessage();
 
@@ -1058,8 +1056,7 @@ void GenTable::paint (Graphics& g)
         float midPoint;
         bool drawTrace=true;
 
-        if(genRoutine==7 || genRoutine==5 || genRoutine==2 || genRoutine==27)
-        {
+        if(genRoutine==7 || genRoutine==5 || genRoutine==2 || genRoutine==27) {
             midPoint = ampToPixel(thumbHeight, minMax, minMax.getStart());
             drawTrace= false;
         }
@@ -1144,15 +1141,15 @@ void GenTable::mouseDown (const MouseEvent& e)
 {
     if(!e.mods.isPopupMenu())
     {
-        if(genRoutine==1)
-        {
-            regionWidth = (1.01-zoom)*1.5;
-            currentPlayPosition = jmax (0.0, xToTime ((float) e.x));
-            loopStart = e.x;
-            loopLength =  0;
-            repaint();
-            sendChangeMessage();
-        }
+		if(genRoutine==1)
+		{
+        regionWidth = (1.01-zoom)*1.5;
+        currentPlayPosition = jmax (0.0, xToTime ((float) e.x));
+        loopStart = e.x;
+        loopLength =  0;
+        repaint();
+        sendChangeMessage();		
+		}
     }
 }
 //==============================================================================
@@ -1258,8 +1255,8 @@ void GenTable::setScrubberPos(double pos)
 //==============================================================================
 void GenTable::mouseUp(const MouseEvent& e)
 {
-    if(genRoutine==1)
-        sendChangeMessage();
+if(genRoutine==1)
+    sendChangeMessage();
 }
 
 
@@ -1733,7 +1730,7 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
     cUtils::debug("Handle height", getHeight());
 
     yPos = jlimit(0.0, getParentComponent()->getHeight()+0.0, yPos+(getHeight()/2.f));
-
+		
     setPosition(viewer->getSnapXPosition(xPos), viewer->getSnapYPosition(yPos), (getWidth()==FIXED_WIDTH ? true : false));
     setRelativePosition(Point<double>(viewer->getSnapXPosition(xPos), viewer->getSnapYPosition(yPos)));
 

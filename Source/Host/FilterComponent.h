@@ -65,6 +65,9 @@ public:
 	void timerCallback();
 	void enableEditMode(bool enable);
 	void changeListenerCallback(ChangeBroadcaster* source);
+	int exportPlugin(String type, bool saveAs, String fileName="");
+	int setUniquePluginID(File binFile, File csdFile, bool AU);
+	long cabbageFindPluginID(unsigned char *buf, size_t len, const char *s);
 
 	GraphDocumentComponent* getGraphDocument()
 	{

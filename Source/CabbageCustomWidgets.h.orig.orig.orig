@@ -485,7 +485,7 @@ public:
     {
         textLabel->setText(label, dontSendNotification);
     }
-
+    
     //update controls
     void update(CabbageGUIClass m_cAttr)
     {
@@ -497,7 +497,7 @@ public:
         setBounds(m_cAttr.getBounds());
         slider->setName(m_cAttr.getStringProp(CabbageIDs::text));
         slider->setSkewFactor(m_cAttr.getNumProp(CabbageIDs::sliderskew));
-        textLabel->setColour(Label::textColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::textcolour)));
+		textLabel->setColour(Label::textColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::textcolour)));
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
         {
             setVisible(false);
@@ -1061,7 +1061,7 @@ public:
         //if widget is a plant intercept mouse events
         if(cAttr.getStringProp(CabbageIDs::plant).isNotEmpty())
             this->setInterceptsMouseClicks(true, true);
-
+        
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
 
     }
@@ -1115,7 +1115,7 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+		
         repaint();
     }
 
@@ -1246,24 +1246,24 @@ public:
             setEnabled(true);
             setVisible(true);
         }
+		
+		if(isEnabled())
+		{
+			setColour(TextButton::buttonColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
+			setColour(GroupComponent::textColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
+			setBounds(m_cAttr.getBounds());
+			setText(m_cAttr.getStringProp(CabbageIDs::text));
+			setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
 
-        if(isEnabled())
-        {
-            setColour(TextButton::buttonColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
-            setColour(GroupComponent::textColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
-            setBounds(m_cAttr.getBounds());
-            setText(m_cAttr.getStringProp(CabbageIDs::text));
-            setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
+			if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
+			{
+				rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
+				setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
+			}
 
-            if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
-            {
-                rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
-                setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
-            }
-
-            repaint();
-
-        }
+			repaint();
+		
+		}
     }
 
     //---------------------------------------------
@@ -1437,8 +1437,7 @@ public:
             setEnabled(false);
             setVisible(false);
         }
-        else
-        {
+        else {
             setEnabled(true);
             setVisible(true);
 

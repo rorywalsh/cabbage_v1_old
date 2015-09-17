@@ -193,6 +193,8 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 		if(pluginType == CABBAGE)
 		{
 			m.addItem (7, "Show source code");
+			m.addItem (8, "Export as VST");
+			m.addItem (9, "Export as VSTi");
 		}
 		
 		//m.addItem (6, "Test state save/load");
@@ -239,6 +241,11 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 		{
 			return;
 		}
+		else if(r==8 ||r==9)
+		{
+			exportPlugin(r==8 ? String("VST") : String("VSTi"), false);
+		}
+		
 		else
 		{
 			if (AudioProcessorGraph::Node::Ptr f = graph.getNodeForId (filterID))
@@ -976,4 +983,352 @@ void ConnectorComponent::getDistancesFromEnds (int x, int y, double& distanceFro
 
 	distanceFromStart = juce_hypot (x - (x1 - getX()), y - (y1 - getY()));
 	distanceFromEnd = juce_hypot (x - (x2 - getX()), y - (y2 - getY()));
+}
+
+//===================== EXPORT FUNCTIONS FOR CABBAGE PLUGINS ==========================
+int FilterComponent::exportPlugin(String type, bool saveAs, String fileName)
+{
+    File dll;
+    File loc_csdFile;
+#ifndef LINUX
+    File thisFile(File::getSpecialLocation(File::currentApplicationFile));
+#else
+    File thisFile(File::getSpecialLocation(File::currentExecutableFile));
+#endif
+
+	CabbagePluginAudioProcessor* nativeCabbagePlugin = dynamic_cast<CabbagePluginAudioProcessor*>(graph.getNodeForId (filterID)->getProcessor());
+
+	File csdFile = nativeCabbagePlugin->getCsoundInputFile();
+	
+	String currentApplicationDirectory =thisFile.getParentDirectory().getFullPathName();	
+	
+    if(!csdFile.exists())
+    {
+        cUtils::showMessage("You need to open a Cabbage instrument before you can export one as a plugin!");
+        return 0;
+    }
+#ifdef LINUX
+    //FileChooser saveFC(String("Save as..."), File::nonexistent, String(""), UseNativeDialogue);
+	bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+	WildcardFileFilter wildcardFilter ("*.*", String::empty, "Foo files");
+	Array<File> selectedFile = cUtils::launchFileBrowser("Save a file..", wildcardFilter, "*.*", 0, File("*"), showNative, &getLookAndFeel());
+ 
+    String VST;
+
+    if (selectedFile.size()>0)
+    {
+        if(type.contains("VSTi"))
+            VST = currentApplicationDirectory + String("/CabbagePluginSynth.so");
+        else if(type.contains(String("VST")))
+            VST = currentApplicationDirectory + String("/CabbagePluginEffect.so");
+        else if(type.contains(String("LV2-ins")))
+            VST = currentApplicationDirectory + String("/CabbagePluginSynthLV2.so");
+        else if(type.contains(String("LV2-fx")))
+            VST = currentApplicationDirectory + String("/CabbagePluginEffectLV2.so");
+        else if(type.contains(String("AU")))
+        {
+            cUtils::showMessage("This feature only works on computers running OSX");
+        }
+        //Logger::writeToLog(VST);
+
+        File VSTData(VST);
+        if(!VSTData.exists())
+        {
+            cUtils::showMessage(VST+" cannot be found?");
+        }
+
+        else
+        {
+            if (type.contains("LV2"))
+            {
+                String filename(selectedFile[0].getFileNameWithoutExtension());
+                File bundle(selectedFile[0].withFileExtension(".lv2").getFullPathName());
+                bundle.createDirectory();
+                File dll(bundle.getChildFile(filename+".so"));
+                Logger::writeToLog(bundle.getFullPathName());
+                Logger::writeToLog(dll.getFullPathName());
+                if(!VSTData.copyFileTo(dll)) 
+					cUtils::showMessage("Can not move lib");
+					
+                File loc_csdFile(bundle.getChildFile(filename+".csd").getFullPathName());
+                loc_csdFile.replaceWithText(csdFile.loadFileAsString());
+
+                // this generates the ttl data
+                typedef void (*TTL_Generator_Function)(const char* basename);
+                DynamicLibrary lib(dll.getFullPathName());
+                TTL_Generator_Function genFunc = (TTL_Generator_Function)lib.getFunction("lv2_generate_ttl");
+                if(!genFunc)
+                {
+                    cUtils::showMessage("Can not generate LV2 data");
+                    return 1;
+                }
+
+                // change CWD for ttl generation
+                File oldCWD(File::getCurrentWorkingDirectory());
+                bundle.setAsCurrentWorkingDirectory();
+                (genFunc)(filename.toRawUTF8());
+                oldCWD.setAsCurrentWorkingDirectory();
+            }
+            else
+            {
+                File dll(selectedFile[0].withFileExtension(".so").getFullPathName());
+                if(!VSTData.copyFileTo(dll))	
+					cUtils::showMessage("Can not move lib");
+					
+                File loc_csdFile(selectedFile[0].withFileExtension(".csd").getFullPathName());
+                loc_csdFile.replaceWithText(csdFile.loadFileAsString());
+				setUniquePluginID(dll, loc_csdFile, false);
+            }
+        }
+    }
+#elif WIN32
+    FileChooser saveFC(String("Save plugin as..."), File::nonexistent, String("*.dll"), UseNativeDialogue);
+    String VST;
+    if(type.contains("VSTi"))
+        VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbagePluginSynth.dat");
+    else if(type.contains(String("VST")))
+        VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbagePluginEffect.dat");
+
+    File VSTData(VST);
+
+    if(!VSTData.exists())
+    {
+        m_ShowMessage("Cabbage cannot find the plugin libraries. Make sure that Cabbage is situated in the same directory as CabbagePluginSynth.dat and CabbagePluginEffect.dat", oldLookAndFeel);
+        return 0;
+    }
+    else
+    {
+        if(saveAs)
+        {
+            if (saveFC.browseForFileToSave(true))
+            {
+                dll = saveFC.getResult().withFileExtension(".dll").getFullPathName();
+                loc_csdFile = saveFC.getResult().withFileExtension(".csd").getFullPathName();
+            }
+            else
+                return 0;
+        }
+        else
+        {
+            dll = csdFile.withFileExtension(".dll").getFullPathName();
+            loc_csdFile = csdFile.withFileExtension(".csd").getFullPathName();
+
+        }
+        //showMessage(dll.getFullPathName());
+        if(!VSTData.copyFileTo(dll))
+            cUtils::showMessage("Problem moving plugin lib, make sure it's not currently open in your plugin host!", lookAndFeel);
+
+        loc_csdFile.replaceWithText(csdFile.loadFileAsString());
+        setUniquePluginID(dll, loc_csdFile, false);
+        String info;
+        info = String("Your plugin has been created. It's called:\n\n")+dll.getFullPathName()+String("\n\nIn order to modify this plugin you only have to edit the associated .csd file. You do not need to export every time you make changes.\n\nTo turn off this notice visit 'Preferences' in the main 'options' menu");
+
+        int val = getPreference(appProperties, "DisablePluginInfo");
+        if(!val)
+            cUtils::showMessage(info);
+    }
+
+#endif
+
+#if MACOSX
+
+    FileChooser saveFC(String("Save as..."), File::nonexistent, String("*.vst"), UseNativeDialogue);
+    String VST;
+    if (saveFC.browseForFileToSave(true))
+    {
+        //showMessage("name of file is:");
+        //showMessage(saveFC.getResult().withFileExtension(".vst").getFullPathName());
+
+        if(type.contains("VSTi"))
+            VST = thisFile.getFullPathName()+"/Contents/CabbagePluginSynth.component";
+        else if(type.contains(String("VST")))
+            VST = thisFile.getFullPathName()+"/Contents/CabbagePluginEffect.component";
+        else if(type.contains("CsoundVSTi"))
+            VST = thisFile.getFullPathName()+"/Contents/CabbageCsoundPluginSynth.component";
+        else if(type.contains(String("CsoundVST")))
+            VST = thisFile.getFullPathName()+"/Contents/CabbageCsoundPluginEffect.component";
+        else if(type.contains(String("AU")))
+        {
+            showMessage("this feature is coming soon");
+            //VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbageVSTfx.component");
+        }
+
+        //create a copy of the data package and write it to the new location given by user
+        File VSTData(VST);
+        if(!VSTData.exists())
+        {
+            showMessage("Cabbage cannot find the plugin libraries. Make sure that Cabbage is situated in the same directory as CabbagePluginSynth.dat and CabbagePluginEffect.dat", lookAndFeel);
+            return 0;
+        }
+
+
+        String plugType = ".vst";
+
+        File dll(saveFC.getResult().withFileExtension(plugType).getFullPathName());
+        VSTData.copyFileTo(dll);
+
+        File pl(dll.getFullPathName()+String("/Contents/Info.plist"));
+        String newPList = pl.loadFileAsString();
+        //write our identifiers to the plist file
+        newPList = newPList.replace("CabbagePlugin", saveFC.getResult().getFileNameWithoutExtension());
+        newPList = newPList.replace("NewProject", saveFC.getResult().getFileNameWithoutExtension());
+        //write plist file
+        pl.replaceWithText(newPList);
+
+
+
+        File loc_csdFile(dll.getFullPathName()+String("/Contents/")+saveFC.getResult().getFileNameWithoutExtension()+String(".csd"));
+        loc_csdFile.replaceWithText(csdFile.loadFileAsString());
+        //showMessage(loc_csdFile.getFullPathName());
+        //showMessage(csdFile.loadFileAsString());
+        csdFile = loc_csdFile;
+
+        //showMessage(VST+String("/Contents/MacOS/")+saveFC.getResult().getFileNameWithoutExtension());
+        //if plugin already exists there is no point in rewriting the binaries
+        if(!File(saveFC.getResult().withFileExtension(".vst").getFullPathName()+("/Contents/MacOS/")+saveFC.getResult().getFileNameWithoutExtension()).exists())
+        {
+            File bin(dll.getFullPathName()+String("/Contents/MacOS/CabbagePlugin"));
+            File pluginBinary(dll.getFullPathName()+String("/Contents/MacOS/")+saveFC.getResult().getFileNameWithoutExtension());
+            bin.moveFileTo(pluginBinary);
+            //else
+            //showMessage("could not copy library binary file");
+
+            setUniquePluginID(pluginBinary, loc_csdFile, true);
+        }
+
+        String info;
+        info = String("Your plugin has been created. It's called:\n\n")+dll.getFullPathName()+String("\n\nIn order to modify this plugin you only have to edit the current .csd file. You do not need to export every time you make changes. To open the current csd file with Cabbage in another session, go to 'Open Cabbage Instrument' and select the .vst file. Cabbage will the load the associated .csd file. \n\nTo turn off this notice visit 'Preferences' in the main 'options' menu");
+
+        int val = appProperties->getUserSettings()->getValue("DisablePluginInfo", var(0)).getFloatValue();
+        if(!val)
+            cUtils::showMessage(info);
+
+
+    }
+
+#endif
+
+    return 0;
+}
+
+//==============================================================================
+// Set unique plugin ID for each plugin based on the file name
+//==============================================================================
+int FilterComponent::setUniquePluginID(File binFile, File csdFile, bool AU)
+{
+    String newID;
+    StringArray csdText;
+    csdText.addLines(csdFile.loadFileAsString());
+    //read contents of csd file to find pluginID
+    for(int i=0; i<csdText.size(); i++)
+    {
+        StringArray tokes;
+        tokes.addTokens(csdText[i].trimEnd(), ", ", "\"");
+        if(tokes[0].equalsIgnoreCase(String("form")))
+        {
+            CabbageGUIClass cAttr(csdText[i].trimEnd(), 0);
+            if(cAttr.getStringProp(CabbageIDs::pluginid).length()!=4)
+            {
+                cUtils::showMessage("Your plugin ID is not the right size. It MUST be 4 characters long. Some hosts may not be able to load your plugin");
+                //return 0;
+            }
+            else
+            {
+                newID = cAttr.getStringProp(CabbageIDs::pluginid);
+                i = csdText.size();
+            }
+        }
+    }
+
+    size_t file_size;
+    const char *pluginID;
+    //if(!AU)
+    pluginID = "YROR";
+    //else
+    //	pluginID = "RORY";
+
+
+    long loc;
+    //showMessage(binFile.getFullPathName(), lookAndFeel);
+    fstream mFile(binFile.getFullPathName().toUTF8(), ios_base::in | ios_base::out | ios_base::binary);
+
+    if(mFile.is_open())
+    {
+        mFile.seekg (0, ios::end);
+        file_size = mFile.tellg();
+        unsigned char* buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
+        //set plugin ID, do this a few times in case the plugin ID appear in more than one place.
+        for(int r=0; r<10; r++)
+        {
+            mFile.seekg (0, ios::beg);
+            mFile.read((char*)&buffer[0], file_size);
+            loc = cabbageFindPluginID(buffer, file_size, pluginID);
+            if (loc < 0)
+            {
+                //showMessage(String("Internel Cabbage Error: The pluginID was not found"));
+                break;
+            }
+            else
+            {
+                //showMessage(newID);
+                mFile.seekg (loc, ios::beg);
+                mFile.write(newID.toUTF8(), 4);
+            }
+        }
+        //set plugin name based on .csd file
+        const char *pluginName = "CabbageEffectNam";
+        String plugLibName = csdFile.getFileNameWithoutExtension();
+        if(plugLibName.length()<16)
+            for(int y=plugLibName.length(); y<16; y++)
+                plugLibName.append(String(" "), 1);
+
+				mFile.seekg (0, ios::beg);
+				buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
+				mFile.read((char*)&buffer[0], file_size);
+				loc = cabbageFindPluginID(buffer, file_size, pluginName);
+				if (loc < 0)
+					cUtils::showMessage("Plugin name could not be set?!?");
+				else
+				{
+					//showMessage("plugin name set!");
+					mFile.seekg (loc, ios::beg);
+					mFile.write(csdFile.getFileNameWithoutExtension().toUTF8(), 16);
+				}
+				//#endif
+
+    }
+    else
+        cUtils::showMessage("File could not be opened");
+
+    mFile.close();
+    return 1;
+}
+
+long FilterComponent::cabbageFindPluginID(unsigned char *buf, size_t len, const char *s)
+{
+    long i, j;
+    int slen = strlen(s);
+    long imax = len - slen - 1;
+    long ret = -1;
+    int match;
+
+    for(i=0; i<imax; i++)
+    {
+        match = 1;
+        for (j=0; j<slen; j++)
+        {
+            if (buf[i+j] != s[j])
+            {
+                match = 0;
+                break;
+            }
+        }
+        if (match)
+        {
+            ret = i;
+            break;
+        }
+    }
+    //return position of plugin ID
+    return ret;
 }

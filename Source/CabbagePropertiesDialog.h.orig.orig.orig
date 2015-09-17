@@ -66,8 +66,8 @@ public:
 };
 
 
-class CabbagePropertiesPanel : public PropertyPanel,
-    public ChangeBroadcaster
+class CabbagePropertiesPanel : public PropertyPanel, 
+								public ChangeBroadcaster
 {
 public:
     CabbagePropertiesPanel(String name) : PropertyPanel(name)
@@ -83,8 +83,8 @@ public:
     {
         g.setColour(Colours::white);
 #ifdef CABBAGE_HOST
-        g.drawFittedText("Press ESC to update widget parameters", 0, getHeight()-25, getWidth(), 16, Justification::centred, 1, 1);
-#endif
+        g.drawFittedText("Press ESC to update widget parameters", 0, getHeight()-25, getWidth(), 16, Justification::centred, 1, 1);		
+#endif		
     }
 
     ///Update properties based on state of Cabbage widget
@@ -117,7 +117,7 @@ public:
                     attributeNames[i].equalsIgnoreCase("basetype") ||
                     attributeNames[i].equalsIgnoreCase("rangey") ||
                     attributeNames[i].equalsIgnoreCase("rangex") ||
-                    attributeNames[i].equalsIgnoreCase("widgetarray") ||
+					attributeNames[i].equalsIgnoreCase("widgetarray") ||
                     attributeNames[i].equalsIgnoreCase("xyautoindex") ||
                     attributeNames[i].equalsIgnoreCase("decimalplaces"))
             {
@@ -256,13 +256,13 @@ public:
 #endif
     }
 
-    void updatePropertyPanel(CabbagePropertiesPanel* panel)
-    {
-        if(panel!=nullptr)
-        {
-            propsPanel = panel;
-        }
-    }
+	void updatePropertyPanel(CabbagePropertiesPanel* panel)
+	{
+		if(panel!=nullptr)  
+		{
+			propsPanel = panel;				
+		}
+	}
 
     void updateIdentifiers()
     {
@@ -396,7 +396,7 @@ public :
 class TextField : public TextEditor,
     public ChangeBroadcaster,
     public ActionBroadcaster,
-    public Timer
+	public Timer
 {
 public:
     TextField(String name):TextEditor(""),
@@ -412,26 +412,26 @@ public:
 #ifndef CABBAGE_HOST
         setColour(TextEditor::focusedOutlineColourId, Colours::orange);
 #else
-        setColour(TextEditor::focusedOutlineColourId, Colours::whitesmoke);
+		setColour(TextEditor::focusedOutlineColourId, Colours::whitesmoke);
 #endif
     }
-
+	
     ~TextField()
     {
-        removeAllActionListeners();
-        removeAllChangeListeners();
+		removeAllActionListeners();
+		removeAllChangeListeners();
     }
 
 
-    bool getWantsKeyboardFocus()
-    {
-        return true;
-    }
-
-    void paint(Graphics &g)
-    {
-        g.fillAll(Colours::black);
-    }
+	bool getWantsKeyboardFocus()
+	{
+		return true;
+	}
+	
+	void paint(Graphics &g)
+	{
+		g.fillAll(Colours::black);
+	}
 
     void updateText()
     {
@@ -491,18 +491,18 @@ public:
 
     }
 
-    void mouseDown(const MouseEvent& event)
-    {
-        startTimer(100);
-    }
+	void mouseDown(const MouseEvent& event)
+	{
+		startTimer(100);
+	}
 
-
-    void timerCallback()
-    {
-        stopTimer();
-        grabKeyboardFocus();
-    }
-
+	
+	void timerCallback()
+	{
+		stopTimer();
+		grabKeyboardFocus();
+	}
+	
     var value;
     String name;
 };

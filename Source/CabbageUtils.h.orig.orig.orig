@@ -195,44 +195,44 @@ public:
 //
     static void debug(String message)
     {
-#ifdef DEBUG
+		#ifdef DEBUG
         Logger::writeToLog(message);
-#endif
+		#endif
     }
 
     static void debug(float value)
     {
-#ifdef DEBUG
+		#ifdef DEBUG
         Logger::writeToLog(String(value));
-#endif
+		#endif
     }
 
     static void debug(String message, double value)
     {
-#ifdef DEBUG
+		#ifdef DEBUG
         Logger::writeToLog(message+":"+String(value));
-#endif
+		#endif
     }
 
     static void debug(float val, String value)
     {
-#ifdef DEBUG
+		#ifdef DEBUG
         Logger::writeToLog(String(val)+":"+value);
-#endif
+		#endif
     }
-
+	
     static void debug(float val, float value)
     {
-#ifdef DEBUG
+		#ifdef DEBUG
         Logger::writeToLog(String(val)+":"+String(value));
-#endif
+		#endif
     }
-
+	
     static void debug(String message, String value)
     {
-#ifdef DEBUG
+		#ifdef DEBUG
         Logger::writeToLog(message+":"+value);
-#endif
+		#endif
     }
 //===========================================================================================
     static void showMessage(String message)
@@ -295,13 +295,13 @@ public:
         return x;
     }
 //===========================================================================================
-    static const Colour getRandomColour()
-    {
-        const Colour colour = Colour(Random::getSystemRandom().nextInt(255),
-                                     Random::getSystemRandom().nextInt(255),
-                                     Random::getSystemRandom().nextInt(255));
-        return colour;
-    }
+	static const Colour getRandomColour()
+	{
+		const Colour colour = Colour(Random::getSystemRandom().nextInt(255),
+                         Random::getSystemRandom().nextInt(255),
+                         Random::getSystemRandom().nextInt(255));	
+		return colour;
+	}
 
 //===========================================================================================
     static void showMessageWithLocation(String message)
@@ -528,48 +528,48 @@ public:
     static int getNchnlsFromFile(String csdText)
     {
         StringArray array;
-        array.addLines(File(csdText).loadFileAsString());
-
-        for(int i=0; i<array.size(); i++)
-        {
-            //cUtils::debug(array.joinIntoString(" "));
-            if(array[i].contains("nchnls") && array[i].contains("="))
-            {
-                String channels = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
-                return channels.trim().getIntValue();
-            }
-        }
-        return 2;
+		array.addLines(File(csdText).loadFileAsString());
+		
+		for(int i=0;i<array.size();i++)
+		{
+			//cUtils::debug(array.joinIntoString(" "));
+			if(array[i].contains("nchnls") && array[i].contains("="))
+			{
+				String channels = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
+				return channels.trim().getIntValue();
+			}
+		}
+		return 2;
     }
 
     static float getKrFromFile(String csdFile, float sr)
     {
         StringArray array;
-        array.addLines(File(csdFile).loadFileAsString());
-
-        for(int i=0; i<array.size(); i++)
-        {
-            //cUtils::debug(array.joinIntoString(" "));
-            if(array[i].contains("kr") && array[i].contains("="))
-            {
-                String kr = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
-                return kr.trim().getIntValue();
-            }
-        }
-
-        for(int i=0; i<array.size(); i++)
-        {
-            //cUtils::debug(array[i]);
-            if(array[i].contains("ksmps") && array[i].contains("="))
-            {
-                String ksmps = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
-                return sr/(ksmps.trim().getDoubleValue());
-            }
-        }
-
-        return sr/64.f;
+		array.addLines(File(csdFile).loadFileAsString());
+		
+		for(int i=0;i<array.size();i++)
+		{
+			//cUtils::debug(array.joinIntoString(" "));
+			if(array[i].contains("kr") && array[i].contains("="))
+			{
+				String kr = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
+				return kr.trim().getIntValue();
+			}
+		}
+		
+        for(int i=0;i<array.size();i++)
+		{
+			//cUtils::debug(array[i]);
+			if(array[i].contains("ksmps") && array[i].contains("="))
+			{
+				String ksmps = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
+				return sr/(ksmps.trim().getDoubleValue());
+			}
+		}
+		
+		return sr/64.f;
     }
-
+	
     static int getNumberOfDecimalPlaces(StringArray array)
     {
         int longest=0;
@@ -1253,183 +1253,183 @@ public:
     }
 //====================================================================================================
 
-    static const DrawablePath* createPlayButtonPath(int buttonSize, Colour col)
-    {
-        Path playPath;
-        playPath.addTriangle(0, 0, buttonSize, buttonSize/2, 0, buttonSize);
-        DrawablePath* playImage = new DrawablePath();
-        playImage->setFill(col);
-        playImage->setPath(playPath);
-        return playImage;
-    }
+	static const DrawablePath* createPlayButtonPath(int buttonSize, Colour col)
+	{
+		Path playPath;
+		playPath.addTriangle(0, 0, buttonSize, buttonSize/2, 0, buttonSize);
+		DrawablePath* playImage = new DrawablePath();
+		playImage->setFill(col);	
+		playImage->setPath(playPath);	
+		return playImage;		
+	}
 
-    static const DrawablePath* createPauseButtonPath(int buttonSize)
-    {
-        Path pausePath;
-        pausePath.addRectangle(0, 0, buttonSize*.4, buttonSize);
-        pausePath.addRectangle(buttonSize*.5, 0, buttonSize*.4, buttonSize);
-        DrawablePath* pauseImage = new DrawablePath();;
-        pauseImage->setPath(pausePath);
-        return pauseImage;
-    }
+	static const DrawablePath* createPauseButtonPath(int buttonSize)
+	{
+		Path pausePath;
+		pausePath.addRectangle(0, 0, buttonSize*.4, buttonSize);
+		pausePath.addRectangle(buttonSize*.5, 0, buttonSize*.4, buttonSize);
+		DrawablePath* pauseImage = new DrawablePath();;
+		pauseImage->setPath(pausePath);
+		return pauseImage;		
+	}
 
-    static const DrawablePath* createZoomInButtonPath(int buttonSize)
-    {
-        Path zoomInPath;
-        //zoomInPath.addEllipse(-100, -100, buttonSize+100, buttonSize+100);
-        zoomInPath.addRectangle(0, buttonSize/3, buttonSize, buttonSize/3);
-        zoomInPath.addRectangle(buttonSize/3, 0, buttonSize/3, buttonSize);
-        DrawablePath* zoomImage = new DrawablePath();
-        zoomImage->setFill(Colours::green.darker(.9f));
-        //zoomImage->setStrokeFill(Colours::green.darker(.9f));
-        //zoomImage->setStrokeThickness(4);
-        zoomImage->setPath(zoomInPath);
-        return zoomImage;
-    }
+	static const DrawablePath* createZoomInButtonPath(int buttonSize)
+	{
+		Path zoomInPath;
+		//zoomInPath.addEllipse(-100, -100, buttonSize+100, buttonSize+100);
+		zoomInPath.addRectangle(0, buttonSize/3, buttonSize, buttonSize/3);
+		zoomInPath.addRectangle(buttonSize/3, 0, buttonSize/3, buttonSize);
+		DrawablePath* zoomImage = new DrawablePath();
+		zoomImage->setFill(Colours::green.darker(.9f));
+		//zoomImage->setStrokeFill(Colours::green.darker(.9f));
+		//zoomImage->setStrokeThickness(4);
+		zoomImage->setPath(zoomInPath);
+		return zoomImage;		
+	}
+	
+	static const DrawablePath* createZoomOutButtonPath(int buttonSize)
+	{
+		Path zoomInPath;
+		//zoomInPath.addEllipse(-100, -100, buttonSize+100, buttonSize+100);
+		zoomInPath.addRectangle(0, buttonSize/3, buttonSize, buttonSize/3);
+		DrawablePath* zoomImage = new DrawablePath();
+		zoomImage->setFill(Colours::green.darker(.9f));
+		//zoomImage->setStrokeFill(Colours::green.darker(.9f));
+		//zoomImage->setStrokeThickness(4);
+		zoomImage->setPath(zoomInPath);
+		return zoomImage;		
+	}	
 
-    static const DrawablePath* createZoomOutButtonPath(int buttonSize)
-    {
-        Path zoomInPath;
-        //zoomInPath.addEllipse(-100, -100, buttonSize+100, buttonSize+100);
-        zoomInPath.addRectangle(0, buttonSize/3, buttonSize, buttonSize/3);
-        DrawablePath* zoomImage = new DrawablePath();
-        zoomImage->setFill(Colours::green.darker(.9f));
-        //zoomImage->setStrokeFill(Colours::green.darker(.9f));
-        //zoomImage->setStrokeThickness(4);
-        zoomImage->setPath(zoomInPath);
-        return zoomImage;
-    }
+	static const DrawablePath* createLoopButtonPath()
+	{	
+		Path path;
+		path.startNewSubPath(60, 0);
+		path.lineTo(100, 0);
+		path.closeSubPath();
+		path.startNewSubPath(100, 0);
+		path.lineTo(100, 80);
+		path.closeSubPath();
+		path.startNewSubPath(100, 80);
+		path.lineTo(120, 80);
+		path.lineTo(100, 100);
+		path.lineTo(80, 80);
+		path.closeSubPath();
 
-    static const DrawablePath* createLoopButtonPath()
-    {
-        Path path;
-        path.startNewSubPath(60, 0);
-        path.lineTo(100, 0);
-        path.closeSubPath();
-        path.startNewSubPath(100, 0);
-        path.lineTo(100, 80);
-        path.closeSubPath();
-        path.startNewSubPath(100, 80);
-        path.lineTo(120, 80);
-        path.lineTo(100, 100);
-        path.lineTo(80, 80);
-        path.closeSubPath();
+		path.startNewSubPath(60, 100);
+		path.lineTo(20, 100);
+		path.closeSubPath();
+		path.startNewSubPath(20, 100);
+		path.lineTo(20, 20);
+		path.closeSubPath();
+		path.startNewSubPath(20, 20);
+		path.lineTo(0, 20);
+		path.lineTo(20, 0);
+		path.lineTo(40, 20);
+		path.closeSubPath();
+		AffineTransform transform(AffineTransform::identity);
+		path.applyTransform(transform.rotated(float_Pi/2.f));
+		DrawablePath* image = new DrawablePath();
+		image->setFill(Colours::white);
+		image->setStrokeThickness(25.f);
+		image->setStrokeFill(Colours::green.darker(.9f));
+		image->setPath(path);	
+		return image;
+	}
 
-        path.startNewSubPath(60, 100);
-        path.lineTo(20, 100);
-        path.closeSubPath();
-        path.startNewSubPath(20, 100);
-        path.lineTo(20, 20);
-        path.closeSubPath();
-        path.startNewSubPath(20, 20);
-        path.lineTo(0, 20);
-        path.lineTo(20, 0);
-        path.lineTo(40, 20);
-        path.closeSubPath();
-        AffineTransform transform(AffineTransform::identity);
-        path.applyTransform(transform.rotated(float_Pi/2.f));
-        DrawablePath* image = new DrawablePath();
-        image->setFill(Colours::white);
-        image->setStrokeThickness(25.f);
-        image->setStrokeFill(Colours::green.darker(.9f));
-        image->setPath(path);
-        return image;
-    }
+	static const DrawablePath* createStopButtonPath(int buttonSize, Colour col)
+	{
+		Path stopPath;
+		stopPath.addRectangle(0, 0, buttonSize, buttonSize);
+		DrawablePath* stopImage = new DrawablePath();
+		stopImage->setPath(stopPath);	
+		stopImage->setFill(col);	
+		return stopImage;
+	}
+	
+	static const DrawablePath* createDisabledStopButtonPath(float buttonSize, Colour col1, Colour col2)
+	{
+		Path stopPath;
+		stopPath.addRectangle(0, 0, buttonSize, buttonSize);		
+		stopPath.addLineSegment(Line<float>(0.f, 0.f, buttonSize, buttonSize), 1.f);
+		stopPath.addLineSegment(Line<float>(buttonSize, 0.f, 0.f, buttonSize), 1.f);
+		DrawablePath* stopImage = new DrawablePath();
+		stopImage->setFill(Colours::red);
+		stopImage->setStrokeFill(col2);
+		stopImage->setPath(stopPath);	
+		return stopImage;
+	}	
 
-    static const DrawablePath* createStopButtonPath(int buttonSize, Colour col)
-    {
-        Path stopPath;
-        stopPath.addRectangle(0, 0, buttonSize, buttonSize);
-        DrawablePath* stopImage = new DrawablePath();
-        stopImage->setPath(stopPath);
-        stopImage->setFill(col);
-        return stopImage;
-    }
+	static const DrawablePath* createEnvelopeButtonPath(Colour col)
+	{
+		Path path;
+		path.addEllipse(-10, 70, 25, 25);
+		path.startNewSubPath(10, 70);
+		path.lineTo(45, 10);		
+		path.closeSubPath();
+		path.addEllipse(35, 25, 25, 25);
+		path.startNewSubPath(40, 10);
+		path.lineTo(70, 80);		
+		path.closeSubPath();
+		path.addEllipse(65, 75, 25, 25);
+		path.startNewSubPath(70, 80);
+		path.lineTo(120, 10);
+		path.closeSubPath();
+		path.addEllipse(115, 5, 25, 25);
 
-    static const DrawablePath* createDisabledStopButtonPath(float buttonSize, Colour col1, Colour col2)
-    {
-        Path stopPath;
-        stopPath.addRectangle(0, 0, buttonSize, buttonSize);
-        stopPath.addLineSegment(Line<float>(0.f, 0.f, buttonSize, buttonSize), 1.f);
-        stopPath.addLineSegment(Line<float>(buttonSize, 0.f, 0.f, buttonSize), 1.f);
-        DrawablePath* stopImage = new DrawablePath();
-        stopImage->setFill(Colours::red);
-        stopImage->setStrokeFill(col2);
-        stopImage->setPath(stopPath);
-        return stopImage;
-    }
-
-    static const DrawablePath* createEnvelopeButtonPath(Colour col)
-    {
-        Path path;
-        path.addEllipse(-10, 70, 25, 25);
-        path.startNewSubPath(10, 70);
-        path.lineTo(45, 10);
-        path.closeSubPath();
-        path.addEllipse(35, 25, 25, 25);
-        path.startNewSubPath(40, 10);
-        path.lineTo(70, 80);
-        path.closeSubPath();
-        path.addEllipse(65, 75, 25, 25);
-        path.startNewSubPath(70, 80);
-        path.lineTo(120, 10);
-        path.closeSubPath();
-        path.addEllipse(115, 5, 25, 25);
-
-        DrawablePath* image = new DrawablePath();
-        image->setFill(Colours::white);
-        image->setStrokeThickness(25.f);
-        image->setStrokeFill(col);
-        image->setPath(path);
-        return image;
-    }
-
-    static const DrawablePath* createOpenButtonPath(int buttonSize)
-    {
-        Path openPath;
-        openPath.startNewSubPath(4, 2);
-        openPath.lineTo(18, 2);
-        openPath.lineTo(18, 5);
-        openPath.lineTo(22, 5);
-        openPath.lineTo(22, buttonSize-5);
-        openPath.lineTo(4, buttonSize-5);
-        openPath.lineTo(4, 2);
-        //openPath.startNewSubPath(8, 7);
-        //openPath.lineTo(24, 7);
-        openPath.closeSubPath();
-        DrawablePath* openImage = new DrawablePath();;
-        openImage->setPath(openPath);
-        openImage->setFill(Colours::white);
-        openImage->setStrokeFill(Colours::green.darker(.9f));
-        openImage->setStrokeThickness(4);
-        return openImage;
-    }
-
-    static void drawBypassIcon(Graphics& g, Rectangle<float> rect, bool isActive)
-    {
-        const float x = rect.getX();
-        const float y = rect.getY();
-        const float w = rect.getWidth()-5.f;
-        const float h = rect.getHeight();
-        const float d = 5;
-        g.setColour(isActive ? Colours::cornflowerblue : Colours::lime);
-        Path p;
-        p.startNewSubPath(x+5, y+h/2.f+d/2.f);
-        g.drawEllipse(x, y+h/2.f, d, d, 1);
-        g.drawEllipse(x+w, y+h/2.f, d, d, 1.f);
-
-        if(!isActive)
-        {
-            p.lineTo(x+w, y+h/2.f+d/2.f);
-        }
-        else
-        {
-            p.addArc(x+w, y+h/2.f+d/2.f, 5, 5, 3.14, 3.14);
-        }
-
-        p.closeSubPath();
-        g.strokePath(p, PathStrokeType(1));
-    }
+		DrawablePath* image = new DrawablePath();
+		image->setFill(Colours::white);
+		image->setStrokeThickness(25.f);
+		image->setStrokeFill(col);
+		image->setPath(path);	
+		return image;
+	}
+	
+	static const DrawablePath* createOpenButtonPath(int buttonSize)
+	{
+		Path openPath;
+		openPath.startNewSubPath(4, 2);
+		openPath.lineTo(18, 2);
+		openPath.lineTo(18, 5);
+		openPath.lineTo(22, 5);
+		openPath.lineTo(22, buttonSize-5);
+		openPath.lineTo(4, buttonSize-5);
+		openPath.lineTo(4, 2);
+		//openPath.startNewSubPath(8, 7);
+		//openPath.lineTo(24, 7);
+		openPath.closeSubPath();
+		DrawablePath* openImage = new DrawablePath();;
+		openImage->setPath(openPath);
+		openImage->setFill(Colours::white);
+		openImage->setStrokeFill(Colours::green.darker(.9f));
+		openImage->setStrokeThickness(4);
+		return openImage;
+	}
+	
+	static void drawBypassIcon(Graphics& g, Rectangle<float> rect, bool isActive)
+	{
+		const float x = rect.getX();
+		const float y = rect.getY();
+		const float w = rect.getWidth()-5.f;
+		const float h = rect.getHeight();
+		const float d = 5; 
+		g.setColour(isActive ? Colours::cornflowerblue : Colours::lime);
+		Path p;
+		p.startNewSubPath(x+5, y+h/2.f+d/2.f);
+		g.drawEllipse(x, y+h/2.f, d, d, 1);
+		g.drawEllipse(x+w, y+h/2.f, d, d, 1.f);	
+		
+		if(!isActive)
+		{
+			p.lineTo(x+w, y+h/2.f+d/2.f);
+		}
+		else
+		{
+			p.addArc(x+w, y+h/2.f+d/2.f, 5, 5, 3.14, 3.14);
+		}
+		
+		p.closeSubPath();
+		g.strokePath(p, PathStrokeType(1));
+	}	
 //====================================================================================================
     static String returnFullPathForFile(String file, String fullPath)
     {
@@ -1454,7 +1454,357 @@ public:
         else return "";
     }
 
-    //===========================================================================================
+	//===========================================================================================
+
+	int exportPlugin(String type, bool saveAs, String fileName)
+	{
+		File dll;
+		File loc_csdFile;
+	#ifndef LINUX
+		File thisFile(File::getSpecialLocation(File::currentApplicationFile));
+	#else
+		File thisFile(File::getSpecialLocation(File::currentExecutableFile));
+	#endif
+
+		if(!csdFile.exists())
+		{
+			m_ShowMessage("You need to open a Cabbage instrument before you can export one as a plugin!", lookAndFeel);
+			return 0;
+		}
+	#ifdef LINUX
+		//FileChooser saveFC(String("Save as..."), File::nonexistent, String(""), UseNativeDialogue);
+		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+		Array<File> selectedFile = cUtils::launchFileBrowser("Save a file..", wildcardFilter, "*.*", 0, File("*"), showNative, &getLookAndFeel());
+	 
+		String VST;
+		Logger::writeToLog(currentApplicationDirectory);
+		if (selectedFile.size()>0)
+		{
+			if(type.contains("VSTi"))
+				VST = currentApplicationDirectory + String("/CabbagePluginSynth.so");
+			else if(type.contains(String("VST")))
+				VST = currentApplicationDirectory + String("/CabbagePluginEffect.so");
+			else if(type.contains(String("LV2-ins")))
+				VST = currentApplicationDirectory + String("/CabbagePluginSynthLV2.so");
+			else if(type.contains(String("LV2-fx")))
+				VST = currentApplicationDirectory + String("/CabbagePluginEffectLV2.so");
+			else if(type.contains(String("AU")))
+			{
+				m_ShowMessage("This feature only works on computers running OSX", lookAndFeel);
+			}
+			//Logger::writeToLog(VST);
+
+			File VSTData(VST);
+			if(!VSTData.exists())
+			{
+				this->setMinimised(true);
+				m_ShowMessage(VST+" cannot be found?", lookAndFeel);
+			}
+
+			else
+			{
+				if (type.contains("LV2"))
+				{
+					String filename(selectedFile[0].getFileNameWithoutExtension());
+					File bundle(selectedFile[0].withFileExtension(".lv2").getFullPathName());
+					bundle.createDirectory();
+					File dll(bundle.getChildFile(filename+".so"));
+					Logger::writeToLog(bundle.getFullPathName());
+					Logger::writeToLog(dll.getFullPathName());
+					if(!VSTData.copyFileTo(dll)) m_ShowMessage("Can not move lib", lookAndFeel);
+					File loc_csdFile(bundle.getChildFile(filename+".csd").getFullPathName());
+					loc_csdFile.replaceWithText(csdFile.loadFileAsString());
+
+					// this generates the ttl data
+					typedef void (*TTL_Generator_Function)(const char* basename);
+					DynamicLibrary lib(dll.getFullPathName());
+					TTL_Generator_Function genFunc = (TTL_Generator_Function)lib.getFunction("lv2_generate_ttl");
+					if(!genFunc)
+					{
+						showMessage("", "Can not generate LV2 data", lookAndFeel, this);
+						return 1;
+					}
+
+					// change CWD for ttl generation
+					File oldCWD(File::getCurrentWorkingDirectory());
+					bundle.setAsCurrentWorkingDirectory();
+					(genFunc)(filename.toRawUTF8());
+					oldCWD.setAsCurrentWorkingDirectory();
+				}
+				else
+				{
+					File dll(selectedFile[0].withFileExtension(".so").getFullPathName());
+					if(!VSTData.copyFileTo(dll))	
+						showMessage("", "Can not move lib", lookAndFeel, this);
+						
+					File loc_csdFile(selectedFile[0].withFileExtension(".csd").getFullPathName());
+					loc_csdFile.replaceWithText(csdFile.loadFileAsString());
+					setUniquePluginID(dll, loc_csdFile, false);
+				}
+			}
+		}
+	#elif WIN32
+		FileChooser saveFC(String("Save plugin as..."), File::nonexistent, String("*.dll"), UseNativeDialogue);
+		String VST;
+		if(type.contains("VSTi"))
+			VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbagePluginSynth.dat");
+		else if(type.contains(String("VST")))
+			VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbagePluginEffect.dat");
+
+		File VSTData(VST);
+
+		if(!VSTData.exists())
+		{
+			m_ShowMessage("Cabbage cannot find the plugin libraries. Make sure that Cabbage is situated in the same directory as CabbagePluginSynth.dat and CabbagePluginEffect.dat", oldLookAndFeel);
+			return 0;
+		}
+		else
+		{
+			if(saveAs)
+			{
+				if (saveFC.browseForFileToSave(true))
+				{
+					dll = saveFC.getResult().withFileExtension(".dll").getFullPathName();
+					loc_csdFile = saveFC.getResult().withFileExtension(".csd").getFullPathName();
+				}
+				else
+					return 0;
+			}
+			else
+			{
+				dll = csdFile.withFileExtension(".dll").getFullPathName();
+				loc_csdFile = csdFile.withFileExtension(".csd").getFullPathName();
+
+			}
+			//showMessage(dll.getFullPathName());
+			if(!VSTData.copyFileTo(dll))
+				m_ShowMessage("Problem moving plugin lib, make sure it's not currently open in your plugin host!", lookAndFeel);
+
+			loc_csdFile.replaceWithText(csdFile.loadFileAsString());
+			setUniquePluginID(dll, loc_csdFile, false);
+			String info;
+			info = String("Your plugin has been created. It's called:\n\n")+dll.getFullPathName()+String("\n\nIn order to modify this plugin you only have to edit the associated .csd file. You do not need to export every time you make changes.\n\nTo turn off this notice visit 'Preferences' in the main 'options' menu");
+
+			int val = getPreference(appProperties, "DisablePluginInfo");
+			if(!val)
+				m_ShowMessage(info, lookAndFeel);
+		}
+
+	#endif
+
+	#if MACOSX
+
+		FileChooser saveFC(String("Save as..."), File::nonexistent, String("*.vst"), UseNativeDialogue);
+		String VST;
+		if (saveFC.browseForFileToSave(true))
+		{
+			//showMessage("name of file is:");
+			//showMessage(saveFC.getResult().withFileExtension(".vst").getFullPathName());
+
+			if(type.contains("VSTi"))
+				VST = thisFile.getFullPathName()+"/Contents/CabbagePluginSynth.component";
+			else if(type.contains(String("VST")))
+				VST = thisFile.getFullPathName()+"/Contents/CabbagePluginEffect.component";
+			else if(type.contains("CsoundVSTi"))
+				VST = thisFile.getFullPathName()+"/Contents/CabbageCsoundPluginSynth.component";
+			else if(type.contains(String("CsoundVST")))
+				VST = thisFile.getFullPathName()+"/Contents/CabbageCsoundPluginEffect.component";
+			else if(type.contains(String("AU")))
+			{
+				showMessage("this feature is coming soon");
+				//VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbageVSTfx.component");
+			}
+
+			//create a copy of the data package and write it to the new location given by user
+			File VSTData(VST);
+			if(!VSTData.exists())
+			{
+				showMessage("Cabbage cannot find the plugin libraries. Make sure that Cabbage is situated in the same directory as CabbagePluginSynth.dat and CabbagePluginEffect.dat", lookAndFeel);
+				return 0;
+			}
+
+
+			String plugType = ".vst";
+	//		if(type.contains(String("AU")))
+	//			plugType = String(".component");
+	//		else plugType = String(".vst");
+
+			File dll(saveFC.getResult().withFileExtension(plugType).getFullPathName());
+
+			VSTData.copyFileTo(dll);
+			//showMessage("copied");
+
+
+
+			File pl(dll.getFullPathName()+String("/Contents/Info.plist"));
+			String newPList = pl.loadFileAsString();
+			//write our identifiers to the plist file
+			newPList = newPList.replace("CabbagePlugin", saveFC.getResult().getFileNameWithoutExtension());
+			newPList = newPList.replace("NewProject", saveFC.getResult().getFileNameWithoutExtension());
+			//write plist file
+			pl.replaceWithText(newPList);
+
+
+
+			File loc_csdFile(dll.getFullPathName()+String("/Contents/")+saveFC.getResult().getFileNameWithoutExtension()+String(".csd"));
+			loc_csdFile.replaceWithText(csdFile.loadFileAsString());
+			//showMessage(loc_csdFile.getFullPathName());
+			//showMessage(csdFile.loadFileAsString());
+			csdFile = loc_csdFile;
+
+			//showMessage(VST+String("/Contents/MacOS/")+saveFC.getResult().getFileNameWithoutExtension());
+			//if plugin already exists there is no point in rewriting the binaries
+			if(!File(saveFC.getResult().withFileExtension(".vst").getFullPathName()+("/Contents/MacOS/")+saveFC.getResult().getFileNameWithoutExtension()).exists())
+			{
+				File bin(dll.getFullPathName()+String("/Contents/MacOS/CabbagePlugin"));
+				//if(bin.exists())showMessage("binary exists");
+
+
+				File pluginBinary(dll.getFullPathName()+String("/Contents/MacOS/")+saveFC.getResult().getFileNameWithoutExtension());
+
+				bin.moveFileTo(pluginBinary);
+				//else
+				//showMessage("could not copy library binary file");
+
+				setUniquePluginID(pluginBinary, loc_csdFile, true);
+			}
+
+			String info;
+			info = String("Your plugin has been created. It's called:\n\n")+dll.getFullPathName()+String("\n\nIn order to modify this plugin you only have to edit the current .csd file. You do not need to export every time you make changes. To open the current csd file with Cabbage in another session, go to 'Open Cabbage Instrument' and select the .vst file. Cabbage will the load the associated .csd file. \n\nTo turn off this notice visit 'Preferences' in the main 'options' menu");
+
+			int val = appProperties->getUserSettings()->getValue("DisablePluginInfo", var(0)).getFloatValue();
+			if(!val)
+				showMessage(info, lookAndFeel);
+
+
+		}
+
+	#endif
+
+		return 0;
+	}
+
+	//==============================================================================
+	// Set unique plugin ID for each plugin based on the file name
+	//==============================================================================
+	int setUniquePluginID(File binFile, File csdFile, bool AU)
+	{
+		String newID;
+		StringArray csdText;
+		csdText.addLines(csdFile.loadFileAsString());
+		//read contents of csd file to find pluginID
+		for(int i=0; i<csdText.size(); i++)
+		{
+			StringArray tokes;
+			tokes.addTokens(csdText[i].trimEnd(), ", ", "\"");
+			if(tokes[0].equalsIgnoreCase(String("form")))
+			{
+				CabbageGUIClass cAttr(csdText[i].trimEnd(), 0);
+				if(cAttr.getStringProp(CabbageIDs::pluginid).length()!=4)
+				{
+					m_ShowMessage("Your plugin ID is not the right size. It MUST be 4 characters long. Some hosts may not be able to load your plugin", lookAndFeel);
+					//return 0;
+				}
+				else
+				{
+					newID = cAttr.getStringProp(CabbageIDs::pluginid);
+					i = csdText.size();
+				}
+			}
+		}
+
+		size_t file_size;
+		const char *pluginID;
+		//if(!AU)
+		pluginID = "YROR";
+		//else
+		//	pluginID = "RORY";
+
+
+		long loc;
+		//showMessage(binFile.getFullPathName(), lookAndFeel);
+		fstream mFile(binFile.getFullPathName().toUTF8(), ios_base::in | ios_base::out | ios_base::binary);
+
+		if(mFile.is_open())
+		{
+			mFile.seekg (0, ios::end);
+			file_size = mFile.tellg();
+			unsigned char* buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
+			//set plugin ID, do this a few times in case the plugin ID appear in more than one place.
+			for(int r=0; r<10; r++)
+			{
+				mFile.seekg (0, ios::beg);
+				mFile.read((char*)&buffer[0], file_size);
+				loc = cabbageFindPluginID(buffer, file_size, pluginID);
+				if (loc < 0)
+				{
+					//showMessage(String("Internel Cabbage Error: The pluginID was not found"));
+					break;
+				}
+				else
+				{
+					//showMessage(newID);
+					mFile.seekg (loc, ios::beg);
+					mFile.write(newID.toUTF8(), 4);
+				}
+			}
+			//set plugin name based on .csd file
+			const char *pluginName = "CabbageEffectNam";
+			String plugLibName = csdFile.getFileNameWithoutExtension();
+			if(plugLibName.length()<16)
+				for(int y=plugLibName.length(); y<16; y++)
+					plugLibName.append(String(" "), 1);
+
+					mFile.seekg (0, ios::beg);
+					buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
+					mFile.read((char*)&buffer[0], file_size);
+					loc = cabbageFindPluginID(buffer, file_size, pluginName);
+					if (loc < 0)
+						m_ShowMessage("Plugin name could not be set?!?", lookAndFeel);
+					else
+					{
+						//showMessage("plugin name set!");
+						mFile.seekg (loc, ios::beg);
+						mFile.write(csdFile.getFileNameWithoutExtension().toUTF8(), 16);
+					}
+					//#endif
+
+		}
+		else
+			m_ShowMessage("File could not be opened", lookAndFeel);
+
+		mFile.close();
+		return 1;
+	}
+
+	long cabbageFindPluginID(unsigned char *buf, size_t len, const char *s)
+	{
+		long i, j;
+		int slen = strlen(s);
+		long imax = len - slen - 1;
+		long ret = -1;
+		int match;
+
+		for(i=0; i<imax; i++)
+		{
+			match = 1;
+			for (j=0; j<slen; j++)
+			{
+				if (buf[i+j] != s[j])
+				{
+					match = 0;
+					break;
+				}
+			}
+			if (match)
+			{
+				ret = i;
+				break;
+			}
+		}
+		//return position of plugin ID
+		return ret;
+	}
 
 };
 

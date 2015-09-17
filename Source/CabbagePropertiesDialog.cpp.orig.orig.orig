@@ -85,14 +85,14 @@ void ControlProperty::actionListenerCallback (const String& message)
         CabbagePropertiesDialog* parentWindow = findParentComponentOfClass <CabbagePropertiesDialog>();
         if(parentWindow)
             parentWindow->updateIdentifiers();
-
+			
 #ifdef CABBAGE_HOST
         SidebarPanel* parentPanel = findParentComponentOfClass <SidebarPanel>();
         if(parentPanel)
-        {
+		{
             parentPanel->updateWidgetProperties();
-        }
-#endif
+		}		
+#endif			
     }
 }
 
@@ -130,6 +130,6 @@ void ControlProperty::paint(Graphics &g)
     g.setColour (Colours::black);
     g.drawRect(0, 0, getWidth(), getHeight(), 1);
 #endif
-
+	
 
 }

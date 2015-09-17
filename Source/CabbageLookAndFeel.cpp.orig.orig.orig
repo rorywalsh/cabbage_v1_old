@@ -330,8 +330,7 @@ const Drawable* CabbageLookAndFeel::getDefaultFolderImage()
     if (folderImage == nullptr)
     {
         static const unsigned char drawableData[] =
-        {
-            120,218,197,86,77,111,27,55,16,229,182,161,237,6,61,39,233,77,63,192,38,56,195,225,215,209,105,210,2,141,13,20,201,193,109,111,178,181,178,183,145,181,130,180,110,145,127,159,199,93,73,137,87,53,218,91,109,192,160,151,179,156,55,111,222,188,229,155,247,
+        {   120,218,197,86,77,111,27,55,16,229,182,161,237,6,61,39,233,77,63,192,38,56,195,225,215,209,105,210,2,141,13,20,201,193,109,111,178,181,178,183,145,181,130,180,110,145,127,159,199,93,73,137,87,53,218,91,109,192,160,151,179,156,55,111,222,188,229,155,247,
             231,87,231,175,47,222,170,234,155,229,244,190,86,213,115,253,102,61,253,123,122,189,168,85,51,83,213,119,250,238,221,47,231,151,175,223,169,170,250,121,221,62,172,84,245,172,60,63,209,243,118,49,171,215,170,107,87,23,245,188,83,213,145,182,167,19,91,
             254,127,223,220,222,117,37,68,82,40,143,174,219,174,107,239,135,168,147,18,37,108,85,245,237,46,207,70,33,249,175,211,238,78,85,186,28,253,76,175,73,109,186,117,251,177,190,106,102,229,241,247,58,24,103,203,15,101,245,103,219,44,187,15,221,39,0,172,142,
             245,125,211,1,196,205,116,181,125,114,164,175,31,186,78,45,219,229,31,245,186,189,106,150,179,102,121,139,100,154,240,231,167,102,177,64,72,247,105,213,23,122,187,158,206,154,122,217,169,85,57,18,1,47,53,101,107,18,135,204,167,147,192,201,216,20,114,
@@ -359,8 +358,7 @@ const Drawable* CabbageLookAndFeel::getDefaultDocumentFileImage()
     if (documentImage == nullptr)
     {
         static const unsigned char drawableData[] =
-        {
-            120,218,213,88,77,115,219,54,16,37,147,208,246,228,214,75,155,246,164,123,29,12,176,216,197,199,49,105,218,94,156,153,78,114,72,219,155,108,75,137,26,89,212,200,116,59,233,175,239,3,105,201,164,68,50,158,166,233,76,196,11,69,60,173,128,197,123,139,183,
+        {   120,218,213,88,77,115,219,54,16,37,147,208,246,228,214,75,155,246,164,123,29,12,176,216,197,199,49,105,218,94,156,153,78,114,72,219,155,108,75,137,26,89,212,200,116,59,233,175,239,3,105,201,164,68,50,158,166,233,76,196,11,69,60,173,128,197,123,139,183,
             124,241,234,217,155,103,207,207,126,204,242,7,171,233,213,44,203,31,23,47,54,211,191,166,231,203,89,182,184,204,242,147,226,195,165,219,252,125,150,229,249,207,155,242,102,157,229,143,210,227,199,197,101,121,113,115,53,91,85,89,85,174,207,102,243,42,
             203,143,10,125,58,209,233,251,171,197,219,119,85,250,173,97,151,30,157,151,85,85,94,53,168,147,132,50,226,179,252,225,246,143,174,179,44,63,254,101,90,189,203,242,34,5,127,84,172,77,118,93,109,202,247,179,55,139,203,244,248,97,161,179,63,202,197,170,
             122,93,125,192,196,242,227,226,106,81,205,54,217,197,116,125,251,228,168,56,191,169,170,108,85,174,126,159,109,202,55,139,213,229,98,245,182,249,97,254,240,167,197,114,137,5,86,31,214,245,111,175,203,37,254,230,162,92,150,55,155,180,148,249,237,39,203,
@@ -1998,16 +1996,16 @@ void CabbageLookAndFeelBasic::drawLinearSliderThumb (Graphics &g, int x, int y, 
         }
 
 
-        ColourGradient thumbColour = ColourGradient(slider.isMouseOver() ? Colours::cornflowerblue.brighter() : Colours::cornflowerblue.withAlpha(.5f), kx - sliderRadius, ky - sliderRadius,
-                                     Colours::cornflowerblue, kx+sliderRadius, sliderRadius, false);
-        g.setGradientFill(thumbColour);
+		ColourGradient thumbColour = ColourGradient(slider.isMouseOver() ? Colours::cornflowerblue.brighter() : Colours::cornflowerblue.withAlpha(.5f), kx - sliderRadius, ky - sliderRadius,
+		Colours::cornflowerblue, kx+sliderRadius, sliderRadius, false);
+		g.setGradientFill(thumbColour);
 
-        g.setGradientFill(thumbColour);
-        g.fillRoundedRectangle(kx - sliderRadius*1.4f, ky - sliderRadius, sliderRadius*1.5f, sliderRadius*1.5f, sliderRadius / 20.0f);
+		g.setGradientFill(thumbColour);
+		g.fillRoundedRectangle(kx - sliderRadius*1.4f, ky - sliderRadius, sliderRadius*1.5f, sliderRadius*1.5f, sliderRadius / 20.0f);
 
-        //thumb border
-        g.setColour(Colours::black);
-        g.drawRoundedRectangle((kx - sliderRadius*1.4f)+1.f, (ky - sliderRadius)+1, sliderRadius*1.5f, sliderRadius*1.5f, sliderRadius / 20.0f, 1.0f);
+		//thumb border
+		g.setColour(Colours::black);
+		g.drawRoundedRectangle((kx - sliderRadius*1.4f)+1.f, (ky - sliderRadius)+1, sliderRadius*1.5f, sliderRadius*1.5f, sliderRadius / 20.0f, 1.0f);
 
 //        cUtils::drawSphericalThumb(g,
 //                                    kx - sliderRadius,
@@ -2046,50 +2044,50 @@ void CabbageLookAndFeelBasic::drawStretchableLayoutResizerBar (Graphics& g, int 
 
 //=========================================================================================================
 void CabbageLookAndFeelBasic::drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
-        bool isMouseOverButton, bool isButtonDown)
-{
-    Colour baseColour (backgroundColour.withMultipliedSaturation (1.3f)
-                       .withMultipliedAlpha (button.isEnabled() ? 0.9f : 0.2f));
-
-    if (isButtonDown || isMouseOverButton)
-        baseColour = baseColour.contrasting (isButtonDown ? 0.2f : 0.1f);
-
-    const bool flatOnLeft   = button.isConnectedOnLeft();
-    const bool flatOnRight  = button.isConnectedOnRight();
-    const bool flatOnTop    = button.isConnectedOnTop();
-    const bool flatOnBottom = button.isConnectedOnBottom();
-
-    const float width  = button.getWidth() - 1.0f;
-    const float height = button.getHeight() - 1.0f;
-
-    if (width > 0 && height > 0)
+                               bool isMouseOverButton, bool isButtonDown)
     {
-        const bool drawRounded = button.getProperties().getWithDefault("isRounded", false);
-        const float cornerSize = jmin ((drawRounded ? 15.0f : 5.f), jmin (width, height) * 0.45f);
-        const float lineThickness = cornerSize * 0.1f;
-        const float halfThickness = lineThickness * 0.5f;
+        Colour baseColour (backgroundColour.withMultipliedSaturation (1.3f)
+                           .withMultipliedAlpha (button.isEnabled() ? 0.9f : 0.2f));
 
-        Path outline;
-        outline.addRoundedRectangle (0.5f + halfThickness, 0.5f + halfThickness, width - lineThickness, height - lineThickness,
-                                     cornerSize, cornerSize,
-                                     ! (flatOnLeft  || flatOnTop),
-                                     ! (flatOnRight || flatOnTop),
-                                     ! (flatOnLeft  || flatOnBottom),
-                                     ! (flatOnRight || flatOnBottom));
+        if (isButtonDown || isMouseOverButton)
+            baseColour = baseColour.contrasting (isButtonDown ? 0.2f : 0.1f);
 
-        const Colour outlineColour (button.findColour (button.getToggleState() ? TextButton::textColourOnId
-                                    : TextButton::textColourOffId));
+        const bool flatOnLeft   = button.isConnectedOnLeft();
+        const bool flatOnRight  = button.isConnectedOnRight();
+        const bool flatOnTop    = button.isConnectedOnTop();
+        const bool flatOnBottom = button.isConnectedOnBottom();
 
-        g.setColour (baseColour);
-        g.fillPath (outline);
+        const float width  = button.getWidth() - 1.0f;
+        const float height = button.getHeight() - 1.0f;
 
-        if (! button.getToggleState())
+        if (width > 0 && height > 0)
         {
-            g.setColour (outlineColour);
-            g.strokePath (outline, PathStrokeType (lineThickness));
+			const bool drawRounded = button.getProperties().getWithDefault("isRounded", false);
+            const float cornerSize = jmin ((drawRounded ? 15.0f : 5.f), jmin (width, height) * 0.45f);
+            const float lineThickness = cornerSize * 0.1f;
+            const float halfThickness = lineThickness * 0.5f;
+
+            Path outline;
+            outline.addRoundedRectangle (0.5f + halfThickness, 0.5f + halfThickness, width - lineThickness, height - lineThickness,
+                                         cornerSize, cornerSize,
+                                         ! (flatOnLeft  || flatOnTop),
+                                         ! (flatOnRight || flatOnTop),
+                                         ! (flatOnLeft  || flatOnBottom),
+                                         ! (flatOnRight || flatOnBottom));
+
+            const Colour outlineColour (button.findColour (button.getToggleState() ? TextButton::textColourOnId
+                                                                                   : TextButton::textColourOffId));
+
+            g.setColour (baseColour);
+            g.fillPath (outline);
+
+            if (! button.getToggleState())
+            {
+                g.setColour (outlineColour);
+                g.strokePath (outline, PathStrokeType (lineThickness));
+            }
         }
     }
-}
 
 //======== Scrollbars ==============================================================================
 bool CabbageLookAndFeelBasic::areScrollbarButtonsVisible()

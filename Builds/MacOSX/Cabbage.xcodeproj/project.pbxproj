@@ -2962,6 +2962,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				ONLY_ACTIVE_ARCH = NO;
+				SDKROOT = macosx10.9;
 				SDKROOT_ppc = macosx10.5;
 				USER_HEADER_SEARCH_PATHS = /Library/Frameworks/CsoundLib64.framework/Versions/6.0/Headers;
 				"USER_HEADER_SEARCH_PATHS[arch=*]" = /Library/Frameworks/CsoundLib64.framework/Versions/6.0/Headers;
@@ -3066,6 +3067,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.9;
 				SDKROOT_ppc = macosx10.5;
 				USER_HEADER_SEARCH_PATHS = /Library/Frameworks/CsoundLib64.framework/Versions/6.0/Headers;
 				"USER_HEADER_SEARCH_PATHS[arch=*]" = /Library/Frameworks/CsoundLib64.framework/Versions/6.0/Headers;

@@ -59,6 +59,8 @@ then
 	rm -rf ./build/Release/CabbagePluginEffect.component
 	rm -rf ~/Library/Audio/Plug-Ins/VST/CabbagePlugin.vst
 
+	xcodebuild -project CabbageStudio.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
+
 	echo "Bundling all files"	
 	cp -rf ../../Docs ./build/Release/Cabbage.app/Contents/MacOS/Docs
 	cp -rf ../../Examples ./build/Release/Cabbage.app/Contents/MacOS/Examples
@@ -88,12 +90,12 @@ fi
 
 if [ $1 == "debug" ]
 then
-	echo "Building All 32Bit Debug"
-	xcodebuild -project Cabbage.xcodeproj/ ARCHS=i386 ONLY_ACTIVE_ARCH=NO -configuration Debug
-	xcodebuild -project CabbagePlugin.xcodeproj/ ARCHS=i386 ONLY_ACTIVE_ARCH=NO -configuration Debug GCC_PREPROCESSOR_DEFINITIONS="Cabbage_Plugin_Synth=1 USE_DOUBLE=1 CSOUND6=1 MACOSX=1"
+	echo "Building Debug version"
+	xcodebuild -project Cabbage.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Debug
+	xcodebuild -project CabbagePlugin.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Debug GCC_PREPROCESSOR_DEFINITIONS="Cabbage_Plugin_Synth=1 USE_DOUBLE=1 CSOUND6=1 MACOSX=1"
 	cp -rf ./build/Debug/CabbagePlugin.component/ ./build/Debug/Cabbage.app/Contents/CabbagePluginSynth.component
 	rm -rf ./build/Debug/CabbagePluginSynth.dat/CabbagePlugin.component	
-	xcodebuild -project CabbagePlugin.xcodeproj/ -configuration Debug ARCHS=i386 ONLY_ACTIVE_ARCH=NO GCC_PREPROCESSOR_DEFINITIONS="MACOSX=1 USE_DOUBLE=1"
+	xcodebuild -project CabbagePlugin.xcodeproj/ -configuration Debug ONLY_ACTIVE_ARCH=NO GCC_PREPROCESSOR_DEFINITIONS="MACOSX=1 USE_DOUBLE=1"
 	cp -rf ./build/Debug/CabbagePlugin.component/ ./build/Debug/Cabbage.app/Contents/CabbagePluginEffect.component
 	rm -rf ./build/Debug/CabbagePluginEffect.component
 	rm -rf ~/Library/Audio/Plug-Ins/VST/CabbagePlugin.vst

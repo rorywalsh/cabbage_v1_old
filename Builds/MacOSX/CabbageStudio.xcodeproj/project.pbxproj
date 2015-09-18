@@ -924,7 +924,7 @@
 		DCF14402C6E7819587C032CD /* juce_MultiTimer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_MultiTimer.cpp; path = ../../JuceLibraryCode/modules/juce_events/timers/juce_MultiTimer.cpp; sourceTree = SOURCE_ROOT; };
 		DD88B217D8AB42A1A6225CC6 /* juce_Slider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_Slider.h; path = ../../JuceLibraryCode/modules/juce_gui_basics/widgets/juce_Slider.h; sourceTree = SOURCE_ROOT; };
 		DD9A03B689A3FCFCF4A1384E /* juce_SystemStats.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_SystemStats.cpp; path = ../../JuceLibraryCode/modules/juce_core/system/juce_SystemStats.cpp; sourceTree = SOURCE_ROOT; };
-		DE1464E0216E7091EA1B63C9 /* CabbageHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CabbageHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DE1464E0216E7091EA1B63C9 /* CabbageStudio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CabbageStudio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE27E32CB7D7A770143493E9 /* juce_TargetPlatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_TargetPlatform.h; path = ../../JuceLibraryCode/modules/juce_core/system/juce_TargetPlatform.h; sourceTree = SOURCE_ROOT; };
 		DE4BD9CDA875DF49B7983EE5 /* juce_mac_CoreAudio.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_mac_CoreAudio.cpp; path = ../../JuceLibraryCode/modules/juce_audio_devices/native/juce_mac_CoreAudio.cpp; sourceTree = SOURCE_ROOT; };
 		DE8149361EB1C561EEE7B508 /* juce_Random.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_Random.h; path = ../../JuceLibraryCode/modules/juce_core/maths/juce_Random.h; sourceTree = SOURCE_ROOT; };
@@ -2168,7 +2168,7 @@
 		84CA414A833EA2B314C8D3EE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DE1464E0216E7091EA1B63C9 /* CabbageHost.app */,
+				DE1464E0216E7091EA1B63C9 /* CabbageStudio.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2938,9 +2938,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		60315F0A8A6B728CE604B742 /* CabbageHost */ = {
+		60315F0A8A6B728CE604B742 /* CabbageStudio */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 45F9D12691B4B4DDEA8DA572 /* Build configuration list for PBXNativeTarget "CabbageHost" */;
+			buildConfigurationList = 45F9D12691B4B4DDEA8DA572 /* Build configuration list for PBXNativeTarget "CabbageStudio" */;
 			buildPhases = (
 				038F9E2450FE9A6F09AD77B6 /* Resources */,
 				40E43F670396B2B7F65916D8 /* Sources */,
@@ -2950,10 +2950,10 @@
 			);
 			dependencies = (
 			);
-			name = CabbageHost;
+			name = CabbageStudio;
 			productInstallPath = "$(HOME)/Applications";
 			productName = CabbageHost;
-			productReference = DE1464E0216E7091EA1B63C9 /* CabbageHost.app */;
+			productReference = DE1464E0216E7091EA1B63C9 /* CabbageStudio.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -2964,7 +2964,7 @@
 			attributes = {
 				LastUpgradeCheck = 0440;
 			};
-			buildConfigurationList = 2AA673425EBA8F28A2635907 /* Build configuration list for PBXProject "CabbageHost" */;
+			buildConfigurationList = 2AA673425EBA8F28A2635907 /* Build configuration list for PBXProject "CabbageStudio" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -2975,7 +2975,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				60315F0A8A6B728CE604B742 /* CabbageHost */,
+				60315F0A8A6B728CE604B742 /* CabbageStudio */,
 			);
 		};
 /* End PBXProject section */
@@ -3111,6 +3111,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
+				PRODUCT_NAME = CabbageStudio;
 				SDKROOT_ppc = macosx10.5;
 			};
 			name = Debug;
@@ -3152,6 +3153,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
+				PRODUCT_NAME = CabbageStudio;
 				SDKROOT_ppc = macosx10.5;
 			};
 			name = Release;
@@ -3180,7 +3182,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2AA673425EBA8F28A2635907 /* Build configuration list for PBXProject "CabbageHost" */ = {
+		2AA673425EBA8F28A2635907 /* Build configuration list for PBXProject "CabbageStudio" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DE0221EF5D59C86CF8A742C9 /* Debug */,
@@ -3189,7 +3191,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		45F9D12691B4B4DDEA8DA572 /* Build configuration list for PBXNativeTarget "CabbageHost" */ = {
+		45F9D12691B4B4DDEA8DA572 /* Build configuration list for PBXNativeTarget "CabbageStudio" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5FD18A07E4C8D5981182A3C0 /* Debug */,

@@ -43,6 +43,11 @@
 		5E5351F928E75A3CB1C5BCB2 /* CabbageGUIClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A892EB9E80B9D9EBD8D75F20 /* CabbageGUIClass.cpp */; };
 		5FBC3E6E5BB9117DF978F49A /* Table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60A5314356E60BA34728C56C /* Table.cpp */; };
 		613496E21B092094005F97F1 /* CsoundLib64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 613496E11B092094005F97F1 /* CsoundLib64.framework */; };
+		6168A5C61BA9D45C000F356A /* CodeWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6168A5BA1BA9D45C000F356A /* CodeWindow.cpp */; };
+		6168A5C71BA9D45C000F356A /* CodeEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6168A5BC1BA9D45C000F356A /* CodeEditor.cpp */; };
+		6168A5C81BA9D45C000F356A /* CommandManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6168A5BE1BA9D45C000F356A /* CommandManager.cpp */; };
+		6168A5C91BA9D45C000F356A /* opcodes.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6168A5C21BA9D45C000F356A /* opcodes.txt */; };
+		6168A5CA1BA9D45C000F356A /* SplitComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6168A5C41BA9D45C000F356A /* SplitComponent.cpp */; };
 		6A46E7B7BF485880047D5FC1 /* AUMIDIEffectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F7E8FECC72DF24243A0CF9C /* AUMIDIEffectBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		6DD4C9203E1C61CC888DDC91 /* AUScopeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AF7B934D8439EE5FFE3FABA /* AUScopeElement.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		70840B68B55060FE7F8B3226 /* AUBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B1F37A32F7389091529F322 /* AUBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -473,6 +478,18 @@
 		60EDB33DC66C04A995532A1C /* juce_AudioUnitPluginFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_AudioUnitPluginFormat.h; path = ../../JuceLibraryCode/modules/juce_audio_processors/format_types/juce_AudioUnitPluginFormat.h; sourceTree = SOURCE_ROOT; };
 		61301C10155AD442503B870F /* BinaryData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BinaryData.h; path = ../../Source/BinaryData.h; sourceTree = SOURCE_ROOT; };
 		613496E11B092094005F97F1 /* CsoundLib64.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CsoundLib64.framework; path = ../../../../csound/build/CsoundLib64.framework; sourceTree = "<group>"; };
+		6168A5BA1BA9D45C000F356A /* CodeWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CodeWindow.cpp; path = ../../Source/Editor/CodeWindow.cpp; sourceTree = "<group>"; };
+		6168A5BB1BA9D45C000F356A /* CodeWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CodeWindow.h; path = ../../Source/Editor/CodeWindow.h; sourceTree = "<group>"; };
+		6168A5BC1BA9D45C000F356A /* CodeEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CodeEditor.cpp; path = ../../Source/Editor/CodeEditor.cpp; sourceTree = "<group>"; };
+		6168A5BD1BA9D45C000F356A /* CodeEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CodeEditor.h; path = ../../Source/Editor/CodeEditor.h; sourceTree = "<group>"; };
+		6168A5BE1BA9D45C000F356A /* CommandManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommandManager.cpp; path = ../../Source/Editor/CommandManager.cpp; sourceTree = "<group>"; };
+		6168A5BF1BA9D45C000F356A /* CommandManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommandManager.h; path = ../../Source/Editor/CommandManager.h; sourceTree = "<group>"; };
+		6168A5C01BA9D45C000F356A /* CsoundTokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CsoundTokeniser.h; path = ../../Source/Editor/CsoundTokeniser.h; sourceTree = "<group>"; };
+		6168A5C11BA9D45C000F356A /* KeyboardShortcuts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyboardShortcuts.h; path = ../../Source/Editor/KeyboardShortcuts.h; sourceTree = "<group>"; };
+		6168A5C21BA9D45C000F356A /* opcodes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = opcodes.txt; path = ../../Source/Editor/opcodes.txt; sourceTree = "<group>"; };
+		6168A5C31BA9D45C000F356A /* PythonTokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PythonTokeniser.h; path = ../../Source/Editor/PythonTokeniser.h; sourceTree = "<group>"; };
+		6168A5C41BA9D45C000F356A /* SplitComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SplitComponent.cpp; path = ../../Source/Editor/SplitComponent.cpp; sourceTree = "<group>"; };
+		6168A5C51BA9D45C000F356A /* SplitComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SplitComponent.h; path = ../../Source/Editor/SplitComponent.h; sourceTree = "<group>"; };
 		617854619A363E67CFF2F5FE /* juce_TabbedComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_TabbedComponent.h; path = ../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_TabbedComponent.h; sourceTree = SOURCE_ROOT; };
 		61E21AD1DDAA5A616E654D08 /* juce_Singleton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_Singleton.h; path = ../../JuceLibraryCode/modules/juce_core/memory/juce_Singleton.h; sourceTree = SOURCE_ROOT; };
 		6201CFF9232045EACEBB9297 /* juce_mac_Threads.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = juce_mac_Threads.mm; path = ../../JuceLibraryCode/modules/juce_core/native/juce_mac_Threads.mm; sourceTree = SOURCE_ROOT; };
@@ -1464,6 +1481,7 @@
 		3A1A52938EB41D809370773F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6168A5A61BA9CE8A000F356A /* Editor */,
 				6D7BC5CEB231ED0F946C9070 /* BinaryData.cpp */,
 				61301C10155AD442503B870F /* BinaryData.h */,
 				64D9A37A167A103323251AAE /* CabbageCallOutBox.cpp */,
@@ -1737,6 +1755,25 @@
 				57DB76EAC341814992E01CC3 /* RecentFilesMenuTemplate.nib */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		6168A5A61BA9CE8A000F356A /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				6168A5BA1BA9D45C000F356A /* CodeWindow.cpp */,
+				6168A5BB1BA9D45C000F356A /* CodeWindow.h */,
+				6168A5BC1BA9D45C000F356A /* CodeEditor.cpp */,
+				6168A5BD1BA9D45C000F356A /* CodeEditor.h */,
+				6168A5BE1BA9D45C000F356A /* CommandManager.cpp */,
+				6168A5BF1BA9D45C000F356A /* CommandManager.h */,
+				6168A5C01BA9D45C000F356A /* CsoundTokeniser.h */,
+				6168A5C11BA9D45C000F356A /* KeyboardShortcuts.h */,
+				6168A5C21BA9D45C000F356A /* opcodes.txt */,
+				6168A5C31BA9D45C000F356A /* PythonTokeniser.h */,
+				6168A5C41BA9D45C000F356A /* SplitComponent.cpp */,
+				6168A5C51BA9D45C000F356A /* SplitComponent.h */,
+			);
+			name = Editor;
 			sourceTree = "<group>";
 		};
 		663098FE8BD61493C925B38C /* encryption */ = {
@@ -3093,6 +3130,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6168A5C91BA9D45C000F356A /* opcodes.txt in Resources */,
 				170BE430E27F23E08A3AE70E /* RecentFilesMenuTemplate.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3129,6 +3167,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B879AE8BC14FD20F254ED31E /* BinaryData.cpp in Sources */,
+				6168A5C81BA9D45C000F356A /* CommandManager.cpp in Sources */,
+				6168A5CA1BA9D45C000F356A /* SplitComponent.cpp in Sources */,
 				B72D7CBD3F271841869C2E4E /* CabbageCallOutBox.cpp in Sources */,
 				5E5351F928E75A3CB1C5BCB2 /* CabbageGUIClass.cpp in Sources */,
 				845D4BB5A601633EA5A48110 /* CabbageLookAndFeel.cpp in Sources */,
@@ -3137,6 +3177,7 @@
 				01531673AD6B2428B375500A /* CabbagePluginEditor.cpp in Sources */,
 				51997744F8DE842134E61C6C /* CabbagePluginProcessor.cpp in Sources */,
 				054EC31D32CCCF913BF6A1F3 /* Soundfiler.cpp in Sources */,
+				6168A5C61BA9D45C000F356A /* CodeWindow.cpp in Sources */,
 				5FBC3E6E5BB9117DF978F49A /* Table.cpp in Sources */,
 				3D82D44CA42E1C928914CD3F /* XYPad.cpp in Sources */,
 				AD9DD7B134BEAC4AA1B07FEF /* XYPadAutomation.cpp in Sources */,
@@ -3158,6 +3199,7 @@
 				2561414B6C1851802629657A /* CAMutex.cpp in Sources */,
 				FDFA88DBA2B8E8C8A5579460 /* CarbonEventHandler.cpp in Sources */,
 				B58818D77448EE9388A057F2 /* CAStreamBasicDescription.cpp in Sources */,
+				6168A5C71BA9D45C000F356A /* CodeEditor.cpp in Sources */,
 				C106DE280E649E96EF299668 /* CAVectorUnit.cpp in Sources */,
 				80A46DD03F84545FC6A47A35 /* ComponentBase.cpp in Sources */,
 				B2F0D3475A03C5E9F845B3E6 /* MusicDeviceBase.cpp in Sources */,
@@ -3263,6 +3305,7 @@
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_LDFLAGS = "-bundle";
 				OTHER_REZFLAGS = "-d ppc_$ppc -d i386_$i386 -d ppc64_$ppc64 -d x86_64_$x86_64 -I /System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Versions/A/Headers -I \"$(DEVELOPER_DIR)/Extras/CoreAudio/AudioUnits/AUPublic/AUBase\"";
+				SDKROOT = macosx10.9;
 				SDKROOT_ppc = macosx10.5;
 				WRAPPER_EXTENSION = component;
 			};
@@ -3312,6 +3355,7 @@
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_LDFLAGS = "-bundle";
 				OTHER_REZFLAGS = "-d ppc_$ppc -d i386_$i386 -d ppc64_$ppc64 -d x86_64_$x86_64 -I /System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Versions/A/Headers -I \"$(DEVELOPER_DIR)/Extras/CoreAudio/AudioUnits/AUPublic/AUBase\"";
+				SDKROOT = macosx10.9;
 				SDKROOT_ppc = macosx10.5;
 				WRAPPER_EXTENSION = component;
 			};

@@ -22,7 +22,7 @@
 		<key>BF30E45040939E29387C8F2692B6427F1D4E5344</key>
 		<string>../../../..</string>
 		<key>FCC05BC24B4C2CC92A8DCCE213A83488734EFCD1</key>
-		<string>../../../../../../csound</string>
+		<string>../../../../../csound</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/cabbageaudio/cabbage.git</string>

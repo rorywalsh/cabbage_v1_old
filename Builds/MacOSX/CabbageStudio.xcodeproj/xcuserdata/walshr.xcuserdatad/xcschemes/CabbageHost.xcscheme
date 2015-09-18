@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "794FA03CAB590D96CBA04AAA"
+               BlueprintIdentifier = "60315F0A8A6B728CE604B742"
                BuildableName = "CabbageHost.app"
-               BlueprintName = "CabbageHost"
-               ReferencedContainer = "container:CabbageHost.xcodeproj">
+               BlueprintName = "CabbageStudio"
+               ReferencedContainer = "container:CabbageStudio.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "794FA03CAB590D96CBA04AAA"
+            BlueprintIdentifier = "60315F0A8A6B728CE604B742"
             BuildableName = "CabbageHost.app"
-            BlueprintName = "CabbageHost"
-            ReferencedContainer = "container:CabbageHost.xcodeproj">
+            BlueprintName = "CabbageStudio"
+            ReferencedContainer = "container:CabbageStudio.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -51,10 +51,10 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "794FA03CAB590D96CBA04AAA"
+            BlueprintIdentifier = "60315F0A8A6B728CE604B742"
             BuildableName = "CabbageHost.app"
-            BlueprintName = "CabbageHost"
-            ReferencedContainer = "container:CabbageHost.xcodeproj">
+            BlueprintName = "CabbageStudio"
+            ReferencedContainer = "container:CabbageStudio.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -69,10 +69,10 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "794FA03CAB590D96CBA04AAA"
+            BlueprintIdentifier = "60315F0A8A6B728CE604B742"
             BuildableName = "CabbageHost.app"
-            BlueprintName = "CabbageHost"
-            ReferencedContainer = "container:CabbageHost.xcodeproj">
+            BlueprintName = "CabbageStudio"
+            ReferencedContainer = "container:CabbageStudio.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

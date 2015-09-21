@@ -62,7 +62,7 @@ public:
         manualPath = "Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual/index.html";
 #endif
         String documentsFolder = File::getSpecialLocation(File::userDocumentsDirectory).getFullPathName();
-        defaultPropSet->setValue("CabbageFilePaths", documentsFolder);
+        defaultPropSet->setValue("CabbageFilePaths", documentsFolder+"/CabbageFiles");
         defaultPropSet->setValue("CsoundHelpDir", manualPath);
         defaultPropSet->setValue("PlantFileDir", homeDir+"/Plants");
         defaultPropSet->setValue("ExamplesDir", homeDir+"/Examples");

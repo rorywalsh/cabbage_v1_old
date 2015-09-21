@@ -58,7 +58,6 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
 
     setSize(1200, 800);
 
-#ifdef BUILD_DEBUGGER
     splitBottomWindow = new SplitComponent(*csoundOutputComponent, *csoundDebuggerComponent, true);
 	#ifdef CABBAGE_HOST
 		splitBottomWindow->SetSplitBarPosition(getWidth()/2);
@@ -66,9 +65,6 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
 		splitBottomWindow->SetSplitBarPosition(getWidth()/2);
 	#endif
     splitWindow = new SplitComponent(*textEditor, *splitBottomWindow, false);
-#else
-    splitWindow = new SplitComponent(*textEditor, *csoundOutputComponent, false);
-#endif
     splitWindow->SetFitToParent(false);
     textEditor->editor[textEditor->currentEditor]->addActionListener(this);
 	//splitBottomWindow->SetSplitBarPosition(getWidth());

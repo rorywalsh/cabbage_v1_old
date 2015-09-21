@@ -1149,7 +1149,7 @@ int FilterComponent::exportPlugin(String type, bool saveAs, String fileName)
             VST = thisFile.getFullPathName()+"/Contents/CabbageCsoundPluginEffect.component";
         else if(type.contains(String("AU")))
         {
-            showMessage("this feature is coming soon");
+            cUtils::showMessage("this feature is coming soon");
             //VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbageVSTfx.component");
         }
 
@@ -1157,7 +1157,7 @@ int FilterComponent::exportPlugin(String type, bool saveAs, String fileName)
         File VSTData(VST);
         if(!VSTData.exists())
         {
-            showMessage("Cabbage cannot find the plugin libraries. Make sure that Cabbage is situated in the same directory as CabbagePluginSynth.dat and CabbagePluginEffect.dat", lookAndFeel);
+            cUtils::showMessage("Cabbage cannot find the plugin libraries. Make sure that Cabbage is situated in the same directory as CabbagePluginSynth.dat and CabbagePluginEffect.dat");
             return 0;
         }
 

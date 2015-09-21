@@ -317,58 +317,57 @@ void MainHostWindow::addCabbageNativePluginsToMenu (PopupMenu& m, Array<File> &c
 	#endif
 	}	
 	
-	FileSearchPath filePaths(examplesDir);
-
-	//cUtils::showMessage(examplesDir);
-
-	//add all files in root of specifed directories
-	for(int i=0;i<filePaths.getNumPaths();i++)
-	{
-		File pluginDir(filePaths[i]);
-		pluginDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
-		
-	}
-		
-	for (int i = 0; i < cabbageFiles.size(); ++i)
-		menu.addItem (i+1, cabbageFiles[i].getFileNameWithoutExtension());
-
-	
-	//fileCnt = cabbageFiles.size();
-
-	//increment menu size and serach recursively through all subfolders in specified dirs
-	for(int i=0;i<filePaths.getNumPaths();i++)
-	{
-		Array<File> subFolders;
-		File searchDir(filePaths[i]);
-		subFolders.add(searchDir);
-		searchDir.findChildFiles(subFolders, File::findDirectories, true);	
-		
-		//remove parent dirs from array
-		for(int p=0;p<filePaths.getNumPaths();p++)
-			subFolders.removeAllInstancesOf(filePaths[p]);
-		
+    
+    FileSearchPath filePaths(appProperties->getUserSettings()->getValue("CabbageFilePaths"));
+    
+    //add all files in root of specifed directories
+    for(int i=0;i<filePaths.getNumPaths();i++)
+    {
+        File pluginDir(filePaths[i]);
+        pluginDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
+        
+    }
+    
+    for (int i = 0; i < cabbageFiles.size(); ++i)
+        menu.addItem (i+1, cabbageFiles[i].getFileNameWithoutExtension());
+    
+    
+    //fileCnt = cabbageFiles.size();
+    
+    //increment menu size and serach recursively through all subfolders in specified dirs
+    for(int i=0;i<filePaths.getNumPaths();i++)
+    {
+        Array<File> subFolders;
+        File searchDir(filePaths[i]);
+        subFolders.add(searchDir);
+        searchDir.findChildFiles(subFolders, File::findDirectories, true);
+        
+        //remove parent dirs from array
+        for(int p=0;p<filePaths.getNumPaths();p++)
+            subFolders.removeAllInstancesOf(filePaths[p]);
+        
         PopupMenu subMenu;
         for (int subs = 0; subs < subFolders.size(); subs++)
-        {	
-			cUtils::debug(subFolders[subs].getFullPathName());
-			fileCnt = cabbageFiles.size();
-			subFolders[subs].findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
-			subMenu.clear();
-			
-			for (int fileIndex=fileCnt+1; fileIndex < cabbageFiles.size(); fileIndex++)
-				subMenu.addItem (fileIndex+1, cabbageFiles[fileIndex].getFileNameWithoutExtension());
-			
-
-				menu.addSubMenu(subFolders[subs].getFileNameWithoutExtension(), subMenu);	
-		}	
-
+        {
+            cUtils::debug(subFolders[subs].getFullPathName());
+            fileCnt = cabbageFiles.size();
+            subFolders[subs].findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
+            subMenu.clear();
+            
+            for (int fileIndex=fileCnt+1; fileIndex < cabbageFiles.size(); fileIndex++)
+                subMenu.addItem (fileIndex+1, cabbageFiles[fileIndex].getFileNameWithoutExtension());
+            
+            
+            menu.addSubMenu(subFolders[subs].getFileNameWithoutExtension(), subMenu);	
+        }	
+        
         subMenu.clear();
-	}
-
-		
-	menu.addSeparator();
-	menu.setLookAndFeel(&this->getLookAndFeel());
-	m.addSubMenu("Cabbage files", menu);
+    }
+    
+    
+    menu.addSeparator();
+    menu.setLookAndFeel(&this->getLookAndFeel());
+    m.addSubMenu("Cabbage files", menu);
 
 }
 

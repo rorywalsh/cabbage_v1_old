@@ -36,20 +36,20 @@ CsoundCodeEditor::CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTo
     editor[currentEditor]->getDocument().setSavePoint();
 
     openFiles.add("CABBAGE_CSOUND_FILE");
-	
-	helpComp = new HelpComp();
-	searchReplaceComp = new SearchReplaceComp();
-	
+
+    helpComp = new HelpComp();
+    searchReplaceComp = new SearchReplaceComp();
+
 #ifndef CABBAGE_HOST
-	addAndMakeVisible(searchReplaceComp);
-	searchReplaceComp->setVisible(true);
+    addAndMakeVisible(searchReplaceComp);
+    searchReplaceComp->setVisible(true);
 #endif
 
-	
+
     addAndMakeVisible(helpComp);
-	helpComp->setVisible(false);
+    helpComp->setVisible(false);
     searchReplaceComp->addChangeListener(this);
-    
+
 
     editor[currentEditor]->addChangeListener(this);
     editor[currentEditor]->addActionListener(this);
@@ -164,7 +164,7 @@ void CsoundCodeEditor::resized()
 void CsoundCodeEditor::paint(Graphics& g)
 {
     g.fillAll(cUtils::getDarkerBackgroundSkin());
-	
+
 #ifndef CABBAGE_HOST
     if(editor[currentEditor] != 0)
     {
@@ -496,17 +496,17 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
 {
     if(message.contains("helpDisplay"))
     {
-	#ifdef CABBAGE_HOST
-		helpComp->setVisible(true);
-		resized();
-	#else
+#ifdef CABBAGE_HOST
+        helpComp->setVisible(true);
+        resized();
+#else
         if(!helpComp->isVisible())
         {
             searchReplaceComp->setVisible(false);
             helpComp->setVisible(true);
             resized();
         }
-	#endif
+#endif
     }
     else if(message.contains("InstrumentBreakpoint"))
     {

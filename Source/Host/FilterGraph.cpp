@@ -41,25 +41,25 @@ FilterGraph::FilterGraph (AudioPluginFormatManager& formatManager_)
                          filenameWildcard,
                          "Load a filter graph",
                          "Save a filter graph"),
-    formatManager (formatManager_), 
-	lastUID (0),
-	audioPlayHead(),
-	timeInSeconds(0),
-	currentBPM(60),
-	playPosition(0),
-	PPQN(24),
-	ppqPosition(1),
-	automationNodeID(-1),
-	subTicks(0)
+    formatManager (formatManager_),
+    lastUID (0),
+    audioPlayHead(),
+    timeInSeconds(0),
+    currentBPM(60),
+    playPosition(0),
+    PPQN(24),
+    ppqPosition(1),
+    automationNodeID(-1),
+    subTicks(0)
 {
-	startTimer(0);
-	stopTimer();	
+    startTimer(0);
+    stopTimer();
     setChangedFlag (false);
 }
 
 FilterGraph::~FilterGraph()
 {
-	stopTimer();
+    stopTimer();
     graph.clear();
 }
 
@@ -86,26 +86,26 @@ const AudioProcessorGraph::Node::Ptr FilterGraph::getNodeForId (const uint32 uid
 //==============================================================================
 void FilterGraph::addNodesToAutomationTrack(int32 id, int index)
 {
-	//if there is an automation device, otherwise create one. Only one permitted in each patch..
-	if(getNodeForId(automationNodeID))
-	{
-	AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
-	node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);	
-	}
-	else
-	{
-		PluginDescription descript;	
-		descript.descriptiveName = "Automation track";
-		descript.name = "AutomationTrack";
-		descript.pluginFormatName = "AutomationTrack";		
-		descript.numInputChannels = 2;		
-		descript.numOutputChannels = 2;
-		addFilter(&descript, 0.50f, 0.5f);
+    //if there is an automation device, otherwise create one. Only one permitted in each patch..
+    if(getNodeForId(automationNodeID))
+    {
+        AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
+        node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);
+    }
+    else
+    {
+        PluginDescription descript;
+        descript.descriptiveName = "Automation track";
+        descript.name = "AutomationTrack";
+        descript.pluginFormatName = "AutomationTrack";
+        descript.numInputChannels = 2;
+        descript.numOutputChannels = 2;
+        addFilter(&descript, 0.50f, 0.5f);
 
-		AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
-		node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);	
+        AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
+        node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);
 
-	}
+    }
 
 }
 
@@ -114,175 +114,177 @@ void FilterGraph::addNodesToAutomationTrack(int32 id, int index)
 //==============================================================================
 void FilterGraph::setIsPlaying(bool value, bool reset)
 {
-	audioPlayHead.setIsPlaying(value);
-	if(value == true)
-	{
-		startTimer(100*(60.f/currentBPM));
-	}
-	else
-		stopTimer();
-		
-	if(reset==true)
-	{
-		timeInSeconds=0;
-		audioPlayHead.setPPQPosition(0);
-		audioPlayHead.setTimeInSeconds(0);
-		ppqPosition=0;
-		timeInSeconds=0;
-		
-	}
+    audioPlayHead.setIsPlaying(value);
+    if(value == true)
+    {
+        startTimer(100*(60.f/currentBPM));
+    }
+    else
+        stopTimer();
+
+    if(reset==true)
+    {
+        timeInSeconds=0;
+        audioPlayHead.setPPQPosition(0);
+        audioPlayHead.setTimeInSeconds(0);
+        ppqPosition=0;
+        timeInSeconds=0;
+
+    }
 }
 //------------------------------------------
 void FilterGraph::setBPM(int bpm)
-{		
-	currentBPM = bpm;	
-	
-	if(isTimerRunning())
-	{
-		stopTimer();
-		startTimer(100*(60.f/currentBPM));
-	}
+{
+    currentBPM = bpm;
+
+    if(isTimerRunning())
+    {
+        stopTimer();
+        startTimer(100*(60.f/currentBPM));
+    }
 }
 //------------------------------------------
 void FilterGraph::hiResTimerCallback()
 {
-	if(playPosition==0)
-	{
-		timeInSeconds++;
-		audioPlayHead.setTimeInSeconds(timeInSeconds);
-	}
+    if(playPosition==0)
+    {
+        timeInSeconds++;
+        audioPlayHead.setTimeInSeconds(timeInSeconds);
+    }
 
-	
-	if(subTicks==0)
-	{
-		audioPlayHead.setPPQPosition(ppqPosition);
-		ppqPosition++;	
-	}
-	
-	subTicks = (subTicks > 9 ? 0 : subTicks+1);
-	playPosition = (playPosition > 1 ? 0 : playPosition+((float)getTimerInterval()/1000.f));	
+
+    if(subTicks==0)
+    {
+        audioPlayHead.setPPQPosition(ppqPosition);
+        ppqPosition++;
+    }
+
+    subTicks = (subTicks > 9 ? 0 : subTicks+1);
+    playPosition = (playPosition > 1 ? 0 : playPosition+((float)getTimerInterval()/1000.f));
 }
 
 AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* desc, int uid)
 {
-	AudioProcessorGraph::Node* node = nullptr;
-	String errorMessage;
-	
+    AudioProcessorGraph::Node* node = nullptr;
+    String errorMessage;
 
-	if(desc->pluginFormatName=="AutomationTrack")
-	{
-		if (AutomationProcessor* automation = new AutomationProcessor(this))
-		{
-			automation->setPlayConfigDetails(2,
-											2,
-											graph.getSampleRate(),
-											graph.getBlockSize());
 
-			if(uid!=-1)
-				node = graph.addNode (automation, uid);
-			else
-				node = graph.addNode (automation);
-				
-			automationNodeID = node->nodeId;
-			node->properties.set("pluginType", "AutomationTrack");
-			node->properties.set("pluginName", "AutomationTrack");
-			ScopedPointer<XmlElement> xmlElem;
-			xmlElem = desc->createXml();
-			String xmlText = xmlElem->createDocument("");
-			node->properties.set("pluginType", "AutomationTrack");
-			node->properties.set("pluginDesc", xmlText);
-			node->getProcessor()->setPlayHead(&audioPlayHead);
-			return node;
-		}
-	}
-	
-	if(desc->pluginFormatName=="SoundfilePlayer")
-	{
-		if (AudioFilePlaybackProcessor* soundfiler = new AudioFilePlaybackProcessor())
-		{
-			soundfiler->setPlayConfigDetails(2,
-											2,
-											graph.getSampleRate(),
-											graph.getBlockSize());
+    if(desc->pluginFormatName=="AutomationTrack")
+    {
+        if (AutomationProcessor* automation = new AutomationProcessor(this))
+        {
+            automation->setPlayConfigDetails(2,
+                                             2,
+                                             graph.getSampleRate(),
+                                             graph.getBlockSize());
 
-			if(uid!=-1)
-				node = graph.addNode (soundfiler, uid);
-			else
-				node = graph.addNode (soundfiler);
-				
-			node->properties.set("pluginType", "SoundfilePlayer");
-			node->properties.set("pluginName", "Soundfile Player");
-			ScopedPointer<XmlElement> xmlElem;
-			xmlElem = desc->createXml();
-			String xmlText = xmlElem->createDocument("");
-			node->properties.set("pluginDesc", xmlText);
-			node->getProcessor()->setPlayHead(&audioPlayHead);
-			return node;
-		}
-	}
-	
-	else if(desc->pluginFormatName=="Internal")
-	{
-			if (AudioPluginInstance* instance = formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
-			{
-			if(uid!=-1)										  
-				node = graph.addNode (instance, uid);
-			else
-				node = graph.addNode (instance);
+            if(uid!=-1)
+                node = graph.addNode (automation, uid);
+            else
+                node = graph.addNode (automation);
 
-			node->properties.set("pluginType", "Internal");
-			node->properties.set("pluginName", desc->name);
-			}
-	}
+            automationNodeID = node->nodeId;
+            node->properties.set("pluginType", "AutomationTrack");
+            node->properties.set("pluginName", "AutomationTrack");
+            ScopedPointer<XmlElement> xmlElem;
+            xmlElem = desc->createXml();
+            String xmlText = xmlElem->createDocument("");
+            node->properties.set("pluginType", "AutomationTrack");
+            node->properties.set("pluginDesc", xmlText);
+            node->getProcessor()->setPlayHead(&audioPlayHead);
+            return node;
+        }
+    }
 
-	else if(desc->pluginFormatName=="Cabbage")
-	{
-		CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc->fileOrIdentifier, false, AUDIO_PLUGIN);
-		int numChannels = cUtils::getNchnlsFromFile(desc->fileOrIdentifier);
-		//create GUI for selected plugin...
-		cabbageNativePlugin->createGUI(File(desc->fileOrIdentifier).loadFileAsString(), true);			
-		cabbageNativePlugin->setPlayConfigDetails(numChannels, 
-												  numChannels, 
-												  cabbageNativePlugin->getCsoundSamplingRate(),
-												  cabbageNativePlugin->getCsoundKsmpsSize());
-												  
-		if(uid!=-1)										  
-			node = graph.addNode (cabbageNativePlugin, uid);	
-		else
-			node = graph.addNode (cabbageNativePlugin);	
-			
-		node->properties.set("pluginName", cabbageNativePlugin->getPluginName());
-		//native Cabbage plugins don't have plugin descriptors, so we create one here..
-		ScopedPointer<XmlElement> xmlElem;
-		xmlElem = desc->createXml();
-		String xmlText = xmlElem->createDocument("");
-		node->properties.set("pluginType", "Cabbage");
-		node->properties.set("pluginDesc", xmlText);
-		node->getProcessor()->setPlayHead(&audioPlayHead);
-	}
-	
-	else //all third party plugins get wrapped into a PluginWrapper...
-	{
-		if(PluginWrapper* instance = new PluginWrapper(formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
-		{
-			instance->setPlayConfigDetails( desc->numInputChannels,
-											desc->numOutputChannels,
-											graph.getSampleRate(),
-											graph.getBlockSize());
-			instance->setPluginName(desc->name);
-			//cUtils::debug("num params", instance->getNumParameters());
-			if(uid!=-1)										  
-				node = graph.addNode (instance, uid);	
-			else
-				node = graph.addNode (instance);				
+    if(desc->pluginFormatName=="SoundfilePlayer")
+    {
+        if (AudioFilePlaybackProcessor* soundfiler = new AudioFilePlaybackProcessor())
+        {
+            soundfiler->setPlayConfigDetails(2,
+                                             2,
+                                             graph.getSampleRate(),
+                                             graph.getBlockSize());
+											 
+			soundfiler->setupAudioFile(File(desc->fileOrIdentifier));
 
-			node->properties.set("pluginType", "ThirdParty");
-			node->getProcessor()->setPlayHead(&audioPlayHead);
-			node->properties.set("pluginName", desc->name);
-		}
-	}
-		
-	return node;
+            if(uid!=-1)
+                node = graph.addNode (soundfiler, uid);
+            else
+                node = graph.addNode (soundfiler);
+
+            node->properties.set("pluginType", "SoundfilePlayer");
+            node->properties.set("pluginName", "Soundfile Player");
+            ScopedPointer<XmlElement> xmlElem;
+            xmlElem = desc->createXml();
+            String xmlText = xmlElem->createDocument("");
+            node->properties.set("pluginDesc", xmlText);
+            node->getProcessor()->setPlayHead(&audioPlayHead);
+            return node;
+        }
+    }
+
+    else if(desc->pluginFormatName=="Internal")
+    {
+        if (AudioPluginInstance* instance = formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
+        {
+            if(uid!=-1)
+                node = graph.addNode (instance, uid);
+            else
+                node = graph.addNode (instance);
+
+            node->properties.set("pluginType", "Internal");
+            node->properties.set("pluginName", desc->name);
+        }
+    }
+
+    else if(desc->pluginFormatName=="Cabbage")
+    {
+        CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc->fileOrIdentifier, false, AUDIO_PLUGIN);
+        int numChannels = cUtils::getNchnlsFromFile(desc->fileOrIdentifier);
+        //create GUI for selected plugin...
+        cabbageNativePlugin->createGUI(File(desc->fileOrIdentifier).loadFileAsString(), true);
+        cabbageNativePlugin->setPlayConfigDetails(numChannels,
+                numChannels,
+                cabbageNativePlugin->getCsoundSamplingRate(),
+                cabbageNativePlugin->getCsoundKsmpsSize());
+
+        if(uid!=-1)
+            node = graph.addNode (cabbageNativePlugin, uid);
+        else
+            node = graph.addNode (cabbageNativePlugin);
+
+        node->properties.set("pluginName", cabbageNativePlugin->getPluginName());
+        //native Cabbage plugins don't have plugin descriptors, so we create one here..
+        ScopedPointer<XmlElement> xmlElem;
+        xmlElem = desc->createXml();
+        String xmlText = xmlElem->createDocument("");
+        node->properties.set("pluginType", "Cabbage");
+        node->properties.set("pluginDesc", xmlText);
+        node->getProcessor()->setPlayHead(&audioPlayHead);
+    }
+
+    else //all third party plugins get wrapped into a PluginWrapper...
+    {
+        if(PluginWrapper* instance = new PluginWrapper(formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage)))
+        {
+            instance->setPlayConfigDetails( desc->numInputChannels,
+                                            desc->numOutputChannels,
+                                            graph.getSampleRate(),
+                                            graph.getBlockSize());
+            instance->setPluginName(desc->name);
+            //cUtils::debug("num params", instance->getNumParameters());
+            if(uid!=-1)
+                node = graph.addNode (instance, uid);
+            else
+                node = graph.addNode (instance);
+
+            node->properties.set("pluginType", "ThirdParty");
+            node->getProcessor()->setPlayHead(&audioPlayHead);
+            node->properties.set("pluginName", desc->name);
+        }
+    }
+
+    return node;
 }
 
 //==============================================================================
@@ -292,17 +294,17 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
     {
         AudioProcessorGraph::Node* node = nullptr;
 
-		node = createNode(desc);
-					
+        node = createNode(desc);
+
         if (node != nullptr)
         {
             node->properties.set ("x", x);
             node->properties.set ("y", y);
-			lastNodeID = node->nodeId;
-			//create node listener with unique nodeID;
-			audioProcessorListeners.add(new NodeAudioProcessorListener(node->nodeId));
-			audioProcessorListeners[audioProcessorListeners.size()-1]->addChangeListener(this);
-			node->getProcessor()->addListener(audioProcessorListeners[audioProcessorListeners.size()-1]);
+            lastNodeID = node->nodeId;
+            //create node listener with unique nodeID;
+            audioProcessorListeners.add(new NodeAudioProcessorListener(node->nodeId));
+            audioProcessorListeners[audioProcessorListeners.size()-1]->addChangeListener(this);
+            node->getProcessor()->addListener(audioProcessorListeners[audioProcessorListeners.size()-1]);
             changed();
         }
         else
@@ -317,18 +319,18 @@ void FilterGraph::addFilter (const PluginDescription* desc, double x, double y)
 //==============================================================================
 String FilterGraph::findControllerForparameter(int32 nodeID, int paramIndex)
 {
-	for(int i=0;i<midiMappings.size();i++)
-	{
-		//cUtils::debug(midiMappings.getReference(i).nodeId);
-		//cUtils::debug(midiMappings.getReference(i).parameterIndex);
-		
-		if(midiMappings.getReference(i).nodeId==nodeID && midiMappings.getReference(i).parameterIndex==paramIndex)
-		{
-			String midiInfo = "CC:"+String(midiMappings.getReference(i).controller)+" Chan:"+String(midiMappings.getReference(i).channel);
-			return midiInfo;
-		}
-	}
-	return String::empty;
+    for(int i=0; i<midiMappings.size(); i++)
+    {
+        //cUtils::debug(midiMappings.getReference(i).nodeId);
+        //cUtils::debug(midiMappings.getReference(i).parameterIndex);
+
+        if(midiMappings.getReference(i).nodeId==nodeID && midiMappings.getReference(i).parameterIndex==paramIndex)
+        {
+            String midiInfo = "CC:"+String(midiMappings.getReference(i).controller)+" Chan:"+String(midiMappings.getReference(i).channel);
+            return midiInfo;
+        }
+    }
+    return String::empty;
 }
 
 
@@ -446,7 +448,7 @@ String FilterGraph::getDocumentTitle()
 
 Result FilterGraph::loadDocument (const File& file)
 {
-	graph.clear();
+    graph.clear();
     XmlDocument doc (file);
     ScopedPointer<XmlElement> xml (doc.getDocumentElement());
 
@@ -494,22 +496,22 @@ static XmlElement* createNodeXml (AudioProcessorGraph::Node* const node) noexcep
     PluginDescription pd;
 
     if(AudioPluginInstance* plugin = dynamic_cast <AudioPluginInstance*> (node->getProcessor()))
-		plugin->fillInPluginDescription (pd);
-	else if(PluginWrapper* plugin = dynamic_cast <PluginWrapper*> (node->getProcessor()))
-		plugin->fillInPluginDescription (pd);
-	else if(dynamic_cast <CabbagePluginAudioProcessor*> (node->getProcessor())||
-			dynamic_cast <AudioFilePlaybackProcessor*> (node->getProcessor())||
-			dynamic_cast <AutomationProcessor*> (node->getProcessor()))
-	{
-		//grab description of native plugin for saving...
-		String xmlPluginDescriptor = node->properties.getWithDefault("pluginDesc", "").toString();
-		//cUtils::debug(xmlPluginDescriptor);
-		XmlElement* xmlElem;
-		xmlElem = XmlDocument::parse(xmlPluginDescriptor);
-		pd.loadFromXml(*xmlElem);
-	}
-	
-		
+        plugin->fillInPluginDescription (pd);
+    else if(PluginWrapper* plugin = dynamic_cast <PluginWrapper*> (node->getProcessor()))
+        plugin->fillInPluginDescription (pd);
+    else if(dynamic_cast <CabbagePluginAudioProcessor*> (node->getProcessor())||
+    dynamic_cast <AudioFilePlaybackProcessor*> (node->getProcessor())||
+    dynamic_cast <AutomationProcessor*> (node->getProcessor()))
+    {
+        //grab description of native plugin for saving...
+        String xmlPluginDescriptor = node->properties.getWithDefault("pluginDesc", "").toString();
+        //cUtils::debug(xmlPluginDescriptor);
+        XmlElement* xmlElem;
+        xmlElem = XmlDocument::parse(xmlPluginDescriptor);
+        pd.loadFromXml(*xmlElem);
+    }
+
+
     XmlElement* e = new XmlElement ("FILTER");
     e->setAttribute ("uid", (int) node->nodeId);
     e->setAttribute ("x", node->properties ["x"].toString());
@@ -539,10 +541,10 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
             break;
     }
 
-	AudioProcessorGraph::Node::Ptr node = nullptr;
-	
-	String errorMessage;
-	node = createNode(&desc, xml.getIntAttribute ("uid"));
+    AudioProcessorGraph::Node::Ptr node = nullptr;
+
+    String errorMessage;
+    node = createNode(&desc, xml.getIntAttribute ("uid"));
 
     if (const XmlElement* const state = xml.getChildByName ("STATE"))
     {
@@ -556,7 +558,7 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
     node->properties.set ("y", xml.getDoubleAttribute ("y"));
     node->properties.set ("uiLastX", xml.getIntAttribute ("uiLastX"));
     node->properties.set ("uiLastY", xml.getIntAttribute ("uiLastY"));
-	node->properties.set("pluginName", desc.name);
+    node->properties.set("pluginName", desc.name);
 
 }
 
@@ -564,7 +566,7 @@ void FilterGraph::createNodeFromXml (const XmlElement& xml)
 XmlElement* FilterGraph::createXml() const
 {
     XmlElement* xml = new XmlElement ("FILTERGRAPH");
-	//cUtils::debug("graph.getNumNodes()", graph.getNumNodes());
+    //cUtils::debug("graph.getNumNodes()", graph.getNumNodes());
 
     for (int i = 0; i < graph.getNumNodes(); ++i)
         xml->addChildElement (createNodeXml (graph.getNode (i)));
@@ -585,16 +587,16 @@ XmlElement* FilterGraph::createXml() const
 
     for (int i = 0; i < midiMappings.size(); ++i)
     {
-		//add midi mapping to here, might not be easy...
+        //add midi mapping to here, might not be easy...
         XmlElement* e = new XmlElement ("MIDI_MAPPINGS");
         e->setAttribute ("NodeId", midiMappings.getReference(i).nodeId);
-		e->setAttribute ("ParameterIndex", midiMappings.getReference(i).parameterIndex);
-		e->setAttribute ("Channel", midiMappings.getReference(i).channel);
-		e->setAttribute ("Controller", midiMappings.getReference(i).controller);
-		
+        e->setAttribute ("ParameterIndex", midiMappings.getReference(i).parameterIndex);
+        e->setAttribute ("Channel", midiMappings.getReference(i).channel);
+        e->setAttribute ("Controller", midiMappings.getReference(i).controller);
+
         xml->addChildElement (e);
     }
-	
+
     return xml;
 }
 
@@ -610,62 +612,62 @@ void FilterGraph::restoreFromXml (const XmlElement& xml)
 
     forEachXmlChildElementWithTagName (xml, e, "CONNECTION")
     {
-		//cUtils::debug("srcFilter", e->getIntAttribute ("srcFilter"));
+        //cUtils::debug("srcFilter", e->getIntAttribute ("srcFilter"));
         addConnection ((uint32) e->getIntAttribute ("srcFilter"),
                        e->getIntAttribute ("srcChannel"),
                        (uint32) e->getIntAttribute ("dstFilter"),
                        e->getIntAttribute ("dstChannel"));
     }
-	graph.removeIllegalConnections();
-	
+    graph.removeIllegalConnections();
+
     forEachXmlChildElementWithTagName (xml, e, "MIDI_MAPPINGS")
     {
-		midiMappings.add(CabbageMidiMapping(e->getIntAttribute ("NodeId"), 
-											e->getIntAttribute ("ParameterIndex"), 
-											e->getIntAttribute ("Channel"),
-											e->getIntAttribute ("Controller")));
-    }		
+        midiMappings.add(CabbageMidiMapping(e->getIntAttribute ("NodeId"),
+                                            e->getIntAttribute ("ParameterIndex"),
+                                            e->getIntAttribute ("Channel"),
+                                            e->getIntAttribute ("Controller")));
+    }
 }
 
 void FilterGraph::updateAutomatedNodes(int nodeId, int parameterIndex, float value)
 {
-	graph.getNodeForId(nodeId)->getProcessor()->setParameterNotifyingHost(parameterIndex, value);	
+    graph.getNodeForId(nodeId)->getProcessor()->setParameterNotifyingHost(parameterIndex, value);
 }
 
 
 void FilterGraph::changeListenerCallback(ChangeBroadcaster* source)
-{	
-	if(NodeAudioProcessorListener* listener = dynamic_cast<NodeAudioProcessorListener*>(source))
-	{
-		lastChangedNodeId = listener->nodeId;
-		lastChangedNodeParameter = listener->parameterIndex;
-	}
-	
-	else if(CabbagePropertiesPanel* props = dynamic_cast<CabbagePropertiesPanel*>(source))
-	{
-		CabbagePluginAudioProcessor* processor = dynamic_cast<CabbagePluginAudioProcessor*>(getNodeForId(this->getEditedNodeId())->getProcessor());
-		if(processor)
-		{
-			CabbagePluginAudioProcessorEditor* editor = (CabbagePluginAudioProcessorEditor*)processor->getActiveEditor();
-			if(editor)
-			{
-				editor->propsWindow->updatePropertyPanel(props);
-				editor->propsWindow->updateIdentifiers();
-			}				
-		}
-	}
+{
+    if(NodeAudioProcessorListener* listener = dynamic_cast<NodeAudioProcessorListener*>(source))
+    {
+        lastChangedNodeId = listener->nodeId;
+        lastChangedNodeParameter = listener->parameterIndex;
+    }
+
+    else if(CabbagePropertiesPanel* props = dynamic_cast<CabbagePropertiesPanel*>(source))
+    {
+        CabbagePluginAudioProcessor* processor = dynamic_cast<CabbagePluginAudioProcessor*>(getNodeForId(this->getEditedNodeId())->getProcessor());
+        if(processor)
+        {
+            CabbagePluginAudioProcessorEditor* editor = (CabbagePluginAudioProcessorEditor*)processor->getActiveEditor();
+            if(editor)
+            {
+                editor->propsWindow->updatePropertyPanel(props);
+                editor->propsWindow->updateIdentifiers();
+            }
+        }
+    }
 }
 
 void FilterGraph::actionListenerCallback (const String &message)
 {
-	sendActionMessage(message);
+    sendActionMessage(message);
 }
 //==========================================================================
 // parameter callback for node, used to map midi messages to parameters
 //==========================================================================
 void NodeAudioProcessorListener::audioProcessorParameterChanged(AudioProcessor* processor, int index, float newValue)
 {
-	parameterIndex = index;
-	sendChangeMessage();
+    parameterIndex = index;
+    sendChangeMessage();
 }
 

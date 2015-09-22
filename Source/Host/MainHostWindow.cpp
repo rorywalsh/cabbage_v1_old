@@ -79,8 +79,8 @@ private:
 MainHostWindow::MainHostWindow()
     : DocumentWindow (JUCEApplication::getInstance()->getApplicationName(), Colours::black,
                       DocumentWindow::allButtons),
-	deadMansPedalFile (getAppProperties().getUserSettings()
-                                      ->getFile().getSiblingFile ("RecentlyCrashedPluginsList"))
+    deadMansPedalFile (getAppProperties().getUserSettings()
+                       ->getFile().getSiblingFile ("RecentlyCrashedPluginsList"))
 {
     setColour(DocumentWindow::textColourId, Colours::whitesmoke);
     setColour(DocumentWindow::backgroundColourId, cUtils::getDarkerBackgroundSkin());
@@ -95,15 +95,15 @@ MainHostWindow::MainHostWindow()
     setResizable (true, false);
     setResizeLimits (500, 400, 10000, 10000);
     centreWithSize (800, 600);
-	
-	deviceManager.initialise(2, 2, savedAudioState, true);
-	
-	//deviceManager.initialiseWithDefaultDevices(8, 8);
-	
-	//if(!deviceManager.getCurrentAudioDevice())
-	//	deviceManager.initialiseWithDefaultDevices(2, 2);
-	
-	setContentOwned (new GraphDocumentComponent (formatManager, &deviceManager), false);
+
+    deviceManager.initialise(2, 2, savedAudioState, true);
+
+    //deviceManager.initialiseWithDefaultDevices(8, 8);
+
+    //if(!deviceManager.getCurrentAudioDevice())
+    //	deviceManager.initialiseWithDefaultDevices(2, 2);
+
+    setContentOwned (new GraphDocumentComponent (formatManager, &deviceManager), false);
 
     restoreWindowStateFromString (getAppProperties().getUserSettings()->getValue ("mainWindowPos"));
 
@@ -131,6 +131,11 @@ MainHostWindow::MainHostWindow()
 #endif
 
     getCommandManager().setFirstCommandTarget (this);
+	
+	String userDir = appProperties->getUserSettings()->getValue("CabbageFilePaths");
+	if(!File(userDir).exists())
+		cUtils::showMessage("There is no user directory set for Cabbage instruments. Please go to Preferences and select the directory/directories where you store your Cabbage files");
+
 }
 
 MainHostWindow::~MainHostWindow()
@@ -215,14 +220,14 @@ PopupMenu MainHostWindow::getMenuForIndex (int topLevelMenuIndex, const String& 
     }
     else if (topLevelMenuIndex == 1)
     {
-		menu.addCommandItem (&getCommandManager(), CommandIDs::viewSidepanel);
-		menu.addCommandItem (&getCommandManager(), CommandIDs::viewBottomPanel);
+        menu.addCommandItem (&getCommandManager(), CommandIDs::viewSidepanel);
+        menu.addCommandItem (&getCommandManager(), CommandIDs::viewBottomPanel);
     }
     else if (topLevelMenuIndex == 2)
     {
         // "Options" menu
-		menu.addCommandItem (&getCommandManager(), CommandIDs::preferences);
-		menu.addCommandItem (&getCommandManager(), CommandIDs::midiLearn);
+        menu.addCommandItem (&getCommandManager(), CommandIDs::preferences);
+        menu.addCommandItem (&getCommandManager(), CommandIDs::midiLearn);
         menu.addSeparator();
         menu.addCommandItem (&getCommandManager(), CommandIDs::showAboutBox);
     }
@@ -245,11 +250,11 @@ void MainHostWindow::menuItemSelected (int menuItemID, int /*topLevelMenuIndex*/
                                        ->getValue ("recentFilterGraphFiles"));
 
         if (graphEditor != nullptr && graphEditor->graph.saveIfNeededAndUserAgrees() == FileBasedDocument::savedOk)
-		{
+        {
             graphEditor->graph.loadFrom (recentFiles.getFile (menuItemID - 100), true);
-			graphEditor->refreshPluginsInSidebarPanel();
-			graphEditor->removeAllComponentsFromBottomPanel();
-		}
+            graphEditor->refreshPluginsInSidebarPanel();
+            graphEditor->removeAllComponentsFromBottomPanel();
+        }
     }
     else if (menuItemID >= 200 && menuItemID < 210)
     {
@@ -281,71 +286,129 @@ void MainHostWindow::createPlugin (const PluginDescription* desc, int x, int y)
 
 void MainHostWindow::addPluginsToMenu (PopupMenu& m) const
 {
-	PopupMenu menu;
+    PopupMenu menu;
     knownPluginList.addToMenu (menu, pluginSortMethod);
-	m.addSubMenu("Third Party", menu);
-	
-	menu.clear();
-	m.addSeparator();
+    m.addSubMenu("Third Party", menu);
+
+    menu.clear();
+    m.addSeparator();
     for (int i = 0; i < internalTypes.size(); ++i)
         menu.addItem (i + 9000, internalTypes.getUnchecked(i)->name);
-		
-	menu.addItem(10000, "Soundfile player");
-	//menu.addItem(10001, "Automation track");
 
-	m.addSubMenu("Devices", menu);
+    menu.addItem(10000, "Soundfile player");
+    //menu.addItem(10001, "Automation track");
+
+    m.addSubMenu("Devices", menu);
 }
 
-//add native filters to list of plugins. 
-void MainHostWindow::addCabbageNativePluginsToMenu (PopupMenu& m, Array<File> &cabbageFiles) const
+//add native filters to list of plugins.
+void MainHostWindow::addCabbagePluginsToMenu (PopupMenu& m, Array<File> &cabbageFiles) const
 {
-	int menuSize = m.getNumItems();
-	
-	PopupMenu menu;
-	PopupMenu subMenu;
-	int fileCnt=0;
-	
-	
-	String examplesDir;
-	//cUtils::debug("Example Directory:"+dir);
-	if(!File(examplesDir).exists())
-	{
-	#if defined(LINUX) || defined(MACOSX)
-		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
-	#else
-		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
-	#endif
-	}	
-	
-    
-    FileSearchPath filePaths(appProperties->getUserSettings()->getValue("CabbageFilePaths"));
-    
-    //add all files in root of specifed directories
-    for(int i=0;i<filePaths.getNumPaths();i++)
+    int menuSize = m.getNumItems();
+
+    PopupMenu menu;
+    PopupMenu subMenu;
+    int fileCnt=0;
+
+
+    String examplesDir;
+    //cUtils::debug("Example Directory:"+dir);
+    if(!File(examplesDir).exists())
     {
-        File pluginDir(filePaths[i]);
-        pluginDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
-        
+#if defined(LINUX) || defined(MACOSX)
+        examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
+#else
+        examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
+#endif
     }
-    
-    for (int i = 0; i < cabbageFiles.size(); ++i)
+
+
+	String userDir = appProperties->getUserSettings()->getValue("CabbageFilePaths");
+	if(File(userDir).exists())
+	{
+		FileSearchPath filePaths(appProperties->getUserSettings()->getValue("CabbageFilePaths"));
+		//cUtils::showMessage(appProperties->getUserSettings()->getValue("CabbageFilePaths"))
+
+		//add all files in root of specifed directories
+		for(int i=0; i<filePaths.getNumPaths(); i++)
+		{
+			File pluginDir(filePaths[i]);
+			pluginDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
+
+		}
+
+		for (int i = 0; i < cabbageFiles.size(); ++i)
+			menu.addItem (i+1, cabbageFiles[i].getFileNameWithoutExtension());
+
+
+		//fileCnt = cabbageFiles.size();
+
+		//increment menu size and serach recursively through all subfolders in specified dirs
+		for(int i=0; i<filePaths.getNumPaths(); i++)
+		{
+			Array<File> subFolders;
+			File searchDir(filePaths[i]);
+			subFolders.add(searchDir);
+			searchDir.findChildFiles(subFolders, File::findDirectories, true);
+
+			//remove parent dirs from array
+			for(int p=0; p<filePaths.getNumPaths(); p++)
+				subFolders.removeAllInstancesOf(filePaths[p]);
+
+			PopupMenu subMenu;
+			for (int subs = 0; subs < subFolders.size(); subs++)
+			{
+				cUtils::debug(subFolders[subs].getFullPathName());
+				fileCnt = cabbageFiles.size();
+				subFolders[subs].findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
+				subMenu.clear();
+
+				for (int fileIndex=fileCnt+1; fileIndex < cabbageFiles.size(); fileIndex++)
+					subMenu.addItem (fileIndex+1, cabbageFiles[fileIndex].getFileNameWithoutExtension());
+
+
+				menu.addSubMenu(subFolders[subs].getFileNameWithoutExtension(), subMenu);
+			}
+
+			subMenu.clear();
+		}
+
+
+		menu.addSeparator();
+		menu.setLookAndFeel(&this->getLookAndFeel());
+		m.addSubMenu("User", menu);
+	}
+	
+	int nonExamplesSize = cabbageFiles.size();
+
+	menu.clear();
+	FileSearchPath exampleFilePaths(examplesDir);
+    //add all files in root of specifed directories
+    for(int i=0; i<exampleFilePaths.getNumPaths(); i++)
+    {
+        File pluginDir(exampleFilePaths[i]);
+        pluginDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
+
+    }
+
+    for (int i = nonExamplesSize; i < cabbageFiles.size(); ++i)
         menu.addItem (i+1, cabbageFiles[i].getFileNameWithoutExtension());
-    
-    
+
+
     //fileCnt = cabbageFiles.size();
-    
+
     //increment menu size and serach recursively through all subfolders in specified dirs
-    for(int i=0;i<filePaths.getNumPaths();i++)
+    for(int i=0; i<exampleFilePaths.getNumPaths(); i++)
     {
         Array<File> subFolders;
-        File searchDir(filePaths[i]);
+        File searchDir(exampleFilePaths[i]);
         subFolders.add(searchDir);
         searchDir.findChildFiles(subFolders, File::findDirectories, true);
-        
+
         //remove parent dirs from array
-        for(int p=0;p<filePaths.getNumPaths();p++)
-            subFolders.removeAllInstancesOf(filePaths[p]);
-        
+        for(int p=0; p<exampleFilePaths.getNumPaths(); p++)
+            subFolders.removeAllInstancesOf(exampleFilePaths[p]);
+
         PopupMenu subMenu;
         for (int subs = 0; subs < subFolders.size(); subs++)
         {
@@ -353,22 +416,18 @@ void MainHostWindow::addCabbageNativePluginsToMenu (PopupMenu& m, Array<File> &c
             fileCnt = cabbageFiles.size();
             subFolders[subs].findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
             subMenu.clear();
-            
+
             for (int fileIndex=fileCnt+1; fileIndex < cabbageFiles.size(); fileIndex++)
                 subMenu.addItem (fileIndex+1, cabbageFiles[fileIndex].getFileNameWithoutExtension());
-            
-            
-            menu.addSubMenu(subFolders[subs].getFileNameWithoutExtension(), subMenu);	
-        }	
-        
+
+
+            menu.addSubMenu(subFolders[subs].getFileNameWithoutExtension(), subMenu);
+        }
+
         subMenu.clear();
     }
-    
-    
-    menu.addSeparator();
-    menu.setLookAndFeel(&this->getLookAndFeel());
-    m.addSubMenu("Cabbage files", menu);
 
+	m.addSubMenu("Native", menu);
 }
 
 const PluginDescription* MainHostWindow::getChosenType (const int menuID) const
@@ -394,11 +453,11 @@ void MainHostWindow::getAllCommands (Array <CommandID>& commands)
                               CommandIDs::showPluginListEditor,
                               CommandIDs::showAudioSettings,
                               CommandIDs::showAboutBox,
-							  CommandIDs::preferences,
-							  CommandIDs::viewSidepanel,
-							  CommandIDs::viewBottomPanel,
-							  CommandIDs::midiLearn,
-							  CommandIDs::setCabbageFileDirectory
+                              CommandIDs::preferences,
+                              CommandIDs::viewSidepanel,
+                              CommandIDs::viewBottomPanel,
+                              CommandIDs::midiLearn,
+                              CommandIDs::setCabbageFileDirectory
                             };
 
     commands.addArray (ids, numElementsInArray (ids));
@@ -441,10 +500,10 @@ void MainHostWindow::getCommandInfo (const CommandID commandID, ApplicationComma
         result.addDefaultKeypress ('a', ModifierKeys::commandModifier);
         break;
 
-	case CommandIDs::setCabbageFileDirectory:
+    case CommandIDs::setCabbageFileDirectory:
         result.setInfo ("Set the Cabbage plugin directory", String::empty, category, 0);
         break;
-		
+
     case CommandIDs::showAboutBox:
         result.setInfo ("About...", String::empty, category, 0);
         break;
@@ -455,19 +514,19 @@ void MainHostWindow::getCommandInfo (const CommandID commandID, ApplicationComma
 
     case CommandIDs::viewSidepanel:
         result.setInfo ("View Sidepanel", String::empty, category, 0);
-		result.defaultKeypresses.add (KeyPress('l', ModifierKeys::commandModifier, 0));
+        result.defaultKeypresses.add (KeyPress('l', ModifierKeys::commandModifier, 0));
         break;
 
     case CommandIDs::viewBottomPanel:
         result.setInfo ("View Bottom Panel", String::empty, category, 0);
-		result.defaultKeypresses.add (KeyPress('b', ModifierKeys::commandModifier, 0));
+        result.defaultKeypresses.add (KeyPress('b', ModifierKeys::commandModifier, 0));
         break;
 
     case CommandIDs::midiLearn:
         result.setInfo ("MIDI Learn", String::empty, category, 0);
-		result.defaultKeypresses.add (KeyPress('m', ModifierKeys::commandModifier, 0));
+        result.defaultKeypresses.add (KeyPress('m', ModifierKeys::commandModifier, 0));
         break;
-		
+
     default:
         break;
     }
@@ -477,20 +536,20 @@ bool MainHostWindow::perform (const InvocationInfo& info)
 {
 
     GraphDocumentComponent* const graphEditor = getGraphDocument();
-	String credits;
-	String dir = appProperties->getUserSettings()->getValue("CabbagePluginDirectory", "");
-	FileChooser browser(String("Please select the Cabbage Plugin directoy..."), File(dir), String("*.csd"));
-	
+    String credits;
+    String dir = appProperties->getUserSettings()->getValue("CabbagePluginDirectory", "");
+    FileChooser browser(String("Please select the Cabbage Plugin directoy..."), File(dir), String("*.csd"));
+
     switch (info.commandID)
     {
     case CommandIDs::open:
         if (graphEditor != nullptr && graphEditor->graph.saveIfNeededAndUserAgrees() == FileBasedDocument::savedOk)
-		{
+        {
             graphEditor->graph.loadFromUserSpecifiedFile (true);
-			graphEditor->removeAllComponentsFromBottomPanel();
-			graphEditor->refreshPluginsInSidebarPanel();
-			
-		}
+            graphEditor->removeAllComponentsFromBottomPanel();
+            graphEditor->refreshPluginsInSidebarPanel();
+
+        }
         break;
 
     case CommandIDs::save:
@@ -514,31 +573,31 @@ bool MainHostWindow::perform (const InvocationInfo& info)
         showAudioSettings();
         break;
 
-	case CommandIDs::setCabbageFileDirectory:
-		if(browser.browseForDirectory())
-			appProperties->getUserSettings()->setValue("CabbagePluginDirectory", browser.getResult().getFullPathName());	
-		break;
-		
+    case CommandIDs::setCabbageFileDirectory:
+        if(browser.browseForDirectory())
+            appProperties->getUserSettings()->setValue("CabbagePluginDirectory", browser.getResult().getFullPathName());
+        break;
+
     case CommandIDs::showAboutBox:
-		cUtils::showMessage("About", "Cabbage Studio v0.1 Beta"); 
+        cUtils::showMessage("About", "Cabbage Studio v0.1 Beta");
         break;
 
     case CommandIDs::viewSidepanel:
         graphEditor->showSidebarPanel(!graphEditor->isSidebarPanelShowing());
         break;
-		
+
     case CommandIDs::viewBottomPanel:
         graphEditor->showBottomPanel(!graphEditor->isBottomPanelShowing());
         break;
-		
-	case CommandIDs::preferences:
-		launchPreferencesDialogue();
-        break;	
 
-	case CommandIDs::midiLearn:
-		graphEditor->toggleMIDILearn();
-        break;	
-		
+    case CommandIDs::preferences:
+        launchPreferencesDialogue();
+        break;
+
+    case CommandIDs::midiLearn:
+        graphEditor->toggleMIDILearn();
+        break;
+
     default:
         return false;
     }
@@ -548,17 +607,17 @@ bool MainHostWindow::perform (const InvocationInfo& info)
 
 void MainHostWindow::launchPreferencesDialogue()
 {
-	CabbageAudioDeviceSelectorComponent* audioSettingsComp = new CabbageAudioDeviceSelectorComponent(deviceManager,
-																					0, 32,	0, 32, true, true, true, false);
-	audioSettingsComp->setSize (500, 450);
-	CabbagePluginListComponent* pluginList = new CabbagePluginListComponent(formatManager,
-																			knownPluginList,
-																			deadMansPedalFile,
-																			getAppProperties().getUserSettings());		
-	ScopedPointer<CabbagePreferences> prefWindow;
-	prefWindow = new CabbagePreferences();	
-	prefWindow->addComponent("pluginList", pluginList);
-	prefWindow->addComponent("audioSelector", audioSettingsComp);
+    CabbageAudioDeviceSelectorComponent* audioSettingsComp = new CabbageAudioDeviceSelectorComponent(deviceManager,
+            0, 32,	0, 32, true, true, true, false);
+    audioSettingsComp->setSize (500, 450);
+    CabbagePluginListComponent* pluginList = new CabbagePluginListComponent(formatManager,
+            knownPluginList,
+            deadMansPedalFile,
+            getAppProperties().getUserSettings());
+    ScopedPointer<CabbagePreferences> prefWindow;
+    prefWindow = new CabbagePreferences();
+    prefWindow->addComponent("pluginList", pluginList);
+    prefWindow->addComponent("audioSelector", audioSettingsComp);
 
     DialogWindow::showModalDialog("Preferences", prefWindow, this, Colours::black, true);
 
@@ -607,10 +666,12 @@ bool MainHostWindow::isInterestedInFileDrag (const StringArray&)
 
 void MainHostWindow::fileDragEnter (const StringArray&, int, int)
 {
+	
 }
 
 void MainHostWindow::fileDragMove (const StringArray&, int, int)
 {
+	
 }
 
 void MainHostWindow::fileDragExit (const StringArray&)

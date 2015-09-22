@@ -87,12 +87,7 @@ public:
     }
 
 	
-	void itemDropped (const DragAndDropTarget::SourceDetails& dragSourceDetails)
-	{
-	//	if(FileTreeComponent* fileComp = dynamic_cast<FileTreeComponent*>(dragSourceDetails.sourceComponent.get()))			
-	//		cUtils::showMessage(fileComp->getSelectedFile().getFullPathName());	
-	}
-	
+	void itemDropped (const DragAndDropTarget::SourceDetails& dragSourceDetails);	
     void updateComponents();
     void findLassoItemsInArea (Array <FilterComponent*>& results, const Rectangle<int>& area);
 

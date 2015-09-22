@@ -19,7 +19,7 @@
 
 #include "CodeWindow.h"
 
-#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) 
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
 ApplicationProperties* appProperties = nullptr;
 #endif
 
@@ -33,20 +33,20 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
     firstTime(true),
     font(String("Courier New"), 15, 1),
     isColumnModeEnabled(false),
-	isEditModeEnabled(false),
+    isEditModeEnabled(false),
     isInstrTabEnabled(false)
 {
-	
+
 #ifndef Cabbage_Build_Standalone
-	PropertiesFile::Options options;
-	options.applicationName     = "Cabbage";
-	options.filenameSuffix      = "settings";
-	options.osxLibrarySubFolder = "Preferences";
-	appProperties = new ApplicationProperties();
-	//set fallback file for default properties...
-	appProperties->setStorageParameters (options);	
+    PropertiesFile::Options options;
+    options.applicationName     = "Cabbage";
+    options.filenameSuffix      = "settings";
+    options.osxLibrarySubFolder = "Preferences";
+    appProperties = new ApplicationProperties();
+    //set fallback file for default properties...
+    appProperties->setStorageParameters (options);
 #endif
-	
+
     setApplicationCommandManagerToWatch(&commandManager);
     commandManager.registerAllCommandsForTarget(this);
     addKeyListener(commandManager.getKeyMappings());
@@ -59,15 +59,15 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
     setSize(1200, 800);
 
     splitBottomWindow = new SplitComponent(*csoundOutputComponent, *csoundDebuggerComponent, true);
-	#ifdef CABBAGE_HOST
-		splitBottomWindow->SetSplitBarPosition(getWidth()/2);
-	#else
-		splitBottomWindow->SetSplitBarPosition(getWidth()/2);
-	#endif
+#ifdef CABBAGE_HOST
+    splitBottomWindow->SetSplitBarPosition(getWidth()/2);
+#else
+    splitBottomWindow->SetSplitBarPosition(getWidth()/2);
+#endif
     splitWindow = new SplitComponent(*textEditor, *splitBottomWindow, false);
     splitWindow->SetFitToParent(false);
     textEditor->editor[textEditor->currentEditor]->addActionListener(this);
-	//splitBottomWindow->SetSplitBarPosition(getWidth());
+    //splitBottomWindow->SetSplitBarPosition(getWidth());
 
     this->setTitleBarHeight(20);
     this->setColour(DocumentWindow::backgroundColourId, Colour(20, 20, 20));
@@ -110,17 +110,17 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
         splitWindow->SetSplitBarPosition(this->getHeight()-(this->getHeight()/4));
 
     setContentNonOwned(splitWindow, false);
-	showEditorConsole();
+    showEditorConsole();
 
 }
 
 //==============================================================================
 CodeWindow::~CodeWindow()
 {
-#ifndef Cabbage_Build_Standalone 	
-	deleteAndZero(appProperties);
-	appProperties = nullptr;
-#endif	
+#ifndef Cabbage_Build_Standalone
+    deleteAndZero(appProperties);
+    appProperties = nullptr;
+#endif
     setMenuBar(nullptr);
     setApplicationCommandManagerToWatch(nullptr);
     commandManager.deleteInstance();
@@ -131,10 +131,10 @@ void CodeWindow::showEditorConsole()
 {
     if(cUtils::getPreference(appProperties, "ShowEditorConsole")==1)
     {
-       splitWindow->SetSplitBarPosition(getHeight()-(getHeight()/4));
-	   //splitBottomWindow->SetSplitBarPosition(getWidth());
+        splitWindow->SetSplitBarPosition(getHeight()-(getHeight()/4));
+        //splitBottomWindow->SetSplitBarPosition(getWidth());
 #ifdef BUILD_DEBUGGER
-       // splitBottomWindow->SetSplitBarPosition(getWidth()/2);
+        // splitBottomWindow->SetSplitBarPosition(getWidth()/2);
 #endif
     }
     else
@@ -160,7 +160,7 @@ void CodeWindow::getAllCommands (Array <CommandID>& commands)
         CommandIDs::fileOpen,
         CommandIDs::fileSave,
         CommandIDs::fileSaveAs,
-		CommandIDs::fileSaveAndClose,
+        CommandIDs::fileSaveAndClose,
         CommandIDs::fileCloseAux,
         CommandIDs::fileQuit,
         CommandIDs::fileKeyboardShorts,
@@ -173,7 +173,7 @@ void CodeWindow::getAllCommands (Array <CommandID>& commands)
         CommandIDs::editToggleComments,
         CommandIDs::editZoomIn,
         CommandIDs::editZoomOut,
-		CommandIDs::editMode,
+        CommandIDs::editMode,
         CommandIDs::whiteBackground,
         CommandIDs::blackBackground,
         CommandIDs::insertFromRepo,
@@ -250,7 +250,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
         result.setInfo (String("Open Auxiliary file"), String("Open a file"), CommandCategories::file, 0);
 #else
         result.setInfo (String("Open file"), String("Open a file"), CommandCategories::file, 0);
-#endif	
+#endif
         result.addDefaultKeypress ('o', ModifierKeys::commandModifier);
         break;
     case CommandIDs::fileSave:
@@ -322,7 +322,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
         result.setInfo (String("Edit mode"), String("Edit Mode"), CommandCategories::edit, 0);
         result.setTicked(isEditModeEnabled);
         result.addDefaultKeypress ('e', ModifierKeys::commandModifier);
-		break;
+        break;
     case CommandIDs::whiteBackground:
         result.setInfo (String("White background"), String("White scheme"), CommandCategories::edit, 0);
         break;
@@ -436,7 +436,7 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
 
         m1.addCommandItem(&commandManager, CommandIDs::fileSave);
         m1.addCommandItem(&commandManager, CommandIDs::fileSaveAs);
-		m1.addCommandItem(&commandManager, CommandIDs::fileSaveAndClose);
+        m1.addCommandItem(&commandManager, CommandIDs::fileSaveAndClose);
         m1.addCommandItem(&commandManager, CommandIDs::fileQuit);
         return m1;
     }
@@ -450,8 +450,8 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
         m1.addCommandItem(&commandManager, CommandIDs::editPaste);
         m1.addSeparator();
 #ifdef CABBAGE_HOST
-		m1.addCommandItem(&commandManager, CommandIDs::editMode);
-		m1.addSeparator();
+        m1.addCommandItem(&commandManager, CommandIDs::editMode);
+        m1.addSeparator();
 #endif
         m1.addCommandItem(&commandManager, CommandIDs::editToggleComments);
         m1.addCommandItem(&commandManager, CommandIDs::editSearchReplace);
@@ -537,7 +537,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
         }
         else
         {
-			isEditModeEnabled=false;
+            isEditModeEnabled=false;
             sendActionMessage("fileSaved");
         }
     }
@@ -551,7 +551,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
         }
         else
         {
-			isEditModeEnabled=false;
+            isEditModeEnabled=false;
             sendActionMessage("fileSaveAndClose");
         }
     }
@@ -573,7 +573,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
             textEditor->showTab(openFC.getResult().getFileName());
         }
 #else
-		sendActionMessage("open file");
+        sendActionMessage("open file");
 #endif
 
     }
@@ -653,10 +653,10 @@ bool CodeWindow::perform (const InvocationInfo& info)
     else if(info.commandID==CommandIDs::editMode)
     {
         isEditModeEnabled=!isEditModeEnabled;
-		if(isEditModeEnabled)
-			sendActionMessage("enableEditMode");
-		else
-			sendActionMessage("disableEditMode");
+        if(isEditModeEnabled)
+            sendActionMessage("enableEditMode");
+        else
+            sendActionMessage("disableEditMode");
 
     }
     else if(info.commandID==CommandIDs::editZoomOut)
@@ -908,12 +908,12 @@ void CodeWindow::setColourScheme(String theme)
     {
         textEditor->editor[textEditor->currentEditor]->setColourScheme(csoundToker.getDarkColourScheme());
         textEditor->editor[textEditor->currentEditor]->setColour(CaretComponent::caretColourId, Colours::white);
-	#ifdef CABBAGE_HOST
+#ifdef CABBAGE_HOST
         textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(30, 30, 30));
-    #else    
-		textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
-    #endif    
-		textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f));
+#else
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
+#endif
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f));
         appProperties->getUserSettings()->setValue("EditorColourScheme", 1);
     }
 }

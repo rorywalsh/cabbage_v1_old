@@ -89,7 +89,7 @@ public:
 
     void addPluginsToMenu (PopupMenu& m) const;
 	//add native Cabbage filters to list...nice.
-	void addCabbageNativePluginsToMenu (PopupMenu& m, Array<File> &cabbageFiles) const;
+	void addCabbagePluginsToMenu (PopupMenu& m, Array<File> &cabbageFiles) const;
     const PluginDescription* getChosenType (const int menuID) const;
 
     GraphDocumentComponent* getGraphDocument() const;

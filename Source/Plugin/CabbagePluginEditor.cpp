@@ -35,12 +35,12 @@ Array <Colour> swatchColours;
 //==============================================================================
 CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePluginAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),
-	  logo1(ImageCache::getFromMemory(BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize)),
-	  logo2(ImageCache::getFromMemory(BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize)),
+      logo1(ImageCache::getFromMemory(BinaryData::logo_cabbage_Black_png, BinaryData::logo_cabbage_Black_pngSize)),
+      logo2(ImageCache::getFromMemory(BinaryData::cabbageLogoHBlueText_png, BinaryData::cabbageLogoHBlueText_pngSize)),
       inValue(0),
       authorText(""),
       keyIsPressed(false),
-	  wildcardFilter("*.*", "*", "File Filter"),
+      wildcardFilter("*.*", "*", "File Filter"),
       currentLineNumber(0),
 #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
       propsWindow(new CabbagePropertiesDialog("Properties")),
@@ -67,11 +67,11 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     swatchColours.set(14, Colour(0x80FF00FF));
     swatchColours.set(15, Colour(0x8000FFFF));
     setWantsKeyboardFocus(false);
-	//setOpaque(true);
+    //setOpaque(true);
     //set custom skin yo use
     lookAndFeel = new CabbageLookAndFeel();
     basicLookAndFeel = new CabbageLookAndFeelBasic();
-	feely = new LookAndFeel_V1();
+    feely = new LookAndFeel_V1();
     //create popup display for showing value of sliders.
     popupBubble = new BubbleMessageComponent(250);
     popupBubble->setColour(BubbleComponent::backgroundColourId, Colours::white);
@@ -197,23 +197,23 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
 //============================================================================
 CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
 {
-#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) 
-	if(getFilter()->cabbageCsoundEditor)
-	{
-		this->sendActionMessage("closing editor");
-		delete getFilter()->cabbageCsoundEditor;
-		//hack to prevent crash if editor is still open
-		#ifndef WIN32
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+    if(getFilter()->cabbageCsoundEditor)
+    {
+        this->sendActionMessage("closing editor");
+        delete getFilter()->cabbageCsoundEditor;
+        //hack to prevent crash if editor is still open
+#ifndef WIN32
         sleep(1);
-        #endif
-	}
+#endif
+    }
 #endif
     comps.clear(true);
     subPatches.clear(true);
     layoutComps.clear(true);
     getFilter()->removeChangeListener(this);
     removeAllChangeListeners();
-    
+
     getFilter()->editorBeingDeleted(this);
 
     if(presetFileText.length()>1)
@@ -404,116 +404,116 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
         le->currentEvent = "";
     }
 #endif
-        Table* table = dynamic_cast<Table*>(source);
-        if(table)
-        {
-			if(table->changeMessage=="overwriteFunctionTable")
-                insertScoreStatementText(table, true);
-            else if(table->changeMessage=="writeNewFunctionTable")
-                insertScoreStatementText(table, false);
-            else if(table->changeMessage=="updateFunctionDisplay")
-                createfTableData(table, false);
-            else// "updateFunctionTable"
-                createfTableData(table, true);
-            return;
-        }
+    Table* table = dynamic_cast<Table*>(source);
+    if(table)
+    {
+        if(table->changeMessage=="overwriteFunctionTable")
+            insertScoreStatementText(table, true);
+        else if(table->changeMessage=="writeNewFunctionTable")
+            insertScoreStatementText(table, false);
+        else if(table->changeMessage=="updateFunctionDisplay")
+            createfTableData(table, false);
+        else// "updateFunctionTable"
+            createfTableData(table, true);
+        return;
+    }
 
-        GenTable* genTable = dynamic_cast<GenTable*>(source);
-        if(genTable)
-        {
-			if((genTable->getCurrentHandle() && genTable->displayAsGrid()!=1))
-				popupBubble->showAt(genTable->getCurrentHandle(), AttributedString(genTable->getCoordinates()), 1050);		
-            if(genTable->changeMessage == "updateFunctionTable")
-                updatefTableData(genTable);
-        }
+    GenTable* genTable = dynamic_cast<GenTable*>(source);
+    if(genTable)
+    {
+        if((genTable->getCurrentHandle() && genTable->displayAsGrid()!=1))
+            popupBubble->showAt(genTable->getCurrentHandle(), AttributedString(genTable->getCoordinates()), 1050);
+        if(genTable->changeMessage == "updateFunctionTable")
+            updatefTableData(genTable);
+    }
 
-        CabbageTextEditor* textEditor = dynamic_cast<CabbageTextEditor*>(source);
-        if(textEditor)
-        {
-            getFilter()->messageQueue.addOutgoingChannelMessageToQueue(textEditor->channel, textEditor->getCurrentText(), "string");
-        }
+    CabbageTextEditor* textEditor = dynamic_cast<CabbageTextEditor*>(source);
+    if(textEditor)
+    {
+        getFilter()->messageQueue.addOutgoingChannelMessageToQueue(textEditor->channel, textEditor->getCurrentText(), "string");
+    }
 
-        CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(source);
-        if(cabSlider)
+    CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(source);
+    if(cabSlider)
+    {
+        if(cabSlider->shouldDisplayPopupValue())
         {
-            if(cabSlider->shouldDisplayPopupValue())
+            String popupText;
+            float value = cabSlider->slider->getValue();
+            if(value>-0.00001 && value<0.00001) value = 0;
+            if(cabSlider->slider->getSliderStyle()==Slider::TwoValueHorizontal)
             {
-				String popupText;
-                float value = cabSlider->slider->getValue();
-                if(value>-0.00001 && value<0.00001) value = 0;
-				if(cabSlider->slider->getSliderStyle()==Slider::TwoValueHorizontal)
-				{
-					popupText = "Min: "+String(cabSlider->slider->getMinValue())+
-								"\nMax: "+String(cabSlider->slider->getMaxValue());
-					popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
-				}
-				else if(cabSlider->slider->getSliderStyle()==Slider::TwoValueVertical)
-				{
-					popupText = "Max: "+String(cabSlider->slider->getMaxValue())+
-								"\nMin: "+String(cabSlider->slider->getMinValue());
-					popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);					
-				}
-				else if(cabSlider->slider->getSliderStyle()==Slider::ThreeValueHorizontal ||
-						cabSlider->slider->getSliderStyle()==Slider::ThreeValueVertical)
-				{
-					popupText = "Min: "+String(cabSlider->slider->getMinValue())+
-								"\nMax: "+String(cabSlider->slider->getMaxValue())+
-								"\nValue: "+String(value);
-					popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
-				}
-				else
-				{
-					popupText = cabSlider->getChannel()+": "+String(value);
-					popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
-				}
-                
+                popupText = "Min: "+String(cabSlider->slider->getMinValue())+
+                            "\nMax: "+String(cabSlider->slider->getMaxValue());
+                popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
             }
-        }
+            else if(cabSlider->slider->getSliderStyle()==Slider::TwoValueVertical)
+            {
+                popupText = "Max: "+String(cabSlider->slider->getMaxValue())+
+                            "\nMin: "+String(cabSlider->slider->getMinValue());
+                popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
+            }
+            else if(cabSlider->slider->getSliderStyle()==Slider::ThreeValueHorizontal ||
+                    cabSlider->slider->getSliderStyle()==Slider::ThreeValueVertical)
+            {
+                popupText = "Min: "+String(cabSlider->slider->getMinValue())+
+                            "\nMax: "+String(cabSlider->slider->getMaxValue())+
+                            "\nValue: "+String(value);
+                popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
+            }
+            else
+            {
+                popupText = cabSlider->getChannel()+": "+String(value);
+                popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
+            }
 
-        CabbageSoundfiler* soundfiler = dynamic_cast<CabbageSoundfiler*>(source);
-        if(soundfiler)
+        }
+    }
+
+    CabbageSoundfiler* soundfiler = dynamic_cast<CabbageSoundfiler*>(source);
+    if(soundfiler)
+    {
+        String channel;
+        float val;
+        int index = soundfiler->getProperties().getWithDefault(CabbageIDs::index, -99);
+        channel = getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel)[0];
+        val = soundfiler->getPosition();
+        getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, val, "");
+        //there should always be two channels, but check just in case..
+        if(getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel).size()>1)
         {
-            String channel;
-            float val;
-            int index = soundfiler->getProperties().getWithDefault(CabbageIDs::index, -99);
-            channel = getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel)[0];
-            val = soundfiler->getPosition();
+            channel = getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel)[1];
+            val = soundfiler->getLoopLength();
             getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, val, "");
-            //there should always be two channels, but check just in case..
-            if(getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel).size()>1)
-            {
-                channel = getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel)[1];
-                val = soundfiler->getLoopLength();
-                getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, val, "");
-            }
         }
+    }
 
-        CabbageGroupbox* groupbox = dynamic_cast<CabbageGroupbox*>(source);
-        if(groupbox)
+    CabbageGroupbox* groupbox = dynamic_cast<CabbageGroupbox*>(source);
+    if(groupbox)
+    {
+        for(int i=0; i<popupMenus.size(); i++)
         {
-            for(int i=0; i<popupMenus.size(); i++)
-            {
-                if(getFilter()->getGUILayoutCtrls(popupMenus[i]).getStringProp("reltoplant").isNotEmpty())
-                    if(getFilter()->getGUILayoutCtrls(popupMenus[i]).getBounds().contains(groupbox->getMouseXYRelative()))
-                    {
-                        int index = popupMenus[i];
-                        layoutComps[popupMenus[i]]->setLookAndFeel(lookAndFeel);
-                        PopupMenu m;
-                        m.setLookAndFeel(lookAndFeel);
-                        static_cast<CabbagePopupMenu*>(layoutComps[index])->addItemsToPopup(m);
-                        int result;
+            if(getFilter()->getGUILayoutCtrls(popupMenus[i]).getStringProp("reltoplant").isNotEmpty())
+                if(getFilter()->getGUILayoutCtrls(popupMenus[i]).getBounds().contains(groupbox->getMouseXYRelative()))
+                {
+                    int index = popupMenus[i];
+                    layoutComps[popupMenus[i]]->setLookAndFeel(lookAndFeel);
+                    PopupMenu m;
+                    m.setLookAndFeel(lookAndFeel);
+                    static_cast<CabbagePopupMenu*>(layoutComps[index])->addItemsToPopup(m);
+                    int result;
 #if !defined(AndroidBuild)
-                        result = m.show();
+                    result = m.show();
 #endif
-                        if(result>0)
-                            getFilter()->messageQueue.addOutgoingChannelMessageToQueue(
-                                getFilter()->getGUILayoutCtrls(index).getStringProp(CabbageIDs::channel),
-                                result,
-                                "popup");
-                    }
+                    if(result>0)
+                        getFilter()->messageQueue.addOutgoingChannelMessageToQueue(
+                            getFilter()->getGUILayoutCtrls(index).getStringProp(CabbageIDs::channel),
+                            result,
+                            "popup");
+                }
 
-            }
         }
+    }
 
 
 }
@@ -589,7 +589,7 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
     String fStatement = "f"+String(table->tableNumber)+" 0 "+String(table->tableSize)+" -16 ";
     String pFields = "";
     //Logger::writeToLog(fStatement);
-	
+
     float xAxisRescaleFactor = (float)table->tableSize/(float)table->getWidth();
     for(int i=0; i<points.size()-1; i++)
     {
@@ -630,7 +630,7 @@ void CabbagePluginAudioProcessorEditor::createfTableData(Table* table, bool )
         handleYPos = points.getReference(points.size()-1).point.getY();
     else
         handleYPos = 0;
-		
+
     float yAmp = table->convertPixelToAmp(handleYPos);
 
     pFields = pFields + String(yAmp);
@@ -654,10 +654,10 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
         evt.pcnt = 5+pFields.size();
         evt.opcod = 'f';
         evt.p[0]=0;
-		
-		
+
+
 //		cUtils::debug("table->tableSize", table->tableSize);
-	
+
 
         //setting table number to 0.
         evt.p[1]=0;
@@ -682,19 +682,19 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 
 
         StringArray fStatement;
-		int pCnt=0;
+        int pCnt=0;
         for(int i=0; i<evt.pcnt-1; i++)
-		{
+        {
             fStatement.add(String(evt.p[i]));
-			cUtils::debug(i, fStatement[i]);
-			pCnt=i;
-		}
-		
-		if(table->genRoutine!=2)
-		{
-			fStatement.add(String(1));
-			fStatement.add(String(evt.p[pCnt]));			
-		}
+            cUtils::debug(i, fStatement[i]);
+            pCnt=i;
+        }
+
+        if(table->genRoutine!=2)
+        {
+            fStatement.add(String(1));
+            fStatement.add(String(evt.p[pCnt]));
+        }
 
         //now set table number and set score char to f
         fStatement.set(1, String(table->tableNumber));
@@ -1115,7 +1115,7 @@ void CabbagePluginAudioProcessorEditor::duplicateComponents()
 void CabbagePluginAudioProcessorEditor::updateSizesAndPositionsOfComponents(int newLine)
 {
     newLine = 0;
-	
+
 #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     StringArray csdArray;
     StringArray boundsForSelectComps;
@@ -1167,7 +1167,7 @@ void CabbagePluginAudioProcessorEditor::updateSizesAndPositionsOfComponents(int 
     }
 
     CabbageGUIClass cAttr(csdArray[currentLineNumber], -99);
-	sendActionMessage(csdArray[currentLineNumber]);
+    sendActionMessage(csdArray[currentLineNumber]);
     propsWindow->updateProps(cAttr);
 #ifndef CABBAGE_HOST
     propsWindow->setVisible(true);
@@ -1187,23 +1187,23 @@ void CabbagePluginAudioProcessorEditor::updateSizesAndPositionsOfComponents(int 
 //=============================================================================
 void CabbagePluginAudioProcessorEditor::mouseMove(const MouseEvent& event)
 {
-	if(getFilter()->compiledOk()==OK)
-	{
-		//look after mouse message from main plant windows and main window
-		int x = event.eventComponent->getTopLevelComponent()->getMouseXYRelative().x;
-		int y = event.eventComponent->getTopLevelComponent()->getMouseXYRelative().y;
+    if(getFilter()->compiledOk()==OK)
+    {
+        //look after mouse message from main plant windows and main window
+        int x = event.eventComponent->getTopLevelComponent()->getMouseXYRelative().x;
+        int y = event.eventComponent->getTopLevelComponent()->getMouseXYRelative().y;
 
-		if(dynamic_cast<CabbagePlantWindow*>(event.eventComponent->getTopLevelComponent()))
-		{
-			getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousex, x, "float");
-			getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, jmax(0, y-18), "float");
-		}
-		else
-		{
-			getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousex, x, "float");
-			getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, y-28, "float");
-		}
-	}
+        if(dynamic_cast<CabbagePlantWindow*>(event.eventComponent->getTopLevelComponent()))
+        {
+            getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousex, x, "float");
+            getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, jmax(0, y-18), "float");
+        }
+        else
+        {
+            getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousex, x, "float");
+            getFilter()->messageQueue.addOutgoingChannelMessageToQueue(CabbageIDs::mousey, y-28, "float");
+        }
+    }
 }
 
 //==============================================================================
@@ -1398,7 +1398,7 @@ void CabbagePluginAudioProcessorEditor::setEditMode(bool on)
         componentPanel->toFront(true);
         componentPanel->setInterceptsMouseClicks(false, true);
         getFilter()->setGuiEnabled(false);
-		propsWindow->closeButtonPressed();
+        propsWindow->closeButtonPressed();
     }
     resized();
 #endif
@@ -1574,7 +1574,7 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
     //currentLineNumber = getFilter()->getCurrentLine();
     getFilter()->createGUI(text.joinIntoString("\n"), false);
     CabbageGUIClass cAttr(currentText, -99);
-	sendActionMessage(currentText);
+    sendActionMessage(currentText);
     propsWindow->updateProps(cAttr);
     getFilter()->sendActionMessage("GUI Updated, controls added, resized");
 
@@ -1589,23 +1589,23 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
 void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 {
 #ifdef Cabbage_Build_Standalone
-	if(getFilter()->isFirstTime())
-	{
-		///home/rory/sourcecode/cabbageaudio/cabbage/Builds/Linux/build/test.csd
+    if(getFilter()->isFirstTime())
+    {
+        ///home/rory/sourcecode/cabbageaudio/cabbage/Builds/Linux/build/test.csd
         g.fillAll(Colours::black);
-        g.drawImage(logo1, 10, 10, getWidth(), getHeight()-60, 0, 0, logo1.getWidth(), logo1.getHeight());	
-		g.setColour(Colours::whitesmoke);
-		String startupMessage = "Please click the 'Options' button to launch an instrument....";
-		g.drawText(startupMessage, 10, 320, 400, 50, Justification::centred, true); 	
-	}
+        g.drawImage(logo1, 10, 10, getWidth(), getHeight()-60, 0, 0, logo1.getWidth(), logo1.getHeight());
+        g.setColour(Colours::whitesmoke);
+        String startupMessage = "Please click the 'Options' button to launch an instrument....";
+        g.drawText(startupMessage, 10, 320, 400, 50, Justification::centred, true);
+    }
     else if(getFilter()->compiledOk()!=OK)
     {
         g.setColour (Colours::white);
-		String error;
-		for(int i=0;i<getHeight()/10;i++)
-			error+="Csound syntax error.Please check the Csound output console for details.";
-		g.setColour(Colours::red);	
-		g.drawFittedText(error, getLocalBounds().reduced(.8f).withLeft(20), Justification::left, 100, 10); 
+        String error;
+        for(int i=0; i<getHeight()/10; i++)
+            error+="Csound syntax error.Please check the Csound output console for details.";
+        g.setColour(Colours::red);
+        g.drawFittedText(error, getLocalBounds().reduced(.8f).withLeft(20), Justification::left, 100, 10);
     }
     else
     {
@@ -1739,7 +1739,7 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
     float width = cAttr.getNumProp(CabbageIDs::width);
     float height = cAttr.getNumProp(CabbageIDs::height);
 
-	static_cast<CabbageImage*>(layoutComps[idx])->setBaseDirectory(getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());
+    static_cast<CabbageImage*>(layoutComps[idx])->setBaseDirectory(getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());
 
     int relY=0,relX=0;
     if(layoutComps.size()>0)
@@ -1927,7 +1927,7 @@ void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIClass &cAtt
     layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
-	((CabbageTextbox*)layoutComps[idx])->editor->setText(getFilter()->getCsoundOutput());
+    ((CabbageTextbox*)layoutComps[idx])->editor->setText(getFilter()->getCsoundOutput());
 
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2200,18 +2200,18 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
     TableManager* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
 
-	int fileTable = 0;
+    int fileTable = 0;
 
-	if(cAttr.getStringProp(CabbageIDs::file).isNotEmpty())
-	{
-			table->addTable(44100, 
-							Colours::findColourForName(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, 0), Colours::white), 
-							1,
-							Array<float>(),
-							0, this);	
-			fileTable=1;
-			table->setFile(cAttr.getStringProp(CabbageIDs::file));
-	}
+    if(cAttr.getStringProp(CabbageIDs::file).isNotEmpty())
+    {
+        table->addTable(44100,
+                        Colours::findColourForName(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, 0), Colours::white),
+                        1,
+                        Array<float>(),
+                        0, this);
+        fileTable=1;
+        table->setFile(cAttr.getStringProp(CabbageIDs::file));
+    }
 
 
 
@@ -2221,7 +2221,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
     {
         int tableNumber = tables[y];
         tableValues.clear();
-		tableValues = getFilter()->getTableFloats(tableNumber);
+        tableValues = getFilter()->getTableFloats(tableNumber);
         if(tableNumber>0 && tableValues.size()>0)
         {
             //Logger::writeToLog("Table Number:"+String(tableNumber));
@@ -2229,42 +2229,42 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
             StringArray pFields = getFilter()->getTableStatement(tableNumber);
             int genRoutine = pFields[4].getIntValue();
 
-			Array<float> ampRange = getAmpRangeArray(cAttr.getFloatArrayProp("amprange"), tableNumber);
-				
-			if(getFilter()->compiledOk()==OK)
-			{
-				table->addTable(44100, 
-								Colours::findColourForName(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y+fileTable), Colours::white), 
-								(tableValues.size()>=MAX_TABLE_SIZE ? 1 : genRoutine),
-								ampRange,
-								tableNumber, this);
-								
-				if(abs(genRoutine)==1 || tableValues.size()>=MAX_TABLE_SIZE)
-				{
-					tableBuffer.clear();
-					int channels = 1;//for now only works in mono;;
-					tableBuffer.setSize(channels, tableValues.size());
-					tableBuffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());
-					table->setWaveform(tableBuffer, tableNumber);
-				}
-				else
-				{
-					table->setWaveform(tableValues, tableNumber);
-					//only enable editing for gen05, 07, and 02
-					table->enableEditMode(pFields, tableNumber);
-				}
-				
-				table->setOutlineThickness(cAttr.getNumProp(CabbageIDs::outlinethickness));
-				
-				if(cAttr.getStringProp(CabbageIDs::drawmode).toLowerCase()=="vu")
-					table->setDrawMode("vu");
-			}
-		}
+            Array<float> ampRange = getAmpRangeArray(cAttr.getFloatArrayProp("amprange"), tableNumber);
+
+            if(getFilter()->compiledOk()==OK)
+            {
+                table->addTable(44100,
+                                Colours::findColourForName(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y+fileTable), Colours::white),
+                                (tableValues.size()>=MAX_TABLE_SIZE ? 1 : genRoutine),
+                                ampRange,
+                                tableNumber, this);
+
+                if(abs(genRoutine)==1 || tableValues.size()>=MAX_TABLE_SIZE)
+                {
+                    tableBuffer.clear();
+                    int channels = 1;//for now only works in mono;;
+                    tableBuffer.setSize(channels, tableValues.size());
+                    tableBuffer.addFrom(0, 0, tableValues.getRawDataPointer(), tableValues.size());
+                    table->setWaveform(tableBuffer, tableNumber);
+                }
+                else
+                {
+                    table->setWaveform(tableValues, tableNumber);
+                    //only enable editing for gen05, 07, and 02
+                    table->enableEditMode(pFields, tableNumber);
+                }
+
+                table->setOutlineThickness(cAttr.getNumProp(CabbageIDs::outlinethickness));
+
+                if(cAttr.getStringProp(CabbageIDs::drawmode).toLowerCase()=="vu")
+                    table->setDrawMode("vu");
+            }
+        }
     }
 
-	var tableConfigArray = cAttr.getVarArrayProp(CabbageIDs::tableconfig);
-	if(fileTable==1) 
-		tableConfigArray.insert(0, 0);
+    var tableConfigArray = cAttr.getVarArrayProp(CabbageIDs::tableconfig);
+    if(fileTable==1)
+        tableConfigArray.insert(0, 0);
     table->configTableSizes(tableConfigArray);
     table->bringTableToFront(0);
 
@@ -2272,26 +2272,26 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
         table->setRange(cAttr.getNumProp(CabbageIDs::startpos), cAttr.getNumProp(CabbageIDs::endpos));
     if(cAttr.getNumProp(CabbageIDs::zoom)!=0)
         table->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
-		
-	//set grid colour and background colours for all tables
-	if(fileTable==0)
-		table->setGridColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablegridcolour)));
-	else
-		table->setGridColour(Colours::transparentBlack);
-		
-	table->setBackgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablebackgroundcolour)));
-	table->setFill(cAttr.getNumProp(CabbageIDs::fill));
-	
-	//set VU gradients based on tablecolours, take only the first three colours. 
-	Array<Colour> gradient;
-	for(int i=0;i<3;i++)
-	{
-		//cUtils::debug(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, i));
-		gradient.add(Colours::findColourForName(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, i), Colours::white));		
-	}
-	
-	table->setVUGradient(gradient);
-	
+
+    //set grid colour and background colours for all tables
+    if(fileTable==0)
+        table->setGridColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablegridcolour)));
+    else
+        table->setGridColour(Colours::transparentBlack);
+
+    table->setBackgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablebackgroundcolour)));
+    table->setFill(cAttr.getNumProp(CabbageIDs::fill));
+
+    //set VU gradients based on tablecolours, take only the first three colours.
+    Array<Colour> gradient;
+    for(int i=0; i<3; i++)
+    {
+        //cUtils::debug(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, i));
+        gradient.add(Colours::findColourForName(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, i), Colours::white));
+    }
+
+    table->setVUGradient(gradient);
+
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2394,18 +2394,18 @@ void CabbagePluginAudioProcessorEditor::InsertSlider(CabbageGUIClass &cAttr)
                         cAttr.getStringProp(CabbageIDs::svgpath) :
                         globalSVGPath));
 
-	
+
     comps.add(new CabbageSlider(cAttr));
-	
+
     int idx = comps.size()-1;
-	if(!cAttr.getStringProp(CabbageIDs::name).contains("dummy"))
-	{
-		setPositionOfComponent(left, top, width, height, comps[idx], cAttr.getStringProp("reltoplant"));
-		((CabbageSlider*)comps[idx])->slider->addListener(this);
-	}
-	else
-		
-    comps[idx]->getProperties().set(String("midiChan"), cAttr.getNumProp("midichan"));
+    if(!cAttr.getStringProp(CabbageIDs::name).contains("dummy"))
+    {
+        setPositionOfComponent(left, top, width, height, comps[idx], cAttr.getStringProp("reltoplant"));
+        ((CabbageSlider*)comps[idx])->slider->addListener(this);
+    }
+    else
+
+        comps[idx]->getProperties().set(String("midiChan"), cAttr.getNumProp("midichan"));
     comps[idx]->getProperties().set(String("midiCtrl"), cAttr.getNumProp("midictrl"));
     ((CabbageSlider*)comps[idx])->slider->getProperties().set(String("index"), idx);
     //if control is not part of a plant, add mouse listener
@@ -2461,45 +2461,45 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
         float range = getFilter()->getGUICtrls(i).getNumProp("range");
         //normalise parameters in plugin mode.
         getFilter()->beginParameterChangeGesture(i);
-		if(sliderThatWasMoved->getSliderStyle()==Slider::LinearHorizontal 
-			|| sliderThatWasMoved->getSliderStyle()==Slider::LinearVertical
-			|| sliderThatWasMoved->getSliderStyle()==Slider::RotaryVerticalDrag
-			|| sliderThatWasMoved->getSliderStyle()==Slider::LinearBarVertical
-			|| sliderThatWasMoved->getSliderStyle()==Slider::ThreeValueVertical
-			|| sliderThatWasMoved->getSliderStyle()==Slider::ThreeValueHorizontal)
+        if(sliderThatWasMoved->getSliderStyle()==Slider::LinearHorizontal
+                || sliderThatWasMoved->getSliderStyle()==Slider::LinearVertical
+                || sliderThatWasMoved->getSliderStyle()==Slider::RotaryVerticalDrag
+                || sliderThatWasMoved->getSliderStyle()==Slider::LinearBarVertical
+                || sliderThatWasMoved->getSliderStyle()==Slider::ThreeValueVertical
+                || sliderThatWasMoved->getSliderStyle()==Slider::ThreeValueHorizontal)
         {
-			getFilter()->setParameter(i, (float)((sliderThatWasMoved->getValue()-min)/range));
-			getFilter()->setParameterNotifyingHost(i, (float)((sliderThatWasMoved->getValue()-min)/range));		
-		}
-		else
-		{
-			getFilter()->setParameter(i, (float)((sliderThatWasMoved->getMinValue()-min)/range));
-			getFilter()->setParameterNotifyingHost(i, (float)((sliderThatWasMoved->getMinValue()-min)/range));	
-			getFilter()->setParameter(i+1, (float)((sliderThatWasMoved->getMaxValue()-min)/range));
-			getFilter()->setParameterNotifyingHost(i+1, (float)((sliderThatWasMoved->getMaxValue()-min)/range));	
-		}
+            getFilter()->setParameter(i, (float)((sliderThatWasMoved->getValue()-min)/range));
+            getFilter()->setParameterNotifyingHost(i, (float)((sliderThatWasMoved->getValue()-min)/range));
+        }
+        else
+        {
+            getFilter()->setParameter(i, (float)((sliderThatWasMoved->getMinValue()-min)/range));
+            getFilter()->setParameterNotifyingHost(i, (float)((sliderThatWasMoved->getMinValue()-min)/range));
+            getFilter()->setParameter(i+1, (float)((sliderThatWasMoved->getMaxValue()-min)/range));
+            getFilter()->setParameterNotifyingHost(i+1, (float)((sliderThatWasMoved->getMaxValue()-min)/range));
+        }
         getFilter()->endParameterChangeGesture(i);
 #else
-        
+
         getFilter()->beginParameterChangeGesture(i);
-		if(sliderThatWasMoved->getSliderStyle()==Slider::LinearHorizontal 
-			|| sliderThatWasMoved->getSliderStyle()==Slider::LinearVertical
-			|| sliderThatWasMoved->getSliderStyle()==Slider::RotaryVerticalDrag
-			|| sliderThatWasMoved->getSliderStyle()==Slider::LinearBarVertical
-			|| sliderThatWasMoved->getSliderStyle()==Slider::ThreeValueVertical
-			|| sliderThatWasMoved->getSliderStyle()==Slider::ThreeValueHorizontal)
-		{
-			const float value = sliderThatWasMoved->getValue();//getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
-			getFilter()->setParameter(i, (float)sliderThatWasMoved->getValue());
-			getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getValue());
-		}
-		else
-		{
-			getFilter()->setParameter(i, (float)sliderThatWasMoved->getMinValue());
-			getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getMinValue());
-			getFilter()->setParameter(i+1, (float)sliderThatWasMoved->getMaxValue());
-			getFilter()->setParameterNotifyingHost(i+1, (float)sliderThatWasMoved->getMaxValue());
-		}
+        if(sliderThatWasMoved->getSliderStyle()==Slider::LinearHorizontal
+                || sliderThatWasMoved->getSliderStyle()==Slider::LinearVertical
+                || sliderThatWasMoved->getSliderStyle()==Slider::RotaryVerticalDrag
+                || sliderThatWasMoved->getSliderStyle()==Slider::LinearBarVertical
+                || sliderThatWasMoved->getSliderStyle()==Slider::ThreeValueVertical
+                || sliderThatWasMoved->getSliderStyle()==Slider::ThreeValueHorizontal)
+        {
+            const float value = sliderThatWasMoved->getValue();//getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
+            getFilter()->setParameter(i, (float)sliderThatWasMoved->getValue());
+            getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getValue());
+        }
+        else
+        {
+            getFilter()->setParameter(i, (float)sliderThatWasMoved->getMinValue());
+            getFilter()->setParameterNotifyingHost(i, (float)sliderThatWasMoved->getMinValue());
+            getFilter()->setParameter(i+1, (float)sliderThatWasMoved->getMaxValue());
+            getFilter()->setParameterNotifyingHost(i+1, (float)sliderThatWasMoved->getMaxValue());
+        }
         getFilter()->endParameterChangeGesture(i);
 
 #endif
@@ -2655,7 +2655,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                 //deal with non-interactive buttons first..
                 if(button->getName()=="sourcebutton")
                 {
-                              getFilter()->createAndShowSourceEditor(lookAndFeel);
+                    getFilter()->createAndShowSourceEditor(lookAndFeel);
                 }
                 else if(button->getName()=="infobutton")
                 {
@@ -2712,17 +2712,17 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 
                             const String filetype = getFilter()->getGUILayoutCtrls(i).getStringProp("filetype");
                             const String selectedDir = getFilter()->getGUILayoutCtrls(i).getStringProp("workingdir");
-							
+
                             File directory;
                             if(selectedDir.isNotEmpty())
                                 directory = File(selectedDir);
                             else
-							{
+                            {
                                 if(lastOpenedDirectory.isNotEmpty())
-									directory = File(lastOpenedDirectory);
-								else
-									directory = File::getCurrentWorkingDirectory();
-							}
+                                    directory = File(lastOpenedDirectory);
+                                else
+                                    directory = File::getCurrentWorkingDirectory();
+                            }
 
                             File selectedFile;
                             //check for snapshot mode
@@ -2771,41 +2771,41 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                             //else if dealing with a filebutton widget
                             else
                             {
-#if !defined(AndroidBuild)		
-								wildcardFilter = WildcardFileFilter((const String)filetype, directory.getFullPathName(), "File fitler");
+#if !defined(AndroidBuild)
+                                wildcardFilter = WildcardFileFilter((const String)filetype, directory.getFullPathName(), "File fitler");
                                 if(!getFilter()->getGUILayoutCtrls(i).getStringProp("filetype").contains("snaps"))
                                 {
                                     //FileChooser fc("Open", directory.getFullPathName(), filetype, UseNativeDialogue);
                                     //determine whether to poen file or directory
                                     if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="file")
                                     {
-										Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file", 
-																									wildcardFilter, 
-																									filetype,
-																									1, 
-																									directory, 
-																									false, 
-																									&getLookAndFeel());
+                                        Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file",
+                                                                    wildcardFilter,
+                                                                    filetype,
+                                                                    1,
+                                                                    directory,
+                                                                    false,
+                                                                    &getLookAndFeel());
                                         if(selectedFiles.size())
                                         {
                                             selectedFile = selectedFiles[0];
-											//cUtils::debug(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel));
+                                            //cUtils::debug(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel));
                                             getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
                                                     selectedFile.getFullPathName().replace("\\", "\\\\"),
                                                     "string");
-											lastOpenedDirectory = selectedFile.getFullPathName();
+                                            lastOpenedDirectory = selectedFile.getFullPathName();
                                         }
                                     }
 
                                     else if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="directory")
                                     {
-										Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file", 
-																									wildcardFilter, 
-																									filetype,
-																									2, 
-																									directory, 
-																									false, 
-																									&getLookAndFeel());
+                                        Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file",
+                                                                    wildcardFilter,
+                                                                    filetype,
+                                                                    2,
+                                                                    directory,
+                                                                    false,
+                                                                    &getLookAndFeel());
                                         if(selectedFiles.size())
                                         {
                                             selectedFile = selectedFiles[0];
@@ -2813,32 +2813,32 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                             getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
                                                     selectedFile.getFullPathName().replace("\\", "\\\\"),
                                                     "string");
-											lastOpenedDirectory = selectedFile.getParentDirectory().getFullPathName();
+                                            lastOpenedDirectory = selectedFile.getParentDirectory().getFullPathName();
                                         }
                                     }
                                 }
                                 else
                                 {
 
-									Array<File> selectedFiles = cUtils::launchFileBrowser("Select a file to save", 
-																								wildcardFilter, 
-																								filetype,
-																								0, 
-																								directory, 
-																								false, 
-																								&getLookAndFeel());
+                                    Array<File> selectedFiles = cUtils::launchFileBrowser("Select a file to save",
+                                                                wildcardFilter,
+                                                                filetype,
+                                                                0,
+                                                                directory,
+                                                                false,
+                                                                &getLookAndFeel());
 
-									if(selectedFiles.size())
-									{
-										selectedFile = selectedFiles[0];
-										if(filetype.contains("snaps"))
-											savePresetsFromParameters(selectedFile, "create");
-										else
-											getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
-													selectedFile.getFullPathName(),
-													"string");
-										refreshDiskReadingGUIControls("combobox");
-										lastOpenedDirectory = selectedFile.getFullPathName();
+                                    if(selectedFiles.size())
+                                    {
+                                        selectedFile = selectedFiles[0];
+                                        if(filetype.contains("snaps"))
+                                            savePresetsFromParameters(selectedFile, "create");
+                                        else
+                                            getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
+                                                    selectedFile.getFullPathName(),
+                                                    "string");
+                                        refreshDiskReadingGUIControls("combobox");
+                                        lastOpenedDirectory = selectedFile.getFullPathName();
                                     }
                                 }
 #endif
@@ -2990,16 +2990,16 @@ void CabbagePluginAudioProcessorEditor::toggleButtonClicked(Button* button)
 void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
 {
     String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
-	String path = cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::workingdir), currentFileLocation);
-	
-	
-	if(File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::workingdir))==false)
-	{
-		if(File::isAbsolutePath(path)!=true)
-			cAttr.setStringProp(CabbageIDs::workingdir, currentFileLocation);
-		else
-			cAttr.setStringProp(CabbageIDs::workingdir, path);
-	}
+    String path = cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::workingdir), currentFileLocation);
+
+
+    if(File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::workingdir))==false)
+    {
+        if(File::isAbsolutePath(path)!=true)
+            cAttr.setStringProp(CabbageIDs::workingdir, currentFileLocation);
+        else
+            cAttr.setStringProp(CabbageIDs::workingdir, path);
+    }
 
     //if not svg files are set, try using the global theme...
     cAttr.setStringProp(CabbageIDs::svgpath, (cAttr.getStringProp(CabbageIDs::svgpath).isNotEmpty() ?
@@ -3025,13 +3025,13 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIClass &cAttr)
     comps[idx]->getProperties().set(CabbageIDs::index, idx);
     //set visiblilty
     comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
-	
-	var items;
-	for( int i=0;i<((CabbageComboBox*)comps[idx])->combo->getNumItems();i++)
-		items.append(((CabbageComboBox*)comps[idx])->combo->getItemText(i));
-	
-	getFilter()->getGUICtrls(idx).setStringArrayProp(CabbageIDs::text, items);
-	
+
+    var items;
+    for( int i=0; i<((CabbageComboBox*)comps[idx])->combo->getNumItems(); i++)
+        items.append(((CabbageComboBox*)comps[idx])->combo->getItemText(i));
+
+    getFilter()->getGUICtrls(idx).setStringArrayProp(CabbageIDs::text, items);
+
 
 }
 
@@ -3107,7 +3107,7 @@ void CabbagePluginAudioProcessorEditor::InsertXYPad(CabbageGUIClass &cAttr)
                                           cAttr.getNumProp("decimalplaces"),
                                           cAttr.getStringProp(CabbageIDs::colour),
                                           cAttr.getStringProp(CabbageIDs::fontcolour),
-										  cAttr.getStringProp(CabbageIDs::textcolour),
+                                          cAttr.getStringProp(CabbageIDs::textcolour),
                                           cAttr.getNumProp("valuex"),
                                           cAttr.getNumProp("valuey")));
         xyPadIndex++;
@@ -3138,7 +3138,7 @@ void CabbagePluginAudioProcessorEditor::InsertXYPad(CabbageGUIClass &cAttr)
                                           cAttr.getNumProp("decimalPlaces"),
                                           cAttr.getStringProp(CabbageIDs::colour),
                                           cAttr.getStringProp(CabbageIDs::fontcolour),
-										  cAttr.getStringProp(CabbageIDs::textcolour),
+                                          cAttr.getStringProp(CabbageIDs::textcolour),
                                           cAttr.getNumProp("valuex"),
                                           cAttr.getNumProp("valuey")));
         idx = comps.size()-1;
@@ -3314,16 +3314,16 @@ void CabbagePluginAudioProcessorEditor::actionListenerCallback (const String& me
         //showMessage(currentLineNumber);
         //Logger::writeToLog("LineNumber:"+String(lineNumber));
         csdArray.addLines(getFilter()->getCsoundInputFileText());
-		StringArray tokens, macros;
-		tokens.addTokens(csdArray.getReference(currentLineNumber), ", ");
-		for(int i=0;i<tokens.size();i++)
-		{
-			if(tokens[i].substring(0, 1).equalsIgnoreCase("$"))
-				macros.add(tokens[i]);
-		
-		}
-		csdArray.set(currentLineNumber, CabbageGUIClass::getCabbageCodeFromIdentifiers(propsWindow->updatedIdentifiers)+
-												""+macros.joinIntoString(" "));
+        StringArray tokens, macros;
+        tokens.addTokens(csdArray.getReference(currentLineNumber), ", ");
+        for(int i=0; i<tokens.size(); i++)
+        {
+            if(tokens[i].substring(0, 1).equalsIgnoreCase("$"))
+                macros.add(tokens[i]);
+
+        }
+        csdArray.set(currentLineNumber, CabbageGUIClass::getCabbageCodeFromIdentifiers(propsWindow->updatedIdentifiers)+
+                     ""+macros.joinIntoString(" "));
         getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
         getFilter()->highlightLine(csdArray[currentLineNumber]);
         //Logger::writeToLog(csdArray[currentLineNumber]);
@@ -3341,7 +3341,7 @@ void CabbagePluginAudioProcessorEditor::actionListenerCallback (const String& me
 //CALL LISTENER METHOD FOR CUSTOM COMPONENTS THAT USE ACTION BROADCASTERS
     else
     {
-       // Logger::writeToLog("Unknwn message:"+message);
+        // Logger::writeToLog("Unknwn message:"+message);
     }
 }
 
@@ -3463,7 +3463,7 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
         for(int i=0; i<getFilter()->getNumParameters(); i++)
         {
             float newValue = (float)xml->getDoubleAttribute(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel));
-			
+
 #ifndef Cabbage_Build_Standalone
 
             float range = getFilter()->getGUICtrls(i).getNumProp("range");
@@ -3474,25 +3474,25 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
             if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="rslider")
                 //Logger::writeToLog("slider");
 
-            if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="xypad")
-                newValue = (jmax(0.f, newValue)/range)+min;
-            else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="combobox")//combo box value need to be rounded...
-                newValue = (newValue/comboRange);
-            else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="checkbox" ||
-                    getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="button")
-                range=1;
-            else
-                newValue = (newValue/range)+min;
-				
-			//getFilter()->getGUICtrls(i)->setNumProp(CabbageIDs::value, newValue);
+                if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="xypad")
+                    newValue = (jmax(0.f, newValue)/range)+min;
+                else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="combobox")//combo box value need to be rounded...
+                    newValue = (newValue/comboRange);
+                else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="checkbox" ||
+                        getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="button")
+                    range=1;
+                else
+                    newValue = (newValue/range)+min;
+
+            //getFilter()->getGUICtrls(i)->setNumProp(CabbageIDs::value, newValue);
 #endif
-			
+
             if(!getFilter()->getGUICtrls(i).getStringProp("filetype").contains("snaps"))
-			{
+            {
                 getFilter()->setParameterNotifyingHost(i, newValue);
-				getFilter()->setParameter(i, newValue);				
-				getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, newValue);
-			}
+                getFilter()->setParameter(i, newValue);
+                getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, newValue);
+            }
 
         }
     }
@@ -3527,59 +3527,59 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
             int i = getFilter()->dirtyControls[index];
             if(i<getFilter()->getGUICtrlsSize())
             {
-				inValue = getFilter()->getParameter(i);
+                inValue = getFilter()->getParameter(i);
                 if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type).contains("slider")||
-				getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::numberbox)
+                        getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::numberbox)
                 {
-                    //CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(comps[i]);	
-					//CabbageNumberBox* cabNumber = dynamic_cast<CabbageNumberBox*>(comps[i]);
-					Slider* slider = nullptr;
-					if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::numberbox)
-					{
-						slider = static_cast<CabbageNumberBox*>(comps[i])->slider;	
-					}
-					else
-					{
-						slider = static_cast<CabbageSlider*>(comps[i])->slider;	
-					}
+                    //CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(comps[i]);
+                    //CabbageNumberBox* cabNumber = dynamic_cast<CabbageNumberBox*>(comps[i]);
+                    Slider* slider = nullptr;
+                    if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::numberbox)
+                    {
+                        slider = static_cast<CabbageNumberBox*>(comps[i])->slider;
+                    }
+                    else
+                    {
+                        slider = static_cast<CabbageSlider*>(comps[i])->slider;
+                    }
                     if(slider)
                     {
 #ifndef Cabbage_Build_Standalone
-						if(slider->getSliderStyle()==Slider::LinearVertical ||
-						   slider->getSliderStyle()==Slider::RotaryVerticalDrag ||
-						   slider->getSliderStyle()==Slider::LinearHorizontal ||
-						   slider->getSliderStyle()==Slider::LinearBarVertical || 
-						   slider->getSliderStyle()==Slider::ThreeValueVertical || 
-						   slider->getSliderStyle()==Slider::ThreeValueHorizontal)
-						{
-							float val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i)+
-										getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::min);
-							slider->setValue(val, dontSendNotification);
-						}
-						else
-						{
-							float bottomVal = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i);
-							float topVal = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i+1);
+                        if(slider->getSliderStyle()==Slider::LinearVertical ||
+                                slider->getSliderStyle()==Slider::RotaryVerticalDrag ||
+                                slider->getSliderStyle()==Slider::LinearHorizontal ||
+                                slider->getSliderStyle()==Slider::LinearBarVertical ||
+                                slider->getSliderStyle()==Slider::ThreeValueVertical ||
+                                slider->getSliderStyle()==Slider::ThreeValueHorizontal)
+                        {
+                            float val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i)+
+                                        getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::min);
+                            slider->setValue(val, dontSendNotification);
+                        }
+                        else
+                        {
+                            float bottomVal = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i);
+                            float topVal = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range)*getFilter()->getParameter(i+1);
 
-							slider->setMinAndMaxValues(topVal, bottomVal);	
-						
-						}
+                            slider->setMinAndMaxValues(topVal, bottomVal);
+
+                        }
 #else
-						if(slider->getSliderStyle()==Slider::LinearVertical ||
-						   slider->getSliderStyle()==Slider::LinearHorizontal ||
-						   slider->getSliderStyle()==Slider::RotaryVerticalDrag ||
-						   slider->getSliderStyle()==Slider::LinearBarVertical || 
-						   slider->getSliderStyle()==Slider::ThreeValueVertical || 
-						   slider->getSliderStyle()==Slider::ThreeValueHorizontal)
-						{							
-							slider->setValue(inValue, sendNotification);
-						}
-						else
-						{
-							float bottomVal = getFilter()->getParameter(i);
-							float topVal = getFilter()->getParameter(i+1);
-							slider->setMinAndMaxValues(topVal, bottomVal);							
-						}
+                        if(slider->getSliderStyle()==Slider::LinearVertical ||
+                                slider->getSliderStyle()==Slider::LinearHorizontal ||
+                                slider->getSliderStyle()==Slider::RotaryVerticalDrag ||
+                                slider->getSliderStyle()==Slider::LinearBarVertical ||
+                                slider->getSliderStyle()==Slider::ThreeValueVertical ||
+                                slider->getSliderStyle()==Slider::ThreeValueHorizontal)
+                        {
+                            slider->setValue(inValue, sendNotification);
+                        }
+                        else
+                        {
+                            float bottomVal = getFilter()->getParameter(i);
+                            float topVal = getFilter()->getParameter(i+1);
+                            slider->setMinAndMaxValues(topVal, bottomVal);
+                        }
 #endif
                     }
                 }
@@ -3587,7 +3587,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                 else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::button)
                 {
                     CabbageButton* cabButton = static_cast<CabbageButton*>(comps[i]);
-					cabButton->button->setToggleState(inValue, dontSendNotification);
+                    cabButton->button->setToggleState(inValue, dontSendNotification);
                     cabButton->button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue(CabbageIDs::text, inValue));
                 }
 
@@ -3706,7 +3706,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 
         }
 
-getFilter()->dirtyControls.clear();
+        getFilter()->dirtyControls.clear();
 //the following code looks after updating any objects that don't get recognised as plugin parameters,
 //for example, table objects don't get listed by the host as a paramters. Likewise the csoundoutput widget..
         for(int i=0; i<getFilter()->getGUILayoutCtrlsSize(); i++)
@@ -3812,31 +3812,31 @@ getFilter()->dirtyControls.clear();
                     getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
             {
                 String message = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage);
-				TableManager* table = static_cast<CabbageGenTable*>(layoutComps[i])->table;
+                TableManager* table = static_cast<CabbageGenTable*>(layoutComps[i])->table;
                 if(message.contains("tablenumber")||message.contains("tablenumbers"))
                 {
-					int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();
+                    int numberOfTables = getFilter()->getGUILayoutCtrls(i).getStringArrayProp(CabbageIDs::tablenumber).size();
                     for(int y=0; y<numberOfTables; y++)
                     {
-                        
+
                         const int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
-						
+
                         tableValues = getFilter()->getTableFloats(tableNumber);
-						if(table->getTableFromFtNumber(tableNumber)->tableSize>=MAX_TABLE_SIZE)
-						{
-							tableBuffer.clear();
-							tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());
-							table->setWaveform(tableBuffer, tableNumber);
-						}
+                        if(table->getTableFromFtNumber(tableNumber)->tableSize>=MAX_TABLE_SIZE)
+                        {
+                            tableBuffer.clear();
+                            tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());
+                            table->setWaveform(tableBuffer, tableNumber);
+                        }
                         else
-						{ 
-							table->setWaveform(tableValues, tableNumber, false);
-							StringArray pFields = getFilter()->getTableStatement(tableNumber);
-							table->enableEditMode(pFields, tableNumber);
-						}
+                        {
+                            table->setWaveform(tableValues, tableNumber, false);
+                            StringArray pFields = getFilter()->getTableStatement(tableNumber);
+                            table->enableEditMode(pFields, tableNumber);
+                        }
                     }
                 }
-				else if(message.contains("file("))
+                else if(message.contains("file("))
                     table->setFile(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::file));
 
                 ((CabbageGenTable*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));

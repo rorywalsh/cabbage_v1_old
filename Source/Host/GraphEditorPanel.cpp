@@ -37,26 +37,26 @@ PluginWindow::PluginWindow (Component* const pluginEditor,
                       DocumentWindow::minimiseButton | DocumentWindow::closeButton),
     owner (o),
     type (t),
-	editor(pluginEditor),	
-	basicLookAndFeel(new CabbageLookAndFeelBasic())
+    editor(pluginEditor),
+    basicLookAndFeel(new CabbageLookAndFeelBasic())
 {
-    setSize (400, 300);	
-	this->setTitleBarHeight(18);
-	//setLookAndFeel(basicLookAndFeel);
+    setSize (400, 300);
+    this->setTitleBarHeight(18);
+    //setLookAndFeel(basicLookAndFeel);
     setContentOwned (pluginEditor, true);
 
     setTopLeftPosition (owner->properties.getWithDefault ("uiLastX", Random::getSystemRandom().nextInt (500)),
                         owner->properties.getWithDefault ("uiLastY", Random::getSystemRandom().nextInt (500)));
     setVisible (true);
-	setAlwaysOnTop(true);
+    setAlwaysOnTop(true);
     activePluginWindows.add (this);
-	startTimer(100);
+    startTimer(100);
 }
 
 void PluginWindow::timerCallback()
 {
-	this->getContentComponent()->setTopLeftPosition(0, 18);
-	stopTimer();
+    this->getContentComponent()->setTopLeftPosition(0, 18);
+    stopTimer();
 }
 
 void PluginWindow::closeCurrentlyOpenWindowsFor (const uint32 nodeId)
@@ -82,16 +82,17 @@ void PluginWindow::closeAllCurrentlyOpenWindows()
 void PluginWindow::updateWindow(AudioProcessorGraph::Node* node, int nodeId)
 {
     for (int i = activePluginWindows.size(); --i >= 0;)
-        if (activePluginWindows.getUnchecked(i)->owner->nodeId == nodeId){
-			 AudioProcessorEditor* ui = nullptr;
-			 activePluginWindows.getUnchecked(i)->setContentOwned(nullptr, false);
-			 ui = node->getProcessor()->createEditor();
-			 if(ui)
-			 activePluginWindows.getUnchecked(i)->setContentOwned(ui, true);
-			 activePluginWindows.getUnchecked(i)->repaint();
+        if (activePluginWindows.getUnchecked(i)->owner->nodeId == nodeId)
+        {
+            AudioProcessorEditor* ui = nullptr;
+            activePluginWindows.getUnchecked(i)->setContentOwned(nullptr, false);
+            ui = node->getProcessor()->createEditor();
+            if(ui)
+                activePluginWindows.getUnchecked(i)->setContentOwned(ui, true);
+            activePluginWindows.getUnchecked(i)->repaint();
 
 
-		}
+        }
 }
 //==============================================================================
 class ProcessorProgramPropertyComp : public PropertyComponent,
@@ -182,9 +183,9 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
                 && activePluginWindows.getUnchecked(i)->type == type)
             return activePluginWindows.getUnchecked(i);
 
-    AudioProcessor* processor = node->getProcessor();	
-	//PluginWrapper* wrapperPlug = dynamic_cast<PluginWrapper*>(processor);
-	
+    AudioProcessor* processor = node->getProcessor();
+    //PluginWrapper* wrapperPlug = dynamic_cast<PluginWrapper*>(processor);
+
     AudioProcessorEditor* ui = nullptr;
 
     if (type == Normal)
@@ -197,12 +198,12 @@ PluginWindow* PluginWindow::getWindowFor (AudioProcessorGraph::Node* const node,
     if (ui == nullptr)
     {
         if (type == Generic || type == Parameters)
-		{
-			if(processor)
-			{
-				ui = new CabbageGenericAudioProcessorEditor (processor, type == midiLearn ? true : false);
-			}
-		}
+        {
+            if(processor)
+            {
+                ui = new CabbageGenericAudioProcessorEditor (processor, type == midiLearn ? true : false);
+            }
+        }
         else if (type == Programs)
             ui = new ProgramAudioProcessorEditor (processor);
     }
@@ -243,15 +244,15 @@ GraphEditorPanel::GraphEditorPanel (FilterGraph& graph_)
     InternalPluginFormat internalFormat;
 
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioInputFilter),
-               0.55f, 0.5f);
+                     0.55f, 0.5f);
 
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::midiInputFilter),
-               0.53f, 0.5f);
+                     0.53f, 0.5f);
 
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioOutputFilter),
-               0.55f, 0.56f);
+                     0.55f, 0.56f);
 
-				
+
 //	//each patch has an automation track
 //	PluginDescription descript;
 //	descript.descriptiveName = "Automation Track";
@@ -259,11 +260,11 @@ GraphEditorPanel::GraphEditorPanel (FilterGraph& graph_)
 //	descript.pluginFormatName = "AutomationTrack";
 //
 //	graph.addFilter (&descript, 0.0f, 0.0f);
-	
-	
+
+
     graph.addChangeListener (this);
     setOpaque (true);
-	//setSize(10000, 10000);
+    //setSize(10000, 10000);
 }
 
 GraphEditorPanel::~GraphEditorPanel()
@@ -280,131 +281,142 @@ void GraphEditorPanel::paint (Graphics& g)
 
 void GraphEditorPanel::mouseDown (const MouseEvent& e)
 {
-	myDragger.startDraggingComponent (this, e);
-	
-	Array<File> cabbageFiles;
-	int numNonNativePlugins;
-	
+    myDragger.startDraggingComponent (this, e);
+
+    Array<File> cabbageFiles;
+    int numNonNativePlugins;
+
     if (e.mods.isPopupMenu())
     {
         PopupMenu m;
-		PopupMenu subMenu;
-		subMenu.addItem(801, "Instrument");
-		subMenu.addItem(802, "Effect");
-		m.addSubMenu("New", subMenu);
-		m.addSeparator();
-	
+        PopupMenu subMenu;
+        subMenu.addItem(801, "Instrument");
+        subMenu.addItem(802, "Effect");
+        m.addSubMenu("New", subMenu);
+        m.addSeparator();
+
         if (MainHostWindow* const mainWindow = findParentComponentOfClass<MainHostWindow>())
         {
-	
-			numNonNativePlugins = m.getNumItems();
-			m.addSeparator();
-            
-			mainWindow->addCabbageNativePluginsToMenu(m, cabbageFiles);
-	
-			mainWindow->addPluginsToMenu (m);
-			
-            const int r = m.show();
-            
-			bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
-			wildcardFilter = WildcardFileFilter("*.csd", "*", ".csd Files");
-			
-            
-			//file new instrument
-			if(r==801)
-			{
-				Array<File> selectedFile = cUtils::launchFileBrowser("Save file as...", wildcardFilter, "*.csd", 0, File(""), showNative, &getLookAndFeel());
-				if(selectedFile.size()>0)
-				{				
-					File csoundFile(selectedFile[0].withFileExtension(String(".csd")));
-					csoundFile.replaceWithText(newFile("instrument", csoundFile.getFileNameWithoutExtension()));
-					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, AUDIO_PLUGIN, csoundFile.getFullPathName());
-				}
-				return;
-			}
-			
-			//file new effect
-			if(r==802)
-			{
-				Array<File> selectedFile = cUtils::launchFileBrowser("Save file as...", wildcardFilter, "*.csd", 0, File(""), showNative, &getLookAndFeel());
-				if(selectedFile.size()>0)
-				{				
-					File csoundFile(selectedFile[0].withFileExtension(String(".csd")));
-					csoundFile.replaceWithText(newFile("effect", csoundFile.getFileNameWithoutExtension()));
-					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, AUDIO_PLUGIN, csoundFile.getFullPathName());
-				}
-				return;
-			}
 
-			if(r>0) //make sure we have a valid item index....
-			{
-				if(r<cabbageFiles.size()+1)
-				{
-					createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, cabbageFiles[r-1].getFullPathName());
-					findParentComponentOfClass<GraphDocumentComponent>()->updatePluginsInSidebarPanel();
-					return;
-				}
-				else 
-				{
-					if(r==10000)
-					{
-						createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, "soundfile player");
-					}
-					if(r==10001)
-					{
-						createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, "automation track");
-					}
-					else
-					{
-						createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
-						findParentComponentOfClass<GraphDocumentComponent>()->updatePluginsInSidebarPanel();
-						return;						
-					}
-				}
-			}
+            numNonNativePlugins = m.getNumItems();
+            m.addSeparator();
+
+            mainWindow->addCabbagePluginsToMenu(m, cabbageFiles);
+            mainWindow->addPluginsToMenu (m);
+
+            const int r = m.show();
+
+            bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+            wildcardFilter = WildcardFileFilter("*.csd", "*", ".csd Files");
+
+
+            //file new instrument
+            if(r==801)
+            {
+                Array<File> selectedFile = cUtils::launchFileBrowser("Save file as...", wildcardFilter, "*.csd", 0, File(""), showNative, &getLookAndFeel());
+                if(selectedFile.size()>0)
+                {
+                    File csoundFile(selectedFile[0].withFileExtension(String(".csd")));
+                    csoundFile.replaceWithText(newFile("instrument", csoundFile.getFileNameWithoutExtension()));
+                    createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, AUDIO_PLUGIN, csoundFile.getFullPathName());
+                }
+                return;
+            }
+
+            //file new effect
+            if(r==802)
+            {
+                Array<File> selectedFile = cUtils::launchFileBrowser("Save file as...", wildcardFilter, "*.csd", 0, File(""), showNative, &getLookAndFeel());
+                if(selectedFile.size()>0)
+                {
+                    File csoundFile(selectedFile[0].withFileExtension(String(".csd")));
+                    csoundFile.replaceWithText(newFile("effect", csoundFile.getFileNameWithoutExtension()));
+                    createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, AUDIO_PLUGIN, csoundFile.getFullPathName());
+                }
+                return;
+            }
+
+            if(r>0) //make sure we have a valid item index....
+            {
+                if(r<cabbageFiles.size()+1)
+                {
+                    createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, cabbageFiles[r-1].getFullPathName());
+                    findParentComponentOfClass<GraphDocumentComponent>()->updatePluginsInSidebarPanel();
+                    return;
+                }
+                else
+                {
+                    if(r==10000)
+                    {
+                        createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, "soundfile player");
+                    }
+                    if(r==10001)
+                    {
+                        createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, "automation track");
+                    }
+                    else
+                    {
+                        createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, false, "");
+                        findParentComponentOfClass<GraphDocumentComponent>()->updatePluginsInSidebarPanel();
+                        return;
+                    }
+                }
+            }
 
         }
     }
     else
     {
-		//deselect all grouped filters and set alpha to normal
-		selectedFilters.deselectAll();
-		for(int i=0; i<getNumChildComponents(); i++)
-		{
-			getChildComponent(i)->getProperties().set("selected", 0);
-			getChildComponent(i)->repaint();
-		}
+        //deselect all grouped filters and set alpha to normal
+        selectedFilters.deselectAll();
+        for(int i=0; i<getNumChildComponents(); i++)
+        {
+            getChildComponent(i)->getProperties().set("selected", 0);
+            getChildComponent(i)->repaint();
+        }
 
         if((e.mods.getCurrentModifiers().isCtrlDown()))
-		{
-			addChildComponent (&lassoComp);
-			lassoComp.beginLasso (e, this);
-		}
+        {
+            addChildComponent (&lassoComp);
+            lassoComp.beginLasso (e, this);
+        }
     }
+}
 
-
+void GraphEditorPanel::itemDropped (const DragAndDropTarget::SourceDetails& dragSourceDetails)
+{
+		if(FileTreeComponent* fileComp = dynamic_cast<FileTreeComponent*>(dragSourceDetails.sourceComponent.get()))			
+		{
+			//cUtils::showMessage(fileComp->getSelectedFile().getFullPathName());	
+			if (MainHostWindow* const mainWindow = findParentComponentOfClass<MainHostWindow>())
+			{			
+				String name = "soundfile player:"+fileComp->getSelectedFile().getFullPathName();
+				createNewPlugin (mainWindow->getChosenType (10000), dragSourceDetails.localPosition.x, dragSourceDetails.localPosition.x, true, name);
+			}
+		}	
 }
 
 GraphDocumentComponent* GraphEditorPanel::getGraphDocument()
 {
-		return findParentComponentOfClass<GraphDocumentComponent>();
+    return findParentComponentOfClass<GraphDocumentComponent>();
 }
-	
+
 void GraphEditorPanel::mouseDrag (const MouseEvent& e)
 {
-	if(!e.mods.isCommandDown())
-		myDragger.dragComponent (this, e, nullptr);
-	else
-	{
-		lassoComp.toFront (false);
-		lassoComp.dragLasso (e);
-	}
+    if(!e.mods.isCommandDown())
+        myDragger.dragComponent (this, e, nullptr);
+    else
+    {
+        lassoComp.toFront (false);
+        lassoComp.dragLasso (e);
+    }
 }
 
 void GraphEditorPanel::mouseUp (const MouseEvent& e)
 {
     //if a selection has been made update the selected groups alpha setting to highlight selection
-    for(int i=0; i<selectedFilters.getNumSelected(); i++) {
+    for(int i=0; i<selectedFilters.getNumSelected(); i++)
+    {
         selectedFilters.getSelectedItem(i)->getProperties().set("selected", 1);
         selectedFilters.getSelectedItem(i)->repaint();
     }
@@ -412,7 +424,7 @@ void GraphEditorPanel::mouseUp (const MouseEvent& e)
     lassoComp.endLasso();
     removeChildComponent (&lassoComp);
 }
-
+	
 void GraphEditorPanel::findLassoItemsInArea (Array <FilterComponent*>& results, const Rectangle<int>& area)
 {
     const Rectangle<int> lasso (area);
@@ -420,7 +432,8 @@ void GraphEditorPanel::findLassoItemsInArea (Array <FilterComponent*>& results, 
     for (int i = 0; i < getNumChildComponents()-1; i++)
     {
         FilterComponent* c = (FilterComponent*)getChildComponent(i);
-        if (c->getBounds().intersects (lasso)) {
+        if (c->getBounds().intersects (lasso))
+        {
             results.addIfNotAlreadyThere(c);
             selectedFilters.addToSelection(c);
         }
@@ -431,38 +444,41 @@ void GraphEditorPanel::findLassoItemsInArea (Array <FilterComponent*>& results, 
 
 void GraphEditorPanel::createNewPlugin (const PluginDescription* desc, int x, int y, bool isNative, String fileName)
 {
-	if(isNative)
-	{
-		PluginDescription descript;
-		if(fileName=="soundfile player")
-		{
-			descript.descriptiveName = "Soundfile player";
-			descript.name = "SoundfilePlayer";
-			descript.pluginFormatName = "SoundfilePlayer";
-		}
-		else if(fileName=="automation track")
-		{
-			descript.descriptiveName = "Automation track";
-			descript.name = "AutomationTrack";
-			descript.pluginFormatName = "AutomationTrack";
-		}
-		else
-		{
-			descript.fileOrIdentifier = fileName;
-			descript.descriptiveName = "Cabbage Plugin "+File(fileName).getFileNameWithoutExtension();
-			descript.name = File(fileName).getFileNameWithoutExtension();
-			descript.manufacturerName = "CabbageAudio";
-			descript.pluginFormatName = "Cabbage";		
-		}
+    if(isNative)
+    {
+        PluginDescription descript;
+        if(fileName.contains("soundfile player"))
+        {
+            descript.descriptiveName = "Soundfile player";
+            descript.name = "SoundfilePlayer";
+            descript.pluginFormatName = "SoundfilePlayer";
+			String file = fileName.substring(17);
+			cUtils::debug(file);
+			descript.fileOrIdentifier = file;
+        }
+        else if(fileName=="automation track")
+        {
+            descript.descriptiveName = "Automation track";
+            descript.name = "AutomationTrack";
+            descript.pluginFormatName = "AutomationTrack";
+        }
+        else
+        {
+            descript.fileOrIdentifier = fileName;
+            descript.descriptiveName = "Cabbage Plugin "+File(fileName).getFileNameWithoutExtension();
+            descript.name = File(fileName).getFileNameWithoutExtension();
+            descript.manufacturerName = "CabbageAudio";
+            descript.pluginFormatName = "Cabbage";
+        }
 
-		descript.numInputChannels = 2;		
-		descript.numOutputChannels = 2;
-		graph.addFilter (&descript, x / (double) getWidth(), y / (double) getHeight());
-	}
-	else
-	{
-		graph.addFilter (desc, x / (double) getWidth(), y / (double) getHeight());
-	}
+        descript.numInputChannels = 2;
+        descript.numOutputChannels = 2;
+        graph.addFilter (&descript, x / (double) getWidth(), y / (double) getHeight());
+    }
+    else
+    {
+        graph.addFilter (desc, x / (double) getWidth(), y / (double) getHeight());
+    }
 }
 
 FilterComponent* GraphEditorPanel::getComponentForFilter (const uint32 filterID) const
@@ -524,39 +540,39 @@ void GraphEditorPanel::actionListenerCallback (const String &message)
 
 void GraphEditorPanel::updateNode (const int nodeID, const int inChannels, const int outChannels)
 {
-	
-	ScopedPointer<XmlElement> temp(graph.createXml());
-	const XmlElement tempXml (*temp);
-	
-	graph.removeFilter(nodeID);
-	
-	forEachXmlChildElementWithTagName (tempXml, e, "FILTER")
-	{			
-		if(nodeID==e->getIntAttribute("uid"))
-		{
-			double origX = e->getDoubleAttribute("x");
-			double origY = e->getDoubleAttribute("y");
-			e->setAttribute("x", origX);
-			e->setAttribute("y", origY);
-			//cUtils::debug(e->getIntAttribute("uid"));
-			e->setAttribute("numInputs", inChannels);
-			e->setAttribute("numOutputs", outChannels); 
-			graph.createNodeFromXml(*e);
-			graph.changed();
-		}
-	}	
 
-	forEachXmlChildElementWithTagName (tempXml, e, "CONNECTION")
-	{
-		if(e->getIntAttribute ("srcFilter")==nodeID || e->getIntAttribute ("dstFilter")==nodeID)
-		{
-			graph.addConnection((uint32) e->getIntAttribute ("srcFilter"),
-								e->getIntAttribute ("srcChannel"),
-								(uint32) e->getIntAttribute ("dstFilter"),
-								e->getIntAttribute ("dstChannel"));
-		}
-	}	
-	
+    ScopedPointer<XmlElement> temp(graph.createXml());
+    const XmlElement tempXml (*temp);
+
+    graph.removeFilter(nodeID);
+
+    forEachXmlChildElementWithTagName (tempXml, e, "FILTER")
+    {
+        if(nodeID==e->getIntAttribute("uid"))
+        {
+            double origX = e->getDoubleAttribute("x");
+            double origY = e->getDoubleAttribute("y");
+            e->setAttribute("x", origX);
+            e->setAttribute("y", origY);
+            //cUtils::debug(e->getIntAttribute("uid"));
+            e->setAttribute("numInputs", inChannels);
+            e->setAttribute("numOutputs", outChannels);
+            graph.createNodeFromXml(*e);
+            graph.changed();
+        }
+    }
+
+    forEachXmlChildElementWithTagName (tempXml, e, "CONNECTION")
+    {
+        if(e->getIntAttribute ("srcFilter")==nodeID || e->getIntAttribute ("dstFilter")==nodeID)
+        {
+            graph.addConnection((uint32) e->getIntAttribute ("srcFilter"),
+                                e->getIntAttribute ("srcChannel"),
+                                (uint32) e->getIntAttribute ("dstFilter"),
+                                e->getIntAttribute ("dstChannel"));
+        }
+    }
+
 }
 
 void GraphEditorPanel::updateComponents()
@@ -615,75 +631,75 @@ void GraphEditorPanel::updateComponents()
 
 String GraphEditorPanel::newFile(String type, String caption)
 {
-	String csdText;
-	if(type=="effect")
-	{
-		csdText= 
-		"<Cabbage>\n"
-		"form size(400, 300), caption(\"";
-		csdText = csdText+caption+"\"), pluginID(\"plu1\")\n"
-		"\n"
-		"</Cabbage>\n"
-		"<CsoundSynthesizer>\n"
-		"<CsOptions>\n"
-		"-n -d\n"
-		"</CsOptions>\n"
-		"<CsInstruments>\n"
-		"sr = 44100\n"
-		"ksmps = 64\n"
-		"nchnls = 2\n"
-		"0dbfs=1\n"
-		"\n"
-		"instr 1\n"
-		"a1 inch 1\n"
-		"a2 inch 2\n"
-		"\n"
-		"\n"
-		"outs a1, a2\n"
-		"endin\n"
-		"\n"
-		"</CsInstruments>  \n"
-		"<CsScore>\n"
-		"f1 0 1024 10 1\n"
-		"i1 0 3600\n"
-		"</CsScore>\n"
-		"</CsoundSynthesizer>";
-	}
-	
-	else if(type=="instrument")
-	{
-		csdText= 
-		"<Cabbage>\n"
-		"form size(400, 300), caption(\"";
-		csdText = csdText+caption+"\"), pluginID(\"plu1\")\n"
-		"keyboard bounds(10, 200, 390, 100)\n"
-		"\n"
+    String csdText;
+    if(type=="effect")
+    {
+        csdText=
+            "<Cabbage>\n"
+            "form size(400, 300), caption(\"";
+        csdText = csdText+caption+"\"), pluginID(\"plu1\")\n"
+                  "\n"
+                  "</Cabbage>\n"
+                  "<CsoundSynthesizer>\n"
+                  "<CsOptions>\n"
+                  "-n -d\n"
+                  "</CsOptions>\n"
+                  "<CsInstruments>\n"
+                  "sr = 44100\n"
+                  "ksmps = 64\n"
+                  "nchnls = 2\n"
+                  "0dbfs=1\n"
+                  "\n"
+                  "instr 1\n"
+                  "a1 inch 1\n"
+                  "a2 inch 2\n"
+                  "\n"
+                  "\n"
+                  "outs a1, a2\n"
+                  "endin\n"
+                  "\n"
+                  "</CsInstruments>  \n"
+                  "<CsScore>\n"
+                  "f1 0 1024 10 1\n"
+                  "i1 0 3600\n"
+                  "</CsScore>\n"
+                  "</CsoundSynthesizer>";
+    }
 
-		"</Cabbage>\n"
-		"<CsoundSynthesizer>\n"
-		"<CsOptions>\n"
-		"-n -d -+rtmidi=NULL -M0 --midi-key-cps=4 --midi-velocity-amp=5\n" 
-		"</CsOptions>\n"
-		"<CsInstruments>\n"
-		"sr = 44100\n"
-		"ksmps = 64\n"
-		"nchnls = 2\n"
-		"0dbfs=1\n"
-		"\n"
-		"instr 1\n"
-		"a1 oscili p5, p4, 1\n"
-		"outs a1, a1"
-		"\n"
-		"endin\n"
-		"\n"
-		"</CsInstruments>  \n"
-		"<CsScore>\n"
-		"f1 0 1024 10 1\n"
-		"f0 3600\n"
-		"</CsScore>\n"
-		"</CsoundSynthesizer>";
-	}
-	return csdText;
+    else if(type=="instrument")
+    {
+        csdText=
+            "<Cabbage>\n"
+            "form size(400, 300), caption(\"";
+        csdText = csdText+caption+"\"), pluginID(\"plu1\")\n"
+                  "keyboard bounds(10, 200, 390, 100)\n"
+                  "\n"
+
+                  "</Cabbage>\n"
+                  "<CsoundSynthesizer>\n"
+                  "<CsOptions>\n"
+                  "-n -d -+rtmidi=NULL -M0 --midi-key-cps=4 --midi-velocity-amp=5\n"
+                  "</CsOptions>\n"
+                  "<CsInstruments>\n"
+                  "sr = 44100\n"
+                  "ksmps = 64\n"
+                  "nchnls = 2\n"
+                  "0dbfs=1\n"
+                  "\n"
+                  "instr 1\n"
+                  "a1 oscili p5, p4, 1\n"
+                  "outs a1, a1"
+                  "\n"
+                  "endin\n"
+                  "\n"
+                  "</CsInstruments>  \n"
+                  "<CsScore>\n"
+                  "f1 0 1024 10 1\n"
+                  "f0 3600\n"
+                  "</CsScore>\n"
+                  "</CsoundSynthesizer>";
+    }
+    return csdText;
 }
 
 void GraphEditorPanel::beginConnectorDrag (const uint32 sourceFilterID, const int sourceFilterChannel,
@@ -839,9 +855,9 @@ GraphAudioProcessorPlayer::GraphAudioProcessorPlayer()
       isPrepared (false),
       numInputChans (0),
       numOutputChans (0),
-	  actionCounter(0),
-	  inputGainLevel(1.f),
-	  outputGainLevel(1.f)
+      actionCounter(0),
+      inputGainLevel(1.f),
+      outputGainLevel(1.f)
 {
 }
 
@@ -859,12 +875,12 @@ void GraphAudioProcessorPlayer::setProcessor (AudioProcessor* const processorToP
         {
             processorToPlay->setPlayConfigDetails (numInputChans, numOutputChans, sampleRate, blockSize);
             processorToPlay->prepareToPlay (sampleRate, blockSize);
-			
-			for(int i=0;i<numInputChans;i++)
-				inputChannelRMS.add(0.f);
-						
-			for(int i=0;i<numOutputChans;i++)
-				outputChannelRMS.add(0.f);
+
+            for(int i=0; i<numInputChans; i++)
+                inputChannelRMS.add(0.f);
+
+            for(int i=0; i<numOutputChans; i++)
+                outputChannelRMS.add(0.f);
         }
 
         AudioProcessor* oldOne;
@@ -884,25 +900,25 @@ void GraphAudioProcessorPlayer::setProcessor (AudioProcessor* const processorToP
 //simple and safe method to listen for gain changes...
 void GraphAudioProcessorPlayer::changeListenerCallback (ChangeBroadcaster* source)
 {
-	const ScopedLock sl(getCurrentProcessor()->getCallbackLock());
-	if(((InternalMixerStrip*)source)->isInput())
-		inputGainLevel = ((InternalMixerStrip*)source)->currentGainLevel;
-	else
-		outputGainLevel = ((InternalMixerStrip*)source)->currentGainLevel;	
+    const ScopedLock sl(getCurrentProcessor()->getCallbackLock());
+    if(((InternalMixerStrip*)source)->isInput())
+        inputGainLevel = ((InternalMixerStrip*)source)->currentGainLevel;
+    else
+        outputGainLevel = ((InternalMixerStrip*)source)->currentGainLevel;
 }
 //==============================================================================
 void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const inputChannelData,
-                                                  const int numInputChannels,
-                                                  float** const outputChannelData,
-                                                  const int numOutputChannels,
-                                                  const int numSamples)
+        const int numInputChannels,
+        float** const outputChannelData,
+        const int numOutputChannels,
+        const int numSamples)
 {
     // these should have been prepared by audioDeviceAboutToStart()...
     jassert (sampleRate > 0 && blockSize > 0);
-	actionCounter++;
+    actionCounter++;
     incomingMidi.clear();
-	float inputBuffer[numSamples];
-	float outputBuffer[numSamples];
+    float inputBuffer[numSamples];
+    float outputBuffer[numSamples];
     messageCollector.removeNextBlockOfMessages (incomingMidi, numSamples);
     int totalNumChans = 0;
 
@@ -930,23 +946,23 @@ void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const input
     }
     else
     {
-				
+
         for (int i = 0; i < numInputChannels; ++i)
         {
-			//apply gain control on input
-			for(int y=0;y<numSamples;y++)
-				inputBuffer[y] = inputChannelData[i][y]*inputGainLevel;
-			
+            //apply gain control on input
+            for(int y=0; y<numSamples; y++)
+                inputBuffer[y] = inputChannelData[i][y]*inputGainLevel;
+
             channels[totalNumChans] = outputChannelData[i];
-			
+
             memcpy (channels[totalNumChans], inputBuffer, sizeof (float) * (size_t) numSamples);
-			inputChannelRMS.getReference(i) = abs(inputBuffer[0]);
-			
-			for(int y=0;y<numSamples;y++)
-			{
-				channels[totalNumChans][y] = channels[totalNumChans][y]*.0;
-			}
-			
+            inputChannelRMS.getReference(i) = abs(inputBuffer[0]);
+
+            for(int y=0; y<numSamples; y++)
+            {
+                channels[totalNumChans][y] = channels[totalNumChans][y]*.0;
+            }
+
             ++totalNumChans;
         }
 
@@ -958,13 +974,14 @@ void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const input
         }
     }
 
-	//put some breaks on the VU update speed. 
-	if(actionCounter==5){
-		actionCounter=0;
-		sendChangeMessage();
-	}
-		
-		
+    //put some breaks on the VU update speed.
+    if(actionCounter==5)
+    {
+        actionCounter=0;
+        sendChangeMessage();
+    }
+
+
     AudioSampleBuffer buffer (channels, totalNumChans, numSamples);
 
     {
@@ -977,10 +994,10 @@ void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const input
             if (! processor->isSuspended())
             {
                 processor->processBlock (buffer, incomingMidi);
-				//apply gain control on output
-				buffer.applyGain(outputGainLevel);
-				for(int i=0;i<totalNumChans;i++)
-					outputChannelRMS.getReference(i) = buffer.getRMSLevel(i, 0, numSamples);				
+                //apply gain control on output
+                buffer.applyGain(outputGainLevel);
+                for(int i=0; i<totalNumChans; i++)
+                    outputChannelRMS.getReference(i) = buffer.getRMSLevel(i, 0, numSamples);
                 return;
             }
         }
@@ -1036,66 +1053,66 @@ void GraphAudioProcessorPlayer::audioDeviceStopped()
 // graphDocumentComponent. Holds out main GUI objects
 GraphDocumentComponent::GraphDocumentComponent (AudioPluginFormatManager& formatManager,
         AudioDeviceManager* deviceManager_)
-: graph (formatManager), 
-deviceManager (deviceManager_),
-midiLearnEnabled(false)
+    : graph (formatManager),
+      deviceManager (deviceManager_),
+      midiLearnEnabled(false)
 {
     addAndMakeVisible (graphPanel = new GraphEditorPanel (graph));
 
-	addAndMakeVisible(sidebarPanel = new SidebarPanel(&graph));
-	addAndMakeVisible(bottomPanel = new BottomPanel(&graph));
+    addAndMakeVisible(sidebarPanel = new SidebarPanel(&graph));
+    addAndMakeVisible(bottomPanel = new BottomPanel(&graph));
 
-	sidebarPanel->addActionListener(bottomPanel);
+    sidebarPanel->addActionListener(bottomPanel);
 
     deviceManager->addChangeListener (graphPanel);
 
     graphPlayer.setProcessor (&graph.getGraph());
-	
-	graphPanel->setSize(6000, 6000);
-	graphPanel->setTopLeftPosition(-2600,-2900);
+
+    graphPanel->setSize(6000, 6000);
+    graphPanel->setTopLeftPosition(-2600,-2900);
 
     keyState.addListener (&graphPlayer.getMidiMessageCollector());
 
     addAndMakeVisible (keyboardComp = new MidiKeyboardComponent (keyState,
             MidiKeyboardComponent::horizontalKeyboard));
 
-	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::whiteNoteColourId, Colours::white.darker(.3f));
-	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::blackNoteColourId, Colours::green.darker(.9f));
-	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::upDownButtonArrowColourId, Colours::lime);
-	keyboardComp->setColour(MidiKeyboardComponent::ColourIds::upDownButtonBackgroundColourId, Colour(30,30,30));
-	
+    keyboardComp->setColour(MidiKeyboardComponent::ColourIds::whiteNoteColourId, Colours::white.darker(.3f));
+    keyboardComp->setColour(MidiKeyboardComponent::ColourIds::blackNoteColourId, Colours::green.darker(.9f));
+    keyboardComp->setColour(MidiKeyboardComponent::ColourIds::upDownButtonArrowColourId, Colours::lime);
+    keyboardComp->setColour(MidiKeyboardComponent::ColourIds::upDownButtonBackgroundColourId, Colour(30,30,30));
+
     addAndMakeVisible (statusBar = new TooltipBar());
     deviceManager->addAudioCallback (&graphPlayer);
     deviceManager->addMidiInputCallback (String::empty, &graphPlayer.getMidiMessageCollector());
-	deviceManager->addMidiInputCallback (String::empty, this);
+    deviceManager->addMidiInputCallback (String::empty, this);
 
-	int inChannels, outChannels;
-	if(!deviceManager->getCurrentAudioDevice())
-	{
-		cUtils::showMessage("Cabbage could not open the last known audio device. Please select a new audio device from the preferences menu and resart");
-		inChannels = outChannels = 2;
-		//dummy strips until user restarts application...
-		addAndMakeVisible (inputStrip = new InternalMixerStrip("Inputs", inChannels));
-		addAndMakeVisible (outputStrip = new InternalMixerStrip("Outputs", outChannels));
-	}
-	else
-	{
-		inChannels = deviceManager->getCurrentAudioDevice()->getInputChannelNames().size();
-		outChannels = deviceManager->getCurrentAudioDevice()->getOutputChannelNames().size();
-		//setup channel strips for inputs and outputs
-		addAndMakeVisible (inputStrip = new InternalMixerStrip("Inputs", inChannels));
-		addAndMakeVisible (outputStrip = new InternalMixerStrip("Outputs", outChannels));
-		graphPlayer.addChangeListener(inputStrip);
-		graphPlayer.addChangeListener(outputStrip);
-		inputStrip->addChangeListener(&graphPlayer);
-		outputStrip->addChangeListener(&graphPlayer);		
-	}
+    int inChannels, outChannels;
+    if(!deviceManager->getCurrentAudioDevice())
+    {
+        cUtils::showMessage("Cabbage could not open the last known audio device. Please select a new audio device from the preferences menu and resart");
+        inChannels = outChannels = 2;
+        //dummy strips until user restarts application...
+        addAndMakeVisible (inputStrip = new InternalMixerStrip("Inputs", inChannels));
+        addAndMakeVisible (outputStrip = new InternalMixerStrip("Outputs", outChannels));
+    }
+    else
+    {
+        inChannels = deviceManager->getCurrentAudioDevice()->getInputChannelNames().size();
+        outChannels = deviceManager->getCurrentAudioDevice()->getOutputChannelNames().size();
+        //setup channel strips for inputs and outputs
+        addAndMakeVisible (inputStrip = new InternalMixerStrip("Inputs", inChannels));
+        addAndMakeVisible (outputStrip = new InternalMixerStrip("Outputs", outChannels));
+        graphPlayer.addChangeListener(inputStrip);
+        graphPlayer.addChangeListener(outputStrip);
+        inputStrip->addChangeListener(&graphPlayer);
+        outputStrip->addChangeListener(&graphPlayer);
+    }
 
-	
 
-	
-	showBottomPanel(false);
-	
+
+
+    showBottomPanel(false);
+
     graphPanel->updateComponents();
 }
 
@@ -1103,12 +1120,12 @@ GraphDocumentComponent::~GraphDocumentComponent()
 {
     deviceManager->removeAudioCallback (&graphPlayer);
     deviceManager->removeMidiInputCallback (String::empty, &graphPlayer.getMidiMessageCollector());
-	deviceManager->removeMidiInputCallback (String::empty, this);
+    deviceManager->removeMidiInputCallback (String::empty, this);
     deviceManager->removeChangeListener (graphPanel);
- 
-	#ifndef WIN32
-	deleteAllChildren();
-	#endif
+
+#ifndef WIN32
+    deleteAllChildren();
+#endif
 
     graphPlayer.setProcessor (nullptr);
     keyState.removeListener (&graphPlayer.getMidiMessageCollector());
@@ -1123,11 +1140,11 @@ void GraphDocumentComponent::resized()
 
     //statusBar->setBounds (0, getHeight() - keysHeight - statusHeight, getWidth(), statusHeight);
     keyboardComp->setBounds (250, getHeight() - keysHeight, getWidth()-450, keysHeight);
-	inputStrip->setBounds(getWidth()-200, getHeight() - keysHeight, 200, 30);
-	outputStrip->setBounds(getWidth()-200, getHeight() - keysHeight/2, 200, 30);
-	sidebarPanel->setLookAndFeel(&getLookAndFeel());
-	sidebarPanel->setBounds(0, 0, 250, getHeight());	
-	bottomPanel->setBounds(250, getHeight()-260, getWidth()-250, 200);
+    inputStrip->setBounds(getWidth()-200, getHeight() - keysHeight, 200, 30);
+    outputStrip->setBounds(getWidth()-200, getHeight() - keysHeight/2, 200, 30);
+    sidebarPanel->setLookAndFeel(&getLookAndFeel());
+    sidebarPanel->setBounds(0, 0, 250, getHeight());
+    bottomPanel->setBounds(250, getHeight()-260, getWidth()-250, 200);
 }
 
 void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int x, int y, bool isNative, String filename)
@@ -1138,109 +1155,112 @@ void GraphDocumentComponent::createNewPlugin (const PluginDescription* desc, int
 
 void GraphDocumentComponent::addComponentToBottomPanel(Component* component)
 {
-	component->setSize(bottomPanel->getWidth(), bottomPanel->getHeight());
-	component->setComponentID(component->getName());
-	bottomPanel->addComponentToPanel(component);	
-	showBottomPanel(true);
+    component->setSize(bottomPanel->getWidth(), bottomPanel->getHeight());
+    component->setComponentID(component->getName());
+    bottomPanel->addComponentToPanel(component);
+    showBottomPanel(true);
 }
 
 void GraphDocumentComponent::removeComponentFromBottomPanel(String compName)
 {
-	bottomPanel->removeComponentFromPanel(compName);	
+    bottomPanel->removeComponentFromPanel(compName);
 }
 
 void GraphDocumentComponent::showComponentInBottomPanel(String compName)
 {
-	bottomPanel->showComponentInPanel(compName);	
+    bottomPanel->showComponentInPanel(compName);
 }
 
 void GraphDocumentComponent::removeAllComponentsFromBottomPanel()
 {
-	bottomPanel->removeAllComponentsFromPanel();
+    bottomPanel->removeAllComponentsFromPanel();
 }
 void GraphDocumentComponent::showSidebarPanel(bool show)
 {
-	if(show)
-	{
-		sidebarPanel->setVisible(true);
-		if(bottomPanel->isVisible())
-			bottomPanel->setBounds(sidebarPanel->getWidth(), bottomPanel->getPosition().getY(), getWidth()-sidebarPanel->getWidth(), bottomPanel->getHeight());
-		if(keyboardComp->isVisible())
-			keyboardComp->setBounds(sidebarPanel->getWidth()+5, keyboardComp->getPosition().getY(), getWidth()-sidebarPanel->getWidth()-10, keyboardComp->getHeight());		
-	}
-	else
-	{
-		sidebarPanel->setVisible(false);
-		if(bottomPanel->isVisible())
-			bottomPanel->setBounds(0, bottomPanel->getPosition().getY(), getWidth(), bottomPanel->getHeight());
-		if(keyboardComp->isVisible())
-			keyboardComp->setBounds(0, keyboardComp->getPosition().getY(), getWidth(), keyboardComp->getHeight());
-	}
+    if(show)
+    {
+        sidebarPanel->setVisible(true);
+        if(bottomPanel->isVisible())
+            bottomPanel->setBounds(sidebarPanel->getWidth(), bottomPanel->getPosition().getY(), getWidth()-sidebarPanel->getWidth(), bottomPanel->getHeight());
+        if(keyboardComp->isVisible())
+            keyboardComp->setBounds(sidebarPanel->getWidth()+5, keyboardComp->getPosition().getY(), getWidth()-sidebarPanel->getWidth()-10, keyboardComp->getHeight());
+    }
+    else
+    {
+        sidebarPanel->setVisible(false);
+        if(bottomPanel->isVisible())
+            bottomPanel->setBounds(0, bottomPanel->getPosition().getY(), getWidth(), bottomPanel->getHeight());
+        if(keyboardComp->isVisible())
+            keyboardComp->setBounds(0, keyboardComp->getPosition().getY(), getWidth(), keyboardComp->getHeight());
+    }
 }
 
 void GraphDocumentComponent::showBottomPanel(bool show)
 {
-	if(show)
-		bottomPanel->setVisible(true);
-	else
-		bottomPanel->setVisible(false);
+    if(show)
+        bottomPanel->setVisible(true);
+    else
+        bottomPanel->setVisible(false);
 }
 
 void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const MidiMessage &message)
 {
-	if(message.isController()){
-		//if MIDI learn is turned on
-		if(midiLearnEnabled){
-			int nodeId = graph.getLastMovedNodeId();
-			int parameterIndex = graph.getLastMovedNodeParameterIndex();
-			
-			for(int i=0;i<graph.midiMappings.size();i++)
-			{
-				if(doMidiMappingsMatch(i, message.getChannel(), message.getControllerNumber()))
-				{
-					graph.midiMappings.getReference(i).nodeId = nodeId;
-					graph.midiMappings.getReference(i).parameterIndex = parameterIndex;
-					
-					if(graph.getGraph().getNodeForId(nodeId))
-					{
-						graph.getGraph().getNodeForId(nodeId)->getProcessor()->setParameterNotifyingHost(parameterIndex, message.getControllerValue()/127.f);
-						//graph.getGraph().getNodeForId(nodeId)->getProcessor()->setParameter(parameterIndex, message.getControllerValue()/127.f);
-						//Logger::writeToLog("exists");
-						addNewMapping=false;
-					}
-				}
-			}		
-			
-			if(addNewMapping)
-			{
-				if(nodeId>0)
-					graph.midiMappings.add(CabbageMidiMapping(nodeId, parameterIndex, message.getChannel(), message.getControllerNumber()));
-			}
-		}
-		else
-		{ //mid learn disabled
-			for(int i=0;i<graph.midiMappings.size();i++)
-			{
-				if(doMidiMappingsMatch(i, message.getChannel(), message.getControllerNumber()))
-				{
-					if(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId))
-					{
-						graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->setParameterNotifyingHost(graph.midiMappings.getReference(i).parameterIndex, message.getControllerValue()/127.f);
-						//graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->setParameter(graph.midiMappings.getReference(i).parameterIndex, message.getControllerValue()/127.f);
-					}
-				}		
-					
-			}
-		}
-		
-	}
-addNewMapping=true;
+    if(message.isController())
+    {
+        //if MIDI learn is turned on
+        if(midiLearnEnabled)
+        {
+            int nodeId = graph.getLastMovedNodeId();
+            int parameterIndex = graph.getLastMovedNodeParameterIndex();
+
+            for(int i=0; i<graph.midiMappings.size(); i++)
+            {
+                if(doMidiMappingsMatch(i, message.getChannel(), message.getControllerNumber()))
+                {
+                    graph.midiMappings.getReference(i).nodeId = nodeId;
+                    graph.midiMappings.getReference(i).parameterIndex = parameterIndex;
+
+                    if(graph.getGraph().getNodeForId(nodeId))
+                    {
+                        graph.getGraph().getNodeForId(nodeId)->getProcessor()->setParameterNotifyingHost(parameterIndex, message.getControllerValue()/127.f);
+                        //graph.getGraph().getNodeForId(nodeId)->getProcessor()->setParameter(parameterIndex, message.getControllerValue()/127.f);
+                        //Logger::writeToLog("exists");
+                        addNewMapping=false;
+                    }
+                }
+            }
+
+            if(addNewMapping)
+            {
+                if(nodeId>0)
+                    graph.midiMappings.add(CabbageMidiMapping(nodeId, parameterIndex, message.getChannel(), message.getControllerNumber()));
+            }
+        }
+        else
+        {
+            //mid learn disabled
+            for(int i=0; i<graph.midiMappings.size(); i++)
+            {
+                if(doMidiMappingsMatch(i, message.getChannel(), message.getControllerNumber()))
+                {
+                    if(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId))
+                    {
+                        graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->setParameterNotifyingHost(graph.midiMappings.getReference(i).parameterIndex, message.getControllerValue()/127.f);
+                        //graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->setParameter(graph.midiMappings.getReference(i).parameterIndex, message.getControllerValue()/127.f);
+                    }
+                }
+
+            }
+        }
+
+    }
+    addNewMapping=true;
 }
 
 bool GraphDocumentComponent::doMidiMappingsMatch(int i, int channel, int controller)
 {
-	if((graph.midiMappings.getReference(i).channel==channel)&&(graph.midiMappings.getReference(i).controller==controller))
-		return true;
-	else 
-		return false;
+    if((graph.midiMappings.getReference(i).channel==channel)&&(graph.midiMappings.getReference(i).controller==controller))
+        return true;
+    else
+        return false;
 }

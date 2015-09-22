@@ -20,31 +20,31 @@
 #include "BreakpointEnvelope.h"
 
 BreakpointEnvelope::BreakpointEnvelope(Colour col, int Id, int tableNum):
-colour(col),
-uid(Id),
-tableNumber(tableNum),
-popupBubble(500)
+    colour(col),
+    uid(Id),
+    tableNumber(tableNum),
+    popupBubble(500)
 {
     popupBubble.setColour(BubbleComponent::backgroundColourId, Colours::white);
-	popupBubble.setAllowedPlacement(BubbleComponent::above | BubbleComponent::below);
+    popupBubble.setAllowedPlacement(BubbleComponent::above | BubbleComponent::below);
     popupBubble.setBounds(0, 0, 50, 20);
-	popupBubble.setAlwaysOnTop(true);
+    popupBubble.setAlwaysOnTop(true);
     addChildComponent(popupBubble);
-	setSize(600, 300);
+    setSize(600, 300);
 }
 
 void BreakpointEnvelope::createEnvStartEndPoint(int amp)
 {
-	EnvelopHandle* leftMostHandle = new EnvelopHandle(this, colour);
-	addAndMakeVisible(leftMostHandle);
-	double yOffset = 8.f/(double)getHeight();
-	leftMostHandle->setRelativePosition(Point<double>(0, 1-amp-yOffset), 1, 1);
-	EnvelopHandle* rightMostHandle = new EnvelopHandle(this, colour);
-	addAndMakeVisible(rightMostHandle);
-	rightMostHandle->setRelativePosition(Point<double>(1, 1-amp-yOffset), 1, 1);
-	handles.add(leftMostHandle);
-	handles.add(rightMostHandle);		
-	//resized();
+    EnvelopHandle* leftMostHandle = new EnvelopHandle(this, colour);
+    addAndMakeVisible(leftMostHandle);
+    double yOffset = 8.f/(double)getHeight();
+    leftMostHandle->setRelativePosition(Point<double>(0, 1-amp-yOffset), 1, 1);
+    EnvelopHandle* rightMostHandle = new EnvelopHandle(this, colour);
+    addAndMakeVisible(rightMostHandle);
+    rightMostHandle->setRelativePosition(Point<double>(1, 1-amp-yOffset), 1, 1);
+    handles.add(leftMostHandle);
+    handles.add(rightMostHandle);
+    //resized();
 }
 
 
@@ -53,7 +53,7 @@ void BreakpointEnvelope::showBubble(EnvelopHandle* handle)
 //	float x = cUtils::roundToPrec(handle->getRelativePosition().getX(), 2)*100.f;
 //	float y = (1.f-cUtils::roundToPrec(handle->getRelativePosition().getY(), 2))*100.f;
 //	String message = String(x)+"%, "+String(y)+"%";
-//	popupBubble.showAt(handle, AttributedString(message), 1050); 	
+//	popupBubble.showAt(handle, AttributedString(message), 1050);
 }
 
 //==============================================================================
@@ -75,12 +75,12 @@ Array<double> BreakpointEnvelope::getEnvelopeAsPfields()
 {
     Array<double> values;
     double prevXPos=0, currXPos=0, currYPos=0;
-	int genRoutine = 7;
-	Range<float> minMax;
-	minMax.setStart(0);
-	minMax.setEnd(1);
-    
-	for(int i=0; i<handles.size(); i++)
+    int genRoutine = 7;
+    Range<float> minMax;
+    minMax.setStart(0);
+    minMax.setEnd(1);
+
+    for(int i=0; i<handles.size(); i++)
     {
         currYPos = handles[i]->getRelativePosition().getY()*getHeight();
         if(genRoutine==7)
@@ -106,39 +106,39 @@ Array<double> BreakpointEnvelope::getEnvelopeAsPfields()
 
 void BreakpointEnvelope::mouseDown(const MouseEvent& e)
 {
-	int indx;
-	const int x = e.getPosition().getX();
-	for (int i=1; i<handles.size(); i++)
-	{
+    int indx;
+    const int x = e.getPosition().getX();
+    for (int i=1; i<handles.size(); i++)
+    {
 //		cUtils::debug("handle0X", handles[i-1]->getX());
 //		cUtils::debug("handle1X", handles[i]->getX());
 //		cUtils::debug("mouseX", x);
-		if (x >= handles[i-1]->getX() && x < handles[i]->getX())
-		{
-			indx = i;
-		}
-	}	
-	
-	EnvelopHandle* handle = new EnvelopHandle(this, colour);
-	addAndMakeVisible(handle);
-	handle->setTopLeftPosition(e.getPosition().getX(), e.getPosition().getY());
-	handle->setRelativePosition(e.getPosition().toDouble(), getWidth(), getHeight());
-	handles.insert(indx, handle);
-	repaint();
-	resized();
+        if (x >= handles[i-1]->getX() && x < handles[i]->getX())
+        {
+            indx = i;
+        }
+    }
+
+    EnvelopHandle* handle = new EnvelopHandle(this, colour);
+    addAndMakeVisible(handle);
+    handle->setTopLeftPosition(e.getPosition().getX(), e.getPosition().getY());
+    handle->setRelativePosition(e.getPosition().toDouble(), getWidth(), getHeight());
+    handles.insert(indx, handle);
+    repaint();
+    resized();
 }
 
 void BreakpointEnvelope::addHandle(Point<double> pos, bool resize)
 {
-	EnvelopHandle* handle = new EnvelopHandle(this, colour);
-	double yOffset = 8.f/(double)getHeight();
-	addAndMakeVisible(handle);
-	handle->setRelativePosition(Point<double>(pos.getX(), pos.getY()-yOffset), 1.0, 1.0);
-	handles.add(handle);
-	repaint();
-	if(resize)
-		resized();	
-} 
+    EnvelopHandle* handle = new EnvelopHandle(this, colour);
+    double yOffset = 8.f/(double)getHeight();
+    addAndMakeVisible(handle);
+    handle->setRelativePosition(Point<double>(pos.getX(), pos.getY()-yOffset), 1.0, 1.0);
+    handles.add(handle);
+    repaint();
+    if(resize)
+        resized();
+}
 
 int BreakpointEnvelope::getHandleIndex(EnvelopHandle* thisHandle)
 {
@@ -150,12 +150,12 @@ void BreakpointEnvelope::removeHandle(EnvelopHandle* handle)
     if (handles.size() > 0)
     {
         handles.removeObject(handle, true);
-    }	
-	
-	repaint();
-	resized();
+    }
+
+    repaint();
+    resized();
 }
-	
+
 EnvelopHandle* BreakpointEnvelope::getLastHandle()
 {
     return handles.getUnchecked(handles.size()-1);
@@ -188,40 +188,40 @@ EnvelopHandle* BreakpointEnvelope::getNextHandle(EnvelopHandle* thisHandle)
 
 Array<Point<double>> BreakpointEnvelope::getHandlePoints()
 {
-		Array<Point<double>> points;
-		for(int i=0;i<handles.size();i++)
-			points.add(handles[i]->getRelativePosition());
-			
-		return points;	
+    Array<Point<double>> points;
+    for(int i=0; i<handles.size(); i++)
+        points.add(handles[i]->getRelativePosition());
+
+    return points;
 }
 
 void BreakpointEnvelope::resized()
 {
-	//sendActionMessage instead....
-	//getEditor()->getFilter()->clearEnvDataPoint();
-	for(int i=0;i<handles.size();i++)
-	{
-		const double xPos = handles[i]->getRelativePosition().getX()*getWidth()-((i==0 || i==handles.size()-1) ? 4 : 0);
-		const double yPos = handles[i]->getRelativePosition().getY()*getHeight();
-		handles[i]->setSize(8, 8);
-		handles[i]->setTopLeftPosition(xPos, yPos);
-		//sendActionMessage instead....
-		//getEditor()->getFilter()->addEnvDataPoint(handles[i]->getRelativePosition());
-	}
-	sendChangeMessage();
+    //sendActionMessage instead....
+    //getEditor()->getFilter()->clearEnvDataPoint();
+    for(int i=0; i<handles.size(); i++)
+    {
+        const double xPos = handles[i]->getRelativePosition().getX()*getWidth()-((i==0 || i==handles.size()-1) ? 4 : 0);
+        const double yPos = handles[i]->getRelativePosition().getY()*getHeight();
+        handles[i]->setSize(8, 8);
+        handles[i]->setTopLeftPosition(xPos, yPos);
+        //sendActionMessage instead....
+        //getEditor()->getFilter()->addEnvDataPoint(handles[i]->getRelativePosition());
+    }
+    sendChangeMessage();
 }
- 
+
 void BreakpointEnvelope::paint(Graphics& g)
-{			
-	g.fillAll(Colours::transparentBlack);
-	Path path;
-	g.setColour(colour);
-	path.startNewSubPath(handles[0]->getPosition().translated(2.5, 2.5).toFloat());
-	for(int i=0;i<handles.size()-1;i++)
-	{
-		path.lineTo(handles[i]->getPosition().translated(4, 4).toFloat());
-	}
-	path.lineTo(handles[handles.size()-1]->getPosition().translated(4, 4).toFloat());
-	g.strokePath(path, PathStrokeType(2));
+{
+    g.fillAll(Colours::transparentBlack);
+    Path path;
+    g.setColour(colour);
+    path.startNewSubPath(handles[0]->getPosition().translated(2.5, 2.5).toFloat());
+    for(int i=0; i<handles.size()-1; i++)
+    {
+        path.lineTo(handles[i]->getPosition().translated(4, 4).toFloat());
+    }
+    path.lineTo(handles[handles.size()-1]->getPosition().translated(4, 4).toFloat());
+    g.strokePath(path, PathStrokeType(2));
 }
 

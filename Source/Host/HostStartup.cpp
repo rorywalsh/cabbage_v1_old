@@ -57,7 +57,7 @@ public:
         String manualPath;
 #if defined(LINUX) || defined(MACOSX)
         manualPath = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/CsoundDocs/index.html";
-        
+
 #else
         manualPath = "Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual/index.html";
 #endif
@@ -79,7 +79,7 @@ public:
         defaultPropSet->setValue("EditorColourScheme", 1);
         defaultPropSet->setValue("showTabs", 1);
         defaultPropSet->setValue("EnablePopupDisplay", 1);
-		defaultPropSet->setValue("ShowNativeFileDialogues", 1);
+        defaultPropSet->setValue("ShowNativeFileDialogues", 1);
         defaultPropSet->setValue("EnableNativePopup", 0);
         defaultPropSet->setValue("windowX", 100);
         defaultPropSet->setValue("windowY", 100);
@@ -107,7 +107,7 @@ public:
     {
         mainWindow = nullptr;
         delete appProperties;;
-        
+
         LookAndFeel::setDefaultLookAndFeel (nullptr);
     }
 
@@ -119,32 +119,38 @@ public:
             JUCEApplicationBase::quit();
     }
 
-    const String getApplicationName() override       {
+    const String getApplicationName() override
+    {
         return "Cabbage Studio";
     }
-    const String getApplicationVersion() override    {
+    const String getApplicationVersion() override
+    {
         return ProjectInfo::versionString;
     }
-    bool moreThanOneInstanceAllowed() override       {
+    bool moreThanOneInstanceAllowed() override
+    {
         return true;
     }
 
     ApplicationCommandManager commandManager;
     //ScopedPointer<ApplicationProperties> appProperties;
     CabbageLookAndFeel lookAndFeel;
-	ScopedPointer<PropertySet> defaultPropSet;
+    ScopedPointer<PropertySet> defaultPropSet;
 
 private:
     ScopedPointer<MainHostWindow> mainWindow;
 };
 
-static PluginHostApp& getApp()                      {
+static PluginHostApp& getApp()
+{
     return *dynamic_cast<PluginHostApp*>(JUCEApplication::getInstance());
 }
-ApplicationCommandManager& getCommandManager()      {
+ApplicationCommandManager& getCommandManager()
+{
     return getApp().commandManager;
 }
-ApplicationProperties& getAppProperties()           {
+ApplicationProperties& getAppProperties()
+{
     return *appProperties;
 }
 

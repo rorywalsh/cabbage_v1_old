@@ -1148,7 +1148,7 @@ int FilterComponent::exportPlugin(String type, bool saveAs, String fileName)
 
     if(!VSTData.exists())
     {
-        m_ShowMessage("Cabbage cannot find the plugin libraries. Make sure that Cabbage is situated in the same directory as CabbagePluginSynth.dat and CabbagePluginEffect.dat", oldLookAndFeel);
+        cUtils::showMessage("Cabbage cannot find the plugin libraries. Make sure that Cabbage is situated in the same directory as CabbagePluginSynth.dat and CabbagePluginEffect.dat");
         return 0;
     }
     else
@@ -1171,16 +1171,16 @@ int FilterComponent::exportPlugin(String type, bool saveAs, String fileName)
         }
         //showMessage(dll.getFullPathName());
         if(!VSTData.copyFileTo(dll))
-            cUtils::showMessage("Problem moving plugin lib, make sure it's not currently open in your plugin host!", lookAndFeel);
+            cUtils::showMessage("Problem moving plugin lib, make sure it's not currently open in your plugin host!");
 
         loc_csdFile.replaceWithText(csdFile.loadFileAsString());
         setUniquePluginID(dll, loc_csdFile, false);
         String info;
         info = String("Your plugin has been created. It's called:\n\n")+dll.getFullPathName()+String("\n\nIn order to modify this plugin you only have to edit the associated .csd file. You do not need to export every time you make changes.\n\nTo turn off this notice visit 'Preferences' in the main 'options' menu");
 
-        int val = getPreference(appProperties, "DisablePluginInfo");
-        if(!val)
-            cUtils::showMessage(info);
+        //int val = getPreference(appProperties, "DisablePluginInfo");
+        //if(!val)
+        //    cUtils::showMessage(info);
     }
 
 #endif

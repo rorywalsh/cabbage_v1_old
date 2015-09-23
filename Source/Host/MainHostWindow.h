@@ -44,6 +44,7 @@ static const int preferences            = 0x30400;
 static const int setCabbageFileDirectory= 0x30500;
 static const int viewSidepanel          = 0x30600;
 static const int midiLearn	            = 0x30700;
+static const int midiMappings           = 0x30701;
 static const int viewBottomPanel        = 0x30800;
 }
 
@@ -86,6 +87,7 @@ public:
 
     void launchPreferencesDialogue();
     void createPlugin (const PluginDescription* desc, int x, int y);
+    void showMidiMappings();
 
     void addPluginsToMenu (PopupMenu& m) const;
     //add native Cabbage filters to list...nice.

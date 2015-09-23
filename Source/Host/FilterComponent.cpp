@@ -155,6 +155,8 @@ FilterComponent::FilterComponent (FilterGraph& graph_, const uint32 filterID_)
 //================================================================================
 FilterComponent::~FilterComponent()
 {
+    mute = nullptr;
+    bypass = nullptr;
     deleteAllChildren();
 }
 

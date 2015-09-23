@@ -221,6 +221,142 @@ public:
         }
     }
 };
+
+class MidiMappingsComponent    : public Component,
+    public TableListBoxModel
+{
+public:
+    MidiMappingsComponent()   : font (14.0f)
+    {
+
+        // Create our table component and add it to this component..
+        addAndMakeVisible (table);
+        table.setModel (this);
+
+        // give it a border
+        table.setColour (ListBox::outlineColourId, Colours::grey);
+        table.setOutlineThickness (1);
+
+        table.getHeader().addColumn("Channel", 1,
+                                    100,
+                                    50, 400,
+                                    TableHeaderComponent::defaultFlags);
+
+        table.getHeader().addColumn("Controller", 2,
+                                    100,
+                                    50, 400,
+                                    TableHeaderComponent::defaultFlags);
+
+        table.getHeader().addColumn("Plugin", 3,
+                                    100,
+                                    50, 400,
+                                    TableHeaderComponent::defaultFlags);
+
+        table.getHeader().addColumn("Parameter", 4,
+                                    100,
+                                    50, 400,
+                                    TableHeaderComponent::defaultFlags);
+
+    }
+
+    // This is overloaded from TableListBoxModel, and must return the total number of rows in our table
+    int getNumRows() override
+    {
+        return numRows;
+    }
+
+    // This is overloaded from TableListBoxModel, and must paint any cells that aren't using custom
+    // components.
+    void paintCell (Graphics& g, int rowNumber, int columnId,
+                    int width, int height, bool /*rowIsSelected*/) override
+    {
+        g.setColour (Colours::black);
+        g.setFont (font);
+        g.setColour(Colours::whitesmoke);
+
+        const XmlElement* rowElement = rowData->getChildElement (rowNumber);
+
+        if (rowElement != 0)
+        {
+            const String text (rowElement->getStringAttribute (getAttributeNameForColumnId (columnId)));
+
+            g.drawText (text, 2, 0, width - 4, height, Justification::centredLeft, true);
+        }
+
+        g.setColour (Colours::black.withAlpha (0.2f));
+        g.fillRect (width - 1, 0, 1, height);
+    }
+
+    String getAttributeNameForColumnId (const int columnId) const
+    {
+        if(columnId==1)
+            return "Channel";
+        else if(columnId==2)
+            return "Controller";
+        else if(columnId==3)
+            return "NodeId";
+        else if(columnId==4)
+            return "ParameterIndex";
+    }
+
+    void paintRowBackground (Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
+    {
+        g.fillAll (cUtils::getBackgroundSkin());
+        g.setFont (font);
+        //g.setColour(Colours::white);
+        //g.drawText (rowData[rowNumber], 2, 0, width - 4, height, Justification::centredLeft, true);
+
+        if (rowIsSelected)
+            g.fillAll (Colours::cornflowerblue);
+    }
+
+    // This is overloaded from TableListBoxModel, and must update any custom components that we're using
+    Component* refreshComponentForCell (int rowNumber, int columnId, bool /*isRowSelected*/,
+                                        Component* existingComponentToUpdate) override
+    {
+        {
+            // for any other column, just return 0, as we'll be painting these columns directly.
+
+            jassert (existingComponentToUpdate == 0);
+            return 0;
+        }
+    }
+
+    //add or modify exiting list entries
+    void addData(XmlElement* xml)
+    {
+        rowData = xml;
+        numRows = xml->getNumChildElements();
+    }
+
+    //==============================================================================
+    void resized() override
+    {
+        // position our table with a gap around its edge
+        table.setBoundsInset (BorderSize<int> (8));
+    }
+
+    //determine actions to take place when users click on a cell...
+    void cellClicked (int rowNumber, int columnId, const MouseEvent &e)
+    {
+        if(e.mods.isRightButtonDown())
+        {
+            PopupMenu m;
+            CabbageLookAndFeel cLAK;
+            m.setLookAndFeel(&cLAK);
+            m.addItem(1, "Delete selected");
+            m.show();
+        }
+
+    }
+
+private:
+    TableListBox table;     // the table component itself
+    Font font;
+    int numRows;            // The number of rows of data we've got
+    XmlElement* rowData;
+};
+
 //==============================================================================
 //    A panel that embeds a GraphEditorPanel with a midi keyboard at the bottom.
 //    It also manages the graph itself, and plays it.
@@ -241,6 +377,7 @@ public:
     FilterGraph graph;
     void handleIncomingMidiMessage (MidiInput*, const MidiMessage&) override;
     bool doMidiMappingsMatch(int i, int channel, int controller);
+    void showMidiMappings();
 
     void showSidebarPanel(bool show);
     void showBottomPanel(bool show);

@@ -1257,6 +1257,38 @@ void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const
     addNewMapping=true;
 }
 
+void GraphDocumentComponent::showMidiMappings()
+{
+    StringArray midiMap;
+    XmlElement* xml = new XmlElement ("MIDIMAPPINGS");
+
+    for (int i = 0; i < graph.midiMappings.size(); ++i)
+    {
+        String controller(graph.midiMappings.getReference(i).controller);
+        String channel(graph.midiMappings.getReference(i).channel);
+        String nodeId(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->getName());
+        String index(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->getParameterName(graph.midiMappings.getReference(i).parameterIndex));
+
+        //add midi mapping to here, might not be easy...
+        XmlElement* e = new XmlElement ("MIDI_MAPPINGS");
+        e->setAttribute ("NodeId", nodeId);
+        e->setAttribute ("ParameterIndex", index);
+        e->setAttribute ("Channel", channel);
+        e->setAttribute ("Controller", controller);
+
+        xml->addChildElement (e);
+    }
+
+    MidiMappingsComponent midiMaps;
+    midiMaps.setSize (420, 300);
+    midiMaps.addData(xml);
+    //midiMaps.setLookAndFeel(lookAndFeel);
+
+    Colour col(24, 24, 24);
+    DialogWindow::showModalDialog("MIDI Mappings", &midiMaps, this, col, true, false, false);
+
+}
+
 bool GraphDocumentComponent::doMidiMappingsMatch(int i, int channel, int controller)
 {
     if((graph.midiMappings.getReference(i).channel==channel)&&(graph.midiMappings.getReference(i).controller==controller))

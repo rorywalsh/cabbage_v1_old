@@ -222,6 +222,7 @@ PopupMenu MainHostWindow::getMenuForIndex (int topLevelMenuIndex, const String& 
     {
         menu.addCommandItem (&getCommandManager(), CommandIDs::viewSidepanel);
         menu.addCommandItem (&getCommandManager(), CommandIDs::viewBottomPanel);
+        menu.addCommandItem (&getCommandManager(), CommandIDs::midiMappings);
     }
     else if (topLevelMenuIndex == 2)
     {
@@ -457,6 +458,7 @@ void MainHostWindow::getAllCommands (Array <CommandID>& commands)
                               CommandIDs::viewSidepanel,
                               CommandIDs::viewBottomPanel,
                               CommandIDs::midiLearn,
+                              CommandIDs::midiMappings,
                               CommandIDs::setCabbageFileDirectory
                             };
 
@@ -525,6 +527,10 @@ void MainHostWindow::getCommandInfo (const CommandID commandID, ApplicationComma
     case CommandIDs::midiLearn:
         result.setInfo ("MIDI Learn", String::empty, category, 0);
         result.defaultKeypresses.add (KeyPress('m', ModifierKeys::commandModifier, 0));
+        break;
+
+    case CommandIDs::midiMappings:
+        result.setInfo ("MIDI Mappings", String::empty, category, 0);
         break;
 
     default:
@@ -598,11 +604,23 @@ bool MainHostWindow::perform (const InvocationInfo& info)
         graphEditor->toggleMIDILearn();
         break;
 
+    case CommandIDs::midiMappings:
+        showMidiMappings();
+        break;
+
     default:
         return false;
     }
 
     return true;
+}
+
+void MainHostWindow::showMidiMappings()
+{
+    StringArray midiMap;
+    GraphDocumentComponent* const graphEditor = getGraphDocument();
+
+    graphEditor->showMidiMappings();
 }
 
 void MainHostWindow::launchPreferencesDialogue()
@@ -676,6 +694,7 @@ void MainHostWindow::fileDragMove (const StringArray&, int, int)
 
 void MainHostWindow::fileDragExit (const StringArray&)
 {
+
 }
 
 void MainHostWindow::filesDropped (const StringArray& files, int x, int y)

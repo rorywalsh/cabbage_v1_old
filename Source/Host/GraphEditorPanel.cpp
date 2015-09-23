@@ -385,15 +385,15 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 
 void GraphEditorPanel::itemDropped (const DragAndDropTarget::SourceDetails& dragSourceDetails)
 {
-		if(FileTreeComponent* fileComp = dynamic_cast<FileTreeComponent*>(dragSourceDetails.sourceComponent.get()))			
-		{
-			//cUtils::showMessage(fileComp->getSelectedFile().getFullPathName());	
-			if (MainHostWindow* const mainWindow = findParentComponentOfClass<MainHostWindow>())
-			{			
-				String name = "soundfile player:"+fileComp->getSelectedFile().getFullPathName();
-				createNewPlugin (mainWindow->getChosenType (10000), dragSourceDetails.localPosition.x, dragSourceDetails.localPosition.x, true, name);
-			}
-		}	
+    if(FileTreeComponent* fileComp = dynamic_cast<FileTreeComponent*>(dragSourceDetails.sourceComponent.get()))
+    {
+        //cUtils::showMessage(fileComp->getSelectedFile().getFullPathName());
+        if (MainHostWindow* const mainWindow = findParentComponentOfClass<MainHostWindow>())
+        {
+            String name = "soundfile player:"+fileComp->getSelectedFile().getFullPathName();
+            createNewPlugin (mainWindow->getChosenType (10000), dragSourceDetails.localPosition.x, dragSourceDetails.localPosition.x, true, name);
+        }
+    }
 }
 
 GraphDocumentComponent* GraphEditorPanel::getGraphDocument()
@@ -424,7 +424,7 @@ void GraphEditorPanel::mouseUp (const MouseEvent& e)
     lassoComp.endLasso();
     removeChildComponent (&lassoComp);
 }
-	
+
 void GraphEditorPanel::findLassoItemsInArea (Array <FilterComponent*>& results, const Rectangle<int>& area)
 {
     const Rectangle<int> lasso (area);
@@ -452,9 +452,9 @@ void GraphEditorPanel::createNewPlugin (const PluginDescription* desc, int x, in
             descript.descriptiveName = "Soundfile player";
             descript.name = "SoundfilePlayer";
             descript.pluginFormatName = "SoundfilePlayer";
-			String file = fileName.substring(17);
-			cUtils::debug(file);
-			descript.fileOrIdentifier = file;
+            String file = fileName.substring(17);
+            cUtils::debug(file);
+            descript.fileOrIdentifier = file;
         }
         else if(fileName=="automation track")
         {
@@ -1255,6 +1255,60 @@ void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const
 
     }
     addNewMapping=true;
+}
+
+void GraphDocumentComponent::showMidiMappings()
+{
+    XmlElement* xml = new XmlElement ("MIDIMAPPINGS");
+
+    for (int i = 0; i < graph.midiMappings.size(); ++i)
+    {
+        String controller(graph.midiMappings.getReference(i).controller);
+        String channel(graph.midiMappings.getReference(i).channel);
+        int nodeId = graph.midiMappings.getReference(i).nodeId;
+        int paramIndex = graph.midiMappings.getReference(i).parameterIndex;
+
+        String plugin(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->getName());
+        String param(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->getParameterName(graph.midiMappings.getReference(i).parameterIndex));
+
+        //add midi mapping to here, might not be easy...
+        XmlElement* e = new XmlElement ("MIDI_MAPPINGS");
+        e->setAttribute ("NodeId", plugin+" ("+String(nodeId)+")");
+        e->setAttribute ("ParameterIndex", param+" ("+String(paramIndex)+")");
+        e->setAttribute ("Channel", channel);
+        e->setAttribute ("Controller", controller);
+        xml->addChildElement (e);
+    }
+
+    MidiMappingsComponent midiMaps(xml);
+    midiMaps.setSize (420, 300);
+    //midiMaps.addData(xml);
+    //midiMaps.setLookAndFeel(lookAndFeel);
+
+    Colour col(24, 24, 24);
+    DialogWindow::showModalDialog("MIDI Mappings", &midiMaps, this, col, true, false, false);
+
+    midiMaps.getMidiMapXml();
+
+    XmlElement* updatedXml = midiMaps.getMidiMapXml();
+
+    //update new MIDI mappings according to user changes
+    graph.midiMappings.clear();
+
+    forEachXmlChildElementWithTagName (*updatedXml, e, "MIDI_MAPPINGS")
+    {
+        String node = e->getStringAttribute("NodeId");
+        //cUtils::showMessage(node);
+        int nodeId = node.substring(node.indexOf("(")+1, node.length()-1).getIntValue();
+        String paramIndex = e->getStringAttribute("ParameterIndex");
+        int index = paramIndex.substring(paramIndex.indexOf("(")+1, paramIndex.length()-1).getIntValue();
+
+        //node.substring(node.indexOf("(")+1, node.length()-1).getIntValue());
+        graph.midiMappings.add(CabbageMidiMapping(nodeId,
+                               index,
+                               e->getIntAttribute ("Channel"),
+                               e->getIntAttribute ("Controller")));
+    }
 }
 
 bool GraphDocumentComponent::doMidiMappingsMatch(int i, int channel, int controller)

@@ -143,11 +143,7 @@ void CodeWindow::showEditorConsole()
 //==============================================================================
 StringArray CodeWindow::getMenuBarNames()
 {
-#ifdef BUILD_DEBUGGER
     const char* const names[] = { "File", "Edit", "View", "Debug", "Help", 0 };
-#else
-    const char* const names[] = { "File", "Edit", "View", "Help", "Debug", 0 };
-#endif
     return StringArray (names);
 }
 
@@ -485,7 +481,7 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
 
         return m1;
     }
-#ifdef BUILD_DEBUGGER
+
     else if(topLevelMenuIndex==3)
     {
         m1.addCommandItem(&commandManager, CommandIDs::setBreakpoint);
@@ -501,16 +497,7 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
         m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
         return m1;
     }
-#else
 
-
-    else if(topLevelMenuIndex==3)
-    {
-        m1.addCommandItem(&commandManager, CommandIDs::viewCsoundHelp);
-        m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
-        return m1;
-    }
-#endif
     else return m1;
 }
 

@@ -27,63 +27,66 @@
 
 //==============================================================================
 class BottomPanel   : public Component,
-					  public ActionListener,
-					  public Timer
+    public ActionListener,
+    public Timer
 {
 public:
     BottomPanel(FilterGraph* graph);
-	~BottomPanel();
-	void paint(Graphics &g);
-	void actionListenerCallback (const String &message);
-	void mouseDrag(const MouseEvent& event);
-	void mouseEnter(const MouseEvent& event);
-	void addComponentToPanel(Component* comp);
-	void removeComponentFromPanel(String name);
-	void showComponentInPanel(String compName);
-	void removeAllComponentsFromPanel();
-	int getNumberComponents(){	return numberOfComponents;	}
-	void resized();
-	void timerCallback();
-	
-	class Container : public Component
-	{
-		public:
-			Container(){}
-			
-			~Container(){}
+    ~BottomPanel();
+    void paint(Graphics &g);
+    void actionListenerCallback (const String &message);
+    void mouseDrag(const MouseEvent& event);
+    void mouseEnter(const MouseEvent& event);
+    void addComponentToPanel(Component* comp);
+    void removeComponentFromPanel(String name);
+    void showComponentInPanel(String compName);
+    void removeAllComponentsFromPanel();
+    int getNumberComponents()
+    {
+        return numberOfComponents;
+    }
+    void resized();
+    void timerCallback();
 
-			BottomPanel* getParentPanel()
-			{
-				return findParentComponentOfClass<BottomPanel>();	
-			}
-			
-			void paint(Graphics &g)
-			{
-				g.fillAll(Colour::greyLevel (0.2f));
-			}
-	};
-	
-	class BorderComponent : public Component
-	{
-	public:
-		BorderComponent(String name):Component(name){}
-		
-		void paint(Graphics& g)
-		{
-			g.fillAll(Colour::greyLevel (0.2f));
-		}		
-	};
-	
+    class Container : public Component
+    {
+    public:
+        Container() {}
+
+        ~Container() {}
+
+        BottomPanel* getParentPanel()
+        {
+            return findParentComponentOfClass<BottomPanel>();
+        }
+
+        void paint(Graphics &g)
+        {
+            g.fillAll(Colour::greyLevel (0.2f));
+        }
+    };
+
+    class BorderComponent : public Component
+    {
+    public:
+        BorderComponent(String name):Component(name) {}
+
+        void paint(Graphics& g)
+        {
+            g.fillAll(Colour::greyLevel (0.2f));
+        }
+    };
+
 
 private:
-	BorderComponent topBorder;
-	int indexOfCompToScrollTo, currentYPos, indexOfCurrentComp;
-	float animateIndex;
-	bool canResize;
-	int startingYPos;
-	Viewport viewport;
-	Container container;
-	int numberOfComponents;
+    BorderComponent topBorder;
+    int indexOfCompToScrollTo, currentYPos, indexOfCurrentComp;
+    float animateIndex;
+    bool canResize;
+    int startingYPos;
+    Viewport viewport;
+    Container container;
+    int numberOfComponents;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BottomPanel);
 };
 

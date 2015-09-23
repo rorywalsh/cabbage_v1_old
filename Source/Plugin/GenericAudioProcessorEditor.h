@@ -30,9 +30,9 @@
 #include "../Host/PluginWrapperProcessor.h"
 
 class PluginProcessorParameterPropertyComp   : public PropertyComponent,
-                                         private AudioProcessorListener,
-                                         private Timer,
-										 public ActionBroadcaster
+    private AudioProcessorListener,
+    private Timer,
+    public ActionBroadcaster
 {
 public:
     PluginProcessorParameterPropertyComp (const String& name, PluginWrapper& p, int paramIndex)
@@ -41,16 +41,16 @@ public:
           index (paramIndex),
           paramHasChanged (false),
           slider (p, paramIndex),
-		  lookAndFeelBasic(new CabbageLookAndFeelBasic()),
-		  active(false)
+          lookAndFeelBasic(new CabbageLookAndFeelBasic()),
+          active(false)
     {
-		setLookAndFeel(lookAndFeelBasic);
+        setLookAndFeel(lookAndFeelBasic);
         startTimer (100);
         addAndMakeVisible (slider);
-		setPreferredHeight(20);
+        setPreferredHeight(20);
         owner.vstInstance->addListener (this);
-		slider.setLookAndFeel(lookAndFeelBasic);
-		slider.lookAndFeelChanged();
+        slider.setLookAndFeel(lookAndFeelBasic);
+        slider.lookAndFeelChanged();
     }
 
     ~PluginProcessorParameterPropertyComp()
@@ -68,22 +68,22 @@ public:
         slider.updateText();
     }
 
-	void setActive(bool val)
-	{
-		active = val;
-		repaint();
-	}
+    void setActive(bool val)
+    {
+        active = val;
+        repaint();
+    }
 
     void paint(Graphics &g)
     {
         g.fillAll(cUtils::getComponentSkin().darker(.4f)); //background
-		
-		if(active == true)
-		{
-			g.setColour(Colours::yellow);
-			g.drawRect(getLocalBounds().withLeft(5).withWidth(slider.getPosition().getX()-15.f), 1.f);
-		}
-		
+
+        if(active == true)
+        {
+            g.setColour(Colours::yellow);
+            g.drawRect(getLocalBounds().withLeft(5).withWidth(slider.getPosition().getX()-15.f), 1.f);
+        }
+
         String text = getName();
         g.setColour(Colours::whitesmoke);
 
@@ -97,7 +97,7 @@ public:
         //	g.drawFittedText(text, 5, 5,
         //	font.getStringWidth(text), font.getHeight()-2, Justification::centredTop, 1);
     }
-	
+
     void audioProcessorChanged (AudioProcessor*) override  {}
 
     void audioProcessorParameterChanged (AudioProcessor*, int parameterIndex, float) override
@@ -147,11 +147,11 @@ private:
                 owner.setParameterNotifyingHost (index, newVal);
 
                 if(PluginProcessorParameterPropertyComp* propComp = findParentComponentOfClass <PluginProcessorParameterPropertyComp>())
-				{
-					propComp->sendActionMessage(String(index));
-				}
-				
-				updateText();
+                {
+                    propComp->sendActionMessage(String(index));
+                }
+
+                updateText();
             }
         }
 
@@ -171,11 +171,11 @@ private:
     const int index;
     bool volatile paramHasChanged;
     ParamSlider slider;
-	bool active;
-	Colour midiLearnColour;
-	ScopedPointer<CabbageLookAndFeelBasic> lookAndFeelBasic;
-	
-	
+    bool active;
+    Colour midiLearnColour;
+    ScopedPointer<CabbageLookAndFeelBasic> lookAndFeelBasic;
+
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginProcessorParameterPropertyComp)
 };
@@ -184,69 +184,69 @@ private:
 //==============================================================================
 
 class PluginGenericAudioProcessorEditor : 	public AudioProcessorEditor,
-											public ActionListener,
-											public ActionBroadcaster
+    public ActionListener,
+    public ActionBroadcaster
 {
 public:
-	PluginGenericAudioProcessorEditor(PluginWrapper* const p, bool midiLearn)
-    : AudioProcessorEditor (p), midiLearnMode(midiLearn)
-	{
-		jassert (p != nullptr);
-		setOpaque (true);
+    PluginGenericAudioProcessorEditor(PluginWrapper* const p, bool midiLearn)
+        : AudioProcessorEditor (p), midiLearnMode(midiLearn)
+    {
+        jassert (p != nullptr);
+        setOpaque (true);
 
-		addAndMakeVisible (panel);
-		
-		const int numParams = p->getNumParameters();
-		int totalHeight = 0;
+        addAndMakeVisible (panel);
 
-		for (int i = 0; i < numParams; ++i)
-		{
-			String name (p->getParameterName (i));
-			if (name.trim().isEmpty())
-				name = "Unnamed";
+        const int numParams = p->getNumParameters();
+        int totalHeight = 0;
 
-			PluginProcessorParameterPropertyComp* const pc = new PluginProcessorParameterPropertyComp (name, *p, i);
-			
-			if(midiLearn)
-				pc->addActionListener(this);
-				
-			params.add (pc);
-			totalHeight += pc->getPreferredHeight();
-		}
+        for (int i = 0; i < numParams; ++i)
+        {
+            String name (p->getParameterName (i));
+            if (name.trim().isEmpty())
+                name = "Unnamed";
 
-		
-		panel.addProperties(params);
+            PluginProcessorParameterPropertyComp* const pc = new PluginProcessorParameterPropertyComp (name, *p, i);
 
-		setSize (400, jlimit (25, 400, totalHeight));
-	}
+            if(midiLearn)
+                pc->addActionListener(this);
 
-	~PluginGenericAudioProcessorEditor()
-	{
-		sendActionMessage("shutting down generic interface");
-	}
+            params.add (pc);
+            totalHeight += pc->getPreferredHeight();
+        }
 
-	void paint (Graphics& g)
-	{
-		g.fillAll (cUtils::getDarkerBackgroundSkin());
-	}
 
-	void resized()
-	{
-		panel.setBounds (getLocalBounds().withHeight(getHeight()));
-	}
+        panel.addProperties(params);
 
-	void actionListenerCallback (const String &message)
-	{
-		int index = message.getIntValue();
-		for(int i=0;i<params.size();i++)
-			((PluginProcessorParameterPropertyComp*)params.getReference(i))->setActive(index==i ? true : false);
+        setSize (400, jlimit (25, 400, totalHeight));
+    }
 
-	}
+    ~PluginGenericAudioProcessorEditor()
+    {
+        sendActionMessage("shutting down generic interface");
+    }
+
+    void paint (Graphics& g)
+    {
+        g.fillAll (cUtils::getDarkerBackgroundSkin());
+    }
+
+    void resized()
+    {
+        panel.setBounds (getLocalBounds().withHeight(getHeight()));
+    }
+
+    void actionListenerCallback (const String &message)
+    {
+        int index = message.getIntValue();
+        for(int i=0; i<params.size(); i++)
+            ((PluginProcessorParameterPropertyComp*)params.getReference(i))->setActive(index==i ? true : false);
+
+    }
 private:
-	PropertyPanel panel;
-	Array <PropertyComponent*> params;
-	bool midiLearnMode;
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginGenericAudioProcessorEditor)
+    PropertyPanel panel;
+    Array <PropertyComponent*> params;
+    bool midiLearnMode;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginGenericAudioProcessorEditor)
 };
 
 

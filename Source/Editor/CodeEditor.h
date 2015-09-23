@@ -143,11 +143,11 @@ public:
 
     int saveAllFiles();
     void setSavePoint();
-	
-	void setShowTabButtons(bool show)
-	{
-		showTabButtons = show;
-	}
+
+    void setShowTabButtons(bool show)
+    {
+        showTabButtons = show;
+    }
     void changeListenerCallback(juce::ChangeBroadcaster* source);
     String getAllText();
     void setAllText(String text);

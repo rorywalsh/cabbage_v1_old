@@ -28,18 +28,18 @@
 class AudioFilePlaybackEditor;
 
 class WaveformDisplay : public Component,
-						public Timer,
-						public ChangeListener,
-						private ScrollBar::Listener
+    public Timer,
+    public ChangeListener,
+    private ScrollBar::Listener
 {
 public:
     WaveformDisplay(AudioFormatManager& formatManager, BufferingAudioSource *source, int sr, Colour col);
     ~WaveformDisplay();
-	
 
-	
-	BreakpointEnvelope gainEnvelope;
-	void showGainEnvelope(bool show);
+
+
+    BreakpointEnvelope gainEnvelope;
+    void showGainEnvelope(bool show);
     void setScrubberPos(double pos);
     void changeListenerCallback (ChangeBroadcaster*);
     void setFile (const File& file);
@@ -53,25 +53,25 @@ public:
     void resetPlaybackPosition();
     void resized() override;
 
-	BufferingAudioSource* source;
+    BufferingAudioSource* source;
 
-	AudioFilePlaybackEditor* getEditor()
-	{
-		return this->findParentComponentOfClass<AudioFilePlaybackEditor>();
-	}	
-	
+    AudioFilePlaybackEditor* getEditor()
+    {
+        return this->findParentComponentOfClass<AudioFilePlaybackEditor>();
+    }
+
 private:
-	Range<double> visibleRange;
+    Range<double> visibleRange;
     //Slider& zoomSlider;
-	ScrollBar scrollbar;
+    ScrollBar scrollbar;
     AudioThumbnailCache thumbnailCache;
-	
+
     AudioThumbnail thumbnail;
     double startTime, endTime;
-	Rectangle<int> localBounds;
-	float sampleRate;
-	double currentPlayPosition;
-	Colour tableColour;
+    Rectangle<int> localBounds;
+    float sampleRate;
+    double currentPlayPosition;
+    Colour tableColour;
     DrawableRectangle currentPositionMarker;
     float timeToX (const double time) const;
     double xToTime (const float x) const;
@@ -83,57 +83,57 @@ private:
 /**
 */
 class AudioFilePlaybackEditor  : public AudioProcessorEditor,
-								 public Button::Listener,
-								 public DragAndDropTarget,
-								 public Slider::Listener
+    public Button::Listener,
+    public DragAndDropTarget,
+    public Slider::Listener
 {
 public:
     AudioFilePlaybackEditor (AudioFilePlaybackProcessor* ownerFilter);
     ~AudioFilePlaybackEditor();
-	const DrawablePath* createZoomInButtonPath(int buttonSize);
+    const DrawablePath* createZoomInButtonPath(int buttonSize);
 
     //CabbagePluginAudioProcessor* filter;
     AudioFilePlaybackProcessor* getFilter() const
-	{
-			return static_cast <AudioFilePlaybackProcessor*> (getAudioProcessor());
-	}
+    {
+        return static_cast <AudioFilePlaybackProcessor*> (getAudioProcessor());
+    }
 
     //==============================================================================
     // This is just a standard Juce paint method...
     void paint (Graphics& g);
-	void resized();
-	void buttonClicked(Button *button);
-	ScopedPointer<WaveformDisplay> waveformDisplay;
-	void setCurrentPosition(String pos)
-	{
-		currentPositionLabel.setText(pos, dontSendNotification);
-	}
+    void resized();
+    void buttonClicked(Button *button);
+    ScopedPointer<WaveformDisplay> waveformDisplay;
+    void setCurrentPosition(String pos)
+    {
+        currentPositionLabel.setText(pos, dontSendNotification);
+    }
 
     bool isInterestedInDragSource (const SourceDetails &dragSourceDetails) override
     {
         return true;
     }
 
-	void sliderValueChanged (Slider* sliderThatWasMoved);
-	void itemDropped (const DragAndDropTarget::SourceDetails& dragSourceDetails);
+    void sliderValueChanged (Slider* sliderThatWasMoved);
+    void itemDropped (const DragAndDropTarget::SourceDetails& dragSourceDetails);
 
 
 private:
-	
-	Label fileNameLabel;
-	Label beatOffsetLabel;
-	Label currentPositionLabel;
-	DrawableButton stopButton;
-	DrawableButton openButton;
-	DrawableButton zoomInButton;
-	DrawableButton gainEnvelopeButton;
-	DrawableButton loopButton;	
-	DrawableButton zoomOutButton;
-	DrawableButton linkToTransport; 
-	DrawableButton playButton;
-	CabbageLookAndFeelBasic basicLook;
-	Slider beatOffset;
-	
+
+    Label fileNameLabel;
+    Label beatOffsetLabel;
+    Label currentPositionLabel;
+    DrawableButton stopButton;
+    DrawableButton openButton;
+    DrawableButton zoomInButton;
+    DrawableButton gainEnvelopeButton;
+    DrawableButton loopButton;
+    DrawableButton zoomOutButton;
+    DrawableButton linkToTransport;
+    DrawableButton playButton;
+    CabbageLookAndFeelBasic basicLook;
+    Slider beatOffset;
+
 
     Colour tableColour;
     double zoom;

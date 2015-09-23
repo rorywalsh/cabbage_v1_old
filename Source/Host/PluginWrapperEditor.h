@@ -19,19 +19,19 @@
 /**
 */
 class PluginWrapperEditor  : public AudioProcessorEditor,
-							 public Timer
+    public Timer
 {
 public:
     PluginWrapperEditor (PluginWrapper&);
     ~PluginWrapperEditor();
 
     //==============================================================================
-	PluginWrapper* getFilter() const
+    PluginWrapper* getFilter() const
     {
         return static_cast <PluginWrapper*> (getAudioProcessor());
     }
 
-	void timerCallback();
+    void timerCallback();
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

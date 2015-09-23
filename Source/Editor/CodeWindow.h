@@ -56,7 +56,7 @@ public:
 
     String getText()
     {
-		const MessageManagerLock lock;
+        const MessageManagerLock lock;
         return textEditor->getText();
     }
 
@@ -173,11 +173,11 @@ public:
         return findFirstTargetParentComponent();
     }
 
-	void focusOfChildComponentChanged(FocusChangeType cause)
-	{
-		//if(cause==focusChangedByMouseClick)
-		//	sendActionMessage("closing editor");
-	} 	
+    void focusOfChildComponentChanged(FocusChangeType cause)
+    {
+        //if(cause==focusChangedByMouseClick)
+        //	sendActionMessage("closing editor");
+    }
 
     void getCommandInfo (const CommandID commandID, ApplicationCommandInfo& result);
     PopupMenu getMenuForIndex (int topLevelMenuIndex, const String& menuName);
@@ -201,14 +201,14 @@ public:
 
     void closeButtonPressed()
     {
-	#if defined(CABBAGE_HOST) || !defined(Cabbage_Build_Standalone)
-		sendActionMessage("closing editor");
-	#else
+#if defined(CABBAGE_HOST) || !defined(Cabbage_Build_Standalone)
+        sendActionMessage("closing editor");
+#else
         this->setVisible(false);
-	#endif
+#endif
     }
 
-	void showEditorConsole();
+    void showEditorConsole();
     void codeDocumentTextDeleted(int,int) {}
     void showCabbageHelp();
     void codeDocumentTextInserted(const juce::String &,int) {}
@@ -252,7 +252,7 @@ public:
     bool isColumnModeEnabled;
     bool isInstrTabEnabled;
     bool isCsoundOutputEnabled;
-	bool isEditModeEnabled;
+    bool isEditModeEnabled;
 };
 
 

@@ -38,146 +38,152 @@ class SidebarPanel;
 // transport prop
 //==============================================================================
 class TransportComponent : public PropertyComponent,
-							public Button::Listener,
-							public Slider::Listener
+    public Button::Listener,
+    public Slider::Listener
 {
 public:
-	TransportComponent(SidebarPanel &ownerPanel, String name);
-	
-	~TransportComponent()
-	{
-	}
-	
-	void resized();
-	void refresh(){}
-	void buttonClicked (Button* button);
-	void sliderValueChanged (Slider* sliderThatWasMoved);
-	void sliderDragEnded (Slider *);
-	
-	void setTimeLabel(String value){ 	timeLabel.setText(value, dontSendNotification);	}
-	void setBeatsLabel(String value){ 	beatsLabel.setText(value, dontSendNotification);	}
-	
-	void setTimeIsRunning(bool value)
-	{
-		if(value)
-			timeLabel.setColour(Label::textColourId, Colours::yellow);
-		else
-			timeLabel.setColour(Label::textColourId, Colours::cornflowerblue);
-	}
-	
+    TransportComponent(SidebarPanel &ownerPanel, String name);
+
+    ~TransportComponent()
+    {
+    }
+
+    void resized();
+    void refresh() {}
+    void buttonClicked (Button* button);
+    void sliderValueChanged (Slider* sliderThatWasMoved);
+    void sliderDragEnded (Slider *);
+
+    void setTimeLabel(String value)
+    {
+        timeLabel.setText(value, dontSendNotification);
+    }
+    void setBeatsLabel(String value)
+    {
+        beatsLabel.setText(value, dontSendNotification);
+    }
+
+    void setTimeIsRunning(bool value)
+    {
+        if(value)
+            timeLabel.setColour(Label::textColourId, Colours::yellow);
+        else
+            timeLabel.setColour(Label::textColourId, Colours::cornflowerblue);
+    }
+
 private:
-	Slider bpmSlider, timeSigNum, timeSigDen;
-	DrawableButton playButton;
-	DrawableButton stopButton;
-	SidebarPanel &owner;
-	Label bpmLabel;
-	Label timeLabel;
-	Label beatsLabel;
-	CabbageLookAndFeelBasic lookAndFeel;
-	DrawablePath timingInfoBox;
-	ScopedPointer<LookAndFeel_V2> standardLookAndFeel;
+    Slider bpmSlider, timeSigNum, timeSigDen;
+    DrawableButton playButton;
+    DrawableButton stopButton;
+    SidebarPanel &owner;
+    Label bpmLabel;
+    Label timeLabel;
+    Label beatsLabel;
+    CabbageLookAndFeelBasic lookAndFeel;
+    DrawablePath timingInfoBox;
+    ScopedPointer<LookAndFeel_V2> standardLookAndFeel;
 };
 
 //==============================================================================
 // file browser comp
 //==============================================================================
 class FileTreePropertyComponent : public PropertyComponent,
-								  public Button::Listener
+    public Button::Listener
 {
 public:
-	FileTreePropertyComponent(SidebarPanel &ownerPanel, String name, DirectoryContentsList &_listToShow);
-	
-	~FileTreePropertyComponent()
-	{
+    FileTreePropertyComponent(SidebarPanel &ownerPanel, String name, DirectoryContentsList &_listToShow);
 
-	}
-	
-	
-	void buttonClicked (Button* button);
-	
-	void setText(String text)
-	{
-		currentDir.setText(text, dontSendNotification);
-	}
-	
-	void resized()
-	{
-		fileComp.setBounds(getLocalBounds().removeFromBottom(20).withTop(30));
-		upButton.setBounds(getWidth()-40, 5, 40, 20); 
-		currentDir.setBounds(5, 5, getWidth()-50, 20);
-	}
-	
-	void refresh(){}
-	
-	void paint(Graphics& g)
-	{
-		g.fillAll(Colour(20, 20, 20));
-	}
-	
-	FileTreeComponent fileComp;
-	//DirectoryContentsList directory;
-	
+    ~FileTreePropertyComponent()
+    {
+
+    }
+
+
+    void buttonClicked (Button* button);
+
+    void setText(String text)
+    {
+        currentDir.setText(text, dontSendNotification);
+    }
+
+    void resized()
+    {
+        fileComp.setBounds(getLocalBounds().removeFromBottom(20).withTop(30));
+        upButton.setBounds(getWidth()-40, 5, 40, 20);
+        currentDir.setBounds(5, 5, getWidth()-50, 20);
+    }
+
+    void refresh() {}
+
+    void paint(Graphics& g)
+    {
+        g.fillAll(Colour(20, 20, 20));
+    }
+
+    FileTreeComponent fileComp;
+    //DirectoryContentsList directory;
+
 private:
-	DrawableButton upButton;
-	Label currentDir;
-	ScopedPointer<LookAndFeel_V2> standardLookAndFeel;
-	SidebarPanel &owner;
+    DrawableButton upButton;
+    Label currentDir;
+    ScopedPointer<LookAndFeel_V2> standardLookAndFeel;
+    SidebarPanel &owner;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FileTreePropertyComponent);
-	
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FileTreePropertyComponent);
+
 };
 //==============================================================================
 class SidebarPanel   : public Component,
-								private Timer,
-								public FileBrowserListener,
-								public ChangeListener,
-								public ActionListener,
-								public ActionBroadcaster
+    private Timer,
+    public FileBrowserListener,
+    public ChangeListener,
+    public ActionListener,
+    public ActionBroadcaster
 {
 public:
     SidebarPanel(FilterGraph* graph);
-	~SidebarPanel();
-	
+    ~SidebarPanel();
+
 
     void paint (Graphics& g) override;
     void resized() override;
     void timerCallback() override;
-	void showParametersForNode(int nodeID=-1);
-	void refreshPluginParameters();
-	void updatePluginParameters();
-	void updateWidgetProperties();
+    void showParametersForNode(int nodeID=-1);
+    void refreshPluginParameters();
+    void updatePluginParameters();
+    void updateWidgetProperties();
     void selectionChanged() override;
     void fileClicked (const File&, const MouseEvent&) override          {}
     void fileDoubleClicked (const File&) override                       {}
     void browserRootChanged (const File&) override                      {}
-	void mouseDrag(const MouseEvent& event);
-	void mouseEnter(const MouseEvent& event);
-	void mouseUp(const MouseEvent& event);
-	void disablePropertiesPanel();
-	void upButtonPressed();	
-	void toggleMIDILearn();
-	void stopButtonPressed();
-	void playButtonPressed();
-	void pauseButtonPressed();
-	void setCurrentBPM(int bpm);
-	void changeListenerCallback (ChangeBroadcaster*);
-	void actionListenerCallback (const String &message);
-	
-	
+    void mouseDrag(const MouseEvent& event);
+    void mouseEnter(const MouseEvent& event);
+    void mouseUp(const MouseEvent& event);
+    void disablePropertiesPanel();
+    void upButtonPressed();
+    void toggleMIDILearn();
+    void stopButtonPressed();
+    void playButtonPressed();
+    void pauseButtonPressed();
+    void setCurrentBPM(int bpm);
+    void changeListenerCallback (ChangeBroadcaster*);
+    void actionListenerCallback (const String &message);
+
+
 private:
     ConcertinaPanel concertinaPanel;
-	BubbleMessageComponent midiBubble;
-	DirectoryContentsList directoryList;
-	FileTreePropertyComponent fileTreeComp;
-	
-	TransportComponent transportControls;
-	TimeSliceThread thread;
-	FilterGraph* filterGraph;
-	int previousFilterNodeId;
+    BubbleMessageComponent midiBubble;
+    DirectoryContentsList directoryList;
+    FileTreePropertyComponent fileTreeComp;
+
+    TransportComponent transportControls;
+    TimeSliceThread thread;
+    FilterGraph* filterGraph;
+    int previousFilterNodeId;
     void addPluginPanel (PropertyPanel* panel);
-	bool canResize;
-	bool midiLearn;
-	
+    bool canResize;
+    bool midiLearn;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SidebarPanel);
 };
 

@@ -70,6 +70,7 @@ CabbageLookAndFeel::CabbageLookAndFeel()
     setColour(ScrollBar::trackColourId, Colours::transparentBlack);
     setColour(ScrollBar::thumbColourId, cUtils::getComponentSkin());
     setColour(TooltipWindow::backgroundColourId, cUtils::getDarkerBackgroundSkin());
+    setColour(TooltipWindow::textColourId, cUtils::getComponentFontColour());
 
 
     setColour(ListBox::outlineColourId, cUtils::getDarkerBackgroundSkin());

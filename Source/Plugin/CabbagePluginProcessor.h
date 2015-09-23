@@ -33,11 +33,11 @@
 
 
 #ifndef Cabbage_No_Csound
-    #ifdef AndroidBuild
-    #include "AndroidCsound.hpp"
-    #else
-    #include <csound.hpp>
-    #endif
+#ifdef AndroidBuild
+#include "AndroidCsound.hpp"
+#else
+#include <csound.hpp>
+#endif
 #endif
 
 #include "csdl.h"
@@ -75,7 +75,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     public Timer,
     public ActionBroadcaster,
     public ChangeListener,
-	public ActionListener
+    public ActionListener
 {
     //==============================================================================
     File csdFile;
@@ -96,7 +96,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     Array<int> tableNumbers;
     AudioPlayHead::CurrentPositionInfo hostInfo;
 
-	NamedValueSet macroText;
+    NamedValueSet macroText;
 
     StringArray socketChannelIdentifiers;
     NamedValueSet socketChannelValues;
@@ -115,7 +115,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     bool isWinXP;
     bool isNativeThreadRunning;
     String csoundDebuggerOutput;
-	float rmsLeft, rmsRight;
+    float rmsLeft, rmsRight;
 
     //============== Csound related variables/methods ==============================
 #ifndef Cabbage_No_Csound
@@ -179,15 +179,15 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     File tempAudioFile;
     CriticalSection writerLock;
     AudioFormatWriter::ThreadedWriter* volatile activeWriter;
-	bool firstTime, isBypassed, isMuted;
+    bool firstTime, isBypassed, isMuted;
 
 
 public:
 
-	//------------------------------- interprocess comms -------------------------------
-	void appendMessage (const String& message)
+    //------------------------------- interprocess comms -------------------------------
+    void appendMessage (const String& message)
     {
-		cUtils::debug(message);
+        cUtils::debug(message);
     }
 
 
@@ -204,14 +204,14 @@ public:
 
         void connectionMade()
         {
-			const String message = "Connection #" + String (ourNumber) + " - connection started";
-			owner.csound->Message(message.toUTF8());
+            const String message = "Connection #" + String (ourNumber) + " - connection started";
+            owner.csound->Message(message.toUTF8());
         }
 
         void connectionLost()
         {
             const String message = "Connection #" + String (ourNumber) + " - connection lost";
-			owner.csound->Message(message.toUTF8());
+            owner.csound->Message(message.toUTF8());
         }
 
         void messageReceived (const MemoryBlock& message);
@@ -241,21 +241,24 @@ public:
         CabbagePluginAudioProcessor& owner;
     };
 
-	OwnedArray <CabbageInterprocessConnection, CriticalSection> activeConnections;
-	ScopedPointer<CabbageInterprocessConnectionServer> server;
-	void openInterprocess (bool asSocket, bool asSender, String address, int port);
-	
-	void closeInterprocess()
-	{
+    OwnedArray <CabbageInterprocessConnection, CriticalSection> activeConnections;
+    ScopedPointer<CabbageInterprocessConnectionServer> server;
+    void openInterprocess (bool asSocket, bool asSender, String address, int port);
+
+    void closeInterprocess()
+    {
         server->stop();
-        activeConnections.clear();	
-		
-	}
+        activeConnections.clear();
+
+    }
 
 
-	//--------------------------------------------------------------
-	
-	bool isFirstTime(){ return firstTime;	};
+    //--------------------------------------------------------------
+
+    bool isFirstTime()
+    {
+        return firstTime;
+    };
     String changeMessage;
     Array<int> dirtyControls;
     bool CSOUND_DEBUG_MODE;
@@ -264,11 +267,11 @@ public:
     void continueCsoundDebug();
     void nextCsoundDebug();
     void cleanCsoundDebug();
-	void createAndShowSourceEditor(LookAndFeel* looky);
-	void actionListenerCallback (const String& message);
-	
+    void createAndShowSourceEditor(LookAndFeel* looky);
+    void actionListenerCallback (const String& message);
 
-	
+
+
     int getNumberCsoundOutChannels()
     {
         return csound->GetNchnls();
@@ -288,18 +291,18 @@ public:
     {
         return csound->GetKsmps();
     }
-	
-	void shouldBypass(bool val)
-	{
-		const ScopedLock sl (getCallbackLock());
-		isBypassed = val;
-	}
-	
-	void shouldMute(bool val)
-	{
-		const ScopedLock sl (getCallbackLock());
-		isMuted = val;
-	}
+
+    void shouldBypass(bool val)
+    {
+        const ScopedLock sl (getCallbackLock());
+        isBypassed = val;
+    }
+
+    void shouldMute(bool val)
+    {
+        const ScopedLock sl (getCallbackLock());
+        isMuted = val;
+    }
     //==============================================================================
 
 #if defined(Cabbage_Build_Standalone) || (CABBAGE_HOST)
@@ -314,9 +317,9 @@ public:
 //#else
 
 #if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
-	CodeWindow* cabbageCsoundEditor;
+    CodeWindow* cabbageCsoundEditor;
 #endif
-	
+
 
     bool compiledOk()
     {
@@ -576,7 +579,7 @@ public:
     }
 
     String getCsoundOutput();
-	
+
     inline String getDebuggerOutput()
     {
         return csoundDebuggerOutput;

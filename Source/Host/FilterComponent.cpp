@@ -89,7 +89,42 @@ void PinComponent::mouseUp (const MouseEvent& e)
     getGraphPanel()->endDraggingConnector (e);
 }
 
+//======================================================================
+// Mute and bypass button components set up with tooltips
+//======================================================================
+class MiniButton : public Component,
+    public TooltipClient
+{
+public:
+    MiniButton(FilterComponent* _parent, String _name): parent(_parent), name(_name), isMuted(false), isBypassed(false)
+    {
+        this->setInterceptsMouseClicks(true, true);
+    }
 
+    ~MiniButton() {}
+
+    void mouseDown(const MouseEvent& e)
+    {
+        if(name=="Toggle mute")
+        {
+            parent->isMuted=!parent->isMuted;
+        }
+        else
+            parent->isBypassed=!parent->isBypassed;
+
+        parent->repaint();
+    }
+
+    String getTooltip()
+    {
+        return name;
+    }
+
+private:
+    String name;
+    FilterComponent* parent;
+    bool isBypassed, isMuted;
+};
 //================================================================================
 // Main component used to represent a filter in our graph
 //================================================================================
@@ -113,6 +148,8 @@ FilterComponent::FilterComponent (FilterGraph& graph_, const uint32 filterID_)
 {
     shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 3, Point<int> (0, 1)));
     setComponentEffect (&shadow);
+    //addAndMakeVisible(mute);
+    //addAndMakeVisible(bypass);
 
 }
 //================================================================================
@@ -620,6 +657,7 @@ void FilterComponent::drawLevelMeter (Graphics& g, float x, float y, int width, 
                                 .5f);
     }
 }
+
 //================================================================================
 void FilterComponent::resized()
 {
@@ -634,6 +672,12 @@ void FilterComponent::resized()
                            pc->isInput ? 0 : (getHeight() - pinSize),
                            pinSize, pinSize);
         }
+    }
+
+    if(mute && bypass)
+    {
+        mute->setBounds(getWidth()-20, 20.f, 15.f, 15.f);
+        bypass->setBounds(10, 16.f, 15.f, 15.f);
     }
 }
 //================================================================================
@@ -713,6 +757,7 @@ void FilterComponent::update()
     muteButton = Rectangle<float>(w-20, 20.f, 15.f, 15.f);
     bypassButton = Rectangle<float>(10, 16.f, 15.f, 15.f);
 
+
     if(PluginWrapper* tmpPlug = dynamic_cast <PluginWrapper*> (f->getProcessor()))
     {
         setName (tmpPlug->getPluginName());
@@ -764,6 +809,12 @@ void FilterComponent::update()
         if (f->getProcessor()->producesMidi())
             if(pluginType!=SOUNDFILER && pluginType!=AUTOMATION)
                 addAndMakeVisible (new PinComponent (graph, filterID, FilterGraph::midiChannelNumber, false));
+
+        if(pluginType!=INTERNAL && pluginType!=AUTOMATION)
+        {
+            addAndMakeVisible(mute = new MiniButton(this, "Toggle mute"));
+            addAndMakeVisible(bypass = new MiniButton(this, "Toggle bypass"));
+        }
 
         resized();
     }

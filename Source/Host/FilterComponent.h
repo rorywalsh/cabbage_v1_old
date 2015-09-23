@@ -28,6 +28,7 @@
 #include "AutomationProcessor.h"
 
 class GraphEditorPanel;
+class MiniButton;
 class GraphDocumentComponent;
 
 #define INTERNAL 1
@@ -36,59 +37,64 @@ class GraphDocumentComponent;
 #define THIRDPARTY 4
 #define AUTOMATION 5
 
+
 //======================================================================
 // Filter Component, GUI component that represents a processing node
 //======================================================================
-class FilterComponent    : public Component, 
-						   public ActionListener,
-						   public Timer,
-						   public ChangeListener
+class FilterComponent    : public Component,
+    public ActionListener,
+    public Timer,
+    public ChangeListener
 {
 public:
     FilterComponent (FilterGraph& graph_, const uint32 filterID_);
-	~FilterComponent();
+    ~FilterComponent();
 
     FilterGraph& graph;
     const uint32 filterID;
     int numInputs, numOutputs;
-	void mouseDown (const MouseEvent& e);
-	void mouseDrag (const MouseEvent& e);
-	void mouseUp (const MouseEvent& e);
-	bool hitTest (int x, int y);
-	void actionListenerCallback (const String &message);
-	void paint (Graphics& g);
-	void getPinPos (const int index, const bool isInput, float& x, float& y);
-	void update();
-	void drawLevelMeter (Graphics& g, float x, float y, int width, int height, float level);
-	void drawMuteIcon(Graphics& g, Rectangle<float> rect, bool state);
-	void drawBypassIcon(Graphics& g, Rectangle<float> rect, bool isActive);
-	void timerCallback();
-	void enableEditMode(bool enable);
-	void changeListenerCallback(ChangeBroadcaster* source);
-	int exportPlugin(String type, bool saveAs, String fileName="");
-	int setUniquePluginID(File binFile, File csdFile, bool AU);
-	long cabbageFindPluginID(unsigned char *buf, size_t len, const char *s);
+    void mouseDown (const MouseEvent& e);
+    void mouseDrag (const MouseEvent& e);
+    void mouseUp (const MouseEvent& e);
+    bool hitTest (int x, int y);
+    void actionListenerCallback (const String &message);
+    void paint (Graphics& g);
+    void getPinPos (const int index, const bool isInput, float& x, float& y);
+    void update();
+    void drawLevelMeter (Graphics& g, float x, float y, int width, int height, float level);
+    void drawMuteIcon(Graphics& g, Rectangle<float> rect, bool state);
+    void drawBypassIcon(Graphics& g, Rectangle<float> rect, bool isActive);
+    void timerCallback();
+    void enableEditMode(bool enable);
+    void changeListenerCallback(ChangeBroadcaster* source);
+    int exportPlugin(String type, bool saveAs, String fileName="");
+    int setUniquePluginID(File binFile, File csdFile, bool AU);
+    long cabbageFindPluginID(unsigned char *buf, size_t len, const char *s);
 
-	GraphDocumentComponent* getGraphDocument()
-	{
-		return findParentComponentOfClass<GraphDocumentComponent>();
-	}
+    GraphDocumentComponent* getGraphDocument()
+    {
+        return findParentComponentOfClass<GraphDocumentComponent>();
+    }
+
+    bool isMuted, isBypassed;
 
 private:
-	ScopedPointer<CodeWindow> codeWindow;
-	int pluginType;
+    ScopedPointer<CodeWindow> codeWindow;
+    int pluginType;
     int pinSize;
     Colour filterColour;
     bool filterIsPartofSelectedGroup;
     Point<int> originalPos;
-	float rmsLeft, rmsRight;
-	void resized();
+    float rmsLeft, rmsRight;
+    void resized();
     Font font;
     int numIns, numOuts;
     DropShadowEffect shadow;
-	bool isMuted, isBypassed;
-	Rectangle<float> muteButton;
-	Rectangle<float> bypassButton;
+    Rectangle<float> muteButton;
+    Rectangle<float> bypassButton;
+
+    ScopedPointer<MiniButton> mute;
+    ScopedPointer<MiniButton> bypass;
 
     GraphEditorPanel* getGraphPanel() const noexcept
     {
@@ -114,7 +120,7 @@ public:
     void mouseDown (const MouseEvent& e);
 
     void mouseDrag (const MouseEvent& e);
-	void mouseUp (const MouseEvent& e);
+    void mouseUp (const MouseEvent& e);
 
     const uint32 filterID;
     const int index;
@@ -127,7 +133,7 @@ private:
     {
         return findParentComponentOfClass<GraphEditorPanel>();
     }
-	
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PinComponent)
 };
 
@@ -165,7 +171,7 @@ private:
     {
         return findParentComponentOfClass<GraphEditorPanel>();
     }
-	
+
     void getDistancesFromEnds (int x, int y, double& distanceFromStart, double& distanceFromEnd) const;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ConnectorComponent)

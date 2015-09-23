@@ -140,10 +140,10 @@ public:
     }
 
 private:
-	WildcardFileFilter wildcardFilter;
+    WildcardFileFilter wildcardFilter;
     AudioDeviceManager::AudioDeviceSetup audioDeviceSetup;
     bool updateEditorOutputConsole;
-	bool isUsingExternalEditor;
+    bool isUsingExternalEditor;
     Time lastSaveTime;
     void openTextEditor();
     bool standaloneMode;

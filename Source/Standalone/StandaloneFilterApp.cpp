@@ -62,7 +62,7 @@ public:
         defaultPropSet->setValue("EditorColourScheme", 1);
         defaultPropSet->setValue("showTabs", 1);
         defaultPropSet->setValue("EnablePopupDisplay", 1);
-		defaultPropSet->setValue("ShowNativeFileDialogues", 1);
+        defaultPropSet->setValue("ShowNativeFileDialogues", 1);
         defaultPropSet->setValue("EnableNativePopup", 0);
         defaultPropSet->setValue("windowX", 100);
         defaultPropSet->setValue("windowY", 100);
@@ -78,8 +78,8 @@ public:
     void shutdown()
     {
         filterWindow = 0;// = nullptr;
-		if(appProperties==nullptr)
-			cUtils::debug("null");
+        if(appProperties==nullptr)
+            cUtils::debug("null");
         appProperties->closeFiles();
         deleteAndZero(appProperties);
         deleteAndZero(defaultPropSet);

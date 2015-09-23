@@ -45,8 +45,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     standaloneMode(false),
     updateEditorOutputConsole(false),
     hasEditorBeingOpened(false),
-	isUsingExternalEditor(false),
-	wildcardFilter("*.*", "*", "File Filter")
+    isUsingExternalEditor(false),
+    wildcardFilter("*.*", "*", "File Filter")
 {
 
     consoleMessages = "";
@@ -157,12 +157,12 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
 
     String defaultCSDFile;
-    
+
 #if defined(MACOSX)
     //hocus pocus for OSX. It seems to append some gibbrish to the command line flags
     commandLineParams = commandLineParams.substring(0, commandLineParams.indexOf("-")-1);
 #endif
-    
+
     if(commandLineParams.contains("--export-VSTi"))
     {
         String inputFileName = commandLineParams.substring(commandLineParams.indexOf("--export-VSTi")+13).trim().removeCharacters("\"");
@@ -199,11 +199,11 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
     //opens a default file that matches the name of the current executable
     //this can be used to create more 'standalone' like apps
-    #ifndef Cabbage64Bit
+#ifndef Cabbage64Bit
     if(File(File::getSpecialLocation(File::currentExecutableFile)).getFileNameWithoutExtension()!="Cabbage")
-    #else
+#else
     if(File(File::getSpecialLocation(File::currentExecutableFile)).getFileNameWithoutExtension()!="Cabbage64")
-    #endif
+#endif
     {
         if(File(defaultCSDFile).existsAsFile())
         {
@@ -587,16 +587,16 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 
         deviceManager->initialise(filter->getNumInputChannels(),
                                   filter->getNumOutputChannels(), savedState, false);
-								  
-		filter->createGUI(csdFile.loadFileAsString(), true);						  
+
+        filter->createGUI(csdFile.loadFileAsString(), true);
     }
     else
     {
         //deviceManager->closeAudioDevice();
-		filter->createGUI(csdFile.loadFileAsString(), true);
+        filter->createGUI(csdFile.loadFileAsString(), true);
         filter->reCompileCsound(csdFile);
     }
-    
+
 
     setName(filter->getPluginName());
     int runningCabbageProcess = getPreference(appProperties, "UseCabbageIO");
@@ -789,28 +789,28 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     standaloneMode=false;
 #endif
 
-	String examplesDir = appProperties->getUserSettings()->getValue("ExamplesDir", "");
-	//cUtils::debug("Example Directory:"+dir);
-	if(!File(examplesDir).exists())
-	{
-	#if defined(LINUX) || defined(MACOSX)
-		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
-	#else
-		examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
-	#endif
-	}
+    String examplesDir = appProperties->getUserSettings()->getValue("ExamplesDir", "");
+    //cUtils::debug("Example Directory:"+dir);
+    if(!File(examplesDir).exists())
+    {
+#if defined(LINUX) || defined(MACOSX)
+        examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
+#else
+        examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
+#endif
+    }
 
     isAFileOpen = true;
     if(!standaloneMode)
     {
         addFilesToPopupMenu(subMenu, exampleFiles, examplesDir, "*.csd", examplesOffset);
-		//subMenu.addItem(3999, "Browse all examples");
+        //subMenu.addItem(3999, "Browse all examples");
         m.addSubMenu(String("Examples"), subMenu);
         subMenu.clear();
 
         subMenu.addItem(30, String("Effect"));
         subMenu.addItem(31, String("Instrument"));
-		m.addSubMenu(String("New Cabbage..."), subMenu);
+        m.addSubMenu(String("New Cabbage..."), subMenu);
         m.addItem(1, String("Open Cabbage Instrument"));
 
         recentFiles.createPopupMenuItems (recentFilesMenu, 9000, false, true);
@@ -928,7 +928,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             subMenu.addItem(300, String("Use native file dialogues"), true, false);
         else
             subMenu.addItem(300, String("Use native file dialogue"), true, true);
-			
+
 //        if(!getPreference(appProperties, "showTabs"))
 //            subMenu.addItem(298, String("Show tabs in editor"), true, false);
 //        else
@@ -979,10 +979,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         openFile(exampleFiles[options-examplesOffset].getFullPathName());
     }
 
-	else if(options==3999)
-	{
-		openFile(examplesDir);
-	}
+    else if(options==3999)
+    {
+        openFile(examplesDir);
+    }
 
     else if(options>=9000)
     {
@@ -995,7 +995,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         credits.append("\t\t\t\t\tIain McCurdy\n", 2056);
         credits.append("\t\t\t\t\tDamien Rennick\n\n", 2056);
         credits.append("\t\t\t\t\tDave Philips\n", 2056);
-		credits.append("\t\t\t\t\tGiorgio Zucco\n\n", 2056);
+        credits.append("\t\t\t\t\tGiorgio Zucco\n\n", 2056);
         credits.append("\t\t\t\tUser Forum:\n", 2056);
         credits.append("\t\t\t\t\twww.thecabbagefoundation.org", 2056);
         String title(CABBAGE_VERSION);
@@ -1038,13 +1038,13 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                         outputConsole->setAlwaysOnTop(true);
                         outputConsole->toFront(true);
                         outputConsole->setVisible(true);
-						outputConsole->setTopLeftPosition(500, 400);
+                        outputConsole->setTopLeftPosition(500, 400);
                     }
-                    else 
-					{
-						outputConsole->setVisible(false);
-						outputConsole->setTopLeftPosition(-1500, -1400);
-					}
+                    else
+                    {
+                        outputConsole->setVisible(false);
+                        outputConsole->setTopLeftPosition(-1500, -1400);
+                    }
                 }
 
                 showEditorConsole();
@@ -1232,7 +1232,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     {
         toggleOnOffPreference(appProperties, "ShowNativeFileDialogues");
     }
-	
+
     //------- preference Csound manual dir ------
     else if(options==200)
     {
@@ -1316,7 +1316,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     else if(options==205)
     {
         String dir = getPreference(appProperties, "ExamplesDir", "");
-		cUtils::debug("Example Directory:"+dir);
+        cUtils::debug("Example Directory:"+dir);
         FileChooser browser(String("Please select your Examples directory..."), File(dir), String("*.*"), UseNativeDialogue);
         if(browser.browseForDirectory())
         {
@@ -1385,7 +1385,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             else m_ShowMessage("Open or create a file first", &getLookAndFeel());
         }
     }
-	isUsingExternalEditor = getPreference(appProperties, "ExternalEditor");
+    isUsingExternalEditor = getPreference(appProperties, "ExternalEditor");
     repaint();
 }
 
@@ -1471,7 +1471,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
     }
     else
     {
-		File currentDir = File(_csdfile);
+        File currentDir = File(_csdfile);
 #ifdef MACOSX
         FileChooser openFC(String("Open a Cabbage .csd file..."), currentDir, String("*.csd;*.vst"), UseNativeDialogue);
         if(openFC.browseForFileToOpen())
@@ -1493,11 +1493,11 @@ void StandaloneFilterWindow::openFile(String _csdfile)
             resetFilter(true);
         }
 #else
-		this->setAlwaysOnTop(false);
-		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
-		wildcardFilter = WildcardFileFilter("*.csd", "*", ".csd Files");
-		Array<File> selectedFile = cUtils::launchFileBrowser("Open a .csd file", wildcardFilter, "*.csd", 1, currentDir, showNative, &getLookAndFeel());
-      
+        this->setAlwaysOnTop(false);
+        bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+        wildcardFilter = WildcardFileFilter("*.csd", "*", ".csd Files");
+        Array<File> selectedFile = cUtils::launchFileBrowser("Open a .csd file", wildcardFilter, "*.csd", 1, currentDir, showNative, &getLookAndFeel());
+
         if(selectedFile.size()>0)
         {
             csdFile = File(selectedFile[0]);//openFC.getResult();
@@ -1586,9 +1586,9 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
     }
 #ifdef LINUX
     //FileChooser saveFC(String("Save as..."), File::nonexistent, String(""), UseNativeDialogue);
-	bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
-	Array<File> selectedFile = cUtils::launchFileBrowser("Save a file..", wildcardFilter, "*.*", 0, File("*"), showNative, &getLookAndFeel());
- 
+    bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+    Array<File> selectedFile = cUtils::launchFileBrowser("Save a file..", wildcardFilter, "*.*", 0, File("*"), showNative, &getLookAndFeel());
+
     String VST;
     Logger::writeToLog(currentApplicationDirectory);
     if (selectedFile.size()>0)
@@ -1647,12 +1647,12 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
             else
             {
                 File dll(selectedFile[0].withFileExtension(".so").getFullPathName());
-                if(!VSTData.copyFileTo(dll))	
-					showMessage("", "Can not move lib", lookAndFeel, this);
-					
+                if(!VSTData.copyFileTo(dll))
+                    showMessage("", "Can not move lib", lookAndFeel, this);
+
                 File loc_csdFile(selectedFile[0].withFileExtension(".csd").getFullPathName());
                 loc_csdFile.replaceWithText(csdFile.loadFileAsString());
-				setUniquePluginID(dll, loc_csdFile, false);
+                setUniquePluginID(dll, loc_csdFile, false);
             }
         }
     }
@@ -1868,19 +1868,19 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
             for(int y=plugLibName.length(); y<16; y++)
                 plugLibName.append(String(" "), 1);
 
-				mFile.seekg (0, ios::beg);
-				buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
-				mFile.read((char*)&buffer[0], file_size);
-				loc = cabbageFindPluginID(buffer, file_size, pluginName);
-				if (loc < 0)
-					m_ShowMessage("Plugin name could not be set?!?", lookAndFeel);
-				else
-				{
-					//showMessage("plugin name set!");
-					mFile.seekg (loc, ios::beg);
-					mFile.write(csdFile.getFileNameWithoutExtension().toUTF8(), 16);
-				}
-				//#endif
+        mFile.seekg (0, ios::beg);
+        buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
+        mFile.read((char*)&buffer[0], file_size);
+        loc = cabbageFindPluginID(buffer, file_size, pluginName);
+        if (loc < 0)
+            m_ShowMessage("Plugin name could not be set?!?", lookAndFeel);
+        else
+        {
+            //showMessage("plugin name set!");
+            mFile.seekg (loc, ios::beg);
+            mFile.write(csdFile.getFileNameWithoutExtension().toUTF8(), 16);
+        }
+        //#endif
 
     }
     else

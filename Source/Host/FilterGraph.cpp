@@ -204,8 +204,8 @@ AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* 
                                              2,
                                              graph.getSampleRate(),
                                              graph.getBlockSize());
-											 
-			soundfiler->setupAudioFile(File(desc->fileOrIdentifier));
+
+            soundfiler->setupAudioFile(File(desc->fileOrIdentifier));
 
             if(uid!=-1)
                 node = graph.addNode (soundfiler, uid);

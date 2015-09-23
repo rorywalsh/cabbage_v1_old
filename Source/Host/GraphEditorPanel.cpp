@@ -385,15 +385,15 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 
 void GraphEditorPanel::itemDropped (const DragAndDropTarget::SourceDetails& dragSourceDetails)
 {
-		if(FileTreeComponent* fileComp = dynamic_cast<FileTreeComponent*>(dragSourceDetails.sourceComponent.get()))			
-		{
-			//cUtils::showMessage(fileComp->getSelectedFile().getFullPathName());	
-			if (MainHostWindow* const mainWindow = findParentComponentOfClass<MainHostWindow>())
-			{			
-				String name = "soundfile player:"+fileComp->getSelectedFile().getFullPathName();
-				createNewPlugin (mainWindow->getChosenType (10000), dragSourceDetails.localPosition.x, dragSourceDetails.localPosition.x, true, name);
-			}
-		}	
+    if(FileTreeComponent* fileComp = dynamic_cast<FileTreeComponent*>(dragSourceDetails.sourceComponent.get()))
+    {
+        //cUtils::showMessage(fileComp->getSelectedFile().getFullPathName());
+        if (MainHostWindow* const mainWindow = findParentComponentOfClass<MainHostWindow>())
+        {
+            String name = "soundfile player:"+fileComp->getSelectedFile().getFullPathName();
+            createNewPlugin (mainWindow->getChosenType (10000), dragSourceDetails.localPosition.x, dragSourceDetails.localPosition.x, true, name);
+        }
+    }
 }
 
 GraphDocumentComponent* GraphEditorPanel::getGraphDocument()
@@ -424,7 +424,7 @@ void GraphEditorPanel::mouseUp (const MouseEvent& e)
     lassoComp.endLasso();
     removeChildComponent (&lassoComp);
 }
-	
+
 void GraphEditorPanel::findLassoItemsInArea (Array <FilterComponent*>& results, const Rectangle<int>& area)
 {
     const Rectangle<int> lasso (area);
@@ -452,9 +452,9 @@ void GraphEditorPanel::createNewPlugin (const PluginDescription* desc, int x, in
             descript.descriptiveName = "Soundfile player";
             descript.name = "SoundfilePlayer";
             descript.pluginFormatName = "SoundfilePlayer";
-			String file = fileName.substring(17);
-			cUtils::debug(file);
-			descript.fileOrIdentifier = file;
+            String file = fileName.substring(17);
+            cUtils::debug(file);
+            descript.fileOrIdentifier = file;
         }
         else if(fileName=="automation track")
         {

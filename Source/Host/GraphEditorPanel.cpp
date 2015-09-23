@@ -1259,34 +1259,56 @@ void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const
 
 void GraphDocumentComponent::showMidiMappings()
 {
-    StringArray midiMap;
     XmlElement* xml = new XmlElement ("MIDIMAPPINGS");
 
     for (int i = 0; i < graph.midiMappings.size(); ++i)
     {
         String controller(graph.midiMappings.getReference(i).controller);
         String channel(graph.midiMappings.getReference(i).channel);
-        String nodeId(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->getName());
-        String index(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->getParameterName(graph.midiMappings.getReference(i).parameterIndex));
+        int nodeId = graph.midiMappings.getReference(i).nodeId;
+        int paramIndex = graph.midiMappings.getReference(i).parameterIndex;
+
+        String plugin(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->getName());
+        String param(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->getParameterName(graph.midiMappings.getReference(i).parameterIndex));
 
         //add midi mapping to here, might not be easy...
         XmlElement* e = new XmlElement ("MIDI_MAPPINGS");
-        e->setAttribute ("NodeId", nodeId);
-        e->setAttribute ("ParameterIndex", index);
+        e->setAttribute ("NodeId", plugin+" ("+String(nodeId)+")");
+        e->setAttribute ("ParameterIndex", param+" ("+String(paramIndex)+")");
         e->setAttribute ("Channel", channel);
         e->setAttribute ("Controller", controller);
-
         xml->addChildElement (e);
     }
 
-    MidiMappingsComponent midiMaps;
+    MidiMappingsComponent midiMaps(xml);
     midiMaps.setSize (420, 300);
-    midiMaps.addData(xml);
+    //midiMaps.addData(xml);
     //midiMaps.setLookAndFeel(lookAndFeel);
 
     Colour col(24, 24, 24);
     DialogWindow::showModalDialog("MIDI Mappings", &midiMaps, this, col, true, false, false);
 
+    midiMaps.getMidiMapXml();
+
+    XmlElement* updatedXml = midiMaps.getMidiMapXml();
+
+    //update new MIDI mappings according to user changes
+    graph.midiMappings.clear();
+
+    forEachXmlChildElementWithTagName (*updatedXml, e, "MIDI_MAPPINGS")
+    {
+        String node = e->getStringAttribute("NodeId");
+        //cUtils::showMessage(node);
+        int nodeId = node.substring(node.indexOf("(")+1, node.length()-1).getIntValue();
+        String paramIndex = e->getStringAttribute("ParameterIndex");
+        int index = paramIndex.substring(paramIndex.indexOf("(")+1, paramIndex.length()-1).getIntValue();
+
+        //node.substring(node.indexOf("(")+1, node.length()-1).getIntValue());
+        graph.midiMappings.add(CabbageMidiMapping(nodeId,
+                               index,
+                               e->getIntAttribute ("Channel"),
+                               e->getIntAttribute ("Controller")));
+    }
 }
 
 bool GraphDocumentComponent::doMidiMappingsMatch(int i, int channel, int controller)

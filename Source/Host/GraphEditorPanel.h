@@ -226,9 +226,11 @@ class MidiMappingsComponent    : public Component,
     public TableListBoxModel
 {
 public:
-    MidiMappingsComponent()   : font (14.0f)
+    MidiMappingsComponent(XmlElement* xml)   : font (14.0f)
     {
 
+        rowData = xml;//->getChildByName ("MIDIMAPPINGS");
+        numRows = rowData->getNumChildElements();
         // Create our table component and add it to this component..
         addAndMakeVisible (table);
         table.setModel (this);
@@ -238,22 +240,22 @@ public:
         table.setOutlineThickness (1);
 
         table.getHeader().addColumn("Channel", 1,
-                                    100,
+                                    60,
                                     50, 400,
                                     TableHeaderComponent::defaultFlags);
 
         table.getHeader().addColumn("Controller", 2,
-                                    100,
+                                    60,
                                     50, 400,
                                     TableHeaderComponent::defaultFlags);
 
-        table.getHeader().addColumn("Plugin", 3,
-                                    100,
+        table.getHeader().addColumn("Plugin (NodeId)", 3,
+                                    140,
                                     50, 400,
                                     TableHeaderComponent::defaultFlags);
 
-        table.getHeader().addColumn("Parameter", 4,
-                                    100,
+        table.getHeader().addColumn("Parameter (Index)", 4,
+                                    140,
                                     50, 400,
                                     TableHeaderComponent::defaultFlags);
 
@@ -307,26 +309,54 @@ public:
         //g.drawText (rowData[rowNumber], 2, 0, width - 4, height, Justification::centredLeft, true);
 
         if (rowIsSelected)
-            g.fillAll (Colours::cornflowerblue);
+            g.fillAll (Colours::lime.withAlpha(.4f));
     }
 
     // This is overloaded from TableListBoxModel, and must update any custom components that we're using
     Component* refreshComponentForCell (int rowNumber, int columnId, bool /*isRowSelected*/,
                                         Component* existingComponentToUpdate) override
     {
-        {
-            // for any other column, just return 0, as we'll be painting these columns directly.
 
-            jassert (existingComponentToUpdate == 0);
-            return 0;
+        if(columnId==1 || columnId==2)
+        {
+            EditableTextCustomComponent* textLabel = (EditableTextCustomComponent*) existingComponentToUpdate;
+
+            // same as above...
+            if (textLabel == 0)
+                textLabel = new EditableTextCustomComponent (*this);
+
+            textLabel->setRowAndColumn (rowNumber, columnId);
+
+            return textLabel;
         }
+        else
+            return 0;
     }
 
-    //add or modify exiting list entries
-    void addData(XmlElement* xml)
+    String getText (const int columnNumber, const int rowNumber) const
     {
-        rowData = xml;
-        numRows = xml->getNumChildElements();
+        //cUtils::showMessage(rowData->getStringAttribute (getAttributeNameForColumnId (columnNumber)));
+        return rowData->getChildElement (rowNumber)->getStringAttribute ( getAttributeNameForColumnId(columnNumber));
+
+        //return "";
+    }
+
+    void setText (const int columnNumber, const int rowNumber, const String& newText)
+    {
+        const String& columnName = getAttributeNameForColumnId(columnNumber);//table.getHeader().getColumnName (columnNumber);
+        rowData->getChildElement (rowNumber)->setAttribute (columnName, newText);
+    }
+
+    void removeRow(const int rowNumber)
+    {
+        rowData->removeChildElement(rowData->getChildElement (rowNumber), true);
+        numRows = rowData->getNumChildElements();
+    }
+
+    XmlElement* getMidiMapXml()
+    {
+
+        return rowData;
     }
 
     //==============================================================================
@@ -339,14 +369,6 @@ public:
     //determine actions to take place when users click on a cell...
     void cellClicked (int rowNumber, int columnId, const MouseEvent &e)
     {
-        if(e.mods.isRightButtonDown())
-        {
-            PopupMenu m;
-            CabbageLookAndFeel cLAK;
-            m.setLookAndFeel(&cLAK);
-            m.addItem(1, "Delete selected");
-            m.show();
-        }
 
     }
 
@@ -355,6 +377,61 @@ private:
     Font font;
     int numRows;            // The number of rows of data we've got
     XmlElement* rowData;
+
+    //=========================================================
+    // editable text box for tweaking midi parameters
+    //=========================================================
+    class EditableTextCustomComponent : public Label
+    {
+    public:
+        EditableTextCustomComponent (MidiMappingsComponent& owner_)
+            : owner (owner_)
+        {
+            // double click to edit the label text; single click handled below
+            setEditable (false, true, false);
+            setColour (textColourId, Colours::white);
+        }
+
+        void mouseDown (const MouseEvent& e) override
+        {
+            // single click on the label should simply select the row
+            owner.table.selectRowsBasedOnModifierKeys (row, e.mods, false);
+
+            if(e.mods.isRightButtonDown())
+            {
+                PopupMenu m;
+                CabbageLookAndFeel cLAK;
+                m.setLookAndFeel(&cLAK);
+                m.addItem(1, "Delete selected");
+                int c = m.show();
+                if(c==1)
+                {
+                    owner.removeRow(row);
+                    owner.table.updateContent();
+
+                }
+            }
+
+            Label::mouseDown (e);
+        }
+
+        void textWasEdited() override
+        {
+            owner.setText (columnId, row, getText());
+        }
+
+        // Our demo code will call this when we may need to update our contents
+        void setRowAndColumn (const int newRow, const int newColumn)
+        {
+            row = newRow;
+            columnId = newColumn;
+            setText (owner.getText(columnId, row), dontSendNotification);
+        }
+
+    private:
+        MidiMappingsComponent& owner;
+        int row, columnId;
+    };
 };
 
 //==============================================================================

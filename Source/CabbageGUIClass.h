@@ -16,7 +16,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
   02111-1307 USA
 
-*/  
+*/
 #ifndef CABBPARSE_H
 #define CABBPARSE_H
 
@@ -29,7 +29,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
-
+  
 #include "CabbageUtils.h"
 
 //creating this as a singleton as I don't wish to create

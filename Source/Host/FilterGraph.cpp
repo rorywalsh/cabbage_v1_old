@@ -89,7 +89,7 @@ void FilterGraph::addNodesToAutomationTrack(int32 id, int index)
     //if there is an automation device, otherwise create one. Only one permitted in each patch..
     if(getNodeForId(automationNodeID))
     {
-		automationAdded=true;
+        automationAdded=true;
         AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
         node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);
     }

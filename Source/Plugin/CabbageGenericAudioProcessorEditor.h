@@ -54,7 +54,7 @@ public:
         startTimer (100);
         addAndMakeVisible (slider);
         setPreferredHeight(20);
-		
+
 
         if(PluginWrapper* wrapper = dynamic_cast<PluginWrapper*>(&p))
         {
@@ -64,7 +64,7 @@ public:
         owner.addListener (this);
         slider.lookAndFeelChanged();
         slider.addActionListener(this);
-		this->setTooltip("Right-click to add automation");
+        this->setTooltip("Right-click to add automation");
     }
 
     ~ProcessorParameterPropertyComp()
@@ -77,7 +77,7 @@ public:
             owner.removeListener (this);
     }
 
-	
+
     void mouseDown(const MouseEvent& event)
     {
         if(event.mods.isPopupMenu())

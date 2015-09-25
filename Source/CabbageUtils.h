@@ -753,7 +753,7 @@ public:
     {
         File searchDir(dir);
         Array<File> subFolders;
-		Array<File> files;
+        Array<File> files;
         subFolders.add(searchDir);
         int noOfFiles=0, fileCnt;
         searchDir.findChildFiles(subFolders, File::findDirectories, true);
@@ -772,14 +772,14 @@ public:
         {
             if(!subFolders[i].containsSubDirectories())
             {
-                subFolders[i].findChildFiles(filesArray, File::findFiles, false, ext);				
-				
+                subFolders[i].findChildFiles(filesArray, File::findFiles, false, ext);
+
                 subMenu.clear();
                 for (fileCnt = noOfFiles; fileCnt < filesArray.size(); fileCnt++)
                     subMenu.addItem (fileCnt + indexOffset, filesArray[fileCnt].getFileNameWithoutExtension());
                 noOfFiles = fileCnt;
-				if(noOfFiles>0)
-					m.addSubMenu(subFolders[i].getFullPathName().replace(dir, "").replace(pathSlash, "-"), subMenu);
+                if(noOfFiles>0)
+                    m.addSubMenu(subFolders[i].getFullPathName().replace(dir, "").replace(pathSlash, "-"), subMenu);
             }
         }
         subMenu.clear();

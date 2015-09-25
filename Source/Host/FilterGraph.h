@@ -201,6 +201,11 @@ public:
     {
         return IdForNodeBeingEdited;
     }
+	
+	bool isAutomationAdded()
+	{
+		return automationAdded;
+	}
 
 private:
     //==============================================================================
@@ -213,6 +218,7 @@ private:
     int lastChangedNodeId;
     int lastChangedNodeParameter;
     int IdForNodeBeingEdited;
+	bool automationAdded;
     uint32 lastUID;
     uint32 getNextUID() noexcept;
     uint32 lastNodeID;

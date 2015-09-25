@@ -50,12 +50,11 @@ public:
           changeMessage(""),
           lookAndFeelBasic(new CabbageLookAndFeelBasic())
     {
-        //test fo the name of the parameter, if it's a button create a button...
-        //of if the number of steps is 2 then create a button.
         setLookAndFeel(lookAndFeelBasic);
         startTimer (100);
         addAndMakeVisible (slider);
         setPreferredHeight(20);
+		
 
         if(PluginWrapper* wrapper = dynamic_cast<PluginWrapper*>(&p))
         {
@@ -65,6 +64,7 @@ public:
         owner.addListener (this);
         slider.lookAndFeelChanged();
         slider.addActionListener(this);
+		this->setTooltip("Right-click to add automation");
     }
 
     ~ProcessorParameterPropertyComp()
@@ -77,6 +77,7 @@ public:
             owner.removeListener (this);
     }
 
+	
     void mouseDown(const MouseEvent& event)
     {
         if(event.mods.isPopupMenu())

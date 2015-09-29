@@ -1828,6 +1828,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
         guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
     }
 #endif
+    updateCabbageControls();
 }
 
 //==============================================================================

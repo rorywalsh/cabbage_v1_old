@@ -37,7 +37,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
     isInstrTabEnabled(false)
 {
 
-#ifndef Cabbage_Build_Standalone
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
     PropertiesFile::Options options;
     options.applicationName     = "Cabbage";
     options.filenameSuffix      = "settings";
@@ -117,7 +117,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
 //==============================================================================
 CodeWindow::~CodeWindow()
 {
-#ifndef Cabbage_Build_Standalone
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
     deleteAndZero(appProperties);
     appProperties = nullptr;
 #endif

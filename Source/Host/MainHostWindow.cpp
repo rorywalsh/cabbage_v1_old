@@ -329,7 +329,8 @@ void MainHostWindow::addCabbagePluginsToMenu (PopupMenu& m, Array<File> &cabbage
     }
 
 
-    String userDir = appProperties->getUserSettings()->getValue("CabbageFilePaths");
+    String userDir = getAppProperties().getUserSettings()->getValue("CabbageFilePaths");
+
     if(File(userDir).exists())
     {
         FileSearchPath filePaths(appProperties->getUserSettings()->getValue("CabbageFilePaths"));

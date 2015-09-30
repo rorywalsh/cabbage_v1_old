@@ -477,6 +477,7 @@ void FilterComponent::actionListenerCallback (const String &message)
         if(instance)
         {
             const int currentChannelCount = graph.getNodeForId(filterID)->getProcessor()->getNumOutputChannels();
+
             const int newChannelCount = cUtils::getNchnlsFromFile(file.loadFileAsString());
 
             if((getGraphPanel()!=nullptr) && (currentChannelCount!=newChannelCount))
@@ -536,12 +537,14 @@ void FilterComponent::timerCallback()
         CabbagePluginAudioProcessor* instance = (CabbagePluginAudioProcessor*)(graph.getNodeForId (filterID)->getProcessor());
 
 
-        if(codeWindow->csoundOutputComponent->getText()!=instance->getCsoundOutput())
-            codeWindow->csoundOutputComponent->setText(instance->getCsoundOutput());
+        if(codeWindow)
+        {
+            if(codeWindow->csoundOutputComponent->getText()!=instance->getCsoundOutput())
+                codeWindow->csoundOutputComponent->setText(instance->getCsoundOutput());
 
-        if(codeWindow->csoundDebuggerComponent->getText()!=instance->getDebuggerOutput())
-            codeWindow->csoundDebuggerComponent->setText(instance->getDebuggerOutput());
-
+            if(codeWindow->csoundDebuggerComponent->getText()!=instance->getDebuggerOutput())
+                codeWindow->csoundDebuggerComponent->setText(instance->getDebuggerOutput());
+        }
     }
 
 }
@@ -555,7 +558,8 @@ void FilterComponent::paint (Graphics& g)
     const int w = getWidth() - x * 2;
     const int h = getHeight() - pinSize * 2;
 
-    g.setColour(cUtils::getComponentSkin().withAlpha(.2f));
+    // g.setColour(cUtils::getComponentSkin());
+    g.setColour(Colour(20, 20, 20));
     g.fillRoundedRectangle(x, y, w, h, 5);
 
     g.drawRoundedRectangle(x, y, w, h, 5, 1.f);
@@ -814,8 +818,8 @@ void FilterComponent::update()
 
         if(pluginType!=INTERNAL && pluginType!=AUTOMATION)
         {
-            addAndMakeVisible(mute = new MiniButton(this, "Toggle mute"));
-            addAndMakeVisible(bypass = new MiniButton(this, "Toggle bypass"));
+//            addAndMakeVisible(mute = new MiniButton(this, "Toggle mute"));
+//            addAndMakeVisible(bypass = new MiniButton(this, "Toggle bypass"));
         }
 
         resized();

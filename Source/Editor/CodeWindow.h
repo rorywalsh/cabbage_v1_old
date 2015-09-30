@@ -27,6 +27,8 @@
 //class LiveCsound;
 class PythonEditor;
 
+ApplicationProperties& getAppProperties();
+
 //========== csound output console class =================
 class CsoundOutputComponent : public Component
 {

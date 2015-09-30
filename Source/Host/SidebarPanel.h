@@ -95,7 +95,7 @@ public:
 
     ~FileTreePropertyComponent()
     {
-
+        this->setColour(PropertyComponent::labelTextColourId, Colours::cornflowerblue);
     }
 
 

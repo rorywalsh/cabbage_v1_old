@@ -153,6 +153,7 @@ void SidebarPanel::refreshPluginParameters()
                     i,
                     filterGraph->getNode(index)->nodeId);
             pc->addChangeListener(this);
+            pc->setLookAndFeel(&this->getLookAndFeel());
             params.add (pc);
         }
 
@@ -244,8 +245,8 @@ void SidebarPanel::setCurrentBPM(int bpm)
 //--------------------------------------------------------------------
 void SidebarPanel::paint (Graphics& g)
 {
-    g.fillAll (Colour::greyLevel (0.2f));
-
+    //g.fillAll (Colour::greyLevel (0.5f));
+    g.fillAll(Colours::cornflowerblue.darker(.95f));
     if(midiLearn)
     {
         g.setColour(Colours::yellow);

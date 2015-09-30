@@ -92,7 +92,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
     codeEditor = nullptr;
     //backgroundThread.startThread();
 
-    setPlayConfigDetails(2, 2, 44100, 512);
+    //setPlayConfigDetails(2, 2, 44100, 512);
 
 
     //set up file logger if needed..
@@ -2094,9 +2094,11 @@ void CabbagePluginAudioProcessor::setGuiEnabled(bool val)
     CabbagePluginAudioProcessorEditor* editor = dynamic_cast< CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
     if(editor)
     {
+#if !defined(CABBAGE_HOST)
         if(val==false)
             if(getPreference(appProperties, "ExternalEditor"))
                 csdFile.replaceWithText(codeEditor->getAllText());
+#endif
 
     }
 #endif

@@ -528,11 +528,13 @@ public:
     static int getNchnlsFromFile(String csdText)
     {
         StringArray array;
-        array.addLines(File(csdText).loadFileAsString());
+        array.addLines(csdText);
+        //cUtils::showMessage(file.loadFileAsString());
 
         for(int i=0; i<array.size(); i++)
         {
             //cUtils::debug(array.joinIntoString(" "));
+            cUtils::debug(array[i]);
             if(array[i].contains("nchnls") && array[i].contains("="))
             {
                 String channels = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));

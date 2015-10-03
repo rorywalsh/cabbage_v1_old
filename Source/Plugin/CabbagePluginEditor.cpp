@@ -2062,7 +2062,7 @@ void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
 
 
 //+++++++++++++++++++++++++++++++++++++++++++
-//                       insert file button
+//                       insert source button
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertSourceButton(CabbageGUIClass &cAttr)
 {
@@ -2777,9 +2777,11 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                 {
                                     //FileChooser fc("Open", directory.getFullPathName(), filetype, UseNativeDialogue);
                                     //determine whether to poen file or directory
-                                    if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="file")
+                                    bool save = getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="save";
+                                    if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="file" ||
+                                            getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="save")
                                     {
-                                        Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file",
+                                        Array<File> selectedFiles = cUtils::launchFileBrowser(save==true ? "Save file" : "Open a file",
                                                                     wildcardFilter,
                                                                     filetype,
                                                                     1,

@@ -1825,10 +1825,10 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
                     newValue, guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
 
         }
-        guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
+        //guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
     }
 #endif
-    updateCabbageControls();
+    //ßupdateCabbageControls();
 }
 
 //==============================================================================

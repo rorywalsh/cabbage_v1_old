@@ -171,8 +171,11 @@
 #ifndef  JucePlugin_Build_VST
 #define JucePlugin_Build_VST              1
 #endif
-#ifndef  JucePlugin_Build_AU
-#define JucePlugin_Build_AU               1
+
+#if !defined(CABBAGE_HOST)
+    #define JucePlugin_Build_AU               0
+#else
+    #define JucePlugin_Build_AU               1
 #endif
 #ifndef  JucePlugin_Build_RTAS
 #define JucePlugin_Build_RTAS             0

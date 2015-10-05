@@ -3546,7 +3546,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     }
                     if(slider)
                     {
-#ifndef Cabbage_Build_Standalone
+#if !defined(Cabbage_Build_Standalone)
                         if(slider->getSliderStyle()==Slider::LinearVertical ||
                                 slider->getSliderStyle()==Slider::RotaryVerticalDrag ||
                                 slider->getSliderStyle()==Slider::LinearHorizontal ||
@@ -3598,7 +3598,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                 {
                     if(comps[i])
                     {
-#ifndef Cabbage_Build_Standalone
+#if !defined(Cabbage_Build_Standalone)
                         float xRange = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range);
                         float xMin = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::minx);
                         float yMin = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::miny);
@@ -3619,7 +3619,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                         notify = sendNotification;
                     else
                         notify = dontSendNotification;
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST) 
                     val = getFilter()->getParameter(i);
                     ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)val-1, notify);
                     //Logger::writeToLog(String("timerCallback():")+String(val));

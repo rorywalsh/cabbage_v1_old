@@ -245,8 +245,8 @@ void SidebarPanel::setCurrentBPM(int bpm)
 //--------------------------------------------------------------------
 void SidebarPanel::paint (Graphics& g)
 {
-    //g.fillAll (Colour::greyLevel (0.5f));
-    g.fillAll(Colours::cornflowerblue.darker(.95f));
+    g.fillAll (Colour::greyLevel (0.8f));
+    //g.fillAll(Colours::cornflowerblue.darker(.99f));
     if(midiLearn)
     {
         g.setColour(Colours::yellow);

@@ -2062,7 +2062,7 @@ void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
 
 
 //+++++++++++++++++++++++++++++++++++++++++++
-//                       insert file button
+//                       insert source button
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertSourceButton(CabbageGUIClass &cAttr)
 {
@@ -2777,9 +2777,11 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                 {
                                     //FileChooser fc("Open", directory.getFullPathName(), filetype, UseNativeDialogue);
                                     //determine whether to poen file or directory
-                                    if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="file")
+                                    bool save = getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="save";
+                                    if(getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="file" ||
+                                            getFilter()->getGUILayoutCtrls(i).getStringProp("mode")=="save")
                                     {
-                                        Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file",
+                                        Array<File> selectedFiles = cUtils::launchFileBrowser(save==true ? "Save file" : "Open a file",
                                                                     wildcardFilter,
                                                                     filetype,
                                                                     1,
@@ -3544,7 +3546,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     }
                     if(slider)
                     {
-#ifndef Cabbage_Build_Standalone
+#if !defined(Cabbage_Build_Standalone)
                         if(slider->getSliderStyle()==Slider::LinearVertical ||
                                 slider->getSliderStyle()==Slider::RotaryVerticalDrag ||
                                 slider->getSliderStyle()==Slider::LinearHorizontal ||
@@ -3596,7 +3598,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                 {
                     if(comps[i])
                     {
-#ifndef Cabbage_Build_Standalone
+#if !defined(Cabbage_Build_Standalone)
                         float xRange = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::range);
                         float xMin = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::minx);
                         float yMin = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::miny);
@@ -3617,7 +3619,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                         notify = sendNotification;
                     else
                         notify = dontSendNotification;
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST) 
                     val = getFilter()->getParameter(i);
                     ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)val-1, notify);
                     //Logger::writeToLog(String("timerCallback():")+String(val));

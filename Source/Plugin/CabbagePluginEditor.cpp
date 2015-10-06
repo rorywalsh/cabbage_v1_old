@@ -3619,7 +3619,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                         notify = sendNotification;
                     else
                         notify = dontSendNotification;
-#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST) 
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
                     val = getFilter()->getParameter(i);
                     ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)val-1, notify);
                     //Logger::writeToLog(String("timerCallback():")+String(val));

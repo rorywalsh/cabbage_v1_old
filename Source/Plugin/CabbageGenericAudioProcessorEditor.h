@@ -127,7 +127,8 @@ public:
 
     void paint(Graphics &g)
     {
-        g.fillAll(cUtils::getComponentSkin().darker(.4f));
+        g.fillAll(Colour(40, 40, 40));
+        //g.fillAll(Colours::red);
 
         if(midiLearnEnabled == true)
         {
@@ -276,7 +277,7 @@ public:
 
     void paint (Graphics& g)
     {
-        g.fillAll (cUtils::getDarkerBackgroundSkin());
+        g.fillAll (cUtils::getDarkerBackgroundSkin().darker());
     }
 
     void resized()

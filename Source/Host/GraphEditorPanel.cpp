@@ -908,6 +908,81 @@ void GraphAudioProcessorPlayer::changeListenerCallback (ChangeBroadcaster* sourc
         outputGainLevel = ((InternalMixerStrip*)source)->currentGainLevel;
 }
 //==============================================================================
+//==============================================================================
+/*
+void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const inputChannelData,
+                                                  const int numInputChannels,
+                                                  float** const outputChannelData,
+                                                  const int numOutputChannels,
+                                                  const int numSamples)
+{
+    // these should have been prepared by audioDeviceAboutToStart()...
+    jassert (sampleRate > 0 && blockSize > 0);
+
+    incomingMidi.clear();
+    messageCollector.removeNextBlockOfMessages (incomingMidi, numSamples);
+    int totalNumChans = 0;
+
+    if (numInputChannels > numOutputChannels)
+    {
+        // if there aren't enough output channels for the number of
+        // inputs, we need to create some temporary extra ones (can't
+        // use the input data in case it gets written to)
+        tempBuffer.setSize (numInputChannels - numOutputChannels, numSamples,
+                            false, false, true);
+
+        for (int i = 0; i < numOutputChannels; ++i)
+        {
+            channels[totalNumChans] = outputChannelData[i];
+            memcpy (channels[totalNumChans], inputChannelData[i], sizeof (float) * (size_t) numSamples);
+            ++totalNumChans;
+        }
+
+        for (int i = numOutputChannels; i < numInputChannels; ++i)
+        {
+            channels[totalNumChans] = tempBuffer.getWritePointer (i - numOutputChannels);
+            memcpy (channels[totalNumChans], inputChannelData[i], sizeof (float) * (size_t) numSamples);
+            ++totalNumChans;
+        }
+    }
+    else
+    {
+        for (int i = 0; i < numInputChannels; ++i)
+        {
+            channels[totalNumChans] = outputChannelData[i];
+            memcpy (channels[totalNumChans], inputChannelData[i], sizeof (float) * (size_t) numSamples);
+            ++totalNumChans;
+        }
+
+        for (int i = numInputChannels; i < numOutputChannels; ++i)
+        {
+            channels[totalNumChans] = outputChannelData[i];
+            zeromem (channels[totalNumChans], sizeof (float) * (size_t) numSamples);
+            ++totalNumChans;
+        }
+    }
+
+    AudioSampleBuffer buffer (channels, totalNumChans, numSamples);
+
+    {
+        const ScopedLock sl (lock);
+
+        if (processor != nullptr)
+        {
+            const ScopedLock sl2 (processor->getCallbackLock());
+
+            if (! processor->isSuspended())
+            {
+                processor->processBlock (buffer, incomingMidi);
+                return;
+            }
+        }
+    }
+
+    for (int i = 0; i < numOutputChannels; ++i)
+        FloatVectorOperations::clear (outputChannelData[i], numSamples);
+}
+*/
 void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const inputChannelData,
         const int numInputChannels,
         float** const outputChannelData,
@@ -955,18 +1030,28 @@ void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const input
                 inputBuffer[y] = inputChannelData[i][y]*inputGainLevel;
 
             channels[totalNumChans] = outputChannelData[i];
-
             memcpy (channels[totalNumChans], inputBuffer, sizeof (float) * (size_t) numSamples);
             inputChannelRMS.getReference(i) = abs(inputBuffer[0]);
 
-            for(int y=0; y<numSamples; y++)
-            {
-                channels[totalNumChans][y] = channels[totalNumChans][y]*.0;
-            }
+            //for(int y=0; y<numSamples; y++)
+            //{
+            //    channels[totalNumChans][y] = channels[totalNumChans][y]*.0;
+            //}
 
             ++totalNumChans;
         }
+        /*
+                for (int i = 0; i < numInputChannels; ++i)
+                {
+        			for(int y=0; y<numSamples; y++)
+        				inputBuffer[y] = inputChannelData[i][y]*inputGainLevel;
 
+                    channels[totalNumChans] = outputChannelData[i];
+                    memcpy (channels[totalNumChans], inputChannelData[i], sizeof (float) * (size_t) numSamples);
+        			inputChannelRMS.getReference(i) = abs(inputBuffer[0]);
+                    ++totalNumChans;
+                }
+        */
         for (int i = numInputChannels; i < numOutputChannels; ++i)
         {
             channels[totalNumChans] = outputChannelData[i];

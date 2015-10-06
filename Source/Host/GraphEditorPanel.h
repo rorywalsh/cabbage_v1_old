@@ -518,6 +518,7 @@ private:
     AudioDeviceManager* deviceManager;
     GraphPanelContainer* graphPanelContainer;
     GraphAudioProcessorPlayer graphPlayer;
+    // AudioProcessorPlayer graphPlayer;
     MidiKeyboardState keyState;
     InternalMixerStrip* inputStrip;
     InternalMixerStrip* outputStrip;

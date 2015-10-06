@@ -674,10 +674,11 @@ public:
             {
                 if(text.isNotEmpty())
                 {
-                    textLabel->setBounds(0, 0, 50, getHeight());
+                    float width = textLabel->getFont().getStringWidthFloat(text)+10.f;
+                    textLabel->setBounds(0, 0, width, getHeight());
                     textLabel->setText(text, dontSendNotification);
                     textLabel->setVisible(true);
-                    slider->setBounds(50, 0, getWidth()-50, getHeight());
+                    slider->setBounds(width, 0, getWidth()-50, getHeight());
                 }
                 else
                     slider->setBounds(0, 0, getWidth(), getHeight());

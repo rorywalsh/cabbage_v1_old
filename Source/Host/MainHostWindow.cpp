@@ -591,7 +591,7 @@ bool MainHostWindow::perform (const InvocationInfo& info)
         break;
 
     case CommandIDs::showAboutBox:
-        cUtils::showMessage("About", "Cabbage Studio v0.1 Beta");
+        cUtils::showMessage("About", "Cabbage Studio v0.1.2 Beta");
         break;
 
     case CommandIDs::viewSidepanel:

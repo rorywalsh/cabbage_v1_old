@@ -224,7 +224,6 @@ AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* 
             return node;
         }
     }
-
     else if(desc->pluginFormatName=="Internal")
     {
         if (AudioPluginInstance* instance = formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))

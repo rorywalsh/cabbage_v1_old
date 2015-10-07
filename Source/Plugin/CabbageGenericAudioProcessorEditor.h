@@ -78,8 +78,9 @@ public:
     }
 
 
-    void mouseDown(const MouseEvent& event)
+    void mmouseDown(const MouseEvent& event)
     {
+        /*
         if(event.mods.isPopupMenu())
         {
             PopupMenu m;
@@ -103,7 +104,7 @@ public:
                     sendChangeMessage();
                 }
             }
-        }
+        }*/
     }
 
     int32 getNodeId()

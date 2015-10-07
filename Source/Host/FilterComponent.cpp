@@ -331,6 +331,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 
     if (pluginType==SOUNDFILER)
         getGraphDocument()->showComponentInBottomPanel("Soundfile Player:"+String(filterID));
+
 }
 //================================================================================
 void FilterComponent::mouseDrag (const MouseEvent& e)
@@ -384,7 +385,8 @@ void FilterComponent::mouseUp (const MouseEvent& e)
     {
         if (const AudioProcessorGraph::Node::Ptr f = graph.getNodeForId (filterID))
         {
-            if(f->properties.getWithDefault("pluginType", "")!="Internal")
+            if(f->properties.getWithDefault("pluginType", "")!="Internal" &&
+                    (f->properties.getWithDefault("pluginType", "")!="SoundfilePlayer"))
                 if (PluginWindow* const w = PluginWindow::getWindowFor (f, PluginWindow::Normal))
                     w->toFront (true);
         }

@@ -351,7 +351,7 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
                     {
                         createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, "soundfile player");
                     }
-                    if(r==10001)
+                    else if(r==10001)
                     {
                         createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, "automation track");
                     }

@@ -86,28 +86,29 @@ const AudioProcessorGraph::Node::Ptr FilterGraph::getNodeForId (const uint32 uid
 //==============================================================================
 void FilterGraph::addNodesToAutomationTrack(int32 id, int index)
 {
-    //if there is an automation device, otherwise create one. Only one permitted in each patch..
-    if(getNodeForId(automationNodeID))
-    {
-        automationAdded=true;
-        AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
-        node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);
-    }
-    else
-    {
-        PluginDescription descript;
-        descript.descriptiveName = "Automation track";
-        descript.name = "AutomationTrack";
-        descript.pluginFormatName = "AutomationTrack";
-        descript.numInputChannels = 2;
-        descript.numOutputChannels = 2;
-        addFilter(&descript, 0.50f, 0.5f);
+    /*
+        //if there is an automation device, otherwise create one. Only one permitted in each patch..
+        if(getNodeForId(automationNodeID))
+        {
+            automationAdded=true;
+            AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
+            node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);
+        }
+        else
+        {
+            PluginDescription descript;
+            descript.descriptiveName = "Automation track";
+            descript.name = "AutomationTrack";
+            descript.pluginFormatName = "AutomationTrack";
+            descript.numInputChannels = 2;
+            descript.numOutputChannels = 2;
+            addFilter(&descript, 0.50f, 0.5f);
 
-        AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
-        node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);
+            AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
+            node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);
 
-    }
-
+        }
+    */
 }
 
 //==============================================================================
@@ -223,7 +224,6 @@ AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* 
             return node;
         }
     }
-
     else if(desc->pluginFormatName=="Internal")
     {
         if (AudioPluginInstance* instance = formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))

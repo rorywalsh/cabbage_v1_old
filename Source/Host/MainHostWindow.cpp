@@ -301,8 +301,8 @@ void MainHostWindow::addPluginsToMenu (PopupMenu& m) const
     GraphDocumentComponent* const graphEditor = getGraphDocument();
     if(graphEditor)
     {
-        if(!graphEditor->graph.isAutomationAdded())
-            menu.addItem(10001, "Automation track");
+        //if(!graphEditor->graph.isAutomationAdded())
+        //    menu.addItem(10001, "Automation track");
     }
     m.addSubMenu("Devices", menu);
 }
@@ -591,7 +591,7 @@ bool MainHostWindow::perform (const InvocationInfo& info)
         break;
 
     case CommandIDs::showAboutBox:
-        cUtils::showMessage("About", "Cabbage Studio v0.1.2 Beta");
+        cUtils::showMessage("About", "Cabbage Studio v0.1.3 Beta");
         break;
 
     case CommandIDs::viewSidepanel:

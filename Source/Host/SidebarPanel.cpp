@@ -153,7 +153,8 @@ void SidebarPanel::refreshPluginParameters()
                     i,
                     filterGraph->getNode(index)->nodeId);
             pc->addChangeListener(this);
-            pc->setLookAndFeel(&this->getLookAndFeel());
+            //pc->setLookAndFeel(&this->getLookAndFeel());
+            //pc->lookAndFeelChanged();
             params.add (pc);
         }
 
@@ -271,12 +272,13 @@ void SidebarPanel::changeListenerCallback (ChangeBroadcaster* source)
 {
     ProcessorParameterPropertyComp* comp = (ProcessorParameterPropertyComp*)source;
 
-    if(comp->changeMessage=="add automation")
-    {
-        filterGraph->addNodesToAutomationTrack(comp->getNodeId(), comp->getParamIndex());
-        comp->changeMessage="";
-    }
-
+    /*
+        if(comp->changeMessage=="add automation")
+        {
+            filterGraph->addNodesToAutomationTrack(comp->getNodeId(), comp->getParamIndex());
+            comp->changeMessage="";
+        }
+    */
     if(midiLearn)
     {
 

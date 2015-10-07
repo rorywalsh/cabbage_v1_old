@@ -1351,6 +1351,16 @@ public:
         return stopImage;
     }
 
+    static const DrawablePath* createRecordButtonPath(int buttonSize, Colour col)
+    {
+        Path stopPath;
+        stopPath.addEllipse(0, 0, buttonSize, buttonSize);
+        DrawablePath* stopImage = new DrawablePath();
+        stopImage->setPath(stopPath);
+        stopImage->setFill(col);
+        return stopImage;
+    }
+
     static const DrawablePath* createDisabledStopButtonPath(float buttonSize, Colour col1, Colour col2)
     {
         Path stopPath;

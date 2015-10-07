@@ -34,6 +34,7 @@ class GraphDocumentComponent;
 #define INTERNAL 1
 #define CABBAGE 2
 #define SOUNDFILER 3
+#define SOUNDFILER_RECORD 6
 #define THIRDPARTY 4
 #define AUTOMATION 5
 

@@ -301,8 +301,8 @@ void MainHostWindow::addPluginsToMenu (PopupMenu& m) const
     GraphDocumentComponent* const graphEditor = getGraphDocument();
     if(graphEditor)
     {
-        if(!graphEditor->graph.isAutomationAdded())
-            menu.addItem(10001, "Automation track");
+        //if(!graphEditor->graph.isAutomationAdded())
+        //    menu.addItem(10001, "Automation track");
     }
     m.addSubMenu("Devices", menu);
 }

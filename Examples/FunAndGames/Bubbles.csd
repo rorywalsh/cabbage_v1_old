@@ -22,7 +22,7 @@ label    bounds( 50,  2, 40, 15), text("0"), align(left), fontcolour(0,0,0,150),
 label    bounds( 90,  2, 55, 15), text("Missed:"), align(left), fontcolour(0,0,0,100)					; Missed label
 label    bounds(145,  2, 40, 15), text("0"), align(left), fontcolour(0,0,0,150), identchannel("missedID")			; Missed value
 
-label    bounds(  1,530,100, 10), text("Iain McCurdy 2014"), align(left), fontcolour(255,255,255,150)
+label    bounds(  1,530,100, 10), text("Iain McCurdy 2014"), align(left), fontcolour(0,0,0,150)
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -121,7 +121,7 @@ instr	$INSTR
  ksize_x	=	(1 + ksize_x) * isize_x
  ksize_y	oscil	0.02,kWobFreq,giWobbleShape,0.5
  ksize_y	=	(1 + ksize_y) * isize_y
-
+ 
  krel		release				; Sense note ending (either by bursting or by exiting the panel).
  if krel==1 then
   event	"i",100,0,0.01,p1			; Call instrument that will restart this instrument (after some delay).
@@ -135,7 +135,7 @@ instr	$INSTR
  if gkRefreshTrig==1 then											; If a trigger has been generated...
   Sbubble	sprintfk "bubble_ident%d",$N
   Smessage sprintfk "bounds(%d,%d,%d,%d),colour(%d,%d,%d,%d), outlinethickness(0)", kx$N, ky, ksize_x, ksize_y,iR,iG,iB,int(iAlpha)	; Create a string with updated attributes that will be sent to the widget.
-  chnset Smessage, Sbubble												; Send updated attributes to the widget.
+  chnset Smessage, Sbubble												; Send updated attributes to the bubble widget.
 
   Sspecular	sprintfk "specular_ident%d",$N
   Smessage sprintfk "bounds(%d,%d,%d,%d),colour(255,255,255,%d)", kx$N+(ksize_x*0.6), ky+(ksize_y*0.22), ksize_x*0.2, ksize_y*0.2,40	; Create a string with updated attributes that will be sent to the widget.

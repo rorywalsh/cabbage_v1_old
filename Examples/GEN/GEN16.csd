@@ -1,8 +1,10 @@
-Demonstration of GEN16
-Envelope repeats once every two seconds therefore 1 second = 2048 table points
-Value 1 and Value 4 should probably be zero.
-Durations are specified in table points - 2048 = 1 second
-If the sum of durations exceeds table size they are automatically scaled down in order to prevent crashes.
+; GEN16.csd
+; Written by Iain McCurdy, 2013
+; Demonstration of GEN16
+; Envelope repeats once every two seconds therefore 1 second = 2048 table points
+; Value 1 and Value 4 should probably be zero.
+; Durations are specified in table points - 2048 = 1 second
+; If the sum of durations exceeds table size they are automatically scaled down in order to prevent crashes.
 
 
 <Cabbage>

@@ -1,3 +1,6 @@
+; GEN20.csd
+; Written by Iain McCurdy, 2014
+
 <Cabbage>
 form caption("GEN20"), size(410, 230), pluginID("gn10"), colour("20,70,170,150")
 

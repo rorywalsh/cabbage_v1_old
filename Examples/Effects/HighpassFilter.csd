@@ -1,3 +1,6 @@
+; HighpassFilter.csd
+; Written by Iain McCurdy, 2012.
+
 <Cabbage>
 form caption("Highpass Filter"), size(435, 90), pluginID("HPFl")
 image pos(0, 0),                size(435, 90), colour(  70,120, 90), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
@@ -20,7 +23,7 @@ rslider  bounds(360, 11, 70, 70), text("Level"),    colour(  0, 60, 30), tracker
 
 <CsInstruments>
 
-sr 		= 	44100	;SAMPLE RATE
+sr 	= 	48000	;SAMPLE RATE
 ksmps 	= 	32	;NUMBER OF AUDIO SAMPLES IN EACH CONTROL CYCLE
 nchnls 	= 	2	;NUMBER OF CHANNELS (2=STEREO)
 0dbfs	=	1
@@ -28,6 +31,7 @@ nchnls 	= 	2	;NUMBER OF CHANNELS (2=STEREO)
 ;Author: Iain McCurdy (2012)
 
 instr	1
+	kporttime	linseg	0,0.001,0.05
 	/* READ IN WIDGETS */
 	kcf			chnget	"cf"
 	kres		chnget	"res"
@@ -35,8 +39,10 @@ instr	1
 	ksteepness	chnget	"steepness"
 	kResType	chnget	"ResType"
 	klevel		chnget	"level"
-	kporttime	linseg	0,0.001,0.02
+	klevel		portk	klevel,kporttime
+	alevel		interp	klevel
 	kcf	portk	kcf,kporttime
+	acf	interp	kcf
 	/* INPUT */
 	kinput		chnget	"input"
 	if kinput=1 then
@@ -53,15 +59,15 @@ instr	1
 	 aFiltL	atone	aL,kcf
 	 aFiltR	atone	aR,kcf
         elseif ksteepness==1&&kResType!=1 then
-	 aFiltL	buthp	aL,kcf
-	 aFiltR	buthp	aR,kcf
+	 aFiltL	buthp	aL,acf
+	 aFiltR	buthp	aR,acf
         elseif kResType==1 then
-	 aFiltL	bqrez	aL,kcf,1+(kres*40),1
-	 aFiltR	bqrez	aR,kcf,1+(kres*40),1
+	 aFiltL	bqrez	aL,acf,1+(kres*40),1
+	 aFiltR	bqrez	aR,acf,1+(kres*40),1
 	endif
 	aL	ntrpol	aL,aFiltL,kmix
 	aR	ntrpol	aR,aFiltR,kmix
-		outs	aL*klevel,aR*klevel
+		outs	aL*alevel,aR*alevel
 endin
 		
 </CsInstruments>

@@ -16,6 +16,7 @@
 form caption("Image Sliders"), scrollbars(0), size(610, 540), pluginID("ExSl"),colour(0,0,0), guirefresh(64)
 image bounds(0,0,0,0), widgetarray("slider",20)
 label      bounds(170,255,250, 20), text("Click and drag anywhere..."), fontcolour("white"), visible(1), identchannel("instruction")
+label bounds(5,528,110, 11), text("Iain McCurdy |2013|"), FontColour(75,75,75), align("left")
 </Cabbage>
 
 <CsoundSynthesizer>

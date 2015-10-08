@@ -1,3 +1,4 @@
+; GEN42.csd
 ; Demonstration of GEN42
 ; Written by Iain McCurdy, 2014.
 
@@ -58,7 +59,7 @@ nchnls 		= 	2	; NUMBER OF CHANNELS (1=MONO)
 0dbfs		=	1	; MAXIMUM AMPLITUDE
 
 ; default waveform		
-gihist	ftgen	1,0, 512, -42, 0,0, 100 ;, 84, 256, 72, 128
+gihist	ftgen	1,0, 512, -42, 0,0, 100 ;
 
 instr	1
 	iftlen	=	ftlen(1)		; length of function  table
@@ -159,6 +160,7 @@ endin
 <CsScore>
 i 1 0 [3600*24*7]
 i 99 0 [3600*24*7]
+f 0 3600
 </CsScore>
 
 </CsoundSynthesizer>

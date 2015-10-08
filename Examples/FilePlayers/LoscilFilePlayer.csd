@@ -1,13 +1,14 @@
-LoscilFilePlayer.csd
-
-Load a user selected sound file into a GEN 01 function table and plays it back using loscil3. 
-This file player is best suited for polyphonic playback and is less well suited for the playback of very long sound files .
-
-The sound file can be played back using the Play/Stop button (and the 'Transpose' / 'Speed' buttons to implement pitch/speed change)
- or it can be played back using the MIDI keyboard.
-
-The loop points can be set either by using the loop 'Start' and 'End' sliders or by clicking and dragging on the waveform view -
- - loscil will take the values from the last control input moved.
+; LoscilFilePlayer.csd
+; Written by Iain McCurdy, 2014
+; 
+; Load a user selected sound file into a GEN 01 function table and plays it back using loscil3. 
+; This file player is best suited for polyphonic playback and is less well suited for the playback of very long sound files .
+; 
+; The sound file can be played back using the Play/Stop button (and the 'Transpose' / 'Speed' buttons to implement pitch/speed change)
+;  or it can be played back using the MIDI keyboard.
+; 
+; The loop points can be set either by using the loop 'Start' and 'End' sliders or by clicking and dragging on the waveform view -
+;  - loscil will take the values from the last control input moved.
 
 <Cabbage>
 form caption("Loscil File Player") size(685,340), colour(0,0,0) pluginID("Losc")

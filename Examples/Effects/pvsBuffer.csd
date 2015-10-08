@@ -1,4 +1,4 @@
-; pvsBuffer.csd (for Cabbage)
+; pvsBuffer.csd
 ; Writes audio into a circular FFT buffer.
 ; Read speed can be modified as can the frequencies.
 ; Take Care! Feedback values above 1 are intended to be used only when transposition is not unison. 

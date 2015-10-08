@@ -1,10 +1,15 @@
-Saving patterns saves tables as text file to the pwd. Each save to a new pattern number creates a new text file on disk for that pattern.
-Saving snapshots only saves visible widgets.
+; TR-808.csd
+; Written by Iain McCurdy, 2012
+; 
+; Saving patterns saves tables as text file to the pwd. Each save to a new pattern number creates a new text file on disk for that pattern.
+; Saving snapshots only saves visible widgets.
+
+; Choosing 'Host Control' allows the VST plugin host to decide 'Tempo' and 'Run/Stop' status
 
 <Cabbage>
 form caption("TR-808") size(800, 400), colour("SlateGrey"), pluginID("T808"), guirefresh(128)
 
-label 		bounds( 10,380,190, 14), text("Author: Iain McCurdy |2012|"), fontcolour("silver")
+label 		bounds(  5,385,120, 12), text("Iain McCurdy |2012|"), fontcolour("black")
 
 groupbox bounds( 0,  0,  50, 225), text("B.Drum"),FontColour("black"), colour(192,192,192){
 checkbox bounds(10, 24,   5,   5), colour("yellow"), channel("Act1"),  value(0), shape("ellipse")
@@ -120,8 +125,7 @@ rslider  bounds(755,175,  45,  45), text("Pan"),    textcolour("black"), colour(
 }
 
 keyboard pos(0, 225), size(800, 80)
-
-button   bounds( 10,315, 80, 25), text("Run","Stop"), channel("OnOff"), value(0)
+button   bounds( 10,315, 80, 25), text("Stop","Run"), channel("OnOff"), value(0) fontcolour:1(205,255,205), colour:1(0,150,0), fontcolour:0(255,205,205), colour:0(150,0,0)
 combobox bounds( 10,345, 80, 15), channel("sound"), value(1), text("Bass Drum","Snare","Open HH","Cl. HH","Hi Tom","Mid Tom","Lo Tom","Cymbal","Rimshot","Claves","Cowbell","Clap","Maraca","Hi Conga","Mid Conga","Lo Conga")
 button   bounds(462,315, 80, 20), text("Clear","Clear"), channel("clear"), value(0)
 button   bounds(462,338, 38, 20), text("Save","Save"), channel("save"), value(0)
@@ -185,6 +189,9 @@ checkbox bounds(380, 345, 12, 12), channel("Acc13"), value(0), colour("yellow")
 checkbox bounds(400, 345, 12, 12), channel("Acc14"), value(0), colour("yellow")
 checkbox bounds(420, 345, 12, 12), channel("Acc15"), value(0), colour("yellow")
 checkbox bounds(440, 345, 12, 12), channel("Acc16"), value(0), colour("yellow")
+
+button   bounds(458,362, 90, 18), text("Local Control","Host Control"), channel("control"), value(0)
+
 
 </Cabbage>
 
@@ -350,6 +357,18 @@ instr	1	;READ IN WIDGETS, SCAN MIDI NOTES PLAYED AND RELAY TO DRUM SOUNDS
 	gktempo		chnget	"tempo"
 	gkswing		chnget	"swing"
 	gklevel		chnget	"level"
+
+	kcontrol	chnget	"control"
+	if kcontrol==1 then			; host control over start stop and tempo
+	 gktempo	chnget	"HOST_BPM"
+	 gkOnOff	chnget	"IS_PLAYING"
+	 if changed(gktempo)==1 then
+	  chnset	gktempo, "tempo"
+	 endif
+	 if changed(gkOnOff)==1 then
+	  chnset	gkOnOff, "OnOff"
+	 endif
+	endif
 	
 	;START/STOP SEQUENCER
 	ktrig	changed	gkOnOff		;if Run/Stop button is changed...

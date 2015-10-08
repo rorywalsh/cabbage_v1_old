@@ -1,67 +1,87 @@
-RubbedResonators.csd
-Written by Iain McCurdy. Updated 2014
+; RubbedResonators.csd
+; Written by Iain McCurdy, 2012. Updated 2014
+; 
+; This example introduces a method of 'exciting' mode filters that creates an imitation of a resonant object being bowed or rubbed. 
+; The excitation signal consists of a stack of sine wave oscillators that match the number and frequencies of the mode filters being used. 
+; This arrangement can cause the mode filters to resonate with great intensity so the amplitudes of the sine wave oscillators should be kept low to prevent overloading. 
+; Additionally the frequency of each sine wave oscillator is individually modulated using a random 'jitter' function created using 'gaussi' (interpolating gaussian noise generator). 
+; This technique results is a shifting spectral response from the filters. Adjusting the rate and amplitude of this jitter function can imitate a variety of bowing and rubbing techniques. 
+; Increasing 'Jit.Dep.' while 'Jit.Rate' is kept low gives the impression of the resonator being rubbed with greater pressure. If both 'Jit.Dep.' and 'Jit.Rate' are high the impression is of the resonator begin brushed. 
+; Input can also be from the live input.
+; If 'Q' is low then more of the character of the impulse sound (the sine wave oscillators) will be apparent (and therefore the jitter modulation will be more apparent). If 'Q' is higher then the character of the mode filters will dominate and modulation of the impulse sound frequencies will be less apparent. A key aspect of this instrument is that once the impulse sound is removed ('Impulse Amp.' is brought to minimum) the sound produced is solely the residual resonance of the mode filters, therefore any modulation within the sine wave oscillators becomes irrelevant.
+;
+; Tuning
+; ------
+; Detune	-	raising this this adds an increasing amount of note-by-note fixed detuning
+; Shift		-	shifts all notes (in semitones). This is intended to be used in conjunction with 'Compress'.
+; Compress	-	increasingly compresses the interval between notes.
 
-This example introduces a method of 'exciting' mode filters that creates an imitation of a resonant object being bowed or rubbed. The excitation signal consists of a stack of sine wave oscillators that match the number and frequencies of the mode filters being used. This arrangement can cause the mode filters to resonate with great intensity so the amplitudes of the sine wave oscillators should be kept low to prevent overloading. Additionally the frequency of each sine wave oscillator is individually modulated using a random 'jitter' function created using 'gaussi' (interpolating gaussian noise generator). This technique results is a shifting spectral response from the filters. Adjusting the rate and amplitude of this jitter function can imitate a variety of bowing and rubbing techniques. Increasing 'Jit.Dep.' while 'Jit.Rate' is kept low gives the impression of the resonator being rubbed with greater pressure. If both 'Jit.Dep.' and 'Jit.Rate' are high the impression is of the resonator begin brushed. 
-If 'Q' is low then more of the character of the impulse sound (the sine wave oscillators) will be apparent (and therefore the jitter modulation will be more apparent). If 'Q' is higher then the character of the mode filters will dominate and modulation of the impulse sound frequencies will be less apparent. A key aspect of this instrument is that once the impulse sound is removed ('Impulse Amp.' is brought to minimum) the sound produced is solely the residual resonance of the mode filters, therefore any modulation within the sine wave oscillators becomes irrelevant.
-
-'Poly.Limit'	-	controls the maximum number of layers allowed. 
-			If an attempt to exceed the polyphony limit is made, the oldest held note will be removed.
-			This is useful for prevent CPU overloads.
-
-'Rel.Time'	-	defines the time over which a note will fade out if it has been removed on account of exceeding the polyphony limit 
-
-For brightness (damping) control to work properly modal ratios in their function table will need to be in ascending order.
-
-Chorus effect is disabled when 'Mix' is zero
-
-Number of partials in the chosen algorithm is printed to the GUI for the user's information. Algorithms with high numbers of partials will demand more CPU and lower polyphony will be possible.
+; 'Poly.Limit'	-	controls the maximum number of layers allowed. 
+; 			If an attempt to exceed the polyphony limit is made, the oldest held note will be removed.
+; 			This is useful for prevent CPU overloads.
+; 
+; 'Rel.Time'	-	defines the time over which a note will fade out if it has been removed on account of exceeding the polyphony limit 
+; 
+; For brightness (damping) control to work properly modal ratios in their function table will need to be in ascending order.
+; 
+; Chorus effect is disabled when 'Mix' is zero
+; 
+; Number of partials in the chosen algorithm is printed to the GUI for the user's information. Algorithms with high numbers of partials will demand more CPU and lower polyphony will be possible.
 
 <Cabbage>
-form caption("Rubbed Resonators"), size(540, 320), pluginID("RubR")
-image pos(0, 0),                   size(540, 290), colour("Sienna"), shape("sharp"), oulinecolour("brown"), outlinethickness(4)
+form caption("Rubbed Resonators"), size(640,320), pluginID("RubR"), guirefresh(32)
+image pos(0, 0),                   size(640,290), colour("Sienna"), shape("sharp"), oulinecolour("brown"), outlinethickness(4)
 
 ;EXCITATION
-groupbox bounds(10, 10, 260, 90), text("Excitation"), fontcolour("white"), plant("excitation"){
-rslider bounds(  0, 25,60,60), text("Amp."), colour("Chocolate"), channel("ImpDB"), range(-70, 0, 0)
-rslider bounds( 50, 25,60,60), text("HPF"), colour("Chocolate"), channel("HPF"), range(20, 20000, 20, 0.5)
-rslider bounds(100, 25,60,60), text("LPF"), colour("Chocolate"), channel("LPF"), range(20, 20000, 20000, 0.5)
-rslider bounds(150, 25,60,60), text("Jit. Dep."), channel("JitDep"), colour("Chocolate"), range(0, 5.00, 0.4,0.5)
-rslider bounds(200, 25,60,60), text("Jit. Rate"), channel("JitRte"), colour("Chocolate"), range(0.01,100, 3,0.5)
+groupbox bounds(10, 10, 330, 90), text("Excitation"), fontcolour("white"), plant("excitation"){
+label    bounds(  5, 30,70,13), text("Input"), fontcolour("white")
+combobox bounds(  5, 45,70,20), text("Rubbing","Live"), channel("Input")
+rslider  bounds( 70, 25,60,60), text("Amp."), colour("Chocolate"), channel("ImpDB"), range(-70, 0, 0)
+rslider  bounds(120, 25,60,60), text("HPF"), colour("Chocolate"), channel("HPF"), range(20, 20000, 20, 0.5)
+rslider  bounds(170, 25,60,60), text("LPF"), colour("Chocolate"), channel("LPF"), range(20, 20000, 20000, 0.5)
+rslider  bounds(220, 25,60,60), text("Jit. Dep."), channel("JitDep"), colour("Chocolate"), range(0, 5.00, 0.4,0.5)
+rslider  bounds(270, 25,60,60), text("Jit. Rate"), channel("JitRte"), colour("Chocolate"), range(0.01,100, 3,0.5)
 }
 
 ;RESONATORS
-groupbox bounds(270, 10,260, 90), text("Resonators"), fontcolour("white"), plant("resonators"){
-label    bounds( 40, 21, 70, 12), text("Instrument"), fontcolour("white")
-combobox bounds( 10, 36,140, 25), channel("sound"), value(4), text("Single", "Dahina", "Banyan", "Xylophone", "Tibetan Bowl 180mm", "Spinel Sphere", "Pot Lid", "Red Cedar Wood Plate", "Tubular Bell", "Redwood Wood Plate", "Douglas Fir Wood Plate", "Uniform Wooden Bar", "Uniform Aluminium Bar", "Vibraphone 1", "Vibraphone 2", "Chalandi Plates", "Tibetan Bowl 152mm", "Tibetan Bowl 140mm", "Wine Glass", "Small Handbell", "Albert Clock Bell", "Wood Block","Harmonic 10","Harmonic 20","Harmonic 30","Harmonic Odd 10","Harmonic Odd 20")
-label    bounds(  6, 62,120, 12), text("Number of Partials:"), fontcolour("white")
-numberbox  bounds( 121, 62, 29, 13), channel("npartials"), range(1, 10000, 1, 1, 1)
-
-rslider  bounds(150, 25, 60, 60), text("Q"), colour("orange"), channel("Q"), range(50, 10000, 2000, 0.5)
-rslider  bounds(200, 25, 60, 60), text("Bright"), colour("orange"), channel("bright"), range(-4.00, 4, 0)
+groupbox bounds(340, 10,290, 90), text("Resonators"), fontcolour("white"), plant("resonators"){
+label    bounds( 15, 21,140, 12), text("Instrument"), fontcolour("white")
+combobox bounds( 15, 36,140, 25), channel("sound"), value(4), text("Single", "Dahina", "Banyan", "Xylophone", "Tibetan Bowl 180mm", "Spinel Sphere", "Pot Lid", "Red Cedar Wood Plate", "Tubular Bell", "Redwood Wood Plate", "Douglas Fir Wood Plate", "Uniform Wooden Bar", "Uniform Aluminium Bar", "Vibraphone 1", "Vibraphone 2", "Chladni Plates", "Tibetan Bowl 152mm", "Tibetan Bowl 140mm", "Wine Glass", "Small Handbell", "Albert Clock Bell", "Wood Block","Harmonic 10","Harmonic 20","Harmonic 30","Harmonic Odd 10","Harmonic Odd 20")
+label    bounds( 11, 62,120, 12), text("Number of Partials:"), fontcolour("white")
+numberbox  bounds( 126, 62, 29, 13), channel("npartials"), range(1, 10000, 1, 1, 1)
+rslider  bounds(160, 25, 60, 60), text("Q"), colour("orange"), channel("Q"), range(1, 10000, 2000, 0.5)
+rslider  bounds(220, 25, 60, 60), text("Bright"), colour("orange"), channel("bright"), range(-4.00, 4, 0)
 }
 
-;POLYPHONY
-groupbox bounds( 10,100,220, 90), text("Polyphony"), fontcolour("white"), plant("polyphony"){
-button   bounds( 10, 25, 80, 20), text("poly","mono"), channel("monopoly"), value(0)
-hslider  bounds(  5, 43, 90, 38), colour("chocolate"), channel("GlissTime"), range(0.005,  2, 0.1, 0.25, 0.001)
-label    bounds( 22, 74, 58, 12), text("Gliss Time")
+;TUNING                                        
+groupbox bounds( 10,100,160, 90), text("Tuning"), fontcolour("white"), plant("tuning"){
+rslider  bounds(  0, 25, 60, 60), text("Detune"), colour("orange"), channel("detune"), range(0, 5, 0)
+rslider  bounds( 50, 25, 60, 60), text("Shift"), colour("orange"), channel("shift"), range(0, 127, 0)
+rslider  bounds(100, 25, 60, 60), text("Compress"), colour("orange"), channel("compress"), range(0, 1, 0)
+}
+
+;POLYPHONY                                        
+groupbox bounds(170,100,220, 90), text("Polyphony"), fontcolour("white"), plant("polyphony"){
+button   bounds(  8, 25, 84, 20), text("Polyphonic","Monophonic"), channel("monopoly"), value(0)
+hslider  bounds(  5, 43, 95, 38), colour("chocolate"), channel("GlissTime"), range(0.005,  2, 0.1, 0.25, 0.001)
+label    bounds(  5, 74, 95, 12), text("Gliss Time")
 rslider  bounds( 95, 25, 60, 60), text("Poly.Limit"), channel("PolyLimit"), range(0, 20, 5,1,1), colour("chocolate")
 rslider  bounds(155, 25, 60, 60), text("Rel.Time"), channel("RelTim"), range(0.01, 5,0.2,0.5,0.01), colour("chocolate")
 }
 
 ;CHORUS
-groupbox bounds(230,100,160, 90), text("Chorus"), fontcolour("white"), plant("chorus"){
+groupbox bounds(390,100,160, 90), text("Chorus"), fontcolour("white"), plant("chorus"){
 rslider  bounds(  0, 25, 60, 60), text("Mix"), channel("ChoMix"), range(0, 1.00, 0.5), colour("yellow")
 rslider  bounds( 50, 25, 60, 60), text("Depth"), channel("ChoDep"), range(0, 0.1, 0.01,0.5, 0.001), colour("yellow")
 rslider  bounds(100, 25, 60, 60), text("Rate"), channel("ChoRte"), range(0, 20, 0.96, 0.5), colour("yellow")
-}
+}                                                            
 
 ;OUTPUT
-groupbox bounds(390,100,140, 90), text("Output"), fontcolour("white"), plant("output"){
-rslider  bounds( 40, 25, 60, 60), text("Level"), channel("OutLev"), range(0, 1.00, 0.25), colour("GoldenRod")
+groupbox bounds(550,100, 80, 90), text("Output"), fontcolour("white"), plant("output"){
+rslider  bounds( 10, 25, 60, 60), text("Level"), channel("OutLev"), range(0, 1.00, 0.25), colour("GoldenRod")
 }
 
-keyboard bounds(10, 195, 520, 85)
+keyboard bounds(10, 195, 620, 85)
 
 image bounds(5, 295, 240, 22), colour(75, 85, 90, 100), plant("credit"){
 label bounds(0.03, 0.15, .9, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white")
@@ -121,7 +141,7 @@ girtos10	ftgen	0,0,-4,-2,	1, 1.47, 2.11, 2.57
 girtos11	ftgen	0,0,-4,-2,	1, 1.42, 2.11, 2.47
 
 ;uniform wooden bar
-girtos12	ftgen	0,0,-6,-2,	1, 2.572, 4.644, 6.984, 9.723, 12
+girtos12 	ftgen 	0,0,-6,-2,      1, 2.572, 4.644, 6.984, 9.723, 12
 
 ;uniform aluminum bar
 girtos13	ftgen	0,0,-6,-2,	1, 2.756, 5.423, 8.988, 13.448, 18.680
@@ -132,7 +152,7 @@ girtos14	ftgen	0,0,-6,-2,	1, 3.984, 10.668, 17.979, 23.679, 33.642
 ;vibraphone 2
 girtos15	ftgen	0,0,-6,-2,	1, 3.997, 9.469, 15.566, 20.863, 29.440
 
-;Chalandi plates
+;Chladni plates
 girtos16	ftgen	0,0,-5,-2,	1, 1.72581, 5.80645, 7.41935, 13.91935
 
 ;tibetan bowl (152 mm)
@@ -172,9 +192,10 @@ girtos27	ftgen	0,0,-20,-2,	1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,3
 seed	0			;random number generators seeded from the system clock
 gasend	init	0		;initialise the global audio send variable
 gisine	ftgen	0,0,4096,10,1	;a sine wave
+gidetuning	ftgen	0,0,128,21,6,1			; random array used for fixing unique detune values for each note
 
 ;table that stores indicators for each active note. 1=active 0=inactive index_location=note_number
-giNoteActive	ftgen	0,0,128,2,0
+giNoteActive	ftgen	0,0,128,2,0                                                                                                                                                             
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 gkbright	init	0
@@ -217,25 +238,20 @@ opcode	ModeVoice,a,akkkiii						;mode udo (k-rate base frequency) - used for non
 	xout	amix+asig								;send all audio back to caller instrument
 endop											;end of udo
 
-; 'lineto' opcode seems buggy. Here's a UDO alternative 'lineto2'
-opcode	lineto2,k,kk
- kinput,ktime	xin
- ktrig	changed	kinput,ktime				; reset trigger
- if ktrig==1 then					; if new note has been received or if portamento time has been changed...
-  reinit RESTART
- endif
- RESTART:						; restart 'linseg' envelope
- if i(ktime)==0 then					; 'linseg' fails if duration is zero...
-  koutput	=	i(kinput)			; ...in which case output simply equals input
- else
-  koutput	linseg	i(koutput),i(ktime),i(kinput)	; linseg envelope from old value to new value
- endif
- rireturn
- 		xout	koutput
+opcode	sspline,k,Kiii
+	kdur,istart,iend,icurve	xin										;READ IN INPUT ARGUMENTS
+	imid	=	istart+((iend-istart)/2)								;SPLINE MID POINT VALUE
+	isspline	ftgentmp	0,0,4096,-16,istart,4096*0.5,icurve,imid,(4096/2)-1,-icurve,iend	;GENERATE 'S' SPLINE
+	kspd	=	i(kdur)/kdur										;POINTER SPEED AS A RATIO (WITH REFERENCE TO THE ORIGINAL DURATION)
+	kptr	init	0											;POINTER INITIAL VALUE	
+	kout	tablei	kptr,isspline										;READ VALUE FROM TABLE
+	kptr	limit	kptr+((ftlen(isspline)/(i(kdur)*kr))*kspd), 0, ftlen(isspline)-1			;INCREMENT THE POINTER BY THE REQUIRED NUMBER OF TABLE POINTS IN ONE CONTROL CYCLE AND LIMIT IT BETWEEN FIRST AND LAST TABLE POINT - FINAL VALUE WILL BE HELD IF POINTER ATTEMPTS TO EXCEED TABLE DURATION
+		xout	kout											;SEND VALUE BACK TO CALLER INSTRUMENT
 endop
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 instr	1	;read in widgets (always on)
+	gkInput	chnget	"Input"
 	gkQ		chnget	"Q"			;read in widgets
 	kImpDB		chnget	"ImpDB"
 	gkHPF		chnget	"HPF"
@@ -243,6 +259,12 @@ instr	1	;read in widgets (always on)
 	gkJitDep	chnget	"JitDep"
 	gkJitRte	chnget	"JitRte"
 	gkbright	chnget	"bright"
+	gkdetune	chnget	"detune"
+	gkdetune	portk	gkdetune,0.1
+	gkshift		chnget	"shift"
+	gkshift		portk	gkshift,0.1
+	gkcompress	chnget	"compress"	
+	gkcompress	portk	gkcompress,0.1
 	gkmonopoly	chnget	"monopoly"
 	gkGlissTime	chnget	"GlissTime"
 	gksound		chnget	"sound"
@@ -261,8 +283,8 @@ endin
 
 instr	2	;MIDI TRIGGERED INSTRUMENT
 	gkNoteTrig	init	1	;at the beginning of a new note set note trigger flag to '1'	
-	ibase	cpsmidi							;read in midi note number as a cps value
-	gkbase	=	ibase
+	inum	notnum
+	gknum	=	inum
 	ivel	ampmidi	1						;read in midi note velocity as a value within the range 0 to 1
 	gkvel	init	ivel
 	inum	notnum							;read in midi note number as an integer (used for create a table of active notes flags)
@@ -270,53 +292,68 @@ instr	2	;MIDI TRIGGERED INSTRUMENT
 		tablew	1-krelease,inum,giNoteActive			;write note release flag to table at the location corresponding to note number
 	iactive	active	p1+1
 		
-	if iactive==0||i(gkmonopoly)==0 then				;if polyphonic mode or if this is the first in a series of notes in monophonic mode...
-	 event_i	"i",p1+1,0,3600,ibase,inum			;call instrument 3 with the appropriate p-fields
+	if iactive==0||i(gkmonopoly)==0 then	; if polyphonic mode or if this is the first in a series of notes in monophonic mode...
+	 event_i	"i",p1+1,0,3600,inum		; call instrument 3 with the appropriate p-fields
 	endif
 endin
 
 instr	3				;impulse and modal resonators instrument
+	inum		=	p4					;note number
+	
 	/* POLYPHONY CONTROL */
 	iPolyLimit	chnget	"PolyLimit"
-	if iPolyLimit>0 then
-	 gkactive init i(gkactive) + 1	;INCREMENT NOTE COUNTER
-	 if gkactive>iPolyLimit then	;IF POLYPHONY IS EXCEEDED (THROUGH THE ADDITION OF NEW NOTE)
-	  turnoff			;REMOVE THIS NOTE
+	if iPolyLimit>0 then              
+	 gkactive init i(gkactive) + 1	; INCREMENT NOTE COUNTER
+	 if gkactive>iPolyLimit then	; IF POLYPHONY IS EXCEEDED (THROUGH THE ADDITION OF NEW NOTE)
+	  turnoff						; REMOVE THIS NOTE
 	 endif
-	 krel release			;IF NOTE HELD = 0, IF NOTE RELEASED = 1
-	 ktrig trigger krel,0.5,0	;WHEN RELEASE FLAG CROSSES 0.5 UPWARDS, I.E. NOTE HAS BEEN RELEASED...	
+	 krel release					; IF NOTE HELD = 0, IF NOTE RELEASED = 1
+	 ktrig trigger krel,0.5,0		; WHEN RELEASE FLAG CROSSES 0.5 UPWARDS, I.E. NOTE HAS BEEN RELEASED...	
 	 if ktrig==1 then		
-	  gkactive = gkactive - 1	;...DECREMENT ACTIVE NOTES COUNTER
-	 endif
-        endif
-
+	  gkactive = gkactive - 1		; ...DECREMENT ACTIVE NOTES COUNTER
+	 endif                                                                                                                                                                                                
+    endif
 
 	ktrig	changed	gksound
 	if ktrig==1 then
-	 reinit RESTART_INSTRUMENT
+	 reinit RESTART_INSTRUMENT                                                                                                                                                         
 	endif
 	RESTART_INSTRUMENT:
 	isound	init	i(gksound)
+
 	if gkmonopoly==1 then
 	/*monophonic*/
-	 kporttime	linseg	0,0.001,1
-	 ;kbase		portk	gkbase,kporttime*gkGlissTime
-	 kbase		lineto2	gkbase,kporttime*gkGlissTime
+	 kNoteTrig	changed	gknum					;...GENERATE A TRIGGER IS A NEW NOTE NUMBER IS GENERATED (FROM INSTR. 1)
+	 gkNoteTrig	=	0
+	 gkOldNum	init	p4						;OLD NOTE NUMBER = FIRST NOTE NUMBER UPON INITIAL NOTE BEING PLAYED 
+	 if kNoteTrig==1 then						;IF A NEW (LEGATO) NOTE HAS BEEN PRESSED
+	  reinit	S_CURVE							;BEGIN A REINITIALISATION PASS FROM LABEL
+	 endif										;END OF CONDITIONAL BRANCH
+	 S_CURVE:									;A LABEL. REINITIALISATION BEGINS FROM HERE.
+	 knum	sspline	gkGlissTime,i(gkOldNum),i(gknum),1 					; CALL sspline UDO (FIXED PORTAMENTO TIME)
+	 rireturn									;RETURN FROM INITIALISATION PASS
+	 gkOldNum	=	knum						;SET OLD NUMBER CURRENT NUMBER	 
+	 ;kporttime	linseg	0,0.001,1
+	 ;knum	portk	gknum,kporttime*gkGlissTime                                                                  
 	 kactive		active	p1-1
 	 kactive		limit	kactive,0,1	
 	else
 	/*polyphponic*/
-	 kbase		init	p4					;base frequency read from p4	
-	 kactive		table	p5,giNoteActive			;check whether the midi key corresponding to this note is being held or has been released (1 = held, 0 = released). this value will be used to control whether the impulse scound should be active or not.
+	 knum		=	p4							;base note number read from p4	
+	 kactive		table	inum,giNoteActive			;check whether the midi key corresponding to this note is being held or has been released (1 = held, 0 = released). this value will be used to control whether the impulse scound should be active or not.
 	endif
 	
-	inum		=	p5					;note number
+	/*detuning*/
+	idtn		table	inum,gidetuning
+	kdtn		=		idtn * gkdetune
+
+	knum2		=		(knum * (1-gkcompress)) + gkshift 	; shifted and compressed version  of knum
 	
-	icount		=	1					;counter to count iterations for recursive udos for sine oscillators and mode filters (starts at zero)
-	irtos		=	girtos1 + isound - 1			;derive actual function table number for ratios according to 'sound' chosen
-	invoices	=	ftlen(irtos)				;derive the number of voices needed for the 'sound' chosen
-	kactivePort	port	kactive,0.05				;smooth note active on/off switching
-	ktrig changed gkNoteTrig					;if a new note is started...
+	icount		=	1						;counter to count iterations for recursive udos for sine oscillators and mode filters (starts at zero)
+	irtos		=	girtos1 + isound - 1	;derive actual function table number for ratios according to 'sound' chosen
+	invoices	=	ftlen(irtos)			;derive the number of voices needed for the 'sound' chosen
+	kactivePort	port	kactive,0.05		;smooth note active on/off switching
+	ktrig changed gkNoteTrig				;if a new note is started...
 	if ktrig==1 then						
 	 reinit RESTART_ENVELOPE					;...reinitialise from the given label
 	endif
@@ -331,21 +368,26 @@ instr	3				;impulse and modal resonators instrument
 	endif
 	RESTART_INSTRUMENT2:
 
-	aSineMix	SineVoice	kbase,gkJitDep,gkJitRte,icount,invoices,irtos,gisine	;call sine oscillator udo (it will be recursively recalled within the udo the appropriate number of times according to invoices)
-	aSineMix	=	aSineMix*0.002*kactivePort*kenv*gkImpAmp			;scale the mixture of sines audio signal
-	aSineMix	buthp	aSineMix,gkHPF
-	aSineMix	butlp	aSineMix,gkLPF	 
-	amodes			ModeVoice	aSineMix,kbase,gkQ,gkbright,icount,invoices,irtos	;call sine oscillator udo (it will be recursively recalled within the udo the appropriate number of times according to invoices)
-	amodes		=		(amodes*0.2*gkOutLev)/invoices				;scale the amplitude of the sound according to the number of modes in the chosen algorithm
+	if gkInput==1 then
+	 aSineMix	SineVoice	cpsmidinn(knum2)*semitone(kdtn),gkJitDep,gkJitRte,icount,invoices,irtos,gisine	; call sine oscillator udo (it will be recursively recalled within the udo the appropriate number of times according to invoices)
+	 aSineMix	=	aSineMix*0.002*kactivePort*kenv*gkImpAmp						; scale the mixture of sines audio signal
+	 aSineMix	buthp	aSineMix,gkHPF
+	 aInput		butlp	aSineMix,gkLPF	 
+	else
+	 a1,a2		ins
+	 aInput	=	(a1+a2)*kactivePort*gkImpAmp          
+	 aInput		buthp	aInput,gkHPF
+	 aInput		butlp	aInput,gkLPF	 
+	endif
+	amodes		ModeVoice	aInput,cpsmidinn(knum2)*semitone(kdtn),gkQ,gkbright,icount,invoices,irtos	; call sine oscillator udo (it will be recursively recalled within the udo the appropriate number of times according to invoices)
+	amodes		=		(amodes*0.2*gkOutLev)/invoices								; scale the amplitude of the sound according to the number of modes in the chosen algorithm
 
-	
 	/* POLYPHONY LIMIT ENVELOPE */
 	if iPolyLimit>0 then
 	 iRelTim	chnget	"RelTim"
 	 aRelEnv	linsegr	1,iRelTim,0
 	 amodes	=	amodes * aRelEnv
 	endif
-
 
 	/* TRACK OUTPUT AMPLITUDE. REMOVE SILENT NOTES */
 	krms		rms		amodes								;track the amplitude of the sound as an rms value

@@ -1,19 +1,21 @@
-Convolution Reverb
-------------------
-You are encouraged to experiment with different impulse files.
-You can try this one to start with: http://www.iainmccurdy.org/CsoundRealtimeExamples/SourceMaterials/Stairwell.wav
-You can find some here: http://www.openairlib.net/
-NOTE THAT ZERO LATENCY (or close to zero) CONV0LUTION WILL NOT BE POSSIBLE.
-
-Instructions
-------------
-'Size Ratio' compresses the duration of the impulse file (provided that 'compressed' is chosen for 'resize' mode).
-'Curve' defines the shape of an envelope applied to compressed impulse files using GEN16
-	zero		=	straight line decaying
-	positive vals. 	=	increasingly convex decaying
-	negative vals	=	increasingly concave decaying
-Increase 'iplen' (must be a power of 2) if experiencing performance problems, or reduce it to reduce latency.
-'Delay OS' fine tunes the delay applied to the dry signal. Normally this should be zero but adjust it to modify how the dry signal lines up with the convoluted signal.
+; ConvolutionReverb.csd
+; Written by Iain McCurdy, 2012.
+; 
+; ------------------
+; You are encouraged to experiment with different impulse files.
+; You can try this one to start with: http://www.iainmccurdy.org/CsoundRealtimeExamples/SourceMaterials/Stairwell.wav
+; You can find some here: http://www.openairlib.net/
+; NOTE THAT ZERO LATENCY (or close to zero) CONV0LUTION WILL NOT BE POSSIBLE.
+; 
+; Instructions
+; ------------
+; 'Size Ratio' compresses the duration of the impulse file (provided that 'compressed' is chosen for 'resize' mode).
+; 'Curve' defines the shape of an envelope applied to compressed impulse files using GEN16
+; 	zero		=	straight line decaying
+; 	positive vals. 	=	increasingly convex decaying
+; 	negative vals	=	increasingly concave decaying
+; Increase 'iplen' (must be a power of 2) if experiencing performance problems, or reduce it to reduce latency.
+; 'Delay OS' fine tunes the delay applied to the dry signal. Normally this should be zero but adjust it to modify how the dry signal lines up with the convoluted signal.
 
 <Cabbage>
 form caption("Convolution Reverb") size(505,230), pluginID("Conv")

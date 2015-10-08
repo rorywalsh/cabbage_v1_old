@@ -1,3 +1,6 @@
+; HRTF3D.csd
+; Written by Iain McCurdy, 2012.
+
 <Cabbage>
 form caption("HRTF 3D") size(365, 275)
 image pos(0, 0), size(365, 236), colour(50, 20,  0), shape("rounded"), outlinecolour("white"), outlinethickness(4) 

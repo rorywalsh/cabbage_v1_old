@@ -1,3 +1,6 @@
+; Flanger.csd
+; Written by Iain McCurdy, 2012.
+
 <Cabbage>
 form caption("Flanger") size(510, 90), pluginID("flan")
 image pos(0, 0), size(510, 90), colour("lightgreen"), shape("rounded"), outlinecolour("white"), outlinethickness(4) 

@@ -1,14 +1,14 @@
-waveset.csd
+; waveset.csd
 
-'freeze' is not technically a freeze but instead a very large number of repeats.
+; 'freeze' is not technically a freeze but instead a very large number of repeats.
 
-Waveset opcode can be reinitialised by three different methods:
-Manually using the 'Reset' button, 
-by a built-in metronome, the rate of which can be adjusted by the user
-or by the dynamics of the input sound (the threshold of this dynamic triggereing can be adjusted by the user)
-'Metro' resetting is disabled when 'Metro Rate' = 0
-'Threshold' (retrigering by input signal dynamics) is disabled when 'Threshold' = 1 (maximum setting)
-(resetting the opcode will reset its internal buffer and cancel out any time displacement induced by wavelet repetitions) 
+; Waveset opcode can be reinitialised by three different methods:
+; Manually, using the 'Reset' button, 
+; by a built-in metronome, the rate of which can be adjusted by the user
+; or by the dynamics of the input sound (the threshold of this dynamic triggereing can be adjusted by the user)
+; 'Metro' resetting is disabled when 'Metro Rate' = 0
+; 'Threshold' (retrigering by input signal dynamics) is disabled when 'Threshold' = 1 (maximum setting)
+; (resetting the opcode will reset its internal buffer and cancel out any time displacement induced by wavelet repetitions) 
 
 <Cabbage>
 form caption("waveset") size(510, 90), pluginID("wset")

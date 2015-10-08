@@ -1,3 +1,6 @@
+; GEN08.csd
+; Written by Iain McCurdy, 2013
+
 ; Demonstration of GEN08 (generates as smooth a line as possible between a sequence of user-defined break points)
 ; The user defines a number of nodes (the amplitude values at these nodes are modulated randomly)
 ; Random value sequence can be wrapped so that values are repeated for higher nodes.
@@ -196,7 +199,7 @@ instr	3
 		
 	a2	delay	-a1,0.01
 
-	aenv	expsegr	0.01,2*i(gkEnvShape),1,4*i(gkEnvShape),0.01	; amplitude envelope to prevent clicks
+	aenv	transegr	0,2*i(gkEnvShape),-4,1,4*i(gkEnvShape),-4,0	; amplitude envelope
 
 	a1	=	a1 * aenv			; apply envelope
 	a2	=	a2 * aenv			; apply envelope

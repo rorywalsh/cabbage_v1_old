@@ -1,11 +1,18 @@
+; LiveBufferDisplay.csd
+; Written by Iain McCurdy, 2014
+
 <Cabbage>
-form caption("Live Buffer Display"), size(610, 185), pluginID("LiBT"), colour("DarkSLateGrey"), guirefresh(32)
+form caption("Live Buffer Display"), size(610, 245), pluginID("LiBT"), colour("DarkSLateGrey"), guirefresh(64)
 gentable      bounds(  5,  5,600,120), tablenumber(1), tablecolour("lime"), amprange(-1,1,1), identchannel(table), zoom(-1)
 
 hslider    bounds(  0,120, 610, 35), channel("ptr"),    range(0, 1.00, 1)
 label      bounds(205,150,200,  12), text("Pointer"), fontcolour("white")
 
 checkbox bounds(  5,150, 70, 20), channel("freeze"), text("Freeze"), fontcolour("white")
+
+rslider    bounds( 20,180, 60, 60), channel("InGain"), text("Input Gain"), textcolour("white"), range(0, 8.00, 1)
+rslider    bounds( 80,180, 60, 60), channel("DryGain"), text("Dry Gain"), textcolour("white"), range(0, 8.00, 1)
+rslider    bounds(140,180, 60, 60), channel("FreezeGain"), text("Frze Gain"), textcolour("white"), range(0, 8.00, 1)
 
 </Cabbage>
                     
@@ -18,22 +25,23 @@ checkbox bounds(  5,150, 70, 20), channel("freeze"), text("Freeze"), fontcolour(
 <CsInstruments>
 
 sr 		= 	44100	; SAMPLE RATE
-ksmps 		= 	32	; NUMBER OF AUDIO SAMPLES IN EACH CONTROL CYCLE
-nchnls 		= 	2	; NUMBER OF CHANNELS (1=MONO)
+ksmps 		= 	64	; NUMBER OF AUDIO SAMPLES IN EACH CONTROL CYCLE
+nchnls 		= 	2	; NUMBER OF CHANNELS
 0dbfs		=	1	; MAXIMUM AMPLITUDE
 			
-giDispBuffer	ftgen	1,0, 2048,-2, 0		; define live audio buffer table for display
-giAudBuffer	ftgen	2,0, 2048*ksmps,-2, 0	; define live audio buffer table
-
-giwfn	ftgen	0,  0, 131072,  20, 2		; HANNING WINDOW (GRAIN WINDOW)
-
+giDispBuffer	ftgen	1,0, 131072/ksmps,10, 0	; define live audio buffer table for display
+giAudBuffer	ftgen	2,0, 131072,10, 0	; define live audio buffer table
 
 instr	1
 	aL,aR	ins
 	kfreeze	chnget	"freeze"
-	
 
 	koffset	init	0	
+	kInGain	chnget	"InGain"
+	aL	*=	kInGain
+	aR	*=	kInGain
+	kDryGain	chnget	"DryGain"
+	kFreezeGain	chnget	"FreezeGain"
 		
 	if kfreeze==0 then
 
@@ -55,21 +63,21 @@ instr	1
 	 	tablew	kval,kcount,giDispBuffer
 	 loop_lt	kcount,1,iDispTabLen,loop	
 
-	 if metro(kr/32)==1 then
+	 if metro(16)==1 then
        	  chnset	"tablenumber(1)", "table"	; update table display	
 	 endif
+	 
+	 		outs	aL*kDryGain,aR*kDryGain
+	 
 	else	
 	
 	 kptr	chnget	"ptr"
-	 kporttime linseg 0,0.001,0.05
+	 kporttime linseg 0,0.001,0.01
 	 kptr portk kptr,kporttime
 	 kptr	wrap	kptr+(koffset/iDispTabLen),0,1
 	 aptr	interp	kptr*(ftlen(giAudBuffer)/sr)
-	 asig 	mincer 	aptr, 1, 1, giAudBuffer, 0, 2048
-	 	outs	asig,asig
-
-	 ;ktrig	init	kptr/ftlen(giDispBuffer)
-	 ;chnset	ktrig,"table1"
+	 asig 	mincer 	aptr, 1, 1, giAudBuffer, 0, 1024
+	 	outs	asig*kFreezeGain,asig*kFreezeGain
 
 	endif
 

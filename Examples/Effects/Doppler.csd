@@ -1,5 +1,5 @@
-doppler.csd
-Written by Iain McCurdy, 2013
+; doppler.csd
+; Written by Iain McCurdy, 2013
 
 ; CONTROLS
 ; Input		-	select input: either left channel, right channel, or a mix of both channels
@@ -29,8 +29,8 @@ combobox bounds(10, 62, 60,18), channel("shape"), value(1), text("sine","triangl
 rslider bounds( 75, 10, 80, 80), channel("RoomSize"), range(0.1,100,40,0.5,0.5), text("Room Size"), TextBox(1), colour( 45, 45, 45), trackercolour(200,200,200)
 rslider bounds(140, 10, 80, 80), channel("speed"), range(0,10,0.08,0.5,0.01), text("Speed"), TextBox(1),        colour( 45, 45, 45), trackercolour(200,200,200)
 rslider bounds(205, 10, 80, 80), channel("depth"), range(0,0.5,0.5,0.5,0.01), text("Depth"), TextBox(1),        colour( 45, 45, 45), trackercolour(200,200,200)
-rslider bounds(270, 10, 80, 80), channel("filtercutoff"), range(1,20,6,1,1), text("Smoothing"), TextBox(1),     colour( 45, 45, 45), trackercolour(200,200,200)
-rslider bounds(335, 10, 80, 80), channel("ampscale"), range(0,1,0.98), text("Amp.Scale"), TextBox(1),           colour( 45, 45, 45), trackercolour(200,200,200)
+rslider bounds(270, 10, 80, 80), channel("filtercutoff"), range(1,20,6,1,1), text("Smooth"), TextBox(1),     colour( 45, 45, 45), trackercolour(200,200,200)
+rslider bounds(335, 10, 80, 80), channel("ampscale"), range(0,1,0.98), text("Amp.Scl."), TextBox(1),           colour( 45, 45, 45), trackercolour(200,200,200)
 rslider bounds(400, 10, 80, 80), channel("PanDep"), range(0,0.5,0.4), text("Pan Depth"), TextBox(1),            colour( 45, 45, 45), trackercolour(200,200,200)
 rslider bounds(465, 10, 80, 80), channel("mix"), range(0,1,1), text("Mix"), TextBox(1),                         colour( 45, 45, 45), trackercolour(200,200,200)
 rslider bounds(530, 10, 80, 80), channel("OutAmp"), range(0,1,0.5), text("Level"), TextBox(1),                  colour( 45, 45, 45), trackercolour(200,200,200)
@@ -110,11 +110,15 @@ instr	1
 	chnset	gksource,"source"
 	;======================================================
 	
-	kporttime	linseg	0, 0.001, 0.1		;RAMPING UP PORTAMENTO TIME VARIABLE
+	kporttime	linseg	0, 0.001, 0.1		;RAMPING UP PORTAMENTO TIME VARIABLE	
 	
 	;DOPPLER================================================
 	ispeedofsound   init	340.29				;SPEED OF SOUND DEFINED
-	ksource		portk	gksource, kporttime		;SMOOTH SOURCE POSITION MOVEMENT
+	if gkshape==4 then
+	 ksource	portk	gksource,kporttime		;SMOOTH SOURCE POSITION MOVEMENT
+	else
+	 ksource	=	gksource
+	endif
 	kmicrophone	portk	gkmicrophone, kporttime		;SMOOTH MICROPHOPNE POSITION MOVEMENT
 	ktrig		changed	gkfiltercutoff			;IF I-RATE VARIABLE SLIDER IS CHANGED GENERATE A '1'
 	if ktrig=1 then						;IF TRIGGER IS '1'...
@@ -130,7 +134,7 @@ instr	1
 	kpan		portk	kpan, kporttime			;APPLY PORTAMENTO SMOOTHING TO PAN POSITION VALUE 
 	aL		ntrpol	asig,aout*sqrt(kpan)*gkOutAmp,kmix	;DRY/WET MIX LEFT CHANNEL
 	aR		ntrpol	asig,aout*sqrt(1-kpan)*gkOutAmp,kmix	;DRY/WET MIX RIGHT CHANNEL
-			outs	aL, aL				;SEND AUDIO TO OUTPUTS AND APPLY PANNING
+			outs	aL, aR				;SEND AUDIO TO OUTPUTS AND APPLY PANNING
 endin
 
 </CsInstruments>

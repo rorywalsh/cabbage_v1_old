@@ -7,7 +7,7 @@
 <Cabbage>
 form caption("FFT Spectrum"), size(610, 340), colour( 50, 50, 50), pluginID("spec"), guirefresh(16)
 gentable   bounds(  0,  0, 610,300), tablenumber(1,2), tablecolour("yellow","green"), identchannel("ampFFT"), amprange(0,1,-1), outlinethickness(0), samplerange(0, 512)) 
-hslider bounds(  5,305,400, 30), channel("gain"), text("Gain"), textBox(1), range(1,100.00,1,0.5,0.001)
+hslider bounds(  5,305,400, 30), channel("gain"), text("Gain"), textBox(1), range(1,99.00,1,0.5,0.01)
 </Cabbage>                                                   
 
 <CsoundSynthesizer>                                                                                                 

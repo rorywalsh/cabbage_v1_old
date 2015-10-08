@@ -30,7 +30,7 @@ checkbox bounds( 89,110, 15, 15), channel("LowE0"),  colour(205,200,250), radiog
 
 
 ; Neck (and Cabbage plant)
-image bounds(110,  0,540,140), shape("sharp"), linethickness(0), plant("neck"), colour(white) {
+image bounds(110,  0,540,135), shape("sharp"), linethickness(0), plant("neck"), colour(white) {
 
 checkbox bounds( 21, 10, 15, 15), channel("HighE1"),  colour:0(0,0,0,0), colour:1(250,250,  0), shape("ellipse"), radiogroup(1)
 checkbox bounds( 73, 10, 15, 15), channel("HighE2"),  colour:0(0,0,0,0), colour:1(250,250,  0), shape("ellipse"), radiogroup(1)
@@ -125,19 +125,19 @@ image bounds(481, 30, 15,15), colour(0,0,0), shape("ellipse")	; 12th fret
 image bounds(481, 90, 15,15), colour(0,0,0), shape("ellipse")	; 12th fret
 
 ; frets
-line bounds( 54,  5,  2, 130), colour(50,50,50)	      	;	;
-line bounds(105,  5,  2, 130), colour(50,50,50)		;3      ;
-line bounds(152,  5,  2, 130), colour(50,50,50)		;       ;
-line bounds(199,  5,  2, 130), colour(50,50,50)      	;5      ;
-line bounds(244,  5,  2, 130), colour(50,50,50)       	;       ;
-line bounds(287,  5,  2, 130), colour(50,50,50)       	;7      ;
-line bounds(328,  5,  2, 130), colour(50,50,50)       	;       ;
-line bounds(367,  5,  2, 130), colour(50,50,50)       	;9      ;
-line bounds(404,  5,  2, 130), colour(50,50,50)       	;       ;
-line bounds(439,  5,  2, 130), colour(50,50,50)       	;       ;
-line bounds(472,  5,  2, 130), colour(50,50,50)       	;12     ;
-line bounds(503,  5,  2, 130), colour(50,50,50)       	;       ;
-line bounds(532,  5,  2, 130), colour(50,50,50)                 ;
+line bounds( 54,  5,  2, 125), colour(50,50,50)	      	;	;
+line bounds(105,  5,  2, 125), colour(50,50,50)		;3      ;
+line bounds(152,  5,  2, 125), colour(50,50,50)		;       ;
+line bounds(199,  5,  2, 125), colour(50,50,50)      	;5      ;
+line bounds(244,  5,  2, 125), colour(50,50,50)       	;       ;
+line bounds(287,  5,  2, 125), colour(50,50,50)       	;7      ;
+line bounds(328,  5,  2, 125), colour(50,50,50)       	;       ;
+line bounds(367,  5,  2, 125), colour(50,50,50)       	;9      ;
+line bounds(404,  5,  2, 125), colour(50,50,50)       	;       ;
+line bounds(439,  5,  2, 125), colour(50,50,50)       	;       ;
+line bounds(472,  5,  2, 125), colour(50,50,50)       	;12     ;
+line bounds(503,  5,  2, 125), colour(50,50,50)       	;       ;
+line bounds(532,  5,  2, 125), colour(50,50,50)                 ;
 
 }
 

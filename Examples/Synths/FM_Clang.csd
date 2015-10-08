@@ -57,7 +57,7 @@ image    bounds(  5,  5,300,110), colour( 70, 90, 90), outlinecolour("white"), o
 line     bounds( 90,  6,120, 14)
 label    bounds( 90,  8,120, 10), text("A  M  P  L  I  T  U  D  E"), textcolour(white)
 rslider  bounds(  0, 25, 75, 75), text("Level"),    channel("Amp"),    range(0,8.00,0.5,0.5),        textBox(1), $RSliderStyle
-rslider  bounds( 55, 25, 75, 75), text("Attack"),   channel("AttTim"), range(0,0.100,0,0.5,0.0001),  textBox(1), $RSliderStyle
+rslider  bounds( 55, 25, 75, 75), text("Attack"),   channel("AttTim"), range(0,0.1,0,0.5,0.001),  textBox(1), $RSliderStyle
 rslider  bounds(110, 25, 75, 75), text("Vel.Att."), channel("AttVel"), range(0,1,0),                 textBox(1), $RSliderStyle
 rslider  bounds(165, 25, 75, 75), text("Duration"), channel("Dur"),    range(0.1, 24.00, 12, 0.5,),  textBox(1), $RSliderStyle
 checkbox bounds(230, 53,180, 12), channel("Sustain"), value(1), text("Sustain"), textcolour("white")
@@ -99,8 +99,8 @@ checkbox bounds( 65, 53,180, 12), channel("FiltFund"), value(1), text("Filter Fu
 image    bounds(  5,120,240,110), colour( 70, 90, 90), outlinecolour("white"), outlinethickness(2), shape("sharp"), plant("noise"){
 line     bounds( 78,  6, 69, 14)
 label    bounds( 78,  8, 69, 10), text("N  O  I  S  E"), textcolour(white)
-rslider  bounds(  0, 25, 75, 75), text("Amount"),  channel("NseAmp"), range(0,2000,1000,0.5),  textBox(1), $RSliderStyle
-rslider  bounds( 55, 25, 75, 75), text("Filter"),     channel("NseBW"),   range(0.0005,1,0.001,0.35), textBox(1), $RSliderStyle
+rslider  bounds(  0, 25, 75, 75), text("Amount"),  channel("NseAmp"),   range(0,2000,1000,0.5,1),   textBox(1), $RSliderStyle
+rslider  bounds( 55, 25, 75, 75), text("Filter"),     channel("NseBW"), range(0.0005,1,0.001,0.35), textBox(1), $RSliderStyle
 checkbox bounds(120, 53,120, 12), channel("NseFllw"), value(0), text("Follow Modulator"), fontcolour("white")
 }
 

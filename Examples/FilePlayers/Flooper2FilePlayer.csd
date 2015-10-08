@@ -1,19 +1,21 @@
-Flooper2FilePlayer.csd
+; Flooper2FilePlayer.csd
+; Written by Iain McCurdy, 2014
 
-Load a user selected sound file into a GEN 01 function table and plays it back using flooper2. 
-This file player is best suited for polyphonic playback and is less well suited for the playback of very long sound files .
-
-The sound file can be played back using the Play/Stop button (and the 'Transpose' / 'Speed' buttons to implement pitch/speed change)
- or it can be played back using the MIDI keyboard.
-
-The loop points can be set either by using the loop 'Start' and 'End' sliders or by clicking and dragging on the waveform view -
- - flooper2 will take the values from the last control input moved.
+; Load a user selected sound file into a GEN 01 function table and plays it back using flooper2. 
+; This file player is best suited for polyphonic playback and is less well suited for the playback of very long sound files .
+; 
+; The sound file can be played back using the Play/Stop button (and the 'Transpose' / 'Speed' buttons to implement pitch/speed change)
+;  or it can be played back using the MIDI keyboard.
+; 
+; The loop points can be set either by using the loop 'Start' and 'End' sliders or by clicking and dragging on the waveform view -
+;  - flooper2 will take the values from the last control input moved.
 
 <Cabbage>
 form caption("Flooper2 File Player") size(805,340), colour(0,0,0) pluginID("FlFP")
 image                     bounds(  0,  0,805,340), colour(155, 50,  0), outlinecolour("White"), line(3), shape("sharp")	; main panel colouration    
 
 soundfiler bounds(  5,  5,795,175), channel("beg","len"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255), 
+label bounds(6, 4, 560, 14), text(""), align(left), colour(0,0,0,0), fontcolour(200,200,200), identchannel("stringbox")
 
 image    bounds(  0,180,805,160), colour(155,30,0,0), outlinecolour("white"), line(2), shape("sharp"), plant("controls"){
 filebutton bounds(  5, 10, 80, 25), text("Open File","Open File"), fontcolour("white") channel("filename"), shape("ellipse")
@@ -70,6 +72,18 @@ gSfilepath	init	""
 gitableL	ftgen	1,0,2,2,0
 gkTabLen	init	ftlen(gitableL)
 
+opcode FileNameFromPath,S,S		; Extract a file name (as a string) from a full path (also as a string)
+ Ssrc	xin						; Read in the file path string
+ icnt	strlen	Ssrc			; Get the length of the file path string
+ LOOP:							; Loop back to here when checking for a backslash
+ iasc	strchar Ssrc, icnt		; Read ascii value of current letter for checking
+ if iasc==92 igoto ESCAPE		; If it is a backslash, escape from loop
+ loop_gt	icnt,1,0,LOOP		; Loop back and decrement counter which is also used as an index into the string
+ ESCAPE:						; Escape point once the backslash has been found
+ Sname	strsub Ssrc, icnt+1, -1	; Create a new string of just the file name
+	xout	Sname				; Send it back to the caller instrument
+endop
+
 instr	1
  gkmode		chnget	"mode"
  kLoopStart	chnget	"LoopStart"		; sliders
@@ -85,7 +99,6 @@ instr	1
   gkLoopStart	=	kbeg/gkTabLen
   gkLoopEnd	=	(kbeg+klen)/gkTabLen
  endif
-  
 
  gkLoopEnd	limit	gkLoopEnd,gkLoopStart+0.01,1	; limit loop end to prevent crashes
  gkcrossfade	chnget	"crossfade"
@@ -129,6 +142,12 @@ instr	99	; load sound file
 
  Smessage sprintfk "file(%s)", gSfilepath			; print sound file to viewer
  chnset Smessage, "filer1"	
+
+ /* write file name to GUI */
+ Sname FileNameFromPath	gSfilepath				; Call UDO to extract file name from the full path
+ Smessage sprintfk "text(%s)",Sname				; create string to update text() identifier for label widget
+ chnset Smessage, "stringbox"					; send string to  widget
+
 endin
 
 

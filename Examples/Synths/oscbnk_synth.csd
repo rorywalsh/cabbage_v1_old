@@ -1,66 +1,81 @@
-oscbnk_synth.csd
+; oscbnk_synth.csd
+; Written by Iain McCurdy, 2012
 
-A synthesizer utilising the oscbnk opcode
-
-CONTROLS
---------
-
--Oscillators-
-Amp		--	output amplitude of the oscillators sections
-N.Oscs		--	number of oscillators
-Spread		--	pitch spread
-SPeed		--	speed of pitch modulations
-Waveform	--	(dropdown menu) wavefrom used by the oscillator. Trombone 2 is a multi-waveform wavetable instrument.
-mono		--	activate monophonic mode
-Time		--	portamento time (monophonic mode)
-T.Shift		--	wavetable shift (will alter the tone if a multi-waveform wavetable instrument is chosen)
-< Bend / Bend >	--	pitch bend up / pitch bend down (in semitones). These can be linked to midi controllers to replace Cabbages lack of response to pitch bend.
-Bend Rng.	--	pitch bend range
-
--Filter Envelope-
-Filter		--	filter cutoff global control
-Env.		--	amount of influnce of the envelope
-Att.		--	envelope attack time
-Dec.		--	envelope decay time
-Sus.		--	envelope sustain level
-Rel.		--	envelope release time
-
--Amplitude Envelope-
-Att		--	envelope attack time  
-Dec		--	envelope decay time   
-Sus		--	envelope sustain level
-Rel		--	envelope release time 
-
--Filter-
-Layers		--	number of interations of tonex filter. Increasing this number will sharpen cutoff.
-
--Filter LFO-
-shape		--	(drop down menu) LFO shape
-Rate 		--	LFO rate
-Depth		--	LFO depth / amplitude
-Delay		--	delay time before LFO has any effect
-Rise		--	time it take for LFO amplitude to rise from zero to 'Depth'
-
--Reverb-
-Mix		--	dry/wet mix
-Size		--	room size
+; A synthesiser utilising the oscbnk opcode
+; 
+; CONTROLS
+; --------
+; 
+; -Oscillators-
+; Amp		--	output amplitude of the oscillators sections
+; N.Oscs	--	number of oscillators
+; Spread	--	pitch spread
+; SPeed		--	speed of pitch modulations
+; Waveform	--	(dropdown menu) wavefrom used by the oscillator. Trombone 2 is a multi-waveform wavetable instrument.
+; mono		--	activate monophonic mode
+; Time		--	portamento time (monophonic mode)
+; T.Shift	--	wavetable shift (will alter the tone if a multi-waveform wavetable instrument is chosen)
+; < Bend / Bend >	--	pitch bend up / pitch bend down (in semitones). These can be linked to midi controllers to replace Cabbages lack of response to pitch bend.
+; Bend Rng.	--	pitch bend range
+; 
+; -Filter Envelope-
+; Filter	--	filter cutoff global control
+; Env.		--	amount of influnce of the envelope
+; Att.		--	envelope attack time
+; Dec.		--	envelope decay time
+; Sus.		--	envelope sustain level
+; Rel.		--	envelope release time
+; 
+; -Amplitude Envelope-
+; Att		--	envelope attack time  
+; Dec		--	envelope decay time   
+; Sus		--	envelope sustain level
+; Rel		--	envelope release time 
+; 
+; -Random Seed-
+; Mode for setting random seed for random number generators in oscbnk:
+; Clock M.	--	seeded from the system clock therefore each note (even if the same note is played) 
+;			will produced the same 'random' values. Left and right channels use the same value.
+; Clock St.	--	same as the above except that left and right channels will use different values.
+; Note M.	--	seeded by the note played therefore repeating a note will produce the same 'random' values.
+;			(Left and right channels use the same seed.) 
+; Note St.	--	Same as the above except that left and right channels will use different values.
+; Fixed	M.	--	All notes use a fixed seed all of the time. Left and right channels use different fixed values.
+; Fixed	St.	--	Same as the above except that left and right channels will use different values.
+;  N.B. You can most clearly hear the effects of different settings by setting 'Spread' to a large value and 
+;    by setting speed to zero.
+;
+; -Filter-
+; Layers		--	number of interations of tonex filter. Increasing this number will sharpen cutoff.
+; 
+; -Filter LFO-
+; shape		--	(drop down menu) LFO shape
+; Rate 		--	LFO rate
+; Depth		--	LFO depth / amplitude
+; Delay		--	delay time before LFO has any effect
+; Rise		--	time it take for LFO amplitude to rise from zero to 'Depth'
+; 
+; -Reverb-
+; Mix		--	dry/wet mix
+; Size		--	room size
 
 
 <Cabbage>
-form caption("Oscillator Bank Synth") size(525, 330), pluginID("oscb")
+form caption("Oscillator Bank Synth") size(570, 330), pluginID("oscb")
 
 ;OSCILLATOR
 groupbox bounds(  0,  0,525, 85), text("Oscillators"), fontcolour("white") plant("oscillators"){
-rslider  bounds(  5, 25, 55, 55), fontcolour("white"), text("Amp."),    channel("amp"),   range(0, 1.00, 0.4),                trackercolour("white") colour(LightBlue)
+rslider  bounds(  5, 25, 55, 55), fontcolour("white"), text("Amp."),    channel("amp"),   range(0, 1.00, 0.4),                 trackercolour("white") colour(LightBlue)
 rslider  bounds( 50, 25, 55, 55), fontcolour("white"), text("N.Oscs."), channel("NOscs"), range(1, 100, 10, 1, 1),             trackercolour("white") colour(LightBlue)
-rslider  bounds( 95, 25, 55, 55), fontcolour("white"), text("Spread"),  channel("fmd"),   range(0, 1.00, 0.005,0.25,0.000001), trackercolour("white") colour(LightBlue)
-rslider  bounds(140, 25, 55, 55), fontcolour("white"), text("Speed"),   channel("mvt"),   range(0, 100.000, 1, 0.25,0.0001),   trackercolour("white") colour(LightBlue)
+rslider  bounds( 95, 25, 55, 55), fontcolour("white"), text("Spread"),  channel("fmd"),   range(0,10.00, 0.005,0.25,0.000001), trackercolour("white") colour(LightBlue)
+rslider  bounds(140, 25, 55, 55), fontcolour("white"), text("Speed"),   channel("mvt"),   range(0,1000.000, 1, 0.25,0.0001),   trackercolour("white") colour(LightBlue)
 rslider  bounds(185, 25, 55, 55), fontcolour("white"), text("Width"),   channel("width"), range(0, 1.000, 1, 1,0.001),         trackercolour("white") colour(LightBlue)
 combobox bounds(240, 25, 80, 20), channel("waveform"), value(1), text("saw", "square", "organ", "eee", "ooh", "Clarinet","Bass Clarinet", "C.Bass Clarinet","Oboe","Bassoon","C.Bassoon",Violin","Cello","Piccolo","Flute","Alto Flute","Bass Flute", "Ahh", "Horn P", "Horn F", "B.Tbn.Harmon", "B.Tbn.Straight", "B.Tbn.Open")
 checkbox bounds(240, 50, 85, 13), text("Legato"), colour("yellow"), channel("legato"),  value(0)
 checkbox bounds(240, 65, 85, 13), text("Mono"), colour("yellow"), channel("mono"),  value(0)
 rslider  bounds(292, 44, 38, 38), fontcolour("white"), text("Time"),    channel("LegTim"),      range(0, 4.00, 0.09, 0.5, 0.01), trackercolour("white") colour(LightBlue)
 rslider  bounds(325, 25, 55, 55), fontcolour("white"), text("T.Shift"), channel("WTableShift"), range(-36, 36, 0, 1,0.001),      trackercolour("white") colour(LightBlue)
+
 ;PITCH BEND
 rslider  bounds(370, 25, 55, 55), fontcolour("white"), text("< Bend"),    channel("BendDown"),    range(-1,0, 0, 1,0.001), trackercolour("white") colour(LightBlue)
 rslider  bounds(415, 25, 55, 55), fontcolour("white"), text("Bend >"),    channel("BendUp"),      range(0, 1, 0, 1,0.001), trackercolour("white") colour(LightBlue)
@@ -75,9 +90,14 @@ rslider bounds( 95, 25, 55, 55), fontcolour("white"), text("Sus."), channel("ASu
 rslider bounds(140, 25, 55, 55), fontcolour("white"), text("Rel."), channel("ARel"), range(0.01, 8, 1.67, 0.5), trackercolour("white") colour(LightBlue)
 }
 
-;FILTER
+;RANDOM SEED
+groupbox bounds(490,85, 80, 85), text("Random Seed"), plant("RandomSeed"), fontcolour("white"){
+combobox bounds(  5, 40, 70, 20), text("Clock M.","Clock St.","Note M.","Note St.","Fixed M","Fixed St"), value(2), channel("seed")
+}
+
+;FILTER ENVELOPE
 groupbox bounds(0, 85, 290, 85), text("Filter Envelope"), fontcolour("white"){
-rslider bounds(  5, 110, 55, 55), fontcolour("white"), text("Filter"), channel("cf"), range(0, 10.00, 5.2),     trackercolour("white") colour(LightBlue)
+rslider bounds(  5, 110, 55, 55), fontcolour("white"), text("Filter"), channel("cf"), range(0, 10.00, 8),     trackercolour("white") colour(LightBlue)
 rslider bounds( 50, 110, 55, 55), fontcolour("white"), text("Env."), channel("FEnvAmt"), range(0, 10.00, 1.16), trackercolour("white") colour(LightBlue)
 rslider bounds( 95, 110, 55, 55), fontcolour("white"), text("Att."), channel("FAtt"), range(0, 8.00, 0.1,0.5),  trackercolour("white") colour(LightBlue)
 rslider bounds(140, 110, 55, 55), fontcolour("white"), text("Dec."), channel("FDec"), range(0, 8.00, 1,0.5),    trackercolour("white") colour(LightBlue)
@@ -87,7 +107,7 @@ rslider bounds(230, 110, 55, 55), fontcolour("white"), text("Rel."), channel("FR
 
 ;FILTER
 groupbox bounds(  0,170, 90, 85), text("Filter"), plant("Filter"){
-rslider bounds( 17,  25,  55, 55), fontcolour("white"), text("Layers"), channel("FiltLayers"), range(1, 10, 4,1,1), trackercolour("white") colour(LightBlue)
+rslider bounds( 17,  25,  55, 55), fontcolour("white"), text("Layers"), channel("FiltLayers"), range(1, 10, 8,1,1), trackercolour("white") colour(LightBlue)
 }
 
 ;FILTER LFO
@@ -104,7 +124,7 @@ rslider bounds(  5,  25,  55, 55), fontcolour("white"), text("Mix"),  channel("R
 rslider bounds( 50,  25,  55, 55), fontcolour("white"), text("Size"), channel("RvbSize"), range(0, 1.00, 0.77), trackercolour("white") colour(LightBlue)
 }
 
-keyboard bounds(0, 255, 525, 75)
+keyboard bounds(0, 255, 570, 75)
 
 </Cabbage>
 
@@ -436,7 +456,6 @@ giUnmuted70 ftgen 0,0,4096,10,0.943312,0.441802,0.052080,0.022643,0.001043,0.002
 giwavemapUnmuted	ftgen	0,0,128,-27, 0,0, 22,0, 23,1, 24,2, 25,3, 26,4, 27,5, 28,6, 30,7, 31,8, 32,9, 33,10, 34,11, 35,12, 37,13, 38,14, 39,15, 40,16, 41,17, 42,18, 43,19, 44,20, 45,21, 46,22, 48,23, 49,24, 50,25, 51,26, 52,27, 53,28, 55,29, 56,30, 57,31, 58,32, 59,33, 60,34, 61,35, 62,36, 63,37, 64,38, 65,39, 67,40, 69,41, 70,42, 127,42
 gitabs4morfUnmuted	ftgen	0,0,64,-2, giUnmuted22,giUnmuted23,giUnmuted24,giUnmuted25,giUnmuted26,giUnmuted27,giUnmuted28,giUnmuted30,giUnmuted31,giUnmuted32,giUnmuted33,giUnmuted34,giUnmuted35,giUnmuted37,giUnmuted38,giUnmuted39,giUnmuted40,giUnmuted41,giUnmuted42,giUnmuted43,giUnmuted44,giUnmuted45,giUnmuted46,giUnmuted48,giUnmuted49,giUnmuted50,giUnmuted51,giUnmuted52,giUnmuted53,giUnmuted55,giUnmuted56,giUnmuted57,giUnmuted58,giUnmuted59,giUnmuted60,giUnmuted61,giUnmuted62,giUnmuted63,giUnmuted64,giUnmuted65,giUnmuted67,giUnmuted69,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70,giUnmuted70
 
-
 isaw	ftgen	0,0,4096,7,1,4096,-1
 
 icount	=	0
@@ -550,8 +569,7 @@ instr	1	; triggered via midi
 	endif
 endin
 
-instr	2	; triggered by instr 2
-	;print	p4
+instr	2	; triggered by instr 1
 	;kporttime	linseg	0,0.001,1		;portamento time function rises quickly from zero to a held value
 	kLegTime	=	gkLegTim;*kporttime	;scale portamento time function with value from GUI knob widget
 	
@@ -562,20 +580,20 @@ instr	2	; triggered by instr 2
 	  ktrig	changed	gknum						;...GENERATE A TRIGGER IS A NEW NOTE NUMBER IS GENERATED (FROM INSTR. 1)
 	  gkNoteTrig	=	0
 	 endif
-	 gkOldNum	init	p4					;OLD NOTE NUMBER = FIRST NOTE NUMBER UPON INITIAL NOTE BEING PLAYED 
-	 if ktrig=1 then						;IF A NEW (LEGATO) NOTE HAS BEEN PRESSED
-	  reinit	S_CURVE_2					;BEGIN A REINITIALISATION PASS FROM LABEL
-	 endif								;END OF CONDITIONAL BRANCH
-	 S_CURVE_2:							;A LABEL. REINITIALISATION BEGINS FROM HERE.
-	 idiff	=	1+abs(i(gknum)-i(gkOldNum))			;ABSOLUTE DIFFERENCE BETWEEN OLD NOTE AND NEW NOTE IN STEPS (+ 1)
-	 knum	sspline	(kLegTime*idiff)+ksmps/sr,i(gkOldNum),i(gknum),1 ;CALL sspline UDO (PORTASMENTO TIME MULTIPLIED BY NOTE GAP (idiff))
-	 rireturn							;RETURN FROM INITIALISATION PASS
-	 gkOldNum	=	knum					;SET OLD NUMBER CURRENT NUMBER
-	 kactive	active	p1-1			;...check number of active midi notes (previous instrument)
-	 if kactive==0 then				;if no midi notes are active...
-	  turnoff					;... turn this instrument off
+	 gkOldNum	init	p4												; OLD NOTE NUMBER = FIRST NOTE NUMBER UPON INITIAL NOTE BEING PLAYED 
+	 if ktrig=1 then													; IF A NEW (LEGATO) NOTE HAS BEEN PRESSED
+	  reinit	S_CURVE_2												; BEGIN A REINITIALISATION PASS FROM LABEL
+	 endif																; END OF CONDITIONAL BRANCH
+	 S_CURVE_2:															; A LABEL. REINITIALISATION BEGINS FROM HERE.
+	 idiff	=	1+abs(i(gknum)-i(gkOldNum))								; ABSOLUTE DIFFERENCE BETWEEN OLD NOTE AND NEW NOTE IN STEPS (+ 1)
+	 knum	sspline	(kLegTime*idiff)+ksmps/sr,i(gkOldNum),i(gknum),1 	; CALL sspline UDO (PORTAMENTO TIME MULTIPLIED BY NOTE GAP (idiff))
+	 rireturn															; RETURN FROM INITIALISATION PASS
+	 gkOldNum	=	knum												; SET OLD NUMBER CURRENT NUMBER
+	 kactive	active	p1-1											; ...check number of active midi notes (previous instrument)
+	 if kactive==0 then													; if no midi notes are active...
+	  turnoff															; ... turn this instrument off
 	 endif
-	else						;otherwise... (polyphonic / non-legato mode)
+	else																; otherwise... (polyphonic / non-legato mode)
 	 knum	=	p4
 	endif
 
@@ -774,15 +792,37 @@ instr	2	; triggered by instr 2
 	kmvt	jspline	gkmvt,gkmvt,gkmvt
 	kcps	=	cpsmidinn(knum)
 
+	; RANDOM SEED
+	iSeedMode	chnget	"seed"
+	if iSeedMode==1 then			; clock mono
+	 iseedL	=	times:i()
+	 iseedR	=	iseedL
+	elseif iSeedMode==2 then		; clock stereo
+	 iseedL	=	times:i()
+	 iseedR	=	iseedL + 1000
+	elseif iSeedMode==3 then		; note mono
+	 iseedL	=	p4
+	 iseedR	=	iseedL
+	elseif iSeedMode==4 then		; note stereo
+	 iseedL	=	p4
+	 iseedR	=	iseedL + 1000
+	elseif iSeedMode==5 then		; fixed mono
+	 iseedL	=	1
+	 iseedR	=	iseedL
+	elseif iSeedMode==6 then		; fixed stereo
+	 iseedL	=	1
+	 iseedR	=	iseedL + 1000
+	endif
+	
 	if i(gkmono)==1 then
 	;OUTPUT	OPCODE  CPS  | AMD  |    FMD     | PMD | OVERLAPS   | SEED | L1MINF  | L1MAXF  | L2MINF  | L2MAXF  | LFOMODE | EQMINF  | EQMAXF | EQMINL | EQMAXL | EQMINQ | EQMAXQ  | EQMODE | KFN  | L1FN | L2FN | EQFFN  | EQLF   |  EQQFN |  TABL  | OUTFN
-	 aL	oscbnk	kcps,   0,    gkfmd*kcps,    0,  i(gkNOscs),   rnd(1),    0,      kmvt,      0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1,   kwave, gicos, gicos, gieqffn, gieqlfn, gieqqfn
+	 aL	oscbnk	kcps,   0,    gkfmd*kcps,    0,  i(gkNOscs),  iseedL,    0,      kmvt,      0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1,   kwave, gicos, gicos, gieqffn, gieqlfn, gieqqfn
 	 aR	=	aL
 	else
 	 ;TWO ITERATIONS OF oscbnk ARE CREATED, ONE FOR EACH OF THE STEREO AUDIO CHANNELS. THE OUTPUTS WILL BE DIFFERENT AS THE RANDOM NUMBER GENERATORS WILL BE SEEDED BY THE SYSTEM CLOCK
 	 ;OUTPUT	OPCODE  CPS  | AMD  |    FMD     | PMD | OVERLAPS   | SEED  | L1MINF  | L1MAXF  | L2MINF  | L2MAXF  | LFOMODE | EQMINF  | EQMAXF | EQMINL | EQMAXL | EQMINQ | EQMAXQ  | EQMODE | KFN  | L1FN | L2FN | EQFFN  | EQLF   |  EQQFN |  TABL  | OUTFN
-	 aL		oscbnk	kcps,   0,    gkfmd*kcps,   0,  i(gkNOscs),   rnd(1),   0,       kmvt,      0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1,   kwave, gicos, gicos, gieqffn, gieqlfn, gieqqfn
-	 aR		oscbnk	kcps,   0,    gkfmd*kcps,   0,  i(gkNOscs),   rnd(1),   0,      -kmvt,      0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1,   kwave, gicos, gicos, gieqffn, gieqlfn, gieqqfn
+	 aL		oscbnk	kcps,   0,    gkfmd*kcps,   0,  i(gkNOscs),   iseedL,   0,       kmvt,      0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1,   kwave, gicos, gicos, gieqffn, gieqlfn, gieqqfn
+	 aR		oscbnk	kcps,   0,    gkfmd*kcps,   0,  i(gkNOscs),   iseedR,   0,      -kmvt,      0,        0,       238,      0,       8000,      1,       1,       1,       1,       -1,   kwave, gicos, gicos, gieqffn, gieqlfn, gieqqfn
 	 aL	ntrpol	(aL+aR)*0.66,aL,gkwidth
 	 aR	ntrpol	(aL+aR)*0.66,aR,gkwidth
 	endif

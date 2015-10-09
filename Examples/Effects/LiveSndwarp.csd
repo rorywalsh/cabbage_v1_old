@@ -1,50 +1,50 @@
-LiveSndwarp.csd
-Iain McCurdy (2012)
-
-Description and Instructions
-----------------------------
-
-This instrument implements live granulation of an audio input stream using the sndwarp opcode.                         
-
-Live audio from the first input channel (left input if stereo) is written into a function table from which sndwarp reads 
-audio. (If 'stereo in/out' is chosen from 'In/Out Mode' then audio from the second/right channel is written into a second 
-table.) The key is that manual pointer read mode is used with sndwarp (as opposed to time-stretch mode) and that the read 
-pointer follows on behind the pointer which is used to write audio into the function table(s). Some care is needed to ensure 
-that the read pointer does not 'overtake' the write pointer (which would result in dicontinuities in the audio it reads). 
-This could be possible if pitch transposition upwards of grains is used as the grain pointer is then moving faster than the 
-write pointer. This example prevents this from happening internally so the user does not need to worry. The user can also 
-define a random offset for the grain read pointer using the 'Grain Delay' settings. Delay times are randomly chosen 
-according to a 'betarand' distribution the 'beta' of which the user can set: if distribution shape is 1 the distribution is 
-uniform, if it is 2 the distribution is linear and beyond 2 it is increasingly exponential.
-
-Note that 'Size' (grain size) and 'Size Rnd.' (random grain size) are i-rate variables so that changing them requires 
-reinitialisation in the orchestra. For this reason discontinuity in the audio output can be heard when they are modified.
-Grain Size and Size Random (bandwith) are in sample frames. Divide by sample rate to derive a value in seconds.
-
-Pitch transposition can be set using either the 'Pitch' knob (ratio multiplier) or 'Semis' (transposition in semitones).
-Changes made to 'Semis' will be reflected in the setting of the 'Pitch' knob, but not vice versa.
-Pitch can also be controlled through MIDI input (in which case 'Pitch' and 'Semis' will be ignored). Using MIDI will 
-polyphony will be possible. If you intend to use MIDI to start and stop sndwarp instances, turn 'On/Off [MIDI]' off.
-You can also adjust the MIDI note at which unison (no transposition) will occur using the 'Uni.Note' knob.
-
-Sound output from sndwarp can be fed back into the input to be mixed with the live audio in. The amount of feedback can be 
-controlled using the 'Feedback' slider. Using high levels of feedback can result in overloading but this will also be 
-dependent upon other factors such as random delay time, grain size (window size), density and transposition so user caution 
-is advised. If the 'clip' button is activated the feedback signal will be clipped at the clip level set (a ratio of then 
-maximum amplitude) providing at least some control over a runaway feedback loop. Note that 'Clip Lev.' defines the amplitude 
-at which clipping begins, therefore lower settings will result in the signal being clipped sooner. The feedback signal can 
-also be filtered by a lowpass filter.
-
-If 'balance' is activated the output of sndwarp is dynamically balanced with the input signal. This can be useful for 
-compensating for increases in amplitude caused when 'Number of Overlaps' (grain density) is increased. There are 3 
-mono/stereo modes: 'mono in - mono out (x2)', 'mono in - stereo out' (stereo effect is created using sndwarp's built-in 
-window/grain size randomisation, and 'stereo in - stereo out' mode.
-
-The buffer size used in the example is just under 23 seconds long (function table size 1048576 at sr=44100). This could be 
-enlarged if required but bear in mind that sndwarp needs a power of two table size.        
-
-Activating 'Freeze' will pause writing of live audio to the function table and allow the user to manually navigate through 
-the buffered audio. The feedback loop will also be deactivated when 'freeze' is active.
+; LiveSndwarp.csd
+; Iain McCurdy (2012)
+; 
+; Description and Instructions
+; ----------------------------
+; 
+; This instrument implements live granulation of an audio input stream using the sndwarp opcode.                         
+; 
+; Live audio from the first input channel (left input if stereo) is written into a function table from which sndwarp reads 
+; audio. (If 'stereo in/out' is chosen from 'In/Out Mode' then audio from the second/right channel is written into a second 
+; table.) The key is that manual pointer read mode is used with sndwarp (as opposed to time-stretch mode) and that the read 
+; pointer follows on behind the pointer which is used to write audio into the function table(s). Some care is needed to ensure 
+; that the read pointer does not 'overtake' the write pointer (which would result in dicontinuities in the audio it reads). 
+; This could be possible if pitch transposition upwards of grains is used as the grain pointer is then moving faster than the 
+; write pointer. This example prevents this from happening internally so the user does not need to worry. The user can also 
+; define a random offset for the grain read pointer using the 'Grain Delay' settings. Delay times are randomly chosen 
+; according to a 'betarand' distribution the 'beta' of which the user can set: if distribution shape is 1 the distribution is 
+; uniform, if it is 2 the distribution is linear and beyond 2 it is increasingly exponential.
+; 
+; Note that 'Size' (grain size) and 'Size Rnd.' (random grain size) are i-rate variables so that changing them requires 
+; reinitialisation in the orchestra. For this reason discontinuity in the audio output can be heard when they are modified.
+; Grain Size and Size Random (bandwith) are in sample frames. Divide by sample rate to derive a value in seconds.
+; 
+; Pitch transposition can be set using either the 'Pitch' knob (ratio multiplier) or 'Semis' (transposition in semitones).
+; Changes made to 'Semis' will be reflected in the setting of the 'Pitch' knob, but not vice versa.
+; Pitch can also be controlled through MIDI input (in which case 'Pitch' and 'Semis' will be ignored). Using MIDI will 
+; polyphony will be possible. If you intend to use MIDI to start and stop sndwarp instances, turn 'On/Off [MIDI]' off.
+; You can also adjust the MIDI note at which unison (no transposition) will occur using the 'Uni.Note' knob.
+; 
+; Sound output from sndwarp can be fed back into the input to be mixed with the live audio in. The amount of feedback can be 
+; controlled using the 'Feedback' slider. Using high levels of feedback can result in overloading but this will also be 
+; dependent upon other factors such as random delay time, grain size (window size), density and transposition so user caution 
+; is advised. If the 'clip' button is activated the feedback signal will be clipped at the clip level set (a ratio of then 
+; maximum amplitude) providing at least some control over a runaway feedback loop. Note that 'Clip Lev.' defines the amplitude 
+; at which clipping begins, therefore lower settings will result in the signal being clipped sooner. The feedback signal can 
+; also be filtered by a lowpass filter.
+; 
+; If 'balance' is activated the output of sndwarp is dynamically balanced with the input signal. This can be useful for 
+; compensating for increases in amplitude caused when 'Number of Overlaps' (grain density) is increased. There are 3 
+; mono/stereo modes: 'mono in - mono out (x2)', 'mono in - stereo out' (stereo effect is created using sndwarp's built-in 
+; window/grain size randomisation, and 'stereo in - stereo out' mode.
+; 
+; The buffer size used in the example is just under 23 seconds long (function table size 1048576 at sr=44100). This could be 
+; enlarged if required but bear in mind that sndwarp needs a power of two table size.        
+; 
+; Activating 'Freeze' will pause writing of live audio to the function table and allow the user to manually navigate through 
+; the buffered audio. The feedback loop will also be deactivated when 'freeze' is active.
 
 <Cabbage>
 form caption("Live Sndwarp") size(530, 465), pluginID("lwrp")
@@ -234,7 +234,7 @@ instr	2
 	if kmetro==1 then
 	 ktrig	changed	gkwsize,gkrnd,gkolap,gkwfn			;if any of the list of input args. change, generate a trigger impulse (momentary '1'). The input args are all i-rate in sndwarp so reinitialisation will be required for their changes to register.
 	endif
-	if ktrig==1 then						;if a trigger hass been generated... 
+	if ktrig==1 then						;if a trigger has been generated... 
 	 reinit	UPDATE_SNDWARP						;... begin a reinitialisation pass from the given label
 	endif
 	UPDATE_SNDWARP:							;a label. Reinitialisation begins from here.

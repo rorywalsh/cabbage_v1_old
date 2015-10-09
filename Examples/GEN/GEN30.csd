@@ -1,11 +1,11 @@
-GEN30.csd
-Written by Iain McCurdy, 2014
-
-GEN30 creates band limited versions of input harmonic waveforms. 
-Typically an input waveform is created using GEN07.
-The user can then define the limits, in terms of partial numbers, in the output waveform.
-If 'Interpolation' is on fractional settings for minimum and maximum partial numbers will fade the partials at the extremities of the spectrum in or out smoothly. 
-The input waveform is displayed in green, the output in yellow.
+; GEN30.csd
+; Written by Iain McCurdy, 2014
+; 
+; GEN30 creates band limited versions of input harmonic waveforms. 
+; Typically an input waveform is created using GEN07.
+; The user can then define the limits, in terms of partial numbers, in the output waveform.
+; If 'Interpolation' is on fractional settings for minimum and maximum partial numbers will fade the partials at the extremities of the spectrum in or out smoothly. 
+; The input waveform is displayed in green, the output in yellow.
 
 <Cabbage>
 form caption("GEN30"), size(410, 290), pluginID("gn30"), colour(80, 30, 50)

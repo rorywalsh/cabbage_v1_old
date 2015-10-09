@@ -7,10 +7,10 @@ groupbox bounds( 5,  0, 690, 100), text("Arpeggiator"),{
 rslider  bounds( 10, 30, 60, 60), text("Interval"), channel("intvl"), range(-36, 36, 7, 1, 1), $RSliderStyle
 rslider  bounds( 60, 30, 60, 60), text("Cycles"), channel("cycles"), range(0, 32, 5, 1, 1), $RSliderStyle
 label    bounds(122, 29, 65, 12), text("Cycle Mode") 
-combobox bounds(120, 42, 70, 20), channel("CyUpDn"), value(2), text("Up","Up-Down")
+combobox bounds(118, 42, 74, 20), channel("CyUpDn"), value(2), text("Up","Up-Down")
 rslider  bounds(190, 30, 60, 60), text("Tempo"), channel("tempo"), range(1, 500,120, 1, 1), $RSliderStyle
 label    bounds(243, 29, 65, 12), text("Tempo Mlt."), 
-combobox bounds(255, 42, 40, 20), channel("TempoMlt"), value(4), text("1/4","1/3","1/2","1","3/2","2","3","4")
+combobox bounds(250, 42, 50, 20), channel("TempoMlt"), value(4), text("1/4","1/3","1/2","1","3/2","2","3","4")
 checkbox bounds(310, 40, 30, 30), colour("yellow"), channel("hold"),  value(1)
 label    bounds(308, 77, 30, 12), text("Hold")
 label    bounds(367, 29, 55, 12), text("Arp.Mode")
@@ -54,7 +54,7 @@ line bounds(130, 240, 2, 70), colour("Grey")
 
 label    bounds(245,230,  70,  12), text("Oscillator")
 label    bounds(161,248, 40, 12), text("Wave")
-combobox bounds(150,260, 65, 20), channel("wave"), value(3), text("tri","sq.","saw","noise")
+combobox bounds(150,260, 65, 20), channel("wave"), value(3), text("triangle","square","saw","noise")
 checkbox bounds(150,290,100, 20), colour("yellow"), channel("subosc"),  value(0), text("Subosc")
 label    bounds(235,248, 40, 12), text("Octave")
 combobox bounds(225,260, 65, 20), channel("OctTrans"), value(5), text("-6","-5","-4","-3","-2","-1","0","1","2","3","4","5","6")
@@ -79,7 +79,6 @@ keyboard pos(5, 330), size(690, 80)
 infobutton bounds(5,415, 70, 20), text("Help"), file("ArpeggiatorHelp.html")
 image bounds(80, 415, 215, 20), colour(50,50,50), plant("credit"), line(0){
 label bounds(0.03, 0.1, .9, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white"), colour(50,50,50)
-hostbpm channel("bpm")
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -159,12 +158,10 @@ instr	ScanWidgets
 	gkintvl		chnget	"intvl"
 	gkcycles	chnget	"cycles"
 	gktempo		chnget	"tempo"		;INTERNAL GUI CONTROL
-	gkbpm		chnget	"bpm"		;HOSDT TEMPO
+	gkhostbpm	chnget	"HOST_BPM"	;HOST TEMPO
 	gkClockSource	chnget	"ClockSource"	;CLOCK SOURCE SELECTOR SWITCH
 	if gkClockSource==1 then
-	 gktempo = gkbpm
-	else
-	 gktempo = gktempo
+	 gktempo = gkhostbpm
 	endif
 	gkCyUpDn	chnget	"CyUpDn"
 	gkTempoMlt	chnget	"TempoMlt"

@@ -1,3 +1,6 @@
+; LoFi.csd
+; Written by Iain McCurdy, 2012.
+
 <Cabbage>
 form size(230, 120), caption("Lo Fi"), pluginID("lofi"), scrollbars(0)
 image pos(0, 0), size(230, 120), colour(0,0,0), shape("sharp")

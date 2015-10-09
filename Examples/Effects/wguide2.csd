@@ -1,15 +1,18 @@
+; wguide.csd
+; Written by Iain McCurdy, 2013.
+
 <Cabbage>
-form caption("wguide2") size(545, 90)
-image pos(0, 0), size(545, 90), colour(25,0,25), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
-rslider bounds(10, 11, 70, 70), text("Freq. 1"),   channel("freq1"),     range(20, 8000, 160, 0.25), colour(150,110,110), trackercolour(white)
-rslider bounds(75, 11, 70, 70), text("Freq. 2"),   channel("freq2"),     range(20, 8000, 160, 0.25), colour(150,110,110), trackercolour(white)
-rslider bounds(140, 11, 70, 70), text("Cutoff 1"), channel("cutoff1"),   range(20,20000,8000,0.25),  colour(150,110,110), trackercolour(white)
-rslider bounds(205, 11, 70, 70), text("Cutoff 1"), channel("cutoff2"),   range(20,20000,8000,0.25),  colour(150,110,110), trackercolour(white)
-rslider bounds(270, 11, 70, 70), text("F.back 1"), channel("feedback1"), range(-0.999, 0.999, 0.2),  colour(150,110,110), trackercolour(white)
-rslider bounds(335, 11, 70, 70), text("F.back 2"), channel("feedback2"), range(-0.999, 0.999, 0.2),  colour(150,110,110), trackercolour(white)
-rslider bounds(400, 11, 70, 70), text("Mix"),      channel("mix"),       range(0, 1.00, 0.7),        colour(150,110,110), trackercolour(white)
-rslider bounds(465, 11, 70, 70), text("Level"),    channel("level"),     range(0, 1.00, 0.7),        colour(150,110,110), trackercolour(white)
-}
+form caption("wguide2") size(595, 90)
+image        pos(0, 0), size(595, 90), colour(25,0,25), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
+button  bounds( 10, 30, 55, 25), text("PLUCK"), channel("pluck"), toggle(0)
+rslider bounds( 65, 11, 70, 70), text("Freq. 1"),   channel("freq1"),     range(20, 8000, 160, 0.25), colour(150,110,110), trackercolour(white)
+rslider bounds(130, 11, 70, 70), text("Freq. 2"),   channel("freq2"),     range(20, 8000, 160, 0.25), colour(150,110,110), trackercolour(white)
+rslider bounds(195, 11, 70, 70), text("Cutoff 1"), channel("cutoff1"),   range(20,20000,8000,0.25),  colour(150,110,110), trackercolour(white)
+rslider bounds(260, 11, 70, 70), text("Cutoff 1"), channel("cutoff2"),   range(20,20000,8000,0.25),  colour(150,110,110), trackercolour(white)
+rslider bounds(325, 11, 70, 70), text("F.back 1"), channel("feedback1"), range(-0.999, 0.999, 0.2),  colour(150,110,110), trackercolour(white)
+rslider bounds(390, 11, 70, 70), text("F.back 2"), channel("feedback2"), range(-0.999, 0.999, 0.2),  colour(150,110,110), trackercolour(white)
+rslider bounds(455, 11, 70, 70), text("Mix"),      channel("mix"),       range(0, 1.00, 0.7),        colour(150,110,110), trackercolour(white)
+rslider bounds(520, 11, 70, 70), text("Level"),    channel("level"),     range(0, 1.00, 0.7),        colour(150,110,110), trackercolour(white)
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -43,7 +46,24 @@ instr	1
 	gklevel		chnget	"level"					;
 	;asigL, asigR	diskin2	"Seashore.wav",1,0,1			;USE SOUND FILE FOR TESTING
 	asigL, asigR	ins
-	kporttime	linseg	0,0.01,0.03				;CREATE A VARIABLE THAT WILL BE USED FOR PORTAMENTO TIME
+
+ 	kFBtot	=	gkfeedback1 + gkfeedback2		; protect against combined feedbacks greater than 0.5
+ 	if kFBtot>0.5 then
+ 	 gkfeedback1	=	gkfeedback1 / (kFBtot*2)
+ 	 gkfeedback2	=	gkfeedback2 / (kFBtot*2)
+ 	else
+ 	 gkfeedback1	=	gkfeedback1
+ 	 gkfeedback2	=	gkfeedback2
+ 	endif
+	
+	aplk	init	0
+	kpluck	chnget	"pluck"					; pluck button
+	if changed(kpluck)==1 then
+	 aplk	=	1
+	 asigL	+=	aplk
+	 asigR	+=	aplk
+	endif
+	
 	aresL	wguide2 asigL, afreq1, afreq2, gkcutoff1, gkcutoff2, gkfeedback1, gkfeedback2
 	aresR	wguide2 asigR, afreq1, afreq2, gkcutoff1, gkcutoff2, gkfeedback1, gkfeedback2
 	aresL	dcblock2	aresL	;BLOCK DC OFFSET

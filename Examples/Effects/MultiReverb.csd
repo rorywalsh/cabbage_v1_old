@@ -1,5 +1,8 @@
-Reverb effect that employs screverb and freeverb opcodes.
-Pitch Mod. is only used by reverbsc.
+; MultiReverb.csd
+; Written by Iain McCurdy, 2012
+
+; Reverb effect that employs screverb and freeverb opcodes.
+; Pitch Mod. is only used by reverbsc.
 
 <Cabbage>
 form caption("Multi Reverb") size(415, 90), pluginID("Rvrb")

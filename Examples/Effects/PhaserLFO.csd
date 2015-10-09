@@ -1,3 +1,6 @@
+; PhaserLFO.csd
+; Written by Iain McCurdy, 2012.
+
 <Cabbage>
 form caption("Phaser LFO") size(580, 90), pluginID("phsr")
 image          bounds(0, 0, 580, 90), colour( 100, 110, 130), shape("rounded"), outlinecolour("white"), outlinethickness(4)

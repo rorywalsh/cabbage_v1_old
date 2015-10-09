@@ -1,26 +1,26 @@
-PingClang.csd
-Written by Iain McCurdy, 2014
-
-A musical toy.
-
-Blocks can be moved using left click and drag, and can be resized using right click and drag.
-
-The nature of the sound produced by the blocks is altered by their shape.
-Thin blocks will produce a more harmonic and sustaining sound. Thick blocks will produce inharmonic and less sustained sounds.
-
-Once balls come to rest on the floor they are rethrown from the top.
-New balls can also be launched using the 'New Ball' button.
-
-CONTROLS
---------
-Damping		-	damping of energy that occurs when the ball hits a surface. e.g. low values = rubber ball, high values = cannon ball
-Friction	-	damping of horizonatal movement that occurs when the ball strikes the floor. e.g. low values = hard surface, high values = thick carpet
-Speed		-	speed of the game
-Size		-	size of the ball. Also has a bearing on the sound produced when the ball rebounds off the walls or the floor.
-Angle		-	range of possible angles (in both directions) in which the ball can be thrown. i.e. when zero, all throws will be straight down.
-Resonance	-	resonating time of the blocks when struck. This will also be affected by the shape of the blocks. Thinner blocks resonate for a longer time.
-Blocks		-	number of blocks used in the game
-Notch		-	turns on a notch filter operating at the fundemental frequency of the 'clang' sounds
+; PingClang.csd
+; Written by Iain McCurdy, 2014
+; 
+; A musical toy.
+; 
+; Blocks can be moved using left click and drag, and can be resized using right click and drag.
+; 
+; The nature of the sound produced by the blocks is altered by their shape.
+; Thin blocks will produce a more harmonic and sustaining sound. Thick blocks will produce inharmonic and less sustained sounds.
+; 
+; Once balls come to rest on the floor they are rethrown from the top.
+; New balls can also be launched using the 'New Ball' button.
+; 
+; CONTROLS
+; --------
+; Damping		-	damping of energy that occurs when the ball hits a surface. e.g. low values = rubber ball, high values = cannon ball
+; Friction	-	damping of horizonatal movement that occurs when the ball strikes the floor. e.g. low values = hard surface, high values = thick carpet
+; Speed		-	speed of the game
+; Size		-	size of the ball. Also has a bearing on the sound produced when the ball rebounds off the walls or the floor.
+; Angle		-	range of possible angles (in both directions) in which the ball can be thrown. i.e. when zero, all throws will be straight down.
+; Resonance	-	resonating time of the blocks when struck. This will also be affected by the shape of the blocks. Thinner blocks resonate for a longer time.
+; Blocks		-	number of blocks used in the game
+; Notch		-	turns on a notch filter operating at the fundemental frequency of the 'clang' sounds
 
 <Cabbage>
 form caption("Ping Clang") size(610,500), guirefresh(32)
@@ -60,7 +60,7 @@ label    bounds(  1,454,100, 10), text("Iain McCurdy 2014"), align(left), fontco
 <CsoundSynthesizer>
 
 <CsOptions>
--n -+rtmidi=NULL -M0 -dm0
+-n -dm0
 </CsOptions>
 
 <CsInstruments>

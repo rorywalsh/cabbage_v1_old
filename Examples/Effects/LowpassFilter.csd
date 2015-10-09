@@ -1,3 +1,6 @@
+; LowpassFilter.csd
+; Written by Iain McCurdy, 2012
+
 <Cabbage>
 form caption("Lowpass Filter") size(435, 90), pluginID("LPFl")
 image pos(0, 0),               size(435, 90), colour(  70, 90,100), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
@@ -20,7 +23,7 @@ rslider  bounds(360, 11, 70, 70), text("Level"),                       colour(  
 
 <CsInstruments>
 
-sr 		= 	44100	;SAMPLE RATE
+sr 		= 	48000	;SAMPLE RATE
 ksmps 		= 	32	;NUMBER OF AUDIO SAMPLES IN EACH CONTROL CYCLE
 nchnls 		= 	2	;NUMBER OF CHANNELS (2=STEREO)
 0dbfs		=	1
@@ -28,14 +31,17 @@ nchnls 		= 	2	;NUMBER OF CHANNELS (2=STEREO)
 ;Author: Iain McCurdy (2012)
 
 instr	1
+	kporttime	linseg	0,0.001,0.05
 	kcf		chnget	"cf"				;
 	kres		chnget	"res"				;
 	kmix		chnget	"mix"				;
 	ksteepness	chnget	"steepness"			;
 	kResType	chnget	"ResType"			;
 	klevel		chnget	"level"				;
-	kporttime	linseg	0,0.001,0.02
+	klevel		portk	klevel,kporttime
+	alevel		interp	klevel
 	kcf	portk	kcf,kporttime
+	acf	interp	kcf
 	/* INPUT */
 	kinput		chnget	"input"
 	if kinput=1 then
@@ -51,15 +57,15 @@ instr	1
 	 aFiltL	tone	aL,kcf
 	 aFiltR	tone	aR,kcf
         elseif ksteepness==1&&kResType!=1 then
-	 aFiltL	butlp	aL,kcf
-	 aFiltR	butlp	aR,kcf
+	 aFiltL	butlp	aL,acf
+	 aFiltR	butlp	aR,acf
         elseif kResType==1 then
-	 aFiltL	moogladder	aL,kcf,kres
-	 aFiltR	moogladder	aR,kcf,kres        
+	 aFiltL	moogladder	aL,acf,kres
+	 aFiltR	moogladder	aR,acf,kres        
 	endif
 	aL	ntrpol	aL,aFiltL,kmix
 	aR	ntrpol	aR,aFiltR,kmix
-		outs	aL*klevel,aR*klevel
+		outs	aL*alevel,aR*alevel
 endin
 		
 </CsInstruments>

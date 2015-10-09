@@ -1,36 +1,37 @@
-StringFeedback.csd - an emulation of a feeding back vibrating string
-------------------
-
-Amplifier
----------
-Feedback	-	signal that is fed back into the vibrating string model. If a particular note doesn't sound, boost this!
-Drive		-	overdrive level
-Sustain		-	sustain of the string vibrations. Inverse of damping.
-Bright		-	brightness of the signal (lowpass filtering). Uses keyboard tracking, value stated is a ratio of the fundemental of the note played.
-Cut		-	remove lower partials of the signal (highpass filtering). Uses keyboard tracking, value stated is a ratio of the fundemental of the note played.
-
-Movement
----------
-Movement is a rough imitation of the effect of moving the vibrating string with respect to the location of the speaker. This is simply a modulating very short delay.
-Speed		-	speed of modulation (created using a random spline)
-
-Pick-up
--------
-Settings pertaining to the location of the pick-up along the length of the vibrating string
-Position	-	manual positioning of the pick-up. 0 or 1 = either end. 0.5 = half-way along the string's length.
-Auto		-	if this is active, manual positioning is ignored and the pick-up moves around randomly
-Speed		-	speed of random movement of the pick-up
-
-Reverb
-------
-Distance	-	Distance of the listener from the speaker (basically a dry/wet signal crossfader)
-Room		-	Room size
-
-Output
-------
-FB.Rel.		-	release time for the feedback signal
-Str.Rel.	-	release time for the string output signal
-Level		-	Level control (pre reverb so reverberation will always die away natuarally)
+; StringFeedback.csd - an emulation of a feeding back vibrating string
+; Written by Iain McCurdy, 2013
+; ------------------
+; 
+; Amplifier
+; ---------
+; Feedback	-	signal that is fed back into the vibrating string model. If a particular note doesn't sound, boost this!
+; Drive		-	overdrive level
+; Sustain		-	sustain of the string vibrations. Inverse of damping.
+; Bright		-	brightness of the signal (lowpass filtering). Uses keyboard tracking, value stated is a ratio of the fundemental of the note played.
+; Cut		-	remove lower partials of the signal (highpass filtering). Uses keyboard tracking, value stated is a ratio of the fundemental of the note played.
+; 
+; Movement
+; ---------
+; Movement is a rough imitation of the effect of moving the vibrating string with respect to the location of the speaker. This is simply a modulating very short delay.
+; Speed		-	speed of modulation (created using a random spline)
+; 
+; Pick-up
+; -------
+; Settings pertaining to the location of the pick-up along the length of the vibrating string
+; Position	-	manual positioning of the pick-up. 0 or 1 = either end. 0.5 = half-way along the string's length.
+; Auto		-	if this is active, manual positioning is ignored and the pick-up moves around randomly
+; Speed		-	speed of random movement of the pick-up
+; 
+; Reverb
+; ------
+; Distance	-	Distance of the listener from the speaker (basically a dry/wet signal crossfader)
+; Room		-	Room size
+; 
+; Output
+; ------
+; FB.Rel.		-	release time for the feedback signal
+; Str.Rel.	-	release time for the string output signal
+; Level		-	Level control (pre reverb so reverberation will always die away natuarally)
 
 <Cabbage>
 form caption("String Feedback"), size(830, 205), pluginID("fbck"), colour("0,0,0"), guirefresh(256)

@@ -16,6 +16,10 @@
 
 <Cabbage>
 form caption("GEN02"), size(720, 440), scrollbars(0), colour( 50, 50, 50),pluginID("gn02"), guirefresh(32)
+
+#define RSliderStyle1 # colour("yellow"), outlinecolour(100,100,100), trackercolour(150,150,150) #
+#define RSliderStyle2 # colour("green"),  outlinecolour(100,100,100), trackercolour(150,150,150) #
+#define RSliderStyle3 # colour("blue"),   outlinecolour(100,100,100), trackercolour(150,150,150) #
                                                                                   
 gentable bounds(  5,  5, 400,140), identchannel("table1"),  tablenumber(1), tablecolour("yellow"),amprange(36,108,1,1), zoom(-1), tablegridcolour(0,0,0,0)
 gentable bounds(  5,150, 400,140), identchannel("table2"),  tablenumber(2), tablecolour("green"), amprange(0,1,2), zoom(-1), tablegridcolour(0,0,0,0)
@@ -27,23 +31,24 @@ label    bounds(  7,295, 100, 12), text("DURATIONS"),  align("left"), fontcolour
 image   bounds(  5, 5, 50,430), colour(255,255,255,50), shape("sharp"), identchannel("ScrubberID")
 
 image   bounds(410,  5,400,430), colour( 50, 50, 50), plant("controls"), shape("sharp"), {
-rslider bounds(  0,  0, 75, 75), channel("fshift"), text("Harm."),   range(0, 32, 0,1,1),       colour("red"),  outlinecolour(100,100,100)
-rslider bounds( 75,  0, 75, 75), channel("filt"),   text("Filt."),   range(-4.00, 4.00, 0),     colour("red"),  outlinecolour(100,100,100)
-rslider bounds(150,  0, 75, 75), channel("res"),    text("Res."),    range(0, 0.99, 0.7),       colour("red"),  outlinecolour(100,100,100)
-rslider bounds(225,  0, 75, 75), channel("dur"),    text("Dur."),    range(0.10, 4, 1,0.5),     colour("red"),  outlinecolour(100,100,100)
+rslider bounds(  0,  0, 75, 75), channel("fshift"), text("Harm."),   range(0, 32, 0,1,1),       $RSliderStyle1
+rslider bounds( 75,  0, 75, 75), channel("filt"),   text("Filt."),   range(-4.00, 4.00, 0),     $RSliderStyle1
+rslider bounds(150,  0, 75, 75), channel("res"),    text("Res."),    range(0, 0.99, 0.7),       $RSliderStyle1
+rslider bounds(225,  0, 75, 75), channel("dur"),    text("Dur."),    range(0.10, 4, 1,0.5),     $RSliderStyle1
 
-rslider bounds( 40, 75, 75, 75), channel("echo"),   text("Echo"),    range(0, 1.00, 0.3),       colour("pink"), outlinecolour(100,100,100)
-rslider bounds(115, 75, 75, 75), channel("rpts"),   text("Repeats"), range(0, 1.00, 0.4),       colour("pink"), outlinecolour(100,100,100)
-rslider bounds(190, 75, 75, 75), channel("time"),   text("Time"),    range(0, 7, 3,1,1),        colour("pink"), outlinecolour(100,100,100)
+rslider bounds( 40, 75, 75, 75), channel("echo"),   text("Echo"),    range(0, 1.00, 0.3),       $RSliderStyle2
+rslider bounds(115, 75, 75, 75), channel("rpts"),   text("Repeats"), range(0, 1.00, 0.4),       $RSliderStyle2
+rslider bounds(190, 75, 75, 75), channel("time"),   text("Time"),    range(0, 7, 3,1,1),        $RSliderStyle2
 
-rslider  bounds(115,160,75,75), channel("tempo"), text("Tempo"), range(10,500,150, 1, 1), colour(150,150,255), outlinecolour(100,100,100)
-rslider  bounds(190,160,75,75), channel("amp"),   text("Level"), range(0, 1.00, 0.5),     colour(255,150,120), outlinecolour(100,100,100)
+rslider  bounds(115,160,75,75), channel("tempo"), text("Tempo"), range(10,500,150, 1, 1), $RSliderStyle3
+rslider  bounds(190,160,75,75), channel("amp"),   text("Level"), range(0, 1.00, 0.5),     $RSliderStyle3
 
 button  bounds( 10,160, 80,20), text("Bwd.","Bwd."),           channel("bwd"),    value(0), fontcolour:0(255,255,255,50), fontcolour:1(105,255,105,250), radiogroup(1)
 button  bounds( 10,180, 80,20), text("Fwd./Bwd.","Fwd./Bwd."), channel("fwdbwd"), value(1), fontcolour:0(255,255,255,50), fontcolour:1(105,255,105,250), radiogroup(1)
 button  bounds( 10,200, 80,20), text("Fwd.","Fwd."),           channel("fwd"),    value(0), fontcolour:0(255,255,255,50), fontcolour:1(105,255,105,250), radiogroup(1)
 button  bounds( 10,220, 80,20), text("Freeze","Freeze"),       channel("freeze"), value(0), fontcolour:0(255,255,255,50), fontcolour:1(155,155,255,250), radiogroup(1)
-button  bounds( 10,240, 80,20), text("Stop","Stop"),           channel("stop"),   value(0), fontcolour:0(255,255,255,50), fontcolour:1(255, 55, 55,250), radiogroup(1)
+button  bounds( 10,240, 80,20), text("Random","Random"),       channel("rnd"),    value(0), fontcolour:0(255,255,255,50), fontcolour:1(125,175,155,250), radiogroup(1)
+button  bounds( 10,260, 80,20), text("Stop","Stop"),           channel("stop"),   value(0), fontcolour:0(255,255,255,50), fontcolour:1(255, 55, 55,250), radiogroup(1)
 }
 </Cabbage>                                                   
                     
@@ -122,6 +127,7 @@ instr	2
 	ibwd	chnget	"bwd"
 	ifwdbwd	chnget	"fwdbwd"
 	ifwd	chnget	"fwd"
+	irnd	chnget	"rnd"
 	ifreeze	chnget	"freeze"
 	istop	chnget	"stop"
 	if ibwd==1 then
@@ -130,6 +136,9 @@ instr	2
 	 idir	=	2
 	elseif ifwd==1 then
 	 idir	=	1
+	elseif irnd==1 then
+	 idir	=	(int(random:i(0,2))*2)+1
+	 print	idir
 	elseif ifreeze==1 then
 	 idir	=	0
 	elseif istop==1 then

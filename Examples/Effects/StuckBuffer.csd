@@ -78,7 +78,7 @@ instr	1
  ;aL,aR	diskin	"ClassicalGuitar.wav",1,0,1	; for testing
  ;aL	diskin	"MFEM.wav",1,0,1	; for testing
  ;aR	=	aL
- aL,aR	ins
+ aInL,aInR	ins
 
  kporttime	linseg	0,0.01,0.05	; portamento time
  kthresh	chnget	"thresh"
@@ -140,10 +140,8 @@ instr	1
  aphsr	=	aphsr * ksize		; rescale scope of phasor according to buffer size
  
  if kTestVal>=kthresh then		; normal
-  	tablew	aL,aphsr,gibufferL	; write to buffer
-  	tablew	aR,aphsr,gibufferR
-  	aL	=	aL * kdry
-  	aR	=	aR * kdry
+  	tablew	aInL,aphsr,gibufferL	; write to buffer
+  	tablew	aInR,aphsr,gibufferR
  else					; stuck buffer
   if kinterp==1 then			; choose interpolation method:
    aL	table	aphsr,gibufferL		; none
@@ -159,6 +157,8 @@ instr	1
   aR	=	aR * (1-kpan) * kwet
  endif
 
+  aL	sum	aL*kwet, aInL*kdry
+  aR	sum	aR*kwet, aInR*kdry
  
  	outs	aL*klevel, aR*klevel
  	

@@ -11,6 +11,7 @@ form caption("Temposcal File Player") size(570,340), colour(0,0,0) pluginID("TSc
 image                       bounds(  0,  0,570,340), colour( 30, 70, 70), outlinecolour("White"), shape("sharp"), line(3)
 
 soundfiler bounds(  5,  5,560,175), channel("beg","len"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255), 
+label bounds(6, 4, 560, 14), text(""), align(left), colour(0,0,0,0), fontcolour(200,200,200), identchannel("stringbox")
 
 image    bounds(  0,180,570,160), colour(0,0,0,0), outlinecolour("white"), line(2), shape("sharp"), plant("controls"){
 filebutton bounds(  5, 10, 80, 25), text("Open","Open"), fontcolour("white") channel("filename"), shape("ellipse")
@@ -20,7 +21,7 @@ checkbox   bounds( 95, 43,100, 15), channel("lock"), text("Phase Lock"), colour(
 checkbox   bounds( 95, 60,100, 15), channel("freeze"), text("Freeze"), colour("LightBlue"), fontcolour("white")
 
 label      bounds(105,  8, 48, 12), text("FFT Size"), fontcolour("white")
-combobox   bounds( 95, 20, 70, 20), channel("FFTSize"), items("32768", "16384", "8192", "4096", "2048", "1024", "512", "256", "128", "64", "32"), value(5), fontcolour("white")
+combobox   bounds( 95, 20, 70, 20), channel("FFTSize"), items("32768", "16384", "8192", "4096", "2048", "1024", "512", "256", "128", "64", "32", "16", "8", "4"), value(5), fontcolour("white")
 
 rslider    bounds(175,  5, 70, 70), channel("transpose"), range(-48, 48, 0,1,1),            colour( 50, 90, 90)), trackercolour("silver"), text("Transpose"), textcolour("white")
 rslider    bounds(240,  5, 70, 70), channel("speed"),     range( -2,  2.00, 1),             colour( 50, 90, 90),  trackercolour("silver"), text("Speed"),     textcolour("white")
@@ -51,9 +52,21 @@ massign	0,3
 gichans		init	0		; 
 giReady		init	0		; flag to indicate function table readiness
 
-giFFTSizes[]	array	32768, 16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64, 32	; an array is used to store FFT window sizes
+giFFTSizes[]	array	32768, 16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4	; an array is used to store FFT window sizes
 
 gSfilepath	init	""
+
+opcode FileNameFromPath,S,S		; Extract a file name (as a string) from a full path (also as a string)
+ Ssrc	xin				; Read in the file path string
+ icnt	strlen	Ssrc			; Get the length of the file path string
+ LOOP:					; Loop back to here when checking for a backslash
+ iasc	strchar Ssrc, icnt		; Read ascii value of current letter for checking
+ if iasc==92 igoto ESCAPE		; If it is a backslash, escape from loop
+ loop_gt	icnt,1,0,LOOP		; Loop back and decrement counter which is also used as an index into the string
+ ESCAPE:				; Escape point once the backslash has been found
+ Sname	strsub Ssrc, icnt+1, -1		; Create a new string of just the file name
+	xout	Sname			; Send it back to the caller instrument
+endop
 
 instr	1
 gkPlayStop	chnget	"PlayStop"
@@ -84,6 +97,12 @@ instr	99	; load sound file
  giReady 	=	1					; if no string has yet been loaded giReady will be zero
  Smessage sprintfk "file(%s)", gSfilepath			; print sound file to viewer
  chnset Smessage, "filer1"
+
+ /* WRITE FILE NAME TO GUI */
+ Sname FileNameFromPath	gSfilepath				; Call UDO to extract file name from the full path
+ Smessage sprintfk "text(%s)",Sname
+ chnset Smessage, "stringbox"
+
 endin
 
 instr	2

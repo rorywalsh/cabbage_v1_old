@@ -1,3 +1,6 @@
+; Vocoder.csd
+; Written by Iain McCurdy, 2012
+
 <Cabbage>
 form caption("vocoder"), size(530, 230), pluginID("voco")
 

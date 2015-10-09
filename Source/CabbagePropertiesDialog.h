@@ -549,7 +549,7 @@ public :
                                         "",
                                         1,
                                         File(""),
-                                        false,
+                                        true,
                                         lookAndFeel);
             if(selectedFiles.size()>0)
             {

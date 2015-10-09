@@ -1,3 +1,6 @@
+; DiskRecPlay.csd
+; Written by Iain McCurdy, 2012
+
 <Cabbage>
 form caption("Disk Rec/Play") size(300, 400), pluginID("dkrp")
 groupbox bounds(10,   0, 70, 80), text("Record")

@@ -1,44 +1,52 @@
-SoundwarpFilePlayer.csd
+; SoundwarpFilePlayer.csd
+; Written by Iain McCurdy, 2014
+
+; Player can also be activated by using right-click and drag upon the waveform display panel.
+;  In this mode, X position equates to pointer position and Y position equates to amplitude (level) and transposition.
+;   (Transposition range when using mouse clicking-and-dragging is controlled using the 'Transposition' knob. Therefore if 'Transposition' = zero, no transposition occurs.)
 
 <Cabbage>
-form caption("Soundwarp File Player") size(805,340), colour(0,0,0) pluginID("SWPl")
-image                       bounds(  0,  0,805,340), colour( 30, 90, 60), outlinecolour("White"), line(3), shape("sharp")	; main panel colouration    
+form caption("Soundwarp File Player") size(835,340), colour(0,0,0) pluginID("SWPl"), guirefresh(32)
+image                       bounds(  0,  0,835,340), colour( 30, 90, 60), outlinecolour("White"), line(3), shape("sharp")	; main panel colouration    
 
-soundfiler bounds(  5,  5,795,175), channel("beg","len"), channel("pos1","end1"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255), 
+soundfiler bounds(  5,  5,825,175), channel("beg","len"), channel("pos1","end1"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255), 
 
-filebutton bounds(  5,190, 80, 25), text("Open File","Open File"), fontcolour("white") channel("filename"), shape("ellipse")
-checkbox   bounds(  5,218, 95, 17), channel("PlayStop"), text("Play/Stop"), fontcolour("white")
-checkbox   bounds(  5,238,100, 17), channel("freeze"), text("Freeze"), colour("LightBlue"), fontcolour("white")
+filebutton bounds(  5,185, 80, 22), text("Open File","Open File"), fontcolour("white") channel("filename"), shape("ellipse")
+checkbox   bounds(  5,210, 95, 17), channel("PlayStop"), text("Play/Stop"), fontcolour("white")
+label      bounds(  5,228,115, 10), text("[or right-click-and-drag]"), fontcolour("white")
+checkbox   bounds(  5,240,100, 17), channel("freeze"), text("Freeze"), colour("LightBlue"), fontcolour("white")
 
 label      bounds(245,184,180, 8), text("G   R   A   I   N   S"), fontcolour("white")
-rslider    bounds( 90,195, 60, 60), channel("overlap"),     range( 1, 100, 20, 1,1),            colour( 50,110, 80), text("Overlaps"),     textcolour("white"), trackercolour(150,210,180)
-rslider    bounds(145,195, 60, 60), channel("grsize"),      range( 1, 40000, 800, 0.5,1),       colour( 50,110, 80), text("Size"),         textcolour("white"), trackercolour(150,210,180)
-rslider    bounds(200,195, 60, 60), channel("grsizeOS"),    range( 0, 2.00,   0.5,  0.5),       colour( 50,110, 80), text("Size OS"),      textcolour("white"), trackercolour(150,210,180)
-rslider    bounds(255,195, 60, 60), channel("transpose"),   range(-48, 48, 0,1,0.001),          colour( 50,110, 80), text("Transpose"),    textcolour("white"), trackercolour(150,210,180)
+rslider    bounds(120,195, 60, 60), channel("overlap"),     range( 1, 100, 20, 1,1),            colour( 50,110, 80), text("Overlaps"),     textcolour("white"), trackercolour(150,210,180)
+rslider    bounds(175,195, 60, 60), channel("grsize"),      range( 1, 40000, 800, 0.5,1),       colour( 50,110, 80), text("Size"),         textcolour("white"), trackercolour(150,210,180)
+rslider    bounds(230,195, 60, 60), channel("grsizeOS"),    range( 0, 2.00,   0.5,  0.5),       colour( 50,110, 80), text("Size OS"),      textcolour("white"), trackercolour(150,210,180)
+rslider    bounds(285,195, 60, 60), channel("transpose"),   range(-48, 48, 0,1,0.001),          colour( 50,110, 80), text("Transpose"),    textcolour("white"), trackercolour(150,210,180)
 
-label      bounds(337,198, 35, 10), text("M o d e"), fontcolour("white")
-combobox   bounds(318,208, 74, 17), channel("mode"), items("Speed", "Pointer", "Region"), value(1), fontcolour("white")
-label      bounds(334,227, 40, 10), text("S h a p e"), fontcolour("white")
-combobox   bounds(318,237, 74, 17), channel("shape"), items("Hanning", "Perc.1", "Perc.2", "Gate", "Rev.Perc.1", "Rev.Perc.2"), value(1), fontcolour("white")
+label      bounds(367,198, 35, 10), text("M o d e"), fontcolour("white")
+combobox   bounds(348,208, 74, 17), channel("mode"), items("Speed", "Pointer", "Region"), value(1), fontcolour("white")
+label      bounds(364,227, 40, 10), text("S h a p e"), fontcolour("white")
+combobox   bounds(348,237, 74, 17), channel("shape"), items("Hanning", "Perc.1", "Perc.2", "Gate", "Rev.Perc.1", "Rev.Perc.2"), value(1), fontcolour("white")
 
-rslider    bounds(395,195, 60, 60), channel("speed"),       range( 0.00, 5.00, 1,0.5,0.001),           colour( 50,110, 80), text("Speed"),   textcolour("white"), trackercolour(150,210,180), visible(1), identchannel("SpeedID")
-rslider    bounds(395,195, 60, 60), channel("ptr"),         range(     0,1.00, 0.5,1,0.001),           colour( 50,110, 80), text("Pointer"), textcolour("white"), trackercolour(150,210,180), visible(0), identchannel("PtrID")
-rslider    bounds(450,195, 60, 60), channel("ptrOS"),       range(     0, 1.000, 0, 0.5, 0.001),       colour( 50,110, 80), text("Ptr.OS"),  textcolour("white"), trackercolour(150,210,180), visible(0), identchannel("PtrOSID")
-rslider    bounds(505,195, 60, 60), channel("inskip"),      range(     0, 1.00, 0),                    colour( 50,110, 80), text("inskip"),  textcolour("white"), trackercolour(150,210,180), visible(1), identchannel("inskipID")
+rslider    bounds(425,195, 60, 60), channel("speed"),       range( 0.00, 5.00, 1,0.5,0.001),           colour( 50,110, 80), text("Speed"),   textcolour("white"), trackercolour(150,210,180), visible(1), identchannel("SpeedID")
+rslider    bounds(425,195, 60, 60), channel("ptr"),         range(     0,1.00, 0.5,1,0.001),           colour( 50,110, 80), text("Pointer"), textcolour("white"), trackercolour(150,210,180), visible(0), identchannel("PtrID")
+rslider    bounds(480,195, 60, 60), channel("ptrOS"),       range(     0, 1.000, 0, 0.5, 0.001),       colour( 50,110, 80), text("Ptr.OS"),  textcolour("white"), trackercolour(150,210,180), visible(0), identchannel("PtrOSID")
+rslider    bounds(535,195, 60, 60), channel("port"),        range(     0,30.000,0.01, 0.5,0.001),      colour( 50,110, 80), text("Port."),   textcolour("white"), trackercolour(150,210,180), visible(0), identchannel("PortID")
+rslider    bounds(535,195, 60, 60), channel("inskip"),      range(     0, 1.00, 0),                    colour( 50,110, 80), text("inskip"),  textcolour("white"), trackercolour(150,210,180), visible(1), identchannel("inskipID")
 
-line       bounds(565,190,  2, 65), colour("Grey")
 
-label      bounds(565,184,120, 8), text("E   N   V   E   L   O   P   E"), fontcolour("white")
-rslider    bounds(568,195, 60, 60), channel("AttTim"),    range(0, 5.00, 0.01, 0.5, 0.001),  colour( 50,110, 80), text("Att.Tim"), textcolour("white"), trackercolour(150,210,180)
-rslider    bounds(620,195, 60, 60), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001),  colour( 50,110, 80), text("Rel.Tim"), textcolour("white"), trackercolour(150,210,180)
+line       bounds(595,190,  2, 65), colour("Grey")
 
-line       bounds(681,190,  2, 65), colour("Grey")
+label      bounds(595,184,120, 8), text("E   N   V   E   L   O   P   E"), fontcolour("white")
+rslider    bounds(598,195, 60, 60), channel("AttTim"),    range(0, 5.00, 0.01, 0.5, 0.001),  colour( 50,110, 80), text("Att.Tim"), textcolour("white"), trackercolour(150,210,180)
+rslider    bounds(650,195, 60, 60), channel("RelTim"),    range(0.01, 5, 0.05, 0.5, 0.001),  colour( 50,110, 80), text("Rel.Tim"), textcolour("white"), trackercolour(150,210,180)
 
-label      bounds(702,184, 80, 8), text("C   O   N   T   R   O   L"), fontcolour("white")
-rslider    bounds(685,195, 60, 60), channel("MidiRef"),   range(0,127,60, 1, 1),            colour( 50,110, 80), text("MIDI Ref."), textcolour("white"), trackercolour(150,210,180)
-rslider    bounds(740,195, 60, 60), channel("level"),     range(  0,  1.00, 0.4, 0.5),      colour( 50,110, 80), text("Level"),     textcolour("white"), trackercolour(150,210,180)
+line       bounds(711,190,  2, 65), colour("Grey")
 
-keyboard   bounds(5,260,795, 75)
+label      bounds(732,184, 80, 8), text("C   O   N   T   R   O   L"), fontcolour("white")
+rslider    bounds(715,195, 60, 60), channel("MidiRef"),   range(0,127,60, 1, 1),            colour( 50,110, 80), text("MIDI Ref."), textcolour("white"), trackercolour(150,210,180)
+rslider    bounds(770,195, 60, 60), channel("level"),     range(  0,  1.00, 0.4, 0.5),      colour( 50,110, 80), text("Level"),     textcolour("white"), trackercolour(150,210,180)
+
+keyboard   bounds(5,260,825, 75)
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -49,7 +57,7 @@ keyboard   bounds(5,260,795, 75)
 
 <CsInstruments>
 
-sr = 44100
+sr = 48000
 ksmps = 64
 nchnls = 2
 0dbfs=1
@@ -84,12 +92,13 @@ instr	1
  gkmode		chnget	"mode"
  gkmode		init	1
  gkspeed	chnget	"speed"
- gkptr		chnget	"ptr"
  gkptrOS	chnget	"ptrOS"
+ gkport		chnget	"port"
+ kporttime	linseg	0,0.001,1
  gkinskip	chnget	"inskip"
  gklevel	chnget	"level"
  gkLoopStart	chnget	"beg"		;from soundfiler
- gkLoopEnd	chnget	"len"		;from soundfiler
+ gkLoopEnd	chnget	"len"			;from soundfiler
  
  
  ; SHOW OR HIDE WIDGETS -------------------------------------
@@ -99,18 +108,21 @@ instr	1
 	 chnset "visible(1)", "SpeedID"
 	 chnset "visible(0)", "PtrOSID"
 	 chnset "visible(0)", "PtrID"
+	 chnset "visible(0)", "PortID"
 	 chnset "visible(1)", "inskipID"
 	endif
 	if gkmode==2 then
 	 chnset "visible(0)", "SpeedID"
 	 chnset "visible(1)", "PtrOSID"
 	 chnset "visible(1)", "PtrID"
+	 chnset "visible(1)", "PortID"
 	 chnset "visible(0)", "inskipID"
 	endif
 	if gkmode==3 then
 	 chnset "visible(0)", "SpeedID"
 	 chnset "visible(0)", "PtrOSID"
 	 chnset "visible(0)", "PtrID"
+	 chnset "visible(0)", "PortID"
 	 chnset "visible(0)", "inskipID"
 	endif
 endif
@@ -124,6 +136,32 @@ endif
 
  ktrig	trigger	gkPlayStop,0.5,0
  schedkwhen	ktrig,0,0,2,0,-1
+
+ /* MOUSE SCRUBBING */
+ gkMOUSE_DOWN_RIGHT	chnget	"MOUSE_DOWN_RIGHT"	; Read in mouse left click status
+ kStartScrub		trigger	gkMOUSE_DOWN_RIGHT,0.5,0
+ if gkMOUSE_DOWN_RIGHT==1 then
+  gkmode	=	2
+  if kStartScrub==1 then 
+   reinit RAMP_FUNC
+  endif
+  RAMP_FUNC:
+  krampup	linseg	0,0.001,1
+  rireturn
+  kMOUSE_X	chnget	"MOUSE_X"
+  kMOUSE_Y	chnget	"MOUSE_Y"
+  kMOUSE_X	=	(kMOUSE_X - 5) / 825
+  kMOUSE_Y	portk	1 - ((kMOUSE_Y - 5) / 175), krampup*0.05		; SOME SMOOTHING OF DENSITY CHANGES VIA THE MOUSE ENHANCES PERFORMANCE RESULTS. MAKE ANY ADJUSTMENTS WITH ADDITIONAL CONSIDERATION OF guirefresh VALUE 
+  gkptr		limit	kMOUSE_X,0,1
+  gklevel	limit	kMOUSE_Y^2, 0, 1
+  gktranspose	=	((kMOUSE_Y*2)-1)*gktranspose	;, -gktranspose, gktranspose
+  schedkwhen	kStartScrub,0,0,2,0,-1
+ else
+  kptr		chnget	"ptr"
+  gkptr		portk	kptr,gkport*kporttime
+  gklevel	chnget	"level"
+ endif 
+ 
 endin
 
 
@@ -145,7 +183,7 @@ endin
 
 
 instr	2	; triggered by 'play/stop' button
- if gkPlayStop==0 then
+ if gkPlayStop==0&&gkMOUSE_DOWN_RIGHT==0 then
   turnoff
  endif
  if giReady = 1 then						; i.e. if a file has been loaded
@@ -159,7 +197,7 @@ instr	2	; triggered by 'play/stop' button
   kenv	expcurve	kenv,8					; remap amplitude value with a more natural curve
   aenv	interp		kenv					; interpolate and create a-rate envelope
 
-  kporttime	linseg	0,0.001,0.05				; portamento time function. (Rises quickly from zero to a held value.)
+  kporttime	linseg	0,0.001,0.02				; portamento time function. (Rises quickly from zero to a held value.)
 
   kspeed	portk	gkspeed, kporttime
   kptr		portk	gkptr, kporttime
@@ -174,9 +212,6 @@ instr	2	; triggered by 'play/stop' button
   
   iwfn		=	i(gkshape) + giwfn1 - 1
   imode		=	i(gkmode) - 1
-
-
-
 
   if imode==0 then						; timestretch mode
    kwarp	=	1/(kspeed*gkfreeze)
@@ -196,8 +231,6 @@ instr	2	; triggered by 'play/stop' button
    kscrubber	=	kwarp * sr
   endif
 
-
-
   apch		interp	semitone(ktranspose)
   klevel	portk	gklevel/(i(gkoverlap)^0.25), kporttime		; apply portamento smoothing to changes in level
   
@@ -211,14 +244,12 @@ instr	2	; triggered by 'play/stop' button
   endif
   rireturn
  endif
- 
- 
+
  ; print scrubber
  if(metro(10)==1) then
   Smessage sprintfk "scrubberposition(%d)", kscrubber
   chnset Smessage, "filer1"
  endif
-
 
 endin
 

@@ -1,5 +1,5 @@
-DopplerSpin.csd
-Written by Iain McCurdy, 2013
+; DopplerSpin.csd
+; Written by Iain McCurdy, 2013
 
 ; CONTROLS
 
@@ -59,7 +59,7 @@ rslider  bounds(400, 23, 55, 55), channel("mix"),        range(0,1.000,1,1,0.001
 rslider  bounds(460, 23, 55, 55), channel("OutGain"),    range(0,1.000,0.7,1,0.001),     text("Level"),                 TextBox(0), colour( 55, 45,155), trackercolour(white)
 line     bounds(520,  5,  2, 70), colour("Grey")
 
-checkbox bounds(530, 33,120, 20), text("Auto-Frequency") channel("AutoFreq"), FontColour("White"), colour("lime")  value(0)
+checkbox bounds(530, 33,120, 20), text("Random Speed") channel("RandSpeed"), FontColour("White"), colour("lime")  value(0)
 
 hslider bounds(  5, 80,690, 35), channel("freq"),        range(-10,10.0,0.2,1,0.01),     text("Speed"),         TextBox(1), colour(145, 45, 65), trackercolour(white)	;Frequency of Rotation
 hslider bounds(  5,110,690, 35), channel("AmpDepth"),    range(0,1.000,0.7,1,0.001),        text("Loc."),          TextBox(1), colour(135, 45, 75), trackercolour(white)	;Central/Edge
@@ -99,7 +99,7 @@ instr	1
 	kmix  	 	chnget	"mix"   	
 	kOutGain   	chnget	"OutGain"   	
 	kRvbOnOff	chnget	"RvbOnOff"
-	kAutoFreq   	chnget	"AutoFreq"   	
+	kRandSpeed   	chnget	"RandSpeed"   	
 	
 	/* INPUT */
 	aL,aR		ins
@@ -116,7 +116,7 @@ instr	1
 	 ;=======================================================
 	endif	 
 
-	if kAutoFreq=1 then
+	if kRandSpeed=1 then
 	 kfreq	jspline	kfreq,1,4
 	endif
 

@@ -2784,7 +2784,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                         Array<File> selectedFiles = cUtils::launchFileBrowser(save==true ? "Save file" : "Open a file",
                                                                     wildcardFilter,
                                                                     filetype,
-                                                                    1,
+                                                                    save==true ? 0 : 1,
                                                                     directory,
                                                                     false,
                                                                     &getLookAndFeel());

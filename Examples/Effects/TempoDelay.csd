@@ -1,7 +1,10 @@
-Units for the delay are assumed to be demi-semiquavers.
-Knob for Rhy.Mult. will be replaced with a combobox once comboboxes work in plugins within hosts.
-Width control only applicable when ping-pong delay selected.
-If 'external' is selected as clock source tempo is taken from the host's BPM. 
+; TempoDelay.csd
+; Written by Iain McCurdy, 2012.
+
+; Units for the delay are assumed to be demi-semiquavers.
+; Knob for Rhy.Mult. will be replaced with a combobox once comboboxes work in plugins within hosts.
+; Width control only applicable when ping-pong delay selected.
+; If 'external' is selected as clock source tempo is taken from the host's BPM. 
 
 <Cabbage>
 form caption("Tempo Delay") size(565, 90), pluginID("TDel")
@@ -18,8 +21,6 @@ button bounds(340,  57, 80, 20), text("Simple","Ping-pong"), channel("DelType"),
 rslider bounds(420, 11, 70, 70), text("Mix"), 		textcolour("black"), 		channel("mix"), 	range(0, 1.00, 0.5), colour(100,100,255),trackercolour(100,100,150)
 rslider bounds(485, 11, 70, 70), text("Level"),		textcolour("black"), 		channel("level"), 	range(0, 1.00, 1),   colour(100,100,255),trackercolour(100,100,150)
 }
-
-hostbpm channel("bpm")
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -42,7 +43,7 @@ instr	1
 	kdamp		chnget	"damp"				;
 	kmix		chnget	"mix"				;
 	klevel		chnget	"level"				;
-	kbpm		chnget	"bpm"				;
+	kbpm		chnget	"HOST_BPM"			;
 	kRhyMlt		chnget	"RhyMlt"			;
 	kClockSource	chnget	"ClockSource"			;
 	kDelType	chnget	"DelType"			;

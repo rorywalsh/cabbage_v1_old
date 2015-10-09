@@ -1073,6 +1073,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                 outputConsole->setAlwaysOnTop(true);
                 outputConsole->toFront(true);
                 outputConsole->setVisible(true);
+                outputConsole->setFontSize(14);
+                //outputConcole->tEditor->setFont(Font("Arial", 18, 0));
             }
             else
             {
@@ -1450,6 +1452,7 @@ void StandaloneFilterWindow::openTextEditor()
                 outputConsole->setAlwaysOnTop(true);
                 outputConsole->toFront(true);
                 outputConsole->setVisible(true);
+                outputConsole->setFontSize(18);
             }
     }
     else m_ShowMessage("Please open or create a file first", lookAndFeel);

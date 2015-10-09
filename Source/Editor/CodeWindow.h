@@ -41,7 +41,7 @@ public:
         textEditor->setColour(TextEditor::backgroundColourId, cUtils::getDarkerBackgroundSkin());
         textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
         textEditor->setMultiLine(true);
-        textEditor->setFont(Font("Arial", 14, 0));
+        textEditor->setFont(Font("Arial", 18, 0));
         addAndMakeVisible(textEditor, true);
         setText("hewe;roiuew asdfhsa ldkjfhsd lfauskdhf lsadiufh dslifuhsadlifu hdsaflisaud hflidsau hflidsa uf");
     };
@@ -51,7 +51,7 @@ public:
 
     void setText(String text)
     {
-        textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
+        textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue.brighter());
         textEditor->setText(text);
         textEditor->setCaretPosition(textEditor->getText().length());
     }
@@ -60,6 +60,11 @@ public:
     {
         const MessageManagerLock lock;
         return textEditor->getText();
+    }
+
+    void setFontSize(int size)
+    {
+        textEditor->setFont(Font("Arial", size, 0));
     }
 
     void resized()

@@ -44,7 +44,7 @@ public:
         textEditor->setColour(TextEditor::backgroundColourId, Colours::black);
         textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
         textEditor->setMultiLine(true);
-        textEditor->setFont(Font("Arial", 14, 0));
+        textEditor->setFont(Font("Arial", 18, 0));
         setSize(700, 200);
         setTopLeftPosition(top, left);
         setAlwaysOnTop(true);

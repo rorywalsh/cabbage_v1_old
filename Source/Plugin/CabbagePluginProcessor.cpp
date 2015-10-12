@@ -670,9 +670,9 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
         csndIndex = 0;
         CSspout = csound->GetSpout();
         CSspin  = csound->GetSpin();
-        csound->PerformKsmps();
-        csound->SetScoreOffsetSeconds(0);
-        csound->RewindScore();
+        //csound->PerformKsmps();
+        //csound->SetScoreOffsetSeconds(0);
+        //csound->RewindScore();
         Logger::writeToLog("Csound compiled your file");
         //numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
         cs_scale = csound->Get0dBFS();

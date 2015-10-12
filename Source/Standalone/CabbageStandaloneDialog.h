@@ -42,9 +42,8 @@ public:
         textEditor = new TextEditor();
         textEditor->setColour(Label::outlineColourId, Colours::white);
         textEditor->setColour(TextEditor::backgroundColourId, Colours::black);
-        textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
+        textEditor->setColour(TextEditor::textColourId, Colours::red);
         textEditor->setMultiLine(true);
-        textEditor->setFont(Font("Arial", 14, 0));
         setSize(700, 200);
         setTopLeftPosition(top, left);
         setAlwaysOnTop(true);
@@ -53,6 +52,7 @@ public:
         textEditor->setBounds(0, 30, getWidth(), getHeight());
         setContentOwned(textEditor, true);
         setAlpha(.8f);
+
     };
 
     ~CsoundMessageConsole() {};

@@ -593,8 +593,8 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
     else
     {
         //deviceManager->closeAudioDevice();
-        filter->createGUI(csdFile.loadFileAsString(), true);
         filter->reCompileCsound(csdFile);
+        filter->createGUI(csdFile.loadFileAsString(), true);
     }
 
 
@@ -1073,6 +1073,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                 outputConsole->setAlwaysOnTop(true);
                 outputConsole->toFront(true);
                 outputConsole->setVisible(true);
+                //outputConcole->tEditor->setFont(Font("Arial", 18, 0));
             }
             else
             {

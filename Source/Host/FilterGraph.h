@@ -176,6 +176,10 @@ public:
         {
             return playHeadPositionInfo.ppqPosition;
         }
+        void setBpm(int bpm)
+        {
+            playHeadPositionInfo.bpm = bpm;
+        }
 
 
     private:

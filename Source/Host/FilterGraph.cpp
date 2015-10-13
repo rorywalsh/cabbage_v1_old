@@ -55,6 +55,7 @@ FilterGraph::FilterGraph (AudioPluginFormatManager& formatManager_)
     startTimer(0);
     stopTimer();
     setChangedFlag (false);
+    setBPM(60);
 }
 
 FilterGraph::~FilterGraph()
@@ -138,6 +139,8 @@ void FilterGraph::setIsPlaying(bool value, bool reset)
 void FilterGraph::setBPM(int bpm)
 {
     currentBPM = bpm;
+    audioPlayHead.setBpm(bpm);
+
 
     if(isTimerRunning())
     {

@@ -76,7 +76,7 @@ public:
           noItemsMessage (noItemsMessage_)
     {
         items = MidiInput::getDevices();
-
+		this->setSize(400, 200);
         setModel (this);
         setOutlineThickness (1);
     }
@@ -1031,7 +1031,11 @@ void CabbageAudioDeviceSelectorComponent::resized()
     if (midiInputsList != nullptr)
     {
         const int bh = midiInputsList->getBestHeight (jmin (h * 8, getHeight() - y - space - h));
-        midiInputsList->setBounds (lx, y, w, bh);
+#ifdef CABBAGE_HOST
+        midiInputsList->setBounds (lx, y, w, 70);
+#else
+		midiInputsList->setBounds (lx, y, w, h);
+#endif
         y += bh + space;
     }
 

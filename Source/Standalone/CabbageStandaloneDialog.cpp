@@ -816,7 +816,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         m.addSubMenu ("Open recent file", recentFilesMenu);
 
         m.addItem(2, String("View Source Editor"));
-        //m.addItem(3, String("View Csound output"));
+        m.addItem(3, String("View Csound output"));
         m.addSeparator();
     }
 
@@ -1024,7 +1024,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
                 cabbageCsoundEditor->toFront(true);
 
-                /*
+                
                 if(!outputConsole)
                 {
                     outputConsole = new CsoundMessageConsole("Csound Output Messages",
@@ -1046,7 +1046,6 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                         outputConsole->setTopLeftPosition(-1500, -1400);
                     }
                 }
-                 */
 
                 showEditorConsole();
                 hasEditorBeingOpened = true;
@@ -1437,8 +1436,9 @@ void StandaloneFilterWindow::openTextEditor()
         cabbageCsoundEditor->toFront(true);
         showEditorConsole();
 
-
+/*
         if(getPreference(appProperties, "ShowConsoleWithEditor"))
+		{
             if(!outputConsole)
             {
                 outputConsole = new CsoundMessageConsole("Csound Output Messages",
@@ -1451,6 +1451,8 @@ void StandaloneFilterWindow::openTextEditor()
                 outputConsole->toFront(true);
                 outputConsole->setVisible(true);
             }
+		}
+*/
     }
     else m_ShowMessage("Please open or create a file first", lookAndFeel);
 }

@@ -208,6 +208,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
         if(File(defaultCSDFile).existsAsFile())
         {
             standaloneMode = true;
+            cUtils::showMessage("Should be standalone");
             openFile(defaultCSDFile);
         }
         else
@@ -784,7 +785,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     Array<File> exampleFiles;
     recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
 
-#ifndef RELEASE
+#ifndef Release
     standaloneMode=false;
 #endif
 
@@ -794,6 +795,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     {
 #if defined(LINUX) || defined(MACOSX)
         examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Examples";
+
 #else
         examplesDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Examples";
 #endif
@@ -1024,7 +1026,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
                 cabbageCsoundEditor->toFront(true);
 
-                
+
                 if(!outputConsole)
                 {
                     outputConsole = new CsoundMessageConsole("Csound Output Messages",
@@ -1436,23 +1438,23 @@ void StandaloneFilterWindow::openTextEditor()
         cabbageCsoundEditor->toFront(true);
         showEditorConsole();
 
-/*
-        if(getPreference(appProperties, "ShowConsoleWithEditor"))
-		{
-            if(!outputConsole)
-            {
-                outputConsole = new CsoundMessageConsole("Csound Output Messages",
-                        Colours::black,
-                        getPosition().getY()+getHeight(),
-                        getPosition().getX());
-                outputConsole->setLookAndFeel(lookAndFeel);
-                outputConsole->setText(filter->getCsoundOutput());
-                outputConsole->setAlwaysOnTop(true);
-                outputConsole->toFront(true);
-                outputConsole->setVisible(true);
-            }
-		}
-*/
+        /*
+                if(getPreference(appProperties, "ShowConsoleWithEditor"))
+        		{
+                    if(!outputConsole)
+                    {
+                        outputConsole = new CsoundMessageConsole("Csound Output Messages",
+                                Colours::black,
+                                getPosition().getY()+getHeight(),
+                                getPosition().getX());
+                        outputConsole->setLookAndFeel(lookAndFeel);
+                        outputConsole->setText(filter->getCsoundOutput());
+                        outputConsole->setAlwaysOnTop(true);
+                        outputConsole->toFront(true);
+                        outputConsole->setVisible(true);
+                    }
+        		}
+        */
     }
     else m_ShowMessage("Please open or create a file first", lookAndFeel);
 }

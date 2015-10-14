@@ -686,7 +686,7 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
         for(int i=0; i<evt.pcnt-1; i++)
         {
             fStatement.add(String(evt.p[i]));
-            cUtils::debug(i, fStatement[i]);
+            //cUtils::debug(i, fStatement[i]);
             pCnt=i;
         }
 
@@ -2249,6 +2249,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
                 }
                 else
                 {
+                    //cUtils::showMessage(tableValues.size());
                     table->setWaveform(tableValues, tableNumber);
                     //only enable editing for gen05, 07, and 02
                     table->enableEditMode(pFields, tableNumber);
@@ -2281,6 +2282,8 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 
     table->setBackgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablebackgroundcolour)));
     table->setFill(cAttr.getNumProp(CabbageIDs::fill));
+
+
 
     //set VU gradients based on tablecolours, take only the first three colours.
     Array<Colour> gradient;

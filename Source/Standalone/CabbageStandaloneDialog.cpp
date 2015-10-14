@@ -1026,30 +1026,31 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
                 cabbageCsoundEditor->toFront(true);
 
+                /*
+                                if(!outputConsole)
+                                {
+                                    outputConsole = new CsoundMessageConsole("Csound Output Messages",
+                                            Colours::black,
+                                            getPosition().getY()+getHeight(),
+                                            getPosition().getX());
+                                    outputConsole->setLookAndFeel(lookAndFeel);
+                                    outputConsole->setText(filter->getCsoundOutput());
+                                    if(getPreference(appProperties, "ShowConsoleWithEditor"))
+                                    {
+                                        outputConsole->setAlwaysOnTop(true);
+                                        outputConsole->toFront(true);
+                                        outputConsole->setVisible(true);
+                                        outputConsole->setTopLeftPosition(500, 400);
+                                    }
+                                    else
+                                    {
+                                        outputConsole->setVisible(false);
+                                        outputConsole->setTopLeftPosition(-1500, -1400);
+                                    }
+                                }
 
-                if(!outputConsole)
-                {
-                    outputConsole = new CsoundMessageConsole("Csound Output Messages",
-                            Colours::black,
-                            getPosition().getY()+getHeight(),
-                            getPosition().getX());
-                    outputConsole->setLookAndFeel(lookAndFeel);
-                    outputConsole->setText(filter->getCsoundOutput());
-                    if(getPreference(appProperties, "ShowConsoleWithEditor"))
-                    {
-                        outputConsole->setAlwaysOnTop(true);
-                        outputConsole->toFront(true);
-                        outputConsole->setVisible(true);
-                        outputConsole->setTopLeftPosition(500, 400);
-                    }
-                    else
-                    {
-                        outputConsole->setVisible(false);
-                        outputConsole->setTopLeftPosition(-1500, -1400);
-                    }
-                }
-
-                showEditorConsole();
+                                showEditorConsole();
+                				 */
                 hasEditorBeingOpened = true;
             }
             else m_ShowMessage("Please open or create a file first", lookAndFeel);

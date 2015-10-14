@@ -49,8 +49,21 @@ fi
 
 if [ $1 == "all" ]
 then
+	echo "Removing old binaries"
+	rm -rf ./build/Release/Cabbage.app
+	rm -rf ./build/Release/CabbageStudio.app
+
+
 	echo "Building Universal build"
+	# The following command is needed to set up Csound so that it can be inside the bundle frameworks folder 
+	install_name_tool -id @executable_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
+	/Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
+
 	xcodebuild -project Cabbage.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
+
+	# The following command is needed to set up Csound so that it can be inside the bundle frameworks folder 
+	install_name_tool -id @loader_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
+	/Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
 	xcodebuild -project CabbagePlugin.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release GCC_PREPROCESSOR_DEFINITIONS="Cabbage_Plugin_Synth=1 USE_DOUBLE=1 CSOUND6=1 MACOSX=1"
 	cp -rf ./build/Release/CabbagePlugin.component/ ./build/Release/Cabbage.app/Contents/CabbagePluginSynth.component
 	rm -rf ./build/Release/CabbagePluginSynth.dat/CabbagePlugin.component	
@@ -59,11 +72,18 @@ then
 	rm -rf ./build/Release/CabbagePluginEffect.component
 	rm -rf ~/Library/Audio/Plug-Ins/VST/CabbagePlugin.vst
 
+	# The following command is needed to set up Csound so that it can be inside the bundle frameworks folder 
+	install_name_tool -id @executable_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
+	/Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
 	xcodebuild -project CabbageStudio.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
 
 	echo "Bundling all files"	
 	cp -rf ../../Docs ./build/Release/Cabbage.app/Contents/MacOS/Docs
+	cp -rf ../../Docs ./build/Release/CabbageStudio.app/Contents/MacOS/Docs
+
 	cp -rf ../../Examples ./build/Release/Cabbage.app/Contents/MacOS/Examples
+	cp -rf ../../Examples ./build/Release/CabbageStudio.app/Contents/MacOS/Examples
+	
 	cp opcodes.txt ./build/Release/Cabbage.app/Contents/MacOS/opcodes.txt 
 
 	#cp -rf ./build/Release/Cabbage.app/ ./build/Release/Cabbage32.app/	

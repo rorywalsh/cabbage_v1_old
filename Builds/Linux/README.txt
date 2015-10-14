@@ -21,14 +21,7 @@ sudo apt-get install libsndfile1
 sudo apt-get install libsndfile1-dev
 sudo apt-get install libjack-dev
 
-If Csound is not installed in the usual place, i.e.,
-"/usr/local/include/csound" you will need to hack the makefiles so
-that the compiler can find the Csound header files or pass the path in
-argument of buildCabbage (see below).
-
-You'll also need to have the VST SDK. you'll need to pass the location of the 
-SDK so that the compiler can find it. 
-
+You'll also need to have the VST SDK. 
 
 If you are having problems viewing fonts you should get the following package:
 
@@ -39,15 +32,19 @@ Compile
 
 To build run the following command from the Linux directory:
 
-./buildCabbage [ARGS]
+./buildCabbage [custom paths]
 
-where ARGS are optional arguments passed to the make commands. For
-instance if you want to compile over 4 threads and set the include
-Csound path to /usr/include/csound, run:
+Running this script without any input prameters will build with default paths, i.e:
+Csound include: "/usr/local/include/csound 
+Csound library: "/usr/local/lib
+VST SDK: "~/SDKs/vstsdk2.4"
 
-./buildCabbage -j4 CSOUND_INCLUDE=/usr/include/csound VST_INCLUDE=~/SDKs/vstsdk2.4
+If you wish to use custom paths please pass them to the buildCabbage script in this order: 
+"csound include" "csound library" "vst sdk" 
 
-This should create a build directory with the Cabbage binary, as well
-as two plugin libraries. If you move the Cabbage binary to another
-location please make sure to also move the plugin libs, as they MUST
-reside in the same folder as the main Cabbage binary.
+Examples usuage with custom paths:
+
+./buildCabbage "/usr/local/csound" "/usr/lib" "~/VST_SDK"
+
+buildCabbage will create a CabbageBuild direcory that will contain everything you need to run Cabbage. It will also install Cabbage to the system menu through the use of a .desktop file. Please run Cabbage from the system menu in order to ensure that all examples and documentation are found
+when using Cabbage. Some users have reported issues when running Cabbage directly from the build directory. 

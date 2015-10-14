@@ -12,7 +12,7 @@ echo "If you wish to use custom paths please pass them to"
 echo "this script in this order: "
 echo "\"csound include\" \"csound library\" \"vst sdk\"" 
 echo "Examples:"
-echo "builAll \"/usr/local/csound\" \"/usr/lib\" \"~/VST_SDK"
+echo "bulidCabbage \"/usr/local/csound\" \"/usr/lib\" \"~/VST_SDK"
 echo ""
 echo ""
 

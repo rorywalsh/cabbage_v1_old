@@ -493,6 +493,11 @@
 		6168A5C41BA9D45C000F356A /* SplitComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SplitComponent.cpp; path = ../../Source/Editor/SplitComponent.cpp; sourceTree = "<group>"; };
 		6168A5C51BA9D45C000F356A /* SplitComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SplitComponent.h; path = ../../Source/Editor/SplitComponent.h; sourceTree = "<group>"; };
 		617854619A363E67CFF2F5FE /* juce_TabbedComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_TabbedComponent.h; path = ../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_TabbedComponent.h; sourceTree = SOURCE_ROOT; };
+		618A84701BCD4B0E000F2636 /* CabbagePlugin copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "CabbagePlugin copy-Info.plist"; path = "/Users/walshr/sourcecode/cabbageaudio/cabbage/Builds/MacOSX/CabbagePlugin copy-Info.plist"; sourceTree = "<absolute>"; };
+		618A84791BCD4B6F000F2636 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		618A847A1BCD4B6F000F2636 /* Test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Test.h; sourceTree = "<group>"; };
+		618A84861BCD4B6F000F2636 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		618A84871BCD4B6F000F2636 /* TestTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestTests.m; sourceTree = "<group>"; };
 		61E21AD1DDAA5A616E654D08 /* juce_Singleton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_Singleton.h; path = ../../JuceLibraryCode/modules/juce_core/memory/juce_Singleton.h; sourceTree = SOURCE_ROOT; };
 		6201CFF9232045EACEBB9297 /* juce_mac_Threads.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = juce_mac_Threads.mm; path = ../../JuceLibraryCode/modules/juce_core/native/juce_mac_Threads.mm; sourceTree = SOURCE_ROOT; };
 		623AB64BA85C0AFEA09EF11A /* juce_ScrollBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_ScrollBar.h; path = ../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_ScrollBar.h; sourceTree = SOURCE_ROOT; };
@@ -1778,6 +1783,40 @@
 			name = Editor;
 			sourceTree = "<group>";
 		};
+		618A84771BCD4B6E000F2636 /* Test */ = {
+			isa = PBXGroup;
+			children = (
+				618A847A1BCD4B6F000F2636 /* Test.h */,
+				618A84781BCD4B6F000F2636 /* Supporting Files */,
+			);
+			path = Test;
+			sourceTree = "<group>";
+		};
+		618A84781BCD4B6F000F2636 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				618A84791BCD4B6F000F2636 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		618A84841BCD4B6F000F2636 /* TestTests */ = {
+			isa = PBXGroup;
+			children = (
+				618A84871BCD4B6F000F2636 /* TestTests.m */,
+				618A84851BCD4B6F000F2636 /* Supporting Files */,
+			);
+			path = TestTests;
+			sourceTree = "<group>";
+		};
+		618A84851BCD4B6F000F2636 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				618A84861BCD4B6F000F2636 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		663098FE8BD61493C925B38C /* encryption */ = {
 			isa = PBXGroup;
 			children = (
@@ -2264,8 +2303,11 @@
 				99300EB703C35CCAD069FD12 /* Juce Modules */,
 				B833BEA811DE3C67424A8CEF /* Juce Library Code */,
 				5F479AD618F4901CB76ECB69 /* Resources */,
+				618A84771BCD4B6E000F2636 /* Test */,
+				618A84841BCD4B6F000F2636 /* TestTests */,
 				4AF9FD9CC441555B214C0193 /* Frameworks */,
 				285EA66A97DAF63F89A049FE /* Products */,
+				618A84701BCD4B0E000F2636 /* CabbagePlugin copy-Info.plist */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -3304,6 +3346,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Audio/Plug-Ins/Components/";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = Bundle;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_LDFLAGS = "-bundle";
@@ -3354,6 +3397,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Audio/Plug-Ins/Components/";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = Bundle;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_LDFLAGS = "-bundle";

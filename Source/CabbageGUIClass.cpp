@@ -51,8 +51,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         channels.append("hslider");
         cabbageIdentifiers.set(CabbageIDs::channel, channels);
         cabbageIdentifiers.set(CabbageIDs::min, 0);
-        cabbageIdentifiers.set(CabbageIDs::max, 100);
-        cabbageIdentifiers.set(CabbageIDs::value, 50);
+        cabbageIdentifiers.set(CabbageIDs::max, 1);
+        cabbageIdentifiers.set(CabbageIDs::value, 0);
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
@@ -61,7 +61,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::textcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
-        cabbageIdentifiers.set(CabbageIDs::sliderincr, .01);
+        cabbageIdentifiers.set(CabbageIDs::sliderincr, .001);
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);
         cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
         //these don't appear in the props dialog
@@ -97,8 +97,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         channels.append("vslider");
         cabbageIdentifiers.set(CabbageIDs::channel, channels);
         cabbageIdentifiers.set(CabbageIDs::min, 0);
-        cabbageIdentifiers.set(CabbageIDs::max, 100);
-        cabbageIdentifiers.set(CabbageIDs::value, 50);
+        cabbageIdentifiers.set(CabbageIDs::max, 1);
+        cabbageIdentifiers.set(CabbageIDs::value, 0);
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
@@ -107,7 +107,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::textcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
-        cabbageIdentifiers.set(CabbageIDs::sliderincr, .01);
+        cabbageIdentifiers.set(CabbageIDs::sliderincr, .001);
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);
         cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
         //these don't appear in the props dialog
@@ -137,10 +137,10 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         channels.append("rslider");
         cabbageIdentifiers.set(CabbageIDs::channel, channels);
         cabbageIdentifiers.set(CabbageIDs::min, 0);
-        cabbageIdentifiers.set(CabbageIDs::max, 100);
-        cabbageIdentifiers.set(CabbageIDs::value, 50);
+        cabbageIdentifiers.set(CabbageIDs::max, 1);
+        cabbageIdentifiers.set(CabbageIDs::value, 0);
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
-        cabbageIdentifiers.set(CabbageIDs::sliderincr, .01);
+        cabbageIdentifiers.set(CabbageIDs::sliderincr, .001);
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
@@ -918,6 +918,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 
     cabbageIdentifiers.set(CabbageIDs::alpha, 1);
     cabbageIdentifiers.set(CabbageIDs::visible, 1);
+    cabbageIdentifiers.set(CabbageIDs::active, 1);
     cabbageIdentifiers.set(CabbageIDs::rotate, 0.f);
     cabbageIdentifiers.set(CabbageIDs::pivotx, 0.f);
     cabbageIdentifiers.set(CabbageIDs::pivoty, 0.f);
@@ -1530,6 +1531,11 @@ void CabbageGUIClass::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("visible"))
             {
                 cabbageIdentifiers.set(CabbageIDs::visible, strTokens[0].trim().getFloatValue());
+            }
+
+            else if(identArray[indx].equalsIgnoreCase("active"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::active, strTokens[0].trim().getFloatValue());
             }
 
             else if(identArray[indx].equalsIgnoreCase("stack"))

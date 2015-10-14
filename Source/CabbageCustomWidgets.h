@@ -145,6 +145,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         setBounds(m_cAttr.getBounds());
     }
 
@@ -508,6 +516,14 @@ public:
             setVisible(true);
             setEnabled(true);
         }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
         {
             rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
@@ -803,6 +819,14 @@ public:
             setVisible(true);
             setEnabled(true);
         }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         repaint();
     }
 
@@ -1012,6 +1036,14 @@ public:
             setVisible(true);
             setEnabled(true);
         }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         repaint();
     }
 
@@ -1116,7 +1148,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         repaint();
     }
 
@@ -1247,7 +1286,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         if(isEnabled())
         {
             setColour(TextButton::buttonColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
@@ -1444,7 +1490,14 @@ public:
             setVisible(true);
 
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         if(ampRanges!=m_cAttr.getFloatArrayProp("amprange"))
         {
             ampRanges = m_cAttr.getFloatArrayProp("amprange");
@@ -1579,7 +1632,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         if(zoom!=m_cAttr.getNumProp(CabbageIDs::zoom))
         {
             zoom = m_cAttr.getNumProp(CabbageIDs::zoom);
@@ -1716,7 +1776,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         setText(m_cAttr.getStringProp(CabbageIDs::text));
         repaint();
     }
@@ -1836,7 +1903,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         //repaint();
     }
 
@@ -1927,7 +2001,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         if(text!=m_cAttr.getStringProp(CabbageIDs::text))
         {
             editor->setText(m_cAttr.getStringProp(CabbageIDs::text));
@@ -2089,7 +2170,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
         if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
         {
@@ -2367,7 +2455,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
         repaint();
     }
@@ -2498,6 +2593,14 @@ public:
         {
             setEnabled(true);
             setVisible(true);
+        }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
         }
         repaint();
     }

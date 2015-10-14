@@ -71,6 +71,7 @@ public:
         add("widgetarray");
         add("channelarray");
         add("textbox");
+        add("active");
         add("caption");
         add("kind");
         add("align");
@@ -149,6 +150,7 @@ static const Identifier caption = "caption";
 static const Identifier basetype = "basetype";
 static const Identifier textbox = "textbox";
 static const Identifier name = "name";
+static const Identifier active = "active";
 static const Identifier type = "type";
 static const Identifier tablegridcolour= "tablegridcolour";
 static const Identifier sliderskew = "sliderskew";

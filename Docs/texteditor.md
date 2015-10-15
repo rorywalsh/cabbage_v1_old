@@ -2,9 +2,9 @@
 ```csharp
 texteditor bounds(x, y, width, height), channel("channel"), \
 text("text"), colour("colour"), fontcolour("colour"), alpha(val), \
-visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number) 
+visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number) \ popuptext("text")
 ```
-
+<!--(End of syntax)/-->
 ![](images/texteditorExample.png)
 
 *Texteditor can be used to send strings to Csound. Hitting return will send the string to Csound on a named string channel. Pressing the up and down buttons when the texteditor is in focus will toggle through the previous strings that have been sent.*+
@@ -29,3 +29,7 @@ visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 **rotate(radians, pivotx, pivoty)** Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+
+**popuptext("text")** Displays a popup text box when a user hovers over the widget.
+<!--(End of identifiers)/-->
+

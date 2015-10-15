@@ -3,8 +3,9 @@
 infobutton bounds(x, y, width, height), text("name"), \
 colour("colour"), fontcolour("colour") file("file name"), \
 identchannel("chan"), alpha(val), visible(val), \
-rotate(radians, pivotx, pivoty), widgetarray("chan", number)
+rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text")
 ```
+<!--(End of syntax)/-->
 ![](images/infobuttonExample.png)
 
 ##Identifiers
@@ -29,3 +30,6 @@ Infobuttons can be used to open html files in the system's default web browser. 
 **rotate(radians, pivotx, pivoty)** Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+
+**popuptext("text")** Displays a popup text box when a user hovers over the widget.
+<!--(End of identifiers)/-->

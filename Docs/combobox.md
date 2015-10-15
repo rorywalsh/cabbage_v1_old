@@ -4,8 +4,9 @@ combobox bounds(x, y, width, height), channel("chan"), \
 value(val), items("item1", "item2", ...), populate("filetype", "dir"),\
 channeltype("type"), colour("colour"), fontcolour("colour"), \
 identchannel("channel"), alpha(val), visible(val), caption("caption"), \
-rotate(radians, pivotx, pivoty), widgetarray("chan", number)
+rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text")
 ```
+<!--(End of syntax)/-->
 ![](images/comboboxExample.png)
 
 ##Identifiers
@@ -38,3 +39,6 @@ Combobox creates a drop-down list of items which users can choose from. Once the
 **rotate(radians, pivotx, pivoty)** Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+
+**popuptext("text")** Displays a popup text box when a user hovers over the widget.
+<!--(End of identifiers)/-->

@@ -2,11 +2,12 @@
 ```csharp
 gentable bounds(x, y, width, height), tableNumber(1, 2, ...), \
 tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise),\
- tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max),\
-  zoom(val), outlinethickness(val), identchannel("channel"), \
-  alpha(val), visible(val), scrubberposition(val), \
-  rotate(radians, pivotx, pivoty), widgetarray("chan", number)
+tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max),\
+zoom(val), outlinethickness(val), identchannel("channel"), \
+alpha(val), visible(val), scrubberposition(val), \
+rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 ```
+<!--(End of syntax)/-->
 ![](images/tableExample.png)
 
 gentable displays the contents of a function table, multiple tables, or files. Function tables that use a negative GEN05, GEN07 or GEN02 can be edited by clicking and dragging on the table. Only tables of size less or equal to 16384 points can be manually edited. If you wish to save any tables that you create you can use one of Csound's built-in table saving opcode "ftsave". If you need only display the contents of a static sound file from disk, use soundfiler as it will be fast and use less CPU. If on the other hand you wish to create some user editable envelopes, or display FFT or live waveform data use table. 
@@ -54,6 +55,7 @@ The background grid is disabled when working with a table that use the file() id
 **rotate(radians, pivotx, pivoty)** Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+<!--(End of identifiers)/-->
 
 ![](images/smallLogo.PNG")
 If you need to redraw tables quickly, make sure they don't use negative GEN routines as it will seriously slow down redrawing. 

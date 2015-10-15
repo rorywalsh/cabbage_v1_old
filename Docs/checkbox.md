@@ -4,8 +4,9 @@ checkbox bounds(x, y, width, height), channel("chan"), \
 text("name"), value(val), caption("Caption"), colour:0("colour"), \
 colour:1("colour"), shape("shape"), fontcolour("colour"), \
 identchannel("channel"), alpha(val), visible(val), \
-rotate(radians, pivotx, pivoty), widgetarray("chan", number)
+rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text")
 ```
+<!--(End of syntax)/-->
 ![](images/checkboxExample.png)
 
 Checkbox creates a checkbox which functions like a button, but the associated caption will not change when the user checks it. As with all widgets capable of sending data to Csound, the channel string is the channel on which the widget will communicate with Csound. 
@@ -43,6 +44,9 @@ You can create an invisible checkbox by setting the colour to something with an 
 **visible(val)** A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+
+**popuptext("text")** Displays a popup text box when a user hovers over the widget.
+<!--(End of identifiers)/-->
 
 [icon="images/smallLogo.PNG"]
 colour:1() can be set using colour(). However, it's recommended that you use the numerated colour identifiers in order to make your code more readable. 

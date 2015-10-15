@@ -5,8 +5,9 @@ text("name"), textbox(val), range(min, max, value, skew, incr), \
 min(val), max(val), textcolour("colour"), fontcolour("colour"), \
 trackercolour("colour"), outlinecolour("colour"), \
 identchannel("channel"), alpha(val), visible(val), caption("caption"), \
-rotate(radians, pivotx, pivoty), widgetarray("chan", number)
+rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text")
 ```
+<!--(End of syntax)/-->
 ![](images/sliderExample.png)
 
 Slider can be used to create an on-screen slider. Data can be sent to Csound on the channel specified through the chan string. Presented above is the syntax for a horizontal slider, i.e., hslider. In order to change it to another slider type simple substitute hslider with the appropriate slider type as outlined below. 
@@ -27,7 +28,7 @@ Slider can be used to create an on-screen slider. Data can be sent to Csound on 
 
 **textbox(on/off)** textbox takes a 0 or a 1. 1 will cause a text box to appear with the sliders values. Leaving this out will result in the numbers appearing automatically when you hover over the sliders with your mouse.
 
-**colour("colour")** This sets the slider. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.  
+**colour("colour")** This sets the slider. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full. 
 
 **textcolour("colour")** This set the colour of the text passed to text(). If you wish to change the colour of the numbers being displayed use fontcolour(). See below. See above for details on valid colours. 
 
@@ -63,7 +64,11 @@ Slider types::
 
 * *hslider3*, horizontal slider with adjustable min and max limits
 
-* *vslider3*, vertical slider with adjustable min and max limits.  
+* *vslider3*, vertical slider with adjustable min and max limits.
+
+
+**popuptext("text")** Displays a popup text box when a user hovers over the widget.
+<!--(End of identifiers)/-->
 
 ![](images/smallLogo.PNG"]
 Make sure to use two unique channel names when using hslider2 and vslider2, otherwise min and max will be set to the same value. 

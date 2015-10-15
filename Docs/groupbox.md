@@ -6,6 +6,7 @@ popup(val), child(val), visible(val), alpha(val), show(val), \
 identchannel("channel"), rotate(radians, pivotx, pivoty), \
 widgetarray("chan", number)
 ```
+<!--(End of syntax)/-->
 ![](images/groupBoxExample.png)
 
 Groupbox creates a container for other GUI widgets. They do not communicate with Csound but can be useful for organising widgets into panels.
@@ -39,3 +40,4 @@ Groupbox creates a container for other GUI widgets. They do not communicate with
 **rotate(radians, pivotx, pivoty)** Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+<!--(End of identifiers)/-->

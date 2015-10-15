@@ -4,8 +4,9 @@ image bounds(x, y, width, height), colour("colour"), \
 file("file name"), shape("type"), outlinecolour("colour"), \
 outlinethickness(thickness), **plant("name"), identchannel("channel"), \
 visible(val), alpha(val), rotate(radians, pivotx, pivoty), \
-widgetarray("chan", number)
+widgetarray("chan", number), popuptext("text")
 ```
+<!--(End of syntax)/-->
 ![](images/imageExample.png)
 
 Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. For convenience, the file passed to file() should be in the same directory as your Cabbage instrument. 
@@ -39,3 +40,4 @@ Try to avoid full path names at all costs. They will work fine on a local machin
 **rotate(radians, pivotx, pivoty)** Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+<!--(End of identifiers)/-->

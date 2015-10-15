@@ -4,6 +4,7 @@ csoundoutput bounds(x, y, width, height), text("name"), \
 colour("colour"), fontcolour("colour"), identchannel("channel"), \
 visible(val), alpha(val), widgetarray("chan", number)
 ```
+<!--(End of syntax)/-->
 ![](images/csoundOutputExample.png)
 
 csoundoutput will display Csound output messages within your instrument**s GUI. This widget can be very useful when working in plugin mode and can be invaluable when it comes to de-slugging Cabbage instruments. 
@@ -25,3 +26,4 @@ csoundoutput will display Csound output messages within your instrument**s GUI. 
 **visible(val)** A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+<!--(End of identifiers)/-->

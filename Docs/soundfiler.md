@@ -5,6 +5,7 @@ colour("colour1"), zoom(val), tablenumber(val), file("filename"), \
 scrubberpos(val), identchannel("channel"), alpha(val), visible(val), \
 rotate(radians, pivotx, pivoty), widgetarray("chan", number)
 ```
+<!--(End of syntax)/-->
 ![](images/soundfilerExample.png)
 
 soundfiler will display the contents of a sound file, or a function table containing a sound file (GEN01 tables). This is a fast waveform viewer that allows users to select regions of the waveform. Unlike the table widget, soundfiler can only display one waveform at a time. 
@@ -34,3 +35,4 @@ soundfiler will display the contents of a sound file, or a function table contai
 **rotate(radians, pivotx, pivoty)** Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+<!--(End of identifiers)/-->

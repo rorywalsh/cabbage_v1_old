@@ -2,9 +2,10 @@
 ```csharp
 textbox bounds(x, y, width, height), file("filename"), \
 colour("colour"), fontcolour("colour"), wrap(val), alpha(val), \
-visible(val), rotate(radians, pivotx, pivoty), \
-widgetarray("chan", number)
+visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number) \
+popuptext("text")
 ```
+<!--(End of syntax)/-->
 ![](images/textboxExample.png)
 
 Textbox will display the contents of a text file. This can be useful for placing instructions and information directly on to an instrument.  
@@ -30,3 +31,6 @@ Textbox will display the contents of a text file. This can be useful for placing
 **rotate(radians, pivotx, pivoty)** Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+
+**popuptext("text")** Displays a popup text box when a user hovers over the widget.
+<!--(End of identifiers)/-->

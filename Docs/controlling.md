@@ -1,7 +1,8 @@
-== Controlling your Cabbage instrument
+# Controlling your Cabbage instrument
 The most obvious limitation to the above instrument is that users cannot interact with the underlying Csound instrument. In order to do this we can use a Csound named channel opcode and a Cabbage widget such as a slider. Any widget that needs to interact with Csound must have a channel identifier. 
 
 When one supplies a channel name to the channel() identifier Csound will listen for data being sent on that channel through the use of a named channel opcode. The chnget opcode is used to grab data from a named channel. It is defined in the Csound reference manual as:
+
 ```csharp
 kval chnget Sname 
 ```

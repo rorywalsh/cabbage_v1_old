@@ -61,7 +61,5 @@ This identifier will place the widget within a groupbox. "caption" is the text t
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
 
-![](images/
-
 ![](images/smallLogo.PNG)
 colour:1() and fontcolour:1() can be set using colour() and fontcolour(). However, it's recommended that you use the numerated colour identifiers in order to make your code as readable a possible. 

@@ -4,7 +4,7 @@ image bounds(x, y, width, height), colour("colour"), \
 file("file name"), shape("type"), outlinecolour("colour"), \
 outlinethickness(thickness), **plant("name"), identchannel("channel"), \
 visible(val), alpha(val), rotate(radians, pivotx, pivoty), \
-widgetarray("chan", number), popuptext("text")
+widgetarray("chan", number), popuptext("text"), active(val)
 ```
 <!--(End of syntax)/-->
 ![](images/imageExample.png)
@@ -40,4 +40,6 @@ Try to avoid full path names at all costs. They will work fine on a local machin
 **rotate(radians, pivotx, pivoty)** Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+
+**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->

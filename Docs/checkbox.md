@@ -4,7 +4,8 @@ checkbox bounds(x, y, width, height), channel("chan"), \
 text("name"), value(val), caption("Caption"), colour:0("colour"), \
 colour:1("colour"), shape("shape"), fontcolour("colour"), \
 identchannel("channel"), alpha(val), visible(val), \
-rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text")
+rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") \
+active(val)
 ```
 <!--(End of syntax)/-->
 ![](images/checkboxExample.png)
@@ -46,6 +47,8 @@ You can create an invisible checkbox by setting the colour to something with an 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
+
+**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
 
 [icon="images/smallLogo.PNG"]

@@ -5,7 +5,8 @@ text("name"), textbox(val), range(min, max, value, skew, incr), \
 min(val), max(val), textcolour("colour"), fontcolour("colour"), \
 trackercolour("colour"), outlinecolour("colour"), \
 identchannel("channel"), alpha(val), visible(val), caption("caption"), \
-rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text")
+rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") \
+active(val)
 ```
 <!--(End of syntax)/-->
 ![](images/sliderExample.png)
@@ -68,6 +69,8 @@ Slider types::
 
 
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
+
+**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
 
 ![](images/smallLogo.PNG"]

@@ -4,7 +4,7 @@ groupbox bounds(x, y, width, height), text("Caption"), \
 colour("colour"), fontcolour("colour"), line(value), plant("name"), \
 popup(val), child(val), visible(val), alpha(val), show(val), \
 identchannel("channel"), rotate(radians, pivotx, pivoty), \
-widgetarray("chan", number)
+widgetarray("chan", number), active(val)
 ```
 <!--(End of syntax)/-->
 ![](images/groupBoxExample.png)
@@ -40,4 +40,6 @@ Groupbox creates a container for other GUI widgets. They do not communicate with
 **rotate(radians, pivotx, pivoty)** Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+
+**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->

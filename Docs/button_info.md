@@ -3,7 +3,8 @@
 infobutton bounds(x, y, width, height), text("name"), \
 colour("colour"), fontcolour("colour") file("file name"), \
 identchannel("chan"), alpha(val), visible(val), \
-rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text")
+rotate(radians, pivotx, pivoty), widgetarray("chan", number), \
+popuptext("text"), active(val)
 ```
 <!--(End of syntax)/-->
 ![](images/infobuttonExample.png)
@@ -32,4 +33,6 @@ Infobuttons can be used to open html files in the system's default web browser. 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
+
+**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->

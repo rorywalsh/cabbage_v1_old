@@ -5,7 +5,7 @@ tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quanti
 tablegridcolour("colour"), tablebackgroundcolour("colour"), samplerange(min, max),\
 zoom(val), outlinethickness(val), identchannel("channel"), \
 alpha(val), visible(val), scrubberposition(val), \
-rotate(radians, pivotx, pivoty), widgetarray("chan", number)
+rotate(radians, pivotx, pivoty), widgetarray("chan", number), active(val)
 ```
 <!--(End of syntax)/-->
 ![](images/tableExample.png)
@@ -55,6 +55,8 @@ The background grid is disabled when working with a table that use the file() id
 **rotate(radians, pivotx, pivoty)** Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+
+**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
 
 ![](images/smallLogo.PNG")

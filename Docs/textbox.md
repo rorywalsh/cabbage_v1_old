@@ -3,7 +3,7 @@
 textbox bounds(x, y, width, height), file("filename"), \
 colour("colour"), fontcolour("colour"), wrap(val), alpha(val), \
 visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number) \
-popuptext("text")
+popuptext("text"), active(val)
 ```
 <!--(End of syntax)/-->
 ![](images/textboxExample.png)
@@ -33,4 +33,6 @@ Textbox will display the contents of a text file. This can be useful for placing
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
+
+**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->

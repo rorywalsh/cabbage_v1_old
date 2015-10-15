@@ -4,7 +4,8 @@
 button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), \
 value(val), colour("colour"), fontcolour("colour"), latched(val), \
 identchannel("channel"), alpha(val), visible(val), caption("caption"), \ 
-rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text")
+rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") \
+active(val)
 ```
 <!--(End of syntax)/-->
 ![Button](images/buttonExample.png)
@@ -62,6 +63,8 @@ This identifier will place the widget within a groupbox. "caption" is the text t
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
+
+**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
 
 ![](images/smallLogo.PNG)

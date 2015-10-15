@@ -3,7 +3,8 @@
 xypad bounds(x, y, width, height), channel("chan1", "chan2"), \
 rangex(min, max, val), rangey(min, max, val), text("name"), \
 identchannel("channel"), colour("colour"), fontcolour("colour"), \
-textcolour("colour"), alpha(val), visible(val), widgetarray("chan", number)
+textcolour("colour"), alpha(val), visible(val), widgetarray("chan", number) \
+active(val)
 ```
 <!--(End of syntax)/-->
 
@@ -40,4 +41,6 @@ xypad is an x/y controller that sends data to Csound on two named channels. The 
 XY pads range identifiers do not permit the setting of skew factors, or increments. If you wish to set a custom skew factor, or increment value, you will need to do so using Csound code.  
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md) 
+
+**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->

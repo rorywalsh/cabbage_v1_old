@@ -3,7 +3,7 @@
 soundfiler bounds(x, y, width, height), channel("start", "end"), \
 colour("colour1"), zoom(val), tablenumber(val), file("filename"), \
 scrubberpos(val), identchannel("channel"), alpha(val), visible(val), \
-rotate(radians, pivotx, pivoty), widgetarray("chan", number)
+rotate(radians, pivotx, pivoty), widgetarray("chan", number), active(val)
 ```
 <!--(End of syntax)/-->
 ![](images/soundfilerExample.png)
@@ -35,4 +35,6 @@ soundfiler will display the contents of a sound file, or a function table contai
 **rotate(radians, pivotx, pivoty)** Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
+
+**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->

@@ -4,7 +4,8 @@ combobox bounds(x, y, width, height), channel("chan"), \
 value(val), items("item1", "item2", ...), populate("filetype", "dir"),\
 channeltype("type"), colour("colour"), fontcolour("colour"), \
 identchannel("channel"), alpha(val), visible(val), caption("caption"), \
-rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text")
+rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") \
+active(val)
 ```
 <!--(End of syntax)/-->
 ![](images/comboboxExample.png)
@@ -41,4 +42,6 @@ Combobox creates a drop-down list of items which users can choose from. Once the
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
+
+**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->

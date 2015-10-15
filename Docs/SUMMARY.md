@@ -1,5 +1,10 @@
 # Summary
-* [Standalone host](standalone_host.md)
+* [Quick start](quickstart.md)	
+	* [First synth](first_synth.md)
+	* [Controlling your instrument](controlling.md)
+	* [First effect](first_effect.md)
+	* [Exporting instruments as plugins](exporting.md)
+	* [Distributing instruments](distributing.md)
 * [Widget Reference](cabbage_widgets.md)
 	* [Button](button.md)
 	* [Button(File)](button_file.md)
@@ -29,3 +34,6 @@
 	* [Presets](presets.md)
 	* [Widget arrays](widget_arrays.md)
 	* [Reserved channels](reserved_channels.md)
+* [Standalone host](standalone_host.md)
+
+

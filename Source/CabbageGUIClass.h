@@ -61,6 +61,7 @@ public:
         add("populate");
         add("range");
         add("amprange");
+        add("popuptext");
         add("address");
         add("rangex");
         add("rangey");
@@ -143,6 +144,7 @@ static const Identifier oncolour = "oncolour";
 static const Identifier tablebackgroundcolour = "tablebackgroundcolour";
 static const Identifier items = "items";
 static const Identifier text = "text";
+static const Identifier popuptext = "popuptext";
 static const Identifier range = "range";
 static const Identifier sliderrange = "sliderrange";
 static const Identifier amprange = "amprange";

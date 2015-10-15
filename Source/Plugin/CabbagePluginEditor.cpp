@@ -67,11 +67,17 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     swatchColours.set(14, Colour(0x80FF00FF));
     swatchColours.set(15, Colour(0x8000FFFF));
     setWantsKeyboardFocus(false);
+
+
+
     //setOpaque(true);
     //set custom skin yo use
     lookAndFeel = new CabbageLookAndFeel();
     basicLookAndFeel = new CabbageLookAndFeelBasic();
     feely = new LookAndFeel_V1();
+
+    tooltipWindow.setLookAndFeel(lookAndFeel);
+
     //create popup display for showing value of sliders.
     popupBubble = new BubbleMessageComponent(250);
     popupBubble->setColour(BubbleComponent::backgroundColourId, Colours::white);
@@ -463,7 +469,11 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
             }
             else
             {
-                popupText = cabSlider->getChannel()+": "+String(value);
+                if(cabSlider->tooltipText.isNotEmpty())
+                    popupText = cabSlider->tooltipText;
+                else
+                    popupText = cabSlider->getChannel()+": "+String(value);
+
                 popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
             }
 
@@ -2572,6 +2582,8 @@ void CabbagePluginAudioProcessorEditor::InsertButton(CabbageGUIClass &cAttr)
     //set visiblilty
     comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
     comps[idx]->setEnabled((cAttr.getNumProp(CabbageIDs::active)==1 ? true : false));
+
+    //((CabbageButton*)comps[idx])->setToolTip("Hello");
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++

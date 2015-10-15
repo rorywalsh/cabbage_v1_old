@@ -39,6 +39,9 @@ Csound include: "/usr/local/include/csound
 Csound library: "/usr/local/lib
 VST SDK: "~/SDKs/vstsdk2.4"
 
+Or if you've downloaded the VST3 SDK you should do something like 'foo/bar/VST3\ SDK' so as to avoid problems with the space in the folder name. 
+You can also simply rename the VST3 folder so that it doesn't contain and spaces. 
+
 If you wish to use custom paths please pass them to the buildCabbage script in this order: 
 "csound include" "csound library" "vst sdk" 
 

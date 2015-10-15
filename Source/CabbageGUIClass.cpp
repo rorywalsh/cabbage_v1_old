@@ -916,6 +916,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::type, "hosttime");
     }
 
+    cabbageIdentifiers.set(CabbageIDs::popuptext, "");
     cabbageIdentifiers.set(CabbageIDs::alpha, 1);
     cabbageIdentifiers.set(CabbageIDs::visible, 1);
     cabbageIdentifiers.set(CabbageIDs::active, 1);
@@ -1179,6 +1180,11 @@ void CabbageGUIClass::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("pluginid"))
             {
                 cabbageIdentifiers.set(CabbageIDs::pluginid, strTokens[0].trim());
+            }
+
+            else if(identArray[indx].equalsIgnoreCase("popuptext"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::popuptext, strTokens[0]);
             }
 
             else if(identArray[indx].equalsIgnoreCase("items")||

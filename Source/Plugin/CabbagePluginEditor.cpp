@@ -744,6 +744,9 @@ void CabbagePluginAudioProcessorEditor::addToRepository(String entryName)
                 i=-100;
             }
     }
+    else
+        plantText.add(csdArray[lineNumbers[0]]);
+
     String plantDir = appProperties->getUserSettings()->getValue("PlantFileDir", "");
     String fileName = plantDir+"/"+entryName+".plant";
     File file(fileName);
@@ -768,6 +771,7 @@ void CabbagePluginAudioProcessorEditor::convertIntoPlant()
     StringArray csdArray;
     StringArray boundsForSelectComps;
     StringArray newPlantText;
+    String plantContainer="";
 
     csdArray.addLines(getFilter()->getCsoundInputFileText());
     ComponentLayoutEditor* le = layoutEditor;
@@ -780,8 +784,16 @@ void CabbagePluginAudioProcessorEditor::convertIntoPlant()
         currentLineNumber = lineNumbers[0];
     }
 
+    if(csdArray[lineNumbers[0]].contains("image ")||csdArray[lineNumbers[0]].contains("groupbox "))
+    {
+        plantContainer = csdArray[lineNumbers[0]];
+        csdArray.remove(lineNumbers[0]);
+    }
+
     for(int i=0; i<lineNumbers.size(); i++)
+    {
         newPlantText.add(csdArray[lineNumbers[i]]);
+    }
 
     if(newPlantText.joinIntoString("\n").contains(" plant("))
         showMessage("Illegal Operation:\nThis group of objects already contains a plant", &this->getLookAndFeel());
@@ -823,6 +835,7 @@ void CabbagePluginAudioProcessorEditor::convertIntoPlant()
             if(cAttr.getBounds().getHeight()+cAttr.getBounds().getY()>bounds.getY()+bounds.getHeight())
                 bounds.setHeight(cAttr.getBounds().getHeight()+cAttr.getBounds().getY()-bounds.getY());
         }
+
         //Logger::writeToLog(getBoundsString(bounds));
         //now that we have our image bounds, we need to change the child coordinates relative
         //to the bounds top/left position
@@ -834,13 +847,16 @@ void CabbagePluginAudioProcessorEditor::convertIntoPlant()
             newPlantText.getReference(i) = replaceIdentifier(newPlantText[i], "bounds", getBoundsString(newBounds));
         }
 
+
         for(int i=0; i<newPlantText.size(); i++)
             if(newPlantText[i].contains("image ") || newPlantText[i].contains("groupbox "))
                 newPlantText.move(i, 0);
 
 
-
-        newPlantText.insert(0, "image "+getBoundsString(bounds)+", colour(255, 255, 255, 0), plant(\"newPlant\"){");
+        if(plantContainer.isNotEmpty())
+            newPlantText.insert(0, plantContainer+", plant(\"newPlant\"){");
+        else
+            newPlantText.insert(0, "image "+getBoundsString(bounds)+", colour(255, 255, 255, 0), plant(\"newPlant\"){");
         newPlantText.add("}");
         insertComponentsFromCabbageText(newPlantText, false);
 
@@ -1321,7 +1337,8 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
         subm.clear();
 
         String plantDir = appProperties->getUserSettings()->getValue("PlantFileDir", "");
-        addFilesToPopupMenu(subm, plantFiles, plantDir, "*.plant", 100);
+        //showMessage(plantDir);
+        addCustomPlantsToMenu(subm, plantFiles, plantDir);
         m.addSubMenu(String("Homegrown"), subm);
     }
 
@@ -1375,15 +1392,29 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
     {
         //showMessage(xml->getAttributeValue(choice-100));
         //update X and Y positions from plants
+        for(int i=0; i<plantFiles.size(); i++)
+        {
+            cUtils::debug(String(i)+":"+plantFiles[i].getFullPathName());
+        }
+
+
         String customPlantControl = plantFiles[choice-100].loadFileAsString();
-        StringArray userPlant;
-        userPlant.addLines(customPlantControl);
-        CabbageGUIClass cAttr(userPlant[0], -99);
-        juce::Rectangle <int> bounds(x, y, cAttr.getBounds().getWidth(), cAttr.getBounds().getHeight());
+        String plantTextFile = plantFiles[choice-100].getFullPathName();
+        if(customPlantControl.isNotEmpty())
+        {
+            StringArray userPlant;
+            userPlant.addLines(customPlantControl);
+            CabbageGUIClass cAttr(userPlant[0], -99);
+            juce::Rectangle <int> bounds(x, y, cAttr.getBounds().getWidth(), cAttr.getBounds().getHeight());
 
-        userPlant.getReference(0) = replaceIdentifier(userPlant[0], "bounds", getBoundsString(bounds));
-        insertComponentsFromCabbageText(userPlant, false);
-
+            userPlant.getReference(0) = replaceIdentifier(userPlant[0], "bounds", getBoundsString(bounds));
+            insertComponentsFromCabbageText(userPlant, false);
+        }
+        else
+        {
+            String info = "There seems to be a problem with the file: "+plantTextFile+"\nPlease check that it is valid and contains text";
+            showMessage(info, &getLookAndFeel());
+        }
     }
 
 //add new lines to text..
@@ -1527,6 +1558,9 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
 {
 #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 //offset the new object by a random value each time so they don't overlap exactly
+    //showMessage(text.joinIntoString("\n"));
+    cUtils::debug(text.joinIntoString("\n"));
+
     int offset;
     if(useOffset)
         offset = 30+Random().nextInt(40);

@@ -1414,8 +1414,10 @@ void StandaloneFilterWindow::setupWindowDimensions()
 //==============================================================================
 void StandaloneFilterWindow::showEditorConsole()
 {
+
     if(getPreference(appProperties, "ShowEditorConsole")==1)
     {
+        cabbageCsoundEditor->csoundOutputComponent->setText("");
         cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
 #ifdef BUILD_DEBUGGER
         cabbageCsoundEditor->splitBottomWindow->SetSplitBarPosition(cabbageCsoundEditor->getWidth());

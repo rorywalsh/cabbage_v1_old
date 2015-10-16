@@ -750,6 +750,69 @@ public:
     }
 
 //==========================================================================================
+    static void addCustomPlantsToMenu (PopupMenu& m, Array<File> &plantFiles, String userDir)
+    {
+        int menuSize = m.getNumItems();
+
+        PopupMenu menu;
+        PopupMenu subMenu;
+        int fileCnt=0;
+
+        if(File(userDir).exists())
+        {
+            FileSearchPath filePaths(userDir);
+            //cUtils::showMessage(appProperties->getUserSettings()->getValue("CabbageFilePaths"))
+
+            //add all files in root of specifed directories
+            for(int i=0; i<filePaths.getNumPaths(); i++)
+            {
+                File plantDir(filePaths[i]);
+                plantDir.findChildFiles(plantFiles, File::findFiles, false, "*.plant");
+
+            }
+
+            for (int i = 0; i < plantFiles.size(); ++i)
+                m.addItem (i+100, plantFiles[i].getFileNameWithoutExtension());
+
+
+            //fileCnt = cabbageFiles.size();
+
+            //increment menu size and serach recursively through all subfolders in specified dirs
+            for(int i=0; i<filePaths.getNumPaths(); i++)
+            {
+                Array<File> subFolders;
+                File searchDir(filePaths[i]);
+                subFolders.add(searchDir);
+                searchDir.findChildFiles(subFolders, File::findDirectories, true);
+
+                //remove parent dirs from array
+                for(int p=0; p<filePaths.getNumPaths(); p++)
+                    subFolders.removeAllInstancesOf(filePaths[p]);
+
+                PopupMenu subMenu;
+                for (int subs = 0; subs < subFolders.size(); subs++)
+                {
+                    cUtils::debug(subFolders[subs].getFullPathName());
+                    fileCnt = plantFiles.size();
+                    subFolders[subs].findChildFiles(plantFiles, File::findFiles, false, "*.plants");
+                    subMenu.clear();
+
+                    for (int fileIndex=fileCnt+1; fileIndex < plantFiles.size(); fileIndex++)
+                        subMenu.addItem (fileIndex+100, plantFiles[fileIndex].getFileNameWithoutExtension());
+
+
+                    m.addSubMenu(subFolders[subs].getFileNameWithoutExtension(), subMenu);
+                }
+
+                subMenu.clear();
+            }
+
+
+            m.addSeparator();
+            //m.setLookAndFeel(&this->getLookAndFeel());
+        }
+    }
+
 
     static void addFilesToPopupMenu(PopupMenu &m, Array<File> &filesArray, String dir, String ext, int indexOffset)
     {
@@ -778,7 +841,9 @@ public:
 
                 subMenu.clear();
                 for (fileCnt = noOfFiles; fileCnt < filesArray.size(); fileCnt++)
+                {
                     subMenu.addItem (fileCnt + indexOffset, filesArray[fileCnt].getFileNameWithoutExtension());
+                }
                 noOfFiles = fileCnt;
                 if(noOfFiles>0)
                     m.addSubMenu(subFolders[i].getFullPathName().replace(dir, "").replace(pathSlash, "-"), subMenu);

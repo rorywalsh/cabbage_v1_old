@@ -283,59 +283,63 @@ void ChildAlias::mouseDown (const MouseEvent& e)
 #endif
         if(choice==1)
         {
-            this->getTopLevelComponent()->setAlwaysOnTop(false);
-            AlertWindow alert("Add to Repository", "Enter a name and hit 'escape'", AlertWindow::NoIcon, this->getTopLevelComponent());
-            CabbageLookAndFeel basicLookAndFeel;
-            alert.setLookAndFeel(&basicLookAndFeel);
-            alert.setColour(TextEditor::textColourId, Colours::white);
-            alert.setColour(TextEditor::backgroundColourId, Colour(20, 20, 20));
-            alert.setColour(TextEditor::highlightColourId, Colour(20, 20, 20));
-            //alert.addTextBlock("Enter a name and hit 'escape'(The following symbols not premitted in names:"" $ % ^ & * ( ) - + )");
-            alert.addTextEditor("textEditor", "name", "");
             String plantDir;
-#if !defined(AndroidBuild) && !defined(CABBAGE_HOST)
             plantDir = appProperties->getUserSettings()->getValue("PlantFileDir", "");
-            alert.runModalLoop();
+            if(File(plantDir).exists())
+            {
+                this->getTopLevelComponent()->setAlwaysOnTop(false);
+                AlertWindow alert("Add to Repository", "Enter a name and hit 'escape'", AlertWindow::NoIcon, this->getTopLevelComponent());
+                //CabbageLookAndFeel basicLookAndFeel;
+                alert.setLookAndFeel(&getLookAndFeel());
+                alert.setColour(TextEditor::textColourId, Colours::white);
+                alert.setColour(TextEditor::backgroundColourId, Colour(20, 20, 20));
+                alert.setColour(TextEditor::highlightColourId, Colour(20, 20, 20));
+                //alert.addTextBlock("Enter a name and hit 'escape'(The following symbols not premitted in names:"" $ % ^ & * ( ) - + )");
+                alert.addTextEditor("textEditor", "name", "");
+#if !defined(AndroidBuild) && !defined(CABBAGE_HOST)
+                alert.runModalLoop();
 #endif
-            this->getTopLevelComponent()->setAlwaysOnTop(true);
-            bool clashingNames=false;
-            int result;
+                this->getTopLevelComponent()->setAlwaysOnTop(true);
+                bool clashingNames=false;
+                int result;
 
+                //Logger::writeToLog(plantDir);
+                Array<File> tempfiles;
+                StringArray plants;
+                addFilesToPopupMenu(m, tempfiles, plantDir, "*.plant", 100);
 
-            //Logger::writeToLog(plantDir);
-            Array<File> tempfiles;
-            StringArray plants;
-            addFilesToPopupMenu(m, tempfiles, plantDir, "*.plant", 100);
-
-            for(int i=0; i<tempfiles.size(); i++)
-            {
-                Logger::outputDebugString(tempfiles[i].getFullPathName());
-                plants.add(tempfiles[i].getFileNameWithoutExtension());
-            }
-
-            for(int i=0; i<plants.size(); i++)
-                if(plants[i]==alert.getTextEditorContents("textEditor"))
-                    clashingNames = true;
-
-            ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
-            if(parent)
-            {
-                parent->currentEvent = "addPlantToRepo:"+alert.getTextEditorContents("textEditor");
-
-
-                if(clashingNames==true)
+                for(int i=0; i<tempfiles.size(); i++)
                 {
-                    result = cUtils::showYesNoMessage("Do you wish to overwrite the existing plant?", &getLookAndFeel());
-                    if(result == 0)
-                        parent->sendChangeMessage();
+                    Logger::outputDebugString(tempfiles[i].getFullPathName());
+                    plants.add(tempfiles[i].getFileNameWithoutExtension());
+                }
+
+                for(int i=0; i<plants.size(); i++)
+                    if(plants[i]==alert.getTextEditorContents("textEditor"))
+                        clashingNames = true;
+
+                ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
+                if(parent)
+                {
+                    parent->currentEvent = "addPlantToRepo:"+alert.getTextEditorContents("textEditor");
+
+
+                    if(clashingNames==true)
+                    {
+                        result = cUtils::showYesNoMessage("Do you wish to overwrite the existing plant?", &getLookAndFeel());
+                        if(result == 0)
+                            parent->sendChangeMessage();
+                        else
+                            showMessage("Nothing written to repository", &getLookAndFeel());
+                    }
                     else
-                        showMessage("Nothing written to repository", &getLookAndFeel());
-                }
-                else
-                {
-                    parent->sendChangeMessage();
+                    {
+                        parent->sendChangeMessage();
+                    }
                 }
             }
+            else
+                cUtils::showMessage("No plant directory found. Please select a plant/widget directory in the Options->Preferences menu", &getLookAndFeel());
         }
         else if(choice==2)
         {

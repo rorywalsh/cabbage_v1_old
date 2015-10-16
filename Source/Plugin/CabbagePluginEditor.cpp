@@ -1723,7 +1723,6 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
             subPatches[patchIndex]->setAlwaysOnTop(true);
             subPatches[patchIndex]->setTitleBarHeight(18);
             //add popupBubble to plany window so slider popups can be seen
-            subPatches[patchIndex]->addChildComponent(popupBubble);
             layoutComps[idx]->getProperties().set("popupPlantIndex", patchIndex);
 
             //if plant is to stay within the bounds of the main window...
@@ -1741,6 +1740,7 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
             else
                 subPatches[patchIndex]->centreWithSize(layoutComps[idx]->getWidth(), layoutComps[idx]->getHeight()+18);
 
+            layoutComps[idx]->addAndMakeVisible(popupBubble);
             subPatches[patchIndex]->setContentNonOwned(layoutComps[idx], true);
             //layoutComps[idx]->addMouseListener(subPatches[patchIndex], false);
             subPatches[patchIndex]->setMinimised(true);

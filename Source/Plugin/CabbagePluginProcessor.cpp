@@ -1878,7 +1878,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
 //		}
 
         //update all control widgets
-        for(int index=0; index<getGUICtrlsSize(); index++)
+        for(int index=0; index<guiCtrls.size(); index++)
         {
             if(guiCtrls[index].getStringProp(CabbageIDs::channeltype).equalsIgnoreCase(CabbageIDs::stringchannel))
             {
@@ -1888,7 +1888,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
             {
                 float value = csound->GetChannel(guiCtrls[index].getStringProp(CabbageIDs::channel).getCharPointer());
 
-                if(value!=guiCtrls.getReference(index).getNumProp(CabbageIDs::value))
+                if(value!=guiCtrls[index].getNumProp(CabbageIDs::value))
                 {
                     //Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));
                     //Logger::writeToLog("value:"+String(value));

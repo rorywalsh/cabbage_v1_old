@@ -484,6 +484,12 @@ void TableManager::enableEditMode(StringArray pFields, int ftNumber)
             tables[i]->enableEditMode(pFields);
 }
 //==============================================================================
+void TableManager::toggleEditMode(bool enable)
+{
+    for( int i=0; i<tables.size(); i++)
+        tables[i]->getHandleViewer()->setVisible(enable);
+}
+//==============================================================================
 void TableManager::bringTableToFront(int ftNumber)
 {
     for( int i=0; i<tables.size(); i++)
@@ -714,10 +720,15 @@ Array<double> GenTable::getPfields()
             float amp = pixelToAmp(handleViewer->getHeight(), minMax, currYPos);
             if(genRoutine==5)
                 amp = jmax(0.001f, amp);
-            else
-                amp = jmax(0.f, amp);
+            //what was I thinking here with this next code! It was preventing
+            //any tables with negative values from editing properly. I'm leaving it
+            //here as a reminder of how dumb that was...
+
+            //else
+            //    amp = jmax(0.f, amp);
             //add y position
             values.add(amp);
+            cUtils::debug("Amp:" + String(amp));
             prevXPos = roundToIntAccurate(handleViewer->handles[i]->xPosRelative*waveformBuffer.size());
         }
         else if(genRoutine==2)
@@ -733,7 +744,6 @@ Array<double> GenTable::getPfields()
             {
                 float amp = pixelToAmp(handleViewer->getHeight(), minMax, currYPos);
                 values.add(amp);
-
             }
         }
     }
@@ -1065,7 +1075,7 @@ void GenTable::paint (Graphics& g)
     {
         vuPath.startNewSubPath(0, thumbArea.getHeight()+5.f);
 
-        //if drawing VU meter then we don't need a high resolution for the draing.
+        //if drawing VU meter then we don't need a high resolution for the drawing.
         float incr = (tableSize<=2 ? 1 : visibleLength/((double)thumbArea.getWidth()));
         prevY = ampToPixel(thumbHeight, minMax, waveformBuffer[0]);
         float midPoint;
@@ -1097,6 +1107,7 @@ void GenTable::paint (Graphics& g)
             else
             {
                 //minMax is the range of the current waveforms amplitude
+
                 currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
                 if(tableSize<=2)
                 {

@@ -78,6 +78,7 @@ public:
     void setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange = true);
     void setFile(const File file);
     void enableEditMode(StringArray pFields, int ftnumber);
+    void toggleEditMode(bool enable);
     ScopedPointer<RoundButton> zoomIn, zoomOut;
     OwnedArray<RoundButton> tableButtons;
     OwnedArray<GenTable> tables;

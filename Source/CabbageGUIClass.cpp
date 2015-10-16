@@ -1763,11 +1763,11 @@ void CabbageGUIClass::parse(String inStr, String identifier)
 //retrieve numerical attributes
 float CabbageGUIClass::getNumProp(Identifier prop)
 {
-    var props = cabbageIdentifiers.getWithDefault(prop, -9999.f);
+    var props = cabbageIdentifiers.getWithDefault(prop, -9999);
     if(props.size()>0)
         return props[0];
     else
-        return cabbageIdentifiers.getWithDefault(prop, -9999.f);
+        return cabbageIdentifiers.getWithDefault(prop, -9999);
 }
 
 //================================================================================================

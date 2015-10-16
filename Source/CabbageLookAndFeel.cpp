@@ -1073,7 +1073,7 @@ void CabbageLookAndFeel::drawScrollbar (Graphics &g, ScrollBar &scrollbar, int x
                                         bool isMouseOver,
                                         bool isMouseDown)
 {
-    g.setColour (Colours::transparentBlack.withAlpha(.7f));
+    g.setColour (Colours::transparentBlack);
     g.fillAll();
 
     g.setColour (cUtils::getComponentSkin().withAlpha(.5f));

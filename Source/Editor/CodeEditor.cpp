@@ -34,7 +34,6 @@ CsoundCodeEditor::CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTo
     editor.add(new CsoundCodeEditorComponenet("csound", document, codeTokeniser));
     addAndMakeVisible(editor[currentEditor]);
     editor[currentEditor]->getDocument().setSavePoint();
-
     openFiles.add("CABBAGE_CSOUND_FILE");
 
     helpComp = new HelpComp();

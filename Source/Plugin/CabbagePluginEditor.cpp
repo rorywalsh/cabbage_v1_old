@@ -2251,7 +2251,8 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
-    layoutComps[idx]->setEnabled((cAttr.getNumProp(CabbageIDs::active)==1 ? true : false));
+    //not allowed active here...
+    //layoutComps[idx]->setEnabled((cAttr.getNumProp(CabbageIDs::active)==1 ? true : false));
     TableManager* table = dynamic_cast<CabbageGenTable*>(layoutComps[idx])->table;
 
     int fileTable = 0;
@@ -2306,6 +2307,9 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
                     //cUtils::showMessage(tableValues.size());
                     table->setWaveform(tableValues, tableNumber);
                     //only enable editing for gen05, 07, and 02
+                    if(cAttr.getNumProp(CabbageIDs::zoom)!=0)
+                        table->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
+
                     table->enableEditMode(pFields, tableNumber);
                 }
 
@@ -2325,8 +2329,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 
     if(cAttr.getNumProp(CabbageIDs::startpos)>-1 && cAttr.getNumProp(CabbageIDs::endpos)>0)
         table->setRange(cAttr.getNumProp(CabbageIDs::startpos), cAttr.getNumProp(CabbageIDs::endpos));
-    if(cAttr.getNumProp(CabbageIDs::zoom)!=0)
-        table->setZoomFactor(cAttr.getNumProp(CabbageIDs::zoom));
+
 
     //set grid colour and background colours for all tables
     if(fileTable==0)
@@ -2336,8 +2339,6 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 
     table->setBackgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablebackgroundcolour)));
     table->setFill(cAttr.getNumProp(CabbageIDs::fill));
-
-
 
     //set VU gradients based on tablecolours, take only the first three colours.
     Array<Colour> gradient;
@@ -2349,6 +2350,8 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIClass &cAttr)
 
     table->setVUGradient(gradient);
 
+    if(cAttr.getNumProp(CabbageIDs::active)!=1)
+        table->toggleEditMode(false);
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

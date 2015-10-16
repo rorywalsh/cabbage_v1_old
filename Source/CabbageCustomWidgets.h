@@ -1563,16 +1563,16 @@ public:
         {
             setEnabled(true);
             setVisible(true);
-
         }
         if(!m_cAttr.getNumProp(CabbageIDs::active))
         {
-            setEnabled(false);
+            table->toggleEditMode(false);
         }
         else
         {
-            setEnabled(true);
+            table->toggleEditMode(true);
         }
+
         if(ampRanges!=m_cAttr.getFloatArrayProp("amprange"))
         {
             ampRanges = m_cAttr.getFloatArrayProp("amprange");

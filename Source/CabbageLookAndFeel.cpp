@@ -493,10 +493,10 @@ void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width,
 
     if (radius > 12.0f)
     {
-        if (slider.isEnabled())
-            g.setColour (slider.findColour (Slider::trackColourId).withAlpha (isMouseOver ? 1.0f : 0.9f));
-        else
-            g.setColour (Colour (0x80808080));
+        //if (slider.isEnabled())
+        g.setColour (slider.findColour (Slider::trackColourId).withAlpha (isMouseOver ? 1.0f : 0.9f));
+        //else
+        //    g.setColour (Colour (0x80808080));
 
         const float thickness = 0.7f;
         {
@@ -506,10 +506,10 @@ void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width,
         }
 
 
-        if (slider.isEnabled())
-            g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId));
-        else
-            g.setColour (Colour (0x80808080));
+        //if (slider.isEnabled())
+        g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId));
+        //else
+        //    g.setColour (Colour (0x80808080));
 
         Path outlineArc;
         outlineArc.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, thickness);
@@ -552,10 +552,10 @@ void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width,
         p.addEllipse (-0.4f * rw, -0.4f * rw, rw * 0.8f, rw * 0.8f);
         g.fillPath(p, AffineTransform::rotation (angle).translated (centreX, centreY));
 
-        if (slider.isEnabled())
-            g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId).withAlpha (isMouseOver ? 0.7f : 0.5f));
-        else
-            g.setColour (Colour (0x80808080));
+        //if (slider.isEnabled())
+        g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId).withAlpha (isMouseOver ? 0.7f : 0.5f));
+        //else
+        //    g.setColour (Colour (0x80808080));
 
         p.addEllipse (-0.4f * rw, -0.4f * rw, rw * 0.8f, rw * 0.8f);
         PathStrokeType (rw * 0.1f).createStrokedPath (p, p);

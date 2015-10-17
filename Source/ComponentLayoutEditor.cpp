@@ -173,10 +173,13 @@ bool ChildAlias::keyPressed(const juce::KeyPress &key ,Component *)
 
 void ChildAlias::mouseDown (const MouseEvent& e)
 {
+    if(e.getNumberOfClicks()==1)
+    {
     //reset drag values..
     dragX = 0;
     dragY = 0;
 
+    
     Logger::writeToLog(getProperties().getWithDefault(CabbageIDs::lineNumber, -99).toString());
     int numSelected = getLayoutEditor()->getLassoSelection().getNumSelected();
     bool partOfSelection=false;
@@ -389,6 +392,7 @@ void ChildAlias::mouseDown (const MouseEvent& e)
             }
         }
 
+    }
     }
 #endif
 }

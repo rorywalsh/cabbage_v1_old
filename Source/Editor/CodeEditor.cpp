@@ -712,28 +712,44 @@ bool CsoundCodeEditorComponenet::pasteFromClipboard()
 //==============================================================================
 void CsoundCodeEditorComponenet::toggleComments()
 {
+
+    CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
+    CodeDocument::Position endPos(this->getDocument(), getHighlightedRegion().getEnd());
+
+    cUtils::debug(startPos.getLineNumber());
+    cUtils::debug(endPos.getLineNumber());
+
     StringArray selectedText;
     selectedText.addLines(getSelectedText());
     StringArray csdArray;
     csdArray.addLines(this->getAllText());
-    String lastLine;
 
-    for(int i=0; i<csdArray.size(); i++)
-        for(int y=0; y<selectedText.size(); y++)
-            if(selectedText[y]==csdArray[i])
-            {
-                if(!csdArray[i].equalsIgnoreCase(""))
-                {
-                    if(selectedText[y].substring(0, 1).equalsIgnoreCase(";"))
-                        csdArray.set(i, selectedText[y].substring(1));
-                    else
-                        csdArray.set(i, ";"+selectedText[y]);
-                    lastLine = selectedText[y].substring(1);
-                }
-            }
 
+    for(int i=startPos.getLineNumber(); i<=endPos.getLineNumber(); i++)
+    {
+        String lineText = csdArray[i];
+        csdArray.set(i, ";"+lineText);
+    }
+
+//
+//    String lastLine;
+//
+//    for(int i=0; i<csdArray.size(); i++)
+//        for(int y=0; y<selectedText.size(); y++)
+//            if(selectedText[y]==csdArray[i])
+//            {
+//                if(!csdArray[i].equalsIgnoreCase(""))
+//                {
+//                    if(selectedText[y].substring(0, 1).equalsIgnoreCase(";"))
+//                        csdArray.set(i, selectedText[y].substring(1));
+//                    else
+//                        csdArray.set(i, ";"+selectedText[y]);
+//                    lastLine = selectedText[y].substring(1);
+//                }
+//            }
+//
     this->setAllText(csdArray.joinIntoString("\n"));
-    moveCaretTo(CodeDocument::Position (getDocument(), getAllText().indexOf(lastLine)+lastLine.length()), false);
+    moveCaretTo(CodeDocument::Position(getDocument(), endPos.getLineNumber(), 1000), false);
 }
 
 //=================== addPopupMenuItems =======================

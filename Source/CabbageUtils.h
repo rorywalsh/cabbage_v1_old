@@ -1077,9 +1077,11 @@ public:
 
             if (isToggleOn)   //on
             {
-                ColourGradient cg = ColourGradient(colour.withSaturation(0.2), width*0.4, height*0.4, colour,
-                                                   width*0.8, height*0.8, true);
-                g.setGradientFill (cg);
+//                ColourGradient cg = ColourGradient(colour.withSaturation(0.2), width*0.4, height*0.4, colour,
+//                                                   width*0.8, height*0.8, true);
+
+                //g.setGradientFill (cg);
+                g.setColour(colour);
                 g.fillEllipse(width*0.09, height*0.09, width*0.82, height*0.82);
             }
             else   //off
@@ -1087,7 +1089,12 @@ public:
                 g.setColour(Colours::black);
                 g.fillEllipse(width*0.09, height*0.09, width*0.82, height*0.82);
 
-                ColourGradient cg = ColourGradient (Colours::white, width*0.4, height*0.4, colour.darker(0.9), width*0.3, height*0.3, true);
+                Colour bg1 = Colour::fromRGBA (25, 25, 28, 255);
+                Colour bg2 = Colour::fromRGBA (15, 15, 18, 255);
+                ColourGradient cg = ColourGradient (bg1, 0, 0, bg2, width*0.5, height*0.5, false);
+
+
+                //ColourGradient cg = ColourGradient (Colours::white, width*0.4, height*0.4, colour.darker(0.9), width*0.3, height*0.3, true);
                 g.setGradientFill (cg);
                 g.setOpacity(0.4);
                 g.fillEllipse(width*0.1, height*0.1, width*0.8, height*0.8);

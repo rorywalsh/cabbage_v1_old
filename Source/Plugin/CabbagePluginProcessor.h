@@ -153,6 +153,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 
 
     StringArray debugInfo;
+    StringArray widgetTypes;
     //basic classes that hold all information regarding GUI objects
     //guiLayoutControls are not used to send data to Csound, and don't show
     //as parameters in a host, guiCtrls do show are parameters, and can send
@@ -297,6 +298,11 @@ public:
     {
         const ScopedLock sl (getCallbackLock());
         isBypassed = val;
+    }
+
+    StringArray getWidgetTypes()
+    {
+        return widgetTypes;
     }
 
     void shouldMute(bool val)

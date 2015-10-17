@@ -130,6 +130,9 @@ void ChildAlias::applyToTarget (String triggeredFrom)
                                                    origBounds[i].getY()*y,
                                                    origBounds[i].getWidth()*x,
                                                    origBounds[i].getHeight()*y);
+
+                cUtils::debug(c->getChildComponent(i)->getProperties().getWithDefault("index", -999).toString());
+
                 ((CabbageMainPanel*)(getTarget()->getParentComponent()))->childBounds.add(c->getChildComponent(i)->getBounds());
                 ((CabbageMainPanel*)(getTarget()->getParentComponent()))->origChildBounds.add(origBounds[i]);
             }
@@ -211,11 +214,12 @@ void ChildAlias::mouseDown (const MouseEvent& e)
             parent->currentEvent = "mouseDownChildAlias";
             parent->sendChangeMessage();
         }
+
         getLayoutEditor()->selectedCompsOrigCoordinates.clear();
         getLayoutEditor()->selectedLineNumbers.clear();
         getLayoutEditor()->selectedCompsOrigCoordinates.add(this->getBounds());
         getLayoutEditor()->selectedLineNumbers.add(this->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
-        //Logger::writeToLog("ChildAlias MouseDown SingleSel:\n"+cUtils::getBoundsString(getBounds()));
+
         toFront (true);
         if(!e.mods.isCommandDown())
             getProperties().set("interest", "current");
@@ -387,7 +391,6 @@ void ChildAlias::mouseDown (const MouseEvent& e)
 
     }
 #endif
-
 }
 
 void ChildAlias::mouseUp (const MouseEvent& e)
@@ -442,7 +445,7 @@ void ChildAlias::mouseUp (const MouseEvent& e)
 
 void ChildAlias::mouseDoubleClick(const MouseEvent &event)
 {
-    ((CabbageMainPanel*)(getTarget()->getParentComponent()))->sendActionMessage("Message sent from CabbageMainPanel:DoubleClick");
+    //((CabbageMainPanel*)(getTarget()->getParentComponent()))->sendActionMessage("Message sent from CabbageMainPanel:DoubleClick");
 }
 
 

@@ -733,6 +733,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
         }
     }
 
+    widgetTypes.clear();
     int indexOfLastGUICtrl = guiCtrls.size();
     int indexOfLastLayoutCtrl = guiLayoutCtrls.size();
 
@@ -988,6 +989,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         else
                         {
                             guiLayoutCtrls.add(cAttr);
+                            widgetTypes.add("layout");
                             guiID++;
                         }
 
@@ -1059,7 +1061,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             cAttr.setNumProp(CabbageIDs::value, cAttr.getNumProp(CabbageIDs::valuex));
                             cAttr.setStringProp(String(CabbageIDs::channel), cAttr.getStringProp(CabbageIDs::xchannel));
                             guiCtrls.add(cAttr);
-
+                            widgetTypes.add("interactive");
                             cAttr.setStringProp(CabbageIDs::xychannel, String("Y"));
                             cAttr.setNumProp(CabbageIDs::range,  cAttr.getNumProp(CabbageIDs::rangey));
                             cAttr.setNumProp(CabbageIDs::min,  cAttr.getNumProp(CabbageIDs::miny));
@@ -1070,6 +1072,8 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             //second xypad
                             cAttr.setStringProp("name", cAttr.getStringProp(CabbageIDs::name)+String("dummy"));
                             guiCtrls.add(cAttr);
+                            widgetTypes.add("interactive");
+                            //widgetTypes.add("interactive");
                             guiID++;
                             startTimer(10);
                         }
@@ -1087,12 +1091,14 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                                     copy.setStringProp(CabbageIDs::identchannel, cAttr.getStringArrayProp(CabbageIDs::identchannelarray).getReference(i));
                                     //Logger::writeToLog(cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
                                     guiCtrls.add(copy);
+                                    widgetTypes.add("interactive");
                                     guiID++;
                                 }
                             }
                             else
                             {
                                 guiCtrls.add(cAttr);
+                                widgetTypes.add("interactive");
                                 guiID++;
                                 if(tokes[0].equalsIgnoreCase(String("hslider2")) || tokes[0].equalsIgnoreCase(String("vslider2")))
                                 {
@@ -1100,6 +1106,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 
                                     cAttr.setStringProp("name", cAttr.getStringProp(CabbageIDs::name)+String("dummy"));
                                     guiCtrls.add(cAttr);
+                                    widgetTypes.add("interactive");
                                     guiID++;
                                 }
                             }
@@ -1159,11 +1166,30 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
             //((CabbagePluginAudioProcessorEditor*)getActiveEditor())->setEditMode(false);
             //editor->setEditMode(false);
         }
-        //!this will not work as we are moving through our entire control vector
-        for(int i=indexOfLastLayoutCtrl; i<guiLayoutCtrls.size(); i++)
-            editor->InsertGUIControls(guiLayoutCtrls[i]);
-        for(int i=indexOfLastGUICtrl; i<guiCtrls.size(); i++)
-            editor->InsertGUIControls(guiCtrls[i]);
+
+        int layoutCtrlIndex=indexOfLastLayoutCtrl;
+        int interactiveCtrlIndex=indexOfLastGUICtrl;
+
+        //this ensures that widgets get added in order they appear
+        //in text
+        for(int i=0; i<getWidgetTypes().size(); i++)
+        {
+            if(getWidgetTypes()[i]=="layout")
+            {
+                editor->InsertGUIControls(getGUILayoutCtrls(layoutCtrlIndex));
+                layoutCtrlIndex++;
+            }
+            else //interactive
+            {
+                editor->InsertGUIControls(getGUICtrls(interactiveCtrlIndex));
+                interactiveCtrlIndex++;
+            }
+        }
+
+//        for(int i=indexOfLastLayoutCtrl; i<guiLayoutCtrls.size(); i++)
+//            editor->InsertGUIControls(guiLayoutCtrls[i]);
+//        for(int i=indexOfLastGUICtrl; i<guiCtrls.size(); i++)
+//            editor->InsertGUIControls(guiCtrls[i]);
 
         if(!getPreference(appProperties, "ExternalEditor") && refresh)
             editor->setEditMode(checkGUI);

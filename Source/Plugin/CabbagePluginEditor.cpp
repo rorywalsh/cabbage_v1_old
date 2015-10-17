@@ -103,7 +103,6 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     Component::setLookAndFeel(lookAndFeel);
     //oldSchoolLook = new OldSchoolLookAndFeel();
 #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
-    //determine whether instrument should be opened in GUI mode or not
     componentPanel = new CabbageMainPanel();
     componentPanel->setLookAndFeel(lookAndFeel);
     componentPanel->setBounds(0, 0, getWidth(), getHeight());
@@ -138,10 +137,29 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     layoutEditor->updateFrames();
 #endif
 
-    for(int i=0; i<getFilter()->getGUILayoutCtrlsSize(); i++)
-        InsertGUIControls(getFilter()->getGUILayoutCtrls(i));
-    for(int i=0; i<getFilter()->getGUICtrlsSize(); i++)
-        InsertGUIControls(getFilter()->getGUICtrls(i));
+    int layoutCtrlIndex=0;
+    int interactiveCtrlIndex=0;
+
+    //this ensures that widgets get added in order they appear
+    //in text
+    for(int i=0; i<getFilter()->getWidgetTypes().size(); i++)
+    {
+        if(getFilter()->getWidgetTypes()[i]=="layout")
+        {
+            InsertGUIControls(getFilter()->getGUILayoutCtrls(layoutCtrlIndex));
+            layoutCtrlIndex++;
+        }
+        else //interactive
+        {
+            InsertGUIControls(getFilter()->getGUICtrls(interactiveCtrlIndex));
+            interactiveCtrlIndex++;
+        }
+    }
+
+//    for(int i=0; i<getFilter()->getGUILayoutCtrlsSize(); i++)
+//        InsertGUIControls(getFilter()->getGUILayoutCtrls(i));
+//    for(int i=0; i<getFilter()->getGUICtrlsSize(); i++)
+//        InsertGUIControls(getFilter()->getGUICtrls(i));
 
 
     //this will prevent editors from creating xyAutos if they have already been crated.
@@ -1154,7 +1172,8 @@ void CabbagePluginAudioProcessorEditor::updateSizesAndPositionsOfComponents(int 
     for(int y=0; y<numSelected; y++)
     {
         //if(CAttr.getStringProp(CabbageIDs::type)=="groupbox")
-        //Logger::writeToLog("SelectedCompBounds:"+getBoundsString(le->selectedCompsOrigCoordinates[y]));
+        //Logger::writeToLog("SelectedCompBounds:"+getBoundsString(le->));
+        cUtils::debug(le->selectedLineNumbers[y]);
         lineNumbers.add(le->selectedLineNumbers[y]);
         boundsForSelectComps.add(getBoundsString(le->selectedCompsNewCoordinates[y]));
     }
@@ -1175,12 +1194,14 @@ void CabbagePluginAudioProcessorEditor::updateSizesAndPositionsOfComponents(int 
         tempPlantText=csdArray[currentLineNumber]+"\n";
         for(int y=1, off=0; y<componentPanel->childBounds.size()+1; y++)
         {
-            //stops things from getting messed up if there are line
+            //stops things from getting messed up if there are comments or empty lines
             if((csdArray[currentLineNumber+y+off].length()<2) || csdArray[currentLineNumber+y+off].indexOf(";")==0)
             {
                 off++;
                 y--;
             }
+            cUtils::debug(csdArray[currentLineNumber+y+off]);
+            cUtils::debug( getBoundsString(componentPanel->childBounds[y]));
             temp = replaceIdentifier(csdArray[currentLineNumber+y+off], "bounds", getBoundsString(componentPanel->childBounds[y-1]));
             csdArray.set(currentLineNumber+y+off, temp);
             //add last curly brace

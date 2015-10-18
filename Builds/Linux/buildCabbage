@@ -30,11 +30,11 @@ elif [ "$#" -ne 3 ]; then
     exit 1
 else
 	make -f MakefileStandalone clean CONFIG=Release 
-	make -f MakefileStandalone -j8 CONFIG=Release CSOUND_INCLUDE=$1 CSOUND_LIBRARY=$2 VST_SDK=$3
+	make -f MakefileStandalone -j8 CONFIG=Release CSOUND_INCLUDE="$1" CSOUND_LIBRARY="$2" VST_SDK="$3"
 	make -f MakefilePluginEffect clean CONFIG=Release
-	make -f MakefilePluginEffect -j8 CONFIG=Release CSOUND_INCLUDE=$1 CSOUND_LIBRARY=$2 VST_SDK=$3
+	make -f MakefilePluginEffect -j8 CONFIG=Release CSOUND_INCLUDE="$1" CSOUND_LIBRARY="$2" VST_SDK="$3"
 	make -f MakefilePluginSynth clean CONFIG=Release
-	make -f MakefilePluginSynth -j8 CONFIG=Release CSOUND_INCLUDE=$1 CSOUND_LIBRARY=$2 VST_SDK=$3
+	make -f MakefilePluginSynth -j8 CONFIG=Release CSOUND_INCLUDE="$1" CSOUND_LIBRARY="$2" VST_SDK="$3"
 fi
 
 	rm -rf CabbageBuild

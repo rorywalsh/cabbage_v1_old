@@ -21,7 +21,7 @@ sudo apt-get install libsndfile1
 sudo apt-get install libsndfile1-dev
 sudo apt-get install libjack-dev
 
-You'll also need to have the VST SDK. 
+Please make sure that the versoin of Csound you use is newer that 6.02, otherwise you will get bulid problems. You'll also need to have the VST SDK. 
 
 If you are having problems viewing fonts you should get the following package:
 

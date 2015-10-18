@@ -21,7 +21,7 @@ sudo apt-get install libsndfile1
 sudo apt-get install libsndfile1-dev
 sudo apt-get install libjack-dev
 
-Please make sure that the versoin of Csound you use is newer that 6.02, otherwise you will get bulid problems. You'll also need to have the VST SDK. 
+Please make sure that the version of Csound you use is 6.03 or newer, otherwise you will get build problems. You'll also need to have the VST SDK. 
 
 If you are having problems viewing fonts you should get the following package:
 
@@ -49,5 +49,5 @@ Examples usuage with custom paths:
 
 ./buildCabbage "/usr/local/csound" "/usr/lib" "~/VST_SDK"
 
-buildCabbage will create a CabbageBuild direcory that will contain everything you need to run Cabbage. It will also install Cabbage to the system menu through the use of a .desktop file. Please run Cabbage from the system menu in order to ensure that all examples and documentation are found
+buildCabbage will create a CabbageBuild directory that will contain everything you need to run Cabbage. It will also install Cabbage to the system menu through the use of a .desktop file. Please run Cabbage from the system menu in order to ensure that all examples and documentation are found
 when using Cabbage. Some users have reported issues when running Cabbage directly from the build directory. 

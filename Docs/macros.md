@@ -13,3 +13,17 @@ rslider bounds(39, 12, 50, 50), channel("rslider"), colour("purple"), $SLIDER1
 ```
 
 You can use as many macros as you wish in your Cabbage code. 
+
+## Accessing macros in Csound code
+There may be times when you may like to have access to a macro defined in your Cabbage code within your Csound code. This can be done by placing a channel() identifier between your #define and macro name. For example:
+
+```csharp
+#define channel("sliderStyle") SLIDER1 colour("red"), fontcolour("yellow"), outlinecolour("red"), range(0, 1000, 500)
+``` 
+
+You can then access the macro identifiers using chnget:
+
+```csharp
+SMessage chnget "sliderStyle"
+prints SMessage 
+```

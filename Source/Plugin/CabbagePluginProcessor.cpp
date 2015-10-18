@@ -236,6 +236,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
                 csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());
 #endif
             Logger::writeToLog("Csound compiled your file");
+            csound->SetChannel("IS_A_PLUGIN", 0.0);
 
             //csound->SetYieldCallback(CabbagePluginAudioProcessor::yieldCallback);
             if(csound->GetSpout()==nullptr);
@@ -461,6 +462,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
         else
             csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());
 #endif
+
+        csound->SetChannel("IS_A_PLUGIN", 1.0);
 
         if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
         {
@@ -695,6 +698,8 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
         csound->SetChannel("CSD_PATH", file.getParentDirectory().getFullPathName().toUTF8().getAddress());
 #endif
 
+        csound->SetChannel("IS_A_PLUGIN", 0.0);
+
         stopProcessing = false;
 
         return csCompileResult;
@@ -841,7 +846,17 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                     tokes.removeEmptyStrings();
                     if(tokes.size()>2)
                     {
-                        macroText.set("$"+tokes[1], " "+csdLine.substring(csdLine.indexOf(tokes[1])+tokes[1].length())+" ");
+                        if(tokes[1].contains("channel("))
+                        {
+                            CabbageGUIClass cAttr(tokes.joinIntoString(" "), -1);
+                            macroText.set("$"+tokes[2], " "+csdLine.substring(csdLine.indexOf(tokes[2])+tokes[2].length())+" ");
+                            tokes.removeRange(0, 3);
+                            String macroText = tokes.joinIntoString(" ");
+                            String channel = cAttr.getStringProp(CabbageIDs::channel);
+                            csound->SetChannel(channel.toUTF8().getAddress(), macroText.toUTF8().getAddress());
+                        }
+                        else
+                            macroText.set("$"+tokes[1], " "+csdLine.substring(csdLine.indexOf(tokes[1])+tokes[1].length())+" ");
                     }
                 }
 

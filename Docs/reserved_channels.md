@@ -28,3 +28,5 @@ Cabbage reserves several channels which are used to send information to Csound f
 **MOUSE_DOWN_MIDDLE** Returns the current state of the middle mouse button; 1 if pressed, and 0 if not. 
 
 **MOUSE_DOWN_RIGHT** Returns the current state of the right mouse button; 1 if pressed, and 0 if not. 
+
+**IS_A_PLUGIN** Returns 1 if the instrument is running as an audio plugin, and 0 if the instrument is running as a standalone. 

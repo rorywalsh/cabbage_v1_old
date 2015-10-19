@@ -1828,7 +1828,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
 #ifndef Cabbage_No_Csound
     float range, min, max, comboRange;
     //add index of control that was changed to dirty control vector
-    dirtyControls.addIfNotAlreadyThere(index);
+    //dirtyControls.addIfNotAlreadyThere(index);
     //Logger::writeToLog("parameterSet:"+String(newValue));
     if(index<(int)guiCtrls.size())//make sure index isn't out of range
     {
@@ -1869,7 +1869,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
         //guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
     }
 #endif
-    //ßupdateCabbageControls();
+    //updateCabbageControls();
 }
 
 //==============================================================================
@@ -1909,26 +1909,20 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
             }
         }
 
-//		{
-//			char string[1024] = {0};
-//            csound->GetStringChannel("HappyDays", string);
-//			const String message = String(string);
-//			//cUtils::debug(message);
-//			csound->SetChannel("HappyDays", "");
-//
-//		}
-
         //update all control widgets
         for(int index=0; index<guiCtrls.size(); index++)
         {
             if(guiCtrls[index].getStringProp(CabbageIDs::channeltype).equalsIgnoreCase(CabbageIDs::stringchannel))
             {
                 //THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE..
+                //dirtyControls.addIfNotAlreadyThere(index);
+                //shouldUpdate = true;
             }
             else
             {
                 float value = csound->GetChannel(guiCtrls[index].getStringProp(CabbageIDs::channel).getCharPointer());
-
+                //cUtils::debug(guiCtrls[index].getNumProp(CabbageIDs::value));
+                //cUtils::debug(value);
                 if(value!=guiCtrls[index].getNumProp(CabbageIDs::value))
                 {
                     //Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));

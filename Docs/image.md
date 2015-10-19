@@ -16,8 +16,7 @@ widgetarray("chan", number), popuptext("text"), active(val)
 
 **file("filename")** "filename" is the name of the image file to be displayed on the widget. If a full file path is not given, file() will search  in the current directory, i.e., the directory that contains the csd file that is open. It is best to keep all files in the same directory as your csd file, but if you wish to keep them in a sperate folder you can pass a full path to the file() identifier. 
 
-[icon="images/smallLogo.PNG"]
-Try to avoid full path names at all costs. They will work fine on a local machine, but will not be valid on another machine.
+>Try to avoid full path names at all costs. They will work fine on a local machine, but will not be valid on another machine.
 
 **shape("type");** "shape" must be either round(with rounded corners, default), sharp(with sharp corners), or ellipse(an elliptical shape)
 

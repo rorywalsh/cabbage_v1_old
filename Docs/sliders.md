@@ -1,4 +1,8 @@
 # Sliders
+
+Slider can be used to create an on-screen slider. Data can be sent to Csound on the channel specified through the channel string. Sliders can be rotary, vertical or horizontal, and can react in both a linear and non-linear fashion. 
+
+
 ```csharp
 hslider bounds(x, y, width, height), channel("chan"), \
 text("name"), textbox(val), range(min, max, value, skew, incr), \
@@ -9,10 +13,6 @@ rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") 
 active(val)
 ```
 <!--(End of syntax)/-->
-![](images/sliderExample.png)
-
-Slider can be used to create an on-screen slider. Data can be sent to Csound on the channel specified through the chan string. Presented above is the syntax for a horizontal slider, i.e., hslider. In order to change it to another slider type simple substitute hslider with the appropriate slider type as outlined below. 
-
 
 ##Identifiers
 **bounds(x, y, width, height)** integer values that set position and size on screen(in pixels). 
@@ -73,6 +73,20 @@ Slider types::
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
 
-![](images/smallLogo.PNG"]
-Make sure to use two unique channel names when using hslider2 and vslider2, otherwise min and max will be set to the same value. 
+>Make sure to use two unique channel names when using hslider2 and vslider2, otherwise min and max will be set to the same value. 
 
+##Example
+
+```csharp
+<Cabbage>
+form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)
+vslider bounds(12, 8, 35, 200), channel("vslider1"), range(0, 1, .6), colour("yellow"), textbox(1)
+vslider bounds(48, 8, 30, 200), channel("vslider2"), range(0, 1, .6), trackercolour("purple")
+rslider bounds(88, 8, 50, 50), text("R-Slider"), channel("rslider1"), range(0, 1, 0)
+rslider bounds(88, 62, 50, 50), channel("rslider2"), range(0, 1, .5), colour("lime"), trackercolour("pink")
+hslider bounds(144, 8, 200, 30), channel("hslider1"), range(0, 1, .2), trackercolour("red"), textbox(1)
+hslider bounds(144, 42, 200, 30), text("H-Slider"), channel("hslider2"), range(0, 1, 1)
+</Cabbage>
+```
+
+![](images/sliderExample.png)

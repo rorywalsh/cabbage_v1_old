@@ -1,14 +1,13 @@
 # Text Editor
+
+Texteditor creates a single line text editor that can be used to send strings to Csound. Hitting return will send the string to Csound on a named string channel. Pressing the up and down buttons when the texteditor is in focus will toggle through the previous strings that have been sent.
+
 ```csharp
 texteditor bounds(x, y, width, height), channel("channel"), \
 text("text"), colour("colour"), fontcolour("colour"), alpha(val), \
 visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number) \ popuptext("text"), active(val)
 ```
 <!--(End of syntax)/-->
-![](images/texteditorExample.png)
-
-*Texteditor can be used to send strings to Csound. Hitting return will send the string to Csound on a named string channel. Pressing the up and down buttons when the texteditor is in focus will toggle through the previous strings that have been sent.*+
-
 
 ##Identifiers
 
@@ -35,3 +34,11 @@ visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number) \ pop
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
 
+##Example
+
+<Cabbage>
+form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)
+texteditor bounds(10, 10, 200, 20), colour(30, 30, 30), fontcolour("yellow"), text("I'm a text editor!...")
+</Cabbage>
+
+![](images/texteditorExample.png)

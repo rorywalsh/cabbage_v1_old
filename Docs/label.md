@@ -1,4 +1,8 @@
 # Label
+
+Labels can be used for placing text on-screen. 
+
+
 ```csharp
 label bounds(x, y, width, height), text("text"), colour("colour"), \
 fontcolour("colour"), align("position"), identchannel("channel"), \
@@ -6,10 +10,6 @@ alpha(val), visible(val), rotate(radians, pivotx, pivoty), \
 widgetarray("chan", number), active(val)
 ```
 <!--(End of syntax)/-->
-![](images/labelExample.png)
-
-Labels can be used for placing text on-screen. 
-
 
 ##Identifiers
 
@@ -35,3 +35,16 @@ Labels can be used for placing text on-screen.
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
+
+##Example
+```csharp
+<Cabbage>
+form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)
+label bounds(14, 10, 161, 52), text("Label"), colour("red"), fontcolour("pink")
+label bounds(82, 44, 161, 52), text("Label"), colour(255, 255, 0, 0), fontcolour("green")
+label bounds(162, 80, 161, 52), text("Label"), colour("green"), fontcolour("red")
+label bounds(218, 118, 161, 52), text("Label"), colour(120, 40, 20, 0), fontcolour("yellow")
+</Cabbage>
+```
+
+![](images/labelExample.png)

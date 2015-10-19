@@ -1,4 +1,8 @@
 # Combo Box
+
+Combobox creates a drop-down list of items which users can choose from. Once the user selects an item, the index of their selection will be sent to Csound on a channel named by the channel string. The default value is 0.
+
+
 ```csharp
 combobox bounds(x, y, width, height), channel("chan"), \
 value(val), items("item1", "item2", ...), populate("filetype", "dir"),\
@@ -8,11 +12,8 @@ rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") 
 active(val)
 ```
 <!--(End of syntax)/-->
-![](images/comboboxExample.png)
 
 ##Identifiers
-Combobox creates a drop-down list of items which users can choose from. Once the user selects an item, the index of their selection will be sent to Csound on a channel named by the channel string. The default value is 0.
-
 **bounds(x, y, width, height)** integer values that set position and size on screen(in pixels).
 
 **channel("chan")** "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode. 
@@ -45,3 +46,13 @@ Combobox creates a drop-down list of items which users can choose from. Once the
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
+
+##Example
+```csharp
+<Cabbage>
+form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)
+combobox bounds(20, 16, 100, 30), channel("combobox"), items("Item 1", "Item 2", "Item 3"), colour("yellow"), fontcolour("black")
+</Cabbage>
+```
+
+![](images/comboboxExample.png)

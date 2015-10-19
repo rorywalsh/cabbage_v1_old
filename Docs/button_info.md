@@ -1,4 +1,7 @@
 # Button (Information button)
+
+Infobuttons can be used to open html files in the system's default web browser. When clicked, the file passed to the file() identifier will be opened, if it is a valid file. This widget can be useful for providing help files or any other additional information about your instruments. 
+
 ```csharp
 infobutton bounds(x, y, width, height), text("name"), \
 colour("colour"), fontcolour("colour") file("file name"), \
@@ -7,11 +10,8 @@ rotate(radians, pivotx, pivoty), widgetarray("chan", number), \
 popuptext("text"), active(val)
 ```
 <!--(End of syntax)/-->
-![](images/infobuttonExample.png)
 
 ##Identifiers
-Infobuttons can be used to open html files in the system's default web browser. When clicked, the file passed to the file() identifier will be opened, if it is a valid file. This widget can be useful for providing help files or any other additional information about your instruments. 
-
 **bounds(x, y, width, height)** integer values that set position and size on screen(in pixels)
 
 **text("name")** "name" will be the text that appears on the top of the info button.  
@@ -36,3 +36,15 @@ Infobuttons can be used to open html files in the system's default web browser. 
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
+
+##Example
+```csharp
+<Cabbage>
+form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)
+button bounds(20, 16, 100, 30), channel("button"),  text("Push me"), fontcolour("white")
+infobutton bounds(120, 16, 100, 30), channel("button"),  file("README.txt"), text("Info")
+filebutton bounds(220, 16, 100, 30), channel("button"),  populate("*.wav", ""), text("Browse")
+</Cabbage>
+```
+
+![](images/buttonExample.png)

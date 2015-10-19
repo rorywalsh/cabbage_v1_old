@@ -1,4 +1,8 @@
 # Text Box
+
+Textbox will display the contents of a text file. This can be useful for placing instructions and information directly on to an instrument.  
+
+
 ```csharp
 textbox bounds(x, y, width, height), file("filename"), \
 colour("colour"), fontcolour("colour"), wrap(val), alpha(val), \
@@ -6,10 +10,6 @@ visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number) \
 popuptext("text"), active(val)
 ```
 <!--(End of syntax)/-->
-![](images/textboxExample.png)
-
-Textbox will display the contents of a text file. This can be useful for placing instructions and information directly on to an instrument.  
-
 
 ##Identifiers
 **bounds(x, y, width, height)** integer values that set position and size on screen(in pixels)
@@ -36,3 +36,14 @@ Textbox will display the contents of a text file. This can be useful for placing
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
+
+##Example
+
+```csharp
+<Cabbage>
+form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)
+textbox bounds(10, 10, 380, 450), colour(30, 30, 30), fontcolour("yellow"), file("test.csd")
+</Cabbage>
+```
+
+![](images/textboxExample.png)

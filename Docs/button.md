@@ -1,5 +1,7 @@
 ##Button
 
+Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish. 
+
 ```csharp
 button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), \
 value(val), colour("colour"), fontcolour("colour"), latched(val), \
@@ -8,11 +10,9 @@ rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") 
 active(val)
 ```
 <!--(End of syntax)/-->
-![Button](images/buttonExample.png)
+
 
 ### Identifiers
-
-Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish. 
 
 **bounds(x, y, width, height)** 
 integer values that set position and size on screen(in pixels). 
@@ -32,8 +32,7 @@ This sets the colour of the button when it's value is 0. Any CSS or HTML colour 
 **colour:1("colour")**
 This sets the colour of the button when it's value is 1.  See above for details on valid colours. 
 
-[icon="images/smallLogo.PNG"]
-You can create an invisible button by setting the colour to something with an alpha value of 0. Images can then be placed under the button to create an image button. 
+>You can create an invisible button by setting the colour to something with an alpha value of 0. Images can then be placed under the button to create an image button. 
 
 **fontcolour:0("colour")**
 Sets the colour of the text that appears on the button when it's in its off state. See above for details on valid colours. 
@@ -67,5 +66,16 @@ This identifier will place the widget within a groupbox. "caption" is the text t
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
 
-![](images/smallLogo.PNG)
-colour:1() and fontcolour:1() can be set using colour() and fontcolour(). However, it's recommended that you use the numerated colour identifiers in order to make your code as readable a possible. 
+>colour:1() and fontcolour:1() can be set using colour() and fontcolour(). However, it's recommended that you use the numerated colour identifiers in order to make your code as readable a possible. 
+
+##Example
+```csharp
+<Cabbage>
+form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)
+button bounds(20, 16, 100, 30), channel("button"),  text("Push me"), fontcolour("white")
+infobutton bounds(120, 16, 100, 30), channel("button"),  file("README.txt"), text("Info")
+filebutton bounds(220, 16, 100, 30), channel("button"),  populate("*.wav", ""), text("Browse")
+</Cabbage>
+```
+
+![Button](images/buttonExample.png)

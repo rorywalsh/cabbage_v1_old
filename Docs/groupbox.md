@@ -1,4 +1,7 @@
 # Group Box
+
+Groupbox creates a container for other GUI widgets. They do not communicate with Csound but can be useful for organising widgets into panels.
+
 ```csharp
 groupbox bounds(x, y, width, height), text("Caption"), \
 colour("colour"), fontcolour("colour"), line(value), plant("name"), \
@@ -7,10 +10,6 @@ identchannel("channel"), rotate(radians, pivotx, pivoty), \
 widgetarray("chan", number), active(val)
 ```
 <!--(End of syntax)/-->
-![](images/groupBoxExample.png)
-
-Groupbox creates a container for other GUI widgets. They do not communicate with Csound but can be useful for organising widgets into panels.
-
 
 ##Identifiers
 **bounds(x, y, width, height)** integer values that set position and size on screen(in pixels)
@@ -43,3 +42,16 @@ Groupbox creates a container for other GUI widgets. They do not communicate with
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
+
+##Example
+```csharp
+<Cabbage>
+form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)
+groupbox bounds(42, 34, 180, 94), text("3 Sliders")
+rslider bounds(56, 64, 50, 50), channel("rslider"), range(0, 1, 0)
+rslider bounds(108, 64, 50, 50), channel("rslider"), range(0, 1, 0)
+rslider bounds(160, 64, 50, 50), channel("rslider"), range(0, 1, 0)
+</Cabbage>
+```
+
+![](images/groupBoxExample.png)

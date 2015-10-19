@@ -1,4 +1,8 @@
 # Check Box
+
+Checkbox creates a checkbox which functions like a button, but the associated caption will not change when the user checks it. As with all widgets capable of sending data to Csound, the channel string is the channel on which the widget will communicate with Csound. 
+
+
 ```csharp
 checkbox bounds(x, y, width, height), channel("chan"), \
 text("name"), value(val), caption("Caption"), colour:0("colour"), \
@@ -8,10 +12,6 @@ rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") 
 active(val)
 ```
 <!--(End of syntax)/-->
-![](images/checkboxExample.png)
-
-Checkbox creates a checkbox which functions like a button, but the associated caption will not change when the user checks it. As with all widgets capable of sending data to Csound, the channel string is the channel on which the widget will communicate with Csound. 
-
 
 ##Identifiers
 **bounds(x, y, width, height)** integer values that set position and size on screen(in pixels). 
@@ -28,8 +28,7 @@ Checkbox creates a checkbox which functions like a button, but the associated ca
 
 **colour:1("colour")** Sets the colour of the widget when it is in its ON state. See above for details on valid colours.
 
-[icon="images/smallLogo.PNG"]
-You can create an invisible checkbox by setting the colour to something with an alpha value of 0. Images can then be placed under the checkbox to create an image button. See the PVSampler instrument as an example of this. 
+>You can create an invisible checkbox by setting the colour to something with an alpha value of 0. Images can then be placed under the checkbox to create an image button. See the PVSampler instrument as an example of this. 
 
 
 **fontcolour("colour")** Sets the colour of the font to appear on the groupbox. See above for details on valid colours.
@@ -51,5 +50,13 @@ You can create an invisible checkbox by setting the colour to something with an 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
 
-[icon="images/smallLogo.PNG"]
-colour:1() can be set using colour(). However, it's recommended that you use the numerated colour identifiers in order to make your code more readable. 
+>colour:1() can be set using colour(). However, it's recommended that you use the numerated colour identifiers in order to make your code more readable. 
+
+##Example
+```csharp
+<Cabbage>
+form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)
+checkbox bounds(20, 16, 150, 30), channel("combobox"), items("Check me out!"), colour("lime"), fontcolour("white")
+</Cabbage>
+```
+![](images/checkboxExample.png)

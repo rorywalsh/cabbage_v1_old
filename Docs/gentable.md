@@ -1,4 +1,8 @@
 # GenTable
+
+Gentable displays the contents of a function table, multiple tables, or files. Function tables that use a negative GEN05, GEN07 or GEN02 can be edited by clicking and dragging on the table. Only tables of size less or equal to 16384 points can be manually edited. If you wish to save any tables that you create you can use one of Csound's built-in table saving opcode "ftsave". If you need only display the contents of a static sound file from disk, use soundfiler as it will be fast and use less CPU. If on the other hand you wish to create some user editable envelopes, or display FFT or live waveform data use table. 
+
+
 ```csharp
 gentable bounds(x, y, width, height), tableNumber(1, 2, ...), \
 tablecolour("colour1", "colour2", ...), amprange(min, max, tablenumber, y-quantise),\
@@ -8,17 +12,12 @@ alpha(val), visible(val), scrubberposition(val), \
 rotate(radians, pivotx, pivoty), widgetarray("chan", number), active(val)
 ```
 <!--(End of syntax)/-->
-![](images/tableExample.png)
-
-gentable displays the contents of a function table, multiple tables, or files. Function tables that use a negative GEN05, GEN07 or GEN02 can be edited by clicking and dragging on the table. Only tables of size less or equal to 16384 points can be manually edited. If you wish to save any tables that you create you can use one of Csound's built-in table saving opcode "ftsave". If you need only display the contents of a static sound file from disk, use soundfiler as it will be fast and use less CPU. If on the other hand you wish to create some user editable envelopes, or display FFT or live waveform data use table. 
-
 
 ##Identifiers
 **bounds(x, y, width, height)** Integer values that set position and size on screen(in pixels)
 
 **amprange(min, max, tablenumber, quantise)** Sets the amplitude range(Y-axis) for a particular table. Min and Max are the minimum and maximum values. Quantise will set the resolution of the Y axis for editing. For example, if quantise is set to 1, all points added to the table will be quantised to integer values. If quantise matches the dynamic range of the table, the table will be drawn as a grid of on/off switches. If only one amprange() identifier is used, a table number of -1 can be set so that each table displayed will share the same amp range.
-[icon="images/smallLogo.PNG"]
-amprange() is one of the few identifiers in Cabbage that can be used more than once in a line of Cabbage code.  
+>amprange() is one of the few identifiers in Cabbage that can be used more than once in a line of Cabbage code.  
 
 **tablenumber(1, 2, ..)** Sets the table/tables to be displayed. If multiple tables are specified the tables will be superimposed on top of each other. If multiple tables are specified with a colon between then the tables will be stacked on top of each other along the Y-axis, e.g., tablenumber(1:2:3:4).  
 
@@ -29,12 +28,10 @@ The default value for the background colour is rgb(10, 10, 10). If you are super
 **tablegridcolour("colour")** Sets the colour of the grid to be drawn. If you don't want a grid to be drawn set this colour to transparent, i.e., 0,0,0,0. See above for details on valid colours.
 
 **tablecolour("colour1", "colour2", ...)** Sets the colour of the table. If you leave this identifier out default colours will be chosen for the tables. If the table size is equal or less than two, the colours passed to tablecolour() will form a gradient fill or three colours.  
-[icon="images/smallLogo.PNG"]
-The tablecolour() identifier will not work with RGBA/RGB values. You must instead use a valid CSS colour name. 
+>The tablecolour() identifier will not work with RGBA/RGB values. You must instead use a valid CSS colour name. 
 
 **file("filename")** Sets a file for the table to display. Unlike the tablenumber() identifier, which depends on the existence of a valid function table, file() will simply display a file from disk. This can be useful if you are using one of Csound's file reading opcodes. File are always shown as table 0, and will always be the first table created. Therefore it will always take the first colour passed to the tablecolour list. If you wish to load a file after the gentable widget has been created you will need to pass a dummy filename to file() so that the underlying table gets created. If not, calling the file() identifier with an identchannel() will not work.  
-[icon="images/smallLogo.PNG"]
-The background grid is disabled when working with a table that use the file() identifier. 
+>The background grid is disabled when working with a table that use the file() identifier. 
 
 'scrubberposition(val, tableNum)' Sets the scrubber position in samples, from the start of the file. Only valid when displaying a sound file or a GEN01 table. tableNum will determine which table the scrubber will be placed on. If you wish to display a scrubber with other table types(non GEN01) use an image and an identchannel. See the GridSequencer instrument as an example.
 
@@ -59,6 +56,14 @@ The background grid is disabled when working with a table that use the file() id
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
 
-![](images/smallLogo.PNG")
-If you need to redraw tables quickly, make sure they don't use negative GEN routines as it will seriously slow down redrawing. 
+>If you need to redraw tables quickly, make sure they don't use negative GEN routines as it will seriously slow down redrawing. 
 
+##Example
+
+```csharp
+<Cabbage>
+form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)
+gentable bounds(10, 10, 380, 200), tablenumber(1, 2), tablecolour("yellow", "red"), tablegridcolour(60, 60,60)
+</Cabbage>
+```
+![](images/tableExample.png)

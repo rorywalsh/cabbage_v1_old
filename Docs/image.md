@@ -1,4 +1,7 @@
 # Image
+
+Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. For convenience, the file passed to file() should be in the same directory as your Cabbage instrument. 
+
 ```csharp
 image bounds(x, y, width, height), colour("colour"), \
 file("file name"), shape("type"), outlinecolour("colour"), \
@@ -7,11 +10,6 @@ visible(val), alpha(val), rotate(radians, pivotx, pivoty), \
 widgetarray("chan", number), popuptext("text"), active(val)
 ```
 <!--(End of syntax)/-->
-![](images/imageExample.png)
-
-Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. For convenience, the file passed to file() should be in the same directory as your Cabbage instrument. 
-
-
 ##Identifiers 
 
 **bounds(x, y, width, height)** integer values that set position and size on screen(in pixels). 
@@ -43,3 +41,14 @@ Try to avoid full path names at all costs. They will work fine on a local machin
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 <!--(End of identifiers)/-->
+
+##Example
+```csharp
+<Cabbage>
+form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)
+image bounds(58, 4, 257, 183), shape("ellipse"), colour("purple")  
+image bounds(84, 22, 200, 150), file("/home/rory/sourcecode/cabbageaudio/cabbage/Images/logo_cabbage_sw_no_text.png"),  
+</Cabbage>
+```
+
+![](images/imageExample.png)

@@ -688,8 +688,10 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
         //init all channels with their init val
         for(int i=0; i<guiCtrls.size(); i++)
         {
-            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
-                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
+            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
+                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
+            // csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
+            //                     guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
         }
 
 #ifdef WIN32
@@ -1827,8 +1829,9 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
     String stringMessage;
 #ifndef Cabbage_No_Csound
     float range, min, max, comboRange;
-    //add index of control that was changed to dirty control vector
-    //dirtyControls.addIfNotAlreadyThere(index);
+    //add index of control that was changed to dirty control vector, unless it's a combobox.
+    if(getGUICtrls(index).getStringProp(CabbageIDs::type)!=CabbageIDs::combobox)
+        dirtyControls.addIfNotAlreadyThere(index);
     //Logger::writeToLog("parameterSet:"+String(newValue));
     if(index<(int)guiCtrls.size())//make sure index isn't out of range
     {
@@ -1884,30 +1887,6 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
     String chanName, channelMessage;
     if(csCompileResult==OK)
     {
-        for(int i=0; i<socketChannelIdentifiers.size(); i++)
-        {
-            //showMessage(oscChannelIdentifiers[i]);
-            float currentVal = (float)socketChannelValues.getWithDefault(socketChannelIdentifiers[i], -9999);
-            float channelValue = csound->GetChannel(socketChannelIdentifiers[i].getCharPointer());
-
-            if(currentVal != channelValue)
-            {
-                socketChannelValues.set(socketChannelIdentifiers[i], channelValue);
-                //MemoryBlock messageData (socketChannelValues.getWithDefault(socketChannelIdentifiers[i], ""), sizeof(float));
-                //
-                const String message (socketChannelIdentifiers[i] + " " + String(channelValue));
-                MemoryBlock messageData(message.toUTF8(), message.getNumBytesAsUTF8());
-                for (int i = activeConnections.size(); --i >= 0;)
-                {
-                    if (! activeConnections[i]->sendMessage (messageData))
-                    {
-                        // the write failed, so indicate that the connection has broken..
-                        //csound->Message("Cabbage is trying to output a message to another process but can't because it can't find a connection!");
-                    }
-                }
-
-            }
-        }
 
         //update all control widgets
         for(int index=0; index<guiCtrls.size(); index++)
@@ -1921,12 +1900,10 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
             else
             {
                 float value = csound->GetChannel(guiCtrls[index].getStringProp(CabbageIDs::channel).getCharPointer());
-                //cUtils::debug(guiCtrls[index].getNumProp(CabbageIDs::value));
-                //cUtils::debug(value);
                 if(value!=guiCtrls[index].getNumProp(CabbageIDs::value))
                 {
-                    //Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));
-                    //Logger::writeToLog("value:"+String(value));
+                    Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));
+                    Logger::writeToLog("value:"+String(value));
                     guiCtrls.getReference(index).setNumProp(CabbageIDs::value, value);
                     dirtyControls.addIfNotAlreadyThere(index);
                     shouldUpdate = true;

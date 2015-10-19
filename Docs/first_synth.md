@@ -5,10 +5,36 @@ Each and every Cabbage widget has 4 common parameters: position on screen(x, y) 
 
 ## A basic Cabbage synthesiser
 
-Code to create the most basic of Cabbage synthesisers is presented below. This instrument uses the MIDI interop command line flags to pipe MIDI data directly to p-fields in instrument 1. In this case all MIDI pitch data is being written directly to a special variable named p4, and all MIDI amplitude data is written to p5. MIDI data being sent on channel 1 will cause instrument 1 to play. Data being sent on channel 2 will cause instrument 2 to play, and so on. If you wish to assign an instrument to a unique MIDI channel you can use the 'massign' opcode. 
+Code to create the most basic of Cabbage synthesisers is presented below. This instrument uses the MIDI interop command line flags to pipe MIDI data directly to p-fields in instrument 1. In this case all MIDI pitch data is being written directly to a special variable named p4 while all MIDI amplitude data is written to variable called p5. MIDI data being sent on channel 1 will cause instrument 1 to play. Data being sent on channel 2 will cause instrument 2 to play(if one was defined), and so on. If you wish to assign an instrument to a unique MIDI channel you can use the 'massign' opcode. 
 
-![](images/simpleSynthExample.png)
+##Example
+```html
+<Cabbage>
+form size(380, 160), caption("Simple synth"), pluginID("plu1")
+keyboard bounds(12, 6, 360, 100)
+</Cabbage>
+<CsoundSynthesizer>
+<CsOptions>
+-n -d -+rtmidi=NULL -M0 --midi-key-cps=4 --midi-velocity-amp=5
+</CsOptions>
+<CsInstruments>
+sr = 44100
+ksmps = 64
+nchnls = 2
+0dbfs=1
 
+instr 1
+a1 oscili p5, p4, 1
+outs a1, a1
+endin
 
-![](images/smallLogo.PNG)
-You'll notice that a '-n' and '-d' are passed to Csound in the CsOptions section. -n stops Csound from writing audio to disk. The '-d' prevents any FLTK widgets from displaying. These flags are now set by defaul in Cabbage so you no longer need to pass them in the CsOpyions. You will also notice that our instrument is stereo. All Cabbage instruments are stereo. 
+</CsInstruments>  
+<CsScore>
+f1 0 1024 10 1
+f0 3600
+</CsScore>
+</CsoundSynthesizer>
+```
+>You'll notice that a '-n' and '-d' are passed to Csound in the CsOptions section. -n stops Csound from writing audio to disk. The '-d' prevents any FLTK widgets from displaying. These flags are now set by defaul in Cabbage so you no longer need to pass them in the CsOpyions. You will also notice that our instrument is stereo. All Cabbage instruments are stereo. 
+
+![](images/firstSynth.png)

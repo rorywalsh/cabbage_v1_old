@@ -595,7 +595,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         tables.append(0);
 
         cabbageIdentifiers.set(CabbageIDs::scrubberposition, tables);
-        cabbageIdentifiers.set(CabbageIDs::zoom, 0);
+        cabbageIdentifiers.set(CabbageIDs::zoom, -1);
         cabbageIdentifiers.set(CabbageIDs::startpos, 0);
         cabbageIdentifiers.set(CabbageIDs::tablenumber, -1);
         cabbageIdentifiers.set(CabbageIDs::outlinethickness, 1.f);

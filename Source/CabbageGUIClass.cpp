@@ -34,6 +34,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 //before parsing begins
     cabbageIdentifiers.set("scalex", 1);
     cabbageIdentifiers.set("scaley", 1);
+    cabbageIdentifiers.set(CabbageIDs::active, 1);
 
     StringArray strTokens;
     strTokens.addTokens(compStr, " ", "\"");
@@ -587,6 +588,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+        cabbageIdentifiers.set(CabbageIDs::active, 0);
 
         var tables;
         tables.append(0);
@@ -919,7 +921,6 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
     cabbageIdentifiers.set(CabbageIDs::popuptext, "");
     cabbageIdentifiers.set(CabbageIDs::alpha, 1);
     cabbageIdentifiers.set(CabbageIDs::visible, 1);
-    cabbageIdentifiers.set(CabbageIDs::active, 1);
     cabbageIdentifiers.set(CabbageIDs::rotate, 0.f);
     cabbageIdentifiers.set(CabbageIDs::pivotx, 0.f);
     cabbageIdentifiers.set(CabbageIDs::pivoty, 0.f);

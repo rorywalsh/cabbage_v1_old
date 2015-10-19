@@ -173,227 +173,225 @@ bool ChildAlias::keyPressed(const juce::KeyPress &key ,Component *)
 
 void ChildAlias::mouseDown (const MouseEvent& e)
 {
-    if(e.getNumberOfClicks()==1)
+    //reset drag values..
+    dragX = 0;
+    dragY = 0;
+
+
+    Logger::writeToLog(getProperties().getWithDefault(CabbageIDs::lineNumber, -99).toString());
+    int numSelected = getLayoutEditor()->getLassoSelection().getNumSelected();
+    bool partOfSelection=false;
+
+    if(e.mods.isCommandDown())
     {
-        //reset drag values..
-        dragX = 0;
-        dragY = 0;
-
-
-        Logger::writeToLog(getProperties().getWithDefault(CabbageIDs::lineNumber, -99).toString());
-        int numSelected = getLayoutEditor()->getLassoSelection().getNumSelected();
-        bool partOfSelection=false;
-
-        if(e.mods.isCommandDown())
+        getLayoutEditor()->selectedFilters.addToSelection(this);
+        getProperties().set("interest", "selected");
+        repaint();
+    }
+    else
+    {
+        for(int i=0; i<numSelected; i++)
         {
-            getLayoutEditor()->selectedFilters.addToSelection(this);
-            getProperties().set("interest", "selected");
-            repaint();
+            if(getLayoutEditor()->selectedFilters.getSelectedItem(i)->getBounds()==this->getBounds())
+                partOfSelection=true;
         }
-        else
+        if(partOfSelection==false)
         {
-            for(int i=0; i<numSelected; i++)
+            if(getLayoutEditor())
             {
-                if(getLayoutEditor()->selectedFilters.getSelectedItem(i)->getBounds()==this->getBounds())
-                    partOfSelection=true;
+                getLayoutEditor()->selectedFilters.deselectAll();
+                getLayoutEditor()->resetAllBorders();
+                numSelected = 0;
             }
-            if(partOfSelection==false)
+        }
+    }
+
+    if(numSelected<1)
+    {
+        ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
+        if(parent)
+        {
+            parent->resetAllBorders();
+            parent->currentEvent = "mouseDownChildAlias";
+            parent->sendChangeMessage();
+        }
+
+        getLayoutEditor()->selectedCompsOrigCoordinates.clear();
+        getLayoutEditor()->selectedLineNumbers.clear();
+        getLayoutEditor()->selectedCompsOrigCoordinates.add(this->getBounds());
+        getLayoutEditor()->selectedLineNumbers.add(this->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
+
+        toFront (true);
+        if(!e.mods.isCommandDown())
+            getProperties().set("interest", "current");
+        repaint ();
+        parent = nullptr;
+    }
+    else
+    {
+        getLayoutEditor()->selectedCompsOrigCoordinates.clear();
+        getLayoutEditor()->selectedLineNumbers.clear();
+        for(int i=0; i<numSelected; i++)
+        {
+            //add original position of selected filters to vector
+            //Logger::writeToLog("ChildAlias MouseDown MultiSel:\n"+cUtils::getBoundsString(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds()));
+            if(getLayoutEditor()->getLassoSelection().getSelectedItem(i))
+                getLayoutEditor()->selectedCompsOrigCoordinates.add(
+                    getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds());
+            getLayoutEditor()->selectedLineNumbers.add(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
+        }
+    }
+
+
+
+    numSelected = getLayoutEditor()->getLassoSelection().getNumSelected();
+    Logger::writeToLog(String(numSelected));
+
+
+
+    if (e.eventComponent == resizer)
+    {
+    }
+    else
+    {
+        //added a constrainer so that components can't be dragged off-screen
+        constrainer->setMinimumOnscreenAmounts(getHeight(), getWidth(), getHeight(), getWidth());
+        //dragger.startDraggingComponent (this,e);
+    }
+
+    userAdjusting = true;
+    startBounds = getBounds ();
+    userStartedChangingBounds ();
+
+    //get the bounds of each of the child components if we are dealing with a plant
+    Component* c = (Component*) target.getComponent ();
+    origBounds.clear();
+
+    for(int i=0; i<c->getNumChildComponents(); i++)
+    {
+        origBounds.add(c->getChildComponent(i)->getBounds());
+    }
+
+#ifdef Cabbage_Build_Standalone
+    if(e.mods.isPopupMenu())
+    {
+        PopupMenu m;
+        m.setLookAndFeel(&getParentComponent()->getLookAndFeel());
+        m.addItem(2, "Delete");
+        m.addItem(3, "Duplicate");
+        m.addItem(4, "Create plant");
+        m.addItem(5, "Break up plant");
+        m.addItem(1, "Add to repository");
+        int choice;
+#if !defined(AndroidBuild)
+        choice = m.show();
+#endif
+        if(choice==1)
+        {
+            String plantDir;
+            plantDir = appProperties->getUserSettings()->getValue("PlantFileDir", "");
+            if(File(plantDir).exists())
             {
-                if(getLayoutEditor())
+                this->getTopLevelComponent()->setAlwaysOnTop(false);
+                AlertWindow alert("Add to Repository", "Enter a name and hit 'escape'", AlertWindow::NoIcon, this->getTopLevelComponent());
+                //CabbageLookAndFeel basicLookAndFeel;
+                alert.setLookAndFeel(&getLookAndFeel());
+                alert.setColour(TextEditor::textColourId, Colours::white);
+                alert.setColour(TextEditor::backgroundColourId, Colour(20, 20, 20));
+                alert.setColour(TextEditor::highlightColourId, Colour(20, 20, 20));
+                //alert.addTextBlock("Enter a name and hit 'escape'(The following symbols not premitted in names:"" $ % ^ & * ( ) - + )");
+                alert.addTextEditor("textEditor", "name", "");
+#if !defined(AndroidBuild) && !defined(CABBAGE_HOST)
+                alert.runModalLoop();
+#endif
+                this->getTopLevelComponent()->setAlwaysOnTop(true);
+                bool clashingNames=false;
+                int result;
+
+                //Logger::writeToLog(plantDir);
+                Array<File> tempfiles;
+                StringArray plants;
+                addFilesToPopupMenu(m, tempfiles, plantDir, "*.plant", 100);
+
+                for(int i=0; i<tempfiles.size(); i++)
                 {
-                    getLayoutEditor()->selectedFilters.deselectAll();
-                    getLayoutEditor()->resetAllBorders();
-                    numSelected = 0;
+                    Logger::outputDebugString(tempfiles[i].getFullPathName());
+                    plants.add(tempfiles[i].getFileNameWithoutExtension());
+                }
+
+                for(int i=0; i<plants.size(); i++)
+                    if(plants[i]==alert.getTextEditorContents("textEditor"))
+                        clashingNames = true;
+
+                ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
+                if(parent)
+                {
+                    parent->currentEvent = "addPlantToRepo:"+alert.getTextEditorContents("textEditor");
+
+
+                    if(clashingNames==true)
+                    {
+                        result = cUtils::showYesNoMessage("Do you wish to overwrite the existing plant?", &getLookAndFeel());
+                        if(result == 0)
+                            parent->sendChangeMessage();
+                        else
+                            showMessage("Nothing written to repository", &getLookAndFeel());
+                    }
+                    else
+                    {
+                        parent->sendChangeMessage();
+                    }
                 }
             }
+            else
+                cUtils::showMessage("No plant directory found. Please select a plant/widget directory in the Options->Preferences menu", &getLookAndFeel());
         }
-
-        if(numSelected<1)
+        else if(choice==2)
         {
+            //notify host to delete component/s
             ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
             if(parent)
             {
-                parent->resetAllBorders();
-                parent->currentEvent = "mouseDownChildAlias";
+                parent->currentEvent = "deleteComponents";
                 parent->sendChangeMessage();
             }
-
-            getLayoutEditor()->selectedCompsOrigCoordinates.clear();
-            getLayoutEditor()->selectedLineNumbers.clear();
-            getLayoutEditor()->selectedCompsOrigCoordinates.add(this->getBounds());
-            getLayoutEditor()->selectedLineNumbers.add(this->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
-
-            toFront (true);
-            if(!e.mods.isCommandDown())
-                getProperties().set("interest", "current");
-            repaint ();
-            parent = nullptr;
         }
-        else
+
+        else if(choice==3)
         {
-            getLayoutEditor()->selectedCompsOrigCoordinates.clear();
-            getLayoutEditor()->selectedLineNumbers.clear();
-            for(int i=0; i<numSelected; i++)
+            //notify host to delete component/s
+            ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
+            if(parent)
             {
-                //add original position of selected filters to vector
-                //Logger::writeToLog("ChildAlias MouseDown MultiSel:\n"+cUtils::getBoundsString(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds()));
-                if(getLayoutEditor()->getLassoSelection().getSelectedItem(i))
-                    getLayoutEditor()->selectedCompsOrigCoordinates.add(
-                        getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds());
-                getLayoutEditor()->selectedLineNumbers.add(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
+                parent->currentEvent = "duplicateComponents";
+                parent->sendChangeMessage();
             }
         }
 
-
-
-        numSelected = getLayoutEditor()->getLassoSelection().getNumSelected();
-        Logger::writeToLog(String(numSelected));
-
-
-
-        if (e.eventComponent == resizer)
+        else if(choice==4)
         {
+            //notify host to delete component/s
+            ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
+            if(parent)
+            {
+                parent->currentEvent = "convertToPlant";
+                parent->sendChangeMessage();
+            }
         }
-        else
+
+        else if(choice==5)
         {
-            //added a constrainer so that components can't be dragged off-screen
-            constrainer->setMinimumOnscreenAmounts(getHeight(), getWidth(), getHeight(), getWidth());
-            //dragger.startDraggingComponent (this,e);
+            //notify host to delete component/s
+            ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
+            if(parent)
+            {
+                parent->currentEvent = "breakUpPlant";
+                parent->sendChangeMessage();
+            }
         }
 
-        userAdjusting = true;
-        startBounds = getBounds ();
-        userStartedChangingBounds ();
-
-        //get the bounds of each of the child components if we are dealing with a plant
-        Component* c = (Component*) target.getComponent ();
-        origBounds.clear();
-
-        for(int i=0; i<c->getNumChildComponents(); i++)
-        {
-            origBounds.add(c->getChildComponent(i)->getBounds());
-        }
-
-#ifdef Cabbage_Build_Standalone
-        if(e.mods.isPopupMenu())
-        {
-            PopupMenu m;
-            m.setLookAndFeel(&getParentComponent()->getLookAndFeel());
-            m.addItem(2, "Delete");
-            m.addItem(3, "Duplicate");
-            m.addItem(4, "Create plant");
-            m.addItem(5, "Break up plant");
-            m.addItem(1, "Add to repository");
-            int choice;
-#if !defined(AndroidBuild)
-            choice = m.show();
-#endif
-            if(choice==1)
-            {
-                String plantDir;
-                plantDir = appProperties->getUserSettings()->getValue("PlantFileDir", "");
-                if(File(plantDir).exists())
-                {
-                    this->getTopLevelComponent()->setAlwaysOnTop(false);
-                    AlertWindow alert("Add to Repository", "Enter a name and hit 'escape'", AlertWindow::NoIcon, this->getTopLevelComponent());
-                    //CabbageLookAndFeel basicLookAndFeel;
-                    alert.setLookAndFeel(&getLookAndFeel());
-                    alert.setColour(TextEditor::textColourId, Colours::white);
-                    alert.setColour(TextEditor::backgroundColourId, Colour(20, 20, 20));
-                    alert.setColour(TextEditor::highlightColourId, Colour(20, 20, 20));
-                    //alert.addTextBlock("Enter a name and hit 'escape'(The following symbols not premitted in names:"" $ % ^ & * ( ) - + )");
-                    alert.addTextEditor("textEditor", "name", "");
-#if !defined(AndroidBuild) && !defined(CABBAGE_HOST)
-                    alert.runModalLoop();
-#endif
-                    this->getTopLevelComponent()->setAlwaysOnTop(true);
-                    bool clashingNames=false;
-                    int result;
-
-                    //Logger::writeToLog(plantDir);
-                    Array<File> tempfiles;
-                    StringArray plants;
-                    addFilesToPopupMenu(m, tempfiles, plantDir, "*.plant", 100);
-
-                    for(int i=0; i<tempfiles.size(); i++)
-                    {
-                        Logger::outputDebugString(tempfiles[i].getFullPathName());
-                        plants.add(tempfiles[i].getFileNameWithoutExtension());
-                    }
-
-                    for(int i=0; i<plants.size(); i++)
-                        if(plants[i]==alert.getTextEditorContents("textEditor"))
-                            clashingNames = true;
-
-                    ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
-                    if(parent)
-                    {
-                        parent->currentEvent = "addPlantToRepo:"+alert.getTextEditorContents("textEditor");
-
-
-                        if(clashingNames==true)
-                        {
-                            result = cUtils::showYesNoMessage("Do you wish to overwrite the existing plant?", &getLookAndFeel());
-                            if(result == 0)
-                                parent->sendChangeMessage();
-                            else
-                                showMessage("Nothing written to repository", &getLookAndFeel());
-                        }
-                        else
-                        {
-                            parent->sendChangeMessage();
-                        }
-                    }
-                }
-                else
-                    cUtils::showMessage("No plant directory found. Please select a plant/widget directory in the Options->Preferences menu", &getLookAndFeel());
-            }
-            else if(choice==2)
-            {
-                //notify host to delete component/s
-                ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
-                if(parent)
-                {
-                    parent->currentEvent = "deleteComponents";
-                    parent->sendChangeMessage();
-                }
-            }
-
-            else if(choice==3)
-            {
-                //notify host to delete component/s
-                ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
-                if(parent)
-                {
-                    parent->currentEvent = "duplicateComponents";
-                    parent->sendChangeMessage();
-                }
-            }
-
-            else if(choice==4)
-            {
-                //notify host to delete component/s
-                ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
-                if(parent)
-                {
-                    parent->currentEvent = "convertToPlant";
-                    parent->sendChangeMessage();
-                }
-            }
-
-            else if(choice==5)
-            {
-                //notify host to delete component/s
-                ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
-                if(parent)
-                {
-                    parent->currentEvent = "breakUpPlant";
-                    parent->sendChangeMessage();
-                }
-            }
-
-        }
     }
+
 #endif
 }
 

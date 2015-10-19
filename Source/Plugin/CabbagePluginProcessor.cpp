@@ -690,8 +690,9 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
         {
             messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
                     guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
-            // csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
-            //                     guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
+            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
+                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
+            this->updateCabbageControls();
         }
 
 #ifdef WIN32

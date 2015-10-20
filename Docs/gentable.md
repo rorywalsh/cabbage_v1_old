@@ -1,6 +1,6 @@
 # GenTable
 
-Gentable displays the contents of a function table, multiple tables, or files. Function tables that use a negative GEN05, GEN07 or GEN02 can be edited by clicking and dragging on the table. Only tables of size less or equal to 16384 points can be manually edited. If you wish to save any tables that you create you can use one of Csound's built-in table saving opcode "ftsave". If you need only display the contents of a static sound file from disk, use soundfiler as it will be fast and use less CPU. If on the other hand you wish to create some user editable envelopes, or display FFT or live waveform data use table. 
+Gentable displays the contents of a function table, multiple tables, or files. Function tables that have their identifier active() set to one, and use a negative GEN05, GEN07 or GEN02 can be edited by clicking and dragging on the table. Only tables of size less or equal to 16384 points can be manually edited. If you wish to save any tables that you create you can use one of Csound's built-in table saving opcode "ftsave". If you need only display the contents of a static sound file from disk, use soundfiler as it will be fast and use less CPU. If on the other hand you wish to create some user editable envelopes, or display FFT or live waveform data use table. 
 
 
 ```csharp
@@ -18,7 +18,7 @@ rotate(radians, pivotx, pivoty), widgetarray("chan", number), active(val)
 
 **amprange(min, max, tablenumber, quantise)** Sets the amplitude range(Y-axis) for a particular table. Min and Max are the minimum and maximum values. Quantise will set the resolution of the Y axis for editing. For example, if quantise is set to 1, all points added to the table will be quantised to integer values. If quantise matches the dynamic range of the table, the table will be drawn as a grid of on/off switches. If only one amprange() identifier is used, a table number of -1 can be set so that each table displayed will share the same amp range.
 
->amprange() is one of the few identifiers in Cabbage that can be used more than once in a line of Cabbage code.  
+>If the table is not active this identifier can usually be left out. If it is active, and therefore editable, it is important to use this identifier. Failure to do so may cause unexpected result.   
 
 **tablenumber(1, 2, ..)** Sets the table/tables to be displayed. If multiple tables are specified the tables will be superimposed on top of each other. If multiple tables are specified with a colon between then the tables will be stacked on top of each other along the Y-axis, e.g., tablenumber(1:2:3:4).  
 
@@ -54,7 +54,7 @@ rotate(radians, pivotx, pivoty), widgetarray("chan", number), active(val)
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
-**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+**active(val)** Set to 0 by default. Will enable or disable on-screen editing of the table. Note that tables must use a negative GEN 02, 05, or 07 in order for manual editing to work. 
 <!--(End of identifiers)/-->
 
 >If you need to redraw tables quickly, make sure they don't use negative GEN routines as it will seriously slow down redrawing. 

@@ -48,7 +48,6 @@
 		6168A5C81BA9D45C000F356A /* CommandManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6168A5BE1BA9D45C000F356A /* CommandManager.cpp */; };
 		6168A5C91BA9D45C000F356A /* opcodes.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6168A5C21BA9D45C000F356A /* opcodes.txt */; };
 		6168A5CA1BA9D45C000F356A /* SplitComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6168A5C41BA9D45C000F356A /* SplitComponent.cpp */; };
-		61DE9C5D1BC2D0F800652F21 /* CsoundLib64.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 613496E11B092094005F97F1 /* CsoundLib64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6A46E7B7BF485880047D5FC1 /* AUMIDIEffectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F7E8FECC72DF24243A0CF9C /* AUMIDIEffectBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		6DD4C9203E1C61CC888DDC91 /* AUScopeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AF7B934D8439EE5FFE3FABA /* AUScopeElement.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		70840B68B55060FE7F8B3226 /* AUBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B1F37A32F7389091529F322 /* AUBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -100,7 +99,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				61DE9C5D1BC2D0F800652F21 /* CsoundLib64.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3346,7 +3344,6 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Audio/Plug-Ins/Components/";
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = Bundle;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_LDFLAGS = "-bundle";
@@ -3397,7 +3394,6 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Audio/Plug-Ins/Components/";
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = Bundle;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_LDFLAGS = "-bundle";

@@ -3882,6 +3882,14 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                 getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
                 //repaint();
             }
+            //texteditor
+            else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("texteditor") &&
+                    getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+            {
+                ((CabbageTextEditor*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
+                getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
+                //repaint();
+            }
             //table
             else if((getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::table) &&
                     getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())

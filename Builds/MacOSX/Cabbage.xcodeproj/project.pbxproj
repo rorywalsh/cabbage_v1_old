@@ -23,7 +23,6 @@
 		58F8C4A32187FF6503FBBB6F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FBEEDA5026BB3BAA07532DA /* Carbon.framework */; };
 		610EBF6C1959BCF70034C779 /* Table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 610EBF6B1959BCF70034C779 /* Table.cpp */; };
 		613496DD1B08E8AE005F97F1 /* CsoundLib64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 613496DC1B08E8AE005F97F1 /* CsoundLib64.framework */; };
-		613496E01B08E9D4005F97F1 /* CsoundLib64.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 613496DF1B08E9D4005F97F1 /* CsoundLib64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		61385E7B186206B900AC002E /* logo_cabbage.icns in Resources */ = {isa = PBXBuildFile; fileRef = 61385E7A186206B900AC002E /* logo_cabbage.icns */; };
 		61F0559C18F7F8140087675C /* SplitComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 61F0559B18F7F8140087675C /* SplitComponent.cpp */; };
 		6271B02534AA9AA1C0279333 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C12BF2ACD057448FCA5020CB /* IOKit.framework */; };
@@ -68,7 +67,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				613496E01B08E9D4005F97F1 /* CsoundLib64.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2959,7 +2957,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx10.9;
@@ -2989,6 +2987,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/Headers,
 				);
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks/Csound64Lib.framework/libs @exectuable_path/../Frameworks/Csound64Lib.framework/libs";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = Cabbage;
 				USER_HEADER_SEARCH_PATHS = /Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/Headers;
@@ -3017,6 +3016,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/Headers,
 				);
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks/Csound64Lib.framework/libs @exectuable_path/../Frameworks/Csound64Lib.framework/libs";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = Cabbage;
 				"USER_HEADER_SEARCH_PATHS[arch=*]" = /Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/Headers;
@@ -3066,7 +3066,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx10.9;

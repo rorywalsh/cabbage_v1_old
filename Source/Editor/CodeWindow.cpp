@@ -835,11 +835,16 @@ void CodeWindow::toggleManuals(String manual)
 void CodeWindow::showCabbageHelp()
 {
     String path;
+    StringArray tokens;
+    tokens.addTokens(textEditor->editor[textEditor->currentEditor]->getLineText(), false);
 #if defined(LINUX) || defined(MACOSX)
-    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/_book/index.html";
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/"+tokens[0]+".html";
 #else
-    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\_book\\index.html";
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\"+tokens[0]+".html";
 #endif
+    
+
+    
 
 
     if(!File(path).existsAsFile())
@@ -951,7 +956,7 @@ void CodeWindow::newFile(String type)
             "</Cabbage>\n"
             "<CsoundSynthesizer>\n"
             "<CsOptions>\n"
-            "-n -d\n"
+            "-m0d\n"
             "</CsOptions>\n"
             "<CsInstruments>\n"
             "sr = 44100\n"
@@ -984,7 +989,7 @@ void CodeWindow::newFile(String type)
             "</Cabbage>\n"
             "<CsoundSynthesizer>\n"
             "<CsOptions>\n"
-            "-n -d -+rtmidi=NULL -M0 --midi-key-cps=4 --midi-velocity-amp=5\n"
+            "-m0d -+rtmidi=NULL -M0 --midi-key-cps=4 --midi-velocity-amp=5\n"
             "</CsOptions>\n"
             "<CsInstruments>\n"
             "sr = 44100\n"

@@ -43,7 +43,7 @@ public:
         textEditor->setMultiLine(true);
         textEditor->setFont(Font("Arial", 18, 0));
         addAndMakeVisible(textEditor, true);
-        setText("hewe;roiuew asdfhsa ldkjfhsd lfauskdhf lsadiufh dslifuhsadlifu hdsaflisaud hflidsau hflidsa uf");
+        setText("");
     };
 
     ~CsoundOutputComponent() {};
@@ -51,7 +51,7 @@ public:
 
     void setText(String text)
     {
-        textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue.brighter());
+        //textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue.brighter());
         textEditor->setText(text);
         textEditor->setCaretPosition(textEditor->getText().length());
     }

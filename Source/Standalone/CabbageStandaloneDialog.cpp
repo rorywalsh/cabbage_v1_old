@@ -152,7 +152,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
     filter->codeEditor = cabbageCsoundEditor->textEditor;
     //start timer for output message, and autoupdate if it's on
-    startTimer(100);
+    startTimer(500);
 
 
 
@@ -375,7 +375,7 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
         saveFile();
         if(filter->isGuiEnabled())
         {
-            startTimer(100);
+            startTimer(500);
             ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
             filter->setGuiEnabled(false);
         }
@@ -633,7 +633,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         globalSettings->removeValue ("filterState");
 
 
-    startTimer(100);
+    startTimer(500);
 
     if(cabbageCsoundEditor)
     {
@@ -1347,7 +1347,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         if(cabbageDance)
             startTimer(20);
         else
-            startTimer(100);
+            startTimer(500);
     }
 
     //------- preference disable gui edit warning ------
@@ -1373,7 +1373,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                 {
                     if(getPreference(appProperties, "ExternalEditor")==1)
                         csdFile = File(csdFile.getFullPathName());
-                    startTimer(100);
+                    startTimer(500);
                     //filter->suspendProcessing(false);
                     ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
                     filter->setGuiEnabled(false);
@@ -1415,16 +1415,8 @@ void StandaloneFilterWindow::setupWindowDimensions()
 void StandaloneFilterWindow::showEditorConsole()
 {
 
-    if(getPreference(appProperties, "ShowEditorConsole")==1)
-    {
-        cabbageCsoundEditor->csoundOutputComponent->setText("");
-        cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
-#ifdef BUILD_DEBUGGER
-        cabbageCsoundEditor->splitBottomWindow->SetSplitBarPosition(cabbageCsoundEditor->getWidth());
-#endif
-    }
-    else
-        cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight());
+    cabbageCsoundEditor->csoundOutputComponent->setText("");
+    cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
 }
 
 //==============================================================================

@@ -842,9 +842,9 @@ void CodeWindow::showCabbageHelp()
 #else
     path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\"+tokens[0]+".html";
 #endif
-    
 
-    
+
+
 
 
     if(!File(path).existsAsFile())

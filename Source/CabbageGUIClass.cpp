@@ -552,8 +552,6 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         height = 200;
 
         var tableColours;
-
-
         tableColours.append("white");
         tableColours.append("cornflowerblue");
         tableColours.append("yellow");
@@ -566,9 +564,6 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         tableColours.append("darkgreen");
         tableColours.append("lightgreen");
         tableColours.append("mango");
-
-
-
         cabbageIdentifiers.set(CabbageIDs::top, 10);
         cabbageIdentifiers.set(CabbageIDs::left, 10);
         cabbageIdentifiers.set(CabbageIDs::width, 300);

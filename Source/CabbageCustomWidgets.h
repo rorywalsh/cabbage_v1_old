@@ -1988,14 +1988,49 @@ class CabbageTextEditor : public Component,
     float rotate;
 public:
     String channel;
-    ScopedPointer<TextEditor> editor;
+
+    class customTextEditor : public TextEditor
+    {
+    public:
+        customTextEditor(CabbageTextEditor* _owner):TextEditor(""), owner(_owner) {}
+        ~customTextEditor() {}
+
+        void addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEvent *mouseClickEvent)
+        {
+            menuToAddTo.addItem(1, "Cut");
+            menuToAddTo.addItem(2, "Copy");
+            menuToAddTo.addItem(3, "Paste");
+            menuToAddTo.addItem(4, "Select All");
+            menuToAddTo.addSeparator();
+            menuToAddTo.addItem(5, "Send text");
+        }
+
+        void performPopupMenuAction (int menuItemID)
+        {
+            if(menuItemID==1)
+                cutToClipboard();
+            else if(menuItemID==2)
+                copyToClipboard();
+            else if(menuItemID==3)
+                pasteFromClipboard();
+            else if(menuItemID==4)
+                selectAll();
+            else if(menuItemID==5)
+                owner->sendTextMessage();
+        }
+
+    private:
+        CabbageTextEditor* owner;
+    };
+
+    ScopedPointer<customTextEditor> editor;
     //---- constructor -----
     CabbageTextEditor(CabbageGUIClass &cAttr) :
         name(cAttr.getStringProp(CabbageIDs::name)),
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         text(cAttr.getStringProp(CabbageIDs::text)),
         type(cAttr.getStringProp(CabbageIDs::type)),
-        editor(new TextEditor(String("editor_"))),
+        editor(new customTextEditor(this)),
         groupbox(new GroupComponent(String("groupbox_"))),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
@@ -2095,6 +2130,11 @@ public:
     }
 
     void textEditorReturnKeyPressed (TextEditor&)
+    {
+        sendTextMessage();
+    }
+
+    void sendTextMessage()
     {
         //cUtils::showMessage(editor->getText());
         strings.add(editor->getText());

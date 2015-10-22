@@ -1209,7 +1209,7 @@ public:
         {
             tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
         }
-        repaint();
+        //repaint();
     }
 
     void paint (Graphics& g)

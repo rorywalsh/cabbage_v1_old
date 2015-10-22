@@ -160,8 +160,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 #endif
         csoundParams->displays = 0;
 
-        csoundParams->sample_rate_override = this->getSampleRate();
-        csoundParams->control_rate_override = cUtils::getKrFromFile(inputfile, (int)getSampleRate());
+        //csoundParams->sample_rate_override = this->getSampleRate();
+        //csoundParams->control_rate_override = cUtils::getKrFromFile(inputfile, (int)getSampleRate());
 
         csound->SetParams(csoundParams);
 
@@ -996,11 +996,12 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             //showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()));
                             for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channelarray).size(); i++)
                             {
-                                CabbageGUIClass copy = cAttr;
+                                CabbageGUIClass copy(cAttr);
                                 copy.setStringProp(CabbageIDs::channel, cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
                                 copy.setStringProp(CabbageIDs::identchannel, cAttr.getStringArrayProp(CabbageIDs::identchannelarray).getReference(i));
                                 //Logger::writeToLog(cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
                                 guiLayoutCtrls.add(copy);
+                                widgetTypes.add("layout");
                                 guiID++;
                             }
                         }
@@ -1957,6 +1958,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 if(channelMessage.isNotEmpty())
                 {
                     guiLayoutCtrls.getReference(index).parse(" "+channelMessage, channelMessage);
+                    //cUtils::debug(channelMessage);
                     guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage,channelMessage.trim());
                     shouldUpdate=true;
                 }

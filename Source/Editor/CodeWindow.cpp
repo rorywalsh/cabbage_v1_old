@@ -903,7 +903,7 @@ void CodeWindow::setColourScheme(String theme)
 #ifdef CABBAGE_HOST
         textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(30, 30, 30));
 #else
-        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(30, 30, 30));
 #endif
         textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f));
         appProperties->getUserSettings()->setValue("EditorColourScheme", 1);

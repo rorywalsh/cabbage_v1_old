@@ -1072,7 +1072,12 @@ public:
             g.setGradientFill(base);
             g.fillEllipse (0, 0, width, height);
 
-            g.setColour(Colour::fromRGB(70, 70, 70));
+            g.setColour(Colours::black);
+            g.fillEllipse(width*0.09, height*0.09, width*0.82, height*0.82);
+
+            Colour outline = Colour::fromRGB(70, 70, 70);
+
+            g.setColour(outline.withAlpha(colour.getAlpha()));
             g.fillEllipse(width*0.04, height*0.04, width*0.92, height*0.92);
 
             if (isToggleOn)   //on

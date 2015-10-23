@@ -603,8 +603,8 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
     csoundParams->nchnls_override =2;
 #endif
     csoundParams->displays = 0;
-    csoundParams->sample_rate_override = this->getSampleRate();
-    csoundParams->control_rate_override = cUtils::getKrFromFile(file.getFullPathName(), (int)getSampleRate());
+    //csoundParams->sample_rate_override = this->getSampleRate();
+    //csoundParams->control_rate_override = cUtils::getKrFromFile(file.getFullPathName(), (int)getSampleRate());
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
     csound->SetOption((char*)"-d");

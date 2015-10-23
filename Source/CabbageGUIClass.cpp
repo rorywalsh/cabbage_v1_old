@@ -2021,6 +2021,9 @@ void CabbageGUIClass::setStringProp(Identifier prop, int index, String value)
 //===================================================================
 void CabbageGUIClass::setStringProp(Identifier prop, String val)
 {
+//	cUtils::debug(prop.toString());
+//	cUtils::debug(val);
+
     cabbageIdentifiers.set(prop, val);
 }
 //===================================================================

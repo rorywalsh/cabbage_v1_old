@@ -167,6 +167,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 
         csound->SetOption((char*)"-n");
         csound->SetOption((char*)"-d");
+        csound->SetOption((char*)"--omacro:IS_A_PLUGIN=0");
 
         StringArray lines, includeFiles;
         lines.addLines(File(inputfile).loadFileAsString());
@@ -415,6 +416,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
     csound->SetOption((char*)"-d");
+    csound->SetOption((char*)"--omacro:IS_A_PLUGIN=1");
 
 
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
@@ -608,6 +610,8 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
     csound->SetOption((char*)"-d");
+    csound->SetOption((char*)"--omacro:IS_A_PLUGIN=0");
+
     csound->SetHostImplementedMIDIIO(true);
     xyAutosCreated = false;
     numCsoundChannels = 0;

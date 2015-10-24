@@ -210,6 +210,17 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
             guiRefreshRate = getCsoundKsmpsSize()*2;
 
             //simple hack to allow tables to be set up correctly.
+
+            //init all channels with their init val
+            for(int i=0; i<guiCtrls.size(); i++)
+            {
+                messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
+                        guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
+                csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
+                                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
+                this->updateCabbageControls();
+            }
+
             csound->PerformKsmps();
             for(int i=0; i<includeFiles.size(); i++)
             {
@@ -278,6 +289,16 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         tempAudioFile.replaceWithData(0 ,0);
     }
 #endif
+
+//        //init all channels with their init val
+//        for(int i=0; i<guiCtrls.size(); i++)
+//        {
+//            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
+//                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
+//            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
+//                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
+//            this->updateCabbageControls();
+//        }
 
 }
 #else
@@ -428,6 +449,17 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
         Logger::writeToLog("compiled Ok");
         keyboardState.allNotesOff(0);
         keyboardState.reset();
+
+        //init all channels with their init val
+        for(int i=0; i<guiCtrls.size(); i++)
+        {
+            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
+                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
+            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
+                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
+            this->updateCabbageControls();
+        }
+
         //simple hack to allow tables to be set up correctly.
         csound->PerformKsmps();
         csound->SetScoreOffsetSeconds(0);
@@ -502,8 +534,18 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
 //        tempAudioFile.replaceWithData(0 ,0);
 //    }
 
+//        //init all channels with their init val
+//        for(int i=0; i<guiCtrls.size(); i++)
+//        {
+//            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
+//                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
+//            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
+//                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
+//            this->updateCabbageControls();
+//        }
 
     createGUI(csdFile.loadFileAsString(), true);
+
     Logger::writeToLog("GUI has been created");
 
 }
@@ -665,6 +707,17 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
         firstTime=false;
         keyboardState.allNotesOff(0);
         keyboardState.reset();
+
+        //init all channels with their init val
+        for(int i=0; i<guiCtrls.size(); i++)
+        {
+            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
+                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
+            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
+                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
+            this->updateCabbageControls();
+        }
+
         //simple hack to allow tables to be set up correctly.
         csound->PerformKsmps();
         csound->SetScoreOffsetSeconds(0);
@@ -689,15 +742,15 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
         //removeAllChangeListeners();
         getCallbackLock().exit();
 
-        //init all channels with their init val
-        for(int i=0; i<guiCtrls.size(); i++)
-        {
-            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
-                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
-            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
-                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
-            this->updateCabbageControls();
-        }
+//        //init all channels with their init val
+//        for(int i=0; i<guiCtrls.size(); i++)
+//        {
+//            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
+//                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
+//            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
+//                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
+//            this->updateCabbageControls();
+//        }
 
 #ifdef WIN32
         csound->SetChannel("CSD_PATH", file.getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());

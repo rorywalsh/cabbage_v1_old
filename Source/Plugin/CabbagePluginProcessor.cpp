@@ -35,6 +35,8 @@ CabbageLookAndFeelBasic* lookAndFeelBasic;
 
 //juce_ImplementSingleton (IdentArray);
 
+char tmp_string[4096] = {0};
+
 
 //==============================================================================
 // There are two different CabbagePluginAudioProcessor constructors. One for the
@@ -1943,14 +1945,15 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
 {
 #ifndef Cabbage_No_Csound
     bool shouldUpdate = false;
-    String chanName, channelMessage;
+    String channelMessage;
     if(csCompileResult==OK)
     {
-
         //update all control widgets
-        for(int index=0; index<guiCtrls.size(); index++)
+        const int guiCtrls_count = guiCtrls.size();
+        for(int index=0; index<guiCtrls_count; ++index)
         {
-            if(guiCtrls[index].getStringProp(CabbageIDs::channeltype).equalsIgnoreCase(CabbageIDs::stringchannel))
+            CabbageGUIClass &guiCtrl = guiCtrls.getReference(index);
+            if(guiCtrl.getStringProp(CabbageIDs::channeltype).equalsIgnoreCase(CabbageIDs::stringchannel))
             {
                 //THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE..
                 //dirtyControls.addIfNotAlreadyThere(index);
@@ -1958,71 +1961,71 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
             }
             else
             {
-                float value = csound->GetChannel(guiCtrls[index].getStringProp(CabbageIDs::channel).getCharPointer());
-                if(value!=guiCtrls[index].getNumProp(CabbageIDs::value))
+                float value = csound->GetChannel(guiCtrl.getStringProp(CabbageIDs::channel).getCharPointer());
+                if(value!=guiCtrl.getNumProp(CabbageIDs::value))
                 {
-                    Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));
-                    Logger::writeToLog("value:"+String(value));
-                    guiCtrls.getReference(index).setNumProp(CabbageIDs::value, value);
+                    //Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));
+                    //Logger::writeToLog("value:"+String(value));
+                    guiCtrl.setNumProp(CabbageIDs::value, value);
                     dirtyControls.addIfNotAlreadyThere(index);
                     shouldUpdate = true;
                 }
             }
 
-            if(guiCtrls[index].getStringProp(CabbageIDs::identchannel).isNotEmpty())
+            if(guiCtrl.getStringProp(CabbageIDs::identchannel).isNotEmpty())
             {
                 //if controls has an identifier channel send data from Csound to control
-                char string[4096] = {0};
-                csound->GetStringChannel(guiCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), string);
-                channelMessage = String(string);
+                csound->GetStringChannel(guiCtrl.getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), tmp_string);
+                channelMessage = String(tmp_string);
                 if(channelMessage.isNotEmpty())
                 {
-                    guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
-                    guiCtrls.getReference(index).parse(" "+channelMessage, "");
+                    guiCtrl.setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
+                    guiCtrl.parse(" "+channelMessage, "");
                     dirtyControls.addIfNotAlreadyThere(index);
                     shouldUpdate = true;
                 }
                 //else
                 //guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
                 //zero channel message so that we don't keep sending the same string
-                csound->SetChannel(guiCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
+                csound->SetChannel(guiCtrl.getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
             }
         }
 
         //update all layout control widgets
         //currently this is only needed for table widgets as other layout controls
         //don't use channel messages...
-        for(int index=0; index<getGUILayoutCtrlsSize(); index++)
+        const int guiLayoutCtrls_count = getGUILayoutCtrlsSize();
+        for(int index=0; index<guiLayoutCtrls_count; ++index)
         {
-            if(guiLayoutCtrls[index].getStringProp(CabbageIDs::type)==CabbageIDs::table)
+            CabbageGUIClass &guiLayoutCtrl = guiLayoutCtrls.getReference(index);
+            if(guiLayoutCtrl.getStringProp(CabbageIDs::type)==CabbageIDs::table)
             {
-                for(int y=0; y<guiLayoutCtrls[index].getStringArrayProp(CabbageIDs::channel).size(); y++)
+                for(int y=0; y<guiLayoutCtrl.getStringArrayProp(CabbageIDs::channel).size(); ++y)
                 {
                     //String test = getGUILayoutCtrls(index).getStringArrayPropValue(CabbageIDs::channel, y);
-                    float value = csound->GetChannel(guiLayoutCtrls[index].getStringArrayPropValue(CabbageIDs::channel, y).getCharPointer());
-                    guiLayoutCtrls[index].setTableChannelValues(y, value);
+                    float value = csound->GetChannel(guiLayoutCtrl.getStringArrayPropValue(CabbageIDs::channel, y).getCharPointer());
+                    guiLayoutCtrl.setTableChannelValues(y, value);
                     shouldUpdate=true;
                 }
             }
 
-            if(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).isNotEmpty())
+            if(guiLayoutCtrl.getStringProp(CabbageIDs::identchannel).isNotEmpty())
             {
-                char string[4096] = {0};
                 //guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress()
-                csound->GetStringChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), string);
-                channelMessage = String(string);
+                csound->GetStringChannel(guiLayoutCtrl.getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), tmp_string);
+                channelMessage = String(tmp_string);
                 //Logger::writeToLog(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel));
                 if(channelMessage.isNotEmpty())
                 {
-                    guiLayoutCtrls.getReference(index).parse(" "+channelMessage, channelMessage);
+                    guiLayoutCtrl.parse(" "+channelMessage, channelMessage);
                     //cUtils::debug(channelMessage);
-                    guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage,channelMessage.trim());
+                    guiLayoutCtrl.setStringProp(CabbageIDs::identchannelmessage,channelMessage.trim());
                     shouldUpdate=true;
                 }
                 //else
                 //	guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
                 //zero channel message so that we don't keep sending the same string
-                csound->SetChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
+                csound->SetChannel(guiLayoutCtrl.getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
             }
         }
         if(shouldUpdate)
@@ -2054,33 +2057,35 @@ void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
 
         }
 #endif
-
-        for(int i=0; i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue(); i++)
+        const int message_count = messageQueue.getNumberOfOutgoingChannelMessagesInQueue();
+        const int scoreEvents_count = scoreEvents.size();
+        for(int i=0; i<message_count; i++)
         {
+            const CabbageChannelMessage &message = messageQueue.getOutgoingChannelMessageFromQueue(i);
             //Logger::writeToLog("MessageType:"+messageQueue.getOutgoingChannelMessageFromQueue(i).type);
-            if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="directoryList")
+            if(message.type=="directoryList")
             {
-                for(int y=0; y<scoreEvents.size(); y++)
+                for(int y=0; y<scoreEvents_count; ++y)
                     csound->InputMessage(scoreEvents[y].toUTF8());
                 //scoreEvents.clear();
             }
             //update Csound function tables with values from table widget
-            else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type=="updateTable")
+            else if(message.type=="updateTable")
             {
                 //Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.toUTF8());
-                csound->InputMessage(messageQueue.getOutgoingChannelMessageFromQueue(i).fStatement.getCharPointer());
+                csound->InputMessage(message.fStatement.getCharPointer());
             }
             //catch string messags
-            else if(messageQueue.getOutgoingChannelMessageFromQueue(i).type==CabbageIDs::stringchannel)
+            else if(message.type==CabbageIDs::stringchannel)
             {
-                Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName);
-                Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);
-                csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
-                                   messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal.toUTF8().getAddress());
+                //Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName);
+                //Logger::writeToLog(messageQueue.getOutgoingChannelMessageFromQueue(i).stringVal);
+                csound->SetChannel(message.channelName.getCharPointer(),
+                                   message.stringVal.toUTF8().getAddress());
             }
             else
-                csound->SetChannel(messageQueue.getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
-                                   messageQueue.getOutgoingChannelMessageFromQueue(i).value);
+                csound->SetChannel(message.channelName.getCharPointer(),
+                                   message.value);
         }
 
         messageQueue.flushOutgoingChannelMessages();
@@ -2232,8 +2237,9 @@ void CabbagePluginAudioProcessor::timerCallback()
 //==============================================================================
 void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-    float* audioBuffer;
-    int numSamples = buffer.getNumSamples();
+    float** audioBuffers = buffer.getArrayOfWritePointers();
+    const int numSamples = buffer.getNumSamples();
+    const int output_channel_count = getNumOutputChannels();
 
     if(stopProcessing || isGuiEnabled())
     {
@@ -2253,7 +2259,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 
 
 
-            keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
+            keyboardState.processNextMidiBuffer (midiMessages, 0, numSamples, true);
             midiBuffer = midiMessages;
             //midiBuffer.clear();
 
@@ -2266,40 +2272,42 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                 midiMessages.clear();
 #endif
 
-            for(int i=0; i<numSamples; i++, csndIndex++)
+            const CriticalSection &callback_lock = getCallbackLock();
+
+            for(int i=0; i<numSamples; i++, ++csndIndex)
             {
                 if(csndIndex == csdKsmps)
                 {
-                    getCallbackLock().enter();
+                    callback_lock.enter();
                     //slow down calls to these functions, no need for them to be firing at k-rate
-                    yieldCounter = (yieldCounter>guiRefreshRate) ? 0 : yieldCounter+1;
-                    if(yieldCounter==0)
-                    {
+                    if (guiRefreshRate < yieldCounter) {
+                        yieldCounter = 0;
                         sendOutgoingMessagesToCsound();
                         updateCabbageControls();
-                    }
-
+                    } else
+                        ++yieldCounter;
 
                     csCompileResult = csound->PerformKsmps();
 
                     if(csCompileResult!=OK)
                         stopProcessing = true;
                     else
-                        ksmpsOffset++;
+                        ++ksmpsOffset;
 
-                    getCallbackLock().exit();
+                    callback_lock.exit();
                     csndIndex = 0;
                 }
                 if(csCompileResult==OK)
                 {
-                    for(int channel = 0; channel < getNumOutputChannels(); channel++ )
+                    pos = csndIndex * output_channel_count;
+                    for(int channel = 0; channel < output_channel_count; ++channel)
                     {
-                        audioBuffer = buffer.getWritePointer(channel,0);
-                        pos = csndIndex*getNumOutputChannels();
-                        float samp = audioBuffer[i]*cs_scale;
-                        CSspin[channel+pos] = samp;
-                        audioBuffer[i] = (CSspout[channel+pos]/cs_scale);
-
+                        float *&current_buffer = audioBuffers[channel];
+                        float samp = *current_buffer * cs_scale;
+                        CSspin[pos] = samp;
+                        *current_buffer = (CSspout[pos] / cs_scale);
+                        ++current_buffer;
+                        ++pos;
                     }
                 }
                 else
@@ -2309,23 +2317,22 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
             }
 
             if (activeWriter != 0 && !isWinXP)
-                activeWriter->write (buffer.getArrayOfReadPointers(), buffer.getNumSamples());
+                activeWriter->write (buffer.getArrayOfReadPointers(), numSamples);
 
             if(isMuted)
                 buffer.clear();
 
-            rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
-            rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
+            rmsLeft = buffer.getRMSLevel(0, 0, numSamples);
+            rmsRight = buffer.getRMSLevel(1, 0, numSamples);
 
         }//if not compiled just mute output
         else
         {
-            for(int channel = 0; channel < getNumInputChannels(); channel++)
+            for(int channel = 0; channel < output_channel_count; ++channel)
             {
-                audioBuffer = buffer.getWritePointer(channel,0);
-                for(int i=0; i<numSamples; i++, csndIndex++)
+                for(int i=0; i<numSamples; ++i, ++csndIndex)
                 {
-                    audioBuffer[i]=0;
+                    audioBuffers[channel][i]=0;
                 }
             }
         }

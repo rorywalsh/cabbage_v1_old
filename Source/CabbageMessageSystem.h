@@ -95,7 +95,7 @@ public:
         outgoingChannelMessages.add(tableMessage);
     }
 
-    CabbageChannelMessage getOutgoingChannelMessageFromQueue(int index)
+    CabbageChannelMessage &getOutgoingChannelMessageFromQueue(int index)
     {
         return outgoingChannelMessages.getReference(index);
     }

@@ -1252,13 +1252,13 @@ void CabbageLookAndFeel::drawDocumentWindowTitleBar (DocumentWindow &window, Gra
         bool /*drawTitleTextOnLeft*/)
 {
     window.setUsingNativeTitleBar(false);
-
+	Colour background = Colour::fromString(window.getProperties().getWithDefault("colour", "").toString());
 #ifdef CABBAGE_HOST
     window.setOpaque(true);
-    g.setColour (cUtils::getComponentSkin());
+    g.setColour (background);
     g.fillRoundedRectangle(0, 0, w, h+20, 10);
 #else
-    g.setColour (cUtils::getDarkerBackgroundSkin());
+    g.setColour (background);
     g.fillAll();
 #endif
 

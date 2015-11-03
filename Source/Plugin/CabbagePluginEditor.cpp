@@ -2431,16 +2431,15 @@ void CabbagePluginAudioProcessorEditor::InsertSnapshot(CabbageGUIClass &cAttr)
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertMIDIKeyboard(CabbageGUIClass &cAttr)
 {
-    layoutComps.add(new MidiKeyboardComponent(getFilter()->keyboardState,
-                    MidiKeyboardComponent::horizontalKeyboard));
-    int idx = layoutComps.size()-1;
-
     float left = cAttr.getNumProp(CabbageIDs::left);
     float top = cAttr.getNumProp(CabbageIDs::top);
     float width = cAttr.getNumProp(CabbageIDs::width);
     float height = cAttr.getNumProp(CabbageIDs::height);
+
+    layoutComps.add(new CabbageKeyboard(cAttr, getFilter()->keyboardState));
+    int idx = layoutComps.size()-1;
+
     setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
-    ((MidiKeyboardComponent*)layoutComps[idx])->setLowestVisibleKey(cAttr.getNumProp(CabbageIDs::value));
     layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
 #ifdef Cabbage_Build_Standalone
     layoutComps[idx]->setWantsKeyboardFocus(true);
@@ -3818,6 +3817,13 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
             {
                 ((CabbageLabel*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
+                getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
+            }
+            //label
+            else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("keyboard") &&
+                    getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+            {
+                ((CabbageKeyboard*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
                 getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
             }
             //textbox

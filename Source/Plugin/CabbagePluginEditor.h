@@ -247,7 +247,7 @@ private:
 #else
     ScopedPointer<Component> componentPanel;
 #endif
-    ScopedPointer<MidiKeyboardComponent> midiKeyboard;
+    ScopedPointer<CabbageKeyboard> midiKeyboard;
     ScopedPointer<LookAndFeel_V1> feely;
     ComponentBoundsConstrainer resizeLimits;
 

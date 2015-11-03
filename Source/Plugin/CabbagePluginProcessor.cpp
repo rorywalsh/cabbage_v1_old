@@ -2280,11 +2280,13 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                 {
                     callback_lock.enter();
                     //slow down calls to these functions, no need for them to be firing at k-rate
-                    if (guiRefreshRate < yieldCounter) {
+                    if (guiRefreshRate < yieldCounter)
+                    {
                         yieldCounter = 0;
                         sendOutgoingMessagesToCsound();
                         updateCabbageControls();
-                    } else
+                    }
+                    else
                         ++yieldCounter;
 
                     csCompileResult = csound->PerformKsmps();

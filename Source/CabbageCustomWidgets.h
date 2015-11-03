@@ -61,7 +61,7 @@ public:
 //==============================================================================
 class CabbageButton : public Component
 {
-    int offX, offY, offWidth, offHeight, pivotx, pivoty;
+    int offX, offY, offWidth, offHeight, pivotx, pivoty, latched;
     String buttonType;
     String name, caption, tooltipText, buttonText, colour, fontcolour, oncolour, onfontcolour;
     float rotate;
@@ -1875,6 +1875,86 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageLabel);
 };
 
+//==============================================================================
+// custom CabbageKeyboard
+//==============================================================================
+class CabbageKeyboard	:	public Component
+{
+    float rotate;
+    int pivotx, pivoty;
+public:
+    CabbageKeyboard (CabbageGUIClass &cAttr, MidiKeyboardState &state)
+        : rotate(cAttr.getNumProp(CabbageIDs::rotate)),
+          pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+          pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+    {
+        addAndMakeVisible(keyboard = new MidiKeyboardComponent(state, MidiKeyboardComponent::Orientation::horizontalKeyboard));
+        if(!cAttr.getNumProp(CabbageIDs::visible))
+        {
+            setVisible(false);
+            //Logger::writeToLog("visivle");
+        }
+        else
+        {
+            setVisible(true);
+            //Logger::writeToLog("visivle");
+        }
+
+        setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
+        keyboard->setLowestVisibleKey(cAttr.getNumProp(CabbageIDs::value));
+        keyboard->setScrollButtonsVisible(true);
+
+    }
+
+    ~CabbageKeyboard()
+    {
+    }
+
+    void resized()
+    {
+        keyboard->setBounds(getLocalBounds());
+        if(rotate!=0)
+            setTransform(AffineTransform::rotation(rotate, getX()+pivotx, getY()+pivoty));
+    }
+
+    //update control
+    void update(CabbageGUIClass m_cAttr)
+    {
+        setBounds(m_cAttr.getBounds());
+        setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
+        if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
+        {
+            rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
+            setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
+        }
+        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+        {
+            setVisible(false);
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+            setVisible(true);
+        }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
+
+        repaint();
+    }
+
+
+private:
+    String text, colour, fontcolour, align;
+    ScopedPointer<MidiKeyboardComponent> keyboard;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageKeyboard);
+};
 
 //==============================================================================
 // custom CabbageXYController

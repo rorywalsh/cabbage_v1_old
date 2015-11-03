@@ -1,6 +1,6 @@
 <Cabbage>
 form caption("Grid Sequencer") size(580, 370), colour("black"),pluginID("add1")
-gentable bounds(10, 10, 560, 245), tablenumber(10:11:12:13:14:15:16:17), tablebackgroundcolour(0,0,0,0), tablecolour("green"), zoom(-1), amprange(0, 1, -1, 1), identchannel("tables1")
+gentable bounds(10, 10, 560, 245), active(1), tablenumber(10:11:12:13:14:15:16:17), tablebackgroundcolour(0,0,0,0), tablecolour("green"), active(1), zoom(-1), amprange(0, 1, -1, 1), identchannel("tables1")
 rslider bounds(320, 260, 71, 62), channel("tempo"), range(1, 16, 4, 1, 1), text("Tempo"),  colour("green"), 
 rslider bounds(252, 260, 71, 62), channel("octave"), range(-2, 2, 0, 1, 1),text("Octave"),  colour("green"), 
 rslider bounds(184, 260, 71, 62), channel("duration"), range(.1, 5, 1),text("Duration"),  colour("green"), 
@@ -126,7 +126,7 @@ endin
 <CsScore>
 f5 0 8 -2 60 61 62 63 64 65 67 68 69
 ;8 tables of 16 samples
-f10 0 16 -2 0 
+f10 0 16 -2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 f11 0 16 -2 0
 f12 0 16 -2 0
 f13 0 16 -2 0

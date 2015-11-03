@@ -835,6 +835,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::valuey, 0);
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::lime.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::cornflowerblue.toString());
+        cabbageIdentifiers.set(CabbageIDs::textcolour, Colours::cornflowerblue.toString());
         cabbageIdentifiers.set(CabbageIDs::type, "xypad");
         cabbageIdentifiers.set(CabbageIDs::name, "xypad");
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));

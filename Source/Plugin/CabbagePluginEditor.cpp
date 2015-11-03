@@ -130,10 +130,10 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
         zero_dbfs = getFilter()->getCsound()->Get0dBFS();
 #endif
 
-    setSize(400, 400);
-    componentPanel->setSize(400, 400);
+    setSize(1200, 1200);
+    componentPanel->setSize(1200, 1200);
 #ifdef Cabbage_Build_Stanalone
-    layoutEditor->setSize(400, 400);
+    layoutEditor->setSize(1200, 1200);
     layoutEditor->updateFrames();
 #endif
 

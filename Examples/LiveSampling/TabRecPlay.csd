@@ -1,3 +1,6 @@
+; TabRecPlay.csd
+; Written by Iain McCurdy, 2012
+
 <Cabbage>
 form caption("Tab.Rec/Play") size(300, 360), pluginID("tbrp")
 

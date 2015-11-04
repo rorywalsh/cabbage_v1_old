@@ -1,6 +1,9 @@
 # The following command is needed to set up Csound so that it can be inside the bundle frameworks folder 
-install_name_tool -id @executable_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
-	/Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
+# install_name_tool -id @executable_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
+# 	/Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
+
+# install_name_tool -id @loader_path/../../libs/libsndfile.1.dylib \
+#	/Users/walshr/sourcecode/csound/build/CsoundLib64.framework/libs/libsndfile.1.dylib
 
 if [ $1 == "standalone" ]
 then
@@ -49,8 +52,23 @@ fi
 
 if [ $1 == "all" ]
 then
+	echo "Removing old binaries"
+	rm -rf ./build/Release/Cabbage.app
+	rm -rf ./build/Release/CabbagePlugin.component
+	rm -rf ./build/Release/CabbageStudio.app
+
+
 	echo "Building Universal build"
+	# The following command is needed to set up Csound so that it can be inside the bundle frameworks folder 
+	# install_name_tool -id @executable_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
+	# /Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
+
 	xcodebuild -project Cabbage.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
+
+	# The following command is needed to set up Csound so that it can be inside the bundle frameworks folder 
+	# install_name_tool -id @loader_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
+	# /Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
+	
 	xcodebuild -project CabbagePlugin.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release GCC_PREPROCESSOR_DEFINITIONS="Cabbage_Plugin_Synth=1 USE_DOUBLE=1 CSOUND6=1 MACOSX=1"
 	cp -rf ./build/Release/CabbagePlugin.component/ ./build/Release/Cabbage.app/Contents/CabbagePluginSynth.component
 	rm -rf ./build/Release/CabbagePluginSynth.dat/CabbagePlugin.component	
@@ -59,12 +77,30 @@ then
 	rm -rf ./build/Release/CabbagePluginEffect.component
 	rm -rf ~/Library/Audio/Plug-Ins/VST/CabbagePlugin.vst
 
+	# The following command is needed to set up Csound so that it can be inside the bundle frameworks folder 
+	# install_name_tool -id @executable_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
+	# /Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
 	xcodebuild -project CabbageStudio.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
 
 	echo "Bundling all files"	
-	cp -rf ../../Docs ./build/Release/Cabbage.app/Contents/MacOS/Docs
+	#mkdir ./build/Release/Cabbage.app/Contents/MacOS/Docs
+	# mkdir ./build/Release/Cabbage.app/Contents/MacOS/Docs
+
+	#mkdir ./build/Release/CabbageStudio.app/Contents/MacOS/Docs
+	#mkdir ./build/Release/CabbageStudio.app/Contents/MacOS/Docs/_book
+
+	cp -rf ../../Docs/_book ./build/Release/Cabbage.app/Contents/MacOS/Docs
+	cp -rf ../../Docs/_book ./build/Release/CabbageStudio.app/Contents/MacOS/Docs
+
 	cp -rf ../../Examples ./build/Release/Cabbage.app/Contents/MacOS/Examples
+	cp -rf ../../Examples ./build/Release/CabbageStudio.app/Contents/MacOS/Examples
+	
 	cp opcodes.txt ./build/Release/Cabbage.app/Contents/MacOS/opcodes.txt 
+	cp IntroScreen.csd ./build/Release/Cabbage.app/Contents/MacOS/IntroScreen.csd
+	cp cabbage.png  ./build/Release/Cabbage.app/Contents/MacOS/cabbage.png 
+	cp cabbageEarphones.png  ./build/Release/Cabbage.app/Contents/MacOS/cabbageEarphones.png 
+
+	#packagesbuild ../../../CabbageOSXUniversal/CabbageOSXUniversal.pkgproj
 
 	#cp -rf ./build/Release/Cabbage.app/ ./build/Release/Cabbage32.app/	
 	#rm -rf 	cp -rf ./build/Release/Cabbage.app/

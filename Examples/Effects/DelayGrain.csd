@@ -1,74 +1,71 @@
-DelayGrain.csd
-Iain McCurdy, 2013
+; DelayGrain.csd
+; Iain McCurdy, 2013
+; 
+; CONTROLS
+; --------
+; Grain Size		--	range of possible grain sizes (in seconds)
+; Density			--	grain density in grains per second (note that the addition of delay will disrupt the regularity of grains)
+; Delay			--	range of delay times possible (in seconds)
+; Transpose		--	range of transpositions (in semitones)
+; Spread			--	random panning spread of grains
+; Amplitude Decay		--	the larger this value, the more grains are delayed, the more their amplitudes will be lowered
+; Reversal Proability	--	probability of material within the grains being played backwards: 0 = all forwards
+; 			                                                                          1 = all backwards
+; 			                                                                          0.5 = 50:50
+; 			        reversal might be hard to hear unless grain size is large
+; Mix			--	dry/wet mix
+; Level			--	output level (both dry and wet)
+; Grain Env.		--	sets the amplitude enveloping window for each grain
+; 				Hanning: natural sounding soft attack, soft decay envelope
+; 				Half-sine: like the hanning but with a slightly sharper attack and decay
+; 				Decay 1: a percussive decay envelope with linear segments
+; 				Decay 2: a percussive decay envelope with a exponential decay segment. Probably more natural sounding than 'Decay 1' but longer grain sizes may be necessary
+; 				Gate: sharp attack and decay. Rather synthetic sounding.
+; Delay Distr.		--	random delay time distribution: exponential, linear or logarithmic. Effect are quite subtle but exponential might be most natural sounding.
 
-CONTROLS
---------
-Grain Size		--	range of possible grain sizes (in seconds)
-Density			--	grain density in grains per second (note that the addition of delay will disrupt the regularity of grains)
-Delay			--	range of delay times possible (in seconds)
-Transpose		--	range of transpositions (in semitones)
-Spread			--	random panning spread of grains
-Amplitude Decay		--	the larger this value, the more grains are delayed, the more their amplitudes will be lowered
-Reversal Proability	--	probability of material within the grains being played backwards: 0 = all forwards
-			                                                                          1 = all backwards
-			                                                                          0.5 = 50:50
-			        reversal might be hard to hear unless grain size is large
-Mix			--	dry/wet mix
-Level			--	output level (both dry and wet)
-Grain Env.		--	sets the amplitude enveloping window for each grain
-				Hanning: natural sounding soft attack, soft decay envelope
-				Half-sine: like the hanning but with a slightly sharper attack and decay
-				Decay 1: a percussive decay envelope with linear segments
-				Decay 2: a percussive decay envelope with a exponential decay segment. Probably more natural sounding than 'Decay 1' but longer grain sizes may be necessary
-				Gate: sharp attack and decay. Rather synthetic sounding.
-Delay Distr.		--	random delay time distribution: exponential, linear or logarithmic. Effect are quite subtle but exponential might be most natural sounding.
 <Cabbage>
-form caption("Delay Grain") size(410, 540), pluginID("DGrn")
+form caption("Delay Grain") size(410, 520), pluginID("DGrn")
 
-hslider  bounds(  5,  5, 400, 25), channel("GSize1"), range(0.005, 2, 0.01, 0.5, 0.0001)
-hslider  bounds(  5, 20, 400, 25), channel("GSize2"), range(0.005, 2, 0.09, 0.5, 0.0001)
+hslider2 bounds(  5,  5, 400, 30), channel("GSize1","GSize2"), min(0.01), max(0.09)    range(0.005, 2, 0.01, 0.5, 0.0001)
+label    bounds(161, 29,  90, 11), text("G R A I N   S I Z E"), fontcolour(105,105,255)
 
-label    bounds(161, 39,  90, 11), text("G R A I N   S I Z E"), fontcolour(105,105,255)
+hslider  bounds(  5, 50, 400, 25), channel("Dens"), range(0.2, 2000, 50,0.5,0.001)
+label    bounds(172, 69,  65, 11), text("D E N S I T Y"), fontcolour(105,105,255)
 
-hslider  bounds(  5, 60, 400, 25), channel("Dens"), range(0.2, 2000, 50,0.5,0.001)
-label    bounds(172, 79,  65, 11), text("D E N S I T Y"), fontcolour(105,105,255)
+hslider2 bounds(  5, 90, 400, 30), channel("Dly1","Dly2"), min(0.01), max(0.5)    range(0, 5, 0.01, 0.5, 0.0001)
+label    bounds(180,114,  50, 11), text("D E L A Y"), fontcolour(105,105,255)
 
-hslider  bounds(  5,100, 400, 25), channel("Dly1"), range(0, 5, 0.01, 0.5, 0.0001)
-hslider  bounds(  5,115, 400, 25), channel("Dly2"), range(0, 5, 0.5,  0.5, 0.0001)
-label    bounds(180,134,  50, 11), text("D E L A Y"), fontcolour(105,105,255)
+hslider2 bounds(  5,140, 400, 30), channel("Trns1","Trns2"), min(0), max(0)    range(-12, 12, 0, 1, 0.001)
+label    bounds(162,164,  88, 11), text("T R A N S P O S E"), fontcolour(105,105,255)
 
-hslider  bounds(  5,160, 400, 25), channel("Trns1"), range(-12, 12, 0, 1, 0.001)
-hslider  bounds(  5,175, 400, 25), channel("Trns2"), range(-12, 12, 0, 1, 0.001)
-label    bounds(162,194,  88, 11), text("T R A N S P O S E"), fontcolour(105,105,255)
+hslider  bounds(  5,195, 400, 25), channel("PanSpread"), range(0, 1.00, 0.5,1,0.001)
+label    bounds(158,214,  95, 11), text("P A N   S P R E A D"), fontcolour(105,105,255)
 
-hslider  bounds(  5,215, 400, 25), channel("PanSpread"), range(0, 1.00, 0.5,1,0.001)
-label    bounds(158,234,  95, 11), text("P A N   S P R E A D"), fontcolour(105,105,255)
+hslider  bounds(  5,240, 400, 25), channel("AmpSpread"), range(0, 1.00, 0.5,1,0.001)
+label    bounds(158,259,  95, 11), text("A M P   S P R E A D"), fontcolour(105,105,255)
 
-hslider  bounds(  5,260, 400, 25), channel("AmpSpread"), range(0, 1.00, 0.5,1,0.001)
-label    bounds(158,279,  95, 11), text("A M P   S P R E A D"), fontcolour(105,105,255)
+hslider  bounds(  5,280, 400, 25), channel("FiltSpread"), range(0, 1.00, 0.5,1,0.001)
+label    bounds(147,299, 120, 11), text("F I L T E R   S P R E A D"), fontcolour(105,105,255)
 
-hslider  bounds(  5,300, 400, 25), channel("FiltSpread"), range(0, 1.00, 0.5,1,0.001)
-label    bounds(147,319, 120, 11), text("F I L T E R   S P R E A D"), fontcolour(105,105,255)
+hslider  bounds(  5,320, 400, 25), channel("ampdecay"), range(0, 1.00, 0.5,1,0.001)
+label    bounds(131,339, 150, 11), text("A M P L I T U D E   D E C A Y"), fontcolour(105,105,255)
 
-hslider  bounds(  5,340, 400, 25), channel("ampdecay"), range(0, 1.00, 0.5,1,0.001)
-label    bounds(131,359, 150, 11), text("A M P L I T U D E   D E C A Y"), fontcolour(105,105,255)
+hslider  bounds(  5,360, 400, 25), channel("reverse"), range(0, 1.00, 0,1,0.001)
+label    bounds(112,379, 190, 11), text("R E V E R S A L   P R O B A B I L I T Y"), fontcolour(105,105,255)
 
-hslider  bounds(  5,380, 400, 25), channel("reverse"), range(0, 1.00, 0,1,0.001)
-label    bounds(112,399, 190, 11), text("R E V E R S A L   P R O B A B I L I T Y"), fontcolour(105,105,255)
+hslider  bounds(  5,400, 400, 25), channel("mix"), range(0, 1.00, 1,1,0.001)
+label    bounds(189,419,  30, 11), text("M I X"), fontcolour(105,105,255)
 
-hslider  bounds(  5,420, 400, 25), channel("mix"), range(0, 1.00, 1,1,0.001)
-label    bounds(189,439,  30, 11), text("M I X"), fontcolour(105,105,255)
+hslider  bounds(  5,440, 400, 25), channel("level"), range(0, 2.00, 1, 0.5, 0.001)
+label    bounds(180,459,  50, 11), text("L E V E L"), fontcolour(105,105,255)
 
-hslider  bounds(  5,460, 400, 25), channel("level"), range(0, 2.00, 1, 0.5, 0.001)
-label    bounds(180,479,  50, 11), text("L E V E L"), fontcolour(105,105,255)
+label    bounds( 19,475,  70, 11), text("GRAIN ENV."), fontcolour(105,105,255)
+combobox bounds( 10,486,  90, 17), channel("window"), value(1), text("Hanning","Half Sine","Decay 1","Decay 2","Gate")
 
-label    bounds( 19,495,  70, 11), text("GRAIN ENV."), fontcolour(105,105,255)
-combobox bounds( 10,506,  90, 17), channel("window"), value(1), text("Hanning","Half Sine","Decay 1","Decay 2","Gate")
+label    bounds(117,475,  75, 11), text("DELAY DISTR."), fontcolour(105,105,255)
+combobox bounds(110,486,  90, 17), channel("DlyDst"), value(1), text("Exp.","Lin.","Log")
 
-label    bounds(117,495,  75, 11), text("DELAY DISTR."), fontcolour(105,105,255)
-combobox bounds(110,506,  90, 17), channel("DlyDst"), value(1), text("Exp.","Lin.","Log")
-
-label    bounds(  5,528, 160, 11), text("Author: Iain McCurdy |2013|"), FontColour("grey")
+label    bounds(  5,508, 160, 11), text("Author: Iain McCurdy |2013|"), FontColour("grey")
 </Cabbage>
 
 <CsoundSynthesizer>

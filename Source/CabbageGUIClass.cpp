@@ -34,6 +34,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 //before parsing begins
     cabbageIdentifiers.set("scalex", 1);
     cabbageIdentifiers.set("scaley", 1);
+    cabbageIdentifiers.set(CabbageIDs::active, 1);
 
     StringArray strTokens;
     strTokens.addTokens(compStr, " ", "\"");
@@ -51,8 +52,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         channels.append("hslider");
         cabbageIdentifiers.set(CabbageIDs::channel, channels);
         cabbageIdentifiers.set(CabbageIDs::min, 0);
-        cabbageIdentifiers.set(CabbageIDs::max, 100);
-        cabbageIdentifiers.set(CabbageIDs::value, 50);
+        cabbageIdentifiers.set(CabbageIDs::max, 1);
+        cabbageIdentifiers.set(CabbageIDs::value, 0);
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
@@ -61,7 +62,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::textcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
-        cabbageIdentifiers.set(CabbageIDs::sliderincr, .01);
+        cabbageIdentifiers.set(CabbageIDs::sliderincr, .001);
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);
         cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
         //these don't appear in the props dialog
@@ -97,8 +98,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         channels.append("vslider");
         cabbageIdentifiers.set(CabbageIDs::channel, channels);
         cabbageIdentifiers.set(CabbageIDs::min, 0);
-        cabbageIdentifiers.set(CabbageIDs::max, 100);
-        cabbageIdentifiers.set(CabbageIDs::value, 50);
+        cabbageIdentifiers.set(CabbageIDs::max, 1);
+        cabbageIdentifiers.set(CabbageIDs::value, 0);
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
@@ -107,7 +108,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::textcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
-        cabbageIdentifiers.set(CabbageIDs::sliderincr, .01);
+        cabbageIdentifiers.set(CabbageIDs::sliderincr, .001);
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);
         cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
         //these don't appear in the props dialog
@@ -137,10 +138,10 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         channels.append("rslider");
         cabbageIdentifiers.set(CabbageIDs::channel, channels);
         cabbageIdentifiers.set(CabbageIDs::min, 0);
-        cabbageIdentifiers.set(CabbageIDs::max, 100);
-        cabbageIdentifiers.set(CabbageIDs::value, 50);
+        cabbageIdentifiers.set(CabbageIDs::max, 1);
+        cabbageIdentifiers.set(CabbageIDs::value, 0);
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
-        cabbageIdentifiers.set(CabbageIDs::sliderincr, .01);
+        cabbageIdentifiers.set(CabbageIDs::sliderincr, .001);
         cabbageIdentifiers.set(CabbageIDs::text, "");
         cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
@@ -551,8 +552,6 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         height = 200;
 
         var tableColours;
-
-
         tableColours.append("white");
         tableColours.append("cornflowerblue");
         tableColours.append("yellow");
@@ -565,9 +564,6 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         tableColours.append("darkgreen");
         tableColours.append("lightgreen");
         tableColours.append("mango");
-
-
-
         cabbageIdentifiers.set(CabbageIDs::top, 10);
         cabbageIdentifiers.set(CabbageIDs::left, 10);
         cabbageIdentifiers.set(CabbageIDs::width, 300);
@@ -587,13 +583,14 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+        cabbageIdentifiers.set(CabbageIDs::active, 0);
 
         var tables;
         tables.append(0);
         tables.append(0);
 
         cabbageIdentifiers.set(CabbageIDs::scrubberposition, tables);
-        cabbageIdentifiers.set(CabbageIDs::zoom, 0);
+        cabbageIdentifiers.set(CabbageIDs::zoom, -1);
         cabbageIdentifiers.set(CabbageIDs::startpos, 0);
         cabbageIdentifiers.set(CabbageIDs::tablenumber, -1);
         cabbageIdentifiers.set(CabbageIDs::outlinethickness, 1.f);
@@ -838,6 +835,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::valuey, 0);
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::lime.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::cornflowerblue.toString());
+        cabbageIdentifiers.set(CabbageIDs::textcolour, Colours::cornflowerblue.toString());
         cabbageIdentifiers.set(CabbageIDs::type, "xypad");
         cabbageIdentifiers.set(CabbageIDs::name, "xypad");
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
@@ -916,6 +914,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::type, "hosttime");
     }
 
+    cabbageIdentifiers.set(CabbageIDs::popuptext, "");
     cabbageIdentifiers.set(CabbageIDs::alpha, 1);
     cabbageIdentifiers.set(CabbageIDs::visible, 1);
     cabbageIdentifiers.set(CabbageIDs::rotate, 0.f);
@@ -1178,6 +1177,11 @@ void CabbageGUIClass::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("pluginid"))
             {
                 cabbageIdentifiers.set(CabbageIDs::pluginid, strTokens[0].trim());
+            }
+
+            else if(identArray[indx].equalsIgnoreCase("popuptext"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::popuptext, strTokens[0]);
             }
 
             else if(identArray[indx].equalsIgnoreCase("items")||
@@ -1532,6 +1536,11 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                 cabbageIdentifiers.set(CabbageIDs::visible, strTokens[0].trim().getFloatValue());
             }
 
+            else if(identArray[indx].equalsIgnoreCase("active"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::active, strTokens[0].trim().getFloatValue());
+            }
+
             else if(identArray[indx].equalsIgnoreCase("stack"))
             {
                 cabbageIdentifiers.set(CabbageIDs::stack, strTokens[0].trim().getFloatValue());
@@ -1751,11 +1760,11 @@ void CabbageGUIClass::parse(String inStr, String identifier)
 //retrieve numerical attributes
 float CabbageGUIClass::getNumProp(Identifier prop)
 {
-    var props = cabbageIdentifiers.getWithDefault(prop, -9999.f);
+    var props = cabbageIdentifiers.getWithDefault(prop, -9999);
     if(props.size()>0)
         return props[0];
     else
-        return cabbageIdentifiers.getWithDefault(prop, -9999.f);
+        return cabbageIdentifiers.getWithDefault(prop, -9999);
 }
 
 //================================================================================================
@@ -2013,6 +2022,9 @@ void CabbageGUIClass::setStringProp(Identifier prop, int index, String value)
 //===================================================================
 void CabbageGUIClass::setStringProp(Identifier prop, String val)
 {
+//	cUtils::debug(prop.toString());
+//	cUtils::debug(val);
+
     cabbageIdentifiers.set(prop, val);
 }
 //===================================================================

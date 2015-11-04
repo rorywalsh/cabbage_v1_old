@@ -34,17 +34,18 @@
 //==============================================================================
 namespace CommandIDs
 {
-	static const int open                   = 0x30000;
-	static const int save                   = 0x30001;
-	static const int saveAs                 = 0x30002;
-	static const int showPluginListEditor   = 0x30100;
-	static const int showAudioSettings      = 0x30200;
-	static const int showAboutBox           = 0x30303;
-	static const int preferences            = 0x30400;
-	static const int setCabbageFileDirectory= 0x30500;
-	static const int viewSidepanel          = 0x30600;
-	static const int midiLearn	            = 0x30700;
-	static const int viewBottomPanel        = 0x30800;
+static const int open                   = 0x30000;
+static const int save                   = 0x30001;
+static const int saveAs                 = 0x30002;
+static const int showPluginListEditor   = 0x30100;
+static const int showAudioSettings      = 0x30200;
+static const int showAboutBox           = 0x30303;
+static const int preferences            = 0x30400;
+static const int setCabbageFileDirectory= 0x30500;
+static const int viewSidepanel          = 0x30600;
+static const int midiLearn	            = 0x30700;
+static const int midiMappings           = 0x30701;
+static const int viewBottomPanel        = 0x30800;
 }
 
 ApplicationCommandManager& getCommandManager();
@@ -58,7 +59,7 @@ class MainHostWindow    : public DocumentWindow,
     public ApplicationCommandTarget,
     public ChangeListener,
     public FileDragAndDropTarget,
-	public DragAndDropContainer
+    public DragAndDropContainer
 {
 public:
     //==============================================================================
@@ -84,24 +85,25 @@ public:
     bool perform (const InvocationInfo& info);
     bool tryToQuitApplication();
 
-	void launchPreferencesDialogue();
+    void launchPreferencesDialogue();
     void createPlugin (const PluginDescription* desc, int x, int y);
+    void showMidiMappings();
 
     void addPluginsToMenu (PopupMenu& m) const;
-	//add native Cabbage filters to list...nice.
-	void addCabbagePluginsToMenu (PopupMenu& m, Array<File> &cabbageFiles) const;
+    //add native Cabbage filters to list...nice.
+    void addCabbagePluginsToMenu (PopupMenu& m, Array<File> &cabbageFiles) const;
     const PluginDescription* getChosenType (const int menuID) const;
 
     GraphDocumentComponent* getGraphDocument() const;
-	
+
 
 private:
     //==============================================================================
     AudioDeviceManager deviceManager;
-	CabbageAudioDeviceSelectorComponent* audioSettingsComp;
-	CabbagePluginListComponent* pluginList;
-	const File deadMansPedalFile;
-	TooltipWindow tooltipWindow;
+    CabbageAudioDeviceSelectorComponent* audioSettingsComp;
+    CabbagePluginListComponent* pluginList;
+    const File deadMansPedalFile;
+    TooltipWindow tooltipWindow;
     AudioPluginFormatManager formatManager;
 
     OwnedArray <PluginDescription> internalTypes;

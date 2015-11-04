@@ -37,7 +37,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
     isInstrTabEnabled(false)
 {
 
-#ifndef Cabbage_Build_Standalone
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
     PropertiesFile::Options options;
     options.applicationName     = "Cabbage";
     options.filenameSuffix      = "settings";
@@ -117,7 +117,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
 //==============================================================================
 CodeWindow::~CodeWindow()
 {
-#ifndef Cabbage_Build_Standalone
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
     deleteAndZero(appProperties);
     appProperties = nullptr;
 #endif
@@ -143,11 +143,7 @@ void CodeWindow::showEditorConsole()
 //==============================================================================
 StringArray CodeWindow::getMenuBarNames()
 {
-#ifdef BUILD_DEBUGGER
     const char* const names[] = { "File", "Edit", "View", "Debug", "Help", 0 };
-#else
-    const char* const names[] = { "File", "Edit", "View", "Help", "Debug", 0 };
-#endif
     return StringArray (names);
 }
 
@@ -485,7 +481,7 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
 
         return m1;
     }
-#ifdef BUILD_DEBUGGER
+
     else if(topLevelMenuIndex==3)
     {
         m1.addCommandItem(&commandManager, CommandIDs::setBreakpoint);
@@ -501,16 +497,7 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
         m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
         return m1;
     }
-#else
 
-
-    else if(topLevelMenuIndex==3)
-    {
-        m1.addCommandItem(&commandManager, CommandIDs::viewCsoundHelp);
-        m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
-        return m1;
-    }
-#endif
     else return m1;
 }
 
@@ -848,11 +835,16 @@ void CodeWindow::toggleManuals(String manual)
 void CodeWindow::showCabbageHelp()
 {
     String path;
+    StringArray tokens;
+    tokens.addTokens(textEditor->editor[textEditor->currentEditor]->getLineText(), false);
 #if defined(LINUX) || defined(MACOSX)
-    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/cabbageReferenceManual.html";
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/"+tokens[0]+".html";
 #else
-    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\cabbageReferenceManual.html";
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\"+tokens[0]+".html";
 #endif
+
+
+
 
 
     if(!File(path).existsAsFile())
@@ -911,7 +903,7 @@ void CodeWindow::setColourScheme(String theme)
 #ifdef CABBAGE_HOST
         textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(30, 30, 30));
 #else
-        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(30, 30, 30));
 #endif
         textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f));
         appProperties->getUserSettings()->setValue("EditorColourScheme", 1);
@@ -964,7 +956,7 @@ void CodeWindow::newFile(String type)
             "</Cabbage>\n"
             "<CsoundSynthesizer>\n"
             "<CsOptions>\n"
-            "-n -d\n"
+            "-m0d\n"
             "</CsOptions>\n"
             "<CsInstruments>\n"
             "sr = 44100\n"
@@ -997,7 +989,7 @@ void CodeWindow::newFile(String type)
             "</Cabbage>\n"
             "<CsoundSynthesizer>\n"
             "<CsOptions>\n"
-            "-n -d -+rtmidi=NULL -M0 --midi-key-cps=4 --midi-velocity-amp=5\n"
+            "-m0d -+rtmidi=NULL -M0 --midi-key-cps=4 --midi-velocity-amp=5\n"
             "</CsOptions>\n"
             "<CsInstruments>\n"
             "sr = 44100\n"

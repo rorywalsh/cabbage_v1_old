@@ -1,3 +1,6 @@
+; PvsRecPlay.csd
+; Written by Iain McCurdy, 2012
+
 <Cabbage>
 form caption("PVS Rec/Play") size(300, 410), pluginID("pvrp")
 

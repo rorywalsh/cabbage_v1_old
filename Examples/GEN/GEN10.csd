@@ -1,6 +1,8 @@
-;Demonstration of GEN10
-;Create a wave and then play it using the keyboard
-;Negative strength values result in inverted phase
+; GEN10.csd
+; Written by Iain McCurdy, 2013
+; Demonstration of GEN10
+; Create a wave and then play it using the keyboard
+; Negative strength values result in inverted phase
 
 <Cabbage>
 form caption("GEN10"), size(410, 340), pluginID("gn10"), colour("20,70,170,150")

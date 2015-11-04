@@ -1,3 +1,6 @@
+; BandFilter.csd
+; Written by Iain McCurdy, 2012.
+
 <Cabbage>
 form caption("Band Filter"), colour("DarkSlateGrey"), size(470, 360), pluginID("band")  
 xypad bounds(5, 5, 350, 350), channel("cf", "bw"), rangex(0, 1, 0.5), rangey(0, 1, 0.3), text("x:cutoff | y:bandwidth"),colour(127,159,159)

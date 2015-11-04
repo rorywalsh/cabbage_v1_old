@@ -89,7 +89,42 @@ void PinComponent::mouseUp (const MouseEvent& e)
     getGraphPanel()->endDraggingConnector (e);
 }
 
+//======================================================================
+// Mute and bypass button components set up with tooltips
+//======================================================================
+class MiniButton : public Component,
+    public TooltipClient
+{
+public:
+    MiniButton(FilterComponent* _parent, String _name): parent(_parent), name(_name), isMuted(false), isBypassed(false)
+    {
+        this->setInterceptsMouseClicks(true, true);
+    }
 
+    ~MiniButton() {}
+
+    void mouseDown(const MouseEvent& e)
+    {
+        if(name=="Toggle mute")
+        {
+            parent->isMuted=!parent->isMuted;
+        }
+        else
+            parent->isBypassed=!parent->isBypassed;
+
+        parent->repaint();
+    }
+
+    String getTooltip()
+    {
+        return name;
+    }
+
+private:
+    String name;
+    FilterComponent* parent;
+    bool isBypassed, isMuted;
+};
 //================================================================================
 // Main component used to represent a filter in our graph
 //================================================================================
@@ -113,11 +148,15 @@ FilterComponent::FilterComponent (FilterGraph& graph_, const uint32 filterID_)
 {
     shadow.setShadowProperties (DropShadow (Colours::black.withAlpha (0.5f), 3, Point<int> (0, 1)));
     setComponentEffect (&shadow);
+    //addAndMakeVisible(mute);
+    //addAndMakeVisible(bypass);
 
 }
 //================================================================================
 FilterComponent::~FilterComponent()
 {
+    mute = nullptr;
+    bypass = nullptr;
     deleteAllChildren();
 }
 
@@ -292,6 +331,7 @@ void FilterComponent::mouseDown (const MouseEvent& e)
 
     if (pluginType==SOUNDFILER)
         getGraphDocument()->showComponentInBottomPanel("Soundfile Player:"+String(filterID));
+
 }
 //================================================================================
 void FilterComponent::mouseDrag (const MouseEvent& e)
@@ -345,7 +385,8 @@ void FilterComponent::mouseUp (const MouseEvent& e)
     {
         if (const AudioProcessorGraph::Node::Ptr f = graph.getNodeForId (filterID))
         {
-            if(f->properties.getWithDefault("pluginType", "")!="Internal")
+            if(f->properties.getWithDefault("pluginType", "")!="Internal" &&
+                    (f->properties.getWithDefault("pluginType", "")!="SoundfilePlayer"))
                 if (PluginWindow* const w = PluginWindow::getWindowFor (f, PluginWindow::Normal))
                     w->toFront (true);
         }
@@ -438,6 +479,7 @@ void FilterComponent::actionListenerCallback (const String &message)
         if(instance)
         {
             const int currentChannelCount = graph.getNodeForId(filterID)->getProcessor()->getNumOutputChannels();
+
             const int newChannelCount = cUtils::getNchnlsFromFile(file.loadFileAsString());
 
             if((getGraphPanel()!=nullptr) && (currentChannelCount!=newChannelCount))
@@ -497,12 +539,14 @@ void FilterComponent::timerCallback()
         CabbagePluginAudioProcessor* instance = (CabbagePluginAudioProcessor*)(graph.getNodeForId (filterID)->getProcessor());
 
 
-        if(codeWindow->csoundOutputComponent->getText()!=instance->getCsoundOutput())
-            codeWindow->csoundOutputComponent->setText(instance->getCsoundOutput());
+        if(codeWindow)
+        {
+            if(codeWindow->csoundOutputComponent->getText()!=instance->getCsoundOutput())
+                codeWindow->csoundOutputComponent->setText(instance->getCsoundOutput());
 
-        if(codeWindow->csoundDebuggerComponent->getText()!=instance->getDebuggerOutput())
-            codeWindow->csoundDebuggerComponent->setText(instance->getDebuggerOutput());
-
+            if(codeWindow->csoundDebuggerComponent->getText()!=instance->getDebuggerOutput())
+                codeWindow->csoundDebuggerComponent->setText(instance->getDebuggerOutput());
+        }
     }
 
 }
@@ -516,7 +560,8 @@ void FilterComponent::paint (Graphics& g)
     const int w = getWidth() - x * 2;
     const int h = getHeight() - pinSize * 2;
 
-    g.setColour(cUtils::getComponentSkin().withAlpha(.2f));
+    // g.setColour(cUtils::getComponentSkin());
+    g.setColour(Colour(20, 20, 20));
     g.fillRoundedRectangle(x, y, w, h, 5);
 
     g.drawRoundedRectangle(x, y, w, h, 5, 1.f);
@@ -620,6 +665,7 @@ void FilterComponent::drawLevelMeter (Graphics& g, float x, float y, int width, 
                                 .5f);
     }
 }
+
 //================================================================================
 void FilterComponent::resized()
 {
@@ -634,6 +680,12 @@ void FilterComponent::resized()
                            pc->isInput ? 0 : (getHeight() - pinSize),
                            pinSize, pinSize);
         }
+    }
+
+    if(mute && bypass)
+    {
+        mute->setBounds(getWidth()-20, 20.f, 15.f, 15.f);
+        bypass->setBounds(10, 16.f, 15.f, 15.f);
     }
 }
 //================================================================================
@@ -713,6 +765,7 @@ void FilterComponent::update()
     muteButton = Rectangle<float>(w-20, 20.f, 15.f, 15.f);
     bypassButton = Rectangle<float>(10, 16.f, 15.f, 15.f);
 
+
     if(PluginWrapper* tmpPlug = dynamic_cast <PluginWrapper*> (f->getProcessor()))
     {
         setName (tmpPlug->getPluginName());
@@ -764,6 +817,12 @@ void FilterComponent::update()
         if (f->getProcessor()->producesMidi())
             if(pluginType!=SOUNDFILER && pluginType!=AUTOMATION)
                 addAndMakeVisible (new PinComponent (graph, filterID, FilterGraph::midiChannelNumber, false));
+
+        if(pluginType!=INTERNAL && pluginType!=AUTOMATION)
+        {
+//            addAndMakeVisible(mute = new MiniButton(this, "Toggle mute"));
+//            addAndMakeVisible(bypass = new MiniButton(this, "Toggle bypass"));
+        }
 
         resized();
     }
@@ -1095,7 +1154,7 @@ int FilterComponent::exportPlugin(String type, bool saveAs, String fileName)
 
     if(!VSTData.exists())
     {
-        m_ShowMessage("Cabbage cannot find the plugin libraries. Make sure that Cabbage is situated in the same directory as CabbagePluginSynth.dat and CabbagePluginEffect.dat", oldLookAndFeel);
+        cUtils::showMessage("Cabbage cannot find the plugin libraries. Make sure that Cabbage is situated in the same directory as CabbagePluginSynth.dat and CabbagePluginEffect.dat");
         return 0;
     }
     else
@@ -1118,16 +1177,16 @@ int FilterComponent::exportPlugin(String type, bool saveAs, String fileName)
         }
         //showMessage(dll.getFullPathName());
         if(!VSTData.copyFileTo(dll))
-            cUtils::showMessage("Problem moving plugin lib, make sure it's not currently open in your plugin host!", lookAndFeel);
+            cUtils::showMessage("Problem moving plugin lib, make sure it's not currently open in your plugin host!");
 
         loc_csdFile.replaceWithText(csdFile.loadFileAsString());
         setUniquePluginID(dll, loc_csdFile, false);
         String info;
         info = String("Your plugin has been created. It's called:\n\n")+dll.getFullPathName()+String("\n\nIn order to modify this plugin you only have to edit the associated .csd file. You do not need to export every time you make changes.\n\nTo turn off this notice visit 'Preferences' in the main 'options' menu");
 
-        int val = getPreference(appProperties, "DisablePluginInfo");
-        if(!val)
-            cUtils::showMessage(info);
+        //int val = getPreference(appProperties, "DisablePluginInfo");
+        //if(!val)
+        //    cUtils::showMessage(info);
     }
 
 #endif

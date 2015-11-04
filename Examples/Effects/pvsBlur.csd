@@ -1,3 +1,6 @@
+; pvsBlur.csd
+; Written by Iain McCurdy, 2012.
+
 <Cabbage>
 form caption("pvsBlur"), size(235,125) colour( 70, 90,100), pluginID("blur")
 image             bounds(0, 0,235,125), colour( 70, 90,100), shape("rounded"), outlinecolour("white"), outlinethickness(5) 

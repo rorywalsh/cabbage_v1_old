@@ -1,3 +1,6 @@
+; pvsWarp.csd
+; Written by Iain McCurdy, 2012.
+
 <Cabbage>
 form caption("pvsWarp") size(440, 90), pluginID("warp")
 image pos(0, 0), size(440, 90), colour( 50, 50,75,220), shape("rounded"), outlinecolour("white"), outlinethickness(4) 

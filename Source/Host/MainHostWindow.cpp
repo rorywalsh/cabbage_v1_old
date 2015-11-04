@@ -131,10 +131,10 @@ MainHostWindow::MainHostWindow()
 #endif
 
     getCommandManager().setFirstCommandTarget (this);
-	
-	String userDir = appProperties->getUserSettings()->getValue("CabbageFilePaths");
-	if(!File(userDir).exists())
-		cUtils::showMessage("There is no user directory set for Cabbage instruments. Please go to Preferences and select the directory/directories where you store your Cabbage files");
+
+    String userDir = appProperties->getUserSettings()->getValue("CabbageFilePaths");
+    if(!File(userDir).exists())
+        cUtils::showMessage("There is no user directory set for Cabbage instruments. Please go to Preferences and select the directory/directories where you store your Cabbage files");
 
 }
 
@@ -222,6 +222,7 @@ PopupMenu MainHostWindow::getMenuForIndex (int topLevelMenuIndex, const String& 
     {
         menu.addCommandItem (&getCommandManager(), CommandIDs::viewSidepanel);
         menu.addCommandItem (&getCommandManager(), CommandIDs::viewBottomPanel);
+        menu.addCommandItem (&getCommandManager(), CommandIDs::midiMappings);
     }
     else if (topLevelMenuIndex == 2)
     {
@@ -296,8 +297,13 @@ void MainHostWindow::addPluginsToMenu (PopupMenu& m) const
         menu.addItem (i + 9000, internalTypes.getUnchecked(i)->name);
 
     menu.addItem(10000, "Soundfile player");
-    //menu.addItem(10001, "Automation track");
 
+    GraphDocumentComponent* const graphEditor = getGraphDocument();
+    if(graphEditor)
+    {
+        //if(!graphEditor->graph.isAutomationAdded())
+        //    menu.addItem(10001, "Automation track");
+    }
     m.addSubMenu("Devices", menu);
 }
 
@@ -323,66 +329,67 @@ void MainHostWindow::addCabbagePluginsToMenu (PopupMenu& m, Array<File> &cabbage
     }
 
 
-	String userDir = appProperties->getUserSettings()->getValue("CabbageFilePaths");
-	if(File(userDir).exists())
-	{
-		FileSearchPath filePaths(appProperties->getUserSettings()->getValue("CabbageFilePaths"));
-		//cUtils::showMessage(appProperties->getUserSettings()->getValue("CabbageFilePaths"))
+    String userDir = getAppProperties().getUserSettings()->getValue("CabbageFilePaths");
 
-		//add all files in root of specifed directories
-		for(int i=0; i<filePaths.getNumPaths(); i++)
-		{
-			File pluginDir(filePaths[i]);
-			pluginDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
+    if(File(userDir).exists())
+    {
+        FileSearchPath filePaths(appProperties->getUserSettings()->getValue("CabbageFilePaths"));
+        //cUtils::showMessage(appProperties->getUserSettings()->getValue("CabbageFilePaths"))
 
-		}
+        //add all files in root of specifed directories
+        for(int i=0; i<filePaths.getNumPaths(); i++)
+        {
+            File pluginDir(filePaths[i]);
+            pluginDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
 
-		for (int i = 0; i < cabbageFiles.size(); ++i)
-			menu.addItem (i+1, cabbageFiles[i].getFileNameWithoutExtension());
+        }
 
-
-		//fileCnt = cabbageFiles.size();
-
-		//increment menu size and serach recursively through all subfolders in specified dirs
-		for(int i=0; i<filePaths.getNumPaths(); i++)
-		{
-			Array<File> subFolders;
-			File searchDir(filePaths[i]);
-			subFolders.add(searchDir);
-			searchDir.findChildFiles(subFolders, File::findDirectories, true);
-
-			//remove parent dirs from array
-			for(int p=0; p<filePaths.getNumPaths(); p++)
-				subFolders.removeAllInstancesOf(filePaths[p]);
-
-			PopupMenu subMenu;
-			for (int subs = 0; subs < subFolders.size(); subs++)
-			{
-				cUtils::debug(subFolders[subs].getFullPathName());
-				fileCnt = cabbageFiles.size();
-				subFolders[subs].findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
-				subMenu.clear();
-
-				for (int fileIndex=fileCnt+1; fileIndex < cabbageFiles.size(); fileIndex++)
-					subMenu.addItem (fileIndex+1, cabbageFiles[fileIndex].getFileNameWithoutExtension());
+        for (int i = 0; i < cabbageFiles.size(); ++i)
+            menu.addItem (i+1, cabbageFiles[i].getFileNameWithoutExtension());
 
 
-				menu.addSubMenu(subFolders[subs].getFileNameWithoutExtension(), subMenu);
-			}
+        //fileCnt = cabbageFiles.size();
 
-			subMenu.clear();
-		}
+        //increment menu size and serach recursively through all subfolders in specified dirs
+        for(int i=0; i<filePaths.getNumPaths(); i++)
+        {
+            Array<File> subFolders;
+            File searchDir(filePaths[i]);
+            subFolders.add(searchDir);
+            searchDir.findChildFiles(subFolders, File::findDirectories, true);
+
+            //remove parent dirs from array
+            for(int p=0; p<filePaths.getNumPaths(); p++)
+                subFolders.removeAllInstancesOf(filePaths[p]);
+
+            PopupMenu subMenu;
+            for (int subs = 0; subs < subFolders.size(); subs++)
+            {
+                cUtils::debug(subFolders[subs].getFullPathName());
+                fileCnt = cabbageFiles.size();
+                subFolders[subs].findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
+                subMenu.clear();
+
+                for (int fileIndex=fileCnt+1; fileIndex < cabbageFiles.size(); fileIndex++)
+                    subMenu.addItem (fileIndex+1, cabbageFiles[fileIndex].getFileNameWithoutExtension());
 
 
-		menu.addSeparator();
-		menu.setLookAndFeel(&this->getLookAndFeel());
-		m.addSubMenu("User", menu);
-	}
-	
-	int nonExamplesSize = cabbageFiles.size();
+                menu.addSubMenu(subFolders[subs].getFileNameWithoutExtension(), subMenu);
+            }
 
-	menu.clear();
-	FileSearchPath exampleFilePaths(examplesDir);
+            subMenu.clear();
+        }
+
+
+        menu.addSeparator();
+        menu.setLookAndFeel(&this->getLookAndFeel());
+        m.addSubMenu("User", menu);
+    }
+
+    int nonExamplesSize = cabbageFiles.size();
+
+    menu.clear();
+    FileSearchPath exampleFilePaths(examplesDir);
     //add all files in root of specifed directories
     for(int i=0; i<exampleFilePaths.getNumPaths(); i++)
     {
@@ -427,7 +434,7 @@ void MainHostWindow::addCabbagePluginsToMenu (PopupMenu& m, Array<File> &cabbage
         subMenu.clear();
     }
 
-	m.addSubMenu("Native", menu);
+    m.addSubMenu("Native", menu);
 }
 
 const PluginDescription* MainHostWindow::getChosenType (const int menuID) const
@@ -457,6 +464,7 @@ void MainHostWindow::getAllCommands (Array <CommandID>& commands)
                               CommandIDs::viewSidepanel,
                               CommandIDs::viewBottomPanel,
                               CommandIDs::midiLearn,
+                              CommandIDs::midiMappings,
                               CommandIDs::setCabbageFileDirectory
                             };
 
@@ -527,6 +535,10 @@ void MainHostWindow::getCommandInfo (const CommandID commandID, ApplicationComma
         result.defaultKeypresses.add (KeyPress('m', ModifierKeys::commandModifier, 0));
         break;
 
+    case CommandIDs::midiMappings:
+        result.setInfo ("MIDI Mappings", String::empty, category, 0);
+        break;
+
     default:
         break;
     }
@@ -579,7 +591,7 @@ bool MainHostWindow::perform (const InvocationInfo& info)
         break;
 
     case CommandIDs::showAboutBox:
-        cUtils::showMessage("About", "Cabbage Studio v0.1 Beta");
+        cUtils::showMessage("About", "Cabbage Studio v0.1.3 Beta");
         break;
 
     case CommandIDs::viewSidepanel:
@@ -598,11 +610,23 @@ bool MainHostWindow::perform (const InvocationInfo& info)
         graphEditor->toggleMIDILearn();
         break;
 
+    case CommandIDs::midiMappings:
+        showMidiMappings();
+        break;
+
     default:
         return false;
     }
 
     return true;
+}
+
+void MainHostWindow::showMidiMappings()
+{
+    StringArray midiMap;
+    GraphDocumentComponent* const graphEditor = getGraphDocument();
+
+    graphEditor->showMidiMappings();
 }
 
 void MainHostWindow::launchPreferencesDialogue()
@@ -666,16 +690,17 @@ bool MainHostWindow::isInterestedInFileDrag (const StringArray&)
 
 void MainHostWindow::fileDragEnter (const StringArray&, int, int)
 {
-	
+
 }
 
 void MainHostWindow::fileDragMove (const StringArray&, int, int)
 {
-	
+
 }
 
 void MainHostWindow::fileDragExit (const StringArray&)
 {
+
 }
 
 void MainHostWindow::filesDropped (const StringArray& files, int x, int y)

@@ -484,6 +484,12 @@ void TableManager::enableEditMode(StringArray pFields, int ftNumber)
             tables[i]->enableEditMode(pFields);
 }
 //==============================================================================
+void TableManager::toggleEditMode(bool enable)
+{
+    for( int i=0; i<tables.size(); i++)
+        tables[i]->getHandleViewer()->setVisible(enable);
+}
+//==============================================================================
 void TableManager::bringTableToFront(int ftNumber)
 {
     for( int i=0; i<tables.size(); i++)
@@ -566,6 +572,7 @@ void GenTable::addTable(int sr, const Colour col, int igen, Array<float> ampRang
     realGenRoutine = igen;
     handleViewer->colour = col;
 
+
     setAmpRanges(ampRange);
 
     //set up table according to type of GEN used to create it
@@ -623,7 +630,7 @@ void GenTable::changeListenerCallback(ChangeBroadcaster *source)
         coordinates << roundToIntAccurate(currentHandle->xPosRelative*waveformBuffer.size()) <<
                     ", " << curY;
 
-        cUtils::debug("coordinates", coordinates);
+        //cUtils::debug("coordinates", coordinates);
         //no need to update function table no movement has taken place
         if(currentHandle->mouseStatus!="mouseEnter")
         {
@@ -713,24 +720,30 @@ Array<double> GenTable::getPfields()
             float amp = pixelToAmp(handleViewer->getHeight(), minMax, currYPos);
             if(genRoutine==5)
                 amp = jmax(0.001f, amp);
-            else
-                amp = jmax(0.f, amp);
+            //what was I thinking here with this next code! It was preventing
+            //any tables with negative values from editing properly. I'm leaving it
+            //here as a reminder of how dumb that was...
+
+            //else
+            //    amp = jmax(0.f, amp);
             //add y position
             values.add(amp);
+            cUtils::debug("Amp:" + String(amp));
             prevXPos = roundToIntAccurate(handleViewer->handles[i]->xPosRelative*waveformBuffer.size());
         }
         else if(genRoutine==2)
         {
             if(this->displayAsGrid())
             {
-                float amp = pixelToAmp(handleViewer->getHeight(), minMax, currYPos);
+                int status = handleViewer->handles[i]->status==true ? 1 : 0;
+                float amp =  status;//pixelToAmp(handleViewer->getHeight(), minMax, handleViewer->getHeight()*status);
+                //cUtils::debug("CurrentStatus:"+String(amp));
                 values.add(round(amp));
             }
             else
             {
                 float amp = pixelToAmp(handleViewer->getHeight(), minMax, currYPos);
                 values.add(amp);
-
             }
         }
     }
@@ -765,6 +778,13 @@ void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRang
     {
         waveformBuffer.clear();
         waveformBuffer = buffer;
+
+        for(int i=0; i<buffer.size(); i++)
+        {
+            //cUtils::debug(String(i)+":"+String(buffer[i]));
+        }
+
+
         //waveformBuffer.swapWith(buffer);
         tableSize = waveformBuffer.size();
 
@@ -838,15 +858,16 @@ void GenTable::enableEditMode(StringArray m_pFields)
         else if(genRoutine==2)
         {
             float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
-            handleViewer->addHandle(0, ampToPixel(thumbHeight, minMax, pFieldAmpValue), width+1, 5, this->colour);
+            handleViewer->addHandle(0, ampToPixel(thumbHeight, minMax, pFieldAmpValue), width+1, 5, this->colour, pFieldAmpValue==1 ? true : false);
 
-
+            //cUtils::debug("PFiledAmp:"+String(pFieldAmpValue));
             for(double i=6; i<pFields.size(); i++)
             {
                 pfieldCount++;
                 xPos = (i-5.0)/(double(tableSize))*tableSize;
                 pFieldAmpValue = (normalised<0 ? pFields[i].getFloatValue() : pFields[i].getFloatValue()/pFieldMinMax.getEnd());
-                handleViewer->addHandle(xPos/tableSize, ampToPixel(thumbHeight, minMax, pFieldAmpValue), width+1, 5, this->colour);
+                //cUtils::debug("PFiledAmp:"+String(pFieldAmpValue));
+                handleViewer->addHandle(xPos/tableSize, ampToPixel(thumbHeight, minMax, pFieldAmpValue), width+1, 5, this->colour, pFieldAmpValue==1 ? true : false);
             }
 
             //initialise all remaining points in the table if user hasn't
@@ -854,7 +875,7 @@ void GenTable::enableEditMode(StringArray m_pFields)
             {
                 xPos = (i+1)/(double(tableSize))*tableSize;
                 pFieldAmpValue = pFieldMinMax.getEnd();
-                handleViewer->addHandle(xPos/tableSize, ampToPixel(thumbHeight, minMax, pFieldAmpValue), width+1, 5, this->colour);
+                handleViewer->addHandle(xPos/tableSize, ampToPixel(thumbHeight, minMax, pFieldAmpValue), width+1, 5, this->colour, false);
             }
 
             handleViewer->fixEdgePoints(genRoutine);
@@ -909,6 +930,8 @@ const Image GenTable::drawGridImage(bool redraw, double width, double height, do
         Image gridImage(Image::RGB, width, height, true);
         Graphics g(gridImage);
         const double widthOfGridElement = width/waveformBuffer.size();
+
+
 
         //g.setColour(Colours::red);
         //draw grid image
@@ -1052,7 +1075,7 @@ void GenTable::paint (Graphics& g)
     {
         vuPath.startNewSubPath(0, thumbArea.getHeight()+5.f);
 
-        //if drawing VU meter then we don't need a high resolution for the draing.
+        //if drawing VU meter then we don't need a high resolution for the drawing.
         float incr = (tableSize<=2 ? 1 : visibleLength/((double)thumbArea.getWidth()));
         prevY = ampToPixel(thumbHeight, minMax, waveformBuffer[0]);
         float midPoint;
@@ -1084,6 +1107,7 @@ void GenTable::paint (Graphics& g)
             else
             {
                 //minMax is the range of the current waveforms amplitude
+
                 currY = ampToPixel(thumbHeight, minMax, waveformBuffer[i]);
                 if(tableSize<=2)
                 {
@@ -1277,7 +1301,7 @@ HandleViewer::~HandleViewer()
 };
 
 //==============================================================================
-void HandleViewer::addHandle(double x, double y, double width, double height, Colour colour)
+void HandleViewer::addHandle(double x, double y, double width, double height, Colour colour, bool status)
 {
     //add a handle component to our handleViewer
     int indx;
@@ -1291,7 +1315,10 @@ void HandleViewer::addHandle(double x, double y, double width, double height, Co
         handle->setPosition(getWidth()*x, y, (handle->getWidth()==FIXED_WIDTH ? true : false));
 
         handle->addChangeListener(table);
-        handle->status=true;
+        handle->status=status;
+
+
+        //cUtils::debug("Top"+String(handle.getPosition().getY()));
         handles.add(handle);
         addAndMakeVisible(handles[handles.size()-1]);
 
@@ -1324,7 +1351,7 @@ void HandleViewer::insertHandle(double x, double y, Colour colour)
         handle->setUniqueID(indx);
         addAndMakeVisible(handle);
         handles.insert(indx, handle);
-        handle->status=true;
+        //handle->status=true;
         handle->sendChangeMessage();
     }
 
@@ -1730,7 +1757,7 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
         xPos = x;
     }
 
-    cUtils::debug("Handle height", getHeight());
+    //cUtils::debug("Handle height", getHeight());
 
     yPos = jlimit(0.0, getParentComponent()->getHeight()+0.0, yPos+(getHeight()/2.f));
 

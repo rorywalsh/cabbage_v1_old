@@ -10,7 +10,7 @@
 ; The reason 5 circles created, and triggering cycles through these, is to allow circles to overlap. It is assumed that the user won't trigger more that five at once.
 
 <Cabbage>
-form caption("Pebbles in a Pond"), scrollbars(0), size(900, 520), pluginID("Pond"),colour(0,10,20), guirefresh(128)
+form caption("Pebbles in a Pond"), scrollbars(0), size(900, 520), pluginID("Pond"),colour(0,10,20), guirefresh(64)
 image bounds(0,0,0,0), colour(0,0,0), widgetarray("circle",70), shape("ellipse"), outlinecolour("white"), line(0)
 label    bounds(  0, 0,0, 0), text("Drop a pebble into the pond..."), align(centre), fontcolour(0,0,0,0), identchannel("instructions")
 </Cabbage>
@@ -106,6 +106,7 @@ instr	2	; Draw an expanding circle and create a 'plip' sound
  aNse	buthp	aNse,250			; Highpass filter the noise to remove some of the rumble.
  aImp	mpulse	1,0				; A Click impulse. Used to augment the attack of the sound.
  aNse	=	aNse+aImp			; Mix the pink noise and the click.
+ kCPS	limit	kCPS, 20, sr/$M_PI
  aDrop	mode	aNse,kCPS,kCPS/3			; Mode filter the noise and click mixture. Note that Q (p3) will increase as CPS increases - higher frequencies will ring for longer.
  aDrop	=	aDrop * aEnv			; Apply envelope to mode filtered signal.
  aL,aR	pan2	aDrop,iXNorm			; Create stereo panned version of 'plip'

@@ -1,6 +1,6 @@
-Metronome.csd
-For the best timing accuracy, set ksmps = 1
-Iain McCurdy, 2013
+; Metronome.csd
+; Written by Iain McCurdy, 2013
+; For the best timing accuracy, set ksmps = 1
 
 ; level 1	-	amplitude level for the main 'beat' (1st beat of the bar)
 ; level 2	-	amplitude level for other beats of the bar (subdivisions)
@@ -12,7 +12,7 @@ Iain McCurdy, 2013
 
 ; to achieve a simple 1 click metronome, set level 2 to zero and subdiv to 1. 
  
-A simple Cabbage metronome
+; A simple Cabbage metronome
 
 <Cabbage>
 form caption("Metronome"), size(770,140), pluginID("mtro")

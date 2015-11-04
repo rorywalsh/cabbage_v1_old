@@ -1,32 +1,53 @@
 #!/bin/bash  
+echo "==========================================="
+echo "======== Build Script for Cabbage ========="
+echo "==========================================="
+echo "Running this script without any input parameters"
+echo "will build with default paths, i.e:"
+echo "Csound include: \"/usr/local/include/csound\"" 
+echo "Csound library: \"/usr/local/lib\""
+echo "~/SDKs/vstsdk2.4\""
+echo ""
+echo "If you wish to use custom paths please pass them to"
+echo "this script in this order: "
+echo "\"csound include\" \"csound library\" \"vst sdk\"" 
+echo "Examples:"
+echo "bulidCabbage \"/usr/local/csound\" \"/usr/lib\" \"~/VST_SDK"
+echo ""
+echo ""
 
-if [ $1 = "plugins" ]; then
-echo "Building Cabbage plugin libraries! "
-make -f MakefilePluginEffect clean CONFIG=Release
-make -f MakefilePluginEffect -j8 CONFIG=Release
-make -f MakefilePluginSynth clean CONFIG=Release
-make -f MakefilePluginSynth -j8 CONFIG=Release
-elif [ $1 = "standalone" ]; then
-echo "Building Cabbage standalone! "
-make -f MakefileStandalone clean CONFIG=Release
-make -f MakefileStandalone -j8 CONFIG=Release
+if [ -z "$1" ]; then
+	echo "Building Cabbage! Using default path"
+	make -f MakefileStandalone clean CONFIG=Release
+	make -f MakefileStandalone -j8 CONFIG=Release
+	make -f MakefilePluginEffect clean CONFIG=Release
+	make -f MakefilePluginEffect -j8 CONFIG=Release
+	make -f MakefilePluginSynth clean CONFIG=Release
+	make -f MakefilePluginSynth -j8 CONFIG=Release
+elif [ "$#" -ne 3 ]; then
+	echo $#
+    echo "Illegal number of parameters. Please provide paths to the csound include dir, the Csound lib dir, and the VST SDK dir."
+    exit 1
 else
-echo "Building Cabbage! "
-make -f MakefileStandalone clean CONFIG=Release
-make -f MakefileStandalone -j8 CONFIG=Release
-make -f MakefilePluginEffect clean CONFIG=Release
-make -f MakefilePluginEffect -j8 CONFIG=Release
-make -f MakefilePluginSynth clean CONFIG=Release
-make -f MakefilePluginSynth -j8 CONFIG=Release
-rm -rf CabbageBuild
-mkdir CabbageBuild
-cp ./build/Cabbage CabbageBuild/Cabbage
-#cp cabbage.desktop CabbageBuild/cabbage.desktop
-cp ./build/CabbagePluginSynth.so CabbageBuild/CabbagePluginSynth.so
-cp ./build/CabbagePluginEffect.so CabbageBuild/CabbagePluginEffect.so
-cp -rf ../../Docs/ CabbageBuild/Docs
-cp -rf ../../Examples/ CabbageBuild/Examples
-cp ../../Images/logo_cabbage_black_no_text.png CabbageBuild/logo.png
-sed "s@CURRENTDIR@$(pwd)@" dummy.desktop > CabbageBuild/cabbage.desktop
-cp CabbageBuild/cabbage.desktop ~/.local/share/applications/
+	make -f MakefileStandalone clean CONFIG=Release 
+	make -f MakefileStandalone -j8 CONFIG=Release CSOUND_INCLUDE="$1" CSOUND_LIBRARY="$2" VST_SDK="$3"
+	make -f MakefilePluginEffect clean CONFIG=Release
+	make -f MakefilePluginEffect -j8 CONFIG=Release CSOUND_INCLUDE="$1" CSOUND_LIBRARY="$2" VST_SDK="$3"
+	make -f MakefilePluginSynth clean CONFIG=Release
+	make -f MakefilePluginSynth -j8 CONFIG=Release CSOUND_INCLUDE="$1" CSOUND_LIBRARY="$2" VST_SDK="$3"
 fi
+
+	rm -rf CabbageBuild
+	mkdir CabbageBuild
+	cp ./build/Cabbage CabbageBuild/Cabbage
+	cp ./build/opcodes.txt CabbageBuild/opcodes.txt
+	cp ./build/cabbage.png CabbageBuild/cabbage.png
+	cp ./build/cabbageEarphones.png CabbageBuild/cabbageEarphones.png
+	cp ./build/IntroScreen.csd CabbageBuild/IntroScreen.csd
+	cp ./build/CabbagePluginSynth.so CabbageBuild/CabbagePluginSynth.so
+	cp ./build/CabbagePluginEffect.so CabbageBuild/CabbagePluginEffect.so
+	cp -rf ../../Docs/_book CabbageBuild/Docs
+	cp -rf ../../Examples/ CabbageBuild/Examples
+	cp ../../Images/logo_cabbage_black_no_text.png CabbageBuild/logo.png
+	sed "s@CURRENTDIR@$(pwd)@" dummy.desktop > CabbageBuild/cabbage.desktop
+	cp CabbageBuild/cabbage.desktop ~/.local/share/applications/

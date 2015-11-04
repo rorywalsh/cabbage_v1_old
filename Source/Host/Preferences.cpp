@@ -107,7 +107,7 @@ void PreferencesComp::resized()
     prefsListBox.setBounds(10, 10, 150, getHeight()-20);
     cabbageFilesPathList.setBounds(170, 30, getWidth()-180, getHeight()-120);
     preferencesLabel.setBounds(170, 10, getWidth()-180, 20);
-    preferencesInfo.setBounds(170, getHeight()-90, getWidth()-180, 80);
+    preferencesInfo.setBounds(170, getHeight()-80, getWidth()-180, 75);
 
     if (pluginList)
         pluginList->setBounds(170, 30, getWidth()-180, getHeight()-120);

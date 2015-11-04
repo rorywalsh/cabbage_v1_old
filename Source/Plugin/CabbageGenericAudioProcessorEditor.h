@@ -30,83 +30,91 @@
 #include "../Host/PluginWrapperProcessor.h"
 
 class ProcessorParameterPropertyComp   : public PropertyComponent,
-                                         private AudioProcessorListener,
-                                         private Timer,
-										 public ChangeBroadcaster,
-										 public ActionListener
+    private AudioProcessorListener,
+    private Timer,
+    public ChangeBroadcaster,
+    public ActionListener
 {
 public:
-	String changeMessage;
+    String changeMessage;
 
     ProcessorParameterPropertyComp (const String& name, AudioProcessor& p, int paramIndex, int Id)
         : PropertyComponent (name),
           owner (p),
-		  nodeId(Id),
+          nodeId(Id),
           index (paramIndex),
           paramHasChanged (false),
           slider (p, paramIndex),
-		  midiLearnEnabled(false),
-		  isBeingAutomated(false),
-		  changeMessage(""),
-		  lookAndFeelBasic(new CabbageLookAndFeelBasic())
+          midiLearnEnabled(false),
+          isBeingAutomated(false),
+          changeMessage(""),
+          lookAndFeelBasic(new CabbageLookAndFeelBasic())
     {
-		//test fo the name of the parameter, if it's a button create a button...
-		//of if the number of steps is 2 then create a button. 
-		setLookAndFeel(lookAndFeelBasic);
+        setLookAndFeel(lookAndFeelBasic);
         startTimer (100);
         addAndMakeVisible (slider);
-		setPreferredHeight(20);
-		
-		if(PluginWrapper* wrapper = dynamic_cast<PluginWrapper*>(&p))
-		{
-			wrapper->vstInstance->addListener (this);
-		}
-		
+        setPreferredHeight(20);
+
+
+        if(PluginWrapper* wrapper = dynamic_cast<PluginWrapper*>(&p))
+        {
+            wrapper->vstInstance->addListener (this);
+        }
+
         owner.addListener (this);
-		slider.lookAndFeelChanged();
-		slider.addActionListener(this);
+        slider.lookAndFeelChanged();
+        slider.addActionListener(this);
+        this->setTooltip("Right-click to add automation");
     }
 
     ~ProcessorParameterPropertyComp()
     {
-		if(PluginWrapper* wrapper = dynamic_cast<PluginWrapper*>(&owner))
-		{
-			wrapper->vstInstance->removeListener (this);
-		}
-		else
-			owner.removeListener (this);
+        if(PluginWrapper* wrapper = dynamic_cast<PluginWrapper*>(&owner))
+        {
+            wrapper->vstInstance->removeListener (this);
+        }
+        else
+            owner.removeListener (this);
     }
 
-	void mouseDown(const MouseEvent& event)
-	{
-		if(event.mods.isPopupMenu())
-		{
-			PopupMenu m;
-			if(!isBeingAutomated)
-				m.addItem(1, "Add automation");
-			else
-				m.addItem(2, "Remove automation");
-			
-			if(int item = m.show())
-			{
-				if(item==1)
-				{
-					isBeingAutomated=true;
-					changeMessage="add automation";
-					sendChangeMessage();
-				}
-				else
-				{
-					isBeingAutomated=false;
-					changeMessage="remove automation";
-					sendChangeMessage();					
-				}
-			}			
-		}
-	}
 
-	int32 getNodeId(){	return nodeId;	}
-	int getParamIndex(){	return index;	}
+    void mmouseDown(const MouseEvent& event)
+    {
+        /*
+        if(event.mods.isPopupMenu())
+        {
+            PopupMenu m;
+            if(!isBeingAutomated)
+                m.addItem(1, "Add automation");
+            else
+                m.addItem(2, "Remove automation");
+
+            if(int item = m.show())
+            {
+                if(item==1)
+                {
+                    isBeingAutomated=true;
+                    changeMessage="add automation";
+                    sendChangeMessage();
+                }
+                else
+                {
+                    isBeingAutomated=false;
+                    changeMessage="remove automation";
+                    sendChangeMessage();
+                }
+            }
+        }*/
+    }
+
+    int32 getNodeId()
+    {
+        return nodeId;
+    }
+    int getParamIndex()
+    {
+        return index;
+    }
 
     void refresh() override
     {
@@ -120,14 +128,15 @@ public:
 
     void paint(Graphics &g)
     {
-        g.fillAll(cUtils::getComponentSkin().darker(.4f)); 
-		
-		if(midiLearnEnabled == true)
-		{
-			g.setColour(Colours::yellow);
-			g.drawRect(getLocalBounds().withLeft(5).withWidth(slider.getPosition().getX()-15.f), 1.f);
-		}		
-		
+        g.fillAll(Colour(40, 40, 40));
+        //g.fillAll(Colours::red);
+
+        if(midiLearnEnabled == true)
+        {
+            g.setColour(Colours::yellow);
+            g.drawRect(getLocalBounds().withLeft(5).withWidth(slider.getPosition().getX()-15.f), 1.f);
+        }
+
         String text = getName();
         g.setColour(Colours::whitesmoke);
 
@@ -138,24 +147,24 @@ public:
                          slider.getPosition().getX(), font.getHeight()-2, Justification::centred, 1);
 
     }
-	
+
     void audioProcessorChanged (AudioProcessor*) override  {}
 
     void audioProcessorParameterChanged (AudioProcessor*, int parameterIndex, float) override
     {
         if (parameterIndex == index)
-		{
+        {
             paramHasChanged = true;
-			sendChangeMessage();
-		}
+            sendChangeMessage();
+        }
     }
 
-		
-	void actionListenerCallback(const String &message)
-	{
-		//sendChangeMessage();
-	}
-	
+
+    void actionListenerCallback(const String &message)
+    {
+        //sendChangeMessage();
+    }
+
     void timerCallback() override
     {
         if (paramHasChanged)
@@ -199,10 +208,10 @@ private:
             }
         }
 
-		void mouseEnter(const MouseEvent& e)
-		{
+        void mouseEnter(const MouseEvent& e)
+        {
             sendActionMessage("midiPopup");
-		}
+        }
 
         String getTextFromValue (double /*value*/) override
         {
@@ -218,14 +227,14 @@ private:
 
     AudioProcessor& owner;
     const int index;
-	int32 nodeId;
+    int32 nodeId;
 
     bool volatile paramHasChanged;
-	bool isBeingAutomated;
-	bool midiLearnEnabled;
-	Colour midiLearnColour;
+    bool isBeingAutomated;
+    bool midiLearnEnabled;
+    Colour midiLearnColour;
     ParamSlider slider;
-	ScopedPointer<CabbageLookAndFeelBasic> lookAndFeelBasic;
+    ScopedPointer<CabbageLookAndFeelBasic> lookAndFeelBasic;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ProcessorParameterPropertyComp)
 };
 
@@ -235,52 +244,52 @@ private:
 class CabbageGenericAudioProcessorEditor      : public AudioProcessorEditor
 {
 public:
-	CabbageGenericAudioProcessorEditor(AudioProcessor* const p, bool midiLearn)
-    : AudioProcessorEditor (p), midiLearnMode(midiLearn)
-	{
-		jassert (p != nullptr);
-		setOpaque (true);
+    CabbageGenericAudioProcessorEditor(AudioProcessor* const p, bool midiLearn)
+        : AudioProcessorEditor (p), midiLearnMode(midiLearn)
+    {
+        jassert (p != nullptr);
+        setOpaque (true);
 
-		addAndMakeVisible (panel);
-		Array <PropertyComponent*> params;
+        addAndMakeVisible (panel);
+        Array <PropertyComponent*> params;
 
-		const int numParams = p->getNumParameters();
-		int totalHeight = 0;
+        const int numParams = p->getNumParameters();
+        int totalHeight = 0;
 
-		for (int i = 0; i < numParams; ++i)
-		{
-			String name (p->getParameterName (i));
-			if (name.trim().isEmpty())
-				name = "Unnamed";
+        for (int i = 0; i < numParams; ++i)
+        {
+            String name (p->getParameterName (i));
+            if (name.trim().isEmpty())
+                name = "Unnamed";
 
-			ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp (name, *p, i, -1);
-			params.add (pc);
-			totalHeight += pc->getPreferredHeight();
-		}
+            ProcessorParameterPropertyComp* const pc = new ProcessorParameterPropertyComp (name, *p, i, -1);
+            params.add (pc);
+            totalHeight += pc->getPreferredHeight();
+        }
 
-		panel.addProperties (params);
+        panel.addProperties (params);
 
-		setSize (400, jlimit (25, 400, totalHeight));
-	}
+        setSize (400, jlimit (25, 400, totalHeight));
+    }
 
-	~CabbageGenericAudioProcessorEditor()
-	{
-	}
+    ~CabbageGenericAudioProcessorEditor()
+    {
+    }
 
-	void paint (Graphics& g)
-	{
-		g.fillAll (cUtils::getDarkerBackgroundSkin());
-	}
+    void paint (Graphics& g)
+    {
+        g.fillAll (cUtils::getDarkerBackgroundSkin().darker());
+    }
 
-	void resized()
-	{
-		panel.setBounds (getLocalBounds());
-	}
+    void resized()
+    {
+        panel.setBounds (getLocalBounds());
+    }
 
 private:
-	PropertyPanel panel;
-	bool midiLearnMode;
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGenericAudioProcessorEditor)
+    PropertyPanel panel;
+    bool midiLearnMode;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGenericAudioProcessorEditor)
 };
 
 

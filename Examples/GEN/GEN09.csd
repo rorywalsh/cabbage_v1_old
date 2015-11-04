@@ -1,4 +1,5 @@
 ; GEN09.csd
+; Written by Iain McCurdy
 ; "P.N.1-8" 	sets the partial number for each of the 8 partials. Note that "Base" and "Int" will also have an influence upon the partial number values.
 ; "Str.1-8" 	sets the strengths for the 8 partials.
 ; "Mute 1-8"	allow the user to mute individual partials
@@ -98,9 +99,9 @@ combobox bounds(120,395, 75, 65), channel("tabsize"), value(8), caption("Table S
 combobox bounds(195,395, 75, 65), channel("opcode"), value(3), caption("Opcode"), text("oscil","oscili","poscil")
 button   bounds(285,395,120, 20), text("EXPORT TABLE"), channel("export"), value(0), fontcolour("yellow")
 
-rslider bounds(285,420, 40, 40), channel("spread"), text("Spread"), range(0, 1, 0.05,0.5,0.00001), colour("yellow")
-rslider bounds(325,420, 40, 40), channel("voices"), text("Voices"), range(1, 20, 8,1,1), colour("yellow")
-rslider bounds(365,420, 40, 40), channel("speed"), text("Speed"), range(0,100, 1.5,0.5,0.001), colour("yellow")
+rslider bounds(283,420, 45, 40), channel("spread"), text("Spread"), range(0, 1, 0.05,0.5,0.00001), colour("yellow")
+rslider bounds(323,420, 45, 40), channel("voices"), text("Voices"), range(1, 20, 8,1,1), colour("yellow")
+rslider bounds(363,420, 45, 40), channel("speed"), text("Speed"), range(0,100, 1.5,0.5,0.001), colour("yellow")
 
 keyboard bounds(  0,475,420, 80)
 
@@ -256,7 +257,6 @@ instr	3	; sound producing instrument
 	update:
 	ivoices	init	i(kvoices)
 	iscal	=	i(gkscal)
-	print	iscal
 	aenv	linsegr	0,0.01,1,0.1,0		; amplitude envelope to prevent clicks
 
 

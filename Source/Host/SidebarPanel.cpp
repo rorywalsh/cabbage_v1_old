@@ -153,6 +153,8 @@ void SidebarPanel::refreshPluginParameters()
                     i,
                     filterGraph->getNode(index)->nodeId);
             pc->addChangeListener(this);
+            //pc->setLookAndFeel(&this->getLookAndFeel());
+            //pc->lookAndFeelChanged();
             params.add (pc);
         }
 
@@ -244,8 +246,8 @@ void SidebarPanel::setCurrentBPM(int bpm)
 //--------------------------------------------------------------------
 void SidebarPanel::paint (Graphics& g)
 {
-    g.fillAll (Colour::greyLevel (0.2f));
-
+    g.fillAll (Colour::greyLevel (0.8f));
+    //g.fillAll(Colours::cornflowerblue.darker(.99f));
     if(midiLearn)
     {
         g.setColour(Colours::yellow);
@@ -270,12 +272,13 @@ void SidebarPanel::changeListenerCallback (ChangeBroadcaster* source)
 {
     ProcessorParameterPropertyComp* comp = (ProcessorParameterPropertyComp*)source;
 
-    if(comp->changeMessage=="add automation")
-    {
-        filterGraph->addNodesToAutomationTrack(comp->getNodeId(), comp->getParamIndex());
-        comp->changeMessage="";
-    }
-
+    /*
+        if(comp->changeMessage=="add automation")
+        {
+            filterGraph->addNodesToAutomationTrack(comp->getNodeId(), comp->getParamIndex());
+            comp->changeMessage="";
+        }
+    */
     if(midiLearn)
     {
 

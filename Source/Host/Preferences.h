@@ -27,116 +27,116 @@
 ApplicationProperties& getAppProperties();
 class CabbageFilesPathList : public FileSearchPathListComponent, public ActionBroadcaster
 {
-	public:
-		CabbageFilesPathList()
-		{
-            const String folders = getAppProperties().getUserSettings()->getValue("CabbageFilePaths");
-            setPath(FileSearchPath(folders));
-            numRows = getPath().getNumPaths()+1;
-            
-		};
-		
-        int getNumRows()
-		{
-            //const String folders = getAppProperties().getUserSettings()->getValue("CabbageFilePaths");
-            //setPath(FileSearchPath(folders));
-            return getPath().getNumPaths()+1;
-		}
-		
-        void paintListBoxItem (int rowNumber, Graphics& g,
-                               int width, int height, bool rowIsSelected)	
-								{
-									if (rowIsSelected)
-										g.fillAll (Colours::cornflowerblue);
-									else
-										g.fillAll(Colour(50, 50, 50));
+public:
+    CabbageFilesPathList()
+    {
+        const String folders = getAppProperties().getUserSettings()->getValue("CabbageFilePaths");
+        setPath(FileSearchPath(folders));
+        numRows = getPath().getNumPaths()+1;
 
-									g.setColour (rowIsSelected ? Colours::black : Colours::green);
-									g.setFont (cUtils::getComponentFont());
+    };
 
-									g.drawText (getPath()[rowNumber].getFullPathName(),
-									5, 0, width, height,
-									Justification::centredLeft, true);
-									
-									numRows = getPath().getNumPaths();
-                                    cUtils::debug("numRows", getPath().getNumPaths());
-                                                  
-                                    getAppProperties().getUserSettings()->setValue("CabbageFilePaths", getPath().toString());
-									
-								}
-	
-		void listBoxItemClicked(int row, const MouseEvent &)
-		{
-			sendActionMessage(String(row));
-		}	
+    int getNumRows()
+    {
+        //const String folders = getAppProperties().getUserSettings()->getValue("CabbageFilePaths");
+        //setPath(FileSearchPath(folders));
+        return getPath().getNumPaths()+1;
+    }
+
+    void paintListBoxItem (int rowNumber, Graphics& g,
+                           int width, int height, bool rowIsSelected)
+    {
+        if (rowIsSelected)
+            g.fillAll (Colours::cornflowerblue);
+        else
+            g.fillAll(Colour(50, 50, 50));
+
+        g.setColour (rowIsSelected ? Colours::black : Colours::green);
+        g.setFont (cUtils::getComponentFont());
+
+        g.drawText (getPath()[rowNumber].getFullPathName(),
+                    5, 0, width, height,
+                    Justification::centredLeft, true);
+
+        numRows = getPath().getNumPaths();
+        cUtils::debug("numRows", getPath().getNumPaths());
+
+        getAppProperties().getUserSettings()->setValue("CabbageFilePaths", getPath().toString());
+
+    }
+
+    void listBoxItemClicked(int row, const MouseEvent &)
+    {
+        sendActionMessage(String(row));
+    }
 
 
-		
-	private:
-			StringArray paths;
-			int numRows;	
+
+private:
+    StringArray paths;
+    int numRows;
 };
 
 //================================================================
 class PreferencesComp   : public Component, public ActionListener
 {
-	
+
 public:
-	PreferencesComp();	
-	~PreferencesComp()
+    PreferencesComp();
+    ~PreferencesComp()
     {
-		audioSelector = nullptr;
-		pluginList = nullptr;
+        audioSelector = nullptr;
+        pluginList = nullptr;
     }
-	
-	void resized();
-	void actionListenerCallback(const String& message);
+
+    void resized();
+    void actionListenerCallback(const String& message);
 
     class ListboxContents  : public ListBoxModel, public ActionBroadcaster
     {
         // The following methods implement the necessary virtual functions from ListBoxModel,
         // telling the listbox how many rows there are, painting them, etc.
-		public:
-		ListboxContents();		
+    public:
+        ListboxContents();
         int getNumRows() override;
         void paintListBoxItem (int rowNumber, Graphics& g,
-                               int width, int height, bool rowIsSelected) override;		
-		void listBoxItemClicked(int row, const MouseEvent &);		
-		
-		private:
-			StringArray contents;
+                               int width, int height, bool rowIsSelected) override;
+        void listBoxItemClicked(int row, const MouseEvent &);
+
+    private:
+        StringArray contents;
     };
-	
+
     void addComponent(String type, Component* comp);
-    
+
 private:
-	ListBox prefsListBox;
+    ListBox prefsListBox;
     ListboxContents listBoxModel;
     ScopedPointer<Component> audioSelector;
     ScopedPointer<Component> pluginList;
     CabbageFilesPathList cabbageFilesPathList;
     Label preferencesLabel;
-	Label preferencesInfo;
+    Label preferencesInfo;
 };
 
 //================================================================
 class CabbagePreferences   : public Component
 {
-	
-	PreferencesComp mainComp;
-	
+
+    PreferencesComp mainComp;
+
 public:
-	CabbagePreferences();	
-	~CabbagePreferences();
-	
-	void addPluginList(Component* selector);
-	void closeButtonPressed();
+    CabbagePreferences();
+    ~CabbagePreferences();
+
+    void addPluginList(Component* selector);
+    void closeButtonPressed();
     void addComponent(String type, Component* comp);
 
 
 private:
-   
-    
+
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePreferences);
 
 };

@@ -21,63 +21,73 @@
 ; Drop		--		Amount of pitch drop upon note conclusion
 
 <Cabbage>
-form caption("Wavetable Synth") size(675, 320), pluginID("wtsy")
-image pos(0, 0), size(675, 290), colour(150,100,70), shape("sharp"),   outlinecolour("maroon"), outlinethickness(2)	
-image   bounds(160,  6,240, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;modulation
-image   bounds(405,  6,140, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;polyphony
-image   bounds(550,  6,110, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;pitch bend
-image   bounds( 15,103,110, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;noise attack
-image   bounds(130,103,155, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;quality
-image   bounds(290,103,110, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;reverb
-image   bounds(405,103,260, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1)	;output
+form caption("Wavetable Synth") size(720, 320), pluginID("wtsy")
+image                pos(0, 0), size(720, 290), colour(150,100,70), shape("sharp"),   outlinecolour("maroon"), outlinethickness(2)
+
 combobox caption("Instrument"), fontcolour("white"), channel("Instr"),  bounds(10, 10, 140, 80)  value(1), text("Clarinet", "Bass Clarinet", "C.bass Clarinet", "Oboe", "Bassoon", "C.bassoon", "Violin", "Cello", "Piccolo", "Flute", "Alto Flute", "Bass Flute", "Ahh", "Horn P", "Horn F", "B.Trb.Harmon Mute", "B.Trb.Cup Mute", "B.Trb.Open")
-label   bounds(168, 80, 28, 12), text("Mod."),       fontcolour(white)
-label   bounds(250, 11, 80, 15), text("Modulation"), fontcolour(white)
-label   bounds(438, 11, 75, 15), text("Polyphony"),  fontcolour(white)
-label   bounds(566, 11, 75, 15), text("Pitch Bend"), fontcolour(white)
-label   bounds( 43,107, 60, 15), text("Attack"),     fontcolour(white)
-label   bounds(178,107, 60, 15), text("Quality"),    fontcolour(white)
-label   bounds(200,175, 16, 11), text("EQ"),         fontcolour(white)
-label   bounds(314,107, 60, 15), text("Reverb"),     fontcolour(white)
-label   bounds(502,107, 60, 15), text("Output"),     fontcolour(white)
 
 ;MODULATION
-vslider bounds(160, 10, 40, 80), channel("moddep"), range(0, 1, 0.4),midCtrl(1, 1), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-rslider bounds(190, 32, 60, 60), text("Vib."),  channel("vibdep"),  range(0, 1, 0.15),       colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-rslider bounds(240, 32, 60, 60), text("Trem."), channel("tremdep"), range(0, 1, 0.4),        colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-rslider bounds(290, 32, 60, 60), text("Tone"),  channel("tonedep"), range(0, 4, 2),          colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-rslider bounds(340, 32, 60, 60), text("Rate"),  channel("ModRte"),  range(0, 16, 4.25, 0.5), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+image   bounds(160,  6,290, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"), outlinethickness(1), plant("modulation") {	;modulation
+label   bounds(  8, 74, 28, 12), text("Mod."),       fontcolour(white)
+label   bounds( 90,  5, 80, 15), text("Modulation"), fontcolour(white)
+vslider bounds(  0,  4, 40, 80), channel("moddep"), range(0, 1, 0.4),midCtrl(1, 1), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds( 30, 26, 60, 60), text("Vib."),  channel("vibdep"),  range(0, 1, 0.15),       colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds( 80, 26, 60, 60), text("Trem."), channel("tremdep"), range(0, 1, 0.4),        colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(130, 26, 60, 60), text("Tone"),  channel("tonedep"), range(0, 4, 2),          colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(180, 26, 60, 60), text("Rate"),  channel("ModRte"),  range(0, 16, 4.25, 0.5), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(230, 26, 60, 60), text("Delay"), channel("ModDly"),  range(0.01,3,1,0.5,0.01),colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+}
 
 ;POLYPHONY
-button   bounds(415, 40, 70, 25), text("poly","mono"), channel("monopoly"), value(1)
-rslider  bounds(485, 32, 60, 60), text("Leg.Time"),    channel("LegTim"), range(0.001, 2, 0.002, 0.5, 0.001), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+image   bounds(455,  6,140, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"), outlinethickness(1), plant("polyphony") {	;polyphony
+label   bounds( 33,  5, 75, 15), text("Polyphony"),  fontcolour(white)
+button  bounds( 10, 34, 70, 25), text("poly","mono"), channel("monopoly"), value(1)
+rslider bounds( 80, 26, 60, 60), text("Leg.Time"),    channel("LegTim"), range(0.001, 2, 0.002, 0.5, 0.001), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+}
 
 ;PITCH BEND
-rslider  bounds(550, 32, 60, 60), text("<"), channel("BendDn"), range(0, 1, 1), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-rslider  bounds(600, 32, 60, 60), text(">"), channel("BendUp"), range(0, 1, 0), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+image   bounds(600,  6,110, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1), plant("pitchbend") {	;pitch bend
+label   bounds( 15,  5, 75, 15), text("Pitch Bend"), fontcolour(white)
+rslider bounds(  0, 26, 60, 60), text("<"), channel("BendDn"), range(0, 1, 1), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds( 50, 26, 60, 60), text(">"), channel("BendUp"), range(0, 1, 0), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+}
 
 ;NOISE ATTACK
-rslider bounds( 15,127, 60, 60), text("Amp."), channel("NAttAmp"), range(0,  4.00, 0.5),      colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-rslider bounds( 65,127, 60, 60), text("Time"), channel("NAttTim"), range(0.001,0.5,0.05,0.5), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+image   bounds( 15,103,160, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"), outlinethickness(1), plant("noiseattack") {	;noise attack
+label   bounds( 28,  4, 60, 15), text("Attack"),     fontcolour(white)
+rslider bounds(  0, 24, 60, 60), text("Amp."), channel("NAttAmp"), range(0,  4.00, 0.5),      colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds( 50, 24, 60, 60), text("Time"), channel("NAttTim"), range(0.001,0.5,0.05,0.5,0.001), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(100, 24, 60, 60), text("Build"), channel("build"),  range(0.001,0.5,0.001,0.5,0.001), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+}
 
 ;QUALITY
-rslider bounds(130,127, 60, 60), text("Noise"), channel("NoiseAmp"), range(0,5,0.01,0.5,0.0001),     colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-vslider bounds(183,120, 30, 65), text(""),      channel("EQ_Lo"),    range(500,10000,2000,0.5,0.01), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-vslider bounds(203,120, 30, 65), text(""),      channel("EQ_Hi"),    range(20,5000,200,0.5,0.01),    colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-rslider bounds(225,127, 60, 60), text("Drop"),  channel("drop"),     range(0,0.5,0.05,0.5,0.0001),   colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+image   bounds(180,103,155, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"), outlinethickness(1), plant("quality") {	;quality
+label   bounds( 70, 72, 16, 11), text("EQ"),         fontcolour(white)
+label   bounds( 48,  4, 60, 15), text("Quality"),    fontcolour(white)
+rslider bounds(  0, 24, 60, 60), text("Noise"), channel("NoiseAmp"), range(0,5,0.01,0.5,0.0001),     colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+vslider bounds( 53, 17, 30, 65), text(""),      channel("EQ_Lo"),    range(500,10000,2000,0.5,0.01), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+vslider bounds( 73, 17, 30, 65), text(""),      channel("EQ_Hi"),    range(20,5000,200,0.5,0.01),    colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds( 95, 24, 60, 60), text("Drop"),  channel("drop"),     range(0,0.5,0.05,0.5,0.0001),   colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+}
 
 ;REVERB
-rslider bounds(290,127, 60, 60), text("Mix"),  channel("RvbMix"),  range(0, 1.00, 1),     colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-rslider bounds(340,127, 60, 60), text("Size"), channel("RvbSize"), range(0.3, 1.00, 0.4), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+image   bounds(340,103,110, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1), plant("reverb") {	;reverb
+label   bounds( 24,  4, 60, 15), text("Reverb"),     fontcolour(white)
+rslider bounds(  0, 24, 60, 60), text("Mix"),  channel("RvbMix"),  range(0, 1.00, 1),     colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds( 50, 24, 60, 60), text("Size"), channel("RvbSize"), range(0.3, 1.00, 0.4), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+}
 
 ;OUTPUT
-rslider bounds(405,127, 60, 60), text("Tone"),   channel("bright"),  range(0, 1.00, 1),            colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-rslider bounds(455,127, 60, 60), text("Shift"),  channel("shift"),   range(-36, 36.00, 0,1,0.001), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-rslider bounds(505,127, 60, 60), text("Jitter"), channel("jitter"),  range(0, 1.00, 0.4),          colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-rslider bounds(555,127, 60, 60), text("Pan"),    channel("pan"),     range(0, 1.00, 0.5),          colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
-rslider bounds(605,127, 60, 60), text("Level"),  channel("level"),   range(0, 2.00, 1),            colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+image   bounds(455,103,260, 88), colour(150,100,70), shape("rounded"), outlinecolour("white"),  outlinethickness(1), plant("output") {	;output
+label   bounds( 97,  4, 60, 15), text("Output"),     fontcolour(white)
+rslider bounds(  0, 24, 60, 60), text("Tone"),   channel("bright"),  range(0, 1.00, 1),            colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds( 50, 24, 60, 60), text("Shift"),  channel("shift"),   range(-36, 36.00, 0,1,0.001), colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(100, 24, 60, 60), text("Jitter"), channel("jitter"),  range(0, 1.00, 0.4),          colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(150, 24, 60, 60), text("Pan"),    channel("pan"),     range(0, 1.00, 0.5),          colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+rslider bounds(200, 24, 60, 60), text("Level"),  channel("level"),   range(0, 2.00, 1),            colour( 70, 30,  0), trackercolour("tan"), textcolour(white)
+}
 
-keyboard pos(10, 200), size(655, 80)
+keyboard pos(10, 200), size(700, 80)
 image bounds(5, 295, 180, 20), colour(75, 85, 90, 100), plant("credit"){
 label bounds(0.03, 0.2, .9, .6), text("Author: Iain McCurdy |2012|"), fontcolour("white")
 </Cabbage>
@@ -606,6 +616,7 @@ instr	3	;waveguide instrument. MIDI notes are directed here.
 	iNAttAmp	chnget		"NAttAmp"
 	iNAttTim	chnget		"NAttTim"
 	idrop		chnget		"drop"
+	iModDly		chnget		"ModDly"
 	
 	;------------------------------------------------------------------------------------------------------------
 	;AMPLITUDE MODULATION (TREMOLO), VIBRATO AND TONE MODULATION
@@ -616,8 +627,7 @@ instr	3	;waveguide instrument. MIDI notes are directed here.
 	RESTART_ENVELOPE:
 	iphs		random	0,1						;RANDOM INITIAL PHASE FOR EACH NOTE
 	kmoddep		chnget	"moddep";ctrl7	1,1,0,1				;READ IN CONTROLLER 1. WILL BE USED TO CONTROL LFO MODULATION DEPTH
-	irisetime	=	1						;THE TIME IT TAKES FOR MODULATION TO RISE TO ITS MAXIMUM VALUE
-	kmodenv		expseg	0.01,irisetime,1,1,1				;MODULATION ENVELOPE. MODULATION WILL RISE FROM NEAR ZERO TO ITS REQUIRED VALUE OVER THE DURATION OF 'irisetime' FOR EACH NEW NOTE
+	kmodenv		expseg	0.01,iModDly,1,1,1				;MODULATION ENVELOPE. MODULATION WILL RISE FROM NEAR ZERO TO ITS REQUIRED VALUE OVER THE DURATION OF 'irisetime' FOR EACH NEW NOTE
 	rireturn
 	kmodenv		portk	kmodenv,0.05					;smooth changes in modulation envelope. This is needed if the envelope is restarted in monophonic mode
 	kRteVar		randi	0.1,4						;random variation of the rate of modulation
@@ -658,6 +668,8 @@ instr	3	;waveguide instrument. MIDI notes are directed here.
 			ftmorf		kftndx, gitabs4morf, imorphtab	;CREATE THE MORHED TABLE ACCORDING TO THE VALUE OF THE FUNCTION TABLE INDEX CREATED ABOVE
 
 	iatt		table		ivel,giattscl,1			;READ A VALUE MAPPED FROM KEY VELOCITY TO ATTACK TIME. (SEE TABLE giattscl) 
+	ibuild		chnget		"build"
+	iatt		limit		iatt,ibuild,10
 	aenv		linsegr		0,iatt,1,0.05,0			;AMPLITUDE ENVELOPE
 	kenv		linsegr		0,iatt,1,0.05,0			;K-RATE VERSION OF THE ABOVE
 

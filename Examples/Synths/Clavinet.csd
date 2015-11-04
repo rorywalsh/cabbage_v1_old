@@ -140,7 +140,7 @@ combobox   bounds( 10, 15, 80, 18), channel("preset"), value(1), text("Clavinet 
 }
 
 keyboard bounds(  5, 85,540, 80)
-label bounds(395, 73,  150, 11), text("Author: Iain McCurdy |2013|"), FontColour(50,50,50)
+label bounds(440, 73,  110, 11), text("Iain McCurdy |2013|"), FontColour(50,50,50)
 
 </Cabbage>
 

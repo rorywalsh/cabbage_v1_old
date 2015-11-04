@@ -1,48 +1,50 @@
-InharmonicAdditiveSynth.csd
-Written by Iain McCurdy, 2012.
-
-This instrument takes information about modal frequency values for a sound (in the form of a list of values in a GEN 02 
-function table and transfers it into a GEN 09 function table for efficient playback by a single oscillator opcode.
-GEN 09 demands partial numbers to be integers (if we want ot avoid unwanted artefacts in the sound) so all modal 
-frequencies are multiplied by a large number before being rounded to integers  for the GEN 09 table in order to reduce 
-the loss of precision. There is a trade off in that we need this multiplier value to be large to minimise quantisation
-but if it is very large we need to use a higher quality oscillator opcode (more CPU drain) and/or a larger function table
-size for the GEN 09 tables (longer load time when the example is started).
-
-If the size chosen for the GEN 09 tables is too small, aliasing artefacts will result when it is played back.
-
-Amplitude Envelope
-------------------
-Att.	-	Attack time in seconds
-Dec.	-	Decay time in seconds
-Sus.	-	Sustain level
-Rel.	-	Release time
-Level	-	Output amplitude level
-
-Instrument
-----------
-Select a GEN09 function table corresponding to a instrument or object
-
-Filter Envelope (Lowpass)
--------------------------
-Amount	-	Amount of influence of the envelope (in octaves)
-Dec.	-	Decay time in seconds
-Sus.	-	Sustain level
-Rel.	-	Release time in seconds
-Offset	-	Filter offset value (in octaves)
-
-Chorus
-------
-Mix	-	Dry/Wet mix of the chorus effect
-Depth	-	Depth of the modulations of the chorus effect
-Rate	-	Rate of modulation
+; InharmonicAdditiveSynth.csd
+; Written by Iain McCurdy, 2012.
+; 
+; This instrument takes information about modal frequency values for a sound (in the form of a list of values in a GEN 02 
+; function table and transfers it into a GEN 09 function table for efficient playback by a single oscillator opcode.
+; GEN 09 demands partial numbers to be integers (if we want ot avoid unwanted artefacts in the sound) so all modal 
+; frequencies are multiplied by a large number before being rounded to integers  for the GEN 09 table in order to reduce 
+; the loss of precision. There is a trade off in that we need this multiplier value to be large to minimise quantisation
+; but if it is very large we need to use a higher quality oscillator opcode (more CPU drain) and/or a larger function table
+; size for the GEN 09 tables (longer load time when the example is started).
+; 
+; If the size chosen for the GEN 09 tables is too small, aliasing artefacts will result when it is played back.
+; 
+; Amplitude Envelope
+; ------------------
+; Att.	-	Attack time in seconds
+; Dec.	-	Decay time in seconds
+; Sus.	-	Sustain level
+; Rel.	-	Release time
+; Level	-	Output amplitude level
+; 
+; Instrument
+; ----------
+; Select a GEN09 function table corresponding to a instrument or object
+; 
+; Filter Envelope (Lowpass)
+; -------------------------
+; Amount	-	Amount of influence of the envelope (in octaves)
+; Dec.	-	Decay time in seconds
+; Sus.	-	Sustain level
+; Rel.	-	Release time in seconds
+; Offset	-	Filter offset value (in octaves)
+; 
+; Chorus
+; ------
+; Mix	-	Dry/Wet mix of the chorus effect
+; Depth	-	Depth of the modulations of the chorus effect
+; Rate	-	Rate of modulation
 
 
 <Cabbage>
 form caption("Inharmonic Synth"), size(445, 320), pluginID("InSy")
-image pos(0, 0), size(445, 290), colour("black"), shape("rounded"), oulinecolour("brown"), line(4)
-combobox caption("Instrument"), channel("Instr"),  pos(275, 10), size(160, 90), value(5), text("Bass Guitar", "Dahina", "Banyan", "Xylophone", "Tibetan Bowl 180mm", "Spinel Sphere", "Pot Lid", "Red Cedar Wood Plate", "Tubular Bell", "Redwood Wood Plate", "Douglas Fir Wood Plate", "Uniform Wooden Bar", "Uniform Aluminium Bar", "Vibraphone 1", "Vibraphone 2", "Chladni Plate", "Tibetan Bowl 152mm", "Tibetan Bowl 140mm", "Wine Glass", "Small Handbell", "Albert Clock Bell", "Wood Block")
+image pos(0, 0), size(445, 290), colour("black"), shape("rounded"), outlinecolour("brown"), line(4)
 
+groupbox bounds(275,10,160, 90), text("Instrument"), plant("instrument"){
+combobox channel("Instr"), bounds( 10, 40,140, 25), value(5), text("Bass Guitar", "Dahina", "Banyan", "Xylophone", "Tibetan Bowl 180mm", "Spinel Sphere", "Pot Lid", "Red Cedar Wood Plate", "Tubular Bell", "Redwood Wood Plate", "Douglas Fir Wood Plate", "Uniform Wooden Bar", "Uniform Aluminium Bar", "Vibraphone 1", "Vibraphone 2", "Chladni Plate", "Tibetan Bowl 152mm", "Tibetan Bowl 140mm", "Wine Glass", "Small Handbell", "Albert Clock Bell", "Wood Block")
+}
 
 groupbox bounds(10, 10,260, 90), text("Amplitude Envelope"), plant("ampenv"){
 rslider bounds(  0, 25, 60, 60), text("Att."),  channel("AAtt"), colour("red"), trackercolour("red"), range(0.0001,1.00,0.0001,0.25,0.0001)

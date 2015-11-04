@@ -528,11 +528,13 @@ public:
     static int getNchnlsFromFile(String csdText)
     {
         StringArray array;
-        array.addLines(File(csdText).loadFileAsString());
+        array.addLines(csdText);
+        //cUtils::showMessage(file.loadFileAsString());
 
         for(int i=0; i<array.size(); i++)
         {
             //cUtils::debug(array.joinIntoString(" "));
+            cUtils::debug(array[i]);
             if(array[i].contains("nchnls") && array[i].contains("="))
             {
                 String channels = array[i].substring(array[i].indexOf("=")+1, (array[i].contains(";") ? array[i].indexOf(";") : 100));
@@ -748,11 +750,75 @@ public:
     }
 
 //==========================================================================================
+    static void addCustomPlantsToMenu (PopupMenu& m, Array<File> &plantFiles, String userDir)
+    {
+        int menuSize = m.getNumItems();
+
+        PopupMenu menu;
+        PopupMenu subMenu;
+        int fileCnt=0;
+
+        if(File(userDir).exists())
+        {
+            FileSearchPath filePaths(userDir);
+            //cUtils::showMessage(appProperties->getUserSettings()->getValue("CabbageFilePaths"))
+
+            //add all files in root of specifed directories
+            for(int i=0; i<filePaths.getNumPaths(); i++)
+            {
+                File plantDir(filePaths[i]);
+                plantDir.findChildFiles(plantFiles, File::findFiles, false, "*.plant");
+
+            }
+
+            for (int i = 0; i < plantFiles.size(); ++i)
+                m.addItem (i+100, plantFiles[i].getFileNameWithoutExtension());
+
+
+            //fileCnt = cabbageFiles.size();
+
+            //increment menu size and serach recursively through all subfolders in specified dirs
+            for(int i=0; i<filePaths.getNumPaths(); i++)
+            {
+                Array<File> subFolders;
+                File searchDir(filePaths[i]);
+                subFolders.add(searchDir);
+                searchDir.findChildFiles(subFolders, File::findDirectories, true);
+
+                //remove parent dirs from array
+                for(int p=0; p<filePaths.getNumPaths(); p++)
+                    subFolders.removeAllInstancesOf(filePaths[p]);
+
+                PopupMenu subMenu;
+                for (int subs = 0; subs < subFolders.size(); subs++)
+                {
+                    cUtils::debug(subFolders[subs].getFullPathName());
+                    fileCnt = plantFiles.size();
+                    subFolders[subs].findChildFiles(plantFiles, File::findFiles, false, "*.plants");
+                    subMenu.clear();
+
+                    for (int fileIndex=fileCnt+1; fileIndex < plantFiles.size(); fileIndex++)
+                        subMenu.addItem (fileIndex+100, plantFiles[fileIndex].getFileNameWithoutExtension());
+
+
+                    m.addSubMenu(subFolders[subs].getFileNameWithoutExtension(), subMenu);
+                }
+
+                subMenu.clear();
+            }
+
+
+            m.addSeparator();
+            //m.setLookAndFeel(&this->getLookAndFeel());
+        }
+    }
+
 
     static void addFilesToPopupMenu(PopupMenu &m, Array<File> &filesArray, String dir, String ext, int indexOffset)
     {
         File searchDir(dir);
         Array<File> subFolders;
+        Array<File> files;
         subFolders.add(searchDir);
         int noOfFiles=0, fileCnt;
         searchDir.findChildFiles(subFolders, File::findDirectories, true);
@@ -772,11 +838,15 @@ public:
             if(!subFolders[i].containsSubDirectories())
             {
                 subFolders[i].findChildFiles(filesArray, File::findFiles, false, ext);
+
                 subMenu.clear();
                 for (fileCnt = noOfFiles; fileCnt < filesArray.size(); fileCnt++)
+                {
                     subMenu.addItem (fileCnt + indexOffset, filesArray[fileCnt].getFileNameWithoutExtension());
+                }
                 noOfFiles = fileCnt;
-                m.addSubMenu(subFolders[i].getFullPathName().replace(dir, "").replace(pathSlash, "-"), subMenu);
+                if(noOfFiles>0)
+                    m.addSubMenu(subFolders[i].getFullPathName().replace(dir, "").replace(pathSlash, "-"), subMenu);
             }
         }
         subMenu.clear();
@@ -1002,14 +1072,21 @@ public:
             g.setGradientFill(base);
             g.fillEllipse (0, 0, width, height);
 
-            g.setColour(Colour::fromRGB(70, 70, 70));
+            g.setColour(Colours::black);
+            g.fillEllipse(width*0.09, height*0.09, width*0.82, height*0.82);
+
+            Colour outline = Colour::fromRGB(70, 70, 70);
+
+            g.setColour(outline.withAlpha(colour.getAlpha()));
             g.fillEllipse(width*0.04, height*0.04, width*0.92, height*0.92);
 
             if (isToggleOn)   //on
             {
-                ColourGradient cg = ColourGradient(colour.withSaturation(0.2), width*0.4, height*0.4, colour,
-                                                   width*0.8, height*0.8, true);
-                g.setGradientFill (cg);
+//                ColourGradient cg = ColourGradient(colour.withSaturation(0.2), width*0.4, height*0.4, colour,
+//                                                   width*0.8, height*0.8, true);
+
+                //g.setGradientFill (cg);
+                g.setColour(colour);
                 g.fillEllipse(width*0.09, height*0.09, width*0.82, height*0.82);
             }
             else   //off
@@ -1017,7 +1094,12 @@ public:
                 g.setColour(Colours::black);
                 g.fillEllipse(width*0.09, height*0.09, width*0.82, height*0.82);
 
-                ColourGradient cg = ColourGradient (Colours::white, width*0.4, height*0.4, colour.darker(0.9), width*0.3, height*0.3, true);
+                Colour bg1 = Colour::fromRGBA (25, 25, 28, 255);
+                Colour bg2 = Colour::fromRGBA (15, 15, 18, 255);
+                ColourGradient cg = ColourGradient (bg1, 0, 0, bg2, width*0.5, height*0.5, false);
+
+
+                //ColourGradient cg = ColourGradient (Colours::white, width*0.4, height*0.4, colour.darker(0.9), width*0.3, height*0.3, true);
                 g.setGradientFill (cg);
                 g.setOpacity(0.4);
                 g.fillEllipse(width*0.1, height*0.1, width*0.8, height*0.8);
@@ -1340,6 +1422,16 @@ public:
     {
         Path stopPath;
         stopPath.addRectangle(0, 0, buttonSize, buttonSize);
+        DrawablePath* stopImage = new DrawablePath();
+        stopImage->setPath(stopPath);
+        stopImage->setFill(col);
+        return stopImage;
+    }
+
+    static const DrawablePath* createRecordButtonPath(int buttonSize, Colour col)
+    {
+        Path stopPath;
+        stopPath.addEllipse(0, 0, buttonSize, buttonSize);
         DrawablePath* stopImage = new DrawablePath();
         stopImage->setPath(stopPath);
         stopImage->setFill(col);

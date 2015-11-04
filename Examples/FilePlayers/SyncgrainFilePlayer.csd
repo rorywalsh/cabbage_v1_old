@@ -1,11 +1,11 @@
-SyncFilePlayer.csd
-Written by Iain McCurdy 2014
-
-The internal pointer used by syncgrain to track progress through the sound file is affected by grain size and density as well as speed 
- so on accaount of this complication a scrubber line in the waveform view is not yet implemented.
+; SyncgrainFilePlayer.csd
+; Written by Iain McCurdy, 2014
+; 
+; The internal pointer used by syncgrain to track progress through the sound file is affected by grain size and density as well as speed 
+;  so on accaount of this complication a scrubber line in the waveform view is not yet implemented.
 
 <Cabbage>
-form caption("Syncgrain File Player") size(800,340), colour(0,0,0) pluginID("Losc")
+form caption("Syncgrain File Player") size(800,340), colour(0,0,0) pluginID("SGFP")
 image                       bounds(  0,  0,800,340), colour( 90, 60, 30), outlinecolour("White"), shape("sharp"), line(3)	; main panel colouration    
 soundfiler                  bounds(  5,  5,790,175), channel("beg","len"), identchannel("filer1"),  colour(0, 255, 255, 255), fontcolour(160, 160, 160, 255), 
 
@@ -48,7 +48,7 @@ keyboard bounds(5, 80,790, 75)
 
 <CsInstruments>
 
-sr = 44100
+sr = 48000
 ksmps = 64
 nchnls = 2
 0dbfs=1

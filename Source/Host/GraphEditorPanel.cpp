@@ -276,7 +276,8 @@ GraphEditorPanel::~GraphEditorPanel()
 
 void GraphEditorPanel::paint (Graphics& g)
 {
-    g.fillAll (Colour(20, 20, 20));
+    g.fillAll (Colour(50, 50, 50));
+    //g.fillAll(Colours::green.darker(.9f));
 }
 
 void GraphEditorPanel::mouseDown (const MouseEvent& e)
@@ -350,7 +351,7 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
                     {
                         createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, "soundfile player");
                     }
-                    if(r==10001)
+                    else if(r==10001)
                     {
                         createNewPlugin (mainWindow->getChosenType (r), e.x, e.y, true, "automation track");
                     }
@@ -385,15 +386,15 @@ void GraphEditorPanel::mouseDown (const MouseEvent& e)
 
 void GraphEditorPanel::itemDropped (const DragAndDropTarget::SourceDetails& dragSourceDetails)
 {
-		if(FileTreeComponent* fileComp = dynamic_cast<FileTreeComponent*>(dragSourceDetails.sourceComponent.get()))			
-		{
-			//cUtils::showMessage(fileComp->getSelectedFile().getFullPathName());	
-			if (MainHostWindow* const mainWindow = findParentComponentOfClass<MainHostWindow>())
-			{			
-				String name = "soundfile player:"+fileComp->getSelectedFile().getFullPathName();
-				createNewPlugin (mainWindow->getChosenType (10000), dragSourceDetails.localPosition.x, dragSourceDetails.localPosition.x, true, name);
-			}
-		}	
+    if(FileTreeComponent* fileComp = dynamic_cast<FileTreeComponent*>(dragSourceDetails.sourceComponent.get()))
+    {
+        //cUtils::showMessage(fileComp->getSelectedFile().getFullPathName());
+        if (MainHostWindow* const mainWindow = findParentComponentOfClass<MainHostWindow>())
+        {
+            String name = "soundfile player:"+fileComp->getSelectedFile().getFullPathName();
+            createNewPlugin (mainWindow->getChosenType (10000), dragSourceDetails.localPosition.x, dragSourceDetails.localPosition.x, true, name);
+        }
+    }
 }
 
 GraphDocumentComponent* GraphEditorPanel::getGraphDocument()
@@ -424,7 +425,7 @@ void GraphEditorPanel::mouseUp (const MouseEvent& e)
     lassoComp.endLasso();
     removeChildComponent (&lassoComp);
 }
-	
+
 void GraphEditorPanel::findLassoItemsInArea (Array <FilterComponent*>& results, const Rectangle<int>& area)
 {
     const Rectangle<int> lasso (area);
@@ -452,9 +453,9 @@ void GraphEditorPanel::createNewPlugin (const PluginDescription* desc, int x, in
             descript.descriptiveName = "Soundfile player";
             descript.name = "SoundfilePlayer";
             descript.pluginFormatName = "SoundfilePlayer";
-			String file = fileName.substring(17);
-			cUtils::debug(file);
-			descript.fileOrIdentifier = file;
+            String file = fileName.substring(17);
+            cUtils::debug(file);
+            descript.fileOrIdentifier = file;
         }
         else if(fileName=="automation track")
         {
@@ -907,6 +908,81 @@ void GraphAudioProcessorPlayer::changeListenerCallback (ChangeBroadcaster* sourc
         outputGainLevel = ((InternalMixerStrip*)source)->currentGainLevel;
 }
 //==============================================================================
+//==============================================================================
+/*
+void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const inputChannelData,
+                                                  const int numInputChannels,
+                                                  float** const outputChannelData,
+                                                  const int numOutputChannels,
+                                                  const int numSamples)
+{
+    // these should have been prepared by audioDeviceAboutToStart()...
+    jassert (sampleRate > 0 && blockSize > 0);
+
+    incomingMidi.clear();
+    messageCollector.removeNextBlockOfMessages (incomingMidi, numSamples);
+    int totalNumChans = 0;
+
+    if (numInputChannels > numOutputChannels)
+    {
+        // if there aren't enough output channels for the number of
+        // inputs, we need to create some temporary extra ones (can't
+        // use the input data in case it gets written to)
+        tempBuffer.setSize (numInputChannels - numOutputChannels, numSamples,
+                            false, false, true);
+
+        for (int i = 0; i < numOutputChannels; ++i)
+        {
+            channels[totalNumChans] = outputChannelData[i];
+            memcpy (channels[totalNumChans], inputChannelData[i], sizeof (float) * (size_t) numSamples);
+            ++totalNumChans;
+        }
+
+        for (int i = numOutputChannels; i < numInputChannels; ++i)
+        {
+            channels[totalNumChans] = tempBuffer.getWritePointer (i - numOutputChannels);
+            memcpy (channels[totalNumChans], inputChannelData[i], sizeof (float) * (size_t) numSamples);
+            ++totalNumChans;
+        }
+    }
+    else
+    {
+        for (int i = 0; i < numInputChannels; ++i)
+        {
+            channels[totalNumChans] = outputChannelData[i];
+            memcpy (channels[totalNumChans], inputChannelData[i], sizeof (float) * (size_t) numSamples);
+            ++totalNumChans;
+        }
+
+        for (int i = numInputChannels; i < numOutputChannels; ++i)
+        {
+            channels[totalNumChans] = outputChannelData[i];
+            zeromem (channels[totalNumChans], sizeof (float) * (size_t) numSamples);
+            ++totalNumChans;
+        }
+    }
+
+    AudioSampleBuffer buffer (channels, totalNumChans, numSamples);
+
+    {
+        const ScopedLock sl (lock);
+
+        if (processor != nullptr)
+        {
+            const ScopedLock sl2 (processor->getCallbackLock());
+
+            if (! processor->isSuspended())
+            {
+                processor->processBlock (buffer, incomingMidi);
+                return;
+            }
+        }
+    }
+
+    for (int i = 0; i < numOutputChannels; ++i)
+        FloatVectorOperations::clear (outputChannelData[i], numSamples);
+}
+*/
 void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const inputChannelData,
         const int numInputChannels,
         float** const outputChannelData,
@@ -954,18 +1030,28 @@ void GraphAudioProcessorPlayer::audioDeviceIOCallback (const float** const input
                 inputBuffer[y] = inputChannelData[i][y]*inputGainLevel;
 
             channels[totalNumChans] = outputChannelData[i];
-
             memcpy (channels[totalNumChans], inputBuffer, sizeof (float) * (size_t) numSamples);
             inputChannelRMS.getReference(i) = abs(inputBuffer[0]);
 
-            for(int y=0; y<numSamples; y++)
-            {
-                channels[totalNumChans][y] = channels[totalNumChans][y]*.0;
-            }
+            //for(int y=0; y<numSamples; y++)
+            //{
+            //    channels[totalNumChans][y] = channels[totalNumChans][y]*.0;
+            //}
 
             ++totalNumChans;
         }
+        /*
+                for (int i = 0; i < numInputChannels; ++i)
+                {
+        			for(int y=0; y<numSamples; y++)
+        				inputBuffer[y] = inputChannelData[i][y]*inputGainLevel;
 
+                    channels[totalNumChans] = outputChannelData[i];
+                    memcpy (channels[totalNumChans], inputChannelData[i], sizeof (float) * (size_t) numSamples);
+        			inputChannelRMS.getReference(i) = abs(inputBuffer[0]);
+                    ++totalNumChans;
+                }
+        */
         for (int i = numInputChannels; i < numOutputChannels; ++i)
         {
             channels[totalNumChans] = outputChannelData[i];
@@ -1255,6 +1341,60 @@ void GraphDocumentComponent::handleIncomingMidiMessage (MidiInput *source, const
 
     }
     addNewMapping=true;
+}
+
+void GraphDocumentComponent::showMidiMappings()
+{
+    XmlElement* xml = new XmlElement ("MIDIMAPPINGS");
+
+    for (int i = 0; i < graph.midiMappings.size(); ++i)
+    {
+        String controller(graph.midiMappings.getReference(i).controller);
+        String channel(graph.midiMappings.getReference(i).channel);
+        int nodeId = graph.midiMappings.getReference(i).nodeId;
+        int paramIndex = graph.midiMappings.getReference(i).parameterIndex;
+
+        String plugin(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->getName());
+        String param(graph.getGraph().getNodeForId(graph.midiMappings.getReference(i).nodeId)->getProcessor()->getParameterName(graph.midiMappings.getReference(i).parameterIndex));
+
+        //add midi mapping to here, might not be easy...
+        XmlElement* e = new XmlElement ("MIDI_MAPPINGS");
+        e->setAttribute ("NodeId", plugin+" ("+String(nodeId)+")");
+        e->setAttribute ("ParameterIndex", param+" ("+String(paramIndex)+")");
+        e->setAttribute ("Channel", channel);
+        e->setAttribute ("Controller", controller);
+        xml->addChildElement (e);
+    }
+
+    MidiMappingsComponent midiMaps(xml);
+    midiMaps.setSize (420, 300);
+    //midiMaps.addData(xml);
+    //midiMaps.setLookAndFeel(lookAndFeel);
+
+    Colour col(24, 24, 24);
+    DialogWindow::showModalDialog("MIDI Mappings", &midiMaps, this, col, true, false, false);
+
+    midiMaps.getMidiMapXml();
+
+    XmlElement* updatedXml = midiMaps.getMidiMapXml();
+
+    //update new MIDI mappings according to user changes
+    graph.midiMappings.clear();
+
+    forEachXmlChildElementWithTagName (*updatedXml, e, "MIDI_MAPPINGS")
+    {
+        String node = e->getStringAttribute("NodeId");
+        //cUtils::showMessage(node);
+        int nodeId = node.substring(node.indexOf("(")+1, node.length()-1).getIntValue();
+        String paramIndex = e->getStringAttribute("ParameterIndex");
+        int index = paramIndex.substring(paramIndex.indexOf("(")+1, paramIndex.length()-1).getIntValue();
+
+        //node.substring(node.indexOf("(")+1, node.length()-1).getIntValue());
+        graph.midiMappings.add(CabbageMidiMapping(nodeId,
+                               index,
+                               e->getIntAttribute ("Channel"),
+                               e->getIntAttribute ("Controller")));
+    }
 }
 
 bool GraphDocumentComponent::doMidiMappingsMatch(int i, int channel, int controller)

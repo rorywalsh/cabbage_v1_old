@@ -22,14 +22,14 @@ form caption("Bouncing Object"), size(390, 635), pluginID("bnOb")
 
 image      bounds(  5,  5,380, 70), colour( 50,100, 70), outlinecolour("white"), line(2), shape("sharp"),plant("main"){
 filebutton bounds(  5,  8, 80, 25), text("Open File","Open File"), fontcolour("white") channel("filename"), shape("ellipse")
-button     bounds(  5, 37, 80, 25), channel("GestureTrigger"), text("Trigger","Trigger"), value(0), latched(0)
+button     bounds(  5, 37, 80, 25), channel("GestureTrigger"), text("Trigger","Trigger"), value(0)
 rslider    bounds( 90,  5, 60, 60), channel("dur"), text("Duration"), range(0.1, 20.00,  4,0.25), $RSliderStyle
 label      bounds(150, 12, 65, 12), text("Input:"),  FontColour("white")
 combobox   bounds(150, 25, 65, 20), channel("input"), value(2), text("Sample", "Sine", "Saw", "Square", "Tri", "Noise")
 
 label    bounds(220, 12, 90, 12), text("Filter Type:"),  FontColour("white")
 combobox bounds(220, 25, 90, 20), channel("FiltType"), value(1), text("Lowpass", "Bandpass", "Reson", "Highpass", "Moogladder")
-rslider  bounds(310,  5, 60, 60), identchannel("bandwidth"), text("Bandwidth"), range(0.05, 2, 0.1, 0.25), $RSliderStyle
+rslider  bounds(310,  5, 60, 60), channel("bandwidth"), text("Bandwidth"), range(0.05, 2, 0.1, 0.25), $RSliderStyle
 }
 
 image   bounds(  5, 80,380, 90), colour( 50,100, 70), outlinecolour("white"), line(2), shape("sharp"),plant("time"){
@@ -111,6 +111,7 @@ instr	1
  gkdur		chnget	"dur"
  gkinput	chnget	"input"
  gkFiltType	chnget	"FiltType"
+ gkFiltType	init	1
  gkbandwidth	chnget	"bandwidth"
 
  gkTimeS	chnget	"TimeS"
@@ -184,7 +185,7 @@ instr	1
  		chnset	"tablenumber(5)", "table5"
  endif
 
- if trigger(gkGestureTrigger,0.5,0)==1 then
+ if changed(gkGestureTrigger)==1 then
   event	"i",3,0,gkdur,60
  endif
 endin
@@ -229,7 +230,7 @@ instr	4	; INDIVIDUAL IMPULSE SOUNDS
   aline		line		0,p3,1
   aenv		tablei		aline,giElementAmp,1
   ilevel	=		p6
-  iFiltType	=		i(gkFiltType)  
+  ;iFiltType	=		i(gkFiltType)  
   if iNChans==1||i(gkinput)!=1 then
    if i(gkinput)==1 then
     asig		loscil3		ilevel,imlt,ifn,1
@@ -250,34 +251,34 @@ instr	4	; INDIVIDUAL IMPULSE SOUNDS
     asig	pinkish	kenv2*ilevel
    endif
    ;asig		poscil3		ilevel,imlt,ifn
-   if iFiltType==1 then
+   if i(gkFiltType)==1 then
     asig		butlp		asig,icf
-   elseif iFiltType==2 then
+   elseif i(gkFiltType)==2 then
     asig		butbp		asig,icf,icf*i(gkbandwidth)
-   elseif iFiltType==3 then
+   elseif i(gkFiltType)==3 then
     asig		reson		asig,icf,icf*i(gkbandwidth),1
-   elseif iFiltType==4 then
+   elseif i(gkFiltType)==4 then
     asig		buthp		asig,icf
-   elseif iFiltType==5 then
+   elseif i(gkFiltType)==5 then
     asig		moogladder	asig,icf,i(gkbandwidth)*0.49
    endif
    asig		=		asig * aenv
    		outs		asig,asig
   elseif iNChans==2 then
    aL,aR		loscil3		ilevel,imlt,ifn,1
-   if iFiltType==1 then
+   if i(gkFiltType)==1 then
     aL		butlp		aL,icf
     aR		butlp		aR,icf
-   elseif iFiltType==2 then
+   elseif i(gkFiltType)==2 then
     aL		butbp		aL,icf,icf*i(gkbandwidth)
     aR		butbp		aR,icf,icf*i(gkbandwidth)
-   elseif iFiltType==3 then
+   elseif i(gkFiltType)==3 then
     aL		reson		aL,icf,icf*i(gkbandwidth),1
     aR		reson		aR,icf,icf*i(gkbandwidth),1
-   elseif iFiltType==4 then
+   elseif i(gkFiltType)==4 then
     aL		buthp		aL,icf
     aR		buthp		aR,icf
-   elseif iFiltType==5 then
+   elseif i(gkFiltType)==5 then
     aL		moogladder	aL,icf,i(gkbandwidth)*0.49
     aR		moogladder	aR,icf,i(gkbandwidth)*0.49
    endif

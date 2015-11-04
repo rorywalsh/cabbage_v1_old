@@ -34,18 +34,18 @@ const char* const filenameSuffix = ".filtergraph";
 const char* const filenameWildcard = "*.filtergraph";
 
 //simple class to hold midi mappings
-class CabbageMidiMapping  
+class CabbageMidiMapping
 {
 public:
-	CabbageMidiMapping(int nodeID, int paramIndex, int chan, int ctrl):
-														channel(chan),
-														controller(ctrl),
-														nodeId(nodeID),
-														parameterIndex(paramIndex),
-														isController(true){}
-	
-int channel, controller, nodeId, parameterIndex;
-bool isController;
+    CabbageMidiMapping(int nodeID, int paramIndex, int chan, int ctrl):
+        channel(chan),
+        controller(ctrl),
+        nodeId(nodeID),
+        parameterIndex(paramIndex),
+        isController(true) {}
+
+    int channel, controller, nodeId, parameterIndex;
+    bool isController;
 
 };
 
@@ -54,12 +54,12 @@ bool isController;
     A collection of filters and some connections between them.
 */
 class FilterGraph   : public FileBasedDocument,
-					  public ChangeListener,
-					  public HighResolutionTimer,
-					  public ActionBroadcaster,
-					  public ActionListener
+    public ChangeListener,
+    public HighResolutionTimer,
+    public ActionBroadcaster,
+    public ActionListener
 {
-	
+
 public:
     //==============================================================================
     FilterGraph (AudioPluginFormatManager& formatManager);
@@ -73,11 +73,11 @@ public:
     const AudioProcessorGraph::Node::Ptr getNodeForId (const uint32 uid) const noexcept;
 
     void addFilter (const PluginDescription* desc, double x, double y);
-	
-	
-	AudioProcessorGraph::Node::Ptr createNode(const PluginDescription* desc, int uid=-1);
-	
-	void addNativeCabbageFilter (String fileName, double x, double y);
+
+
+    AudioProcessorGraph::Node::Ptr createNode(const PluginDescription* desc, int uid=-1);
+
+    void addNativeCabbageFilter (String fileName, double x, double y);
 
     void removeFilter (const uint32 filterUID);
     void disconnectFilter (const uint32 filterUID);
@@ -87,19 +87,19 @@ public:
     void setNodePosition (const int nodeId, double x, double y);
     void getNodePosition (const int nodeId, double& x, double& y) const;
 
-	void changeListenerCallback (ChangeBroadcaster*);
-	void actionListenerCallback (const String &message);
-	
-	int getLastMovedNodeId()
-	{
-		return lastChangedNodeId;
-	}
+    void changeListenerCallback (ChangeBroadcaster*);
+    void actionListenerCallback (const String &message);
+
+    int getLastMovedNodeId()
+    {
+        return lastChangedNodeId;
+    }
 
 
-	int getLastMovedNodeParameterIndex()
-	{
-		return lastChangedNodeParameter;
-	}	
+    int getLastMovedNodeParameterIndex()
+    {
+        return lastChangedNodeParameter;
+    }
     //==============================================================================
     int getNumConnections() const noexcept;
     const AudioProcessorGraph::Connection* getConnection (const int index) const noexcept;
@@ -120,9 +120,9 @@ public:
 
     void clear();
 
-	String findControllerForparameter(int32 nodeID, int parameterIndex);
+    String findControllerForparameter(int32 nodeID, int parameterIndex);
 
-	void updateAutomatedNodes(int nodeId, int parameterIndex, float value);
+    void updateAutomatedNodes(int nodeId, int parameterIndex, float value);
 
     //==============================================================================
 
@@ -135,66 +135,103 @@ public:
     Result saveDocument (const File& file);
     File getLastDocumentOpened();
     void setLastDocumentOpened (const File& file);
-	void createNodeFromXml (const XmlElement& xml);
+    void createNodeFromXml (const XmlElement& xml);
 
-	void addNodesToAutomationTrack(int32 id, int index);
+    void addNodesToAutomationTrack(int32 id, int index);
 
     static const int midiChannelNumber;
-	Array<CabbageMidiMapping> midiMappings;
-	
-	//------- play info and timer stuff ---------------
-	void hiResTimerCallback();
-	
-	class AudioPlaybackHead: public AudioPlayHead
-	{
-		public:
-			bool getCurrentPosition (CurrentPositionInfo &result)
-			{
-				result = playHeadPositionInfo;
-				return true;
-			}
-			
-			void setIsPlaying(bool val){  playHeadPositionInfo.isPlaying=val;	}
-			
-			void setTimeInSeconds(int val){  playHeadPositionInfo.timeInSeconds=val;	}
-			int getTimeInSeconds(){  return playHeadPositionInfo.timeInSeconds;	}
-			
-			void setPPQPosition(int val){  playHeadPositionInfo.ppqPosition=val;	}
-			int getPPQPosition(){  return playHeadPositionInfo.ppqPosition;	}
-			
-		
-		private:
-			AudioPlayHead::CurrentPositionInfo playHeadPositionInfo;
-	};
+    Array<CabbageMidiMapping> midiMappings;
 
-	void setIsPlaying(bool value, bool reset=false);
-	void setBPM(int bpm);
-	
-	int getTimeInSeconds(){		return audioPlayHead.getTimeInSeconds();	}
-	int getPPQPosition(){		return audioPlayHead.getPPQPosition();		}
-	void setEditedNodeId(int id){	IdForNodeBeingEdited=id;		}
-	int getEditedNodeId(){	return IdForNodeBeingEdited;			}
+    //------- play info and timer stuff ---------------
+    void hiResTimerCallback();
+
+    class AudioPlaybackHead: public AudioPlayHead
+    {
+    public:
+        bool getCurrentPosition (CurrentPositionInfo &result)
+        {
+            result = playHeadPositionInfo;
+            return true;
+        }
+
+        void setIsPlaying(bool val)
+        {
+            playHeadPositionInfo.isPlaying=val;
+        }
+
+        void setTimeInSeconds(int val)
+        {
+            playHeadPositionInfo.timeInSeconds=val;
+        }
+        int getTimeInSeconds()
+        {
+            return playHeadPositionInfo.timeInSeconds;
+        }
+
+        void setPPQPosition(int val)
+        {
+            playHeadPositionInfo.ppqPosition=val;
+        }
+        int getPPQPosition()
+        {
+            return playHeadPositionInfo.ppqPosition;
+        }
+        void setBpm(int bpm)
+        {
+            playHeadPositionInfo.bpm = bpm;
+        }
+
+
+    private:
+        AudioPlayHead::CurrentPositionInfo playHeadPositionInfo;
+    };
+
+    void setIsPlaying(bool value, bool reset=false);
+    void setBPM(int bpm);
+
+    int getTimeInSeconds()
+    {
+        return audioPlayHead.getTimeInSeconds();
+    }
+    int getPPQPosition()
+    {
+        return audioPlayHead.getPPQPosition();
+    }
+    void setEditedNodeId(int id)
+    {
+        IdForNodeBeingEdited=id;
+    }
+    int getEditedNodeId()
+    {
+        return IdForNodeBeingEdited;
+    }
+
+    bool isAutomationAdded()
+    {
+        return automationAdded;
+    }
 
 private:
     //==============================================================================
     AudioPluginFormatManager& formatManager;
     AudioProcessorGraph graph;
-	AudioPlaybackHead audioPlayHead;
-	int32 automationNodeID;
-	
-	OwnedArray<NodeAudioProcessorListener> audioProcessorListeners;
-	int lastChangedNodeId;
-	int lastChangedNodeParameter;
-	int IdForNodeBeingEdited;
+    AudioPlaybackHead audioPlayHead;
+    int32 automationNodeID;
+
+    OwnedArray<NodeAudioProcessorListener> audioProcessorListeners;
+    int lastChangedNodeId;
+    int lastChangedNodeParameter;
+    int IdForNodeBeingEdited;
+    bool automationAdded;
     uint32 lastUID;
     uint32 getNextUID() noexcept;
-	uint32 lastNodeID;
-	Array<String> pluginTypes;
-	uint32 nodeId;
-	float PPQN, currentBPM, playPosition;
-	int ppqPosition, subTicks;
-	int timeInSeconds; 
-	
+    uint32 lastNodeID;
+    Array<String> pluginTypes;
+    uint32 nodeId;
+    float PPQN, currentBPM, playPosition;
+    int ppqPosition, subTicks;
+    int timeInSeconds;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FilterGraph)
 };
 
@@ -203,16 +240,19 @@ private:
 // plugin is triggering the callback
 //==============================================================================
 class NodeAudioProcessorListener : public AudioProcessorListener,
-										public ChangeBroadcaster
+    public ChangeBroadcaster
 {
 
 public:
-	NodeAudioProcessorListener(int _nodeID):nodeId(_nodeID){}
-    void audioProcessorChanged (AudioProcessor* processor){	   this->removeAllChangeListeners();	}
+    NodeAudioProcessorListener(int _nodeID):nodeId(_nodeID) {}
+    void audioProcessorChanged (AudioProcessor* processor)
+    {
+        this->removeAllChangeListeners();
+    }
     void audioProcessorParameterChanged(AudioProcessor* processor, int parameterIndex, float newValue);
 
-	int nodeId;
-	int parameterIndex;
+    int nodeId;
+    int parameterIndex;
 };
 
 

@@ -26,34 +26,41 @@
 
 
 <Cabbage>
-form caption("Frequency Shifter") size(500,180), pluginID("fshi")
-image                               bounds( 0,  0, 500,180), colour("darkslategrey"), outlinecolour("silver"), outlinethickness(6), shape("rounded")
-label    bounds(14,  7, 45, 11), text("INPUT"), fontcolour("white")
-combobox bounds(10, 18, 65, 20), channel("input"), value(1), text("Live","Tone","Noise")
-label    bounds(14, 42, 55, 11), text("POLARITY"), fontcolour("white")
-combobox bounds(10, 53, 65, 20), channel("polarity"), value(1), text("Positive","Negative","Dual")
-rslider bounds( 75, 10, 70, 70), text("Mix"),      channel("mix"),    range(0, 1.00, 0.5),     colour(27,59,59), textcolour("white), trackercolour(255,255,100)
-rslider bounds(145, 10, 70, 70), text("Freq."),    channel("freq"),   range(-4000, 4000, -50), colour(27,59,59), textcolour("white), trackercolour(255,255,100)
-rslider bounds(215, 10, 70, 70), text("Mult."),    channel("mult"),   range(-1, 1.00, 0.1),    colour(27,59,59), textcolour("white), trackercolour(255,255,100)
-rslider bounds(285, 10, 70, 70), text("Feedback"), channel("fback"),  range(0, 0.75, 0.6),     colour(27,59,59), textcolour("white), trackercolour(255,255,100)
-rslider bounds(355, 10, 70, 70), text("Level"),    channel("level"),  range(0, 1.00, 1),       colour(27,59,59), textcolour("white), trackercolour(255,255,100)
+form caption("Frequency Shifter") size(560,180), pluginID("fshi")
+image                   bounds( 0,  0, 560,180), colour("darkslategrey"), outlinecolour("silver"), outlinethickness(6), shape("rounded")
+label    bounds(15,  7, 70, 11), text("INPUT"), fontcolour("white")
+combobox bounds(15, 18, 70, 20), channel("input"), value(1), text("Live","Tone","Noise")
+label    bounds(15, 42, 70, 11), text("POLARITY"), fontcolour("white")
+combobox bounds(15, 53, 70, 20), channel("polarity"), value(1), text("Positive","Negative","Dual")
+rslider bounds( 80, 10, 70, 70), text("Mix"),      channel("mix"),    range(0, 1.00, 0.5),     colour(27,59,59), textcolour("white), trackercolour(255,255,100)
+rslider bounds(150, 10, 70, 70), text("Freq."),    channel("freq"),   range(-4000, 4000, -50), colour(27,59,59), textcolour("white), trackercolour(255,255,100)
+rslider bounds(220, 10, 70, 70), text("Mult."),    channel("mult"),   range(-1, 1.00, 0.1),    colour(27,59,59), textcolour("white), trackercolour(255,255,100)
+rslider bounds(285, 15, 60, 60), text("Port."),    channel("port"),   range(0, 30.00, 0.1),    colour(27,59,59), textcolour("white), trackercolour(255,255,100)
 
-checkbox bounds(425, 20, 12, 12), channel("r1") fontcolour("white") colour(yellow) value(1)
-checkbox bounds(425, 32, 12, 12), channel("r2") fontcolour("white") colour(yellow) 
-label    bounds(438, 21, 55,  9), text("DUAL MONO"), fontcolour("white")
-label    bounds(437, 33, 40,  9), text("STEREO"), fontcolour("white")
+rslider bounds(340, 10, 70, 70), text("Feedback"), channel("fback"),  range(0, 0.75, 0.6),     colour(27,59,59), textcolour("white), trackercolour(255,255,100)
+rslider bounds(410, 10, 70, 70), text("Level"),    channel("level"),  range(0, 1.00, 1),       colour(27,59,59), textcolour("white), trackercolour(255,255,100)
 
-button   bounds(425, 50, 65, 20), colour("Green"), text("Zero Freq", "Zero Freq"), channel("Zerofreq"), value(0), latched(0)
+checkbox bounds(480, 20, 12, 12), channel("r1") fontcolour("white") colour(yellow) value(1)
+checkbox bounds(480, 32, 12, 12), channel("r2") fontcolour("white") colour(yellow) 
+label    bounds(493, 21, 55,  9), text("DUAL MONO"), fontcolour("white")
+label    bounds(492, 33, 40,  9), text("STEREO"), fontcolour("white")
 
-line     bounds( 10, 90, 480, 2), colour("Grey")
-checkbox bounds( 10,100,150, 20), channel("ModOnOff") text("LFO Modulate Freq."), fontcolour("white") colour(lime) value(0)
-label    bounds( 23,127, 45, 11), text("SHAPE"), fontcolour("white")
-combobox bounds( 10,138, 85, 20), channel("LFOShape"), value(7), text("Sine","Triangle","Square","Saw Up","Saw Down","Rand.S&H","Rand.Spline")
-rslider bounds( 145,100, 70, 70), text("Rate"),     channel("LFORate"),  range(0, 30,  1.5, 0.5, 0.001), colour("lightslategrey"), textcolour("white), trackercolour(255,255,100)
-rslider bounds( 215,100, 70, 70), text("Min"),      channel("LFOMin"),   range(-2000, 2000, -600),       colour("lightslategrey"), textcolour("white), trackercolour(255,255,100)
-rslider bounds( 285,100, 70, 70), text("Max"),      channel("LFOMax"),   range(-2000, 2000,  600),       colour("lightslategrey"), textcolour("white), trackercolour(255,255,100)
-rslider bounds( 355,100, 70, 70), text("Pan Mod."), channel("PanSpread"),range(0, 1.00, 1),              colour("lightslategrey"), textcolour("white), trackercolour(255,255,100)
-button   bounds(425,100, 65, 20), colour("Green"), text("Sync LFO", "Sync LFO"), channel("SyncLFO"), value(0), latched(0)
+button   bounds(480, 50, 65, 20), colour("Green"), text("Zero Freq", "Zero Freq"), channel("Zerofreq"), value(0), latched(0)
+
+;----
+
+line     bounds( 10, 90, 540, 2), colour("Grey")
+
+;----
+
+checkbox bounds( 40,100,150, 20), channel("ModOnOff") text("LFO Modulate Freq."), fontcolour("white") colour(lime) value(0)
+label    bounds( 53,127, 45, 11), text("SHAPE"), fontcolour("white")
+combobox bounds( 40,138, 85, 20), channel("LFOShape"), value(7), text("Sine","Triangle","Square","Saw Up","Saw Down","Rand.S&H","Rand.Spline")
+rslider bounds( 175,100, 70, 70), text("Rate"),     channel("LFORate"),  range(0, 30,  1.5, 0.5, 0.001), colour("lightslategrey"), textcolour("white), trackercolour(255,255,100)
+rslider bounds( 245,100, 70, 70), text("Min"),      channel("LFOMin"),   range(-2000, 2000, -600),       colour("lightslategrey"), textcolour("white), trackercolour(255,255,100)
+rslider bounds( 315,100, 70, 70), text("Max"),      channel("LFOMax"),   range(-2000, 2000,  600),       colour("lightslategrey"), textcolour("white), trackercolour(255,255,100)
+rslider bounds( 385,100, 70, 70), text("Pan Mod."), channel("PanSpread"),range(0, 1.00, 1),              colour("lightslategrey"), textcolour("white), trackercolour(255,255,100)
+button   bounds(455,100, 65, 20), colour("Green"), text("Sync LFO", "Sync LFO"), channel("SyncLFO"), value(0), latched(0)
 
 </Cabbage>
 <CsoundSynthesizer>
@@ -63,7 +70,7 @@ button   bounds(425,100, 65, 20), colour("Green"), text("Sync LFO", "Sync LFO"),
 </CsOptions>
 
 <CsInstruments>
-sr 	= 	44100
+sr 	= 	48000
 ksmps 	= 	32
 nchnls 	= 	2
 0dbfs 	= 	1
@@ -76,14 +83,13 @@ gisine		ftgen	0,0,4096,10,1			;A SINE WAVE SHAPE
 gicos		ftgen	0,0,4096,11,1			;A COSINE WAVE SHAPE
 gishapes	ftgen	0,0,8,-2,0,1,2,4,5
 
-opcode	FreqShifter,a,akkkki
-	adry,kmix,kfreq,kmult,kfback,ifn	xin			;READ IN INPUT ARGUMENTS
+opcode	FreqShifter,a,akkki
+	adry,kmix,kfshift,kfback,ifn	xin			;READ IN INPUT ARGUMENTS
 	kWet	limit	kmix*2,0,1
 	kDry	limit	(1-kmix)*2,0,1
 	aFS	init	0					;INITILISE FEEDBACK SIGNAL (FOR FIRST K-PASS)
 	ain	=	adry + (aFS * kfback)			;ADD FEEDBACK SIGNAL TO INPUT (AMOUNT OF FEEDBACK CONTROLLED BY 'Feedback Gain' SLIDER)
 	areal, aimag hilbert ain				;HILBERT OPCODE OUTPUTS TWO PHASE SHIFTED SIGNALS, EACH 90 OUT OF PHASE WITH EACH OTHER
-	kfshift	=	kfreq*kmult
 	;QUADRATURE OSCILLATORS. I.E. 90 OUT OF PHASE WITH RESPECT TO EACH OTHER
 	;OUTUTS	OPCODE	AMPLITUDE | FREQ. | FUNCTION_TABLE | INITIAL_PHASE (OPTIONAL;DEFAULTS TO ZERO)
 	asin 	oscili       1,    kfshift,     ifn,           0
@@ -133,13 +139,13 @@ endop
 
 
 instr	1
-kporttime	linseg	0,0.001,0.05
+kporttime	linseg	0,0.001,1
 koff	=	0
 kmix		chnget	"mix"			; read input widgets
 kfreq		chnget	"freq"
-kfreq		portk	kfreq,kporttime
 kmult		chnget	"mult"
-kmult		portk	kmult,kporttime
+kport		chnget	"port"
+kfshift		portk	kfreq*kmult,kporttime*kport
 kfback		chnget	"fback"
 klevel		chnget	"level"
 kpolarity	chnget	"polarity"
@@ -204,31 +210,31 @@ if ktrig=1 then
 endif
 RESTART_FREQUENCY_SHIFTERS:
 if kpolarity=1 then						; polarity is positive...
- a1	FreqShifter	a1,kmix,kfreq,kmult,kfback,gisine	
+ a1	FreqShifter	a1,kmix,kfshift,kfback,gisine	
  if i(kStereoMode)=2 then
-  a2	FreqShifter	a2,kmix,kfreq,kmult,kfback,gicos	; cosine version
+  a2	FreqShifter	a2,kmix,kfshift,kfback,gicos	; cosine version
  else
-  a2	FreqShifter	a2,kmix,kfreq,kmult,kfback,gisine	
+  a2	FreqShifter	a2,kmix,kfshift,kfback,gisine	
  endif 
 elseif kpolarity=2 then						; polarity is negative...
- a1	FreqShifter	a1,kmix,-kfreq,kmult,kfback,gisine	
+ a1	FreqShifter	a1,kmix,-kfshift,kfback,gisine	
  if i(kStereoMode)=2 then
-  a2	FreqShifter	a2,kmix,-kfreq,kmult,kfback,gicos	; cosine version
+  a2	FreqShifter	a2,kmix,-kfshift,kfback,gicos	; cosine version
  else
-  a2	FreqShifter	a2,kmix,-kfreq,kmult,kfback,gisine	
+  a2	FreqShifter	a2,kmix,-kfshift,kfback,gisine	
  endif
 else								; polarity is dual...
- aa	FreqShifter	a1,kmix,kfreq,kmult,kfback,gisine	; positive
+ aa	FreqShifter	a1,kmix,kfshift,kfback,gisine	; positive
  if i(kStereoMode)=2 then
-  ab	FreqShifter	a2,kmix,kfreq,kmult,kfback,gicos	; cosine version
+  ab	FreqShifter	a2,kmix,kfshift,kfback,gicos	; cosine version
  else
-  ab	FreqShifter	a2,kmix,kfreq,kmult,kfback,gisine	
+  ab	FreqShifter	a2,kmix,kfshift,kfback,gisine	
  endif 
- ac	FreqShifter	a1,kmix,-kfreq,kmult,kfback,gisine	; negative
+ ac	FreqShifter	a1,kmix,-kfshift,kfback,gisine	; negative
  if i(kStereoMode)=2 then
-  ad	FreqShifter	a2,kmix,-kfreq,kmult,kfback,gicos	; cosine version
+  ad	FreqShifter	a2,kmix,-kfshift,kfback,gicos	; cosine version
  else
-  ad	FreqShifter	a2,kmix,-kfreq,kmult,kfback,gisine	
+  ad	FreqShifter	a2,kmix,-kfshift,kfback,gisine	
  endif
 rireturn
 

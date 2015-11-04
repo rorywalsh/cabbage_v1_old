@@ -1,4 +1,6 @@
-TriggerDelay.csd
+; TriggerDelay.csd
+; Written by Iain McCurdy, 2012.
+
 ; This example works best with sharp percussive sounds
 
 ; A trigger impulse is generated each time the rms of the input signal crosses the defined 'Threshold' value.

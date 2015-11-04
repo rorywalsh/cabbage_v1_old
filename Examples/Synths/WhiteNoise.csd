@@ -1,7 +1,7 @@
 <Cabbage>
 form caption("White Noise"), size(230, 90), pluginID("wnse")
 image bounds(  0,  0,230, 90), colour("white"), shape("rounded"), outlinecolour("black"), outlinethickness(4) 
-checkbox bounds( 20, 10, 80, 15), text("On/Off"), channel("onoff"), value(1), fontcolour("black")
+checkbox bounds( 20, 10, 80, 15), text("On/Off"), channel("onoff"), value(0), fontcolour("black")
 rslider  bounds( 80, 10, 70, 70), text("Amplitude"), channel("amp"),  outlinecolour("DarkGrey"), colour("black"), range(0, 1, 0.1, 0.5, 0.001),   textcolour("black"), trackercolour("grey")
 rslider  bounds(150, 10, 70, 70), text("Beta"),      channel("beta"), outlinecolour("DarkGrey"), colour("black"), range(-0.999, 0.999,0,1,0.001), textcolour("black"), trackercolour("grey")
 </Cabbage>

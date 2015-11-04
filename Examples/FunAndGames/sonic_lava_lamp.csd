@@ -1,3 +1,6 @@
+; SonicLavaLamp.csd
+; Written by Iain McCurdy, 2012.
+
 <Cabbage>
 form caption("Sonic Lava Lamp") size(510, 450), pluginID("sonl")
 image bounds(  5,  0,250, 210), colour(255,255, 50,100),shape("rounded"), oulinecolour("white"), line(0)

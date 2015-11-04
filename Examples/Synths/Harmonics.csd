@@ -48,21 +48,21 @@
 form caption("Harmonics"), size( 710, 320), colour(100,150,150), pluginID("Harm"), colour( 0,0, 0)
 
 ;AMPLITUDE
-image    bounds(  5,  5,130,110), colour(100,150,150), oulinecolour("white"), outlinethickness(2), shape("sharp"), plant("amplitude"){
+image    bounds(  5,  5,130,110), colour(100,150,150), outlinecolour("white"), outlinethickness(2), shape("sharp"), plant("amplitude"){
 label    bounds(  0,  5,130, 12), text("A M P L I T U D E"), fontcolour(white)
 rslider  bounds(  0, 25, 75, 75), text("Amp."),  channel("Amp"), range(0,1.00,0.3),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
 rslider  bounds( 55, 25, 75, 75), text("Vel."),  channel("AmpVel"), range(0,1.00,0.5),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
 }
 
 ;FUNDEMENTAL
-image    bounds(140,  5,130,110), colour(100,150,150), oulinecolour("white"), outlinethickness(2), shape("sharp"), plant("fundemental"){
+image    bounds(140,  5,130,110), colour(100,150,150), outlinecolour("white"), outlinethickness(2), shape("sharp"), plant("fundemental"){
 label    bounds(  0,  5,130, 12), text("F U N D E M E N T A L"), fontcolour(white)
 rslider  bounds(  0, 25, 75, 75), text("Offset"),  channel("NumOffset"), range(0,127.000,30),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
 rslider  bounds( 55, 25, 75, 75), text("Rnge."),  channel("NumRange"), range(0,127.000,15),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
 }
 
 ;HARMONIC
-image    bounds(275,  5,185,110), colour(100,150,150), oulinecolour("white"), outlinethickness(2), shape("sharp"), plant("harmonic"){
+image    bounds(275,  5,185,110), colour(100,150,150), outlinecolour("white"), outlinethickness(2), shape("sharp"), plant("harmonic"){
 label    bounds(  0,  5,185, 12), text("H A R M O N I C"), fontcolour(white)
 rslider  bounds(  0, 25, 75, 75), text("Offset"),  channel("HarmOffset"), range(-1,1.000,0),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
 rslider  bounds( 55, 25, 75, 75), text("Vel."),  channel("HarmRange"), range(0,2.000,0.645,0.5),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
@@ -70,7 +70,7 @@ rslider  bounds(110, 25, 75, 75), text("Kybd.Track"),  channel("HarmKybd"), rang
 }
 
 ;STRING
-image    bounds(465,  5,240,110), colour(100,150,150), oulinecolour("white"), outlinethickness(2), shape("sharp"), plant("main"){
+image    bounds(465,  5,240,110), colour(100,150,150), outlinecolour("white"), outlinethickness(2), shape("sharp"), plant("main"){
 label    bounds(  0,  5,240, 12), text("S T R I N G S"), fontcolour(white)
 rslider  bounds(  0, 25, 75, 75), text("Detune"),  channel("detune"), range(0,50.000,1.5,0.35,0.001),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
 rslider  bounds( 55, 25, 75, 75), text("Release"),  channel("release"), range(0.01,12.000,0.15,0.5,0.001),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
@@ -79,7 +79,7 @@ rslider  bounds(165, 25, 75, 75), text("Damping"),  channel("cutoff"), range(0.0
 }
 
 ;ATTACK HAMMER
-image    bounds(  5,120,185,110), colour(100,150,150), oulinecolour("white"), outlinethickness(2), shape("sharp"), plant("hammer"){
+image    bounds(  5,120,185,110), colour(100,150,150), outlinecolour("white"), outlinethickness(2), shape("sharp"), plant("hammer"){
 label    bounds(  0,  5,185, 12), text("A T T A C K    H A M M E R"), fontcolour(white)
 rslider  bounds(  0, 25, 75, 75), text("Vel."),  channel("ToneVel"), range(0,1.00,0.75),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
 rslider  bounds( 55, 25, 75, 75), text("Offset"),  channel("HammFrq"), range(1,4000,100,0.5,1),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
@@ -87,7 +87,7 @@ rslider  bounds(110, 25, 75, 75), text("Kybd.Track"),  channel("HammTrk"), range
 }
 
 ;RELEASE HAMMER
-image    bounds(195,120,185,110), colour(100,150,150), oulinecolour("white"), outlinethickness(2), shape("sharp"), plant("hammer_rel"){
+image    bounds(195,120,185,110), colour(100,150,150), outlinecolour("white"), outlinethickness(2), shape("sharp"), plant("hammer_rel"){
 label    bounds(  0,  5,185, 12), text("R E L E A S E    H A M M E R"), fontcolour(white)
 rslider  bounds(  0, 25, 75, 75), text("Ampl."),  channel("RelHammAmp"), range(0,1.00,0.3),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
 rslider  bounds( 55, 25, 75, 75), text("Offset"),  channel("RelHammFrq"), range(1,4000,100,0.5,1),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
@@ -95,14 +95,14 @@ rslider  bounds(110, 25, 75, 75), text("Kybd.Track"),  channel("RelHammTrk"), ra
 }
 
 ;STEREO
-image    bounds(385,120,130,110), colour(100,150,150), oulinecolour("white"), outlinethickness(2), shape("sharp"), plant("stereo"){
+image    bounds(385,120,130,110), colour(100,150,150), outlinecolour("white"), outlinethickness(2), shape("sharp"), plant("stereo"){
 label    bounds(  0,  5,130, 12), text("S T E R E O"), fontcolour(white)
 rslider  bounds(  0, 25, 75, 75), text("Width"),  channel("StWidth"), range(0.0001,0.1,0.01,0.5),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
 rslider  bounds( 55, 25, 75, 75), text("Dry/Wet"),  channel("StMix"), range(0,1,0.5),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
 }
 
 ;REVERB
-image    bounds(520,120,185,110), colour(100,150,150), oulinecolour("white"), outlinethickness(2), shape("sharp"), plant("reverb"){
+image    bounds(520,120,185,110), colour(100,150,150), outlinecolour("white"), outlinethickness(2), shape("sharp"), plant("reverb"){
 label    bounds(  0,  5,185, 12), text("R E V E R B"), fontcolour(white)
 rslider  bounds(  0, 25, 75, 75), text("Dry/Wet"),  channel("RvbDryWet"), range(0,1.000,0.3),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")
 rslider  bounds( 55, 25, 75, 75), text("Size"),  channel("RvbSize"), range(0.4,0.999,0.55),  textBox(1), colour("silver"), trackercolour("silver"), textcolour("white"), fontcolour("white")

@@ -93,8 +93,8 @@ checkbox bounds(516, 98, 12, 12), channel("Acc14"), value(0)
 checkbox bounds(551, 98, 12, 12), channel("Acc15"), value(0)
 checkbox bounds(586, 98, 12, 12), channel("Acc16"), value(0)
 
-button   bounds( 10,120, 60, 25), fontcolour:0(100,100,100), fontcolour:1(150,255,150), colour:0(0,30,0), colour:1(0,150,0), text("Play","Play"), channel("Play"), latched(1), radiogroup(1), identchannel("PlayButton")
-button   bounds( 10,150, 60, 25), fontcolour:0(100,100,100), fontcolour:1(255,150,150), colour:0(30,0,0), colour:1(150,0,0), text("Stop","Stop"), channel("Stop"), latched(1), radiogroup(1), value(1), identchannel("StopButton")
+button   bounds( 10,120, 60, 25), fontcolour:0(50,50,50), fontcolour:1(205,255,205), colour:0(0,10,0), colour:1(0,150,0), text("Play","Play"), channel("Play"), latched(1), radiogroup(1), identchannel("PlayButton")
+button   bounds( 10,150, 60, 25), fontcolour:0(50,50,50), fontcolour:1(255,205,205), colour:0(10,0,0), colour:1(150,0,0), text("Stop","Stop"), channel("Stop"), latched(1), radiogroup(1), value(1), identchannel("StopButton")
 combobox bounds( 10,190, 60, 15), channel("Waveform"), value(1), text("saw","square","triangle","PWM","noise")
 rslider  bounds( 80,180, 40, 40), text("P.W."),    channel("pw"),      range(0.01,0.99, 0.25),   $RSliderStyle
 rslider  bounds( 70,120, 60, 60), text("Vol."),    channel("Vol"),     range(0, 5.00, 1),        $RSliderStyle
@@ -111,41 +111,40 @@ button   bounds(480,140, 60, 15), text("-semi"),   channel("SemiDn"), value(0), 
 button   bounds(540,140, 60, 15), text("+semi"),   channel("SemiUp"), value(0), latched(0)
 button   bounds(480,160, 60, 15), text("-oct"),    channel("OctDn"),  value(0), latched(0)
 button   bounds(540,160, 60, 15), text("+oct"),    channel("OctUp"),  value(0), latched(0)
-
+                                                                       
 button bounds(280, 185, 80, 20), text("Internal","External"), channel("ClockSource"), value(0)
 label  bounds(281, 205, 75, 12), text("Clock Source"), FontColour("black")
-
+                                                                       
 image bounds(5, 225, 210, 20), colour(75, 85, 90, 100), plant("credit"){
 label bounds(0.03, 0.1, .9, .7), text("Author: Iain McCurdy |2012|"), fontcolour("white")
-}
-
-hostbpm channel("bpm")
-</Cabbage>
-
-<CsoundSynthesizer>
-
-<CsOptions>
--d -n
-</CsOptions>
-
-<CsInstruments>
-
-sr 		= 	44100	;SAMPLE RATE
+}                                                                      
+                                                                       
+</Cabbage>                                                             
+                                                                       
+<CsoundSynthesizer>                                                    
+                                                                       
+<CsOptions>                                                            
+-d -n                                                                  
+</CsOptions>                                                           
+                                                                       
+<CsInstruments>                                                        
+                                                                       
+sr 		= 	44100	;SAMPLE RATE                           
 ksmps 		= 	32	;NUMBER OF AUDIO SAMPLES IN EACH CONTROL CYCLE
-nchnls 		= 	2	;NUMBER OF CHANNELS (2=STEREO)
-0dbfs		=	1
-		seed	0
-		
-;Author: Iain McCurdy (2012)
-
-opcode	moogladdersr,a,akk
-	asig,kcf,kres	xin
-		setksmps	1
-	acf	interp	kcf
-	kcf	downsamp	acf
-	asig      moogladder   asig, kcf, kres
-		xout	asig
-endop
+nchnls 		= 	2	;NUMBER OF CHANNELS (2=STEREO)         
+0dbfs		=	1                                              
+		seed	0                                              
+		                                                       
+;Author: Iain McCurdy (2012)                                           
+                                                                       
+opcode	moogladdersr,a,akk                                             
+	asig,kcf,kres	xin                                            
+		setksmps	1                                      
+	acf	interp	kcf                                            
+	kcf	downsamp	acf                                    
+	asig      moogladder   asig, kcf, kres                         
+		xout	asig                                           
+endop                                                                  
 
 opcode	resonsr,a,akki
 	asig,kcf,kbw,iscal	xin
@@ -256,7 +255,7 @@ instr	1	;BASSLINE INSTRUMENT
 	if kClockSource==0 then
 	 gkTempo	chnget	"Tempo"
 	else
-	 gkTempo	chnget	"bpm"
+	 gkTempo	chnget	"HOST_BPM"
 	 gkTempo	limit	gkTempo,1,2000
 	endif
 	

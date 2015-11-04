@@ -18,17 +18,17 @@
 /**
 */
 class PluginWrapper  : public AudioPluginInstance,
-								public ActionBroadcaster
+    public ActionBroadcaster
 {
 public:
     //==============================================================================
     PluginWrapper(AudioPluginInstance* instance);
-							
+
     ~PluginWrapper();
-	
-	void fillInPluginDescription(PluginDescription & description) const;
-	void fillInPluginDescription(const PluginDescription & description) const;
-	
+
+    void fillInPluginDescription(PluginDescription & description) const;
+    void fillInPluginDescription(const PluginDescription & description) const;
+
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -48,29 +48,29 @@ public:
 
     const String getParameterName (int index) override;
     const String getParameterText (int index) override;
-	
-	String getPluginName()
-	{
-		return pluginName;
-	}
-	
-	void setPluginName(String name)
-	{
-		pluginName = name;
-	}
-	
-	void shouldBypass(bool val)
-	{
-		const ScopedLock sl (getCallbackLock());
-		isBypassed = val;
-	}
-	
-	void shouldMute(bool val)
-	{
-		const ScopedLock sl (getCallbackLock());
-		isMuted = val;
-	}
-	
+
+    String getPluginName()
+    {
+        return pluginName;
+    }
+
+    void setPluginName(String name)
+    {
+        pluginName = name;
+    }
+
+    void shouldBypass(bool val)
+    {
+        const ScopedLock sl (getCallbackLock());
+        isBypassed = val;
+    }
+
+    void shouldMute(bool val)
+    {
+        const ScopedLock sl (getCallbackLock());
+        isMuted = val;
+    }
+
     const String getInputChannelName (int channelIndex) const override;
     const String getOutputChannelName (int channelIndex) const override;
     bool isInputChannelStereoPair (int index) const override;
@@ -80,24 +80,24 @@ public:
     bool producesMidi() const override;
     bool silenceInProducesSilenceOut() const override;
     double getTailLengthSeconds() const override;
-	void getStateInformation (MemoryBlock& destData);
-	void setStateInformation (const void* data, int sizeInBytes);
-	
+    void getStateInformation (MemoryBlock& destData);
+    void setStateInformation (const void* data, int sizeInBytes);
+
     //==============================================================================
     int getNumPrograms() override;
     int getCurrentProgram() override;
     void setCurrentProgram (int index) override;
     const String getProgramName (int index) override;
     void changeProgramName (int index, const String& newName) override;
-	float rmsLeft, rmsRight;
-	ScopedPointer<AudioPluginInstance> vstInstance;
+    float rmsLeft, rmsRight;
+    ScopedPointer<AudioPluginInstance> vstInstance;
 private:
-	CriticalSection callbackLock;
-	PluginDescription pluginDesc;
-	bool isBypassed, isMuted;
-	String pluginName;
-	int updateCounter;
-	
+    CriticalSection callbackLock;
+    PluginDescription pluginDesc;
+    bool isBypassed, isMuted;
+    String pluginName;
+    int updateCounter;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginWrapper)
 };

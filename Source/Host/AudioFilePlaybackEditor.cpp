@@ -240,20 +240,28 @@ AudioFilePlaybackEditor::AudioFilePlaybackEditor (AudioFilePlaybackProcessor* ow
 
     setOpaque(true);
     playButton.addListener(this);
+    playButton.setTooltip("Play");
     addAndMakeVisible(playButton);
     stopButton.addListener(this);
+    stopButton.setTooltip("Stop");
     addAndMakeVisible(stopButton);
     openButton.addListener(this);
+    openButton.setTooltip("Open file");
     addAndMakeVisible(openButton);
     zoomInButton.addListener(this);
+    zoomInButton.setTooltip("Zoom in");
     addAndMakeVisible(zoomInButton);
     zoomOutButton.addListener(this);
+    zoomOutButton.setTooltip("Zoom out");
     addAndMakeVisible(zoomOutButton);
     linkToTransport.addListener(this);
+    linkToTransport.setTooltip("Link to main transport");
     addAndMakeVisible(linkToTransport);
     gainEnvelopeButton.addListener(this);
+    gainEnvelopeButton.setTooltip("Show/hide gain envelope");
     addAndMakeVisible(gainEnvelopeButton);
     loopButton.addListener(this);
+    loopButton.setTooltip("Toggle looping");
     addAndMakeVisible(loopButton);
 
     playButton.setLookAndFeel(&basicLook);
@@ -275,6 +283,7 @@ AudioFilePlaybackEditor::AudioFilePlaybackEditor (AudioFilePlaybackProcessor* ow
     beatOffset.setColour(Slider::ColourIds::thumbColourId, Colours::black);
     beatOffset.setColour(Slider::ColourIds::textBoxTextColourId, Colours::white);
     beatOffset.setColour(Slider::ColourIds::textBoxBackgroundColourId, Colours::black);
+    beatOffsetLabel.setTooltip("Offset playback in seconds");
 
     beatOffsetLabel.setText("Cue:", dontSendNotification);
     zoomOutButton.getProperties().set("isRounded", true);

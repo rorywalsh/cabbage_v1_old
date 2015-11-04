@@ -1,3 +1,6 @@
+; MouseSense.csd
+; Written by Iain McCurdy, 2014
+
 <Cabbage>
 form caption("Mouse Sense") size(785, 400), pluginID("SMo1"), guirefresh(16)
 

@@ -27,6 +27,8 @@
 //class LiveCsound;
 class PythonEditor;
 
+ApplicationProperties& getAppProperties();
+
 //========== csound output console class =================
 class CsoundOutputComponent : public Component
 {
@@ -39,9 +41,9 @@ public:
         textEditor->setColour(TextEditor::backgroundColourId, cUtils::getDarkerBackgroundSkin());
         textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
         textEditor->setMultiLine(true);
-        textEditor->setFont(Font("Arial", 14, 0));
+        textEditor->setFont(Font("Arial", 18, 0));
         addAndMakeVisible(textEditor, true);
-        setText("hewe;roiuew asdfhsa ldkjfhsd lfauskdhf lsadiufh dslifuhsadlifu hdsaflisaud hflidsau hflidsa uf");
+        setText("");
     };
 
     ~CsoundOutputComponent() {};
@@ -49,15 +51,20 @@ public:
 
     void setText(String text)
     {
-        textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
+        //textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue.brighter());
         textEditor->setText(text);
         textEditor->setCaretPosition(textEditor->getText().length());
     }
 
     String getText()
     {
-		const MessageManagerLock lock;
+        const MessageManagerLock lock;
         return textEditor->getText();
+    }
+
+    void setFontSize(int size)
+    {
+        textEditor->setFont(Font("Arial", size, 0));
     }
 
     void resized()
@@ -173,11 +180,11 @@ public:
         return findFirstTargetParentComponent();
     }
 
-	void focusOfChildComponentChanged(FocusChangeType cause)
-	{
-		//if(cause==focusChangedByMouseClick)
-		//	sendActionMessage("closing editor");
-	} 	
+    void focusOfChildComponentChanged(FocusChangeType cause)
+    {
+        //if(cause==focusChangedByMouseClick)
+        //	sendActionMessage("closing editor");
+    }
 
     void getCommandInfo (const CommandID commandID, ApplicationCommandInfo& result);
     PopupMenu getMenuForIndex (int topLevelMenuIndex, const String& menuName);
@@ -201,14 +208,14 @@ public:
 
     void closeButtonPressed()
     {
-	#if defined(CABBAGE_HOST) || !defined(Cabbage_Build_Standalone)
-		sendActionMessage("closing editor");
-	#else
+#if defined(CABBAGE_HOST) || !defined(Cabbage_Build_Standalone)
+        sendActionMessage("closing editor");
+#else
         this->setVisible(false);
-	#endif
+#endif
     }
 
-	void showEditorConsole();
+    void showEditorConsole();
     void codeDocumentTextDeleted(int,int) {}
     void showCabbageHelp();
     void codeDocumentTextInserted(const juce::String &,int) {}
@@ -252,7 +259,7 @@ public:
     bool isColumnModeEnabled;
     bool isInstrTabEnabled;
     bool isCsoundOutputEnabled;
-	bool isEditModeEnabled;
+    bool isEditModeEnabled;
 };
 
 

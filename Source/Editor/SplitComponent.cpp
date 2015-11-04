@@ -119,7 +119,7 @@ void SplitComponent::Layout()
 
     if (m_isVertical)
     {
-        int splitBarPosX = m_pSplitBar->getX();
+        int splitBarPosX = 700;//m_pSplitBar->getX();
         int splitBarWidth = m_pSplitBar->getWidth();
 
         topLeftComponentRect.setWidth(splitBarPosX);

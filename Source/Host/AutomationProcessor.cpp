@@ -39,11 +39,9 @@ AutomationProcessor::AutomationProcessor(FilterGraph* filterGraph):
     csoundParams->displays = 0;
     csound->SetParams(csoundParams);
 
-#if defined(MACOSX)
-    File csdFile("/Users/walshr/sourcecode/cabbageaudio/cabbage/Source/Host/AutomationTrack.csd");
-#else
-    File csdFile("/home/rory/sourcecode/cabbageaudio/cabbage/Source/Host/AutomationTrack.csd");
-#endif
+    String csd = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/AutomationTrack.csd";
+
+    File csdFile(csd);
 
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
 

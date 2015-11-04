@@ -1,10 +1,10 @@
-FormantFilter.csd
+; FormantFilter.csd
 
-reson 1 uses reson with scaling method 1.
-reson 2 uses reson with scaling method 2.
-'gain' controls the gain the the bandpass filtered sound only.
-'BW.Mult' is a factor which all five bandwidth values are multiplied by.
-'Freq.Mult.' is a factor by which all cutoff frequencies are multiplied by.
+; reson 1 uses reson with scaling method 1.
+; reson 2 uses reson with scaling method 2.
+; 'gain' controls the gain the the bandpass filtered sound only.
+; 'BW.Mult' is a factor which all five bandwidth values are multiplied by.
+; 'Freq.Mult.' is a factor by which all cutoff frequencies are multiplied by.
 
 <Cabbage>
 form caption("Formant Filter"), colour("SlateGrey"), size(550, 300), pluginID("form")  

@@ -1,7 +1,7 @@
-ModifyingWidgetAppearance.csd
-Written by Iain McCurdy, 2014
+; ModifyingWidgetAppearance.csd
+; Written by Iain McCurdy, 2014
 
-An example that demonsstrates the ability to modify various attributes of a widget's appearance in realtime from within the Csound orchestra via Cabbage's own widgets.
+; An example that demonstrates the ability to modify various attributes of a widget's appearance in realtime from within the Csound orchestra via Cabbage's own widgets.
 
 <Cabbage>
 form caption("Modifying Widget Appearance") size(800, 500), pluginID("TEx1"), guirefresh(16)
@@ -132,7 +132,7 @@ instr	1
   kpivotx		chnget	"pivotx"
   kpivoty		chnget	"pivoty"
   if changed(kradians)==1||changed(kpivotx)==1||changed(kpivoty)==1 then
-   Smessage sprintfk "rotate(%f,%f,%f)", kradians, kpivotx*kSizeX, kpivoty*kSizeY
+   Smessage sprintfk "rotate(%f,%d,%d)", kradians, kpivotx*kSizeX, kpivoty*kSizeY
    chnset Smessage, "image1"
   endif
  endif

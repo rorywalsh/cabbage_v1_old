@@ -1,14 +1,16 @@
 ; phaser1.csd
-; Iain McCurdy 2012
+; Written by Iain McCurdy, 2012.
 
 <Cabbage>
-form caption("phaser1") size(350, 90), pluginID("phs1")
-image pos(0, 0), size(350, 90), colour(80,20,20), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
-rslider bounds(10, 11, 70, 70),  text("Frequency"), channel("freq"),     range(20.0, 5000, 160, 0.25), colour(160,40,40), textcolour("white"), trackercolour(white)
-rslider bounds(75, 11, 70, 70),  text("Feedback"),  channel("feedback"), range(-0.99, 0.99, 0.9),      colour(160,40,40), textcolour("white"), trackercolour(white)
-rslider bounds(140, 11, 70, 70), text("N.Ords."),   channel("ord"),      range(1, 256, 32, 0.5,1),     colour(160,40,40), textcolour("white"), trackercolour(white)
-rslider bounds(205, 11, 70, 70), text("Mix"),       channel("mix"),      range(0, 1.00, 1),            colour(160,40,40), textcolour("white"), trackercolour(white)
-rslider bounds(270, 11, 70, 70), text("Level"),     channel("level"),    range(0, 1.00, 0.7),          colour(160,40,40), textcolour("white"), trackercolour(white)
+form caption("phaser1") size(430, 90), pluginID("phs1")
+image pos(0, 0), size(430, 90), colour(80,20,20), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
+label    bounds( 10, 15, 80, 12), text("INPUT");, fontcolour("white")
+button   bounds( 10, 30, 80, 30), text("Live","Noise"), channel("input"), value(0)
+rslider  bounds( 90, 11, 70, 70),  text("Frequency"), channel("freq"),     range(20.0, 5000, 160, 0.25), colour(160,40,40), textcolour("white"), trackercolour(white)
+rslider  bounds(155, 11, 70, 70),  text("Feedback"),  channel("feedback"), range(-0.99, 0.99, 0.9),      colour(160,40,40), textcolour("white"), trackercolour(white)
+rslider  bounds(220, 11, 70, 70), text("N.Ords."),   channel("ord"),      range(1, 256, 32, 0.5,1),     colour(160,40,40), textcolour("white"), trackercolour(white)
+rslider  bounds(285, 11, 70, 70), text("Mix"),       channel("mix"),      range(0, 1.00, 1),            colour(160,40,40), textcolour("white"), trackercolour(white)
+rslider  bounds(350, 11, 70, 70), text("Level"),     channel("level"),    range(0, 1.00, 0.7),          colour(160,40,40), textcolour("white"), trackercolour(white)
 }
 </Cabbage>
 
@@ -33,8 +35,15 @@ instr	1
 	gkord		chnget	"ord"					;
 	gkmix		chnget	"mix"					;
 	gklevel		chnget	"level"					;
-	;asigL, asigR	diskin2	"Seashore.wav",1,0,1			;
-	asigL, asigR	ins
+
+	gkinput		chnget	"input"					;
+	if gkinput==0 then
+	 asigL,asigR	ins
+	else
+	 asigL	pinker
+	 asigR	pinker
+	endif
+
 	kporttime	linseg	0,0.01,0.03				;CREATE A VARIABLE THAT WILL BE USED FOR PORTAMENTO TIME
 	kfreq		portk	gkfreq, kporttime			;PORTAMENTO IS APPLIED TO 'SMOOTH' SLIDER MOVEMENT	
 	kSwitch		changed	gkord					;GENERATE A MOMENTARY '1' PULSE IN OUTPUT 'kSwitch' IF ANY OF THE SCANNED INPUT VARIABLES CHANGE. (OUTPUT 'kSwitch' IS NORMALLY ZERO)

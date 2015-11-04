@@ -1,8 +1,18 @@
-  MiniPops.csd
-  Written by Iain McCurdy, 2014.
+;  MiniPops.csd
+;  Written by Iain McCurdy, 2014.
+;
+;  Emulation of the Korg/Univibe Mini Pops 7
 
-  Emulation of the Korg/Univibe Mini Pops 7
-
+; The Mini Pops 7 was an early non-programmable drum machine from the Japanese company Korg. It is perhaps most through 
+; its use by Jean Michel Jarre in his early work. I have tried to retain as close a tie as possible with the original 
+; design whilst making some additions and modifications for convenience.
+; Preset rhythms are selected using the large black buttons. The lower row of rhythms (in red) are selected by first 
+; setting the 'Lower' checkbox to 'on'.
+; Additional effects are 'O.D.' - clipping distortion, 'Dec' - sample rate decimation and 'Mash' - break-beat style cut
+; ups.
+; The 'Rhythm' selector buttons were radio buttons (depressing one would release any others) but a popular trick was to 
+; force more than one to stay depressed and to create a combination of two or more rhythms. The rhythms would combine in
+; a rather enigmatic way. Unfortunately I quite figured out how this worked yet so in my implementation they simply mix.
 
 
 
@@ -137,7 +147,7 @@ checkbox bounds(618, 19, 10, 10), channel("Indic1"), value(0), colour( 70,255, 7
 checkbox bounds(618, 30, 10, 10), channel("Indic2"), value(0), colour(255, 30, 30), shape("ellipse")
 }
 
-keyboard bounds( 10,150, 600, 90)
+keyboard bounds( 10,155, 600, 80)
 
 label   bounds(695,239, 145, 10), text("Author: Iain McCurdy |2014|"), FontColour("DarkSlateGrey"), align("left")
 </Cabbage>

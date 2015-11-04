@@ -1,18 +1,19 @@
-WRITTEN BY IAIN MCCURDY, 2010
+; MouseChord.csd
+; Written by Iain McCurdy, 2013
 
-Mouse Chord
------------
-This csd was originally written for use by someone who only had the use of a head-mouse for music performance.
-If the mouse enters one of the coloured boxes the chord indicated by the Roman numeral is played. 
-Continuous dynamic control is possible by moving the mouse within the box: the dynamic is lowest at the edges of each box and highest at the centre of each box.
-Key and tonality (major/minor) can also be selected from within the GUI.
-Professional head mouse or iris tracking software can be very expensive and requires practice. 
-Camera Mouse is a good free option for Windows users. It can be found at www.cameramouse.org.
-iNavigate is a free option for Mac OS 10.5 if the user wants to experiment with this approach.
-
-You can change the size of the panel in the Cabbage 'form' setup. 
-If you do this, change the values for 'giPanelWidth' and 'giPanelHeight' just below the orchestra header and all elements
-will be stretch, compressed and moved appropriately.
+; Mouse Chord
+; -----------
+; This csd was originally written for use by someone who only had the use of a head-mouse for music performance.
+; If the mouse enters one of the coloured boxes the chord indicated by the Roman numeral is played. 
+; Continuous dynamic control is possible by moving the mouse within the box: the dynamic is lowest at the edges of each box and highest at the centre of each box.
+; Key and tonality (major/minor) can also be selected from within the GUI.
+; Professional head mouse or iris tracking software can be very expensive and requires practice. 
+; Camera Mouse is a good free option for Windows users. It can be found at www.cameramouse.org.
+; iNavigate is a free option for Mac OS 10.5 if the user wants to experiment with this approach.
+; 
+; You can change the size of the panel in the Cabbage 'form' setup. 
+; If you do this, change the values for 'giPanelWidth' and 'giPanelHeight' just below the orchestra header and all elements
+; will be stretch, compressed and moved appropriately.
 
 <Cabbage>
 form caption("Mouse Chord") size(700, 500), pluginID("MChd"), scrollbars(0), guirefresh(64)

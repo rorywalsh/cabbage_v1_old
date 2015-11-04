@@ -4,14 +4,39 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>CabbagePlugin copy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 		<key>CabbagePlugin.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>Test.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>618A84111BCD4B0E000F2636</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>618A84751BCD4B6E000F2636</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>618A847F1BCD4B6F000F2636</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>6DFAA96236C47CDC2EAAE109</key>
 		<dict>
 			<key>primary</key>

@@ -5,10 +5,19 @@
 DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 
 # Default csound include path
+ifndef CSOUND_INCLUDE
 CSOUND_INCLUDE ?= "/usr/local/include/csound"
+endif
 
 # Default Csound library path
+ifndef CSOUND_LIBRARY
 CSOUND_LIBRARY ?= "/usr/local/lib"
+endif
+
+#default VST SDK path
+ifndef VST_SDK
+VST_SDK ?= "/home/rory/SDKs/vstsdk2.4/"
+endif
 
 ifndef CONFIG
   CONFIG=Debug
@@ -24,7 +33,7 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := -march=native
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D"JUCE_LINUX=1" -D "_DEBUG=1" -D "Cabbage_Plugin_LV2=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  CPPFLAGS := $(DEPFLAGS) -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D"JUCE_LINUX=1" -D "_DEBUG=1" -D "Cabbage_Plugin_LV2=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I $(VST_SDK) -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -g -ggdb -fPIC -O0
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -rdynamic -L/usr/X11R6/lib/ -lGL -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile` -Wl,--no-undefined
@@ -44,12 +53,12 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := -march=native
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  CPPFLAGS := $(DEPFLAGS) -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I$(VST_SDK) -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -fPIC -Os
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -fvisibility=hidden -L/usr/X11R6/lib/ -lGL -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile` -Wl,--no-undefined
   LDDEPS :=
-  RESFLAGS := -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  RESFLAGS := -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I$(VST_SDK) -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := CabbagePluginEffect.so
   BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(TARGET_ARCH)
 endif

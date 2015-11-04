@@ -1,34 +1,34 @@
-Splat.csd
-Written by Iain McCurdy, 2014.
-
-Left click somewhere within the swarm to splat the flies. 
-Left click again somewhere within the field of splatted flies to unsplat them and bring them back to life.
-
-Population	-	the number of flies in the swarm
-Liveliness	-	the speed with which flies will move about within the swarm
-Excursion	-	how far flies will move away from the centre of the swarm, therefore this also defines the area covered by the swarm.
-Fly Size	-	doesn't affect the physical size of flies but instead affects the central frequency of the buzzing tone they produce.
-Swarm Speed	-	the speed with which the swarm moves around the panel. The swarm can exit the panel completely.
-
-If the swarm area (excursion) is very small it can become difficult to splat (and unsplat) it. 
-If this becomes a problem, simply raise the value for excursion, even while the swarm is splatted.
+; Splat.csd
+; Written by Iain McCurdy, 2014.
+; 
+; Left click somewhere within the swarm to splat the flies. 
+; Left click again somewhere within the field of splatted flies to unsplat them and bring them back to life.
+; 
+; Population	-	the number of flies in the swarm
+; Liveliness	-	the speed with which flies will move about within the swarm
+; Excursion	-	how far flies will move away from the centre of the swarm, therefore this also defines the area covered by the swarm.
+; Fly Size	-	doesn't affect the physical size of flies but instead affects the central frequency of the buzzing tone they produce.
+; Swarm Speed	-	the speed with which the swarm moves around the panel. The swarm can exit the panel completely.
+; 
+; If the swarm area (excursion) is very small it can become difficult to splat (and unsplat) it. 
+; If this becomes a problem, simply raise the value for excursion, even while the swarm is splatted.
 
 <Cabbage>
-form caption("Splat!"), size(700,500), colour(230,230,230),guirefresh(64)
+form caption("Splat!"), size(1000,530), colour(230,230,230),guirefresh(64)
 image bounds(0,   0, 0, 0), colour(white), shape(ellipse), widgetarray("fly",50)
-numberbox  bounds(  5,465,60,34), channel("Population"),    range(1, 50, 10,1,1),       textcolour(black), fontcolour(black), text("Population"), colour(white)
-numberbox  bounds( 70,465,60,34), channel("Liveliness"),    range(0.1,10.00, 4,1,0.1),  textcolour(black), fontcolour(black), text("Liveliness"), colour(white)
-numberbox  bounds(135,465,60,34), channel("Excursion"),     range(2,300, 50,1,1),       textcolour(black), fontcolour(black), text("Excursion"),  colour(white)
-numberbox  bounds(200,465,60,34), channel("FlySize"),       range(1,10, 5,1,0.001),     textcolour(black), fontcolour(black), text("Fly Size"),   colour(white)
-numberbox  bounds(265,465,80,34), channel("SwarmSpeed"),    range(0.1,10, 0.3,1,0.001), textcolour(black), fontcolour(black), text("Swarm Speed"),colour(white)
+numberbox  bounds(  5,495,60,34), channel("Population"),    range(1, 50, 10,1,1),       textcolour(black), fontcolour(black), text("Population"), colour(white)
+numberbox  bounds( 70,495,60,34), channel("Liveliness"),    range(0.1,10.00, 4,1,0.1),  textcolour(black), fontcolour(black), text("Liveliness"), colour(white)
+numberbox  bounds(135,495,60,34), channel("Excursion"),     range(2,300, 50,1,1),       textcolour(black), fontcolour(black), text("Excursion"),  colour(white)
+numberbox  bounds(200,495,60,34), channel("FlySize"),       range(1,10, 5,1,0.001),     textcolour(black), fontcolour(black), text("Fly Size"),   colour(white)
+numberbox  bounds(265,495,80,34), channel("SwarmSpeed"),    range(0.1,10, 0.3,1,0.001), textcolour(black), fontcolour(black), text("Swarm Speed"),colour(white)
 label    bounds(  0, 0,  0, 0), text("Click swarm to splat. Click again to unsplat."), align(centre), fontcolour(white), identchannel("instructions1")		; Instructions
-label    bounds(350,489,100, 10), text("Iain McCurdy 2014"), align(left), fontcolour(0,0,0,150)
+label    bounds(350,519,100, 10), text("Iain McCurdy 2014"), align(left), fontcolour(0,0,0,150)
 </Cabbage>
 
 <CsoundSynthesizer>
 
 <CsOptions>
--n -+rtmidi=NULL -M0 -dm0
+-n -dm0
 </CsOptions>
 
 <CsInstruments>
@@ -37,9 +37,10 @@ sr = 44100
 ksmps = 32
 nchnls = 2
 0dbfs = 1
+seed	0
 
-giPanelWidth	=	700
-giPanelHeight	=	500
+giPanelWidth	=	1000
+giPanelHeight	=	530
 gisine	ftgen	0,0,131072,10,1
 giMaxFlies	=	50
 

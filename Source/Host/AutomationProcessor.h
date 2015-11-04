@@ -33,40 +33,40 @@ class AutomationEditor;
 /**
 */
 class AutomationProcessor  : public AudioProcessor,
-							 public ChangeBroadcaster,
-							 public ChangeListener
+    public ChangeBroadcaster,
+    public ChangeListener
 {
 public:
 
-	class AutomatableNode 
-	{
-	public:
-		int32 nodeID;
-		int parameterIndex;
-		int fTableNumber;
-		int genRoutine;
-		String nodeName;
-		String parametername;
-		String fStatement;
-		int size;
-		String channelName;
-		float value;
-		
-		AutomatableNode(String node, String name, int32 id, int index):
-		nodeID(id), parameterIndex(index), nodeName(node), parametername(name),
-		size(4096)
-		{}
-	};
+    class AutomatableNode
+    {
+    public:
+        int32 nodeID;
+        int parameterIndex;
+        int fTableNumber;
+        int genRoutine;
+        String nodeName;
+        String parametername;
+        String fStatement;
+        int size;
+        String channelName;
+        float value;
 
-	class AbstractEnvelope
-	{
-	public:
-		AbstractEnvelope():shape(1), currentPointIndex(0), currentSampleIndex(0)
-		{
-		}
-		Array<double> envPoints;
-		int shape, currentPointIndex, currentSampleIndex; 		
-	};
+        AutomatableNode(String node, String name, int32 id, int index):
+            nodeID(id), parameterIndex(index), nodeName(node), parametername(name),
+            size(4096)
+        {}
+    };
+
+    class AbstractEnvelope
+    {
+    public:
+        AbstractEnvelope():shape(1), currentPointIndex(0), currentSampleIndex(0)
+        {
+        }
+        Array<double> envPoints;
+        int shape, currentPointIndex, currentSampleIndex;
+    };
 
     //==============================================================================
     AutomationProcessor(FilterGraph* filterGraph);
@@ -74,9 +74,9 @@ public:
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
-	void generateEnvelope(AudioSampleBuffer& buffer);
+    void generateEnvelope(AudioSampleBuffer& buffer);
     void releaseResources() override;
-	XmlElement* createAutomationXML(AutomationProcessor::AutomatableNode node, int index);
+    XmlElement* createAutomationXML(AutomationProcessor::AutomatableNode node, int index);
     void processBlock (AudioSampleBuffer&, MidiBuffer&) override;
 
     //==============================================================================
@@ -112,79 +112,79 @@ public:
 
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
-    void setStateInformation (const void* data, int sizeInBytes) override;	
-	void sendOutgoingMessagesToCsound();
-	AutomatableNode getAutomatableNode(int index);
-	int getNumberOfAutomatableNodes();
-	void updateAutomationValues();
-	void updatefTableData(BreakpointEnvelope* table);
-	void updateAutomatableNodefStatement(int tableNumber, String newStatement);
-	void updateEnvPoints(int env, Array<Point<double>> points);
-	void changeListenerCallback(ChangeBroadcaster* source);	
-	float getGainEnvelop(int envIndex);
-	
-	const AbstractEnvelope getEnvelope(int index)
-	{
-		return envelopes.getReference(index);
-	}
+    void setStateInformation (const void* data, int sizeInBytes) override;
+    void sendOutgoingMessagesToCsound();
+    AutomatableNode getAutomatableNode(int index);
+    int getNumberOfAutomatableNodes();
+    void updateAutomationValues();
+    void updatefTableData(BreakpointEnvelope* table);
+    void updateAutomatableNodefStatement(int tableNumber, String newStatement);
+    void updateEnvPoints(int env, Array<Point<double>> points);
+    void changeListenerCallback(ChangeBroadcaster* source);
+    float getGainEnvelop(int envIndex);
 
-	int getNumberOfEnvelopes()
-	{
-		return envelopes.size();
-	}
-	
-	float getAutomationValue()
-	{
-		const ScopedLock sl (getCallbackLock());
-		return automationCurveValue;
-	}
-	
-	CSOUND* getCsoundStruct()
-	{
-		return csound->GetCsound();
-	}	
-	
-	AutomationEditor* getEditor();
-	float automationCurveValue;
-	void addAutomatableNode(String nodeName, String parameterString, int32 id, int index, int gen=-1, String statement="");
-	
+    const AbstractEnvelope getEnvelope(int index)
+    {
+        return envelopes.getReference(index);
+    }
+
+    int getNumberOfEnvelopes()
+    {
+        return envelopes.size();
+    }
+
+    float getAutomationValue()
+    {
+        const ScopedLock sl (getCallbackLock());
+        return automationCurveValue;
+    }
+
+    CSOUND* getCsoundStruct()
+    {
+        return csound->GetCsound();
+    }
+
+    AutomationEditor* getEditor();
+    float automationCurveValue;
+    void addAutomatableNode(String nodeName, String parameterString, int32 id, int index, int gen=-1, String statement="");
+
     const double getScrubberPosition()
     {
         //const MessageManagerLock lock;
         return scrubberPosition;
     }
-    
-	bool isSourcePlaying;
-	CabbageMessageQueue messageQueue;
-private:
-	bool shouldLoop;
-	bool isLinkedToMasterTransport;
-	FilterGraph* graph;	
-	int sourceSampleRate;
-	ScopedPointer<XmlElement> xmlState;
-    double scrubberPosition;
-	Array<AutomatableNode> automatableNodes;
-	AudioPlayHead::CurrentPositionInfo hostInfo;
-	bool newTableAdded;
-	float totalLength;
-	int updateCount;
-	int envSampleIndex;
-	Array<AbstractEnvelope> envelopes;
 
-	//=== Csound stuff ======
-	std::vector<MYFLT> temp;
-	bool csoundStatus;
-	int csCompileResult;
-	ScopedPointer<CSOUND_PARAMS> csoundParams;
-	MYFLT cs_scale;
-	ScopedPointer<Csound> csound; //Csound instance
-	MYFLT *CSspin, *CSspout; //Csound audio IO pointers
-	int csndIndex; //Csound sample counter
-	int csdKsmps;
-	int CSCompResult; //result of Csound performKsmps
-	int pos;
-	controlChannelInfo_s* csoundChanList;
-	int numCsoundChannels; //number of Csound channels
+    bool isSourcePlaying;
+    CabbageMessageQueue messageQueue;
+private:
+    bool shouldLoop;
+    bool isLinkedToMasterTransport;
+    FilterGraph* graph;
+    int sourceSampleRate;
+    ScopedPointer<XmlElement> xmlState;
+    double scrubberPosition;
+    Array<AutomatableNode> automatableNodes;
+    AudioPlayHead::CurrentPositionInfo hostInfo;
+    bool newTableAdded;
+    float totalLength;
+    int updateCount;
+    int envSampleIndex;
+    Array<AbstractEnvelope> envelopes;
+
+    //=== Csound stuff ======
+    std::vector<MYFLT> temp;
+    bool csoundStatus;
+    int csCompileResult;
+    ScopedPointer<CSOUND_PARAMS> csoundParams;
+    MYFLT cs_scale;
+    ScopedPointer<Csound> csound; //Csound instance
+    MYFLT *CSspin, *CSspout; //Csound audio IO pointers
+    int csndIndex; //Csound sample counter
+    int csdKsmps;
+    int CSCompResult; //result of Csound performKsmps
+    int pos;
+    controlChannelInfo_s* csoundChanList;
+    int numCsoundChannels; //number of Csound channels
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AutomationProcessor)

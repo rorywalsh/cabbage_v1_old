@@ -78,6 +78,7 @@ public:
     void setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange = true);
     void setFile(const File file);
     void enableEditMode(StringArray pFields, int ftnumber);
+    void toggleEditMode(bool enable);
     ScopedPointer<RoundButton> zoomIn, zoomOut;
     OwnedArray<RoundButton> tableButtons;
     OwnedArray<GenTable> tables;
@@ -306,7 +307,7 @@ public:
     void positionHandle(const MouseEvent& e);
     void repaint(Graphics &g);
     void resized();
-    void addHandle(double x, double y, double width, double height, Colour colour);
+    void addHandle(double x, double y, double width, double height, Colour colour, bool status=false);
     void insertHandle(double x, double y, Colour colour);
     double getSnapYPosition(const double y);
     double getSnapXPosition(const double x);

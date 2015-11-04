@@ -1,3 +1,6 @@
+; pvShift.csd
+; Written by Iain McCurdy, 2012.
+
 <Cabbage>
 form caption("pvshift Frequency Shifter") size(510,  90), pluginID("shft"), scrollbars(0)
 image bounds( 15,  9, 60, 60), colour(30,30,30,100), shape("ellipse"), outlinethickness(0)

@@ -61,9 +61,9 @@ public:
 //==============================================================================
 class CabbageButton : public Component
 {
-    int offX, offY, offWidth, offHeight, pivotx, pivoty;
+    int offX, offY, offWidth, offHeight, pivotx, pivoty, latched;
     String buttonType;
-    String name, caption, buttonText, colour, fontcolour, oncolour, onfontcolour;
+    String name, caption, tooltipText, buttonText, colour, fontcolour, oncolour, onfontcolour;
     float rotate;
 public:
     ScopedPointer<GroupComponent> groupbox;
@@ -80,7 +80,8 @@ public:
         onfontcolour(cAttr.getStringProp(CabbageIDs::onfontcolour)),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+        pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+        tooltipText(String::empty)
     {
         setName(name);
         offX=offY=offWidth=offHeight=0;
@@ -106,7 +107,14 @@ public:
             groupbox->setText(caption);
         }
 
+        if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
+        {
+            tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
+            button->setTooltip(tooltipText);
+        }
+
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
+
         button->setColour(TextButton::textColourOffId, Colour::fromString(fontcolour));
         button->setColour(TextButton::buttonColourId, Colour::fromString(colour));
         button->setColour(TextButton::textColourOnId, Colour::fromString(onfontcolour));
@@ -145,6 +153,20 @@ public:
             setEnabled(true);
             setVisible(true);
         }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
+        if(tooltipText!=m_cAttr.getStringProp(CabbageIDs::popuptext))
+        {
+            tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
+            button->setTooltip(tooltipText);
+        }
+
         setBounds(m_cAttr.getBounds());
     }
 
@@ -324,6 +346,7 @@ public:
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<Slider> slider;
     bool shouldDisplayPopup;
+    String tooltipText;
     //---- constructor -----
     CabbageSlider(CabbageGUIClass &cAttr) : plantX(-99), plantY(-99),
         name(cAttr.getStringProp(CabbageIDs::name)),
@@ -431,7 +454,8 @@ public:
         slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
         slider->setRange(cAttr.getNumProp(CabbageIDs::min), cAttr.getNumProp(CabbageIDs::max), cAttr.getNumProp(CabbageIDs::sliderincr));
 
-
+        if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
+            tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
 
         slider->setDoubleClickReturnValue(true, cAttr.getNumProp(CabbageIDs::value));
 
@@ -508,10 +532,22 @@ public:
             setVisible(true);
             setEnabled(true);
         }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
         {
             rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
             setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
+        }
+        if(tooltipText!=m_cAttr.getStringProp(CabbageIDs::popuptext))
+        {
+            tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
         }
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
         repaint();
@@ -674,10 +710,11 @@ public:
             {
                 if(text.isNotEmpty())
                 {
-                    textLabel->setBounds(0, 0, 50, getHeight());
+                    float width = textLabel->getFont().getStringWidthFloat(text)+10.f;
+                    textLabel->setBounds(0, 0, width, getHeight());
                     textLabel->setText(text, dontSendNotification);
                     textLabel->setVisible(true);
-                    slider->setBounds(50, 0, getWidth()-50, getHeight());
+                    slider->setBounds(width, 0, getWidth()-width, getHeight());
                 }
                 else
                     slider->setBounds(0, 0, getWidth(), getHeight());
@@ -715,7 +752,7 @@ public:
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<ToggleButton> button;
     bool isRect;
-    String name, caption, buttonText, colour, fontcolour, oncolour;
+    String name, caption, tooltipText, buttonText, colour, fontcolour, oncolour;
     //---- constructor -----
     CabbageCheckbox(CabbageGUIClass &cAttr) :
         name(cAttr.getStringProp(CabbageIDs::name)),
@@ -727,7 +764,8 @@ public:
         isRect(cAttr.getStringProp(CabbageIDs::shape).equalsIgnoreCase("square")),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+        pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+        tooltipText(String::empty)
     {
         setName(name);
         offX=offY=offWidth=offHeight=0;
@@ -742,6 +780,7 @@ public:
         groupbox->setColour(TextButton::buttonColourId, cUtils::getComponentSkin());
 
         button->setButtonText(buttonText);
+
         if(caption.length()>0)
         {
             offX=10;
@@ -750,6 +789,12 @@ public:
             offHeight=-30;
             groupbox->setVisible(true);
             groupbox->setText(caption);
+        }
+
+        if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
+        {
+            tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
+            button->setTooltip(tooltipText);
         }
 
         button->getProperties().set("isRect", isRect);
@@ -801,6 +846,19 @@ public:
         {
             setVisible(true);
             setEnabled(true);
+        }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
+        if(tooltipText!=m_cAttr.getStringProp(CabbageIDs::popuptext))
+        {
+            tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
+            button->setTooltip(tooltipText);
         }
         repaint();
     }
@@ -895,7 +953,7 @@ class CabbageComboBox : public Component
 {
     //ScopedPointer<LookAndFeel> lookFeel;
     int offX, offY, offWidth, offHeight, pivotx, pivoty;
-    String name, caption, text, colour, fontcolour;
+    String name, tooltipText, caption, text, colour, fontcolour;
     float rotate;
 public:
     ScopedPointer<GroupComponent> groupbox;
@@ -908,7 +966,8 @@ public:
         fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+        pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+        tooltipText(String::empty)
     {
         setName(name);
         offX=offY=offWidth=offHeight=0;
@@ -938,6 +997,11 @@ public:
             groupbox->setText(caption);
         }
 
+        if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
+        {
+            tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
+            combo->setTooltip(tooltipText);
+        }
 
         combo->setEditableText (false);
         combo->setJustificationType (Justification::centredLeft);
@@ -1011,6 +1075,14 @@ public:
             setVisible(true);
             setEnabled(true);
         }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         repaint();
     }
 
@@ -1031,13 +1103,13 @@ public:
 // custom image component
 //==============================================================================
 class CabbageImage : public Component,
-    public ChangeBroadcaster
+    public ChangeBroadcaster, public TooltipClient
 {
     String name, outline, colour, shape, file;
     float rotate;
     Image img;
     int top, left, width, height, line, pivotx, pivoty;
-    String currentDirectory;
+    String currentDirectory, tooltipText;
     AffineTransform transform;
 
 public:
@@ -1051,7 +1123,8 @@ public:
         transform(AffineTransform::identity),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+        pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+        tooltipText(String::empty)
 
     {
         setName(name);
@@ -1064,9 +1137,17 @@ public:
 
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
 
+        if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
+            tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
+
     }
     ~CabbageImage()
     {
+    }
+
+    String getTooltip()
+    {
+        return tooltipText;
     }
 
     void setBaseDirectory(String dir)
@@ -1115,8 +1196,20 @@ public:
             setEnabled(true);
             setVisible(true);
         }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
 
-        repaint();
+        if(tooltipText!=m_cAttr.getStringProp(CabbageIDs::popuptext))
+        {
+            tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
+        }
+        //repaint();
     }
 
     void paint (Graphics& g)
@@ -1173,10 +1266,10 @@ public:
 // custom groupbox component, this can act as a plant for other components
 //==============================================================================
 class CabbageGroupbox : public GroupComponent,
-    public ChangeBroadcaster
+    public ChangeBroadcaster, public TooltipClient
 {
     int offX, offY, offWidth, offHeight, pivotx, pivoty, left, top;
-    String name, caption, text, colour, fontcolour;
+    String name, caption, text, colour, fontcolour, tooltipText;
     float rotate;
     int line;
 public:
@@ -1193,7 +1286,8 @@ public:
         line(cAttr.getNumProp(CabbageIDs::linethickness)),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+        pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+        tooltipText(String::empty)
     {
         toBack();
         offX=offY=offWidth=offHeight=0;
@@ -1218,11 +1312,19 @@ public:
         if(rotate!=0)
             setTransform(AffineTransform::rotation(rotate, left+pivotx, pivoty+top));
 
+        if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
+            tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
+
     }
     //---------------------------------------------
     ~CabbageGroupbox()
     {
 
+    }
+
+    String getTooltip()
+    {
+        return tooltipText;
     }
 
     void mouseDown(const MouseEvent& event)
@@ -1246,7 +1348,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         if(isEnabled())
         {
             setColour(TextButton::buttonColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
@@ -1263,6 +1372,10 @@ public:
 
             repaint();
 
+        }
+        if(tooltipText!=m_cAttr.getStringProp(CabbageIDs::popuptext))
+        {
+            tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
         }
     }
 
@@ -1368,11 +1481,11 @@ private:
 //==============================================================================
 class CabbageGenTable	:	public Component,
     public ChangeBroadcaster,
-    public ChangeListener
+    public ChangeListener, public TooltipClient
 {
     String colour;
     String fontcolour;
-    String file;
+    String file, tooltipText;
     var ampranges;
     float zoom, rotate;
     float startpos, endpos;
@@ -1391,7 +1504,8 @@ public:
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
         pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
         startpos(-1),
-        endpos(-1)
+        endpos(-1),
+        tooltipText(String::empty)
     {
         setName(cAttr.getStringProp(CabbageIDs::name));
         table = new TableManager();
@@ -1402,10 +1516,18 @@ public:
 
         if(File(file).existsAsFile())
             setFile(file);
+
+        if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
+            tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
     }
 
     ~CabbageGenTable()
     {
+    }
+
+    String getTooltip()
+    {
+        return tooltipText;
     }
 
     void resized()
@@ -1441,7 +1563,14 @@ public:
         {
             setEnabled(true);
             setVisible(true);
-
+        }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            table->toggleEditMode(false);
+        }
+        else
+        {
+            table->toggleEditMode(true);
         }
 
         if(ampRanges!=m_cAttr.getFloatArrayProp("amprange"))
@@ -1457,6 +1586,11 @@ public:
             table->setRange(m_cAttr.getNumProp(CabbageIDs::startpos), m_cAttr.getNumProp(CabbageIDs::endpos));
             endpos = m_cAttr.getNumProp(CabbageIDs::endpos);
             startpos = m_cAttr.getNumProp(CabbageIDs::startpos);
+        }
+
+        if(tooltipText!=m_cAttr.getStringProp(CabbageIDs::popuptext))
+        {
+            tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
         }
 
         if(zoom!=m_cAttr.getNumProp(CabbageIDs::zoom))
@@ -1578,7 +1712,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         if(zoom!=m_cAttr.getNumProp(CabbageIDs::zoom))
         {
             zoom = m_cAttr.getNumProp(CabbageIDs::zoom);
@@ -1715,7 +1856,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         setText(m_cAttr.getStringProp(CabbageIDs::text));
         repaint();
     }
@@ -1728,38 +1876,84 @@ private:
 };
 
 //==============================================================================
-// custom multitab
+// custom CabbageKeyboard
 //==============================================================================
-class CabbageMultiTab	:	public Component
+class CabbageKeyboard	:	public Component
 {
+    float rotate;
+    int pivotx, pivoty;
 public:
-    ScopedPointer<TabbedComponent> tabComp;
-    String name, fontcolour, bgcolour;
-//---- constructor -----
-public:
-    CabbageMultiTab (String _name,  String _fontcolour, String _bgcolour):
-        name(_name),
-        fontcolour(_fontcolour),
-        bgcolour(_bgcolour)
+    CabbageKeyboard (CabbageGUIClass &cAttr, MidiKeyboardState &state)
+        : rotate(cAttr.getNumProp(CabbageIDs::rotate)),
+          pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+          pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
     {
-        setName(name);
-        tabComp = new TabbedComponent(TabbedButtonBar::TabsAtTop);
-        tabComp->setOutline(0);
-        addAndMakeVisible(tabComp);
+        addAndMakeVisible(keyboard = new MidiKeyboardComponent(state, MidiKeyboardComponent::horizontalKeyboard));
+        if(!cAttr.getNumProp(CabbageIDs::visible))
+        {
+            setVisible(false);
+            //Logger::writeToLog("visivle");
+        }
+        else
+        {
+            setVisible(true);
+            //Logger::writeToLog("visivle");
+        }
+
+        setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
+        keyboard->setLowestVisibleKey(cAttr.getNumProp(CabbageIDs::value));
+        keyboard->setScrollButtonsVisible(true);
+
     }
 
-    ~CabbageMultiTab() {}
+    ~CabbageKeyboard()
+    {
+    }
 
     void resized()
     {
-        tabComp->setBounds(0, 0, getWidth(), getHeight());
+        keyboard->setBounds(getLocalBounds());
+        if(rotate!=0)
+            setTransform(AffineTransform::rotation(rotate, getX()+pivotx, getY()+pivoty));
     }
 
-    void paint(Graphics& g) {}
+    //update control
+    void update(CabbageGUIClass m_cAttr)
+    {
+        setBounds(m_cAttr.getBounds());
+        setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
+        if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
+        {
+            rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
+            setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
+        }
+        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+        {
+            setVisible(false);
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+            setVisible(true);
+        }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
+
+        repaint();
+    }
 
 
 private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageMultiTab);
+    String text, colour, fontcolour, align;
+    ScopedPointer<MidiKeyboardComponent> keyboard;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageKeyboard);
 };
 
 //==============================================================================
@@ -1835,7 +2029,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         //repaint();
     }
 
@@ -1860,21 +2061,56 @@ class CabbageTextEditor : public Component,
 {
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<LookAndFeel_V1> lookAndFeel;
-    String text, name, caption, type, currentText;
+    String text, tooltipText, name, caption, type, currentText;
     StringArray strings;
     Colour colour, fontcolour;
     int offX, offY, offWidth, offHeight, stringIndex, pivotx, pivoty;
     float rotate;
 public:
     String channel;
-    ScopedPointer<TextEditor> editor;
+
+    class customTextEditor : public TextEditor
+    {
+    public:
+        customTextEditor(CabbageTextEditor* _owner):TextEditor(""), owner(_owner) {}
+        ~customTextEditor() {}
+
+        void addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEvent *mouseClickEvent)
+        {
+            menuToAddTo.addItem(1, "Cut");
+            menuToAddTo.addItem(2, "Copy");
+            menuToAddTo.addItem(3, "Paste");
+            menuToAddTo.addItem(4, "Select All");
+            menuToAddTo.addSeparator();
+            menuToAddTo.addItem(5, "Send text");
+        }
+
+        void performPopupMenuAction (int menuItemID)
+        {
+            if(menuItemID==1)
+                cutToClipboard();
+            else if(menuItemID==2)
+                copyToClipboard();
+            else if(menuItemID==3)
+                pasteFromClipboard();
+            else if(menuItemID==4)
+                selectAll();
+            else if(menuItemID==5)
+                owner->sendTextMessage();
+        }
+
+    private:
+        CabbageTextEditor* owner;
+    };
+
+    ScopedPointer<customTextEditor> editor;
     //---- constructor -----
     CabbageTextEditor(CabbageGUIClass &cAttr) :
         name(cAttr.getStringProp(CabbageIDs::name)),
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         text(cAttr.getStringProp(CabbageIDs::text)),
         type(cAttr.getStringProp(CabbageIDs::type)),
-        editor(new TextEditor(String("editor_"))),
+        editor(new customTextEditor(this)),
         groupbox(new GroupComponent(String("groupbox_"))),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
@@ -1887,7 +2123,8 @@ public:
         offY(0),
         offWidth(0),
         offHeight(0),
-        stringIndex(0)
+        stringIndex(0),
+        tooltipText(String::empty)
     {
         editor->setLookAndFeel(lookAndFeel);
         addAndMakeVisible(editor);
@@ -1902,6 +2139,11 @@ public:
         editor->addListener(this);
         editor->addKeyListener(this);
         editor->setText(text, false);
+        if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
+        {
+            editor->setTooltip(cAttr.getStringProp(CabbageIDs::popuptext));
+            tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
+        }
         //groupbox->setColour(GroupComponent::ColourIds::outlineColourId, Colours::red);
         this->setWantsKeyboardFocus(false);
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
@@ -1926,7 +2168,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         if(text!=m_cAttr.getStringProp(CabbageIDs::text))
         {
             editor->setText(m_cAttr.getStringProp(CabbageIDs::text));
@@ -1936,6 +2185,11 @@ public:
         {
             rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
             setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
+        }
+        if(tooltipText!=m_cAttr.getStringProp(CabbageIDs::popuptext))
+        {
+            tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
+            editor->setTooltip(tooltipText);
         }
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
         repaint();
@@ -1956,6 +2210,11 @@ public:
     }
 
     void textEditorReturnKeyPressed (TextEditor&)
+    {
+        sendTextMessage();
+    }
+
+    void sendTextMessage()
     {
         //cUtils::showMessage(editor->getText());
         strings.add(editor->getText());
@@ -1999,7 +2258,7 @@ class CabbageTextbox : public Component
 {
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<LookAndFeel_V1> lookAndFeel;
-    String text, name, caption, type;
+    String text, name, tooltipText, caption, type;
     Colour colour, fontcolour;
     int offX, offY, offWidth, offHeight, pivotx, pivoty;
     float rotate;
@@ -2022,7 +2281,8 @@ public:
         offX(0),
         offY(0),
         offWidth(0),
-        offHeight(0)
+        offHeight(0),
+        tooltipText(String::empty)
     {
         editor->setLookAndFeel(lookAndFeel);
         addAndMakeVisible(editor);
@@ -2034,6 +2294,13 @@ public:
         editor->setScrollbarsShown(true);
         editor->setReturnKeyStartsNewLine(true);
         editor->setReadOnly(true);
+
+        if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
+        {
+            editor->setTooltip(cAttr.getStringProp(CabbageIDs::popuptext));
+            tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
+        }
+
         //background colour ID
         editor->setColour(0x1000200, colour);
         //text colour ID
@@ -2088,12 +2355,24 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
         if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
         {
             rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
             setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
+        }
+        if(tooltipText!=m_cAttr.getStringProp(CabbageIDs::popuptext))
+        {
+            tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
+            editor->setTooltip(tooltipText);
         }
         repaint();
     }
@@ -2139,7 +2418,7 @@ public:
 
 
 //==============================================================================
-// custom CabbageTable, uses the Table class
+// custom CabbageTable, deprecated....
 //==============================================================================
 class CabbageTable : public Component
 {
@@ -2366,7 +2645,14 @@ public:
             setEnabled(true);
             setVisible(true);
         }
-
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
         repaint();
     }
@@ -2498,74 +2784,18 @@ public:
             setEnabled(true);
             setVisible(true);
         }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
         repaint();
     }
 
 };
 
-//==============================================================================
-// custom CabbageTransportControl
-//==============================================================================
-/*
- * this will need a fast forward, skip to start, play/pause and
- */
-class CabbageTransportControl	:	public Component
-{
-    ScopedPointer<ImageButton> playButton;
-    ScopedPointer<ImageButton> skipToStartButton;
-    ScopedPointer<ImageButton> skipToEndButton;
-
-public:
-    CabbageTransportControl(int width, int height)
-    {
-        playButton = new ImageButton("Play button");
-        addAndMakeVisible(playButton);
-        skipToStartButton = new ImageButton("Skip to start button");
-        addAndMakeVisible(skipToStartButton);
-        skipToEndButton = new ImageButton("Skip to end button");
-        addAndMakeVisible(skipToEndButton);
-
-        //playButton->setToggleState(false, true);
-        playButton->setClickingTogglesState(true);
-        //playButton->setState(Button::buttonDown);
-        /*
-        	playButton->setImages(false, true, true,
-        		cUtils::drawSoundfilerButton("play_normal"), 1.0f, Colours::transparentBlack,
-        		cUtils::drawSoundfilerButton("play_hover"), 1.0f, Colours::transparentBlack,
-        		cUtils::drawSoundfilerButton("play_down"), 1.0f, Colours::transparentBlack);
-
-        	skipToStartButton->setImages(false, true, true,
-        		cUtils::drawSoundfilerButton("skip_start_normal"), 1.0f, Colours::transparentBlack,
-        		cUtils::drawSoundfilerButton("skip_start_hover"), 1.0f, Colours::transparentBlack,
-        		cUtils::drawSoundfilerButton("skip_start_down"), 1.0f, Colours::transparentBlack);
-
-        	skipToEndButton->setImages(false, true, true,
-        		cUtils::drawSoundfilerButton("skip_end_normal"), 1.0f, Colours::transparentBlack,
-        		cUtils::drawSoundfilerButton("skip_end_hover"), 1.0f, Colours::transparentBlack,
-        		cUtils::drawSoundfilerButton("skip_end_down"), 1.0f, Colours::transparentBlack);
-        		 */
-    }
-
-    ~CabbageTransportControl() {}
-
-    void resized()
-    {
-        int numOfButtons = 3;
-        float buttonWidth = getWidth() / (numOfButtons+1); //jmin(getHeight()*0.8f, (float)getWidth()/(numOfButtons+1));
-        float buttonGap = buttonWidth / (numOfButtons+1); //(getWidth()-(buttonWidth*numOfButtons)) / numOfButtons;
-        float buttonHeight = getHeight() - (buttonGap*2);
-
-        skipToStartButton->setBounds(buttonGap, buttonGap, buttonWidth, buttonHeight);
-        playButton->setBounds(buttonGap*2 + buttonWidth, buttonGap, buttonWidth, buttonHeight);
-        skipToEndButton->setBounds(buttonGap*3 + buttonWidth*2, buttonGap, buttonWidth, buttonHeight);
-    }
-
-    void paint(Graphics& g)
-    {
-        //g.setColour(cUtils::getDarkerBackgroundSkin());
-        g.setColour(Colours::lightgrey);
-        g.fillAll();
-    }
-};
 
 #endif

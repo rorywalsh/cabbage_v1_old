@@ -1,3 +1,6 @@
+; clip.csd
+; Written by Iain McCurdy, 2012.
+
 <Cabbage>
 form caption("clip") size(315, 90), pluginID("clip")
 image        bounds(0, 0, 315, 90), colour( 20, 30, 40), shape("rounded"), outlinecolour("white"), outlinethickness(4) 

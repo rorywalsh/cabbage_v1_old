@@ -12,6 +12,8 @@
 	<dict>
 		<key>BF30E45040939E29387C8F2692B6427F1D4E5344</key>
 		<string>https://github.com/cabbageaudio/cabbage.git</string>
+		<key>FCC05BC24B4C2CC92A8DCCE213A83488734EFCD1</key>
+		<string>https://github.com/csound/csound.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Builds/MacOSX/CabbageStudio.xcodeproj</string>
@@ -19,6 +21,8 @@
 	<dict>
 		<key>BF30E45040939E29387C8F2692B6427F1D4E5344</key>
 		<string>../../../..</string>
+		<key>FCC05BC24B4C2CC92A8DCCE213A83488734EFCD1</key>
+		<string>../../../../../csound</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/cabbageaudio/cabbage.git</string>
@@ -35,6 +39,14 @@
 			<string>BF30E45040939E29387C8F2692B6427F1D4E5344</string>
 			<key>IDESourceControlWCCName</key>
 			<string>cabbage</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>FCC05BC24B4C2CC92A8DCCE213A83488734EFCD1</string>
+			<key>IDESourceControlWCCName</key>
+			<string>csound</string>
 		</dict>
 	</array>
 </dict>

@@ -1,3 +1,6 @@
+; pvsAdsyn.csd
+; Written by Iain McCurdy, 2012.
+
 <Cabbage>
 form caption("pvsAdsyn") size(580, 90), pluginID("adsy")
 image pos(0, 0), size(580, 90), colour(200,100,50,150), shape("rounded"), outlinecolour("white"), outlinethickness(5) 

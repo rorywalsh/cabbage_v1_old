@@ -1,18 +1,18 @@
-GEN33.csd
-Written by Iain McCurdy, 2014
-
-GEN33 generates a harmonic waveform based on data stored in another table. 
-The data for each partial in the second table is stored in the form: Strength, Partial Number / Frequency, Phase, for each partial.
-Therefore data for 10 partials would be stored using 30 items of data. GEN02 is normally used for this purpose.
-
-In this example the user can select from a number of data sets of partial using a combobox.
-The number of partials contained within the chosen data set is displayed below the combobox.
-
-When the GEN33 table is created the user can choose to limit the number of partials used.
-
-In this example the GEN33 table can be auditioned and interacted with manually using the controls in the first groupbox
-or it can be played from the MIDI keyboard in which case key velocity is mapped to the number of partials used by GEN33
-thereby implementing a kind of velocity to brightness mechanism.
+; GEN33.csd
+; Written by Iain McCurdy, 2014
+; 
+; GEN33 generates a harmonic waveform based on data stored in another table. 
+; The data for each partial in the second table is stored in the form: Strength, Partial Number / Frequency, Phase, for each partial.
+; Therefore data for 10 partials would be stored using 30 items of data. GEN02 is normally used for this purpose.
+; 
+; In this example the user can select from a number of data sets of partial using a combobox.
+; The number of partials contained within the chosen data set is displayed below the combobox.
+; 
+; When the GEN33 table is created the user can choose to limit the number of partials used.
+; 
+; In this example the GEN33 table can be auditioned and interacted with manually using the controls in the first groupbox
+; or it can be played from the MIDI keyboard in which case key velocity is mapped to the number of partials used by GEN33
+; thereby implementing a kind of velocity to brightness mechanism.
 
 
 <Cabbage>
@@ -23,7 +23,7 @@ gentable bounds(  0,  0, 520, 120), identchannel("table1"), tablenumber(1), tabl
 groupbox bounds(0, 120,370,120), text("Manual Control"), plant("Manual"), fontcolour("white"){
 checkbox bounds( 10, 30,110, 20), channel("ManualOnOff"),  value(0), text("Test On/Off")
 label    bounds( 10, 50,140, 11), text("Source")
-combobox bounds( 10, 61,140, 20), channel("source"), value(1), text("Tubular Bell","Chalandi Plates","Tibetan Bowl 180mm","Tibetan Bowl 152mm","Tibetan Bowl 140mm","Small Handbell","Spinel Sphere","Clarinet")
+combobox bounds( 10, 61,140, 20), channel("source"), value(1), text("Tubular Bell","Chladni Plates","Tibetan Bowl 180mm","Tibetan Bowl 152mm","Tibetan Bowl 140mm","Small Handbell","Spinel Sphere","Clarinet")
 
 label     bounds( 10, 82,100, 11), text("Maximum Harms:"), fontcolour("white"), align(left)
 numberbox bounds( 110, 81, 40, 15), text(""), fontcolour(white), channel("NumPartials"), range(0, 100, 0,1,1)
@@ -68,7 +68,7 @@ gidata1		ftgen	0,0,-10*3,-2,	1,		272,		0,\
 					1,		4822,		0,\ 
 					1,		5255,		0
 
-;Chalandi plates 	
+;Chladni plates 	
 gidata2		ftgen	0,0,-5*3,-2,	1,		62,		0,\
 					1,		107,            0,\
 					1,		360,            0,\

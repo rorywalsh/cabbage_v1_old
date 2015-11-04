@@ -1,5 +1,6 @@
-pvsmooth
-FFT feedback is disabled if amplitude smoothing is increased beyond zero. If this is not done the instrument will fail. 
+; pvSmooth.csd
+; Written by Iain McCurdy, 2012.
+; FFT feedback is disabled if amplitude smoothing is increased beyond zero. If this is not done the instrument will fail. 
 
 <Cabbage>
 form caption("pvSmooth") size(505, 90), pluginID("smoo"), scrollbars(0)

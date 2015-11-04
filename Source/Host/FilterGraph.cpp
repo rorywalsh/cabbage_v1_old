@@ -55,6 +55,7 @@ FilterGraph::FilterGraph (AudioPluginFormatManager& formatManager_)
     startTimer(0);
     stopTimer();
     setChangedFlag (false);
+    setBPM(60);
 }
 
 FilterGraph::~FilterGraph()
@@ -86,27 +87,29 @@ const AudioProcessorGraph::Node::Ptr FilterGraph::getNodeForId (const uint32 uid
 //==============================================================================
 void FilterGraph::addNodesToAutomationTrack(int32 id, int index)
 {
-    //if there is an automation device, otherwise create one. Only one permitted in each patch..
-    if(getNodeForId(automationNodeID))
-    {
-        AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
-        node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);
-    }
-    else
-    {
-        PluginDescription descript;
-        descript.descriptiveName = "Automation track";
-        descript.name = "AutomationTrack";
-        descript.pluginFormatName = "AutomationTrack";
-        descript.numInputChannels = 2;
-        descript.numOutputChannels = 2;
-        addFilter(&descript, 0.50f, 0.5f);
+    /*
+        //if there is an automation device, otherwise create one. Only one permitted in each patch..
+        if(getNodeForId(automationNodeID))
+        {
+            automationAdded=true;
+            AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
+            node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);
+        }
+        else
+        {
+            PluginDescription descript;
+            descript.descriptiveName = "Automation track";
+            descript.name = "AutomationTrack";
+            descript.pluginFormatName = "AutomationTrack";
+            descript.numInputChannels = 2;
+            descript.numOutputChannels = 2;
+            addFilter(&descript, 0.50f, 0.5f);
 
-        AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
-        node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);
+            AutomationProcessor* node = (AutomationProcessor*)graph.getNodeForId(automationNodeID)->getProcessor();
+            node->addAutomatableNode(graph.getNodeForId(id)->getProcessor()->getName(), graph.getNodeForId(id)->getProcessor()->getParameterName(index), id, index);
 
-    }
-
+        }
+    */
 }
 
 //==============================================================================
@@ -136,6 +139,8 @@ void FilterGraph::setIsPlaying(bool value, bool reset)
 void FilterGraph::setBPM(int bpm)
 {
     currentBPM = bpm;
+    audioPlayHead.setBpm(bpm);
+
 
     if(isTimerRunning())
     {
@@ -204,8 +209,8 @@ AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* 
                                              2,
                                              graph.getSampleRate(),
                                              graph.getBlockSize());
-											 
-			soundfiler->setupAudioFile(File(desc->fileOrIdentifier));
+
+            soundfiler->setupAudioFile(File(desc->fileOrIdentifier));
 
             if(uid!=-1)
                 node = graph.addNode (soundfiler, uid);
@@ -222,7 +227,6 @@ AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* 
             return node;
         }
     }
-
     else if(desc->pluginFormatName=="Internal")
     {
         if (AudioPluginInstance* instance = formatManager.createPluginInstance (*desc, graph.getSampleRate(), graph.getBlockSize(), errorMessage))
@@ -240,7 +244,7 @@ AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* 
     else if(desc->pluginFormatName=="Cabbage")
     {
         CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc->fileOrIdentifier, false, AUDIO_PLUGIN);
-        int numChannels = cUtils::getNchnlsFromFile(desc->fileOrIdentifier);
+        int numChannels = cUtils::getNchnlsFromFile(File(desc->fileOrIdentifier).loadFileAsString());
         //create GUI for selected plugin...
         cabbageNativePlugin->createGUI(File(desc->fileOrIdentifier).loadFileAsString(), true);
         cabbageNativePlugin->setPlayConfigDetails(numChannels,

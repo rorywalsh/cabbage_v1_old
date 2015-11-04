@@ -68,6 +68,8 @@ public:
 
     };
 
+    TooltipWindow tooltipWindow;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePlantWindow);
 };
 //==============================================================================
@@ -118,7 +120,7 @@ class CabbagePluginAudioProcessorEditor  : public AudioProcessorEditor,
     public ChangeBroadcaster,
     public ChangeListener,
     public ActionListener,
-	public ActionBroadcaster
+    public ActionBroadcaster
 
 {
 public:
@@ -151,8 +153,8 @@ public:
     int currentPopupIndex;
 
 private:
-	WildcardFileFilter wildcardFilter;
-	Image logo1, logo2;
+    WildcardFileFilter wildcardFilter;
+    Image logo1, logo2;
     void setPositionOfComponent(float x, float y, float width, float height, Component* comp, String reltoplant);
     void createfTableData(Table* table, bool sendToCsound);
     bool keyPressed(const juce::KeyPress &,Component *);
@@ -167,7 +169,7 @@ private:
     void comboBoxChanged (ComboBox* combo);
     void InsertComboBox(CabbageGUIClass &cAttr);
     void InsertSoundfiler(CabbageGUIClass &cAttr);
-	void InsertSourceButton(CabbageGUIClass &cAttr);
+    void InsertSourceButton(CabbageGUIClass &cAttr);
     void InsertDirectoryList(CabbageGUIClass &cAttr);
     void SetupWindow(CabbageGUIClass &cAttr);
     void InsertSlider(CabbageGUIClass &cAttr);
@@ -222,7 +224,7 @@ private:
     StringArray pastEvents;
     Array <float, CriticalSection> tableValues;
     AudioSampleBuffer tableBuffer;
-	String lastOpenedDirectory;
+    String lastOpenedDirectory;
 
     ScopedPointer<Viewport> viewport;
     ScopedPointer<CabbageViewportComponent> viewportComponent;
@@ -245,7 +247,7 @@ private:
 #else
     ScopedPointer<Component> componentPanel;
 #endif
-    ScopedPointer<MidiKeyboardComponent> midiKeyboard;
+    ScopedPointer<CabbageKeyboard> midiKeyboard;
     ScopedPointer<LookAndFeel_V1> feely;
     ComponentBoundsConstrainer resizeLimits;
 
@@ -263,6 +265,9 @@ private:
     String globalSVGPath;
     Array<int> radioGroups;
     ScopedPointer<BubbleMessageComponent> popupBubble;
+
+    TooltipWindow tooltipWindow;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePluginAudioProcessorEditor);
 
 };

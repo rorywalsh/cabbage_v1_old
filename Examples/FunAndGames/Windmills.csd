@@ -1,7 +1,7 @@
-Windmills.csd
-Written by Iain McCurdy, 2014
-
-This doesn't make sound yet!
+; Windmills.csd
+; Written by Iain McCurdy, 2014
+; 
+; This doesn't make sound yet!
 
 <Cabbage>
 form caption("Windmills") size(700,500), colour(150,150,255), scrollbars(0), guirefresh(32)
@@ -70,7 +70,7 @@ label    bounds(  0, 0,  0, 0), text("Blow into your microphone..."), align(cent
 <CsoundSynthesizer>
 
 <CsOptions>
--n -+rtmidi=NULL -M0 -dm0
+-n -dm0
 </CsOptions>
 
 <CsInstruments>
@@ -204,6 +204,9 @@ instr	1
  kMaxWidth	=	$WIDTH
  kSwing2	portk kSwing,limit((ksize*kMaxWidth)/1000,0,2)
  ktilt	=	1 - abs(kSwing2)
+
+ ; printk	0.5,ktilt	; 1 = full 0.5 = tilted
+ printk	0.5,kspeed		; 1 = full 0.5 = tilted
 
  kWidth		=	(1-abs(kSwing2))*kMaxWidth
  kX_Offset	=	(kMaxWidth - kWidth) * 0.5

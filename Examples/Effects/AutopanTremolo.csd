@@ -1,14 +1,18 @@
-AutopanTremolo.csd
-
-An autopan/tremolo effect in which a variety of LFO shapes can be employed.
-
-LFO Shapes
-----------
-Randomi	-	an interpolating random function
-Randomh	-	a 'sample and hold' type function
-User	-	an LFO shape (best understood when using tremolo function) 
-		in which the user can define the bias (percussive type : reverse percussive) 
-		and duty emphasis (emphasis of high state/loud against low state/quiet)
+; AutopanTremolo.csd
+; 
+; An autopan/tremolo effect in which a variety of LFO shapes can be employed.
+; 
+; LFO Shapes
+; ----------
+; sine
+; triangle
+; square
+; Randomi	-	an interpolating random function
+; Randomh	-	a 'sample and hold' type function
+; Rspline	-	random spline
+; User	-	an LFO shape (best understood when using tremolo function) 
+; 		in which the user can define the bias (percussive type : reverse percussive) 
+; 		and duty emphasis (emphasis of high state/loud against low state/quiet)
 
 <Cabbage>
 form caption("Autopan / Tremolo") size(565, 102), pluginID("aptr"), guirefresh(32)
@@ -26,7 +30,7 @@ rslider  bounds(470,  6, 90, 90), text("Level"),      channel("level"), range(0,
 
 checkbox bounds(160, 15, 25, 25), colour("yellow"), channel("indicator"),  value(0), shape("rounded")
 combobox bounds(260, 13,  90,20), channel("mode"), value(1), text("Autopan", "Tremolo")
-combobox bounds(260, 38,  90,20), channel("wave"), value(1), text("Sine", "Triangle", "Square", "Randomi", "Randomh", "User")
+combobox bounds(260, 38,  90,20), channel("wave"), value(1), text("Sine", "Triangle", "Square", "Randomi", "Randomh", "Rspline", "User")
 checkbox bounds(260, 63, 90, 15), text("TEST TONE"), colour("lime"), channel("test"),  value(0)
 </Cabbage>
 
@@ -52,12 +56,14 @@ opcode	PanTrem,aa,aakkkKkK
 	endif						;END OF THIS CONDITIONAL BRANCH
 	UPDATE:						;LABEL CALLED UPDATE
 	iwave	init		i(kwave)
-	iwave	limit	iwave,	0, 5			;
-	if iwave==3 then				;if 'randomi' chosen...
+	iwave	limit	iwave,	0, 6			;
+	if iwave==3 then				;if 'randomi' is chosen...
 	 klfo	randomi	-kdepth,kdepth,krate,1
-	elseif iwave==4 then				;or if 'randomh' chosen...
+	elseif iwave==4 then				;or if 'randomh' is chosen...
 	 klfo	randomh	-kdepth,kdepth,krate,1		
-	elseif iwave==5 then				;or if 'user' has been chosen...
+	elseif iwave==5 then				;or if 'rspline' is chosen...
+	 klfo	rspline	-kdepth,kdepth,krate,krate*2		
+	elseif iwave==6 then				;or if 'user' has been chosen...
 	 aphs	phasor	krate				;create a linear pointer from 0 to 1 
 	 aphs 	pdhalf	aphs, kbias			;distort the linearity using pdhalf
 	 kphs	downsamp	aphs			;downsample to krate
@@ -78,7 +84,7 @@ opcode	PanTrem,aa,aakkkKkK
 		aoutR	=	ainR*(1-sqrt(alfo))	;REDEFINE GLOBAL AUDIO RIGHT CHANNEL SIGNAL WITH AUTO-PANNING
 		kindicator	=	(klfo>0.5?1:0)
 		chnset	kindicator,"indicator"
-	elseif kmode=1 then	;TREM			;IF TREMELO MODE IS CHOSEN FROM BUTTON BANK...
+	elseif kmode=1 then	;TREM			;IF TREMOLO MODE IS CHOSEN FROM BUTTON BANK...
 		kindicator	=	(klfo>0.5?1:0)
 		if changed:k(kindicator)==1 then
 		 chnset	kindicator,"indicator"

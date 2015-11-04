@@ -1,4 +1,5 @@
-pvsCross
+; pvsCross.csd
+; Written by Iain McCurdy, 2012.
 
 <Cabbage>
 form caption("pvsCross") size(370, 90), pluginID("crss")

@@ -34,7 +34,7 @@
     method. Each of the objects returned can then be used to list the available
     devices of that type. E.g.
     @code
-    OwnedArray <AudioIODeviceType> types;
+    OwnedArray<AudioIODeviceType> types;
     myAudioDeviceManager.createAudioDeviceTypes (types);
 
     for (int i = 0; i < types.size(); ++i)
@@ -151,7 +151,7 @@ public:
     /** Creates an iOS device type if it's available on this platform, or returns null. */
     static AudioIODeviceType* createAudioIODeviceType_iOSAudio();
     /** Creates a WASAPI device type if it's available on this platform, or returns null. */
-    static AudioIODeviceType* createAudioIODeviceType_WASAPI();
+    static AudioIODeviceType* createAudioIODeviceType_WASAPI (bool exclusiveMode);
     /** Creates a DirectSound device type if it's available on this platform, or returns null. */
     static AudioIODeviceType* createAudioIODeviceType_DirectSound();
     /** Creates an ASIO device type if it's available on this platform, or returns null. */

@@ -111,6 +111,9 @@ LookAndFeel_V2::LookAndFeel_V2()
         TextPropertyComponent::textColourId,        0xff000000,
         TextPropertyComponent::outlineColourId,     standardOutlineColour,
 
+        BooleanPropertyComponent::backgroundColourId, 0xffffffff,
+        BooleanPropertyComponent::outlineColourId,  standardOutlineColour,
+
         ListBox::backgroundColourId,                0xffffffff,
         ListBox::outlineColourId,                   standardOutlineColour,
         ListBox::textColourId,                      0xff000000,
@@ -238,24 +241,19 @@ void LookAndFeel_V2::drawButtonBackground (Graphics& g,
                       button.isConnectedOnBottom());
 }
 
-Font LookAndFeel_V2::getTextButtonFont (TextButton& button)
+Font LookAndFeel_V2::getTextButtonFont (TextButton&, int buttonHeight)
 {
-    return button.getFont();
+    return Font (jmin (15.0f, buttonHeight * 0.6f));
 }
 
-void LookAndFeel_V2::changeTextButtonWidthToFitText (TextButton& b, int newHeight)
+int LookAndFeel_V2::getTextButtonWidthToFitText (TextButton& b, int buttonHeight)
 {
-    if (newHeight >= 0)
-        b.setSize (jmax (1, b.getWidth()), newHeight);
-    else
-        newHeight = b.getHeight();
-
-    b.setSize (getTextButtonFont (b).getStringWidth (b.getButtonText()) + newHeight, newHeight);
+    return getTextButtonFont (b, buttonHeight).getStringWidth (b.getButtonText()) + buttonHeight;
 }
 
 void LookAndFeel_V2::drawButtonText (Graphics& g, TextButton& button, bool /*isMouseOverButton*/, bool /*isButtonDown*/)
 {
-    Font font (getTextButtonFont (button));
+    Font font (getTextButtonFont (button, button.getHeight()));
     g.setFont (font);
     g.setColour (button.findColour (button.getToggleState() ? TextButton::textColourOnId
                                                             : TextButton::textColourOffId)
@@ -452,8 +450,7 @@ void LookAndFeel_V2::drawAlertBox (Graphics& g, AlertWindow& alert,
             colour    = alert.getAlertType() == AlertWindow::InfoIcon ? (uint32) 0x605555ff : (uint32) 0x40b69900;
             character = alert.getAlertType() == AlertWindow::InfoIcon ? 'i' : '?';
 
-            icon.addEllipse ((float) iconRect.getX(), (float) iconRect.getY(),
-                             (float) iconRect.getWidth(), (float) iconRect.getHeight());
+            icon.addEllipse (iconRect.toFloat());
         }
 
         GlyphArrangement ga;
@@ -1007,6 +1004,16 @@ void LookAndFeel_V2::drawPopupMenuItem (Graphics& g, const Rectangle<int>& area,
     }
 }
 
+void LookAndFeel_V2::drawPopupMenuSectionHeader (Graphics& g, const Rectangle<int>& area, const String& sectionName)
+{
+    g.setFont (getPopupMenuFont().boldened());
+    g.setColour (findColour (PopupMenu::headerTextColourId));
+
+    g.drawFittedText (sectionName,
+                      area.getX() + 12, area.getY(), area.getWidth() - 16, (int) (area.getHeight() * 0.8f),
+                      Justification::bottomLeft, 1);
+}
+
 //==============================================================================
 int LookAndFeel_V2::getMenuWindowFlags()
 {
@@ -1390,7 +1397,6 @@ void LookAndFeel_V2::drawRotarySlider (Graphics& g, int x, int y, int width, int
             g.fillPath (filledArc);
         }
 
-        if (thickness > 0)
         {
             const float innerRadius = radius * 0.2f;
             Path p;
@@ -1449,24 +1455,20 @@ Label* LookAndFeel_V2::createSliderTextBox (Slider& slider)
     Label* const l = new SliderLabelComp();
 
     l->setJustificationType (Justification::centred);
+    l->setKeyboardType (TextInputTarget::decimalKeyboard);
 
     l->setColour (Label::textColourId, slider.findColour (Slider::textBoxTextColourId));
-
     l->setColour (Label::backgroundColourId,
                   (slider.getSliderStyle() == Slider::LinearBar || slider.getSliderStyle() == Slider::LinearBarVertical)
                             ? Colours::transparentBlack
                             : slider.findColour (Slider::textBoxBackgroundColourId));
     l->setColour (Label::outlineColourId, slider.findColour (Slider::textBoxOutlineColourId));
-
     l->setColour (TextEditor::textColourId, slider.findColour (Slider::textBoxTextColourId));
-
     l->setColour (TextEditor::backgroundColourId,
                   slider.findColour (Slider::textBoxBackgroundColourId)
                         .withAlpha ((slider.getSliderStyle() == Slider::LinearBar || slider.getSliderStyle() == Slider::LinearBarVertical)
                                         ? 0.7f : 1.0f));
-
     l->setColour (TextEditor::outlineColourId, slider.findColour (Slider::textBoxOutlineColourId));
-
     l->setColour (TextEditor::highlightColourId, slider.findColour (Slider::textBoxHighlightColourId));
 
     return l;
@@ -2363,6 +2365,10 @@ void LookAndFeel_V2::drawCallOutBoxBackground (CallOutBox& box, Graphics& g,
     g.strokePath (path, PathStrokeType (2.0f));
 }
 
+int LookAndFeel_V2::getCallOutBoxBorderSize (const CallOutBox&)
+{
+    return 20;
+}
 
 //==============================================================================
 AttributedString LookAndFeel_V2::createFileChooserHeaderText (const String& title,

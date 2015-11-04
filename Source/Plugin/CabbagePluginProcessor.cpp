@@ -1,21 +1,21 @@
 /*
-  Copyright (C) 2009 Rory Walsh
+ Copyright (C) 2009 Rory Walsh
 
-  Cabbage is free software; you can redistribute it
-  and/or modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+ Cabbage is free software; you can redistribute it
+ and/or modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
 
-  Cabbage is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
+ Cabbage is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with Csound; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-  02111-1307 USA
-*/
+ You should have received a copy of the GNU Lesser General Public
+ License along with Csound; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+ 02111-1307 USA
+ */
 
 #include "CabbagePluginProcessor.h"
 #include "CabbagePluginEditor.h"
@@ -33,122 +33,15 @@
 CabbageLookAndFeel* lookAndFeel;
 CabbageLookAndFeelBasic* lookAndFeelBasic;
 
-juce_ImplementSingleton (IdentArray);
+//juce_ImplementSingleton (IdentArray);
 
-#if defined(Cabbage_No_Csound)
-#define OK 0
-#endif
-
-//==================================================================
-OscThread::OscThread() : Thread("OSCThread")
-{
-
-}
- 
-void OscThread::setupSocket(const String address, int port)
-{
-	sock.setAddress(address.toStdString());
-	sock.setPort(port);
-	sock.bindSocket();	
-}
-
-void OscThread::setCsoundChannels(StringArray chans)
-{
-	channels = chans;
-	for(int i=0;i<channels.size();i++)
-	{
-		//add '/' for message
-		channels.set(i, String("/")+channels[i]);
-	}
-}
-
-void OscThread::flushOSCMessages()
-{
-	messageQue.flushOutgoingChannelMessages();
-}
-
-void OscThread::sendOSC(String message, float value) 
-{
-	//should add /Cabbage tag here to make messages easier to spot in other OSC hosts
-	message = "/"+message;  
-	OSC::Message *bundleMessage;
-	long dataSize;	
-	bundleMessage = new OSC::Message();
-	bundleMessage->setAddress(message.toStdString());
-	if(bundleMessage->getAddress() != "")
-	{
-		bundleMessage->addFloat32(value);
-	}
-	bundle.addElement(bundleMessage);
-	dataSize = bundle.getSize();
-	sock.sendData(bundle.getData(), dataSize);
-	//Clean up for the next send.
-	bundle.clearElements();		 
-}
- 
- 
-void OscThread::run()
-{
-	while(!threadShouldExit())
-		{
-		long size=0;
-		char* data = sock.getData(size);
-		if(size>0)
-		{
-
-				if(OSC::Message::isMessage(data, size))
-				{
-					OSC::Message message(data, size);
-					
-					for(int i=0;i<channels.size();i++)
-					{		
-						if(channels[i]==String(data).trim())
-						{
-							//Logger::writeToLog("Message:"+String(data)+"-"+String(message.getFloat(0)));
-							//remove the '/'
-							messageQue.addOutgoingChannelMessageToQueue(channels[i].substring(1), message.getFloat(0), "float");
-						}
-						
-					}
-					sendChangeMessage();
-					//int numMessages = message.getNumFloats();
-					//	for(int y=0;y<numMessages;y++)
-					//		Logger::writeToLog(String(message.getFloat(y)));
-					//CabbageUtils::showMessage(message.getData());				
-				}
-				else if(OSC::Bundle::isBundle(data, size))
-				{
-					//Logger::writeToLog("Bundle:"+String(data));
-					OSC::Bundle bundle(data, size);
-					int numMessages = bundle.getNumMessages();
-					for(int i=0;i<numMessages;i++)
-					{
-						for(int x=0;x<channels.size();x++)
-						{		
-							//CabbageUtils::showMessage("Bundle:"+String(bundle.getMessage(i)->getData()+String("-")+String(bundle.getMessage(i)->getFloat(0))));
-							if(channels[x]==String(bundle.getMessage(i)->getData()).trim())
-							{
-							//Logger::writeToLog("Bundle:"+String(bundle.getMessage(i)->getData()+String("-")+String(bundle.getMessage(i)->getFloat(0))));
-							messageQue.addOutgoingChannelMessageToQueue(channels[x].substring(1), bundle.getMessage(i)->getFloat(0), "float");
-							}
-						}
-						//for(int y=0;y<bundle.getMessage(i)->getNumFloats();y++)
-						//	Logger::writeToLog(String(bundle.getMessage(i)->getFloat(y)));
-					}
-					sendChangeMessage();
-				}			
-			}
-			data = nullptr;
-		}
-
-}
 
 //==============================================================================
 // There are two different CabbagePluginAudioProcessor constructors. One for the
 // standalone application and the other for the plugin library
 //==============================================================================
 //#ifdef Cabbage_Build_Standalone
-#if defined(Cabbage_Build_Standalone) || defined(Cabbage_Plugin_Host)
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 //===========================================================
 // STANDALONE - CONSTRUCTOR
 //===========================================================
@@ -183,23 +76,26 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      createLog(false),
      automationParamID(-1),
      debugMessage(""),
-     guiRefreshRate(20),
+     guiRefreshRate(50),
      mouseY(0),
      mouseX(0),
      isWinXP(false),
      ksmpsOffset(0),
      breakCount(0),
-	 stopProcessing(false),
-     oscThread(new OscThread())
+     stopProcessing(false),
+     firstTime(true),
+     isMuted(false),
+     isBypassed(false),
+     vuCounter(0)
 {
-//suspendProcessing(true);
+    //suspendProcessing(true);
     codeEditor = nullptr;
-    backgroundThread.startThread();
+    //backgroundThread.startThread();
 
     setPlayConfigDetails(2, 2, 44100, 512);
 
-    
-//set up file logger if needed..
+
+    //set up file logger if needed..
     StringArray tmpArray;
     CabbageGUIClass cAttr;
 
@@ -220,54 +116,36 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 
 
 #ifndef Cabbage_No_Csound
-//don't start of run Csound in edit mode
+    //don't start of run Csound in edit mode
     setOpcodeDirEnv();
     csound = nullptr;
 #if !defined(AndroidBuild)
     csound = new Csound();
 #else
-				AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
-                                              "Uh-oh",
-                                              "Pugin Constructor",
-                                              "ok");	
-	csound = new AndroidCsound();
-	csound->setOpenSlCallbacks(); // for android audio to work
+    AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                      "Uh-oh",
+                                      "Pugin Constructor",
+                                      "ok");
+    csound = new AndroidCsound();
+    csound->setOpenSlCallbacks(); // for android audio to work
 #endif
 
-#ifdef CSOUND6
     csound->SetHostImplementedMIDIIO(true);
-
-
-#endif
     csound->Reset();
-//Logger::writeToLog(csound->GetEnv("OPCODEDIR64"));
-#ifdef CSOUND5
-    csound->PreCompile();
-#endif
     csound->SetHostData(this);
-    csound->SetMessageCallback(CabbagePluginAudioProcessor::messageCallback);
+    csound->CreateMessageBuffer(0);
     csound->SetExternalMidiInOpenCallback(OpenMidiInputDevice);
     csound->SetExternalMidiReadCallback(ReadMidiData);
     csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
     csound->SetExternalMidiWriteCallback(WriteMidiData);
-
     csound->SetIsGraphable(0);
-#ifndef Cabbage_Plugin_Host
-    if(!getPreference(appProperties, "UseCabbageIO"))
-    {
-        csoundPerfThread = new CsoundPerformanceThread(csound);
-        csoundPerfThread->SetProcessCallback(CabbagePluginAudioProcessor::YieldCallback, (void*)this);
-    }
-#endif
 
-    if(pluginType==AUTOMATION_PLUGIN)
-        isAutomator = true;
 
     csoundChanList = NULL;
     numCsoundChannels = 0;
     csndIndex = 32;
 
-//set up PVS struct
+    //set up PVS struct
     dataout = new PVSDATEXT;
 
     if(inputfile.isNotEmpty())
@@ -275,15 +153,20 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         File(inputfile).setAsCurrentWorkingDirectory();
 
 
-#ifdef CSOUND6 
+        csoundParams = nullptr;
         csoundParams = new CSOUND_PARAMS();
+#ifndef CABBAGE_HOST
         csoundParams->nchnls_override = this->getNumOutputChannels();
-        csoundParams->displays = 0;
-        csound->SetParams(csoundParams);
 #endif
+        csoundParams->displays = 0;
 
-//ftpp->ftable;
+        csoundParams->sample_rate_override = this->getSampleRate();
+        csoundParams->control_rate_override = cUtils::getKrFromFile(inputfile, (int)getSampleRate());
 
+        csound->SetParams(csoundParams);
+
+        csound->SetOption((char*)"-n");
+        csound->SetOption((char*)"-d");
 
         StringArray lines, includeFiles;
         lines.addLines(File(inputfile).loadFileAsString());
@@ -308,18 +191,22 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 
         includeFiles.removeDuplicates(0);
 
-
         csCompileResult = csound->Compile(const_cast<char*>(inputfile.toUTF8().getAddress()));
+
+
+        File(inputfile).getParentDirectory().setAsCurrentWorkingDirectory();
 
         Logger::writeToLog(inputfile);
         if(csCompileResult==OK)
         {
-
+            firstTime=false;
             //send root directory path to Csound.
             setPlayConfigDetails(getNumberCsoundOutChannels(),
                                  getNumberCsoundOutChannels(),
                                  getCsoundSamplingRate(),
                                  getCsoundKsmpsSize());
+
+            guiRefreshRate = getCsoundKsmpsSize()*2;
 
             //simple hack to allow tables to be set up correctly.
             csound->PerformKsmps();
@@ -331,10 +218,22 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 
             csound->SetScoreOffsetSeconds(0);
             csound->RewindScore();
+
+            char path[4096] = {0};
+
 #ifdef WIN32
-            csound->SetChannel("CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());
+
+            csound->GetStringChannel("CSD_PATH", path);
+            if(String(path).isNotEmpty())
+                File(path).getParentDirectory().setAsCurrentWorkingDirectory();
+            else
+                csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());
 #else
-            csound->SetChannel("CSD_PATH", File(inputfile).getParentDirectory().getFullPathName().toUTF8().getAddress());
+            csound->GetStringChannel("CSD_PATH", path);
+            if(String(path).isNotEmpty())
+                File(path).getParentDirectory().setAsCurrentWorkingDirectory();
+            else
+                csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());
 #endif
             Logger::writeToLog("Csound compiled your file");
 
@@ -368,14 +267,14 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         isWinXP = true;
         String path = File(inputfile).getParentDirectory().getFullPathName();
         String fullFileName;
-#ifdef LINUX
+#if defined(LINUX) || defined(MACOSX)
         fullFileName = path+"/CabbageTemp.wav";
 #else
         fullFileName = path+"\\CabbageTemp.wav";
 #endif
         tempAudioFile = fullFileName;
         tempAudioFile.replaceWithData(0 ,0);
-	}
+    }
 #endif
 
 }
@@ -407,21 +306,24 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     yieldCounter(10),
     nativePluginEditor(false),
     averageSampleIndex(0),
-	stopProcessing(false),
-	oscThread(new OscThread())
+    stopProcessing(false),
+    firstTime(false),
+    isMuted(false),
+    isBypassed(false),
+    vuCounter(0)
 {
-//Cabbage plugins always try to load a csd file with the same name as the plugin library.
-//Therefore we need to find the name of the library and append a '.csd' to it.
+    //Cabbage plugins always try to load a csd file with the same name as the plugin library.
+    //Therefore we need to find the name of the library and append a '.csd' to it.
 #ifdef MACOSX
     String osxCSD = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+String("/Contents/")+File::getSpecialLocation(File::currentApplicationFile).getFileName();
     File thisFile(osxCSD);
     Logger::writeToLog("MACOSX defined OK");
-	csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
+    csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
 #elif defined(AndroidBuild)
     File inFile(File::getSpecialLocation(File::currentApplicationFile));
     ScopedPointer<InputStream> fileStream;
     fileStream = File(inFile.getFullPathName()).createInputStream();
-    ZipFile zipFile (fileStream, false); 
+    ZipFile zipFile (fileStream, false);
     ScopedPointer<InputStream> fileContents;
     fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/AndroidSimpleSynth.csd"));
     File thisFile("/sdcard/Cabbage.csd");
@@ -429,22 +331,22 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     csdFile = thisFile;
 #else
     File thisFile(File::getSpecialLocation(File::currentExecutableFile));
-	csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
+    csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
 #endif
-   
+
     //Logger::writeToLog(File::getSpecialLocation(File::currentExecutableFile).getFullPathName());
 
     if(csdFile.exists())
-	{
-		Logger::writeToLog("File exists:"+String(csdFile.getFullPathName()));
-		
-	}
-    else
-	{
-        Logger::writeToLog("File doesn't exist"+String(csdFile.getFullPathName()));
-	}
+    {
+        Logger::writeToLog("File exists:"+String(csdFile.getFullPathName()));
 
-    File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
+    }
+    else
+    {
+        Logger::writeToLog("File doesn't exist"+String(csdFile.getFullPathName()));
+    }
+
+    //File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
     csdFile.setAsCurrentWorkingDirectory();
 
 
@@ -473,18 +375,21 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
 #if !defined(AndroidBuild)
     csound = new Csound();
 #else
-	csound = new AndroidCsound();
-	//csound->setOpenSlCallbacks(); // for android audio to work
+    csound = new AndroidCsound();
+    //csound->setOpenSlCallbacks(); // for android audio to work
 #endif
 
+    cabbageCsoundEditor = nullptr;
+
     csound->SetHostImplementedMIDIIO(true);
-//csound->Reset();
-//csound->PreCompile();
+    //csound->Reset();
+    //csound->PreCompile();
     csound->SetHostData(this);
     midiOutputBuffer.clear();
-//for host midi to get sent to Csound, don't need this for standalone
-//but might use it in the future for midi mapping to controls
-    csound->SetMessageCallback(CabbagePluginAudioProcessor::messageCallback);
+    //for host midi to get sent to Csound, don't need this for standalone
+    //but might use it in the future for midi mapping to controls
+    //csound->SetMessageCallback(CabbagePluginAudioProcessor::messageCallback);
+    csound->CreateMessageBuffer(0);
     csound->SetExternalMidiInOpenCallback(OpenMidiInputDevice);
     csound->SetExternalMidiReadCallback(ReadMidiData);
     csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
@@ -494,20 +399,31 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     numCsoundChannels = 0;
     csndIndex = 32;
     startTimer(20);
-#ifdef CSOUND6
+
+    csoundParams = nullptr;
     csoundParams = new CSOUND_PARAMS();
+#ifndef CABBAGE_HOST
     csoundParams->nchnls_override = this->getNumOutputChannels();
-    csoundParams->displays = 0;
-    csound->SetParams(csoundParams);
 #endif
 
+    csoundParams->sample_rate_override = this->getSampleRate();
+    csoundParams->control_rate_override = cUtils::getKrFromFile(csdFile.getFullPathName(), (int)getSampleRate());
+
+
+    csoundParams->displays = 0;
+    csound->SetParams(csoundParams);
+    csound->SetOption((char*)"-n");
+    csound->SetOption((char*)"-d");
+
+
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
-//csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
-    csdFile.setAsCurrentWorkingDirectory();
+    //csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
+    csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
     if(csCompileResult==OK)
     {
+        guiRefreshRate = getCsoundKsmpsSize()*2;
         Logger::writeToLog("compiled Ok");
-		keyboardState.allNotesOff(0);
+        keyboardState.allNotesOff(0);
         keyboardState.reset();
         //simple hack to allow tables to be set up correctly.
         csound->PerformKsmps();
@@ -529,24 +445,35 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
         csoundStatus = true;
         debugMessageArray.add(VERSION);
         debugMessageArray.add(String("\n"));
+        char path[8192] = {0};
+
 #ifdef WIN32
-        csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());
+
+        csound->GetStringChannel("CSD_PATH", path);
+        if(String(path).isNotEmpty())
+            File(path).getParentDirectory().setAsCurrentWorkingDirectory();
+        else
+            csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());
 #else
-        csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());
+        csound->GetStringChannel("CSD_PATH", path);
+        if(String(path).isNotEmpty())
+            File(path).getParentDirectory().setAsCurrentWorkingDirectory();
+        else
+            csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());
 #endif
 
-        //send host info before performance..
         if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+        {
             csound->SetChannel(CabbageIDs::hostbpm.toUTF8(), hostInfo.bpm);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::timeinseconds.toUTF8(), hostInfo.timeInSeconds);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::isplaying.toUTF8(), hostInfo.isPlaying);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
-		Logger::writeToLog("everything still good...");
+            csound->SetChannel(CabbageIDs::timeinsamples.toUTF8(), hostInfo.timeInSamples);
+            csound->SetChannel(CabbageIDs::timeSigDenom.toUTF8(), hostInfo.timeSigDenominator);
+            csound->SetChannel(CabbageIDs::timeSigNum.toUTF8(), hostInfo.timeSigNumerator);
+        }
+        Logger::writeToLog("everything still good...");
     }
     else
     {
@@ -555,24 +482,24 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     }
 #endif
 
-
-    if(SystemStats::getOperatingSystemType()!=SystemStats::WinXP)
-    {
-        isWinXP = true;
-        String path = csdFile.getParentDirectory().getFullPathName();
-        String fullFileName;
-#ifdef LINUX
-        fullFileName = path+"/CabbageTemp.wav";
-#else
-        fullFileName = path+"\\CabbageTemp.wav";
-#endif
-        tempAudioFile = fullFileName;
-        tempAudioFile.replaceWithData(0 ,0);
-    }
+//
+//    if(SystemStats::getOperatingSystemType()!=SystemStats::WinXP)
+//    {
+//        isWinXP = true;
+//        String path = csdFile.getParentDirectory().getFullPathName();
+//        String fullFileName;
+//#ifdef LINUX
+//        fullFileName = path+"/CabbageTemp.wav";
+//#else
+//        fullFileName = path+"\\CabbageTemp.wav";
+//#endif
+//        tempAudioFile = fullFileName;
+//        tempAudioFile.replaceWithData(0 ,0);
+//    }
 
 
     createGUI(csdFile.loadFileAsString(), true);
-	Logger::writeToLog("GUI has been created");
+    Logger::writeToLog("GUI has been created");
 
 }
 #endif
@@ -582,27 +509,21 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
 //===========================================================
 CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 {
+    //deleteAndZero(cabbageCsoundEditor);
+
     deleteAndZero(lookAndFeel);
     deleteAndZero(lookAndFeelBasic);
     Logger::setCurrentLogger (nullptr);
     stopProcessing = true;
     removeAllChangeListeners();
 
-    oscThread->stopThread(10);
 #ifndef Cabbage_No_Csound
 
     xyAutomation.clear();
 
-    IdentArray::deleteInstance();
-    //const MessageManagerLock mmLock;
     if(csound)
     {
-        if(csoundPerfThread)
-        {
-            csoundPerfThread->Stop();
-            csoundPerfThread = nullptr;
-        }
-        //csound->SetHostImplementedMIDIIO(false);
+        this->getCallbackLock().enter();
         csound->DeleteChannelList(csoundChanList);
         Logger::writeToLog("about to cleanup Csound");
         //csoundDebugContinue(csound);
@@ -611,6 +532,7 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 
         //csound->Reset();
         //csoundDebuggerClean(csound->GetCsound());
+
         csound = nullptr;
         Logger::writeToLog("Csound cleaned up");
     }
@@ -624,7 +546,7 @@ int CabbagePluginAudioProcessor::performEntireScore()
 #ifndef Cabbage_No_Csound
     if(!isNativeThreadRunning)
     {
-        csoundPerfThread->Play();
+        //csoundPerfThread->Play();
         isNativeThreadRunning = true;
     }
 #endif
@@ -642,40 +564,58 @@ void CabbagePluginAudioProcessor::YieldCallback(void* data)
 //============================================================================
 //RECOMPILE CSOUND. THIS IS CALLED FROM THE PLUGIN HOST WHEN UDPATES ARE MADE ON THE FLY
 //============================================================================
-void CabbagePluginAudioProcessor::reCompileCsound(File file)
+int CabbagePluginAudioProcessor::reCompileCsound(File file)
 {
 #ifndef Cabbage_No_Csound
-    
-	stopProcessing = true;
-    //getCallbackLock().enter();
-    midiOutputBuffer.clear();
-//csound->DeleteChannelList(csoundChanList);
 
+    stopProcessing = true;
+    getCallbackLock().enter();
+    numChannelsChanged();
+    midiOutputBuffer.clear();
+    //csound->DeleteChannelList(csoundChanList);
+
+    //cUtils::debug(file.loadFileAsString());
+
+    csound->DestroyMessageBuffer();
+    //csound = nullptr;
+    //csound = new Csound();
     csound->Reset();
     ksmpsOffset = 0;
     breakCount = 0;
-#ifdef CSOUND6
-    csoundParams = new CSOUND_PARAMS();
-    csoundParams->nchnls_override =2;
-    csoundParams->displays = 0;
-    csound->SetParams(csoundParams);
-#endif
 
     csound->SetHostImplementedMIDIIO(true);
-    xyAutosCreated = false;
-//csound->SetMessageCallback(CabbagePluginAudioProcessor::messageCallback);
-    numCsoundChannels = 0;
-//csound->SetParams(csoundParams);
-//csound->SetMessageCallback(CabbagePluginAudioProcessor::messageCallback);
+    csound->SetHostData(this);
+    csound->CreateMessageBuffer(0);
     csound->SetExternalMidiInOpenCallback(OpenMidiInputDevice);
     csound->SetExternalMidiReadCallback(ReadMidiData);
     csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
     csound->SetExternalMidiWriteCallback(WriteMidiData);
+    //csound->SetIsGraphable(0);
+
+
+
+    csoundParams = nullptr;
+    csoundParams = new CSOUND_PARAMS();
+#ifndef CABBAGE_HOST
+    csoundParams->nchnls_override =2;
+#endif
+    csoundParams->displays = 0;
+    csoundParams->sample_rate_override = this->getSampleRate();
+    csoundParams->control_rate_override = cUtils::getKrFromFile(file.getFullPathName(), (int)getSampleRate());
+    csound->SetParams(csoundParams);
+    csound->SetOption((char*)"-n");
+    csound->SetOption((char*)"-d");
+    csound->SetHostImplementedMIDIIO(true);
+    xyAutosCreated = false;
+    numCsoundChannels = 0;
+
 
     CSspout = nullptr;
     CSspin = nullptr;
+    //csound->Stop();
 
     csCompileResult = csound->Compile(const_cast<char*>(file.getFullPathName().toUTF8().getAddress()));
+    file.getParentDirectory().setAsCurrentWorkingDirectory();
 
 #ifdef BUILD_DEBUGGER
     for(int i=0; i<breakpointInstruments.size(); i++)
@@ -715,6 +655,7 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
 
     if(csCompileResult==OK)
     {
+        firstTime=false;
         keyboardState.allNotesOff(0);
         keyboardState.reset();
         //simple hack to allow tables to be set up correctly.
@@ -756,7 +697,7 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
 
         stopProcessing = false;
 
-        return;
+        return csCompileResult;
     }
     else
     {
@@ -764,6 +705,8 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
         csoundStatus=false;
     }
     getCallbackLock().exit();
+
+    return csCompileResult;
 #endif
 }
 //===========================================================
@@ -775,7 +718,7 @@ void CabbagePluginAudioProcessor::reCompileCsound(File file)
 //maybe this should only be done at the end of a k-rate cycle..
 void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 {
-//clear arrays if refresh is set
+    //clear arrays if refresh is set
     if(refresh==true)
     {
         guiLayoutCtrls.clear();
@@ -793,23 +736,54 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     int indexOfLastGUICtrl = guiCtrls.size();
     int indexOfLastLayoutCtrl = guiLayoutCtrls.size();
 
+    String warningMessage;
+
     int test=100;
     int checkGUI = isGuiEnabled();
-//setGuiEnabled((false));
+    //setGuiEnabled((false));
     int guiID=0;
     StringArray csdText;
 
     int lines=1;
     String csdLine("");
-    csdText.addLines(source);
+    csdText.addLines(source.replace("\t", " "));
     bool multiComment = false;
     bool multiLine = false;
-//check for minimal Cabbage GUI
+
+    //csound->Message("\n===Cabbage Warnings===\n");
+    int lineWhichCabbageSectionStarts = 0;
+    int lineWhichCabbageSectionEnds = csdText.size();
+    for(int i=0; i<csdText.size(); i++)
+    {
+        if(csdText[i].contains("<Cabbage>"))
+            lineWhichCabbageSectionStarts=i;
+        else if(csdText[i].contains("</Cabbage>"))
+            lineWhichCabbageSectionEnds=i;
+    }
+
+    csdText.removeRange(0, lineWhichCabbageSectionStarts);
+    csdText.removeRange(lineWhichCabbageSectionEnds+1, 99999);
+
+    //cUtils::debug(csdText.size());
 
     for(int i=0; i<csdText.size(); i++)
     {
+        String temp;
+        //roll any lines with a \ into the next line and remove from csdText array...
+        if(csdText[i].contains(" \\"))
+        {
+            temp = csdText[i+1];
+            csdText.remove(i+1);
+            csdText.set(i, csdText[i].replace(" \\", " ")+temp);
+            //cUtils::debug(csdText[i]);
+        }
+    }
+
+    for(int i=0; i<csdText.size(); i++)
+    {
+
         int csdLineNumber=0;
-#if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
+#if (defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)) && !defined(AndroidBuild)
         if(!refresh)
         {
             StringArray fullText;
@@ -838,7 +812,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                 csdLine = csdLine.trimStart();
                 //csdLine = csdLine.removeCharacters(" \\");
                 //csdLine = csdLine.removeCharacters(",\\");
-                //Logger::writeToLog(csdLine);
+
                 StringArray tokes;
                 tokes.addTokens(csdLine.trimEnd(), ", ", "\"");
 
@@ -861,13 +835,29 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                     presetFlag = "";
                 }
 
+                if(tokes[0].containsIgnoreCase("#define"))
+                {
+                    tokes.removeEmptyStrings();
+                    if(tokes.size()>2)
+                    {
+                        macroText.set("$"+tokes[1], " "+csdLine.substring(csdLine.indexOf(tokes[1])+tokes[1].length())+" ");
+                    }
+                }
+
+                for(int cnt=0; cnt<macroText.size(); cnt++)
+                {
+                    if(csdLine.contains(macroText.getName(cnt).toString()))
+                        csdLine = csdLine.replace(macroText.getName(cnt), macroText.getWithDefault(macroText.getName(cnt), "").toString()+" ");
+                }
+
                 if(!multiComment)
                     //populate the guiLayoutCtrls vector with non-interactive widgets
                     //the host widgets aren't GUI based but they can be added to this
                     //vector too, as can the editor button.
                     if(tokes[0].equalsIgnoreCase(String("form"))
                             ||tokes[0].equalsIgnoreCase(String("image"))
-							||tokes[0].equalsIgnoreCase(String("oscserver"))
+                            ||tokes[0].equalsIgnoreCase(String("socketsend"))
+                            ||tokes[0].equalsIgnoreCase(String("socketreceive"))
                             ||tokes[0].equalsIgnoreCase(String("keyboard"))
                             ||tokes[0].equalsIgnoreCase(String("gentable"))
                             ||tokes[0].equalsIgnoreCase(String("csoundoutput"))
@@ -886,7 +876,8 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             ||tokes[0].equalsIgnoreCase(String("infobutton"))
                             ||tokes[0].equalsIgnoreCase(String("filebutton"))
                             ||tokes[0].equalsIgnoreCase(String("soundfiler"))
-							||tokes[0].equalsIgnoreCase(String("texteditor"))
+                            ||tokes[0].equalsIgnoreCase(String("sourcebutton"))
+                            ||tokes[0].equalsIgnoreCase(String("texteditor"))
                             ||tokes[0].equalsIgnoreCase(String("popupmenu"))
                             ||tokes[0].equalsIgnoreCase(String("snapshot"))
                             ||tokes[0].equalsIgnoreCase(String("table"))
@@ -897,12 +888,17 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             ||tokes[0].equalsIgnoreCase(String("groupbox")))
                     {
                         CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
+                        warningMessage = "";
+                        warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
+                        if(cAttr.getWarningMessages().isNotEmpty())
+                            csound->Message(warningMessage.toUTF8().getAddress());
+
                         //showMessage(csdLine);
                         cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
                         if(cAttr.getStringProp("native").length()>0)
                         {
                             //create generic plugin editor and break..
-                            setupNativePluginEditor();
+                            //setupNativePluginEditor();
                             nativePluginEditor = true;
                             return;
                         }
@@ -913,34 +909,51 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         //showMessage(cAttr.getStringProp("type"));
 
 
-                        if(tokes[0].equalsIgnoreCase(String("oscserver")))
+                        if(tokes[0].equalsIgnoreCase(String("socketsend")))
                         {
-							for(int i=0;i<cAttr.getStringArrayProp(CabbageIDs::channel).size();i++)
-							{								
-								oscChannelIdentifiers.add(cAttr.getStringArrayPropValue("channel", i));
-								Logger::writeToLog(cAttr.getStringArrayPropValue("channel", i));
-								oscChannelValues.set(cAttr.getStringArrayPropValue("channel", i), 0.f);
-							}
-						}
-						
-                        if(cAttr.getStringProp(CabbageIDs::oscaddress).isNotEmpty() && cAttr.getStringProp(CabbageIDs::oscaddress).isNotEmpty())
-						{
-                            oscAddress = cAttr.getStringProp(CabbageIDs::oscaddress);						
-							oscPort = cAttr.getNumProp(CabbageIDs::oscport);
-							oscThread->setupSocket(oscAddress, oscPort);
-							oscThread->setCsoundChannels(oscChannelIdentifiers);
-							oscThread->addChangeListener(this);
-							oscThread->startThread();
-						}
+                            //set up server...
+                            server = new CabbageInterprocessConnectionServer (*this);
+                            socketChannelIdentifiers.clear();
+                            socketChannelValues.clear();
+                            openInterprocess(false, true, cAttr.getStringProp(CabbageIDs::socketaddress),
+                                             cAttr.getNumProp(CabbageIDs::socketport));
+
+                            for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channel).size(); i++)
+                            {
+                                socketChannelIdentifiers.add(cAttr.getStringArrayPropValue("channel", i));
+                                Logger::writeToLog(cAttr.getStringArrayPropValue("channel", i));
+                                socketChannelValues.set(cAttr.getStringArrayPropValue("channel", i), 0.f);
+                            }
+                            //cUtils::debug(socketChannelValues.size());
+                        }
+                        else if(tokes[0].equalsIgnoreCase(String("socketreceive")))
+                        {
+                            server = new CabbageInterprocessConnectionServer (*this);
+                            socketChannelIdentifiers.clear();
+                            socketChannelValues.clear();
+
+                            openInterprocess(false, false, cAttr.getStringProp(CabbageIDs::socketaddress),
+                                             cAttr.getNumProp(CabbageIDs::socketport));
+
+                            for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channel).size(); i++)
+                            {
+                                socketChannelIdentifiers.add(cAttr.getStringArrayPropValue("channel", i));
+                                Logger::writeToLog(cAttr.getStringArrayPropValue("channel", i));
+                                socketChannelValues.set(cAttr.getStringArrayPropValue("channel", i), 0.f);
+                            }
+                            //cUtils::debug(socketChannelValues.size());
+                        }
+
+
                         csdLine = "";
 
 
                         //set up stuff for tables
                         if(tokes[0].equalsIgnoreCase(String("table")))
                         {
-/*                            if(cAttr.getStringArrayProp(CabbageIDs::channel).size()==0)
-                                for(int i=0; i<cAttr.getIntArrayProp("tablenumber").size(); i++)
-                                    cAttr.addDummyChannel("dummy"+String(i));*/
+                            /*                            if(cAttr.getStringArrayProp(CabbageIDs::channel).size()==0)
+                             for(int i=0; i<cAttr.getIntArrayProp("tablenumber").size(); i++)
+                             cAttr.addDummyChannel("dummy"+String(i));*/
 
                             for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channel).size(); i++)
                                 cAttr.addTableChannelValues();
@@ -955,23 +968,28 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         else if(cAttr.getStringProp(String("reltoplant")).equalsIgnoreCase(String("")))
                             cAttr.setStringProp(String("reltoplant"), plantFlag);
 
-							if(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0){
-								//showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).joinIntoString(" ")));
-								//showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()));
-								for(int i=0;i<cAttr.getStringArrayProp(CabbageIDs::channelarray).size();i++)
-								{
-									CabbageGUIClass copy = cAttr;
-									copy.setStringProp(CabbageIDs::channel, cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
-									copy.setStringProp(CabbageIDs::identchannel, cAttr.getStringArrayProp(CabbageIDs::identchannelarray).getReference(i));
-									//Logger::writeToLog(cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
-									guiLayoutCtrls.add(copy);
-									guiID++;
-								}
-							}
-							else{
-								guiLayoutCtrls.add(cAttr);
-								guiID++;
-							}
+
+                        //if an array of objects is being set up...
+                        if((cAttr.getStringArrayProp(CabbageIDs::identchannelarray).size()>0) &&
+                                (cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0))
+                        {
+                            //showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).joinIntoString(" ")));
+                            //showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()));
+                            for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channelarray).size(); i++)
+                            {
+                                CabbageGUIClass copy = cAttr;
+                                copy.setStringProp(CabbageIDs::channel, cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
+                                copy.setStringProp(CabbageIDs::identchannel, cAttr.getStringArrayProp(CabbageIDs::identchannelarray).getReference(i));
+                                //Logger::writeToLog(cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
+                                guiLayoutCtrls.add(copy);
+                                guiID++;
+                            }
+                        }
+                        else
+                        {
+                            guiLayoutCtrls.add(cAttr);
+                            guiID++;
+                        }
 
                         if(cAttr.getStringProp("type").containsIgnoreCase("form"))
                             if(cAttr.getStringProp("text").length()>2)
@@ -994,16 +1012,25 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                     }
                 //populate the guiCtrls vector with interactive widgets
                     else if(tokes[0].equalsIgnoreCase(String("hslider"))
-                            ||tokes[0].equalsIgnoreCase(String("vslider"))
+                            ||tokes[0].equalsIgnoreCase(String("hslider2"))
+                            ||tokes[0].equalsIgnoreCase(String("hslider3"))
                             ||tokes[0].equalsIgnoreCase(String("rslider"))
+                            ||tokes[0].equalsIgnoreCase(String("vslider"))
+                            ||tokes[0].equalsIgnoreCase(String("vslider2"))
+                            ||tokes[0].equalsIgnoreCase(String("vslider3"))
                             ||tokes[0].equalsIgnoreCase(String("combobox"))
                             ||tokes[0].equalsIgnoreCase(String("checkbox"))
                             ||tokes[0].equalsIgnoreCase(String("numberbox"))
                             ||tokes[0].equalsIgnoreCase(String("xypad"))
                             ||tokes[0].equalsIgnoreCase(String("button")))
                     {
-						
+
                         CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
+                        warningMessage = "";
+                        warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
+                        if(cAttr.getWarningMessages().isNotEmpty())
+                            csound->Message(warningMessage.toUTF8().getAddress());
+
                         cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
                         //Logger::writeToLog(csdLine.trimEnd());
                         csdLine = "";
@@ -1019,7 +1046,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                                 cAttr.setStringProp(String("preset"), presetFlag.trim());
                             //showMessage(cAttr.getStringProp("preset"));
                         }
-												
+
                         //xypad contain two control paramters, one for x axis and another for y. As such we add two
                         //to our contorl vector so that plugin hosts display two sliders. We name one of the xypad pads
                         // 'dummy' so that our editor doesn't display it. Our editor only needs to show one xypad.
@@ -1049,24 +1076,34 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         else
                         {
                             //if an array of objects is to be set up enter.....
-							if(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0){
-								//showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).joinIntoString(" ")));
-								//showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()));
-								for(int i=0;i<cAttr.getStringArrayProp(CabbageIDs::channelarray).size();i++)
-								{
-									CabbageGUIClass copy = cAttr;
-									copy.setStringProp(CabbageIDs::channel, cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
-									copy.setStringProp(CabbageIDs::identchannel, cAttr.getStringArrayProp(CabbageIDs::identchannelarray).getReference(i));
-									//Logger::writeToLog(cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
-									guiCtrls.add(copy);
-									guiID++;
-								}
-							}
-                            else{
-								guiCtrls.add(cAttr);
-								guiID++;
-							}
-                            
+                            if(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0)
+                            {
+                                //showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).joinIntoString(" ")));
+                                //showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()));
+                                for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channelarray).size(); i++)
+                                {
+                                    CabbageGUIClass copy = cAttr;
+                                    copy.setStringProp(CabbageIDs::channel, cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
+                                    copy.setStringProp(CabbageIDs::identchannel, cAttr.getStringArrayProp(CabbageIDs::identchannelarray).getReference(i));
+                                    //Logger::writeToLog(cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
+                                    guiCtrls.add(copy);
+                                    guiID++;
+                                }
+                            }
+                            else
+                            {
+                                guiCtrls.add(cAttr);
+                                guiID++;
+                                if(tokes[0].equalsIgnoreCase(String("hslider2")) || tokes[0].equalsIgnoreCase(String("vslider2")))
+                                {
+                                    cAttr.setStringProp(String(CabbageIDs::channel), cAttr.getStringArrayPropValue(CabbageIDs::channel, 1));
+
+                                    cAttr.setStringProp("name", cAttr.getStringProp(CabbageIDs::name)+String("dummy"));
+                                    guiCtrls.add(cAttr);
+                                    guiID++;
+                                }
+                            }
+
                         }
 
                         //debugMessageArray.addArray(logGUIAttributes(cAttr, String("Interactive")));
@@ -1078,16 +1115,16 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
         else break;
     } //end of scan through entire csd text, control vectors are now populated
 
-
+    //csound->Message("===End of Cabbage warnings===\n");
     //init all channels with their init val, and set parameters
     for(int i=0; i<guiCtrls.size(); i++)
     {
-//		Logger::writeToLog(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel)+": "+String(guiCtrls[i].getNumProp(CabbageIDs::value)));
+        //		Logger::writeToLog(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel)+": "+String(guiCtrls[i].getNumProp(CabbageIDs::value)));
 #ifndef Cabbage_No_Csound
         if(guiCtrls.getReference(i).getStringProp("channeltype")=="string")
             //deal with combobox strings..
             csound->SetChannel(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), "");
-//									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
+        //									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
         else
             csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::value));
 #endif
@@ -1096,17 +1133,19 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     //init all channels with their init val, and set parameters
     for(int i=0; i<guiLayoutCtrls.size(); i++)
     {
-//		Logger::writeToLog(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel)+": "+String(guiCtrls[i].getNumProp(CabbageIDs::value)));
+        if(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("texteditor"))
+            csound->SetChannel(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
+                               guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::text).toUTF8().getAddress());
 #ifndef Cabbage_No_Csound
         if(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::identchannel).isNotEmpty())
             //deal with combobox strings..
             csound->SetChannel(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::identchannel).toUTF8(), "");
-//									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
+        //									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
 #endif
     }
 
 
-#ifdef Cabbage_Build_Standalone
+//#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 
     if(this->getActiveEditor())
     {
@@ -1131,7 +1170,254 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 
     }
 
+//#endif
+}
+
+//===========================================================
+// SHOW SOURCE EDITOR
+//===========================================================
+void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
+{
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+    if(!cabbageCsoundEditor)
+    {
+        cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
+        cabbageCsoundEditor->setVisible(true);
+        cabbageCsoundEditor->toFront(true);
+        //setupWindowDimensions();
+        cabbageCsoundEditor->addActionListener(this);
+        cabbageCsoundEditor->setLookAndFeel(looky);
+        cabbageCsoundEditor->textEditor->editor[0]->loadContent(csdFile.loadFileAsString());
+        codeEditor = cabbageCsoundEditor->textEditor;
+    }
 #endif
+}
+
+void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
+{
+
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+
+    if(message=="open file")
+    {
+        WildcardFileFilter wildcardFilter = WildcardFileFilter("*.csd", "", "File filter");
+        Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file",
+                                    wildcardFilter,
+                                    "*.csd",
+                                    1,
+                                    File("").getParentDirectory(),
+                                    false,
+                                    &cabbageCsoundEditor->getLookAndFeel());
+
+        if(selectedFiles.size())
+        {
+            csdFile = selectedFiles[0];
+            cabbageCsoundEditor->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
+            createGUI(selectedFiles[0].loadFileAsString(), true);
+            reCompileCsound(csdFile);
+        }
+    }
+
+    if(message=="closing editor")
+    {
+        delete cabbageCsoundEditor;
+        cabbageCsoundEditor = nullptr;
+    }
+
+    if(message == "GUI Update, PropsPanel")
+    {
+        //if something changes in the properties panel we need to update our GUI so
+        //that the changes are reflected in the on screen components
+        createGUI(csdFile.loadFileAsString(), true);
+        if(cabbageCsoundEditor)
+        {
+            //cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
+            cabbageCsoundEditor->textEditor->highlightLine(getCurrentLineText());
+        }
+    }
+
+    else if(message == "Score Updated")
+    {
+        if(cabbageCsoundEditor)
+        {
+            //cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
+            cabbageCsoundEditor->textEditor->highlightLine(getCurrentLineText());
+        }
+    }
+
+    else if(message == "GUI Updated, controls added, resized")
+    {
+        //no need to update our entire GUI here as only on-screen sizes change
+        setCurrentLine(getCurrentLine()+1);
+        if(cabbageCsoundEditor)
+        {
+            //cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
+            cabbageCsoundEditor->textEditor->highlightLine(getCurrentLineText());
+        }
+    }
+
+    else if(message == "GUI Updated, controls deleted")
+    {
+        //controls have already been deleted, we just need to update our file
+        if(cabbageCsoundEditor)
+            cabbageCsoundEditor->csoundDoc.replaceAllContent(csdFile.loadFileAsString());
+    }
+
+    else if(message.equalsIgnoreCase("fileSaved"))
+    {
+        //saveFile();
+        if(csdFile.hasWriteAccess())
+        {
+            csdFile.replaceWithText(cabbageCsoundEditor->getText());
+        }
+
+        createGUI(csdFile.loadFileAsString(), true);
+        reCompileCsound(csdFile);
+
+        if(isGuiEnabled())
+        {
+            startTimer(100);
+            ((CabbagePluginAudioProcessorEditor*)getActiveEditor())->setEditMode(false);
+            setGuiEnabled(false);
+        }
+    }
+
+
+    else if(message.contains("ContinueDebug"))
+    {
+        continueCsoundDebug();
+    }
+
+    else if(message.contains("RemoveAllBreakpoints"))
+    {
+        cleanCsoundDebug();
+    }
+
+    else if(message.contains("NextDebug"))
+    {
+        nextCsoundDebug();
+    }
+
+    else if(message.contains("InstrumentBreakpoint"))
+    {
+        if(message.contains("Set"))
+        {
+            int instrNumber = message.substring(24).getIntValue();
+            setCsoundInstrumentBreakpoint(instrNumber, 0);
+        }
+        else
+        {
+            int instrNumber = message.substring(27).getIntValue();
+            removeCsoundInstrumentBreakpoint(instrNumber);
+
+        }
+    }
+
+    else if(message.contains("fileUpdateGUI"))
+    {
+        createGUI(cabbageCsoundEditor->getText(), true);
+        csdFile.replaceWithText(cabbageCsoundEditor->getText());
+        if(cabbageCsoundEditor)
+        {
+            cabbageCsoundEditor->setName(csdFile.getFullPathName());
+        }
+    }
+
+    else if(message.contains("MENU COMMAND: toggle edit"))
+    {
+        if(isGuiEnabled())
+        {
+            ((CabbagePluginAudioProcessorEditor*)getActiveEditor())->setEditMode(false);
+            setGuiEnabled(false);
+            //filter->suspendProcessing(false);
+        }
+        else
+        {
+            ((CabbagePluginAudioProcessorEditor*)getActiveEditor())->setEditMode(true);
+            setGuiEnabled(true);
+            //filter->suspendProcessing(true);
+
+            //stopTimer();
+            //setPreference(appProperties, "ExternalEditor", 0);
+        }
+    }
+
+#endif
+}
+
+//============= deal with interprocess communication =========================
+void CabbagePluginAudioProcessor::CabbageInterprocessConnection::messageReceived(const MemoryBlock& message)
+{
+    StringArray data;
+    data.addTokens(message.toString(), " ");
+    owner.messageQueue.addOutgoingChannelMessageToQueue(data[0], data[1].getFloatValue(), "float");
+    //owner.appendMessage ("Connection #" + String (ourNumber) + " - message received: " + message.toString());
+}
+
+void CabbagePluginAudioProcessor::openInterprocess (bool asSocket, bool asSender, String address, int port)
+{
+    closeInterprocess();
+
+    // Make the appropriate bits of UI visible..
+
+
+    // and try to open the socket or pipe...
+    bool openedOk = false;
+
+    if (asSender)
+    {
+        // if we're connecting to an existing server, we can just create a connection object
+        // directly.
+        ScopedPointer<CabbageInterprocessConnection> newConnection (new CabbageInterprocessConnection (*this));
+
+        if (asSocket)
+        {
+            openedOk = newConnection->connectToSocket(address,
+                       port,
+                       1000);
+        }
+        else
+        {
+            openedOk = newConnection->connectToPipe ("CabbagePipe", 100);
+        }
+
+        if (openedOk)
+        {
+            activeConnections.add (newConnection.release());
+
+        }
+        else
+            csound->Message("Couldn't create connection?");
+    }
+    else
+    {
+        // if we're starting up a server, we need to tell the server to start waiting for
+        // clients to connect. It'll then create connection objects for us when clients arrive.
+        if (asSocket)
+        {
+            openedOk = server->beginWaitingForSocket (port);
+
+            if (openedOk)
+                csound->Message("Waiting for another app to connect to Cabbage server..");
+        }
+        else
+        {
+            ScopedPointer<CabbageInterprocessConnection> newConnection (new CabbageInterprocessConnection (*this));
+
+            openedOk = newConnection->createPipe ("CabbagePipe", 100);
+
+            if (openedOk)
+            {
+                csound->Message("Waiting for another app to connect to Cabbage server..");
+                activeConnections.add (newConnection.release());
+            }
+        }
+    }
+
+    if (! openedOk)
+    {
+        csound->Message("Failed to open pipe...");
+    }
 }
 
 //============================================================================
@@ -1139,7 +1425,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 //============================================================================
 void CabbagePluginAudioProcessor::removeGUIComponent(int index, String type)
 {
-//remove component struct from our abstract vector
+    //remove component struct from our abstract vector
     CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
 
     if(type=="interactive")
@@ -1162,11 +1448,12 @@ void CabbagePluginAudioProcessor::removeGUIComponent(int index, String type)
 //============================================================================
 void CabbagePluginAudioProcessor::startRecording ()
 {
-    if(isWinXP)
+    if(!isWinXP)
         if (sampleRate > 0)
         {
             // Create an OutputStream to write to our destination file...
             tempAudioFile.deleteFile();
+            backgroundThread.startThread();
             ScopedPointer<FileOutputStream> fileStream (tempAudioFile.createOutputStream());
 
             if (fileStream != nullptr)
@@ -1197,7 +1484,7 @@ void CabbagePluginAudioProcessor::startRecording ()
 
 void CabbagePluginAudioProcessor::stopRecording()
 {
-    if(isWinXP)
+    if(!isWinXP)
     {
         // First, clear this pointer to stop the audio callback from using our writer object..
         {
@@ -1222,91 +1509,48 @@ void CabbagePluginAudioProcessor::stopRecording()
     }
 }
 
-//============================================================================
-//SETS UP A GENERIC PLUGIN EDITOR
-//============================================================================
-void CabbagePluginAudioProcessor::setupNativePluginEditor()
+
+String CabbagePluginAudioProcessor::getCsoundOutput()
 {
-    /*
-    //create a basic 'native' gui if specificed by the user.
-    	int guiID = 0;
-    	guiCtrls.clear();
-    	for(int i=0;i<numCsoundChannels;i++){
-    		const CsoundChannelListEntry& entry = csoundChanList[i];
-    		if (entry.type & CSOUND_CONTROL_CHANNEL && entry.type & CSOUND_INPUT_CHANNEL) {
-    			MYFLT ddefault, dmin, dmax;
-    			int value_type = getCsound()->GetControlChannelParams(entry.name, ddefault, dmin, dmax);
-    			String parameterInfo;
-    			float initVal = (ddefault<dmin ? dmin : ddefault);
-    			parameterInfo << "channel(\"" << entry.name << "\"), " << "range(" << String(dmin) << ", " << String(dmax) << ", " << String(initVal) << ")";
-    			Logger::writeToLog(parameterInfo);
-    			CabbageGUIClass cAttr(parameterInfo, guiID);
-    			cAttr.setNumProp("range", dmax-dmin);
-    			//cAttr.setStringProp(CabbageIDs::channel, entry.name);
-    			//cAttr.setNumProp("max", (dmax>0 ? dmax : 1));
-    			//cAttr.setNumProp("init", (ddefault<dmin ? dmin : ddefault));
+    const int messageCnt = csound->GetMessageCnt();
 
-    			    switch(value_type) {
-    					case CSOUND_CONTROL_CHANNEL_INT:
-    					cAttr.setNumProp("incr", 1);
-    					break;
+    if(messageCnt==0)
+        return csoundOutput;
 
-    					case CSOUND_CONTROL_CHANNEL_LIN:
-    					cAttr.setNumProp("incr", .01);
-    					break;
+    for(int i=0; i<messageCnt; i++)
+    {
+        csoundOutput+=csound->GetFirstMessage();
+        csound->PopFirstMessage();
+    }
 
-    					case CSOUND_CONTROL_CHANNEL_EXP:
-    					cAttr.setNumProp("skew", .5);
-    					break;
-
-    					default:
-
-    					break;
-    				}
-
-    			guiCtrls.add(cAttr);
-    			setPluginName("Test Plugin");
-    			guiID++;
-    			}
-    		}
-    		 */
+    return csoundOutput;
 }
-
-//===========================================================
-// SHOW SOURCE EDITOR
-//===========================================================
-//void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
-//{
-//if(!cabbageCsoundEditor){
-//cabbageCsoundEditor = new CabbageEditorWindow(looky);
-//cabbageCsoundEditor->setCsoundFile(csdFile);
-//cabbageCsoundEditor->setCsoundOutputText(csoundOutput);
-//}
-//cabbageCsoundEditor->setVisible(true);
-//}
 
 //===========================================================
 // CALLBACKS FOR STANDALONE
 //===========================================================
-#ifndef Cabbage_No_Csound
-void CabbagePluginAudioProcessor::messageCallback(CSOUND* csound, int /*attr*/,  const char* fmt, va_list args)
-{
-    CabbagePluginAudioProcessor* ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
-    char msg[MAX_BUFFER_SIZE];
-    vsnprintf(msg, MAX_BUFFER_SIZE, fmt, args);
-
-    ud->debugMessage += String(msg); //We have to append the incoming msg
-    ud->csoundOutput += ud->debugMessage;
-    ud->debugMessageArray.add(ud->debugMessage);
-    if(ud->createLog)
-        Logger::writeToLog(String(msg).trim());
-    ud->sendChangeMessage();
-    ud->debugMessage = "";
-    ud = nullptr;
-}
-
-
-#endif
+//#ifndef Cabbage_No_Csound
+//void CabbagePluginAudioProcessor::messageCallback(CSOUND* csound, int /*attr*/,  const char* fmt, va_list args)
+//{
+//    if(fmt)
+//    {
+//        CabbagePluginAudioProcessor* ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
+//        char msg[MAX_BUFFER_SIZE];
+//        vsnprintf(msg, MAX_BUFFER_SIZE, fmt, args);
+//
+//        ud->debugMessage += String(msg); //We have to append the incoming msg
+//		//const MessageManagerLock mmLock;
+//        ud->csoundOutput += ud->debugMessage;
+//        ud->debugMessageArray.add(ud->debugMessage);
+//        if(ud->createLog)
+//            Logger::writeToLog(String(msg).trim());
+//        ud->sendChangeMessage();
+//        ud->debugMessage = "";
+//        ud = nullptr;
+//
+//    }
+//}
+//#endif
 
 #if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
 
@@ -1368,7 +1612,7 @@ void CabbagePluginAudioProcessor::breakpointCallback(CSOUND *csound, debug_bkpt_
 }
 #endif
 //==============================================================================
-#if defined(Cabbage_Build_Standalone) || defined(Cabbage_Plugin_Host)
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int pluginType)
 {
     return new CabbagePluginAudioProcessor(inputfile, false, pluginType);
@@ -1393,6 +1637,7 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 #ifdef Cabbage_Build_Standalone
         setParameterNotifyingHost(xyPad->paramIndex, xyPad->getXValue());
         setParameterNotifyingHost(xyPad->paramIndex+1, xyPad->getYValue());
+        sendChangeMessage();
 #else
         if(xyPad->getMinimumXValue()>=0)
             xVal = (xyPad->getXValue()/xyPad->getXRange())+(fabs(xyPad->getMinimumXValue())/xyPad->getXRange());
@@ -1404,28 +1649,13 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
         else
             yVal = (xyPad->getYValue()/xyPad->getYRange())-(fabs(xyPad->getMinimumYValue())/xyPad->getYRange());
 
-        //Logger::writeToLog("Param:"+String(xyPad->paramIndex)+"  xyPadXVal:"+String(xVal));
-        //Logger::writeToLog("Param:"+String(xyPad->paramIndex+1)+"  xyPadYVal:"+String(yVal));
-
         setParameterNotifyingHost(xyPad->paramIndex, xVal);
         setParameterNotifyingHost(xyPad->paramIndex+1, yVal);
+        sendChangeMessage();
 #endif
     }
-	
-    OscThread* oscObject = dynamic_cast< OscThread*>(source);
-    if(oscObject)
-	{
-		for(int i=0;i<oscObject->getMessages().getNumberOfOutgoingChannelMessagesInQueue();i++)
-		{
-		//csound-> oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).channelName,
-		//											  oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).value, "float");
-		csound->SetChannel(oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).channelName.getCharPointer(),
-                                   oscObject->getMessages().getOutgoingChannelMessageFromQueue(i).value);
-		//Logger::writeToLog("OSC invoming messages");			
-		}
-		oscObject->flushOSCMessages();
-	}
-	
+
+
 }
 
 //==============================================================================
@@ -1433,35 +1663,31 @@ void CabbagePluginAudioProcessor::changeListenerCallback(ChangeBroadcaster *sour
 //==============================================================================
 StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 {
-StringArray fdata;
-fdata.add(String::empty);
+    StringArray fdata;
+    fdata.add(String::empty);
 #ifndef Cabbage_No_Csound
     if(csCompileResult==OK)
     {
         MYFLT* argsPtr, *temp;
-		int noOfArgs = -1;//csoundGetTableArgs(csound->GetCsound(), &argsPtr, tableNum);
-		if(noOfArgs!=-1)
-		{
-		int tableSize = csound->GetTable(temp, tableNum);
-		fdata.add(String(tableNum));	
-		fdata.add("0");
-		fdata.add(String(tableSize));
-		for(int i=0;i<noOfArgs;i++)
-		//Logger::writeToLog("TableNum:"+String(tableNum)+" ArgsCount:"+String(noOfArgs));
-			fdata.add(String(argsPtr[i]));
-		}
-        //int tableSize = csound->GetTable(temp, tableNum);
-        //if(tableSize>0)
-        //{
-			//uncomment with dev and modified Csound
-            /*EVTBLK* e = (EVTBLK*)csoundTableGetEvtblk(csound->GetCsound(), tableNum);
-            for(int i=0; i<=e->pcnt; i++)
-                fdata.add(String(e->p[i]));*/
-        //}
+        int noOfArgs = csoundGetTableArgs(csound->GetCsound(), &argsPtr, tableNum);
+        if(noOfArgs!=-1)
+        {
+            int tableSize = csound->GetTable(temp, tableNum);
+            fdata.add(String(tableNum));
+            fdata.add("0");
+            fdata.add(String(tableSize));
+            if(noOfArgs==0)
+                fdata.add(String(1));
+            else
+                for(int i=0; i<noOfArgs; i++)
+                {
+                    fdata.add(String(argsPtr[i]));
+                }
+        }
     }
 #endif
     return fdata;
-} 
+}
 //==============================================================================
 const Array<double, CriticalSection> CabbagePluginAudioProcessor::getTable(int tableNum)
 {
@@ -1510,10 +1736,10 @@ const Array<float, CriticalSection> CabbagePluginAudioProcessor::getTableFloats(
 
 int CabbagePluginAudioProcessor::checkTable(int tableNum)
 {
-#ifndef Cabbage_No_Csound	
-	return  csound->TableLength(tableNum);	
+#ifndef Cabbage_No_Csound
+    return  csound->TableLength(tableNum);
 #else
-	return -1;
+    return -1;
 #endif
 }
 
@@ -1549,23 +1775,20 @@ float CabbagePluginAudioProcessor::getParameter (int index)
             return 0.0f;
     }
     else
+    {
+        cUtils::debug("getParameter(): Parameter index out of bounds");
         return 0.0f;
+    }
 }
-
 
 void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
 {
     String stringMessage;
 #ifndef Cabbage_No_Csound
-    /* this will get called by the plugin GUI sliders or
-    by the host, via automation. The timer thread in the plugin's editor
-    will constantly update with the values that have been set here.
-    We don't actually change any parameters here, we simply add the messages
-    to a queue. See next method. The updates will only happen when it's safe to do. */
     float range, min, max, comboRange;
-//add index of control that was changed to dirty control vector
+    //add index of control that was changed to dirty control vector
     dirtyControls.addIfNotAlreadyThere(index);
-//Logger::writeToLog("parameterSet:"+String(newValue));
+    //Logger::writeToLog("parameterSet:"+String(newValue));
     if(index<(int)guiCtrls.size())//make sure index isn't out of range
     {
 #ifndef Cabbage_Build_Standalone
@@ -1585,23 +1808,23 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
         else
             newValue = (newValue*range)+min;
 
+
+
 #endif
         if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox &&
                 getGUICtrls(index).getStringProp(CabbageIDs::channeltype)==CabbageIDs::stringchannel)
         {
+            cUtils::debug(getGUICtrls(index).getStringArrayProp(CabbageIDs::text).size());
             stringMessage = getGUICtrls(index).getStringArrayPropValue(CabbageIDs::text, newValue-1);
-            Logger::writeToLog(stringMessage);
             messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel),
-                    stringMessage,
-                    CabbageIDs::stringchannel);
+                    stringMessage, CabbageIDs::stringchannel);
         }
         else
         {
             messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel),
-                    newValue,
-                    guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
-        }
+                    newValue, guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
 
+        }
         guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
     }
 #endif
@@ -1615,23 +1838,44 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
 void CabbagePluginAudioProcessor::updateCabbageControls()
 {
 #ifndef Cabbage_No_Csound
+    bool shouldUpdate = false;
     String chanName, channelMessage;
     if(csCompileResult==OK)
     {
-		//receive OSC data from Csound channels
-		for(int i=0;i<oscChannelIdentifiers.size();i++)
-		{
-			//showMessage(oscChannelIdentifiers[i]);
-			float currentVal = (float)oscChannelValues.getWithDefault(oscChannelIdentifiers[i], -9999);
-			float channelValue = csound->GetChannel(oscChannelIdentifiers[i].getCharPointer());
+        for(int i=0; i<socketChannelIdentifiers.size(); i++)
+        {
+            //showMessage(oscChannelIdentifiers[i]);
+            float currentVal = (float)socketChannelValues.getWithDefault(socketChannelIdentifiers[i], -9999);
+            float channelValue = csound->GetChannel(socketChannelIdentifiers[i].getCharPointer());
 
-			if(currentVal != channelValue)
-			{
-				oscChannelValues.set(oscChannelIdentifiers[i], channelValue);
-				oscThread->sendOSC(oscChannelIdentifiers[i], channelValue);
-			}
-		}
-		
+            if(currentVal != channelValue)
+            {
+                socketChannelValues.set(socketChannelIdentifiers[i], channelValue);
+                //MemoryBlock messageData (socketChannelValues.getWithDefault(socketChannelIdentifiers[i], ""), sizeof(float));
+                //
+                const String message (socketChannelIdentifiers[i] + " " + String(channelValue));
+                MemoryBlock messageData(message.toUTF8(), message.getNumBytesAsUTF8());
+                for (int i = activeConnections.size(); --i >= 0;)
+                {
+                    if (! activeConnections[i]->sendMessage (messageData))
+                    {
+                        // the write failed, so indicate that the connection has broken..
+                        //csound->Message("Cabbage is trying to output a message to another process but can't because it can't find a connection!");
+                    }
+                }
+
+            }
+        }
+
+//		{
+//			char string[1024] = {0};
+//            csound->GetStringChannel("HappyDays", string);
+//			const String message = String(string);
+//			//cUtils::debug(message);
+//			csound->SetChannel("HappyDays", "");
+//
+//		}
+
         //update all control widgets
         for(int index=0; index<getGUICtrlsSize(); index++)
         {
@@ -1642,26 +1886,29 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
             else
             {
                 float value = csound->GetChannel(guiCtrls[index].getStringProp(CabbageIDs::channel).getCharPointer());
-                //Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));
-                //Logger::writeToLog("value:"+String(value));
+
                 if(value!=guiCtrls.getReference(index).getNumProp(CabbageIDs::value))
                 {
+                    //Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));
+                    //Logger::writeToLog("value:"+String(value));
                     guiCtrls.getReference(index).setNumProp(CabbageIDs::value, value);
                     dirtyControls.addIfNotAlreadyThere(index);
+                    shouldUpdate = true;
                 }
             }
 
             if(guiCtrls[index].getStringProp(CabbageIDs::identchannel).isNotEmpty())
             {
                 //if controls has an identifier channel send data from Csound to control
-                char string[1024] = {0};
+                char string[4096] = {0};
                 csound->GetStringChannel(guiCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), string);
                 channelMessage = String(string);
-                if(channelMessage!="")
+                if(channelMessage.isNotEmpty())
                 {
                     guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
                     guiCtrls.getReference(index).parse(" "+channelMessage, "");
                     dirtyControls.addIfNotAlreadyThere(index);
+                    shouldUpdate = true;
                 }
                 //else
                 //guiCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
@@ -1682,20 +1929,22 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                     //String test = getGUILayoutCtrls(index).getStringArrayPropValue(CabbageIDs::channel, y);
                     float value = csound->GetChannel(guiLayoutCtrls[index].getStringArrayPropValue(CabbageIDs::channel, y).getCharPointer());
                     guiLayoutCtrls[index].setTableChannelValues(y, value);
+                    shouldUpdate=true;
                 }
             }
 
             if(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).isNotEmpty())
             {
-                char string[1024] = {0};
+                char string[4096] = {0};
                 //guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress()
                 csound->GetStringChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), string);
                 channelMessage = String(string);
                 //Logger::writeToLog(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel));
-                if(channelMessage!="")
+                if(channelMessage.isNotEmpty())
                 {
-                    guiLayoutCtrls.getReference(index).parse(" "+channelMessage, "");
-                    guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
+                    guiLayoutCtrls.getReference(index).parse(" "+channelMessage, channelMessage);
+                    guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage,channelMessage.trim());
+                    shouldUpdate=true;
                 }
                 //else
                 //	guiLayoutCtrls.getReference(index).setStringProp(CabbageIDs::identchannelmessage, "");
@@ -1703,8 +1952,9 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 csound->SetChannel(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
             }
         }
+        if(shouldUpdate)
+            sendChangeMessage();
     }
-    sendChangeMessage();
 #endif
 }
 
@@ -1719,15 +1969,17 @@ void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
     {
 #ifndef Cabbage_Build_Standalone
         if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+        {
             csound->SetChannel(CabbageIDs::hostbpm.toUTF8(), hostInfo.bpm);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::timeinseconds.toUTF8(), hostInfo.timeInSeconds);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::isplaying.toUTF8(), hostInfo.isPlaying);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
-        if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
+            csound->SetChannel(CabbageIDs::timeinsamples.toUTF8(), hostInfo.timeInSamples);
+            csound->SetChannel(CabbageIDs::timeSigDenom.toUTF8(), hostInfo.timeSigDenominator);
+            csound->SetChannel(CabbageIDs::timeSigNum.toUTF8(), hostInfo.timeSigNumerator);
+
+        }
 #endif
 
         for(int i=0; i<messageQueue.getNumberOfOutgoingChannelMessagesInQueue(); i++)
@@ -1836,7 +2088,7 @@ bool CabbagePluginAudioProcessor::producesMidi() const
 
 void CabbagePluginAudioProcessor::setGuiEnabled(bool val)
 {
-#if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
+#if (defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)) && !defined(AndroidBuild)
     guiON = val;
     CabbagePluginAudioProcessorEditor* editor = dynamic_cast< CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
     if(editor)
@@ -1877,7 +2129,7 @@ void CabbagePluginAudioProcessor::prepareToPlay (double sampRate, int samplesPer
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-	//showMessage(String(this->getNumOutputChannels()));
+    //showMessage(String(this->getNumOutputChannels()));
     keyboardState.reset();
     sampleRate = sampRate;
 }
@@ -1906,160 +2158,112 @@ void CabbagePluginAudioProcessor::timerCallback()
 void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
     float* audioBuffer;
-	int numSamples = buffer.getNumSamples();
+    int numSamples = buffer.getNumSamples();
 
     if(stopProcessing || isGuiEnabled())
     {
-		buffer.clear();
-	}
-	else{
+        buffer.clear();
+    }
+    else
+    {
 #ifndef Cabbage_No_Csound
+        //if no inputs are used clear buffer in case it's not empty..
+        if(getNumInputChannels()==0)
+            buffer.clear();
 
-			if(csCompileResult==OK)
-			{
-
-				keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
-				midiBuffer = midiMessages;
-				ccBuffer = midiMessages;
-
-				//if no inputs are used clear buffer in case it's not empty..
-				if(getNumInputChannels()==0)
-					buffer.clear();
-
-	#if JucePlugin_ProducesMidiOutput
-				if(!midiOutputBuffer.isEmpty())
-					midiMessages.swapWith(midiOutputBuffer);
-	#endif
-
-				for(int i=0; i<numSamples; i++, csndIndex++)
-				{
-					if(csndIndex == csound->GetKsmps())
-					{
-						getCallbackLock().enter();
-						//slow down calls to these functions, no need for them to be firing at k-rate
-						yieldCounter = (yieldCounter>guiRefreshRate) ? 0 : yieldCounter+1;
-						if(yieldCounter==0)
-						{
-							sendOutgoingMessagesToCsound();
-							updateCabbageControls();
-						}
+        if(csCompileResult==OK)
+        {
+            if(isBypassed==true)
+                return;
 
 
-						csCompileResult = csound->PerformKsmps();
 
-						if(csCompileResult!=OK)
-							stopProcessing = true;
-						else
-							ksmpsOffset++;
-
-						getCallbackLock().exit();
-						csndIndex = 0;
-					}
-					if(csCompileResult==OK)
-					{
-						for(int channel = 0; channel < getNumOutputChannels(); channel++ )
-						{
-							audioBuffer = buffer.getWritePointer(channel,0);
-							pos = csndIndex*getNumOutputChannels();
-							CSspin[channel+pos] = audioBuffer[i]*cs_scale;
-							audioBuffer[i] = (CSspout[channel+pos]/cs_scale);
-						}
-					}
-					else
-						buffer.clear();
-
-
-				}
-
-				if (activeWriter != 0 && !isWinXP)
-					activeWriter->write (buffer.getArrayOfReadPointers(), buffer.getNumSamples());
-
-
-			}//if not compiled just mute output
-			else
-			{
-				for(int channel = 0; channel < getNumInputChannels(); channel++)
-				{
-					audioBuffer = buffer.getWritePointer(channel,0);
-					for(int i=0; i<numSamples; i++, csndIndex++)
-					{
-						audioBuffer[i]=0;
-					}
-				}
-			}
-
-	#endif
-		}
+            keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
+            midiBuffer = midiMessages;
+            //midiBuffer.clear();
 
 #if JucePlugin_ProducesMidiOutput
-    if(!midiBuffer.isEmpty())
-        midiMessages.swapWith(midiOutputBuffer);
+            if(!midiOutputBuffer.isEmpty())
+            {
+                midiMessages.swapWith(midiOutputBuffer);
+            }
+            else
+                midiMessages.clear();
 #endif
-}
 
-//==============================================================================
-// breakpoint functions
-//==============================================================================
-void CabbagePluginAudioProcessor::setCsoundInstrumentBreakpoint(int instr, int line=0)
-{
-#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
-    getCallbackLock().enter();
-    if(breakpointInstruments.size()==0)
-        csoundDebuggerInit(csound->GetCsound());
-    csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
-    csoundSetInstrumentBreakpoint(csound->GetCsound(), instr, 0);
-    breakpointInstruments.add(instr);
-    getCallbackLock().exit();
+            for(int i=0; i<numSamples; i++, csndIndex++)
+            {
+                if(csndIndex == csdKsmps)
+                {
+                    getCallbackLock().enter();
+                    //slow down calls to these functions, no need for them to be firing at k-rate
+                    yieldCounter = (yieldCounter>guiRefreshRate) ? 0 : yieldCounter+1;
+                    if(yieldCounter==0)
+                    {
+                        sendOutgoingMessagesToCsound();
+                        updateCabbageControls();
+                    }
+
+
+                    csCompileResult = csound->PerformKsmps();
+
+                    if(csCompileResult!=OK)
+                        stopProcessing = true;
+                    else
+                        ksmpsOffset++;
+
+                    getCallbackLock().exit();
+                    csndIndex = 0;
+                }
+                if(csCompileResult==OK)
+                {
+                    for(int channel = 0; channel < getNumOutputChannels(); channel++ )
+                    {
+                        audioBuffer = buffer.getWritePointer(channel,0);
+                        pos = csndIndex*getNumOutputChannels();
+                        float samp = audioBuffer[i]*cs_scale;
+                        CSspin[channel+pos] = samp;
+                        audioBuffer[i] = (CSspout[channel+pos]/cs_scale);
+
+                    }
+                }
+                else
+                    buffer.clear();
+
+
+            }
+
+            if (activeWriter != 0 && !isWinXP)
+                activeWriter->write (buffer.getArrayOfReadPointers(), buffer.getNumSamples());
+
+            if(isMuted)
+                buffer.clear();
+
+            rmsLeft = buffer.getRMSLevel(0, 0, buffer.getNumSamples());
+            rmsRight = buffer.getRMSLevel(1, 0, buffer.getNumSamples());
+
+        }//if not compiled just mute output
+        else
+        {
+            for(int channel = 0; channel < getNumInputChannels(); channel++)
+            {
+                audioBuffer = buffer.getWritePointer(channel,0);
+                for(int i=0; i<numSamples; i++, csndIndex++)
+                {
+                    audioBuffer[i]=0;
+                }
+            }
+        }
+
 #endif
-}
-
-void CabbagePluginAudioProcessor::removeCsoundInstrumentBreakpoint(int instr)
-{
-#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
-    getCallbackLock().enter();
-    breakpointInstruments.removeAllInstancesOf(instr);
-    if(breakpointInstruments.size()==0)
-        breakCount=0;
-    csoundDebuggerInit(csound->GetCsound());
-    csoundRemoveInstrumentBreakpoint(csound->GetCsound(), instr);
-    getCallbackLock().exit();
-#endif
-}
-
-void CabbagePluginAudioProcessor::continueCsoundDebug()
-{
-#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
-
-    if(breakpointInstruments.size()>0)
-    {
-        getCallbackLock().enter();
-        csoundDebugContinue(csound->GetCsound());
-        getCallbackLock().exit();
     }
 
-#endif
+    vuCounter = (vuCounter>5) ? 0 : vuCounter+1;
+    if(vuCounter==0)
+        sendActionMessage("rmsValues "+String(rmsLeft)+" "+String(rmsRight));
 }
 
-void CabbagePluginAudioProcessor::nextCsoundDebug()
-{
-#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
-    //not yet implemented....
-    if(breakpointInstruments.size()>0)
-    {
-        getCallbackLock().enter();
-        //csoundDebugNext(csound->GetCsound());
-        getCallbackLock().exit();
-    }
 
-#endif
-}
-
-void CabbagePluginAudioProcessor::cleanCsoundDebug()
-{
-#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
-    csoundClearBreakpoints(csound->GetCsound());
-#endif
-}
 //==============================================================================
 // MIDI functions
 //==============================================================================
@@ -2168,7 +2372,7 @@ int CabbagePluginAudioProcessor::WriteMidiData(CSOUND* /*csound*/, void *_userDa
     }
 
     MidiMessage message(mbuf, nbytes, 0);
-//Logger::writeToLog(String(message.getNoteNumber()));
+    //Logger::writeToLog(String(message.getNoteNumber()));
     userData->midiOutputBuffer.addEvent(message, 0);
     return nbytes;
 }
@@ -2182,10 +2386,7 @@ bool CabbagePluginAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* CabbagePluginAudioProcessor::createEditor()
 {
-    if(!nativePluginEditor)
-        return new CabbagePluginAudioProcessorEditor (this);
-    else
-        return new CabbageGenericAudioProcessorEditor (this);
+    return new CabbagePluginAudioProcessorEditor (this);
 }
 
 //==============================================================================
@@ -2201,15 +2402,23 @@ void CabbagePluginAudioProcessor::getStateInformation (MemoryBlock& destData)
         xml.setAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel),getParameter(i));
 
     for(int i=0; i<guiLayoutCtrls.size(); i++)
-		if(guiLayoutCtrls[i].getStringProp(CabbageIDs::type)==CabbageIDs::filebutton)
-		{
-			//save filebutton last opened file...
-			char string[1024] = {0};
+        if(guiLayoutCtrls[i].getStringProp(CabbageIDs::type)==CabbageIDs::filebutton)
+        {
+            //save filebutton last opened file...
+            char string[4096] = {0};
             csound->GetStringChannel(guiLayoutCtrls[i].getStringProp(CabbageIDs::channel).toUTF8().getAddress(), string);
-			xml.setAttribute ("filebutton_"+guiLayoutCtrls[i].getStringProp(CabbageIDs::channel), String(string));
-			Logger::writeToLog("filebutton_"+guiLayoutCtrls[i].getStringProp(CabbageIDs::channel));
-			Logger::writeToLog(String(string));
-		}
+            xml.setAttribute ("filebutton_"+guiLayoutCtrls[i].getStringProp(CabbageIDs::channel), String(string));
+            Logger::writeToLog("filebutton_"+guiLayoutCtrls[i].getStringProp(CabbageIDs::channel));
+            Logger::writeToLog(String(string));
+        }
+        else if(guiLayoutCtrls[i].getStringProp(CabbageIDs::type)==CabbageIDs::sourcebutton)
+        {
+            xml.setAttribute("sourcebutton", csdFile.getFullPathName());
+        }
+
+
+
+
 
     // then use this helper function to stuff it into the binary blob and return it..
     copyXmlToBinary (xml, destData);
@@ -2228,27 +2437,92 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
         if (xmlState->hasTagName ("CABBAGE_PLUGIN_SETTINGS"))
         {
             for(int i=0; i<this->getNumParameters(); i++)
-			{
-			this->setParameter(i, (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel)));
-			}
-			
-		
-			for(int i=0;i<xmlState->getNumAttributes();i++)
-			{
-				//if the instrument uses a filebutton, then retreive the last known
-				//file that was loaded with it
-				if(xmlState->getAttributeName(i).contains("filebutton_"))
-				{
-					String channel = xmlState->getAttributeName(i).substring(11);
-					//Logger::writeToLog(xmlState->getAttributeValue(i));
-					csound->SetChannel(channel.toUTF8().getAddress(), xmlState->getAttributeValue(i).toUTF8().getAddress());
-				}
-				
-			}
-		}
+            {
+                this->setParameter(i, (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel)));
+            }
+
+
+            for(int i=0; i<xmlState->getNumAttributes(); i++)
+            {
+                //if the instrument uses a filebutton, then retreive the last known
+                //file that was loaded with it
+                if(xmlState->getAttributeName(i).contains("filebutton_"))
+                {
+                    String channel = xmlState->getAttributeName(i).substring(11);
+                    //Logger::writeToLog(xmlState->getAttributeValue(i));
+                    csound->SetChannel(channel.toUTF8().getAddress(), xmlState->getAttributeValue(i).toUTF8().getAddress());
+                }
+                else  if(xmlState->getAttributeName(i).contains("sourcebutton"))
+                {
+                    //showMessage(xmlState->getAttributeValue(i));
+                    csdFile = File(xmlState->getAttributeValue(i));
+                    createGUI(csdFile.loadFileAsString(), true);
+                    reCompileCsound(csdFile);
+                }
+            }
+        }
     }
 }
-
 //==============================================================================
+// breakpoint functions
+//==============================================================================
+void CabbagePluginAudioProcessor::setCsoundInstrumentBreakpoint(int instr, int line=0)
+{
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
+    getCallbackLock().enter();
+    if(breakpointInstruments.size()==0)
+        csoundDebuggerInit(csound->GetCsound());
+    csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
+    csoundSetInstrumentBreakpoint(csound->GetCsound(), instr, 0);
+    breakpointInstruments.add(instr);
+    getCallbackLock().exit();
+#endif
+}
 
+void CabbagePluginAudioProcessor::removeCsoundInstrumentBreakpoint(int instr)
+{
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
+    getCallbackLock().enter();
+    breakpointInstruments.removeAllInstancesOf(instr);
+    if(breakpointInstruments.size()==0)
+        breakCount=0;
+    csoundDebuggerInit(csound->GetCsound());
+    csoundRemoveInstrumentBreakpoint(csound->GetCsound(), instr);
+    getCallbackLock().exit();
+#endif
+}
 
+void CabbagePluginAudioProcessor::continueCsoundDebug()
+{
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
+
+    if(breakpointInstruments.size()>0)
+    {
+        getCallbackLock().enter();
+        csoundDebugContinue(csound->GetCsound());
+        getCallbackLock().exit();
+    }
+
+#endif
+}
+
+void CabbagePluginAudioProcessor::nextCsoundDebug()
+{
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
+    //not yet implemented....
+    if(breakpointInstruments.size()>0)
+    {
+        getCallbackLock().enter();
+        //csoundDebugNext(csound->GetCsound());
+        getCallbackLock().exit();
+    }
+
+#endif
+}
+
+void CabbagePluginAudioProcessor::cleanCsoundDebug()
+{
+#if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
+    csoundClearBreakpoints(csound->GetCsound());
+#endif
+}

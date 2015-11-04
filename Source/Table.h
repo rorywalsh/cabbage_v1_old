@@ -20,6 +20,9 @@
 #ifndef GENTABLE_H
 #define GENTABLE_H
 
+#define FIXED_WIDTH 15
+#define MAX_TABLE_SIZE 16384
+
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "CabbageUtils.h"
 #include "CabbageLookAndFeel.h"
@@ -30,51 +33,62 @@ class HandleComponent;
 class GenTable;
 
 class TableManager : public Component,
-					 private ScrollBar::Listener,
-					 public ChangeListener
+    private ScrollBar::Listener,
+    public ChangeListener
 {
-	double zoom;
-	int currentTableIndex;
-	var tableConfigList;
-	int largestTable;
-	double scrubberPosition;
-	double scrubberFreq;
-	bool shouldShowTableButtons;
-	bool shouldShowZoomButtons;
-	int mainFooterHeight;
+    double zoom;
+    int currentTableIndex;
+    var tableConfigList;
+    int largestTable;
+    double scrubberPosition;
+    double scrubberFreq;
+    bool shouldShowTableButtons;
+    bool shouldShowZoomButtons;
+    int mainFooterHeight;
+    Colour gridColour;
+    Colour backgroundColour;
+    int tableIndex;
+    bool scrollbarEnabled;
 
-public:	
-	TableManager();
-	~TableManager(){};
-	void paint (Graphics& g){
-		g.fillAll(Colours::transparentBlack);
-	};
-	void resized();
-	void setZoomFactor(double zoom);
-	void setDrawMode(String mode);
-	void bringButtonsToFront();
-	void setAmpRanges(Array<float> ampRange);
-	void timerCallback();
-	void setRange(double start, double end);
-	ScopedPointer<DrawableRectangle> currentPositionMarker;
-	double getLengthInSamples();
-	void setScrubberPos(double pos, int tableNum);
-	void scroll(double newRangeStart);
-	void addTable(int sr, const String col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener);
+public:
+    TableManager();
+    ~TableManager() {};
+    void paint (Graphics& g);
+    void setGridColour(Colour col);
+    void setOutlineThickness(float thickness);
+    void setFill(bool fill );
+    void setBackgroundColour(Colour col);
+    void repaintAllTables();
+    void resized();
+    void setZoomFactor(double zoom);
+    void setDrawMode(String mode);
+    void showScrollbar(bool show);
+    void bringButtonsToFront();
+    void setAmpRanges(Array<float> ampRange);
+    void timerCallback();
+    void updateScrollbars();
+    void setRange(double start, double end);
+    ScopedPointer<DrawableRectangle> currentPositionMarker;
+    double getLengthInSamples();
+    void setScrubberPos(double pos, int tableNum);
+    void scroll(double newRangeStart);
+    void addTable(int sr, const Colour col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener);
     void setWaveform(AudioSampleBuffer buffer, int ftNumber);
-	void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
+    void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart);
     void setWaveform(Array<float, CriticalSection> buffer, int ftNumber, bool updateRange = true);
-	void enableEditMode(StringArray pFields, int ftnumber);
+    void setFile(const File file);
+    void enableEditMode(StringArray pFields, int ftnumber);
     ScopedPointer<RoundButton> zoomIn, zoomOut;
-	OwnedArray<RoundButton> tableButtons;
-	OwnedArray<GenTable> tables;
-	void showZoomButtons(bool show);
-	void showTableButtons(bool show);
-	void changeListenerCallback(ChangeBroadcaster *source);
-	void bringTableToFront(int ftNumber);
-	void configTableSizes(var tableConfig);
-	GenTable* getLargestTable();
-	GenTable* getTableFromFtNumber(int ftnumber);
+    OwnedArray<RoundButton> tableButtons;
+    OwnedArray<GenTable> tables;
+    void showZoomButtons(bool show);
+    void showTableButtons(bool show);
+    void changeListenerCallback(ChangeBroadcaster *source);
+    void bringTableToFront(int ftNumber);
+    void configTableSizes(var tableConfig);
+    void setVUGradient(Array<Colour> colour);
+    GenTable* getLargestTable();
+    GenTable* getTableFromFtNumber(int ftnumber);
 };
 
 //=================================================================
@@ -108,7 +122,7 @@ public:
 
     float timeToX (const double time) const
     {
-        return getWidth() * (float) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
+        return getWidth() * (double) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
     }
 
     double xToTime (const float x) const
@@ -116,51 +130,118 @@ public:
         return (x / getWidth()) * (visibleRange.getLength()) + visibleRange.getStart();
     }
 
-	void setSampleRange(double pos, double end);
+    void setSampleRange(double pos, double end);
     void setZoomFactor (double amount);
     void setFile (const File& file);
     void mouseWheelMove (const MouseEvent&, const MouseWheelDetails& wheel);
     void setWaveform(AudioSampleBuffer buffer);
     void enableEditMode(StringArray pFields);
-	Point<int> tableTopAndHeight;
+    Point<int> tableTopAndHeight;
     void setWaveform(Array<float, CriticalSection> buffer, bool updateRange = true);
     void createImage(String filename);
-    void addTable(int sr, const String col, int gen, Array<float> ampRange);
+    void addTable(int sr, const Colour col, int gen, Array<float> ampRange);
     static float ampToPixel(int height, Range<float> minMax, float sampleVal);
     static float pixelToAmp(int height, Range<float> minMax, float sampleVal);
     Array<double> getPfields();
     String changeMessage;
+    Colour gridColour;
     int tableNumber, tableSize, genRoutine, realGenRoutine;
-	void setRange(Range<double> newRange, bool isScrolling = false);
-	Range<double> globalRange;
-	bool isTableOnTop;
-	ScopedPointer<ScrollBar> scrollbar;
-	void resized();
-	Range<double> visibleRange;
-	int scrollbarReduction;
-	void showScrollbar(bool show);
-	int mainFooterHeight, paintFooterHeight;
-	HandleViewer* getHandleViewer(){ return handleViewer;}
-	double quantiseSpace;
-	void setAmpRanges(Array<float> ampRange);
-	void setXPosition(double pos);
-	bool drawAsVUMeter;
-	
+    void setRange(Range<double> newRange, bool isScrolling = false);
+    Range<double> globalRange;
+    bool isTableOnTop;
+    ScopedPointer<ScrollBar> scrollbar;
+    void resized();
+    Range<double> visibleRange;
+    bool drawGrid;
+    int scrollbarReduction;
+    void showScrollbar(bool show);
+    int mainFooterHeight, paintFooterHeight, zoomButtonsOffset;
+
+    HandleViewer* getHandleViewer()
+    {
+        return handleViewer;
+    }
+
+    double quantiseSpace;
+    void setAmpRanges(Array<float> ampRange);
+    void setXPosition(double pos);
+    bool drawAsVUMeter;
+
+    HandleComponent* getCurrentHandle()
+    {
+        if(currentHandle)
+            return currentHandle;
+        else
+        {
+            assert(false);
+            return nullptr;
+        }
+
+    }
+
+    String getCoordinates()
+    {
+        return coordinates;
+    }
+
+    double getNewRangeStart()
+    {
+        return newRangeStart;
+    }
+
+    void shouldDrawGrid(bool val)
+    {
+        drawGrid = val;
+    }
+
+    int displayAsGrid()
+    {
+        return qsteps;
+    }
+
+    void setTraceThickness(float thickness)
+    {
+        traceThickness = thickness;
+    }
+
+    void shouldFillTable(bool fill)
+    {
+        shouldFill = fill;
+    }
+
+    void setBackgroundColour(Colour col)
+    {
+        backgroundColour = col;
+    }
+
+    void setVUGradient(ColourGradient grad)
+    {
+        vuGradient=grad;
+    }
+
 private:
-    Image img;
-	bool shouldScroll;
+    void drawBackgroundGrid();
+    Image backgroundImage;
+    bool shouldFill;
+    float traceThickness;
+    bool paintCachedImage;
+    String coordinates;
+    double newRangeStart;
+    HandleComponent* currentHandle;
+    bool shouldScroll;
     int normalised;
     int imgCount;
-	Colour fillColour;
+    Colour fillColour;
+    Colour backgroundColour;
     float currentWidth;
     double zoom;
-	bool showScroll;
-	double qsteps;
-	double numPixelsPerIndex;
-	ColourGradient gradient;
-	StringArray pFields;
+    bool showScroll;
+    double qsteps;
+    double numPixelsPerIndex;
+    ColourGradient gradient;
+    StringArray pFields;
     ScopedPointer<DrawableRectangle> currentPositionMarker;
-	juce::Rectangle<int> thumbArea;
+    juce::Rectangle<int> thumbArea;
     juce::Rectangle<int> handleViewerRect;
     void paint (Graphics& g);
     void mouseDown (const MouseEvent& e);
@@ -186,8 +267,9 @@ private:
     double loopStart;
     double currentPlayPosition;
     bool drawWaveform;
+    ColourGradient vuGradient;
 
-
+    const Image drawGridImage(bool redraw, double width=0.0, double height=0.0, double offset=0.0);
 
     Array<float, CriticalSection> waveformBuffer;
     double visibleLength, visibleStart, visibleEnd, maxAmp;
@@ -211,42 +293,52 @@ private:
 //==============================================================================
 // HandleViewer class, holds breakpoint handles
 //==============================================================================
-class HandleViewer : public Component,
-    public ActionListener
+class HandleViewer : public Component
 {
-    void actionListenerCallback(const String &message);
-    ScopedPointer<Label> label;
+
 public:
     HandleViewer();
     ~HandleViewer();
     ScopedPointer<TextButton> button1;
     ScopedPointer<TextButton> button2;
     void mouseDown(const MouseEvent& e);
-	void mouseDrag(const MouseEvent& e);
-	void positionHandle(const MouseEvent& e);
+    void mouseDrag(const MouseEvent& e);
+    void positionHandle(const MouseEvent& e);
     void repaint(Graphics &g);
     void resized();
     void addHandle(double x, double y, double width, double height, Colour colour);
-	void insertHandle(double x, double y, Colour colour);
-	double getSnapPosition(const double y);
+    void insertHandle(double x, double y, Colour colour);
+    double getSnapYPosition(const double y);
+    double getSnapXPosition(const double x);
     HandleComponent* getPreviousHandle(HandleComponent* thisHandle);
     HandleComponent* getNextHandle(HandleComponent* thisHandle);
     int getHandleIndex(HandleComponent* thisHandle);
     void removeHandle (HandleComponent* thisHandle);
     OwnedArray<HandleComponent, CriticalSection> handles;
     void fixEdgePoints(int gen);
-	void showHandles(bool show);
-	void showLabel(String message);
+    void showHandles(bool show);
     int handleIndex;
+    bool showingGrid;
     double tableSize;
-	Range<float> minMax;
-	Colour colour;
-	int gen;
-	bool shouldShowHandles;
-	
-	GenTable* getParentTable(){
-		return findParentComponentOfClass <GenTable>();
-	};	
+    Range<float> minMax;
+    Colour colour;
+    int handleViewerGen;
+
+    bool isShowingGrid()
+    {
+        return showingGrid;
+    }
+
+    void setShowingGrid(bool val)
+    {
+        showingGrid = val;
+    }
+    bool shouldShowHandles;
+
+    GenTable* getParentTable()
+    {
+        return findParentComponentOfClass <GenTable>();
+    };
 
 };
 
@@ -254,47 +346,80 @@ public:
 // Handle class
 //==============================================================================
 class HandleComponent : public Component,
-    public ChangeBroadcaster,
-    public ActionBroadcaster
+    public ChangeBroadcaster
 {
 public:
     HandleComponent(double xPos, double yPos, int index, bool fixed, int gen, Colour colour);
     ~HandleComponent();
 
-    HandleViewer* getParentComponent();
+
+    void setPosition(double x, double y, bool circularEnv);
+
     void paint (Graphics& g);
     void removeThisHandle();
     void mouseEnter (const MouseEvent& e);
     void mouseDown (const MouseEvent& e);
     void mouseDrag (const MouseEvent& e);
     void mouseUp (const MouseEvent& e);
-	void mouseExit (const MouseEvent& e);
+    void mouseExit (const MouseEvent& e);
     int index;
     int height, width;
     int x,y;
-	void setColour(Colour icolour);
-	void setRelativePositions(Point<double> point);
-	
-	HandleViewer* getParentHandleViewer(){
-		return findParentComponentOfClass <HandleViewer>();
-	};	
-	
+    void setColour(Colour icolour);
+    void setRelativePosition(Point<double> point);
+
+    HandleViewer* getParentHandleViewer()
+    {
+        return findParentComponentOfClass <HandleViewer>();
+    };
+
+    GenTable* getParentGenTable()
+    {
+        return findParentComponentOfClass <GenTable>();
+    };
+
+    TableManager* getParentTableManager()
+    {
+        return findParentComponentOfClass <TableManager>();
+    };
+
+    int getUniqueID()
+    {
+        return uniqueID;
+    }
+
+    void setUniqueID(int id)
+    {
+        uniqueID = id;
+    }
+
+    double getDoubleY()
+    {
+        return highResY;
+    }
+
+    double setDoubleY(double y)
+    {
+        highResY = y;
+    }
+
     HandleComponent* getPreviousHandle();
     HandleComponent* getNextHandle();
     String changeMessage;
     String mouseStatus;
-	double xPosRelative, yPosRelative;
-	bool status;
-	
+    double xPosRelative, yPosRelative;
+    bool status;
+
 private:
     Colour colour;
     bool fixed;
-	
-	
+    double highResY;
+    int uniqueID;
+
     ComponentDragger dragger;
     int lastX, lastY;
     int offsetX, offsetY;
-	int genRoutine;
+    int genRoutine;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HandleComponent);
 };
@@ -306,52 +431,74 @@ class RoundButton : public Component,
     public ChangeBroadcaster
 
 {
-String type;
-Colour colour;
-int mode;
+    String type;
+    String visible;
+    Colour colour;
+    int mode;
 public:
-    RoundButton(String _type, Colour _colour):Component()
+    RoundButton(String _type, Colour _colour):Component(), visible("bacground")
     {
         setName(_type);
-		type = _type;
-		colour = _colour;
-		mode = 0;
+        type = _type;
+        colour = _colour;
+        mode = 0;
     }
     ~RoundButton() {}
 
     void mouseDown(const MouseEvent& e)
     {
-		//Logger::writeToLog("Mouse down on round button:"+String(type));
+        //Logger::writeToLog("Mouse down on round button:"+String(type));
         sendChangeMessage();
-		mode = (mode==1 ? 0 : mode+1);
+        mode = (mode==1 ? 0 : mode+1);
     }
 
     void paint(Graphics& g)
     {
-		//Logger::writeToLog(type);
+        //Logger::writeToLog(type);
         if(type.contains("zoom"))
-		{
-			g.fillAll(Colours::transparentBlack);
-			g.setColour(Colours::white.withAlpha(.8f));
-			g.fillEllipse(0, 0, getWidth(), getHeight());
-			g.setColour(Colours::black);
-			g.fillRoundedRectangle(getWidth()*.18, getHeight()*.4f, getWidth()*.65, getHeight()*.25, 2);
-			if(getName()=="zoomIn")
-				g.fillRoundedRectangle(getWidth()*.38f, getHeight()*.20, getWidth()*.25, getHeight()*.65, 2);
-		}
-		else{
-			g.fillAll(Colours::transparentBlack);
-			g.setColour(colour);
-			g.fillEllipse(0, 0, getWidth(), getHeight());
-			g.setColour(colour.contrasting());
-			g.drawFittedText(type, 0, 0, getWidth(), getHeight(), Justification::centred, 1); 
-		}
+        {
+            g.fillAll(Colours::transparentBlack);
+            g.setColour(cUtils::getBackgroundSkin());
+            g.fillEllipse(0, 0, getWidth(), getHeight());
+            g.setColour(Colours::white.withAlpha(.8f));
+            g.fillEllipse(1, 1, getWidth()-2, getHeight()-2);
+            g.setColour(Colours::black);
+            g.fillRoundedRectangle(getWidth()*.18, getHeight()*.4f, getWidth()*.65, getHeight()*.25, 2);
+            if(getName()=="zoomIn")
+                g.fillRoundedRectangle(getWidth()*.38f, getHeight()*.20, getWidth()*.25, getHeight()*.65, 2);
+        }
+        else
+        {
+            g.fillAll(Colours::transparentBlack);
+            g.setColour(cUtils::getBackgroundSkin());
+            g.fillEllipse(0, 0, getWidth(), getHeight());
+            g.setColour((visible=="foreground" ? colour : colour.withAlpha(.3f)));
+            g.fillEllipse(1, 1, getWidth()-2, getHeight()-2);
+            g.setColour(colour.contrasting());
+            g.drawFittedText(type, 0, 0, getWidth(), getHeight(), Justification::centred, 1);
+            if(visible=="off")
+            {
+                g.setColour(colour.contrasting());
+                g.drawLine(0, 0, getWidth(), getHeight(), 2);
+                g.drawLine(0, getHeight(), getWidth(), 0, 2);
+            }
+        }
     }
 
-	int getMode()
-	{
-		return mode;
-	}
+    void setVisibilityStatus(String status)
+    {
+        visible = status;
+    }
+
+    int getMode()
+    {
+        return mode;
+    }
+
+    int setMode(int mod)
+    {
+        mode=mod;
+    }
 };
 
 #endif // SOUNDFILEWAVEFORM_H

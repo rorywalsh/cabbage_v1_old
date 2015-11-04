@@ -19,31 +19,43 @@ Name: "program"; Description: "Program Files, standard binaries and essential Cs
 
 [Files]
 ;these are the minimal files needed to run Cabbage
-Source: "build\Cabbage.exe";              DestDir: "{app}"; Components: program
+Source: "build\Cabbage64.exe";              DestDir: "{app}"; Components: program
 Source: "build\CabbagePluginSynth.dat";   DestDir: "{app}"; Components: program 
 Source: "build\CabbagePluginEffect.dat";  DestDir: "{app}"; Components: program
 Source: "build\opcodes.txt";              DestDir: "{app}"; Components: program
 Source: "..\..\Examples\*";               DestDir: "{app}\Examples"; Components: program; Flags: recursesubdirs
 Source: "..\..\Docs\*";                   DestDir: "{app}\Docs"; Components: program; Flags: recursesubdirs
+Source: "..\..\..\csoundDocs\*";          DestDir: "{app}\csoundDocs"; Components: program; Flags: recursesubdirs
+
+Source: "C:\mingw32\bin\libgcc_s_dw2-1.dll";  DestDir: "{app}"; Components: program
+Source: "C:\mingw64\bin\libstdc++-6.dll";     DestDir: "{app}"; Components: program
 
 ;Source: "..\..\..\MingwLibs\libwinpthread-1.dll"; DestDir: "{app}"; Components: program
 ;Source: "..\..\..\MingwLibs\libgomp-1.dll";       DestDir: "{app}"; Components: program
 ;Source: "..\..\..\MingwLibs\libgcc_s_dw2-1.dll";  DestDir: "{app}"; Components: program
 ;Source: "..\..\..\MingwLibs\libstdc++-6.dll";     DestDir: "{app}"; Components: program
 ;Source: "..\..\..\MingwLibs\msvcr110.dll";        DestDir: "{app}"; Components: program
-Source: "..\..\..\csound\build\csound64.dll";     DestDir: "{app}"; Components: program
-Source: "C:\Program Files\Mega-Nerd\libsndfile\bin\libsndfile-1.dll";   DestDir: "{app}"; Components: program
+Source: "..\..\..\csound64\build\csound64.dll";     DestDir: "{app}"; Components: program
+Source: "C:\Program Files\Mega-Nerd\libsndfile64\bin\libsndfile-1.dll";   DestDir: "{app}"; Components: program
 
 ;Regular Csound dlls
-Source: "..\..\..\csound\build\libsndfile-1.dll";   DestDir: "{app}"; Components: program
-
-;Special opcodes
-;Source: "..\..\..\csound\build\osc.dll";            DestDir: "{app}"; Components: osc
-;Source: "..\..\..\csound\build\liblo-7.dll";        DestDir: "{app}"; Components: osc
-;Source: "..\..\..\csound\build\py.dll";             DestDir: "{app}"; Components: python  
+;Source: "..\..\..\csound64\build\py.dll";             DestDir: "{app}"; Components: program
+Source: "..\..\..\csound64\build\signalflowgraph.dll"; DestDir: "{app}"; Components: program
+Source: "..\..\..\csound64\build\serial.dll"; DestDir: "{app}"; Components: program
+Source: "..\..\..\csound64\build\scansyn.dll"; DestDir: "{app}"; Components: program
+Source: "..\..\..\csound64\build\doppler.dll"; DestDir: "{app}"; Components: program
+Source: "..\..\..\csound64\build\fractalnoise.dll"; DestDir: "{app}"; Components: program
+Source: "..\..\..\csound64\build\fareygen.dll"; DestDir: "{app}"; Components: program
+;Source: "..\..\..\csound64\build\osc.dll";    DestDir: "{app}"; Components: program
+Source: "..\..\..\csound64\build\chua.dll"; DestDir: "{app}"; Components: program
+Source: "..\..\..\csound64\build\mixer.dll"; DestDir: "{app}"; Components: program
+Source: "..\..\..\csound64\build\ampmidid.dll"; DestDir: "{app}"; Components: program
+Source: "..\..\..\csound64\build\cs_date.dll"; DestDir: "{app}"; Components: program
+Source: "..\..\..\csound64\build\cellular.dll"; DestDir: "{app}"; Components: program
+Source: "..\..\..\csound64\build\platerev.dll"; DestDir: "{app}"; Components: program
 
 [Icons]
-Name: "{group}\Cabbage64"; Filename: "{app}\Cabbage.exe"
+Name: "{group}\Cabbage64"; Filename: "{app}\Cabbage64.exe"
 
 ; NOTE: Most apps do not need registry entries to be pre-created. If you
 ; don't know what the registry is or if you need to use it, then chances are

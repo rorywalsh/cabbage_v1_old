@@ -3,6 +3,8 @@
 #include "../CabbageUtils.h"
 #include "../CabbageLookAndFeel.h"
 
+
+
 ApplicationProperties* appProperties = nullptr;
 PropertySet* defaultPropSet = nullptr;
 String currentApplicationDirectory;
@@ -44,12 +46,11 @@ public:
 #else
         manualPath = "Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual/index.html";
 #endif
-
         defaultPropSet->setValue("CsoundHelpDir", manualPath);
         defaultPropSet->setValue("PlantFileDir", homeDir+"/Plants");
-        defaultPropSet->setValue("ExamplesDir", homeDir+"/Examples");
+        defaultPropSet->setValue("ExamplesDir", homeDir+"/Examples/Examples");
         defaultPropSet->setValue("DisablePluginInfo", 0);
-        defaultPropSet->setValue("ShowEditorConsole", 0);
+        defaultPropSet->setValue("ShowEditorConsole", 1);
         defaultPropSet->setValue("ExternalEditor", 0);
         defaultPropSet->setValue("UseCabbageIO", 1);
         defaultPropSet->setValue("ShowConsoleWithEditor", 0);
@@ -61,9 +62,10 @@ public:
         defaultPropSet->setValue("EditorColourScheme", 1);
         defaultPropSet->setValue("showTabs", 1);
         defaultPropSet->setValue("EnablePopupDisplay", 1);
-		defaultPropSet->setValue("windowX", 100);
-		defaultPropSet->setValue("windowY", 100);
-
+		defaultPropSet->setValue("ShowNativeFileDialogues", 1);
+        defaultPropSet->setValue("EnableNativePopup", 0);
+        defaultPropSet->setValue("windowX", 100);
+        defaultPropSet->setValue("windowY", 100);
         appProperties->getUserSettings()->setFallbackPropertySet(defaultPropSet);
         filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black, getCommandLineParameters());
         filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
@@ -76,6 +78,8 @@ public:
     void shutdown()
     {
         filterWindow = 0;// = nullptr;
+		if(appProperties==nullptr)
+			cUtils::debug("null");
         appProperties->closeFiles();
         deleteAndZero(appProperties);
         deleteAndZero(defaultPropSet);

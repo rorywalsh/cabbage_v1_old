@@ -19,8 +19,12 @@
 
 #include "CodeWindow.h"
 
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+ApplicationProperties* appProperties = nullptr;
+#endif
+
 //==============================================================================
-CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
+CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
             DocumentWindow::allButtons),
     fontSize(15),
     showOutput(true),
@@ -29,8 +33,20 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
     firstTime(true),
     font(String("Courier New"), 15, 1),
     isColumnModeEnabled(false),
+    isEditModeEnabled(false),
     isInstrTabEnabled(false)
 {
+
+#ifndef Cabbage_Build_Standalone
+    PropertiesFile::Options options;
+    options.applicationName     = "Cabbage";
+    options.filenameSuffix      = "settings";
+    options.osxLibrarySubFolder = "Preferences";
+    appProperties = new ApplicationProperties();
+    //set fallback file for default properties...
+    appProperties->setStorageParameters (options);
+#endif
+
     setApplicationCommandManagerToWatch(&commandManager);
     commandManager.registerAllCommandsForTarget(this);
     addKeyListener(commandManager.getKeyMappings());
@@ -42,18 +58,19 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
 
     setSize(1200, 800);
 
-#ifdef BUILD_DEBUGGER
     splitBottomWindow = new SplitComponent(*csoundOutputComponent, *csoundDebuggerComponent, true);
+#ifdef CABBAGE_HOST
     splitBottomWindow->SetSplitBarPosition(getWidth()/2);
-    splitWindow = new SplitComponent(*textEditor, *splitBottomWindow, false);
 #else
-    splitWindow = new SplitComponent(*textEditor, *csoundOutputComponent, false);
+    splitBottomWindow->SetSplitBarPosition(getWidth()/2);
 #endif
+    splitWindow = new SplitComponent(*textEditor, *splitBottomWindow, false);
     splitWindow->SetFitToParent(false);
     textEditor->editor[textEditor->currentEditor]->addActionListener(this);
+    //splitBottomWindow->SetSplitBarPosition(getWidth());
 
     this->setTitleBarHeight(20);
-    this->setColour(DocumentWindow::backgroundColourId, CabbageUtils::getBackgroundSkin());
+    this->setColour(DocumentWindow::backgroundColourId, Colour(20, 20, 20));
 
 
     setMenuBar(this, 25);
@@ -86,26 +103,43 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::black,
     //else csound->Message("Could not open opcodes.txt file, parameter display disabled..");
 
 
-		bool showConsole = (appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1 ? true : false);
-		if(showConsole == false)
-			splitWindow->SetSplitBarPosition(this->getHeight());
-		else
-            splitWindow->SetSplitBarPosition(this->getHeight()-(this->getHeight()/4));
+    bool showConsole = (appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1 ? true : false);
+    if(showConsole == false)
+        splitWindow->SetSplitBarPosition(this->getHeight());
+    else
+        splitWindow->SetSplitBarPosition(this->getHeight()-(this->getHeight()/4));
 
     setContentNonOwned(splitWindow, false);
+    showEditorConsole();
 
 }
 
 //==============================================================================
 CodeWindow::~CodeWindow()
 {
+#ifndef Cabbage_Build_Standalone
+    deleteAndZero(appProperties);
+    appProperties = nullptr;
+#endif
     setMenuBar(nullptr);
     setApplicationCommandManagerToWatch(nullptr);
     commandManager.deleteInstance();
     deleteAndZero(textEditor);
 }
-
-
+//==============================================================================
+void CodeWindow::showEditorConsole()
+{
+    if(cUtils::getPreference(appProperties, "ShowEditorConsole")==1)
+    {
+        splitWindow->SetSplitBarPosition(getHeight()-(getHeight()/4));
+        //splitBottomWindow->SetSplitBarPosition(getWidth());
+#ifdef BUILD_DEBUGGER
+        // splitBottomWindow->SetSplitBarPosition(getWidth()/2);
+#endif
+    }
+    else
+        splitWindow->SetSplitBarPosition(getHeight());
+}
 //==============================================================================
 StringArray CodeWindow::getMenuBarNames()
 {
@@ -126,6 +160,7 @@ void CodeWindow::getAllCommands (Array <CommandID>& commands)
         CommandIDs::fileOpen,
         CommandIDs::fileSave,
         CommandIDs::fileSaveAs,
+        CommandIDs::fileSaveAndClose,
         CommandIDs::fileCloseAux,
         CommandIDs::fileQuit,
         CommandIDs::fileKeyboardShorts,
@@ -138,6 +173,7 @@ void CodeWindow::getAllCommands (Array <CommandID>& commands)
         CommandIDs::editToggleComments,
         CommandIDs::editZoomIn,
         CommandIDs::editZoomOut,
+        CommandIDs::editMode,
         CommandIDs::whiteBackground,
         CommandIDs::blackBackground,
         CommandIDs::insertFromRepo,
@@ -187,15 +223,15 @@ void CodeWindow::setFontSize(String zoom)
 #endif
 
     if(zoom==String("in"))
-	{
+    {
         textEditor->editor[textEditor->currentEditor]->setFont(Font(font, ++fontSize, 1));
-		CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
-	}
+        cUtils::setPreference(appProperties, "FontSize", String(fontSize));
+    }
     else
-	{
+    {
         textEditor->editor[textEditor->currentEditor]->setFont(Font(font, --fontSize, 1));
-		CabbageUtils::setPreference(appProperties, "FontSize", String(fontSize));
-	}
+        cUtils::setPreference(appProperties, "FontSize", String(fontSize));
+    }
 }
 
 //==============================================================================
@@ -210,7 +246,11 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
         result.addDefaultKeypress ('n', ModifierKeys::commandModifier);
         break;
     case CommandIDs::fileOpen:
+#ifdef Cabbage_Build_Standalone
         result.setInfo (String("Open Auxiliary file"), String("Open a file"), CommandCategories::file, 0);
+#else
+        result.setInfo (String("Open file"), String("Open a file"), CommandCategories::file, 0);
+#endif
         result.addDefaultKeypress ('o', ModifierKeys::commandModifier);
         break;
     case CommandIDs::fileSave:
@@ -220,6 +260,10 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
     case CommandIDs::fileSaveAs:
         result.setInfo (String("Save as"), String("Save file as.."), CommandCategories::file, 0);
         result.addDefaultKeypress ('s', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
+        break;
+    case CommandIDs::fileSaveAndClose:
+        result.setInfo (String("Save and close"), String("Save and close.."), CommandCategories::file, 0);
+        result.addDefaultKeypress ('s', ModifierKeys::altModifier | ModifierKeys::commandModifier);
         break;
     case CommandIDs::fileQuit:
         result.setInfo (String("Close editor"), String("Close"), CommandCategories::file, 0);
@@ -260,7 +304,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
         break;
     case CommandIDs::editToggleComments:
         result.setInfo (String("Toggle comments"), String("Toggle comments"), CommandCategories::edit, 0);
-        result.addDefaultKeypress ('t', ModifierKeys::commandModifier);
+        result.addDefaultKeypress ('/', ModifierKeys::commandModifier);
         break;
     case CommandIDs::editSearchReplace:
         result.setInfo(String("Search or Replace"), String("Search Replace"), CommandCategories::edit, 0);
@@ -273,6 +317,11 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
     case CommandIDs::editZoomOut:
         result.setInfo (String("Zoom out"), String("Zoom out"), CommandCategories::edit, 0);
         result.addDefaultKeypress (']', ModifierKeys::commandModifier);
+        break;
+    case CommandIDs::editMode:
+        result.setInfo (String("Edit mode"), String("Edit Mode"), CommandCategories::edit, 0);
+        result.setTicked(isEditModeEnabled);
+        result.addDefaultKeypress ('e', ModifierKeys::commandModifier);
         break;
     case CommandIDs::whiteBackground:
         result.setInfo (String("White background"), String("White scheme"), CommandCategories::edit, 0);
@@ -358,7 +407,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
     case CommandIDs::viewCsoundOutput:
         result.setInfo (String("View Csound Output"), String("View Csound Output"), CommandCategories::help, 0);
         result.addDefaultKeypress ('p', ModifierKeys::commandModifier);
-		bool isTicked = (appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1 ? true : false);
+        bool isTicked = (appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1 ? true : false);
         result.setTicked(isTicked);
         break;
     }
@@ -387,6 +436,7 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
 
         m1.addCommandItem(&commandManager, CommandIDs::fileSave);
         m1.addCommandItem(&commandManager, CommandIDs::fileSaveAs);
+        m1.addCommandItem(&commandManager, CommandIDs::fileSaveAndClose);
         m1.addCommandItem(&commandManager, CommandIDs::fileQuit);
         return m1;
     }
@@ -399,6 +449,10 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
         m1.addCommandItem(&commandManager, CommandIDs::editCopy);
         m1.addCommandItem(&commandManager, CommandIDs::editPaste);
         m1.addSeparator();
+#ifdef CABBAGE_HOST
+        m1.addCommandItem(&commandManager, CommandIDs::editMode);
+        m1.addSeparator();
+#endif
         m1.addCommandItem(&commandManager, CommandIDs::editToggleComments);
         m1.addCommandItem(&commandManager, CommandIDs::editSearchReplace);
         m1.addCommandItem(&commandManager, CommandIDs::editColumnEdit);
@@ -478,12 +532,27 @@ bool CodeWindow::perform (const InvocationInfo& info)
         Logger::writeToLog("fileSaved");
         if(textEditor->currentEditor!=0)
         {
-            CabbageUtils::showMessage("Saving an auxillary file!");
+            cUtils::showMessage("Saving an auxillary file!");
             textEditor->saveAuxFile();
         }
         else
         {
+            isEditModeEnabled=false;
             sendActionMessage("fileSaved");
+        }
+    }
+    else if(info.commandID==CommandIDs::fileSaveAndClose)
+    {
+        Logger::writeToLog("fileSaved");
+        if(textEditor->currentEditor!=0)
+        {
+            cUtils::showMessage("Saving an auxillary file!");
+            textEditor->saveAuxFile();
+        }
+        else
+        {
+            isEditModeEnabled=false;
+            sendActionMessage("fileSaveAndClose");
         }
     }
     else if(info.commandID==CommandIDs::fileSaveAs)
@@ -493,6 +562,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
     }
     else if(info.commandID==CommandIDs::fileOpen)
     {
+#ifdef Cabbage_Build_Standalone
         FileChooser openFC(String("Open a file..."), File::nonexistent, String("*.csd;*.py;*.txt"), UseNativeDialogue);
         if(openFC.browseForFileToOpen())
         {
@@ -502,13 +572,15 @@ bool CodeWindow::perform (const InvocationInfo& info)
             this->setName(openFC.getResult().getFullPathName());
             textEditor->showTab(openFC.getResult().getFileName());
         }
+#else
+        sendActionMessage("open file");
+#endif
 
     }
     else if(info.commandID==CommandIDs::fileQuit)
     {
         //JUCEApplication::getInstance()->systemRequestedQuit();
         textEditor->saveAllFiles();
-        this->setVisible(false);
     }
 
     else if(info.commandID==CommandIDs::editUndo)
@@ -576,6 +648,15 @@ bool CodeWindow::perform (const InvocationInfo& info)
             textEditor->enableColumnEdit(true);
 
         isColumnModeEnabled=!isColumnModeEnabled;
+
+    }
+    else if(info.commandID==CommandIDs::editMode)
+    {
+        isEditModeEnabled=!isEditModeEnabled;
+        if(isEditModeEnabled)
+            sendActionMessage("enableEditMode");
+        else
+            sendActionMessage("disableEditMode");
 
     }
     else if(info.commandID==CommandIDs::editZoomOut)
@@ -670,10 +751,10 @@ bool CodeWindow::perform (const InvocationInfo& info)
         else
         {
             splitWindow->SetSplitBarPosition(this->getHeight()-(this->getHeight()/4));
-        //cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
+            //cabbageCsoundEditor->splitWindow->SetSplitBarPosition(cabbageCsoundEditor->getHeight()-(cabbageCsoundEditor->getHeight()/4));
 #ifdef BUILD_DEBUGGER
-        splitBottomWindow->SetSplitBarPosition(getWidth()/2);
-#endif			
+            splitBottomWindow->SetSplitBarPosition(getWidth()/2);
+#endif
             appProperties->getUserSettings()->setValue("ShowEditorConsole", "1");
         }
     }
@@ -712,7 +793,7 @@ void CodeWindow::toggleManuals(String manual)
 
 
     if(helpDir.length()<2)
-        CabbageUtils::showMessage("Please set the Csound manual directory in the Preference menu", &getLookAndFeel());
+        cUtils::showMessage("Please set the Csound manual directory in the Preference menu", &getLookAndFeel());
     else
     {
         CodeDocument::Position pos1, pos2;
@@ -739,7 +820,7 @@ void CodeWindow::toggleManuals(String manual)
         {
 #ifdef LINUX
             if(!process.start("xdg-open "+urlCsound.toString(false).toUTF8()))
-                CabbageUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
+                cUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
 #else
             urlCsound.launchInDefaultBrowser();
 #endif
@@ -750,13 +831,13 @@ void CodeWindow::toggleManuals(String manual)
             {
 #ifdef LINUX
                 if(!process.start("xdg-open "+homePage))
-                    CabbageUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
+                    cUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
 #else
                 URL(homePage).launchInDefaultBrowser();
 #endif
             }
             else
-                CabbageUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
+                cUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
 
         }
 
@@ -768,14 +849,14 @@ void CodeWindow::showCabbageHelp()
 {
     String path;
 #if defined(LINUX) || defined(MACOSX)
-    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/cabbage.html";
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/cabbageReferenceManual.html";
 #else
-    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\cabbage.html";
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\cabbageReferenceManual.html";
 #endif
 
 
     if(!File(path).existsAsFile())
-        CabbageUtils::showMessage(
+        cUtils::showMessage(
             "Could not find Cabbage manual. Make sure\n\
 	it is located in the Docs folder in the same\n\
 	directory as the main Cabbage executable", &getLookAndFeel());
@@ -787,7 +868,7 @@ void CodeWindow::showCabbageHelp()
         {
 #ifdef LINUX
             if(!process.start("xdg-open "+path))
-                CabbageUtils::showMessage("Couldn't show file", &getLookAndFeel());
+                cUtils::showMessage("Couldn't show file", &getLookAndFeel());
 #else
             URL(path).launchInDefaultBrowser();
 #endif
@@ -807,8 +888,8 @@ void CodeWindow::setEditorColourScheme(String theme)
 //==============================================================================
 void CodeWindow::actionListenerCallback(const String &message)
 {
-	if(message=="Launch help")
-		toggleManuals("Csound");
+    if(message=="Launch help")
+        toggleManuals("Csound");
     sendActionMessage(message);
 }
 //==============================================================================
@@ -819,7 +900,7 @@ void CodeWindow::setColourScheme(String theme)
         textEditor->editor[textEditor->currentEditor]->setColourScheme(csoundToker.getDefaultColourScheme());
         textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
         textEditor->editor[textEditor->currentEditor]->setColour(CaretComponent::caretColourId, Colours::black);
-        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::cornflowerblue);
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::lime);
         appProperties->getUserSettings()->setValue("EditorColourScheme", 0);
         repaint();
     }
@@ -827,7 +908,11 @@ void CodeWindow::setColourScheme(String theme)
     {
         textEditor->editor[textEditor->currentEditor]->setColourScheme(csoundToker.getDarkColourScheme());
         textEditor->editor[textEditor->currentEditor]->setColour(CaretComponent::caretColourId, Colours::white);
+#ifdef CABBAGE_HOST
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(30, 30, 30));
+#else
         textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(20, 20, 20));
+#endif
         textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f));
         appProperties->getUserSettings()->setValue("EditorColourScheme", 1);
     }

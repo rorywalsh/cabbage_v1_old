@@ -24,7 +24,7 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := -march=native
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -DJUCE_FORCE_DEBUG=0 -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D"BUILD_DEBUGGER=1" -D "Cabbage_Build_Standalone=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules -I $(CSOUND_INCLUDE)
+  CPPFLAGS := $(DEPFLAGS) -DJUCE_FORCE_DEBUG=0 -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D"BUILD_DEBUGGER=1" -D "Cabbage_Build_Standalone=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules -I $(CSOUND_INCLUDE)
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -std=c++11 -g -ggdb -O0
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile`
@@ -44,21 +44,17 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := -march=native
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(CSOUND_INCLUDE) -D "LINUX=1" -D "NDEBUG=1" -D "CSOUND6=1" -D "Cabbage_Build_Standalone=1" -D "Cabbage_GUI_Editor=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules -I $(CSOUND_INCLUDE)
+  CPPFLAGS := $(DEPFLAGS) -I $(CSOUND_INCLUDE) -D "LINUX=1" -D "NDEBUG=1" -D "CSOUND6=1" -D "Cabbage_Build_Standalone=1" -D "Cabbage_GUI_Editor=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ~/SDKs/vstsdk2.4  -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules -I $(CSOUND_INCLUDE)
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -std=c++11 -Os
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -fvisibility=hidden -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile`
   LDDEPS :=
-  RESFLAGS := -I $(CSOUND_INCLUDE) -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "Cabbage_GUI_Editor=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  RESFLAGS := -I $(CSOUND_INCLUDE) -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "Cabbage_GUI_Editor=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I ~/SDKs/vstsdk2.4  -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := Cabbage
   BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(TARGET_ARCH)
 endif
 
 OBJECTS := \
-  $(OBJDIR)/OSCBundle.o \
-  $(OBJDIR)/OSCMessage.o \
-  $(OBJDIR)/OSCTimeTag.o \
-  $(OBJDIR)/UDPSocket.o \
   $(OBJDIR)/BinaryData_5ba7f54.o \
   $(OBJDIR)/CabbageCallOutBox_1ced38fd.o \
   $(OBJDIR)/CabbageGUIClass_79b9049f.o \
@@ -67,17 +63,16 @@ OBJECTS := \
   $(OBJDIR)/CabbagePropertiesDialog_5e61b3fd.o \
   $(OBJDIR)/CabbageTable_d003e736.o \
   $(OBJDIR)/ComponentLayoutEditor_aa38c835.o \
-  $(OBJDIR)/csPerfThread_f9d0b9cc.o \
   $(OBJDIR)/DirectoryContentsComponent_616f5a9f.o \
   $(OBJDIR)/CodeEditor_bb1e171d.o \
   $(OBJDIR)/CodeWindow_86e6d820.o \
+  $(OBJDIR)/SplitComponent_35ae1cd2.o \
   $(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o \
   $(OBJDIR)/CommandManager_f4ac7445.o \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
   $(OBJDIR)/Table_35ae1cd9.o \
-  $(OBJDIR)/SplitComponent_35ae1cd2.o \
   $(OBJDIR)/CabbageStandaloneDialog_72d272cd.o \
   $(OBJDIR)/StandaloneFilterApp_d9ee3663.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
@@ -113,26 +108,6 @@ clean:
 strip:
 	@echo Stripping CabbageStandalone
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
-
-$(OBJDIR)/OSCBundle.o: ../../Source/NiallsOSCLib/OSCBundle.cpp 
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscBundle.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/OSCMessage.o: ../../Source/NiallsOSCLib/OSCMessage.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscMessage.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/OSCTimeTag.o: ../../Source/NiallsOSCLib/OSCTimeTag.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscTimeTag.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/UDPSocket.o: ../../Source/NiallsSocketLib/UDPSocket.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling UDPSocket.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 	
 $(OBJDIR)/BinaryData_5ba7f54.o: ../../Source/BinaryData.cpp
 	-@mkdir -p $(OBJDIR)
@@ -187,11 +162,6 @@ $(OBJDIR)/SplitComponent_35ae1cd2.o: ../../Source/Editor/SplitComponent.cpp
 $(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o: ../../Source/CabbageAudioDeviceSelectorComponent.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CabbageAudioDeviceSelectorComponent.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/csPerfThread_f9d0b9cc.o: ../../Source/csPerfThread.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling csPerfThread.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/DirectoryContentsComponent_616f5a9f.o: ../../Source/DirectoryContentsComponent.cpp

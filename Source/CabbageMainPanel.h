@@ -32,7 +32,7 @@ class ComponentLayoutEditor;
 //-----------------------------------------------------------------------------
 
 class CabbageMainPanel   : public Component,
-    public CabbageUtils,
+    public cUtils,
     public ActionBroadcaster
 
 {

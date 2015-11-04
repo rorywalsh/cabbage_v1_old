@@ -4,10 +4,10 @@
 DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 
 # Default csound include path
-CSOUND_INCLUDE ?= "C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound\include"
+CSOUND_INCLUDE ?= "C:\Users\rory\Documents\sourceCode\cabbageaudio\csound\include"
 
 # Default Csound library path
-CSOUND_LIBRARY ?= "C:\Users\RoryWalsh\Documents\SourceCode\cabbageaudio\csound\build\libcsound64.dll.a"
+CSOUND_LIBRARY ?= "C:\Users\rory\Documents\sourceCode\cabbageaudio\csound\build\libcsound64.dll.a"
 
 ASIO_SDK ?= "C:\SDKs\ASIOSDK2.3\common"
 VST_SDK ?= "C:\SDKs\vstsdk2.4"
@@ -60,10 +60,6 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS := \
-  $(OBJDIR)/OSCBundle.o \
-  $(OBJDIR)/OSCMessage.o \
-  $(OBJDIR)/OSCTimeTag.o \
-  $(OBJDIR)/UDPSocket.o \
   $(OBJDIR)/BinaryData_5ba7f54.o \
   $(OBJDIR)/CabbageCallOutBox_1ced38fd.o \
   $(OBJDIR)/CabbageGUIClass_79b9049f.o \
@@ -72,13 +68,16 @@ OBJECTS := \
   $(OBJDIR)/CabbagePropertiesDialog_5e61b3fd.o \
   $(OBJDIR)/CabbageTable_d003e736.o \
   $(OBJDIR)/ComponentLayoutEditor_aa38c835.o \
-  $(OBJDIR)/csPerfThread_f9d0b9cc.o \
-  $(OBJDIR)/DirectoryContentsComponent_616f5a9f.o \
+  $(OBJDIR)/CodeEditor_bb1e171d.o \
+  $(OBJDIR)/CodeWindow_86e6d820.o \
+  $(OBJDIR)/SplitComponent_35ae1cd2.o \
+  $(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o \
+  $(OBJDIR)/CommandManager_f4ac7445.o \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
-  $(OBJDIR)/XYPad_6eaa3453.o \
   $(OBJDIR)/Table_35ae1cd9.o \
+  $(OBJDIR)/XYPad_6eaa3453.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
@@ -86,59 +85,35 @@ OBJECTS := \
   $(OBJDIR)/juce_audio_processors_44a134a2.o \
   $(OBJDIR)/juce_audio_utils_f63b12e8.o \
   $(OBJDIR)/juce_core_aff681cc.o \
-  $(OBJDIR)/juce_cryptography_25c7e826.o \
   $(OBJDIR)/juce_data_structures_bdd6d488.o \
   $(OBJDIR)/juce_events_79b2840.o \
   $(OBJDIR)/juce_graphics_c8f1e7a4.o \
   $(OBJDIR)/juce_gui_basics_a630dd20.o \
   $(OBJDIR)/juce_gui_extra_7767d6a8.o \
   $(OBJDIR)/juce_PluginUtilities_e2e19a34.o \
+  $(OBJDIR)/juce_VST3_Wrapper_77e7c73b.o \
   $(OBJDIR)/juce_VST_Wrapper_bb62e93d.o \
-
+  
 .PHONY: clean
 
 $(OUTDIR)/$(TARGET): $(OBJECTS) $(LDDEPS) $(RESOURCES)
-	@echo Linking CabbagePluginSynth
+	@echo Linking CabbagePluginEffect
 	-@mkdir -p $(BINDIR)
 	-@mkdir -p $(LIBDIR)
 	-@mkdir -p $(OUTDIR)
 	@$(BLDCMD)
 
-clean_obj:
-	@echo Cleaning CabbagePluginSynth Object files
-	-@rm -rf $(OBJDIR)/*
-	-@rm -rf $(OBJDIR)
-
 clean:
-	@echo Cleaning CabbagePluginSynth
+	@echo Cleaning CabbagePluginEffect
 	-@rm -f $(OUTDIR)/$(TARGET)
 	-@rm -rf $(OBJDIR)/*
 	-@rm -rf $(OBJDIR)
 
 strip:
-	@echo Stripping CabbagePluginSynth
+	@echo Stripping CabbagePluginEffect
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
 
-$(OBJDIR)/OSCBundle.o: ../../Source/NiallsOSCLib/OSCBundle.cpp 
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscBundle.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/OSCMessage.o: ../../Source/NiallsOSCLib/OSCMessage.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscMessage.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/OSCTimeTag.o: ../../Source/NiallsOSCLib/OSCTimeTag.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OscTimeTag.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/UDPSocket.o: ../../Source/NiallsSocketLib/UDPSocket.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling UDPSocket.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-	
 $(OBJDIR)/BinaryData_5ba7f54.o: ../../Source/BinaryData.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling BinaryData.cpp"
@@ -184,14 +159,29 @@ $(OBJDIR)/ComponentLayoutEditor_aa38c835.o: ../../Source/ComponentLayoutEditor.c
 	@echo "Compiling ComponentLayoutEditor.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/csPerfThread_f9d0b9cc.o: ../../Source/csPerfThread.cpp
+$(OBJDIR)/SplitComponent_35ae1cd2.o: ../../Source/Editor/SplitComponent.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling csPerfThread.cpp"
+	@echo "Compiling SplitComponent.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/DirectoryContentsComponent_616f5a9f.o: ../../Source/DirectoryContentsComponent.cpp
+$(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o: ../../Source/CabbageAudioDeviceSelectorComponent.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling DirectoryContentsComponent.cpp"
+	@echo "Compiling CabbageAudioDeviceSelectorComponent.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CodeEditor_bb1e171d.o: ../../Source/Editor/CodeEditor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CodeEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CodeWindow_86e6d820.o: ../../Source/Editor/CodeWindow.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CodeWindow.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CommandManager_f4ac7445.o: ../../Source/Editor/CommandManager.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CommandManager.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/CabbagePluginEditor_5a11f64e.o: ../../Source/Plugin/CabbagePluginEditor.cpp
@@ -282,6 +272,11 @@ $(OBJDIR)/juce_gui_extra_7767d6a8.o: ../../JuceLibraryCode/modules/juce_gui_extr
 $(OBJDIR)/juce_PluginUtilities_e2e19a34.o: ../../JuceLibraryCode/modules/juce_audio_plugin_client/utility/juce_PluginUtilities.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling juce_PluginUtilities.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/juce_VST3_Wrapper_77e7c73b.o: ../../JuceLibraryCode/modules/juce_audio_plugin_client/VST3/juce_VST3_Wrapper.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling juce_VST3_Wrapper.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/juce_VST_Wrapper_bb62e93d.o: ../../JuceLibraryCode/modules/juce_audio_plugin_client/VST/juce_VST_Wrapper.cpp

@@ -23,7 +23,7 @@ public:
         //turn off resizeable...
         //filterWindow->setResizable(true, true);
         //filterWindow->setFullScreen(true);
-		juce::Thread::setCurrentThreadName("cabbage");
+        juce::Thread::setCurrentThreadName("cabbage");
     }
 
     void shutdown()

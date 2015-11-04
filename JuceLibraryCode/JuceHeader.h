@@ -10,8 +10,8 @@
 
 */
 
-#ifndef __APPHEADERFILE_QMSL5D__
-#define __APPHEADERFILE_QMSL5D__
+#ifndef __APPHEADERFILE_R4KT5S__
+#define __APPHEADERFILE_R4KT5S__
 
 #include "AppConfig.h"
 #include "modules/juce_audio_basics/juce_audio_basics.h"
@@ -26,7 +26,7 @@
 #include "modules/juce_graphics/juce_graphics.h"
 #include "modules/juce_gui_basics/juce_gui_basics.h"
 #include "modules/juce_gui_extra/juce_gui_extra.h"
-
+#include "BinaryData.h"
 
 #if ! DONT_SET_USING_JUCE_NAMESPACE
  // If your code uses a lot of JUCE classes, then this will obviously save you
@@ -34,11 +34,13 @@
  using namespace juce;
 #endif
 
+#if ! JUCE_DONT_DECLARE_PROJECTINFO
 namespace ProjectInfo
 {
-    const char* const  projectName    = "Cabbage";
-    const char* const  versionString  = "0.5";
-    const int          versionNumber  = 0x500;
+    const char* const  projectName    = "CabbageHost";
+    const char* const  versionString  = "1.0.0";
+    const int          versionNumber  = 0x10000;
 }
+#endif
 
-#endif   // __APPHEADERFILE_QMSL5D__
+#endif   // __APPHEADERFILE_R4KT5S__

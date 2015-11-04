@@ -109,15 +109,15 @@ public:
     }
 
     bool columnEditMode;
-	void mouseWheelMove (const MouseEvent&, const MouseWheelDetails&);
-	
-	
+    void mouseWheelMove (const MouseEvent&, const MouseWheelDetails&);
+
+
 private:
     int xPos, yPos, prevXpos;
     CodeDocument::Position pos1, pos2;
     Colour selectedColour;
-	int fontSize;
-	String font;
+    int fontSize;
+    String font;
     String type;
     StringArray opcodeStrings;
     StringArray opcodeTokens;
@@ -143,6 +143,11 @@ public:
 
     int saveAllFiles();
     void setSavePoint();
+	
+	void setShowTabButtons(bool show)
+	{
+		showTabButtons = show;
+	}
     void changeListenerCallback(juce::ChangeBroadcaster* source);
     String getAllText();
     void setAllText(String text);
@@ -181,8 +186,8 @@ class FlatButton : public Component,
 {
 public:
     FlatButton(String name, int currentTab, String type): 	name(name),
-        type(type),
         currentTab(currentTab),
+        type(type),
         isMouseDown(false),
         genericColour(Colours::brown)
     {
@@ -261,7 +266,6 @@ public:
 
         else
         {
-            float number = name.substring(6, 5).getDoubleValue();
             if(isMouseDown)
                 g.setColour(genericColour.darker(.2f));
             else
@@ -374,7 +378,7 @@ public:
 
     void paint(Graphics& g)
     {
-        g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
+        g.fillAll(cUtils::getDarkerBackgroundSkin());
     }
 
     void resized()

@@ -29,6 +29,10 @@
 extern CabbageLookAndFeel* lookAndFeel;
 extern CabbageLookAndFeelBasic* lookAndFeelBasic;
 
+#ifdef Cabbage_Build_Standalone
+extern ApplicationProperties* appProperties;
+#endif
+
 class CabbageMainPanel;
 class ComponentLayoutEditor;
 class CabbageCornerResizer;
@@ -42,7 +46,7 @@ public:
     CabbagePlantWindow(const String& title, const Colour& backgroundColour)
         : DocumentWindow (title, backgroundColour, DocumentWindow::closeButton)
     {
-		setName(title);
+        setName(title);
     };
 
     ~CabbagePlantWindow()
@@ -50,12 +54,12 @@ public:
     };
 
 //	void mouseMove(const MouseEvent& event)
-//	{		
+//	{
 //		Logger::writeToLog("planty");
 //		//Logger::writeToLog(String(this->getContentComponent()->getMouseXYRelative().getX()));
 //	}
 //
-//	
+//
     void closeButtonPressed()
     {
         setMinimised(true);
@@ -75,8 +79,8 @@ class CabbageViewportComponent : public Component
 public:
     CabbageViewportComponent() : Component("CabbageViewportComponent")
     {
-	this->setInterceptsMouseClicks(false, true);	
-	}
+        this->setInterceptsMouseClicks(false, true);
+    }
     ~CabbageViewportComponent() {}
 
     void paint(Graphics &g)
@@ -84,7 +88,7 @@ public:
         Viewport* const viewport = findParentComponentOfClass<Viewport>(); //Get the parent viewport
         if(viewport != nullptr) //Check for nullness
         {
-           juce::Rectangle<int> viewRect(viewport->getViewPositionX(), viewport->getViewPositionY(), viewport->getViewWidth(), viewport->getViewHeight()); //Get the current displayed area in the viewport
+            juce::Rectangle<int> viewRect(viewport->getViewPositionX(), viewport->getViewPositionY(), viewport->getViewWidth(), viewport->getViewHeight()); //Get the current displayed area in the viewport
         }
     }
 };
@@ -106,14 +110,15 @@ public:
 // main GUI editor window
 //==============================================================================
 class CabbagePluginAudioProcessorEditor  : public AudioProcessorEditor,
-    public CabbageUtils,
+    public cUtils,
     public SliderListener,
     public ComboBoxListener,
     public ButtonListener,
     public KeyListener,
     public ChangeBroadcaster,
     public ChangeListener,
-    public ActionListener
+    public ActionListener,
+	public ActionBroadcaster
 
 {
 public:
@@ -142,10 +147,12 @@ public:
     {
         return static_cast <CabbagePluginAudioProcessor*> (getAudioProcessor());
     }
-	
-	int currentPopupIndex;
+
+    int currentPopupIndex;
 
 private:
+	WildcardFileFilter wildcardFilter;
+	Image logo1, logo2;
     void setPositionOfComponent(float x, float y, float width, float height, Component* comp, String reltoplant);
     void createfTableData(Table* table, bool sendToCsound);
     bool keyPressed(const juce::KeyPress &,Component *);
@@ -160,10 +167,11 @@ private:
     void comboBoxChanged (ComboBox* combo);
     void InsertComboBox(CabbageGUIClass &cAttr);
     void InsertSoundfiler(CabbageGUIClass &cAttr);
+	void InsertSourceButton(CabbageGUIClass &cAttr);
     void InsertDirectoryList(CabbageGUIClass &cAttr);
     void SetupWindow(CabbageGUIClass &cAttr);
     void InsertSlider(CabbageGUIClass &cAttr);
-	void InsertTextEditor(CabbageGUIClass &cAttr);
+    void InsertTextEditor(CabbageGUIClass &cAttr);
     void sliderValueChanged (Slider*);
     void InsertButton(CabbageGUIClass &cAttr);
     void InsertCheckBox(CabbageGUIClass &cAttr);
@@ -186,7 +194,10 @@ private:
     void InsertTextbox(CabbageGUIClass &cAttr);
     void InsertNumberBox(CabbageGUIClass &cAttr);
     void buttonClicked(Button*);
+    void textButtonClicked(Button* button);
+    void toggleButtonClicked(Button* button);
     void mouseMove(const MouseEvent& event);
+    void mouseDrag(const MouseEvent& event);
     void mouseDown(const MouseEvent& event);
     void mouseUp(const MouseEvent& event);
     void buttonStateChanged(Button*);
@@ -211,6 +222,7 @@ private:
     StringArray pastEvents;
     Array <float, CriticalSection> tableValues;
     AudioSampleBuffer tableBuffer;
+	String lastOpenedDirectory;
 
     ScopedPointer<Viewport> viewport;
     ScopedPointer<CabbageViewportComponent> viewportComponent;
@@ -222,7 +234,7 @@ private:
     }
     bool keyIsPressed;
     bool isMouseDown;
-	bool showScrollbars;
+    bool showScrollbars;
     void positionComponentWithinPlant(String type, float left, float top, float width, float height, Component *layout, Component *control);
     //ScopedPointer<CabbagePlantWindow> subPatch;
     OwnedArray<CabbageButton> plantButton;
@@ -234,7 +246,7 @@ private:
     ScopedPointer<Component> componentPanel;
 #endif
     ScopedPointer<MidiKeyboardComponent> midiKeyboard;
-    ScopedPointer<LookAndFeel> feely;
+    ScopedPointer<LookAndFeel_V1> feely;
     ComponentBoundsConstrainer resizeLimits;
 
     AudioPlayHead::CurrentPositionInfo hostInfo;
@@ -248,7 +260,9 @@ private:
     ScopedPointer<CabbageLookAndFeelBasic> basicLookAndFeel;
     ScopedPointer<Label> debugLabel;
     StringArray scoreEvents;
-
+    String globalSVGPath;
+    Array<int> radioGroups;
+    ScopedPointer<BubbleMessageComponent> popupBubble;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePluginAudioProcessorEditor);
 
 };

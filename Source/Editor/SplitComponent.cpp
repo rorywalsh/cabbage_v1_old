@@ -158,14 +158,12 @@ void SplitComponent::SetSplitBarPosition(int newPosition)
     if (m_isVertical)
     {
         newPosition = jmax(0, jmin(newPosition, getWidth() - m_pSplitBar->getWidth()));	// limit
-
         m_pSplitBar->setBounds(newPosition, 0, m_pSplitBar->getWidth(), m_pSplitBar->getHeight());
         m_lastSplitbarMoveExtent = getWidth();
     }
     else
     {
         newPosition = jmax(0, jmin(newPosition, getHeight() - m_pSplitBar->getHeight()));	// limit
-
         m_pSplitBar->setBounds(0, newPosition, m_pSplitBar->getWidth(), m_pSplitBar->getHeight());
         m_lastSplitbarMoveExtent = getHeight();
     }

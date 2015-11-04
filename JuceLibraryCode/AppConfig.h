@@ -41,7 +41,7 @@
 // juce_audio_devices flags:
 
 #ifndef    JUCE_ASIO
- #ifdef Cabbage_Build_Standalone 
+ #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST) 
    #define JUCE_ASIO 1
  #endif
 #endif
@@ -95,15 +95,19 @@
 
 //==============================================================================
 // juce_audio_processors flags:
+#ifdef CABBAGE_HOST
+    #ifndef    JUCE_PLUGINHOST_VST
+     #define   JUCE_PLUGINHOST_VST 1
+    #endif
 
-#ifndef    JUCE_PLUGINHOST_VST
-//#define JUCE_PLUGINHOST_VST
+    #ifndef    JUCE_PLUGINHOST_VST3
+     #define   JUCE_PLUGINHOST_VST3 0
+    #endif
+
+    #ifndef    JUCE_PLUGINHOST_AU
+     #define   JUCE_PLUGINHOST_AU 1
+    #endif
 #endif
-
-#ifndef    JUCE_PLUGINHOST_AU
-//#define JUCE_PLUGINHOST_AU
-#endif
-
 //==============================================================================
 // juce_core flags:
 
@@ -191,19 +195,34 @@
 #ifndef  JucePlugin_PluginCode
 #define JucePlugin_PluginCode             'RORY'
 #endif
-#ifndef  JucePlugin_MaxNumInputChannels
-#define JucePlugin_MaxNumInputChannels    2
-#endif
-#ifndef  JucePlugin_MaxNumOutputChannels
-#define JucePlugin_MaxNumOutputChannels   2
-#endif
-#ifndef  JucePlugin_PreferredChannelConfigurations
-#define JucePlugin_PreferredChannelConfigurations  {2,2}//, {4,4}, {6,6}, {8,8}
+
+
+#ifdef CABBAGE_HOST
+	#ifndef  JucePlugin_MaxNumInputChannels
+	#define JucePlugin_MaxNumInputChannels    8
+	#endif
+	#ifndef  JucePlugin_MaxNumOutputChannels
+	#define JucePlugin_MaxNumOutputChannels   8
+	#endif
+	#ifndef  JucePlugin_PreferredChannelConfigurations
+	#define JucePlugin_PreferredChannelConfigurations  {2,2}, {4,4}, {6,6}, {8,8}
+	#endif
+
+#else
+	#ifndef  JucePlugin_MaxNumInputChannels
+	#define JucePlugin_MaxNumInputChannels    2
+	#endif
+	#ifndef  JucePlugin_MaxNumOutputChannels
+	#define JucePlugin_MaxNumOutputChannels   2
+	#endif
+	#ifndef  JucePlugin_PreferredChannelConfigurations
+	#define JucePlugin_PreferredChannelConfigurations  {2,2}
+	#endif
 #endif
 
 #ifdef Cabbage_Plugin_LV2
-#define JucePlugin_LV2URI               "urn:cabbage:plugin"
-#define JucePlugin_WantsLV2TimePos      1
+	#define JucePlugin_LV2URI               "urn:cabbage:plugin"
+	#define JucePlugin_WantsLV2TimePos      1
 #endif 
 
 #ifdef Cabbage_Plugin_Synth

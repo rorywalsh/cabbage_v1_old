@@ -36,7 +36,7 @@ public:
     {
         textEditor = new TextEditor();
         textEditor->setColour(Label::outlineColourId, Colours::white);
-        textEditor->setColour(TextEditor::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
+        textEditor->setColour(TextEditor::backgroundColourId, cUtils::getDarkerBackgroundSkin());
         textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
         textEditor->setMultiLine(true);
         textEditor->setFont(Font("Arial", 14, 0));
@@ -56,6 +56,7 @@ public:
 
     String getText()
     {
+		const MessageManagerLock lock;
         return textEditor->getText();
     }
 
@@ -66,7 +67,7 @@ public:
 
     void paint(Graphics& g)
     {
-        g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
+        g.fillAll(cUtils::getDarkerBackgroundSkin());
         g.setColour(Colours::white);
         g.drawRoundedRectangle(getLocalBounds().toFloat(), 2, 2);
         g.drawFittedText("Csound output", getLocalBounds().withHeight(18), Justification::centred, 1, 1.f);
@@ -83,7 +84,7 @@ public:
     {
         textEditor = new TextEditor();
         textEditor->setColour(Label::outlineColourId, Colours::white);
-        textEditor->setColour(TextEditor::backgroundColourId, CabbageUtils::getDarkerBackgroundSkin());
+        textEditor->setColour(TextEditor::backgroundColourId, cUtils::getDarkerBackgroundSkin());
         textEditor->setColour(TextEditor::textColourId, Colours::white);
         textEditor->setMultiLine(true);
 #if defined(WIN32)
@@ -138,7 +139,7 @@ public:
 
     void paint(Graphics& g)
     {
-        g.fillAll(CabbageUtils::getDarkerBackgroundSkin());
+        g.fillAll(cUtils::getDarkerBackgroundSkin());
         g.setColour(Colours::white);
         g.drawRoundedRectangle(getLocalBounds().toFloat(), 2, 2);
         g.drawFittedText("Debugger output", getLocalBounds().withHeight(18), Justification::centred, 1, 1.f);
@@ -172,6 +173,12 @@ public:
         return findFirstTargetParentComponent();
     }
 
+	void focusOfChildComponentChanged(FocusChangeType cause)
+	{
+		//if(cause==focusChangedByMouseClick)
+		//	sendActionMessage("closing editor");
+	} 	
+
     void getCommandInfo (const CommandID commandID, ApplicationCommandInfo& result);
     PopupMenu getMenuForIndex (int topLevelMenuIndex, const String& menuName);
     bool perform (const InvocationInfo& info);
@@ -194,10 +201,14 @@ public:
 
     void closeButtonPressed()
     {
-        //JUCEApplication::getInstance()->systemRequestedQuit();
+	#if defined(CABBAGE_HOST) || !defined(Cabbage_Build_Standalone)
+		sendActionMessage("closing editor");
+	#else
         this->setVisible(false);
+	#endif
     }
 
+	void showEditorConsole();
     void codeDocumentTextDeleted(int,int) {}
     void showCabbageHelp();
     void codeDocumentTextInserted(const juce::String &,int) {}
@@ -241,6 +252,7 @@ public:
     bool isColumnModeEnabled;
     bool isInstrTabEnabled;
     bool isCsoundOutputEnabled;
+	bool isEditModeEnabled;
 };
 
 

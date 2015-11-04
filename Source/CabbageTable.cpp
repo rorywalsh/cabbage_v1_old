@@ -75,8 +75,8 @@ void CabbageEnvelopeHandleComponent::mouseDown (const MouseEvent& e)
         pop.addItem(4, "Delete");
 
         int result;
-#if !defined(AndroidBuild)		
-		result = pop.show();
+#if !defined(AndroidBuild)
+        result = pop.show();
 #endif
         if(result==1)
             getProperties().set(String("curveType"), LINEAR);
@@ -112,8 +112,6 @@ void CabbageEnvelopeHandleComponent::mouseDrag (const MouseEvent& e)
 
     int leftLimit = previousHandle == 0 ? 0 : previousHandle->getX()+1;
     int rightLimit = nextHandle == 0 ? getParentWidth()-previousHandle->getHeight() : nextHandle->getX()-1;
-    int topLimit = previousHandle == 0 ? 0 : previousHandle->getX()+1;
-    int bottomLimit = nextHandle == 0 ? getParentWidth()-previousHandle->getHeight() : nextHandle->getX()-1;
     int dragX = x+e.getDistanceFromDragStartX();
     int dragY = y+e.getDistanceFromDragStartY();
 
@@ -359,7 +357,7 @@ void Table::paint (Graphics& g)
                 topYPixelValue -= (minGap-diff)/2;
             }
 
-            if (CabbageUtils::isNumber(topYPixelValue) && CabbageUtils::isNumber(bottomYPixelValue))
+            if (cUtils::isNumber(topYPixelValue) && cUtils::isNumber(bottomYPixelValue))
             {
                 g.setColour(currColour);
                 topYPixelValue -= minWaveHeight/2;
@@ -445,7 +443,9 @@ void Table::paint (Graphics& g)
 
                     if(drawHorizontalSegments==true && fixedEnvelope == true)
                         if(drawFill==true && !toggleMaxMin)
+                        {
                             g.fillRect(0, jmax(handle->getY(), 0),  jmax(handle->getWidth(), 0), jmax(0, getHeight()-1));
+                        }
                         else if(drawFill==true && toggleMaxMin)
                         {
                             //g.setColour(Colours::red);
@@ -554,8 +554,8 @@ void Table::paint (Graphics& g)
     if(onTop){
     String text = "ftable:"+String(tableNumber);
     g.setColour(currColour);
-    g.setFont(CabbageUtils::getComponentFont());
-    int length = CabbageUtils::getComponentFont().getStringWidth(text)+10;
+    g.setFont(cUtils::getComponentFont());
+    int length = cUtils::getComponentFont().getStringWidth(text)+10;
     g.drawText(text, getWidth()-length,
     					   2,
     					   length, 12,
@@ -631,7 +631,6 @@ void Table::createHandlesFromTable(int points)
     handles.clear();
     Colour col;
     editMode=true;
-    int x;
     float end = getWidth();
     float scaleX = .99;
 
@@ -815,7 +814,7 @@ Table* CabbageTableManager::getTable(int index)
 
 void CabbageTableManager::paint(Graphics& g)
 {
-    g.setColour(CabbageUtils::getDarkerBackgroundSkin());
+    g.setColour(cUtils::getDarkerBackgroundSkin());
     g.fillAll();
     //this needs to be updated so that we can stables on top of each other
     if(toggleMode)
@@ -929,7 +928,7 @@ void CabbageTableManager::addTable (String name,
 
 void CabbageTableManager::tableToTop (int tableIndex)
 {
-    jassert(tables[tableIndex])
+
     tables[tableIndex]->toFront(true);
 
     Logger::writeToLog("Table on top is"+String(tables[tableIndex]->tableNumber));
@@ -1077,7 +1076,7 @@ void CabbageTableManager::mouseDown (const MouseEvent& e)
 
         int choice;
 #if !defined(AndroidBuild)
-		choice = pop.show();
+        choice = pop.show();
 #endif
         if((choice>=100) && (choice<200))
         {

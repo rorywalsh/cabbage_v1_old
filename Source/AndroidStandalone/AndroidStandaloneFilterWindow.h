@@ -74,13 +74,13 @@ public:
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Standalone);
 
         processor = createPluginFilter();
-		
-        if(processor == nullptr) // Your createPluginFilter() function must return a valid object!
-			CabbageUtils::showMessage("Something not right in plugin");
 
-											  
-		//processor->createGUI(tempFile.loadFileAsString(), true);
-									  
+        if(processor == nullptr) // Your createPluginFilter() function must return a valid object!
+            CabbageUtils::showMessage("Something not right in plugin");
+
+
+        //processor->createGUI(tempFile.loadFileAsString(), true);
+
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Undefined);
 
         processor->setPlayConfigDetails (JucePlugin_MaxNumInputChannels,
@@ -92,7 +92,7 @@ public:
     {
         stopPlaying();
         processor = nullptr;
-		Logger::writeToLog("deleting plugin");
+        Logger::writeToLog("deleting plugin");
     }
 
     static String getFilePatterns (const String& fileSuffix)
@@ -120,12 +120,12 @@ public:
     {
         DialogWindow::LaunchOptions o;
         o.content.setOwned (new AudioDeviceSelectorComponent (deviceManager,
-                                                              processor->getNumInputChannels(),
-                                                              processor->getNumInputChannels(),
-                                                              processor->getNumOutputChannels(),
-                                                              processor->getNumOutputChannels(),
-                                                              true, false,
-                                                              true, false));
+                            processor->getNumInputChannels(),
+                            processor->getNumInputChannels(),
+                            processor->getNumOutputChannels(),
+                            processor->getNumOutputChannels(),
+                            true, false,
+                            true, false));
         o.content->setSize (500, 450);
 
         o.dialogTitle                   = TRANS("Audio Settings");
@@ -185,14 +185,14 @@ public:
     //==============================================================================
     ScopedPointer<PropertySet> settings;
     ScopedPointer<AudioProcessor> processor;
-	//ScopedPointer<CabbagePluginAudioProcessor> processor;
+    //ScopedPointer<CabbagePluginAudioProcessor> processor;
     AudioDeviceManager deviceManager;
     AudioProcessorPlayer player;
 
 private:
     void setupAudioDevices()
     {
-		Logger::writeToLog("gotcha!!");
+        Logger::writeToLog("gotcha!!");
         deviceManager.addAudioCallback (&player);
         deviceManager.addMidiInputCallback (String::empty, &player);
 
@@ -220,7 +220,7 @@ private:
     that the other plugin wrappers use.
 */
 class StandaloneFilterWindow    : public DocumentWindow,
-                                  public ButtonListener   // (can't use Button::Listener due to VC2005 bug)
+    public ButtonListener   // (can't use Button::Listener due to VC2005 bug)
 {
 public:
     //==============================================================================
@@ -275,8 +275,14 @@ public:
     }
 
     //==============================================================================
-    AudioProcessor* getAudioProcessor() const noexcept      { return pluginHolder->processor; }
-    AudioDeviceManager& getDeviceManager() const noexcept   { return pluginHolder->deviceManager; }
+    AudioProcessor* getAudioProcessor() const noexcept
+    {
+        return pluginHolder->processor;
+    }
+    AudioDeviceManager& getDeviceManager() const noexcept
+    {
+        return pluginHolder->deviceManager;
+    }
 
     void createEditorComp()
     {
@@ -322,14 +328,14 @@ public:
         m.addItem (3, TRANS("Load a saved state..."));
         m.addSeparator();
         m.addItem (4, TRANS("Reset to default state"));
-/*
-        switch (m.showAt (&optionsButton))
-        {
-            case 1:  pluginHolder->showAudioSettingsDialog(); break;
-            case 4:  resetToDefaultState(); break;
-            default: break;
-        }
-		*/
+        /*
+                switch (m.showAt (&optionsButton))
+                {
+                    case 1:  pluginHolder->showAudioSettingsDialog(); break;
+                    case 4:  resetToDefaultState(); break;
+                    default: break;
+                }
+        		*/
     }
 
     void resized() override

@@ -23,89 +23,59 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "../CabbageUtils.h"
 #include "../CabbageGUIClass.h"
-#include "../Editor/CodeEditor.h"
 #include "../XYPadAutomation.h"
 #include "../CabbageMessageSystem.h"
 #include "../Soundfiler.h"
-#include "CabbageGenericAudioProcessorEditor.h" 
+#include "../Editor/CodeWindow.h"
+#include "../Editor/CodeEditor.h"
+//#include "CabbageGenericAudioProcessorEditor.h"
 #include "../CabbageLookAndFeel.h"
 
-#include "../NiallsSocketLib/UDPSocket.h"
-#include "../NiallsOSCLib/OSCBundle.h" 
-#include "../NiallsOSCLib/OSCMessage.h" 
-#include "../NiallsOSCLib/OSCTimeTag.h" 
 
 #ifndef Cabbage_No_Csound
-#ifdef AndroidBuild
+    #ifdef AndroidBuild
     #include "AndroidCsound.hpp"
-#else
+    #else
     #include <csound.hpp>
+    #endif
 #endif
 
 #include "csdl.h"
-//#include "cwindow.h"
-#include "../csPerfThread.hpp"
+
+
+#ifndef Cabbage_Build_Standalone
+class CodeWindow;
 #endif
 
-//#ifndef Cabbage_Build_Standalone
-//#include "../Editor/CabbageEditorWindow.h"
-//#endif
-
 #ifdef Cabbage64Bit
-    #define CABBAGE_VERSION "Cabbage(64bit) v0.5.13 Alpha"
+#define CABBAGE_VERSION "Cabbage(64bit) v0.5.14"
 #else
-    #define CABBAGE_VERSION "Cabbage(32bit) v0.5.13 Alpha"
+#define CABBAGE_VERSION "Cabbage(32bit) v0.5.14"
 #endif
 
 #define AUDIO_PLUGIN 1
 #define EXTERNAL_PLUGIN 2
 #define AUTOMATION_PLUGIN 3
 
-#ifdef Cabbage_Build_Standalone
-class CsoundCodeEditor;
-#endif
+//#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+//class CsoundCodeEditor;
+//#endif
 
 #if defined(BUILD_DEBUGGER) && !defined(Cabbage_No_Csound)
 #include <csdebug.h>
 #endif
 
-class OscThread;
 
-//==================================================================
-//OSC hack socket/server......
-//==================================================================
-#define PORT 7000
-
-class OscThread : public Thread, public ChangeBroadcaster
-{
-private:
-	///	The socket we're sending our data through.
-	UDPSocket sock;
-	///	Bundle sent when the user drags an xy pad.
-	OSC::Bundle bundle;
-	CabbageMessageQueue messageQue;
-	StringArray channels;
-public:
-    OscThread();
-    ~OscThread(){}
-	CabbageMessageQueue getMessages(){
-		return messageQue;
-	}
-	void sendOSC(String message, float value);
-	void setupSocket(const String address, int port);
-	void setCsoundChannels(StringArray channels);
-	void flushOSCMessages();
-    void run();
-};
 //==============================================================================
 // CabbagePluginAudioProcessor definition
 //==============================================================================
 class CabbagePluginAudioProcessor  : public AudioProcessor,
-    public CabbageUtils,
+    public cUtils,
     public ChangeBroadcaster,
     public Timer,
     public ActionBroadcaster,
-    public ChangeListener
+    public ChangeListener,
+	public ActionListener
 {
     //==============================================================================
     File csdFile;
@@ -125,35 +95,38 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     bool updateTable;
     Array<int> tableNumbers;
     AudioPlayHead::CurrentPositionInfo hostInfo;
-	
-	StringArray oscChannelIdentifiers;
-	NamedValueSet oscChannelValues;
-	String oscAddress;
-	int oscPort;
+
+	NamedValueSet macroText;
+
+    StringArray socketChannelIdentifiers;
+    NamedValueSet socketChannelValues;
+    String socketAddress;
+    int scoketPort;
 
     ScopedPointer<FileLogger> fileLogger;
     bool createLog;
 
     //ExamplePacketListener listener;
     //UdpListeningReceiveSocket socket;
-    ScopedPointer<OscThread> oscThread;
+    //ScopedPointer<OscThread> oscThread;
 
     File logFile;
     bool isAutomator;
     bool isWinXP;
     bool isNativeThreadRunning;
     String csoundDebuggerOutput;
+	float rmsLeft, rmsRight;
 
     //============== Csound related variables/methods ==============================
 #ifndef Cabbage_No_Csound
     ScopedPointer<CSOUND_PARAMS> csoundParams;
-    ScopedPointer<CsoundPerformanceThread> csoundPerfThread;
+    //ScopedPointer<CsoundPerformanceThread> csoundPerfThread;
     PVSDATEXT* dataout;
     MYFLT cs_scale;
 #if !defined(AndroidBuild)
     ScopedPointer<Csound> csound;                           //Csound instance
 #else
-	ScopedPointer<AndroidCsound> csound; 
+    ScopedPointer<AndroidCsound> csound;
 #endif
     MYFLT *CSspin, *CSspout;        //Csound audio IO pointers
     int csndIndex;                          //Csound sample counter
@@ -170,26 +143,6 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     static int OpenMidiOutputDevice(CSOUND * csnd, void **userData, const char *devName);
     static int ReadMidiData(CSOUND *csound, void *userData, unsigned char *mbuf, int nbytes);
     static int WriteMidiData(CSOUND *csound, void *userData, const unsigned char *mbuf, int nbytes);
-
-    int getNumberCsoundOutChannels()
-    {
-        return csound->GetNchnls();
-    }
-
-    int getNumberCsoundInChannels()
-    {
-        //return csound->GetInNchnls();
-    }
-
-    int getCsoundSamplingRate()
-    {
-        return csound->GetSr();
-    }
-
-    int getCsoundKsmpsSize()
-    {
-        return csound->GetKsmps();
-    }
 #endif
     static void YieldCallback(void* data);
     void updateCabbageControls();
@@ -215,7 +168,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     void updateGUIControlsKsmps(int speed);
     int guiRefreshRate;
 #ifdef Cabbage_No_Csound
-	std::vector<float> temp;
+    std::vector<float> temp;
 #else
     std::vector<MYFLT> temp;
 #endif
@@ -226,9 +179,83 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     File tempAudioFile;
     CriticalSection writerLock;
     AudioFormatWriter::ThreadedWriter* volatile activeWriter;
+	bool firstTime, isBypassed, isMuted;
 
 
 public:
+
+	//------------------------------- interprocess comms -------------------------------
+	void appendMessage (const String& message)
+    {
+		cUtils::debug(message);
+    }
+
+
+    class CabbageInterprocessConnection  : public InterprocessConnection
+    {
+    public:
+        CabbageInterprocessConnection (CabbagePluginAudioProcessor& owner_)
+            : InterprocessConnection (true),
+              owner (owner_)
+        {
+            static int totalConnections = 0;
+            ourNumber = ++totalConnections;
+        }
+
+        void connectionMade()
+        {
+			const String message = "Connection #" + String (ourNumber) + " - connection started";
+			owner.csound->Message(message.toUTF8());
+        }
+
+        void connectionLost()
+        {
+            const String message = "Connection #" + String (ourNumber) + " - connection lost";
+			owner.csound->Message(message.toUTF8());
+        }
+
+        void messageReceived (const MemoryBlock& message);
+
+    private:
+        CabbagePluginAudioProcessor& owner;
+        int ourNumber;
+    };
+
+    class CabbageInterprocessConnectionServer   : public InterprocessConnectionServer
+    {
+    public:
+        CabbageInterprocessConnectionServer (CabbagePluginAudioProcessor& owner_)
+            : owner (owner_)
+        {
+        }
+
+        InterprocessConnection* createConnectionObject()
+        {
+            CabbageInterprocessConnection* newConnection = new CabbageInterprocessConnection (owner);
+
+            owner.activeConnections.add (newConnection);
+            return newConnection;
+        }
+
+    private:
+        CabbagePluginAudioProcessor& owner;
+    };
+
+	OwnedArray <CabbageInterprocessConnection, CriticalSection> activeConnections;
+	ScopedPointer<CabbageInterprocessConnectionServer> server;
+	void openInterprocess (bool asSocket, bool asSender, String address, int port);
+	
+	void closeInterprocess()
+	{
+        server->stop();
+        activeConnections.clear();	
+		
+	}
+
+
+	//--------------------------------------------------------------
+	
+	bool isFirstTime(){ return firstTime;	};
     String changeMessage;
     Array<int> dirtyControls;
     bool CSOUND_DEBUG_MODE;
@@ -237,18 +264,59 @@ public:
     void continueCsoundDebug();
     void nextCsoundDebug();
     void cleanCsoundDebug();
+	void createAndShowSourceEditor(LookAndFeel* looky);
+	void actionListenerCallback (const String& message);
+	
+
+	
+    int getNumberCsoundOutChannels()
+    {
+        return csound->GetNchnls();
+    }
+
+    int getNumberCsoundInChannels()
+    {
+        return csound->GetNchnls();
+    }
+
+    int getCsoundSamplingRate()
+    {
+        return csound->GetSr();
+    }
+
+    int getCsoundKsmpsSize()
+    {
+        return csound->GetKsmps();
+    }
+	
+	void shouldBypass(bool val)
+	{
+		const ScopedLock sl (getCallbackLock());
+		isBypassed = val;
+	}
+	
+	void shouldMute(bool val)
+	{
+		const ScopedLock sl (getCallbackLock());
+		isMuted = val;
+	}
     //==============================================================================
 
-#if defined(Cabbage_Build_Standalone) || (Cabbage_Plugin_Host)
+#if defined(Cabbage_Build_Standalone) || (CABBAGE_HOST)
     CabbagePluginAudioProcessor(String inputfile, bool guiOnOff, int pluginType);
 #else
     CabbagePluginAudioProcessor();
 #endif
     ~CabbagePluginAudioProcessor();
 
-#ifdef Cabbage_Build_Standalone
+//#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
     CsoundCodeEditor* codeEditor;
+//#else
+
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+	CodeWindow* cabbageCsoundEditor;
 #endif
+	
 
     bool compiledOk()
     {
@@ -273,8 +341,7 @@ public:
     int performEntireScore();
     void startRecording();
     void stopRecording();
-    void reCompileCsound(File file);
-    void setupNativePluginEditor();
+    int reCompileCsound(File file);
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock);
     void releaseResources();
@@ -315,7 +382,7 @@ public:
     const Array<double, CriticalSection> getTable(int tableNum);
     const Array<float, CriticalSection> getTableFloats(int tableNum);
     void createGUI(String source, bool refresh);
-	int checkTable(int tableNum);
+    int checkTable(int tableNum);
     MidiKeyboardState keyboardState;
     //midiBuffers
     MidiBuffer midiBuffer;
@@ -323,12 +390,12 @@ public:
     MidiBuffer ccBuffer;
     bool showMIDI;
     bool yieldCallbackBool;
-    int yieldCounter;
+    int yieldCounter, vuCounter;
     bool nativePluginEditor;
     CabbageMessageQueue messageQueue;
     StringArray scoreEvents;
     int averageSampleIndex;
-	bool stopProcessing;
+    bool stopProcessing;
     float outputNo1;
     int pluginType;
     float automationAmp;
@@ -347,7 +414,7 @@ public:
     inline String getCsoundInputFileText()
     {
         String ret="";
-#if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
+#if (defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)) && !defined(AndroidBuild)
         if(codeEditor)
             ret = codeEditor->getAllText();
         else
@@ -359,14 +426,14 @@ public:
     void updateCsoundFile(String text)
     {
         //csdFile.replaceWithText(text);
-#if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
+#if (defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)) && !defined(AndroidBuild)
         codeEditor->setAllText(text);
 #endif
     }
 
     int saveEditorFiles()
     {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
         if(codeEditor)
             return codeEditor->saveAllFiles();
 #endif
@@ -374,7 +441,7 @@ public:
 
     void saveText()
     {
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
         codeEditor->textChanged = false;
 #endif
     }
@@ -400,7 +467,7 @@ public:
 
     void highlightLine(String text)
     {
-#if defined(Cabbage_Build_Standalone) && !defined(AndroidBuild)
+#if (defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)) && !defined(AndroidBuild)
         codeEditor->highlightLine(text);
 #endif
     }
@@ -508,11 +575,8 @@ public:
         return changeMessageType;
     }
 
-    inline String getCsoundOutput()
-    {
-        return csoundOutput;
-    }
-
+    String getCsoundOutput();
+	
     inline String getDebuggerOutput()
     {
         return csoundDebuggerOutput;
@@ -609,6 +673,8 @@ public:
     {
         return true;
     }
+
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbagePluginAudioProcessor);
 

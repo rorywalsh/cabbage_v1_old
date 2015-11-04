@@ -35,7 +35,8 @@ CabbageMainPanel::CabbageMainPanel() : width(-99), top(-99), height(-99), left(-
     setVisible(true);
     setSize(0,0);
     LOCKED=true;
-    panelColour = CabbageUtils::getBackgroundSkin();
+    panelColour = cUtils::getBackgroundSkin();
+
 }
 
 

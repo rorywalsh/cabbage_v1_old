@@ -317,7 +317,7 @@ bool PropertyPanel::isSectionOpen (const int sectionIndex) const
     return false;
 }
 
-void PropertyPanel::setSectionOpen (const int sectionIndex, const bool shouldBeOpen)
+void PropertyPanel::setSectionOpen (const int sectionIndex, const bool shouldBeOpen, const bool shouldScroll)
 {
     int index = 0;
 
@@ -330,6 +330,12 @@ void PropertyPanel::setSectionOpen (const int sectionIndex, const bool shouldBeO
             if (index == sectionIndex)
             {
                 section->setOpen (shouldBeOpen);
+				
+				if(shouldScroll)
+				{
+					viewport.setViewPosition(section->getX(), section->getY());
+				}
+				
                 break;
             }
 
@@ -390,7 +396,7 @@ void PropertyPanel::restoreOpennessState (const XmlElement& xml)
         forEachXmlChildElementWithTagName (xml, e, "SECTION")
         {
             setSectionOpen (sections.indexOf (e->getStringAttribute ("name")),
-                            e->getBoolAttribute ("open"));
+                            e->getBoolAttribute ("open"), true);
         }
 
         viewport.setViewPosition (viewport.getViewPositionX(),

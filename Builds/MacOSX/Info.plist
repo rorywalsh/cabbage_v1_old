@@ -7,13 +7,13 @@
 	<key>CFBundleIconFile</key>
 	<string>logo_cabbage.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.yourcompany.CabbagePlugin</string>
+	<string>com.cabbageaudio.${EXECUTABLE_NAME}</string>
 	<key>CFBundleName</key>
-	<string>CabbagePlugin</string>
+	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundlePackageType</key>
-	<string>TDMw</string>
+	<string>APPL</string>
 	<key>CFBundleSignature</key>
-	<string>PTul</string>
+	<string>????</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0.0</string>
 	<key>CFBundleVersion</key>
@@ -22,24 +22,5 @@
 	<string></string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
-	<key>AudioComponents</key>
-	<array>
-		<dict>
-			<key>name</key>
-			<string>yourcompany: CabbagePlugin</string>
-			<key>description</key>
-			<string>CabbagePlugin</string>
-			<key>factoryFunction</key>
-			<string>CabbagePluginAUFactory</string>
-			<key>manufacturer</key>
-			<string>Manu</string>
-			<key>type</key>
-			<string>aufx</string>
-			<key>subtype</key>
-			<string>Plug</string>
-			<key>version</key>
-			<integer>65536</integer>
-		</dict>
-	</array>
 </dict>
 </plist>

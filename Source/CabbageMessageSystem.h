@@ -25,9 +25,9 @@
 
 #ifndef Cabbage_No_Csound
 #ifdef AndroidBuild
-    #include "AndroidCsound.hpp"
+#include "AndroidCsound.hpp"
 #else
-    #include <csound.hpp>
+#include <csound.hpp>
 #endif
 #endif
 
@@ -35,7 +35,7 @@ using namespace std;
 
 
 //simple channel message classe
-class CabbageChannelMessage : public CabbageUtils
+class CabbageChannelMessage : public cUtils
 {
 public:
     String channelName;
@@ -69,7 +69,7 @@ public:
 };
 
 //message queue class
-class CabbageMessageQueue : public CabbageUtils
+class CabbageMessageQueue : public cUtils
 {
     Array<CabbageChannelMessage, CriticalSection> outgoingChannelMessages;
 

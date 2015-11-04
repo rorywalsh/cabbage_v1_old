@@ -193,9 +193,12 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         }
         if(partOfSelection==false)
         {
-            getLayoutEditor()->selectedFilters.deselectAll();
-            getLayoutEditor()->resetAllBorders();
-            numSelected = 0;
+            if(getLayoutEditor())
+            {
+                getLayoutEditor()->selectedFilters.deselectAll();
+                getLayoutEditor()->resetAllBorders();
+                numSelected = 0;
+            }
         }
     }
 
@@ -212,7 +215,7 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         getLayoutEditor()->selectedLineNumbers.clear();
         getLayoutEditor()->selectedCompsOrigCoordinates.add(this->getBounds());
         getLayoutEditor()->selectedLineNumbers.add(this->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
-        //Logger::writeToLog("ChildAlias MouseDown SingleSel:\n"+CabbageUtils::getBoundsString(getBounds()));
+        //Logger::writeToLog("ChildAlias MouseDown SingleSel:\n"+cUtils::getBoundsString(getBounds()));
         toFront (true);
         if(!e.mods.isCommandDown())
             getProperties().set("interest", "current");
@@ -226,9 +229,10 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         for(int i=0; i<numSelected; i++)
         {
             //add original position of selected filters to vector
-            //Logger::writeToLog("ChildAlias MouseDown MultiSel:\n"+CabbageUtils::getBoundsString(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds()));
-            getLayoutEditor()->selectedCompsOrigCoordinates.add(
-                getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds());
+            //Logger::writeToLog("ChildAlias MouseDown MultiSel:\n"+cUtils::getBoundsString(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds()));
+            if(getLayoutEditor()->getLassoSelection().getSelectedItem(i))
+                getLayoutEditor()->selectedCompsOrigCoordinates.add(
+                    getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getBounds());
             getLayoutEditor()->selectedLineNumbers.add(getLayoutEditor()->getLassoSelection().getSelectedItem(i)->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
         }
     }
@@ -275,7 +279,7 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         m.addItem(1, "Add to repository");
         int choice;
 #if !defined(AndroidBuild)
-		choice = m.show();
+        choice = m.show();
 #endif
         if(choice==1)
         {
@@ -288,16 +292,16 @@ void ChildAlias::mouseDown (const MouseEvent& e)
             alert.setColour(TextEditor::highlightColourId, Colour(20, 20, 20));
             //alert.addTextBlock("Enter a name and hit 'escape'(The following symbols not premitted in names:"" $ % ^ & * ( ) - + )");
             alert.addTextEditor("textEditor", "name", "");
-			String plantDir;
-#if !defined(AndroidBuild)
-			plantDir = appProperties->getUserSettings()->getValue("PlantFileDir", "");
+            String plantDir;
+#if !defined(AndroidBuild) && !defined(CABBAGE_HOST)
+            plantDir = appProperties->getUserSettings()->getValue("PlantFileDir", "");
             alert.runModalLoop();
 #endif
             this->getTopLevelComponent()->setAlwaysOnTop(true);
             bool clashingNames=false;
             int result;
 
-            
+
             //Logger::writeToLog(plantDir);
             Array<File> tempfiles;
             StringArray plants;
@@ -321,7 +325,7 @@ void ChildAlias::mouseDown (const MouseEvent& e)
 
                 if(clashingNames==true)
                 {
-                    result = CabbageUtils::showYesNoMessage("Do you wish to overwrite the existing plant?", &getLookAndFeel());
+                    result = cUtils::showYesNoMessage("Do you wish to overwrite the existing plant?", &getLookAndFeel());
                     if(result == 0)
                         parent->sendChangeMessage();
                     else
@@ -476,8 +480,8 @@ void ChildAlias::mouseDrag (const MouseEvent& e)
                         selectedCompsPosY = selectedCompsPosY/gridSize*gridSize;
                         selectedCompsPosX = selectedCompsPosX+dragX;
                         selectedCompsPosX = selectedCompsPosX/gridSize*gridSize;
-
-                        restrictBounds(selectedCompsPosX, selectedCompsPosY);
+                        //needs fixing for multiple objects. For now leaving it disabled...
+                        //restrictBounds(selectedCompsPosX, selectedCompsPosY);
                         c->setTopLeftPosition(selectedCompsPosX, selectedCompsPosY);
                         c->applyToTarget("");
                     }
@@ -516,6 +520,7 @@ void ChildAlias::mouseDrag (const MouseEvent& e)
 
 void ChildAlias::restrictBounds(int &x, int &y)
 {
+    //this is kak when dealing with multiple objects....
     if(x>getParentComponent()->getWidth()-this->getWidth())
         x = getParentComponent()->getWidth()-this->getWidth();
     if(x<0)

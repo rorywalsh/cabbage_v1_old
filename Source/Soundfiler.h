@@ -52,6 +52,18 @@ public:
         return loopLength*sampleRate;
     }
 
+    void setIsRangeSelectable(bool isSelectable)
+    {
+        selectableRange = isSelectable;
+    }
+
+    void shouldShowScrubber(bool show)
+    {
+        showScrubber = show;
+        currentPositionMarker->setVisible(show);
+    }
+
+
     void setScrubberPos(double pos);
 
     float timeToX (const double time) const
@@ -73,6 +85,8 @@ public:
 
 private:
     Image img;
+    bool selectableRange;
+    bool showScrubber;
     //Graphics& graphics;
     int imgCount;
     Range<double> visibleRange;

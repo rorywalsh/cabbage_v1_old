@@ -20,8 +20,8 @@ Name: "custom"; Description: "Custom installation"; Flags: iscustom
 
 [Components]
 Name: "program"; Description: "Program Files, standard binaries and essential Csound dlls"; Types: full minimal custom; Flags: fixed
-Name: "csound"; Description: "Csound program files and audio/MIDI interfaces, for standalone Csound use"; Types: custom  full
-Name: "csoundOpcodes"; Description: "Csound plugin opcodes"; Types: custom full
+;Name: "csound"; Description: "Csound program files and audio/MIDI interfaces, for standalone Csound use"; Types: custom  full
+;Name: "csoundOpcodes"; Description: "Csound plugin opcodes"; Types: custom full
 Name: "python"; Description: "Python opcodes, requires Python 2.7 to be installed"; Types: custom  full
 ;Name: "csound4Max"; Description: "csound~ object for Max/MSP/M4L"; Types: custom  full
 ;C:\Users\rory\Documents\sourcecode\cabbageaudio\csound\build\frontends
@@ -49,38 +49,6 @@ Source: "..\..\..\csound\build\csound64.dll";     DestDir: "{app}"; Components: 
 Source: "C:\Program Files (x86)\Mega-Nerd\libsndfile32\bin\libsndfile-1.dll";   DestDir: "{app}"; Components: program
 Source: "..\..\..\csound\build\signalflowgraph.dll";   DestDir: "{app}"; Components: program
 
-;Csound binaries
-Source: "..\..\..\csound\build\csound.exe";             DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\libcsound64.dll.a";             DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\libcsnd6.dll.a";             DestDir: "{app}\csound"; Components: csound
-Source: "C:\Program Files (x86)\Mega-Nerd\libsndfile32\bin\libsndfile-1.dll";   DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\csnd6.jar";             DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\csnd6.dll";             DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\libportaudio-2.dll";     DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\pmidi.dll";              DestDir: "{app}\csound"; Components: csound
-Source: "C:/Users/rory/Documents/sourcecode/portmidi/build/libportmidi.dll";              DestDir: "{app}\csound"; Components: csound
-;Source: "..\..\..\csound\build\ipmidi.dll";             DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\rtpa.dll";               DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\rtwinmm.dll";            DestDir: "{app}\csound"; Components: csound
-;Source: "..\..\..\csound\build\virtual.dll";            DestDir: "{app}"; Components: csound
-Source: "C:\Users\rory\Documents\sourcecode\liblo-0.28\src\.libs\liblo-7.dll";        DestDir: "{app}\csound"; Components: csoundOpcodes
-;Source: "..\..\..\csound\build\_jcsound6.dll";            DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\py.dll";             DestDir: "{app}\csound"; Components: python  
-Source: "..\..\..\csound\build\signalflowgraph.dll"; DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\serial.dll"; DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\scansyn.dll"; DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\doppler.dll"; DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\fractalnoise.dll"; DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\fareygen.dll"; DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\osc.dll";     DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\chua.dll"; DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\mixer.dll"; DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\ampmidid.dll"; DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\cs_date.dll"; DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\cellular.dll"; DestDir: "{app}\csound"; Components: csound
-Source: "..\..\..\csound\build\platerev.dll"; DestDir: "{app}\csound"; Components: csound
-
-;Source: "..\..\..\csound\build\widgets.dll";            DestDir: "{app}"; Components: csound
 
 ;Csound opcodes
 Source: "C:\Users\rory\Documents\sourcecode\liblo-0.28\src\.libs\liblo-7.dll";        DestDir: "{app}"; Components: csoundOpcodes
@@ -129,7 +97,7 @@ function NextButtonClick(CurPageID: Integer): Boolean;
 	  if CurPageID = wpSelectTasks then
 	  begin
     	if WizardForm.TasksList.Checked[2] then
-      	SetEnvSystem('OPCODE6DIR64', ExpandConstant('{app}'), True)
+      	SetEnvSystem('OPCODE6DIR', ExpandConstant('{app}'), True)
 	  end;
 	end;
 

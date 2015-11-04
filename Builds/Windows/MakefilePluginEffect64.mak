@@ -4,10 +4,10 @@
 DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 
 # Default csound include path
-CSOUND_INCLUDE ?= "C:\Users\rory\Documents\sourceCode\cabbageaudio\csound64\include"
+CSOUND_INCLUDE ?= "C:\Users\rory\sourceCode\cabbageaudio\csound64\include"
 
 # Default Csound library path
-CSOUND_LIBRARY ?= "C:\Users\rory\Documents\sourceCode\cabbageaudio\csound64\build\libcsound64.dll.a"
+CSOUND_LIBRARY ?= "C:\Users\rory\sourceCode\cabbageaudio\csound64\build\libcsound64.dll.a"
 
 ASIO_SDK ?= "C:\SDKs\ASIOSDK2.3\common"
 VST_SDK ?= "C:\SDKs\vstsdk2.4"
@@ -22,10 +22,10 @@ ifndef TARGET
 endif
 
 ifeq ($(CONFIG),Debug)
-  BINDIR := build
-  LIBDIR := build
-  OBJDIR := build/intermediate/Debug
-  OUTDIR := build
+  BINDIR := build64
+  LIBDIR := build64
+  OBJDIR := build64/intermediate/Debug
+  OUTDIR := build64
 
   ifeq ($(TARGET_ARCH),)
     TARGET_ARCH := -march=x86-64
@@ -41,10 +41,10 @@ ifeq ($(CONFIG),Debug)
 endif
 
 ifeq ($(CONFIG),Release)
-  BINDIR := build
-  LIBDIR := build
-  OBJDIR := build/intermediate/Release
-  OUTDIR := build
+  BINDIR := build64
+  LIBDIR := build64
+  OBJDIR := build64/intermediate/Release
+  OUTDIR := build64
 
   ifeq ($(TARGET_ARCH),)
     TARGET_ARCH := -march=x86-64

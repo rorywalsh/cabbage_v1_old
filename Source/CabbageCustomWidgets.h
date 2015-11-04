@@ -1888,7 +1888,7 @@ public:
           pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
           pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
     {
-        addAndMakeVisible(keyboard = new MidiKeyboardComponent(state, MidiKeyboardComponent::Orientation::horizontalKeyboard));
+        addAndMakeVisible(keyboard = new MidiKeyboardComponent(state, MidiKeyboardComponent::horizontalKeyboard));
         if(!cAttr.getNumProp(CabbageIDs::visible))
         {
             setVisible(false);

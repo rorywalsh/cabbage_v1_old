@@ -595,8 +595,9 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
     else
     {
         //deviceManager->closeAudioDevice();
-        filter->reCompileCsound(csdFile);
         filter->createGUI(csdFile.loadFileAsString(), true);
+        filter->reCompileCsound(csdFile);
+        
     }
 
 
@@ -1419,7 +1420,10 @@ void StandaloneFilterWindow::setupWindowDimensions()
 #elif WIN32
     cabbageCsoundEditor->setFullScreen(true);
 #else
-    cabbageCsoundEditor->setSize(1000, 800);
+    Rectangle<int> r = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
+    int x = r.getWidth();
+    int y = r.getHeight();
+    cabbageCsoundEditor->setSize(x*.8, y*.8);
 #endif
 }
 //==============================================================================

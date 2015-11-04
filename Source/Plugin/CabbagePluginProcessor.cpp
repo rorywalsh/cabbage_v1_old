@@ -688,16 +688,6 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
         keyboardState.allNotesOff(0);
         keyboardState.reset();
 
-        //init all channels with their init val
-//        for(int i=0; i<guiCtrls.size(); i++)
-//        {
-//            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
-//                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
-//            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
-//                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
-//            this->updateCabbageControls();
-//        }
-
         //simple hack to allow tables to be set up correctly.
         csound->PerformKsmps();
         csound->SetScoreOffsetSeconds(0);
@@ -722,15 +712,6 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
         //removeAllChangeListeners();
         getCallbackLock().exit();
 
-//        //init all channels with their init val
-//        for(int i=0; i<guiCtrls.size(); i++)
-//        {
-//            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
-//                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
-//            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
-//                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
-//            this->updateCabbageControls();
-//        }
 
 #ifdef WIN32
         csound->SetChannel("CSD_PATH", file.getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());
@@ -784,17 +765,15 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 
     String warningMessage;
 
-    int test=100;
     int checkGUI = isGuiEnabled();
     //setGuiEnabled((false));
     int guiID=0;
     StringArray csdText;
 
-    int lines=1;
+
     String csdLine("");
     csdText.addLines(source.replace("\t", " "));
     bool multiComment = false;
-    bool multiLine = false;
 
     //csound->Message("\n===Cabbage Warnings===\n");
     int lineWhichCabbageSectionStarts = 0;
@@ -1183,14 +1162,15 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     for(int i=0; i<guiCtrls.size(); i++)
     {
         //		Logger::writeToLog(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel)+": "+String(guiCtrls[i].getNumProp(CabbageIDs::value)));
-#ifndef Cabbage_No_Csound
         if(guiCtrls.getReference(i).getStringProp("channeltype")=="string")
             //deal with combobox strings..
             csound->SetChannel(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), "");
         //									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
         else
             csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::value));
-#endif
+        
+        messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
+                                                      guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
     }
 
     //init all channels with their init val, and set parameters
@@ -1199,14 +1179,11 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
         if(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("texteditor"))
             csound->SetChannel(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
                                guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::text).toUTF8().getAddress());
-#ifndef Cabbage_No_Csound
         if(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::identchannel).isNotEmpty())
             //deal with combobox strings..
             csound->SetChannel(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::identchannel).toUTF8(), "");
-        //									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
-#endif
     }
-
+    this->updateCabbageControls();
 
 //#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 

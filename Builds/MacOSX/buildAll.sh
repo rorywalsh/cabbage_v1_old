@@ -96,8 +96,11 @@ then
 	cp -rf ../../Examples ./build/Release/CabbageStudio.app/Contents/MacOS/Examples
 	
 	cp opcodes.txt ./build/Release/Cabbage.app/Contents/MacOS/opcodes.txt 
+	cp IntroScreen.csd ./build/Release/Cabbage.app/Contents/MacOS/IntroScreen.csd
+	cp cabbage.png  ./build/Release/Cabbage.app/Contents/MacOS/cabbage.png 
+	cp cabbageEarphones.png  ./build/Release/Cabbage.app/Contents/MacOS/cabbageEarphones.png 
 
-	packagesbuild ../../../CabbageOSXUniversal/CabbageOSXUniversal.pkgproj
+	#packagesbuild ../../../CabbageOSXUniversal/CabbageOSXUniversal.pkgproj
 
 	#cp -rf ./build/Release/Cabbage.app/ ./build/Release/Cabbage32.app/	
 	#rm -rf 	cp -rf ./build/Release/Cabbage.app/

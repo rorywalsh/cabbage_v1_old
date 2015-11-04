@@ -228,12 +228,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
             //setAlwaysOnTop(true);
         }
     }
-	
-	if(!File(defaultCSDFile).existsAsFile())
-	{
-		defaultCSDFile = File(File::getSpecialLocation(File::currentExecutableFile)).getParentDirectory().getFullPathName()+"/IntroScreen.csd";
-		openFile(defaultCSDFile);
-	}
+
 }
 //==============================================================================
 // Destructor

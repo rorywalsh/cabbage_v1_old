@@ -228,6 +228,15 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
             //setAlwaysOnTop(true);
         }
     }
+    else
+    {
+#if defined(WIN32)
+        defaultCSDFile = File(File::getSpecialLocation(File::currentExecutableFile)).getParentDirectory().getFullPathName()+"\\IntroScreen.csd";
+#else
+        defaultCSDFile = File(File::getSpecialLocation(File::currentExecutableFile)).getParentDirectory().getFullPathName()+"/IntroScreen.csd";
+#endif
+        openFile(defaultCSDFile);
+    }
 
 }
 //==============================================================================

@@ -31,6 +31,7 @@
 		54A87F2E778D3ED78C6EC4A3 /* SidebarPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D171CFF8580F0944F028B24 /* SidebarPanel.cpp */; };
 		58E049EF68B7D3BC08263CF3 /* XYPadAutomation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD0486577FD3D3259EEF934F /* XYPadAutomation.cpp */; };
 		5D860941C437344C762BBA9C /* CabbageGUIClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9531A2CD2441D376DAE4EC80 /* CabbageGUIClass.cpp */; };
+		61BA86141BCE7BE80006C8D5 /* CsoundLib64.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 61DE9C5F1BC2D1B900652F21 /* CsoundLib64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		61BE1EE21B04A28C00BA8AAA /* logo_cabbage.icns in Resources */ = {isa = PBXBuildFile; fileRef = 61BE1EE11B04A28C00BA8AAA /* logo_cabbage.icns */; };
 		61DE9C601BC2D1B900652F21 /* CsoundLib64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61DE9C5F1BC2D1B900652F21 /* CsoundLib64.framework */; };
 		630843614340BB8A917737F9 /* juce_audio_formats.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1D089C3A2B19F6BECC94A6D /* juce_audio_formats.mm */; };
@@ -85,6 +86,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				61BA86141BCE7BE80006C8D5 /* CsoundLib64.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,12 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/Plugin/CabbagePluginProcessor.cpp"
-            timestampString = "448890353.53683"
+            timestampString = "468341944.093157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1784"
-            endingLineNumber = "1784"
-            landmarkName = "CabbagePluginAudioProcessor::checkTable(int tableNum)"
+            startingLineNumber = "1739"
+            endingLineNumber = "1739"
+            landmarkName = "CabbagePluginAudioProcessor::getTableStatement(int tableNum)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -26,12 +26,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/Plugin/CabbagePluginProcessor.cpp"
-            timestampString = "448890353.53683"
+            timestampString = "468341944.093157"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1507"
-            endingLineNumber = "1507"
-            landmarkName = "CabbagePluginAudioProcessor::startRecording ()"
+            startingLineNumber = "1462"
+            endingLineNumber = "1462"
+            landmarkName = "CabbagePluginAudioProcessor::openInterprocess (bool asSocket, bool asSender, String address, int port)"
             landmarkType = "5">
             <Locations>
                <Location
@@ -120,7 +120,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/Editor/CodeWindow.cpp"
-            timestampString = "467111472.730079"
+            timestampString = "468343930.213341"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "778"
@@ -136,7 +136,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/Editor/CodeWindow.cpp"
-            timestampString = "467111672.31408"
+            timestampString = "468343930.213341"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "797"
@@ -152,28 +152,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/Editor/CodeWindow.cpp"
-            timestampString = "467111824.270118"
+            timestampString = "468343930.213341"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "812"
             endingLineNumber = "812"
             landmarkName = "CodeWindow::toggleManuals(String manual)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../Source/Standalone/CabbageStandaloneDialog.cpp"
-            timestampString = "467118871.578138"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "307"
-            endingLineNumber = "307"
-            landmarkName = "StandaloneFilterWindow::timerCallback()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

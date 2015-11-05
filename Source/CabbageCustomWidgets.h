@@ -1379,15 +1379,6 @@ public:
         }
     }
 
-    //---------------------------------------------
-    //void resized()
-    //{
-    //this->setBounds(0, 18, getWidth(), getHeight());
-    //Logger::writeToLog("resizing plant");
-    //this->setWantsKeyboardFocus(false);
-    //}
-
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGroupbox);
 };
 

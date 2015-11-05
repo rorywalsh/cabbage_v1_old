@@ -1778,6 +1778,9 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
 
     dynamic_cast<CabbageGroupbox*>(layoutComps[idx])->addChangeListener(this);
 
+    //send to back so it's behind all other contorls
+    layoutComps[idx]->toBack();
+
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
     cAttr.setStringProp(CabbageIDs::type, "groupbox");
@@ -1857,6 +1860,7 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+    layoutComps[idx]->toBack();
 
     //if control is not part of a plant, add mouse listener
     if(cAttr.getStringProp("plant").isEmpty())

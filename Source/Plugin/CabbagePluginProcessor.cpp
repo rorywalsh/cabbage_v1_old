@@ -217,6 +217,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
                 //	csound->InputMessage("i\"PROCESSOR\" 0 3600 1");
             }
 
+            //send an f0 score statement to insure instrument keeps running
+            csound->InputMessage("f1 0 1024 10 1");
             csound->SetScoreOffsetSeconds(0);
             csound->RewindScore();
 
@@ -252,7 +254,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
             debugMessageArray.add(String("\n"));
             this->setLatencySamples(csound->GetKsmps());
             updateHostDisplay();
-
         }
         else
         {

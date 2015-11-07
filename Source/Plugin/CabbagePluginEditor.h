@@ -165,6 +165,8 @@ private:
     void addToRepository(String entryName);
     void convertIntoPlant();
     void breakUpPlant();
+    void sendBack(bool toBack);
+    void sendForward(bool toFront);
     void InsertGroupBox(CabbageGUIClass &cAttr);
     void comboBoxChanged (ComboBox* combo);
     void InsertComboBox(CabbageGUIClass &cAttr);

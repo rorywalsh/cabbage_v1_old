@@ -419,6 +419,18 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
         else if(le->currentEvent=="convertToPlant")
             convertIntoPlant();
 
+        else if(le->currentEvent=="sendToBack")
+            sendBack(true);
+
+        else if(le->currentEvent=="sendBackOne")
+            sendBack(false);
+
+        else if(le->currentEvent=="sendForward")
+            sendForward(true);
+
+        else if(le->currentEvent=="sendForwardOne")
+            sendForward(false);
+
         else if(le->currentEvent=="breakUpPlant")
             breakUpPlant();
 
@@ -960,6 +972,125 @@ void CabbagePluginAudioProcessorEditor::populateLineNumberArray(StringArray csdA
 #endif
 }
 
+//========================================================
+//send components backwards in z order
+//========================================================
+void CabbagePluginAudioProcessorEditor::sendBack(bool toBack)
+{
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+    StringArray csdArray;
+    StringArray boundsForSelectComps;
+    csdArray.addLines(getFilter()->getCsoundInputFileText());
+    ComponentLayoutEditor* le = layoutEditor;
+
+    populateLineNumberArray(csdArray);
+
+    if(lineNumbers.size()>1)
+    {
+        showMessage("Only single components can be moved forwards or backwards.\nPlease make sure only a single component is selected");
+        return;
+    }
+
+    currentLineNumber = lineNumbers[0];
+    String widgetText = csdArray[currentLineNumber];
+    csdArray.remove(currentLineNumber);
+
+    if(toBack)
+    {
+        for(int i=0; i<csdArray.size(); i++)
+        {
+            //cUtils::debug(csdArray[i].trim().substring(0, 3));
+            if(csdArray[i].trim().substring(0, 4)=="form")
+            {
+                csdArray.insert(i+1, widgetText);
+                i=csdArray.size();
+            }
+        }
+    }
+    else
+    {
+        for(int i=currentLineNumber-1; i>0; i--)
+        {
+            if(csdArray[i].isNotEmpty())
+            {
+                csdArray.insert(i, widgetText);
+                i=-1;
+            }
+        }
+    }
+
+    getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
+    getFilter()->createGUI(csdArray.joinIntoString("\n"), true);
+
+
+    //update frames to reflect changes made to GUI
+    this->updateLayoutEditorFrames();
+    updateLayoutEditorFrames();
+    //close props windows after deleting object
+    propsWindow->setVisible(false);
+
+#endif
+}
+//========================================================
+//send components forward in z order
+//========================================================
+void CabbagePluginAudioProcessorEditor::sendForward(bool toFront)
+{
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+    StringArray csdArray;
+    StringArray boundsForSelectComps;
+    csdArray.addLines(getFilter()->getCsoundInputFileText());
+    ComponentLayoutEditor* le = layoutEditor;
+
+    populateLineNumberArray(csdArray);
+
+    if(lineNumbers.size()>1)
+    {
+        showMessage("Only single components can be moved forwards or backwards.\nPlease make sure only a single component is selected");
+        return;
+    }
+
+    currentLineNumber = lineNumbers[0];
+    String widgetText = csdArray[currentLineNumber];
+    csdArray.remove(currentLineNumber);
+
+    if(toFront)
+    {
+        for(int i=0; i<csdArray.size(); i++)
+        {
+            //cUtils::debug(csdArray[i].trim().substring(0, 3));
+            if(csdArray[i].trim().substring(0, 10)=="</Cabbage>")
+            {
+                csdArray.insert(i, widgetText);
+                i=csdArray.size();
+            }
+        }
+    }
+    else
+    {
+        for(int i=currentLineNumber; i<csdArray.size(); i++)
+        {
+            cUtils::debug(csdArray[i]);
+            if(csdArray[i].trim().isNotEmpty())
+            {
+                csdArray.insert(i+1, widgetText);
+                i=csdArray.size();
+            }
+        }
+    }
+
+    getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
+    getFilter()->createGUI(csdArray.joinIntoString("\n"), true);
+
+
+    //update frames to reflect changes made to GUI
+    this->updateLayoutEditorFrames();
+    updateLayoutEditorFrames();
+    //close props windows after deleting object
+    propsWindow->setVisible(false);
+
+#endif
+}
 //========================================================
 //deletes any selected Components and removes text decs from csd file
 //care is taken here to first delete the instances of each GUI component

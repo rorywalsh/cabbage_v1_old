@@ -55,8 +55,10 @@ Section "Core components" SEC01
   ${EnvVarUpdate} $0 "CABBAGE_OPCODE_PATH" "A" "HKLM" "$INSTDIR"                            ; Prepend
   SetOverwrite ifnewer
   File "build\Cabbage.exe"
+  File "build\CabbageStudio.exe"
   CreateDirectory "$SMPROGRAMS\Cabbage32"
   CreateShortCut "$SMPROGRAMS\Cabbage32\Cabbage32.lnk" "$INSTDIR\Cabbage.exe"
+  CreateShortCut "$SMPROGRAMS\Cabbage32\CabbageStudio32.lnk" "$INSTDIR\CabbageStudio.exe"
   CreateShortCut "$DESKTOP\Cabbage32.lnk" "$INSTDIR\Cabbage.exe"
   File "build\CabbagePluginEffect.dat"
   File "build\CabbagePluginSynth.dat"
@@ -195,8 +197,15 @@ Section Uninstall
 
   Delete "$SMPROGRAMS\Cabbage32\Uninstall.lnk"
   Delete "$SMPROGRAMS\Cabbage32\Website.lnk"
+  Delete "$INSTDIR\IntroScreen.csd"
+  Delete "$INSTDIR\test.csd"
+  Delete "$INSTDIR\CabbageStudio.exe" 
+  Delete "$INSTDIR\cabbage.png"
+  Delete "$INSTDIR\cabbageEarphones.png"
   Delete "$DESKTOP\Cabbage32.lnk"
   Delete "$SMPROGRAMS\Cabbage32\Cabbage32.lnk"
+  Delete "$SMPROGRAMS\Cabbage32\liblo-7.dll"
+  Delete "$SMPROGRAMS\Cabbage32\csound.exe"
 
   SetOutPath $SMPROGRAMS
   RMDir /r "$INSTDIR\csoundDocs"

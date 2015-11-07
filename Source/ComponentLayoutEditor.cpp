@@ -279,8 +279,8 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         m.setLookAndFeel(&getParentComponent()->getLookAndFeel());
         m.addItem(2, "Delete");
         m.addItem(3, "Duplicate");
-        m.addItem(4, "Create plant");
-        m.addItem(5, "Break up plant");
+        //m.addItem(4, "Create plant");
+        //m.addItem(5, "Break up plant");
         m.addItem(1, "Add to repository");
         int choice;
 #if !defined(AndroidBuild)

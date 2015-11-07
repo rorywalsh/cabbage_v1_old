@@ -1219,7 +1219,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                 interactiveCtrlIndex++;
             }
         }
-
+//
 //        for(int i=indexOfLastLayoutCtrl; i<guiLayoutCtrls.size(); i++)
 //            editor->InsertGUIControls(guiLayoutCtrls[i]);
 //        for(int i=indexOfLastGUICtrl; i<guiCtrls.size(); i++)

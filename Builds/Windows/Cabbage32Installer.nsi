@@ -5,7 +5,7 @@
 !define PRODUCT_VERSION ""
 !define PRODUCT_PUBLISHER "Cabbage Audio"
 !define PRODUCT_WEB_SITE "http://www.cabbageaudio.com"
-!define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\Cabbage.exe"
+!define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\Cabbage32"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 
@@ -45,7 +45,7 @@
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "Output\Cabbage32Setup.exe"
 InstallDir "$PROGRAMFILES\Cabbage32"
-InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
+;InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
 
@@ -55,8 +55,10 @@ Section "Core components" SEC01
   ${EnvVarUpdate} $0 "CABBAGE_OPCODE_PATH" "A" "HKLM" "$INSTDIR"                            ; Prepend
   SetOverwrite ifnewer
   File "build\Cabbage.exe"
+  File "build\CabbageStudio.exe"
   CreateDirectory "$SMPROGRAMS\Cabbage32"
   CreateShortCut "$SMPROGRAMS\Cabbage32\Cabbage32.lnk" "$INSTDIR\Cabbage.exe"
+  CreateShortCut "$SMPROGRAMS\Cabbage32\CabbageStudio32.lnk" "$INSTDIR\CabbageStudio.exe"
   CreateShortCut "$DESKTOP\Cabbage32.lnk" "$INSTDIR\Cabbage.exe"
   File "build\CabbagePluginEffect.dat"
   File "build\CabbagePluginSynth.dat"
@@ -65,6 +67,9 @@ Section "Core components" SEC01
   File "build\cabbageEarphones.png"
   File "build\cabbage.png"
   
+  ;CLI for Csound
+  File "csound.exe"
+
   File "..\..\..\csound\build\ampmidid.dll"
   File "..\..\..\csound\build\buchla.dll"
   File "..\..\..\csound\build\cellular.dll"
@@ -192,8 +197,15 @@ Section Uninstall
 
   Delete "$SMPROGRAMS\Cabbage32\Uninstall.lnk"
   Delete "$SMPROGRAMS\Cabbage32\Website.lnk"
+  Delete "$INSTDIR\IntroScreen.csd"
+  Delete "$INSTDIR\test.csd"
+  Delete "$INSTDIR\CabbageStudio.exe" 
+  Delete "$INSTDIR\cabbage.png"
+  Delete "$INSTDIR\cabbageEarphones.png"
   Delete "$DESKTOP\Cabbage32.lnk"
   Delete "$SMPROGRAMS\Cabbage32\Cabbage32.lnk"
+  Delete "$SMPROGRAMS\Cabbage32\liblo-7.dll"
+  Delete "$SMPROGRAMS\Cabbage32\csound.exe"
 
   SetOutPath $SMPROGRAMS
   RMDir /r "$INSTDIR\csoundDocs"

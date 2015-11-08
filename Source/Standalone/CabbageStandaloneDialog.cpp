@@ -606,7 +606,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         //deviceManager->closeAudioDevice();
         filter->createGUI(csdFile.loadFileAsString(), true);
         filter->reCompileCsound(csdFile);
-        
+
     }
 
 
@@ -655,18 +655,18 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         filter->codeEditor = cabbageCsoundEditor->textEditor;
         //cabbageCsoundEditor->textEditor->setSavePoint();
     }
-	
-	StringArray csdArray;
-	csdArray.addLines(csdFile.loadFileAsString());
-	for(int i=0;i<csdArray.size();i++)
-	{
-		if(csdArray[i].contains("form "))
-		{
-			CabbageGUIClass cAttr(csdArray[i], -99);
-			this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));
-			this->lookAndFeelChanged();
-		}
-	}
+
+    StringArray csdArray;
+    csdArray.addLines(csdFile.loadFileAsString());
+    for(int i=0; i<csdArray.size(); i++)
+    {
+        if(csdArray[i].contains("form "))
+        {
+            CabbageGUIClass cAttr(csdArray[i], -99);
+            this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));
+            this->lookAndFeelChanged();
+        }
+    }
 
 }
 

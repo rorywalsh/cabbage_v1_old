@@ -217,6 +217,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
                 //	csound->InputMessage("i\"PROCESSOR\" 0 3600 1");
             }
 
+            //send an f0 score statement to insure instrument keeps running
+            csound->InputMessage("f1 0 1024 10 1");
             csound->SetScoreOffsetSeconds(0);
             csound->RewindScore();
 
@@ -252,7 +254,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
             debugMessageArray.add(String("\n"));
             this->setLatencySamples(csound->GetKsmps());
             updateHostDisplay();
-
         }
         else
         {
@@ -1168,9 +1169,9 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
         //									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
         else
             csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::value));
-        
+
         messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
-                                                      guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
+                guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
     }
 
     //init all channels with their init val, and set parameters
@@ -1218,7 +1219,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                 interactiveCtrlIndex++;
             }
         }
-
+//
 //        for(int i=indexOfLastLayoutCtrl; i<guiLayoutCtrls.size(); i++)
 //            editor->InsertGUIControls(guiLayoutCtrls[i]);
 //        for(int i=indexOfLastGUICtrl; i<guiCtrls.size(); i++)

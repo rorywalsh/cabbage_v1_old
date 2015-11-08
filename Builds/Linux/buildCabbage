@@ -24,6 +24,8 @@ if [ -z "$1" ]; then
 	make -f MakefilePluginEffect -j8 CONFIG=Release
 	make -f MakefilePluginSynth clean CONFIG=Release
 	make -f MakefilePluginSynth -j8 CONFIG=Release
+	make -f MakefileHost clean CONFIG=Release
+	make -f MakefileHost -j8 CONFIG=Release
 elif [ "$#" -ne 3 ]; then
 	echo $#
     echo "Illegal number of parameters. Please provide paths to the csound include dir, the Csound lib dir, and the VST SDK dir."
@@ -46,8 +48,12 @@ fi
 	cp ./build/IntroScreen.csd CabbageBuild/IntroScreen.csd
 	cp ./build/CabbagePluginSynth.so CabbageBuild/CabbagePluginSynth.so
 	cp ./build/CabbagePluginEffect.so CabbageBuild/CabbagePluginEffect.so
+	cp ./build/CabbageStudio CabbageBuild/CabbageStudio
 	cp -rf ../../Docs/_book CabbageBuild/Docs
 	cp -rf ../../Examples/ CabbageBuild/Examples
-	cp ../../Images/logo_cabbage_black_no_text.png CabbageBuild/logo.png
+	cp ../../Images/Cabbage.png CabbageBuild/Cabbage.png
+	cp ../../Images/CabbageStudio.png CabbageBuild/CabbageStudio.png
 	sed "s@CURRENTDIR@$(pwd)@" dummy.desktop > CabbageBuild/cabbage.desktop
 	cp CabbageBuild/cabbage.desktop ~/.local/share/applications/
+	sed "s@CURRENTDIR@$(pwd)@" dummyStudio.desktop > CabbageBuild/cabbageStudio.desktop
+	cp CabbageBuild/cabbageStudio.desktop ~/.local/share/applications/

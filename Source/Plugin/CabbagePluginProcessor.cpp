@@ -169,6 +169,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 
         csound->SetOption((char*)"-n");
         csound->SetOption((char*)"-d");
+        //csound->SetOption((char*)"--omacro:ATTRIBS=\"colour\(\\\"red\\\"),size\(100,100\),text\(\\\"Hello\\\"\)\\\"");
         //csound->SetOption((char*)"--omacro:ATTRIBS=\"colour\(\"red\"),size\\(100,100\\),text\\(\"Hello\"\\)\"");
 
         StringArray lines, includeFiles;

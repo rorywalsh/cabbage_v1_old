@@ -1691,8 +1691,8 @@ void CabbagePluginAudioProcessorEditor::positionComponentWithinPlant(String type
     if(layout->getName().containsIgnoreCase("groupbox")||layout->getName().containsIgnoreCase("image"))
     {
         control->setBounds(left, top, width, height);
-        if(layout->getName().containsIgnoreCase("groupbox"))
-            control->toBack();
+        //if(layout->getName().containsIgnoreCase("groupbox"))
+        //    control->toBack();
         layout->addAndMakeVisible(control);
         //showMessage(String(layoutComps[idx]->getNumChildComponents()));
         control->addMouseListener(this, false);

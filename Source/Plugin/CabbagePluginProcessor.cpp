@@ -169,6 +169,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 
         csound->SetOption((char*)"-n");
         csound->SetOption((char*)"-d");
+        //csound->SetOption((char*)"--omacro:ATTRIBS=\"colour\(\"red\"),size\\(100,100\\),text\\(\"Hello\"\\)\"");
 
         StringArray lines, includeFiles;
         lines.addLines(File(inputfile).loadFileAsString());
@@ -418,6 +419,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     csound->SetOption((char*)"-n");
     csound->SetOption((char*)"-d");
     csound->SetOption((char*)"--omacro:IS_A_PLUGIN=1");
+   
 
 
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));

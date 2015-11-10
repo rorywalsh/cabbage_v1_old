@@ -461,7 +461,11 @@ public:
 #ifdef WIN32
         String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\CsoundPlugins";
         if(!File(opcodeDir).exists())
+        #ifdef Cabbage64Bit
+            opcodeDir = String(getenv("CABBAGE_OPCODE_PATH64"));
+        #else
             opcodeDir = String(getenv("CABBAGE_OPCODE_PATH"));
+        #endif
 
         Logger::writeToLog("\n================================\nCabbage opcode plugins are located at:"+opcodeDir);
         //showMessage(opcodeDir);

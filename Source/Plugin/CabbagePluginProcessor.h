@@ -144,7 +144,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     static int ReadMidiData(CSOUND *csound, void *userData, unsigned char *mbuf, int nbytes);
     static int WriteMidiData(CSOUND *csound, void *userData, const unsigned char *mbuf, int nbytes);
 #endif
-    static void YieldCallback(void* data);
+
     void updateCabbageControls();
     void sendOutgoingMessagesToCsound();
     int ksmpsOffset;
@@ -271,6 +271,7 @@ public:
     void cleanCsoundDebug();
     void createAndShowSourceEditor(LookAndFeel* looky);
     void actionListenerCallback (const String& message);
+    void addMacros(String csdText);
 
 
 

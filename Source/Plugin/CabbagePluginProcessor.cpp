@@ -169,6 +169,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 
         csound->SetOption((char*)"-n");
         csound->SetOption((char*)"-d");
+
+        addMacros(File(inputfile).loadFileAsString());
         //csound->SetOption((char*)"--omacro:ATTRIBS=\"colour\(\\\"red\\\"),size\(100,100\),text\(\\\"Hello\\\"\)\\\"");
         //csound->SetOption((char*)"--omacro:ATTRIBS=\"colour\(\"red\"),size\\(100,100\\),text\\(\"Hello\"\\)\"");
 
@@ -420,7 +422,9 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     csound->SetOption((char*)"-n");
     csound->SetOption((char*)"-d");
     csound->SetOption((char*)"--omacro:IS_A_PLUGIN=1");
-   
+
+    addMacros(csdFile.loadFileAsString());
+
 
 
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
@@ -583,12 +587,37 @@ int CabbagePluginAudioProcessor::performEntireScore()
     return 1;
 }
 
-//this callback will be employed when users run with Csound audio IO rather than Cabbage
-void CabbagePluginAudioProcessor::YieldCallback(void* data)
+//============================================================================
+//FIND MACROS AND ADD THEM TO SETUP OPTIONS
+//============================================================================
+void CabbagePluginAudioProcessor::addMacros(String csdText)
 {
-    CabbagePluginAudioProcessor *cabbage = (CabbagePluginAudioProcessor *)data;
-    cabbage->sendOutgoingMessagesToCsound();
-    cabbage->updateCabbageControls();
+    StringArray csdArray;
+    String macroName, macroText;
+
+    csdArray.addLines(csdText);
+    for(int i=0; i<csdArray.size(); i++)
+    {
+        if(csdArray[i].trim().substring(0, 7)=="#define")
+        {
+            StringArray tokens;
+            tokens.addTokens(csdArray[i].trim() ," ");
+            cUtils::debug(tokens[0]);
+            cUtils::debug(tokens[1]);
+            cUtils::debug(tokens[2]);
+            macroName = tokens[1];
+            tokens.remove(0);
+            tokens.remove(0);
+            macroText = "\\\"" + tokens.joinIntoString(" ").replace("\"", "\\\\\\\"")+"\\\"";
+            String fullMacro = "--omacro:"+macroName+"="+macroText+"\"";
+
+            cUtils::debug(fullMacro);
+            csound->SetOption(fullMacro.toUTF8().getAddress());
+        }
+
+        if(csdArray[i].contains("</Cabbage>"))
+            i=csdArray.size();
+    }
 }
 
 //============================================================================
@@ -635,7 +664,7 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
     csound->SetOption((char*)"-d");
-
+    addMacros(file.loadFileAsString());
     csound->SetHostImplementedMIDIIO(true);
     xyAutosCreated = false;
     numCsoundChannels = 0;

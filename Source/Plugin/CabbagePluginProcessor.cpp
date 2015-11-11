@@ -381,12 +381,14 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
 #ifndef Cabbage_No_Csound
 #if !defined(AndroidBuild)
     csound = new Csound();
+    cabbageCsoundEditor = nullptr;
 #else
     csound = new AndroidCsound();
     //csound->setOpenSlCallbacks(); // for android audio to work
 #endif
 
-    cabbageCsoundEditor = nullptr;
+
+
 
     csound->SetHostImplementedMIDIIO(true);
     //csound->Reset();
@@ -1254,10 +1256,10 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 //            editor->InsertGUIControls(guiLayoutCtrls[i]);
 //        for(int i=indexOfLastGUICtrl; i<guiCtrls.size(); i++)
 //            editor->InsertGUIControls(guiCtrls[i]);
-
+#if !defined(AndroidBuild)
         if(!getPreference(appProperties, "ExternalEditor") && refresh)
             editor->setEditMode(checkGUI);
-
+#endif
     }
 
 //#endif
@@ -1268,7 +1270,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 //===========================================================
 void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
 {
-#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) && !defined(AndroidBuild)
     if(!cabbageCsoundEditor)
     {
         cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
@@ -1286,7 +1288,7 @@ void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
 void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
 {
 
-#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) && !defined(AndroidBuild)
 
     if(message=="open file")
     {
@@ -1755,7 +1757,7 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 {
     StringArray fdata;
     fdata.add(String::empty);
-#ifndef Cabbage_No_Csound
+#if !defined(AndroidBuild)
     if(csCompileResult==OK)
     {
         MYFLT* argsPtr, *temp;
@@ -2341,9 +2343,11 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 #ifndef Cabbage_No_Csound
 int CabbagePluginAudioProcessor::OpenMidiInputDevice(CSOUND * csound, void **userData, const char* /*devName*/)
 {
+#if !defined(AndroidBuild)
     *userData = csoundGetHostData(csound);
     if(!userData)
         cout << "\n\ncan't open midi in\n\n";
+#endif
     return 0;
 }
 
@@ -2421,9 +2425,11 @@ int CabbagePluginAudioProcessor::ReadMidiData(CSOUND* /*csound*/, void *userData
 //==============================================================================
 int CabbagePluginAudioProcessor::OpenMidiOutputDevice(CSOUND * csound, void **userData, const char* /*devName*/)
 {
+#if !defined(AndroidBuild)
     *userData = csoundGetHostData(csound);
     if(!userData)
         Logger::writeToLog("\n\ncan't open midi out\n\n");
+#endif
     return 0;
 }
 

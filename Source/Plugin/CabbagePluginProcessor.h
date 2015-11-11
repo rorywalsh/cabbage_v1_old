@@ -26,8 +26,10 @@
 #include "../XYPadAutomation.h"
 #include "../CabbageMessageSystem.h"
 #include "../Soundfiler.h"
+#ifndef AndroidBuild
 #include "../Editor/CodeWindow.h"
 #include "../Editor/CodeEditor.h"
+#endif
 //#include "CabbageGenericAudioProcessorEditor.h"
 #include "../CabbageLookAndFeel.h"
 
@@ -320,12 +322,14 @@ public:
 #endif
     ~CabbagePluginAudioProcessor();
 
-//#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+#ifndef AndroidBuild
     CsoundCodeEditor* codeEditor;
-//#else
+#endif
 
 #if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+#ifndef AndroidBuild
     CodeWindow* cabbageCsoundEditor;
+#endif
 #endif
 
 

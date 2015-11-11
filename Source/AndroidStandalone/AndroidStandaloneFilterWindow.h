@@ -76,7 +76,7 @@ public:
         processor = createPluginFilter();
 
         if(processor == nullptr) // Your createPluginFilter() function must return a valid object!
-            CabbageUtils::showMessage("Something not right in plugin");
+            cUtils::showMessage("Something not right in plugin");
 
 
         //processor->createGUI(tempFile.loadFileAsString(), true);

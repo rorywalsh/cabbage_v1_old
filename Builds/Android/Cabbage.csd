@@ -1,36 +1,29 @@
 <Cabbage>
-form size(600, 400), caption("Android Synth"), pluginID("plu1")
-;keyboard bounds(8, 72, 583, 259)
-
-;hslider bounds(8, 10, 586, 50), channel("hslider"), range(0, 1, .5), colour("white")
-button bounds(49, 59, 496, 231), channel("but1"), text("Start me", "Stop me"), value(0)
+form caption("Untitled") size(1024, 520), colour(58, 110, 182), pluginID("def1")
+keyboard bounds(6, 386, 1012, 79)
+csoundoutput bounds(4, 12, 1015, 373)
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>
--n -d
+-n -d -+rtmidi=NULL -M0 --midi-key-cps=4 --midi-velocity-amp=5
 </CsOptions>
 <CsInstruments>
-sr = 22050
-ksmps = 256
+; Initialize the global variables. 
+sr = 44100
+ksmps = 32
 nchnls = 2
-0dbfs=1
+0dbfs = 1
 
-
+;instrument will be triggered by keyboard widget
 instr 1
-a1 init 0
-k1 chnget "but1"
-if(k1==1) then
-a1 buzz 1, 400, 1, 1
-else
-a1 = 0
-endif
-
-outs a1, a1
+kEnv madsr .1, .2, .6, .4
+aOut vco2 p5, p4
+outs aOut*kEnv, aOut*kEnv
 endin
 
-</CsInstruments>  
+</CsInstruments>
 <CsScore>
-f1 0 1024 10 1
-i1 0 1000
+;causes Csound to run for about 7000 years...
+f0 z
 </CsScore>
 </CsoundSynthesizer>

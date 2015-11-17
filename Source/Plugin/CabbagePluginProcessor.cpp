@@ -1757,7 +1757,6 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 {
     StringArray fdata;
     fdata.add(String::empty);
-#if !defined(AndroidBuild)
     if(csCompileResult==OK)
     {
         MYFLT* argsPtr, *temp;
@@ -1777,7 +1776,6 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
                 }
         }
     }
-#endif
     return fdata;
 }
 //==============================================================================
@@ -2343,11 +2341,9 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 #ifndef Cabbage_No_Csound
 int CabbagePluginAudioProcessor::OpenMidiInputDevice(CSOUND * csound, void **userData, const char* /*devName*/)
 {
-#if !defined(AndroidBuild)
     *userData = csoundGetHostData(csound);
     if(!userData)
         cout << "\n\ncan't open midi in\n\n";
-#endif
     return 0;
 }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="CabbageAndroid" default="debug">
+<project name="DummyAndroid" default="debug">
   <loadproperties srcFile="local.properties"/>
   <loadproperties srcFile="project.properties"/>
   <target name="clean" depends="android_rules.clean">
@@ -17,7 +17,7 @@
     <condition property="ndkDebugValue" value="NDK_DEBUG=1" else="NDK_DEBUG=0">
       <equals arg1="${ant.project.invoked-targets}" arg2="debug"/>
     </condition>
-    <condition property="app_abis" value="armeabi-v7a" else="armeabi-v7a">
+    <condition property="app_abis" value="armeabi armeabi-v7a" else="armeabi armeabi-v7a">
       <equals arg1="${ant.project.invoked-targets}" arg2="debug"/>
     </condition>
     <exec executable="${ndk.dir}/ndk-build" dir="${basedir}" failonerror="true">

@@ -23,7 +23,7 @@
 #include  "../CabbageCustomWidgets.h"
 
 
-#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST) || defined(AndroidBuild)
 #include "../ComponentLayoutEditor.h"
 #include "../CabbageMainPanel.h"
 #endif

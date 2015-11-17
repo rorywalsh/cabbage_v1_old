@@ -25,7 +25,7 @@
 #ifndef JUCE_STANDALONEFILTERWINDOW_H_INCLUDED
 #define JUCE_STANDALONEFILTERWINDOW_H_INCLUDED
 
-#include "../Editor/CodeWindow.h"
+//#include "../Editor/CodeWindow.h"
 #include "../CabbageUtils.h"
 #include "../Plugin/CabbagePluginProcessor.h"
 #include "../Plugin/CabbagePluginEditor.h"

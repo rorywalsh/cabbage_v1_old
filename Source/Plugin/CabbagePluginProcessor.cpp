@@ -334,7 +334,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     ScopedPointer<InputStream> fileContents;
     fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/AndroidSimpleSynth.csd"));
     File thisFile("/sdcard/Cabbage.csd");
-    thisFile.replaceWithText(fileContents->readEntireStreamAsString());
+    //thisFile.replaceWithText(fileContents->readEntireStreamAsString());
     csdFile = thisFile;
 #else
     File thisFile(File::getSpecialLocation(File::currentExecutableFile));
@@ -384,7 +384,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     cabbageCsoundEditor = nullptr;
 #else
     csound = new AndroidCsound();
-    //csound->setOpenSlCallbacks(); // for android audio to work
+    csound->setOpenSlCallbacks(); // for android audio to work
 #endif
 
 

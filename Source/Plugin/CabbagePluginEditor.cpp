@@ -4170,8 +4170,8 @@ void CabbagePluginAudioProcessorEditor::timerCallback()
     {
         if(object->editor->getText()!=getFilter()->getCsoundOutput())
         {
-           object->editor->setText(getFilter()->getCsoundOutput());
-           object->editor->setCaretPosition(object->editor->getText().length());
+            object->editor->setText(getFilter()->getCsoundOutput());
+            object->editor->setCaretPosition(object->editor->getText().length());
         }
 
     }

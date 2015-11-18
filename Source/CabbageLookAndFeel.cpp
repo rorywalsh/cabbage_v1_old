@@ -170,7 +170,7 @@ void CabbageLookAndFeel::drawFileBrowserRow (Graphics& g, int width, int height,
     Component* const fileListComp = dynamic_cast<Component*> (&dcc);
 
     if (isItemSelected)
-        g.fillAll(Colours::black.brighter(.1f));
+        g.fillAll(Colours::black.brighter(.5f));
     else
         g.fillAll(Colours::black);
 

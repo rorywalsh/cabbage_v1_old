@@ -1,3 +1,3 @@
 ant debug
-adb install -r bin/DummyAndroid-debug.apk 
-adb shell monkey -p com.yourcompany.dummyandroid -c android.intent.category.LAUNCHER 1
+adb install -r bin/CabbageAndroid-debug.apk 
+adb shell monkey -p com.yourcompany.cabbageandroid -c android.intent.category.LAUNCHER 1

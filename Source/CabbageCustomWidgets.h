@@ -1893,6 +1893,9 @@ public:
 
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
         keyboard->setLowestVisibleKey(cAttr.getNumProp(CabbageIDs::value));
+#ifdef AndroidBuild
+        keyboard->setKeyWidth(60);
+#endif
         keyboard->setScrollButtonsVisible(true);
 
     }

@@ -318,7 +318,7 @@ public:
 #if defined(Cabbage_Build_Standalone) || (CABBAGE_HOST)
     CabbagePluginAudioProcessor(String inputfile, bool guiOnOff, int pluginType);
 #else
-    CabbagePluginAudioProcessor();
+    CabbagePluginAudioProcessor(String file="");
 #endif
     ~CabbagePluginAudioProcessor();
 
@@ -353,7 +353,6 @@ public:
         return 1;
     }
 
-    int performEntireScore();
     void startRecording();
     void stopRecording();
     int reCompileCsound(File file);

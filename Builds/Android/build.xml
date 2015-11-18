@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="DummyAndroid" default="debug">
+<project name="CabbageAndroid" default="debug">
   <loadproperties srcFile="local.properties"/>
   <loadproperties srcFile="project.properties"/>
   <target name="clean" depends="android_rules.clean">

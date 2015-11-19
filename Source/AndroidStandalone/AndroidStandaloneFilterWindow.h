@@ -25,7 +25,7 @@
 #ifndef JUCE_STANDALONEFILTERWINDOW_H_INCLUDED
 #define JUCE_STANDALONEFILTERWINDOW_H_INCLUDED
 
-#include "../Editor/CodeWindow.h"
+//#include "../Editor/CodeWindow.h"
 #include "../CabbageUtils.h"
 #include "../Plugin/CabbagePluginProcessor.h"
 #include "../Plugin/CabbagePluginEditor.h"
@@ -35,7 +35,7 @@
 //  and make it create an instance of the filter subclass that you're building.
 ///extern CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int plugType);
 
-extern AudioProcessor* JUCE_CALLTYPE createPluginFilter();
+extern AudioProcessor* JUCE_CALLTYPE createPluginFilter(String file);
 //==============================================================================
 /**
     An object that creates and plays a standalone instance of an AudioProcessor.
@@ -56,7 +56,7 @@ public:
     StandalonePluginHolder (PropertySet* settingsToUse)
         : settings (settingsToUse)
     {
-        createPlugin();
+        createPlugin("");
         setupAudioDevices();
         reloadPluginState();
         startPlaying();
@@ -69,14 +69,17 @@ public:
     }
 
     //==============================================================================
-    void createPlugin()
+    void createPlugin(String file)
     {
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Standalone);
 
-        processor = createPluginFilter();
+		if(file.isEmpty())
+			processor = createPluginFilter("");
+		else
+			processor = createPluginFilter(file);
 
         if(processor == nullptr) // Your createPluginFilter() function must return a valid object!
-            CabbageUtils::showMessage("Something not right in plugin");
+            cUtils::showMessage("Something not right in plugin");
 
 
         //processor->createGUI(tempFile.loadFileAsString(), true);
@@ -220,6 +223,7 @@ private:
     that the other plugin wrappers use.
 */
 class StandaloneFilterWindow    : public DocumentWindow,
+	private FileBrowserListener,
     public ButtonListener   // (can't use Button::Listener due to VC2005 bug)
 {
 public:
@@ -233,17 +237,39 @@ public:
                             Colour backgroundColour,
                             PropertySet* settingsToUse)
         : DocumentWindow (title, backgroundColour, DocumentWindow::minimiseButton | DocumentWindow::closeButton),
-          optionsButton ("options")
+          optionsButton ("Open"), lookAndFeel(new CabbageLookAndFeel()),
+		  editorShowing(true),
+		  thread ("audio file preview"),
+          directoryList(nullptr, thread),
+          fileTreeComp (directoryList)
     {
-        setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
-
-        //Component::addAndMakeVisible (optionsButton);
+        setTitleBarButtonsRequired (0, false);
+		Component::setLookAndFeel(lookAndFeel);
+        Component::addAndMakeVisible (optionsButton);
+		optionsButton.setLookAndFeel(lookAndFeel);
         optionsButton.addListener (this);
         optionsButton.setTriggeredOnMouseDown (true);
-
+		this->setTitleBarHeight(50);
         pluginHolder = new StandalonePluginHolder (settingsToUse);
 
+	
+
+		wildcardFilter = new WildcardFileFilter("*.csd", "*", "File Filter"),
+		directoryList.setFileFilter((FileFilter*)wildcardFilter);
+
+		getProperties().set("colour", Colour(58, 110, 182).toString());
+		lookAndFeelChanged();
+
+			
         createEditorComp();
+		
+        directoryList.setDirectory(File("/sdcard"), true, true);
+        thread.startThread (3);
+		fileTreeComp.setColour (FileTreeComponent::backgroundColourId, cUtils::getBackgroundSkin());
+		fileTreeComp.setItemHeight(40);
+        fileTreeComp.addListener (this);
+		fileTreeComp.setBounds(0, 0, getWidth(), getHeight());
+		//addAndMakeVisible(&fileTreeComp);
 
         if (PropertySet* props = pluginHolder->settings)
         {
@@ -308,7 +334,7 @@ public:
         if (PropertySet* props = pluginHolder->settings)
             props->removeValue ("filterState");
 
-        pluginHolder->createPlugin();
+        pluginHolder->createPlugin("");
         createEditorComp();
         pluginHolder->startPlaying();
     }
@@ -321,30 +347,61 @@ public:
 
     void buttonClicked (Button*) override
     {
-        PopupMenu m;
-        m.addItem (1, TRANS("Audio Settings..."));
-        m.addSeparator();
-        m.addItem (2, TRANS("Save current state..."));
-        m.addItem (3, TRANS("Load a saved state..."));
-        m.addSeparator();
-        m.addItem (4, TRANS("Reset to default state"));
-        /*
-                switch (m.showAt (&optionsButton))
-                {
-                    case 1:  pluginHolder->showAudioSettingsDialog(); break;
-                    case 4:  resetToDefaultState(); break;
-                    default: break;
-                }
-        		*/
+			clearContentComponent();
+			setContentNonOwned(&fileTreeComp, true);
     }
 
+    void selectionChanged() override  {}
+    void fileClicked (const File&, const MouseEvent&) override          {}
+	
+    void fileDoubleClicked (const File& file) override                       
+	{
+		pluginHolder->stopPlaying();
+        deleteEditorComp();
+        pluginHolder->deletePlugin();
+
+		if(file.existsAsFile())
+		{
+			//cUtils::showMessage(file.loadFileAsString());
+			pluginHolder->createPlugin(file.getFullPathName());
+			
+			createEditorComp();
+			pluginHolder->startPlaying();
+			clearContentComponent();
+			setContentOwned (getAudioProcessor()->createEditorIfNeeded(), true);
+			
+			StringArray csdArray;
+			csdArray.addLines(file.loadFileAsString());
+			for(int i=0; i<csdArray.size(); i++)
+			{
+				if(csdArray[i].contains("form "))
+				{
+					CabbageGUIClass cAttr(csdArray[i], -99);
+					this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));
+					this->lookAndFeelChanged();
+				}
+			}				
+		}
+
+	}
+	
+    void browserRootChanged (const File&) override                      {}
+	
     void resized() override
     {
         DocumentWindow::resized();
-        optionsButton.setBounds (8, 6, 60, getTitleBarHeight() - 8);
+        optionsButton.setBounds (8, 6, 130, getTitleBarHeight() - 8);
     }
 
+
     ScopedPointer<StandalonePluginHolder> pluginHolder;
+	ScopedPointer<CabbageLookAndFeel> lookAndFeel;
+	ScopedPointer<Component> fileBrowser;
+	TimeSliceThread thread;
+    DirectoryContentsList directoryList;
+    FileTreeComponent fileTreeComp;
+	ScopedPointer<WildcardFileFilter> wildcardFilter;
+	bool editorShowing;
 
 private:
     //==============================================================================

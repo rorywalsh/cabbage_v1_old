@@ -120,7 +120,8 @@ class CabbagePluginAudioProcessorEditor  : public AudioProcessorEditor,
     public ChangeBroadcaster,
     public ChangeListener,
     public ActionListener,
-    public ActionBroadcaster
+    public ActionBroadcaster,
+    public Timer
 
 {
 public:
@@ -211,6 +212,8 @@ private:
     void savePresetsFromParameters(File selectedFile, String mode);
     void refreshDiskReadingGUIControls(String typeOfControl);
     void updatefTableData(GenTable* table);
+    void timerCallback();
+    int csoundOutputWidget;
     int mouseX, mouseY;
     bool LOCKED;
     void insertComponentsFromCabbageText(StringArray text, bool useOffset);

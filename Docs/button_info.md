@@ -11,7 +11,7 @@ popuptext("text"), active(val)
 ```
 <!--(End of syntax)/-->
 
-##Identifiers
+## Identifiers
 **bounds(x, y, width, height)** integer values that set position and size on screen(in pixels)
 
 **text("name")** "name" will be the text that appears on the top of the info button.  

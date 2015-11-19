@@ -403,6 +403,7 @@ public:
     {
         const bool warnAboutOverwrite = true;
         Array<File> results;
+#if !defined(AndroidBuild)
         //if set to open or browse for files
         if(mode==1)
         {
@@ -499,7 +500,7 @@ public:
                     results.add(fc.getResult());
             }
         }
-
+#endif
         return results;
     }
 //==========================================================================================

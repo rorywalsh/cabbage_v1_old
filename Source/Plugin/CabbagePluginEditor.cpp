@@ -23,7 +23,7 @@
 #include  "../CabbageCustomWidgets.h"
 
 
-#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST) || defined(AndroidBuild)
 #include "../ComponentLayoutEditor.h"
 #include "../CabbageMainPanel.h"
 #endif
@@ -221,7 +221,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
 //============================================================================
 CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
 {
-#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) &&!defined(AndroidBuild)
     if(getFilter()->cabbageCsoundEditor)
     {
         this->sendActionMessage("closing editor");
@@ -2120,6 +2120,7 @@ void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIClass &cAtt
 {
     layoutComps.add(new CabbageTextbox(cAttr));
     int idx = layoutComps.size()-1;
+    csoundOutputWidget = idx;
     float left = cAttr.getNumProp(CabbageIDs::left);
     float top = cAttr.getNumProp(CabbageIDs::top);
     float width = cAttr.getNumProp(CabbageIDs::width);
@@ -2135,6 +2136,7 @@ void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIClass &cAtt
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
     ((CabbageTextbox*)layoutComps[idx])->editor->setText(getFilter()->getCsoundOutput());
+    startTimer(100);
 
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -4161,6 +4163,20 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 
 }
 
+void CabbagePluginAudioProcessorEditor::timerCallback()
+{
+    CabbageTextbox* object = dynamic_cast<CabbageTextbox*>(layoutComps[csoundOutputWidget]);
+    if(object)
+    {
+        if(object->editor->getText()!=getFilter()->getCsoundOutput())
+        {
+            object->editor->setText(getFilter()->getCsoundOutput());
+            object->editor->setCaretPosition(object->editor->getText().length());
+        }
+
+    }
+
+}
 //==============================================================================
 //update frames displayed by layout editor
 //==============================================================================

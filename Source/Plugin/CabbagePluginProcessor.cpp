@@ -290,7 +290,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 //===========================================================
 // PLUGIN - CONSTRUCTOR
 //===========================================================
-CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
+CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
     backgroundThread ("Audio Recorder Thread"),
     activeWriter (nullptr),
     csoundStatus(false),
@@ -319,29 +319,59 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     isBypassed(false),
     vuCounter(0)
 {
-    //Cabbage plugins always try to load a csd file with the same name as the plugin library.
+    //If a sourcefile is not given, Cabbage plugins always try to load a csd file with the same name as the plugin library.
     //Therefore we need to find the name of the library and append a '.csd' to it.
+
+    if(!File(sourcefile).existsAsFile())
+    {
 #ifdef MACOSX
-    String osxCSD = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+String("/Contents/")+File::getSpecialLocation(File::currentApplicationFile).getFileName();
-    File thisFile(osxCSD);
-    Logger::writeToLog("MACOSX defined OK");
-    csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
+        String osxCSD = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+String("/Contents/")+File::getSpecialLocation(File::currentApplicationFile).getFileName();
+        File thisFile(osxCSD);
+        Logger::writeToLog("MACOSX defined OK");
+        csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
 #elif defined(AndroidBuild)
-    File inFile(File::getSpecialLocation(File::currentApplicationFile));
-    ScopedPointer<InputStream> fileStream;
-    fileStream = File(inFile.getFullPathName()).createInputStream();
-    ZipFile zipFile (fileStream, false);
-    ScopedPointer<InputStream> fileContents;
-    fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/AndroidSimpleSynth.csd"));
-    File thisFile("/sdcard/Cabbage.csd");
-    thisFile.replaceWithText(fileContents->readEntireStreamAsString());
-    csdFile = thisFile;
+        File inFile(File::getSpecialLocation(File::currentApplicationFile));
+        ScopedPointer<InputStream> fileStream;
+        fileStream = File(inFile.getFullPathName()).createInputStream();
+        ZipFile zipFile (fileStream, false);
+
+        //sample files
+        ScopedPointer<InputStream> fileContents;
+        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/IntroScreen.csd"));
+        File thisFile("/sdcard/CabbageTemp.csd");
+        thisFile.replaceWithText(fileContents->readEntireStreamAsString());
+        csdFile = thisFile;
+
+        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/VectorialSynth.csd"));
+        File thisFile1("/sdcard/VectorialSynthExample.csd");
+        thisFile1.replaceWithText(fileContents->readEntireStreamAsString());
+
+        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/ImageSliders.csd"));
+        File thisFile2("/sdcard/ImageSliders.csd");
+        thisFile2.replaceWithText(fileContents->readEntireStreamAsString());
+
+        //cabbage logo
+        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/icon.png"));
+        File imageFile1("/sdcard/cabbage.png");
+        MemoryBlock mem;
+        fileContents->readIntoMemoryBlock(mem);
+        imageFile1.replaceWithData(mem.getData(), mem.getSize());
+
+
 #else
-    File thisFile(File::getSpecialLocation(File::currentExecutableFile));
-    csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
+        File thisFile(File::getSpecialLocation(File::currentExecutableFile));
+        csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
 #endif
 
-    //Logger::writeToLog(File::getSpecialLocation(File::currentExecutableFile).getFullPathName());
+        //Logger::writeToLog(File::getSpecialLocation(File::currentExecutableFile).getFullPathName());
+    }
+
+    else
+    {
+        csdFile = File(sourcefile);
+
+    }
+
 
     if(csdFile.exists())
     {
@@ -381,12 +411,14 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
 #ifndef Cabbage_No_Csound
 #if !defined(AndroidBuild)
     csound = new Csound();
+    cabbageCsoundEditor = nullptr;
 #else
     csound = new AndroidCsound();
-    //csound->setOpenSlCallbacks(); // for android audio to work
+    csound->setOpenSlCallbacks(); // for android audio to work
 #endif
 
-    cabbageCsoundEditor = nullptr;
+
+
 
     csound->SetHostImplementedMIDIIO(true);
     //csound->Reset();
@@ -506,31 +538,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor():
     }
 #endif
 
-//
-//    if(SystemStats::getOperatingSystemType()!=SystemStats::WinXP)
-//    {
-//        isWinXP = true;
-//        String path = csdFile.getParentDirectory().getFullPathName();
-//        String fullFileName;
-//#ifdef LINUX
-//        fullFileName = path+"/CabbageTemp.wav";
-//#else
-//        fullFileName = path+"\\CabbageTemp.wav";
-//#endif
-//        tempAudioFile = fullFileName;
-//        tempAudioFile.replaceWithData(0 ,0);
-//    }
-
-//        //init all channels with their init val
-//        for(int i=0; i<guiCtrls.size(); i++)
-//        {
-//            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
-//                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
-//            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
-//                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
-//            this->updateCabbageControls();
-//        }
-
     createGUI(csdFile.loadFileAsString(), true);
 
     Logger::writeToLog("GUI has been created");
@@ -573,18 +580,6 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 
 
 #endif
-}
-
-int CabbagePluginAudioProcessor::performEntireScore()
-{
-#ifndef Cabbage_No_Csound
-    if(!isNativeThreadRunning)
-    {
-        //csoundPerfThread->Play();
-        isNativeThreadRunning = true;
-    }
-#endif
-    return 1;
 }
 
 //============================================================================
@@ -1254,10 +1249,10 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 //            editor->InsertGUIControls(guiLayoutCtrls[i]);
 //        for(int i=indexOfLastGUICtrl; i<guiCtrls.size(); i++)
 //            editor->InsertGUIControls(guiCtrls[i]);
-
+#if !defined(AndroidBuild)
         if(!getPreference(appProperties, "ExternalEditor") && refresh)
             editor->setEditMode(checkGUI);
-
+#endif
     }
 
 //#endif
@@ -1268,7 +1263,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 //===========================================================
 void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
 {
-#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) && !defined(AndroidBuild)
     if(!cabbageCsoundEditor)
     {
         cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
@@ -1286,7 +1281,7 @@ void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
 void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
 {
 
-#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) && !defined(AndroidBuild)
 
     if(message=="open file")
     {
@@ -1707,6 +1702,11 @@ CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inpu
 {
     return new CabbagePluginAudioProcessor(inputfile, false, pluginType);
 }
+#elif defined(AndroidBuild)
+AudioProcessor* JUCE_CALLTYPE createPluginFilter(String file)
+{
+    return new CabbagePluginAudioProcessor(file);
+}
 #else
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
@@ -1755,7 +1755,6 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
 {
     StringArray fdata;
     fdata.add(String::empty);
-#ifndef Cabbage_No_Csound
     if(csCompileResult==OK)
     {
         MYFLT* argsPtr, *temp;
@@ -1775,7 +1774,6 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
                 }
         }
     }
-#endif
     return fdata;
 }
 //==============================================================================
@@ -2421,9 +2419,11 @@ int CabbagePluginAudioProcessor::ReadMidiData(CSOUND* /*csound*/, void *userData
 //==============================================================================
 int CabbagePluginAudioProcessor::OpenMidiOutputDevice(CSOUND * csound, void **userData, const char* /*devName*/)
 {
+#if !defined(AndroidBuild)
     *userData = csoundGetHostData(csound);
     if(!userData)
         Logger::writeToLog("\n\ncan't open midi out\n\n");
+#endif
     return 0;
 }
 

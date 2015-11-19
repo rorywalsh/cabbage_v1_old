@@ -902,6 +902,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         m.addSubMenu("Batch Convert (Directory)", subMenu);
 #endif
 #endif
+
+        m.addItem(1001, "Export Android .apk");
         m.addSeparator();
     }
 
@@ -1593,6 +1595,24 @@ void StandaloneFilterWindow::saveFileAs()
     filter->saveText();
 
 }
+
+//==============================================================================
+// Export Android .apk
+//==============================================================================
+int StandaloneFilterWindow::exportAsAndroid()
+{
+    File inFile(File::getSpecialLocation(File::currentApplicationFile));
+    ScopedPointer<InputStream> fileStream;
+    fileStream = File(inFile.getFullPathName()).createInputStream();
+    ZipFile zipFile (fileStream, false);
+    ScopedPointer<InputStream> fileContents;
+    fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/AndroidSimpleSynth.csd"));
+    File thisFile("/sdcard/Cabbage.csd");
+    thisFile.replaceWithText(fileContents->readEntireStreamAsString());
+    csdFile = thisFile;
+
+}
+
 //==============================================================================
 // Export plugin method
 //==============================================================================

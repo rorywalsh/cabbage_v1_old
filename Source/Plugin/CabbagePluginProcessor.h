@@ -26,8 +26,10 @@
 #include "../XYPadAutomation.h"
 #include "../CabbageMessageSystem.h"
 #include "../Soundfiler.h"
+#ifndef AndroidBuild
 #include "../Editor/CodeWindow.h"
 #include "../Editor/CodeEditor.h"
+#endif
 //#include "CabbageGenericAudioProcessorEditor.h"
 #include "../CabbageLookAndFeel.h"
 
@@ -316,16 +318,18 @@ public:
 #if defined(Cabbage_Build_Standalone) || (CABBAGE_HOST)
     CabbagePluginAudioProcessor(String inputfile, bool guiOnOff, int pluginType);
 #else
-    CabbagePluginAudioProcessor();
+    CabbagePluginAudioProcessor(String file="");
 #endif
     ~CabbagePluginAudioProcessor();
 
-//#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+#ifndef AndroidBuild
     CsoundCodeEditor* codeEditor;
-//#else
+#endif
 
 #if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+#ifndef AndroidBuild
     CodeWindow* cabbageCsoundEditor;
+#endif
 #endif
 
 
@@ -349,7 +353,6 @@ public:
         return 1;
     }
 
-    int performEntireScore();
     void startRecording();
     void stopRecording();
     int reCompileCsound(File file);

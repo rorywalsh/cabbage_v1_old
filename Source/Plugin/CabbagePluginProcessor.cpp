@@ -142,7 +142,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
     csound->SetExternalMidiWriteCallback(WriteMidiData);
     csound->SetIsGraphable(0);
 
-
     csoundChanList = NULL;
     numCsoundChannels = 0;
     csndIndex = 32;
@@ -224,6 +223,17 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
             csound->InputMessage("f1 0 1024 10 1");
             csound->SetScoreOffsetSeconds(0);
             csound->RewindScore();
+
+
+            //init all channels with their init val
+            for(int i=0; i<guiCtrls.size(); i++)
+            {
+                messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
+                        guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
+                csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
+                                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
+                this->updateCabbageControls();
+            }
 
             char path[4096] = {0};
 
@@ -733,6 +743,17 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
         //numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
         cs_scale = csound->Get0dBFS();
         csoundStatus = true;
+
+        //init all channels with their init val
+        for(int i=0; i<guiCtrls.size(); i++)
+        {
+            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
+                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
+            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
+                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
+            this->updateCabbageControls();
+        }
+
         debugMessageArray.add(CABBAGE_VERSION);
         debugMessageArray.add(String("\n"));
         //removeAllChangeListeners();

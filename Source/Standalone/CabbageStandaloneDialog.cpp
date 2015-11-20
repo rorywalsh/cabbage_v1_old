@@ -634,7 +634,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
     }
     else
     {
-        filter->performEntireScore();
+        // filter->performEntireScore();
     }
 
 

@@ -169,6 +169,12 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         csound->SetOption((char*)"-n");
         csound->SetOption((char*)"-d");
 
+        Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+        String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth())+"\"";
+        csound->SetOption(screenWidth.toUTF8().getAddress());
+        String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight())+"\"";
+        csound->SetOption(screenHeight.toUTF8().getAddress());
+
         addMacros(File(inputfile).loadFileAsString());
         //csound->SetOption((char*)"--omacro:ATTRIBS=\"colour\(\\\"red\\\"),size\(100,100\),text\(\\\"Hello\\\"\)\\\"");
         //csound->SetOption((char*)"--omacro:ATTRIBS=\"colour\(\"red\"),size\\(100,100\\),text\\(\"Hello\"\\)\"");
@@ -346,26 +352,44 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
         ZipFile zipFile (fileStream, false);
 
         //sample files
+        String mkdir = "mkdir -p \""+String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage\"");
+        String homeDir = String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage/");
+
+        system(mkdir.toUTF8().getAddress());
         ScopedPointer<InputStream> fileContents;
-        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/IntroScreen.csd"));
-        File thisFile("/sdcard/CabbageTemp.csd");
-        thisFile.replaceWithText(fileContents->readEntireStreamAsString());
-        csdFile = thisFile;
-
-        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/VectorialSynth.csd"));
-        File thisFile1("/sdcard/VectorialSynthExample.csd");
-        thisFile1.replaceWithText(fileContents->readEntireStreamAsString());
-
-        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/ImageSliders.csd"));
-        File thisFile2("/sdcard/ImageSliders.csd");
-        thisFile2.replaceWithText(fileContents->readEntireStreamAsString());
 
         //cabbage logo
         fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/icon.png"));
-        File imageFile1("/sdcard/cabbage.png");
+        File imageFile1(homeDir+"cabbage.png");
         MemoryBlock mem;
         fileContents->readIntoMemoryBlock(mem);
         imageFile1.replaceWithData(mem.getData(), mem.getSize());
+
+
+        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/IntroScreen.csd"));
+        File thisFile(homeDir+"CabbageTemp.csd");
+        //cUtils::showMessage(thisFile.getFullPathName());
+        thisFile.replaceWithText(fileContents->readEntireStreamAsString());
+        csdFile = thisFile;
+
+        //examples
+        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/VectorialSynth.csd"));
+        File thisFile1(homeDir+"VectorialSynthExample.csd");
+        thisFile1.replaceWithText(fileContents->readEntireStreamAsString());
+
+        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/ImageSliders.csd"));
+        File thisFile2(homeDir+"ImageSliders.csd");
+        thisFile2.replaceWithText(fileContents->readEntireStreamAsString());
+
+        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/PebblesInAPond.csd"));
+        File thisFile3(homeDir+"PebblesInAPond.csd");
+        thisFile3.replaceWithText(fileContents->readEntireStreamAsString());
+
+        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/DrumPads.csd"));
+        File thisFile4(homeDir+"DrumPads.csd");
+        thisFile4.replaceWithText(fileContents->readEntireStreamAsString());
+
+
 
 
 #else
@@ -463,7 +487,13 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
     csound->SetOption((char*)"-d");
-    csound->SetOption((char*)"--omacro:IS_A_PLUGIN=1");
+    csound->SetOption((char*)"--omacro:IS_A_PLUGIN=\"1\"");
+
+    Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+    String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth())+"\"";
+    csound->SetOption(screenWidth.toUTF8().getAddress());
+    String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight())+"\"";
+    csound->SetOption(screenHeight.toUTF8().getAddress());
 
     addMacros(csdFile.loadFileAsString());
 
@@ -606,7 +636,7 @@ void CabbagePluginAudioProcessor::addMacros(String csdText)
         if(csdArray[i].trim().substring(0, 7)=="#define")
         {
             StringArray tokens;
-            tokens.addTokens(csdArray[i].trim() ," ");
+            tokens.addTokens(csdArray[i].replace("#", "").trim() ," ");
             cUtils::debug(tokens[0]);
             cUtils::debug(tokens[1]);
             cUtils::debug(tokens[2]);
@@ -669,6 +699,13 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
     csound->SetOption((char*)"-d");
+
+    Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+    String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth())+"\"";
+    csound->SetOption(screenWidth.toUTF8().getAddress());
+    String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight())+"\"";
+    csound->SetOption(screenHeight.toUTF8().getAddress());
+
     addMacros(file.loadFileAsString());
     csound->SetHostImplementedMIDIIO(true);
     xyAutosCreated = false;

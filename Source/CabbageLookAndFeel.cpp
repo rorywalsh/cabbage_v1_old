@@ -2146,6 +2146,11 @@ void CabbageLookAndFeelBasic::drawScrollbar (Graphics& g,
 {
     g.fillAll (scrollbar.findColour (ScrollBar::backgroundColourId));
 
+//#ifdef AndroidBuild
+    g.fillAll (Colours::red);
+//#endif
+
+
     Path slotPath, thumbPath;
 
     const float slotIndent = jmin (width, height) > 15 ? 1.0f : 0.0f;

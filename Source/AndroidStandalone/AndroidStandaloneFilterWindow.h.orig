@@ -223,7 +223,7 @@ private:
     that the other plugin wrappers use.
 */
 class StandaloneFilterWindow    : public DocumentWindow,
-    public ButtonListener
+    public ButtonListener 
 {
 public:
 
@@ -231,105 +231,105 @@ public:
     class FileBrowser : public Component, Button::Listener, public ActionListener
     {
     public:
-        class ListboxContents  : public ListBoxModel, public ActionBroadcaster
-        {
-            // The following methods implement the necessary virtual functions from ListBoxModel,
-            // telling the listbox how many rows there are, painting them, etc.
-        public:
-            ListboxContents()
-            {
-                File homeDir(String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage/"));
-                Array<File> cabbageFiles;
-                homeDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
+		class ListboxContents  : public ListBoxModel, public ActionBroadcaster
+		{
+			// The following methods implement the necessary virtual functions from ListBoxModel,
+			// telling the listbox how many rows there are, painting them, etc.
+		public:
+			ListboxContents()
+			{
+				File homeDir(String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage/"));			
+				Array<File> cabbageFiles;
+				homeDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
 
-                for (int i = 0; i < cabbageFiles.size(); ++i)
-                    contents.add(cabbageFiles[i].getFullPathName());
+				for (int i = 0; i < cabbageFiles.size(); ++i)
+					contents.add(cabbageFiles[i].getFullPathName());
+					
+				}
 
-            }
+			int getNumRows()
+			{
+				return contents.size();
+			}
 
-            int getNumRows()
-            {
-                return contents.size();
-            }
+			void paintListBoxItem (int rowNumber, Graphics& g,
+					int width, int height, bool rowIsSelected)
+			{
+				if (rowIsSelected)
+					g.fillAll (Colour(70, 70, 70));
 
-            void paintListBoxItem (int rowNumber, Graphics& g,
-                                   int width, int height, bool rowIsSelected)
-            {
-                if (rowIsSelected)
-                    g.fillAll (Colour(70, 70, 70));
+				g.setColour (rowIsSelected ? Colours::white : Colours::green);
+				g.setFont (cUtils::getComponentFont());
 
-                g.setColour (rowIsSelected ? Colours::white : Colours::green);
-                g.setFont (cUtils::getComponentFont());
+				g.drawFittedText(File(contents[rowNumber]).getFileNameWithoutExtension(),
+							5, 0, width, height,
+							Justification::centred, true);
+			}
 
-                g.drawFittedText(File(contents[rowNumber]).getFileNameWithoutExtension(),
-                                 5, 0, width, height,
-                                 Justification::centred, true);
-            }
+			void listBoxItemClicked(int row, const MouseEvent &)
+			{
+				//sendActionMessage(String(row));
+			}
+			
+			void listBoxItemDoubleClicked(int row, const MouseEvent &)
+			{
+				sendActionMessage(contents[row]);
+			}
 
-            void listBoxItemClicked(int row, const MouseEvent &)
-            {
-                //sendActionMessage(String(row));
-            }
-
-            void listBoxItemDoubleClicked(int row, const MouseEvent &)
-            {
-                sendActionMessage(contents[row]);
-            }
-
-        private:
-            StringArray contents;
-
-        };
-
+		private:
+			StringArray contents;
+			
+		};
+		
         FileBrowser(StandaloneFilterWindow* ownerWindow): owner(ownerWindow), Component(),
-            upButton("Up"), downButton("Down")
+			upButton("Up"), downButton("Down")
         {
-            fileListBox.setRowHeight(70);
-            fileListBox.setModel (&listBoxModel);
-            fileListBox.setMultipleSelectionEnabled (false);
-            fileListBox.setColour(ListBox::ColourIds::backgroundColourId, Colour(30, 30, 30));
-            addAndMakeVisible (fileListBox);
-            listBoxModel.addActionListener(this);
-            fileListBox.selectRow(0);
-            addAndMakeVisible(&upButton);
-            addAndMakeVisible(&downButton);
-            upButton.addListener(this);
-            downButton.addListener(this);
+			fileListBox.setRowHeight(70);
+			fileListBox.setModel (&listBoxModel);
+			fileListBox.setMultipleSelectionEnabled (false);
+			fileListBox.setColour(ListBox::ColourIds::backgroundColourId, Colour(30, 30, 30));
+			addAndMakeVisible (fileListBox);
+			listBoxModel.addActionListener(this);
+			fileListBox.selectRow(0);
+			addAndMakeVisible(&upButton);
+			addAndMakeVisible(&downButton);
+			upButton.addListener(this);
+			downButton.addListener(this);
         }
 
         ~FileBrowser() {}
 
-        void resized()
-        {
-            fileListBox.setBounds(0, 0, getWidth(), getHeight()-170);
-            upButton.setBounds(100, getHeight()-150, 200, 100);
-            downButton.setBounds(getWidth()-300, getHeight()-150, 200, 100);
-        }
+		void resized()
+		{
+			fileListBox.setBounds(0, 0, getWidth(), getHeight()-170);
+			upButton.setBounds(100, getHeight()-150, 200, 100);
+			downButton.setBounds(getWidth()-300, getHeight()-150, 200, 100);
+		}
 
-        void buttonClicked (Button* button) override
-        {
-            if(button->getName()=="Down")
-            {
-                fileIndex++;// = (fileIndex<fileListBox.getModel()->getNumRows() ? fileIndex++ : fileListBox.getModel()->getNumRows()-1);
-                fileListBox.selectRow(fileIndex);
-            }
-            else
-            {
-                fileIndex--;// = (fileIndex>0 ? fileIndex-- : 0);
-                fileListBox.selectRow(fileIndex);
-            }
-        }
+		void buttonClicked (Button* button) override
+		{
+			if(button->getName()=="Down")
+			{
+				fileIndex++;// = (fileIndex<fileListBox.getModel()->getNumRows() ? fileIndex++ : fileListBox.getModel()->getNumRows()-1);
+				fileListBox.selectRow(fileIndex);
+			}
+			else
+			{
+				fileIndex--;// = (fileIndex>0 ? fileIndex-- : 0);
+				fileListBox.selectRow(fileIndex);
+			}
+		}
 
-        void actionListenerCallback(const String& message)
-        {
-            owner->loadFile(message);
-        }
-
-        TextButton upButton, downButton;
-        int fileIndex;
-        ListBox fileListBox;
-        ListboxContents listBoxModel;
-        ScopedPointer<StandaloneFilterWindow> owner;
+		void actionListenerCallback(const String& message)
+		{
+			owner->loadFile(message);
+		}
+		
+		TextButton upButton, downButton;
+		int fileIndex;
+		ListBox fileListBox;
+		ListboxContents listBoxModel;
+		ScopedPointer<StandaloneFilterWindow> owner;
     };
 
 
@@ -359,7 +359,7 @@ public:
         setSize(rect.getWidth(), rect.getHeight());
 
         fileBrowser = new FileBrowser(this);
-        fileBrowser->setBounds(0, 0, getWidth(), getHeight());
+		fileBrowser->setBounds(0, 0, getWidth(), getHeight());
 
         getProperties().set("colour", Colour(58, 110, 182).toString());
         lookAndFeelChanged();
@@ -444,13 +444,13 @@ public:
     void buttonClicked (Button*) override
     {
         clearContentComponent();
-        optionsButton.setVisible(false);
+		optionsButton.setVisible(false);
         setContentNonOwned(fileBrowser, true);
     }
 
     void loadFile(String filename)
     {
-        File file(filename);
+		File file(filename);
         pluginHolder->stopPlaying();
         deleteEditorComp();
         pluginHolder->deletePlugin();

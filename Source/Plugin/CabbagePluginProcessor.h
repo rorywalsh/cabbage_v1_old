@@ -271,6 +271,7 @@ public:
     void continueCsoundDebug();
     void nextCsoundDebug();
     void cleanCsoundDebug();
+    void initAllChannels();
     void createAndShowSourceEditor(LookAndFeel* looky);
     void actionListenerCallback (const String& message);
     void addMacros(String csdText);

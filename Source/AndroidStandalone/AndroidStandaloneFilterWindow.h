@@ -35,7 +35,11 @@
 //  and make it create an instance of the filter subclass that you're building.
 ///extern CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int plugType);
 
+#ifndef AndroidDebug
 extern AudioProcessor* JUCE_CALLTYPE createPluginFilter(String file);
+#else
+extern AudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String file, bool refresh, int pluginType);
+#endif
 //==============================================================================
 /**
     An object that creates and plays a standalone instance of an AudioProcessor.
@@ -74,9 +78,17 @@ public:
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Standalone);
 
         if(file.isEmpty())
+#ifndef AndroidDebug
             processor = createPluginFilter("");
+#else
+            processor = createCabbagePluginFilter("", false, 1);
+#endif
         else
+#ifndef AndroidDebug
             processor = createPluginFilter(file);
+#else
+            processor = createCabbagePluginFilter(file, false, 1);
+#endif
 
         if(processor == nullptr) // Your createPluginFilter() function must return a valid object!
             cUtils::showMessage("Something not right in plugin");
@@ -228,23 +240,61 @@ class StandaloneFilterWindow    : public DocumentWindow,
 public:
 
 
-    class FileBrowser : public Component, Button::Listener, public ActionListener
+    class FileBrowser : public Component,
+        public Button::Listener,
+        public ActionListener
     {
     public:
-        class ListboxContents  : public ListBoxModel, public ActionBroadcaster
+
+        class ScrollableListbox  : public Component, public ActionBroadcaster
         {
             // The following methods implement the necessary virtual functions from ListBoxModel,
             // telling the listbox how many rows there are, painting them, etc.
         public:
-            ListboxContents()
+            ScrollableListbox()
             {
+#ifndef AndroidDebug
                 File homeDir(String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage/"));
+#else
+                File homeDir(File::getSpecialLocation(File::currentExecutableFile).getParentDirectory());
+                cUtils::debug(homeDir.getFullPathName());
+#endif
+                setInterceptsMouseClicks(true, true);
+
                 Array<File> cabbageFiles;
                 homeDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
 
                 for (int i = 0; i < cabbageFiles.size(); ++i)
                     contents.add(cabbageFiles[i].getFullPathName());
 
+                for (int i=0; i<contents.size(); i++)
+                {
+                    files.add(new nameLabel(this, "", File(contents[i]).getFileNameWithoutExtension()));
+                    files[i]->index = i;
+                    files[i]->setJustificationType(Justification::centred);
+                    files[i]->setColour(Label::outlineColourId, Colours::white);
+                    files[i]->setFont(Font(50));
+                    addAndMakeVisible(files[i]);
+                }
+
+            }
+
+            void paint(Graphics &g)
+            {
+                g.fillAll(Colour(30, 30, 40));
+            }
+
+            void resized()
+            {
+                for (int i=0; i<contents.size(); i++)
+                    files[i]->setBounds(getWidth()*.2, (i*80)+10, getWidth()-getWidth()*.4, 75);
+
+                setBounds(0, 0, getWidth(), contents.size()*200);
+            }
+
+            void mouseDown(const MouseEvent &event)
+            {
+                int test;
             }
 
             int getNumRows()
@@ -252,58 +302,86 @@ public:
                 return contents.size();
             }
 
-            void paintListBoxItem (int rowNumber, Graphics& g,
-                                   int width, int height, bool rowIsSelected)
+            void selectLabel(int yPos)
             {
-                if (rowIsSelected)
-                    g.fillAll (Colour(70, 70, 70));
 
-                g.setColour (rowIsSelected ? Colours::white : Colours::green);
-                g.setFont (cUtils::getComponentFont());
-
-                g.drawFittedText(File(contents[rowNumber]).getFileNameWithoutExtension(),
-                                 5, 0, width, height,
-                                 Justification::centred, true);
             }
 
-            void listBoxItemClicked(int row, const MouseEvent &)
+            class nameLabel  : public Label
             {
-                //sendActionMessage(String(row));
-            }
+            public:
+                nameLabel(ScrollableListbox* owner_, String name, String text):
+                    owner(owner_),
+                    Label(name, text)
+                {
 
-            void listBoxItemDoubleClicked(int row, const MouseEvent &)
-            {
-                sendActionMessage(contents[row]);
-            }
+                }
+
+                ~nameLabel() {}
+
+                void mouseDown(const MouseEvent & e)
+                {
+                    if(e.getNumberOfClicks()>1)
+                    {
+                        //this->setColour(Label::backgroundColourId, Colours::red);
+                        //this->setText("Opening....", dontSendNotification);
+                        //this->lookAndFeelChanged();
+                        //repaint();
+                        owner->sendActionMessage(owner->contents[index]);
+                    }
+                }
+
+                int index;
+                ScopedPointer<ScrollableListbox> owner;
+
+            };
 
         private:
             StringArray contents;
+            OwnedArray<nameLabel> files;
+
 
         };
 
         FileBrowser(StandaloneFilterWindow* ownerWindow): owner(ownerWindow), Component(),
-            upButton("Up"), downButton("Down")
+            upButton("Up"), downButton("Down"), distanceDragged(0)
         {
-            fileListBox.setRowHeight(70);
-            fileListBox.setModel (&listBoxModel);
-            fileListBox.setMultipleSelectionEnabled (false);
-            fileListBox.setColour(ListBox::ColourIds::backgroundColourId, Colour(30, 30, 30));
             addAndMakeVisible (fileListBox);
-            listBoxModel.addActionListener(this);
-            fileListBox.selectRow(0);
-            addAndMakeVisible(&upButton);
-            addAndMakeVisible(&downButton);
-            upButton.addListener(this);
-            downButton.addListener(this);
+            fileListBox.addActionListener(this);
+            //addAndMakeVisible(&upButton);
+            //addAndMakeVisible(&downButton);
+            //upButton.addListener(this);
+            //downButton.addListener(this);
+            fileListBox.addMouseListener(this, true);
+            setInterceptsMouseClicks(true, false);
         }
 
         ~FileBrowser() {}
 
         void resized()
         {
-            fileListBox.setBounds(0, 0, getWidth(), getHeight()-170);
+            fileListBox.setBounds(0, 0, getWidth(), 500);
             upButton.setBounds(100, getHeight()-150, 200, 100);
             downButton.setBounds(getWidth()-300, getHeight()-150, 200, 100);
+        }
+
+        void mouseDrag(const MouseEvent & event)
+        {
+            Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+            fileListBox.setTopLeftPosition(0, jmin(0,currentBounds.getY()+event.getDistanceFromDragStartY()));
+        }
+
+        void mouseDown(const MouseEvent &event)
+        {
+            int test;
+            //cUtils::debug(event.getPosition().getY());
+            fileListBox.selectLabel(event.getPosition().getY());
+        }
+
+        void mouseUp(const MouseEvent &event)
+        {
+            mouseUpY = event.getPosition().getY();
+            currentBounds = fileListBox.getBounds();
         }
 
         void buttonClicked (Button* button) override
@@ -311,12 +389,10 @@ public:
             if(button->getName()=="Down")
             {
                 fileIndex++;// = (fileIndex<fileListBox.getModel()->getNumRows() ? fileIndex++ : fileListBox.getModel()->getNumRows()-1);
-                fileListBox.selectRow(fileIndex);
             }
             else
             {
                 fileIndex--;// = (fileIndex>0 ? fileIndex-- : 0);
-                fileListBox.selectRow(fileIndex);
             }
         }
 
@@ -325,10 +401,13 @@ public:
             owner->loadFile(message);
         }
 
-        TextButton upButton, downButton;
+        //TextButton upButton, downButton;
         int fileIndex;
-        ListBox fileListBox;
-        ListboxContents listBoxModel;
+        ScrollableListbox fileListBox;
+        int distanceDragged;
+        int mouseUpY;
+        Rectangle<int> currentBounds;
+        TextButton upButton, downButton;
         ScopedPointer<StandaloneFilterWindow> owner;
     };
 
@@ -385,6 +464,7 @@ public:
 
     ~StandaloneFilterWindow()
     {
+#ifndef AndroidDebug
         if (PropertySet* props = pluginHolder->settings)
         {
             props->setValue ("windowX", getX());
@@ -392,6 +472,8 @@ public:
         }
 
         pluginHolder->stopPlaying();
+#endif
+
         deleteEditorComp();
         pluginHolder = nullptr;
     }
@@ -477,6 +559,7 @@ public:
                 }
             }
         }
+        optionsButton.setVisible(true);
     }
 
     void resized() override

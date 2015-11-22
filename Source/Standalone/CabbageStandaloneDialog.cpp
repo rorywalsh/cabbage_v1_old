@@ -599,7 +599,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         deviceManager->initialise(filter->getNumInputChannels(),
                                   filter->getNumOutputChannels(), savedState, false);
 
-        filter->createGUI(csdFile.loadFileAsString(), true);
+        //filter->createGUI(csdFile.loadFileAsString(), true);
     }
     else
     {
@@ -903,7 +903,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 #endif
 #endif
 
-        m.addItem(1001, "Export Android .apk");
+        //m.addItem(1001, "Export Android .apk");
         m.addSeparator();
     }
 

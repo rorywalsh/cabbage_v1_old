@@ -154,7 +154,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
     {
         File(inputfile).setAsCurrentWorkingDirectory();
 
-
+     
         csoundParams = nullptr;
         csoundParams = new CSOUND_PARAMS();
 #ifndef CABBAGE_HOST
@@ -173,7 +173,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
         String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth())+"\"";
         csound->SetOption(screenWidth.toUTF8().getAddress());
-        String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight())+"\"";
+        String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight()-30)+"\"";
         csound->SetOption(screenHeight.toUTF8().getAddress());
 
         addMacros(File(inputfile).loadFileAsString());
@@ -435,7 +435,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
     cabbageCsoundEditor = nullptr;
 #else
     csound = new AndroidCsound();
-    csound->setOpenSlCallbacks(); // for android audio to work
+    //csound->setOpenSlCallbacks(); // for android audio to work
 #endif
 
 
@@ -469,18 +469,19 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
     csoundParams->sample_rate_override = this->getSampleRate();
     csoundParams->control_rate_override = cUtils::getKrFromFile(csdFile.getFullPathName(), (int)getSampleRate());
 
-
+   
     csoundParams->displays = 0;
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
     csound->SetOption((char*)"-d");
     csound->SetOption((char*)"--omacro:IS_A_PLUGIN=\"1\"");
 
-    Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-    String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth())+"\"";
-    csound->SetOption(screenWidth.toUTF8().getAddress());
-    String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight())+"\"";
-    csound->SetOption(screenHeight.toUTF8().getAddress());
+	Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+	String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth())+"\"";
+	//cUtils::showMessage(screenWidth);
+	csound->SetOption(screenWidth.toUTF8().getAddress());
+	String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight()-30)+"\"";
+	csound->SetOption(screenHeight.toUTF8().getAddress());
 
     addMacros(csdFile.loadFileAsString());
 

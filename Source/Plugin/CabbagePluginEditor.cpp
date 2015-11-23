@@ -137,6 +137,12 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     layoutEditor->updateFrames();
 #endif
 
+//#ifdef AndroidBuild
+//			Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+//			setSize(rect.getWidth(), rect.getHeight());
+//			componentPanel->setSize(rect.getWidth(), rect.getHeight());
+//#endif
+
     int layoutCtrlIndex=0;
     int interactiveCtrlIndex=0;
 
@@ -2077,7 +2083,7 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
     if(cAttr.getStringProp(CabbageIDs::colour).isNotEmpty())
     {
         formColour = Colour::fromString(cAttr.getStringProp(CabbageIDs::colour));
-		formColour = Colour(formColour.getRed(), formColour.getGreen(), formColour.getBlue());
+        formColour = Colour(formColour.getRed(), formColour.getGreen(), formColour.getBlue());
     }
     else
         formColour = cUtils::getBackgroundSkin();
@@ -2099,11 +2105,13 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
 
 #ifdef AndroidBuild
     Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-    setSize(width, height);
+    setSize(rect.getWidth(), rect.getHeight()-30);
+	componentPanel->setBounds(left, top, rect.getWidth(), rect.getHeight()-30);
 #else
     setSize(width, height);
+	componentPanel->setBounds(left, top, width, height);
 #endif
-    componentPanel->setBounds(left, top, width, height);
+    
 
 #ifdef LINUX
     formPic.append(String("/")+String(cAttr.getStringProp(CabbageIDs::file)), 1024);

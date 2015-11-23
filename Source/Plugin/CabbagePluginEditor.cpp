@@ -1805,7 +1805,7 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
     }
     else
     {
-        g.fillAll(formColour);
+        g.fillAll(formColour.withAlpha(0));
         g.setColour (cUtils::getTitleFontColour().withAlpha(.3f));
         g.drawImage (logo2, getWidth() - 100, getHeight()-35, logo2.getWidth()*0.55, logo2.getHeight()*0.55,
                      0, 0, logo2.getWidth(), logo2.getHeight(), true);

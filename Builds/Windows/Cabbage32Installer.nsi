@@ -69,6 +69,7 @@ Section "Core components" SEC01
   
   ;CLI for Csound
   File "csound.exe"
+  File "commandLineTest.csd"
 
   File "..\..\..\csound\build\ampmidid.dll"
   File "..\..\..\csound\build\buchla.dll"
@@ -85,6 +86,7 @@ Section "Core components" SEC01
   File "..\..\..\csound\build\ipmidi.dll"
   File "..\..\..\csound\build\libportaudio-2.dll"
   File "..\..\..\csound\build\mixer.dll"
+  File "..\..\..\csound\build\osc.dll"
   File "..\..\..\csound\build\padsynth.dll"
   File "..\..\..\csound\build\platerev.dll"
   File "..\..\..\csound\build\py.dll"
@@ -95,6 +97,7 @@ Section "Core components" SEC01
   File "..\..\..\csound\build\signalflowgraph.dll"
   File "..\..\..\csound\build\stdutil.dll"
   File "..\..\..\csound\build\system_call.dll"
+
   ;libsndfile
   File "C:\Program Files (x86)\Mega-Nerd\libsndfile\bin\libsndfile-1.dll"
   ;liblo

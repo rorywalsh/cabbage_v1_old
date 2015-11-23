@@ -678,7 +678,7 @@ public:
 //======== for the main background =========================================================
     static Colour getBackgroundSkin()
     {
-        Colour skin = Colour::fromRGBA (5, 15, 20, 255);
+        Colour skin = Colour::fromRGB(5, 15, 20);
         return skin;
     }
 

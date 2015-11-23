@@ -1,6 +1,6 @@
 <Cabbage>
-form size(1024, 520), caption("Welcome to Cabbage"), pluginID("plu1"), colour(58, 110, 182)
-image bounds(200, -5, 600, 500), file("/sdcard/cabbage.png"), identchannel("cabbage")
+form size(1080, 530), caption("Welcome to Cabbage"), pluginID("plu1"), colour(58, 110, 182)
+image bounds(200, -5, 600, 500), file("cabbage.png"), identchannel("cabbage")
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>

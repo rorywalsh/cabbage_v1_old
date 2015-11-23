@@ -1933,6 +1933,7 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
     {
         String pic = returnFullPathForFile(cAttr.getStringProp(CabbageIDs::file), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());
         cAttr.setStringProp(CabbageIDs::file, pic);
+
     }
 
     layoutComps.add(new CabbageImage(cAttr));
@@ -2093,7 +2094,12 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
     formPic = thisFile.getParentDirectory().getFullPathName();
 #endif
 
+#ifdef AndroidBuild
+    Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
     setSize(width, height);
+#else
+    setSize(width, height);
+#endif
     componentPanel->setBounds(left, top, width, height);
 
 #ifdef LINUX

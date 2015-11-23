@@ -1542,6 +1542,10 @@ public:
 #ifdef WIN32
             pic = fullPath+String("\\")+file;;
 #endif
+#ifdef AndroidBuild
+            String homeDir = String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage/");
+            pic = homeDir+String("/")+file;;
+#endif
             return pic;
         }
         else return "";

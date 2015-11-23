@@ -2077,7 +2077,7 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
     if(cAttr.getStringProp(CabbageIDs::colour).isNotEmpty())
     {
         formColour = Colour::fromString(cAttr.getStringProp(CabbageIDs::colour));
-        formColour = formColour.withAlpha(0.f);
+		formColour = Colour(formColour.getRed(), formColour.getGreen(), formColour.getBlue());
     }
     else
         formColour = cUtils::getBackgroundSkin();

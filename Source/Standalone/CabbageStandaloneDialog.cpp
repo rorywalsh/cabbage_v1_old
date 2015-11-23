@@ -738,9 +738,15 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
     const int numIns = filter->getNumInputChannels() <= 0 ? JucePlugin_MaxNumInputChannels : filter->getNumInputChannels();
     const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutputChannels : filter->getNumOutputChannels();
     filter->stopProcessing = true;
-    CabbageAudioDeviceSelectorComponent selectorComp (*deviceManager,
+#ifdef MACOSX
+    AudioDeviceSelectorComponent selectorComp (*deviceManager,
             numIns, numIns, numOuts, numOuts,
             true, false, true, false);
+#else
+    CabbageAudioDeviceSelectorComponent selectorComp (*deviceManager,
+                                               numIns, numIns, numOuts, numOuts,
+                                               true, false, true, false);
+#endif
     selectorComp.setSize (400, 550);
     setAlwaysOnTop(false);
     selectorComp.setLookAndFeel(lookAndFeel);

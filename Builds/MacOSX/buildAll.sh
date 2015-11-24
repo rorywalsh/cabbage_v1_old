@@ -64,23 +64,25 @@ then
 	# /Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
 
 	xcodebuild -project Cabbage.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
-
+	xcodebuild -project CabbageStudio.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
 	# The following command is needed to set up Csound so that it can be inside the bundle frameworks folder 
 	# install_name_tool -id @loader_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
 	# /Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
 	
 	xcodebuild -project CabbagePlugin.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release GCC_PREPROCESSOR_DEFINITIONS="Cabbage_Plugin_Synth=1 USE_DOUBLE=1 CSOUND6=1 MACOSX=1"
 	cp -rf ./build/Release/CabbagePlugin.component/ ./build/Release/Cabbage.app/Contents/CabbagePluginSynth.component
+	cp -rf ./build/Release/CabbagePlugin.component/ ./build/Release/CabbageStudio.app/Contents/CabbagePluginSynth.component
 	rm -rf ./build/Release/CabbagePluginSynth.dat/CabbagePlugin.component	
 	xcodebuild -project CabbagePlugin.xcodeproj/ -configuration Release ONLY_ACTIVE_ARCH=NO GCC_PREPROCESSOR_DEFINITIONS="MACOSX=1 USE_DOUBLE=1"
 	cp -rf ./build/Release/CabbagePlugin.component/ ./build/Release/Cabbage.app/Contents/CabbagePluginEffect.component
+	cp -rf ./build/Release/CabbagePlugin.component/ ./build/Release/CabbageStudio.app/Contents/CabbagePluginEffect.component
 	rm -rf ./build/Release/CabbagePluginEffect.component
 	rm -rf ~/Library/Audio/Plug-Ins/VST/CabbagePlugin.vst
 
 	# The following command is needed to set up Csound so that it can be inside the bundle frameworks folder 
 	# install_name_tool -id @executable_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
 	# /Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
-	xcodebuild -project CabbageStudio.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
+
 
 	echo "Bundling all files"	
 	#mkdir ./build/Release/Cabbage.app/Contents/MacOS/Docs

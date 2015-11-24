@@ -23,7 +23,7 @@
 #include  "../CabbageCustomWidgets.h"
 
 
-#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST) || defined(AndroidBuild)
 #include "../ComponentLayoutEditor.h"
 #include "../CabbageMainPanel.h"
 #endif
@@ -137,6 +137,12 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
     layoutEditor->updateFrames();
 #endif
 
+//#ifdef AndroidBuild
+//			Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+//			setSize(rect.getWidth(), rect.getHeight());
+//			componentPanel->setSize(rect.getWidth(), rect.getHeight());
+//#endif
+
     int layoutCtrlIndex=0;
     int interactiveCtrlIndex=0;
 
@@ -221,7 +227,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
 //============================================================================
 CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
 {
-#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) &&!defined(AndroidBuild)
     if(getFilter()->cabbageCsoundEditor)
     {
         this->sendActionMessage("closing editor");
@@ -418,6 +424,18 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
 
         else if(le->currentEvent=="convertToPlant")
             convertIntoPlant();
+
+        else if(le->currentEvent=="sendToBack")
+            sendBack(true);
+
+        else if(le->currentEvent=="sendBackOne")
+            sendBack(false);
+
+        else if(le->currentEvent=="sendForward")
+            sendForward(true);
+
+        else if(le->currentEvent=="sendForwardOne")
+            sendForward(false);
 
         else if(le->currentEvent=="breakUpPlant")
             breakUpPlant();
@@ -960,6 +978,125 @@ void CabbagePluginAudioProcessorEditor::populateLineNumberArray(StringArray csdA
 #endif
 }
 
+//========================================================
+//send components backwards in z order
+//========================================================
+void CabbagePluginAudioProcessorEditor::sendBack(bool toBack)
+{
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+    StringArray csdArray;
+    StringArray boundsForSelectComps;
+    csdArray.addLines(getFilter()->getCsoundInputFileText());
+    ComponentLayoutEditor* le = layoutEditor;
+
+    populateLineNumberArray(csdArray);
+
+    if(lineNumbers.size()>1)
+    {
+        showMessage("Only single components can be moved forwards or backwards.\nPlease make sure only a single component is selected");
+        return;
+    }
+
+    currentLineNumber = lineNumbers[0];
+    String widgetText = csdArray[currentLineNumber];
+    csdArray.remove(currentLineNumber);
+
+    if(toBack)
+    {
+        for(int i=0; i<csdArray.size(); i++)
+        {
+            //cUtils::debug(csdArray[i].trim().substring(0, 3));
+            if(csdArray[i].trim().substring(0, 4)=="form")
+            {
+                csdArray.insert(i+1, widgetText);
+                i=csdArray.size();
+            }
+        }
+    }
+    else
+    {
+        for(int i=currentLineNumber-1; i>0; i--)
+        {
+            if(csdArray[i].isNotEmpty())
+            {
+                csdArray.insert(i, widgetText);
+                i=-1;
+            }
+        }
+    }
+
+    getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
+    getFilter()->createGUI(csdArray.joinIntoString("\n"), true);
+
+
+    //update frames to reflect changes made to GUI
+    this->updateLayoutEditorFrames();
+    updateLayoutEditorFrames();
+    //close props windows after deleting object
+    propsWindow->setVisible(false);
+
+#endif
+}
+//========================================================
+//send components forward in z order
+//========================================================
+void CabbagePluginAudioProcessorEditor::sendForward(bool toFront)
+{
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+    StringArray csdArray;
+    StringArray boundsForSelectComps;
+    csdArray.addLines(getFilter()->getCsoundInputFileText());
+    ComponentLayoutEditor* le = layoutEditor;
+
+    populateLineNumberArray(csdArray);
+
+    if(lineNumbers.size()>1)
+    {
+        showMessage("Only single components can be moved forwards or backwards.\nPlease make sure only a single component is selected");
+        return;
+    }
+
+    currentLineNumber = lineNumbers[0];
+    String widgetText = csdArray[currentLineNumber];
+    csdArray.remove(currentLineNumber);
+
+    if(toFront)
+    {
+        for(int i=0; i<csdArray.size(); i++)
+        {
+            //cUtils::debug(csdArray[i].trim().substring(0, 3));
+            if(csdArray[i].trim().substring(0, 10)=="</Cabbage>")
+            {
+                csdArray.insert(i, widgetText);
+                i=csdArray.size();
+            }
+        }
+    }
+    else
+    {
+        for(int i=currentLineNumber; i<csdArray.size(); i++)
+        {
+            cUtils::debug(csdArray[i]);
+            if(csdArray[i].trim().isNotEmpty())
+            {
+                csdArray.insert(i+1, widgetText);
+                i=csdArray.size();
+            }
+        }
+    }
+
+    getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
+    getFilter()->createGUI(csdArray.joinIntoString("\n"), true);
+
+
+    //update frames to reflect changes made to GUI
+    this->updateLayoutEditorFrames();
+    updateLayoutEditorFrames();
+    //close props windows after deleting object
+    propsWindow->setVisible(false);
+
+#endif
+}
 //========================================================
 //deletes any selected Components and removes text decs from csd file
 //care is taken here to first delete the instances of each GUI component
@@ -1560,8 +1697,8 @@ void CabbagePluginAudioProcessorEditor::positionComponentWithinPlant(String type
     if(layout->getName().containsIgnoreCase("groupbox")||layout->getName().containsIgnoreCase("image"))
     {
         control->setBounds(left, top, width, height);
-        if(layout->getName().containsIgnoreCase("groupbox"))
-            control->toBack();
+        //if(layout->getName().containsIgnoreCase("groupbox"))
+        //    control->toBack();
         layout->addAndMakeVisible(control);
         //showMessage(String(layoutComps[idx]->getNumChildComponents()));
         control->addMouseListener(this, false);
@@ -1773,10 +1910,15 @@ void CabbagePluginAudioProcessorEditor::InsertGroupBox(CabbageGUIClass &cAttr)
     }
 
     //if control is not part of a plant, add mouse listener
+    //if it is a plant send it to back
     if(cAttr.getStringProp("plant").isEmpty())
         layoutComps[idx]->addMouseListener(this, true);
+    //else
+    //	layoutComps[idx]->toBack();
 
     dynamic_cast<CabbageGroupbox*>(layoutComps[idx])->addChangeListener(this);
+
+    //send to back so it's behind all other contorls
 
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
@@ -1797,6 +1939,7 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
     {
         String pic = returnFullPathForFile(cAttr.getStringProp(CabbageIDs::file), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());
         cAttr.setStringProp(CabbageIDs::file, pic);
+
     }
 
     layoutComps.add(new CabbageImage(cAttr));
@@ -1857,10 +2000,14 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIClass &cAttr)
 
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+    //layoutComps[idx]->toBack();
 
     //if control is not part of a plant, add mouse listener
     if(cAttr.getStringProp("plant").isEmpty())
         layoutComps[idx]->addMouseListener(this, true);
+    //else
+    //	layoutComps[idx]->toBack();
+
     dynamic_cast<CabbageImage*>(layoutComps[idx])->addChangeListener(this);
     layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
     layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
@@ -1934,7 +2081,10 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
 
     showScrollbars = (bool)cAttr.getNumProp(CabbageIDs::scrollbars);
     if(cAttr.getStringProp(CabbageIDs::colour).isNotEmpty())
+    {
         formColour = Colour::fromString(cAttr.getStringProp(CabbageIDs::colour));
+        formColour = Colour(formColour.getRed(), formColour.getGreen(), formColour.getBlue());
+    }
     else
         formColour = cUtils::getBackgroundSkin();
 
@@ -1953,8 +2103,15 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
     formPic = thisFile.getParentDirectory().getFullPathName();
 #endif
 
+#ifdef AndroidBuild
+    Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+    setSize(rect.getWidth(), rect.getHeight()-30);
+	componentPanel->setBounds(left, top, rect.getWidth(), rect.getHeight()-30);
+#else
     setSize(width, height);
-    componentPanel->setBounds(left, top, width, height);
+	componentPanel->setBounds(left, top, width, height);
+#endif
+    
 
 #ifdef LINUX
     formPic.append(String("/")+String(cAttr.getStringProp(CabbageIDs::file)), 1024);
@@ -1980,6 +2137,7 @@ void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIClass &cAtt
 {
     layoutComps.add(new CabbageTextbox(cAttr));
     int idx = layoutComps.size()-1;
+    csoundOutputWidget = idx;
     float left = cAttr.getNumProp(CabbageIDs::left);
     float top = cAttr.getNumProp(CabbageIDs::top);
     float width = cAttr.getNumProp(CabbageIDs::width);
@@ -1995,6 +2153,7 @@ void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIClass &cAtt
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
     ((CabbageTextbox*)layoutComps[idx])->editor->setText(getFilter()->getCsoundOutput());
+    startTimer(100);
 
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -4021,6 +4180,20 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 
 }
 
+void CabbagePluginAudioProcessorEditor::timerCallback()
+{
+    CabbageTextbox* object = dynamic_cast<CabbageTextbox*>(layoutComps[csoundOutputWidget]);
+    if(object)
+    {
+        if(object->editor->getText()!=getFilter()->getCsoundOutput())
+        {
+            object->editor->setText(getFilter()->getCsoundOutput());
+            object->editor->setCaretPosition(object->editor->getText().length());
+        }
+
+    }
+
+}
 //==============================================================================
 //update frames displayed by layout editor
 //==============================================================================

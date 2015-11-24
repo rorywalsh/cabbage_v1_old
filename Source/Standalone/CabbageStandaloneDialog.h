@@ -116,6 +116,7 @@ public:
     void setupWindowDimensions();
     void m_ShowMessage(String mess, LookAndFeel* feel, String title="Cabbage");
     int exportPlugin(String type, bool saveAs, String fileName="");
+    int exportAsAndroid();
     Array<File> cabbageFiles;
     ScopedPointer<StandaloneFileDialogue> standaloneFileDialogue;
 

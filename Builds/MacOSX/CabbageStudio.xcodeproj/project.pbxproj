@@ -31,9 +31,9 @@
 		54A87F2E778D3ED78C6EC4A3 /* SidebarPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D171CFF8580F0944F028B24 /* SidebarPanel.cpp */; };
 		58E049EF68B7D3BC08263CF3 /* XYPadAutomation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BD0486577FD3D3259EEF934F /* XYPadAutomation.cpp */; };
 		5D860941C437344C762BBA9C /* CabbageGUIClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9531A2CD2441D376DAE4EC80 /* CabbageGUIClass.cpp */; };
-		61BA86141BCE7BE80006C8D5 /* CsoundLib64.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 61DE9C5F1BC2D1B900652F21 /* CsoundLib64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		61BE1EE21B04A28C00BA8AAA /* logo_cabbage.icns in Resources */ = {isa = PBXBuildFile; fileRef = 61BE1EE11B04A28C00BA8AAA /* logo_cabbage.icns */; };
-		61DE9C601BC2D1B900652F21 /* CsoundLib64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61DE9C5F1BC2D1B900652F21 /* CsoundLib64.framework */; };
+		6150BFF51C049AB200855E6D /* CsoundLib64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6150BFF41C049AB200855E6D /* CsoundLib64.framework */; };
+		61A243801C04A9C200DB6B93 /* InfoStudio.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61A2437F1C04A9C200DB6B93 /* InfoStudio.plist */; };
+		61A243811C04B10C00DB6B93 /* CabbageStudio.icns in Resources */ = {isa = PBXBuildFile; fileRef = 61F34ED11BF0D1EB000698F9 /* CabbageStudio.icns */; };
 		630843614340BB8A917737F9 /* juce_audio_formats.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1D089C3A2B19F6BECC94A6D /* juce_audio_formats.mm */; };
 		63B6168246F0E27556FFDCD9 /* CabbageCallOutBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 851299FB9E5A5F4EAD7BAEF2 /* CabbageCallOutBox.cpp */; };
 		659B3C42A744B654E4A01248 /* MainHostWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 105376C5CA1099496368AF2D /* MainHostWindow.cpp */; };
@@ -78,19 +78,6 @@
 		FCCBC9F8B78C875E2C571663 /* CabbageTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F764FE6E9101E7F060B6CA4 /* CabbageTable.cpp */; };
 		FD14257841B53478FBCE17F2 /* FilterComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87878EDE7D0DD27CF613B8A8 /* FilterComponent.cpp */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		61DE9C5E1BC2D15F00652F21 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				61BA86141BCE7BE80006C8D5 /* CsoundLib64.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0082477F1AA7C9F8E7F4C54D /* juce_Quaternion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_Quaternion.h; path = ../../JuceLibraryCode/modules/juce_opengl/geometry/juce_Quaternion.h; sourceTree = SOURCE_ROOT; };
@@ -461,13 +448,15 @@
 		60D371533A6181393D7B031D /* juce_ValueTree.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_ValueTree.cpp; path = ../../JuceLibraryCode/modules/juce_data_structures/values/juce_ValueTree.cpp; sourceTree = SOURCE_ROOT; };
 		60EA5023EB3C59F18A394B3B /* juce_ResizableEdgeComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_ResizableEdgeComponent.h; path = ../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_ResizableEdgeComponent.h; sourceTree = SOURCE_ROOT; };
 		60F2BF95543A070861B5CF4A /* juce_ChoicePropertyComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_ChoicePropertyComponent.cpp; path = ../../JuceLibraryCode/modules/juce_gui_basics/properties/juce_ChoicePropertyComponent.cpp; sourceTree = SOURCE_ROOT; };
+		6150BFF41C049AB200855E6D /* CsoundLib64.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CsoundLib64.framework; path = ../../../CsoundLib64.framework; sourceTree = "<group>"; };
 		6154A065DEB977744923A941 /* juce_KeyboardFocusTraverser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_KeyboardFocusTraverser.cpp; path = ../../JuceLibraryCode/modules/juce_gui_basics/keyboard/juce_KeyboardFocusTraverser.cpp; sourceTree = SOURCE_ROOT; };
+		61A2437F1C04A9C200DB6B93 /* InfoStudio.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = InfoStudio.plist; sourceTree = "<group>"; };
 		61A9C9CEB34955ADF70271DA /* juce_LookAndFeel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_LookAndFeel.cpp; path = ../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel.cpp; sourceTree = SOURCE_ROOT; };
 		61ACF0EC50EE55D7D2F58C37 /* juce_TimeSliceThread.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_TimeSliceThread.cpp; path = ../../JuceLibraryCode/modules/juce_core/threads/juce_TimeSliceThread.cpp; sourceTree = SOURCE_ROOT; };
-		61BE1EE11B04A28C00BA8AAA /* logo_cabbage.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = logo_cabbage.icns; sourceTree = "<group>"; };
 		61D438D5EC760B29315EF484 /* juce_CallOutBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_CallOutBox.h; path = ../../JuceLibraryCode/modules/juce_gui_basics/windows/juce_CallOutBox.h; sourceTree = SOURCE_ROOT; };
 		61DE9C5F1BC2D1B900652F21 /* CsoundLib64.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CsoundLib64.framework; path = ../../../../csound/build/CsoundLib64.framework; sourceTree = "<group>"; };
 		61EA6F52F5CF7B3C588D1A8C /* CabbageLookAndFeel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CabbageLookAndFeel.cpp; path = ../../Source/CabbageLookAndFeel.cpp; sourceTree = SOURCE_ROOT; };
+		61F34ED11BF0D1EB000698F9 /* CabbageStudio.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = CabbageStudio.icns; sourceTree = "<group>"; };
 		622DF84C56301488E2188DAC /* juce_mac_Strings.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = juce_mac_Strings.mm; path = ../../JuceLibraryCode/modules/juce_core/native/juce_mac_Strings.mm; sourceTree = SOURCE_ROOT; };
 		624F5C0ECAC82B8ED632D022 /* juce_DocumentWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_DocumentWindow.h; path = ../../JuceLibraryCode/modules/juce_gui_basics/windows/juce_DocumentWindow.h; sourceTree = SOURCE_ROOT; };
 		6254AEE85717E44C9E9BAB63 /* juce_OpenGL_win32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_OpenGL_win32.h; path = ../../JuceLibraryCode/modules/juce_opengl/native/juce_OpenGL_win32.h; sourceTree = SOURCE_ROOT; };
@@ -674,7 +663,6 @@
 		924D1C8A9F6C5EFDD7CC4924 /* juce_Synthesiser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_Synthesiser.h; path = ../../JuceLibraryCode/modules/juce_audio_basics/synthesisers/juce_Synthesiser.h; sourceTree = SOURCE_ROOT; };
 		9253C6DCAECD7015AD67E794 /* juce_MidiMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_MidiMessage.cpp; path = ../../JuceLibraryCode/modules/juce_audio_basics/midi/juce_MidiMessage.cpp; sourceTree = SOURCE_ROOT; };
 		927B64DD15C78BCD398D0DEB /* juce_DrawableButton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_DrawableButton.cpp; path = ../../JuceLibraryCode/modules/juce_gui_basics/buttons/juce_DrawableButton.cpp; sourceTree = SOURCE_ROOT; };
-		928069B23BDBDE867943952A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		928CAF5BBDBBBD2246C5650E /* juce_Path.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_Path.h; path = ../../JuceLibraryCode/modules/juce_graphics/geometry/juce_Path.h; sourceTree = SOURCE_ROOT; };
 		929C029C16BD9614CFFF61B2 /* juce_android_JNIHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_android_JNIHelpers.h; path = ../../JuceLibraryCode/modules/juce_core/native/juce_android_JNIHelpers.h; sourceTree = SOURCE_ROOT; };
 		93986002BBAED2DCAC80E9ED /* XYPadAutomation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XYPadAutomation.h; path = ../../Source/XYPadAutomation.h; sourceTree = SOURCE_ROOT; };
@@ -1078,7 +1066,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				61DE9C601BC2D1B900652F21 /* CsoundLib64.framework in Frameworks */,
+				6150BFF51C049AB200855E6D /* CsoundLib64.framework in Frameworks */,
 				40E7C7ABA291BD1C6FED47C3 /* Accelerate.framework in Frameworks */,
 				3CDB6D922EA4D4E13F77B331 /* AudioToolbox.framework in Frameworks */,
 				3310336AD3B4D995B3961D30 /* AudioUnit.framework in Frameworks */,
@@ -1161,6 +1149,7 @@
 		085D042421734B425DA7805D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6150BFF41C049AB200855E6D /* CsoundLib64.framework */,
 				61DE9C5F1BC2D1B900652F21 /* CsoundLib64.framework */,
 				901AF147B9B2D72662AA1E25 /* Accelerate.framework */,
 				130A73280C3CA420C80FC5B5 /* AudioToolbox.framework */,
@@ -1275,8 +1264,8 @@
 		1CBAB7E6CAD4FC34F0AED27F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				61BE1EE11B04A28C00BA8AAA /* logo_cabbage.icns */,
-				928069B23BDBDE867943952A /* Info.plist */,
+				61A2437F1C04A9C200DB6B93 /* InfoStudio.plist */,
+				61F34ED11BF0D1EB000698F9 /* CabbageStudio.icns */,
 				053BD300B17E555E196860C9 /* RecentFilesMenuTemplate.nib */,
 			);
 			name = Resources;
@@ -2959,7 +2948,6 @@
 				038F9E2450FE9A6F09AD77B6 /* Resources */,
 				40E43F670396B2B7F65916D8 /* Sources */,
 				94C0F5DB6A99CBC8C50E312E /* Frameworks */,
-				61DE9C5E1BC2D15F00652F21 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -3000,8 +2988,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61A243811C04B10C00DB6B93 /* CabbageStudio.icns in Resources */,
+				61A243801C04A9C200DB6B93 /* InfoStudio.plist in Resources */,
 				CCCD3D416629F13D03021FA9 /* RecentFilesMenuTemplate.nib in Resources */,
-				61BE1EE21B04A28C00BA8AAA /* logo_cabbage.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3102,6 +3091,7 @@
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 					/Users/walshr/sourcecode/csound/build,
+					/Users/walshr/sourcecode/cabbageaudio,
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -3125,7 +3115,7 @@
 					"$(inherited)",
 					/Users/walshr/SDKs/vstsdk2.4,
 				);
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = InfoStudio.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				PRODUCT_NAME = CabbageStudio;
@@ -3145,6 +3135,7 @@
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 					/Users/walshr/sourcecode/csound/build,
+					/Users/walshr/sourcecode/cabbageaudio,
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -3168,7 +3159,7 @@
 					"$(inherited)",
 					/Users/walshr/SDKs/vstsdk2.4,
 				);
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = InfoStudio.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				PRODUCT_NAME = CabbageStudio;

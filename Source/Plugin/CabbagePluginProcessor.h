@@ -26,8 +26,10 @@
 #include "../XYPadAutomation.h"
 #include "../CabbageMessageSystem.h"
 #include "../Soundfiler.h"
+#ifndef AndroidBuild
 #include "../Editor/CodeWindow.h"
 #include "../Editor/CodeEditor.h"
+#endif
 //#include "CabbageGenericAudioProcessorEditor.h"
 #include "../CabbageLookAndFeel.h"
 
@@ -48,9 +50,9 @@ class CodeWindow;
 #endif
 
 #ifdef Cabbage64Bit
-#define CABBAGE_VERSION "Cabbage(64bit) v0.5.15"
+#define CABBAGE_VERSION "Cabbage(64bit) v0.5.16"
 #else
-#define CABBAGE_VERSION "Cabbage(32bit) v0.5.15"
+#define CABBAGE_VERSION "Cabbage(32bit) v0.5.16"
 #endif
 
 #define AUDIO_PLUGIN 1
@@ -144,7 +146,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     static int ReadMidiData(CSOUND *csound, void *userData, unsigned char *mbuf, int nbytes);
     static int WriteMidiData(CSOUND *csound, void *userData, const unsigned char *mbuf, int nbytes);
 #endif
-    static void YieldCallback(void* data);
+
     void updateCabbageControls();
     void sendOutgoingMessagesToCsound();
     int ksmpsOffset;
@@ -269,8 +271,10 @@ public:
     void continueCsoundDebug();
     void nextCsoundDebug();
     void cleanCsoundDebug();
+    void initAllChannels();
     void createAndShowSourceEditor(LookAndFeel* looky);
     void actionListenerCallback (const String& message);
+    void addMacros(String csdText);
 
 
 
@@ -315,16 +319,18 @@ public:
 #if defined(Cabbage_Build_Standalone) || (CABBAGE_HOST)
     CabbagePluginAudioProcessor(String inputfile, bool guiOnOff, int pluginType);
 #else
-    CabbagePluginAudioProcessor();
+    CabbagePluginAudioProcessor(String file="");
 #endif
     ~CabbagePluginAudioProcessor();
 
-//#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+#ifndef AndroidBuild
     CsoundCodeEditor* codeEditor;
-//#else
+#endif
 
 #if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+#ifndef AndroidBuild
     CodeWindow* cabbageCsoundEditor;
+#endif
 #endif
 
 
@@ -348,7 +354,6 @@ public:
         return 1;
     }
 
-    int performEntireScore();
     void startRecording();
     void stopRecording();
     int reCompileCsound(File file);
@@ -461,7 +466,11 @@ public:
 #ifdef WIN32
         String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\CsoundPlugins";
         if(!File(opcodeDir).exists())
+#ifdef Cabbage64Bit
+            opcodeDir = String(getenv("CABBAGE_OPCODE_PATH64"));
+#else
             opcodeDir = String(getenv("CABBAGE_OPCODE_PATH"));
+#endif
 
         Logger::writeToLog("\n================================\nCabbage opcode plugins are located at:"+opcodeDir);
         //showMessage(opcodeDir);
@@ -470,6 +479,9 @@ public:
             String env = "OPCODE6DIR="+opcodeDir;
             _putenv(env.toUTF8().getAddress());
             Logger::writeToLog("Current opcodeDir is:"+String(getenv("OPCODE6DIR")));
+			
+			//String setCLI = "set "+env;
+			//system(setCLI.toUTF8().getAddress());
         }
 #endif
     }

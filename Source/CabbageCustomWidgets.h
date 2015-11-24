@@ -1379,15 +1379,6 @@ public:
         }
     }
 
-    //---------------------------------------------
-    //void resized()
-    //{
-    //this->setBounds(0, 18, getWidth(), getHeight());
-    //Logger::writeToLog("resizing plant");
-    //this->setWantsKeyboardFocus(false);
-    //}
-
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageGroupbox);
 };
 
@@ -1902,6 +1893,9 @@ public:
 
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
         keyboard->setLowestVisibleKey(cAttr.getNumProp(CabbageIDs::value));
+#ifdef AndroidBuild
+        keyboard->setKeyWidth(60);
+#endif
         keyboard->setScrollButtonsVisible(true);
 
     }

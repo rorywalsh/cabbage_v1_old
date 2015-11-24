@@ -13,7 +13,7 @@ active(val)
 ```
 <!--(End of syntax)/-->
 
-##Identifiers
+## Identifiers
 **bounds(x, y, width, height)** integer values that set position and size on screen(in pixels). 
 
 **channel("chan")** "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode. 
@@ -52,7 +52,7 @@ active(val)
 
 >colour:1() can be set using colour(). However, it's recommended that you use the numerated colour identifiers in order to make your code more readable. 
 
-##Example
+## Example
 ```csharp
 <Cabbage>
 form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)

@@ -170,7 +170,7 @@ void CabbageLookAndFeel::drawFileBrowserRow (Graphics& g, int width, int height,
     Component* const fileListComp = dynamic_cast<Component*> (&dcc);
 
     if (isItemSelected)
-        g.fillAll(Colours::black.brighter(.1f));
+        g.fillAll(Colours::black.brighter(.5f));
     else
         g.fillAll(Colours::black);
 
@@ -1252,7 +1252,7 @@ void CabbageLookAndFeel::drawDocumentWindowTitleBar (DocumentWindow &window, Gra
         bool /*drawTitleTextOnLeft*/)
 {
     window.setUsingNativeTitleBar(false);
-	Colour background = Colour::fromString(window.getProperties().getWithDefault("colour", "").toString());
+    Colour background = Colour::fromString(window.getProperties().getWithDefault("colour", "").toString());
 #ifdef CABBAGE_HOST
     window.setOpaque(true);
     g.setColour (background);
@@ -2145,6 +2145,11 @@ void CabbageLookAndFeelBasic::drawScrollbar (Graphics& g,
         bool /*isMouseDown*/)
 {
     g.fillAll (scrollbar.findColour (ScrollBar::backgroundColourId));
+
+//#ifdef AndroidBuild
+    g.fillAll (Colours::red);
+//#endif
+
 
     Path slotPath, thumbPath;
 

@@ -1,4 +1,4 @@
-##Button
+# Button
 
 Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish. 
 
@@ -12,7 +12,7 @@ active(val)
 <!--(End of syntax)/-->
 
 
-### Identifiers
+##Identifiers
 
 **bounds(x, y, width, height)** 
 integer values that set position and size on screen(in pixels). 

@@ -25,7 +25,7 @@
 #ifndef JUCE_STANDALONEFILTERWINDOW_H_INCLUDED
 #define JUCE_STANDALONEFILTERWINDOW_H_INCLUDED
 
-#include "../Editor/CodeWindow.h"
+//#include "../Editor/CodeWindow.h"
 #include "../CabbageUtils.h"
 #include "../Plugin/CabbagePluginProcessor.h"
 #include "../Plugin/CabbagePluginEditor.h"
@@ -35,7 +35,11 @@
 //  and make it create an instance of the filter subclass that you're building.
 ///extern CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int plugType);
 
-extern AudioProcessor* JUCE_CALLTYPE createPluginFilter();
+#ifndef AndroidDebug
+extern AudioProcessor* JUCE_CALLTYPE createPluginFilter(String file);
+#else
+extern AudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String file, bool refresh, int pluginType);
+#endif
 //==============================================================================
 /**
     An object that creates and plays a standalone instance of an AudioProcessor.
@@ -56,7 +60,7 @@ public:
     StandalonePluginHolder (PropertySet* settingsToUse)
         : settings (settingsToUse)
     {
-        createPlugin();
+        createPlugin("");
         setupAudioDevices();
         reloadPluginState();
         startPlaying();
@@ -69,14 +73,25 @@ public:
     }
 
     //==============================================================================
-    void createPlugin()
+    void createPlugin(String file)
     {
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Standalone);
 
-        processor = createPluginFilter();
+        if(file.isEmpty())
+#ifndef AndroidDebug
+            processor = createPluginFilter("");
+#else
+            processor = createCabbagePluginFilter("", false, 1);
+#endif
+        else
+#ifndef AndroidDebug
+            processor = createPluginFilter(file);
+#else
+            processor = createCabbagePluginFilter(file, false, 1);
+#endif
 
         if(processor == nullptr) // Your createPluginFilter() function must return a valid object!
-            CabbageUtils::showMessage("Something not right in plugin");
+            cUtils::showMessage("Something not right in plugin");
 
 
         //processor->createGUI(tempFile.loadFileAsString(), true);
@@ -220,9 +235,183 @@ private:
     that the other plugin wrappers use.
 */
 class StandaloneFilterWindow    : public DocumentWindow,
-    public ButtonListener   // (can't use Button::Listener due to VC2005 bug)
+    public ButtonListener
 {
 public:
+
+
+    class FileBrowser : public Component,
+        public Button::Listener,
+        public ActionListener
+    {
+    public:
+
+        class ScrollableListbox  : public Component, public ActionBroadcaster
+        {
+            // The following methods implement the necessary virtual functions from ListBoxModel,
+            // telling the listbox how many rows there are, painting them, etc.
+        public:
+            ScrollableListbox()
+            {
+#ifndef AndroidDebug
+                File homeDir(String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage/"));
+#else
+                File homeDir(File::getSpecialLocation(File::currentExecutableFile).getParentDirectory());
+                cUtils::debug(homeDir.getFullPathName());
+#endif
+                setInterceptsMouseClicks(true, true);
+
+                Array<File> cabbageFiles;
+                homeDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
+
+                for (int i = 0; i < cabbageFiles.size(); ++i)
+                    contents.add(cabbageFiles[i].getFullPathName());
+
+                for (int i=0; i<contents.size(); i++)
+                {
+                    files.add(new nameLabel(this, "", File(contents[i]).getFileNameWithoutExtension()));
+                    files[i]->index = i;
+                    files[i]->setJustificationType(Justification::centred);
+                    files[i]->setColour(Label::outlineColourId, Colours::white);
+                    files[i]->setFont(Font(50));
+                    addAndMakeVisible(files[i]);
+                }
+
+            }
+
+            void paint(Graphics &g)
+            {
+                g.fillAll(Colour(30, 30, 40));
+            }
+
+            void resized()
+            {
+                for (int i=0; i<contents.size(); i++)
+                    files[i]->setBounds(getWidth()*.2, (i*80)+10, getWidth()-getWidth()*.4, 75);
+
+                setBounds(0, 0, getWidth(), contents.size()*200);
+            }
+
+            void mouseDown(const MouseEvent &event)
+            {
+                int test;
+            }
+
+            int getNumRows()
+            {
+                return contents.size();
+            }
+
+            void selectLabel(int yPos)
+            {
+
+            }
+
+            class nameLabel  : public Label
+            {
+            public:
+                nameLabel(ScrollableListbox* owner_, String name, String text):
+                    owner(owner_),
+                    Label(name, text)
+                {
+
+                }
+
+                ~nameLabel() {}
+
+                void mouseDown(const MouseEvent & e)
+                {
+                    if(e.getNumberOfClicks()>1)
+                    {
+                        //this->setColour(Label::backgroundColourId, Colours::red);
+                        //this->setText("Opening....", dontSendNotification);
+                        //this->lookAndFeelChanged();
+                        //repaint();
+                        owner->sendActionMessage(owner->contents[index]);
+                    }
+                }
+
+                int index;
+                ScopedPointer<ScrollableListbox> owner;
+
+            };
+
+        private:
+            StringArray contents;
+            OwnedArray<nameLabel> files;
+
+
+        };
+
+        FileBrowser(StandaloneFilterWindow* ownerWindow): owner(ownerWindow), Component(),
+            upButton("Up"), downButton("Down"), distanceDragged(0)
+        {
+            addAndMakeVisible (fileListBox);
+            fileListBox.addActionListener(this);
+            //addAndMakeVisible(&upButton);
+            //addAndMakeVisible(&downButton);
+            //upButton.addListener(this);
+            //downButton.addListener(this);
+            fileListBox.addMouseListener(this, true);
+            setInterceptsMouseClicks(true, false);
+        }
+
+        ~FileBrowser() {}
+
+        void resized()
+        {
+            fileListBox.setBounds(0, 0, getWidth(), 500);
+            upButton.setBounds(100, getHeight()-150, 200, 100);
+            downButton.setBounds(getWidth()-300, getHeight()-150, 200, 100);
+        }
+
+        void mouseDrag(const MouseEvent & event)
+        {
+            Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+            fileListBox.setTopLeftPosition(0, jmin(0,currentBounds.getY()+event.getDistanceFromDragStartY()));
+        }
+
+        void mouseDown(const MouseEvent &event)
+        {
+            int test;
+            //cUtils::debug(event.getPosition().getY());
+            fileListBox.selectLabel(event.getPosition().getY());
+        }
+
+        void mouseUp(const MouseEvent &event)
+        {
+            mouseUpY = event.getPosition().getY();
+            currentBounds = fileListBox.getBounds();
+        }
+
+        void buttonClicked (Button* button) override
+        {
+            if(button->getName()=="Down")
+            {
+                fileIndex++;// = (fileIndex<fileListBox.getModel()->getNumRows() ? fileIndex++ : fileListBox.getModel()->getNumRows()-1);
+            }
+            else
+            {
+                fileIndex--;// = (fileIndex>0 ? fileIndex-- : 0);
+            }
+        }
+
+        void actionListenerCallback(const String& message)
+        {
+            owner->loadFile(message);
+        }
+
+        //TextButton upButton, downButton;
+        int fileIndex;
+        ScrollableListbox fileListBox;
+        int distanceDragged;
+        int mouseUpY;
+        Rectangle<int> currentBounds;
+        TextButton upButton, downButton;
+        ScopedPointer<StandaloneFilterWindow> owner;
+    };
+
+
     //==============================================================================
     /** Creates a window with a given title and colour.
         The settings object can be a PropertySet that the class should use to
@@ -233,17 +422,29 @@ public:
                             Colour backgroundColour,
                             PropertySet* settingsToUse)
         : DocumentWindow (title, backgroundColour, DocumentWindow::minimiseButton | DocumentWindow::closeButton),
-          optionsButton ("options")
+          optionsButton ("Open"), lookAndFeel(new CabbageLookAndFeel()),
+          editorShowing(true)
     {
-        setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
-
-        //Component::addAndMakeVisible (optionsButton);
+        setTitleBarButtonsRequired (0, false);
+        Component::setLookAndFeel(lookAndFeel);
+        Component::addAndMakeVisible (optionsButton);
+        optionsButton.setLookAndFeel(lookAndFeel);
         optionsButton.addListener (this);
         optionsButton.setTriggeredOnMouseDown (true);
-
+        this->setTitleBarHeight(50);
         pluginHolder = new StandalonePluginHolder (settingsToUse);
 
+        Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+        setSize(rect.getWidth(), rect.getHeight());
+
+        fileBrowser = new FileBrowser(this);
+        fileBrowser->setBounds(0, 0, getWidth(), getHeight());
+
+        getProperties().set("colour", Colour(58, 110, 182).toString());
+        lookAndFeelChanged();
+
         createEditorComp();
+
 
         if (PropertySet* props = pluginHolder->settings)
         {
@@ -263,6 +464,7 @@ public:
 
     ~StandaloneFilterWindow()
     {
+#ifndef AndroidDebug
         if (PropertySet* props = pluginHolder->settings)
         {
             props->setValue ("windowX", getX());
@@ -270,6 +472,8 @@ public:
         }
 
         pluginHolder->stopPlaying();
+#endif
+
         deleteEditorComp();
         pluginHolder = nullptr;
     }
@@ -308,7 +512,7 @@ public:
         if (PropertySet* props = pluginHolder->settings)
             props->removeValue ("filterState");
 
-        pluginHolder->createPlugin();
+        pluginHolder->createPlugin("");
         createEditorComp();
         pluginHolder->startPlaying();
     }
@@ -321,30 +525,54 @@ public:
 
     void buttonClicked (Button*) override
     {
-        PopupMenu m;
-        m.addItem (1, TRANS("Audio Settings..."));
-        m.addSeparator();
-        m.addItem (2, TRANS("Save current state..."));
-        m.addItem (3, TRANS("Load a saved state..."));
-        m.addSeparator();
-        m.addItem (4, TRANS("Reset to default state"));
-        /*
-                switch (m.showAt (&optionsButton))
+        clearContentComponent();
+        optionsButton.setVisible(false);
+        setContentNonOwned(fileBrowser, true);
+    }
+
+    void loadFile(String filename)
+    {
+        File file(filename);
+        pluginHolder->stopPlaying();
+        deleteEditorComp();
+        pluginHolder->deletePlugin();
+
+        if(file.existsAsFile())
+        {
+            //cUtils::showMessage(file.loadFileAsString());
+            pluginHolder->createPlugin(file.getFullPathName());
+
+            createEditorComp();
+            pluginHolder->startPlaying();
+            clearContentComponent();
+            setContentOwned (getAudioProcessor()->createEditorIfNeeded(), true);
+
+            StringArray csdArray;
+            csdArray.addLines(file.loadFileAsString());
+            for(int i=0; i<csdArray.size(); i++)
+            {
+                if(csdArray[i].contains("form "))
                 {
-                    case 1:  pluginHolder->showAudioSettingsDialog(); break;
-                    case 4:  resetToDefaultState(); break;
-                    default: break;
+                    CabbageGUIClass cAttr(csdArray[i], -99);
+                    this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));
+                    this->lookAndFeelChanged();
                 }
-        		*/
+            }
+        }
+        optionsButton.setVisible(true);
     }
 
     void resized() override
     {
         DocumentWindow::resized();
-        optionsButton.setBounds (8, 6, 60, getTitleBarHeight() - 8);
+        optionsButton.setBounds (8, 6, 130, getTitleBarHeight() - 8);
     }
 
+
     ScopedPointer<StandalonePluginHolder> pluginHolder;
+    ScopedPointer<CabbageLookAndFeel> lookAndFeel;
+    ScopedPointer<FileBrowser> fileBrowser;
+    bool editorShowing;
 
 private:
     //==============================================================================

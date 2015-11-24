@@ -403,6 +403,7 @@ public:
     {
         const bool warnAboutOverwrite = true;
         Array<File> results;
+#if !defined(AndroidBuild)
         //if set to open or browse for files
         if(mode==1)
         {
@@ -499,7 +500,7 @@ public:
                     results.add(fc.getResult());
             }
         }
-
+#endif
         return results;
     }
 //==========================================================================================
@@ -677,7 +678,7 @@ public:
 //======== for the main background =========================================================
     static Colour getBackgroundSkin()
     {
-        Colour skin = Colour::fromRGBA (5, 15, 20, 255);
+        Colour skin = Colour::fromRGB(5, 15, 20);
         return skin;
     }
 
@@ -1540,6 +1541,10 @@ public:
 #endif
 #ifdef WIN32
             pic = fullPath+String("\\")+file;;
+#endif
+#ifdef AndroidBuild
+            String homeDir = String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage/");
+            pic = homeDir+String("/")+file;;
 #endif
             return pic;
         }

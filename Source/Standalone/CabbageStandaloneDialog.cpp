@@ -599,14 +599,14 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         deviceManager->initialise(filter->getNumInputChannels(),
                                   filter->getNumOutputChannels(), savedState, false);
 
-        filter->createGUI(csdFile.loadFileAsString(), true);
+        //filter->createGUI(csdFile.loadFileAsString(), true);
     }
     else
     {
         //deviceManager->closeAudioDevice();
         filter->createGUI(csdFile.loadFileAsString(), true);
         filter->reCompileCsound(csdFile);
-        
+
     }
 
 
@@ -634,7 +634,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
     }
     else
     {
-        filter->performEntireScore();
+        // filter->performEntireScore();
     }
 
 
@@ -655,18 +655,18 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         filter->codeEditor = cabbageCsoundEditor->textEditor;
         //cabbageCsoundEditor->textEditor->setSavePoint();
     }
-	
-	StringArray csdArray;
-	csdArray.addLines(csdFile.loadFileAsString());
-	for(int i=0;i<csdArray.size();i++)
-	{
-		if(csdArray[i].contains("form "))
-		{
-			CabbageGUIClass cAttr(csdArray[i], -99);
-			this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));
-			this->lookAndFeelChanged();
-		}
-	}
+
+    StringArray csdArray;
+    csdArray.addLines(csdFile.loadFileAsString());
+    for(int i=0; i<csdArray.size(); i++)
+    {
+        if(csdArray[i].contains("form "))
+        {
+            CabbageGUIClass cAttr(csdArray[i], -99);
+            this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));
+            this->lookAndFeelChanged();
+        }
+    }
 
 }
 
@@ -738,9 +738,11 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
     const int numIns = filter->getNumInputChannels() <= 0 ? JucePlugin_MaxNumInputChannels : filter->getNumInputChannels();
     const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutputChannels : filter->getNumOutputChannels();
     filter->stopProcessing = true;
-    CabbageAudioDeviceSelectorComponent selectorComp (*deviceManager,
+
+    AudioDeviceSelectorComponent selectorComp (*deviceManager,
             numIns, numIns, numOuts, numOuts,
             true, false, true, false);
+
     selectorComp.setSize (400, 550);
     setAlwaysOnTop(false);
     selectorComp.setLookAndFeel(lookAndFeel);
@@ -902,6 +904,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         m.addSubMenu("Batch Convert (Directory)", subMenu);
 #endif
 #endif
+
+        //m.addItem(1001, "Export Android .apk");
         m.addSeparator();
     }
 
@@ -1593,6 +1597,24 @@ void StandaloneFilterWindow::saveFileAs()
     filter->saveText();
 
 }
+
+//==============================================================================
+// Export Android .apk
+//==============================================================================
+int StandaloneFilterWindow::exportAsAndroid()
+{
+    File inFile(File::getSpecialLocation(File::currentApplicationFile));
+    ScopedPointer<InputStream> fileStream;
+    fileStream = File(inFile.getFullPathName()).createInputStream();
+    ZipFile zipFile (fileStream, false);
+    ScopedPointer<InputStream> fileContents;
+    fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/AndroidSimpleSynth.csd"));
+    File thisFile("/sdcard/Cabbage.csd");
+    thisFile.replaceWithText(fileContents->readEntireStreamAsString());
+    csdFile = thisFile;
+
+}
+
 //==============================================================================
 // Export plugin method
 //==============================================================================

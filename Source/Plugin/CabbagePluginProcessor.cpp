@@ -409,7 +409,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
     csdFile.setAsCurrentWorkingDirectory();
 
     createGUI(csdFile.loadFileAsString(), true);
-
     StringArray tmpArray;
     CabbageGUIClass cAttr;
 
@@ -493,20 +492,11 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
     csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
     if(csCompileResult==OK)
     {
+		initAllChannels();
         guiRefreshRate = getCsoundKsmpsSize()*2;
         Logger::writeToLog("compiled Ok");
         keyboardState.allNotesOff(0);
         keyboardState.reset();
-
-        //init all channels with their init val
-        for(int i=0; i<guiCtrls.size(); i++)
-        {
-            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
-                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
-            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
-                                guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
-            this->updateCabbageControls();
-        }
 
         //simple hack to allow tables to be set up correctly.
         csound->PerformKsmps();
@@ -566,7 +556,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
         csoundStatus=false;
     }
 #endif
-
+				
     Logger::writeToLog("GUI has been created");
 
 }

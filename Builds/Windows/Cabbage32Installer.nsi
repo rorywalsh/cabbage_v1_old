@@ -207,8 +207,13 @@ Section Uninstall
   Delete "$INSTDIR\cabbageEarphones.png"
   Delete "$DESKTOP\Cabbage32.lnk"
   Delete "$SMPROGRAMS\Cabbage32\Cabbage32.lnk"
-  Delete "$SMPROGRAMS\Cabbage32\liblo-7.dll"
-  Delete "$SMPROGRAMS\Cabbage32\csound.exe"
+  Delete "$INSTDIR\liblo-7.dll"
+  Delete "$INSTDIR\osc.dll"
+  Delete "$INSTDIR\csound.exe"
+  Delete "$INSTDIR\commandLineTest.csd"
+
+
+
 
   SetOutPath $SMPROGRAMS
   RMDir /r "$INSTDIR\csoundDocs"

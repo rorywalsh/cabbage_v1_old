@@ -178,6 +178,7 @@ static const Identifier linethickness = "linethickness";
 static const Identifier tablenumber = "tablenumber";
 static const Identifier tableconfig = "tableconfig";
 static const Identifier resizemode = "resizemode";
+static const Identifier resize = "resize";
 static const Identifier drawmode = "drawmode";
 static const Identifier readonly = "readonly";
 static const Identifier xyautoindex = "xyautoindex";

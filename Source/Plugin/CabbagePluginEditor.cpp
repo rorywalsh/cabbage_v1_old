@@ -1076,7 +1076,7 @@ void CabbagePluginAudioProcessorEditor::sendForward(bool toFront)
     {
         for(int i=currentLineNumber; i<csdArray.size(); i++)
         {
-            cUtils::debug(csdArray[i]);
+            //cUtils::debug(csdArray[i]);
             if(csdArray[i].trim().isNotEmpty())
             {
                 csdArray.insert(i+1, widgetText);
@@ -1310,7 +1310,7 @@ void CabbagePluginAudioProcessorEditor::updateSizesAndPositionsOfComponents(int 
     {
         //if(CAttr.getStringProp(CabbageIDs::type)=="groupbox")
         //Logger::writeToLog("SelectedCompBounds:"+getBoundsString(le->));
-        cUtils::debug(le->selectedLineNumbers[y]);
+        //cUtils::debug(le->selectedLineNumbers[y]);
         lineNumbers.add(le->selectedLineNumbers[y]);
         boundsForSelectComps.add(getBoundsString(le->selectedCompsNewCoordinates[y]));
     }
@@ -1337,8 +1337,8 @@ void CabbagePluginAudioProcessorEditor::updateSizesAndPositionsOfComponents(int 
                 off++;
                 y--;
             }
-            cUtils::debug(csdArray[currentLineNumber+y+off]);
-            cUtils::debug( getBoundsString(componentPanel->childBounds[y]));
+            //cUtils::debug(csdArray[currentLineNumber+y+off]);
+            //cUtils::debug( getBoundsString(componentPanel->childBounds[y]));
             temp = replaceIdentifier(csdArray[currentLineNumber+y+off], "bounds", getBoundsString(componentPanel->childBounds[y-1]));
             csdArray.set(currentLineNumber+y+off, temp);
             //add last curly brace
@@ -1550,12 +1550,6 @@ void CabbagePluginAudioProcessorEditor::showInsertControlsMenu(int x, int y)
     {
         //showMessage(xml->getAttributeValue(choice-100));
         //update X and Y positions from plants
-        for(int i=0; i<plantFiles.size(); i++)
-        {
-            cUtils::debug(String(i)+":"+plantFiles[i].getFullPathName());
-        }
-
-
         String customPlantControl = plantFiles[choice-100].loadFileAsString();
         String plantTextFile = plantFiles[choice-100].getFullPathName();
         if(customPlantControl.isNotEmpty())
@@ -1717,7 +1711,7 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
 #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 //offset the new object by a random value each time so they don't overlap exactly
     //showMessage(text.joinIntoString("\n"));
-    cUtils::debug(text.joinIntoString("\n"));
+    //cUtils::debug(text.joinIntoString("\n"));
 
     int offset;
     if(useOffset)
@@ -2105,13 +2099,13 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
 
 #ifdef AndroidBuild
     Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-    setSize(rect.getWidth(), rect.getHeight()-30);
-	componentPanel->setBounds(left, top, rect.getWidth(), rect.getHeight()-30);
+    setSize(rect.getWidth(), rect.getHeight()-50);
+    componentPanel->setBounds(left, top, rect.getWidth(), rect.getHeight()-50);
 #else
     setSize(width, height);
-	componentPanel->setBounds(left, top, width, height);
+    componentPanel->setBounds(left, top, width, height);
 #endif
-    
+
 
 #ifdef LINUX
     formPic.append(String("/")+String(cAttr.getStringProp(CabbageIDs::file)), 1024);

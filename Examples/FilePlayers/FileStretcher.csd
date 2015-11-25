@@ -174,13 +174,13 @@ instr	2	; play stretched
    turnoff
   endif
 
-  iFileLen	=	ftlen(gitableL)/sr						; File length in seconds
-  iAttPnt	=	(i(gkAttack) == 0 ? 0.01 : (i(gkAttack)/sr))			; If stretch points haven't been set, replace with defaults. 
+  iFileLen	=	ftlen(gitableL)/sr											; File length in seconds
+  iAttPnt	=	(i(gkAttack) == 0 ? 0.01 : (i(gkAttack)/sr))				; If stretch points haven't been set, replace with defaults. 
   iRelPnt	=	(i(gkAttack) == 0 ? 0.01 : ((i(gkAttack) + i(gkLen))/sr))
   
   iDuration	chnget	"Duration"
   
-  p3		=	iDuration
+  p3		limit	iDuration, iFileLen, iDuration
   
   iFFTSize	chnget	"FFTSize"
   iFFTSize	=	giFFTSizes[iFFTSize-1]
@@ -216,9 +216,12 @@ instr	3	; normal speed playback
  p3	=	ftlen(gitableL)/(sr*i(gkTranspose))
  aptr	line	0,p3,1
  aL	table3	aptr,gitableL,1
+ if gichans==1 then
+ 	outs	aL*gkLevel,aL*gkLevel
+ else
  aR	table3	aptr,gitableR,1
-	outs	aL*gkLevel,aR*gkLevel
- 
+	outs	aL*gkLevel,aR*gkLevel 
+ endif 
  kStop		chnget	"Stop"
  ktrig		trigger	kStop,0.5,0		; Generate an impulse if 'STOP' is clicked
  if ktrig==1 then

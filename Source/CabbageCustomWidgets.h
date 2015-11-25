@@ -1108,7 +1108,7 @@ class CabbageImage : public Component,
     String name, outline, colour, shape, file;
     float rotate;
     Image img;
-    int top, left, width, height, line, pivotx, pivoty;
+    int top, left, width, height, line, pivotx, pivoty, resize;
     String currentDirectory, tooltipText;
     AffineTransform transform;
 
@@ -1140,6 +1140,7 @@ public:
         if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
             tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
 
+        resize = cAttr.getNumProp(CabbageIDs::resize);
     }
     ~CabbageImage()
     {
@@ -1209,7 +1210,8 @@ public:
         {
             tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
         }
-        //repaint();
+
+        repaint();
     }
 
     void paint (Graphics& g)
@@ -1894,7 +1896,7 @@ public:
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
         keyboard->setLowestVisibleKey(cAttr.getNumProp(CabbageIDs::value));
 #ifdef AndroidBuild
-        keyboard->setKeyWidth(60);
+        keyboard->setKeyWidth(40);
 #endif
         keyboard->setScrollButtonsVisible(true);
 

@@ -50,7 +50,7 @@ instr	1
 	 reinit	UPDATE				;BEGIN A REINITIALISATION PASS AT LABEL 'UPDATE'
 	endif					;END OF CONDITIONAL BRANCH
 	UPDATE:					;LABEL 'UPDATE'. REINITIALISATION BEGINS FROM HERE.
-	asig	gausstrig	kamp, kfreq, kdev, i(kmode)	;GENERATE GAUSSIAM TRIGGERS
+	asig	gausstrig	kamp, kfreq, kdev, i(kmode), 1	;GENERATE GAUSSIAN TRIGGERS
 	kpan	random	0.5-(kspread*0.5), 0.5+(kspread*0.5)
 	asigL,asigR	pan2	asig,kpan
 	rireturn				;RETURN FROM REINITIALISATION PASS

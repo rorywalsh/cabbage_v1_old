@@ -36,9 +36,9 @@
 ///extern CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int plugType);
 
 #ifndef AndroidDebug
-	extern AudioProcessor* JUCE_CALLTYPE createPluginFilter(String file);
+extern AudioProcessor* JUCE_CALLTYPE createPluginFilter(String file);
 #else
-	extern AudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String file, bool refresh, int pluginType);
+extern AudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String file, bool refresh, int pluginType);
 #endif
 //==============================================================================
 /**
@@ -78,17 +78,17 @@ public:
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Standalone);
 
         if(file.isEmpty())
-			#ifndef AndroidDebug
-				processor = createPluginFilter("");
-			#else
-				processor = createCabbagePluginFilter("", false, 1);
-			#endif
+#ifndef AndroidDebug
+            processor = createPluginFilter("");
+#else
+            processor = createCabbagePluginFilter("", false, 1);
+#endif
         else
-			#ifndef AndroidDebug
-				processor = createPluginFilter(file);
-			#else
-				processor = createCabbagePluginFilter(file, false, 1);
-			#endif
+#ifndef AndroidDebug
+            processor = createPluginFilter(file);
+#else
+            processor = createCabbagePluginFilter(file, false, 1);
+#endif
 
         if(processor == nullptr) // Your createPluginFilter() function must return a valid object!
             cUtils::showMessage("Something not right in plugin");
@@ -98,9 +98,9 @@ public:
 
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Undefined);
 
-        processor->setPlayConfigDetails (JucePlugin_MaxNumInputChannels,
+        processor->setPlayConfigDetails(JucePlugin_MaxNumInputChannels,
                                          JucePlugin_MaxNumOutputChannels,
-                                         22050, 1024);
+                                         44100, 64);
     }
 
     void deletePlugin()
@@ -241,11 +241,11 @@ public:
 
 
     class FileBrowser : public Component,
-	public Button::Listener, 
-	public ActionListener
+        public Button::Listener,
+        public ActionListener
     {
     public:
-	
+
         class ScrollableListbox  : public Component, public ActionBroadcaster
         {
             // The following methods implement the necessary virtual functions from ListBoxModel,
@@ -253,93 +253,102 @@ public:
         public:
             ScrollableListbox()
             {
-				#ifndef AndroidDebug
+#ifndef AndroidDebug
                 File homeDir(String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage/"));
-				#else
-				File homeDir(File::getSpecialLocation(File::currentExecutableFile).getParentDirectory());
-				cUtils::debug(homeDir.getFullPathName());
-#endif	
-				setInterceptsMouseClicks(true, true);
-					
+#else
+                File homeDir(File::getSpecialLocation(File::currentExecutableFile).getParentDirectory());
+                cUtils::debug(homeDir.getFullPathName());
+#endif
+                setInterceptsMouseClicks(true, true);
+
                 Array<File> cabbageFiles;
                 homeDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
 
                 for (int i = 0; i < cabbageFiles.size(); ++i)
                     contents.add(cabbageFiles[i].getFullPathName());
 
-				for (int i=0;i<contents.size();i++)
-				{
-					files.add(new nameLabel(this, "", File(contents[i]).getFileNameWithoutExtension()));
-					files[i]->index = i;
-					files[i]->setJustificationType(Justification::centred);
-					files[i]->setColour(Label::outlineColourId, Colours::white);
-					files[i]->setFont(Font(50));
-					addAndMakeVisible(files[i]);
-				}
+                for (int i=0; i<contents.size(); i++)
+                {
+                    files.add(new nameLabel(this, "", File(contents[i]).getFileNameWithoutExtension()));
+                    files[i]->index = i;
+                    //files[i]->setColour(Label::outlineColourId, Colours::lime);
+                    addAndMakeVisible(files[i]);
+                }
 
             }
 
-			void paint(Graphics &g)
-			{	
-				g.fillAll(Colour(30, 30, 40));		
-			}
-			
-			void resized()
-			{
-				for (int i=0;i<contents.size();i++)
-					files[i]->setBounds(getWidth()*.2, (i*80)+10, getWidth()-getWidth()*.4, 75);
-					
-				setBounds(0, 0, getWidth(), contents.size()*200);
-			}
-			
-			void mouseDown(const MouseEvent &event)
-			{
-					int test;
-			}
-		
+            void paint(Graphics &g)
+            {
+                g.fillAll(Colour(58, 110, 182));
+            }
+
+            void resized()
+            {
+                for (int i=0; i<contents.size(); i++)
+                    files[i]->setBounds(getWidth()*.2, (i*80)+10, getWidth()-getWidth()*.4, 75);
+
+                setBounds(0, 0, getWidth(), contents.size()*200);
+            }
+
+            void mouseDown(const MouseEvent &event)
+            {
+                int test;
+            }
+
             int getNumRows()
             {
                 return contents.size();
             }
-			
-			void selectLabel(int yPos)
-			{
 
-			}
+            void selectLabel(int yPos)
+            {
 
-			class nameLabel  : public Label
-			{	
-				public:
-				nameLabel(ScrollableListbox* owner_, String name, String text): 
-					owner(owner_), 
-					Label(name, text)
+            }
+
+            class nameLabel  : public Component
+            {
+            public:
+                nameLabel(ScrollableListbox* owner_, String name, String _text):
+                    owner(owner_),
+                    Component(name),
+					text(_text)
+                {
+
+                }
+
+                ~nameLabel() {}
+
+                void mouseDown(const MouseEvent & e)
+                {
+                    if(e.getNumberOfClicks()>1)
+                    {
+                        //this->setColour(Label::backgroundColourId, Colours::red);
+                        //this->setText("Opening....", dontSendNotification);
+                        //this->lookAndFeelChanged();
+                        //repaint();
+                        owner->sendActionMessage(owner->contents[index]);
+                    }
+                }
+
+				void paint(Graphics &g)
 				{
-					
+					g.setColour(Colour(90, 90, 90));	
+					g.setFont(50);				
+					g.fillRoundedRectangle(getLocalBounds().reduced(5).toFloat(), 7.f);
+					g.setColour(Colours::whitesmoke);
+					g.drawFittedText(text, getLocalBounds().reduced(6), Justification::centred, 1);					
 				}
 				
-				~nameLabel(){}
-				
-				void mouseDown(const MouseEvent & e)
-				{
-					if(e.getNumberOfClicks()>1)
-					{
-					//this->setColour(Label::backgroundColourId, Colours::red);
-					//this->setText("Opening....", dontSendNotification);
-					//this->lookAndFeelChanged();
-					//repaint();		
-					owner->sendActionMessage(owner->contents[index]);
-					}
-				}
-				
-				int index;
-				ScopedPointer<ScrollableListbox> owner;
-				
-			};
+                int index;
+				String text;
+                ScopedPointer<ScrollableListbox> owner;
+
+            };
 
         private:
             StringArray contents;
-			OwnedArray<nameLabel> files;
-			
+            OwnedArray<nameLabel> files;
+
 
         };
 
@@ -352,8 +361,8 @@ public:
             //addAndMakeVisible(&downButton);
             //upButton.addListener(this);
             //downButton.addListener(this);
-			fileListBox.addMouseListener(this, true);
-			setInterceptsMouseClicks(true, false);
+            fileListBox.addMouseListener(this, true);
+            setInterceptsMouseClicks(true, false);
         }
 
         ~FileBrowser() {}
@@ -365,25 +374,25 @@ public:
             downButton.setBounds(getWidth()-300, getHeight()-150, 200, 100);
         }
 
-		void mouseDrag(const MouseEvent & event)	
-		{
-			Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-			fileListBox.setTopLeftPosition(0, jmin(0,currentBounds.getY()+event.getDistanceFromDragStartY()));		
-		}
-		
-		void mouseDown(const MouseEvent &event)
-		{
-			int test;
-			//cUtils::debug(event.getPosition().getY());
-			fileListBox.selectLabel(event.getPosition().getY());
-		}
-		
-		void mouseUp(const MouseEvent &event)
-		{
-			mouseUpY = event.getPosition().getY();
-			currentBounds = fileListBox.getBounds();
-		}
-		
+        void mouseDrag(const MouseEvent & event)
+        {
+            Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+            fileListBox.setTopLeftPosition(0, jmin(0,currentBounds.getY()+event.getDistanceFromDragStartY()));
+        }
+
+        void mouseDown(const MouseEvent &event)
+        {
+            int test;
+            //cUtils::debug(event.getPosition().getY());
+            fileListBox.selectLabel(event.getPosition().getY());
+        }
+
+        void mouseUp(const MouseEvent &event)
+        {
+            mouseUpY = event.getPosition().getY();
+            currentBounds = fileListBox.getBounds();
+        }
+
         void buttonClicked (Button* button) override
         {
             if(button->getName()=="Down")
@@ -404,10 +413,10 @@ public:
         //TextButton upButton, downButton;
         int fileIndex;
         ScrollableListbox fileListBox;
-		int distanceDragged;
-		int mouseUpY;
-		Rectangle<int> currentBounds;
-		TextButton upButton, downButton;
+        int distanceDragged;
+        int mouseUpY;
+        Rectangle<int> currentBounds;
+        TextButton upButton, downButton;
         ScopedPointer<StandaloneFilterWindow> owner;
     };
 
@@ -444,6 +453,8 @@ public:
         lookAndFeelChanged();
 
         createEditorComp();
+		
+		setName(pluginHolder->processor->getName());
 
 
         if (PropertySet* props = pluginHolder->settings)
@@ -464,7 +475,7 @@ public:
 
     ~StandaloneFilterWindow()
     {
-		#ifndef AndroidDebug
+#ifndef AndroidDebug
         if (PropertySet* props = pluginHolder->settings)
         {
             props->setValue ("windowX", getX());
@@ -472,10 +483,10 @@ public:
         }
 
         pluginHolder->stopPlaying();
-		#endif
-		
-		deleteEditorComp();
-        pluginHolder = nullptr;	
+#endif
+
+        deleteEditorComp();
+        pluginHolder = nullptr;
     }
 
     //==============================================================================
@@ -513,6 +524,7 @@ public:
             props->removeValue ("filterState");
 
         pluginHolder->createPlugin("");
+		setName(pluginHolder->processor->getName());
         createEditorComp();
         pluginHolder->startPlaying();
     }
@@ -543,6 +555,7 @@ public:
             pluginHolder->createPlugin(file.getFullPathName());
 
             createEditorComp();
+			setName(pluginHolder->processor->getName());
             pluginHolder->startPlaying();
             clearContentComponent();
             setContentOwned (getAudioProcessor()->createEditorIfNeeded(), true);
@@ -559,7 +572,7 @@ public:
                 }
             }
         }
-		optionsButton.setVisible(true);
+        optionsButton.setVisible(true);
     }
 
     void resized() override

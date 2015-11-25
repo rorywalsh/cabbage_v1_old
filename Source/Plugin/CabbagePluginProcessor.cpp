@@ -154,7 +154,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
     {
         File(inputfile).setAsCurrentWorkingDirectory();
 
-     
+
         csoundParams = nullptr;
         csoundParams = new CSOUND_PARAMS();
 #ifndef CABBAGE_HOST
@@ -170,11 +170,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         csound->SetOption((char*)"-n");
         csound->SetOption((char*)"-d");
 
-        Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-        String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth())+"\"";
-        csound->SetOption(screenWidth.toUTF8().getAddress());
-        String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight()-30)+"\"";
-        csound->SetOption(screenHeight.toUTF8().getAddress());
+
+        setScreenMacros();
 
         addMacros(File(inputfile).loadFileAsString());
         //csound->SetOption((char*)"--omacro:ATTRIBS=\"colour\(\\\"red\\\"),size\(100,100\),text\(\\\"Hello\\\"\)\\\"");
@@ -364,10 +361,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
         csdFile = thisFile;
 
         //examples
-        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/VectorialSynth.csd"));
-        File thisFile1(homeDir+"VectorialSynthExample.csd");
-        thisFile1.replaceWithText(fileContents->readEntireStreamAsString());
-
         fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/ImageSliders.csd"));
         File thisFile2(homeDir+"ImageSliders.csd");
         thisFile2.replaceWithText(fileContents->readEntireStreamAsString());
@@ -380,7 +373,9 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
         File thisFile4(homeDir+"DrumPads.csd");
         thisFile4.replaceWithText(fileContents->readEntireStreamAsString());
 
-
+        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/SpookEPad.csd"));
+        File thisFile5(homeDir+"SpookEPad.csd");
+        thisFile5.replaceWithText(fileContents->readEntireStreamAsString());
 #else
         File thisFile(File::getSpecialLocation(File::currentExecutableFile));
         csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
@@ -438,17 +433,9 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
     //csound->setOpenSlCallbacks(); // for android audio to work
 #endif
 
-
-
-
     csound->SetHostImplementedMIDIIO(true);
-    //csound->Reset();
-    //csound->PreCompile();
     csound->SetHostData(this);
     midiOutputBuffer.clear();
-    //for host midi to get sent to Csound, don't need this for standalone
-    //but might use it in the future for midi mapping to controls
-    //csound->SetMessageCallback(CabbagePluginAudioProcessor::messageCallback);
     csound->CreateMessageBuffer(0);
     csound->SetExternalMidiInOpenCallback(OpenMidiInputDevice);
     csound->SetExternalMidiReadCallback(ReadMidiData);
@@ -469,30 +456,21 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
     csoundParams->sample_rate_override = this->getSampleRate();
     csoundParams->control_rate_override = cUtils::getKrFromFile(csdFile.getFullPathName(), (int)getSampleRate());
 
-   
+
     csoundParams->displays = 0;
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
     csound->SetOption((char*)"-d");
     csound->SetOption((char*)"--omacro:IS_A_PLUGIN=\"1\"");
 
-	Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-	String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth())+"\"";
-	//cUtils::showMessage(screenWidth);
-	csound->SetOption(screenWidth.toUTF8().getAddress());
-	String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight()-30)+"\"";
-	csound->SetOption(screenHeight.toUTF8().getAddress());
-
+    setScreenMacros();
     addMacros(csdFile.loadFileAsString());
-
-
-
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
     //csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
     csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
     if(csCompileResult==OK)
     {
-		initAllChannels();
+        initAllChannels();
         guiRefreshRate = getCsoundKsmpsSize()*2;
         Logger::writeToLog("compiled Ok");
         keyboardState.allNotesOff(0);
@@ -556,7 +534,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
         csoundStatus=false;
     }
 #endif
-				
+
     Logger::writeToLog("GUI has been created");
 
 }
@@ -600,6 +578,25 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 }
 
 //============================================================================
+//SET SCREEN WIDTH AND SCREEN HEIGHT MACROS
+//============================================================================
+void CabbagePluginAudioProcessor::setScreenMacros()
+{
+//android opens full screen by default.
+#ifdef AndroidBuild
+    Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+    String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth())+"\"";
+    csound->SetOption(screenWidth.toUTF8().getAddress());
+    String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight()-30)+"\"";
+    csound->SetOption(screenHeight.toUTF8().getAddress());
+#else
+    String width = "--omacro:SCREEN_WIDTH=\""+String(screenWidth)+"\"";
+    csound->SetOption(width.toUTF8().getAddress());
+    String height = "--omacro:SCREEN_HEIGHT=\""+String(screenHeight)+"\"";
+    csound->SetOption(height.toUTF8().getAddress());
+#endif
+}
+//============================================================================
 //FIND MACROS AND ADD THEM TO SETUP OPTIONS
 //============================================================================
 void CabbagePluginAudioProcessor::addMacros(String csdText)
@@ -614,16 +611,11 @@ void CabbagePluginAudioProcessor::addMacros(String csdText)
         {
             StringArray tokens;
             tokens.addTokens(csdArray[i].replace("#", "").trim() ," ");
-            cUtils::debug(tokens[0]);
-            cUtils::debug(tokens[1]);
-            cUtils::debug(tokens[2]);
             macroName = tokens[1];
             tokens.remove(0);
             tokens.remove(0);
             macroText = "\\\"" + tokens.joinIntoString(" ").replace("\"", "\\\\\\\"")+"\\\"";
             String fullMacro = "--omacro:"+macroName+"="+macroText+"\"";
-
-            cUtils::debug(fullMacro);
             csound->SetOption(fullMacro.toUTF8().getAddress());
         }
 
@@ -1013,6 +1005,15 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             ||tokes[0].equalsIgnoreCase(String("groupbox")))
                     {
                         CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
+
+                        if(cAttr.getStringProp(CabbageIDs::type)=="form")
+                        {
+                            screenWidth = cAttr.getNumProp(CabbageIDs::width);
+                            screenHeight = cAttr.getNumProp(CabbageIDs::height);
+                        }
+
+
+
                         warningMessage = "";
                         warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
                         if(cAttr.getWarningMessages().isNotEmpty())

@@ -34,6 +34,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 //before parsing begins
     cabbageIdentifiers.set("scalex", 1);
     cabbageIdentifiers.set("scaley", 1);
+    cabbageIdentifiers.set("resize", 0);
     cabbageIdentifiers.set(CabbageIDs::active, 1);
 
     StringArray strTokens;
@@ -1674,6 +1675,11 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                 cabbageIdentifiers.set(CabbageIDs::tablenumber, value);
             }
             else if(identArray[indx].equalsIgnoreCase("popup"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::popup, strTokens[0].trim().getIntValue());
+            }
+
+            else if(identArray[indx].equalsIgnoreCase("resize"))
             {
                 cabbageIdentifiers.set(CabbageIDs::popup, strTokens[0].trim().getIntValue());
             }

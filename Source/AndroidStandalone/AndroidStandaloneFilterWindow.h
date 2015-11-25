@@ -98,9 +98,9 @@ public:
 
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Undefined);
 
-        processor->setPlayConfigDetails (JucePlugin_MaxNumInputChannels,
-                                         JucePlugin_MaxNumOutputChannels,
-                                         22050, 1024);
+        processor->setPlayConfigDetails(JucePlugin_MaxNumInputChannels,
+                                        JucePlugin_MaxNumOutputChannels,
+                                        44100, 64);
     }
 
     void deletePlugin()
@@ -271,9 +271,7 @@ public:
                 {
                     files.add(new nameLabel(this, "", File(contents[i]).getFileNameWithoutExtension()));
                     files[i]->index = i;
-                    files[i]->setJustificationType(Justification::centred);
-                    files[i]->setColour(Label::outlineColourId, Colours::white);
-                    files[i]->setFont(Font(50));
+                    //files[i]->setColour(Label::outlineColourId, Colours::lime);
                     addAndMakeVisible(files[i]);
                 }
 
@@ -281,7 +279,7 @@ public:
 
             void paint(Graphics &g)
             {
-                g.fillAll(Colour(30, 30, 40));
+                g.fillAll(Colour(58, 110, 182));
             }
 
             void resized()
@@ -307,12 +305,13 @@ public:
 
             }
 
-            class nameLabel  : public Label
+            class nameLabel  : public Component
             {
             public:
-                nameLabel(ScrollableListbox* owner_, String name, String text):
+                nameLabel(ScrollableListbox* owner_, String name, String _text):
                     owner(owner_),
-                    Label(name, text)
+                    Component(name),
+                    text(_text)
                 {
 
                 }
@@ -331,7 +330,17 @@ public:
                     }
                 }
 
+                void paint(Graphics &g)
+                {
+                    g.setColour(Colour(90, 90, 90));
+                    g.setFont(50);
+                    g.fillRoundedRectangle(getLocalBounds().reduced(5).toFloat(), 7.f);
+                    g.setColour(Colours::whitesmoke);
+                    g.drawFittedText(text, getLocalBounds().reduced(6), Justification::centred, 1);
+                }
+
                 int index;
+                String text;
                 ScopedPointer<ScrollableListbox> owner;
 
             };
@@ -445,6 +454,8 @@ public:
 
         createEditorComp();
 
+        setName(pluginHolder->processor->getName());
+
 
         if (PropertySet* props = pluginHolder->settings)
         {
@@ -513,6 +524,7 @@ public:
             props->removeValue ("filterState");
 
         pluginHolder->createPlugin("");
+        setName(pluginHolder->processor->getName());
         createEditorComp();
         pluginHolder->startPlaying();
     }
@@ -543,6 +555,7 @@ public:
             pluginHolder->createPlugin(file.getFullPathName());
 
             createEditorComp();
+            setName(pluginHolder->processor->getName());
             pluginHolder->startPlaying();
             clearContentComponent();
             setContentOwned (getAudioProcessor()->createEditorIfNeeded(), true);

@@ -275,7 +275,8 @@ public:
     void createAndShowSourceEditor(LookAndFeel* looky);
     void actionListenerCallback (const String& message);
     void addMacros(String csdText);
-
+    int screenWidth, screenHeight;
+    void setScreenMacros();
 
 
     int getNumberCsoundOutChannels()
@@ -479,9 +480,9 @@ public:
             String env = "OPCODE6DIR="+opcodeDir;
             _putenv(env.toUTF8().getAddress());
             Logger::writeToLog("Current opcodeDir is:"+String(getenv("OPCODE6DIR")));
-			
-			//String setCLI = "set "+env;
-			//system(setCLI.toUTF8().getAddress());
+
+            //String setCLI = "set "+env;
+            //system(setCLI.toUTF8().getAddress());
         }
 #endif
     }

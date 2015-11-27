@@ -358,6 +358,7 @@ public:
     void startRecording();
     void stopRecording();
     int reCompileCsound(File file);
+    void openFile(LookAndFeel* looky);
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock);
     void releaseResources();

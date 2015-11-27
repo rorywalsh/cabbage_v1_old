@@ -322,6 +322,10 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
     {
         InsertFileButton(cAttr);
     }
+    else if(cAttr.getStringProp(CabbageIDs::type)==String("loadbutton"))
+    {
+        InsertFileButton(cAttr);
+    }
     else if(cAttr.getStringProp(CabbageIDs::type)==String("recordbutton"))
     {
         InsertRecordButton(cAttr);
@@ -2247,7 +2251,7 @@ void CabbagePluginAudioProcessorEditor::InsertInfoButton(CabbageGUIClass &cAttr)
     layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
 }
 
-//+++++++++++++++++++++++++++++++++++++++++++
+//+++++++++++++++++++++++++++++++++++++++++++                                          
 //                       insert file button
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
@@ -2884,9 +2888,8 @@ void CabbagePluginAudioProcessorEditor::buttonStateChanged(Button* button)
 void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 {
 #ifndef Cabbage_No_Csound
-//thi is funked!
 //Logger::writeToLog(button->getName());
-    if(!getFilter()->isGuiEnabled())
+    if(!getFilter()->isGuiEnabled() && button!=nullptr)
     {
         if(button->isEnabled())      // check button is ok before sending data to on named channel
         {
@@ -2895,7 +2898,8 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                 //deal with non-interactive buttons first..
                 if(button->getName()=="sourcebutton")
                 {
-                    getFilter()->createAndShowSourceEditor(lookAndFeel);
+                    getFilter()->openFile(lookAndFeel);
+                    //getFilter()->createAndShowSourceEditor(lookAndFeel);
                 }
                 else if(button->getName()=="infobutton")
                 {
@@ -3086,6 +3090,10 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 #endif
                             }
 
+                        }
+                        else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==String("loadbutton"))
+                        {
+                            //getFilter()->openFile();
                         }
                     }
 

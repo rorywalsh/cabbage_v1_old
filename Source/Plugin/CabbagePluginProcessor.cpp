@@ -333,6 +333,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
         File thisFile(osxCSD);
         Logger::writeToLog("MACOSX defined OK");
         csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
+        cUtils::showMessage(csdFile);
 #elif defined(AndroidBuild)
         File inFile(File::getSpecialLocation(File::currentApplicationFile));
         ScopedPointer<InputStream> fileStream;
@@ -834,9 +835,9 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
         CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
         if(editor)
         {
-            editor->comps.clear();
-            editor->layoutComps.clear();
-            editor->subPatches.clear();
+            editor->comps.clear(true);
+            editor->layoutComps.clear(true);
+            editor->subPatches.clear(true);
             editor->popupMenus.clear();
         }
     }
@@ -992,6 +993,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             ||tokes[0].equalsIgnoreCase(String("multitab"))
                             ||tokes[0].equalsIgnoreCase(String("infobutton"))
                             ||tokes[0].equalsIgnoreCase(String("filebutton"))
+                            ||tokes[0].equalsIgnoreCase(String("loadbutton"))
                             ||tokes[0].equalsIgnoreCase(String("soundfiler"))
                             ||tokes[0].equalsIgnoreCase(String("sourcebutton"))
                             ||tokes[0].equalsIgnoreCase(String("texteditor"))
@@ -1288,7 +1290,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 //            editor->InsertGUIControls(guiLayoutCtrls[i]);
 //        for(int i=indexOfLastGUICtrl; i<guiCtrls.size(); i++)
 //            editor->InsertGUIControls(guiCtrls[i]);
-#if !defined(AndroidBuild)
+#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
         if(!getPreference(appProperties, "ExternalEditor") && refresh)
             editor->setEditMode(checkGUI);
 #endif
@@ -1305,18 +1307,39 @@ void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
 #if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) && !defined(AndroidBuild)
     if(!cabbageCsoundEditor)
     {
-        cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
+        cabbageCsoundEditor = new CodeWindow(csdFile.getFullPathName());
         cabbageCsoundEditor->setVisible(true);
         cabbageCsoundEditor->toFront(true);
         //setupWindowDimensions();
         cabbageCsoundEditor->addActionListener(this);
         cabbageCsoundEditor->setLookAndFeel(looky);
+        //codeEditor->sendActionMessage("open file");
         cabbageCsoundEditor->textEditor->editor[0]->loadContent(csdFile.loadFileAsString());
         codeEditor = cabbageCsoundEditor->textEditor;
+        
     }
 #endif
 }
 
+void CabbagePluginAudioProcessor::openFile(LookAndFeel* looky)
+{
+    WildcardFileFilter wildcardFilter = WildcardFileFilter("*.csd", "", "File filter");
+    Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file",
+                                                          wildcardFilter,
+                                                          "*.csd",
+                                                          1,
+                                                          File("").getParentDirectory(),
+                                                          false,
+                                                          looky);
+    
+    if(selectedFiles.size())
+    {
+        csdFile = selectedFiles[0];
+        //cabbageCsoundEditor->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
+        createGUI(selectedFiles[0].loadFileAsString(), true);
+        reCompileCsound(csdFile);
+    }
+}
 void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
 {
 
@@ -1326,13 +1349,13 @@ void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
     {
         WildcardFileFilter wildcardFilter = WildcardFileFilter("*.csd", "", "File filter");
         Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file",
-                                    wildcardFilter,
-                                    "*.csd",
-                                    1,
-                                    File("").getParentDirectory(),
-                                    false,
-                                    &cabbageCsoundEditor->getLookAndFeel());
-
+                                                              wildcardFilter,
+                                                              "*.csd",
+                                                              1,
+                                                              File("").getParentDirectory(),
+                                                              false,
+                                                              &cabbageCsoundEditor->getLookAndFeel());
+        
         if(selectedFiles.size())
         {
             csdFile = selectedFiles[0];

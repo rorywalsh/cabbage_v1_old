@@ -164,7 +164,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
 
-    else if(strTokens[0].trim() == "sourcebutton")
+    else if((strTokens[0].trim() == "sourcebutton")||(strTokens[0].trim() == "loadbutton"))
     {
         top = 10;
         left = 10;
@@ -181,8 +181,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
         cabbageIdentifiers.set(CabbageIDs::oncolour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::onfontcolour, Colours::white.toString());
-        cabbageIdentifiers.set(CabbageIDs::type, "sourcebutton");
-        cabbageIdentifiers.set(CabbageIDs::name, "sourcebutton");
+        cabbageIdentifiers.set(CabbageIDs::type, strTokens[0].trim());
+        cabbageIdentifiers.set(CabbageIDs::name, strTokens[0].trim());
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);

@@ -424,7 +424,8 @@ public:
                                           browserComponent, warnAboutOverwrite,
                                           cUtils::getDarkerBackgroundSkin());
 
-                box.setLookAndFeel(look);
+                if(look!=nullptr)
+                    box.setLookAndFeel(look);
 
                 if (box.show())
                 {
@@ -455,7 +456,8 @@ public:
                                           browserComponent, warnAboutOverwrite,
                                           cUtils::getDarkerBackgroundSkin());
 
-                box.setLookAndFeel(look);
+                if(look!=nullptr)
+                    box.setLookAndFeel(look);
 
                 if (box.show())
                 {
@@ -485,7 +487,8 @@ public:
                                           browserComponent, warnAboutOverwrite,
                                           cUtils::getDarkerBackgroundSkin());
 
-                box.setLookAndFeel(look);
+                if(look!=nullptr)
+                    box.setLookAndFeel(look);
 
                 if (box.show())
                 {

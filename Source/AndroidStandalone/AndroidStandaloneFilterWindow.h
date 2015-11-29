@@ -241,7 +241,6 @@ public:
 
 
     class FileBrowser : public Component,
-        public Button::Listener,
         public ActionListener
     {
     public:
@@ -305,13 +304,15 @@ public:
 
             }
 
-            class nameLabel  : public Component
+            class nameLabel  : public Component, public Timer
             {
             public:
                 nameLabel(ScrollableListbox* owner_, String name, String _text):
                     owner(owner_),
                     Component(name),
-                    text(_text)
+                    timerVal(0),
+                    buttonColour(Colour(90, 90, 90)),
+                    text(_text), Timer()
                 {
 
                 }
@@ -320,27 +321,47 @@ public:
 
                 void mouseDown(const MouseEvent & e)
                 {
-                    if(e.getNumberOfClicks()>1)
+                    startTimer(.01);
+                }
+
+                void mouseUp(const MouseEvent & e)
+                {
+                    stopTimer();
+                    timerVal=0;
+                    repaint();
+                }
+
+                void mouseDrag(const MouseEvent & e)
+                {
+                    stopTimer();
+                    timerVal=0;
+                    repaint();
+                }
+
+                void timerCallback()
+                {
+                    timerVal+=.5;
+                    if(timerVal>1)
                     {
-                        //this->setColour(Label::backgroundColourId, Colours::red);
-                        //this->setText("Opening....", dontSendNotification);
-                        //this->lookAndFeelChanged();
-                        //repaint();
+                        stopTimer();
                         owner->sendActionMessage(owner->contents[index]);
                     }
+                    repaint();
                 }
 
                 void paint(Graphics &g)
                 {
-                    g.setColour(Colour(90, 90, 90));
+                    g.setColour(buttonColour.brighter(timerVal));
                     g.setFont(50);
                     g.fillRoundedRectangle(getLocalBounds().reduced(5).toFloat(), 7.f);
-                    g.setColour(Colours::whitesmoke);
+                    g.setColour(Colours::whitesmoke.darker(timerVal));
                     g.drawFittedText(text, getLocalBounds().reduced(6), Justification::centred, 1);
                 }
 
                 int index;
+                float timerVal;
                 String text;
+                Colour buttonColour;
                 ScopedPointer<ScrollableListbox> owner;
 
             };
@@ -393,17 +414,6 @@ public:
             currentBounds = fileListBox.getBounds();
         }
 
-        void buttonClicked (Button* button) override
-        {
-            if(button->getName()=="Down")
-            {
-                fileIndex++;// = (fileIndex<fileListBox.getModel()->getNumRows() ? fileIndex++ : fileListBox.getModel()->getNumRows()-1);
-            }
-            else
-            {
-                fileIndex--;// = (fileIndex>0 ? fileIndex-- : 0);
-            }
-        }
 
         void actionListenerCallback(const String& message)
         {

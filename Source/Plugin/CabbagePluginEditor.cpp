@@ -2251,7 +2251,7 @@ void CabbagePluginAudioProcessorEditor::InsertInfoButton(CabbageGUIClass &cAttr)
     layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
 }
 
-//+++++++++++++++++++++++++++++++++++++++++++                                          
+//+++++++++++++++++++++++++++++++++++++++++++
 //                       insert file button
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)

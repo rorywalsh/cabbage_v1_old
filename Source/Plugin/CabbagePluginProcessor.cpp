@@ -715,8 +715,10 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
     CSspin = nullptr;
     //csound->Stop();
 
+
     csCompileResult = csound->Compile(const_cast<char*>(file.getFullPathName().toUTF8().getAddress()));
     file.getParentDirectory().setAsCurrentWorkingDirectory();
+    initAllChannels();
 
 #ifdef BUILD_DEBUGGER
     for(int i=0; i<breakpointInstruments.size(); i++)
@@ -1316,7 +1318,7 @@ void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
         //codeEditor->sendActionMessage("open file");
         cabbageCsoundEditor->textEditor->editor[0]->loadContent(csdFile.loadFileAsString());
         codeEditor = cabbageCsoundEditor->textEditor;
-        
+
     }
 #endif
 }
@@ -1325,13 +1327,13 @@ void CabbagePluginAudioProcessor::openFile(LookAndFeel* looky)
 {
     WildcardFileFilter wildcardFilter = WildcardFileFilter("*.csd", "", "File filter");
     Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file",
-                                                          wildcardFilter,
-                                                          "*.csd",
-                                                          1,
-                                                          File("").getParentDirectory(),
-                                                          false,
-                                                          looky);
-    
+                                wildcardFilter,
+                                "*.csd",
+                                1,
+                                File("").getParentDirectory(),
+                                false,
+                                looky);
+
     if(selectedFiles.size())
     {
         csdFile = selectedFiles[0];
@@ -1349,13 +1351,13 @@ void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
     {
         WildcardFileFilter wildcardFilter = WildcardFileFilter("*.csd", "", "File filter");
         Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file",
-                                                              wildcardFilter,
-                                                              "*.csd",
-                                                              1,
-                                                              File("").getParentDirectory(),
-                                                              false,
-                                                              &cabbageCsoundEditor->getLookAndFeel());
-        
+                                    wildcardFilter,
+                                    "*.csd",
+                                    1,
+                                    File("").getParentDirectory(),
+                                    false,
+                                    &cabbageCsoundEditor->getLookAndFeel());
+
         if(selectedFiles.size())
         {
             csdFile = selectedFiles[0];

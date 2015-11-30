@@ -169,7 +169,11 @@
 // Audio plugin settings..
 
 #ifndef  JucePlugin_Build_VST
-#define JucePlugin_Build_VST              1
+    #define JucePlugin_Build_VST              1
+#endif
+
+#ifdef CabbageAU
+    #define JucePlugin_Build_AU               1
 #endif
 
 #if !defined(CABBAGE_HOST)
@@ -177,28 +181,42 @@
 #else
     #define JucePlugin_Build_AU               1
 #endif
+
 #ifndef  JucePlugin_Build_RTAS
 #define JucePlugin_Build_RTAS             0
 #endif
+
 #ifndef  JucePlugin_Build_AAX
 #define JucePlugin_Build_AAX              0
 #endif
+
 #ifndef  JucePlugin_Name
-#define JucePlugin_Name                   "CabbageEffectNam"
+    #ifndef CabbageAU
+    #define JucePlugin_Name                   "CabbageEffectNam"
+    #else
+    #define JucePlugin_Name                   "CabbageAudioUnit"
+    #endif
 #endif
+
 #ifndef  JucePlugin_Desc
 #define JucePlugin_Desc                   "CabbagePlugin"
 #endif
+
 #ifndef  JucePlugin_Manufacturer
 #define JucePlugin_Manufacturer           "CabbageAudio"
 #endif
+
 #ifndef  JucePlugin_ManufacturerCode
 #define JucePlugin_ManufacturerCode       'Cabb'
 #endif
-#ifndef  JucePlugin_PluginCode
-#define JucePlugin_PluginCode             'RORY'
-#endif
 
+#ifndef  JucePlugin_PluginCode
+    #ifndef CabbageAU
+        #define JucePlugin_PluginCode             'RORY'
+    #else
+        #define JucePlugin_PluginCode             'CABU'
+    #endif
+#endif
 
 #ifdef CABBAGE_HOST
 	#ifndef  JucePlugin_MaxNumInputChannels
@@ -210,7 +228,6 @@
 	#ifndef  JucePlugin_PreferredChannelConfigurations
 	#define JucePlugin_PreferredChannelConfigurations  {2,2}, {4,4}, {6,6}, {8,8}
 	#endif
-
 #else
 	#ifndef  JucePlugin_MaxNumInputChannels
 	#define JucePlugin_MaxNumInputChannels    2
@@ -237,15 +254,19 @@
 #ifndef  JucePlugin_WantsMidiInput
 #define JucePlugin_WantsMidiInput         1
 #endif
+
 #ifndef  JucePlugin_ProducesMidiOutput
 #define JucePlugin_ProducesMidiOutput     1
 #endif
+
 #ifndef  JucePlugin_SilenceInProducesSilenceOut
 #define JucePlugin_SilenceInProducesSilenceOut  1
 #endif
+
 #ifndef  JucePlugin_TailLengthSeconds
 #define JucePlugin_TailLengthSeconds      0
 #endif
+
 #ifndef  JucePlugin_EditorRequiresKeyboardFocus
 #define JucePlugin_EditorRequiresKeyboardFocus  0
 #endif

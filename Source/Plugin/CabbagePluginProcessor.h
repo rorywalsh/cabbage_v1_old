@@ -276,7 +276,7 @@ public:
     void actionListenerCallback (const String& message);
     void addMacros(String csdText);
     int screenWidth, screenHeight;
-    int compileCsound(bool isPlugin);
+    int compileCsoundAndInitialiseGUI(bool isPlugin);
     void setScreenMacros();
 
 
@@ -329,10 +329,8 @@ public:
     CsoundCodeEditor* codeEditor;
 #endif
 
-#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
-#ifndef AndroidBuild
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) && !defined(AndroidBuild)
     CodeWindow* cabbageCsoundEditor;
-#endif
 #endif
 
 

@@ -94,198 +94,200 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
     codeEditor = nullptr;
     //backgroundThread.startThread();
 
+    //createGUI(File(inputfile).loadFileAsString(), true);
+    if(compileCsound(false)==0)
+        cUtils::debug(File(inputfile).getFullPathName());
     //setPlayConfigDetails(2, 2, 44100, 512);
 
-    createGUI(csdFile.loadFileAsString(), true);
+//
+    /*
+        //set up file logger if needed..
+        StringArray tmpArray;
+        CabbageGUIClass cAttr;
 
-    //set up file logger if needed..
-    StringArray tmpArray;
-    CabbageGUIClass cAttr;
-
-    tmpArray.addLines(File(inputfile).loadFileAsString());
-    for(int i=0; i<tmpArray.size() || tmpArray[i].contains("</Cabbage>"); i++)
-        if(tmpArray[i].contains("logger("))
-        {
-            CabbageGUIClass cAttr(tmpArray[i], -99);
-            createLog = cAttr.getNumProp(CabbageIDs::logger);
-            if(createLog)
+        tmpArray.addLines(File(inputfile).loadFileAsString());
+        for(int i=0; i<tmpArray.size() || tmpArray[i].contains("</Cabbage>"); i++)
+            if(tmpArray[i].contains("logger("))
             {
-                String logFileName = File(inputfile).getParentDirectory().getFullPathName()+String("/")+File(inputfile).getFileNameWithoutExtension()+String("_Log.txt");
-                logFile = File(logFileName);
-                fileLogger = new FileLogger(logFile, String("Cabbage Log.."));
-                Logger::setCurrentLogger(fileLogger);
-            }
-        }
-
-
-#ifndef Cabbage_No_Csound
-    //don't start of run Csound in edit mode
-    setOpcodeDirEnv();
-    csound = nullptr;
-#if !defined(AndroidBuild)
-    csound = new Csound();
-#else
-    AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
-                                      "Uh-oh",
-                                      "Pugin Constructor",
-                                      "ok");
-    csound = new AndroidCsound();
-    csound->setOpenSlCallbacks(); // for android audio to work
-#endif
-
-    csound->SetHostImplementedMIDIIO(true);
-    csound->Reset();
-    csound->SetHostData(this);
-    csound->CreateMessageBuffer(0);
-    csound->SetExternalMidiInOpenCallback(OpenMidiInputDevice);
-    csound->SetExternalMidiReadCallback(ReadMidiData);
-    csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
-    csound->SetExternalMidiWriteCallback(WriteMidiData);
-    csound->SetIsGraphable(0);
-
-    csoundChanList = NULL;
-    numCsoundChannels = 0;
-    csndIndex = 32;
-
-    //set up PVS struct
-    dataout = new PVSDATEXT;
-
-    if(inputfile.isNotEmpty())
-    {
-        File(inputfile).setAsCurrentWorkingDirectory();
-
-
-        csoundParams = nullptr;
-        csoundParams = new CSOUND_PARAMS();
-#ifndef CABBAGE_HOST
-        csoundParams->nchnls_override = this->getNumOutputChannels();
-#endif
-        csoundParams->displays = 0;
-
-        //csoundParams->sample_rate_override = this->getSampleRate();
-        //csoundParams->control_rate_override = cUtils::getKrFromFile(inputfile, (int)getSampleRate());
-
-        csound->SetParams(csoundParams);
-
-        csound->SetOption((char*)"-n");
-        csound->SetOption((char*)"-d");
-
-
-        setScreenMacros();
-
-        addMacros(File(inputfile).loadFileAsString());
-        //csound->SetOption((char*)"--omacro:ATTRIBS=\"colour\(\\\"red\\\"),size\(100,100\),text\(\\\"Hello\\\"\)\\\"");
-        //csound->SetOption((char*)"--omacro:ATTRIBS=\"colour\(\"red\"),size\\(100,100\\),text\\(\"Hello\"\\)\"");
-
-        StringArray lines, includeFiles;
-        lines.addLines(File(inputfile).loadFileAsString());
-
-        for(int i=0; i<lines.size(); i++)
-            if(lines[i].contains("include("))
-            {
-                CabbageGUIClass cAttr(lines[i], -99);
-                for(int y=0; y<cAttr.getStringArrayProp(CabbageIDs::include).size(); y++)
+                CabbageGUIClass cAttr(tmpArray[i], -99);
+                createLog = cAttr.getNumProp(CabbageIDs::logger);
+                if(createLog)
                 {
-                    String infile = cAttr.getStringArrayPropValue(CabbageIDs::include, y);
-                    if(!File::isAbsolutePath(infile))
-                    {
-                        String file = returnFullPathForFile(infile, File(inputfile).getParentDirectory().getFullPathName());
-                        includeFiles.add(file);
-                    }
-                    else
-                        includeFiles.add(infile);
+                    String logFileName = File(inputfile).getParentDirectory().getFullPathName()+String("/")+File(inputfile).getFileNameWithoutExtension()+String("_Log.txt");
+                    logFile = File(logFileName);
+                    fileLogger = new FileLogger(logFile, String("Cabbage Log.."));
+                    Logger::setCurrentLogger(fileLogger);
                 }
-                break;
             }
 
-        includeFiles.removeDuplicates(0);
 
-        csCompileResult = csound->Compile(const_cast<char*>(inputfile.toUTF8().getAddress()));
+    #ifndef Cabbage_No_Csound
+        setOpcodeDirEnv();
+        csound = nullptr;
+    #if !defined(AndroidBuild)
+        csound = new Csound();
+    #else
+        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                          "Uh-oh",
+                                          "Pugin Constructor",
+                                          "ok");
+        csound = new AndroidCsound();
+        csound->setOpenSlCallbacks(); // for android audio to work
+    #endif
 
-        File(inputfile).getParentDirectory().setAsCurrentWorkingDirectory();
+        csound->SetHostImplementedMIDIIO(true);
+        csound->Reset();
+        csound->SetHostData(this);
+        csound->CreateMessageBuffer(0);
+        csound->SetExternalMidiInOpenCallback(OpenMidiInputDevice);
+        csound->SetExternalMidiReadCallback(ReadMidiData);
+        csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
+        csound->SetExternalMidiWriteCallback(WriteMidiData);
+        csound->SetIsGraphable(0);
 
-        Logger::writeToLog(inputfile);
-        if(csCompileResult==OK)
+        csoundChanList = NULL;
+        numCsoundChannels = 0;
+        csndIndex = 32;
+
+        //set up PVS struct
+        dataout = new PVSDATEXT;
+
+        if(inputfile.isNotEmpty())
         {
-            initAllChannels();
-            firstTime=false;
-            //send root directory path to Csound.
-            setPlayConfigDetails(getNumberCsoundOutChannels(),
-                                 getNumberCsoundOutChannels(),
-                                 getCsoundSamplingRate(),
-                                 getCsoundKsmpsSize());
+            File(inputfile).setAsCurrentWorkingDirectory();
 
-            guiRefreshRate = getCsoundKsmpsSize()*2;
 
-            for(int i=0; i<includeFiles.size(); i++)
+            csoundParams = nullptr;
+            csoundParams = new CSOUND_PARAMS();
+    #ifndef CABBAGE_HOST
+            csoundParams->nchnls_override = this->getNumOutputChannels();
+    #endif
+            csoundParams->displays = 0;
+
+            //csoundParams->sample_rate_override = this->getSampleRate();
+            //csoundParams->control_rate_override = cUtils::getKrFromFile(inputfile, (int)getSampleRate());
+
+            csound->SetParams(csoundParams);
+
+            csound->SetOption((char*)"-n");
+            csound->SetOption((char*)"-d");
+
+
+            setScreenMacros();
+
+            addMacros(File(inputfile).loadFileAsString());
+            //csound->SetOption((char*)"--omacro:ATTRIBS=\"colour\(\\\"red\\\"),size\(100,100\),text\(\\\"Hello\\\"\)\\\"");
+            //csound->SetOption((char*)"--omacro:ATTRIBS=\"colour\(\"red\"),size\\(100,100\\),text\\(\"Hello\"\\)\"");
+
+            StringArray lines, includeFiles;
+            lines.addLines(File(inputfile).loadFileAsString());
+
+            for(int i=0; i<lines.size(); i++)
+                if(lines[i].contains("include("))
+                {
+                    CabbageGUIClass cAttr(lines[i], -99);
+                    for(int y=0; y<cAttr.getStringArrayProp(CabbageIDs::include).size(); y++)
+                    {
+                        String infile = cAttr.getStringArrayPropValue(CabbageIDs::include, y);
+                        if(!File::isAbsolutePath(infile))
+                        {
+                            String file = returnFullPathForFile(infile, File(inputfile).getParentDirectory().getFullPathName());
+                            includeFiles.add(file);
+                        }
+                        else
+                            includeFiles.add(infile);
+                    }
+                    break;
+                }
+
+            includeFiles.removeDuplicates(0);
+
+            csCompileResult = csound->Compile(const_cast<char*>(inputfile.toUTF8().getAddress()));
+
+            File(inputfile).getParentDirectory().setAsCurrentWorkingDirectory();
+
+            Logger::writeToLog(inputfile);
+            if(csCompileResult==OK)
             {
-                //	csound->CompileOrc(File(includeFiles[i]).loadFileAsString().toUTF8().getAddress());
-                //	csound->InputMessage("i\"PROCESSOR\" 0 3600 1");
+                initAllChannels();
+                firstTime=false;
+                //send root directory path to Csound.
+                setPlayConfigDetails(getNumberCsoundOutChannels(),
+                                     getNumberCsoundOutChannels(),
+                                     getCsoundSamplingRate(),
+                                     getCsoundKsmpsSize());
+
+                guiRefreshRate = getCsoundKsmpsSize()*2;
+
+                for(int i=0; i<includeFiles.size(); i++)
+                {
+                    //	csound->CompileOrc(File(includeFiles[i]).loadFileAsString().toUTF8().getAddress());
+                    //	csound->InputMessage("i\"PROCESSOR\" 0 3600 1");
+                }
+
+                csound->PerformKsmps();
+                //send an f0 score statement to insure instrument keeps running
+                csound->SetScoreOffsetSeconds(0);
+                csound->RewindScore();
+
+                char path[4096] = {0};
+
+    #ifdef WIN32
+
+                csound->GetStringChannel("CSD_PATH", path);
+                if(String(path).isNotEmpty())
+                    File(path).getParentDirectory().setAsCurrentWorkingDirectory();
+                else
+                    csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());
+    #else
+                csound->GetStringChannel("CSD_PATH", path);
+                if(String(path).isNotEmpty())
+                    File(path).getParentDirectory().setAsCurrentWorkingDirectory();
+                else
+                    csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());
+    #endif
+                Logger::writeToLog("Csound compiled your file");
+                csound->SetChannel("IS_A_PLUGIN", 0.0);
+
+                //csound->SetYieldCallback(CabbagePluginAudioProcessor::yieldCallback);
+                if(csound->GetSpout()==nullptr);
+                CSspout = csound->GetSpout();
+                CSspin  = csound->GetSpin();
+                // numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
+                csndIndex = csound->GetKsmps();
+                csdKsmps = csound->GetKsmps();
+                cs_scale = csound->Get0dBFS();
+                csoundStatus = true;
+                debugMessageArray.add(CABBAGE_VERSION);
+                debugMessageArray.add(String("\n"));
+                this->setLatencySamples(csound->GetKsmps());
+                updateHostDisplay();
             }
-
-            csound->PerformKsmps();
-            //send an f0 score statement to insure instrument keeps running
-            csound->SetScoreOffsetSeconds(0);
-            csound->RewindScore();
-
-            char path[4096] = {0};
-
-#ifdef WIN32
-
-            csound->GetStringChannel("CSD_PATH", path);
-            if(String(path).isNotEmpty())
-                File(path).getParentDirectory().setAsCurrentWorkingDirectory();
             else
-                csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());
-#else
-            csound->GetStringChannel("CSD_PATH", path);
-            if(String(path).isNotEmpty())
-                File(path).getParentDirectory().setAsCurrentWorkingDirectory();
-            else
-                csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());
-#endif
-            Logger::writeToLog("Csound compiled your file");
-            csound->SetChannel("IS_A_PLUGIN", 0.0);
-
-            //csound->SetYieldCallback(CabbagePluginAudioProcessor::yieldCallback);
-            if(csound->GetSpout()==nullptr);
-            CSspout = csound->GetSpout();
-            CSspin  = csound->GetSpin();
-            // numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
-            csndIndex = csound->GetKsmps();
-            csdKsmps = csound->GetKsmps();
-            cs_scale = csound->Get0dBFS();
-            csoundStatus = true;
-            debugMessageArray.add(CABBAGE_VERSION);
-            debugMessageArray.add(String("\n"));
-            this->setLatencySamples(csound->GetKsmps());
-            updateHostDisplay();
+            {
+                Logger::writeToLog("Csound couldn't compile your file");
+                csoundStatus=false;
+                //debugMessage = "Csound did not compile correctly. Check for snytax errors by compiling with WinXound";
+            }
         }
         else
+            Logger::writeToLog("Welcome to Cabbage, problems with input file...");
+
+        if(SystemStats::getOperatingSystemType()!=SystemStats::WinXP)
         {
-            Logger::writeToLog("Csound couldn't compile your file");
-            csoundStatus=false;
-            //debugMessage = "Csound did not compile correctly. Check for snytax errors by compiling with WinXound";
+            isWinXP = true;
+            String path = File(inputfile).getParentDirectory().getFullPathName();
+            String fullFileName;
+    #if defined(LINUX) || defined(MACOSX)
+            fullFileName = path+"/CabbageTemp.wav";
+    #else
+            fullFileName = path+"\\CabbageTemp.wav";
+    #endif
+            tempAudioFile = fullFileName;
+            tempAudioFile.replaceWithData(0 ,0);
         }
-    }
-    else
-        Logger::writeToLog("Welcome to Cabbage, problems with input file...");
-
-    if(SystemStats::getOperatingSystemType()!=SystemStats::WinXP)
-    {
-        isWinXP = true;
-        String path = File(inputfile).getParentDirectory().getFullPathName();
-        String fullFileName;
-#if defined(LINUX) || defined(MACOSX)
-        fullFileName = path+"/CabbageTemp.wav";
-#else
-        fullFileName = path+"\\CabbageTemp.wav";
-#endif
-        tempAudioFile = fullFileName;
-        tempAudioFile.replaceWithData(0 ,0);
-    }
-#endif
-
+    #endif
+    */
 
 }
 #else
@@ -574,7 +576,6 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
         Logger::writeToLog("Csound cleaned up");
     }
 
-
 #endif
 }
 
@@ -653,6 +654,169 @@ void CabbagePluginAudioProcessor::initAllChannels()
             csound->SetChannel(guiLayoutCtrls.getReference(i).getStringProp(CabbageIDs::identchannel).toUTF8(), "");
     }
     this->updateCabbageControls();
+}
+
+//============================================================================
+//COMPILE CSOUND
+//============================================================================
+int CabbagePluginAudioProcessor::compileCsound(bool isPlugin)
+{
+
+    //File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
+    csdFile.setAsCurrentWorkingDirectory();
+
+    createGUI(csdFile.loadFileAsString(), true);
+    StringArray tmpArray;
+    CabbageGUIClass cAttr;
+
+    tmpArray.addLines(csdFile.loadFileAsString());
+    for(int i=0; i<tmpArray.size() || tmpArray[i].contains("</Cabbage>"); i++)
+        if(tmpArray[i].contains("logger("))
+        {
+            CabbageGUIClass cAttr(tmpArray[i], -99);
+            createLog = cAttr.getNumProp(CabbageIDs::logger);
+            if(createLog)
+            {
+                String logFileName = csdFile.getParentDirectory().getFullPathName()+String("/")+csdFile.getFileNameWithoutExtension()+String("_Log.txt");
+                logFile = File(logFileName);
+                fileLogger = new FileLogger(logFile, String("Cabbage Log.."));
+                Logger::setCurrentLogger(fileLogger);
+            }
+        }
+
+    setOpcodeDirEnv();
+
+#ifndef Cabbage_No_Csound
+#if !defined(AndroidBuild)
+    csound = new Csound();
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOSST)
+    cabbageCsoundEditor = nullptr;
+#endif
+#else
+    csound = new AndroidCsound();
+    //csound->setOpenSlCallbacks(); // for android audio to work
+#endif
+
+    csound->SetHostImplementedMIDIIO(true);
+    csound->SetHostData(this);
+    midiOutputBuffer.clear();
+    csound->CreateMessageBuffer(0);
+    csound->SetExternalMidiInOpenCallback(OpenMidiInputDevice);
+    csound->SetExternalMidiReadCallback(ReadMidiData);
+    csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
+    csound->SetExternalMidiWriteCallback(WriteMidiData);
+    csound->SetIsGraphable(0);
+
+    csoundChanList = NULL;
+    numCsoundChannels = 0;
+    csndIndex = 32;
+    startTimer(20);
+
+    csoundParams = nullptr;
+    csoundParams = new CSOUND_PARAMS();
+#ifndef CABBAGE_HOST
+    csoundParams->nchnls_override = this->getNumOutputChannels();
+#endif
+
+    csoundParams->sample_rate_override = this->getSampleRate();
+    csoundParams->control_rate_override = cUtils::getKrFromFile(csdFile.getFullPathName(), (int)getSampleRate());
+
+
+    csoundParams->displays = 0;
+    csound->SetParams(csoundParams);
+    csound->SetOption((char*)"-n");
+    csound->SetOption((char*)"-d");
+    if(isPlugin)
+        csound->SetOption((char*)"--omacro:IS_A_PLUGIN=\"1\"");
+
+    setScreenMacros();
+    addMacros(csdFile.loadFileAsString());
+    csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
+    //csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
+    csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
+    if(csCompileResult==OK)
+    {
+        initAllChannels();
+        firstTime=false;
+        guiRefreshRate = getCsoundKsmpsSize()*2;
+
+        if(!isPlugin)
+        {
+            setPlayConfigDetails(getNumberCsoundOutChannels(),
+                                 getNumberCsoundOutChannels(),
+                                 getCsoundSamplingRate(),
+                                 getCsoundKsmpsSize());
+        }
+
+        Logger::writeToLog("compiled Ok");
+        keyboardState.allNotesOff(0);
+        keyboardState.reset();
+
+        //simple hack to allow tables to be set up correctly.
+        csound->PerformKsmps();
+        csound->SetScoreOffsetSeconds(0);
+        csound->RewindScore();
+        //set up PVS struct
+        csdKsmps = csound->GetKsmps();
+
+        if(csound->GetSpout()==nullptr);
+        CSspout = csound->GetSpout();
+        CSspin  = csound->GetSpin();
+        cs_scale = csound->Get0dBFS();
+        //numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
+        csndIndex = csound->GetKsmps();
+        this->setLatencySamples(csound->GetKsmps());
+        updateHostDisplay();
+        //soundFilerVector = new MYFLT[csdKsmps];
+        csoundStatus = true;
+        debugMessageArray.add(VERSION);
+        debugMessageArray.add(String("\n"));
+        char path[8192] = {0};
+
+#ifdef WIN32
+
+        csound->GetStringChannel("CSD_PATH", path);
+        if(String(path).isNotEmpty())
+            File(path).getParentDirectory().setAsCurrentWorkingDirectory();
+        else
+            csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().replace("\\", "\\\\").toUTF8().getAddress());
+#else
+        csound->GetStringChannel("CSD_PATH", path);
+        if(String(path).isNotEmpty())
+            File(path).getParentDirectory().setAsCurrentWorkingDirectory();
+        else
+            csound->SetChannel("CSD_PATH", File(csdFile).getParentDirectory().getFullPathName().toUTF8().getAddress());
+#endif
+
+        if(isPlugin)
+            csound->SetChannel("IS_A_PLUGIN", 1.0);
+        else
+            csound->SetChannel("IS_A_PLUGIN", 0.0);
+
+        if(isPlugin)
+        {
+            if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
+            {
+                csound->SetChannel(CabbageIDs::hostbpm.toUTF8(), hostInfo.bpm);
+                csound->SetChannel(CabbageIDs::timeinseconds.toUTF8(), hostInfo.timeInSeconds);
+                csound->SetChannel(CabbageIDs::isplaying.toUTF8(), hostInfo.isPlaying);
+                csound->SetChannel(CabbageIDs::isrecording.toUTF8(), hostInfo.isRecording);
+                csound->SetChannel(CabbageIDs::hostppqpos.toUTF8(), hostInfo.ppqPosition);
+                csound->SetChannel(CabbageIDs::timeinsamples.toUTF8(), hostInfo.timeInSamples);
+                csound->SetChannel(CabbageIDs::timeSigDenom.toUTF8(), hostInfo.timeSigDenominator);
+                csound->SetChannel(CabbageIDs::timeSigNum.toUTF8(), hostInfo.timeSigNumerator);
+            }
+        }
+        cUtils::debug("everything still good...");
+    }
+    else
+    {
+        cUtils::debug("Csound couldn't compile your file");
+        csoundStatus=false;
+        return 0;
+    }
+#endif
+    return 1;
 }
 //============================================================================
 //RECOMPILE CSOUND. THIS IS CALLED FROM THE PLUGIN HOST WHEN UDPATES ARE MADE ON THE FLY
@@ -829,6 +993,7 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
 //maybe this should only be done at the end of a k-rate cycle..
 void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 {
+    cUtils::debug(source);
     //clear arrays if refresh is set
     if(refresh==true)
     {
@@ -1256,7 +1421,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 
 //#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 
-    if(this->getActiveEditor())
+    if(this->createEditorIfNeeded())
     {
         CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
 

@@ -75,7 +75,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
         filter->addChangeListener(this);
         filter->addActionListener(this);
         filter->sendChangeMessage();
-        filter->createGUI("", true);
+        filter->createEditorIfNeeded();
     }
     JUCE_CATCH_ALL
 

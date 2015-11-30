@@ -276,6 +276,7 @@ public:
     void actionListenerCallback (const String& message);
     void addMacros(String csdText);
     int screenWidth, screenHeight;
+    int compileCsound(bool isPlugin);
     void setScreenMacros();
 
 

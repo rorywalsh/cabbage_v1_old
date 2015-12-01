@@ -52,9 +52,31 @@ import android.media.AudioManager;
 import android.media.MediaScannerConnection;
 import android.media.MediaScannerConnection.MediaScannerConnectionClient;
 
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.SubMenu;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 //==============================================================================
 public class CabbageAndroid   extends Activity
 {
+
+    ListView listView;
+    ArrayAdapter<String> listAdapter;
     //==============================================================================
     static
     {
@@ -66,10 +88,32 @@ public class CabbageAndroid   extends Activity
     {
         super.onCreate (savedInstanceState);
 
-        viewHolder = new ViewHolder (this);
-        setContentView (viewHolder);
-
+        //viewHolder = new ViewHolder (this);
+        //setContentView (viewHolder);
+        setContentView (R.layout.home_activity);
         setVolumeControlStream (AudioManager.STREAM_MUSIC);
+        addFilesToListView();
+    }
+
+    //add tune types to list view
+    void addFilesToListView(){
+        // Find the ListView resource.
+        listView = (ListView) findViewById( R.id.tuneListView);
+        ArrayList<String> fileList = new ArrayList<String>();
+
+
+        // Create ArrayAdapter using the planet list.
+        listAdapter = new ArrayAdapter<String>(this, R.layout.listview_text_item, fileList);
+        int numberOfTunes=0;
+        //append tune titles to list view
+        for(int i=0;i<10;i++)
+        {
+            listAdapter.add("THis is teh first file"+Integer.toString(i));
+            numberOfTunes++;
+        }
+
+        listView.setAdapter( listAdapter );
+        listView.setBackgroundResource(R.drawable.rounded_button);
     }
 
     @Override

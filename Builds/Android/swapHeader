@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ $1 = "android" ]; then
+sudo mv /usr/local/include/csound/float-version.h /usr/local/include/csound/float-version.h.bak
+else
+sudo mv /usr/local/include/csound/float-version.h.bak /usr/local/include/csound/float-version.h
+fi

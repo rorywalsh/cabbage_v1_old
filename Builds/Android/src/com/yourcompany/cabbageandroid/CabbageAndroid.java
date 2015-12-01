@@ -57,6 +57,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -72,11 +73,12 @@ import java.util.Collections;
 import java.util.List;
 
 //==============================================================================
-public class CabbageAndroid   extends Activity
+public class CabbageAndroid   extends Activity implements AdapterView.OnItemClickListener
 {
 
     ListView listView;
     ArrayAdapter<String> listAdapter;
+    ArrayList<String> files;
     //==============================================================================
     static
     {
@@ -87,7 +89,7 @@ public class CabbageAndroid   extends Activity
     public void onCreate (Bundle savedInstanceState)
     {
         super.onCreate (savedInstanceState);
-
+        files = new ArrayList<String>();
         //viewHolder = new ViewHolder (this);
         //setContentView (viewHolder);
         setContentView (R.layout.home_activity);
@@ -106,14 +108,31 @@ public class CabbageAndroid   extends Activity
         listAdapter = new ArrayAdapter<String>(this, R.layout.listview_text_item, fileList);
         int numberOfTunes=0;
         //append tune titles to list view
-        for(int i=0;i<10;i++)
+     
+        File sdCard = Environment.getExternalStorageDirectory();
+        // to this path add a new directory path
+        File dir = new File(sdCard.getAbsolutePath() + "/Cabbage/");
+        if(dir.exists()) 
         {
-            listAdapter.add("THis is teh first file"+Integer.toString(i));
-            numberOfTunes++;
-        }
+            File[] dirFiles = dir.listFiles();
+            ArrayList<String> fileNames = new ArrayList<String>();
 
+            for (int i = 0; i < dirFiles.length; i++) 
+            {
+                fileNames.add(dirFiles[i].getName().replace(".txt", ""));
+                files.add(dirFiles[i].getName());
+                //tuneLinks.add(fileList[i].getAbsolutePath());
+                listAdapter.add(dirFiles[i].getName());
+            }
+        }
+             
         listView.setAdapter( listAdapter );
         listView.setBackgroundResource(R.drawable.rounded_button);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //do something on click here...
     }
 
     @Override

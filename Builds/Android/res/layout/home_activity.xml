@@ -5,38 +5,21 @@
     tools:context=".HomeScreen"
     android:background="#3A6EB6">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="#3A6EB6"
-        android:paddingRight="30px"
-        android:paddingLeft="30px"
-        android:id="@+id/linearLayout2">
-
         <ImageView
             android:id="@+id/imageView"
             android:src = "@drawable/icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="fitXY"
-            android:layout_gravity="center"
+            android:layout_gravity="center_vertical"
             android:adjustViewBounds="true"
             android:paddingTop="1dp"
             android:maxHeight="150dip"
             android:maxWidth="100dip"
             android:minHeight="100dip"
             android:minWidth="250dip"
-            android:resizeMode="horizontal" /> 
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:minHeight="40px" />
+            android:resizeMode="horizontal"
+            android:layout_centerVertical="true" /> 
 
         <ListView
             android:layout_width="wrap_content"
@@ -44,18 +27,9 @@
             android:paddingLeft="6dip"
             android:paddingRight="6dip"
             android:id="@+id/tuneListView"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:paddingTop="10px"
             android:background="#000000"
+            android:layout_below="@id/imageView"
             android:gravity="center" />
-       
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:minHeight="40px" /> 
 
-    </LinearLayout>
 </RelativeLayout>

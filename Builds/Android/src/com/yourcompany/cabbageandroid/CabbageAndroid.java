@@ -67,10 +67,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
+import android.widget.LinearLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import android.view.MotionEvent;
+import android.widget.ViewFlipper;
 
 //==============================================================================
 public class CabbageAndroid   extends Activity implements AdapterView.OnItemClickListener
@@ -79,6 +81,11 @@ public class CabbageAndroid   extends Activity implements AdapterView.OnItemClic
     ListView listView;
     ArrayAdapter<String> listAdapter;
     ArrayList<String> files;
+    LinearLayout juceViewContainer;
+
+    public static native void loadCabbageFile (String message);
+
+    private ViewFlipper viewFlipper;
     //==============================================================================
     static
     {
@@ -90,19 +97,23 @@ public class CabbageAndroid   extends Activity implements AdapterView.OnItemClic
     {
         super.onCreate (savedInstanceState);
         files = new ArrayList<String>();
-        //viewHolder = new ViewHolder (this);
+        viewHolder = new ViewHolder (this);
         //setContentView (viewHolder);
-        setContentView (R.layout.home_activity);
-        setVolumeControlStream (AudioManager.STREAM_MUSIC);
+        setContentView (R.layout.activity_home);
+        viewFlipper = (ViewFlipper) findViewById(R.id.viewflipper);
+        //setVolumeControlStream (AudioManager.STREAM_MUSIC);
+        juceViewContainer = (LinearLayout) findViewById(R.id.juce_container);
+        juceViewContainer.addView(viewHolder);
         addFilesToListView();
+        //viewFlipper.showNext();
     }
 
     //add tune types to list view
     void addFilesToListView(){
         // Find the ListView resource.
-        listView = (ListView) findViewById( R.id.tuneListView);
+        listView = (ListView) findViewById( R.id.fileListView);
         ArrayList<String> fileList = new ArrayList<String>();
-
+        listView.setOnItemClickListener(this);
 
         // Create ArrayAdapter using the planet list.
         listAdapter = new ArrayAdapter<String>(this, R.layout.listview_text_item, fileList);
@@ -119,8 +130,7 @@ public class CabbageAndroid   extends Activity implements AdapterView.OnItemClic
 
             for (int i = 0; i < dirFiles.length; i++) 
             {
-                fileNames.add(dirFiles[i].getName().replace(".txt", ""));
-                files.add(dirFiles[i].getName());
+                files.add(dirFiles[i].getAbsolutePath());
                 //tuneLinks.add(fileList[i].getAbsolutePath());
                 listAdapter.add(dirFiles[i].getName());
             }
@@ -132,7 +142,10 @@ public class CabbageAndroid   extends Activity implements AdapterView.OnItemClic
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //do something on click here...
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Info");
+        alertDialog.setMessage(files.get(position));
+        alertDialog.show();
     }
 
     @Override

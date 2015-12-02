@@ -806,7 +806,7 @@ void CodeWindow::toggleManuals(String manual)
         if(temp1.exists())
         {
 #ifdef LINUX
-            if(!process.start("xdg-open "+urlCsound.toString(false).toUTF8()))
+            if(!process.start(String("xdg-open "+urlCsound.toString(false)).toUTF8()))
                 cUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
 #else
             urlCsound.launchInDefaultBrowser();

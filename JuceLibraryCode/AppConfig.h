@@ -22,7 +22,6 @@
    #define UseNativeDialogue 0
 #endif
 // [END_USER_CODE_SECTION]
-
 //==============================================================================
 #define JUCE_MODULE_AVAILABLE_juce_audio_basics             1
 #define JUCE_MODULE_AVAILABLE_juce_audio_devices            1

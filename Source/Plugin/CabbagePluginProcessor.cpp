@@ -98,7 +98,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
         if(!inputfile.equalsIgnoreCase(""))
             cUtils::debug("Csound coudln't compile your file:"+File(inputfile).getFullPathName());
     }
-    
+
 
 }
 #else
@@ -936,8 +936,6 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                         if((cAttr.getStringArrayProp(CabbageIDs::identchannelarray).size()>0) &&
                                 (cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0))
                         {
-                            //showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).joinIntoString(" ")));
-                            //showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()));
                             for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channelarray).size(); i++)
                             {
                                 CabbageGUIClass copy(cAttr);
@@ -1022,7 +1020,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             cAttr.setNumProp(CabbageIDs::min,  cAttr.getNumProp(CabbageIDs::minx));
                             cAttr.setNumProp(CabbageIDs::max,  cAttr.getNumProp(CabbageIDs::maxx));
                             cAttr.setNumProp(CabbageIDs::value, cAttr.getNumProp(CabbageIDs::valuex));
-                            cAttr.setStringProp(String(CabbageIDs::channel), cAttr.getStringProp(CabbageIDs::xchannel));
+                            cAttr.setStringProp(CabbageIDs::channel, cAttr.getStringProp(CabbageIDs::xchannel));
                             guiCtrls.add(cAttr);
                             widgetTypes.add("interactive");
                             cAttr.setStringProp(CabbageIDs::xychannel, String("Y"));
@@ -1030,7 +1028,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             cAttr.setNumProp(CabbageIDs::min,  cAttr.getNumProp(CabbageIDs::miny));
                             cAttr.setNumProp(CabbageIDs::max,  cAttr.getNumProp(CabbageIDs::maxy));
                             cAttr.setNumProp(CabbageIDs::value, cAttr.getNumProp(CabbageIDs::valuey));
-                            cAttr.setStringProp(String(CabbageIDs::channel), cAttr.getStringProp(CabbageIDs::ychannel));
+                            cAttr.setStringProp(CabbageIDs::channel, cAttr.getStringProp(CabbageIDs::ychannel));
                             //append 'dummy' to name so the editor know not to display the
                             //second xypad
                             cAttr.setStringProp("name", cAttr.getStringProp(CabbageIDs::name)+String("dummy"));
@@ -1045,8 +1043,6 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                             //if an array of objects is to be set up enter.....
                             if(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0)
                             {
-                                //showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).joinIntoString(" ")));
-                                //showMessage(String(cAttr.getStringArrayProp(CabbageIDs::channelarray).size()));
                                 for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channelarray).size(); i++)
                                 {
                                     CabbageGUIClass copy = cAttr;
@@ -1065,7 +1061,7 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
                                 guiID++;
                                 if(tokes[0].equalsIgnoreCase(String("hslider2")) || tokes[0].equalsIgnoreCase(String("vslider2")))
                                 {
-                                    cAttr.setStringProp(String(CabbageIDs::channel), cAttr.getStringArrayPropValue(CabbageIDs::channel, 1));
+                                    cAttr.setStringProp(CabbageIDs::channel, cAttr.getStringArrayPropValue(CabbageIDs::channel, 1));
 
                                     cAttr.setStringProp("name", cAttr.getStringProp(CabbageIDs::name)+String("dummy"));
                                     guiCtrls.add(cAttr);

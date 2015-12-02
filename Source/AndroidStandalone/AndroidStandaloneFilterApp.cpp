@@ -6,7 +6,7 @@
 ApplicationProperties* appProperties = nullptr;
 PropertySet* defaultPropSet = nullptr;
 
-
+StandaloneFilterWindow* filterWindow;
 
 class CabbageStandalone : public JUCEApplication
 {
@@ -17,7 +17,7 @@ public:
 
     void initialise(const String& commandLineParameters)
     {
-        filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black, defaultPropSet);
+        filterWindow = new StandaloneFilterWindow ();
         filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
         filterWindow->setVisible (true);
         //turn off resizeable...
@@ -51,7 +51,8 @@ public:
     }
 
 private:
-    ScopedPointer<StandaloneFilterWindow> filterWindow;
+
 };
+
 
 START_JUCE_APPLICATION (CabbageStandalone)

@@ -679,8 +679,8 @@ void ComponentLayoutEditor::updateFrames ()
             {
                 ChildAlias* alias = createAlias (c, type, compIndex++);
                 //pass on relative X and Y's to alias components so they are plant aware...
-                alias->getProperties().set("plantX", var(c->getProperties().getWithDefault(var::identifier("plantX"), 0)));
-                alias->getProperties().set("plantY", var(c->getProperties().getWithDefault(var::identifier("plantY"), 0)));
+                alias->getProperties().set("plantX", var(c->getProperties().getWithDefault("plantX", 0)));
+                alias->getProperties().set("plantY", var(c->getProperties().getWithDefault("plantY", 0)));
                 alias->getProperties().set(CabbageIDs::lineNumber, c->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
                 if (alias)
                 {

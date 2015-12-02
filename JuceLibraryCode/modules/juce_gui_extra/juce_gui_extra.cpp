@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -76,6 +76,7 @@ namespace juce
 #if JUCE_MAC || JUCE_IOS
  #include "../juce_core/native/juce_osx_ObjCHelpers.h"
 #endif
+
 #include "documents/juce_FileBasedDocument.cpp"
 #include "code_editor/juce_CodeDocument.cpp"
 #include "code_editor/juce_CodeEditorComponent.cpp"

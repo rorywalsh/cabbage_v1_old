@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -154,7 +154,7 @@ public:
     bool isAttachedOnLeft() const noexcept                                      { return leftOfOwnerComp; }
 
     /** Specifies the minimum amount that the font can be squashed horizontally before it starts
-        using ellipsis.
+        using ellipsis. Use a value of 0 for a default value.
 
         @see Graphics::drawFittedText
     */
@@ -188,6 +188,9 @@ public:
 
         /** Called when a Label goes into editing mode and displays a TextEditor. */
         virtual void editorShown (Label*, TextEditor&) {}
+
+        /** Called when a Label is about to delete its TextEditor and exit editing mode. */
+        virtual void editorHidden (Label*, TextEditor&) {}
     };
 
     /** Registers a listener that will be called when the label's text changes. */

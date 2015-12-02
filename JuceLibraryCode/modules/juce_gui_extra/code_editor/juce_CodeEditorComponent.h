@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -86,19 +86,12 @@ public:
     */
     int getNumColumnsOnScreen() const noexcept                  { return columnsOnScreen; }
 
-    /** Returns the selection start caret position. */
-    CodeDocument::Position getSelectionStartCaretPos() const                  { return selectionStart; }
-
-    /** Returns the selection end caret position. */
-    CodeDocument::Position getSelectionEndCaretPos() const                  { return selectionEnd; }
-	
     /** Returns the current caret position. */
     CodeDocument::Position getCaretPos() const                  { return caretPos; }
 
-     /** Sets the current caret position. */
-    void setCaretPos(Rectangle<int> caretPos);
-   
-	/** Returns the position of the caret, relative to the editor's origin. */
+	void setCaretPos(Rectangle<int> caretPos);
+	
+    /** Returns the position of the caret, relative to the editor's origin. */
     Rectangle<int> getCaretRectangle() override;
 
     /** Moves the caret.
@@ -118,12 +111,18 @@ public:
     */
     CodeDocument::Position getPositionAt (int x, int y);
 
+    /** Returns the start of the selection as a position. */
+    CodeDocument::Position getSelectionStart() const            { return selectionStart; }
+
+    /** Returns the end of the selection as a position. */
+    CodeDocument::Position getSelectionEnd() const              { return selectionEnd; }
+
     /** Enables or disables the line-number display in the gutter. */
     void setLineNumbersShown (bool shouldBeShown);
 
     //==============================================================================
-    virtual bool moveCaretLeft (bool moveInWholeWordSteps, bool selecting);
-    virtual bool moveCaretRight (bool moveInWholeWordSteps, bool selecting);
+    bool moveCaretLeft (bool moveInWholeWordSteps, bool selecting);
+    bool moveCaretRight (bool moveInWholeWordSteps, bool selecting);
     bool moveCaretUp (bool selecting);
     bool moveCaretDown (bool selecting);
     bool scrollDown();
@@ -134,11 +133,11 @@ public:
     bool moveCaretToStartOfLine (bool selecting);
     bool moveCaretToEnd (bool selecting);
     bool moveCaretToEndOfLine (bool selecting);
-    virtual bool deleteBackwards (bool moveInWholeWordSteps);
-    virtual bool deleteForwards (bool moveInWholeWordSteps);
+    bool deleteBackwards (bool moveInWholeWordSteps);
+    bool deleteForwards (bool moveInWholeWordSteps);
     bool deleteWhitespaceBackwardsToTabStop();
-    bool copyToClipboard();
-    bool cutToClipboard();
+    virtual bool copyToClipboard();
+    virtual bool cutToClipboard();
     virtual bool pasteFromClipboard();
     bool undo();
     bool redo();
@@ -170,13 +169,13 @@ public:
     struct State
     {
         /** Creates an object containing the state of the given editor. */
-        State (const CodeEditorComponent& editor);
+        State (const CodeEditorComponent&);
         /** Creates a state object from a string that was previously created with toString(). */
         State (const String& stringifiedVersion);
-        State (const State& other) noexcept;
+        State (const State&) noexcept;
 
         /** Updates the given editor with this saved state. */
-        void restoreState (CodeEditorComponent& editor) const;
+        void restoreState (CodeEditorComponent&) const;
 
         /** Returns a stringified version of this state that can be used to recreate it later. */
         String toString() const;
@@ -281,6 +280,9 @@ public:
     /** Called when the escape key is pressed - this can be overridden for custom behaviour. */
     virtual void handleEscapeKey();
 
+    /** Called when the view position is scrolled horizontally or vertically. */
+    virtual void editorViewportPositionChanged();
+
     //==============================================================================
     /** This adds the items to the popup menu.
 
@@ -301,7 +303,7 @@ public:
     */
     virtual void addPopupMenuItems (PopupMenu& menuToAddTo,
                                     const MouseEvent* mouseClickEvent);
-									
+
     /** This is called to perform one of the items that was shown on the popup menu.
 
         If you've overridden addPopupMenuItems(), you should also override this
@@ -348,7 +350,7 @@ public:
     /** @internal */
     bool isTextInputActive() const override;
     /** @internal */
-    void setTemporaryUnderlining (const Array <Range<int> >&) override;
+    void setTemporaryUnderlining (const Array<Range<int> >&) override;
     /** @internal */
     ApplicationCommandTarget* getNextCommandTarget() override;
     /** @internal */
@@ -400,12 +402,12 @@ private:
     ColourScheme colourScheme;
 
     class CodeEditorLine;
-    OwnedArray <CodeEditorLine> lines;
+    OwnedArray<CodeEditorLine> lines;
     void rebuildLineTokens();
     void rebuildLineTokensAsync();
     void codeDocumentChanged (int start, int end);
 
-    OwnedArray <CodeDocument::Iterator> cachedIterators;
+    OwnedArray<CodeDocument::Iterator> cachedIterators;
     void clearCachedIterators (int firstLineToBeInvalid);
     void updateCachedIterators (int maxLineNum);
     void getIteratorForPosition (int position, CodeDocument::Iterator&);
@@ -417,7 +419,6 @@ private:
     void insertText (const String&);
     virtual void updateCaretPosition();
     void updateScrollBars();
-	virtual void editorHasScrolled(){}
     void scrollToLineInternal (int line);
     void scrollToColumnInternal (double column);
     void newTransaction();

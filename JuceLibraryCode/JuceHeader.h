@@ -28,11 +28,14 @@
 #include "modules/juce_gui_extra/juce_gui_extra.h"
 #include "BinaryData.h"
 
+
+
 #if ! DONT_SET_USING_JUCE_NAMESPACE
  // If your code uses a lot of JUCE classes, then this will obviously save you
  // a lot of typing, but can be disabled by setting DONT_SET_USING_JUCE_NAMESPACE.
  using namespace juce;
 #endif
+
 
 #if ! JUCE_DONT_DECLARE_PROJECTINFO
 namespace ProjectInfo

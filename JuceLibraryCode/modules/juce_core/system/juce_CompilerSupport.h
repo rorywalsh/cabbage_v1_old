@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission to use, copy, modify, and/or distribute this software for any purpose with
    or without fee is hereby granted, provided that the above copyright notice and this
@@ -41,6 +41,8 @@
  #define JUCE_COMPILER_SUPPORTS_NULLPTR 1
  #define JUCE_COMPILER_SUPPORTS_MOVE_SEMANTICS 1
  #define JUCE_COMPILER_SUPPORTS_INITIALIZER_LISTS 1
+ #define JUCE_COMPILER_SUPPORTS_VARIADIC_TEMPLATES 1
+ #define JUCE_COMPILER_SUPPORTS_STATIC_ASSERT 1
 
  #if (__GNUC__ * 100 + __GNUC_MINOR__) >= 407 && ! defined (JUCE_COMPILER_SUPPORTS_OVERRIDE_AND_FINAL)
   #define JUCE_COMPILER_SUPPORTS_OVERRIDE_AND_FINAL 1
@@ -52,6 +54,12 @@
 
  #if (__GNUC__ * 100 + __GNUC_MINOR__) >= 406 && ! defined (JUCE_COMPILER_SUPPORTS_LAMBDAS)
   #define JUCE_COMPILER_SUPPORTS_LAMBDAS 1
+ #endif
+
+ #ifndef JUCE_EXCEPTIONS_DISABLED
+  #if ! __EXCEPTIONS
+   #define JUCE_EXCEPTIONS_DISABLED 1
+  #endif
  #endif
 #endif
 
@@ -82,12 +90,26 @@
   #define JUCE_COMPILER_SUPPORTS_INITIALIZER_LISTS 1
  #endif
 
+ #if __has_feature (cxx_variadic_templates)
+  #define JUCE_COMPILER_SUPPORTS_VARIADIC_TEMPLATES 1
+ #endif
+
+ #if __has_feature (cxx_static_assert)
+  #define JUCE_COMPILER_SUPPORTS_STATIC_ASSERT 1
+ #endif
+
  #ifndef JUCE_COMPILER_SUPPORTS_OVERRIDE_AND_FINAL
   #define JUCE_COMPILER_SUPPORTS_OVERRIDE_AND_FINAL 1
  #endif
 
  #ifndef JUCE_COMPILER_SUPPORTS_ARC
   #define JUCE_COMPILER_SUPPORTS_ARC 1
+ #endif
+
+ #ifndef JUCE_EXCEPTIONS_DISABLED
+  #if ! __has_feature (cxx_exceptions)
+   #define JUCE_EXCEPTIONS_DISABLED 1
+  #endif
  #endif
 
 #endif
@@ -98,6 +120,7 @@
  #if _MSC_VER >= 1600
   #define JUCE_COMPILER_SUPPORTS_NULLPTR 1
   #define JUCE_COMPILER_SUPPORTS_MOVE_SEMANTICS 1
+  #define JUCE_COMPILER_SUPPORTS_STATIC_ASSERT 1
  #endif
 
  #if _MSC_VER >= 1700
@@ -107,11 +130,18 @@
 
  #if _MSC_VER >= 1800
   #define JUCE_COMPILER_SUPPORTS_INITIALIZER_LISTS 1
+  #define JUCE_COMPILER_SUPPORTS_VARIADIC_TEMPLATES 1
+  #define JUCE_DELETED_FUNCTION = delete
  #endif
 
  #if _MSC_VER >= 1900
   #define JUCE_COMPILER_SUPPORTS_NOEXCEPT 1
-  #define JUCE_DELETED_FUNCTION = delete
+ #endif
+
+ #ifndef JUCE_EXCEPTIONS_DISABLED
+  #if ! _CPPUNWIND
+   #define JUCE_EXCEPTIONS_DISABLED 1
+  #endif
  #endif
 #endif
 

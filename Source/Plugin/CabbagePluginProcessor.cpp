@@ -190,6 +190,10 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
         fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/SpookEPad.csd"));
         File thisFile5(homeDir+"SpookEPad.csd");
         thisFile5.replaceWithText(fileContents->readEntireStreamAsString());
+
+        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/VectorialSynth.csd"));
+        File thisFile6(homeDir+"VectorialSynth.csd");
+        thisFile6.replaceWithText(fileContents->readEntireStreamAsString());
 #else
         File thisFile(File::getSpecialLocation(File::currentExecutableFile));
         csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();

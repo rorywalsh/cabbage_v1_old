@@ -43,7 +43,6 @@ StandaloneFilterWindow::StandaloneFilterWindow ()
     //     centreWithSize (getWidth(), getHeight());
     // }
     loadFile(filename);
-    setFullScreen(true);
 }
 
 StandaloneFilterWindow::~StandaloneFilterWindow()
@@ -252,15 +251,15 @@ void StandalonePluginHolder::saveAudioDeviceState()
 
 void StandalonePluginHolder::reloadAudioDeviceState()
 {
-    // ScopedPointer<XmlElement> savedState;
+    ScopedPointer<XmlElement> savedState;
 
-    // if (settings != nullptr)
-    //     savedState = settings->getXmlValue ("audioSetup");
+    //if (settings != nullptr)
+    //    savedState = settings->getXmlValue ("audioSetup");
 
-    // deviceManager.initialise (processor->getNumInputChannels(),
-    //                           processor->getNumOutputChannels(),
-    //                           savedState,
-    //                           true);
+    deviceManager.initialise (processor->getNumInputChannels(),
+                              processor->getNumOutputChannels(),
+                              savedState,
+                              true);
 }
 
 //==============================================================================

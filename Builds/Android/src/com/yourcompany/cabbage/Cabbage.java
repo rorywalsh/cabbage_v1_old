@@ -29,6 +29,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -229,6 +230,14 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
     {
         super.onCreate (savedInstanceState);
         files = new ArrayList<String>();
+        ArrayList<String> assetsFiles = new ArrayList<String>();
+        assetsFiles.add("DrumPads.csd");
+        assetsFiles.add("icon.png");
+        assetsFiles.add("ImageSliders.csd");
+        assetsFiles.add("IntroScreen.csd");
+        assetsFiles.add("PebblesInAPond.csd");
+        assetsFiles.add("SpookEPad.csd");
+        assetsFiles.add("VectorialSynth.csd");
         viewHolder = new ViewHolder (this);
         //setContentView (viewHolder);
         setContentView (R.layout.activity_home);
@@ -236,9 +245,13 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
         //setVolumeControlStream (AudioManager.STREAM_MUSIC);
         juceViewContainer = (LinearLayout) findViewById(R.id.juce_container);
         juceViewContainer.addView(viewHolder);
+
+        copyAssets();
+
         addFilesToListView();
         //viewFlipper.showNext();
         setVolumeControlStream (AudioManager.STREAM_MUSIC);
+
     }
 
     //add tune types to list view
@@ -271,6 +284,51 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
              
         listView.setAdapter( listAdapter );
         listView.setBackgroundResource(R.drawable.rounded_button);
+    }
+
+    private void copyAssets() 
+    {
+        AssetManager assetManager = getAssets();
+        String[] files = null;
+        try {
+            files = assetManager.list("");
+        } 
+        catch (IOException e) {
+            Log.e("tag", "Failed to get asset file list.", e);
+        }
+
+        for(String filename : files) {
+            Log.d("tag", "Trying to copy file: " + filename);
+            InputStream in = null;
+            OutputStream out = null;
+            try {
+              in = assetManager.open(filename);
+
+            
+
+            File outFile = new File(Environment.getExternalStorageDirectory()+"/Cabbage2/", filename); 
+            out = new FileOutputStream(outFile);
+
+            copyFile(in, out);
+            in.close();
+            in = null;
+            out.flush();
+            out.close();
+            out = null;
+            } catch(IOException e) {
+              Log.e("tag", "Failed to copy asset file: " + filename, e);
+                }       
+        }
+            
+    }
+         
+    private void copyFile(InputStream in, OutputStream out) throws IOException 
+    {
+        byte[] buffer = new byte[1024];
+        int read;
+        while((read = in.read(buffer)) != -1){
+           out.write(buffer, 0, read);
+        }
     }
 
     @Override

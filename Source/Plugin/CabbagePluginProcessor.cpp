@@ -147,53 +147,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
         Logger::writeToLog("MACOSX defined OK");
         csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
         //cUtils::showMessage(csdFile.getFullPathName());
-#elif defined(AndroidBuild)
-        File inFile(File::getSpecialLocation(File::currentApplicationFile));
-        ScopedPointer<InputStream> fileStream;
-        fileStream = File(inFile.getFullPathName()).createInputStream();
-        ZipFile zipFile (fileStream, false);
-
-        //sample files
-        String mkdir = "mkdir -p \""+String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage\"");
-        String homeDir = String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage/");
-
-        system(mkdir.toUTF8().getAddress());
-        ScopedPointer<InputStream> fileContents;
-
-        //cabbage logo
-        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/icon.png"));
-        File imageFile1(homeDir+"cabbage.png");
-        MemoryBlock mem;
-        fileContents->readIntoMemoryBlock(mem);
-        imageFile1.replaceWithData(mem.getData(), mem.getSize());
-
-
-        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/IntroScreen.csd"));
-        File thisFile(homeDir+"CabbageTemp.csd");
-        //cUtils::showMessage(thisFile.getFullPathName());
-        thisFile.replaceWithText(fileContents->readEntireStreamAsString());
-        csdFile = thisFile;
-
-        //examples
-        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/ImageSliders.csd"));
-        File thisFile2(homeDir+"ImageSliders.csd");
-        thisFile2.replaceWithText(fileContents->readEntireStreamAsString());
-
-        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/PebblesInAPond.csd"));
-        File thisFile3(homeDir+"PebblesInAPond.csd");
-        thisFile3.replaceWithText(fileContents->readEntireStreamAsString());
-
-        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/DrumPads.csd"));
-        File thisFile4(homeDir+"DrumPads.csd");
-        thisFile4.replaceWithText(fileContents->readEntireStreamAsString());
-
-        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/SpookEPad.csd"));
-        File thisFile5(homeDir+"SpookEPad.csd");
-        thisFile5.replaceWithText(fileContents->readEntireStreamAsString());
-
-        fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/VectorialSynth.csd"));
-        File thisFile6(homeDir+"VectorialSynth.csd");
-        thisFile6.replaceWithText(fileContents->readEntireStreamAsString());
 #else
         File thisFile(File::getSpecialLocation(File::currentExecutableFile));
         csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
@@ -259,9 +212,9 @@ void CabbagePluginAudioProcessor::setScreenMacros()
 //android opens full screen by default.
 #ifdef AndroidBuild
     Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-    String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth())+"\"";
+    String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth()-60)+"\"";
     csound->SetOption(screenWidth.toUTF8().getAddress());
-    String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight()-30)+"\"";
+    String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight()-60)+"\"";
     csound->SetOption(screenHeight.toUTF8().getAddress());
 #else
     String width = "--omacro:SCREEN_WIDTH=\""+String(screenWidth)+"\"";
@@ -535,11 +488,7 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
     csound->SetOption((char*)"-n");
     csound->SetOption((char*)"-d");
 
-    Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-    String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth())+"\"";
-    csound->SetOption(screenWidth.toUTF8().getAddress());
-    String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight())+"\"";
-    csound->SetOption(screenHeight.toUTF8().getAddress());
+    setScreenMacros();
 
     addMacros(file.loadFileAsString());
     csound->SetHostImplementedMIDIIO(true);

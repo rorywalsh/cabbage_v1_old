@@ -247,7 +247,12 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
         juceViewContainer.addView(viewHolder);
 
         copyAssets();
-
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        showNativeMessage(Integer.toString(height));
         addFilesToListView();
         //viewFlipper.showNext();
         setVolumeControlStream (AudioManager.STREAM_MUSIC);
@@ -268,7 +273,7 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
      
         File sdCard = Environment.getExternalStorageDirectory();
         // to this path add a new directory path
-        File dir = new File(sdCard.getAbsolutePath() + "/Cabbage/");
+        File dir = new File(sdCard.getAbsolutePath() + "/CabbageFiles/");
         if(dir.exists()) 
         {
             File[] dirFiles = dir.listFiles();
@@ -276,9 +281,12 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
 
             for (int i = 0; i < dirFiles.length; i++) 
             {
-                files.add(dirFiles[i].getAbsolutePath());
-                //tuneLinks.add(fileList[i].getAbsolutePath());
-                listAdapter.add(dirFiles[i].getName());
+                if(dirFiles[i].getName().contains(".csd"))
+                {
+                    files.add(dirFiles[i].getAbsolutePath());
+                    //tuneLinks.add(fileList[i].getAbsolutePath());
+                    listAdapter.add(dirFiles[i].getName());
+                }
             }
         }
              
@@ -288,40 +296,60 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
 
     private void copyAssets() 
     {
+        String fileNames="";
         AssetManager assetManager = getAssets();
         String[] files = null;
         try {
             files = assetManager.list("");
         } 
         catch (IOException e) {
-            Log.e("tag", "Failed to get asset file list.", e);
+            showNativeMessage("Failed to open assets");
         }
 
+
+
         for(String filename : files) {
-            Log.d("tag", "Trying to copy file: " + filename);
             InputStream in = null;
             OutputStream out = null;
             try {
-              in = assetManager.open(filename);
 
-            
-
-            File outFile = new File(Environment.getExternalStorageDirectory()+"/Cabbage2/", filename); 
-            out = new FileOutputStream(outFile);
-
-            copyFile(in, out);
-            in.close();
-            in = null;
-            out.flush();
-            out.close();
-            out = null;
-            } catch(IOException e) {
-              Log.e("tag", "Failed to copy asset file: " + filename, e);
-                }       
-        }
-            
-    }
+                
+                if(filename.contains(".csd") || filename.contains(".png"))
+                {
+                    in = assetManager.open(filename);
+                    //showNativeMessage(convertStreamToString(in));
+                    File dir = new File(Environment.getExternalStorageDirectory() + "/CabbageFiles/");
+                    dir.mkdir();
+                    File outFile = new File(dir.getAbsolutePath()+"/"+filename);
+                    out = new FileOutputStream(outFile);
+                    copyFile(in, out);
+                    in.close();
+                    in = null;
+                    out.flush();
+                    out.close();
+                    out = null;   
+                }
          
+            } 
+            catch(IOException e) {
+                showNativeMessage(e.getMessage());
+                }       
+        }            
+    }
+        
+    void showNativeMessage(String message)
+    {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Info");
+        alertDialog.setMessage(message);
+        alertDialog.show();
+    }
+
+    static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+
     private void copyFile(InputStream in, OutputStream out) throws IOException 
     {
         byte[] buffer = new byte[1024];

@@ -21,7 +21,7 @@ public:
         filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
         filterWindow->setVisible (true);
         //turn off resizeable...
-        //filterWindow->setResizable(true, true);
+        filterWindow->setResizable(false, false);
         filterWindow->setFullScreen(true);
         juce::Thread::setCurrentThreadName("cabbage");
     }

@@ -17,31 +17,11 @@ StandaloneFilterWindow::StandaloneFilterWindow ()
     optionsButton.setTriggeredOnMouseDown (true);
     this->setTitleBarHeight(30);
     pluginHolder = new StandalonePluginHolder ();
-
-    Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-    setSize(rect.getWidth(), rect.getHeight());
+    //setSize(rect.getWidth(), rect.getHeight());
     getProperties().set("colour", Colour(58, 110, 182).toString());
     lookAndFeelChanged();
-
     createEditorComp();
-
     setName(pluginHolder->processor->getName());
-
-
-    // if (PropertySet* props = pluginHolder->settings)
-    // {
-    //     const int x = props->getIntValue ("windowX", -100);
-    //     const int y = props->getIntValue ("windowY", -100);
-
-    //     if (x != -100 && y != -100)
-    //         setBoundsConstrained (juce::Rectangle<int> (x, y, getWidth(), getHeight()));
-    //     else
-    //         centreWithSize (getWidth(), getHeight());
-    // }
-    // else
-    // {
-    //     centreWithSize (getWidth(), getHeight());
-    // }
     loadFile(filename);
 }
 
@@ -121,7 +101,8 @@ void StandaloneFilterWindow::loadFile(String filename)
         pluginHolder->startPlaying();
         clearContentComponent();
         setContentOwned (getAudioProcessor()->createEditorIfNeeded(), true);
-
+        Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+        cUtils::showMessage(rect.getHeight());
         StringArray csdArray;
         csdArray.addLines(file.loadFileAsString());
         for(int i=0; i<csdArray.size(); i++)

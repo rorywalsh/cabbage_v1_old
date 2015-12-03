@@ -838,9 +838,9 @@ void CodeWindow::showCabbageHelp()
     StringArray tokens;
     tokens.addTokens(textEditor->editor[textEditor->currentEditor]->getLineText(), false);
 #if defined(LINUX) || defined(MACOSX)
-    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/"+tokens[0]+".html";
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/_book/"+tokens[0]+".html";
 #else
-    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\"+tokens[0]+".html";
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\_book\\"+tokens[0]+".html";
 #endif
 
 

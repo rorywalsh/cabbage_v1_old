@@ -245,24 +245,21 @@ public:
         fullScreen = isNowFullScreen;
 
         NSRect r = makeNSRect (newBounds);
+        NSSize oldViewSize = [view frame].size;
 
         if (isSharedWindow)
         {
             r.origin.y = [[view superview] frame].size.height - (r.origin.y + r.size.height);
-
-            if ([view frame].size.width != r.size.width
-                 || [view frame].size.height != r.size.height)
-            {
-                [view setNeedsDisplay: true];
-            }
-
             [view setFrame: r];
         }
         else
         {
             [window setFrame: [window frameRectForContentRect: flippedScreenRect (r)]
-                     display: true];
+                     display: false];
         }
+
+        if (oldViewSize.width != r.size.width || oldViewSize.height != r.size.height)
+            [view setNeedsDisplay: true];
     }
 
     Rectangle<int> getBounds (const bool global) const
@@ -307,27 +304,10 @@ public:
 
     void setAlpha (float newAlpha) override
     {
-        if (! isSharedWindow)
-        {
-            [window setAlphaValue: (CGFloat) newAlpha];
-        }
-        else
-        {
-           #if defined (MAC_OS_X_VERSION_10_5) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+        if (isSharedWindow)
             [view setAlphaValue: (CGFloat) newAlpha];
-           #else
-            if ([view respondsToSelector: @selector (setAlphaValue:)])
-            {
-                // PITA dynamic invocation for 10.4 builds..
-                NSInvocation* inv = [NSInvocation invocationWithMethodSignature: [view methodSignatureForSelector: @selector (setAlphaValue:)]];
-                [inv setSelector: @selector (setAlphaValue:)];
-                [inv setTarget: view];
-                CGFloat cgNewAlpha = (CGFloat) newAlpha;
-                [inv setArgument: &cgNewAlpha atIndex: 2];
-                [inv invoke];
-            }
-           #endif
-        }
+        else
+            [window setAlphaValue: (CGFloat) newAlpha];
     }
 
     void setMinimised (bool shouldBeMinimised) override
@@ -782,16 +762,6 @@ public:
         handleModifierKeysChange();
     }
 
-   #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-    bool redirectPerformKeyEquivalent (NSEvent* ev)
-    {
-        if ([ev type] == NSKeyDown)   return redirectKeyDown (ev);
-        if ([ev type] == NSKeyUp)     return redirectKeyUp (ev);
-
-        return false;
-    }
-   #endif
-
     void drawRect (NSRect r)
     {
         if (r.size.width < 1.0f || r.size.height < 1.0f)
@@ -1090,7 +1060,15 @@ public:
 
     static float getMousePressure (NSEvent* e) noexcept
     {
-        return (float) e.pressure;
+        @try
+        {
+            if (e.type != NSMouseEntered && e.type != NSMouseExited)
+                return (float) e.pressure;
+        }
+        @catch (NSException* e) {}
+        @finally {}
+
+        return 0.0f;
     }
 
     static Point<float> getMousePos (NSEvent* e, NSView* view)
@@ -1467,10 +1445,6 @@ struct JuceNSViewClass   : public ObjCClass <NSView>
         addMethod (@selector (resignFirstResponder),          resignFirstResponder,       "c@:");
         addMethod (@selector (acceptsFirstResponder),         acceptsFirstResponder,      "c@:");
 
-       #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-        addMethod (@selector (performKeyEquivalent:),         performKeyEquivalent,       "c@:@");
-       #endif
-
         addMethod (@selector (draggingEntered:),              draggingEntered,            @encode (NSDragOperation), "@:@");
         addMethod (@selector (draggingUpdated:),              draggingUpdated,            @encode (NSDragOperation), "@:@");
         addMethod (@selector (draggingEnded:),                draggingEnded,              "v@:@");
@@ -1697,18 +1671,6 @@ private:
         if (NSViewComponentPeer* const owner = getOwner (self))
             owner->redirectModKeyChange (ev);
     }
-
-    #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-    static BOOL performKeyEquivalent (id self, SEL, NSEvent* ev)
-    {
-        if (NSViewComponentPeer* const owner = getOwner (self))
-            if (owner->redirectPerformKeyEquivalent (ev))
-                return true;
-
-        objc_super s = { self, [NSView class] };
-        return getMsgSendSuperFn() (&s, @selector (performKeyEquivalent:), ev) != nil;
-    }
-    #endif
 
     static BOOL becomeFirstResponder (id self, SEL)
     {

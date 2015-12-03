@@ -27,6 +27,7 @@
 #include "AppConfig.h"
 
 #include "../utility/juce_CheckSettingMacros.h"
+#include "../../juce_core/native/juce_mac_ClangBugWorkaround.h"
 
 #if JucePlugin_Build_AU
 
@@ -239,17 +240,9 @@ public:
                     return noErr;
 
                 case kAudioUnitProperty_CocoaUI:
-                   #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-                    // (On 10.4, there's a random obj-c dispatching crash when trying to load a cocoa UI)
-                    if (SystemStats::getOperatingSystemType() >= SystemStats::MacOSX_10_5)
-                   #endif
-                    {
-                        outDataSize = sizeof (AudioUnitCocoaViewInfo);
-                        outWritable = true;
-                        return noErr;
-                    }
-
-                    break;
+                    outDataSize = sizeof (AudioUnitCocoaViewInfo);
+                    outWritable = true;
+                    return noErr;
 
                #if JucePlugin_ProducesMidiOutput
                 case kAudioUnitProperty_MIDIOutputCallbackInfo:
@@ -303,10 +296,6 @@ public:
                     return noErr;
 
                 case kAudioUnitProperty_CocoaUI:
-                   #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-                    // (On 10.4, there's a random obj-c dispatching crash when trying to load a cocoa UI)
-                    if (SystemStats::getOperatingSystemType() >= SystemStats::MacOSX_10_5)
-                   #endif
                     {
                         JUCE_AUTORELEASEPOOL
                         {
@@ -322,8 +311,6 @@ public:
 
                         return noErr;
                     }
-
-                    break;
 
                #if JucePlugin_ProducesMidiOutput
                 case kAudioUnitProperty_MIDIOutputCallbackInfo:

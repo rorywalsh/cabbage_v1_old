@@ -252,7 +252,7 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
         display.getSize(size);
         int width = size.x;
         int height = size.y;
-        showNativeMessage(Integer.toString(height));
+        //showNativeMessage(Integer.toString(height));
         addFilesToListView();
         //viewFlipper.showNext();
         setVolumeControlStream (AudioManager.STREAM_MUSIC);
@@ -364,6 +364,12 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
           //loadCabbageFile("hello good times");  
         viewFlipper.showNext();
         Cabbage.loadCabbageFile(files.get(position)); 
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        showNativeMessage(Integer.toString(height));
     }
 
     @Override

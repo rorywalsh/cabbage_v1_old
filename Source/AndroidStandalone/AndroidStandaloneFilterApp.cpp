@@ -18,17 +18,17 @@ public:
     void initialise(const String& commandLineParameters)
     {
         filterWindow = new StandaloneFilterWindow ();
-        filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
-        filterWindow->setVisible (true);
+        //filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
+        //filterWindow->setVisible (true);
         //turn off resizeable...
-        filterWindow->setResizable(false, false);
-        filterWindow->setFullScreen(true);
+        //filterWindow->setResizable(false, false);
+        //filterWindow->setFullScreen(true);
         juce::Thread::setCurrentThreadName("cabbage");
     }
 
     void shutdown()
     {
-        filterWindow = 0;// = nullptr;
+        filterWindow = nullptr;
         appProperties->closeFiles();
         deleteAndZero(appProperties);
         deleteAndZero(lookAndFeel);

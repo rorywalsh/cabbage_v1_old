@@ -9,20 +9,17 @@ StandaloneFilterWindow::StandaloneFilterWindow ()
       optionsButton ("Open"), lookAndFeel(new CabbageLookAndFeel()),
       editorShowing(true)
 {
-    setTitleBarButtonsRequired (0, false);
+    setTitleBarButtonsRequired(0, false);
+    setUsingNativeTitleBar (true);
     Component::setLookAndFeel(lookAndFeel);
-    Component::addAndMakeVisible (optionsButton);
-    optionsButton.setLookAndFeel(lookAndFeel);
-    optionsButton.addListener (this);
-    optionsButton.setTriggeredOnMouseDown (true);
-    this->setTitleBarHeight(30);
     pluginHolder = new StandalonePluginHolder ();
-    //setSize(rect.getWidth(), rect.getHeight());
+    //centreWithSize(getWidth(), getHeight());
     getProperties().set("colour", Colour(58, 110, 182).toString());
     lookAndFeelChanged();
+    loadFile(filename);
     createEditorComp();
     setName(pluginHolder->processor->getName());
-    loadFile(filename);
+    setVisible (true);
 }
 
 StandaloneFilterWindow::~StandaloneFilterWindow()
@@ -102,7 +99,7 @@ void StandaloneFilterWindow::loadFile(String filename)
         clearContentComponent();
         setContentOwned (getAudioProcessor()->createEditorIfNeeded(), true);
         Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-        cUtils::showMessage(rect.getHeight());
+        //cUtils::showMessage(rect.getHeight());
         StringArray csdArray;
         csdArray.addLines(file.loadFileAsString());
         for(int i=0; i<csdArray.size(); i++)
@@ -292,14 +289,22 @@ void StandalonePluginHolder::shutDownAudioDevices()
 extern "C" __attribute__ ((visibility("default"))) void Java_com_yourcompany_cabbage_Cabbage_loadCabbageFile (JNIEnv* env, jobject activity,jstring testString)
 
 {
-
     const char *inCStr = env->GetStringUTFChars(testString,nullptr);
     if(!filterWindow)
         filename = String(inCStr);
     else
         filterWindow->loadFile(String(inCStr));
-
     env->ReleaseStringUTFChars(testString, inCStr);
-
 }
+
+//extern "C" __attribute__ ((visibility("default"))) void Java_com_yourcompany_cabbage_Cabbage_setScreenSize (JNIEnv* env, jobject activity, jint screenWidth, jint screenHeight)
+//
+//{
+//    const char *inCStr = env->GetStringUTFChars(testString,nullptr);
+//    if(!filterWindow)
+//        filename = String(inCStr);
+//    else
+//        filterWindow->loadFile(String(inCStr));
+//    env->ReleaseStringUTFChars(testString, inCStr);
+//}
 #endif

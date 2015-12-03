@@ -257,7 +257,6 @@ void CabbagePluginAudioProcessorEditor::resized()
 {
     //this->setSize(this->getWidth(), this->getHeight());
     viewport->setBounds(0, 0, this->getWidth(), this->getHeight());
-
     componentPanel->setTopLeftPosition(0, 0);
 
 #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
@@ -2104,9 +2103,9 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
 #ifdef AndroidBuild
     Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
 
-    // setSize(rect.getWidth()-60, rect.getHeight()-60);
-    setSize(getWidth(), getHeight());
-    componentPanel->setBounds(0, 0, getWidth(), getHeight());
+    setSize(rect.getWidth(), rect.getHeight());
+    //setSize(getWidth(), getHeight());
+    componentPanel->setBounds(0, 0, rect.getWidth(), rect.getHeight());
     // componentPanel->setBounds(left, top, rect.getWidth(), rect.getHeight());
 #else
     setSize(width, height);
@@ -3169,6 +3168,7 @@ void CabbagePluginAudioProcessorEditor::textButtonClicked(Button* button)
                     //getFilter()->getCsound()->SetChannel(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel).toUTF8(), 0.f);
                     getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, 0);
                     getFilter()->setParameter(i, 0.f);
+
                     button->setToggleState(false, dontSendNotification);
                 }
                 //toggle text values

@@ -810,9 +810,9 @@ public:
 
         //set initial value if given
         if(cAttr.getNumProp(CabbageIDs::value)==1)
-            button->setToggleState(true, sendNotification);
+            button->setToggleState(true, dontSendNotification);
         else
-            button->setToggleState(false, sendNotification);
+            button->setToggleState(false, dontSendNotification);
 
         this->setWantsKeyboardFocus(false);
     }

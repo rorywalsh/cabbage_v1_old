@@ -262,7 +262,10 @@ void CabbagePluginAudioProcessor::initAllChannels()
             csound->SetChannel(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), "");
         //									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
         else
+        {
             csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::value));
+        }
+
 
         messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
                 guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
@@ -290,7 +293,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndInitialiseGUI(bool isPlugin)
     //File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
     csdFile.setAsCurrentWorkingDirectory();
 
-    createGUI(csdFile.loadFileAsString(), true);
+
     StringArray tmpArray;
     CabbageGUIClass cAttr;
 
@@ -361,7 +364,6 @@ int CabbagePluginAudioProcessor::compileCsoundAndInitialiseGUI(bool isPlugin)
     csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
     if(csCompileResult==OK)
     {
-        initAllChannels();
         firstTime=false;
         guiRefreshRate = getCsoundKsmpsSize()*2;
 
@@ -432,7 +434,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndInitialiseGUI(bool isPlugin)
                 csound->SetChannel(CabbageIDs::timeSigNum.toUTF8(), hostInfo.timeSigNumerator);
             }
         }
-        cUtils::debug("everything still good...");
+        cUtils::debug("Everything has been setup without an issue. ");
     }
     else
     {
@@ -441,6 +443,8 @@ int CabbagePluginAudioProcessor::compileCsoundAndInitialiseGUI(bool isPlugin)
         return 0;
     }
 #endif
+    createGUI(csdFile.loadFileAsString(), true);
+    initAllChannels();
     return 1;
 }
 //============================================================================
@@ -1792,6 +1796,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
             else
             {
                 float value = csound->GetChannel(guiCtrl.getStringProp(CabbageIDs::channel).getCharPointer());
+                //cUtils::debug(guiCtrl.getStringProp(CabbageIDs::channel));
                 if(value!=guiCtrl.getNumProp(CabbageIDs::value))
                 {
                     //Logger::writeToLog("Channel:"+guiCtrls[index].getStringProp(CabbageIDs::channel));

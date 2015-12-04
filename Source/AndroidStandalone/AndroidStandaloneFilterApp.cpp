@@ -22,7 +22,7 @@ public:
         //filterWindow->setVisible (true);
         //turn off resizeable...
         //filterWindow->setResizable(false, false);
-        //filterWindow->setFullScreen(true);
+
         juce::Thread::setCurrentThreadName("cabbage");
     }
 

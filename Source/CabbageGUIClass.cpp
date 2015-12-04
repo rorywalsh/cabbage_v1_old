@@ -1684,6 +1684,17 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                 cabbageIdentifiers.set(CabbageIDs::popup, strTokens[0].trim().getIntValue());
             }
 
+            else if(identArray[indx].equalsIgnoreCase("resize"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::popup, strTokens[0].trim().getIntValue());
+            }
+
+            else if(identArray[indx].equalsIgnoreCase("rescale"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::scalex, strTokens[0].trim().getFloatValue());
+                cabbageIdentifiers.set(CabbageIDs::scaley, strTokens[1].trim().getFloatValue());
+            }
+
             else if(identArray[indx].equalsIgnoreCase("resizemode"))
             {
                 var value;

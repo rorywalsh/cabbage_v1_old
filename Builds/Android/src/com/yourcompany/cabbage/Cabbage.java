@@ -339,11 +339,19 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
         
     void showNativeMessage(String message)
     {
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Info");
-        alertDialog.setMessage(message);
-        alertDialog.show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message)
+               .setCancelable(false)
+               .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                   public void onClick(DialogInterface dialog, int id) {
+                        //do things
+                   }
+               });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
+
+
 
     static String convertStreamToString(java.io.InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
@@ -361,15 +369,36 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-          //loadCabbageFile("hello good times");  
+          //loadCabbageFile("hello good times"); 
+        showInfoFromCsdFile(files.get(position));
         viewFlipper.showNext();
         Cabbage.loadCabbageFile(files.get(position)); 
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
-        showNativeMessage(Integer.toString(height));
+    }
+
+    void showInfoFromCsdFile(String csdfile)
+    {
+        //Get the text file
+        File file = new File(csdfile);
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                if(line.contains("androidinfo"))
+                {
+
+                    String newLine = line.substring(line.indexOf("androidinfo(")+13);
+                    newLine = newLine.substring(0, newLine.indexOf(")")-1);
+                    showNativeMessage(newLine);
+                    
+                }
+            }
+            br.close();
+        }
+        catch (IOException e) {
+            //You'll need to add proper error handling here
+        }
     }
 
     @Override

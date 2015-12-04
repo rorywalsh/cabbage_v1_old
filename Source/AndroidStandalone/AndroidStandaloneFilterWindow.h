@@ -133,7 +133,7 @@ public:
     void closeButtonPressed();
     void buttonClicked (Button*);
     void loadFile(String filename);
-    void resized();
+    //void resized();
 
     ScopedPointer<CabbageLookAndFeel> lookAndFeel;
     //ScopedPointer<FileBrowser> fileBrowser;

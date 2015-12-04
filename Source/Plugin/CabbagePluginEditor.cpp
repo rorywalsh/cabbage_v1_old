@@ -268,6 +268,12 @@ void CabbagePluginAudioProcessorEditor::resized()
     else
         viewport->setScrollBarsShown(false, false);
 #endif
+
+#ifdef AndroidBuild
+    //don't show scrollbars on Android. They are terrible to navigate.
+    viewport->setScrollBarsShown(false, false);
+#endif
+
 }
 
 //==============================================================================
@@ -2103,9 +2109,9 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
 #ifdef AndroidBuild
     Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
 
-    setSize(rect.getWidth(), rect.getHeight());
+    setSize(rect.getWidth(), rect.getHeight()-20);
     //setSize(getWidth(), getHeight());
-    componentPanel->setBounds(0, 0, rect.getWidth(), rect.getHeight());
+    componentPanel->setBounds(0, 0, getWidth(), getHeight());
     // componentPanel->setBounds(left, top, rect.getWidth(), rect.getHeight());
 #else
     setSize(width, height);
@@ -2129,6 +2135,16 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
     //set visiblilty
     layoutComps[layoutComps.size()-1]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// rescale all components, used in Android build
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+void CabbagePluginAudioProcessorEditor::resizeChildren()
+{
+
+}
+
+
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //      Csound output widget.

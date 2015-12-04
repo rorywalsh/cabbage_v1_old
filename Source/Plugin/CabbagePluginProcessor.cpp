@@ -444,6 +444,11 @@ int CabbagePluginAudioProcessor::compileCsoundAndInitialiseGUI(bool isPlugin)
     }
 #endif
     createGUI(csdFile.loadFileAsString(), true);
+    CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
+    if(editor)
+    {
+        editor->resizeChildren();
+    }
     initAllChannels();
     return 1;
 }

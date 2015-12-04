@@ -152,6 +152,7 @@ public:
     }
 
     int currentPopupIndex;
+    void resizeChildren();
 
 private:
     WildcardFileFilter wildcardFilter;

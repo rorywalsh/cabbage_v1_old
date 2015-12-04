@@ -1110,6 +1110,7 @@ class CabbageImage : public Component,
     Image img;
     int top, left, width, height, line, pivotx, pivoty, resize;
     String currentDirectory, tooltipText;
+    Point<float> scale;
     AffineTransform transform;
 
 public:
@@ -1141,6 +1142,7 @@ public:
             tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
 
         resize = cAttr.getNumProp(CabbageIDs::resize);
+        scale = Point<float>(cAttr.getNumProp(CabbageIDs::scalex), cAttr.getNumProp(CabbageIDs::scaley));
     }
     ~CabbageImage()
     {
@@ -1162,6 +1164,18 @@ public:
             sendChangeMessage();
     }
 
+    void rescale(float x, float y)
+    {
+        for( int i=0; i<getNumChildComponents(); i++)
+        {
+            Rectangle<int> bounds = getChildComponent(i)->getBounds();
+            getChildComponent(i)->setBounds(bounds.getX()*x,
+                                            bounds.getY()*y,
+                                            bounds.getWidth()*x,
+                                            bounds.getHeight()*y);
+        }
+    }
+
     //update control
     void update(CabbageGUIClass m_cAttr)
     {
@@ -1177,6 +1191,12 @@ public:
             file = cUtils::returnFullPathForFile(m_cAttr.getStringProp(CabbageIDs::file), currentDirectory);
             img = ImageCache::getFromFile (File (file));
             repaint(this->getBounds());
+        }
+
+        if(scale!=Point<float>(m_cAttr.getNumProp(CabbageIDs::scalex), m_cAttr.getNumProp(CabbageIDs::scaley)))
+        {
+            scale=Point<float>(m_cAttr.getNumProp(CabbageIDs::scalex), m_cAttr.getNumProp(CabbageIDs::scaley));
+            rescale(scale.getX(), scale.getY());
         }
 
         if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
@@ -1274,6 +1294,7 @@ class CabbageGroupbox : public GroupComponent,
     String name, caption, text, colour, fontcolour, tooltipText;
     float rotate;
     int line;
+    Point<float> scale;
 public:
     //---- constructor -----
     CabbageGroupbox(CabbageGUIClass &cAttr):
@@ -1316,7 +1337,7 @@ public:
 
         if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
             tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
-
+        scale = Point<float>(cAttr.getNumProp(CabbageIDs::scalex), cAttr.getNumProp(CabbageIDs::scaley));
     }
     //---------------------------------------------
     ~CabbageGroupbox()
@@ -1336,9 +1357,30 @@ public:
             sendChangeMessage();
     }
 
+    //rescale plant
+    void rescale(float x, float y)
+    {
+        for( int i=0; i<getNumChildComponents(); i++)
+        {
+            Rectangle<int> bounds = getChildComponent(i)->getBounds();
+            getChildComponent(i)->setBounds(bounds.getX()*x,
+                                            bounds.getY()*y,
+                                            bounds.getWidth()*x,
+                                            bounds.getHeight()*y);
+        }
+        setSize(this->getWidth()*x, this->getHeight()*y);
+        getParentComponent()->resized();
+    }
+
     //update control
     void update(CabbageGUIClass m_cAttr)
     {
+
+        if(scale!=Point<float>(m_cAttr.getNumProp(CabbageIDs::scalex), m_cAttr.getNumProp(CabbageIDs::scaley)))
+        {
+            scale=Point<float>(m_cAttr.getNumProp(CabbageIDs::scalex), m_cAttr.getNumProp(CabbageIDs::scaley));
+            rescale(scale.getX(), scale.getY());
+        }
 
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
         {
@@ -1375,6 +1417,7 @@ public:
             repaint();
 
         }
+
         if(tooltipText!=m_cAttr.getStringProp(CabbageIDs::popuptext))
         {
             tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
@@ -1896,7 +1939,7 @@ public:
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
         keyboard->setLowestVisibleKey(cAttr.getNumProp(CabbageIDs::value));
 #ifdef AndroidBuild
-        keyboard->setKeyWidth(40);
+        keyboard->setKeyWidth(30);
 #endif
         keyboard->setScrollButtonsVisible(true);
 

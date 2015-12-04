@@ -5,19 +5,21 @@ String filename("");
 extern StandaloneFilterWindow* filterWindow;
 
 StandaloneFilterWindow::StandaloneFilterWindow ()
-    : DocumentWindow ("Cabbage", Colours::black, DocumentWindow::minimiseButton | DocumentWindow::closeButton),
-      optionsButton ("Open"), lookAndFeel(new CabbageLookAndFeel()),
+    : DocumentWindow ("Cabbage", Colours::black, DocumentWindow::minimiseButton | DocumentWindow::closeButton), lookAndFeel(new CabbageLookAndFeel()),
       editorShowing(true)
 {
+    ///Desktop::getInstance().setGlobalScaleFactor(0.5f);
     setTitleBarButtonsRequired(0, false);
-    setUsingNativeTitleBar (true);
+    //setUsingNativeTitleBar (true);
     Component::setLookAndFeel(lookAndFeel);
     pluginHolder = new StandalonePluginHolder ();
     //centreWithSize(getWidth(), getHeight());
     getProperties().set("colour", Colour(58, 110, 182).toString());
     lookAndFeelChanged();
+    setFullScreen(true);
     loadFile(filename);
     createEditorComp();
+    //setSize(200, 200);
     setName(pluginHolder->processor->getName());
     setVisible (true);
 }
@@ -115,11 +117,6 @@ void StandaloneFilterWindow::loadFile(String filename)
 
 }
 
-void StandaloneFilterWindow::resized()
-{
-    DocumentWindow::resized();
-    //optionsButton.setBounds (8, 6, 130, getTitleBarHeight() - 8);
-}
 
 //============================================================
 // plugin holder

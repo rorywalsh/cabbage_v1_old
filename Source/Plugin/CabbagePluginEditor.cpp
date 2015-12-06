@@ -1035,7 +1035,8 @@ void CabbagePluginAudioProcessorEditor::sendBack(bool toBack)
     }
 
     getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
-    getFilter()->createGUI(csdArray.joinIntoString("\n"), true);
+    getFilter()->initliaseWidgets(csdArray.joinIntoString("\n"), true);
+    getFilter()->addWidgetsToEditor(true);
 
 
     //update frames to reflect changes made to GUI
@@ -1095,7 +1096,8 @@ void CabbagePluginAudioProcessorEditor::sendForward(bool toFront)
     }
 
     getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
-    getFilter()->createGUI(csdArray.joinIntoString("\n"), true);
+    getFilter()->initliaseWidgets(csdArray.joinIntoString("\n"), true);
+    getFilter()->addWidgetsToEditor(true);
 
 
     //update frames to reflect changes made to GUI
@@ -1203,8 +1205,8 @@ void CabbagePluginAudioProcessorEditor::deleteComponents()
 
     plantDefs.clear();
     getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
-
-    getFilter()->createGUI(csdArray.joinIntoString("\n"), true);
+    getFilter()->initliaseWidgets(csdArray.joinIntoString("\n"), true);
+    getFilter()->addWidgetsToEditor(true);
 
 
     //getFilter()->sendActionMessage("GUI Updated, controls deleted");
@@ -1777,7 +1779,10 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
     getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
     getFilter()->highlightLine(currentText);
     //currentLineNumber = getFilter()->getCurrentLine();
-    getFilter()->createGUI(text.joinIntoString("\n"), false);
+    getFilter()->initliaseWidgets(text.joinIntoString("\n"), false);
+    getFilter()->addWidgetsToEditor(false);
+
+
     CabbageGUIClass cAttr(currentText, -99);
     sendActionMessage(currentText);
     propsWindow->updateProps(cAttr);
@@ -2135,16 +2140,6 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
     //set visiblilty
     layoutComps[layoutComps.size()-1]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
 }
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// rescale all components, used in Android build
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-void CabbagePluginAudioProcessorEditor::resizeChildren()
-{
-
-}
-
-
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //      Csound output widget.
@@ -3600,7 +3595,8 @@ void CabbagePluginAudioProcessorEditor::actionListenerCallback (const String& me
         getFilter()->highlightLine(csdArray[currentLineNumber]);
         //Logger::writeToLog(csdArray[currentLineNumber]);
         getFilter()->setGuiEnabled(true);
-        getFilter()->createGUI(csdArray.joinIntoString("\n"), true);
+        getFilter()->initliaseWidgets(csdArray.joinIntoString("\n"), true);
+        getFilter()->addWidgetsToEditor(true);
         layoutEditor->selectedFilters.deselectAll();
         //getFilter()->sendActionMessage("GUI Updated, controls added");
         //Logger::writeToLog(getCodeFromIdentifiers(propsWindow->updatedIdentifiers));

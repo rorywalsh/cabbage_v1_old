@@ -345,7 +345,8 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
     {
         //if something changes in the properties panel we need to update our GUI so
         //that the changes are reflected in the on screen components
-        filter->createGUI(csdFile.loadFileAsString(), true);
+        filter->initliaseWidgets(csdFile.loadFileAsString(), true);
+        filter->addWidgetsToEditor(true);
         if(cabbageCsoundEditor)
         {
             //cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
@@ -454,7 +455,8 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
 
     else if(message.contains("fileUpdateGUI"))
     {
-        filter->createGUI(cabbageCsoundEditor->getText(), true);
+        filter->initliaseWidgets(cabbageCsoundEditor->getText(), true);
+        filter->addWidgetsToEditor(true);
         csdFile.replaceWithText(cabbageCsoundEditor->getText());
         if(cabbageCsoundEditor)
         {
@@ -470,7 +472,10 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
         openFile("");
 
     else if(message.contains("MENU COMMAND: manual update GUI"))
-        filter->createGUI(csdFile.loadFileAsString(), true);
+    {
+        filter->initliaseWidgets(csdFile.loadFileAsString(), true);
+        filter->addWidgetsToEditor(true);
+    }
 
     else if(message.contains("MENU COMMAND: toggle edit"))
     {
@@ -604,8 +609,9 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
     else
     {
         //deviceManager->closeAudioDevice();
-        filter->createGUI(csdFile.loadFileAsString(), true);
-        filter->reCompileCsound(csdFile);
+        filter->initliaseWidgets(csdFile.loadFileAsString(), true);
+        filter->addWidgetsToEditor(true);
+        filter->recompileCsound(csdFile);
 
     }
 
@@ -1223,7 +1229,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     }
     //----- update GUI only -----
     else if(options==9)
-        filter->createGUI(csdFile.loadFileAsString(), true);
+    {
+        filter->initliaseWidgets(csdFile.loadFileAsString(), true);
+        filter->addWidgetsToEditor(true);
+
+    }
 
     //----- batch process ------
     else if(options==11)

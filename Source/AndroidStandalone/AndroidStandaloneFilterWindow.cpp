@@ -1,6 +1,7 @@
 #include "AndroidStandaloneFilterWindow.h"
 
 String filename("");
+int bufferSize;
 
 extern StandaloneFilterWindow* filterWindow;
 
@@ -87,6 +88,7 @@ void StandaloneFilterWindow::loadFile(String filename)
 {
     File file(filename);
     pluginHolder->stopPlaying();
+    pluginHolder->reloadAudioDeviceState();
     deleteEditorComp();
     pluginHolder->deletePlugin();
 
@@ -160,10 +162,11 @@ void StandalonePluginHolder::createPlugin(String file)
     //processor->createGUI(tempFile.loadFileAsString(), true);
 
     AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Undefined);
-
     processor->setPlayConfigDetails(JucePlugin_MaxNumInputChannels,
                                     JucePlugin_MaxNumOutputChannels,
                                     44100, 64);
+
+    //showAudioSettingsDialog();
 }
 
 void StandalonePluginHolder::deletePlugin()
@@ -217,7 +220,7 @@ void StandalonePluginHolder::showAudioSettingsDialog()
 
 void StandalonePluginHolder::saveAudioDeviceState()
 {
-    // if (settings != nullptr)
+    //if (settings != nullptr)
     // {
     //     ScopedPointer<XmlElement> xml (deviceManager.createStateXml());
     //     settings->setValue ("audioSetup", xml);
@@ -230,11 +233,33 @@ void StandalonePluginHolder::reloadAudioDeviceState()
 
     //if (settings != nullptr)
     //    savedState = settings->getXmlValue ("audioSetup");
+    AudioDeviceManager::AudioDeviceSetup config;
 
     deviceManager.initialise (processor->getNumInputChannels(),
                               processor->getNumOutputChannels(),
                               savedState,
                               true);
+
+    deviceManager.getAudioDeviceSetup(config);
+    const Array<int> bufferSizes (deviceManager.getCurrentAudioDevice()->getAvailableBufferSizes());
+    if(bufferSize>1)
+    {
+        bufferSize = bufferSizes[bufferSizes.size()-1];
+        //cUtils::showMessage(bufferSize);
+    }
+    else if(bufferSize==1)
+    {
+        bufferSize = bufferSizes[round((bufferSizes.size()-1)/2)];
+        //cUtils::showMessage(bufferSize);
+    }
+    else
+        bufferSize = 0;
+
+
+    config.bufferSize = bufferSize;
+    deviceManager.setAudioDeviceSetup (config, true);
+    //showAudioSettingsDialog();
+    //cUtils::showMessage(deviceManager.getCurrentAudioDevice()->getCurrentBufferSizeSamples());
 }
 
 //==============================================================================
@@ -283,9 +308,10 @@ void StandalonePluginHolder::shutDownAudioDevices()
 }
 
 #ifdef JUCE_ANDROID
-extern "C" __attribute__ ((visibility("default"))) void Java_com_yourcompany_cabbage_Cabbage_loadCabbageFile (JNIEnv* env, jobject activity,jstring testString)
+extern "C" __attribute__ ((visibility("default"))) void Java_com_yourcompany_cabbage_Cabbage_loadCabbageFile (JNIEnv* env, jobject activity,jstring testString, jint suggestedBufferSize)
 
 {
+    bufferSize = (int)suggestedBufferSize;
     const char *inCStr = env->GetStringUTFChars(testString,nullptr);
     if(!filterWindow)
         filename = String(inCStr);
@@ -294,14 +320,4 @@ extern "C" __attribute__ ((visibility("default"))) void Java_com_yourcompany_cab
     env->ReleaseStringUTFChars(testString, inCStr);
 }
 
-//extern "C" __attribute__ ((visibility("default"))) void Java_com_yourcompany_cabbage_Cabbage_setScreenSize (JNIEnv* env, jobject activity, jint screenWidth, jint screenHeight)
-//
-//{
-//    const char *inCStr = env->GetStringUTFChars(testString,nullptr);
-//    if(!filterWindow)
-//        filename = String(inCStr);
-//    else
-//        filterWindow->loadFile(String(inCStr));
-//    env->ReleaseStringUTFChars(testString, inCStr);
-//}
 #endif

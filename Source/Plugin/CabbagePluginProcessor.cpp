@@ -92,7 +92,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
 {
 
     codeEditor = nullptr;
-    if(compileCsoundAndInitialiseGUI(false)==0)
+    if(compileCsoundAndCreateGUI(false)==0)
     {
         suspendProcessing(true);
         if(!inputfile.equalsIgnoreCase(""))
@@ -287,8 +287,9 @@ void CabbagePluginAudioProcessor::initAllChannels()
 //============================================================================
 //COMPILE CSOUND
 //============================================================================
-int CabbagePluginAudioProcessor::compileCsoundAndInitialiseGUI(bool isPlugin)
+int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
 {
+    initliaseWidgets(csdFile.loadFileAsString(), true);
 
     //File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
     csdFile.setAsCurrentWorkingDirectory();
@@ -364,6 +365,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndInitialiseGUI(bool isPlugin)
     csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
     if(csCompileResult==OK)
     {
+        initAllChannels();
         firstTime=false;
         guiRefreshRate = getCsoundKsmpsSize()*2;
 
@@ -443,19 +445,15 @@ int CabbagePluginAudioProcessor::compileCsoundAndInitialiseGUI(bool isPlugin)
         return 0;
     }
 #endif
-    createGUI(csdFile.loadFileAsString(), true);
-    CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
-    if(editor)
-    {
-        editor->resizeChildren();
-    }
-    initAllChannels();
+
+    addWidgetsToEditor(true);
+
     return 1;
 }
 //============================================================================
 //RECOMPILE CSOUND. THIS IS CALLED FROM THE PLUGIN HOST WHEN UDPATES ARE MADE ON THE FLY
 //============================================================================
-int CabbagePluginAudioProcessor::reCompileCsound(File file)
+int CabbagePluginAudioProcessor::recompileCsound(File file)
 {
 #ifndef Cabbage_No_Csound
 
@@ -621,9 +619,9 @@ int CabbagePluginAudioProcessor::reCompileCsound(File file)
 // EDITOR FROM INFORMATION HELD IN THE GUICONTROLS VECTOR
 //===========================================================
 //maybe this should only be done at the end of a k-rate cycle..
-void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
+void CabbagePluginAudioProcessor::initliaseWidgets(String source, bool refresh)
 {
-    cUtils::debug(source);
+    //cUtils::debug(source);
     //clear arrays if refresh is set
     if(refresh==true)
     {
@@ -640,12 +638,11 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
     }
 
     widgetTypes.clear();
-    int indexOfLastGUICtrl = guiCtrls.size();
-    int indexOfLastLayoutCtrl = guiLayoutCtrls.size();
+    indexOfLastGUICtrl = guiCtrls.size();
+    indexOfLastLayoutCtrl = guiLayoutCtrls.size();
 
     String warningMessage;
 
-    int checkGUI = isGuiEnabled();
     //setGuiEnabled((false));
     int guiID=0;
     StringArray csdText;
@@ -1047,6 +1044,16 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 
 //#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 
+
+
+//#endif
+}
+
+//===========================================================================================
+// Create GUI. Must only be called after the widget abstractions have been created
+//===========================================================================================
+void CabbagePluginAudioProcessor::addWidgetsToEditor(bool refresh)
+{
     if(this->createEditorIfNeeded())
     {
         CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
@@ -1085,12 +1092,11 @@ void CabbagePluginAudioProcessor::createGUI(String source, bool refresh)
 //            editor->InsertGUIControls(guiCtrls[i]);
 #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
         if(!getPreference(appProperties, "ExternalEditor") && refresh)
-            editor->setEditMode(checkGUI);
+            editor->setEditMode(isGuiEnabled());
 #endif
     }
-
-//#endif
 }
+
 
 //===========================================================
 // SHOW SOURCE EDITOR
@@ -1129,8 +1135,9 @@ void CabbagePluginAudioProcessor::openFile(LookAndFeel* looky)
     {
         csdFile = selectedFiles[0];
         //cabbageCsoundEditor->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
-        createGUI(selectedFiles[0].loadFileAsString(), true);
-        reCompileCsound(csdFile);
+        initliaseWidgets(selectedFiles[0].loadFileAsString(), true);
+        addWidgetsToEditor(true);
+        recompileCsound(csdFile);
     }
 }
 void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
@@ -2382,8 +2389,9 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
                 {
                     //showMessage(xmlState->getAttributeValue(i));
                     csdFile = File(xmlState->getAttributeValue(i));
-                    createGUI(csdFile.loadFileAsString(), true);
-                    reCompileCsound(csdFile);
+                    initliaseWidgets(csdFile.loadFileAsString(), true);
+                    addWidgetsToEditor(true);
+                    recompileCsound(csdFile);
                 }
             }
         }

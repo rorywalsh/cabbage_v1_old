@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!-- view background color -->
+    <solid
+        android:color="#3A6EB6" >
+    </solid>
+
+    <!-- view border color and width -->
+    <stroke
+        android:width="3dp"
+        android:color="#FFFFFF" >
+    </stroke>
+
+    <!-- If you want to add some padding -->
+    <padding
+        android:left="4dp"
+        android:top="10dp"
+        android:right="4dp"
+        android:bottom="8dp"    >
+    </padding>
+
+    <!-- Here is the corner radius -->
+    <corners
+        android:radius="10dp"   >
+    </corners>
+
+</shape>

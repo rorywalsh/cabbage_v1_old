@@ -1,6 +1,6 @@
 <Cabbage>
-form size(1270, 550), caption("Spook-ePad"), pluginID("epad"), colour(10, 10, 10), guirefresh(32)
-image bounds(0, 0, 1070, 450), shape("sharp"), colour(10, 10, 10), plant("testPlany"){
+form size(1035, 500), caption("Spook-ePad"), pluginID("epad"), colour(10, 10, 10), guirefresh(32), androidinfo("Spook-ePad instrument, by Rory Walsh")
+image bounds(0, 0, 1035, 450), shape("sharp"), colour(10, 10, 10), identchannel("mainPlant"), plant("fullgui"){
 ;image bounds(294, 0, 582, 305), alpha(1), child(0), shape("sharp"), linethickness(1), colour(160, 160, 160, 50),
 ;groupbox bounds(302, 8, 573, 295), text("Index Envelope"), colour(0, 0, 0, 50), caption("groupbBox")
 gentable bounds(310, 34, 555, 148), tablenumber(2), amprange(0, 1, 2), zoom(-1), tablegridcolour(160, 160, 160, 60), identchannel("table1")
@@ -22,6 +22,7 @@ keyboard bounds(160, 316, 719, 131), value(40)
 ;filebutton bounds(8, 312, 98, 27), text("Save Preset", "Save Preset"), populate("*.*", ""), colour:1(20, 20, 20), mode("file"), channel("filechooser")
 ;combobox bounds(106, 312, 105, 26), channel("combobox"), items("Crazy"), 
 
+
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>
@@ -29,7 +30,7 @@ keyboard bounds(160, 316, 719, 131), value(40)
 </CsOptions>
 <CsInstruments>
 
-	sr = 44100  
+	sr = 48000 
 	ksmps = 64
 	nchnls = 2
 	0dbfs = 1
@@ -53,6 +54,13 @@ keyboard bounds(160, 316, 719, 131), value(40)
 	gkAmp init .9
 	gkModIndex init .2 
 	
+	;***********************************************************
+	; rescale containing plant so it fits screen
+	instr 1000
+	Smessage sprintf "rescale(%f, %f)", strtod($SCREEN_WIDTH)/1025, strtod($SCREEN_HEIGHT)/500
+	chnset Smessage, "mainPlant"
+	endin
+	
 	;*********************************************************************
 	instr	1,2,3,4,5,6,7,8
 	;this will prevent notes from getting stuck
@@ -67,7 +75,8 @@ keyboard bounds(160, 316, 719, 131), value(40)
 		event "i", -instrN, 0, .1, inote, ivel
 	endif
 	endin
-       
+
+
     ;*********************************************************************
 	instr	100
 	icps = p4
@@ -153,8 +162,9 @@ keyboard bounds(160, 316, 719, 131), value(40)
 
 </CsInstruments>
 <CsScore>
-i200 	0	86400
-i300 	0	86400
+i1000 	0	1
+i200 	1	86400
+i300 	1	86400
 e
 </CsScore>
 </CsoundSynthesizer>

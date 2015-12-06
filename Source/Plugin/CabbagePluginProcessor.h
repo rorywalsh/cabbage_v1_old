@@ -266,6 +266,8 @@ public:
     String changeMessage;
     Array<int> dirtyControls;
     bool CSOUND_DEBUG_MODE;
+    int indexOfLastLayoutCtrl;
+    int indexOfLastGUICtrl;
     void setCsoundInstrumentBreakpoint(int instr, int line);
     void removeCsoundInstrumentBreakpoint(int instr);
     void continueCsoundDebug();
@@ -276,7 +278,7 @@ public:
     void actionListenerCallback (const String& message);
     void addMacros(String csdText);
     int screenWidth, screenHeight;
-    int compileCsoundAndInitialiseGUI(bool isPlugin);
+    int compileCsoundAndCreateGUI(bool isPlugin);
     void setScreenMacros();
 
 
@@ -356,7 +358,7 @@ public:
 
     void startRecording();
     void stopRecording();
-    int reCompileCsound(File file);
+    int recompileCsound(File file);
     void openFile(LookAndFeel* looky);
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock);
@@ -397,7 +399,8 @@ public:
     StringArray getTableStatement(int tableNum);
     const Array<double, CriticalSection> getTable(int tableNum);
     const Array<float, CriticalSection> getTableFloats(int tableNum);
-    void createGUI(String source, bool refresh);
+    void initliaseWidgets(String source, bool refresh);
+    void addWidgetsToEditor(bool refresh);
     int checkTable(int tableNum);
     MidiKeyboardState keyboardState;
     //midiBuffers

@@ -23,7 +23,7 @@
 */
 
 package com.yourcompany.cabbage;
-
+import android.widget.TextView;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -63,7 +63,7 @@ import java.net.HttpURLConnection;
 import android.media.AudioManager;
 import android.media.MediaScannerConnection;
 import android.media.MediaScannerConnection.MediaScannerConnectionClient;
-
+import android.content.SharedPreferences;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -78,11 +78,16 @@ import android.widget.ViewFlipper;
 //==============================================================================
 public class Cabbage   extends Activity implements AdapterView.OnItemClickListener
 {
-    ListView listView;
-    ArrayAdapter<String> listAdapter;
+    ListView fileListView;
+    ArrayAdapter<String> fileListAdapter;
+
+    ListView bufferListView;
+    ArrayAdapter<String> bufferListAdapter;
+
+    int bufferSize=99;
     ArrayList<String> files;
     LinearLayout juceViewContainer;
-    public static native void loadCabbageFile (String message);
+    public static native void loadCabbageFile (String message, int bufferSize);
     private ViewFlipper viewFlipper;
 
     //==============================================================================
@@ -237,11 +242,16 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
         assetsFiles.add("IntroScreen.csd");
         assetsFiles.add("PebblesInAPond.csd");
         assetsFiles.add("SpookEPad.csd");
-        assetsFiles.add("VectorialSynth.csd");
+        assetsFiles.add("PatternMatrix.csd");
         viewHolder = new ViewHolder (this);
         //setContentView (viewHolder);
         setContentView (R.layout.activity_home);
         viewFlipper = (ViewFlipper) findViewById(R.id.viewflipper);
+
+        TextView textView2 = (TextView) findViewById(R.id.textView2); 
+        textView2.setTextColor(Color.parseColor("#FFFFFF"));
+        textView2.setText("Select a file to open");   
+        //textView2.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);    
         //setVolumeControlStream (AudioManager.STREAM_MUSIC);
         juceViewContainer = (LinearLayout) findViewById(R.id.juce_container);
         juceViewContainer.addView(viewHolder);
@@ -252,22 +262,51 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
         display.getSize(size);
         int width = size.x;
         int height = size.y;
-        //showNativeMessage(Integer.toString(height));
         addFilesToListView();
         //viewFlipper.showNext();
+        //addBufferSizesToListView();
         setVolumeControlStream (AudioManager.STREAM_MUSIC);
 
+    }
+
+    public void buttonOnClick(View view) 
+    {
+        if (view.getId()==R.id.aboutButton)
+        {
+            showNativeMessage("Info", "Cabbage. Developed by Rory Walsh.\nWebsite: cabbageaudio.com\nUser forum: forum.cabbageaudio.com");
+        }
+        else
+        {
+            final CharSequence[] items = {
+                    "Smallest", "Medium", "Largest"
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Select Buffer Size");
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                bufferSize = item;
+                SharedPreferences settings = getSharedPreferences("CabbagePrefs", 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("buffer", Integer.toString(item));
+                editor.apply();
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
     //add tune types to list view
     void addFilesToListView(){
         // Find the ListView resource.
-        listView = (ListView) findViewById( R.id.fileListView);
+        fileListView = (ListView) findViewById( R.id.fileListView);
+        fileListView.setTag("filelistview");
         ArrayList<String> fileList = new ArrayList<String>();
-        listView.setOnItemClickListener(this);
+        fileListView.setOnItemClickListener(this);
 
         // Create ArrayAdapter using the planet list.
-        listAdapter = new ArrayAdapter<String>(this, R.layout.listview_text_item, fileList);
+        fileListAdapter = new ArrayAdapter<String>(this, R.layout.fileview_text_item, fileList);
         int numberOfTunes=0;
         //append tune titles to list view
      
@@ -285,13 +324,13 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
                 {
                     files.add(dirFiles[i].getAbsolutePath());
                     //tuneLinks.add(fileList[i].getAbsolutePath());
-                    listAdapter.add(dirFiles[i].getName());
+                    fileListAdapter.add(dirFiles[i].getName());
                 }
             }
         }
              
-        listView.setAdapter( listAdapter );
-        listView.setBackgroundResource(R.drawable.rounded_button);
+        fileListView.setAdapter( fileListAdapter );
+        fileListView.setBackgroundResource(R.drawable.file_list_view);
     }
 
     private void copyAssets() 
@@ -303,7 +342,7 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
             files = assetManager.list("");
         } 
         catch (IOException e) {
-            showNativeMessage("Failed to open assets");
+            showNativeMessage("Error", "Failed to open assets");
         }
 
 
@@ -332,15 +371,16 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
          
             } 
             catch(IOException e) {
-                showNativeMessage(e.getMessage());
+                showNativeMessage("Error", e.getMessage());
                 }       
         }            
     }
         
-    void showNativeMessage(String message)
+    void showNativeMessage(String title, String message)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message)
+               .setTitle(title)
                .setCancelable(false)
                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
@@ -368,11 +408,11 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-          //loadCabbageFile("hello good times"); 
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
+    {
         showInfoFromCsdFile(files.get(position));
         viewFlipper.showNext();
-        Cabbage.loadCabbageFile(files.get(position)); 
+        Cabbage.loadCabbageFile(files.get(position), bufferSize); 
     }
 
     void showInfoFromCsdFile(String csdfile)
@@ -390,7 +430,7 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
 
                     String newLine = line.substring(line.indexOf("androidinfo(")+13);
                     newLine = newLine.substring(0, newLine.indexOf(")")-1);
-                    showNativeMessage(newLine);
+                    showNativeMessage("Info", newLine);
                     
                 }
             }

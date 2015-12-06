@@ -15,33 +15,96 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:layout_weight="1" 
                 android:orientation="horizontal" 
                 android:background="#3A6EB6">
 
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/icon"
-                    android:layout_centerVertical="true" 
-                    android:layout_centerHorizontal="true"/>
+                <LinearLayout
+                    android:layout_width="300dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                <ListView
-                    android:id="@+id/fileListView"
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="180dp"  
+                        android:src="@drawable/icon"/>
+
+                    <Button
+                        android:layout_width="200dp"
+                        android:layout_height="40dp"
+                        android:textColor="#FFF"
+                        android:text="About"
+                        android:gravity="center"
+                        android:layout_marginLeft="50dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/rounded_button"
+                        android:id="@+id/aboutButton"
+                        android:onClick="buttonOnClick"
+                    />
+
+                    <Button
+                        android:layout_width="200dp"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="50dp"
+                        android:layout_marginTop="10dp"
+                        android:textColor="#FFF"
+                        android:text="Buffer Settings"
+                        android:gravity="center"
+                        android:background="@drawable/rounded_button"
+                        android:id="@+id/settingsButton"
+                        android:onClick="buttonOnClick"
+                    />
+
+
+<!--                     <EditText
+                            android:layout_width="300dp"
+                            android:layout_height="100dp"
+                            android:gravity="center"
+                            android:hint="Hello" 
+                            android:editable="false"
+                            android:textColor="#FFFFFF"
+                            android:background="#3A6EB6"
+                            android:textSize="50sp"/> -->
+
+<!--                     <ImageView
+                        android:id="@+id/imageView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"  
+                        android:src="@drawable/icon"/>    --> 
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_weight="1" 
-                    android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true" />
+                    android:orientation="vertical">
+
+                    <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="340dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="15dp"
+                    android:gravity="center"
+                    android:hint="Select Buffer Size" 
+                    android:textSize="20sp"/>
+                                       
+                    <ListView
+                        android:id="@+id/fileListView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="50dp"
+                        android:layout_marginLeft="30dp"
+                        android:dividerHeight="1dip"
+                        android:divider="#FFFFFF"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginTop="10dp"
+                        android:paddingTop="0dp"
+                        android:layout_weight="1" 
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

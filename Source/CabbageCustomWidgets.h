@@ -1168,12 +1168,15 @@ public:
     {
         for( int i=0; i<getNumChildComponents(); i++)
         {
-            Rectangle<int> bounds = getChildComponent(i)->getBounds();
+            const Rectangle<int> bounds = getChildComponent(i)->getBounds();
             getChildComponent(i)->setBounds(bounds.getX()*x,
                                             bounds.getY()*y,
                                             bounds.getWidth()*x,
                                             bounds.getHeight()*y);
         }
+
+        setSize(this->getWidth()*x, this->getHeight()*y);
+        getParentComponent()->resized();
     }
 
     //update control
@@ -1368,6 +1371,7 @@ public:
                                             bounds.getWidth()*x,
                                             bounds.getHeight()*y);
         }
+
         setSize(this->getWidth()*x, this->getHeight()*y);
         getParentComponent()->resized();
     }

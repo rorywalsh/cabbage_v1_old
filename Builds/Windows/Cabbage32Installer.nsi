@@ -89,7 +89,6 @@ Section "Core components" SEC01
   File "..\..\..\csound\build\osc.dll"
   File "..\..\..\csound\build\padsynth.dll"
   File "..\..\..\csound\build\platerev.dll"
-  File "..\..\..\csound\build\py.dll"
   File "..\..\..\csound\build\rtpa.dll"
   File "..\..\..\csound\build\rtwinmm.dll"
   File "..\..\..\csound\build\scansyn.dll"

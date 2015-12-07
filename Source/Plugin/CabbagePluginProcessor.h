@@ -399,7 +399,7 @@ public:
     StringArray getTableStatement(int tableNum);
     const Array<double, CriticalSection> getTable(int tableNum);
     const Array<float, CriticalSection> getTableFloats(int tableNum);
-    void initliaseWidgets(String source, bool refresh);
+    void initialiseWidgets(String source, bool refresh);
     void addWidgetsToEditor(bool refresh);
     int checkTable(int tableNum);
     MidiKeyboardState keyboardState;

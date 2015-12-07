@@ -345,7 +345,7 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
     {
         //if something changes in the properties panel we need to update our GUI so
         //that the changes are reflected in the on screen components
-        filter->initliaseWidgets(csdFile.loadFileAsString(), true);
+        filter->initialiseWidgets(csdFile.loadFileAsString(), true);
         filter->addWidgetsToEditor(true);
         if(cabbageCsoundEditor)
         {
@@ -455,7 +455,7 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
 
     else if(message.contains("fileUpdateGUI"))
     {
-        filter->initliaseWidgets(cabbageCsoundEditor->getText(), true);
+        filter->initialiseWidgets(cabbageCsoundEditor->getText(), true);
         filter->addWidgetsToEditor(true);
         csdFile.replaceWithText(cabbageCsoundEditor->getText());
         if(cabbageCsoundEditor)
@@ -473,7 +473,7 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
 
     else if(message.contains("MENU COMMAND: manual update GUI"))
     {
-        filter->initliaseWidgets(csdFile.loadFileAsString(), true);
+        filter->initialiseWidgets(csdFile.loadFileAsString(), true);
         filter->addWidgetsToEditor(true);
     }
 
@@ -609,7 +609,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
     else
     {
         //deviceManager->closeAudioDevice();
-        filter->initliaseWidgets(csdFile.loadFileAsString(), true);
+        filter->initialiseWidgets(csdFile.loadFileAsString(), true);
         filter->addWidgetsToEditor(true);
         filter->recompileCsound(csdFile);
 
@@ -1230,7 +1230,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     //----- update GUI only -----
     else if(options==9)
     {
-        filter->initliaseWidgets(csdFile.loadFileAsString(), true);
+        filter->initialiseWidgets(csdFile.loadFileAsString(), true);
         filter->addWidgetsToEditor(true);
 
     }

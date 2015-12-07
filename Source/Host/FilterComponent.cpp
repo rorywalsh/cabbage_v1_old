@@ -492,7 +492,7 @@ void FilterComponent::actionListenerCallback (const String &message)
             {
 
                 instance->suspendProcessing(true);
-                instance->reCompileCsound(file);
+                instance->recompileCsound(file);
                 instance->setPlayConfigDetails(newChannelCount,
                                                newChannelCount,
                                                instance->getCsoundSamplingRate(),
@@ -500,7 +500,8 @@ void FilterComponent::actionListenerCallback (const String &message)
 
                 numIns = instance->getNumberCsoundOutChannels();
                 numOuts = instance->getNumberCsoundOutChannels();
-                instance->createGUI(file.loadFileAsString(), true);
+                instance->initialiseWidgets(file.loadFileAsString(), true);
+				instance->addWidgetsToEditor(true);
 
 
                 if(instance->getActiveEditor() != nullptr)

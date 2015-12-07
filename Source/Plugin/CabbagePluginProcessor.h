@@ -480,7 +480,7 @@ public:
         //showMessage(opcodeDir);
         if(File(opcodeDir).exists())
         {
-            String env = "OPCODE6DIR="+opcodeDir;
+            String env = "OPCODE6DIR64="+opcodeDir;
             _putenv(env.toUTF8().getAddress());
             Logger::writeToLog("Current opcodeDir is:"+String(getenv("OPCODE6DIR")));
 

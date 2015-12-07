@@ -159,7 +159,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
         csdFile = File(sourcefile);
 
 
-    if(compileCsoundAndInitialiseGUI(false)==0)
+    if(compileCsoundAndCreateGUI(false)==0)
     {
         suspendProcessing(true);
         cUtils::debug("Csound coudln't compile your file:"+csdFile.getFullPathName());
@@ -289,7 +289,7 @@ void CabbagePluginAudioProcessor::initAllChannels()
 //============================================================================
 int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
 {
-    initliaseWidgets(csdFile.loadFileAsString(), true);
+    initialiseWidgets(csdFile.loadFileAsString(), true);
 
     //File(csdFile.getFullPathName()).setAsCurrentWorkingDirectory();
     csdFile.setAsCurrentWorkingDirectory();
@@ -619,7 +619,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 // EDITOR FROM INFORMATION HELD IN THE GUICONTROLS VECTOR
 //===========================================================
 //maybe this should only be done at the end of a k-rate cycle..
-void CabbagePluginAudioProcessor::initliaseWidgets(String source, bool refresh)
+void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
 {
     //cUtils::debug(source);
     //clear arrays if refresh is set
@@ -1135,7 +1135,7 @@ void CabbagePluginAudioProcessor::openFile(LookAndFeel* looky)
     {
         csdFile = selectedFiles[0];
         //cabbageCsoundEditor->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
-        initliaseWidgets(selectedFiles[0].loadFileAsString(), true);
+        initialiseWidgets(selectedFiles[0].loadFileAsString(), true);
         addWidgetsToEditor(true);
         recompileCsound(csdFile);
     }
@@ -1160,8 +1160,9 @@ void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
         {
             csdFile = selectedFiles[0];
             cabbageCsoundEditor->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
-            createGUI(selectedFiles[0].loadFileAsString(), true);
-            reCompileCsound(csdFile);
+            initialiseWidgets(csdFile.loadFileAsString(), true);
+            addWidgetsToEditor(true);
+            recompileCsound(csdFile);
         }
     }
 
@@ -1175,7 +1176,10 @@ void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
     {
         //if something changes in the properties panel we need to update our GUI so
         //that the changes are reflected in the on screen components
-        createGUI(csdFile.loadFileAsString(), true);
+        initialiseWidgets(csdFile.loadFileAsString(), true);
+        addWidgetsToEditor(true);
+        
+        
         if(cabbageCsoundEditor)
         {
             //cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
@@ -1218,8 +1222,9 @@ void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
             csdFile.replaceWithText(cabbageCsoundEditor->getText());
         }
 
-        createGUI(csdFile.loadFileAsString(), true);
-        reCompileCsound(csdFile);
+        initialiseWidgets(csdFile.loadFileAsString(), true);
+        addWidgetsToEditor(true);
+        recompileCsound(csdFile);
 
         if(isGuiEnabled())
         {
@@ -1262,7 +1267,8 @@ void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
 
     else if(message.contains("fileUpdateGUI"))
     {
-        createGUI(cabbageCsoundEditor->getText(), true);
+        initialiseWidgets(cabbageCsoundEditor->getText(), true);
+        addWidgetsToEditor(true);
         csdFile.replaceWithText(cabbageCsoundEditor->getText());
         if(cabbageCsoundEditor)
         {
@@ -2389,7 +2395,7 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
                 {
                     //showMessage(xmlState->getAttributeValue(i));
                     csdFile = File(xmlState->getAttributeValue(i));
-                    initliaseWidgets(csdFile.loadFileAsString(), true);
+                    initialiseWidgets(csdFile.loadFileAsString(), true);
                     addWidgetsToEditor(true);
                     recompileCsound(csdFile);
                 }

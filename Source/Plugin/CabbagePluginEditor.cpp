@@ -1035,7 +1035,7 @@ void CabbagePluginAudioProcessorEditor::sendBack(bool toBack)
     }
 
     getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
-    getFilter()->initliaseWidgets(csdArray.joinIntoString("\n"), true);
+    getFilter()->initialiseWidgets(csdArray.joinIntoString("\n"), true);
     getFilter()->addWidgetsToEditor(true);
 
 
@@ -1096,7 +1096,7 @@ void CabbagePluginAudioProcessorEditor::sendForward(bool toFront)
     }
 
     getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
-    getFilter()->initliaseWidgets(csdArray.joinIntoString("\n"), true);
+    getFilter()->initialiseWidgets(csdArray.joinIntoString("\n"), true);
     getFilter()->addWidgetsToEditor(true);
 
 
@@ -1205,7 +1205,7 @@ void CabbagePluginAudioProcessorEditor::deleteComponents()
 
     plantDefs.clear();
     getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
-    getFilter()->initliaseWidgets(csdArray.joinIntoString("\n"), true);
+    getFilter()->initialiseWidgets(csdArray.joinIntoString("\n"), true);
     getFilter()->addWidgetsToEditor(true);
 
 
@@ -1779,7 +1779,7 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
     getFilter()->updateCsoundFile(csdArray.joinIntoString("\n"));
     getFilter()->highlightLine(currentText);
     //currentLineNumber = getFilter()->getCurrentLine();
-    getFilter()->initliaseWidgets(text.joinIntoString("\n"), false);
+    getFilter()->initialiseWidgets(text.joinIntoString("\n"), false);
     getFilter()->addWidgetsToEditor(false);
 
 
@@ -3595,7 +3595,7 @@ void CabbagePluginAudioProcessorEditor::actionListenerCallback (const String& me
         getFilter()->highlightLine(csdArray[currentLineNumber]);
         //Logger::writeToLog(csdArray[currentLineNumber]);
         getFilter()->setGuiEnabled(true);
-        getFilter()->initliaseWidgets(csdArray.joinIntoString("\n"), true);
+        getFilter()->initialiseWidgets(csdArray.joinIntoString("\n"), true);
         getFilter()->addWidgetsToEditor(true);
         layoutEditor->selectedFilters.deselectAll();
         //getFilter()->sendActionMessage("GUI Updated, controls added");

@@ -843,7 +843,7 @@ public:
             if(!subFolders[i].containsSubDirectories())
             {
                 subFolders[i].findChildFiles(filesArray, File::findFiles, false, ext);
-				filesArray.sort();
+                filesArray.sort();
 
                 subMenu.clear();
                 for (fileCnt = noOfFiles; fileCnt < filesArray.size(); fileCnt++)

@@ -210,18 +210,18 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 void CabbagePluginAudioProcessor::setScreenMacros()
 {
 //android opens full screen by default.
-#ifdef AndroidBuild
-    Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-    String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth()-60)+"\"";
-    csound->SetOption(screenWidth.toUTF8().getAddress());
-    String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight()-60)+"\"";
-    csound->SetOption(screenHeight.toUTF8().getAddress());
-#else
+//#ifdef AndroidBuild
+//    Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+//    String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth()-60)+"\"";
+//    csound->SetOption(screenWidth.toUTF8().getAddress());
+//    String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight()-60)+"\"";
+//    csound->SetOption(screenHeight.toUTF8().getAddress());
+//#else
     String width = "--omacro:SCREEN_WIDTH=\""+String(screenWidth)+"\"";
     csound->SetOption(width.toUTF8().getAddress());
     String height = "--omacro:SCREEN_HEIGHT=\""+String(screenHeight)+"\"";
     csound->SetOption(height.toUTF8().getAddress());
-#endif
+//#endif
 }
 //============================================================================
 //FIND MACROS AND ADD THEM TO SETUP OPTIONS
@@ -1178,8 +1178,8 @@ void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
         //that the changes are reflected in the on screen components
         initialiseWidgets(csdFile.loadFileAsString(), true);
         addWidgetsToEditor(true);
-        
-        
+
+
         if(cabbageCsoundEditor)
         {
             //cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());

@@ -2113,9 +2113,8 @@ void CabbagePluginAudioProcessorEditor::setupWindow(CabbageGUIClass &cAttr)
 
 #ifdef AndroidBuild
     //Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-
+    setSize(width, height);
     //setSize(rect.getWidth(), rect.getHeight()-20);
-	Desktop::getInstance().setGlobalScaleFactor(.7f);
     //setSize(getWidth(), getHeight());
     componentPanel->setBounds(0, 0, getWidth(), getHeight());
     // componentPanel->setBounds(left, top, rect.getWidth(), rect.getHeight());

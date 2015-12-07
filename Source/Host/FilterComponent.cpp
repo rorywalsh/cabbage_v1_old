@@ -501,7 +501,7 @@ void FilterComponent::actionListenerCallback (const String &message)
                 numIns = instance->getNumberCsoundOutChannels();
                 numOuts = instance->getNumberCsoundOutChannels();
                 instance->initialiseWidgets(file.loadFileAsString(), true);
-				instance->addWidgetsToEditor(true);
+                instance->addWidgetsToEditor(true);
 
 
                 if(instance->getActiveEditor() != nullptr)

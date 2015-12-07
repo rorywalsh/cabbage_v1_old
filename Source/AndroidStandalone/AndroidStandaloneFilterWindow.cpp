@@ -6,8 +6,11 @@ int bufferSize;
 extern StandaloneFilterWindow* filterWindow;
 
 StandaloneFilterWindow::StandaloneFilterWindow ()
-    : DocumentWindow ("Cabbage", Colours::black, DocumentWindow::minimiseButton | DocumentWindow::closeButton), lookAndFeel(new CabbageLookAndFeel()),
-      editorShowing(true)
+    : DocumentWindow ("Cabbage", Colours::black, DocumentWindow::minimiseButton | DocumentWindow::closeButton),
+      lookAndFeel(new CabbageLookAndFeel()),
+      editorShowing(true),
+      globalScale(1.f),
+      firstRun(true)
 {
     ///Desktop::getInstance().setGlobalScaleFactor(0.5f);
     setTitleBarButtonsRequired(0, false);
@@ -20,6 +23,7 @@ StandaloneFilterWindow::StandaloneFilterWindow ()
     setFullScreen(true);
     loadFile(filename);
     createEditorComp();
+
     //setSize(200, 200);
     setName(pluginHolder->processor->getName());
     setVisible (true);
@@ -49,6 +53,11 @@ AudioDeviceManager& StandaloneFilterWindow::getDeviceManager() const noexcept
 void StandaloneFilterWindow::createEditorComp()
 {
     setContentOwned (getAudioProcessor()->createEditorIfNeeded(), true);
+    if(firstRun)
+    {
+        desktopRect = Desktop::getInstance().getDisplays().getMainDisplay().userArea.toFloat();
+        firstRun=false;
+    }
 }
 
 void StandaloneFilterWindow::deleteEditorComp()
@@ -98,11 +107,21 @@ void StandaloneFilterWindow::loadFile(String filename)
         pluginHolder->createPlugin(file.getFullPathName());
 
         createEditorComp();
+
+        float pluginWidth = pluginHolder->processor->getActiveEditor()->getWidth();
+        float pluginHeight = pluginHolder->processor->getActiveEditor()->getHeight();
+
+        //cUtils::showMessage(String(globalScale)+":"+String(desktopRect.getWidth())+":"+String(pluginWidth));
+
+        //this will causes all plugins to resize to fit the screen on android.
+        Desktop::getInstance().setGlobalScaleFactor(1.f/globalScale);
+        globalScale = desktopRect.getWidth()/pluginWidth;
+        Desktop::getInstance().setGlobalScaleFactor(globalScale);
+
         setName(pluginHolder->processor->getName());
         pluginHolder->startPlaying();
         clearContentComponent();
         setContentOwned (getAudioProcessor()->createEditorIfNeeded(), true);
-        Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
         //cUtils::showMessage(rect.getHeight());
         StringArray csdArray;
         csdArray.addLines(file.loadFileAsString());

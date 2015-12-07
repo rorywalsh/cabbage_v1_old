@@ -139,7 +139,11 @@ public:
     //ScopedPointer<FileBrowser> fileBrowser;
     bool editorShowing;
 
+
 private:
+    float globalScale;
+    Rectangle<float> desktopRect;
+    bool firstRun;
     //==============================================================================
     TextButton optionsButton;
     ScopedPointer<StandalonePluginHolder> pluginHolder;

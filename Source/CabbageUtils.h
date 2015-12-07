@@ -823,10 +823,10 @@ public:
     {
         File searchDir(dir);
         Array<File> subFolders;
-        Array<File> files;
         subFolders.add(searchDir);
         int noOfFiles=0, fileCnt;
         searchDir.findChildFiles(subFolders, File::findDirectories, true);
+        subFolders.sort();
         String pathSlash;
 #if defined(LINUX) || defined(MACOSX)
         pathSlash = "/";

@@ -1250,9 +1250,9 @@ public:
             {
                 g.fillAll(Colours::transparentBlack);
                 g.setColour(Colour::fromString(outline));
-                g.drawRoundedRectangle(0,0, width, height, width*.05, line);
+                g.drawRoundedRectangle(0,0, width, height, width*.025, line);
                 g.setColour(Colour::fromString(colour));
-                g.fillRoundedRectangle(line,line, width-(line*2), height-(line*2), width*.05);
+                g.fillRoundedRectangle(line,line, width-(line*2), height-(line*2), width*.025);
             }
             if(shape=="ellipse")
             {

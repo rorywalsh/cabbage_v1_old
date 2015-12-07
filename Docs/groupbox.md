@@ -22,7 +22,7 @@ widgetarray("chan", number), active(val)
 
 **line(value)** Turns off the line that appears on a groupbox. 
 
-**plant("name")** Sets the name of the plant. No two plants can have the same name. See link#_plants[Plants]
+**plant("name")** Sets the name of the plant. No two plants can have the same name. See [Plants](./plants.md)
 
 **alpha(val)** A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
@@ -41,6 +41,7 @@ widgetarray("chan", number), active(val)
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
 <!--(End of identifiers)/-->
 
 ##Example

@@ -22,7 +22,7 @@ active(val)
 
 **value(val)** val sets the initial state of the widget
   
-**populate("filetype", "dir")** This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "\*.snaps". When using the populate() identifier you do not need to use the items() identifier. If no directory is specified, Cabbage will look in the current working directory. See <<presets, Presets>> <<filebutton, Filebutton>>  
+**populate("filetype", "dir")** This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "\*.snaps". When using the populate() identifier you do not need to use the items() identifier. If no directory is specified, Cabbage will look in the current working directory. See [Presets](./presets.md)
   
 **caption("caption")** This identifier lets you place your widget within a groupbox. "caption" is the text that will appear on groupbox. This identifier is useful for naming and containing widgets.  
 
@@ -45,6 +45,7 @@ active(val)
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
 <!--(End of identifiers)/-->
 
 ##Example

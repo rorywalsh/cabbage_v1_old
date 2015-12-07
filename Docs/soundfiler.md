@@ -37,6 +37,7 @@ rotate(radians, pivotx, pivoty), widgetarray("chan", number), active(val)
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
 <!--(End of identifiers)/-->
 
 ##Example

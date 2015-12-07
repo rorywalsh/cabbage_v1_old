@@ -103,7 +103,8 @@ instr 1
  koffset	portk	koffset,kporttime*0.5
  aoffset	interp	koffset
  
- a1,a2	ins
+ a1	inch 1
+ a2 inch 1
  ;a1	pinkish	0.1
  ;a2	pinkish	0.1
  ;a1	vco2	0.1,50,4,0.5

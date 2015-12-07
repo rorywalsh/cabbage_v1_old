@@ -1,2 +1,2 @@
 
-<img src="images/logo_cabbage_sw.png" align="center" style="text-align:center"/>
+<img src="images/Cabbage.png" align="center" width:200px style="text-align:center"/>

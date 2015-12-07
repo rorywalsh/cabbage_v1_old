@@ -9,7 +9,7 @@ Once a widget has been placed onto the form, an identifier properties dialogue w
 
 ![](images/editMode.gif)
 
-Multiple widgets can be selected by dragging over them. Once selected they can be moved around the screen and duplicated, but they can't be resized in a single move. To do this one must group the widgets into a <<plants,Plant>>. Once the widgets have been grouped as a plant, they can be resized by dragging the corner of the plant. The newly created plant can also be added to the Plant repository by right-clicking and selecting the 'Add to Repository' command. 
+Multiple widgets can be selected by dragging over them. Once selected they can be moved around the screen and duplicated, but they can't be resized in a single move. To do this one must group the widgets into [Plants](./plants.md). Once the widgets have been grouped as a plant, they can be resized by dragging the corner of the plant. The newly created plant can also be added to the Plant repository by right-clicking and selecting the 'Add to Repository' command. 
 
 ![](images/editMode2.gif)
 

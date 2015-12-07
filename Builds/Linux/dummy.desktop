@@ -7,4 +7,4 @@ Categories=AudioVideo;Audio;Multimedia
 Exec=CURRENTDIR/CabbageBuild/Cabbage
 Terminal=false
 StartupNotify=false
-Icon=CURRENTDIR/CabbageBuild/Cabbage.png
+Icon=CURRENTDIR/CabbageBuild/cabbage.png

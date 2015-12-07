@@ -7,8 +7,7 @@ While any text editor can be used to code Cabbage instruments, it's fair to say 
 ## Open Cabbage Instrument
 Use this command to open a cabbage instrument(unified Csound file with a dedicated <Cabbage></Cabbage> section). You may open any .csd file you wish and add a Cabbage section yourself once it's open. Note that if you try to open an existing non-Cabbage .csd file you will need to update its CsOptions section so that Csound doesn't try to write audio to disk itself. 
  
-![Note](images/smallLogo.PNG)
-*On OSX users can open .csd files contained within plugins. Just select a .vst file instead of a .csd file when opening. See the sections on exporting plugins for more information.*
+> *On OSX users can open .csd files contained within plugins. Just select a .vst file instead of a .csd file when opening. See the sections on exporting plugins for more information.*
 
 ## New Cabbage...
 This command will help you create a new Cabbage instrument/effect. Cabbage instruments are synthesisers capable of creating sounds from scratch while effects process incoming audio. Effects can access the incoming audio by using the 'inch' or 'ins' opcodes. All effects have stereo inputs and stereo outputs. Instruments can access the incoming MIDI data in a host of different ways but the easiest is to pipe the MIDI data directly to instrument p-fields using the MIDI inter-op command line flags. Examples can be found in the examples folder.
@@ -23,15 +22,13 @@ Clicking on the audio settings command will open the audio settings window. Here
 ## Toggle edit-mode
 Enabling edit-mode allows users to interact with GUI widgets. When in edit-mode, right clicking on the instrument's main area will display a context menu that will let you select a widget to insert on to your main form. When a widget is placed on screen the corresponding code will be inserted into your instrument's code. Any changes you make to the widget's size and position will automatically be updated in your code. Toggling edit-mode will also cause a property dialogue to appear. Any widget property can be set using this property dialogue window. In order to update your underlying source code with a newly edited property you must hit the 'Esc' key on your keyboard. If you do not, your updated property will not be passed to the instrument's source code and will therefore be discarded.  
 
-![Note](images/smallLogo.PNG)
-*One should get into the habit of updating/saving their instruments when they make changes to its user interface. Instruments need to be recompiled for any changes to stick.*   
+> One should get into the habit of updating/saving their instruments when they make changes to its user interface. Instruments need to be recompiled for any changes to stick.   
 
 ## Export/Export as...
 
 This command will export your Cabbage instrument as a plugin, that is, it will create a new plugin library file along with a copy of the Csound text file. Clicking 'synth' or 'effect' will cause Cabbage to create a plugin file in the same directory as the .csd file you are currently using. When 'exporting as...' Cabbage will prompt you to save your plugin in a set location, under a specific name. Once Cabbage has created the plugin it will make a copy of the current .csd file and locate it in the same folder as the plugin. This new .csd file will have the same name as the plugin and should ALWAYS be in the same directory as the plugin file. 
 
-![Note](images/smallLogo.PNG)
-*You do not need to keep exporting instruments as plugins every time you modify them. You need only modify the associated .csd file. To simplify this task, Cabbage will automatically load the associated .csd file whenever you export as a plugin. On OSX Cabbage can open a plugin's .csd file directly be selecting the plugin when prompted to select a file to open.*  
+> You do not need to keep exporting instruments as plugins every time you modify them. You need only modify the associated .csd file. To simplify this task, Cabbage will automatically load the associated .csd file whenever you export as a plugin. On OSX Cabbage can open a plugin's .csd file directly be selecting the plugin when prompted to select a file to open. 
 
 ## Reload Instrument
 This command will hard reset and rebuild the instrument from disk. 
@@ -39,8 +36,7 @@ This command will hard reset and rebuild the instrument from disk.
 ## Batch Convert 
 Batch convert will let convert a selection of Cabbage .csd files, or an entire directory into plugins so you don't have to manually open and export each one.  
 
-![Note](images/smallLogo.PNG)
-*Currently this feature is only available on Windows. *
+> Currently this feature is only available on Windows.
 
 ## Preferences
 The following preferences are available:

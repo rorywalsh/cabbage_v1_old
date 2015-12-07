@@ -1,6 +1,6 @@
 
 <Cabbage>
-form caption("Drum Pads") size(850, 430), pluginID("DPds")
+form caption("Drum Pads") size(850, 630), pluginID("DPds")
 image bounds( -10, 10, 200, 200), identchannel("drum1"), colour(150,150,170), shape("rounded"), outlinecolour("white"), line(0)
 image bounds(-220, 10, 200, 200), identchannel("drum2"), colour(150,150,170), shape("rounded"), outlinecolour("white"), line(0)
 image bounds(-430, 10, 200, 200), identchannel("drum3"), colour(150,150,170), shape("rounded"), outlinecolour("white"), line(0)
@@ -10,7 +10,6 @@ image bounds(-220,220, 200, 200), identchannel("drum6"), colour(150,150,170), sh
 image bounds(-430,220, 200, 200), identchannel("drum7"), colour(150,150,170), shape("rounded"), outlinecolour("white"), line(0)
 image bounds(-640,220, 200, 200), identchannel("drum8"), colour(150,150,170), shape("rounded"), outlinecolour("white"), line(0)
 </Cabbage>
-
 <CsoundSynthesizer>
 
 <CsOptions>
@@ -32,6 +31,8 @@ gicos		ftgen	0,0,65536,9,1,1,90	; A COSINE WAVE
 instr 1
 iWidth strtod $SCREEN_WIDTH
 iHeight strtod $SCREEN_HEIGHT
+print iWidth
+print iHeight
 ; iWidth = 1200
 ; iHeight = 680
 iPadWidth = iWidth/4.3

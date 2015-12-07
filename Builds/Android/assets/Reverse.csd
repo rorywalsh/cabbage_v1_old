@@ -87,15 +87,15 @@ endop
 
 
 instr 1
-ktimeL   = 1;"timeL"
-ktimeR   = 1;"timeR"
-kspread  = 1;"spread"
-kmix     = 1;"mix"
-klevel   = 1;"level"
-kreverse = 1;"reverse"
-kforward = 1;"forward"
-kTMod    = 1;"TMod"
-kPMod    = 1;"PMod"
+ktimeL   chnget "timeL"
+ktimeR   chnget "timeR"
+kspread  chnget "spread"
+kmix     chnget "mix"
+klevel   chnget "level"
+kreverse chnget "reverse"
+kforward chnget "forward"
+kTMod    chnget "TMod"
+kPMod    chnget "PMod"
 
 /* LINK */
 klink chnget "link"			; if 'Link L&R' is selected
@@ -109,7 +109,8 @@ if klink=1&&kTMod=0 then
  endif
 endif
 
-a1,a2	ins
+a1 inch 1
+a2 inch 1
 
 if kTMod=1 then						; if time modulation is selected....
  if klink=0 then					; and if 'link L&R' is off...

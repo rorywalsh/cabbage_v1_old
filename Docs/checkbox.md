@@ -48,6 +48,7 @@ active(val)
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
 <!--(End of identifiers)/-->
 
 >colour:1() can be set using colour(). However, it's recommended that you use the numerated colour identifiers in order to make your code more readable. 

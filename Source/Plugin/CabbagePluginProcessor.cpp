@@ -159,7 +159,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
         csdFile = File(sourcefile);
 
 
-    if(compileCsoundAndCreateGUI(false)==0)
+    if(compileCsoundAndCreateGUI(true)==0)
     {
         suspendProcessing(true);
         cUtils::debug("Csound coudln't compile your file:"+csdFile.getFullPathName());

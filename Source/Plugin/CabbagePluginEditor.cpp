@@ -281,7 +281,7 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
 {
     if(cAttr.getStringProp(CabbageIDs::type)==String("form"))
     {
-        SetupWindow(cAttr);   //set main application
+        setupWindow(cAttr);   //set main application
     }
     else if(cAttr.getStringProp(CabbageIDs::type)==String("groupbox"))
     {
@@ -2076,7 +2076,7 @@ void CabbagePluginAudioProcessorEditor::InsertLabel(CabbageGUIClass &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 //                                      window
 //+++++++++++++++++++++++++++++++++++++++++++
-void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
+void CabbagePluginAudioProcessorEditor::setupWindow(CabbageGUIClass &cAttr)
 {
     setName(cAttr.getStringProp(CabbageIDs::caption));
     getFilter()->setPluginName(cAttr.getStringProp(CabbageIDs::caption));
@@ -2112,9 +2112,10 @@ void CabbagePluginAudioProcessorEditor::SetupWindow(CabbageGUIClass &cAttr)
 #endif
 
 #ifdef AndroidBuild
-    Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+    //Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
 
-    setSize(rect.getWidth(), rect.getHeight()-20);
+    //setSize(rect.getWidth(), rect.getHeight()-20);
+	Desktop::getInstance().setGlobalScaleFactor(.7f);
     //setSize(getWidth(), getHeight());
     componentPanel->setBounds(0, 0, getWidth(), getHeight());
     // componentPanel->setBounds(left, top, rect.getWidth(), rect.getHeight());

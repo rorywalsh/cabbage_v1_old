@@ -31,7 +31,8 @@ instr	1
 	kfeedback	chnget	"feedback"				;
 	kmix		chnget	"mix"					;
 	klevel		chnget	"level"					;
-	asigL, asigR	ins
+	asigL	inch 1
+	asigR 	inch 1
 	kporttime	linseg	0,0.01,0.03				;CREATE A VARIABLE THAT WILL BE USED FOR PORTAMENTO TIME
 	ktime		portk	ktime,kporttime				;PORTAMENTO SMOOTHING OF DELAT TIME
 	atime		interp	ktime					;INTERPOLATED A-RATE VERSION OF DELAY TIME
@@ -50,13 +51,7 @@ instr	1
 	amixR		ntrpol	asigR,aDelR,kmix			;MIX DRY AND WET SIGNALS (RIGHT CHANNEL)
 			outs	amixL*klevel, amixR*klevel		;PING PONG DELAY OUTPUTS ARE SENT OUT
 endin
-	
 
-; rescale containing plant so it fits screen
-instr 1000
-	Smessage sprintf "rescale(%f, %f)", strtod($SCREEN_WIDTH)/350, strtod($SCREEN_HEIGHT)/90
-	chnset Smessage, "mainPlant"
-endin		
 </CsInstruments>
 
 <CsScore>

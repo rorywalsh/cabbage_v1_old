@@ -2,8 +2,8 @@
 ; Written by Iain McCurdy, 2012.
 
 <Cabbage>
-form caption("phaser2") size(705, 90), pluginID("phs2"), androidinfo("Phaser2. Written by Iain McCurdy, 2012")
-image bounds(0, 0 705, 90), colour(0,0,25), shape("rounded"), outlinecolour("white"), outlinethickness(4), identchannel("mainPlant"), plant("fullgui") {
+form caption("phaser2") size(705, 90), pluginID("phs2")
+image pos(0, 0),        size(705, 90), colour(0,0,25), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
 label    bounds( 10, 15, 80, 12), text("INPUT");, fontcolour("white")
 button   bounds( 10, 30, 80, 30), text("Live","Noise"), channel("input"), value(0)
 rslider  bounds( 90, 11, 70, 70),  text("Frequency"),  channel("freq"),     range(20.0, 5000, 100, 0.25), colour(100,100,200), trackercolour(silver), textcolour("white")
@@ -52,7 +52,8 @@ instr	1
 	gklevel		chnget	"level"					;
 	gkinput		chnget	"input"					;
 	if gkinput==0 then
-	 asigL,asigR	ins
+	 asigL inch 1
+	 asigR inch 1 
 	else
 	 asigL	pinker
 	 asigR	pinker
@@ -77,18 +78,11 @@ instr	1
 	amixR		ntrpol	asigR,aphaserr,gkmix
 			outs	amixL*gklevel, amixR*gklevel		;PHASER OUTPUTS ARE SENT OUT
 endin
-	
-; rescale containing plant so it fits screen
-instr 1000
-	Smessage sprintf "rescale(%f, %f)", strtod($SCREEN_WIDTH)/705, strtod($SCREEN_HEIGHT)/90
-	chnset Smessage, "mainPlant"
-endin
 		
 </CsInstruments>
 
 <CsScore>
-i1000 	0	1
-i 1 1 [3600*24*7]
+i 1 0 [3600*24*7]
 </CsScore>
 
 

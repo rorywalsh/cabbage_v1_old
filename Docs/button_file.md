@@ -34,13 +34,14 @@ widgetarray("chan", number), popuptext("text"), active(val)
 
 * *file*, Default. Will let the browser to select a file
 * *directory*, Will let the browser to select a folder/directory
-* *snapshot*, Will stop the file browser from opening, and instead will write a preset file to disk with a default file name. See <<presets, Presets>> <<combobox, Combobox>> 
+* *snapshot*, Will stop the file browser from opening, and instead will write a preset file to disk with a default file name. See [Presets](./presets.md) 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
 <!--(End of identifiers)/-->
 
 ##Example

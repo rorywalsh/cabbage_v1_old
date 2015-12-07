@@ -175,7 +175,7 @@ private:
     void InsertSoundfiler(CabbageGUIClass &cAttr);
     void InsertSourceButton(CabbageGUIClass &cAttr);
     void InsertDirectoryList(CabbageGUIClass &cAttr);
-    void SetupWindow(CabbageGUIClass &cAttr);
+    void setupWindow(CabbageGUIClass &cAttr);
     void InsertSlider(CabbageGUIClass &cAttr);
     void InsertTextEditor(CabbageGUIClass &cAttr);
     void sliderValueChanged (Slider*);

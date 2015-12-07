@@ -36,12 +36,12 @@ active(val)
 
 **visible(val)** A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default
 
-[icon="images/smallLogo.PNG"]
-XY pads range identifiers do not permit the setting of skew factors, or increments. If you wish to set a custom skew factor, or increment value, you will need to do so using Csound code.  
+> XY pads range identifiers do not permit the setting of skew factors, or increments. If you wish to set a custom skew factor, or increment value, you will need to do so using Csound code.  
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md) 
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
 <!--(End of identifiers)/-->
 
 ##Example:
@@ -53,4 +53,4 @@ xypad bounds(10, 10, 380, 380), channel("x", "y"), colour("yellow"), textcolour(
 </Cabbage>
 ```
 
-![](images/xypadExample.png[xypad]
+![](images/xypadExample.png)

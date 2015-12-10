@@ -142,10 +142,14 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
     if(!File(sourcefile).existsAsFile())
     {
 #ifdef MACOSX
+#ifdef CABBAGE_AU
+        csdFile = File("/Users/walshr/Music/CabbageAU/startup.csd");
+#else
         String osxCSD = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+String("/Contents/")+File::getSpecialLocation(File::currentApplicationFile).getFileName();
         File thisFile(osxCSD);
         Logger::writeToLog("MACOSX defined OK");
         csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
+#endif
         //cUtils::showMessage(csdFile.getFullPathName());
 #else
         File thisFile(File::getSpecialLocation(File::currentExecutableFile));
@@ -163,6 +167,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
     {
         suspendProcessing(true);
         cUtils::debug("Csound coudln't compile your file:"+csdFile.getFullPathName());
+        
     }
 
 }
@@ -437,6 +442,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
             }
         }
         cUtils::debug("Everything has been setup without an issue. ");
+
     }
     else
     {
@@ -621,8 +627,19 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 //maybe this should only be done at the end of a k-rate cycle..
 void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
 {
-    //cUtils::debug(source);
-    //clear arrays if refresh is set
+
+//#ifdef CABBAGE_AU
+//if(source.isEmpty())
+//{
+//    StringArray cabbageSection;
+//    cabbageSection.add("<Cabbage>");
+//    cabbageSection.add("form size(300, 200), colour(20, 20, 20)");
+//    cabbageSection.add("loadbutton bounds(10, 10, 100, 50), text(\"Browse\")");
+//    cabbageSection.add("rslider bounds(-1000, -1000, 100, 50), widgetarray(\"\", 100)");
+//    cabbageSection.add("</Cabbage>");
+//    source = cabbageSection.joinIntoString("\n");
+//}
+//#endif
     if(refresh==true)
     {
         guiLayoutCtrls.clear();
@@ -1053,7 +1070,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
 // Create GUI. Must only be called after the widget abstractions have been created
 //===========================================================================================
 void CabbagePluginAudioProcessor::addWidgetsToEditor(bool refresh)
-{
+{    
     if(this->createEditorIfNeeded())
     {
         CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
@@ -1739,52 +1756,55 @@ float CabbagePluginAudioProcessor::getParameter (int index)
 
 void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
 {
-    String stringMessage;
-#ifndef Cabbage_No_Csound
-    float range, min, max, comboRange;
-    //add index of control that was changed to dirty control vector, unless it's a combobox.
-    if(getGUICtrls(index).getStringProp(CabbageIDs::type)!=CabbageIDs::combobox)
-        dirtyControls.addIfNotAlreadyThere(index);
-    //Logger::writeToLog("parameterSet:"+String(newValue));
-    if(index<(int)guiCtrls.size())//make sure index isn't out of range
+    if(isPositiveAndBelow(index, getGUICtrlsSize()))
     {
-#ifndef Cabbage_Build_Standalone
-        //scaling in here because incoming values in plugin mode range from 0-1
-        range = getGUICtrls(index).getNumProp(CabbageIDs::range);
-        comboRange = getGUICtrls(index).getNumProp(CabbageIDs::comborange);
-        //Logger::writeToLog("inValue:"+String(newValue));
-        min = getGUICtrls(index).getNumProp(CabbageIDs::min);
-
-        if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::xypad)
-            newValue = (jmax(0.f, newValue)*range)+min;
-        else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox)//combo box value need to be rounded...
-            newValue = (newValue*comboRange);
-        else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::checkbox ||
-                getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::button)
-            range=1;
-        else
-            newValue = (newValue*range)+min;
-
-
-
-#endif
-        if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox &&
-                getGUICtrls(index).getStringProp(CabbageIDs::channeltype)==CabbageIDs::stringchannel)
+        String stringMessage;
+    #ifndef Cabbage_No_Csound
+        float range, min, comboRange;
+        //add index of control that was changed to dirty control vector, unless it's a combobox.
+        if(getGUICtrls(index).getStringProp(CabbageIDs::type)!=CabbageIDs::combobox)
+            dirtyControls.addIfNotAlreadyThere(index);
+        //Logger::writeToLog("parameterSet:"+String(newValue));
+        if(index<(int)guiCtrls.size())//make sure index isn't out of range
         {
-            cUtils::debug(getGUICtrls(index).getStringArrayProp(CabbageIDs::text).size());
-            stringMessage = getGUICtrls(index).getStringArrayPropValue(CabbageIDs::text, newValue-1);
-            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel),
-                    stringMessage, CabbageIDs::stringchannel);
-        }
-        else
-        {
-            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel),
-                    newValue, guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
+    #ifndef Cabbage_Build_Standalone
+            //scaling in here because incoming values in plugin mode range from 0-1
+            range = getGUICtrls(index).getNumProp(CabbageIDs::range);
+            comboRange = getGUICtrls(index).getNumProp(CabbageIDs::comborange);
+            //Logger::writeToLog("inValue:"+String(newValue));
+            min = getGUICtrls(index).getNumProp(CabbageIDs::min);
 
+            if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::xypad)
+                newValue = (jmax(0.f, newValue)*range)+min;
+            else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox)//combo box value need to be rounded...
+                newValue = (newValue*comboRange);
+            else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::checkbox ||
+                    getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::button)
+                range=1;
+            else
+                newValue = (newValue*range)+min;
+
+
+
+    #endif
+            if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox &&
+                    getGUICtrls(index).getStringProp(CabbageIDs::channeltype)==CabbageIDs::stringchannel)
+            {
+                cUtils::debug(getGUICtrls(index).getStringArrayProp(CabbageIDs::text).size());
+                stringMessage = getGUICtrls(index).getStringArrayPropValue(CabbageIDs::text, newValue-1);
+                messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel),
+                        stringMessage, CabbageIDs::stringchannel);
+            }
+            else
+            {
+                messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(index).getStringProp(CabbageIDs::channel),
+                        newValue, guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
+
+            }
+            //guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
         }
-        //guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
+    #endif
     }
-#endif
     //updateCabbageControls();
 }
 
@@ -2333,10 +2353,9 @@ void CabbagePluginAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // Here's an example of how you can use XML to make it easy and more robust:
-
-    // Create an outer XML element..
+        // Create an outer XML element..
     XmlElement xml ("CABBAGE_PLUGIN_SETTINGS");
-
+    cUtils::debug(guiCtrls.size());
     for(int i=0; i<guiCtrls.size(); i++)
         xml.setAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel),getParameter(i));
 
@@ -2355,12 +2374,12 @@ void CabbagePluginAudioProcessor::getStateInformation (MemoryBlock& destData)
             xml.setAttribute("sourcebutton", csdFile.getFullPathName());
         }
 
-
-
-
-
+#ifdef CABBAGE_AU
+        xml.setAttribute("sourcefile", csdFile.getFullPathName());
+#endif
     // then use this helper function to stuff it into the binary blob and return it..
     copyXmlToBinary (xml, destData);
+
 }
 
 void CabbagePluginAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
@@ -2372,6 +2391,20 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
 
     if (xmlState != nullptr)
     {
+#ifdef CABBAGE_AU
+        for(int i=0; i<xmlState->getNumAttributes(); i++)
+        {
+            if(xmlState->getAttributeName(i).contains("sourcefile"))
+            {
+                //showMessage(xmlState->getAttributeValue(i));
+                csdFile = File(xmlState->getAttributeValue(i));
+                initialiseWidgets(csdFile.loadFileAsString(), true);
+                addWidgetsToEditor(true);
+                recompileCsound(csdFile);
+                updateHostDisplay();
+            }
+        }
+#endif
         // make sure that it's actually our type of XML object..
         if (xmlState->hasTagName ("CABBAGE_PLUGIN_SETTINGS"))
         {

@@ -49,176 +49,165 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
       tableBuffer(2, 44100),
       showScrollbars(true)
 {
-    //setup swatches for colour selector.
-    swatchColours.set(0, Colour(0xFF000000));
-    swatchColours.set(1, Colour(0xFFFFFFFF));
-    swatchColours.set(2, Colour(0xFFFF0000));
-    swatchColours.set(3, Colour(0xFF00FF00));
-    swatchColours.set(4, Colour(0xFF0000FF));
-    swatchColours.set(5, Colour(0xFFFFFF00));
-    swatchColours.set(6, Colour(0xFFFF00FF));
-    swatchColours.set(7, Colour(0xFF00FFFF));
-    swatchColours.set(8, Colour(0x80000000));
-    swatchColours.set(9, Colour(0x80FFFFFF));
-    swatchColours.set(10, Colour(0x80FF0000));
-    swatchColours.set(11, Colour(0x8000FF00));
-    swatchColours.set(12, Colour(0x800000FF));
-    swatchColours.set(13, Colour(0x80FFFF00));
-    swatchColours.set(14, Colour(0x80FF00FF));
-    swatchColours.set(15, Colour(0x8000FFFF));
-    setWantsKeyboardFocus(false);
+    
+        //setup swatches for colour selector.
+        swatchColours.set(0, Colour(0xFF000000));
+        swatchColours.set(1, Colour(0xFFFFFFFF));
+        swatchColours.set(2, Colour(0xFFFF0000));
+        swatchColours.set(3, Colour(0xFF00FF00));
+        swatchColours.set(4, Colour(0xFF0000FF));
+        swatchColours.set(5, Colour(0xFFFFFF00));
+        swatchColours.set(6, Colour(0xFFFF00FF));
+        swatchColours.set(7, Colour(0xFF00FFFF));
+        swatchColours.set(8, Colour(0x80000000));
+        swatchColours.set(9, Colour(0x80FFFFFF));
+        swatchColours.set(10, Colour(0x80FF0000));
+        swatchColours.set(11, Colour(0x8000FF00));
+        swatchColours.set(12, Colour(0x800000FF));
+        swatchColours.set(13, Colour(0x80FFFF00));
+        swatchColours.set(14, Colour(0x80FF00FF));
+        swatchColours.set(15, Colour(0x8000FFFF));
+        setWantsKeyboardFocus(false);
 
 
 
-    //setOpaque(true);
-    //set custom skin yo use
-    lookAndFeel = new CabbageLookAndFeel();
-    basicLookAndFeel = new CabbageLookAndFeelBasic();
-    feely = new LookAndFeel_V1();
+        //setOpaque(true);
+        //set custom skin yo use
+        lookAndFeel = new CabbageLookAndFeel();
+        basicLookAndFeel = new CabbageLookAndFeelBasic();
+        feely = new LookAndFeel_V1();
 
-    tooltipWindow.setLookAndFeel(lookAndFeel);
+        tooltipWindow.setLookAndFeel(lookAndFeel);
 
-    //create popup display for showing value of sliders.
-    popupBubble = new BubbleMessageComponent(250);
-    popupBubble->setColour(BubbleComponent::backgroundColourId, Colours::white);
-    popupBubble->setBounds(0, 0, 50, 20);
-    addChildComponent(popupBubble);
-    popupBubble->setAlwaysOnTop(true);
+        //create popup display for showing value of sliders.
+        popupBubble = new BubbleMessageComponent(250);
+        popupBubble->setColour(BubbleComponent::backgroundColourId, Colours::white);
+        popupBubble->setBounds(0, 0, 50, 20);
+        addChildComponent(popupBubble);
+        popupBubble->setAlwaysOnTop(true);
 
-#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
-    propsWindow->setAlwaysOnTop(true);
-    propsWindow->setVisible(false);
-    propsWindow->centreWithSize(5,5);
-    propsWindow->addActionListener(this);
-    propsWindow->setLookAndFeel(basicLookAndFeel);
-    propsWindow->setTitleBarHeight(20);
-#endif
-
-
-    viewport = new Viewport("mainViewport");
-    viewportComponent = new CabbageViewportComponent();
-    viewport->addMouseListener(this, true);
-
-    this->setLookAndFeel(lookAndFeel);
-    Component::setLookAndFeel(lookAndFeel);
-    //oldSchoolLook = new OldSchoolLookAndFeel();
-#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
-    componentPanel = new CabbageMainPanel();
-    componentPanel->setLookAndFeel(lookAndFeel);
-    componentPanel->setBounds(0, 0, getWidth(), getHeight());
-    layoutEditor = new ComponentLayoutEditor();
-    layoutEditor->setLookAndFeel(lookAndFeel);
-    layoutEditor->addChangeListener(this);
-    layoutEditor->setBounds(0, 0, getWidth(), getHeight());
-
-    viewportComponent->addAndMakeVisible(layoutEditor);
-    viewportComponent->addAndMakeVisible(componentPanel);
-    layoutEditor->setTargetComponent(componentPanel);
-    layoutEditor->setInterceptsMouseClicks(true, true);
-    resizeLimits.setSizeLimits (150, 150, 3800, 3800);
-    resizer = new CabbageCornerResizer(this, this, &resizeLimits);
-#else
-    componentPanel = new Component();
-    componentPanel->setTopLeftPosition(0, 0);
-    viewportComponent->addAndMakeVisible(componentPanel);
-#endif
-    componentPanel->addKeyListener(this);
-    componentPanel->setInterceptsMouseClicks(false, true);
-
-#ifndef Cabbage_No_Csound
-    if(getFilter()->getCsound())
-        zero_dbfs = getFilter()->getCsound()->Get0dBFS();
-#endif
-
-    setSize(1200, 1200);
-    componentPanel->setSize(1200, 1200);
-#ifdef Cabbage_Build_Stanalone
-    layoutEditor->setSize(1200, 1200);
-    layoutEditor->updateFrames();
-#endif
-
-//#ifdef AndroidBuild
-//			Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-//			setSize(rect.getWidth(), rect.getHeight());
-//			componentPanel->setSize(rect.getWidth(), rect.getHeight());
-//#endif
-
-    int layoutCtrlIndex=0;
-    int interactiveCtrlIndex=0;
-
-    //this ensures that widgets get added in order they appear
-    //in text
-    for(int i=0; i<getFilter()->getWidgetTypes().size(); i++)
-    {
-        if(getFilter()->getWidgetTypes()[i]=="layout")
-        {
-            InsertGUIControls(getFilter()->getGUILayoutCtrls(layoutCtrlIndex));
-            layoutCtrlIndex++;
-        }
-        else //interactive
-        {
-            InsertGUIControls(getFilter()->getGUICtrls(interactiveCtrlIndex));
-            interactiveCtrlIndex++;
-        }
-    }
-
-//    for(int i=0; i<getFilter()->getGUILayoutCtrlsSize(); i++)
-//        InsertGUIControls(getFilter()->getGUILayoutCtrls(i));
-//    for(int i=0; i<getFilter()->getGUICtrlsSize(); i++)
-//        InsertGUIControls(getFilter()->getGUICtrls(i));
+    #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+        propsWindow->setAlwaysOnTop(true);
+        propsWindow->setVisible(false);
+        propsWindow->centreWithSize(5,5);
+        propsWindow->addActionListener(this);
+        propsWindow->setLookAndFeel(basicLookAndFeel);
+        propsWindow->setTitleBarHeight(20);
+    #endif
 
 
-    //this will prevent editors from creating xyAutos if they have already been crated.
-    getFilter()->setHaveXYAutoBeenCreated(true);
+        viewport = new Viewport("mainViewport");
+        viewportComponent = new CabbageViewportComponent();
+        viewport->addMouseListener(this, true);
 
+        this->setLookAndFeel(lookAndFeel);
+        Component::setLookAndFeel(lookAndFeel);
+        //oldSchoolLook = new OldSchoolLookAndFeel();
+    #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+        componentPanel = new CabbageMainPanel();
+        componentPanel->setLookAndFeel(lookAndFeel);
+        componentPanel->setBounds(0, 0, getWidth(), getHeight());
+        layoutEditor = new ComponentLayoutEditor();
+        layoutEditor->setLookAndFeel(lookAndFeel);
+        layoutEditor->addChangeListener(this);
+        layoutEditor->setBounds(0, 0, getWidth(), getHeight());
 
-#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
-    componentPanel->addActionListener(this);
-    if(!ownerFilter->isGuiEnabled())
-    {
-        layoutEditor->addAndMakeVisible(resizer);
-        layoutEditor->setEnabled(false);
-        layoutEditor->toFront(false);
+        viewportComponent->addAndMakeVisible(layoutEditor);
+        viewportComponent->addAndMakeVisible(componentPanel);
+        layoutEditor->setTargetComponent(componentPanel);
+        layoutEditor->setInterceptsMouseClicks(true, true);
+        resizeLimits.setSizeLimits (150, 150, 3800, 3800);
+        resizer = new CabbageCornerResizer(this, this, &resizeLimits);
+    #else
+        componentPanel = new Component();
+        componentPanel->setTopLeftPosition(0, 0);
+        viewportComponent->addAndMakeVisible(componentPanel);
+    #endif
+        componentPanel->addKeyListener(this);
+        componentPanel->setInterceptsMouseClicks(false, true);
+
+    #ifndef Cabbage_No_Csound
+        if(getFilter()->getCsound())
+            zero_dbfs = getFilter()->getCsound()->Get0dBFS();
+    #endif
+
+        setSize(1200, 1200);
+        componentPanel->setSize(1200, 1200);
+    #ifdef Cabbage_Build_Stanalone
+        layoutEditor->setSize(1200, 1200);
         layoutEditor->updateFrames();
-#ifdef Cabbage_Build_Standalone
+    #endif
+
+        int layoutCtrlIndex=0;
+        int interactiveCtrlIndex=0;
+
+        //this ensures that widgets get added in order they appear
+        //in text
+        for(int i=0; i<getFilter()->getWidgetTypes().size(); i++)
+        {
+            if(getFilter()->getWidgetTypes()[i]=="layout")
+            {
+                InsertGUIControls(getFilter()->getGUILayoutCtrls(layoutCtrlIndex));
+                layoutCtrlIndex++;
+            }
+            else //interactive
+            {
+                InsertGUIControls(getFilter()->getGUICtrls(interactiveCtrlIndex));
+                interactiveCtrlIndex++;
+            }
+        }
+        //this will prevent editors from creating xyAutos if they have already been crated.
+        getFilter()->setHaveXYAutoBeenCreated(true);
+
+
+    #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+        componentPanel->addActionListener(this);
+        if(!ownerFilter->isGuiEnabled())
+        {
+            layoutEditor->addAndMakeVisible(resizer);
+            layoutEditor->setEnabled(false);
+            layoutEditor->toFront(false);
+            layoutEditor->updateFrames();
+    #ifdef Cabbage_Build_Standalone
+            //only want to grab keyboard focus on standalone mode as DAW handle their own keystrokes
+            componentPanel->setWantsKeyboardFocus(true);
+            componentPanel->toFront(true);
+            componentPanel->grabKeyboardFocus();
+    #endif
+        }
+        else
+        {
+            layoutEditor->setEnabled(true);
+            layoutEditor->toFront(true);
+            layoutEditor->updateFrames();
+        }
+    #endif
+
+    #ifdef Cabbage_Build_Standalone
         //only want to grab keyboard focus on standalone mode as DAW handle their own keystrokes
         componentPanel->setWantsKeyboardFocus(true);
         componentPanel->toFront(true);
         componentPanel->grabKeyboardFocus();
-#endif
-    }
-    else
-    {
-        layoutEditor->setEnabled(true);
-        layoutEditor->toFront(true);
-        layoutEditor->updateFrames();
-    }
-#endif
+    #endif
 
-#ifdef Cabbage_Build_Standalone
-    //only want to grab keyboard focus on standalone mode as DAW handle their own keystrokes
-    componentPanel->setWantsKeyboardFocus(true);
-    componentPanel->toFront(true);
-    componentPanel->grabKeyboardFocus();
-#endif
-
-    //we update our tables when our editor first opens by sending -1's to each table channel. These are aded to our message queue so
-    //the data will only be sent to Csund when it's safe
-    for(int index=0; index<getFilter()->getGUILayoutCtrlsSize(); index++)
-    {
-        if(getFilter()->getGUILayoutCtrls(index).getStringProp(CabbageIDs::type)=="table")
+        //we update our tables when our editor first opens by sending -1's to each table channel. These are aded to our message queue so
+        //the data will only be sent to Csund when it's safe
+        for(int index=0; index<getFilter()->getGUILayoutCtrlsSize(); index++)
         {
-            for(int y=0; y<getFilter()->getGUILayoutCtrls(index).getStringArrayProp("channels").size(); y++)
-                getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(index).getStringArrayPropValue(CabbageIDs::channel, y).toUTF8(),  -1.f, getFilter()->getGUILayoutCtrls(index).getStringProp(CabbageIDs::type));
+            if(getFilter()->getGUILayoutCtrls(index).getStringProp(CabbageIDs::type)=="table")
+            {
+                for(int y=0; y<getFilter()->getGUILayoutCtrls(index).getStringArrayProp("channels").size(); y++)
+                    getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(index).getStringArrayPropValue(CabbageIDs::channel, y).toUTF8(),  -1.f, getFilter()->getGUILayoutCtrls(index).getStringProp(CabbageIDs::type));
+            }
         }
-    }
 
-    //addAndMakeVisible(viewportComponent);
-    //viewport->setScrollBarsShown(true, true);
-    addAndMakeVisible(viewport);
-    viewport->setViewedComponent(viewportComponent);
-    getFilter()->addChangeListener(this);
-    resized();
+        //addAndMakeVisible(viewportComponent);
+        //viewport->setScrollBarsShown(true, true);
+        addAndMakeVisible(viewport);
+        viewport->setViewedComponent(viewportComponent);
+        getFilter()->addChangeListener(this);
+        resized();
+
 }
 
 
@@ -255,24 +244,24 @@ CabbagePluginAudioProcessorEditor::~CabbagePluginAudioProcessorEditor()
 //==============================================================================
 void CabbagePluginAudioProcessorEditor::resized()
 {
-    //this->setSize(this->getWidth(), this->getHeight());
-    viewport->setBounds(0, 0, this->getWidth(), this->getHeight());
-    componentPanel->setTopLeftPosition(0, 0);
+        //this->setSize(this->getWidth(), this->getHeight());
+        viewport->setBounds(0, 0, this->getWidth(), this->getHeight());
+        componentPanel->setTopLeftPosition(0, 0);
 
-#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
-    layoutEditor->setTopLeftPosition(0, 0);
-    if(componentPanel->getWidth()<this->getWidth()+18 && componentPanel->getHeight()<this->getHeight()+18)
-        viewport->setScrollBarsShown(false, false);
-    else if(showScrollbars)
-        viewport->setScrollBarsShown(true, true);
-    else
-        viewport->setScrollBarsShown(false, false);
-#endif
+    #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+        layoutEditor->setTopLeftPosition(0, 0);
+        if(componentPanel->getWidth()<this->getWidth()+18 && componentPanel->getHeight()<this->getHeight()+18)
+            viewport->setScrollBarsShown(false, false);
+        else if(showScrollbars)
+            viewport->setScrollBarsShown(true, true);
+        else
+            viewport->setScrollBarsShown(false, false);
+    #endif
 
-#ifdef AndroidBuild
-    //don't show scrollbars on Android. They are terrible to navigate.
-    viewport->setScrollBarsShown(false, false);
-#endif
+    #ifdef AndroidBuild
+        //don't show scrollbars on Android. They are terrible to navigate.
+        viewport->setScrollBarsShown(false, false);
+    #endif
 
 }
 
@@ -2296,6 +2285,9 @@ void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIClass &cAttr)
     layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
     layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
 
+    if(cAttr.getStringProp("type")=="loadbutton")
+        ((CabbageButton*)layoutComps[idx])->button->setName("loadbutton");
+    
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
     layoutComps[idx]->setEnabled((cAttr.getNumProp(CabbageIDs::active)==1 ? true : false));
@@ -2901,6 +2893,14 @@ void CabbagePluginAudioProcessorEditor::buttonStateChanged(Button* button)
 void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 {
 #ifndef Cabbage_No_Csound
+    cUtils::debug(button->getName());
+    //loadbuttons are special case AU buttons....
+    if(button->getName()=="loadbutton")
+    {
+        getFilter()->openFile(&this->getLookAndFeel());
+        return;
+    }
+    
 //Logger::writeToLog(button->getName());
     if(!getFilter()->isGuiEnabled() && button!=nullptr)
     {
@@ -3104,10 +3104,6 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                             }
 
                         }
-                        else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==String("loadbutton"))
-                        {
-                            //getFilter()->openFile();
-                        }
                     }
 
                 textButtonClicked(button);
@@ -3128,6 +3124,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 //--------------------------------------------------------
 void CabbagePluginAudioProcessorEditor::textButtonClicked(Button* button)
 {
+    cUtils::debug(button->getName());
     int i = button->getProperties().getWithDefault("index", -9999);
 
     if(isPositiveAndBelow(i, getFilter()->getGUICtrlsSize()))

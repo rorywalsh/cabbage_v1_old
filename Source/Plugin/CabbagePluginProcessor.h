@@ -468,7 +468,7 @@ public:
     void setOpcodeDirEnv()
     {
 #ifdef WIN32
-        String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\CsoundPlugins";
+        String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName();
         if(!File(opcodeDir).exists())
 #ifdef Cabbage64Bit
             opcodeDir = String(getenv("CABBAGE_OPCODE_PATH64"));
@@ -482,7 +482,7 @@ public:
         {
             String env = "OPCODE6DIR64="+opcodeDir;
             _putenv(env.toUTF8().getAddress());
-            Logger::writeToLog("Current opcodeDir is:"+String(getenv("OPCODE6DIR")));
+            Logger::writeToLog("Current opcodeDir is:"+String(getenv("OPCODE6DIR64")));
 
             //String setCLI = "set "+env;
             //system(setCLI.toUTF8().getAddress());

@@ -1145,7 +1145,7 @@ void CabbagePluginAudioProcessor::openFile(LookAndFeel* looky)
                                 "*.csd",
                                 1,
                                 File("").getParentDirectory(),
-                                false,
+                                true,
                                 looky);
 
     if(selectedFiles.size())

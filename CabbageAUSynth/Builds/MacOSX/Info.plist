@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist>
+  <dict>
+    <key>CFBundleExecutable</key>
+    <string>${EXECUTABLE_NAME}</string>
+    <key>CFBundleIconFile</key>
+    <string></string>
+    <key>CFBundleIdentifier</key>
+    <string>com.CabbageAudio.CabbageSynth</string>
+    <key>CFBundleName</key>
+    <string>CabbageAUSynth</string>
+    <key>CFBundlePackageType</key>
+    <string>TDMw</string>
+    <key>CFBundleSignature</key>
+    <string>PTul</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundleVersion</key>
+    <string>1.0.0</string>
+    <key>NSHumanReadableCopyright</key>
+    <string></string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>AudioComponents</key>
+    <array>
+      <dict>
+        <key>name</key>
+        <string>CabbageAudio: CabbageSynth</string>
+        <key>description</key>
+        <string>CabbageSynth</string>
+        <key>factoryFunction</key>
+        <string>CabbageAUSynthAUFactory</string>
+        <key>manufacturer</key>
+        <string>Cab</string>
+        <key>type</key>
+        <string>aumu</string>
+        <key>subtype</key>
+        <string>Trz8</string>
+        <key>version</key>
+        <integer>65536</integer>
+      </dict>
+    </array>
+  </dict>
+</plist>

@@ -143,7 +143,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
     {
 #ifdef MACOSX
 #ifdef CABBAGE_AU
-        csdFile = File("/Users/walshr/Music/CabbageAU/startup.csd");
+        csdFile = File("~/Music/CabbageAudioUnit/startup.csd");
+        
 #else
         String osxCSD = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+String("/Contents/")+File::getSpecialLocation(File::currentApplicationFile).getFileName();
         File thisFile(osxCSD);

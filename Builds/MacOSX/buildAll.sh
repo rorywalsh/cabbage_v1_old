@@ -1,7 +1,5 @@
-# The following command is needed to set up Csound so that it can be inside the bundle frameworks folder 
-# install_name_tool -id @executable_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
-# 	/Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
-
+# The following command is no onger used, but I've left it here in case I ever need it again!
+# It was used to set up Csound so that it can be inside the bundle frameworks folder 
 # install_name_tool -id @loader_path/../../libs/libsndfile.1.dylib \
 #	/Users/walshr/sourcecode/csound/build/CsoundLib64.framework/libs/libsndfile.1.dylib
 
@@ -59,13 +57,30 @@ then
 
 
 	echo "Building Universal build"
-	# The following command is needed to set up Csound so that it can be inside the bundle frameworks folder 
+
+	# The following command is no onger used, but I've left it here in case I ever need it again!
+	# It was used to set up Csound so that it can be inside the bundle frameworks folder 
 	# install_name_tool -id @executable_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
 	# /Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
 
+	xcodebuild -project ./../../CabbageAUEffect/Builds/MacOSX/CabbageAUEffect.xcodeproj clean
+
+	xcodebuild -project ./../../CabbageAUEffect/Builds/MacOSX/CabbageAUEffect.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
+
+	xcodebuild -project ./../../CabbageAUEffect/Builds/MacOSX/CabbageAUSynth.xcodeproj clean
+
+	xcodebuild -project ./../../CabbageAUEffect/Builds/MacOSX/CabbageAUSynth.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
+
+	xcodebuild -project Cabbage.xcodeproj clean
+
 	xcodebuild -project Cabbage.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
+
+	xcodebuild -project CabbageStudio.xcodeproj clean
+
 	xcodebuild -project CabbageStudio.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
-	# The following command is needed to set up Csound so that it can be inside the bundle frameworks folder 
+
+	# The following command is no onger used, but I've left it here in case I ever need it again!
+	# It was used to set up Csound so that it can be inside the bundle frameworks folder 
 	# install_name_tool -id @loader_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
 	# /Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
 	
@@ -79,7 +94,8 @@ then
 	rm -rf ./build/Release/CabbagePluginEffect.component
 	rm -rf ~/Library/Audio/Plug-Ins/VST/CabbagePlugin.vst
 
-	# The following command is needed to set up Csound so that it can be inside the bundle frameworks folder 
+	# The following command is no onger used, but I've left it here in case I ever need it again!
+	# It was used to set up Csound so that it can be inside the bundle frameworks folder 
 	# install_name_tool -id @executable_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
 	# /Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
 

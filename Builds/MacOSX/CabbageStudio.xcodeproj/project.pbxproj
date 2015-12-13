@@ -3119,6 +3119,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				PRODUCT_NAME = CabbageStudio;
+				SDKROOT = macosx10.9;
 				SDKROOT_ppc = macosx10.5;
 			};
 			name = Debug;
@@ -3163,6 +3164,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				PRODUCT_NAME = CabbageStudio;
+				SDKROOT = macosx10.9;
 				SDKROOT_ppc = macosx10.5;
 			};
 			name = Release;

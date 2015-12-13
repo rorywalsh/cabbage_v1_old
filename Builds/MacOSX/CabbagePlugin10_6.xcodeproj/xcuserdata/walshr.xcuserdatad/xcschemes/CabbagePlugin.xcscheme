@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B9AFB87EB0655EB0338BAD16"
-               BuildableName = "Cabbage.app"
-               BlueprintName = "Cabbage"
-               ReferencedContainer = "container:Cabbage.xcodeproj">
+               BlueprintIdentifier = "AEC40B28A38308B0167313D3"
+               BuildableName = "CabbagePlugin.component"
+               BlueprintName = "CabbagePlugin"
+               ReferencedContainer = "container:CabbagePlugin10_6.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -29,15 +29,6 @@
       buildConfiguration = "Debug">
       <Testables>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B9AFB87EB0655EB0338BAD16"
-            BuildableName = "Cabbage.app"
-            BlueprintName = "Cabbage"
-            ReferencedContainer = "container:Cabbage.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
@@ -48,21 +39,15 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable>
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B9AFB87EB0655EB0338BAD16"
-            BuildableName = "Cabbage.app"
-            BlueprintName = "Cabbage"
-            ReferencedContainer = "container:Cabbage.xcodeproj">
+            BlueprintIdentifier = "AEC40B28A38308B0167313D3"
+            BuildableName = "CabbagePlugin.component"
+            BlueprintName = "CabbagePlugin"
+            ReferencedContainer = "container:CabbagePlugin10_6.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "/Users/walshr/sourcecode/cabbageaudio/test.csd"
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -72,15 +57,15 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable>
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B9AFB87EB0655EB0338BAD16"
-            BuildableName = "Cabbage.app"
-            BlueprintName = "Cabbage"
-            ReferencedContainer = "container:Cabbage.xcodeproj">
+            BlueprintIdentifier = "AEC40B28A38308B0167313D3"
+            BuildableName = "CabbagePlugin.component"
+            BlueprintName = "CabbagePlugin"
+            ReferencedContainer = "container:CabbagePlugin10_6.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

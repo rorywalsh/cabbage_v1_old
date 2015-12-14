@@ -829,13 +829,14 @@ void CabbageLookAndFeel::drawToggleButton (Graphics &g, ToggleButton &button, bo
 
     bool isRECT = button.getProperties().getWithDefault("isRect", 0);
     String svgPath = button.getProperties().getWithDefault("svgpath", "");
+    float corner = button.getProperties().getWithDefault("cornersize", 5);
 
     //----- Creating the image
     Image newButton;
     if(!button.getToggleState())
-        newButton = cUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonColourId), isRECT, svgPath);
+        newButton = cUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonColourId), isRECT, svgPath, corner);
     else
-        newButton = cUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonOnColourId), isRECT, svgPath);
+        newButton = cUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonOnColourId), isRECT, svgPath, corner);
 
 
 
@@ -1035,14 +1036,16 @@ void CabbageLookAndFeel::drawGroupComponentOutline (Graphics &g, int w, int h, c
     }
     else
     {
+        
+        int corners = group.getProperties().getWithDefault("cornersize", 5);
         Colour col;
         g.setColour (group.findColour(TextButton::buttonColourId));
-        g.fillRoundedRectangle (0, 0, w, h, 5);
+        g.fillRoundedRectangle (0, 0, w, h, corners);
 
         //----- Outline
         g.setColour (cUtils::getComponentFontColour());
         g.setOpacity (0.1);
-        g.drawRoundedRectangle (0.5, 0.5, w-1, h-1, 5, 1);
+        g.drawRoundedRectangle (0.5, 0.5, w-1, h-1, corners, 1);
 
         g.setColour (group.findColour(GroupComponent::textColourId));
         if(!group.getProperties().getWithDefault("groupLine", 0).equals(var(0)))
@@ -2294,9 +2297,9 @@ void CabbageLookAndFeelBasic::drawToggleButton (Graphics &g, ToggleButton &butto
     //----- Creating the image
     Image newButton;
     if(!button.getToggleState())
-        newButton = cUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonColourId), isRECT, svgPath);
+        newButton = cUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonColourId), isRECT, svgPath, 5.f);
     else
-        newButton = cUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonOnColourId), isRECT, svgPath);
+        newButton = cUtils::drawToggleImage (destWidth, destHeight, true, button.findColour(TextButton::buttonOnColourId), isRECT, svgPath, 5.f);
 
 
 

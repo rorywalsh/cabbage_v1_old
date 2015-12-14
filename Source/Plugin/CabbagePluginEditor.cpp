@@ -352,6 +352,10 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
     {
         InsertLineSeparator(cAttr);
     }
+    else if(cAttr.getStringProp(CabbageIDs::type)==String("progressbar"))
+    {
+        InsertProgressbar(cAttr);
+    }
     else if(cAttr.getStringProp(CabbageIDs::type)==String("table"))
     {
         InsertTable(cAttr);
@@ -559,6 +563,19 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
         }
     }
 
+    CabbageImage* image = dynamic_cast<CabbageImage*>(source);
+    if(image)
+    {
+        if(image->leftButton)
+        {
+            String channel;
+
+            int index = image->getProperties().getWithDefault(CabbageIDs::index, -99);
+            channel = getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel)[0];
+            getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, image->counter, "");
+            
+        }
+    }
 
 }
 
@@ -1804,7 +1821,7 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
         for(int i=0; i<getHeight()/10; i++)
             error+="Csound syntax error.Please check the Csound output console for details.";
         g.setColour(Colours::red);
-        g.drawFittedText(error, getLocalBounds().reduced(.8f).withLeft(20), Justification::left, 100, 10);
+        //g.drawFittedText(error, getLocalBounds().reduced(.8f).withLeft(20), Justification::left, 100, 10);
     }
     else
     {
@@ -2188,6 +2205,36 @@ void CabbagePluginAudioProcessorEditor::InsertTextbox(CabbageGUIClass &cAttr)
     layoutComps[idx]->setEnabled((cAttr.getNumProp(CabbageIDs::active)==1 ? true : false));
 }
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//      progressbar widget.
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+void CabbagePluginAudioProcessorEditor::InsertProgressbar(CabbageGUIClass &cAttr)
+{
+    if(!File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::file)))
+    {
+        String pic = returnFullPathForFile(cAttr.getStringProp(CabbageIDs::file), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());
+        cAttr.setStringProp(CabbageIDs::file, pic);
+    }
+    
+    layoutComps.add(new CabbageProgressBar(cAttr));
+    int idx = layoutComps.size()-1;
+    float left = cAttr.getNumProp(CabbageIDs::left);
+    float top = cAttr.getNumProp(CabbageIDs::top);
+    float width = cAttr.getNumProp(CabbageIDs::width);
+    float height = cAttr.getNumProp(CabbageIDs::height);
+    setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
+    layoutComps[idx]->setName("progressbar");
+    layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
+    //if control is not part of a plant, add mouse listener
+    if(cAttr.getStringProp("plant").isEmpty())
+        layoutComps[idx]->addMouseListener(this, true);
+    
+    layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+    layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+    //set visiblilty
+    layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+    layoutComps[idx]->setEnabled((cAttr.getNumProp(CabbageIDs::active)==1 ? true : false));
+}
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //      TextEditor widget.
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

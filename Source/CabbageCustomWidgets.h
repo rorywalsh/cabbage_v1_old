@@ -132,10 +132,16 @@ public:
     void update(CabbageGUIClass m_cAttr)
     {
         const MessageManagerLock mmLock;
-        button->setColour(TextButton::textColourOffId, Colour::fromString(fontcolour));
-        button->setColour(TextButton::buttonColourId, Colour::fromString(colour));
-        button->setColour(TextButton::textColourOnId, Colour::fromString(onfontcolour));
-        button->setColour(TextButton::buttonOnColourId, Colour::fromString(oncolour));
+        
+        button->setColour(TextButton::textColourOffId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
+        button->setColour(TextButton::textColourOnId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::onfontcolour)));
+        
+        button->setColour(TextButton::buttonColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
+        button->setColour(TextButton::buttonOnColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::oncolour)));
+        
+        cUtils::debug("OnColour:"+m_cAttr.getStringProp(CabbageIDs::oncolour));
+        cUtils::debug("OffColour:"+m_cAttr.getStringProp(CabbageIDs::colour));
+        cUtils::debug(m_cAttr.getNumProp(CabbageIDs::value));
 
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
         if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
@@ -168,6 +174,7 @@ public:
         }
 
         setBounds(m_cAttr.getBounds());
+        repaint();
     }
 
     //---------------------------------------------
@@ -745,7 +752,7 @@ public:
 //==============================================================================
 class CabbageCheckbox : public Component
 {
-    int offX, offY, offWidth, offHeight, pivotx, pivoty;
+    int offX, offY, offWidth, offHeight, pivotx, pivoty, corners;
     float rotate;
 
 public:
@@ -765,7 +772,9 @@ public:
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
         pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
-        tooltipText(String::empty)
+        tooltipText(String::empty),
+        corners(cAttr.getNumProp(CabbageIDs::corners))
+    
     {
         setName(name);
         offX=offY=offWidth=offHeight=0;
@@ -781,6 +790,8 @@ public:
 
         button->setButtonText(buttonText);
 
+        button->getProperties().set("cornersize", corners);
+        
         if(caption.length()>0)
         {
             offX=10;
@@ -1101,6 +1112,57 @@ public:
 };
 //==============================================================================
 // custom image component
+class CabbageProgressBar : public Component,
+public ChangeBroadcaster, Timer
+{
+    String name, outline, colour, background, shape, file;
+    float rotate;
+    Image img;
+    int top, left, width, height, line, pivotx, pivoty, resize, corners, progress;
+    String currentDirectory, tooltipText;
+    Point<float> scale;
+    AffineTransform transform;
+    
+public:
+    CabbageProgressBar(CabbageGUIClass &cAttr):
+    name(cAttr.getStringProp(CabbageIDs::name)),
+    file(cAttr.getStringProp(CabbageIDs::file)),
+    outline(cAttr.getStringProp(CabbageIDs::outlinecolour)),
+    colour(cAttr.getStringProp(CabbageIDs::oncolour)),
+    shape(cAttr.getStringProp("shape")),
+    line(cAttr.getNumProp(CabbageIDs::outlinethickness)),
+    transform(AffineTransform::identity),
+    rotate(cAttr.getNumProp(CabbageIDs::rotate)),
+    corners(cAttr.getNumProp(CabbageIDs::corners)),
+    pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+    pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+    tooltipText(String::empty),
+    background(cAttr.getStringProp(CabbageIDs::colour)),
+    progress(0)
+    {
+        cUtils::debug("I'm a progress bar");
+        startTimer(50);
+    }
+    
+    void paint(Graphics &g)
+    {
+        g.fillAll(Colour::fromString(background));
+        //int barheight = progress/getHeight();
+        g.setColour(Colour::fromString(colour));
+        //g.setColour(Colour(9,9,9));
+        g.fillRect(progress, 0, 50, getHeight());
+    }
+    
+    void timerCallback()
+    {
+        progress = progress<getWidth() ? progress+2 : 0;;
+        repaint();
+        
+    }
+    
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageProgressBar);
+};
 //==============================================================================
 class CabbageImage : public Component,
     public ChangeBroadcaster, public TooltipClient
@@ -1108,7 +1170,7 @@ class CabbageImage : public Component,
     String name, outline, colour, shape, file;
     float rotate;
     Image img;
-    int top, left, width, height, line, pivotx, pivoty, resize;
+    int top, left, width, height, line, pivotx, pivoty, resize, corners;
     String currentDirectory, tooltipText;
     Point<float> scale;
     AffineTransform transform;
@@ -1123,9 +1185,12 @@ public:
         line(cAttr.getNumProp(CabbageIDs::outlinethickness)),
         transform(AffineTransform::identity),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
+        corners(cAttr.getNumProp(CabbageIDs::corners)),
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
         pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
-        tooltipText(String::empty)
+        tooltipText(String::empty),
+        leftButton(false),
+        counter(0)
 
     {
         setName(name);
@@ -1161,7 +1226,12 @@ public:
     void mouseDown(const MouseEvent& event)
     {
         if(event.mods.isPopupMenu())
-            sendChangeMessage();
+            leftButton = false;
+        else
+            leftButton = true;
+
+        counter = (counter==0 ? 1 : 0);
+        sendChangeMessage();
     }
 
     void rescale(float x, float y)
@@ -1250,9 +1320,9 @@ public:
             {
                 g.fillAll(Colours::transparentBlack);
                 g.setColour(Colour::fromString(outline));
-                g.drawRoundedRectangle(0,0, width, height, width*.025, line);
+                g.drawRoundedRectangle(0,0, width, height, corners, line);
                 g.setColour(Colour::fromString(colour));
-                g.fillRoundedRectangle(line,line, width-(line*2), height-(line*2), width*.025);
+                g.fillRoundedRectangle(line,line, width-(line*2), height-(line*2), corners);
             }
             if(shape=="ellipse")
             {
@@ -1284,6 +1354,9 @@ public:
             setTransform(AffineTransform::rotation(rotate, getX()+pivotx, pivoty+getY()));
 
     }
+    
+    bool leftButton;
+    int counter;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageImage);
 };
 
@@ -1293,7 +1366,7 @@ public:
 class CabbageGroupbox : public GroupComponent,
     public ChangeBroadcaster, public TooltipClient
 {
-    int offX, offY, offWidth, offHeight, pivotx, pivoty, left, top;
+    int offX, offY, offWidth, offHeight, pivotx, pivoty, left, top, corners;
     String name, caption, text, colour, fontcolour, tooltipText;
     float rotate;
     int line;
@@ -1313,7 +1386,8 @@ public:
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
         pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
-        tooltipText(String::empty)
+        tooltipText(String::empty),
+        corners(cAttr.getNumProp(CabbageIDs::corners))
     {
         toBack();
         offX=offY=offWidth=offHeight=0;
@@ -1335,6 +1409,9 @@ public:
             this->setInterceptsMouseClicks(true, true);
         this->toFront(true);
 
+        this->getProperties().set("cornersize", corners);
+        cUtils::debug(corners);
+        
         if(rotate!=0)
             setTransform(AffineTransform::rotation(rotate, left+pivotx, pivoty+top));
 

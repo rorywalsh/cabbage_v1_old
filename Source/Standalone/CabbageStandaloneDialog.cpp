@@ -320,7 +320,10 @@ void StandaloneFilterWindow::timerCallback()
     if(cabbageCsoundEditor->isVisible())
     {
         if(cabbageCsoundEditor->csoundOutputComponent->getText()!=filter->getCsoundOutput())
+        {
             cabbageCsoundEditor->csoundOutputComponent->setText(filter->getCsoundOutput());
+            filter->clearDebugMessage();
+        }
 #ifdef BUILD_DEBUGGER
         cabbageCsoundEditor->csoundDebuggerComponent->setText(filter->getDebuggerOutput());
 #endif

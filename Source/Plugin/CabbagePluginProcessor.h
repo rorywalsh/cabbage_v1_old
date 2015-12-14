@@ -524,7 +524,7 @@ public:
 
     void clearDebugMessage()
     {
-        debugMessage="";
+        csoundOutput="";
     }
 
     void setPluginName(String name)

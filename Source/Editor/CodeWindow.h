@@ -52,7 +52,7 @@ public:
     void setText(String text)
     {
         //textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue.brighter());
-        textEditor->setText(text);
+        textEditor->insertTextAtCaret(text);
         textEditor->setCaretPosition(textEditor->getText().length());
     }
 

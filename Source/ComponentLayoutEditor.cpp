@@ -283,8 +283,8 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         m.addSubMenu("Forwards", subMenu);
         m.addItem(12, "Bring to front");
         m.addItem(13, "Forward one");
-        //m.addItem(4, "Create plant");
-        //m.addItem(5, "Break up plant");
+        m.addItem(4, "Create plant");
+        m.addItem(5, "Break up plant");
         m.addItem(1, "Add to repository");
         int choice;
 #if !defined(AndroidBuild)

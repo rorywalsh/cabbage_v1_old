@@ -1017,7 +1017,7 @@ public:
     }
 
 //====================================================================================================
-    static Image drawToggleImage (float width, float height, bool isToggleOn, Colour colour, bool isRect, String svgPath)
+    static Image drawToggleImage (float width, float height, bool isToggleOn, Colour colour, bool isRect, String svgPath, float corners)
     {
         Image img = Image(Image::ARGB, width, height, true);
         Graphics g (img);
@@ -1033,12 +1033,12 @@ public:
         if (isRect)   //if rectangular toggle
         {
             g.setColour (Colour::fromRGBA (10, 10, 10, 255));
-            g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+            g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, corners);
 
             if (isToggleOn == true)
             {
                 g.setColour (colour);
-                g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, height*0.1);
+                g.fillRoundedRectangle(width*0.01, height*0.01, width*0.93, height*0.93, corners);
                 opacity = 0.4;
             }
             else   //off
@@ -1047,15 +1047,15 @@ public:
                 for (float i=0.01; i<0.05; i+=0.01)
                 {
                     g.setColour (Colour::fromRGBA (0, 0, 0, 255/(i*100)));
-                    g.fillRoundedRectangle (width*i, height*i,
-                                            width*0.95, height*0.95, height*0.1);
+                    g.fillRoundedRectangle (width*i+1, height*i+1,
+                                            width*0.95, height*0.95, corners);
                 }
                 // Filling in the button
                 Colour bg1 = Colour::fromRGBA (25, 25, 28, 255);
                 Colour bg2 = Colour::fromRGBA (15, 15, 18, 255);
                 ColourGradient cg = ColourGradient (bg1, 0, 0, bg2, width*0.5, height*0.5, false);
                 g.setGradientFill (cg);
-                g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, height*0.1);
+                g.fillRoundedRectangle (width*0.01, height*0.01, width*0.93, height*0.93, corners);
                 opacity = 0.2;
             }
 
@@ -1064,13 +1064,13 @@ public:
                                            Colours::transparentWhite, 0, height*0.1, false);
             g.setGradientFill (edgeHighlight);
             g.setOpacity (opacity);
-            g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+            g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, corners);
 
             ColourGradient edgeHighlight2 = ColourGradient (Colours::whitesmoke, 0, 0,
                                             Colours::transparentWhite, height*0.1, 0, false);
             g.setGradientFill (edgeHighlight2);
             g.setOpacity (opacity);
-            g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, height*0.1);
+            g.fillRoundedRectangle (0, 0, width*0.95, height*0.95, corners);
         }
         else   //else if round toggle
         {

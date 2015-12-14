@@ -799,7 +799,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                             ||tokes[0].equalsIgnoreCase(String("hosttime"))
                             ||tokes[0].equalsIgnoreCase(String("hostplaying"))
                             ||tokes[0].equalsIgnoreCase(String("hostppqpos"))
-                            ||tokes[0].equalsIgnoreCase(String("vumeter"))
+                            ||tokes[0].equalsIgnoreCase(String("progressbar"))
                             ||tokes[0].equalsIgnoreCase(String("patmatrix"))
                             ||tokes[0].equalsIgnoreCase(String("source"))
                             ||tokes[0].equalsIgnoreCase(String("multitab"))
@@ -825,8 +825,8 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                             screenWidth = cAttr.getNumProp(CabbageIDs::width);
                             screenHeight = cAttr.getNumProp(CabbageIDs::height);
                         }
-
-
+                        if(cAttr.getStringArrayProp(CabbageIDs::identchannelarray).size()==0)
+                            cAttr.setStringProp(CabbageIDs::identchannel, cAttr.getStringProp(CabbageIDs::channel)+"_ident");
 
                         warningMessage = "";
                         warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
@@ -907,8 +907,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                         }
                         else if(cAttr.getStringProp(String("reltoplant")).equalsIgnoreCase(String("")))
                             cAttr.setStringProp(String("reltoplant"), plantFlag);
-
-
+                        
                         //if an array of objects is being set up...
                         if((cAttr.getStringArrayProp(CabbageIDs::identchannelarray).size()>0) &&
                                 (cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0))
@@ -1484,7 +1483,9 @@ void CabbagePluginAudioProcessor::stopRecording()
 String CabbagePluginAudioProcessor::getCsoundOutput()
 {
     const int messageCnt = csound->GetMessageCnt();
-
+    
+    //csoundOutput="";
+    
     if(messageCnt==0)
         return csoundOutput;
 

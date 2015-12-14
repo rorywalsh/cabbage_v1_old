@@ -362,6 +362,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::value, 0);
         cabbageIdentifiers.set(CabbageIDs::caption, "");
         cabbageIdentifiers.set(CabbageIDs::shape, "square");
+        cabbageIdentifiers.set(CabbageIDs::corners, 2);
         cabbageIdentifiers.set(CabbageIDs::type, "checkbox");
         cabbageIdentifiers.set(CabbageIDs::oncolour, Colours::lime.toString());
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
@@ -614,6 +615,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::width, 160);
         cabbageIdentifiers.set(CabbageIDs::height, 120);
         cabbageIdentifiers.set(CabbageIDs::shape, "rounded");
+        cabbageIdentifiers.set(CabbageIDs::corners, 5);
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
         cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colours::white.toString());
         cabbageIdentifiers.set(CabbageIDs::outlinethickness, 0);
@@ -626,6 +628,36 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
+    
+    //===============image==================//
+    else if(strTokens[0].trim() == "progressbar")
+    {
+        cabbageIdentifiers.set("basetype", "layout");
+        top = 10;
+        left = 10;
+        width = 160;
+        height = 120;
+        
+        
+        cabbageIdentifiers.set(CabbageIDs::top, 10);
+        cabbageIdentifiers.set(CabbageIDs::left, 10);
+        cabbageIdentifiers.set(CabbageIDs::width, 160);
+        cabbageIdentifiers.set(CabbageIDs::height, 120);
+        cabbageIdentifiers.set(CabbageIDs::shape, "rounded");
+        cabbageIdentifiers.set(CabbageIDs::corners, 5);
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::outlinethickness, 0);
+        cabbageIdentifiers.set(CabbageIDs::popup, 0);
+        cabbageIdentifiers.set(CabbageIDs::plant, "");
+        cabbageIdentifiers.set(CabbageIDs::type, "progressbar");
+        cabbageIdentifiers.set(CabbageIDs::file, "");
+        cabbageIdentifiers.set(CabbageIDs::name, "progressbar");
+        cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+        cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+        cabbageIdentifiers.set(CabbageIDs::visible, 1);
+    }
+    
     //===============groupbox==================//
     else if(strTokens[0].trim() == "groupbox")
     {
@@ -634,6 +666,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::left, 10);
         cabbageIdentifiers.set(CabbageIDs::width, 80);
         cabbageIdentifiers.set(CabbageIDs::height, 22);
+        cabbageIdentifiers.set(CabbageIDs::corners, 5);
         cabbageIdentifiers.set(CabbageIDs::colour, Colour(35, 35, 35).toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::popup, 0);
@@ -1093,12 +1126,12 @@ void CabbageGUIClass::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("colour:1") ||
                     identArray[indx].equalsIgnoreCase("colour"))
             {
-                if(typeOfWidget=="checkbox" || typeOfWidget.contains("button"))
-                {
+                //if(typeOfWidget=="checkbox" || typeOfWidget.contains("button"))
+                //{
                     cabbageIdentifiers.set(CabbageIDs::oncolour, getColourFromText(strTokens.joinIntoString(",")).toString());
-                }
-                else
-                    cabbageIdentifiers.set(CabbageIDs::colour, getColourFromText(strTokens.joinIntoString(",")).toString());
+                //}
+                //else
+                  //  cabbageIdentifiers.set(CabbageIDs::colour, getColourFromText(strTokens.joinIntoString(",")).toString());
             }
 
             else if(identArray[indx].equalsIgnoreCase("fontcolour")||
@@ -1231,6 +1264,7 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                 cabbageIdentifiers.set("native", strTokens[0].trim());
             }
 
+            
             else if(identArray[indx].equalsIgnoreCase("channeltype"))
             {
                 cabbageIdentifiers.set(CabbageIDs::channeltype, strTokens[0].trim());
@@ -1562,6 +1596,11 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                 cabbageIdentifiers.set(CabbageIDs::alpha, strTokens[0].trim().getFloatValue());
             }
 
+            else if(identArray[indx].equalsIgnoreCase("corners"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::corners, strTokens[0].trim().getFloatValue());
+            }
+            
             else if(identArray[indx].equalsIgnoreCase("radiogroup"))
             {
                 cabbageIdentifiers.set(CabbageIDs::radiogroup, strTokens[0].trim().getFloatValue());

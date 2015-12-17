@@ -1036,7 +1036,7 @@ void CabbageLookAndFeel::drawGroupComponentOutline (Graphics &g, int w, int h, c
     }
     else
     {
-        
+
         int corners = group.getProperties().getWithDefault("cornersize", 5);
         Colour col;
         g.setColour (group.findColour(TextButton::buttonColourId));

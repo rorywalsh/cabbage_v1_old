@@ -132,13 +132,13 @@ public:
     void update(CabbageGUIClass m_cAttr)
     {
         const MessageManagerLock mmLock;
-        
+
         button->setColour(TextButton::textColourOffId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
         button->setColour(TextButton::textColourOnId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::onfontcolour)));
-        
+
         button->setColour(TextButton::buttonColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
         button->setColour(TextButton::buttonOnColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::oncolour)));
-        
+
         cUtils::debug("OnColour:"+m_cAttr.getStringProp(CabbageIDs::oncolour));
         cUtils::debug("OffColour:"+m_cAttr.getStringProp(CabbageIDs::colour));
         cUtils::debug(m_cAttr.getNumProp(CabbageIDs::value));
@@ -774,7 +774,7 @@ public:
         pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
         tooltipText(String::empty),
         corners(cAttr.getNumProp(CabbageIDs::corners))
-    
+
     {
         setName(name);
         offX=offY=offWidth=offHeight=0;
@@ -791,7 +791,7 @@ public:
         button->setButtonText(buttonText);
 
         button->getProperties().set("cornersize", corners);
-        
+
         if(caption.length()>0)
         {
             offX=10;
@@ -1112,8 +1112,8 @@ public:
 };
 //==============================================================================
 // custom image component
-class CabbageProgressBar : public Component,
-public ChangeBroadcaster, Timer
+class CabbageProgressBar : public Component, public Timer,
+    public ChangeBroadcaster
 {
     String name, outline, colour, background, shape, file;
     float rotate;
@@ -1122,45 +1122,64 @@ public ChangeBroadcaster, Timer
     String currentDirectory, tooltipText;
     Point<float> scale;
     AffineTransform transform;
-    
+
+    class Bar : public Component
+    {
+
+        Colour colour;
+    public:
+        Bar(String _colour):Component(), colour(Colour::fromString(_colour)) {}
+        ~Bar() {}
+
+        void paint(Graphics &g)
+        {
+            g.fillAll(colour);
+        }
+
+    };
+
 public:
     CabbageProgressBar(CabbageGUIClass &cAttr):
-    name(cAttr.getStringProp(CabbageIDs::name)),
-    file(cAttr.getStringProp(CabbageIDs::file)),
-    outline(cAttr.getStringProp(CabbageIDs::outlinecolour)),
-    colour(cAttr.getStringProp(CabbageIDs::oncolour)),
-    shape(cAttr.getStringProp("shape")),
-    line(cAttr.getNumProp(CabbageIDs::outlinethickness)),
-    transform(AffineTransform::identity),
-    rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-    corners(cAttr.getNumProp(CabbageIDs::corners)),
-    pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-    pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
-    tooltipText(String::empty),
-    background(cAttr.getStringProp(CabbageIDs::colour)),
-    progress(0)
+        name(cAttr.getStringProp(CabbageIDs::name)),
+        file(cAttr.getStringProp(CabbageIDs::file)),
+        outline(cAttr.getStringProp(CabbageIDs::outlinecolour)),
+        colour(cAttr.getStringProp(CabbageIDs::oncolour)),
+        shape(cAttr.getStringProp("shape")),
+        line(cAttr.getNumProp(CabbageIDs::outlinethickness)),
+        transform(AffineTransform::identity),
+        rotate(cAttr.getNumProp(CabbageIDs::rotate)),
+        corners(cAttr.getNumProp(CabbageIDs::corners)),
+        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+        pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+        tooltipText(String::empty),
+        background(cAttr.getStringProp(CabbageIDs::colour)),
+        progress(0),
+        bar(new Bar(colour))
     {
-        cUtils::debug("I'm a progress bar");
-        startTimer(50);
+        addAndMakeVisible(bar);
+        startTimer(100);
+
     }
-    
+
     void paint(Graphics &g)
     {
         g.fillAll(Colour::fromString(background));
-        //int barheight = progress/getHeight();
-        g.setColour(Colour::fromString(colour));
-        //g.setColour(Colour(9,9,9));
-        g.fillRect(progress, 0, 50, getHeight());
     }
-    
+
     void timerCallback()
     {
-        progress = progress<getWidth() ? progress+2 : 0;;
-        repaint();
-        
+        bar->setBounds(progress, 0, 50, getHeight());
+        progress = progress<getWidth() ? progress+20 : 0;
     }
-    
-    
+
+    //update control
+    void update(CabbageGUIClass m_cAttr)
+    {
+        // bar->setBounds(m_cAttr.getBounds());
+    }
+
+    ScopedPointer<Bar> bar;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageProgressBar);
 };
 //==============================================================================
@@ -1354,7 +1373,7 @@ public:
             setTransform(AffineTransform::rotation(rotate, getX()+pivotx, pivoty+getY()));
 
     }
-    
+
     bool leftButton;
     int counter;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageImage);
@@ -1411,7 +1430,7 @@ public:
 
         this->getProperties().set("cornersize", corners);
         cUtils::debug(corners);
-        
+
         if(rotate!=0)
             setTransform(AffineTransform::rotation(rotate, left+pivotx, pivoty+top));
 

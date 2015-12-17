@@ -30,6 +30,7 @@
 //  and make it create an instance of the filter subclass that you're building.
 extern CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int plugType);
 
+static const char* openGLRendererName = "OpenGL Renderer";
 
 //==============================================================================
 StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
@@ -48,7 +49,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     isUsingExternalEditor(false),
     wildcardFilter("*.*", "*", "File Filter")
 {
-
+    setOpenGLRenderingEngine();
     consoleMessages = "";
     cabbageDance = 0;
     setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
@@ -285,6 +286,58 @@ StandaloneFilterWindow::~StandaloneFilterWindow()
 
 }
 
+//==============================================================================
+// rendering routines
+//==============================================================================
+StringArray StandaloneFilterWindow::getRenderingEngines()
+{
+    StringArray renderingEngines;
+
+    if (ComponentPeer* peer = getPeer())
+        renderingEngines = peer->getAvailableRenderingEngines();
+
+#if JUCE_OPENGL
+    renderingEngines.add (openGLRendererName);
+#endif
+
+    return renderingEngines;
+}
+
+void StandaloneFilterWindow::setRenderingEngine (int index)
+{
+    //showMessageBubble (getRenderingEngines()[index]);
+
+#if JUCE_OPENGL
+    if (getRenderingEngines()[index] == openGLRendererName)
+    {
+        openGLContext.attachTo (*getTopLevelComponent());
+        return;
+    }
+
+    openGLContext.detach();
+#endif
+
+    if (ComponentPeer* peer = getPeer())
+        peer->setCurrentRenderingEngine (index);
+}
+
+void StandaloneFilterWindow::setOpenGLRenderingEngine()
+{
+    setRenderingEngine (getRenderingEngines().indexOf (openGLRendererName));
+}
+
+int StandaloneFilterWindow::getActiveRenderingEngine()
+{
+#if JUCE_OPENGL
+    if (openGLContext.isAttached())
+        return getRenderingEngines().indexOf (openGLRendererName);
+#endif
+
+    if (ComponentPeer* peer = getPeer())
+        return peer->getCurrentRenderingEngine();
+
+    return 0;
+}
 //==============================================================================
 // insane Cabbage dancing....
 //==============================================================================
@@ -1511,7 +1564,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
         originalCsdFile = csdFile;
         lastSaveTime = csdFile.getLastModificationTime();
         csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
-        resetFilter(true);
+        //resetFilter(true);
     }
     else
     {

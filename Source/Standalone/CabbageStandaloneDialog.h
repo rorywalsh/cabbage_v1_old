@@ -117,6 +117,16 @@ public:
     void m_ShowMessage(String mess, LookAndFeel* feel, String title="Cabbage");
     int exportPlugin(String type, bool saveAs, String fileName="");
     int exportAsAndroid();
+    StringArray getRenderingEngines();
+    void setRenderingEngine (int index);
+    void setOpenGLRenderingEngine();
+    int getActiveRenderingEngine();
+
+#if JUCE_OPENGL
+    OpenGLContext openGLContext;
+#endif
+
+
     Array<File> cabbageFiles;
     ScopedPointer<StandaloneFileDialogue> standaloneFileDialogue;
 

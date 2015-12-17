@@ -628,7 +628,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
-    
+
     //===============image==================//
     else if(strTokens[0].trim() == "progressbar")
     {
@@ -637,8 +637,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         left = 10;
         width = 160;
         height = 120;
-        
-        
+
+
         cabbageIdentifiers.set(CabbageIDs::top, 10);
         cabbageIdentifiers.set(CabbageIDs::left, 10);
         cabbageIdentifiers.set(CabbageIDs::width, 160);
@@ -657,7 +657,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
-    
+
     //===============groupbox==================//
     else if(strTokens[0].trim() == "groupbox")
     {
@@ -1126,12 +1126,12 @@ void CabbageGUIClass::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("colour:1") ||
                     identArray[indx].equalsIgnoreCase("colour"))
             {
-                //if(typeOfWidget=="checkbox" || typeOfWidget.contains("button"))
-                //{
+                if(typeOfWidget.contains("checkbox") || typeOfWidget.contains("button"))
+                {
                     cabbageIdentifiers.set(CabbageIDs::oncolour, getColourFromText(strTokens.joinIntoString(",")).toString());
-                //}
-                //else
-                  //  cabbageIdentifiers.set(CabbageIDs::colour, getColourFromText(strTokens.joinIntoString(",")).toString());
+                }
+                else
+                    cabbageIdentifiers.set(CabbageIDs::colour, getColourFromText(strTokens.joinIntoString(",")).toString());
             }
 
             else if(identArray[indx].equalsIgnoreCase("fontcolour")||
@@ -1264,7 +1264,7 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                 cabbageIdentifiers.set("native", strTokens[0].trim());
             }
 
-            
+
             else if(identArray[indx].equalsIgnoreCase("channeltype"))
             {
                 cabbageIdentifiers.set(CabbageIDs::channeltype, strTokens[0].trim());
@@ -1600,7 +1600,7 @@ void CabbageGUIClass::parse(String inStr, String identifier)
             {
                 cabbageIdentifiers.set(CabbageIDs::corners, strTokens[0].trim().getFloatValue());
             }
-            
+
             else if(identArray[indx].equalsIgnoreCase("radiogroup"))
             {
                 cabbageIdentifiers.set(CabbageIDs::radiogroup, strTokens[0].trim().getFloatValue());

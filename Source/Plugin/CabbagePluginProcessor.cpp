@@ -94,7 +94,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
     codeEditor = nullptr;
     if(compileCsoundAndCreateGUI(false)==0)
     {
-        suspendProcessing(true);
         if(!inputfile.equalsIgnoreCase(""))
             cUtils::debug("Csound coudln't compile your file:"+File(inputfile).getFullPathName());
     }
@@ -144,7 +143,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
 #ifdef MACOSX
 #ifdef CABBAGE_AU
         csdFile = File("~/Music/CabbageAudioUnit/startup.csd");
-        
+
 #else
         String osxCSD = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+String("/Contents/")+File::getSpecialLocation(File::currentApplicationFile).getFileName();
         File thisFile(osxCSD);
@@ -152,6 +151,19 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
         csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
 #endif
         //cUtils::showMessage(csdFile.getFullPathName());
+#elseif AndroidBuild
+        File inFile(File::getSpecialLocation(File::currentApplicationFile));
+        ScopedPointer<InputStream> fileStream;
+        fileStream = File(inFile.getFullPathName()).createInputStream();
+        ZipFile zipFile (fileStream, false);
+
+        //sample files
+        String mkdir = "mkdir -p \""+String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage\"");
+        String homeDir = String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage/");
+
+        system(mkdir.toUTF8().getAddress());
+        ScopedPointer<InputStream> fileContents;
+
 #else
         File thisFile(File::getSpecialLocation(File::currentExecutableFile));
         csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
@@ -168,7 +180,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
     {
         suspendProcessing(true);
         cUtils::debug("Csound coudln't compile your file:"+csdFile.getFullPathName());
-        
+
     }
 
 }
@@ -364,6 +376,9 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
     if(isPlugin)
         csound->SetOption((char*)"--omacro:IS_A_PLUGIN=\"1\"");
 
+#ifdef AndroidBuild
+    csound->SetOption((char*)"--omacro:ANDROID=\"1\"");
+#endif
     setScreenMacros();
     addMacros(csdFile.loadFileAsString());
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
@@ -825,8 +840,8 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                             screenWidth = cAttr.getNumProp(CabbageIDs::width);
                             screenHeight = cAttr.getNumProp(CabbageIDs::height);
                         }
-                        if(cAttr.getStringArrayProp(CabbageIDs::identchannelarray).size()==0)
-                            cAttr.setStringProp(CabbageIDs::identchannel, cAttr.getStringProp(CabbageIDs::channel)+"_ident");
+                        //if(cAttr.getStringArrayProp(CabbageIDs::identchannelarray).size()==0)
+                        //    cAttr.setStringProp(CabbageIDs::identchannel, cAttr.getStringProp(CabbageIDs::channel)+"_ident");
 
                         warningMessage = "";
                         warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
@@ -907,7 +922,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                         }
                         else if(cAttr.getStringProp(String("reltoplant")).equalsIgnoreCase(String("")))
                             cAttr.setStringProp(String("reltoplant"), plantFlag);
-                        
+
                         //if an array of objects is being set up...
                         if((cAttr.getStringArrayProp(CabbageIDs::identchannelarray).size()>0) &&
                                 (cAttr.getStringArrayProp(CabbageIDs::channelarray).size()>0))
@@ -1070,7 +1085,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
 // Create GUI. Must only be called after the widget abstractions have been created
 //===========================================================================================
 void CabbagePluginAudioProcessor::addWidgetsToEditor(bool refresh)
-{    
+{
     if(this->createEditorIfNeeded())
     {
         CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
@@ -1483,9 +1498,9 @@ void CabbagePluginAudioProcessor::stopRecording()
 String CabbagePluginAudioProcessor::getCsoundOutput()
 {
     const int messageCnt = csound->GetMessageCnt();
-    
+
     //csoundOutput="";
-    
+
     if(messageCnt==0)
         return csoundOutput;
 
@@ -1761,7 +1776,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
     if(isPositiveAndBelow(index, getGUICtrlsSize()))
     {
         String stringMessage;
-    #ifndef Cabbage_No_Csound
+#ifndef Cabbage_No_Csound
         float range, min, comboRange;
         //add index of control that was changed to dirty control vector, unless it's a combobox.
         if(getGUICtrls(index).getStringProp(CabbageIDs::type)!=CabbageIDs::combobox)
@@ -1769,7 +1784,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
         //Logger::writeToLog("parameterSet:"+String(newValue));
         if(index<(int)guiCtrls.size())//make sure index isn't out of range
         {
-    #ifndef Cabbage_Build_Standalone
+#ifndef Cabbage_Build_Standalone
             //scaling in here because incoming values in plugin mode range from 0-1
             range = getGUICtrls(index).getNumProp(CabbageIDs::range);
             comboRange = getGUICtrls(index).getNumProp(CabbageIDs::comborange);
@@ -1788,7 +1803,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
 
 
 
-    #endif
+#endif
             if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox &&
                     getGUICtrls(index).getStringProp(CabbageIDs::channeltype)==CabbageIDs::stringchannel)
             {
@@ -1805,7 +1820,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
             }
             //guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
         }
-    #endif
+#endif
     }
     //updateCabbageControls();
 }
@@ -1855,7 +1870,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 if(channelMessage.isNotEmpty())
                 {
                     guiCtrl.setStringProp(CabbageIDs::identchannelmessage, channelMessage.trim());
-                    guiCtrl.parse(" "+channelMessage, "");
+                    guiCtrl.parse(guiCtrl.getStringProp(CabbageIDs::type)+" "+channelMessage, "");
                     dirtyControls.addIfNotAlreadyThere(index);
                     shouldUpdate = true;
                 }
@@ -1892,7 +1907,8 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 //Logger::writeToLog(guiLayoutCtrls[index].getStringProp(CabbageIDs::identchannel));
                 if(channelMessage.isNotEmpty())
                 {
-                    guiLayoutCtrl.parse(" "+channelMessage, channelMessage);
+
+                    guiLayoutCtrl.parse(guiLayoutCtrl.getStringProp(CabbageIDs::type)+" "+channelMessage, channelMessage);
                     //cUtils::debug(channelMessage);
                     guiLayoutCtrl.setStringProp(CabbageIDs::identchannelmessage,channelMessage.trim());
                     shouldUpdate=true;
@@ -2355,7 +2371,7 @@ void CabbagePluginAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // Here's an example of how you can use XML to make it easy and more robust:
-        // Create an outer XML element..
+    // Create an outer XML element..
     XmlElement xml ("CABBAGE_PLUGIN_SETTINGS");
     cUtils::debug(guiCtrls.size());
     for(int i=0; i<guiCtrls.size(); i++)
@@ -2377,7 +2393,7 @@ void CabbagePluginAudioProcessor::getStateInformation (MemoryBlock& destData)
         }
 
 #ifdef CABBAGE_AU
-        xml.setAttribute("sourcefile", csdFile.getFullPathName());
+    xml.setAttribute("sourcefile", csdFile.getFullPathName());
 #endif
     // then use this helper function to stuff it into the binary blob and return it..
     copyXmlToBinary (xml, destData);

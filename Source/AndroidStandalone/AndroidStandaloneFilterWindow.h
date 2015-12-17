@@ -138,8 +138,13 @@ public:
     ScopedPointer<CabbageLookAndFeel> lookAndFeel;
     //ScopedPointer<FileBrowser> fileBrowser;
     bool editorShowing;
-
-
+    StringArray getRenderingEngines();
+    void setRenderingEngine (int index);
+    void setOpenGLRenderingEngine();
+    int getActiveRenderingEngine();
+#if JUCE_OPENGL
+    OpenGLContext openGLContext;
+#endif
 private:
     float globalScale;
     Rectangle<float> desktopRect;

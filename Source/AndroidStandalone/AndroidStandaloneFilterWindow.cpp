@@ -5,6 +5,8 @@ int bufferSize;
 
 extern StandaloneFilterWindow* filterWindow;
 
+static const char* openGLRendererName = "OpenGL Renderer";
+
 StandaloneFilterWindow::StandaloneFilterWindow ()
     : DocumentWindow ("Cabbage", Colours::black, DocumentWindow::minimiseButton | DocumentWindow::closeButton),
       lookAndFeel(new CabbageLookAndFeel()),
@@ -12,6 +14,7 @@ StandaloneFilterWindow::StandaloneFilterWindow ()
       globalScale(1.f),
       firstRun(true)
 {
+    //setOpenGLRenderingEngine();
     ///Desktop::getInstance().setGlobalScaleFactor(0.5f);
     setTitleBarButtonsRequired(0, false);
     //setUsingNativeTitleBar (true);
@@ -31,6 +34,10 @@ StandaloneFilterWindow::StandaloneFilterWindow ()
 
 StandaloneFilterWindow::~StandaloneFilterWindow()
 {
+#if JUCE_OPENGL
+    openGLContext.detach();
+#endif
+
 #ifndef AndroidDebug
 
     pluginHolder->stopPlaying();
@@ -38,6 +45,60 @@ StandaloneFilterWindow::~StandaloneFilterWindow()
 
     deleteEditorComp();
     pluginHolder = nullptr;
+}
+
+
+//==============================================================================
+// rendering routines
+//==============================================================================
+StringArray StandaloneFilterWindow::getRenderingEngines()
+{
+    StringArray renderingEngines;
+
+    if (ComponentPeer* peer = getPeer())
+        renderingEngines = peer->getAvailableRenderingEngines();
+
+#if JUCE_OPENGL
+    renderingEngines.add (openGLRendererName);
+#endif
+
+    return renderingEngines;
+}
+
+void StandaloneFilterWindow::setRenderingEngine (int index)
+{
+    //showMessageBubble (getRenderingEngines()[index]);
+
+#if JUCE_OPENGL
+    if (getRenderingEngines()[index] == openGLRendererName)
+    {
+        openGLContext.attachTo (*this);
+        return;
+    }
+
+    openGLContext.detach();
+#endif
+
+    if (ComponentPeer* peer = getPeer())
+        peer->setCurrentRenderingEngine (index);
+}
+
+void StandaloneFilterWindow::setOpenGLRenderingEngine()
+{
+    setRenderingEngine (getRenderingEngines().indexOf (openGLRendererName));
+}
+
+int StandaloneFilterWindow::getActiveRenderingEngine()
+{
+#if JUCE_OPENGL
+    if (openGLContext.isAttached())
+        return getRenderingEngines().indexOf (openGLRendererName);
+#endif
+
+    if (ComponentPeer* peer = getPeer())
+        return peer->getCurrentRenderingEngine();
+
+    return 0;
 }
 
 //==============================================================================
@@ -114,14 +175,16 @@ void StandaloneFilterWindow::loadFile(String filename)
         //cUtils::showMessage(String(globalScale)+":"+String(desktopRect.getWidth())+":"+String(pluginWidth));
 
         //this will causes all plugins to resize to fit the screen on android.
-        Desktop::getInstance().setGlobalScaleFactor(1.f/globalScale);
+        //Desktop::getInstance().setGlobalScaleFactor(1.f/globalScale);
         globalScale = desktopRect.getWidth()/pluginWidth;
-        Desktop::getInstance().setGlobalScaleFactor(globalScale);
+        //Desktop::getInstance().setGlobalScaleFactor(globalScale);
 
+        //setOpenGLRenderingEngine()
         setName(pluginHolder->processor->getName());
         pluginHolder->startPlaying();
         clearContentComponent();
         setContentOwned (getAudioProcessor()->createEditorIfNeeded(), true);
+        setOpenGLRenderingEngine();
         //cUtils::showMessage(rect.getHeight());
         StringArray csdArray;
         csdArray.addLines(file.loadFileAsString());

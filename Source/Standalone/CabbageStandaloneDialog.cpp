@@ -1564,7 +1564,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
         originalCsdFile = csdFile;
         lastSaveTime = csdFile.getLastModificationTime();
         csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
-        //resetFilter(true);
+        resetFilter(true);
     }
     else
     {

@@ -49,7 +49,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     isUsingExternalEditor(false),
     wildcardFilter("*.*", "*", "File Filter")
 {
-    setOpenGLRenderingEngine();
+    //setOpenGLRenderingEngine();
     consoleMessages = "";
     cabbageDance = 0;
     setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
@@ -289,6 +289,7 @@ StandaloneFilterWindow::~StandaloneFilterWindow()
 //==============================================================================
 // rendering routines
 //==============================================================================
+/*
 StringArray StandaloneFilterWindow::getRenderingEngines()
 {
     StringArray renderingEngines;
@@ -337,7 +338,7 @@ int StandaloneFilterWindow::getActiveRenderingEngine()
         return peer->getCurrentRenderingEngine();
 
     return 0;
-}
+}*/
 //==============================================================================
 // insane Cabbage dancing....
 //==============================================================================
@@ -1661,23 +1662,6 @@ void StandaloneFilterWindow::saveFileAs()
     appProperties->getUserSettings()->setValue ("recentlyOpenedFiles",
             recentFiles.toString());
     filter->saveText();
-
-}
-
-//==============================================================================
-// Export Android .apk
-//==============================================================================
-int StandaloneFilterWindow::exportAsAndroid()
-{
-    File inFile(File::getSpecialLocation(File::currentApplicationFile));
-    ScopedPointer<InputStream> fileStream;
-    fileStream = File(inFile.getFullPathName()).createInputStream();
-    ZipFile zipFile (fileStream, false);
-    ScopedPointer<InputStream> fileContents;
-    fileContents = zipFile.createStreamForEntry(*zipFile.getEntry("assets/AndroidSimpleSynth.csd"));
-    File thisFile("/sdcard/Cabbage.csd");
-    thisFile.replaceWithText(fileContents->readEntireStreamAsString());
-    csdFile = thisFile;
 
 }
 

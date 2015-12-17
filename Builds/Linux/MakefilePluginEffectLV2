@@ -90,6 +90,7 @@ OBJECTS := \
   $(OBJDIR)/juce_opengl_c7e3506c.o \
   $(OBJDIR)/juce_PluginUtilities_e2e19a34.o \
   $(OBJDIR)/juce_LV2_Wrapper_bb62e93d.o \
+  $(OBJDIR)/juce_opengl_7767dsdf8.o \
 
 .PHONY: clean
 
@@ -285,4 +286,9 @@ $(OBJDIR)/juce_LV2_Wrapper_bb62e93d.o: ../../JuceLibraryCode/modules/juce_audio_
 	@echo "Compiling juce_LV2_Wrapper.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/juce_opengl_7767dsdf8.o: ../../JuceLibraryCode/modules/juce_opengl/juce_opengl.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling juce_opengl.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
 -include $(OBJECTS:%.o=%.d)

@@ -2122,8 +2122,8 @@ void CabbagePluginAudioProcessorEditor::setupWindow(CabbageGUIClass &cAttr)
     setSize(width, height);
     //setSize(rect.getWidth(), rect.getHeight()-20);
     //setSize(getWidth(), getHeight());
-    componentPanel->setBounds(0, 0, getWidth(), getHeight());
-    // componentPanel->setBounds(left, top, rect.getWidth(), rect.getHeight());
+	componentPanel->setBounds(0, 0, getWidth(), getHeight());
+    //componentPanel->setBounds(left, top, rect.getWidth(), rect.getHeight());
 #else
     setSize(width, height);
     componentPanel->setBounds(left, top, width, height);

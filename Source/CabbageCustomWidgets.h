@@ -1280,8 +1280,12 @@ public:
 
         if(m_cAttr.getStringProp(CabbageIDs::file)!=file)
         {
-            file = cUtils::returnFullPathForFile(m_cAttr.getStringProp(CabbageIDs::file), currentDirectory);
-            img = ImageCache::getFromFile (File (file));
+			if(!File(m_cAttr.getStringProp(CabbageIDs::file)).existsAsFile())
+				file = cUtils::returnFullPathForFile(m_cAttr.getStringProp(CabbageIDs::file), currentDirectory);
+            else
+				file = m_cAttr.getStringProp(CabbageIDs::file);
+				
+			img = ImageCache::getFromFile (File (file));
             repaint(this->getBounds());
         }
 

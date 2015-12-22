@@ -14,7 +14,7 @@ StandaloneFilterWindow::StandaloneFilterWindow ()
       globalScale(1.f),
       firstRun(true)
 {
-    //setOpenGLRenderingEngine();
+    setOpenGLRenderingEngine();
     ///Desktop::getInstance().setGlobalScaleFactor(0.5f);
     setTitleBarButtonsRequired(0, false);
     //setUsingNativeTitleBar (true);
@@ -68,10 +68,10 @@ StringArray StandaloneFilterWindow::getRenderingEngines()
 void StandaloneFilterWindow::setRenderingEngine (int index)
 {
     //showMessageBubble (getRenderingEngines()[index]);
-
 #if JUCE_OPENGL
     if (getRenderingEngines()[index] == openGLRendererName)
     {
+        //cUtils::showMessage("Attaching to opengl");
         openGLContext.attachTo (*this);
         return;
     }
@@ -117,6 +117,7 @@ void StandaloneFilterWindow::createEditorComp()
     if(firstRun)
     {
         desktopRect = Desktop::getInstance().getDisplays().getMainDisplay().userArea.toFloat();
+		//this->setSize(desktopRect.getWidth(), desktopRect.getHeight());
         firstRun=false;
     }
 }
@@ -172,19 +173,25 @@ void StandaloneFilterWindow::loadFile(String filename)
         float pluginWidth = pluginHolder->processor->getActiveEditor()->getWidth();
         float pluginHeight = pluginHolder->processor->getActiveEditor()->getHeight();
 
-        //cUtils::showMessage(String(globalScale)+":"+String(desktopRect.getWidth())+":"+String(pluginWidth));
+        
 
         //this will causes all plugins to resize to fit the screen on android.
-        //Desktop::getInstance().setGlobalScaleFactor(1.f/globalScale);
+        //Desktop::getInstance().setGlobalScaleFactor(1.f);
         globalScale = desktopRect.getWidth()/pluginWidth;
-        //Desktop::getInstance().setGlobalScaleFactor(globalScale);
-
-        //setOpenGLRenderingEngine()
+		//cUtils::showMessage(String(globalScale)+":"+String(desktopRect.getWidth())+":"+String(pluginWidth));
         setName(pluginHolder->processor->getName());
         pluginHolder->startPlaying();
         clearContentComponent();
         setContentOwned (getAudioProcessor()->createEditorIfNeeded(), true);
-        setOpenGLRenderingEngine();
+		
+		int mwidth = Desktop::getInstance().getDisplays().getMainDisplay().userArea.getWidth();
+		int mheight = Desktop::getInstance().getDisplays().getMainDisplay().userArea.getHeight();
+		
+		this->setSize(desktopRect.getWidth(), desktopRect.getHeight());
+		Desktop::getInstance().setGlobalScaleFactor(globalScale);
+		//cUtils::showMessage(String(globalScale)+":"+String(desktopRect.getWidth())+":"+String(pluginWidth));
+		
+        //setOpenGLRenderingEngine();
         //cUtils::showMessage(rect.getHeight());
         StringArray csdArray;
         csdArray.addLines(file.loadFileAsString());

@@ -17,6 +17,7 @@ public:
 
     void initialise(const String& commandLineParameters)
     {
+		//Desktop::getInstance().setGlobalScaleFactor(0.97);
         filterWindow = new StandaloneFilterWindow ();
         //filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
         //filterWindow->setVisible (true);

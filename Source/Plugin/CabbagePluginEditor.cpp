@@ -266,6 +266,35 @@ void CabbagePluginAudioProcessorEditor::resized()
 }
 
 //==============================================================================
+void CabbagePluginAudioProcessorEditor::rescaleAllChildren(double scale)
+{
+	
+	for( int i=0; i<componentPanel->getNumChildComponents(); i++)
+	{
+		if(componentPanel->getChildComponent(i)->getNumChildComponents()>2)
+		{
+			
+			for(int y=0;y<componentPanel->getChildComponent(i)->getNumChildComponents();y++)
+			{
+				Rectangle<int> bounds = componentPanel->getChildComponent(i)->getChildComponent(y)->getBounds();
+				componentPanel->getChildComponent(i)->getChildComponent(y)->setBounds(bounds.getX()*scale,
+																					  bounds.getY()*scale,
+																					  bounds.getWidth()*scale,
+																					  bounds.getHeight()*scale);								
+			}
+		}
+
+		Rectangle<int> bounds = componentPanel->getChildComponent(i)->getBounds();
+		componentPanel->getChildComponent(i)->setBounds(bounds.getX()*scale,
+										bounds.getY()*scale,
+										bounds.getWidth()*scale,
+										bounds.getHeight()*scale);
+	}
+
+	setSize(this->getWidth()*scale, this->getHeight()*scale);
+}
+
+//==============================================================================
 void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
 {
     if(cAttr.getStringProp(CabbageIDs::type)==String("form"))

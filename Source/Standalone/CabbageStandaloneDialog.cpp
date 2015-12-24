@@ -209,7 +209,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
         if(File(defaultCSDFile).existsAsFile())
         {
             standaloneMode = true;
-            cUtils::showMessage("Should be standalone");
+           // cUtils::showMessage("Should be standalone");
             openFile(defaultCSDFile);
         }
         else

@@ -15,21 +15,14 @@ StandaloneFilterWindow::StandaloneFilterWindow ()
       firstRun(true)
 {
     setOpenGLRenderingEngine();
-    ///Desktop::getInstance().setGlobalScaleFactor(0.5f);
+	Desktop::getInstance().setKioskModeComponent(this);
     setTitleBarButtonsRequired(0, false);
-    //setUsingNativeTitleBar (true);
     Component::setLookAndFeel(lookAndFeel);
     pluginHolder = new StandalonePluginHolder ();
-    //centreWithSize(getWidth(), getHeight());
-    getProperties().set("colour", Colour(58, 110, 182).toString());
-    lookAndFeelChanged();
-    setFullScreen(true);
+	desktopRect = Desktop::getInstance().getDisplays().getMainDisplay().userArea.toDouble();
     loadFile(filename);
-    createEditorComp();
-
-    //setSize(200, 200);
-    setName(pluginHolder->processor->getName());
     setVisible (true);
+	//setFullScreen(true);
 }
 
 StandaloneFilterWindow::~StandaloneFilterWindow()
@@ -67,7 +60,6 @@ StringArray StandaloneFilterWindow::getRenderingEngines()
 
 void StandaloneFilterWindow::setRenderingEngine (int index)
 {
-    //showMessageBubble (getRenderingEngines()[index]);
 #if JUCE_OPENGL
     if (getRenderingEngines()[index] == openGLRendererName)
     {
@@ -111,15 +103,14 @@ AudioDeviceManager& StandaloneFilterWindow::getDeviceManager() const noexcept
     return pluginHolder->deviceManager;
 }
 
-void StandaloneFilterWindow::createEditorComp()
+AudioProcessorEditor* StandaloneFilterWindow::createEditorComp()
 {
-    setContentOwned (getAudioProcessor()->createEditorIfNeeded(), true);
-    if(firstRun)
+	if (AudioProcessorEditor* ed = getAudioProcessor()->createEditorIfNeeded())
     {
-        desktopRect = Desktop::getInstance().getDisplays().getMainDisplay().userArea.toFloat();
-		//this->setSize(desktopRect.getWidth(), desktopRect.getHeight());
-        firstRun=false;
-    }
+		return getAudioProcessor()->createEditorIfNeeded();
+	}
+	else
+		return nullptr;
 }
 
 void StandaloneFilterWindow::deleteEditorComp()
@@ -131,28 +122,10 @@ void StandaloneFilterWindow::deleteEditorComp()
     }
 }
 
-/** Deletes and re-creates the plugin, resetting it to its default state. */
-void StandaloneFilterWindow::resetToDefaultState()
-{
-    pluginHolder->stopPlaying();
-    deleteEditorComp();
-    pluginHolder->deletePlugin();
-
-    pluginHolder->createPlugin("");
-    setName(pluginHolder->processor->getName());
-    createEditorComp();
-    pluginHolder->startPlaying();
-}
-
 //==============================================================================
 void StandaloneFilterWindow::closeButtonPressed()
 {
     JUCEApplicationBase::quit();
-}
-
-void StandaloneFilterWindow::buttonClicked (Button*)
-{
-
 }
 
 void StandaloneFilterWindow::loadFile(String filename)
@@ -167,33 +140,26 @@ void StandaloneFilterWindow::loadFile(String filename)
     {
         //cUtils::showMessage(file.loadFileAsString());
         pluginHolder->createPlugin(file.getFullPathName());
-
+		AudioProcessorEditor* ed = createEditorComp();
+		setContentOwned(ed, true);
         createEditorComp();
 
-        float pluginWidth = pluginHolder->processor->getActiveEditor()->getWidth();
+        double pluginWidth = pluginHolder->processor->getActiveEditor()->getWidth();
         float pluginHeight = pluginHolder->processor->getActiveEditor()->getHeight();
 
+		//ed->setSize(desktopRect.getWidth(), desktopRect.getHeight());
+		//this->resized();
+			
+		if (CabbagePluginAudioProcessorEditor* cabbageEditor = dynamic_cast<CabbagePluginAudioProcessorEditor*> (getContentComponent()))
+		{
+				//cUtils::showMessage(String(desktopRect.getWidth())+":"+String(pluginWidth));
+				cabbageEditor->rescaleAllChildren(desktopRect.getWidth()/pluginWidth);
+		}
         
-
-        //this will causes all plugins to resize to fit the screen on android.
-        //Desktop::getInstance().setGlobalScaleFactor(1.f);
-        globalScale = desktopRect.getWidth()/pluginWidth;
-		//cUtils::showMessage(String(globalScale)+":"+String(desktopRect.getWidth())+":"+String(pluginWidth));
-        setName(pluginHolder->processor->getName());
+		setName(pluginHolder->processor->getName());
         pluginHolder->startPlaying();
-        clearContentComponent();
-        setContentOwned (getAudioProcessor()->createEditorIfNeeded(), true);
-		
-		int mwidth = Desktop::getInstance().getDisplays().getMainDisplay().userArea.getWidth();
-		int mheight = Desktop::getInstance().getDisplays().getMainDisplay().userArea.getHeight();
-		
-		this->setSize(desktopRect.getWidth(), desktopRect.getHeight());
-		Desktop::getInstance().setGlobalScaleFactor(globalScale);
-		//cUtils::showMessage(String(globalScale)+":"+String(desktopRect.getWidth())+":"+String(pluginWidth));
-		
-        //setOpenGLRenderingEngine();
-        //cUtils::showMessage(rect.getHeight());
-        StringArray csdArray;
+        
+		StringArray csdArray;
         csdArray.addLines(file.loadFileAsString());
         for(int i=0; i<csdArray.size(); i++)
         {
@@ -361,11 +327,6 @@ void StandalonePluginHolder::savePluginState()
 
     //     settings->setValue ("filterState", data.toBase64Encoding());
     // }
-}
-
-void StandalonePluginHolder::showAlertBox()
-{
-    cUtils::showMessage("Hello");
 }
 
 void StandalonePluginHolder::reloadPluginState()

@@ -134,6 +134,8 @@ public:
     void InsertGUIControls(CabbageGUIClass cAttr);
     void ksmpsYieldCallback();
     void updateSize();
+	//used in Android mode to rescale according to screen res
+	void rescaleAllChildren(double scale);
     ScopedPointer<CabbagePropertiesDialog> propsWindow;
     //main GUI controls vectors..
     OwnedArray<Component> comps;

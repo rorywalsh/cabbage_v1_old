@@ -109,8 +109,7 @@ private:
     let it do its work. It will create your filter object using the same createPluginFilter() function
     that the other plugin wrappers use.
 */
-class StandaloneFilterWindow    : public DocumentWindow,
-    public ButtonListener
+class StandaloneFilterWindow    : public DocumentWindow
 {
 public:
     //==============================================================================
@@ -125,13 +124,12 @@ public:
     //==============================================================================
     AudioProcessor* getAudioProcessor() const noexcept;
     AudioDeviceManager& getDeviceManager() const noexcept;
-    void createEditorComp();
+    AudioProcessorEditor* createEditorComp();
     void deleteEditorComp();
     /** Deletes and re-creates the plugin, resetting it to its default state. */
     void resetToDefaultState();
     //==============================================================================
     void closeButtonPressed();
-    void buttonClicked (Button*);
     void loadFile(String filename);
     //void resized();
 
@@ -147,7 +145,7 @@ public:
 #endif
 private:
     float globalScale;
-    Rectangle<float> desktopRect;
+    Rectangle<double> desktopRect;
     bool firstRun;
     //==============================================================================
     TextButton optionsButton;

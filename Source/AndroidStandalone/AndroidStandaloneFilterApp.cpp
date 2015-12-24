@@ -16,15 +16,10 @@ public:
     }
 
     void initialise(const String& commandLineParameters)
-    {
-		//Desktop::getInstance().setGlobalScaleFactor(0.97);
-        filterWindow = new StandaloneFilterWindow ();
-        //filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
-        //filterWindow->setVisible (true);
-        //turn off resizeable...
-        //filterWindow->setResizable(false, false);
-
-        juce::Thread::setCurrentThreadName("cabbage");
+    {        
+		filterWindow = new StandaloneFilterWindow ();
+		//Desktop::getInstance().setGlobalScaleFactor(1.3);
+		juce::Thread::setCurrentThreadName("cabbage");
     }
 
     void shutdown()
@@ -48,7 +43,7 @@ public:
 
     bool moreThanOneInstanceAllowed()
     {
-        return true;
+        return false;
     }
 
 private:

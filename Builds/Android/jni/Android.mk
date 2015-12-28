@@ -69,6 +69,7 @@ LOCAL_SRC_FILES := \
   ../../../JuceLibraryCode/modules/juce_graphics/juce_graphics.cpp\
   ../../../JuceLibraryCode/modules/juce_gui_basics/juce_gui_basics.cpp\
   ../../../JuceLibraryCode/modules/juce_gui_extra/juce_gui_extra.cpp\
+  ../../../JuceLibraryCode/modules/juce_opengl/juce_opengl.cpp\
 
 ifeq ($(NDK_DEBUG),1)  
   LOCAL_CPPFLAGS += -fsigned-char -fexceptions -frtti -g -I "../../JuceLibraryCode" -I "../../../sourcecode/juce4/modules" -O0 -std=c++11 -std=gnu++11 -D "JUCE_ANDROID=1" -D "AndroidBuild=1" -D "JUCE_ANDROID_API_VERSION=10" -D "JUCE_ANDROID_ACTIVITY_CLASSNAME=com_yourcompany_cabbage_Cabbage" -D JUCE_ANDROID_ACTIVITY_CLASSPATH=\"com/yourcompany/cabbage/Cabbage\" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_ANDROID_7F0E4A25=1" -D "JUCE_APP_VERSION=1.0.0" -D "JUCE_APP_VERSION_HEX=0x10000" -I$(CSOUND_INCLUDE_DIR) -I$(CSOUND_JNI_DIR)

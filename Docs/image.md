@@ -6,7 +6,7 @@ Image creates a static shape or graphic. It can be used to show pictures or it c
 image bounds(x, y, width, height), colour("colour"), \
 file("file name"), shape("type"), outlinecolour("colour"), \
 outlinethickness(thickness), plant("name"), identchannel("channel"), \
-visible(val), alpha(val), rotate(radians, pivotx, pivoty), \
+visible(val), alpha(val), rotate(radians, pivotx, pivoty), corners(val)m \
 widgetarray("chan", number), popuptext("text"), active(val)
 ```
 <!--(End of syntax)/-->
@@ -40,6 +40,7 @@ widgetarray("chan", number), popuptext("text"), active(val)
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 
+**corners(val)** Sets the radius size of the widget's corners.
 <!--(End of identifiers)/-->
 
 ##Example

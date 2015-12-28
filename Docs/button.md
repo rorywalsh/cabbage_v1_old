@@ -45,7 +45,6 @@ With latched set to 0 the button will send a message to Csound on the initial mo
 
 **identchannel("channel")**
 Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See [Identifier channels](./identchannels.md)
-[Identifier channels](./identchannels.md)  
 
 **rotate(radians, pivotx, pivoty)**
 Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 

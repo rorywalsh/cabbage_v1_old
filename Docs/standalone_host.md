@@ -1,8 +1,8 @@
 # The Cabbage Standalone Host
 
-![Aliasingg](images/CabbageStandaloneHost.PNG "Example of aliasing. The sampled waveform is lower in frequency than the original.")
-
 While any text editor can be used to code Cabbage instruments, it's fair to say that most development and prototyping will be done with the main Cabbage host and source code editor. The following is a run down of the various options accessible from the 'Options' menu. 
+
+![Standalone](images/FullEditor.png)
  
 ## Open Cabbage Instrument
 Use this command to open a cabbage instrument(unified Csound file with a dedicated <Cabbage></Cabbage> section). You may open any .csd file you wish and add a Cabbage section yourself once it's open. Note that if you try to open an existing non-Cabbage .csd file you will need to update its CsOptions section so that Csound doesn't try to write audio to disk itself. 
@@ -56,4 +56,5 @@ Checking this will disable the plugin export information that pops up on screen 
 ## Use external editor
 If you wish to use a different source code editor with Cabbage than the one provided, you can check this option. Whenever you save changes to the .csd file that Cabbage currently has open, Cabbage will automatically update according to the changes made. Although it's not as quick as the integrated editor, it does give you scope to use some feature rich source code editors with Cabbage.   
 ## Use native file dialogues
+
 This option lets you set whether Cabbage will use its own File Chooser dialogues, or those provided by the operating system. Due to various issues with Linux file managers, Linux users may want to ensure that they use non-native dialogues. All file choosers that launch from within a Cabbage instrument will use non-native dialogues. 

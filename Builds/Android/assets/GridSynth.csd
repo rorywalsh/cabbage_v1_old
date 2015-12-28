@@ -1,17 +1,17 @@
 <Cabbage>
-form caption("Grid Sequencer") size(615, 280), colour(255, 255, 255),pluginID("add1"), androidinfo("Grid sequencer, Rory Walsh 2015") 
-rslider bounds(476, 0, 70, 64), channel("tempo"), range(1, 16, 4, 1, 1), text("Tempo"),  colour("white"), trackercolour("black") 
-rslider bounds(540, 0, 71, 64), channel("octave"), range(-2, 2, 0, 1, 1),text("Octave"),  colour("white"), trackercolour("black")  
-rslider bounds(476, 66, 71, 64), channel("duration"), range(.1, 5, 1),text("Duration"),  colour("white"), trackercolour("black")  
+form caption("Grid Sequencer") size(615, 300), colour(255, 255, 255),pluginID("add1"), androidinfo("Grid sequencer, Rory Walsh 2015") 
+rslider bounds(476, 10, 70, 64), channel("tempo"), range(1, 16, 4, 1, 1), text("Tempo"),  colour("white"), trackercolour("black") 
+rslider bounds(540, 10, 71, 64), channel("octave"), range(-2, 2, 0, 1, 1),text("Octave"),  colour("white"), trackercolour("black")  
+rslider bounds(476, 76, 71, 64), channel("duration"), range(.1, 5, 1),text("Duration"),  colour("white"), trackercolour("black")  
 ;image bounds(2, 0, 571, 254), colour("black")
 ;image bounds(10, 258, 383, 63), outlinecolour("white"), outlinethickness(2), colour(0,0,0,0)
 ;image bounds(16, 270, 35, 35), file("play.png"), identchannel("playImage")
 ;image bounds(2, 0, 571, 264), colour("black")
 ;gentable bounds(8, 6, 560, 245), tablenumber(10:11:12:13:14:15:16:17), active(1), tablebackgroundcolour(0,0,0,0), tablecolour("green"), zoom(-1), amprange(0, 1, -1, 1), identchannel("tables1")
 
-image bounds(8, 0, 464, 276), colour("black")
+image bounds(10, 10, 464, 276), colour("black")
 
-groupbox bounds(36, 12, 409, 250), text("Delay Lines"), fontcolour("black"), visible(0), colour("white"), plant("delayPlant"), identchannel("delays"){
+groupbox bounds(38, 22, 409, 250), text("Delay Lines"), fontcolour("black"), visible(0), colour("white"), plant("delayPlant"), identchannel("delays"){
 rslider bounds(14, 40, 95, 97), channel("del1"), range(0, 1, 0, 1, 0.001), textcolour("black"),  colour(55, 110, 182), text("D1"), trackercolour("black")
 rslider bounds(110, 40, 95, 97), channel("del2"), range(0, 1, 0, 1, 0.001), textcolour("black"),  colour(55, 110, 182), text("D2"), trackercolour("black")
 rslider bounds(207, 40, 95, 97), channel("del3"), range(0, 1, 0, 1, 0.001), textcolour("black"),  colour(55, 110, 182), text("D3"), trackercolour("black")
@@ -22,7 +22,7 @@ rslider bounds(207, 144, 95, 97), channel("del7"), range(0, 1, 0, 1, 0.001), tex
 rslider bounds(299, 144, 95, 97), channel("del8"), range(0, 1, 0, 1, 0.001), textcolour("black"),  colour(55, 110, 182), text("D8"), trackercolour("black")
 }
 
-image bounds(24, 10, 432, 259), colour(255, 255, 255, 0), plant("gridPlant"), identchannel("grid") {
+image bounds(26, 20, 432, 290), colour(255, 255, 255, 0), plant("gridPlant"), identchannel("grid") {
 checkbox bounds(0, 0, 36, 32), channel("CH1"), text(""), corners(5)
 checkbox bounds(36, 0, 36, 32), channel("CH2"), text(""), corners(5)
 checkbox bounds(72, 0, 36, 32), channel("CH3"), text(""), corners(5)
@@ -133,13 +133,13 @@ checkbox bounds(360, 249, 35, 9), channel("stepPos11") colour:0(50, 50, 50)
 checkbox bounds(396, 249, 35, 9), channel("stepPos12") colour:0(50, 50, 50) 
 }
 
-button bounds(486, 198, 57, 26), channel("startStop"), text("Start", "Stop"), colour:0(0,0,0), colour:1("lime"), fontcolour:0("white"), fontcolour:1("black")
-button bounds(486, 226, 57, 26), channel("gridDisplay"), colour:0("black"), colour:1(55, 110, 182) text("Grid"), value(1), radiogroup(99)
-button bounds(546, 226, 57, 26), channel("delayDisplay"), colour:0("black"), colour:1(55, 110, 182), text("Delay"), radiogroup(99)
-button bounds(546, 198, 57, 26), channel("random"), text("Random")
-rslider bounds(540, 66, 71, 64), channel("randomWeight"), range(30, 100, 80, 1, 1),text("R-Weight"),  colour("white"), trackercolour("black")  
-rslider bounds(476, 130, 71, 64), channel("synthGain"), range(0, 1, .5, 1, .001), text("Syn-Gain"),  colour("white"), trackercolour("black")  
-rslider bounds(540, 130, 71, 64), channel("delayGain"), range(0, 1, .5, 1, .001), text("Del-Gain"),  colour("white"), trackercolour("black")  
+button bounds(486, 208, 57, 26), channel("startStop"), text("Start", "Stop"), colour:0(0,0,0), colour:1("lime"), fontcolour:0("white"), fontcolour:1("black")
+button bounds(486, 236, 57, 26), channel("gridDisplay"), colour:0("black"), colour:1(55, 110, 182) text("Grid"), value(1), radiogroup(99)
+button bounds(546, 236, 57, 26), channel("delayDisplay"), colour:0("black"), colour:1(55, 110, 182), text("Delay"), radiogroup(99)
+button bounds(546, 208, 57, 26), channel("random"), text("Random")
+rslider bounds(540, 76, 71, 64), channel("randomWeight"), range(30, 100, 80, 1, 1),text("R-Weight"),  colour("white"), trackercolour("black")  
+rslider bounds(476, 140, 71, 64), channel("synthGain"), range(0, 1, .5, 1, .001), text("Syn-Gain"),  colour("white"), trackercolour("black")  
+rslider bounds(540, 140, 71, 64), channel("delayGain"), range(0, 1, .5, 1, .001), text("Del-Gain"),  colour("white"), trackercolour("black")  
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>

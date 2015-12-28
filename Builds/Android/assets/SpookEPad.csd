@@ -1,8 +1,7 @@
 <Cabbage>
 form size(1035, 500), caption("Spook-ePad"), pluginID("epad"), colour(10, 10, 10), guirefresh(32), androidinfo("Spook-ePad instrument, by Rory Walsh")
-image bounds(0, 0, 1035, 450), shape("sharp"), colour(10, 10, 10), identchannel("mainPlant"), plant("fullgui"){
-;image bounds(294, 0, 582, 305), alpha(1), child(0), shape("sharp"), linethickness(1), colour(160, 160, 160, 50),
-;groupbox bounds(302, 8, 573, 295), text("Index Envelope"), colour(0, 0, 0, 50), caption("groupbBox")
+image bounds(294, 0, 582, 305), alpha(1), child(0), shape("sharp"), linethickness(1), colour(160, 160, 160, 50),
+groupbox bounds(302, 8, 573, 295), text("Index Envelope"), colour(0, 0, 0, 50), caption("groupbBox")
 gentable bounds(310, 34, 555, 148), tablenumber(2), amprange(0, 1, 2), zoom(-1), tablegridcolour(160, 160, 160, 60), identchannel("table1")
 rslider bounds(876, 6, 150, 150), channel("car"), range(0.5, 5, 1, 1, 0.055), alpha(1), text("Car Factor"), 
 rslider bounds(876, 158, 150, 150), channel("mod"), range(0.1, 20, 13), text("Mod Factor") 
@@ -18,7 +17,7 @@ rslider bounds(6, 168, 140, 140), channel("noiseBand"), range(0, 500, 10, 1, 0.0
 rslider bounds(148, 168, 140, 140), channel("noise"), range(0, 1, 0, 1, 0.001), text("Noise Amp") 
 rslider bounds(8, 314, 140, 140), channel("random"), range(0, 1, 0, 1, 0.001), text("Random") 
 keyboard bounds(160, 316, 719, 131), value(40)
-}
+
 ;filebutton bounds(8, 312, 98, 27), text("Save Preset", "Save Preset"), populate("*.*", ""), colour:1(20, 20, 20), mode("file"), channel("filechooser")
 ;combobox bounds(106, 312, 105, 26), channel("combobox"), items("Crazy"), 
 
@@ -30,7 +29,7 @@ keyboard bounds(160, 316, 719, 131), value(40)
 </CsOptions>
 <CsInstruments>
 
-	sr = 48000 
+	sr = 44100 
 	ksmps = 64
 	nchnls = 2
 	0dbfs = 1

@@ -2,7 +2,7 @@
 ; Written by Iain McCurdy, 2012.
 
 <Cabbage>
-form caption("phaser2") size(705, 90), pluginID("phs2")
+form caption("phaser2") size(705, 90), pluginID("phs2"), androidinfo("Phaser2, by Iain McCurdy\n")
 image pos(0, 0),        size(705, 90), colour(0,0,25), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
 label    bounds( 10, 15, 80, 12), text("INPUT");, fontcolour("white")
 button   bounds( 10, 30, 80, 30), text("Live","Noise"), channel("input"), value(0)

@@ -403,7 +403,7 @@ public:
         slider->toFront(true);
         slider->addMouseListener(this, false);
         textLabel->setColour(Label::textColourId, Colour::fromString(textColour));
-
+		textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
         //slider->setPopupDisplayEnabled (true, 0);
 
         slider->setColour(Slider::textBoxHighlightColourId, Colours::lime.withAlpha(.2f));
@@ -1112,39 +1112,34 @@ public:
 };
 //==============================================================================
 // custom image component
-class CabbageProgressBar : public Component, public Timer,
-    public ChangeBroadcaster
+class CabbageEncoder : public Component, public ChangeBroadcaster, public Label::Listener
 {
-    String name, outline, colour, background, shape, file;
-    float rotate;
+    String name, outlinecolour, colour, trackercolour, text, textcolour;
+    float rotate, sliderincr, value;
     Image img;
-    int top, left, width, height, line, pivotx, pivoty, resize, corners, progress;
-    String currentDirectory, tooltipText;
+    int top, left, width, textBox, height, line, pivotx, pivoty, resize, corners, progress;
+    String tooltipText;
     Point<float> scale;
     AffineTransform transform;
+	bool isMouseOver;
 
-    class Bar : public Component
-    {
-
-        Colour colour;
-    public:
-        Bar(String _colour):Component(), colour(Colour::fromString(_colour)) {}
-        ~Bar() {}
-
-        void paint(Graphics &g)
-        {
-            g.fillAll(colour);
-        }
-
-    };
+	int yAxis;
+	float sliderIncr, startingValue;
+	Rectangle<float> slider;
+	Label textLabel, valueLabel;
+	float sliderPos;
 
 public:
-    CabbageProgressBar(CabbageGUIClass &cAttr):
+	bool shouldDisplayPopup;
+	String channel;
+	float currentValue;
+	
+    CabbageEncoder(CabbageGUIClass &cAttr):
         name(cAttr.getStringProp(CabbageIDs::name)),
-        file(cAttr.getStringProp(CabbageIDs::file)),
-        outline(cAttr.getStringProp(CabbageIDs::outlinecolour)),
-        colour(cAttr.getStringProp(CabbageIDs::oncolour)),
-        shape(cAttr.getStringProp("shape")),
+        colour(cAttr.getStringProp(CabbageIDs::colour)),
+		trackercolour(cAttr.getStringProp(CabbageIDs::trackercolour)),
+		textcolour(cAttr.getStringProp(CabbageIDs::textcolour)),
+		outlinecolour(cAttr.getStringProp(CabbageIDs::outlinecolour)),
         line(cAttr.getNumProp(CabbageIDs::outlinethickness)),
         transform(AffineTransform::identity),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
@@ -1152,25 +1147,183 @@ public:
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
         pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
         tooltipText(String::empty),
-        background(cAttr.getStringProp(CabbageIDs::colour)),
-        progress(0),
-        bar(new Bar(colour))
+		text(cAttr.getStringProp(CabbageIDs::text)),
+		sliderincr(cAttr.getNumProp(CabbageIDs::sliderincr)),
+		value(cAttr.getNumProp(CabbageIDs::value)),
+		textLabel(""),
+		valueLabel(""),
+		isMouseOver(false),
+		sliderIncr(cAttr.getNumProp(CabbageIDs::sliderincr)),
+		sliderPos(0),
+		yAxis(0),
+		shouldDisplayPopup(false),
+		channel(cAttr.getStringProp(CabbageIDs::channel)),
+		currentValue(value),
+		startingValue(value),
+		textBox(cAttr.getNumProp(CabbageIDs::textbox))
     {
-        addAndMakeVisible(bar);
-        startTimer(100);
-
+		//addAndMakeVisible(slider);
+		//slider.addChangeListener(this);
+		addAndMakeVisible(textLabel);
+		slider.setSize(cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));
+		textLabel.setColour(Label::textColourId, Colour::fromString(textcolour));
+		textLabel.setColour(Label::outlineColourId, Colours::transparentBlack);
+		valueLabel.setColour(Label::textColourId, Colour::fromString(textcolour));
+		valueLabel.setColour(Label::outlineColourId, Colours::whitesmoke.withAlpha(.2f));
+		valueLabel.setEditable(true);
+		valueLabel.addListener(this);
+        if(textBox<1)
+			shouldDisplayPopup=true;
+		else
+			addAndMakeVisible(valueLabel);
     }
+	
+	void labelTextChanged (Label *label)
+	{
+		float value = label->getText().getFloatValue();
+		sliderPos=0;
+		currentValue=value;
+		valueLabel.setText(String(value, 2), dontSendNotification);
+		sendChangeMessage();
+	}
 
-    void paint(Graphics &g)
-    {
-        g.fillAll(Colour::fromString(background));
-    }
+	void mouseDown(const MouseEvent &e)
+	{
+		if(e.getNumberOfClicks()>1)
+		{
+			sliderPos=0;
+			currentValue=startingValue;
+			repaint();
+			sendChangeMessage();
+		}
+	}
+	
+	void mouseEnter(const MouseEvent &e)
+	{
+		isMouseOver = true;
+		repaint();
+		sendChangeMessage();
+	}
+	
+	void mouseDrag(const MouseEvent& e)
+	{
+		if(yAxis!=e.getOffsetFromDragStart().getY())
+		{
+			sliderPos = sliderPos+(e.getOffsetFromDragStart().getY()<yAxis ? -50 : 50);
+			currentValue = cUtils::roundToPrec(currentValue+(e.getOffsetFromDragStart().getY()<yAxis ? sliderIncr : -sliderIncr), 5);
+			yAxis = e.getOffsetFromDragStart().getY();
+			repaint();
+			valueLabel.setText(String(currentValue, 2), dontSendNotification);
+		}
+		
+		sendChangeMessage();
+	}
 
-    void timerCallback()
-    {
-        bar->setBounds(progress, 0, 50, getHeight());
-        progress = progress<getWidth() ? progress+20 : 0;
-    }
+	void mouseExit(const MouseEvent &e)
+	{
+		isMouseOver = false;
+		repaint();
+	}
+	
+	void paint(Graphics &g)
+	{
+		float rotaryStartAngle = 0;
+		float rotaryEndAngle = 2*3.14;
+		bool isEnabled=true;
+		const float radius = jmin (slider.getWidth() / 2, slider.getHeight() / 2) - 2.0f;
+		const float diameter = radius*2.f;
+		const float centreX = getWidth() * 0.5f;
+		const float centreY = slider.getY()+slider.getHeight() * 0.5f;
+		const float rx = centreX - radius;
+		const float ry = centreY - radius;
+		const float rw = radius * 2.0f;
+		const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+
+		if (radius > 12.0f)
+		{
+			g.setColour (Colour::fromString(trackercolour).withAlpha (isMouseOver ? 1.0f : 0.9f));
+
+			const float thickness = 0.7f;
+			{
+				Path filledArc;
+				filledArc.addPieSegment (rx, ry, rw, rw, angle-.25, angle+.25f, thickness);
+				g.fillPath (filledArc);
+			}
+
+			g.setColour (Colour::fromString(outlinecolour).withAlpha (isMouseOver ? 1.0f : 0.7f));
+			g.drawEllipse(slider.reduced(1.f).toFloat(), isMouseOver ? 1.5f : 1.f);
+			g.drawEllipse(slider.reduced(getWidth()*.11).toFloat(), isMouseOver ? 1.5f : 1.f);
+
+			Path newPolygon;
+			Point<float> centre (centreX, centreY);
+
+			if (diameter >= 25)   //If diameter is >= 40 then polygon has 12 steps
+			{
+				newPolygon.addPolygon(centre, 12.f, radius*.65, 0.f);
+				newPolygon.applyTransform (AffineTransform::rotation (angle,
+										   centreX, centreY));
+			}
+			else //Else just use a circle. This is clearer than a polygon when very small.
+				newPolygon.addEllipse (-radius*.2, -radius*.2, radius * .3f, radius * .3f);
+
+
+			g.setColour (Colour::fromString(colour));
+
+			Colour thumbColour = Colour::fromString(colour).withAlpha (isMouseOver ? 1.0f : 0.9f);
+			ColourGradient cg = ColourGradient (Colours::white, 0, 0, thumbColour, diameter*0.6, diameter*0.4, false);
+			//if(slider.findColour (Slider::thumbColourId)!=Colour(0.f,0.f,0.f,0.f))
+				g.setGradientFill (cg);
+			g.fillPath (newPolygon);
+			}
+			else
+			{
+				Path p;
+				g.setColour (Colour::fromString(colour).withAlpha (isMouseOver ? 1.0f : 0.7f));
+				p.addEllipse (-0.4f * rw, -0.4f * rw, rw * 0.8f, rw * 0.8f);
+				g.fillPath(p, AffineTransform::rotation (angle).translated (centreX, centreY));
+
+				//if (slider.isEnabled())
+				g.setColour (Colour::fromString(trackercolour).withAlpha (isMouseOver ? 0.7f : 0.5f));
+				//else
+				//    g.setColour (Colour (0x80808080));
+
+				p.addEllipse (-0.4f * rw, -0.4f * rw, rw * 0.8f, rw * 0.8f);
+				PathStrokeType (rw * 0.1f).createStrokedPath (p, p);
+
+				p.addLineSegment (Line<float> (0.0f, 0.0f, 0.0f, -radius), rw * 0.1f);
+
+				g.fillPath (p, AffineTransform::rotation (angle).translated (centreX, centreY));
+
+			}	
+		}
+	
+	void resized()
+	{
+			if(text.isNotEmpty())
+			{
+				if(textBox>0)
+				{
+					textLabel.setBounds(0, 0, getWidth(), 20);
+					textLabel.setText(text, dontSendNotification);
+					textLabel.setJustificationType(Justification::centred);
+					textLabel.setVisible(true);
+					slider.setBounds(20, 20, getWidth()-40, getHeight()-40);
+					valueLabel.setBounds(25, getHeight()-15, getWidth()-50, 15);
+					valueLabel.setJustificationType(Justification::centred);
+					valueLabel.setText(String(currentValue, 2), dontSendNotification);
+				}
+				else
+				{
+					textLabel.setBounds(0, getHeight()-20, getWidth(), 20);
+					textLabel.setText(text, dontSendNotification);
+					textLabel.setJustificationType(Justification::centred);
+					textLabel.setVisible(true);
+					slider.setBounds(10, 0, getWidth()-20, getHeight()-20);
+				}
+			}
+			else
+				slider.setBounds(0, 0, getWidth(), getHeight());		
+	}
 
     //update control
     void update(CabbageGUIClass m_cAttr)
@@ -1178,9 +1331,7 @@ public:
         // bar->setBounds(m_cAttr.getBounds());
     }
 
-    ScopedPointer<Bar> bar;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageProgressBar);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageEncoder);
 };
 //==============================================================================
 class CabbageImage : public Component,

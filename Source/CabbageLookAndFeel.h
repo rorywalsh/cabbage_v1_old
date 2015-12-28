@@ -62,8 +62,6 @@ public:
                                 const Slider::SliderStyle style,
                                 Slider &slider);
 
-    class SliderLabelComp;
-    Label* createSliderTextBox (Slider&) override;
     void drawButtonBackground (Graphics&, Button&, const Colour&, bool, bool);
     void drawButtonText (Graphics &g, TextButton &button, bool isMouseOverButton, bool isButtonDown);
 

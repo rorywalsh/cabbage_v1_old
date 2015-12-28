@@ -139,26 +139,8 @@ void StandaloneFilterWindow::loadFile(String filename)
     if(file.existsAsFile())
     {
         //cUtils::showMessage(file.loadFileAsString());
-        pluginHolder->createPlugin(file.getFullPathName());
-		AudioProcessorEditor* ed = createEditorComp();
-		setContentOwned(ed, true);
-        createEditorComp();
-
-        double pluginWidth = pluginHolder->processor->getActiveEditor()->getWidth();
-        float pluginHeight = pluginHolder->processor->getActiveEditor()->getHeight();
-
-		//ed->setSize(desktopRect.getWidth(), desktopRect.getHeight());
-		//this->resized();
-			
-		if (CabbagePluginAudioProcessorEditor* cabbageEditor = dynamic_cast<CabbagePluginAudioProcessorEditor*> (getContentComponent()))
-		{
-				//cUtils::showMessage(String(desktopRect.getWidth())+":"+String(pluginWidth));
-				cabbageEditor->rescaleAllChildren(desktopRect.getWidth()/pluginWidth);
-		}
-        
-		setName(pluginHolder->processor->getName());
-        pluginHolder->startPlaying();
-        
+		float originalPluginWidth=100;
+		float originalPluginHeight=100;
 		StringArray csdArray;
         csdArray.addLines(file.loadFileAsString());
         for(int i=0; i<csdArray.size(); i++)
@@ -166,10 +148,27 @@ void StandaloneFilterWindow::loadFile(String filename)
             if(csdArray[i].contains("form "))
             {
                 CabbageGUIClass cAttr(csdArray[i], -99);
+				originalPluginWidth = cAttr.getNumProp(CabbageIDs::width);
+				originalPluginHeight = cAttr.getNumProp(CabbageIDs::height);
                 this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));
                 this->lookAndFeelChanged();
             }
-        }
+        }		
+		
+		Point<float> scale = Point<float>(desktopRect.getWidth()/originalPluginWidth,
+										  (desktopRect.getHeight()/originalPluginHeight)*.95);
+		
+        pluginHolder->createPlugin(file.getFullPathName(), scale);
+		AudioProcessorEditor* ed = createEditorComp();
+		setContentOwned(ed, true);
+        //createEditorComp();
+
+		ed->setSize(desktopRect.getWidth(), desktopRect.getHeight());
+		//this->resized();
+        
+		setName(pluginHolder->processor->getName());
+        pluginHolder->startPlaying();
+        
     }
 
 }
@@ -180,7 +179,7 @@ void StandaloneFilterWindow::loadFile(String filename)
 //============================================================
 StandalonePluginHolder::StandalonePluginHolder ()
 {
-    createPlugin("");
+    createPlugin("", Point<float>(1.f, 1.f));
     setupAudioDevices();
     reloadPluginState();
     startPlaying();
@@ -193,19 +192,19 @@ StandalonePluginHolder::~StandalonePluginHolder()
 }
 
 //==============================================================================
-void StandalonePluginHolder::createPlugin(String file)
+void StandalonePluginHolder::createPlugin(String file, Point<float> scale)
 {
     AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Standalone);
 
     if(file.isEmpty())
 #ifndef AndroidDebug
-        processor = createPluginFilter("");
+        processor = createPluginFilter("", scale);
 #else
         processor = createCabbagePluginFilter("", false, 1);
 #endif
     else
 #ifndef AndroidDebug
-        processor = createPluginFilter(file);
+        processor = createPluginFilter(file, scale);
 #else
         processor = createCabbagePluginFilter(file, false, 1);
 #endif

@@ -412,43 +412,6 @@ void CabbageLookAndFeel::drawLinearSlider (Graphics& g, int x, int y, int width,
     }
 }
 
-class CabbageLookAndFeel::SliderLabelComp  : public Label
-{
-public:
-    SliderLabelComp() : Label (String::empty, String::empty) {}
-
-    void mouseWheelMove (const MouseEvent&, const MouseWheelDetails&) {}
-};
-
-//========= slider text box label ====================================================================
-Label* CabbageLookAndFeel::createSliderTextBox (Slider& slider)
-{
-    Label* const l = new SliderLabelComp();
-
-    l->setJustificationType (Justification::centred);
-
-    l->setColour (Label::textColourId, slider.findColour (Slider::textBoxTextColourId));
-
-    l->setColour (Label::backgroundColourId,
-                  (slider.getSliderStyle() == Slider::LinearBar || slider.getSliderStyle() == Slider::LinearBarVertical)
-                  ? Colours::transparentBlack
-                  : slider.findColour (Slider::textBoxBackgroundColourId));
-    l->setColour (Label::outlineColourId, slider.findColour (Slider::textBoxOutlineColourId));
-
-    l->setColour (TextEditor::textColourId, slider.findColour (Slider::textBoxTextColourId));
-
-    l->setColour (TextEditor::backgroundColourId,
-                  slider.findColour (Slider::textBoxBackgroundColourId)
-                  .withAlpha ((slider.getSliderStyle() == Slider::LinearBar || slider.getSliderStyle() == Slider::LinearBarVertical)
-                              ? 0.7f : 1.0f));
-
-    l->setColour (TextEditor::outlineColourId, slider.findColour (Slider::textBoxOutlineColourId));
-
-    l->setColour (TextEditor::highlightColourId, slider.findColour (Slider::textBoxHighlightColourId));
-
-    return l;
-}
-
 //========= bubble componenent that shows when we move a slider ====================
 void CabbageLookAndFeel::drawBubble (Graphics& g, BubbleComponent& comp,
                                      const Point<float>& tip, const Rectangle<float>& body)

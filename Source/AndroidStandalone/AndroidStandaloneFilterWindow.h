@@ -36,7 +36,7 @@
 ///extern CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int plugType);
 
 #ifndef AndroidDebug
-extern AudioProcessor* JUCE_CALLTYPE createPluginFilter(String file);
+extern AudioProcessor* JUCE_CALLTYPE createPluginFilter(String file, Point<float> scale);
 #else
 extern AudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String file, bool refresh, int pluginType);
 #endif
@@ -74,7 +74,7 @@ public:
 
     ~StandalonePluginHolder();
     //==============================================================================
-    void createPlugin(String file);
+    void createPlugin(String file, Point<float> scale);
     void deletePlugin();
     static String getFilePatterns (const String& fileSuffix);
     void startPlaying();

@@ -265,34 +265,6 @@ void CabbagePluginAudioProcessorEditor::resized()
 
 }
 
-//==============================================================================
-void CabbagePluginAudioProcessorEditor::rescaleAllChildren(double scale)
-{
-	
-	for( int i=0; i<componentPanel->getNumChildComponents(); i++)
-	{
-		if(componentPanel->getChildComponent(i)->getNumChildComponents()>2)
-		{
-			
-			for(int y=0;y<componentPanel->getChildComponent(i)->getNumChildComponents();y++)
-			{
-				Rectangle<int> bounds = componentPanel->getChildComponent(i)->getChildComponent(y)->getBounds();
-				componentPanel->getChildComponent(i)->getChildComponent(y)->setBounds(bounds.getX()*scale,
-																					  bounds.getY()*scale,
-																					  bounds.getWidth()*scale,
-																					  bounds.getHeight()*scale);								
-			}
-		}
-
-		Rectangle<int> bounds = componentPanel->getChildComponent(i)->getBounds();
-		componentPanel->getChildComponent(i)->setBounds(bounds.getX()*scale,
-										bounds.getY()*scale,
-										bounds.getWidth()*scale,
-										bounds.getHeight()*scale);
-	}
-
-	setSize(this->getWidth()*scale, this->getHeight()*scale);
-}
 
 //==============================================================================
 void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
@@ -381,9 +353,9 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIClass cAttr)
     {
         InsertLineSeparator(cAttr);
     }
-    else if(cAttr.getStringProp(CabbageIDs::type)==String("progressbar"))
+    else if(cAttr.getStringProp(CabbageIDs::type)==String("encoder"))
     {
-        InsertProgressbar(cAttr);
+        InsertEncoder(cAttr);
     }
     else if(cAttr.getStringProp(CabbageIDs::type)==String("table"))
     {
@@ -546,6 +518,17 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
 
         }
     }
+	
+	CabbageEncoder* encSlider = dynamic_cast<CabbageEncoder*>(source);
+    if(encSlider)
+    {
+        if(encSlider->shouldDisplayPopup)
+        {
+			String popupText = encSlider->channel+": "+String(encSlider->currentValue);
+			popupBubble->showAt(encSlider, AttributedString(popupText), 550);
+			getFilter()->messageQueue.addOutgoingChannelMessageToQueue(encSlider->channel, encSlider->currentValue, "");
+		}
+	}
 
     CabbageSoundfiler* soundfiler = dynamic_cast<CabbageSoundfiler*>(source);
     if(soundfiler)
@@ -2237,32 +2220,28 @@ void CabbagePluginAudioProcessorEditor::InsertTextbox(CabbageGUIClass &cAttr)
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //      progressbar widget.
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-void CabbagePluginAudioProcessorEditor::InsertProgressbar(CabbageGUIClass &cAttr)
+void CabbagePluginAudioProcessorEditor::InsertEncoder(CabbageGUIClass &cAttr)
 {
-    if(!File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::file)))
-    {
-        String pic = returnFullPathForFile(cAttr.getStringProp(CabbageIDs::file), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());
-        cAttr.setStringProp(CabbageIDs::file, pic);
-    }
-
-    layoutComps.add(new CabbageProgressBar(cAttr));
-    int idx = layoutComps.size()-1;
     float left = cAttr.getNumProp(CabbageIDs::left);
     float top = cAttr.getNumProp(CabbageIDs::top);
     float width = cAttr.getNumProp(CabbageIDs::width);
     float height = cAttr.getNumProp(CabbageIDs::height);
-    setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
-    layoutComps[idx]->setName("progressbar");
-    layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
+
+    comps.add(new CabbageEncoder(cAttr));
+    int idx = comps.size()-1;
+    setPositionOfComponent(left, top, width, height, comps[idx], cAttr.getStringProp("reltoplant"));
+    comps[idx]->setName("progressbar");
+    comps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
     //if control is not part of a plant, add mouse listener
     if(cAttr.getStringProp("plant").isEmpty())
-        layoutComps[idx]->addMouseListener(this, true);
+        comps[idx]->addMouseListener(this, true);
 
-    layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
-    layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+    comps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+    comps[idx]->getProperties().set(CabbageIDs::index, idx);
     //set visiblilty
-    layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
-    layoutComps[idx]->setEnabled((cAttr.getNumProp(CabbageIDs::active)==1 ? true : false));
+    comps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+    comps[idx]->setEnabled((cAttr.getNumProp(CabbageIDs::active)==1 ? true : false));
+	((CabbageEncoder*)comps[idx])->addChangeListener(this);
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //      TextEditor widget.
@@ -4018,6 +3997,12 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                         getFilter()->getGUICtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
                     }
 
+                    else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::encoder)
+                    {
+                        ((CabbageEncoder*)comps[i])->update(getFilter()->getGUICtrls(i));
+                        getFilter()->getGUICtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
+                    }
+					
                     else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::numberbox)
                     {
                         ((CabbageNumberBox*)comps[i])->update(getFilter()->getGUICtrls(i));
@@ -4146,13 +4131,13 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                 //repaint();
             }
             //progressbar
-            else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("progressbar") &&
-                    getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
-            {
-                ((CabbageProgressBar*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
-                getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
-                //repaint();
-            }
+//            else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("encoder") &&
+//                    getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+//            {
+//                ((CabbageEncoder*)layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
+//                getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
+//                //repaint();
+//            }
             //table
             else if((getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::table) &&
                     getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())

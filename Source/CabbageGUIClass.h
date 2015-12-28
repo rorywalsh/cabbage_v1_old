@@ -72,6 +72,7 @@ public:
         add("channeltype");
         add("channels");
         add("channel");
+		add("sliderincr");
         add("widgetarray");
         add("channelarray");
         add("textbox");
@@ -253,7 +254,7 @@ static const String filebutton = "filebutton";
 static const String loadbutton = "loadbutton";
 static const String sourcebutton = "sourcebutton";
 static const String texteditor = "texteditor";
-static const String progressbar = "progressbar";
+static const String encoder = "encoder";
 static const String table = "table";
 static const String gentable = "gentable";
 static const String groupbox = "groupbox";
@@ -321,6 +322,7 @@ public:
     String getPropsString();
     String getColourProp(Identifier prop);
     float getNumPropVal(Identifier prop);
+	void scaleWidget(Point<float> scale);
     void setNumPropVal(Identifier prop, float val);
     static String getCabbageCodeFromIdentifiers(NamedValueSet props);
     static String getStringForIdentifier(var props, String identifier, String type);

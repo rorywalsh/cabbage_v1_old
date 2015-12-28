@@ -630,31 +630,35 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
     }
 
     //===============image==================//
-    else if(strTokens[0].trim() == "progressbar")
+    else if(strTokens[0].trim() == "encoder")
     {
-        cabbageIdentifiers.set("basetype", "layout");
-        top = 10;
-        left = 10;
-        width = 160;
-        height = 120;
-
-
+      cabbageIdentifiers.set(CabbageIDs::basetype, "interactive");
         cabbageIdentifiers.set(CabbageIDs::top, 10);
         cabbageIdentifiers.set(CabbageIDs::left, 10);
-        cabbageIdentifiers.set(CabbageIDs::width, 160);
-        cabbageIdentifiers.set(CabbageIDs::height, 120);
-        cabbageIdentifiers.set(CabbageIDs::shape, "rounded");
-        cabbageIdentifiers.set(CabbageIDs::corners, 5);
-        cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
-        cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colours::white.toString());
-        cabbageIdentifiers.set(CabbageIDs::outlinethickness, 0);
-        cabbageIdentifiers.set(CabbageIDs::popup, 0);
-        cabbageIdentifiers.set(CabbageIDs::plant, "");
-        cabbageIdentifiers.set(CabbageIDs::type, "progressbar");
-        cabbageIdentifiers.set(CabbageIDs::file, "");
-        cabbageIdentifiers.set(CabbageIDs::name, "progressbar");
+        cabbageIdentifiers.set(CabbageIDs::width, 60);
+        cabbageIdentifiers.set(CabbageIDs::height, 60);
+        var channels;
+        channels.append("encoder");
+        cabbageIdentifiers.set(CabbageIDs::channel, channels);
+        cabbageIdentifiers.set(CabbageIDs::value, 0);
+        cabbageIdentifiers.set(CabbageIDs::sliderincr, .001);
+        cabbageIdentifiers.set(CabbageIDs::text, "");
+        cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
+        cabbageIdentifiers.set(CabbageIDs::caption, "");
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::whitesmoke.toString());
+        cabbageIdentifiers.set(CabbageIDs::trackercolour, Colour(0, 118, 38).toString());
+        cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
+        cabbageIdentifiers.set(CabbageIDs::textcolour, cUtils::getComponentFontColour().toString());
+        cabbageIdentifiers.set(CabbageIDs::outlinecolour, Colours::black.brighter(.3f).toString());
+        cabbageIdentifiers.set(CabbageIDs::midichan, -99);
+        cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
+        //these don't appear in the props dialog
+        cabbageIdentifiers.set(CabbageIDs::name, "encoder");
+        cabbageIdentifiers.set(CabbageIDs::type, cabbageIdentifiers.getWithDefault("name", "").toString());
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+        cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+        cabbageIdentifiers.set(CabbageIDs::trackerthickness, .05);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
 
@@ -2072,6 +2076,19 @@ float CabbageGUIClass::getFloatArrayPropValue(Identifier prop, int index)
 void CabbageGUIClass::setStringProp(Identifier prop, int index, String value)
 {
 
+}
+//===================================================================
+void CabbageGUIClass::scaleWidget(Point<float> scale)
+{
+	Rectangle<int> rect(cabbageIdentifiers.getWithDefault("left", 0),
+						cabbageIdentifiers.getWithDefault("top", 0),
+						cabbageIdentifiers.getWithDefault("width", 10),
+						cabbageIdentifiers.getWithDefault("height", 10));
+						
+	cabbageIdentifiers.set(CabbageIDs::left, rect.getX()*scale.x);
+	cabbageIdentifiers.set(CabbageIDs::top, rect.getY()*scale.y);
+	cabbageIdentifiers.set(CabbageIDs::width, rect.getWidth()*scale.x);
+	cabbageIdentifiers.set(CabbageIDs::height, rect.getHeight()*scale.y);	;
 }
 //===================================================================
 void CabbageGUIClass::setStringProp(Identifier prop, String val)

@@ -47,7 +47,7 @@ char tmp_string[4096] = {0};
 //===========================================================
 // STANDALONE - CONSTRUCTOR
 //===========================================================
-CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool guiOnOff, int _pluginType)
+CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool guiOnOff, float _scale)
     :backgroundThread ("Audio Recorder Thread"),
      activeWriter (nullptr),
      csoundStatus(false),
@@ -72,7 +72,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      scoreEvents(),
      nativePluginEditor(false),
      averageSampleIndex(0),
-     pluginType(_pluginType),
      automationAmp(0),
      isAutomator(false),
      createLog(false),
@@ -89,23 +88,20 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      isMuted(false),
      isBypassed(false),
      vuCounter(0)
-{
-
+{	
     codeEditor = nullptr;
     if(compileCsoundAndCreateGUI(false)==0)
     {
         if(!inputfile.equalsIgnoreCase(""))
             cUtils::debug("Csound coudln't compile your file:"+File(inputfile).getFullPathName());
     }
-
-
 }
 #else
 
 //===========================================================
 // PLUGIN - CONSTRUCTOR
 //===========================================================
-CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
+CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile, Point<float> instrScale):
     backgroundThread ("Audio Recorder Thread"),
     activeWriter (nullptr),
     csoundStatus(false),
@@ -132,9 +128,9 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
     firstTime(false),
     isMuted(false),
     isBypassed(false),
-    vuCounter(0)
+    vuCounter(0),
+	scale(instrScale)
 {
-
     //If a sourcefile is not given, Cabbage plugins always try to load a csd file with the same name as the plugin library.
     //Therefore we need to find the name of the library and append a '.csd' to it.
 
@@ -152,17 +148,17 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile):
 #endif
         //cUtils::showMessage(csdFile.getFullPathName());
 #elseif AndroidBuild
-        File inFile(File::getSpecialLocation(File::currentApplicationFile));
-        ScopedPointer<InputStream> fileStream;
-        fileStream = File(inFile.getFullPathName()).createInputStream();
-        ZipFile zipFile (fileStream, false);
-
-        //sample files
-        String mkdir = "mkdir -p \""+String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage\"");
-        String homeDir = String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage/");
-
-        system(mkdir.toUTF8().getAddress());
-        ScopedPointer<InputStream> fileContents;
+//        File inFile(File::getSpecialLocation(File::currentApplicationFile));
+//        ScopedPointer<InputStream> fileStream;
+//        fileStream = File(inFile.getFullPathName()).createInputStream();
+//        ZipFile zipFile (fileStream, false);
+//
+//        //sample files
+//        String mkdir = "mkdir -p \""+String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage\"");
+//        String homeDir = String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage/");
+//
+//        system(mkdir.toUTF8().getAddress());
+//        ScopedPointer<InputStream> fileContents;
 
 #else
         File thisFile(File::getSpecialLocation(File::currentExecutableFile));
@@ -228,18 +224,18 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 void CabbagePluginAudioProcessor::setScreenMacros()
 {
 //android opens full screen by default.
-//#ifdef AndroidBuild
-//    Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
-//    String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth()-60)+"\"";
-//    csound->SetOption(screenWidth.toUTF8().getAddress());
-//    String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight()-60)+"\"";
-//    csound->SetOption(screenHeight.toUTF8().getAddress());
-//#else
+#ifdef AndroidBuild
+    Rectangle<int> rect(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+    String screenWidth = "--omacro:SCREEN_WIDTH=\""+String(rect.getWidth()-60)+"\"";
+    csound->SetOption(screenWidth.toUTF8().getAddress());
+    String screenHeight = "--omacro:SCREEN_HEIGHT=\""+String(rect.getHeight()-60)+"\"";
+    csound->SetOption(screenHeight.toUTF8().getAddress());
+#else
     String width = "--omacro:SCREEN_WIDTH=\""+String(screenWidth)+"\"";
     csound->SetOption(width.toUTF8().getAddress());
     String height = "--omacro:SCREEN_HEIGHT=\""+String(screenHeight)+"\"";
     csound->SetOption(height.toUTF8().getAddress());
-//#endif
+#endif
 }
 //============================================================================
 //FIND MACROS AND ADD THEM TO SETUP OPTIONS
@@ -377,7 +373,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
         csound->SetOption((char*)"--omacro:IS_A_PLUGIN=\"1\"");
 
 #ifdef AndroidBuild
-    csound->SetOption((char*)"--omacro:ANDROID=\"1\"");
+    csound->SetOption((char*)"--omacro:IS_ANDROID=\"1\"");
 #endif
     setScreenMacros();
     addMacros(csdFile.loadFileAsString());
@@ -675,6 +671,8 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
     indexOfLastLayoutCtrl = guiLayoutCtrls.size();
 
     String warningMessage;
+	
+	//cUtils::showMessage(scale);
 
     //setGuiEnabled((false));
     int guiID=0;
@@ -814,7 +812,6 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                             ||tokes[0].equalsIgnoreCase(String("hosttime"))
                             ||tokes[0].equalsIgnoreCase(String("hostplaying"))
                             ||tokes[0].equalsIgnoreCase(String("hostppqpos"))
-                            ||tokes[0].equalsIgnoreCase(String("progressbar"))
                             ||tokes[0].equalsIgnoreCase(String("patmatrix"))
                             ||tokes[0].equalsIgnoreCase(String("source"))
                             ||tokes[0].equalsIgnoreCase(String("multitab"))
@@ -834,6 +831,10 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                             ||tokes[0].equalsIgnoreCase(String("groupbox")))
                     {
                         CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
+
+#ifdef AndroidBuild	
+						cAttr.scaleWidget(scale);
+#endif
 
                         if(cAttr.getStringProp(CabbageIDs::type)=="form")
                         {
@@ -974,12 +975,16 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                             ||tokes[0].equalsIgnoreCase(String("vslider3"))
                             ||tokes[0].equalsIgnoreCase(String("combobox"))
                             ||tokes[0].equalsIgnoreCase(String("checkbox"))
+                            ||tokes[0].equalsIgnoreCase(String("encoder"))
                             ||tokes[0].equalsIgnoreCase(String("numberbox"))
                             ||tokes[0].equalsIgnoreCase(String("xypad"))
                             ||tokes[0].equalsIgnoreCase(String("button")))
                     {
-
                         CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
+#ifdef AndroidBuild	
+						cAttr.scaleWidget(scale);
+#endif						
+						
                         warningMessage = "";
                         warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
                         if(cAttr.getWarningMessages().isNotEmpty())
@@ -1072,13 +1077,6 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
         else break;
     } //end of scan through entire csd text, control vectors are now populated
 
-    //csound->Message("===End of Cabbage warnings===\n");
-
-//#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
-
-
-
-//#endif
 }
 
 //===========================================================================================
@@ -1605,9 +1603,9 @@ CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inpu
     return new CabbagePluginAudioProcessor(inputfile, false, pluginType);
 }
 #elif defined(AndroidBuild)
-AudioProcessor* JUCE_CALLTYPE createPluginFilter(String file)
+AudioProcessor* JUCE_CALLTYPE createPluginFilter(String file, Point<float> scale)
 {
-    return new CabbagePluginAudioProcessor(file);
+    return new CabbagePluginAudioProcessor(file, scale);
 }
 #else
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()

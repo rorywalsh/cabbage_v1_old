@@ -135,7 +135,6 @@ public:
     void ksmpsYieldCallback();
     void updateSize();
 	//used in Android mode to rescale according to screen res
-	void rescaleAllChildren(double scale);
     ScopedPointer<CabbagePropertiesDialog> propsWindow;
     //main GUI controls vectors..
     OwnedArray<Component> comps;
@@ -192,7 +191,7 @@ private:
     void InsertLabel(CabbageGUIClass &cAttr);
     void InsertTable(CabbageGUIClass &cAttr);
     void InsertMultiTab(CabbageGUIClass &cAttr);
-    void InsertProgressbar(CabbageGUIClass &cAttr);
+    void InsertEncoder(CabbageGUIClass &cAttr);
     void InsertInfoButton(CabbageGUIClass &cAttr);
     void InsertLineSeparator(CabbageGUIClass &cAttr);
     void InsertPatternMatrix(CabbageGUIClass &cAttr);

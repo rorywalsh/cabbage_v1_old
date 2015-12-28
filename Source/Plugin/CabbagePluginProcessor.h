@@ -321,9 +321,9 @@ public:
     //==============================================================================
 
 #if defined(Cabbage_Build_Standalone) || (CABBAGE_HOST)
-    CabbagePluginAudioProcessor(String inputfile, bool guiOnOff, int pluginType);
+    CabbagePluginAudioProcessor(String inputfile, bool guiOnOff, float scale);
 #else
-    CabbagePluginAudioProcessor(String file="");
+    CabbagePluginAudioProcessor(String file="", Point<float> scale = Point<float>(1, 1));
 #endif
     ~CabbagePluginAudioProcessor();
 
@@ -416,7 +416,7 @@ public:
     int averageSampleIndex;
     bool stopProcessing;
     float outputNo1;
-    int pluginType;
+    Point<float> scale;
     float automationAmp;
     int automationParamID;
     int mouseX, mouseY;

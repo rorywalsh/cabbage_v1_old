@@ -12,6 +12,7 @@
 	* [Checkbox](checkbox.md)
 	* [Combobox](combobox.md)
 	* [Csound Output](csound_output.md)
+	* [Endless encoder](encoder.md)
 	* [Gentable](gentable.md)
 	* [Form](form.md)
 	* [Groupbox](groupbox.md)

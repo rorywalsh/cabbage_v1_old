@@ -19,7 +19,7 @@ active(val)
 
 **channel("chan")** "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode. If you are using a hslider2 or vslider2 widget you will need to pass two channel names, e.g., channel("sliderMin", "slidermax"), as the slider will be sending data over two channels. 
 
-**range(min, max, value, skew, incr)** the first 2 parameters are required. The rest are optional. The first two parameters let you set the minimum value and the maximum value. The next parameter determines the initial value of the slider. If you are using slider with 2 thumbs, you must pass two values here separated by a colon. For example, if you are using a hslider2, your range() identifiers might read range(0, 100, 20:60, 1, .1). The next allows you to adjust the skew factor. Tweaking the skew factor can cause the slider to output values in a non linear fashion. A skew of 0.5 will cause the slider to output values in an exponential fashion. A skew of 1 is the default value, which causes the slider to behave is a typical linear form. 
+**range(min, max, value, skew, incr)** the first 2 parameters are required. The rest are optional. The first two parameters let you set the minimum value and the maximum value. The next parameter determines the initial value of the slider. If you are using slider with 2 thumbs, you must pass two values here separated by a colon. For example, if you are using a hslider2, your range() identifiers might read range(0, 100, 20:60, 1, .1). The next allows you to adjust the skew factor. Tweaking the skew factor can cause the slider to output values in a non linear fashion. A skew of 0.5 will cause the slider to output values in an exponential fashion. A skew of 1 is the default value, which causes the slider to behave is a typical linear form. The final parameter sets the incremental step size for the slider. If you need to have very fine control of steps you may wish to look at using an [Endless Encoder](./encoder.md) instead. 
 
 **min(val)** If using a double or triple pointer slider (hslider2, hslider3, vslider2, vslider3), min() will set the default minimum position of the minimum thumb controller. The absolute minimum is set using the range identifier. See above.
 
@@ -67,8 +67,7 @@ Slider types::
 
 * *vslider3*, vertical slider with adjustable min and max limits.
 
-
-**popuptext("text")** Displays a popup text box when a user hovers over the widget.
+**popuptext("text")** Sets the text that will appear in the popup text bubble when a user hovers over the widget. This can be used to override the defaul text which displays the channel name and the current value. 
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 

@@ -3,7 +3,7 @@
 Image creates a static shape or graphic. It can be used to show pictures or it can be used to draw simple shapes. If you wish to display a picture you must pass the file name to the file() identifier. For convenience, the file passed to file() should be in the same directory as your Cabbage instrument. 
 
 ```csharp
-image bounds(x, y, width, height), colour("colour"), \
+image bounds(x, y, width, height), colour("colour"), channel("chan")\
 file("file name"), shape("type"), outlinecolour("colour"), \
 outlinethickness(thickness), plant("name"), identchannel("channel"), \
 visible(val), alpha(val), rotate(radians, pivotx, pivoty), corners(val)m \
@@ -19,6 +19,8 @@ widgetarray("chan", number), popuptext("text"), active(val)
 >Try to avoid full path names at all costs. They will work fine on a local machine, but will not be valid on another machine.
 
 **shape("type");** "shape" must be either round(with rounded corners, default), sharp(with sharp corners), or ellipse(an elliptical shape)
+
+**channel("chan")** "chan" is the name of the channel that Cabbage will communicate with Csound on. A left-mouse click on an image will send a 1 to the channel passed to channel(). Subsequent clicks will toggle between 0 and 1. 
 
 **colour("colour")** This sets the colour of the image if no file name is given with the file identifier. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.  
 

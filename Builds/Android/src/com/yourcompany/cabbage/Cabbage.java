@@ -235,14 +235,7 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
     {
         super.onCreate (savedInstanceState);
         files = new ArrayList<String>();
-        ArrayList<String> assetsFiles = new ArrayList<String>();
-        assetsFiles.add("DrumPads.csd");
-        assetsFiles.add("icon.png");
-        assetsFiles.add("ImageSliders.csd");
-        assetsFiles.add("IntroScreen.csd");
-        assetsFiles.add("PebblesInAPond.csd");
-        assetsFiles.add("SpookEPad.csd");
-        assetsFiles.add("PatternMatrix.csd");
+
         viewHolder = new ViewHolder (this);
         //setContentView (viewHolder);
         setContentView (R.layout.activity_home);

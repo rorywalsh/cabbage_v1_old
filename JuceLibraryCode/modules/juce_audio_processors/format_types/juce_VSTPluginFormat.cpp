@@ -469,7 +469,7 @@ public:
             }
         }
 
-        return String::empty;
+        return String();
     }
    #endif
 #else
@@ -479,7 +479,7 @@ public:
     Handle resHandle;
     CFBundleRef bundleRef;
     FSSpec parentDirFSSpec;
-    short resFileId;
+    ResFileRefNum resFileId;
 
     bool open()
     {
@@ -1024,7 +1024,7 @@ public:
                 return String (pinProps.label, sizeof (pinProps.label));
         }
 
-        return String::empty;
+        return String();
     }
 
     bool isInputChannelStereoPair (int index) const override
@@ -1048,7 +1048,7 @@ public:
                 return String (pinProps.label, sizeof (pinProps.label));
         }
 
-        return String::empty;
+        return String();
     }
 
     bool isOutputChannelStereoPair (int index) const override
@@ -1750,7 +1750,7 @@ private:
     String getTextForOpcode (const int index, const AEffectOpcodes opcode) const
     {
         if (effect == nullptr)
-            return String::empty;
+            return String();
 
         jassert (index >= 0 && index < effect->numParams);
         char nm [256] = { 0 };
@@ -1775,7 +1775,7 @@ private:
             if (index >= 0 && programNames[index].isEmpty())
             {
                 while (programNames.size() < index)
-                    programNames.add (String::empty);
+                    programNames.add (String());
 
                 programNames.set (index, progName);
             }
@@ -2376,6 +2376,10 @@ private:
     {
         if (isOpen)
         {
+            // You shouldn't end up hitting this assertion unless the host is trying to do GUI
+            // cleanup on a non-GUI thread.. If it does that, bad things could happen in here..
+            jassert (MessageManager::getInstance()->currentThreadHasLockedMessageManager());
+
             JUCE_VST_LOG ("Closing VST UI: " + plugin.getName());
             isOpen = false;
             dispatch (effEditClose, 0, 0, 0, 0);

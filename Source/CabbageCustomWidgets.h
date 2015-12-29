@@ -1328,7 +1328,43 @@ public:
     //update control
     void update(CabbageGUIClass m_cAttr)
     {
-        // bar->setBounds(m_cAttr.getBounds());
+        const MessageManagerLock mmLock;
+        colour = m_cAttr.getStringProp(CabbageIDs::colour);
+        textcolour = m_cAttr.getStringProp(CabbageIDs::fontcolour);
+        trackercolour = m_cAttr.getStringProp(CabbageIDs::trackercolour);
+		outlinecolour = m_cAttr.getStringProp(CabbageIDs::outlinecolour);
+        setBounds(m_cAttr.getBounds());
+        textLabel.setColour(Label::textColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::textcolour)));
+		
+        if(!m_cAttr.getNumProp(CabbageIDs::visible))
+        {
+            setVisible(false);
+            setEnabled(false);
+        }
+        else
+        {
+            setVisible(true);
+            setEnabled(true);
+        }
+        if(!m_cAttr.getNumProp(CabbageIDs::active))
+        {
+            setEnabled(false);
+        }
+        else
+        {
+            setEnabled(true);
+        }
+        if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
+        {
+            rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
+            setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
+        }
+        if(tooltipText!=m_cAttr.getStringProp(CabbageIDs::popuptext))
+        {
+            tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
+        }
+        setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
+        repaint();
     }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageEncoder);

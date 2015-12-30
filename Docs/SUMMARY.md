@@ -36,4 +36,8 @@
 * [Cabage AudioUnit](cabbage_audio_unit.md)
 * [Standalone Standalone Host](standalone_host.md)
 * [Cabbage Studio](cabbage_studio.md)
+* [Adding new Widgets](add_new_widgets.md)
+	* [Part 1](new_widgets_part_1.md)
+	* [Part 2](new_widgets_part_2.md)
+	* [Part 3](new_widgets_part_3.md)
 

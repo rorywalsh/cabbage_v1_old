@@ -8,7 +8,7 @@ In order to add new widgets you will need to set up a Cabbage build, based on yo
 
 All custom widgets classes must declared in CabbageCustomWidgets.h, while all function definitions should be implemented in the CabbageCustomWidgets.cpp. If you scroll towards the bottom of CabbageCustomWidgets.h you will see where the sample stepper widget is declared. You can add any new widgets directly after this declaration. Before declaring our new widget, it is worth looking at some of the files CabbageCustomWidgets.h includes. 
 
-```c++
+```csharp
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "CabbageLookAndFeel.h"
 #include "CabbageUtils.h"
@@ -16,9 +16,9 @@ All custom widgets classes must declared in CabbageCustomWidgets.h, while all fu
 ```
 The CabbageLookAndFeel file contains methods for painting components with a set look and feel. If your new widget uses any existing widgets such as sliders, buttons, comboboxes, etc, it is advised to use the CabbageLookAndFeel class to skin them in a way that is consistent to Cabbage. The CabbageUtils class contains several static methods that can be use for debugging and various other utility operations. The CabbageGUIType class, which is discussed in more detail later, is an abstract data type that holds information about the various attributes of a widget. 
 
-Your new widget class constructor, located towards the end of CabbageCustomWidgets.h can derive from any of JUCE's main GUI classes. The base class for all GUI widgets in JUCE is the Component class. Our simple class will inherit from this base class and will look like this.  
+Your new widget class constructor, located towards the end of CabbageCustomWidgets.h can derive from any of JUCE's main GUI classes. The base class for all GUI widgets in JUCE is the Component class. Our simple class will inherit from this base class and in most cases will need a **paint()** method for drawing the component and an **update(...)** method for updating our widget from Csound. A very basic widget class might look like this.  
 
-```c++
+```csharp
 class CabbageStepper	:	public Component
 {
 String name;
@@ -40,6 +40,8 @@ public:
 		g.fillAll(Colours::red);
     }
 
+    void update(CabbageGUIType m_cAttr){}
+
 private:
 	CabbagePluginAudioProcessorEditor* owner;
 	
@@ -50,16 +52,16 @@ private:
 ```
 > In order to keep things as clear as possible for this particular tutorial, I've included member method definitions within the class declaration. In reality however, function definitions should always reside in CabbageCustomWidgets.cpp, otherwise you will have problems with forward declarations and circular dependencies.   
 
-Each Cabbage widget gets passed a CabbageGUIType object. CabbageGUIType objects are created and instantiated based on lines of text in the Cabbage section of your code. Each CabbageGUIType object contains information about a particular widget, such as size, colour, position, etc. The CabbageGUIType class contains several methods for accessing a widget's properties. The simplest of these methods are:
+Each Cabbage widget gets passed a **CabbageGUIType** object. CabbageGUIType objects are created and instantiated based on lines of text in the Cabbage section of your code. Each CabbageGUIType object contains information about a particular widget, such as size, colour, position, etc. The **CabbageGUIType** class contains several methods for accessing a widget's properties. The simplest of these methods are:
 
-```c++
+```csharp
 float getNumProp(Identifier prop);
 String getStringProp(Identifier prop);
 ```
 
 These two methods, used extensively throughout the entire Cabbage code-base, can be passed strings that name the identifier you wish to access. For example, if you wanted users to be able to use a colour() identifier to set the colour of a new widget you could do something like this:
 
-```c++
+```csharp
 (...)
 Colour widgetColour;
 public:
@@ -89,7 +91,7 @@ If Cabbage finds a widget type when parsing the user code, it makes a call to th
 
 Out simple **InsertStepper(...)** method looks like this.
 
-```c++
+```csharp
 void CabbagePluginAudioProcessorEditor::InsertStepper(CabbageGUIType &cAttr)
 {
 	CabbageStepper* stepper = new CabbageStepper(cAttr, this);
@@ -125,7 +127,7 @@ Any new **Insert(...)** method will need to do the following:
 
 There is one final step to be taken before Cabbage will successfully create our new widget type. That is to set up all default parameters for our new widget. Widgets must have default parameters set so that users don't have to set each one themselves in their code. This ensures each line of Cabbage code can be a succinct as possible. To add default parameters for your new widget type you will need to add some code to the CabbageGUIType class constructor. Here is what needs to be added to the CabbageGUIType constructor in CabbageGUIClass.h in order to create default parameters for our new *stepper* widget.
 
-```c++
+```csharp
     //===============stepper==================//
     else if(strTokens[0].trim() == "stepper")
     {

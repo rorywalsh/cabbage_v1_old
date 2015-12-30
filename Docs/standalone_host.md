@@ -1,6 +1,6 @@
 # The Cabbage Standalone Host
 
-While any text editor can be used to code Cabbage instruments, it's fair to say that most development and prototyping will be done with the main Cabbage host and source code editor. The following is a run down of the various options accessible from the 'Options' menu. 
+While any text editor can be used to code Cabbage instruments, it's fair to say that most development and prototyping will be done with the main Cabbage host and source code editor. The Cabbage standalone host is a single instrument host. It loads a Cabbage .csd file as a standalone plugin and comes with many features that make developing instruments that little bit easier. Provided below is a run down of the various options accessible from the 'Options' menu. 
 
 ![Standalone](images/FullEditor.png)
  

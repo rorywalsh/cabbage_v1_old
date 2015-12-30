@@ -6,7 +6,7 @@ Now that we have created our simple widget, and have tested to make sure it work
 
 As there are currently no pre-existing identifiers that can be used for the aforementioned two properties, we will need to create them ourselves by adding them to the IdentArray class in CabbageGUIClass.h. 
 
-```c++
+```csharp
 // this array holds the name of identifiers used in Cabbage syntx
 class IdentArray : public StringArray
 {
@@ -20,7 +20,7 @@ public:
 
 We then need to add some code to the CabbageGUIType::parse(...) method. You'll see that this method contains a number of conditional statements relating to numeric, or string parameters. In the if-else's for numeric parameters we add the following code:
 
-```c++
+```csharp
 else if(identArray[indx].equalsIgnoreCase("numberofsteps"))
 {
     cabbageIdentifiers.set("numberofsteps", strTokens[0].trim().getIntValue());
@@ -37,7 +37,7 @@ The CabbageGUIType::parse(...) method is passed a line of Cabbage code, and from
 
 Now that we have added two unique stepper identifiers, we might as well go ahead and add default values for them in the CabageGUIType class constructor. 
 
-```c++
+```csharp
 	(...)
     //===============stepper==================//
     else if(strTokens[0].trim() == "stepper")
@@ -65,7 +65,7 @@ Now that we have added two unique stepper identifiers, we might as well go ahead
 
 Now that we have taken care of the two new identifiers, we can get cracking on our stepper widgets. The first thing will need to do is paint a number of 'steps'. The number of steps is dynamic and it set by the user. All painting/drawing is done in the widget's paint(...) method which is passed a Graphics context. To paint something on our widget we can call any number of special painting routines defined in JUCE's Graphics class. Our simple widget will need to paint some rectangles. To do this will will make some calls to **JUCE::Graphics::fillRoundedRectangle(...)**. Note that we also create a simple integer array that will hold the current state of each steps. All steps are off by default. 
 
-```c++
+```csharp
 class CabbageStepper	:	public Component
 {
 	String name;
@@ -108,7 +108,7 @@ The next thing to add is the ability to select a step within the sequence. To do
 
 In our mouseDown(...) method, we need to check the position of the mouse click. If the user has clicked on a step that is currently disabled, we need to enabled it, otherwise we should disable the step. We also need to call the JUCE::Component::repaint() method once we have dealt with the mouse click. This will cause our widget's paint method to be caled, so that it can refresh itself. 
 
-```c++
+```csharp
 	void mouseDown(const MouseEvent& event)
 	{
 		int x = event.getMouseDownX();
@@ -128,8 +128,7 @@ Users can now enable/disable steps by clicking on them.
 
 Right now our stepper widget doesn't actual 'step', so to speak. In order to step through each, er, step, we need to add some kind of timer. JUCE comes with a very simple Timer class that we can use. We can simple inherit it. The **JUCE::Timer** class has a pure virtual method that has be overridden. That method is called **timerCallback()**. This method will be called periodically at a user defined rate. We will set it up to fire at whatever the user has passed to the stepbpm() identifier by passing a timer interval to the **startTimer(...)** method. 
 
-```c++
-
+```csharp
 class CabbageStepper	:	public Component, public Timer
 {
 	String name;
@@ -162,7 +161,7 @@ class CabbageStepper	:	public Component, public Timer
 
 Now that we have a timer going, we need to provide the user with some kind of visual indicator as to the current step. There are several ways to do this. We could for example colour the current step so that it is different from the others. But this might lead to some confusion when the current step matches one of the selected steps. In this case it may be best to dynamically resize the current step so that it is slightly larger than the others. This is quite simple to do. We simply create a currentStep variable that will hold the currentStep index, and modify our paint routine so that it paints the current step larger than the others. 
 
-```c++
+```csharp
 class CabbageStepper	:	public Component, public Timer
 {
 	String name;
@@ -208,6 +207,7 @@ class CabbageStepper	:	public Component, public Timer
 			g.fillRoundedRectangle(stepWidth*i, getHeight()*scaleTop, stepWidth*scaleSize, getHeight()*scaleSize, 5.f); 
 		}
     }
+   (...)
    ```
 
    Now the user can clearly see which is the current step in the sequence.

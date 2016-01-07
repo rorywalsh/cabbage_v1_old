@@ -298,7 +298,7 @@ void SidebarPanel::actionListenerCallback (const String &message)
         concertinaPanel.removePanel(concertinaPanel.getPanel(WIDGET_PROPS));
     }
 
-    CabbageGUIClass cAttr(message, -1);
+    CabbageGUIType cAttr(message, -1);
     CabbagePropertiesPanel* panel = new CabbagePropertiesPanel("Widget Properties");
     panel->updateProperties(cAttr);
     panel->addChangeListener(filterGraph);

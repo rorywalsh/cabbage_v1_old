@@ -725,7 +725,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
     {
         if(csdArray[i].contains("form "))
         {
-            CabbageGUIClass cAttr(csdArray[i], -99);
+            CabbageGUIType cAttr(csdArray[i], -99);
             this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));
             this->lookAndFeelChanged();
         }
@@ -1911,7 +1911,7 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
         tokes.addTokens(csdText[i].trimEnd(), ", ", "\"");
         if(tokes[0].equalsIgnoreCase(String("form")))
         {
-            CabbageGUIClass cAttr(csdText[i].trimEnd(), 0);
+            CabbageGUIType cAttr(csdText[i].trimEnd(), 0);
             if(cAttr.getStringProp(CabbageIDs::pluginid).length()!=4)
             {
                 m_ShowMessage("Your plugin ID is not the right size. It MUST be 4 characters long. Some hosts may not be able to load your plugin", lookAndFeel);

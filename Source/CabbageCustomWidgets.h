@@ -23,11 +23,13 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "CabbageLookAndFeel.h"
 #include "CabbageUtils.h"
+#include "CabbageGUIClass.h"
 #include "CabbageTable.h"
 #include "Table.h"
 #include "XYPad.h"
 #include "Soundfiler.h"
-//#include "DirectoryContentsComponent.h"
+
+class CabbagePluginAudioProcessorEditor;
 
 class InfoWindow   : public DocumentWindow
 {
@@ -70,7 +72,7 @@ public:
     ScopedPointer<TextButton> button;
     //---- constructor -----
 
-    CabbageButton(CabbageGUIClass &cAttr) :
+    CabbageButton(CabbageGUIType &cAttr) :
         name(cAttr.getStringProp(CabbageIDs::name)),
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         buttonText(cAttr.getStringProp(CabbageIDs::text)),
@@ -82,13 +84,25 @@ public:
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
         pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
         tooltipText(String::empty)
-    {
+    {		
         setName(name);
         offX=offY=offWidth=offHeight=0;
         groupbox = new GroupComponent(String("groupbox_")+name);
-        button = new TextButton(name);
-        button->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
-        addAndMakeVisible(groupbox);
+        button = new TextButton(name);		
+        button->getProperties().set("svgpath",  cAttr.getStringProp(CabbageIDs::svgpath));
+        
+		File svgFileButtonOn(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgbuttonon),
+													cAttr.getStringProp(CabbageIDs::parentdir)));
+		File svgFileButtonOff(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgbuttonoff),
+													cAttr.getStringProp(CabbageIDs::parentdir)));		
+		File svgPath(cAttr.getStringProp(CabbageIDs::svgpath));
+		
+		cUtils::setSVGProperties(*button, svgFileButtonOn, svgPath, "buttonon");		
+		cUtils::setSVGProperties(*button, svgFileButtonOff, svgPath, "buttonoff");	
+		
+		//cUtils::debug(button->getProperties().getWithDefault("svgbuttonwidth", 100).toString());
+		
+		addAndMakeVisible(groupbox);
         addAndMakeVisible(button);
         groupbox->setVisible(false);
         groupbox->getProperties().set("groupLine", var(1));
@@ -129,7 +143,7 @@ public:
     }
 
     //update controls
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         const MessageManagerLock mmLock;
 
@@ -332,7 +346,9 @@ private:
     const int thumbWidth;
     bool isDraggingRange;
 };
-
+//==============================================================================
+// custom slider components 
+//==============================================================================
 class CabbageSlider : public Component,
     public ChangeBroadcaster
 {
@@ -355,7 +371,7 @@ public:
     bool shouldDisplayPopup;
     String tooltipText;
     //---- constructor -----
-    CabbageSlider(CabbageGUIClass &cAttr) : plantX(-99), plantY(-99),
+    CabbageSlider(CabbageGUIType &cAttr) : plantX(-99), plantY(-99),
         name(cAttr.getStringProp(CabbageIDs::name)),
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         colour(cAttr.getStringProp(CabbageIDs::colour)),
@@ -398,9 +414,24 @@ public:
         if(sliderType=="horizontal2" || sliderType=="vertical2")
             channel2 = cAttr.getStringArrayPropValue(CabbageIDs::channel, 1);
 
-
         slider->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
+
+		cUtils::debug(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgpath),
+													cAttr.getStringProp(CabbageIDs::parentdir)));
+
+
+		slider->getProperties().set("svgslider", cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgslider),
+													cAttr.getStringProp(CabbageIDs::parentdir)));
+
+		cUtils::debug(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgsliderbg),
+													cAttr.getStringProp(CabbageIDs::parentdir)));
+			
+		slider->getProperties().set("svgsliderbg", cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgsliderbg),
+													cAttr.getStringProp(CabbageIDs::parentdir)));		
+		
+		
         slider->toFront(true);
+		
         slider->addMouseListener(this, false);
         textLabel->setColour(Label::textColourId, Colour::fromString(textColour));
 		textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
@@ -433,7 +464,10 @@ public:
         groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontColour));
         groupbox->setColour(TextButton::buttonColourId, cUtils::getComponentSkin());
         slider->getProperties().set("decimalPlaces", decPlaces);
-        slider->getProperties().set("trackerThickness", trackerThickness);
+        slider->getProperties().set("trackerthickness", trackerThickness);
+		slider->getProperties().set("gradient", cAttr.getNumProp(CabbageIDs::gradient));
+		
+		
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
 
         this->setWantsKeyboardFocus(false);
@@ -518,7 +552,7 @@ public:
     }
 
     //update controls
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         const MessageManagerLock mmLock;
         slider->setColour(Slider::rotarySliderFillColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
@@ -567,7 +601,6 @@ public:
         if (sliderType.contains("rotary"))
         {
             slider->setColour(Slider::rotarySliderFillColourId, Colour::fromString(cl));
-            slider->setSliderStyle(Slider::Rotary);
             getProperties().set("type", var("rslider"));
             slider->setSliderStyle(Slider::RotaryVerticalDrag);
             slider->setValue((value));
@@ -761,7 +794,7 @@ public:
     bool isRect;
     String name, caption, tooltipText, buttonText, colour, fontcolour, oncolour;
     //---- constructor -----
-    CabbageCheckbox(CabbageGUIClass &cAttr) :
+    CabbageCheckbox(CabbageGUIType &cAttr) :
         name(cAttr.getStringProp(CabbageIDs::name)),
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         buttonText(cAttr.getStringProp(CabbageIDs::text)),
@@ -834,7 +867,7 @@ public:
     }
 
     //update controls
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         const MessageManagerLock mmLock;
         button->setColour(ToggleButton::textColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
@@ -899,7 +932,7 @@ class CabbagePopupMenu : public Component
     StringArray items;
 public:
     //---- constructor -----
-    CabbagePopupMenu(CabbageGUIClass &cAttr):
+    CabbagePopupMenu(CabbageGUIType &cAttr):
         name(cAttr.getStringProp(CabbageIDs::name)),
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         colour(cAttr.getStringProp(CabbageIDs::colour)),
@@ -949,7 +982,7 @@ public:
     }
 
     //update controls
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
 
     }
@@ -970,7 +1003,7 @@ public:
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<ComboBox> combo;
     //---- constructor -----
-    CabbageComboBox(CabbageGUIClass &cAttr):
+    CabbageComboBox(CabbageGUIType &cAttr):
         name(cAttr.getStringProp(CabbageIDs::name)),
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         colour(cAttr.getStringProp(CabbageIDs::colour)),
@@ -1064,7 +1097,7 @@ public:
     }
 
     //update controls
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         const MessageManagerLock mmLock;
         combo->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
@@ -1111,262 +1144,32 @@ public:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageComboBox);
 };
 //==============================================================================
-// custom image component
+// encoder component
 class CabbageEncoder : public Component, public ChangeBroadcaster, public Label::Listener
 {
-    String name, outlinecolour, colour, trackercolour, text, textcolour;
-    float rotate, sliderincr, value;
+    String name, channel, outlinecolour, colour, trackercolour, text, textcolour, tooltipText;
+    float rotate, sliderincr, value, sliderIncr, startingValue, sliderPos, currentValue;
     Image img;
-    int top, left, width, textBox, height, line, pivotx, pivoty, resize, corners, progress;
-    String tooltipText;
+    int top, left, width, yAxis, textBox, height, line, pivotx, pivoty, resize, corners, progress;
     Point<float> scale;
     AffineTransform transform;
-	bool isMouseOver;
-
-	int yAxis;
-	float sliderIncr, startingValue;
+	bool isMouseOver, shouldDisplayPopup;
 	Rectangle<float> slider;
 	Label textLabel, valueLabel;
-	float sliderPos;
+	CabbagePluginAudioProcessorEditor* owner;
 
-public:
-	bool shouldDisplayPopup;
-	String channel;
-	float currentValue;
+public:	
+    CabbageEncoder(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
+	void labelTextChanged (Label *label);
+	void mouseDown(const MouseEvent &e);	
+	void mouseEnter(const MouseEvent &e);
+	void mouseDrag(const MouseEvent& e);
+	void mouseExit(const MouseEvent &e);
+	void paint(Graphics &g);
+	void showPopup();
+	void resized();
+    void update(CabbageGUIType m_cAttr);
 	
-    CabbageEncoder(CabbageGUIClass &cAttr):
-        name(cAttr.getStringProp(CabbageIDs::name)),
-        colour(cAttr.getStringProp(CabbageIDs::colour)),
-		trackercolour(cAttr.getStringProp(CabbageIDs::trackercolour)),
-		textcolour(cAttr.getStringProp(CabbageIDs::textcolour)),
-		outlinecolour(cAttr.getStringProp(CabbageIDs::outlinecolour)),
-        line(cAttr.getNumProp(CabbageIDs::outlinethickness)),
-        transform(AffineTransform::identity),
-        rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-        corners(cAttr.getNumProp(CabbageIDs::corners)),
-        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
-        tooltipText(String::empty),
-		text(cAttr.getStringProp(CabbageIDs::text)),
-		sliderincr(cAttr.getNumProp(CabbageIDs::sliderincr)),
-		value(cAttr.getNumProp(CabbageIDs::value)),
-		textLabel(""),
-		valueLabel(""),
-		isMouseOver(false),
-		sliderIncr(cAttr.getNumProp(CabbageIDs::sliderincr)),
-		sliderPos(0),
-		yAxis(0),
-		shouldDisplayPopup(false),
-		channel(cAttr.getStringProp(CabbageIDs::channel)),
-		currentValue(value),
-		startingValue(value),
-		textBox(cAttr.getNumProp(CabbageIDs::textbox))
-    {
-		//addAndMakeVisible(slider);
-		//slider.addChangeListener(this);
-		addAndMakeVisible(textLabel);
-		slider.setSize(cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));
-		textLabel.setColour(Label::textColourId, Colour::fromString(textcolour));
-		textLabel.setColour(Label::outlineColourId, Colours::transparentBlack);
-		valueLabel.setColour(Label::textColourId, Colour::fromString(textcolour));
-		valueLabel.setColour(Label::outlineColourId, Colours::whitesmoke.withAlpha(.2f));
-		valueLabel.setEditable(true);
-		valueLabel.addListener(this);
-        if(textBox<1)
-			shouldDisplayPopup=true;
-		else
-			addAndMakeVisible(valueLabel);
-    }
-	
-	void labelTextChanged (Label *label)
-	{
-		float value = label->getText().getFloatValue();
-		sliderPos=0;
-		currentValue=value;
-		valueLabel.setText(String(value, 2), dontSendNotification);
-		sendChangeMessage();
-	}
-
-	void mouseDown(const MouseEvent &e)
-	{
-		if(e.getNumberOfClicks()>1)
-		{
-			sliderPos=0;
-			currentValue=startingValue;
-			repaint();
-			sendChangeMessage();
-		}
-	}
-	
-	void mouseEnter(const MouseEvent &e)
-	{
-		isMouseOver = true;
-		repaint();
-		sendChangeMessage();
-	}
-	
-	void mouseDrag(const MouseEvent& e)
-	{
-		if(yAxis!=e.getOffsetFromDragStart().getY())
-		{
-			sliderPos = sliderPos+(e.getOffsetFromDragStart().getY()<yAxis ? -50 : 50);
-			currentValue = cUtils::roundToPrec(currentValue+(e.getOffsetFromDragStart().getY()<yAxis ? sliderIncr : -sliderIncr), 5);
-			yAxis = e.getOffsetFromDragStart().getY();
-			repaint();
-			valueLabel.setText(String(currentValue, 2), dontSendNotification);
-		}
-		
-		sendChangeMessage();
-	}
-
-	void mouseExit(const MouseEvent &e)
-	{
-		isMouseOver = false;
-		repaint();
-	}
-	
-	void paint(Graphics &g)
-	{
-		float rotaryStartAngle = 0;
-		float rotaryEndAngle = 2*3.14;
-		bool isEnabled=true;
-		const float radius = jmin (slider.getWidth() / 2, slider.getHeight() / 2) - 2.0f;
-		const float diameter = radius*2.f;
-		const float centreX = getWidth() * 0.5f;
-		const float centreY = slider.getY()+slider.getHeight() * 0.5f;
-		const float rx = centreX - radius;
-		const float ry = centreY - radius;
-		const float rw = radius * 2.0f;
-		const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-
-		if (radius > 12.0f)
-		{
-			g.setColour (Colour::fromString(trackercolour).withAlpha (isMouseOver ? 1.0f : 0.9f));
-
-			const float thickness = 0.7f;
-			{
-				Path filledArc;
-				filledArc.addPieSegment (rx, ry, rw, rw, angle-.25, angle+.25f, thickness);
-				g.fillPath (filledArc);
-			}
-
-			g.setColour (Colour::fromString(outlinecolour).withAlpha (isMouseOver ? 1.0f : 0.7f));
-			g.drawEllipse(slider.reduced(1.f).toFloat(), isMouseOver ? 1.5f : 1.f);
-			g.drawEllipse(slider.reduced(getWidth()*.11).toFloat(), isMouseOver ? 1.5f : 1.f);
-
-			Path newPolygon;
-			Point<float> centre (centreX, centreY);
-
-			if (diameter >= 25)   //If diameter is >= 40 then polygon has 12 steps
-			{
-				newPolygon.addPolygon(centre, 12.f, radius*.65, 0.f);
-				newPolygon.applyTransform (AffineTransform::rotation (angle,
-										   centreX, centreY));
-			}
-			else //Else just use a circle. This is clearer than a polygon when very small.
-				newPolygon.addEllipse (-radius*.2, -radius*.2, radius * .3f, radius * .3f);
-
-
-			g.setColour (Colour::fromString(colour));
-
-			Colour thumbColour = Colour::fromString(colour).withAlpha (isMouseOver ? 1.0f : 0.9f);
-			ColourGradient cg = ColourGradient (Colours::white, 0, 0, thumbColour, diameter*0.6, diameter*0.4, false);
-			//if(slider.findColour (Slider::thumbColourId)!=Colour(0.f,0.f,0.f,0.f))
-				g.setGradientFill (cg);
-			g.fillPath (newPolygon);
-			}
-			else
-			{
-				Path p;
-				g.setColour (Colour::fromString(colour).withAlpha (isMouseOver ? 1.0f : 0.7f));
-				p.addEllipse (-0.4f * rw, -0.4f * rw, rw * 0.8f, rw * 0.8f);
-				g.fillPath(p, AffineTransform::rotation (angle).translated (centreX, centreY));
-
-				//if (slider.isEnabled())
-				g.setColour (Colour::fromString(trackercolour).withAlpha (isMouseOver ? 0.7f : 0.5f));
-				//else
-				//    g.setColour (Colour (0x80808080));
-
-				p.addEllipse (-0.4f * rw, -0.4f * rw, rw * 0.8f, rw * 0.8f);
-				PathStrokeType (rw * 0.1f).createStrokedPath (p, p);
-
-				p.addLineSegment (Line<float> (0.0f, 0.0f, 0.0f, -radius), rw * 0.1f);
-
-				g.fillPath (p, AffineTransform::rotation (angle).translated (centreX, centreY));
-
-			}	
-		}
-	
-	void resized()
-	{
-			if(text.isNotEmpty())
-			{
-				if(textBox>0)
-				{
-					textLabel.setBounds(0, 0, getWidth(), 20);
-					textLabel.setText(text, dontSendNotification);
-					textLabel.setJustificationType(Justification::centred);
-					textLabel.setVisible(true);
-					slider.setBounds(20, 20, getWidth()-40, getHeight()-40);
-					valueLabel.setBounds(25, getHeight()-15, getWidth()-50, 15);
-					valueLabel.setJustificationType(Justification::centred);
-					valueLabel.setText(String(currentValue, 2), dontSendNotification);
-				}
-				else
-				{
-					textLabel.setBounds(0, getHeight()-20, getWidth(), 20);
-					textLabel.setText(text, dontSendNotification);
-					textLabel.setJustificationType(Justification::centred);
-					textLabel.setVisible(true);
-					slider.setBounds(10, 0, getWidth()-20, getHeight()-20);
-				}
-			}
-			else
-				slider.setBounds(0, 0, getWidth(), getHeight());		
-	}
-
-    //update control
-    void update(CabbageGUIClass m_cAttr)
-    {
-        const MessageManagerLock mmLock;
-        colour = m_cAttr.getStringProp(CabbageIDs::colour);
-        textcolour = m_cAttr.getStringProp(CabbageIDs::fontcolour);
-        trackercolour = m_cAttr.getStringProp(CabbageIDs::trackercolour);
-		outlinecolour = m_cAttr.getStringProp(CabbageIDs::outlinecolour);
-        setBounds(m_cAttr.getBounds());
-        textLabel.setColour(Label::textColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::textcolour)));
-		
-        if(!m_cAttr.getNumProp(CabbageIDs::visible))
-        {
-            setVisible(false);
-            setEnabled(false);
-        }
-        else
-        {
-            setVisible(true);
-            setEnabled(true);
-        }
-        if(!m_cAttr.getNumProp(CabbageIDs::active))
-        {
-            setEnabled(false);
-        }
-        else
-        {
-            setEnabled(true);
-        }
-        if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
-        {
-            rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
-            setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
-        }
-        if(tooltipText!=m_cAttr.getStringProp(CabbageIDs::popuptext))
-        {
-            tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
-        }
-        setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
-        repaint();
-    }
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageEncoder);
 };
 //==============================================================================
@@ -1382,7 +1185,7 @@ class CabbageImage : public Component,
     AffineTransform transform;
 
 public:
-    CabbageImage(CabbageGUIClass &cAttr):
+    CabbageImage(CabbageGUIType &cAttr):
         name(cAttr.getStringProp(CabbageIDs::name)),
         file(cAttr.getStringProp(CabbageIDs::file)),
         outline(cAttr.getStringProp(CabbageIDs::outlinecolour)),
@@ -1456,7 +1259,7 @@ public:
     }
 
     //update control
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         setBounds(m_cAttr.getBounds());
         colour = m_cAttr.getStringProp(CabbageIDs::colour);
@@ -1583,7 +1386,7 @@ class CabbageGroupbox : public GroupComponent,
     Point<float> scale;
 public:
     //---- constructor -----
-    CabbageGroupbox(CabbageGUIClass &cAttr):
+    CabbageGroupbox(CabbageGUIType &cAttr):
         name(cAttr.getStringProp(CabbageIDs::name)),
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         text(cAttr.getStringProp(CabbageIDs::text)),
@@ -1604,7 +1407,14 @@ public:
         setColour(TextButton::buttonColourId, Colour::fromString(colour));
         setName(cAttr.getStringProp(CabbageIDs::name));
         setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
-        getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
+		
+		File svgFile(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svggroupbox),
+													cAttr.getStringProp(CabbageIDs::parentdir)));
+		
+		File svgPath(cAttr.getStringProp(CabbageIDs::svgpath));
+		
+		cUtils::setSVGProperties(*this, svgFile, svgPath, "groupbox");
+		
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
         this->setText(text);
         this->setWantsKeyboardFocus(false);
@@ -1664,7 +1474,7 @@ public:
     }
 
     //update control
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
 
         if(scale!=Point<float>(m_cAttr.getNumProp(CabbageIDs::scalex), m_cAttr.getNumProp(CabbageIDs::scaley)))
@@ -1822,7 +1632,7 @@ class CabbageGenTable	:	public Component,
     Array<float> ampRanges;
 //---- constructor -----
 public:
-    CabbageGenTable (CabbageGUIClass &cAttr) : colour(cAttr.getStringProp(CabbageIDs::colour)),
+    CabbageGenTable (CabbageGUIType &cAttr) : colour(cAttr.getStringProp(CabbageIDs::colour)),
         fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
         file(cAttr.getStringProp(CabbageIDs::file)),
         zoom(cAttr.getNumProp(CabbageIDs::zoom)),
@@ -1866,7 +1676,7 @@ public:
 
 
     //update control
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         //setBounds(m_cAttr.getBounds());
         //Logger::writeToLog("ScrubberPos:"+String(m_cAttr.getNumProp(CabbageIDs::scrubberposition)));
@@ -1980,7 +1790,7 @@ class CabbageSoundfiler	:	public Component,
     float scrubberPos;
 //---- constructor -----
 public:
-    CabbageSoundfiler (CabbageGUIClass &cAttr) : colour(cAttr.getStringProp(CabbageIDs::colour)),
+    CabbageSoundfiler (CabbageGUIType &cAttr) : colour(cAttr.getStringProp(CabbageIDs::colour)),
         fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
         file(cAttr.getStringProp(CabbageIDs::file)),
         zoom(cAttr.getNumProp(CabbageIDs::zoom)),
@@ -2020,7 +1830,7 @@ public:
 
 
     //update control
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         setBounds(m_cAttr.getBounds());
         if(scrubberPos!=m_cAttr.getNumProp(CabbageIDs::scrubberposition))
@@ -2101,7 +1911,7 @@ class CabbageLabel	:	public Component
     float rotate;
     int pivotx, pivoty;
 public:
-    CabbageLabel (CabbageGUIClass &cAttr)
+    CabbageLabel (CabbageGUIType &cAttr)
         : text(cAttr.getStringProp(CabbageIDs::text)),
           colour(cAttr.getStringProp(CabbageIDs::colour)),
           fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
@@ -2162,7 +1972,7 @@ public:
 
 
     //update control
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         colour = m_cAttr.getStringProp(CabbageIDs::colour);
         fontcolour = m_cAttr.getStringProp(CabbageIDs::fontcolour);
@@ -2210,7 +2020,7 @@ class CabbageKeyboard	:	public Component
     float rotate;
     int pivotx, pivoty;
 public:
-    CabbageKeyboard (CabbageGUIClass &cAttr, MidiKeyboardState &state)
+    CabbageKeyboard (CabbageGUIType &cAttr, MidiKeyboardState &state)
         : rotate(cAttr.getNumProp(CabbageIDs::rotate)),
           pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
           pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
@@ -2248,7 +2058,7 @@ public:
     }
 
     //update control
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         setBounds(m_cAttr.getBounds());
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
@@ -2344,7 +2154,7 @@ public:
 
 
     //update control
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         setBounds(m_cAttr.getBounds());
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
@@ -2435,7 +2245,7 @@ public:
 
     ScopedPointer<customTextEditor> editor;
     //---- constructor -----
-    CabbageTextEditor(CabbageGUIClass &cAttr) :
+    CabbageTextEditor(CabbageGUIType &cAttr) :
         name(cAttr.getStringProp(CabbageIDs::name)),
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         text(cAttr.getStringProp(CabbageIDs::text)),
@@ -2483,7 +2293,7 @@ public:
     ~CabbageTextEditor() {}
 
     //update control
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         editor->setColour(0x1000200, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
         editor->setColour(0x1000201, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
@@ -2595,7 +2405,7 @@ class CabbageTextbox : public Component
 public:
     ScopedPointer<TextEditor> editor;
     //---- constructor -----
-    CabbageTextbox(CabbageGUIClass &cAttr) :
+    CabbageTextbox(CabbageGUIType &cAttr) :
         name(cAttr.getStringProp(CabbageIDs::name)),
         caption(cAttr.getStringProp(CabbageIDs::caption)),
         text(cAttr.getStringProp(CabbageIDs::text)),
@@ -2668,7 +2478,7 @@ public:
     }
 
     //update control
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         editor->setColour(0x1000200, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
         editor->setColour(0x1000201, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::fontcolour)));
@@ -2962,7 +2772,7 @@ public:
     }
 
     //update control
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         setBounds(m_cAttr.getBounds());
         if(!m_cAttr.getNumProp(CabbageIDs::visible))
@@ -3007,7 +2817,7 @@ class CabbageNumberBox :  public Component
     float rotate;
 public:
     ScopedPointer<Slider> slider;
-    CabbageNumberBox(CabbageGUIClass &cAttr) :
+    CabbageNumberBox(CabbageGUIType &cAttr) :
         colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::colour))),
         outlinecolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::outlinecolour))),
         fontcolour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
@@ -3089,7 +2899,7 @@ public:
     }
 
     //update controls
-    void update(CabbageGUIClass m_cAttr)
+    void update(CabbageGUIType m_cAttr)
     {
         const MessageManagerLock mmLock;
         slider->setColour(Slider::rotarySliderFillColourId, Colour::fromString(m_cAttr.getStringProp(CabbageIDs::colour)));
@@ -3126,6 +2936,42 @@ public:
     }
 
 };
+
+//============================================================
+// all new custom widgets class declrations should be made here
+//============================================================
+
+
+//============================================================
+//example CabbageStepper class
+//============================================================
+class CabbageStepper	:	public Component, public Timer
+{
+	String name, channel;
+	float numberOfSteps;
+	int stepBPM, currentStep, isRunning;
+	Colour colour;
+	Array<int> stepStates;
+	CabbagePluginAudioProcessorEditor* owner;
+	bool isMouseDown;
+
+public:
+    CabbageStepper (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
+	void timerCallback();
+    ~CabbageStepper()
+	{
+		stopTimer();
+		owner = nullptr;
+	}
+    void resized(){}
+	void mouseDown(const MouseEvent& event);
+	void mouseUp(const MouseEvent& event);
+	void mouseEnter(const MouseEvent& event);
+    void paint(Graphics& g);
+	void update(CabbageGUIType cAttr);	
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageStepper);
+};
+
 
 
 #endif

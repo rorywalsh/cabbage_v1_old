@@ -440,6 +440,83 @@ int CabbageLookAndFeel::getSliderPopupPlacement (Slider&)
            | BubbleComponent::right;
 }
 
+bool CabbageLookAndFeel::drawBackgroundForSVGSlider(Graphics& g, Component* comp, String type, int x, int y, int width, int height)
+{
+	if(type.contains("slider"))
+	{
+		String svgPath = comp->getProperties().getWithDefault("svgpath", "");
+		String svgSliderBg = comp->getProperties().getWithDefault("svgsliderbg", "");
+		Slider* slider = (Slider*)comp;
+			
+		if(slider->getSliderStyle()!=Slider::RotaryVerticalDrag)
+		{		
+			const float sliderRadius = (float)  jmin (7, slider->getHeight() / 2, slider->getWidth() / 2);
+			float xOffset = (sliderRadius/width);
+			
+			if(File(svgSliderBg).existsAsFile())
+			{
+				if(cUtils::drawSVGImageFromFilePath(svgSliderBg, "hslider_background", AffineTransform::identity).isValid() 
+				&&	slider->isHorizontal())
+				{
+					g.drawImage(cUtils::drawSVGImageFromFilePath(svgSliderBg, "hslider_background", AffineTransform::identity), width*(xOffset/3), 0,  
+																width*(1+xOffset*2), height, 0, 0, svgHSliderWidth, svgHSliderHeight, false);
+					
+					return true;
+				}	
+				else if(cUtils::drawSVGImageFromFilePath(svgSliderBg, "vslider_background", AffineTransform::identity).isValid() 
+				&&	slider->isVertical())
+				{
+					g.drawImage(cUtils::drawSVGImageFromFilePath(svgSliderBg, "vslider_background", AffineTransform::identity), 0, 0,  
+																width, height+sliderRadius, 0, 0, svgVSliderWidth, svgVSliderHeight, false);
+					return true;
+				}	
+			}
+			else if(cUtils::drawSVGImageFromFilePath(svgPath, "hslider_background", AffineTransform::identity).isValid() 
+			&&	slider->isHorizontal())
+			{
+				g.drawImage(cUtils::drawSVGImageFromFilePath(svgPath, "hslider_background", AffineTransform::identity), width*(xOffset/3), 0,  
+															width*(1+xOffset*2), height, 0, 0, svgHSliderWidth, svgHSliderHeight, false);
+				return true;
+			}	
+			else if(cUtils::drawSVGImageFromFilePath(svgPath, "vslider_background", AffineTransform::identity).isValid() 
+			&&	slider->isVertical())
+			{
+				g.drawImage(cUtils::drawSVGImageFromFilePath(svgPath, "vslider_background", AffineTransform::identity), 0, 0,  
+															width, height+sliderRadius, 0, 0, svgVSliderWidth, svgVSliderHeight, false);
+				return true;
+			}
+		}
+		else//rotary slider
+		{
+			const float radius = jmin (width / 2, height / 2) - 2.0f;
+			const float diameter = radius*2.f;
+			const float centreX = x + width * 0.5f;
+			const float centreY = y + height * 0.5f;
+			const float rx = centreX - radius;
+			const float ry = centreY - radius;
+			const float rw = radius * 2.0f;
+			
+			if(File(svgSliderBg).existsAsFile())
+			{
+				if(cUtils::drawSVGImageFromFilePath(svgSliderBg, "rslider_background", AffineTransform::identity).isValid())
+				{
+					g.drawImage(cUtils::drawSVGImageFromFilePath(svgSliderBg, "rslider_background", AffineTransform::identity), rx, ry,  
+													diameter, diameter, 0, 0, svgRSliderDiameter, svgRSliderDiameter, false);				
+					return true;
+				}		
+			}
+			else if(cUtils::drawSVGImageFromFilePath(svgPath, "rslider_background", AffineTransform::identity).isValid())
+			{
+					g.drawImage(cUtils::drawSVGImageFromFilePath(svgPath, "rslider_background", AffineTransform::identity), rx, ry,  
+													diameter, diameter, 0, 0, svgRSliderDiameter, svgRSliderDiameter, false);	
+				return true;
+			}			
+		}
+	}
+	return false;
+		
+}
+
 //=========== Rotary Sliders ==============================================================================
 void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width, int height, float sliderPos,
         const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider)
@@ -453,60 +530,102 @@ void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width,
     const float rw = radius * 2.0f;
     const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
     const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
+	
+	//if slider background svg exists...
+	String svgPath = slider.getProperties().getWithDefault("svgpath", "");
+	String svgSlider = slider.getProperties().getWithDefault("svgslider", "");
+	bool useSliderSVG = false;
+	bool useSliderBackgroundSVG = drawBackgroundForSVGSlider(g, &slider, "slider", x, y, width, height);
+	
+	slider.setSliderStyle(Slider::RotaryVerticalDrag);
 
     if (radius > 12.0f)
     {
-        //if (slider.isEnabled())
-        g.setColour (slider.findColour (Slider::trackColourId).withAlpha (isMouseOver ? 1.0f : 0.9f));
-        //else
-        //    g.setColour (Colour (0x80808080));
 
-        const float thickness = 0.7f;
-        {
-            Path filledArc;
-            filledArc.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, angle, thickness);
-            g.fillPath (filledArc);
-        }
+			//tracker
+			if(slider.findColour (Slider::trackColourId).getAlpha()==0)
+				g.setColour(Colours::transparentBlack);
+			else
+				g.setColour (slider.findColour (Slider::trackColourId).withAlpha (isMouseOver ? 1.0f : 0.9f));
+
+			const float thickness = 0.7f;
+			{
+				Path filledArc;
+				filledArc.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, angle, thickness);
+				g.fillPath (filledArc);
+			}
+
+			if(File(svgSlider).existsAsFile() || File(svgPath).exists())
+			{
+				if(slider.findColour (Slider::trackColourId).getAlpha()==0)
+					g.setColour(Colours::transparentBlack);
+				else
+					g.setColour (slider.findColour (Slider::trackColourId).withAlpha (isMouseOver ? 1.0f : 0.9f));
+				const float thickness = slider.getProperties().getWithDefault("trackerthickness", .7);
+				{
+					Path filledArc;
+					filledArc.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, angle, 1.f-thickness);
+					g.fillPath (filledArc);
+				}
+				
+				g.setOpacity(1.0);
+				
+				
+				if(File(svgSlider).existsAsFile())
+				{
+					g.drawImage(cUtils::drawSVGImageFromFilePath(svgSlider, "rslider", AffineTransform::rotation(angle,
+											   svgRSliderDiameter/2, svgRSliderDiameter/2)), rx, ry, diameter, diameter,
+														 0, 0, svgRSliderDiameter, svgRSliderDiameter, false);	
+					useSliderSVG=true;
+				}
+				else if(File(svgPath).exists())
+				{
+					g.drawImage(cUtils::drawSVGImageFromFilePath(svgPath, "rslider", AffineTransform::rotation(angle,
+											   svgRSliderDiameter/2, svgRSliderDiameter/2)), rx, ry, diameter, diameter,
+														 0, 0, svgRSliderDiameter, svgRSliderDiameter, false);	
+					useSliderSVG=true;
+				}
+				else
+					useSliderSVG = false;
+					
+					
+			}	
 
 
-        //if (slider.isEnabled())
-        g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId));
-        //else
-        //    g.setColour (Colour (0x80808080));
+			//outinecolour
+			if(!useSliderBackgroundSVG)
+			{
+				g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId));
 
-        Path outlineArc;
-        outlineArc.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, thickness);
-        outlineArc.closeSubPath();
+				Path outlineArc;
+				outlineArc.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, thickness);
+				outlineArc.closeSubPath();
 
-        g.strokePath (outlineArc, PathStrokeType (slider.isEnabled() ? (isMouseOver ? 2.0f : 1.2f) : 0.3f));
+				g.strokePath (outlineArc, PathStrokeType (slider.isEnabled() ? (isMouseOver ? 2.0f : 1.2f) : 0.3f));
+			}
+			if(!useSliderSVG)
+			{
+				Path newPolygon;
+				Point<float> centre (centreX, centreY);
 
-
-        Path newPolygon;
-        Point<float> centre (centreX, centreY);
-
-        if (diameter >= 25)   //If diameter is >= 40 then polygon has 12 steps
-        {
-            newPolygon.addPolygon(centre, 12.f, radius*.65, 0.f);
-
-            //newPolygon.addRoundedRectangle(radius, radius*.1f, radius*.25f, radius*.5f, 2.f);
-            //g.setColour(Colours::lime);
-            //g.fillPath (newPolygon);
-
-            //newPolygon.addLineSegment (Line<float> (0.0f, 60.0f, 0.0f, -radius), rw);
-            newPolygon.applyTransform (AffineTransform::rotation (angle,
-                                       centreX, centreY));
-        }
-        else //Else just use a circle. This is clearer than a polygon when very small.
-            newPolygon.addEllipse (-radius*.2, -radius*.2, radius * .3f, radius * .3f);
+				if (diameter >= 25)   //If diameter is >= 40 then polygon has 12 steps
+				{
+					newPolygon.addPolygon(centre, 12.f, radius*.65, 0.f);
+					newPolygon.applyTransform (AffineTransform::rotation (angle,
+											   centreX, centreY));
+				}
+				else //Else just use a circle. This is clearer than a polygon when very small.
+					newPolygon.addEllipse (-radius*.2, -radius*.2, radius * .3f, radius * .3f);
 
 
-        g.setColour (slider.findColour (Slider::thumbColourId));
+				g.setColour (slider.findColour (Slider::thumbColourId));
 
-        Colour thumbColour = slider.findColour (Slider::thumbColourId).withAlpha (isMouseOver ? 1.0f : 0.9f);
-        ColourGradient cg = ColourGradient (Colours::white, 0, 0, thumbColour, diameter*0.6, diameter*0.4, false);
-        if(slider.findColour (Slider::thumbColourId)!=Colour(0.f,0.f,0.f,0.f))
-            g.setGradientFill (cg);
-        g.fillPath (newPolygon);
+				Colour thumbColour = slider.findColour (Slider::thumbColourId).withAlpha (isMouseOver ? 1.0f : 0.9f);
+				ColourGradient cg = ColourGradient (Colours::white, 0, 0, thumbColour, diameter*0.6, diameter*0.4, false);
+				if(slider.findColour (Slider::thumbColourId)!=Colour(0.f,0.f,0.f,0.f))
+					g.setGradientFill (cg);
+				g.fillPath (newPolygon);
+			}
     }
     else
     {
@@ -531,7 +650,6 @@ void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width,
 
 }
 
-
 //=========== Linear Slider Background ===========================================================================
 void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, int width, int height, float sliderPos,
         float minSliderPos,
@@ -540,40 +658,47 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
         Slider &slider)
 {
     const float sliderRadius = (float) (getSliderThumbRadius (slider) - 2);
-
+	float xOffset = (sliderRadius/width);
     const Colour trackColour (slider.findColour (Slider::trackColourId));
-
     float zeroPosProportional = 0;
-
     if (slider.getMinimum() < 0)
         zeroPosProportional = slider.valueToProportionOfLength(0); //takes into account skew factor
 
+	const int useGradient = slider.getProperties().getWithDefault("gradient", 1);
+	const float trackerThickness = slider.getProperties().getWithDefault("trackerthickness", .75);
+	
+	
+	bool useSVG = drawBackgroundForSVGSlider(g, &slider, "slider", x, y, width, height);
 
     Path indent;
-
     if (slider.isHorizontal())
     {
-        g.setColour (Colours::whitesmoke);
-        g.setOpacity (0.6);
-        const float midPoint = width/2.f+sliderRadius;
-        const float markerGap = width/9.f;
-        g.drawLine (midPoint, height*0.25, midPoint, height*0.75, 1.5);
-        g.setOpacity (0.3);
-        for (int i=1; i<5; i++)
-        {
-            g.drawLine (midPoint+markerGap*i, height*0.3, midPoint+markerGap*i, height*0.7, .7);
-            g.drawLine (midPoint-markerGap*i, height*0.3, midPoint-markerGap*i, height*0.7, .7);
-        }
-        //backgrounds
-        g.setColour (Colours::whitesmoke);
-        g.setOpacity (0.1);
-        g.fillRoundedRectangle (sliderRadius, height*0.44, width, height*0.15, height*0.05); //for light effect
-        g.setColour (Colour::fromRGBA(5, 5, 5, 255));
-        g.fillRoundedRectangle (sliderRadius, height*0.425, width*0.99, height*0.15, height*0.05); //main rectangle
+		if(!useSVG)
+		{
+			g.setColour (Colours::whitesmoke);
+			g.setOpacity (0.6);
+			const float midPoint = width/2.f+sliderRadius;
+			const float markerGap = width/9.f;
+			g.drawLine (midPoint, height*0.25, midPoint, height*0.75, 1.5);
+			g.setOpacity (0.3);
+			for (int i=1; i<5; i++)
+			{
+				g.drawLine (midPoint+markerGap*i, height*0.3, midPoint+markerGap*i, height*0.7, .7);
+				g.drawLine (midPoint-markerGap*i, height*0.3, midPoint-markerGap*i, height*0.7, .7);
+			}
+			//backgrounds
+			g.setColour (Colours::whitesmoke);
+			g.setOpacity (0.1);
+			g.fillRoundedRectangle (sliderRadius, height*0.44, width, height*0.15, height*0.05); //for light effect
+			g.setColour (Colour::fromRGBA(5, 5, 5, 255));
+			g.fillRoundedRectangle (sliderRadius, height*0.425, width*0.99, height*0.15, height*0.05); //main rectangle
+		}
 
-        const float iy = y + height * 0.5f - sliderRadius * 0.25f;
-        const float ih = sliderRadius*.5f;
+		const float scale = trackerThickness;
+        const float ih = (height * scale);
+		const float iy = ((height-ih)/2.f);
 
+		//gradient fill for tracker...
         if(slider.getSliderStyle()==Slider::TwoValueHorizontal)
         {
             g.setColour(trackColour);
@@ -590,96 +715,124 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
         }
         else
         {
-            if(slider.getMinimum()>=0)
-                g.setGradientFill(ColourGradient (Colours::transparentBlack, 0, 0, trackColour, width*0.25, 0, false));
-            else
-                g.setGradientFill(ColourGradient(Colours::transparentBlack,
-                                                 (slider.getValue()<= 0 ? zeroPosProportional*width*1.25 : zeroPosProportional*width),
-                                                 0,
-                                                 trackColour,
-                                                 (slider.getValue()<= 0 ? 0 : width),
-                                                 0,
-                                                 false));
-            if(slider.getValue()>0)
-                indent.addRoundedRectangle (zeroPosProportional*width + sliderRadius, iy,
+			if(useGradient)
+			{
+				if(slider.getMinimum()>=0)
+					g.setGradientFill(ColourGradient (Colours::transparentBlack, 0, 0, trackColour, width*0.25, 0, false));
+				else
+					g.setGradientFill(ColourGradient(Colours::transparentBlack,
+													 (slider.getValue()<= 0 ? zeroPosProportional*width*1.25 : zeroPosProportional*width),
+													 0,
+													 trackColour,
+													 (slider.getValue()<= 0 ? 0 : width),
+													 0,
+													 false));
+            }
+			else
+				g.setColour(trackColour);
+				
+			if(slider.getValue()>0)
+                g.fillRoundedRectangle (zeroPosProportional*width + sliderRadius, iy,
                                             sliderPos - sliderRadius*0.5 - zeroPosProportional*width, ih,
                                             5.0f);
             else
-                indent.addRoundedRectangle (sliderPos, iy,
+                g.fillRoundedRectangle (sliderPos, iy,
                                             zeroPosProportional*width + sliderRadius - sliderPos, ih,
                                             5.0f);
-        }
+        } 
+
+		if(!useSVG)
+		{
+			g.fillPath (indent);
+			g.setColour (Colour (0x4c000000));
+			g.strokePath (indent, PathStrokeType (0.3f));
+		}
 
     }
     else //vertical
     {
+		if(!useSVG)
+		{
+			g.setColour (Colours::whitesmoke);
+			g.setOpacity (0.6);
+			const float midPoint = height/2.f+sliderRadius;
+			const float markerGap = height/9.f;
+			g.drawLine (width*0.25, midPoint, width*0.75, midPoint, 1.59);
+			g.setOpacity (0.3);
+			
+			for (int i=1; i<5; i++)
+			{
+				g.drawLine (width*0.3, midPoint+markerGap*i, width*0.7, midPoint+markerGap*i, .7);
+				g.drawLine (width*0.3, midPoint-markerGap*i, width*0.7, midPoint-markerGap*i, .7);
+			}
 
-        g.setColour (Colours::whitesmoke);
-        g.setOpacity (0.6);
-        const float midPoint = height/2.f+sliderRadius;
-        const float markerGap = height/9.f;
-        g.drawLine (width*0.25, midPoint, width*0.75, midPoint, 1.59);
-        g.setOpacity (0.3);
-        for (int i=1; i<5; i++)
-        {
-            g.drawLine (width*0.3, midPoint+markerGap*i, width*0.7, midPoint+markerGap*i, .7);
-            g.drawLine (width*0.3, midPoint-markerGap*i, width*0.7, midPoint-markerGap*i, .7);
-        }
-
-        g.setColour(Colours::whitesmoke);
-        g.setOpacity (0.1);
-        g.fillRoundedRectangle(width*0.44, sliderRadius, width*0.15, height, width*0.05);
-        g.setColour (Colour::fromRGBA(5, 5, 5, 255));
-        g.fillRoundedRectangle (width*0.425, sliderRadius, width*0.15, height*0.99, width*0.05);
-
-        const float ix = x + width * 0.5f - sliderRadius * 0.25f;
-        const float iw = sliderRadius*.5f;
+			g.setColour(Colours::whitesmoke);
+			g.setOpacity (0.1);
+			g.fillRoundedRectangle(width*0.44, sliderRadius, width*0.15, height, width*0.05);
+			g.setColour (Colour::fromRGBA(5, 5, 5, 255));
+			g.fillRoundedRectangle (width*0.425, sliderRadius, width*0.15, height*0.99, width*0.05);
+		}
+		
+//        const float ix = x + width * 0.5f - sliderRadius * 0.25f;
+//        const float iw = sliderRadius*.5f;
+		
+		const float scale = trackerThickness;
+        const float iw = (width* scale);
+		const float ix = ((width-iw)/2.f);
+		
 
         if(slider.getSliderStyle()==Slider::TwoValueVertical)
         {
             g.setColour(trackColour);
             const float minPos = slider.valueToProportionOfLength(slider.getMinValue())*height;
             const float maxPos = slider.valueToProportionOfLength(slider.getMaxValue())*height;
-            indent.addRoundedRectangle(ix, height-maxPos+sliderRadius*1.5f, iw, maxPos - minPos - sliderRadius*.5f, 5.0f);
+            indent.addRoundedRectangle(ix, height-maxPos+sliderRadius*1.5f, iw, maxPos - minPos - sliderRadius*.5f, 3.0f);
         }
         else if(slider.getSliderStyle()==Slider::ThreeValueVertical)
         {
             g.setColour(trackColour);
             const float minPos = slider.valueToProportionOfLength(slider.getMinValue())*height;
             const float currentPos = slider.valueToProportionOfLength(slider.getValue())*height;
-            indent.addRoundedRectangle(ix, height-currentPos+sliderRadius*.5f, iw, currentPos-minPos+sliderRadius, 5.0f);
+            indent.addRoundedRectangle(ix, height-currentPos+sliderRadius*.5f, iw, currentPos-minPos+sliderRadius, 3.0f);
         }
         else
         {
-            if(slider.getMinimum()>=0)
-                g.setGradientFill(ColourGradient(Colours::transparentBlack, 0, height, trackColour, 0, height*0.8, false));
-            else
-                g.setGradientFill(ColourGradient(Colours::transparentBlack,
-                                                 0,
-                                                 (slider.getValue()<= 0 ? zeroPosProportional*height : zeroPosProportional*height*1.25),
-                                                 trackColour,
-                                                 0,
-                                                 (slider.getValue()<= 0 ? height : 0),
-                                                 false));
+			if(useGradient)
+			{
+				if(slider.getMinimum()>=0)
+					g.setGradientFill(ColourGradient(Colours::transparentBlack, 0, height, trackColour, 0, height*0.8, false));
+				else
+					g.setGradientFill(ColourGradient(Colours::transparentBlack,
+													 0,
+													 (slider.getValue()<= 0 ? zeroPosProportional*height : zeroPosProportional*height*1.25),
+													 trackColour,
+													 0,
+													 (slider.getValue()<= 0 ? height : 0),
+													 false));
+			}
+			else
+				g.setColour(trackColour);
 
 
             if(slider.getValue()>=0)
-                indent.addRoundedRectangle (ix, y + sliderPos - sliderRadius*1.5f,
+                g.fillRoundedRectangle (ix, y + sliderPos - sliderRadius*2,
                                             iw, height - sliderPos + sliderRadius+1.5f - zeroPosProportional*height,
-                                            5.0f);
+                                            3.0f);
             else
-                indent.addRoundedRectangle (ix, zeroPosProportional*height+sliderRadius,
+                g.fillRoundedRectangle (ix, zeroPosProportional*height+sliderRadius,
                                             iw, sliderPos - sliderRadius - zeroPosProportional*height,
-                                            5.0f);
+                                            3.0f);
         }
+	  
+		if(!useSVG)
+		{
+			g.fillPath (indent);
+			g.setColour (Colour (0x4c000000));
+			g.strokePath (indent, PathStrokeType (0.3f));
+		}
     }
-
-    g.fillPath (indent);
-    g.setColour (Colour (0x4c000000));
-    g.strokePath (indent, PathStrokeType (0.3f));
-
+	 
 }
-
 
 
 //========== Linear Slider Thumb =========================================================================
@@ -690,84 +843,111 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
     const float sliderRadius = (float) (getSliderThumbRadius (slider) - 2);
     float sliderWidth, sliderHeight;
 
+	bool useSVG=false;
+	
+	//if slider background svg exists...
+	String svgPath = slider.getProperties().getWithDefault("svgpath", "");
+	if(cUtils::drawSVGImageFromFilePath(svgPath, "hslider", AffineTransform::identity).isValid() &&
+		style == Slider::LinearHorizontal)
+	{
+		sliderWidth = height;
+		sliderHeight = height;
+		g.drawImage(cUtils::drawSVGImageFromFilePath(svgPath, "hslider", AffineTransform::identity), sliderPos-width*.05, 0,  
+													sliderWidth, sliderHeight, 0, 0, svgHSliderThumb, svgHSliderThumb, false);
+		useSVG = true;
+	}
 
-    Colour knobColour (LookAndFeelHelpers::createBaseColour (slider.findColour (Slider::thumbColourId),
-                       slider.hasKeyboardFocus (false) && slider.isEnabled(),
-                       slider.isMouseOverOrDragging() && slider.isEnabled(),
-                       slider.isMouseButtonDown() && slider.isEnabled()));
+	if(cUtils::drawSVGImageFromFilePath(svgPath, "vslider", AffineTransform::identity).isValid() &&
+		style == Slider::LinearVertical)
+	{
+		sliderWidth = width;
+		sliderHeight = width;
+		g.drawImage(cUtils::drawSVGImageFromFilePath(svgPath, "vslider", AffineTransform::identity), 0, sliderPos-(height*.07),  
+													sliderWidth, sliderHeight, 0, 0, svgVSliderThumb, svgVSliderThumb, false);
+		useSVG = true;
+	}
+	
+	if(!useSVG)
+	{
+		Colour knobColour (LookAndFeelHelpers::createBaseColour (slider.findColour (Slider::thumbColourId),
+						   slider.hasKeyboardFocus (false) && slider.isEnabled(),
+						   slider.isMouseOverOrDragging() && slider.isEnabled(),
+						   slider.isMouseButtonDown() && slider.isEnabled()));
 
-    const float outlineThickness = slider.isEnabled() ? 0.8f : 0.3f;
+		const float outlineThickness = slider.isEnabled() ? 0.8f : 0.3f;
 
-    if (style == Slider::LinearHorizontal || style == Slider::LinearVertical)
-    {
-        float kx, ky;
+		if (style == Slider::LinearHorizontal || style == Slider::LinearVertical)
+		{
+			
+			float kx, ky;
 
-        if (style == Slider::LinearVertical)
-        {
-            kx = x + width * 0.5f;
-            ky = sliderPos;
-            sliderWidth = sliderRadius * 2.0f;
-            sliderHeight = sliderRadius * 1.5f;
+			if (style == Slider::LinearVertical)
+			{
+				kx = x + width * 0.5f;
+				ky = sliderPos;
+				sliderWidth = sliderRadius * 2.0f;
+				sliderHeight = sliderRadius * 1.5f;
 
-        }
-        else
-        {
-            kx = sliderPos;
-            ky = y + height * 0.5f;
-            sliderWidth = sliderRadius * 1.5f;
-            sliderHeight = sliderRadius * 2.0f;
-        }
+			}
+			else
+			{
+				kx = sliderPos;
+				ky = y + height * 0.5f;
+				sliderWidth = sliderRadius * 1.5f;
+				sliderHeight = sliderRadius * 2.0f;
+			}
 
-        cUtils::drawSphericalThumb (g,
-                                    kx - sliderRadius,
-                                    ky - sliderRadius,
-                                    sliderWidth,
-                                    sliderHeight,
-                                    knobColour, outlineThickness);
-    }
-    else
-    {
-        if (style == Slider::ThreeValueVertical)
-        {
-            cUtils::drawSphericalThumb (g, x + width * 0.5f - sliderRadius,
-                                        sliderPos - sliderRadius,
-                                        sliderRadius * 2.0f,
-                                        sliderRadius * 2.0f,
-                                        knobColour, outlineThickness);
-        }
-        else if (style == Slider::ThreeValueHorizontal)
-        {
-            cUtils::drawSphericalThumb (g,sliderPos - sliderRadius * 0.75f,
-                                        y + height * 0.5f - sliderRadius,
-                                        sliderRadius * 1.5f,
-                                        sliderRadius * 2.0f,
-                                        knobColour, outlineThickness);
-        }
+			cUtils::drawSphericalThumb(g,
+										kx - sliderRadius,
+										ky - sliderRadius,
+										sliderWidth,
+										sliderHeight,
+										knobColour, outlineThickness);
+		}
+		else
+		{
+			if (style == Slider::ThreeValueVertical)
+			{
+				cUtils::drawSphericalThumb (g, x + width * 0.5f - sliderRadius,
+											sliderPos - sliderRadius,
+											sliderRadius * 2.0f,
+											sliderRadius * 2.0f,
+											knobColour, outlineThickness);
+			}
+			else if (style == Slider::ThreeValueHorizontal)
+			{
+				cUtils::drawSphericalThumb (g,sliderPos - sliderRadius * 0.75f,
+											y + height * 0.5f - sliderRadius,
+											sliderRadius * 1.5f,
+											sliderRadius * 2.0f,
+											knobColour, outlineThickness);
+			}
 
-        if (style == Slider::TwoValueVertical || style == Slider::ThreeValueVertical)
-        {
-            const float sr = jmin (sliderRadius, width * 0.4f);
+			if (style == Slider::TwoValueVertical || style == Slider::ThreeValueVertical)
+			{
+				const float sr = jmin (sliderRadius, width * 0.4f);
 
-            cUtils::drawGlassPointer (g, jmax (0.0f, x + width * 0.5f - sliderRadius * 2.0f),
-                                      minSliderPos - sliderRadius,
-                                      sliderRadius * 2.0f, knobColour, outlineThickness, 1);
+				cUtils::drawGlassPointer (g, jmax (0.0f, x + width * 0.5f - sliderRadius * 2.0f),
+										  minSliderPos - sliderRadius,
+										  sliderRadius * 2.0f, knobColour, outlineThickness, 1);
 
-            cUtils::drawGlassPointer (g, jmin (x + width - sliderRadius * 2.0f, x + width * 0.5f), maxSliderPos - sr,
-                                      sliderRadius * 2.0f, knobColour, outlineThickness, 3);
-        }
-        else if (style == Slider::TwoValueHorizontal || style == Slider::ThreeValueHorizontal)
-        {
-            const float sr = jmin (sliderRadius, height * 0.4f);
+				cUtils::drawGlassPointer (g, jmin (x + width - sliderRadius * 2.0f, x + width * 0.5f), maxSliderPos - sr,
+										  sliderRadius * 2.0f, knobColour, outlineThickness, 3);
+			}
+			else if (style == Slider::TwoValueHorizontal || style == Slider::ThreeValueHorizontal)
+			{
+				const float sr = jmin (sliderRadius, height * 0.4f);
 
-            cUtils::drawGlassPointer (g, minSliderPos - sr,
-                                      jmax (0.0f, y + height * 0.5f - sliderRadius * 2.0f),
-                                      sliderRadius * 2.0f, knobColour, outlineThickness, 2);
+				cUtils::drawGlassPointer (g, minSliderPos - sr,
+										  jmax (0.0f, y + height * 0.5f - sliderRadius * 2.0f),
+										  sliderRadius * 2.0f, knobColour, outlineThickness, 2);
 
-            cUtils::drawGlassPointer (g, maxSliderPos - sliderRadius,
-                                      jmin (y + height - sliderRadius * 2.0f, y + height * 0.5f),
-                                      sliderRadius * 2.0f, knobColour, outlineThickness, 4);
-        }
-    }
+				cUtils::drawGlassPointer (g, maxSliderPos - sliderRadius,
+										  jmin (y + height - sliderRadius * 2.0f, y + height * 0.5f),
+										  sliderRadius * 2.0f, knobColour, outlineThickness, 4);
+			}
+		}
+	}
 }
 
 
@@ -829,11 +1009,18 @@ void CabbageLookAndFeel::drawButtonBackground (Graphics& g, Button& button, cons
     Image newButton;
     float width = button.getWidth();
     float height = button.getHeight();
-    String svgPath = button.getProperties().getWithDefault("svgpath", "");
+	
+	String svgButtonOn = button.getProperties().getWithDefault("svgbuttonon", "");
+	String svgButtonOff = button.getProperties().getWithDefault("svgbuttonoff", "");
+	
+	int svgWidth = button.getProperties().getWithDefault("svgbuttonwidth", 100);
+	int svgHeight = button.getProperties().getWithDefault("svgbuttonheight", 100);	
+	
+	
     if(!button.getToggleState())
-        newButton = cUtils::drawTextButtonImage (width, height, isButtonDown, button.findColour(TextButton::buttonColourId), svgPath);
+        newButton = cUtils::drawTextButtonImage(width, height, isButtonDown, button.findColour(TextButton::buttonColourId), svgButtonOff, svgWidth, svgHeight, false);
     else
-        newButton = cUtils::drawTextButtonImage (width, height, isButtonDown, button.findColour(TextButton::buttonOnColourId), svgPath);
+        newButton = cUtils::drawTextButtonImage (width, height, isButtonDown, button.findColour(TextButton::buttonOnColourId), svgButtonOn, svgWidth, svgHeight, true);
 
     g.drawImage (newButton, 0, 0, width, height, 0, 0, width, height, false);
 }
@@ -989,14 +1176,15 @@ void CabbageLookAndFeel::drawGroupComponentOutline (Graphics &g, int w, int h, c
         GroupComponent &group)
 {
     g.fillAll(Colours::transparentBlack);
-    String svgPath = group.getProperties().getWithDefault("svgpath", "");
-    //if slider background svg exists...
-    if(cUtils::getSVGImageFor(svgPath, "groupbox_background", AffineTransform::identity).isValid())
-    {
-        g.drawImage(cUtils::getSVGImageFor(svgPath, "groupbox_background", AffineTransform::identity), 0, 0,
-                    w, h, 0, 0, svgGroupboxWidth, svgGroupboxHeight, false);
-
-    }
+	String svgFile = group.getProperties().getWithDefault("svggroupbox", "");
+	int svgWidth = group.getProperties().getWithDefault("svggroupboxwidth", 100);
+	int svgHeight = group.getProperties().getWithDefault("svggroupboxheight", 100);
+	
+	//if valid SVG file....
+	if(svgFile.length()>0)
+		g.drawImage(cUtils::drawFromSVG(svgFile, svgWidth, svgHeight, AffineTransform::identity), 0, 0,
+						w, h, 0, 0, svgGroupboxWidth, svgGroupboxHeight, false);
+	
     else
     {
 
@@ -1920,8 +2108,8 @@ void CabbageLookAndFeelBasic::drawLinearSlider (Graphics& g, int x, int y, int w
     }
     else
     {
-        drawLinearSliderBackground (g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
-        drawLinearSliderThumb (g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
+       drawLinearSliderBackground (g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider); 
+       drawLinearSliderThumb (g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
     }
 }
 

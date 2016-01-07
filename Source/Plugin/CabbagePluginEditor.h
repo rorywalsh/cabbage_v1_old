@@ -21,6 +21,7 @@
 #define __PLUGINEDITOR_H_F4EBBBA1__
 
 #include  "../CabbageCustomWidgets.h"
+#include "../CabbageStepper.h"
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "CabbagePluginProcessor.h"
 #include "../CabbagePropertiesDialog.h"
@@ -131,7 +132,7 @@ public:
     void paint (Graphics& g);
     void resized();
     void setEditMode(bool on);
-    void InsertGUIControls(CabbageGUIClass cAttr);
+    void InsertGUIControls(CabbageGUIType cAttr);
     void ksmpsYieldCallback();
     void updateSize();
 	//used in Android mode to rescale according to screen res
@@ -154,6 +155,10 @@ public:
 
     int currentPopupIndex;
     void resizeChildren();
+	void showBubble(Component* comp, String message)
+	{
+		popupBubble->showAt(comp, AttributedString(message), 550);		
+	}
 
 private:
     WildcardFileFilter wildcardFilter;
@@ -170,37 +175,39 @@ private:
     void breakUpPlant();
     void sendBack(bool toBack);
     void sendForward(bool toFront);
-    void InsertGroupBox(CabbageGUIClass &cAttr);
+    void InsertGroupBox(CabbageGUIType &cAttr);
     void comboBoxChanged (ComboBox* combo);
-    void InsertComboBox(CabbageGUIClass &cAttr);
-    void InsertSoundfiler(CabbageGUIClass &cAttr);
-    void InsertSourceButton(CabbageGUIClass &cAttr);
-    void InsertDirectoryList(CabbageGUIClass &cAttr);
-    void setupWindow(CabbageGUIClass &cAttr);
-    void InsertSlider(CabbageGUIClass &cAttr);
-    void InsertTextEditor(CabbageGUIClass &cAttr);
+    void InsertComboBox(CabbageGUIType &cAttr);
+    void InsertSoundfiler(CabbageGUIType &cAttr);
+    void InsertSourceButton(CabbageGUIType &cAttr);
+    void InsertDirectoryList(CabbageGUIType &cAttr);
+    void setupWindow(CabbageGUIType &cAttr);
+    void InsertSlider(CabbageGUIType &cAttr);
+    void InsertTextEditor(CabbageGUIType &cAttr);
     void sliderValueChanged (Slider*);
-    void InsertButton(CabbageGUIClass &cAttr);
-    void InsertCheckBox(CabbageGUIClass &cAttr);
-    void InsertCsoundOutput(CabbageGUIClass &cAttr);
-    void InsertMIDIKeyboard(CabbageGUIClass &cAttr);
-    void InsertXYPad(CabbageGUIClass &cAttr);
-    void InsertFileButton(CabbageGUIClass &cAttr);
-    void InsertRecordButton(CabbageGUIClass &cAttr);
-    void InsertImage(CabbageGUIClass &cAttr);
-    void InsertLabel(CabbageGUIClass &cAttr);
-    void InsertTable(CabbageGUIClass &cAttr);
-    void InsertMultiTab(CabbageGUIClass &cAttr);
-    void InsertEncoder(CabbageGUIClass &cAttr);
-    void InsertInfoButton(CabbageGUIClass &cAttr);
-    void InsertLineSeparator(CabbageGUIClass &cAttr);
-    void InsertPatternMatrix(CabbageGUIClass &cAttr);
-    void InsertSnapshot(CabbageGUIClass &cAttr);
-    void InsertTransport(CabbageGUIClass &cAttr);
-    void InsertPopupMenu(CabbageGUIClass &cAttr);
-    void InsertGenTable(CabbageGUIClass &cAttr);
-    void InsertTextbox(CabbageGUIClass &cAttr);
-    void InsertNumberBox(CabbageGUIClass &cAttr);
+    void InsertButton(CabbageGUIType &cAttr);
+    void InsertCheckBox(CabbageGUIType &cAttr);
+    void InsertCsoundOutput(CabbageGUIType &cAttr);
+    void InsertMIDIKeyboard(CabbageGUIType &cAttr);
+    void InsertXYPad(CabbageGUIType &cAttr);
+    void InsertFileButton(CabbageGUIType &cAttr);
+    void InsertRecordButton(CabbageGUIType &cAttr);
+    void InsertImage(CabbageGUIType &cAttr);
+    void InsertLabel(CabbageGUIType &cAttr);
+    void InsertTable(CabbageGUIType &cAttr);
+    void InsertMultiTab(CabbageGUIType &cAttr);
+    void InsertEncoder(CabbageGUIType &cAttr);
+    void InsertInfoButton(CabbageGUIType &cAttr);
+    void InsertLineSeparator(CabbageGUIType &cAttr);
+    void InsertPatternMatrix(CabbageGUIType &cAttr);
+    void InsertSnapshot(CabbageGUIType &cAttr);
+    void InsertTransport(CabbageGUIType &cAttr);
+    void InsertPopupMenu(CabbageGUIType &cAttr);
+    void InsertGenTable(CabbageGUIType &cAttr);
+    void InsertTextbox(CabbageGUIType &cAttr);
+	//example insert stepper method 
+	void InsertStepper(CabbageGUIType &cAttr);
+    void InsertNumberBox(CabbageGUIType &cAttr);
     void buttonClicked(Button*);
     void textButtonClicked(Button* button);
     void toggleButtonClicked(Button* button);
@@ -215,6 +222,15 @@ private:
     void savePresetsFromParameters(File selectedFile, String mode);
     void refreshDiskReadingGUIControls(String typeOfControl);
     void updatefTableData(GenTable* table);
+	bool checkForIdentifierMessage(CabbageGUIType cAttr, String type)
+	{
+		if(cAttr.getStringProp(CabbageIDs::type).equalsIgnoreCase(type) &&
+			cAttr.getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+          return true;
+
+		else
+			return false;
+	}
     void timerCallback();
     int csoundOutputWidget;
     int mouseX, mouseY;
@@ -233,7 +249,6 @@ private:
     Array <float, CriticalSection> tableValues;
     AudioSampleBuffer tableBuffer;
     String lastOpenedDirectory;
-
     ScopedPointer<Viewport> viewport;
     ScopedPointer<CabbageViewportComponent> viewportComponent;
 

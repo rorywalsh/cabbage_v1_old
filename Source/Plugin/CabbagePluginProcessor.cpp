@@ -310,13 +310,13 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
 
 
     StringArray tmpArray;
-    CabbageGUIClass cAttr;
+    CabbageGUIType cAttr;
 
     tmpArray.addLines(csdFile.loadFileAsString());
     for(int i=0; i<tmpArray.size() || tmpArray[i].contains("</Cabbage>"); i++)
         if(tmpArray[i].contains("logger("))
         {
-            CabbageGUIClass cAttr(tmpArray[i], -99);
+            CabbageGUIType cAttr(tmpArray[i], -99);
             createLog = cAttr.getNumProp(CabbageIDs::logger);
             if(createLog)
             {
@@ -402,18 +402,15 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
         csound->PerformKsmps();
         csound->SetScoreOffsetSeconds(0);
         csound->RewindScore();
-        //set up PVS struct
         csdKsmps = csound->GetKsmps();
 
         if(csound->GetSpout()==nullptr);
         CSspout = csound->GetSpout();
         CSspin  = csound->GetSpin();
         cs_scale = csound->Get0dBFS();
-        //numCsoundChannels = csoundListChannels(csound->GetCsound(), &csoundChanList);
         csndIndex = csound->GetKsmps();
         this->setLatencySamples(csound->GetKsmps());
         updateHostDisplay();
-        //soundFilerVector = new MYFLT[csdKsmps];
         csoundStatus = true;
         debugMessageArray.add(VERSION);
         debugMessageArray.add(String("\n"));
@@ -548,7 +545,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
     for(int i=0; i<lines.size(); i++)
         if(lines[i].contains("include("))
         {
-            CabbageGUIClass cAttr(lines[i], -99);
+            CabbageGUIType cAttr(lines[i], -99);
             for(int y=0; y<cAttr.getStringArrayProp(CabbageIDs::include).size(); y++)
             {
                 String infile = cAttr.getStringArrayPropValue(CabbageIDs::include, y);
@@ -640,18 +637,9 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
 {
 
-//#ifdef CABBAGE_AU
-//if(source.isEmpty())
-//{
-//    StringArray cabbageSection;
-//    cabbageSection.add("<Cabbage>");
-//    cabbageSection.add("form size(300, 200), colour(20, 20, 20)");
-//    cabbageSection.add("loadbutton bounds(10, 10, 100, 50), text(\"Browse\")");
-//    cabbageSection.add("rslider bounds(-1000, -1000, 100, 50), widgetarray(\"\", 100)");
-//    cabbageSection.add("</Cabbage>");
-//    source = cabbageSection.joinIntoString("\n");
-//}
-//#endif
+	GUILayoutCtrlsArray layoutCtrlsArray;
+	GUICtrlsArray ctrlsArray;
+
     if(refresh==true)
     {
         guiLayoutCtrls.clear();
@@ -775,7 +763,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                     {
                         if(tokes[1].contains("channel("))
                         {
-                            CabbageGUIClass cAttr(tokes.joinIntoString(" "), -1);
+                            CabbageGUIType cAttr(tokes.joinIntoString(" "), -1);
                             macroText.set("$"+tokes[2], " "+csdLine.substring(csdLine.indexOf(tokes[2])+tokes[2].length())+" ");
                             tokes.removeRange(0, 3);
                             String macroText = tokes.joinIntoString(" ");
@@ -794,48 +782,15 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                 }
 
                 if(!multiComment)
-                    //populate the guiLayoutCtrls vector with non-interactive widgets
-                    //the host widgets aren't GUI based but they can be added to this
-                    //vector too, as can the editor button.
-                    if(tokes[0].equalsIgnoreCase(String("form"))
-                            ||tokes[0].equalsIgnoreCase(String("image"))
-                            ||tokes[0].equalsIgnoreCase(String("socketsend"))
-                            ||tokes[0].equalsIgnoreCase(String("socketreceive"))
-                            ||tokes[0].equalsIgnoreCase(String("keyboard"))
-                            ||tokes[0].equalsIgnoreCase(String("gentable"))
-                            ||tokes[0].equalsIgnoreCase(String("csoundoutput"))
-                            ||tokes[0].equalsIgnoreCase(String("textbox"))
-                            ||tokes[0].equalsIgnoreCase(String("line"))
-                            ||tokes[0].equalsIgnoreCase(String("recordbutton"))
-                            ||tokes[0].equalsIgnoreCase(String("label"))
-                            ||tokes[0].equalsIgnoreCase(String("hostbpm"))
-                            ||tokes[0].equalsIgnoreCase(String("hosttime"))
-                            ||tokes[0].equalsIgnoreCase(String("hostplaying"))
-                            ||tokes[0].equalsIgnoreCase(String("hostppqpos"))
-                            ||tokes[0].equalsIgnoreCase(String("patmatrix"))
-                            ||tokes[0].equalsIgnoreCase(String("source"))
-                            ||tokes[0].equalsIgnoreCase(String("multitab"))
-                            ||tokes[0].equalsIgnoreCase(String("infobutton"))
-                            ||tokes[0].equalsIgnoreCase(String("filebutton"))
-                            ||tokes[0].equalsIgnoreCase(String("loadbutton"))
-                            ||tokes[0].equalsIgnoreCase(String("soundfiler"))
-                            ||tokes[0].equalsIgnoreCase(String("sourcebutton"))
-                            ||tokes[0].equalsIgnoreCase(String("texteditor"))
-                            ||tokes[0].equalsIgnoreCase(String("popupmenu"))
-                            ||tokes[0].equalsIgnoreCase(String("snapshot"))
-                            ||tokes[0].equalsIgnoreCase(String("table"))
-                            ||tokes[0].equalsIgnoreCase(String("pvsview"))
-                            ||tokes[0].equalsIgnoreCase(String("hostrecording"))
-                            ||tokes[0].equalsIgnoreCase(String("directorylist"))
-                            ||tokes[0].equalsIgnoreCase(String("transport"))
-                            ||tokes[0].equalsIgnoreCase(String("groupbox")))
+                    //check that the line of Cabbage code contains a valid widget name and
+					//populate the guiLayoutCtrls vector
+                    if(layoutCtrlsArray.contains(tokes[0]))
                     {
-                        CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
-
+                        CabbageGUIType cAttr(csdLine.trimEnd(), guiID);						
+						cAttr.setStringProp(CabbageIDs::parentdir, getCsoundInputFile().getParentDirectory().getFullPathName());
 #ifdef AndroidBuild	
 						cAttr.scaleWidget(scale);
 #endif
-
                         if(cAttr.getStringProp(CabbageIDs::type)=="form")
                         {
                             screenWidth = cAttr.getNumProp(CabbageIDs::width);
@@ -930,7 +885,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                         {
                             for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channelarray).size(); i++)
                             {
-                                CabbageGUIClass copy(cAttr);
+                                CabbageGUIType copy(cAttr);
                                 copy.setStringProp(CabbageIDs::channel, cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
                                 copy.setStringProp(CabbageIDs::identchannel, cAttr.getStringArrayProp(CabbageIDs::identchannelarray).getReference(i));
                                 //Logger::writeToLog(cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
@@ -965,22 +920,11 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                                 ||tokes[0].equalsIgnoreCase(String("hostrecording")))
                             startTimer(20);
                     }
-                //populate the guiCtrls vector with interactive widgets
-                    else if(tokes[0].equalsIgnoreCase(String("hslider"))
-                            ||tokes[0].equalsIgnoreCase(String("hslider2"))
-                            ||tokes[0].equalsIgnoreCase(String("hslider3"))
-                            ||tokes[0].equalsIgnoreCase(String("rslider"))
-                            ||tokes[0].equalsIgnoreCase(String("vslider"))
-                            ||tokes[0].equalsIgnoreCase(String("vslider2"))
-                            ||tokes[0].equalsIgnoreCase(String("vslider3"))
-                            ||tokes[0].equalsIgnoreCase(String("combobox"))
-                            ||tokes[0].equalsIgnoreCase(String("checkbox"))
-                            ||tokes[0].equalsIgnoreCase(String("encoder"))
-                            ||tokes[0].equalsIgnoreCase(String("numberbox"))
-                            ||tokes[0].equalsIgnoreCase(String("xypad"))
-                            ||tokes[0].equalsIgnoreCase(String("button")))
+                //check if line of Cabbage code contains a valid widget and populate the guiCtrls vector
+                    else if(ctrlsArray.contains(tokes[0]))
                     {
-                        CabbageGUIClass cAttr(csdLine.trimEnd(), guiID);
+                        CabbageGUIType cAttr(csdLine.trimEnd(), guiID);
+						cAttr.setStringProp(CabbageIDs::parentdir, getCsoundInputFile().getParentDirectory().getFullPathName());
 #ifdef AndroidBuild	
 						cAttr.scaleWidget(scale);
 #endif						
@@ -1041,7 +985,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                             {
                                 for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channelarray).size(); i++)
                                 {
-                                    CabbageGUIClass copy = cAttr;
+                                    CabbageGUIType copy = cAttr;
                                     copy.setStringProp(CabbageIDs::channel, cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
                                     copy.setStringProp(CabbageIDs::identchannel, cAttr.getStringArrayProp(CabbageIDs::identchannelarray).getReference(i));
                                     //Logger::writeToLog(cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
@@ -1333,7 +1277,7 @@ void CabbagePluginAudioProcessor::CabbageInterprocessConnection::messageReceived
 {
     StringArray data;
     data.addTokens(message.toString(), " ");
-    owner.messageQueue.addOutgoingChannelMessageToQueue(data[0], data[1].getFloatValue(), "float");
+    owner.messageQueue.addOutgoingChannelMessageToQueue(data[0], data[1].getFloatValue());
     //owner.appendMessage ("Connection #" + String (ourNumber) + " - message received: " + message.toString());
 }
 
@@ -1839,7 +1783,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
         const int guiCtrls_count = guiCtrls.size();
         for(int index=0; index<guiCtrls_count; ++index)
         {
-            CabbageGUIClass &guiCtrl = guiCtrls.getReference(index);
+            CabbageGUIType &guiCtrl = guiCtrls.getReference(index);
             if(guiCtrl.getStringProp(CabbageIDs::channeltype).equalsIgnoreCase(CabbageIDs::stringchannel))
             {
                 //THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE..
@@ -1885,7 +1829,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
         const int guiLayoutCtrls_count = getGUILayoutCtrlsSize();
         for(int index=0; index<guiLayoutCtrls_count; ++index)
         {
-            CabbageGUIClass &guiLayoutCtrl = guiLayoutCtrls.getReference(index);
+            CabbageGUIType &guiLayoutCtrl = guiLayoutCtrls.getReference(index);
             if(guiLayoutCtrl.getStringProp(CabbageIDs::type)==CabbageIDs::table)
             {
                 for(int y=0; y<guiLayoutCtrl.getStringArrayProp(CabbageIDs::channel).size(); ++y)
@@ -2406,7 +2350,7 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
     ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 
     if (xmlState != nullptr)
-    {
+    {  
 #ifdef CABBAGE_AU
         for(int i=0; i<xmlState->getNumAttributes(); i++)
         {

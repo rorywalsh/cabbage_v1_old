@@ -147,7 +147,7 @@ void StandaloneFilterWindow::loadFile(String filename)
         {
             if(csdArray[i].contains("form "))
             {
-                CabbageGUIClass cAttr(csdArray[i], -99);
+                CabbageGUIType cAttr(csdArray[i], -99);
 				originalPluginWidth = cAttr.getNumProp(CabbageIDs::width);
 				originalPluginHeight = cAttr.getNumProp(CabbageIDs::height);
                 this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));

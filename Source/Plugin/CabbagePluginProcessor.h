@@ -25,6 +25,7 @@
 #include "../CabbageGUIClass.h"
 #include "../XYPadAutomation.h"
 #include "../CabbageMessageSystem.h"
+//sample widget
 #include "../Soundfiler.h"
 #ifndef AndroidBuild
 #include "../Editor/CodeWindow.h"
@@ -33,6 +34,8 @@
 //#include "CabbageGenericAudioProcessorEditor.h"
 #include "../CabbageLookAndFeel.h"
 
+//sample widget
+//#include "../CabbageStepper.h"
 
 #ifndef Cabbage_No_Csound
 #ifdef AndroidBuild
@@ -160,8 +163,8 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     //guiLayoutControls are not used to send data to Csound, and don't show
     //as parameters in a host, guiCtrls do show are parameters, and can send
     //channel messages to Csound.
-    Array<CabbageGUIClass, CriticalSection> guiLayoutCtrls;
-    Array<CabbageGUIClass, CriticalSection> guiCtrls;
+    Array<CabbageGUIType, CriticalSection> guiLayoutCtrls;
+    Array<CabbageGUIType, CriticalSection> guiCtrls;
     String plantFlag, presetFlag;
     String debugMessage;
     StringArray debugMessageArray;
@@ -553,7 +556,7 @@ public:
         return showMIDI;
     }
     //======== log information about GUI controls ===============
-    StringArray logGUIAttributes(CabbageGUIClass cAttr, String type)
+    StringArray logGUIAttributes(CabbageGUIType cAttr, String type)
     {
 
         StringArray arr;
@@ -585,12 +588,12 @@ public:
         return (int)guiLayoutCtrls.size();
     }
 
-    inline CabbageGUIClass &getGUILayoutCtrls(int index)
+    inline CabbageGUIType &getGUILayoutCtrls(int index)
     {
         return guiLayoutCtrls.getReference(index);
     }
 
-    inline CabbageGUIClass &getGUICtrls(int index)
+    inline CabbageGUIType &getGUICtrls(int index)
     {
         return guiCtrls.getReference(index);
     }
@@ -656,12 +659,12 @@ public:
     }
 
 #endif
-    void addLayoutCtrl(CabbageGUIClass cAttr)
+    void addLayoutCtrl(CabbageGUIType cAttr)
     {
         guiLayoutCtrls.add(cAttr);
     }
 
-    void addGUICtrl(CabbageGUIClass cAttr)
+    void addGUICtrl(CabbageGUIType cAttr)
     {
         guiCtrls.add(cAttr);
     }

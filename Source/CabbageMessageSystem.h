@@ -72,40 +72,13 @@ class CabbageMessageQueue : public cUtils
 public:
     CabbageMessageQueue() {}
     ~CabbageMessageQueue() {}
-
-    void addOutgoingChannelMessageToQueue(String _chan, double _val, String _type)
-    {
-        outgoingChannelMessages.add(CabbageChannelMessage(_chan, _val, _type));
-    }
-
-    void addOutgoingChannelMessageToQueue(String _chan, String _val, String _type)
-    {
-        outgoingChannelMessages.add(CabbageChannelMessage(_chan, _val, _type));
-    }
-
-    void addOutgoingTableUpdateMessageToQueue(String fStatement, int tableNumber)
-    {
-        CabbageChannelMessage tableMessage("", 0.f, "updateTable");
-        tableMessage.fStatement = fStatement;
-        tableMessage.tableNumber = tableNumber;
-        outgoingChannelMessages.add(tableMessage);
-    }
-
-    CabbageChannelMessage &getOutgoingChannelMessageFromQueue(int index)
-    {
-        return outgoingChannelMessages.getReference(index);
-    }
-
-    int getNumberOfOutgoingChannelMessagesInQueue()
-    {
-        return outgoingChannelMessages.size();
-    }
-
-    void flushOutgoingChannelMessages()
-    {
-        //const MessageManagerLock mmLock;
-        outgoingChannelMessages.clear();
-    }
+	
+	void addOutgoingChannelMessageToQueue(String _chan, double _val, String _type="");
+    void addOutgoingChannelMessageToQueue(String _chan, String _val, String _type="");
+    void addOutgoingTableUpdateMessageToQueue(String fStatement, int tableNumber);
+    CabbageChannelMessage &getOutgoingChannelMessageFromQueue(int index);
+    int getNumberOfOutgoingChannelMessagesInQueue();
+    void flushOutgoingChannelMessages();
 
 };
 

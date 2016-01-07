@@ -88,7 +88,7 @@ public:
     }
 
     ///Update properties based on state of Cabbage widget
-    void updateProperties(CabbageGUIClass &cAttr)
+    void updateProperties(CabbageGUIType &cAttr)
     {
         attributeNames.clear();
         textFields.remove(0);
@@ -244,7 +244,7 @@ public:
         setVisible(false);
     }
 
-    void updateProps(CabbageGUIClass &cAttr)
+    void updateProps(CabbageGUIType &cAttr)
     {
 #ifndef CABBAGE_HOST
         propsPanel = nullptr;
@@ -295,7 +295,7 @@ public:
     CabbagePropertiesPanel* propsPanel;
     ScopedPointer<CabbageLookAndFeel> lookAndFeel;
     NamedValueSet updatedIdentifiers;
-    CabbageGUIClass cAttr;
+    CabbageGUIType cAttr;
 };
 
 class ColourField : public Component,

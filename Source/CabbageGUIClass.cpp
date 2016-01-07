@@ -23,7 +23,7 @@
 //===============================================================================
 // Main Cabbage abstract GUI class
 //===============================================================================
-CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
+CabbageGUIType::CabbageGUIType(String compStr, int ID):
     width(0),
     height(0),
     left(0),
@@ -36,6 +36,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
     cabbageIdentifiers.set("scaley", 1);
     cabbageIdentifiers.set("resize", 0);
     cabbageIdentifiers.set(CabbageIDs::active, 1);
+	cabbageIdentifiers.set(CabbageIDs::parentdir, "");
 
     StringArray strTokens;
     strTokens.addTokens(compStr, " ", "\"");
@@ -78,7 +79,11 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
             cabbageIdentifiers.set(CabbageIDs::kind, "horizontal");
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+		cabbageIdentifiers.set(CabbageIDs::trackerthickness, .25);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+		cabbageIdentifiers.set(CabbageIDs::gradient, 1);
+		cabbageIdentifiers.set(CabbageIDs::svgslider, "");
+		cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");		
 
 
     }
@@ -124,9 +129,11 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
             cabbageIdentifiers.set(CabbageIDs::kind, "vertical");
 
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
+		cabbageIdentifiers.set(CabbageIDs::trackerthickness, .25);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
-
+		cabbageIdentifiers.set(CabbageIDs::svgslider, "");
+		cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");
     }
     else if(strTokens[0].trim() == "rslider")
     {
@@ -160,8 +167,10 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::kind, "rotary");
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
-        cabbageIdentifiers.set(CabbageIDs::trackerthickness, .05);
-        cabbageIdentifiers.set(CabbageIDs::visible, 1);
+        cabbageIdentifiers.set(CabbageIDs::trackerthickness, .7);
+        cabbageIdentifiers.set(CabbageIDs::visible, 1);		
+		cabbageIdentifiers.set(CabbageIDs::svgslider, "");
+		cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");
     }
 
     else if((strTokens[0].trim() == "sourcebutton")||(strTokens[0].trim() == "loadbutton"))
@@ -186,6 +195,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+		cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
+		cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
     }
 
     //===============info button==================//
@@ -212,6 +223,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+		cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
+		cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
     }
 
     //===============directory list==================//
@@ -270,6 +283,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         populate.append("");
         cabbageIdentifiers.set("populate", populate);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+		cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
+		cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
     }
     //===============file button==================//
     else if(strTokens[0].trim() == "filebutton")
@@ -309,6 +324,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set("populate", populate);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
         cabbageIdentifiers.set(CabbageIDs::filetype, "*");
+		cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
+		cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
     }
 
     //===============button==================//
@@ -344,6 +361,8 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::radiogroup, 0);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+		cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
+		cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
 
     }
 
@@ -682,6 +701,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+		cabbageIdentifiers.set(CabbageIDs::svggroupbox, "");
 
     }
     //===============line==================//
@@ -825,25 +845,7 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
-    else if(strTokens[0].trim() == "pvsview")
-    {
-        /*
-        cabbageIdentifiers.set("basetype", "layout");
-          top = 10;
-          left = 10;
-          width = 400;
-          height = 200;
-          colour = Colours::white;
-          name = "pvsview";
-          type = name;
-          value = 1;
-          tableNum = 1;
-          name.append(String(ID), 1024);
-          overlapSize = 256;
-          fftSize = 1024;
-          frameSize = 1024;
-           */
-    }
+
     //===============xypad==================//
     else if(strTokens[0].trim() == "xypad")
     {
@@ -917,6 +919,28 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
 
     }
 
+    //===============stepper==================//
+    else if(strTokens[0].trim() == "stepper")
+    {
+        cabbageIdentifiers.set("basetype", "layout");
+        top = 10;
+        left = 10;
+        width = 180;
+        height = 2;
+
+        cabbageIdentifiers.set(CabbageIDs::top, 10);
+        cabbageIdentifiers.set(CabbageIDs::left, 10);
+        cabbageIdentifiers.set(CabbageIDs::width, 160);
+        cabbageIdentifiers.set(CabbageIDs::height, 2);
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::type, "stepper");
+        cabbageIdentifiers.set(CabbageIDs::name, "stepper");
+        cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+        cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+        cabbageIdentifiers.set(CabbageIDs::visible, 1);
+    }
+	
+	//===============non-GUI host widgets==================//
     else if(strTokens[0].trim() == "hostbpm")
     {
         cabbageIdentifiers.set(CabbageIDs::basetype, "layout");
@@ -964,14 +988,14 @@ CabbageGUIClass::CabbageGUIClass(String compStr, int ID):
     parse(compStr, "");
 }
 
-CabbageGUIClass::~CabbageGUIClass()
+CabbageGUIType::~CabbageGUIType()
 {
 
 }
 //===========================================================================================
 // this method parsing the Cabbage text and set each of the Cabbage indentifers
 //===========================================================================================
-void CabbageGUIClass::parse(String inStr, String identifier)
+void CabbageGUIType::parse(String inStr, String identifier)
 {
     //Logger::writeToLog(str);
     //remove any text after a semicolon and take out tabs..
@@ -999,19 +1023,7 @@ void CabbageGUIClass::parse(String inStr, String identifier)
         identArray = idententifiers;
     }
 
-
-
-    //else
-    //    identArray = *IdentArray::getInstance(); // creates the singleton if there isn't already one.
-
-
-
     String typeOfWidget="";
-
-
-    //Logger::writeToLog(String(identArray.size()));
-    //retrieve paramters consisting of strings
-
     StringArray strTokens, tempTokens;
     tempTokens.addTokens(str, ", \t", "\"");
     typeOfWidget = tempTokens[0];
@@ -1045,6 +1057,10 @@ void CabbageGUIClass::parse(String inStr, String identifier)
 
             strTokens.addTokens(tstr.removeCharacters("\t)\""), ",", "\"");
 
+
+            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            //string paramters
+            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             if(identArray[indx].equalsIgnoreCase("name"))
             {
                 cabbageIdentifiers.set(CabbageIDs::name, strTokens[0].trim());
@@ -1194,6 +1210,28 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                 cabbageIdentifiers.set(CabbageIDs::svgpath, strTokens[0].trim());
             }
 
+            else if(identArray[indx].equalsIgnoreCase("svgfile"))
+            {
+				if(typeOfWidget=="groupbox")
+					cabbageIdentifiers.set(CabbageIDs::svggroupbox, strTokens[0].trim());
+				else if(typeOfWidget.contains("slider"))
+				{
+					if(strTokens[0].trim().contains("background"))
+					cabbageIdentifiers.set(CabbageIDs::svgsliderbg, strTokens[1].trim());
+					else
+						cabbageIdentifiers.set(CabbageIDs::svgslider, strTokens[1].trim());
+				}
+				else if(typeOfWidget.contains("button"))
+				{
+					if(strTokens[0].trim().contains("off"))
+					cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, strTokens[1].trim());
+					else
+						cabbageIdentifiers.set(CabbageIDs::svgbuttonon, strTokens[1].trim());
+				}
+				//identifiers that appear more than once need to use indx-- so we can check for another instance
+                indx--;
+            }
+			
             else if(identArray[indx].equalsIgnoreCase("fillcolour"))
             {
                 cabbageIdentifiers.set(CabbageIDs::fillcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
@@ -1620,6 +1658,11 @@ void CabbageGUIClass::parse(String inStr, String identifier)
                 cabbageIdentifiers.set(CabbageIDs::textbox, strTokens[0].trim().getFloatValue());
             }
 
+            else if(identArray[indx].equalsIgnoreCase("gradient"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::gradient, strTokens[0].trim().getFloatValue());
+            }
+			
             else if(identArray[indx].equalsIgnoreCase("scrubberposition"))
             {
                 var scrubberInfo;
@@ -1802,10 +1845,21 @@ void CabbageGUIClass::parse(String inStr, String identifier)
             {
                 cabbageIdentifiers.set(CabbageIDs::scrollbars, strTokens[0].trim().getIntValue());
             }
-
-            else
+			
+			//============================================
+			//sample identifiers for stepper class
+			//============================================
+            else if(identArray[indx].equalsIgnoreCase("numberofsteps"))
             {
+                cabbageIdentifiers.set("numberofsteps", strTokens[0].trim().getFloatValue());
             }
+
+            else if(identArray[indx].equalsIgnoreCase("stepbpm"))
+            {
+                cabbageIdentifiers.set("stepbpm", strTokens[0].trim().getIntValue());
+            }			
+			
+			
             strTokens.clear();
         }
         else
@@ -1818,7 +1872,7 @@ void CabbageGUIClass::parse(String inStr, String identifier)
 }
 //=========================================================================
 //retrieve numerical attributes
-float CabbageGUIClass::getNumProp(Identifier prop)
+float CabbageGUIType::getNumProp(Identifier prop)
 {
     var props = cabbageIdentifiers.getWithDefault(prop, -9999);
     if(props.size()>0)
@@ -1831,7 +1885,7 @@ float CabbageGUIClass::getNumProp(Identifier prop)
 // these mthods can be used to find the values of indentifiers
 // by passing a single line of text to them.
 //================================================================================================
-Rectangle<int> CabbageGUIClass::getBoundsFromText(String text)
+Rectangle<int> CabbageGUIType::getBoundsFromText(String text)
 {
     text = " "+text;
     String subString = text.substring(text.indexOfWholeWord("bounds"));
@@ -1842,7 +1896,7 @@ Rectangle<int> CabbageGUIClass::getBoundsFromText(String text)
 }
 
 //===================================================================
-Colour CabbageGUIClass::getColourFromText(String text)
+Colour CabbageGUIType::getColourFromText(String text)
 {
     StringArray strTokens;
     strTokens.addTokens(text, ",", "");
@@ -1870,7 +1924,7 @@ Colour CabbageGUIClass::getColourFromText(String text)
     return colour;
 }
 //==================================================================
-String CabbageGUIClass::getTextFromText(String text)
+String CabbageGUIType::getTextFromText(String text)
 {
     text = " "+text;
     String subString = text.substring(text.indexOfWholeWord("text"));
@@ -1878,7 +1932,7 @@ String CabbageGUIClass::getTextFromText(String text)
     return subString;
 }
 //==================================================================
-var CabbageGUIClass::getVarArrayFromText(String text)
+var CabbageGUIType::getVarArrayFromText(String text)
 {
     text = " "+text.replace("\"", "");
     String subString = text.substring(text.indexOfWholeWord("text"));
@@ -1891,7 +1945,7 @@ var CabbageGUIClass::getVarArrayFromText(String text)
     return varArray;
 }
 //==================================================================
-Point<int> CabbageGUIClass::getPosFromText(String text)
+Point<int> CabbageGUIType::getPosFromText(String text)
 {
     text = " "+text;
     String subString = text.substring(text.indexOfWholeWord("pos"));
@@ -1901,7 +1955,7 @@ Point<int> CabbageGUIClass::getPosFromText(String text)
     return Point<int>(strTokens[0].getIntValue(), strTokens[1].getIntValue());
 }
 //==================================================================
-Point<int> CabbageGUIClass::getSizeFromText(String text)
+Point<int> CabbageGUIType::getSizeFromText(String text)
 {
     text = " "+text;
     String subString = text.substring(text.indexOfWholeWord("size"));
@@ -1911,7 +1965,7 @@ Point<int> CabbageGUIClass::getSizeFromText(String text)
     return Point<int>(strTokens[0].getIntValue(), strTokens[1].getIntValue());
 }
 //==================================================================
-float CabbageGUIClass::getSkewFromText(String text)
+float CabbageGUIType::getSkewFromText(String text)
 {
     text = " "+text;
     String subString = text.substring(text.indexOfWholeWord("sliderskew"));
@@ -1921,12 +1975,12 @@ float CabbageGUIClass::getSkewFromText(String text)
 
 //===================================================================
 //set numerical attributes
-void CabbageGUIClass::setNumProp(Identifier prop, float val)
+void CabbageGUIType::setNumProp(Identifier prop, float val)
 {
     cabbageIdentifiers.set(prop, val);
 }
 //===================================================================
-float CabbageGUIClass::getTableChannelValues(int index)
+float CabbageGUIType::getTableChannelValues(int index)
 {
     if(index<tableChannelValues.size())
         return tableChannelValues.getReference(index);
@@ -1934,18 +1988,18 @@ float CabbageGUIClass::getTableChannelValues(int index)
         return 0.f;
 }
 //===================================================================
-void CabbageGUIClass::addTableChannelValues()
+void CabbageGUIType::addTableChannelValues()
 {
     tableChannelValues.add(-1.f);
 }
 //===================================================================
-void CabbageGUIClass::setTableChannelValues(int index, float val)
+void CabbageGUIType::setTableChannelValues(int index, float val)
 {
     if(index<tableChannelValues.size())
         tableChannelValues.set(index, val);
 }
 //===================================================================
-String CabbageGUIClass::getStringProp(Identifier prop, int index)
+String CabbageGUIType::getStringProp(Identifier prop, int index)
 {
     jassert(1);
     /*
@@ -1957,14 +2011,14 @@ String CabbageGUIClass::getStringProp(Identifier prop, int index)
     return String::empty;
 }
 //===================================================================
-Rectangle<int> CabbageGUIClass::getComponentBounds()
+Rectangle<int> CabbageGUIType::getComponentBounds()
 {
     Rectangle<int> rect;
     rect.setBounds(getNumProp("left"), getNumProp("top"), getNumProp("width"), getNumProp("height"));
     return rect;
 }
 //===================================================================
-String CabbageGUIClass::getStringProp(Identifier prop)
+String CabbageGUIType::getStringProp(Identifier prop)
 {
     var strings = cabbageIdentifiers.getWithDefault(prop, "");
 
@@ -1983,7 +2037,7 @@ String CabbageGUIClass::getStringProp(Identifier prop)
     return String::empty;
 }
 //===================================================================
-StringArray CabbageGUIClass::getStringArrayProp(Identifier prop)
+StringArray CabbageGUIType::getStringArrayProp(Identifier prop)
 {
     StringArray returnArray;
     var strings = cabbageIdentifiers.getWithDefault(prop, "");
@@ -1992,7 +2046,7 @@ StringArray CabbageGUIClass::getStringArrayProp(Identifier prop)
     return returnArray;
 }
 //===================================================================
-String CabbageGUIClass::getStringArrayPropValue(Identifier prop, int index)
+String CabbageGUIType::getStringArrayPropValue(Identifier prop, int index)
 {
     StringArray returnArray;
     var strings = cabbageIdentifiers.getWithDefault(prop, "");
@@ -2005,14 +2059,14 @@ String CabbageGUIClass::getStringArrayPropValue(Identifier prop, int index)
         return returnArray[strings.size()-1];
 }
 //===================================================================
-void CabbageGUIClass::setStringArrayProp(Identifier prop, var value)
+void CabbageGUIType::setStringArrayProp(Identifier prop, var value)
 {
     cabbageIdentifiers.remove(prop);
     cabbageIdentifiers.set(prop, value);
     //cabbageIdentifiers.set(prop, value);
 }
 //===================================================================
-void CabbageGUIClass::setStringArrayPropValue(Identifier prop, int index, String value)
+void CabbageGUIType::setStringArrayPropValue(Identifier prop, int index, String value)
 {
     var strings = cabbageIdentifiers.getWithDefault(prop, "");
     if(strings.size()>0)
@@ -2024,7 +2078,7 @@ void CabbageGUIClass::setStringArrayPropValue(Identifier prop, int index, String
 
 }
 //===================================================================
-Array<int> CabbageGUIClass::getIntArrayProp(Identifier prop)
+Array<int> CabbageGUIType::getIntArrayProp(Identifier prop)
 {
     Array<int> returnArray;
     var ints = cabbageIdentifiers.getWithDefault(prop, "");
@@ -2033,12 +2087,12 @@ Array<int> CabbageGUIClass::getIntArrayProp(Identifier prop)
     return returnArray;
 }
 //===================================================================
-var CabbageGUIClass::getVarArrayProp(Identifier prop)
+var CabbageGUIType::getVarArrayProp(Identifier prop)
 {
     return cabbageIdentifiers.getWithDefault(prop, "");
 }
 //===================================================================
-int CabbageGUIClass::getIntArrayPropValue(Identifier prop, int index)
+int CabbageGUIType::getIntArrayPropValue(Identifier prop, int index)
 {
     Array<int> returnArray;
     var ints = cabbageIdentifiers.getWithDefault(prop, "");
@@ -2052,7 +2106,7 @@ int CabbageGUIClass::getIntArrayPropValue(Identifier prop, int index)
     return 0;
 }
 //===================================================================
-Array<float> CabbageGUIClass::getFloatArrayProp(Identifier prop)
+Array<float> CabbageGUIType::getFloatArrayProp(Identifier prop)
 {
     Array<float> returnArray;
     var ints = cabbageIdentifiers.getWithDefault(prop, "");
@@ -2061,7 +2115,7 @@ Array<float> CabbageGUIClass::getFloatArrayProp(Identifier prop)
     return returnArray;
 }
 //===================================================================
-float CabbageGUIClass::getFloatArrayPropValue(Identifier prop, int index)
+float CabbageGUIType::getFloatArrayPropValue(Identifier prop, int index)
 {
     Array<float> returnArray;
     var ints = cabbageIdentifiers.getWithDefault(prop, "");
@@ -2073,12 +2127,12 @@ float CabbageGUIClass::getFloatArrayPropValue(Identifier prop, int index)
         return returnArray[ints.size()-1];
 }
 //===================================================================
-void CabbageGUIClass::setStringProp(Identifier prop, int index, String value)
+void CabbageGUIType::setStringProp(Identifier prop, int index, String value)
 {
 
 }
 //===================================================================
-void CabbageGUIClass::scaleWidget(Point<float> scale)
+void CabbageGUIType::scaleWidget(Point<float> scale)
 {
 	Rectangle<int> rect(cabbageIdentifiers.getWithDefault("left", 0),
 						cabbageIdentifiers.getWithDefault("top", 0),
@@ -2091,7 +2145,7 @@ void CabbageGUIClass::scaleWidget(Point<float> scale)
 	cabbageIdentifiers.set(CabbageIDs::height, rect.getHeight()*scale.y);	;
 }
 //===================================================================
-void CabbageGUIClass::setStringProp(Identifier prop, String val)
+void CabbageGUIType::setStringProp(Identifier prop, String val)
 {
 //	cUtils::debug(prop.toString());
 //	cUtils::debug(val);
@@ -2099,13 +2153,13 @@ void CabbageGUIClass::setStringProp(Identifier prop, String val)
     cabbageIdentifiers.set(prop, val);
 }
 //===================================================================
-String CabbageGUIClass::getColourProp(Identifier prop)
+String CabbageGUIType::getColourProp(Identifier prop)
 {
 
     return String::empty;
 }
 //===================================================================
-String CabbageGUIClass::getStringForIdentifier(var propsArray, String identifier, String type)
+String CabbageGUIType::getStringForIdentifier(var propsArray, String identifier, String type)
 {
     String str;
     if(type=="number")
@@ -2141,7 +2195,7 @@ String CabbageGUIClass::getStringForIdentifier(var propsArray, String identifier
         return "";
 }
 //===================================================================
-String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
+String CabbageGUIType::getCabbageCodeFromIdentifiers(NamedValueSet props)
 {
     //Logger::writeToLog("::::getCabbageCodeFromIdentifiers::::");
     String line, widgetType;
@@ -2159,7 +2213,7 @@ String CabbageGUIClass::getCabbageCodeFromIdentifiers(NamedValueSet props)
             widgetType = props.getValueAt(i).toString();
 
     //get default values for this type of widget
-    CabbageGUIClass cAttr(widgetType, -99);
+    CabbageGUIType cAttr(widgetType, -99);
 
     //run through the complete list of identifiersand create code
     for(int i=0; i<props.size(); i++)

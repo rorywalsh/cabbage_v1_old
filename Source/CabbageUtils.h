@@ -33,25 +33,23 @@
 
 using namespace std;
 
-#define svgRSliderDiameter 1000
+#define svgRSliderDiameter 100
 
-#define svgVSliderWidth 300
-#define svgVSliderHeight 1000
+#define svgVSliderWidth 30
+#define svgVSliderHeight 300
 
-#define svgVSliderThumbHeight 1000
-#define svgVSliderThumbWidth 1000
+#define svgVSliderThumb 100
+#define svgHSliderThumb 100
 
-#define svgHSliderThumbWidth 1000
-#define svgHSliderThumbHeight 1000
 
-#define svgHSliderHeight 300
-#define svgHSliderWidth 1000
+#define svgHSliderWidth 300
+#define svgHSliderHeight 30
 
-#define svgButtonWidth 1000
-#define svgButtonHeight 500
+#define svgButtonWidth 100
+#define svgButtonHeight 50
 
-#define svgGroupboxWidth 1000
-#define svgGroupboxHeight 800
+#define svgGroupboxWidth 400
+#define svgGroupboxHeight 300
 
 #define OK 0
 
@@ -898,39 +896,205 @@ public:
     }
 
 //====================================================================================
-    static Image getSVGImageFor(String path, String type, AffineTransform affine)
+	static int getSVGWidth(String svgContents)
+	{
+		ScopedPointer<XmlElement> svg (XmlDocument::parse(svgContents));
+		for(int i=0; i<svg->getNumAttributes(); i++)
+		{
+			if(svg->getAttributeName(i)=="width")
+				return svg->getAttributeValue(i).getIntValue();
+		}
+		return 0;
+	}
+
+	static int getSVGHeight(String svgContents)
+	{
+		ScopedPointer<XmlElement> svg (XmlDocument::parse(svgContents));
+		for(int i=0; i<svg->getNumAttributes(); i++)
+		{
+			if(svg->getAttributeName(i)=="height")
+				return svg->getAttributeValue(i).getIntValue();
+		}
+		return 0;
+	}
+
+//============================================================================
+	static void setSVGProperties(Component& comp, File svgFile, File svgPath, String type)
+	{
+		if(type=="groupbox")
+		{
+			if(svgFile.existsAsFile())
+			{
+				comp.getProperties().set("svggroupbox", svgFile.loadFileAsString());
+				comp.getProperties().set("svggroupboxheight", cUtils::getSVGHeight(svgFile.loadFileAsString()));
+				comp.getProperties().set("svggroupboxwidth", cUtils::getSVGWidth(svgFile.loadFileAsString()));
+			}
+			else if(svgPath.exists())
+			{
+				File filename(svgPath.getFullPathName()+"/groupbox.svg");
+				cUtils::debug(filename.getFullPathName());
+				if(filename.existsAsFile())
+				{
+					comp.getProperties().set("svggroupbox", filename.loadFileAsString());	
+					comp.getProperties().set("svggroupboxheight", cUtils::getSVGHeight(filename.loadFileAsString()));
+					comp.getProperties().set("svggroupboxwidth", cUtils::getSVGWidth(filename.loadFileAsString()));				
+				}
+			}
+		}
+		else if(type=="buttonon")
+		{
+			if(svgFile.existsAsFile())
+			{
+				comp.getProperties().set("svgbuttonon", svgFile.loadFileAsString());
+				comp.getProperties().set("svgbuttonheight", cUtils::getSVGHeight(svgFile.loadFileAsString()));
+				comp.getProperties().set("svgbuttonwidth", cUtils::getSVGWidth(svgFile.loadFileAsString()));
+			}
+			else if(svgPath.exists())
+			{
+				File filename(svgPath.getFullPathName()+"/buttonon.svg");
+				cUtils::debug(filename.getFullPathName());
+				if(filename.existsAsFile())
+				{
+					comp.getProperties().set("svgbuttonon", filename.loadFileAsString());	
+					comp.getProperties().set("svgbuttonheight", cUtils::getSVGHeight(filename.loadFileAsString()));
+					comp.getProperties().set("svgbuttonwidth", cUtils::getSVGWidth(filename.loadFileAsString()));				
+				}
+			}
+		}
+		else if(type=="buttonoff")
+		{
+			if(svgFile.existsAsFile())
+			{
+				comp.getProperties().set("svgbuttonoff", svgFile.loadFileAsString());
+				comp.getProperties().set("svgbuttonheight", cUtils::getSVGHeight(svgFile.loadFileAsString()));
+				cUtils::debug(cUtils::getSVGHeight(svgFile.loadFileAsString()));
+				comp.getProperties().set("svgbuttonwidth", cUtils::getSVGWidth(svgFile.loadFileAsString()));
+			}
+			else if(svgPath.exists())
+			{
+				File filename(svgPath.getFullPathName()+"/buttonoff.svg");
+				cUtils::debug(filename.getFullPathName());
+				if(filename.existsAsFile())
+				{
+					comp.getProperties().set("svgbuttonoff", filename.loadFileAsString());	
+					cUtils::debug(cUtils::getSVGHeight(filename.loadFileAsString()));
+					comp.getProperties().set("svgbuttonheight", cUtils::getSVGHeight(filename.loadFileAsString()));
+					comp.getProperties().set("svgbuttonwidth", cUtils::getSVGWidth(filename.loadFileAsString()));				
+				}
+			}
+		}
+		else if(type=="rslider")
+		{
+			if(svgFile.existsAsFile())
+			{
+				comp.getProperties().set("svgrslider", svgFile.loadFileAsString());
+				comp.getProperties().set("svgrsliderheight", cUtils::getSVGHeight(svgFile.loadFileAsString()));
+				cUtils::debug(cUtils::getSVGHeight(svgFile.loadFileAsString()));
+				comp.getProperties().set("svgrsliderwidth", cUtils::getSVGWidth(svgFile.loadFileAsString()));
+			}
+			else if(svgPath.exists())
+			{
+				File filename(svgPath.getFullPathName()+"/rslider.svg");
+				cUtils::debug(filename.getFullPathName());
+				if(filename.existsAsFile())
+				{
+					comp.getProperties().set("svgrslider", filename.loadFileAsString());	
+					cUtils::debug(cUtils::getSVGHeight(filename.loadFileAsString()));
+					comp.getProperties().set("svgrsliderheight", cUtils::getSVGHeight(filename.loadFileAsString()));
+					comp.getProperties().set("svgrsliderwidth", cUtils::getSVGWidth(filename.loadFileAsString()));				
+				}
+			}			
+		}
+		else if(type=="rsliderbg")
+		{
+			if(svgFile.existsAsFile())
+			{
+				comp.getProperties().set("svgrsliderbg", svgFile.loadFileAsString());
+				comp.getProperties().set("svgrsliderbgheight", cUtils::getSVGHeight(svgFile.loadFileAsString()));
+				cUtils::debug(cUtils::getSVGHeight(svgFile.loadFileAsString()));
+				comp.getProperties().set("svgrsliderbgwidth", cUtils::getSVGWidth(svgFile.loadFileAsString()));
+			}
+			else if(svgPath.exists())
+			{
+				File filename(svgPath.getFullPathName()+"/rslider.svg");
+				cUtils::debug(filename.getFullPathName());
+				if(filename.existsAsFile())
+				{
+					comp.getProperties().set("svgrslider", filename.loadFileAsString());	
+					cUtils::debug(cUtils::getSVGHeight(filename.loadFileAsString()));
+					comp.getProperties().set("svgrsliderheight", cUtils::getSVGHeight(filename.loadFileAsString()));
+					comp.getProperties().set("svgrsliderwidth", cUtils::getSVGWidth(filename.loadFileAsString()));				
+				}
+			}			
+		}
+	}
+
+    static Image drawFromSVG(String svgString, int width, int height, AffineTransform affine)
     {
+		Image svgImg;
+		svgImg = Image(Image::ARGB, width, height, true);
+		ScopedPointer<XmlElement> svg (XmlDocument::parse(svgString));
+		if(svg == nullptr)
+                return Image::null;
+				
+		ScopedPointer<Drawable> drawable;
 
-        String svgFileName;
+		Graphics graph(svgImg);
+		if (svg != nullptr)
+		{
+			drawable = Drawable::createFromSVG (*svg);
+			drawable->draw(graph, 1.f, affine);
+			return svgImg;
+		}
+		return Image::null;
+		
+	}
+	
+	
+    static Image drawSVGImageFromFilePath(String path, String type, AffineTransform affine)
+    {
+        String svgFileName = File(path).existsAsFile()? path : path+"/"+String(type)+".svg";
         Image svgImg;
-        if(type.contains("button"))
-        {
-            svgFileName = path+"/"+String(type)+".svg";
-            if(File(svgFileName).existsAsFile())
-                svgImg = Image(Image::ARGB, svgButtonWidth, svgButtonHeight, true);//default button size 100px X 50px
-        }
-
-        else if(type.contains("slider"))
-        {
-            svgFileName = path+"/"+String(type)+".svg";
-            if(File(svgFileName).existsAsFile())
-                svgImg = Image(Image::ARGB, svgRSliderDiameter, svgRSliderDiameter, true);//default rotary slider size 150px X 150px
-        }
-
-        else if(type.contains("groupbox"))
-        {
-            svgFileName = path+"/"+String(type)+".svg";
-            if(File(svgFileName).existsAsFile())
-                svgImg = Image(Image::ARGB, svgGroupboxWidth, svgGroupboxHeight, true);//default rotary slider size 150px X 150px
-        }
-
-
         File svgFile(svgFileName);
         ScopedPointer<XmlElement> svg (XmlDocument::parse(svgFile.loadFileAsString()));
-        if (svgFile.exists())
+        
+		if (svgFile.exists())
         {
+			int width, height;
+			for(int i=0; i<svg->getNumAttributes(); i++)
+			{
+				if(svg->getAttributeName(i)=="width")
+					width = svg->getAttributeValue(i).getIntValue();
+				else if(svg->getAttributeName(i)=="height")
+					height = svg->getAttributeValue(i).getIntValue();
+			}			
+			
+			
+			if(type.contains("button"))
+					svgImg = Image(Image::ARGB, svgButtonWidth, svgButtonHeight, true);
+
+			else if(type.contains("rslider"))
+					svgImg = Image(Image::ARGB, svgRSliderDiameter, svgRSliderDiameter, true);
+
+			else if(type=="hslider_background")
+					svgImg = Image(Image::ARGB, svgHSliderWidth, svgHSliderHeight, true);
+
+			else if(type=="hslider")
+					svgImg = Image(Image::ARGB, svgHSliderThumb, svgHSliderThumb, true);
+			
+			else if(type=="vslider")
+					svgImg = Image(Image::ARGB, svgVSliderThumb, svgVSliderThumb, true);
+
+			else if(type=="vslider_background")
+					svgImg = Image(Image::ARGB, svgVSliderWidth, svgVSliderHeight, true);
+			
+			else if(type.contains("groupbox"))
+					svgImg = Image(Image::ARGB, svgGroupboxWidth, svgGroupboxHeight, true);
+
+			
             if(svg == nullptr)
                 Logger::writeToLog("couldn't parse svg, might not exist");
+				
             ScopedPointer<Drawable> drawable;
 
             Graphics graph(svgImg);
@@ -941,12 +1105,13 @@ public:
                 return svgImg;
             }
         }
-
-        return svgImg;
+		
+		return Image::null;
     }
 
 //========= Text button image ========================================================
-    static Image drawTextButtonImage(float width, float height, bool isButtonDown, Colour colour, String svgPath)
+    static Image drawTextButtonImage(float width, float height, bool isButtonDown, Colour colour, 
+									String svgFile, int svgWidth, int svgHeight, bool on)
     {
         Image img = Image(Image::ARGB, width, height, true);
         Graphics g (img);
@@ -960,13 +1125,13 @@ public:
         }
 
 
-        if(getSVGImageFor(svgPath, "button_background", AffineTransform::identity).isValid())
+        if(svgFile.length()>0)
         {
             //----- If "off"
-            if (isButtonDown == false)
-                g.drawImage(getSVGImageFor(svgPath, "button_background", AffineTransform::identity), 0, 0, width, height, 0, 0, svgButtonWidth, svgButtonHeight, false);
+            if (on == false)
+                g.drawImage(drawFromSVG(svgFile, svgWidth, svgHeight, AffineTransform::identity), 0, 0, width, height, 0, 0, svgWidth, svgHeight, false);
             else
-                g.drawImage(getSVGImageFor(svgPath, "button_background", AffineTransform::identity), 1, 1, width-2, height-2, 0, 0, svgButtonWidth, svgButtonHeight, false);
+                g.drawImage(drawFromSVG(svgFile, svgWidth, svgHeight, AffineTransform::identity), 1, 1, width-2, height-2, 0, 0, svgWidth, svgHeight, false);
         }
         else
         {
@@ -1533,27 +1698,30 @@ public:
 //====================================================================================================
     static String returnFullPathForFile(String file, String fullPath)
     {
-        String pic;
+        String filePath;
         if(file.isNotEmpty())
         {
+		if(file==".")
+			file="";	
+			
 #ifdef MACOSX
 #ifndef Cabbage_Build_Standalone
-            pic.append(String("/Contents/")+file, 1024);
+            filePath.append(String("/Contents/")+file, 1024);
 #else
-            pic = fullPath+String("//")+file;
+            filePath = fullPath+String("//")+file;
 #endif
 #endif
 #ifdef LINUX
-            pic = fullPath+String("/")+file;;
+            filePath = fullPath+String("/")+file;;
 #endif
 #ifdef WIN32
-            pic = fullPath+String("\\")+file;;
+            filePath = fullPath+String("\\")+file;;
 #endif
 #ifdef AndroidBuild
             String homeDir = String(getenv("EXTERNAL_STORAGE"))+String("/Cabbage/");
-            pic = homeDir+String("/")+file;;
+            filePath = homeDir+String("/")+file;;
 #endif
-            return pic;
+           return filePath;
         }
         else return "";
     }

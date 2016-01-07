@@ -387,11 +387,11 @@ void AutomationEditor::buttonClicked(Button* button)
         {
             processor.suspendProcessing(false);
             startTimer(100);
-            getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 1.0, "");
+            getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 1.0);
         }
         else
         {
-            getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 0.0, "");
+            getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 0.0);
             //processor.suspendProcessing(true);
             stopTimer();
 
@@ -406,7 +406,7 @@ void AutomationEditor::buttonClicked(Button* button)
         if(playButton.getToggleState()==true)
             playButton.setToggleState(false, dontSendNotification);
 
-        getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 0.0, "");
+        getFilter()->messageQueue.addOutgoingChannelMessageToQueue("isPlaying", 0.0);
         getFilter()->isSourcePlaying=false;
 
     }

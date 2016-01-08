@@ -7,10 +7,10 @@ Slider can be used to create an on-screen slider. Data can be sent to Csound on 
 hslider bounds(x, y, width, height), channel("chan"), \
 text("name"), textbox(val), range(min, max, value, skew, incr), \
 min(val), max(val), textcolour("colour"), fontcolour("colour"), \
-trackercolour("colour"), outlinecolour("colour"), \
+trackercolour("colour"), outlinecolour("colour"), trackerthickness(val)
 identchannel("channel"), alpha(val), visible(val), caption("caption"), \
 rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") \
-active(val)
+active(val), svgfile("type", "file")
 ```
 <!--(End of syntax)/-->
 
@@ -35,7 +35,9 @@ active(val)
 
 **fontcolour("colour")** Sets the colour of the text used to display the slider's value when textbox is enable. See above for details on valid colours. .
 
-**trackercolour("colour")** Sets the colour of the slider**s tracker. This is the line that follows the slider when you move it. See above for details on valid colours. 
+**trackercolour("colour")** Sets the colour of the slider's tracker. This is the line that follows the slider when you move it. See above for details on valid colours. To disable the tracker you can set this colour to something with alpha 0, or set the tracker's thickness to 0. 
+
+**trackerthickness(val)** Sets the thickness of the slider's tracker, 1 being full thickness. This is the line that follows the slider when you move it. To disable the tracker you can set its thickness to 0 or it's alpha colour channel to 0. 
 
 **outlinecolour("colour")** Sets the colour of a rotary slider**s tracker outline. This is the line that is drawn around the rslider's tracker. If you don't wish to display the tracker outline set the colour to something with an alpha value of 0. See above for details on valid colours.  
 
@@ -51,7 +53,20 @@ active(val)
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
-Slider types::
+**svgfile("type", "file")** Use this identifier to pass a unique svg file to use instead of the default look and feel. "type" should be one of the following:
+
+- "background" : sets the slider background image
+- "slider" : sets the slider thumb, or in the case of a rotary slider, the inner circle. This image moves in sympathy with that the mouse as users move the slider.
+
+For more information see [Using SVGs](./using_svgs.md)
+
+**popuptext("text")** Sets the text that will appear in the popup text bubble when a user hovers over the widget. This can be used to override the defaul text which displays the channel name and the current value. 
+
+**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
+<!--(End of identifiers)/-->
+
+##Slider types:
 
 * *rslider*, a standard rotary or knob slider
 
@@ -66,12 +81,6 @@ Slider types::
 * *hslider3*, horizontal slider with adjustable min and max limits
 
 * *vslider3*, vertical slider with adjustable min and max limits.
-
-**popuptext("text")** Sets the text that will appear in the popup text bubble when a user hovers over the widget. This can be used to override the defaul text which displays the channel name and the current value. 
-
-**active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
-
-<!--(End of identifiers)/-->
 
 >Make sure to use two unique channel names when using hslider2 and vslider2, otherwise min and max will be set to the same value. 
 

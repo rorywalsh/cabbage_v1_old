@@ -5,7 +5,7 @@ If you wish to create a large number of widgets you can use the widgetarray() id
 checkbox bounds(10, 10, 50, 50), channelarray("test", 100), value(1)
 ```
 
-The first checkbox widget will have a channel named "test_1", and an ident-channel named "test_ident1". The second widget channel will be named "test2", while its ident-channel will be named "test_ident2", and so on, upwards to 100. The identifiers for the newly created checkboxes can be modified using Csound code. For example, the following code will place the checkboxes around the screen in a 10x10 grid.
+The first checkbox widget will have a channel named "test1", and an ident-channel named "test_ident1". The second widget channel will be named "test2", while its ident-channel will be named "test_ident2", and so on, upwards to 100. The identifiers for the newly created checkboxes can be modified using Csound code. For example, the following code will place the checkboxes around the screen in a 10x10 grid.
 
 ```csharp
 <Cabbage>
@@ -25,7 +25,7 @@ nchnls = 2
 instr 1
 iCnt init 0
 iCntRows init 0
-kMetro metro kr
+kMetro metro 1
 	until iCnt > 100 do
 		S1 sprintfk "pos(%d, %d)", iCnt%10*25+5, iCntRows*25
 		S2 sprintfk "test_ident%d", iCnt+1
@@ -34,7 +34,7 @@ kMetro metro kr
 		iCntRows = (iCnt%10==0 ? iCntRows+1 : iCntRows)
 	enduntil
 	if kMetro==1 then
-		;event "i", 2, 0, .01
+		event "i", 2, 0, .01
 	endif		
 endin
 
@@ -56,6 +56,8 @@ i1 0 1000
 </CsScore>
 </CsoundSynthesizer> 
 ```
+
+![WidgetArrayExample](images/widgetArray.gif)
 
 For more details on how to controls widgets from Csound code look at the [Controlling widgets](./controlling.md) section. 
 

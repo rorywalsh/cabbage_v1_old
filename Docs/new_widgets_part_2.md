@@ -210,6 +210,6 @@ class CabbageStepper	:	public Component, public Timer
    (...)
    ```
 
-   Now the user can clearly see which is the current step in the sequence.
+Now the user can clearly see which is the current step in the sequence.
 
-   ![NewWidget3](images/newWidgetTimerTest.gif)
+![NewWidget3](images/newWidgetTimerTest.gif)

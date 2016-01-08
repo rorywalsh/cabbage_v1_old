@@ -37,6 +37,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
     cabbageIdentifiers.set("resize", 0);
     cabbageIdentifiers.set(CabbageIDs::active, 1);
 	cabbageIdentifiers.set(CabbageIDs::parentdir, "");
+	cabbageIdentifiers.set(CabbageIDs::svgdebug, 0);
+	
 
     StringArray strTokens;
     strTokens.addTokens(compStr, " ", "\"");
@@ -1224,7 +1226,7 @@ void CabbageGUIType::parse(String inStr, String identifier)
 				else if(typeOfWidget.contains("button"))
 				{
 					if(strTokens[0].trim().contains("off"))
-					cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, strTokens[1].trim());
+						cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, strTokens[1].trim());
 					else
 						cabbageIdentifiers.set(CabbageIDs::svgbuttonon, strTokens[1].trim());
 				}
@@ -1556,6 +1558,11 @@ void CabbageGUIType::parse(String inStr, String identifier)
                 cabbageIdentifiers.set(CabbageIDs::minvalue, strTokens[0].trim().getFloatValue());
             }
 
+            else if(identArray[indx].equalsIgnoreCase("svgdebug"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::svgdebug, strTokens[0].trim().getFloatValue());
+            }
+			
             else if(identArray[indx].equalsIgnoreCase("fill"))
             {
                 cabbageIdentifiers.set(CabbageIDs::fill, strTokens[0].trim().getIntValue());

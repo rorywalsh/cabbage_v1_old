@@ -7,7 +7,7 @@ button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaptio
 value(val), colour("colour"), fontcolour("colour"), latched(val), \
 identchannel("channel"), alpha(val), visible(val), caption("caption"), \ 
 rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") \
-active(val)
+active(val), svgfile("type", "file")
 ```
 <!--(End of syntax)/-->
 
@@ -63,6 +63,13 @@ This identifier will place the widget within a groupbox. "caption" is the text t
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
+**svgfile("type", "file")** Use this identifier to set a unique .svg file to use instead of the default look and feel. "type" should be one of the following:
+
+- "on" : sets the button image when it is on
+- "off" : sets the button image when it is off
+
+For more information see [Using SVGs](./using_svgs.md)
 
 <!--(End of identifiers)/-->
 

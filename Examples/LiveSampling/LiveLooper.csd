@@ -64,8 +64,8 @@ gitri		ftgen	0,0,4096,-7,0,2048,1,2048,0
 gkLoopDuration	init	0			; LOOP DURATION (WILL BE UPDATED WHILE RECORDING)
               
 instr 1
- ;gaL,gaR	ins				; READ AUDIO INPUT
- gaL	poscil	0.2,440
+ gaL,gaR	ins				; READ AUDIO INPUT
+ ;gaL	poscil	0.2,440
  gaR	=	gaL
 
  kShape	chnget	"Shape"				; CURVE SHAPE

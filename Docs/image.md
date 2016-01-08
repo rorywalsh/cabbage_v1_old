@@ -28,7 +28,7 @@ widgetarray("chan", number), popuptext("text"), active(val)
 
 **outlinethickness(thickness)** This sets the line thickness in pixels.
 
-**plant("name")** Sets the name of the plant. No two plants can have the same name. See **PLANTS**
+**plant("name")** Sets the name of the plant. No two plants can have the same name. See [Plants](./plants.md)
 
 **identchannel("channel")** Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See [Identifier channels](./identchannels.md) 
 

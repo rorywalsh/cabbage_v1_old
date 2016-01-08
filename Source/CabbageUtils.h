@@ -966,6 +966,7 @@ public:
 			if(svgFile.existsAsFile())
 			{
 				comp.getProperties().set("svgbuttonoff", svgFile.loadFileAsString());
+				cUtils::debug(svgFile.loadFileAsString());
 				comp.getProperties().set("svgbuttonheight", cUtils::getSVGHeight(svgFile.loadFileAsString()));
 				cUtils::debug(cUtils::getSVGHeight(svgFile.loadFileAsString()));
 				comp.getProperties().set("svgbuttonwidth", cUtils::getSVGWidth(svgFile.loadFileAsString()));
@@ -983,50 +984,64 @@ public:
 				}
 			}
 		}
-		else if(type=="rslider")
+		else if(type.contains("sliderbg"))
 		{
 			if(svgFile.existsAsFile())
 			{
-				comp.getProperties().set("svgrslider", svgFile.loadFileAsString());
-				comp.getProperties().set("svgrsliderheight", cUtils::getSVGHeight(svgFile.loadFileAsString()));
+				comp.getProperties().set("svgsliderbg", svgFile.loadFileAsString());
+				comp.getProperties().set("svgsliderbgheight", cUtils::getSVGHeight(svgFile.loadFileAsString()));
 				cUtils::debug(cUtils::getSVGHeight(svgFile.loadFileAsString()));
-				comp.getProperties().set("svgrsliderwidth", cUtils::getSVGWidth(svgFile.loadFileAsString()));
+				comp.getProperties().set("svgsliderbgwidth", cUtils::getSVGWidth(svgFile.loadFileAsString()));
 			}
 			else if(svgPath.exists())
 			{
-				File filename(svgPath.getFullPathName()+"/rslider.svg");
-				cUtils::debug(filename.getFullPathName());
+				File filename;
+				if(type=="rsliderbg")
+					filename = File(svgPath.getFullPathName()+"/rslider_background.svg");
+				else if(type=="hsliderbg")
+					filename = File(svgPath.getFullPathName()+"/hslider_background.svg");
+				else
+					filename = File(svgPath.getFullPathName()+"/vslider_background.svg");
+
 				if(filename.existsAsFile())
 				{
-					comp.getProperties().set("svgrslider", filename.loadFileAsString());	
+					comp.getProperties().set("svgsliderbg", filename.loadFileAsString());	
 					cUtils::debug(cUtils::getSVGHeight(filename.loadFileAsString()));
-					comp.getProperties().set("svgrsliderheight", cUtils::getSVGHeight(filename.loadFileAsString()));
-					comp.getProperties().set("svgrsliderwidth", cUtils::getSVGWidth(filename.loadFileAsString()));				
+					comp.getProperties().set("svgsliderbgheight", cUtils::getSVGHeight(filename.loadFileAsString()));
+					comp.getProperties().set("svgsliderbgwidth", cUtils::getSVGWidth(filename.loadFileAsString()));				
 				}
 			}			
 		}
-		else if(type=="rsliderbg")
+		else if(type.contains("slider"))
 		{
 			if(svgFile.existsAsFile())
 			{
-				comp.getProperties().set("svgrsliderbg", svgFile.loadFileAsString());
-				comp.getProperties().set("svgrsliderbgheight", cUtils::getSVGHeight(svgFile.loadFileAsString()));
+				comp.getProperties().set("svgslider", svgFile.loadFileAsString());
+				comp.getProperties().set("svgsliderheight", cUtils::getSVGHeight(svgFile.loadFileAsString()));
 				cUtils::debug(cUtils::getSVGHeight(svgFile.loadFileAsString()));
-				comp.getProperties().set("svgrsliderbgwidth", cUtils::getSVGWidth(svgFile.loadFileAsString()));
+				comp.getProperties().set("svgsliderwidth", cUtils::getSVGWidth(svgFile.loadFileAsString()));
 			}
 			else if(svgPath.exists())
 			{
-				File filename(svgPath.getFullPathName()+"/rslider.svg");
-				cUtils::debug(filename.getFullPathName());
+				File filename;
+				if(type=="rslider")
+					filename = File(svgPath.getFullPathName()+"/rslider.svg");
+				else if(type=="hslider")
+					filename = File(svgPath.getFullPathName()+"/hslider.svg");
+				else
+					filename = File(svgPath.getFullPathName()+"/vslider.svg");
+					
+				//cUtils::debug(filename.getFullPathName());
 				if(filename.existsAsFile())
 				{
-					comp.getProperties().set("svgrslider", filename.loadFileAsString());	
+					comp.getProperties().set("svgslider", filename.loadFileAsString());	
 					cUtils::debug(cUtils::getSVGHeight(filename.loadFileAsString()));
-					comp.getProperties().set("svgrsliderheight", cUtils::getSVGHeight(filename.loadFileAsString()));
-					comp.getProperties().set("svgrsliderwidth", cUtils::getSVGWidth(filename.loadFileAsString()));				
+					comp.getProperties().set("svgsliderheight", cUtils::getSVGHeight(filename.loadFileAsString()));
+					comp.getProperties().set("svgsliderwidth", cUtils::getSVGWidth(filename.loadFileAsString()));				
 				}
 			}			
 		}
+		
 	}
 
     static Image drawFromSVG(String svgString, int width, int height, AffineTransform affine)

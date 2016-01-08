@@ -63,10 +63,11 @@ public:
 //==============================================================================
 class CabbageButton : public Component
 {
-    int offX, offY, offWidth, offHeight, pivotx, pivoty, latched;
+    int offX, offY, offWidth, offHeight, pivotx, pivoty, latched, svgDebug;
     String buttonType;
     String name, caption, tooltipText, buttonText, colour, fontcolour, oncolour, onfontcolour;
     float rotate;
+	File svgFileButtonOn, svgFileButtonOff, svgPath;
 public:
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<TextButton> button;
@@ -83,23 +84,23 @@ public:
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
         pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
-        tooltipText(String::empty)
+        tooltipText(String::empty),
+		svgDebug(cAttr.getNumProp(CabbageIDs::svgdebug))
     {		
         setName(name);
         offX=offY=offWidth=offHeight=0;
         groupbox = new GroupComponent(String("groupbox_")+name);
         button = new TextButton(name);		
         button->getProperties().set("svgpath",  cAttr.getStringProp(CabbageIDs::svgpath));
-        
-		File svgFileButtonOn(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgbuttonon),
+        	
+		
+		svgFileButtonOn = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgbuttonon),
 													cAttr.getStringProp(CabbageIDs::parentdir)));
-		File svgFileButtonOff(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgbuttonoff),
+		svgFileButtonOff = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgbuttonoff),
 													cAttr.getStringProp(CabbageIDs::parentdir)));		
-		File svgPath(cAttr.getStringProp(CabbageIDs::svgpath));
+		svgPath = File(cAttr.getStringProp(CabbageIDs::svgpath));
 		
-		cUtils::setSVGProperties(*button, svgFileButtonOn, svgPath, "buttonon");		
-		cUtils::setSVGProperties(*button, svgFileButtonOff, svgPath, "buttonoff");	
-		
+		setSVGs(cAttr);
 		//cUtils::debug(button->getProperties().getWithDefault("svgbuttonwidth", 100).toString());
 		
 		addAndMakeVisible(groupbox);
@@ -141,6 +142,12 @@ public:
     {
 
     }
+
+	void setSVGs(CabbageGUIType &cAttr)
+	{
+		cUtils::setSVGProperties(*button, svgFileButtonOn, svgPath, "buttonon");		
+		cUtils::setSVGProperties(*button, svgFileButtonOff, svgPath, "buttonoff");	
+	}
 
     //update controls
     void update(CabbageGUIType m_cAttr)
@@ -186,7 +193,11 @@ public:
             tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
             button->setTooltip(tooltipText);
         }
-
+		if(m_cAttr.getNumProp(CabbageIDs::svgdebug)!=svgDebug)
+        {
+            setSVGs(m_cAttr);
+			svgDebug = m_cAttr.getNumProp(CabbageIDs::svgdebug);
+        }
         setBounds(m_cAttr.getBounds());
         repaint();
     }
@@ -352,11 +363,11 @@ private:
 class CabbageSlider : public Component,
     public ChangeBroadcaster
 {
-    int offX, offY, offWidth, offHeight, plantX, plantY, pivotx, pivoty;
+    int offX, offY, offWidth, offHeight, plantX, plantY, pivotx, pivoty, svgDebug;
     String sliderType, compName, cl;
     int resizeCount;
     String tracker;
-
+	File svgFileSlider, svgFileSliderBg, svgPath;
     String name, text, caption, kind, colour, fontColour, textColour, trackerFill, outlineColour, channel, channel2;
     int textBox, decPlaces;
     double min, max, value;
@@ -393,7 +404,8 @@ public:
         textLabel(new Label()),
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+        pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+		svgDebug(0)
     {
         setName(name);
 
@@ -414,21 +426,13 @@ public:
         if(sliderType=="horizontal2" || sliderType=="vertical2")
             channel2 = cAttr.getStringArrayPropValue(CabbageIDs::channel, 1);
 
-        slider->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
-
-		cUtils::debug(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgpath),
+		svgFileSlider = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgslider),
 													cAttr.getStringProp(CabbageIDs::parentdir)));
-
-
-		slider->getProperties().set("svgslider", cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgslider),
-													cAttr.getStringProp(CabbageIDs::parentdir)));
-
-		cUtils::debug(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgsliderbg),
-													cAttr.getStringProp(CabbageIDs::parentdir)));
-			
-		slider->getProperties().set("svgsliderbg", cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgsliderbg),
+		svgFileSliderBg = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgsliderbg),
 													cAttr.getStringProp(CabbageIDs::parentdir)));		
-		
+		svgPath = File(cAttr.getStringProp(CabbageIDs::svgpath));
+					
+		setSVGs(cAttr);
 		
         slider->toFront(true);
 		
@@ -506,6 +510,25 @@ public:
     ~CabbageSlider()
     {
     }
+
+	void setSVGs(CabbageGUIType &cAttr)
+	{
+        if (sliderType.contains("rotary"))
+        {
+			cUtils::setSVGProperties(*slider, svgFileSliderBg, svgPath, "rsliderbg");		
+			cUtils::setSVGProperties(*slider, svgFileSlider, svgPath, "rslider");
+		}
+		else if(sliderType.contains("horizontal"))
+		{
+			cUtils::setSVGProperties(*slider, svgFileSliderBg, svgPath, "hsliderbg");		
+			cUtils::setSVGProperties(*slider, svgFileSlider, svgPath, "hslider");			
+		}
+		else if(sliderType.contains("vertical"))
+		{
+			cUtils::setSVGProperties(*slider, svgFileSliderBg, svgPath, "vsliderbg");		
+			cUtils::setSVGProperties(*slider, svgFileSlider, svgPath, "vslider");			
+		}
+	}
 
     void setupMinMaxValue()
     {
@@ -589,6 +612,12 @@ public:
         if(tooltipText!=m_cAttr.getStringProp(CabbageIDs::popuptext))
         {
             tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
+        }
+		
+		if(m_cAttr.getNumProp(CabbageIDs::svgdebug)!=svgDebug)
+        {
+            setSVGs(m_cAttr);
+			svgDebug = m_cAttr.getNumProp(CabbageIDs::svgdebug);
         }
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
         repaint();
@@ -1379,11 +1408,12 @@ public:
 class CabbageGroupbox : public GroupComponent,
     public ChangeBroadcaster, public TooltipClient
 {
-    int offX, offY, offWidth, offHeight, pivotx, pivoty, left, top, corners;
+    int offX, offY, offWidth, offHeight, pivotx, pivoty, left, top, corners, svgDebug;
     String name, caption, text, colour, fontcolour, tooltipText;
     float rotate;
     int line;
     Point<float> scale;
+	File svgPath, svgFile;
 public:
     //---- constructor -----
     CabbageGroupbox(CabbageGUIType &cAttr):
@@ -1400,7 +1430,8 @@ public:
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
         pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
         tooltipText(String::empty),
-        corners(cAttr.getNumProp(CabbageIDs::corners))
+        corners(cAttr.getNumProp(CabbageIDs::corners)),
+		svgDebug(cAttr.getNumProp(CabbageIDs::svgdebug))
     {
         toBack();
         offX=offY=offWidth=offHeight=0;
@@ -1408,11 +1439,10 @@ public:
         setName(cAttr.getStringProp(CabbageIDs::name));
         setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
 		
-		File svgFile(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svggroupbox),
+		svgFile = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svggroupbox),
 													cAttr.getStringProp(CabbageIDs::parentdir)));
 		
-		File svgPath(cAttr.getStringProp(CabbageIDs::svgpath));
-		
+		svgPath = File(cAttr.getStringProp(CabbageIDs::svgpath));
 		cUtils::setSVGProperties(*this, svgFile, svgPath, "groupbox");
 		
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
@@ -1522,6 +1552,12 @@ public:
         if(tooltipText!=m_cAttr.getStringProp(CabbageIDs::popuptext))
         {
             tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
+        }
+		
+		if(m_cAttr.getNumProp(CabbageIDs::svgdebug)!=svgDebug)
+        {
+			cUtils::setSVGProperties(*this, svgFile, svgPath, "groupbox");
+			svgDebug = m_cAttr.getNumProp(CabbageIDs::svgdebug);
         }
     }
 

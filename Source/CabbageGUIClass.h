@@ -76,7 +76,7 @@ public:
         add("mode");add("tablenumber");add("tablenumbers");add("fill");add("logger");add("file");add("corners");add("svgpath");add("outlinecolour");
         add("shape");add("rotate");add("textcolour");add("pluginid");add("trackercolour");add("popup");add("show");add("latched");
         add("identchannel");add("visible");add("scrubberposition");add("scroll");add("zoom");add("samplerange");add("scrollbars");
-        add("colour");add("colour:0");add("colour:1");add("text");add("gradient");add("svgfile");	
+        add("colour");add("colour:0");add("colour:1");add("text");add("gradient");add("svgfile");add("svgdebug");	
 		//sample identifiers for stepper widget
 		add("numberofsteps");
 		add("stepbpm");		
@@ -136,6 +136,7 @@ static const Identifier textbox = "textbox";
 static const Identifier name = "name";
 static const Identifier active = "active";
 static const Identifier type = "type";
+static const Identifier svgdebug = "svgdebug";
 static const Identifier svgfile = "svgfile";
 static const Identifier parentdir = "parentdir";
 static const Identifier corners = "corners";

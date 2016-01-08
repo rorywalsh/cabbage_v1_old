@@ -440,83 +440,6 @@ int CabbageLookAndFeel::getSliderPopupPlacement (Slider&)
            | BubbleComponent::right;
 }
 
-bool CabbageLookAndFeel::drawBackgroundForSVGSlider(Graphics& g, Component* comp, String type, int x, int y, int width, int height)
-{
-	if(type.contains("slider"))
-	{
-		String svgPath = comp->getProperties().getWithDefault("svgpath", "");
-		String svgSliderBg = comp->getProperties().getWithDefault("svgsliderbg", "");
-		Slider* slider = (Slider*)comp;
-			
-		if(slider->getSliderStyle()!=Slider::RotaryVerticalDrag)
-		{		
-			const float sliderRadius = (float)  jmin (7, slider->getHeight() / 2, slider->getWidth() / 2);
-			float xOffset = (sliderRadius/width);
-			
-			if(File(svgSliderBg).existsAsFile())
-			{
-				if(cUtils::drawSVGImageFromFilePath(svgSliderBg, "hslider_background", AffineTransform::identity).isValid() 
-				&&	slider->isHorizontal())
-				{
-					g.drawImage(cUtils::drawSVGImageFromFilePath(svgSliderBg, "hslider_background", AffineTransform::identity), width*(xOffset/3), 0,  
-																width*(1+xOffset*2), height, 0, 0, svgHSliderWidth, svgHSliderHeight, false);
-					
-					return true;
-				}	
-				else if(cUtils::drawSVGImageFromFilePath(svgSliderBg, "vslider_background", AffineTransform::identity).isValid() 
-				&&	slider->isVertical())
-				{
-					g.drawImage(cUtils::drawSVGImageFromFilePath(svgSliderBg, "vslider_background", AffineTransform::identity), 0, 0,  
-																width, height+sliderRadius, 0, 0, svgVSliderWidth, svgVSliderHeight, false);
-					return true;
-				}	
-			}
-			else if(cUtils::drawSVGImageFromFilePath(svgPath, "hslider_background", AffineTransform::identity).isValid() 
-			&&	slider->isHorizontal())
-			{
-				g.drawImage(cUtils::drawSVGImageFromFilePath(svgPath, "hslider_background", AffineTransform::identity), width*(xOffset/3), 0,  
-															width*(1+xOffset*2), height, 0, 0, svgHSliderWidth, svgHSliderHeight, false);
-				return true;
-			}	
-			else if(cUtils::drawSVGImageFromFilePath(svgPath, "vslider_background", AffineTransform::identity).isValid() 
-			&&	slider->isVertical())
-			{
-				g.drawImage(cUtils::drawSVGImageFromFilePath(svgPath, "vslider_background", AffineTransform::identity), 0, 0,  
-															width, height+sliderRadius, 0, 0, svgVSliderWidth, svgVSliderHeight, false);
-				return true;
-			}
-		}
-		else//rotary slider
-		{
-			const float radius = jmin (width / 2, height / 2) - 2.0f;
-			const float diameter = radius*2.f;
-			const float centreX = x + width * 0.5f;
-			const float centreY = y + height * 0.5f;
-			const float rx = centreX - radius;
-			const float ry = centreY - radius;
-			const float rw = radius * 2.0f;
-			
-			if(File(svgSliderBg).existsAsFile())
-			{
-				if(cUtils::drawSVGImageFromFilePath(svgSliderBg, "rslider_background", AffineTransform::identity).isValid())
-				{
-					g.drawImage(cUtils::drawSVGImageFromFilePath(svgSliderBg, "rslider_background", AffineTransform::identity), rx, ry,  
-													diameter, diameter, 0, 0, svgRSliderDiameter, svgRSliderDiameter, false);				
-					return true;
-				}		
-			}
-			else if(cUtils::drawSVGImageFromFilePath(svgPath, "rslider_background", AffineTransform::identity).isValid())
-			{
-					g.drawImage(cUtils::drawSVGImageFromFilePath(svgPath, "rslider_background", AffineTransform::identity), rx, ry,  
-													diameter, diameter, 0, 0, svgRSliderDiameter, svgRSliderDiameter, false);	
-				return true;
-			}			
-		}
-	}
-	return false;
-		
-}
-
 //=========== Rotary Sliders ==============================================================================
 void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width, int height, float sliderPos,
         const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider)
@@ -530,13 +453,25 @@ void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width,
     const float rw = radius * 2.0f;
     const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
     const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
-	
+	bool useSliderBackgroundSVG = false;
+	bool useSliderSVG = false;
 	//if slider background svg exists...
 	String svgPath = slider.getProperties().getWithDefault("svgpath", "");
 	String svgSlider = slider.getProperties().getWithDefault("svgslider", "");
-	bool useSliderSVG = false;
-	bool useSliderBackgroundSVG = drawBackgroundForSVGSlider(g, &slider, "slider", x, y, width, height);
+	String svgSliderBg = slider.getProperties().getWithDefault("svgsliderbg", "");
+	int svgSliderWidthBg = slider.getProperties().getWithDefault("svgsliderbgwidth", 100);
+	int svgSliderHeightBg = slider.getProperties().getWithDefault("svgsliderbgheight", 100);	
+	int svgSliderWidth = slider.getProperties().getWithDefault("svgsliderwidth", 100);
+	int svgSliderHeight = slider.getProperties().getWithDefault("svgsliderheight", 100);	
 	
+	//if valid background SVG file....
+	if(svgSliderBg.length()>0)
+	{
+		g.drawImage(cUtils::drawFromSVG(svgSliderBg, svgSliderWidthBg, svgSliderHeightBg, AffineTransform::identity), rx, ry,  
+													diameter, diameter, 0, 0, svgSliderWidthBg, svgSliderHeightBg, false);
+		useSliderBackgroundSVG = true;
+	}
+						
 	slider.setSliderStyle(Slider::RotaryVerticalDrag);
 
     if (radius > 12.0f)
@@ -555,7 +490,7 @@ void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width,
 				g.fillPath (filledArc);
 			}
 
-			if(File(svgSlider).existsAsFile() || File(svgPath).exists())
+			if(svgSlider.length()>0)
 			{
 				if(slider.findColour (Slider::trackColourId).getAlpha()==0)
 					g.setColour(Colours::transparentBlack);
@@ -569,28 +504,15 @@ void CabbageLookAndFeel::drawRotarySlider (Graphics& g, int x, int y, int width,
 				}
 				
 				g.setOpacity(1.0);
-				
-				
-				if(File(svgSlider).existsAsFile())
-				{
-					g.drawImage(cUtils::drawSVGImageFromFilePath(svgSlider, "rslider", AffineTransform::rotation(angle,
-											   svgRSliderDiameter/2, svgRSliderDiameter/2)), rx, ry, diameter, diameter,
-														 0, 0, svgRSliderDiameter, svgRSliderDiameter, false);	
-					useSliderSVG=true;
-				}
-				else if(File(svgPath).exists())
-				{
-					g.drawImage(cUtils::drawSVGImageFromFilePath(svgPath, "rslider", AffineTransform::rotation(angle,
-											   svgRSliderDiameter/2, svgRSliderDiameter/2)), rx, ry, diameter, diameter,
-														 0, 0, svgRSliderDiameter, svgRSliderDiameter, false);	
-					useSliderSVG=true;
-				}
+				g.drawImage(cUtils::drawFromSVG(svgSlider, svgSliderWidth, svgSliderHeight, AffineTransform::rotation(angle,
+											   svgRSliderDiameter/2, svgRSliderDiameter/2)), rx, ry, diameter, diameter, 
+											   0, 0, svgSliderWidth, svgSliderHeight, false);
+				useSliderSVG = true;
+								
+			}
 				else
 					useSliderSVG = false;
 					
-					
-			}	
-
 
 			//outinecolour
 			if(!useSliderBackgroundSVG)
@@ -666,9 +588,27 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
 
 	const int useGradient = slider.getProperties().getWithDefault("gradient", 1);
 	const float trackerThickness = slider.getProperties().getWithDefault("trackerthickness", .75);
+	bool useSVG=false;
+
+	String svgSliderBg = slider.getProperties().getWithDefault("svgsliderbg", "");
+	int svgSliderWidthBg = slider.getProperties().getWithDefault("svgsliderbgwidth", 100);
+	int svgSliderHeightBg = slider.getProperties().getWithDefault("svgsliderbgheight", 100);	
+
+		
+	//if valid background SVG file....
+	if(svgSliderBg.length()>0)
+	{
+		if(slider.isHorizontal())
+			g.drawImage(cUtils::drawFromSVG(svgSliderBg, svgSliderWidthBg, svgSliderHeightBg, AffineTransform::identity), 
+					width*(xOffset/3), 0,  width*(1+xOffset*2), height, 0, 0, svgSliderWidthBg, svgSliderHeightBg, false);
+		else
+			g.drawImage(cUtils::drawFromSVG(svgSliderBg, svgSliderWidthBg, svgSliderHeightBg, AffineTransform::identity), 
+					0, 0, width, height+sliderRadius, 0, 0, svgSliderWidthBg, svgSliderHeightBg, false);
+
+		useSVG  = true;
+	}
 	
-	
-	bool useSVG = drawBackgroundForSVGSlider(g, &slider, "slider", x, y, width, height);
+	//bool useSVG = drawBackgroundForSVGSlider(g, &slider, "slider", x, y, width, height);
 
     Path indent;
     if (slider.isHorizontal())
@@ -842,29 +782,28 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
 {
     const float sliderRadius = (float) (getSliderThumbRadius (slider) - 2);
     float sliderWidth, sliderHeight;
+	bool useSVG=false;	
+	String svgSlider = slider.getProperties().getWithDefault("svgslider", "");
+	int svgSliderWidth = slider.getProperties().getWithDefault("svgsliderwidth", 100);
+	int svgSliderHeight = slider.getProperties().getWithDefault("svgsliderheight", 100);		
 
-	bool useSVG=false;
-	
-	//if slider background svg exists...
-	String svgPath = slider.getProperties().getWithDefault("svgpath", "");
-	if(cUtils::drawSVGImageFromFilePath(svgPath, "hslider", AffineTransform::identity).isValid() &&
-		style == Slider::LinearHorizontal)
+	if(svgSlider.length()>0)
 	{
-		sliderWidth = height;
-		sliderHeight = height;
-		g.drawImage(cUtils::drawSVGImageFromFilePath(svgPath, "hslider", AffineTransform::identity), sliderPos-width*.05, 0,  
-													sliderWidth, sliderHeight, 0, 0, svgHSliderThumb, svgHSliderThumb, false);
-		useSVG = true;
-	}
-
-	if(cUtils::drawSVGImageFromFilePath(svgPath, "vslider", AffineTransform::identity).isValid() &&
-		style == Slider::LinearVertical)
-	{
-		sliderWidth = width;
-		sliderHeight = width;
-		g.drawImage(cUtils::drawSVGImageFromFilePath(svgPath, "vslider", AffineTransform::identity), 0, sliderPos-(height*.07),  
-													sliderWidth, sliderHeight, 0, 0, svgVSliderThumb, svgVSliderThumb, false);
-		useSVG = true;
+		if(slider.isHorizontal())
+		{
+			sliderWidth = height;
+			sliderHeight = height;
+			g.drawImage(cUtils::drawFromSVG(svgSlider, svgSliderWidth, svgSliderHeight, AffineTransform::identity), 
+											sliderPos-width*.05, 0, sliderWidth, sliderHeight, 0, 0, svgHSliderThumb, svgHSliderThumb, false);
+		}
+		else
+		{
+			sliderWidth = width;
+			sliderHeight = width;		
+			g.drawImage(cUtils::drawFromSVG(svgSlider, svgSliderWidth, svgSliderHeight, AffineTransform::identity), 
+											0, sliderPos-(height*.07), sliderWidth, sliderHeight, 0, 0, svgVSliderThumb, svgVSliderThumb, false);
+		}
+		useSVG  = true;
 	}
 	
 	if(!useSVG)
@@ -878,16 +817,13 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
 
 		if (style == Slider::LinearHorizontal || style == Slider::LinearVertical)
 		{
-			
 			float kx, ky;
-
 			if (style == Slider::LinearVertical)
 			{
 				kx = x + width * 0.5f;
 				ky = sliderPos;
 				sliderWidth = sliderRadius * 2.0f;
 				sliderHeight = sliderRadius * 1.5f;
-
 			}
 			else
 			{
@@ -926,7 +862,6 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
 			if (style == Slider::TwoValueVertical || style == Slider::ThreeValueVertical)
 			{
 				const float sr = jmin (sliderRadius, width * 0.4f);
-
 				cUtils::drawGlassPointer (g, jmax (0.0f, x + width * 0.5f - sliderRadius * 2.0f),
 										  minSliderPos - sliderRadius,
 										  sliderRadius * 2.0f, knobColour, outlineThickness, 1);
@@ -937,7 +872,6 @@ void CabbageLookAndFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int w
 			else if (style == Slider::TwoValueHorizontal || style == Slider::ThreeValueHorizontal)
 			{
 				const float sr = jmin (sliderRadius, height * 0.4f);
-
 				cUtils::drawGlassPointer (g, minSliderPos - sr,
 										  jmax (0.0f, y + height * 0.5f - sliderRadius * 2.0f),
 										  sliderRadius * 2.0f, knobColour, outlineThickness, 2);

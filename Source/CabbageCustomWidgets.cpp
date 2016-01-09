@@ -354,3 +354,169 @@ void CabbageEncoder::update(CabbageGUIType m_cAttr)
 	setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
 	repaint();
 }
+
+//==============================================================================================
+// RangeSlider2, homegrown version of JUCE's two value slider, with dragable range
+//==============================================================================================
+CabbageRangeSlider2::CabbageRangeSlider2(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner)
+        : Component(), 
+		owner(_owner),
+		name(cAttr.getStringProp(CabbageIDs::name)),
+		kind(cAttr.getStringProp(CabbageIDs::kind)),
+		sliderThumb(this, "leftTop", kind),
+		currentThumb(0),
+		thumbWidth(20),
+		tooltipText(String::empty),
+		shouldDisplayPopup(true),
+		max(cAttr.getNumProp(CabbageIDs::max)),
+		min(cAttr.getNumProp(CabbageIDs::min)),
+		maxVal(cAttr.getNumProp(CabbageIDs::maxvalue)),
+		minVal(cAttr.getNumProp(CabbageIDs::minvalue)),
+		initVal(cAttr.getNumProp(CabbageIDs::value)),
+		value1(0),
+		value2(0),
+		incr(cAttr.getNumProp(CabbageIDs::sliderincr)),
+		skew(cAttr.getNumProp(CabbageIDs::sliderskew))
+{
+	if(cAttr.getStringArrayProp(CabbageIDs::channel).size()>1)
+	{
+		channels.add(cAttr.getStringArrayPropValue(CabbageIDs::channel, 0));
+		channels.add(cAttr.getStringArrayPropValue(CabbageIDs::channel, 1));
+	}	
+	
+	addAndMakeVisible(&sliderThumb);
+	
+}
+
+void CabbageRangeSlider2::resized()
+{
+	thumbIncr = (incr/(max-min))*getWidth();
+	sliderThumb.setBounds(0, 0, getWidth(), getHeight());
+	//bottomRight.setBounds(getWidth()-20, 0, 20, getHeight());
+}
+
+void CabbageRangeSlider2::mouseDown(const MouseEvent& event)
+{
+	if(getThumbOuterBounds(1).contains(event.getMouseDownPosition()))
+	{
+		cUtils::debug("topLeft");
+		currentThumb = 1;
+		sliderThumbBounds = sliderThumb.getBounds();
+	}
+	else if(getThumbOuterBounds(2).contains(event.getMouseDownPosition())) 
+	{
+		cUtils::debug("bottomRight");
+		currentThumb = 2;
+		sliderThumbBounds = sliderThumb.getBounds();
+	}
+	else if(getThumbOuterBounds(3).contains(event.getMouseDownPosition())) 
+	{
+		cUtils::debug("rangeArea");
+		currentThumb = 3;
+		sliderThumbBounds = sliderThumb.getBounds();
+	}
+	showPopup();
+}
+
+Rectangle<int> CabbageRangeSlider2::getThumbOuterBounds(int type)
+{
+	if(type==1)
+		return Rectangle<int>(sliderThumb.getPosition().getX(), 0, 20, getHeight());
+	else if(type==2)
+		return Rectangle<int>(sliderThumb.getPosition().getX()+sliderThumb.getWidth()-20, 0, 20, getHeight());
+	else if(type==3)
+		return Rectangle<int>(sliderThumb.getPosition().getX()+thumbWidth, 0, sliderThumb.getWidth()-thumbWidth, getHeight());
+		
+}
+
+void CabbageRangeSlider2::mouseUp(const MouseEvent& event)
+{
+	sliderThumbBounds = sliderThumb.getBounds();
+	cUtils::getBoundsString(sliderThumbBounds);
+	currentThumb=0;
+}
+
+void CabbageRangeSlider2::mouseDrag(const MouseEvent& event)
+{
+	if(currentThumb == 1)
+	{
+		const int right = (sliderThumbBounds.getX()+sliderThumbBounds.getWidth())-thumbWidth*2;
+		const int xPos = cUtils::roundToMultiple(jmin(right, sliderThumbBounds.getX()+event.getDistanceFromDragStartX()), thumbIncr);
+		const int newWidth = cUtils::roundToMultiple(sliderThumbBounds.getWidth()-event.getDistanceFromDragStartX(), thumbIncr);
+		if(xPos>=0)
+			sliderThumb.setBounds(xPos<right? xPos : right, 0, jmax(thumbWidth*2, newWidth), getHeight()); 
+	}
+	else if(currentThumb == 2)
+	{	
+		const int newWidth = jmax(thumbWidth*2, sliderThumbBounds.getWidth()+event.getDistanceFromDragStartX());
+		if(newWidth+sliderThumb.getPosition().getX()<getWidth())
+			sliderThumb.setBounds(sliderThumbBounds.getX(), 0, cUtils::roundToMultiple(newWidth, thumbIncr), getHeight()); 
+	}
+	else if(currentThumb==3)
+	{
+		int xPos = sliderThumbBounds.getPosition().getX()+event.getDistanceFromDragStartX();
+		xPos = cUtils::roundToMultiple(xPos+sliderThumb.getWidth() < getWidth() ? xPos : getWidth()-sliderThumb.getWidth(), thumbIncr);
+		sliderThumb.setBounds(jmax(0, xPos), 0, sliderThumb.getWidth(), getHeight());
+	}
+	
+	float proportion1 = ((float)sliderThumb.getPosition().getX()/(float)getWidth());
+	float proportion2 = ((float)sliderThumb.getPosition().getX()+(float)sliderThumb.getWidth());
+	
+	value1 = (float)((sliderThumb.getPosition().getX()/(float)getWidth())*(max-min))+min;
+	value2 = (float)(((sliderThumb.getPosition().getX()+sliderThumb.getWidth())/(float)getWidth())*(max-min))+min;	
+
+
+    value1 = skew == 1.0 ? value1 : pow (proportion1, skew);
+    //value2 = skew == 1.0 ? value2 : pow (proportion2, skew);		
+	
+	showPopup();
+}
+void CabbageRangeSlider2::mouseEnter(const MouseEvent& event)
+{
+	showPopup();
+}
+
+void CabbageRangeSlider2::paint(Graphics& g)
+{
+	g.fillAll(Colours::transparentBlack);
+	g.setColour(Colours::slategrey);
+	g.fillRoundedRectangle(this->getLocalBounds().toFloat(), 4);
+	g.setColour(Colours::lime);
+}
+
+void CabbageRangeSlider2::showPopup()
+{
+	if(shouldDisplayPopup)
+	{
+		String popupText;
+		if(tooltipText.isNotEmpty())
+			popupText = tooltipText;
+		else
+			popupText = channels.getReference(0)+": "+String(value1)+" "+channels.getReference(1)+": "+String(value2);
+						
+		owner->showBubble(this, popupText);	
+	}
+}
+
+void CabbageRangeSlider2::update(CabbageGUIType cAttr)
+{
+}
+
+//--------------------------------------------------------
+//slider thumb class
+//--------------------------------------------------------
+CabbageRangeSlider2::SliderThumb::SliderThumb(CabbageRangeSlider2* _owner, String _name, String _kind):
+Component(), owner(_owner), name(_name), kind(_kind)
+{
+	this->setInterceptsMouseClicks(false, false);
+}
+
+void CabbageRangeSlider2::SliderThumb::paint(Graphics& g)
+{
+	g.fillAll(Colours::transparentBlack);
+	g.setColour(Colours::lime);
+	g.fillRoundedRectangle(this->getLocalBounds().toFloat(), 4);
+	g.setColour(Colours::lightblue);
+	g.fillRoundedRectangle(0, 0, 20, getHeight(), 4);
+	g.fillRoundedRectangle(getWidth()-20, 0, 20, getHeight(), 4);	
+}

@@ -292,6 +292,11 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIType cAttr)
     {
         InsertStepper(cAttr);
     }
+    else if(cAttr.getStringProp(CabbageIDs::type)==String("vrange")
+		||cAttr.getStringProp(CabbageIDs::type)==String("hrange"))
+    {
+        InsertRangeSlider(cAttr);
+    }
     else if(cAttr.getStringProp(CabbageIDs::type)==String("label"))
     {
         InsertLabel(cAttr);
@@ -2072,7 +2077,7 @@ void CabbagePluginAudioProcessorEditor::InsertStepper(CabbageGUIType &cAttr)
     stepper->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));	
     stepper->getProperties().set(CabbageIDs::index, layoutComps.size());
 	
-    layoutComps.add(new CabbageStepper(cAttr, this));
+    layoutComps.add(stepper);
     int idx = layoutComps.size()-1;
 	setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));		
     cAttr.setStringProp(CabbageIDs::type, "label");
@@ -2833,6 +2838,32 @@ void CabbagePluginAudioProcessorEditor::InsertPopupMenu(CabbageGUIType &cAttr)
     //setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
     layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
     layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++
+//                             range slider
+//+++++++++++++++++++++++++++++++++++++++++++
+void CabbagePluginAudioProcessorEditor::InsertRangeSlider(CabbageGUIType &cAttr)
+{
+	CabbageRangeSlider2* rangeSlider = new CabbageRangeSlider2(cAttr, this);
+	
+    float left = cAttr.getNumProp(CabbageIDs::left);
+    float top = cAttr.getNumProp(CabbageIDs::top);
+    float width = cAttr.getNumProp(CabbageIDs::width);
+    float height = cAttr.getNumProp(CabbageIDs::height);
+    
+    //if control is not part of a plant, add mouse listener
+    if(cAttr.getStringProp("plant").isEmpty())
+        rangeSlider->addMouseListener(this, true);
+
+    rangeSlider->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+    rangeSlider->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));	
+    rangeSlider->getProperties().set(CabbageIDs::index, comps.size());
+	
+    comps.add(rangeSlider);
+    int idx = layoutComps.size()-1;
+	setPositionOfComponent(left, top, width, height, comps[idx], cAttr.getStringProp("reltoplant"));		
+    cAttr.setStringProp(CabbageIDs::type, "label");
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++

@@ -1030,6 +1030,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         else
             subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, true);
 
+		subMenu.addItem(301, String("Set external editor"), true, false);
+
         //if(!getPreference(appProperties, "EnablePopupDisplay"))
         //subMenu.addItem(207, String("Enable opcode popup help display"), true, false);
         //else
@@ -1146,7 +1148,18 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             else m_ShowMessage("Please open or create a file first", lookAndFeel);
         }
         else
-            m_ShowMessage("Please disable \'Use external editor\' from preferences first", lookAndFeel);
+		{
+			if(File(getPreference(appProperties, "ExternalEditorApplication", "")).existsAsFile())
+			{
+				String editorApp = getPreference(appProperties, "ExternalEditorApplication", "");
+				ChildProcess process;				
+				process.start(editorApp+ " "+csdFile.getFullPathName());				
+			}
+			else
+			 m_ShowMessage("\'Use external editor\' is enabled. If you wish to use the Cabbage editor,\n\
+							please disable 'Use external editor\' from the preferences and try again", lookAndFeel);	
+		}
+           
     }
     //-------Csound output console-----
     else if(options==3)
@@ -1352,6 +1365,15 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         if(browser.browseForDirectory())
         {
             setPreference(appProperties, "PlantFileDir", browser.getResult().getFullPathName());
+        }
+    }
+    else if(options==301)
+    {
+        String dir = getPreference(appProperties, "ExternalEditorApplication", "");
+        FileChooser browser(String("Please select your preferred external editor..."), File(dir), String("*.*"), UseNativeDialogue);
+        if(browser.browseForFileToOpen())
+        {
+            setPreference(appProperties, "ExternalEditorApplication", browser.getResult().getFullPathName());
         }
     }
     //--------preference Show tabs

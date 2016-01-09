@@ -920,6 +920,48 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::scrollbars, 1);
 
     }
+	
+	//===============rangeslider===============//
+    else if(strTokens[0].trim() == "hrange" || strTokens[0].trim() == "vrange")
+    {	
+		cabbageIdentifiers.set(CabbageIDs::basetype, "interactive");
+        cabbageIdentifiers.set(CabbageIDs::top, 10);
+        cabbageIdentifiers.set(CabbageIDs::left, 10);
+        cabbageIdentifiers.set(CabbageIDs::width, 50);
+        cabbageIdentifiers.set(CabbageIDs::height, 150);
+        var channels;
+        channels.append("vslider");
+        cabbageIdentifiers.set(CabbageIDs::channel, channels);
+        cabbageIdentifiers.set(CabbageIDs::min, 0);
+        cabbageIdentifiers.set(CabbageIDs::max, 1);
+        cabbageIdentifiers.set(CabbageIDs::value, 0);
+        cabbageIdentifiers.set(CabbageIDs::text, "");
+        cabbageIdentifiers.set(CabbageIDs::textbox, 0.f);
+        cabbageIdentifiers.set(CabbageIDs::caption, "");
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::trackercolour, Colour(0, 118, 38).toString());
+        cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
+        cabbageIdentifiers.set(CabbageIDs::textcolour, cUtils::getComponentFontColour().toString());
+        cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
+        cabbageIdentifiers.set(CabbageIDs::sliderincr, .001);
+        cabbageIdentifiers.set(CabbageIDs::midichan, -99);
+        cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
+        //these don't appear in the props dialog
+        cabbageIdentifiers.set(CabbageIDs::name, strTokens[0].trim());
+        cabbageIdentifiers.set(CabbageIDs::type, cabbageIdentifiers.getWithDefault("name", "").toString());
+        cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+        if(strTokens[0].trim() == "hrange")
+            cabbageIdentifiers.set(CabbageIDs::kind, "horizontal");
+        else 
+            cabbageIdentifiers.set(CabbageIDs::kind, "vertical");
+
+        cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
+		cabbageIdentifiers.set(CabbageIDs::trackerthickness, .25);
+        cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+        cabbageIdentifiers.set(CabbageIDs::visible, 1);
+		cabbageIdentifiers.set(CabbageIDs::svgslider, "");
+		cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");
+	}
 
     //===============stepper==================//
     else if(strTokens[0].trim() == "stepper")

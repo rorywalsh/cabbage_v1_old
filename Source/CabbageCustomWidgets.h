@@ -3008,6 +3008,58 @@ public:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageStepper);
 };
 
+//============================================================
+// homegrown version of JUCE's two value, slider with dragable range
+//============================================================
+class CabbageRangeSlider2	:	public Component
+{
+	String name, kind, tooltipText;
+	StringArray channels;
+	CabbagePluginAudioProcessorEditor* owner;
+	bool shouldDisplayPopup;
+	float value1, value2, min, initVal, minVal, maxVal, max, incr, skew;
+	int thumbIncr;
+	int thumbWidth, rangeDistance, currentThumb;
+	
 
+public:
+	Rectangle<int> sliderThumbBounds;
+	
+	class SliderThumb : public Component
+	{
+		String name, kind;
+		Point<int> currentPos;
+		CabbageRangeSlider2* owner;
+		
+		public:
+			SliderThumb(CabbageRangeSlider2* _owner, String _name, String kind);
+			~SliderThumb()
+			{
+				owner=nullptr;
+			}
+			void resized(){}			
+			void paint(Graphics& g);		
+	};
+
+
+    CabbageRangeSlider2 (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
+    ~CabbageRangeSlider2()
+	{
+		owner = nullptr;
+	}
+    void resized();
+	void mouseDown(const MouseEvent& event);
+	void mouseUp(const MouseEvent& event);
+	void mouseEnter(const MouseEvent& event);
+	void mouseDrag(const MouseEvent& event);
+    void paint(Graphics& g);
+	void update(CabbageGUIType cAttr);	
+	void showPopup();
+	Rectangle<int> getThumbOuterBounds(int type);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageRangeSlider2);
+	
+private:
+		SliderThumb sliderThumb;
+};
 
 #endif

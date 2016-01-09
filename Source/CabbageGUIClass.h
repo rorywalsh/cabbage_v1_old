@@ -38,7 +38,7 @@ class GUICtrlsArray : public StringArray
 public:
     GUICtrlsArray()
     {
-		add("hslider");add("hslider2");add("hslider3");add("rslider");add("vslider");add("vslider2");
+		add("hslider");add("hslider2");add("hslider3");add("rslider");add("vslider");add("vslider2");add("hrange");add("vrange");
 		add("vslider3");add("combobox");add("checkbox");add("encoder");add("numberbox");add("xypad");add("button");
     }
 
@@ -67,19 +67,18 @@ class IdentArray : public StringArray
 public:
     IdentArray()
     {
-        add("tablecolour");add("tablegridcolour");add("alpha");add("bounds");add("fontcolour");add("fontcolour:1");
-        add("fontcolour:0");add("size");add("items");add("pos");add("min");add("radiogroup");add("max");add("value");
-        add("guirefresh");add("outlinethickness");add("linethickness");add("trackerthickness");add("populate");add("range");
-        add("amprange");add("popuptext");add("address");add("scalex");add("scaley");add("rescale");add("rangex");
-        add("rangey");add("plant");add("channeltype");add("channels");add("channel");add("sliderincr");add("widgetarray");
-        add("channelarray");add("textbox");add("active");add("caption");add("kind");add("align");add("wrap");add("tablebackgroundcolour");
-        add("mode");add("tablenumber");add("tablenumbers");add("fill");add("logger");add("file");add("corners");add("svgpath");add("outlinecolour");
-        add("shape");add("rotate");add("textcolour");add("pluginid");add("trackercolour");add("popup");add("show");add("latched");
+        add("tablecolour");add("tablecolor");add("tablegridcolour");add("tablegridcolor");add("alpha");add("bounds");add("fontcolour");
+		add("fontcolor");add("fontcolour:1");add("fontcolor:1");add("fontcolour:0");add("fontcolor:0");add("size");add("items");
+		add("pos");add("min");add("radiogroup");add("max");add("value");add("guirefresh");add("outlinethickness");add("linethickness");
+		add("trackerthickness");add("populate");add("range");add("amprange");add("popuptext");add("address");add("scalex");
+		add("scaley");add("rescale");add("rangex");add("rangey");add("plant");add("channeltype");add("channels");add("channel");add("sliderincr");add("widgetarray");
+        add("channelarray");add("textbox");add("active");add("caption");add("kind");add("align");add("wrap");add("tablebackgroundcolour");add("tablebackgroundcolor");
+        add("mode");add("tablenumber");add("tablenumbers");add("fill");add("logger");add("file");add("corners");add("svgpath");add("outlinecolour");add("outlinecolor");
+        add("shape");add("rotate");add("textcolour");add("textcolor");add("pluginid");add("trackercolour");add("trackercolor");add("popup");add("show");add("latched");
         add("identchannel");add("visible");add("scrubberposition");add("scroll");add("zoom");add("samplerange");add("scrollbars");
-        add("colour");add("colour:0");add("colour:1");add("text");add("gradient");add("svgfile");add("svgdebug");	
+        add("colour");add("colour:0");add("colour:1");add("color");add("color:0");add("color:1");add("text");add("gradient");add("svgfile");add("svgdebug");	
 		//sample identifiers for stepper widget
-		add("numberofsteps");
-		add("stepbpm");		
+		add("numberofsteps");add("stepbpm");		
     }
 
     ~IdentArray()
@@ -224,6 +223,8 @@ static const String hslider3 = "hslider3";
 static const String vslider = "vslider";
 static const String vslider2 = "vslider2";
 static const String vslider3 = "vslider3";
+static const String vrange = "vrange";
+static const String hrange = "hrange";
 static const String checkbox = "checkbox";
 static const String soundfiler = "sounfiler";
 static const String button = "button";

@@ -401,12 +401,13 @@ void RangeSlider::resized()
 	if(!isVertical)
 	{
 		const int xPos = getSliderPosition(SliderType::left);
-		const int width = getSliderPosition(SliderType::right);
-		sliderThumb.setBounds(xPos, 0, width, getHeight());	
+		const int width = jmax(thumbWidth*2, getSliderPosition(SliderType::right));
+		sliderThumb.setBounds(jmax(0, xPos), 0, width, getHeight());	
 	}
 	else
 	{
-		sliderThumb.setBounds(0, getSliderPosition(SliderType::top), getWidth(), getSliderPosition(SliderType::bottom));			
+		const int height = jmax(thumbHeight*2, getSliderPosition(SliderType::bottom));
+		sliderThumb.setBounds(0, getSliderPosition(SliderType::top), getWidth(), height);			
 	}
 }
 

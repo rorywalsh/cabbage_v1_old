@@ -358,25 +358,27 @@ void CabbageEncoder::update(CabbageGUIType m_cAttr)
 //==============================================================================================
 // RangeSlider2, homegrown version of JUCE's two value slider, with dragable range
 //==============================================================================================
-CabbageRangeSlider2::CabbageRangeSlider2(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner)
+RangeSlider::RangeSlider(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner)
         : Component(), 
 		owner(_owner),
 		name(cAttr.getStringProp(CabbageIDs::name)),
-		kind(cAttr.getStringProp(CabbageIDs::kind)),
-		sliderThumb(this, "leftTop", kind),
+		isVertical(cAttr.getStringProp(CabbageIDs::kind)=="horizontal" ? false : true),
+		sliderThumb(this, cAttr.getStringProp(CabbageIDs::kind)),
 		currentThumb(0),
-		thumbWidth(20),
+		thumbWidth(10),
+		thumbHeight(10),
 		tooltipText(String::empty),
 		shouldDisplayPopup(true),
+		initVal(cAttr.getNumProp(CabbageIDs::value)),
 		max(cAttr.getNumProp(CabbageIDs::max)),
 		min(cAttr.getNumProp(CabbageIDs::min)),
 		maxVal(cAttr.getNumProp(CabbageIDs::maxvalue)),
 		minVal(cAttr.getNumProp(CabbageIDs::minvalue)),
-		initVal(cAttr.getNumProp(CabbageIDs::value)),
-		value1(0),
-		value2(0),
 		incr(cAttr.getNumProp(CabbageIDs::sliderincr)),
-		skew(cAttr.getNumProp(CabbageIDs::sliderskew))
+		skew(cAttr.getNumProp(CabbageIDs::sliderskew)),
+		colour(cAttr.getStringProp(CabbageIDs::colour)),
+		trackerThickness(cAttr.getNumProp(CabbageIDs::trackerthickness)),
+		trackerColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::trackercolour)))
 {
 	if(cAttr.getStringArrayProp(CabbageIDs::channel).size()>1)
 	{
@@ -384,107 +386,251 @@ CabbageRangeSlider2::CabbageRangeSlider2(CabbageGUIType &cAttr, CabbagePluginAud
 		channels.add(cAttr.getStringArrayPropValue(CabbageIDs::channel, 1));
 	}	
 	
+	sliderThumb.setColour(Colour::fromString(colour));
+	value1 =  isVertical == false ? minVal : maxVal;
+	value2 =  isVertical == false ? maxVal : minVal;
+	sendValuesToCsound(value1, value2);	
 	addAndMakeVisible(&sliderThumb);
 	
 }
 
-void CabbageRangeSlider2::resized()
+void RangeSlider::resized()
 {
 	thumbIncr = (incr/(max-min))*getWidth();
-	sliderThumb.setBounds(0, 0, getWidth(), getHeight());
-	//bottomRight.setBounds(getWidth()-20, 0, 20, getHeight());
+
+	if(!isVertical)
+	{
+		const int xPos = getSliderPosition(SliderType::left);
+		const int width = getSliderPosition(SliderType::right);
+		sliderThumb.setBounds(xPos, 0, width, getHeight());	
+	}
+	else
+	{
+		sliderThumb.setBounds(0, getSliderPosition(SliderType::top), getWidth(), getSliderPosition(SliderType::bottom));			
+	}
 }
 
-void CabbageRangeSlider2::mouseDown(const MouseEvent& event)
+int RangeSlider::getSliderPosition(SliderType type)
+{
+	if(type == SliderType::left)
+	{
+		const double proportion = abs((minVal- (minVal<0 ? min : 0))/(max-min));
+		return (getWidth()*proportion)- (minVal<0 ? thumbWidth : 0);
+	}
+	else if(type == SliderType::right)
+	{
+		const double proportion = abs((maxVal-minVal)/(max-min));
+		int newWidth = getWidth()*proportion;
+		return newWidth + (minVal < 0 ? thumbWidth : 0);
+	}
+	else if(type == SliderType::top)
+	{
+		const double proportion = abs((maxVal-max)/(max-min));
+		return (getHeight()*proportion);
+	}
+	else if(type == SliderType::bottom)
+	{
+		const double newWidth = abs((maxVal-minVal)/(max-min));
+		return (getHeight()*newWidth)+ (minVal<0 ? thumbHeight : 0);
+	}		
+}
+
+void RangeSlider::mouseDown(const MouseEvent& event)
 {
 	if(getThumbOuterBounds(1).contains(event.getMouseDownPosition()))
-	{
-		cUtils::debug("topLeft");
 		currentThumb = 1;
-		sliderThumbBounds = sliderThumb.getBounds();
-	}
 	else if(getThumbOuterBounds(2).contains(event.getMouseDownPosition())) 
-	{
-		cUtils::debug("bottomRight");
 		currentThumb = 2;
-		sliderThumbBounds = sliderThumb.getBounds();
-	}
 	else if(getThumbOuterBounds(3).contains(event.getMouseDownPosition())) 
-	{
-		cUtils::debug("rangeArea");
 		currentThumb = 3;
-		sliderThumbBounds = sliderThumb.getBounds();
-	}
+	
+	sliderThumbBounds = sliderThumb.getBounds();
 	showPopup();
 }
 
-Rectangle<int> CabbageRangeSlider2::getThumbOuterBounds(int type)
+Rectangle<int> RangeSlider::getThumbOuterBounds(int type)
 {
-	if(type==1)
-		return Rectangle<int>(sliderThumb.getPosition().getX(), 0, 20, getHeight());
-	else if(type==2)
-		return Rectangle<int>(sliderThumb.getPosition().getX()+sliderThumb.getWidth()-20, 0, 20, getHeight());
-	else if(type==3)
-		return Rectangle<int>(sliderThumb.getPosition().getX()+thumbWidth, 0, sliderThumb.getWidth()-thumbWidth, getHeight());
-		
+	if(!isVertical)
+	{
+		if(type==1)
+			return Rectangle<int>(sliderThumb.getPosition().getX(), 0, thumbWidth, getHeight());
+		else if(type==2)
+			return Rectangle<int>(sliderThumb.getPosition().getX()+sliderThumb.getWidth()-thumbWidth, 0, thumbWidth, getHeight());
+		else if(type==3)
+			return Rectangle<int>(sliderThumb.getPosition().getX()+thumbWidth, 0, sliderThumb.getWidth()-thumbWidth, getHeight());
+	}
+	else
+	{
+		if(type==1)
+			return Rectangle<int>(0, sliderThumb.getPosition().getY(), getWidth(), thumbHeight);
+		else if(type==2)
+			return Rectangle<int>(0, sliderThumb.getPosition().getY()+sliderThumb.getHeight()-thumbHeight, getWidth(), thumbHeight);
+		else if(type==3)
+			return Rectangle<int>(0, sliderThumb.getPosition().getY()-thumbHeight, getWidth(), sliderThumb.getPosition().getY()+sliderThumb.getHeight());		
+	}	
 }
 
-void CabbageRangeSlider2::mouseUp(const MouseEvent& event)
+void RangeSlider::mouseUp(const MouseEvent& event)
 {
 	sliderThumbBounds = sliderThumb.getBounds();
-	cUtils::getBoundsString(sliderThumbBounds);
 	currentThumb=0;
 }
 
-void CabbageRangeSlider2::mouseDrag(const MouseEvent& event)
+void RangeSlider::mouseDrag(const MouseEvent& event)
+{
+	if(isVertical == false)
+		horizontalDrag(event);
+	else
+		verticalDrag(event);
+		
+	showPopup();
+}
+
+void RangeSlider::verticalDrag(const MouseEvent& event)
 {
 	if(currentThumb == 1)
 	{
-		const int right = (sliderThumbBounds.getX()+sliderThumbBounds.getWidth())-thumbWidth*2;
-		const int xPos = cUtils::roundToMultiple(jmin(right, sliderThumbBounds.getX()+event.getDistanceFromDragStartX()), thumbIncr);
-		const int newWidth = cUtils::roundToMultiple(sliderThumbBounds.getWidth()-event.getDistanceFromDragStartX(), thumbIncr);
-		if(xPos>=0)
-			sliderThumb.setBounds(xPos<right? xPos : right, 0, jmax(thumbWidth*2, newWidth), getHeight()); 
+		const int bottomThumb = (sliderThumbBounds.getY()+sliderThumbBounds.getHeight())-thumbHeight*2;
+		const int yPos = cUtils::roundToMultiple(jmin(bottomThumb, sliderThumbBounds.getY()+event.getDistanceFromDragStartY()), thumbIncr);
+		sliderThumb.setBounds(sliderThumbBounds.withTop(yPos<bottomThumb ? jmax(0, yPos) : bottomThumb));
 	}
 	else if(currentThumb == 2)
 	{	
-		const int newWidth = jmax(thumbWidth*2, sliderThumbBounds.getWidth()+event.getDistanceFromDragStartX());
-		if(newWidth+sliderThumb.getPosition().getX()<getWidth())
-			sliderThumb.setBounds(sliderThumbBounds.getX(), 0, cUtils::roundToMultiple(newWidth, thumbIncr), getHeight()); 
+		const int yPos = jlimit(sliderThumbBounds.getY()+thumbHeight*2, getHeight(), sliderThumbBounds.getY()+sliderThumbBounds.getHeight()+event.getDistanceFromDragStartY());
+		sliderThumb.setBounds(sliderThumbBounds.withBottom(cUtils::roundToMultiple(yPos, thumbIncr)));
 	}
-	else if(currentThumb==3)
+	else if(currentThumb == 3)
+	{
+		int yPos = sliderThumbBounds.getPosition().getY()+event.getDistanceFromDragStartY();
+		yPos = cUtils::roundToMultiple(yPos+sliderThumb.getHeight() < getHeight() ? yPos : getHeight()-sliderThumb.getHeight(), thumbIncr);
+		sliderThumb.setBounds(0, jmax(0, yPos), getWidth(), sliderThumbBounds.getHeight());
+	}
+	
+	const double scaledHeight = (getHeight()-(2*thumbHeight))*.99;//scale down to prevent errors at different sizes...
+	double proportion1 = (double)sliderThumb.getPosition().getY()/scaledHeight;
+	double proportion2 = ((double)sliderThumb.getPosition().getY()+(double)sliderThumb.getHeight()-thumbHeight*2)/scaledHeight;
+	value1 = cUtils::roundToMultiple(getSkewedValue(proportion1), incr);
+	value2 = cUtils::roundToMultiple(getSkewedValue(proportion2), incr);
+	sendValuesToCsound(value1, value2);
+}
+
+void RangeSlider::horizontalDrag(const MouseEvent& event)
+{
+	if(currentThumb == 1)
+	{
+		const int rightThumb = (sliderThumbBounds.getX()+sliderThumbBounds.getWidth())-thumbWidth*2;
+		const int xPos = cUtils::roundToMultiple(jmin(rightThumb, sliderThumbBounds.getX()+event.getDistanceFromDragStartX()), thumbIncr);
+		sliderThumb.setBounds(sliderThumbBounds.withLeft(xPos<rightThumb ? jmax(0, xPos) : rightThumb));
+	}
+	else if(currentThumb == 2)
+	{	
+		const int xPos = jlimit(sliderThumbBounds.getX()+thumbWidth*2, getWidth(), sliderThumbBounds.getX()+sliderThumbBounds.getWidth()+event.getDistanceFromDragStartX());
+		sliderThumb.setBounds(sliderThumbBounds.withRight(cUtils::roundToMultiple(xPos, thumbIncr)));
+	}
+	else if(currentThumb == 3)
 	{
 		int xPos = sliderThumbBounds.getPosition().getX()+event.getDistanceFromDragStartX();
 		xPos = cUtils::roundToMultiple(xPos+sliderThumb.getWidth() < getWidth() ? xPos : getWidth()-sliderThumb.getWidth(), thumbIncr);
 		sliderThumb.setBounds(jmax(0, xPos), 0, sliderThumb.getWidth(), getHeight());
 	}
 	
-	float proportion1 = ((float)sliderThumb.getPosition().getX()/(float)getWidth());
-	float proportion2 = ((float)sliderThumb.getPosition().getX()+(float)sliderThumb.getWidth());
-	
-	value1 = (float)((sliderThumb.getPosition().getX()/(float)getWidth())*(max-min))+min;
-	value2 = (float)(((sliderThumb.getPosition().getX()+sliderThumb.getWidth())/(float)getWidth())*(max-min))+min;	
+	const double scaledWidth = (getWidth()-(2*thumbWidth))*.99;//scale down to prevent errors at different sizes...
+	const double proportion1 = (double)sliderThumb.getPosition().getX()/scaledWidth;
+	const double proportion2 = ((double)sliderThumb.getPosition().getX()+(double)sliderThumb.getWidth()-thumbWidth*2)/scaledWidth;
+	value1 = cUtils::roundToMultiple(getSkewedValue(proportion1), incr);
+	value2 = cUtils::roundToMultiple(getSkewedValue(proportion2), incr);
+	sendValuesToCsound(value1, value2);	
 
-
-    value1 = skew == 1.0 ? value1 : pow (proportion1, skew);
-    //value2 = skew == 1.0 ? value2 : pow (proportion2, skew);		
-	
-	showPopup();
 }
-void CabbageRangeSlider2::mouseEnter(const MouseEvent& event)
+
+void RangeSlider::sendValuesToCsound(double val1, double val2)
+{
+	owner->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channels.getReference(0), isVertical ? val2 : val1);
+	owner->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channels.getReference(1), isVertical ? val1 : val2);
+}
+
+void RangeSlider::mouseEnter(const MouseEvent& event)
 {
 	showPopup();
 }
 
-void CabbageRangeSlider2::paint(Graphics& g)
+double RangeSlider::getSkewedValue(double proportion)
 {
+	if(isVertical)
+	{
+		const double skewedValue = pow (1-proportion, 1/skew)*(max-min)+min;
+		return skew == 1.0 ? jlimit(min, max, (1-proportion)*(max-min)+min) : jlimit(min, max, skewedValue);		
+	}
+	else
+	{
+		const double skewedValue = pow (proportion, 1/skew)*(max-min)+min;
+		return skew == 1.0 ? jlimit(min, max, proportion*(max-min)+min) : jlimit(min, max, skewedValue);
+	}
+}
+
+void RangeSlider::paint(Graphics& g)
+{
+	const int width = getWidth();
+	const int height = getHeight();
+	
 	g.fillAll(Colours::transparentBlack);
-	g.setColour(Colours::slategrey);
-	g.fillRoundedRectangle(this->getLocalBounds().toFloat(), 4);
-	g.setColour(Colours::lime);
+	if(!isVertical)
+	{
+		g.setColour (Colours::whitesmoke);
+		g.setOpacity (0.6);
+		const float midPoint = getWidth()/2.f;
+		const float markerGap = getWidth()/9.f;
+		g.drawLine (midPoint, height*0.2, midPoint, height*0.8, 1.5);
+		g.setOpacity (0.3);
+		for (int i=1; i<5; i++)
+		{
+			g.drawLine (midPoint+markerGap*i, height*0.3, midPoint+markerGap*i, height*0.7, .7);
+			g.drawLine (midPoint-markerGap*i, height*0.3, midPoint-markerGap*i, height*0.7, .7);
+		}
+		//backgrounds
+		g.setColour (Colours::whitesmoke);
+		g.setOpacity (0.3);
+		g.fillRoundedRectangle (0, height*0.44, width, height*0.15, height*0.05); //for light effect
+		g.setColour (Colour::fromRGBA(5, 5, 5, 255));
+		g.fillRoundedRectangle (0, height*0.40, width*0.995, height*0.15, height*0.05); //main rectangle
+		//tracker
+		g.setColour(trackerColour);
+		const float scale = trackerThickness;
+        const int iHeight = (height * scale);
+		const int iTop = ((height-iHeight)/2.f);		
+		g.fillRect(sliderThumb.getPosition().getX(), iTop, sliderThumb.getWidth(), iHeight);
+		
+	}
+	else
+	{
+		g.setColour (Colours::whitesmoke);
+		g.setOpacity (0.6);
+		const float midPoint = height/2.f;
+		const float markerGap = height/9.f;
+		g.drawLine (width*0.25, midPoint, width*0.75, midPoint, 1.59);
+		g.setOpacity (0.3);
+		
+		for (int i=1; i<5; i++)
+		{
+			g.drawLine (width*0.3, midPoint+markerGap*i, width*0.7, midPoint+markerGap*i, .7);
+			g.drawLine (width*0.3, midPoint-markerGap*i, width*0.7, midPoint-markerGap*i, .7);
+		}
+
+		g.setColour(Colours::whitesmoke);
+		g.setOpacity (0.1);
+		g.fillRoundedRectangle(width*0.44, 0, width*0.15, height, width*0.05);
+		g.setColour (Colour::fromRGBA(5, 5, 5, 255));
+		g.fillRoundedRectangle (width*0.425, 0, width*0.15, height*0.99, width*0.05);	
+		//tracker
+		g.setColour(trackerColour);
+		const float scale = trackerThickness;
+        const int iWidth = (width* scale);
+		const int iLeft = ((width-iWidth)/2.f);
+		g.fillRect(iLeft, sliderThumb.getPosition().getY(), iWidth, sliderThumb.getHeight());	
+	}
 }
 
-void CabbageRangeSlider2::showPopup()
+void RangeSlider::showPopup()
 {
 	if(shouldDisplayPopup)
 	{
@@ -492,31 +638,97 @@ void CabbageRangeSlider2::showPopup()
 		if(tooltipText.isNotEmpty())
 			popupText = tooltipText;
 		else
-			popupText = channels.getReference(0)+": "+String(value1)+" "+channels.getReference(1)+": "+String(value2);
+			if(isVertical)
+				popupText = channels.getReference(0)+": "+String(value2)+" "+channels.getReference(1)+": "+String(value1);				
+			else
+				popupText = channels.getReference(0)+": "+String(value1)+" "+channels.getReference(1)+": "+String(value2);
 						
 		owner->showBubble(this, popupText);	
 	}
 }
 
-void CabbageRangeSlider2::update(CabbageGUIType cAttr)
+void RangeSlider::update(CabbageGUIType cAttr)
 {
 }
 
 //--------------------------------------------------------
 //slider thumb class
 //--------------------------------------------------------
-CabbageRangeSlider2::SliderThumb::SliderThumb(CabbageRangeSlider2* _owner, String _name, String _kind):
-Component(), owner(_owner), name(_name), kind(_kind)
+RangeSlider::SliderThumb::SliderThumb(RangeSlider* _owner, String _kind):
+Component(), owner(_owner), isVertical(_kind=="vertical" ? true : false)
 {
 	this->setInterceptsMouseClicks(false, false);
 }
 
-void CabbageRangeSlider2::SliderThumb::paint(Graphics& g)
+void RangeSlider::SliderThumb::paint(Graphics& g)
 {
+	const int thumbWidth = 10;
+	const int thumbHeight = 10;
 	g.fillAll(Colours::transparentBlack);
-	g.setColour(Colours::lime);
-	g.fillRoundedRectangle(this->getLocalBounds().toFloat(), 4);
-	g.setColour(Colours::lightblue);
-	g.fillRoundedRectangle(0, 0, 20, getHeight(), 4);
-	g.fillRoundedRectangle(getWidth()-20, 0, 20, getHeight(), 4);	
+
+	if(isVertical ==false)
+	{
+		g.setColour(colour.darker(.7));
+		g.fillRoundedRectangle(0, getHeight()*.2, thumbWidth, getHeight()*.6, 4);
+		g.setColour(colour);
+		g.fillRoundedRectangle(0, getHeight()*.2, thumbWidth*.9, getHeight()*.57, 4);
+		
+		g.setColour(colour.darker(.7));		
+		g.fillRoundedRectangle(getWidth()-thumbWidth, getHeight()*.2, thumbWidth, getHeight()*.60, 4);	
+		g.setColour(colour);		
+		g.fillRoundedRectangle(getWidth()-thumbWidth, getHeight()*.2, thumbWidth*.9, getHeight()*.57, 4);	
+	}
+	else 
+	{
+		g.setColour(colour.darker(.7));
+		g.fillRoundedRectangle(getWidth()*.3, 0, getWidth()*.4, thumbHeight, 4);
+		g.setColour(colour);
+		g.fillRoundedRectangle(getWidth()*.3, 0, getWidth()*.37, thumbHeight*.9, 4);
+		
+		g.setColour(colour.darker(.7));
+		g.fillRoundedRectangle(getWidth()*.3, getHeight()-thumbHeight, getWidth()*.4, thumbHeight, 4);	
+		g.setColour(colour);
+		g.fillRoundedRectangle(getWidth()*.3, getHeight()-thumbHeight, getWidth()*.37, thumbHeight*.9, 4);	
+	}
+}
+//---------------------------------------------------------------------
+//container class for rangeslider widget
+//---------------------------------------------------------------------
+CabbageRangeSlider2::CabbageRangeSlider2(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner):
+ 	slider(cAttr, _owner),
+	text(cAttr.getStringProp(CabbageIDs::text)),
+	textColour(cAttr.getStringProp(CabbageIDs::textcolour)),
+	textLabel(text),
+	isVertical(cAttr.getStringProp(CabbageIDs::kind)=="horizontal" ? false : true)
+{
+	addAndMakeVisible(&slider);		
+    textLabel.setColour(Label::textColourId, Colour::fromString(textColour));
+	textLabel.setColour(Label::outlineColourId, Colours::transparentBlack);
+	addAndMakeVisible(&textLabel);
+	textLabel.setVisible(false);
+}
+
+void CabbageRangeSlider2::resized()
+{
+	if(text.isNotEmpty())
+	{
+		if(isVertical)
+		{
+			textLabel.setBounds(0, getHeight()-20, getWidth(), 20);
+            textLabel.setJustificationType(Justification::centred);
+            textLabel.setText(text, dontSendNotification);
+            textLabel.setVisible(true);
+            slider.setBounds(0, 4, getWidth(), getHeight()-30);	
+		}
+		else
+		{
+			float width = textLabel.getFont().getStringWidthFloat(text)+10.f;
+            textLabel.setBounds(0, 0, width, getHeight());
+            textLabel.setText(text, dontSendNotification);
+            textLabel.setVisible(true);
+			slider.setBounds(width, 0, getWidth()-(width*1.10), getHeight());
+		}
+	}
+	else
+		slider.setBounds(getLocalBounds());
 }

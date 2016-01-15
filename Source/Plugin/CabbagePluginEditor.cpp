@@ -2861,7 +2861,7 @@ void CabbagePluginAudioProcessorEditor::InsertRangeSlider(CabbageGUIType &cAttr)
     rangeSlider->getProperties().set(CabbageIDs::index, comps.size());
 	
     comps.add(rangeSlider);
-    int idx = layoutComps.size()-1;
+    int idx = comps.size()-1;
 	setPositionOfComponent(left, top, width, height, comps[idx], cAttr.getStringProp("reltoplant"));		
     cAttr.setStringProp(CabbageIDs::type, "label");
 }

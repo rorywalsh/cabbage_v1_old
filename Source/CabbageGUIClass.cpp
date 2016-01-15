@@ -81,7 +81,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
             cabbageIdentifiers.set(CabbageIDs::kind, "horizontal");
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
-		cabbageIdentifiers.set(CabbageIDs::trackerthickness, .25);
+		cabbageIdentifiers.set(CabbageIDs::trackerthickness, .1);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
 		cabbageIdentifiers.set(CabbageIDs::gradient, 1);
 		cabbageIdentifiers.set(CabbageIDs::svgslider, "");
@@ -131,7 +131,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
             cabbageIdentifiers.set(CabbageIDs::kind, "vertical");
 
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
-		cabbageIdentifiers.set(CabbageIDs::trackerthickness, .25);
+		cabbageIdentifiers.set(CabbageIDs::trackerthickness, .1);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
 		cabbageIdentifiers.set(CabbageIDs::svgslider, "");
@@ -930,7 +930,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::width, 50);
         cabbageIdentifiers.set(CabbageIDs::height, 150);
         var channels;
-        channels.append("vslider");
+        channels.append("rangeslider");
         cabbageIdentifiers.set(CabbageIDs::channel, channels);
         cabbageIdentifiers.set(CabbageIDs::min, 0);
         cabbageIdentifiers.set(CabbageIDs::max, 1);
@@ -956,7 +956,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
             cabbageIdentifiers.set(CabbageIDs::kind, "vertical");
 
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
-		cabbageIdentifiers.set(CabbageIDs::trackerthickness, .25);
+		cabbageIdentifiers.set(CabbageIDs::trackerthickness, .1);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
 		cabbageIdentifiers.set(CabbageIDs::svgslider, "");

@@ -783,7 +783,7 @@ public:
                     textLabel->setBounds(0, 0, width, getHeight());
                     textLabel->setText(text, dontSendNotification);
                     textLabel->setVisible(true);
-                    slider->setBounds(width, 0, getWidth()-width, getHeight());
+                    slider->setBounds(width-1, 0, getWidth()-width, getHeight());
                 }
                 else
                     slider->setBounds(0, 0, getWidth(), getHeight());
@@ -3011,55 +3011,98 @@ public:
 //============================================================
 // homegrown version of JUCE's two value, slider with dragable range
 //============================================================
-class CabbageRangeSlider2	:	public Component
+class RangeSlider	:	public Component
 {
-	String name, kind, tooltipText;
+	
+	
+	String name, tooltipText;
 	StringArray channels;
 	CabbagePluginAudioProcessorEditor* owner;
-	bool shouldDisplayPopup;
-	float value1, value2, min, initVal, minVal, maxVal, max, incr, skew;
-	int thumbIncr;
-	int thumbWidth, rangeDistance, currentThumb;
-	
+	bool shouldDisplayPopup, isVertical;
+	String colour, text;
+	Colour trackerColour;
+	double value1, value2, min, trackerThickness, initVal, minVal, maxVal, max, incr, skew;
+	float thumbIncr;
+	int thumbWidth, thumbHeight, rangeDistance, currentThumb;
+
 
 public:
 	Rectangle<int> sliderThumbBounds;
 	
 	class SliderThumb : public Component
 	{
-		String name, kind;
+		bool isVertical;
 		Point<int> currentPos;
-		CabbageRangeSlider2* owner;
+		RangeSlider* owner;
+		Colour colour;
 		
 		public:
-			SliderThumb(CabbageRangeSlider2* _owner, String _name, String kind);
+			SliderThumb(RangeSlider* _owner,String kind);
 			~SliderThumb()
 			{
 				owner=nullptr;
 			}
 			void resized(){}			
-			void paint(Graphics& g);		
+			void paint(Graphics& g);
+			void setColour(Colour _colour){
+				colour = _colour;
+			};
 	};
 
 
-    CabbageRangeSlider2 (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
-    ~CabbageRangeSlider2()
+    RangeSlider(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
+    ~RangeSlider()
 	{
 		owner = nullptr;
 	}
+	
+	enum SliderType {
+		left,
+		right,
+		top,
+		bottom
+	  };
+	  
     void resized();
 	void mouseDown(const MouseEvent& event);
 	void mouseUp(const MouseEvent& event);
 	void mouseEnter(const MouseEvent& event);
 	void mouseDrag(const MouseEvent& event);
+	void horizontalDrag(const MouseEvent& event);
+	void verticalDrag(const MouseEvent& event);
     void paint(Graphics& g);
 	void update(CabbageGUIType cAttr);	
+	int getSliderPosition(SliderType type);
 	void showPopup();
+	double getSkewedValue(double proportion);
+	void sendValuesToCsound(double val1, double val2);
+
 	Rectangle<int> getThumbOuterBounds(int type);
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageRangeSlider2);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RangeSlider);
 	
 private:
 		SliderThumb sliderThumb;
 };
 
+//container class for rangeslider widget
+class CabbageRangeSlider2	:	public Component
+{
+	
+	String name, text, textColour;
+	RangeSlider slider;
+	Label textLabel;
+	bool isVertical;
+
+public:
+
+    CabbageRangeSlider2 (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
+	
+    ~CabbageRangeSlider2()
+	{
+		
+	}
+	
+	void resized();
+	
+};
 #endif

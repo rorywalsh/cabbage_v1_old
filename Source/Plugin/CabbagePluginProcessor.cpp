@@ -277,7 +277,14 @@ void CabbagePluginAudioProcessor::initAllChannels()
         //									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
         else
         {
-            csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::value));
+			if(guiCtrls.getReference(i).getStringProp(CabbageIDs::type)==CabbageIDs::hrange ||
+				guiCtrls.getReference(i).getStringProp(CabbageIDs::type)==CabbageIDs::vrange)
+			{
+				csound->SetChannel( guiCtrls.getReference(i).getStringArrayPropValue(CabbageIDs::channel, 0).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::minvalue));
+				csound->SetChannel( guiCtrls.getReference(i).getStringArrayPropValue(CabbageIDs::channel, 1).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::maxvalue));
+			}
+			else
+				csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::value));
         }
 
 
@@ -1440,8 +1447,6 @@ void CabbagePluginAudioProcessor::stopRecording()
 String CabbagePluginAudioProcessor::getCsoundOutput()
 {
     const int messageCnt = csound->GetMessageCnt();
-
-    //csoundOutput="";
 
     if(messageCnt==0)
         return csoundOutput;

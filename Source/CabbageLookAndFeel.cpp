@@ -629,9 +629,9 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
 			//backgrounds
 			g.setColour (Colours::whitesmoke);
 			g.setOpacity (0.1);
-			g.fillRoundedRectangle (sliderRadius, height*0.44, width, height*0.15, height*0.05); //for light effect
+			g.fillRoundedRectangle (sliderRadius/2.f, height*0.44, width*1.025, height*0.15, height*0.05); //for light effect
 			g.setColour (Colour::fromRGBA(5, 5, 5, 255));
-			g.fillRoundedRectangle (sliderRadius, height*0.425, width*0.99, height*0.15, height*0.05); //main rectangle
+			g.fillRoundedRectangle (sliderRadius/2.f, height*0.425, width*1.02, height*0.15, height*0.05); //main rectangle
 		}
 
 		const float scale = trackerThickness;
@@ -708,9 +708,9 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
 
 			g.setColour(Colours::whitesmoke);
 			g.setOpacity (0.1);
-			g.fillRoundedRectangle(width*0.44, sliderRadius, width*0.15, height, width*0.05);
+			g.fillRoundedRectangle(width*0.44, sliderRadius/2.f, width*0.15, height*1.003, width*0.05);
 			g.setColour (Colour::fromRGBA(5, 5, 5, 255));
-			g.fillRoundedRectangle (width*0.425, sliderRadius, width*0.15, height*0.99, width*0.05);
+			g.fillRoundedRectangle (width*0.425, sliderRadius/2.f, width*0.15, height*1.029, width*0.05);
 		}
 		
 //        const float ix = x + width * 0.5f - sliderRadius * 0.25f;

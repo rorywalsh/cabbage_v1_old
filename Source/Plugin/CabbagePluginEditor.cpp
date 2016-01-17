@@ -1817,7 +1817,7 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
         String startupMessage = "Please click the 'Options' button to launch an instrument....";
         g.drawText(startupMessage, 10, 320, 400, 50, Justification::centred, true);
     }
-    else if(getFilter()->compiledOk()!=OK)
+    else if(getFilter()->csoundCompiledOk()!=OK)
     {
         g.setColour (Colours::white);
         String error;
@@ -3897,8 +3897,6 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                 if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type).contains("slider")||
                         getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::numberbox)
                 {
-                    //CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(comps[i]);
-                    //CabbageNumberBox* cabNumber = dynamic_cast<CabbageNumberBox*>(comps[i]);
                     Slider* slider = nullptr;
                     if(comps[i])
                         if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::numberbox)

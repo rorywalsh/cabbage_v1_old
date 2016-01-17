@@ -98,7 +98,9 @@ OBJECTS := \
   $(OBJDIR)/juce_VST3_Wrapper_77e7c73b.o \
   $(OBJDIR)/juce_VST_Wrapper_bb62e93d.o \
   $(OBJDIR)/juce_opengl_7767dsdf8.o \
-
+  $(OBJDIR)/CabbageCustomWidgets_35a2sd62.o \
+  $(OBJDIR)/CabbageMessageSystem_6we1348e.o \
+  
   
 .PHONY: clean
 
@@ -119,6 +121,15 @@ strip:
 	@echo Stripping CabbagePluginEffect
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
 
+$(OBJDIR)/CabbageMessageSystem_6we1348e.o: ../../Source/CabbageMessageSystem.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageMessageSystem.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbageCustomWidgets_35a2sd62.o: ../../Source/CabbageCustomWidgets.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageCustomWidgets.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/BinaryData_5ba7f54.o: ../../Source/BinaryData.cpp
 	-@mkdir -p $(OBJDIR)

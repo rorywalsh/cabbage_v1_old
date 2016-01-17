@@ -79,6 +79,8 @@ OBJECTS := \
   $(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o \
   $(OBJDIR)/CommandManager_f4ac7445.o \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
+  $(OBJDIR)/CabbageMessageSystem_6we1348e.o \
+  $(OBJDIR)/CabbageCustomWidgets_35a2sd62.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
   $(OBJDIR)/Table_35ae1cd9.o \
@@ -128,6 +130,11 @@ $(OBJDIR)/CabbageCallOutBox_1ced38fd.o: ../../Source/CabbageCallOutBox.cpp
 	@echo "Compiling CabbageCallOutBox.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/CabbageMessageSystem_6we1348e.o: ../../Source/CabbageMessageSystem.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageMessageSystem.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
 $(OBJDIR)/CabbageGUIClass_79b9049f.o: ../../Source/CabbageGUIClass.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CabbageGUIClass.cpp"
@@ -156,6 +163,11 @@ $(OBJDIR)/CabbageTable_d003e736.o: ../../Source/CabbageTable.cpp
 $(OBJDIR)/Table_35ae1cd9.o: ../../Source/Table.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling Table.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbageCustomWidgets_35a2sd62.o: ../../Source/CabbageCustomWidgets.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageCustomWidgets.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/ComponentLayoutEditor_aa38c835.o: ../../Source/ComponentLayoutEditor.cpp

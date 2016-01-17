@@ -942,25 +942,22 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                             csound->Message(warningMessage.toUTF8().getAddress());
 
                         cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
-                        //Logger::writeToLog(csdLine.trimEnd());
                         csdLine = "";
-                        //Logger::writeToLog(tokes[0]);
-                        //attach widget to plant if need be
+                        
+						//attach widget to plant if need be
                         if(cAttr.getStringProp(String("reltoplant")).equalsIgnoreCase(String("")))
                         {
-                            //showMessage(cAttr.getStringProp(String("relToPlant")));
                             cAttr.setStringProp(String("reltoplant"), plantFlag);
-                            //showMessage(String("presetFlag:")+presetFlag);
-                            //showMessage(cAttr.getStringProp("name"));
                             if(cAttr.getStringProp("preset").length()<1)
                                 cAttr.setStringProp(String("preset"), presetFlag.trim());
-                            //showMessage(cAttr.getStringProp("preset"));
                         }
 
                         //xypad contain two control paramters, one for x axis and another for y. As such we add two
                         //to our contorl vector so that plugin hosts display two sliders. We name one of the xypad pads
                         // 'dummy' so that our editor doesn't display it. Our editor only needs to show one xypad.
-                        if(tokes[0].equalsIgnoreCase(String("xypad")))
+                        
+						
+						if(tokes[0].equalsIgnoreCase(String("xypad")))
                         {
                             cAttr.setStringProp(CabbageIDs::xychannel, String("X"));
                             cAttr.setNumProp(CabbageIDs::range,  cAttr.getNumProp(CabbageIDs::rangex));
@@ -1014,6 +1011,14 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                                     guiCtrls.add(cAttr);
                                     widgetTypes.add("interactive");
                                     guiID++;
+                                }
+								else if(tokes[0].equalsIgnoreCase(String("hrange")) || tokes[0].equalsIgnoreCase(String("vrange")))
+                                {
+//                                    cAttr.setStringProp(CabbageIDs::channel, cAttr.getStringArrayPropValue(CabbageIDs::channel, 1));
+//									cAttr.setStringProp("name", cAttr.getStringProp(CabbageIDs::name)+String("dummy"));
+//                                    guiCtrls.add(cAttr);
+//                                    widgetTypes.add("interactive");
+//                                    guiID++;
                                 }
                             }
 
@@ -2021,7 +2026,8 @@ void CabbagePluginAudioProcessor::setGuiEnabled(bool val)
 
 int CabbagePluginAudioProcessor::getNumPrograms()
 {
-    return 0;
+	//seems that we need to report at least one program for some hosts to work properly
+    return 1;
 }
 
 int CabbagePluginAudioProcessor::getCurrentProgram()

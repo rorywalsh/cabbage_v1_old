@@ -3102,7 +3102,14 @@ public:
 		
 	}
 	
+	void setValue(int index, float value)
+	{
+		cUtils::showMessage(String(index)+" Value:"+String(value));
+	}
+	
 	void resized();
+	
+	void update(CabbageGUIType &cAttr){}
 	
 };
 #endif

@@ -295,7 +295,8 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIType cAttr)
     else if(cAttr.getStringProp(CabbageIDs::type)==String("vrange")
 		||cAttr.getStringProp(CabbageIDs::type)==String("hrange"))
     {
-        InsertRangeSlider(cAttr);
+		if(cAttr.getStringProp(CabbageIDs::name)!="dummy")
+			InsertRangeSlider(cAttr);
     }
     else if(cAttr.getStringProp(CabbageIDs::type)==String("label"))
     {
@@ -3865,11 +3866,8 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
     }
 }
 //==========================================================================================
-//Gets called periodically to update GUI controls with values coming from Csound
+//Gets called periodically to update GUI controls with values coming from Csound and/or host DAW
 //==========================================================================================
-
-
-
 void CabbagePluginAudioProcessorEditor::updateGUIControls()
 {
 // update our GUI so that whenever a VST parameter is changed in the
@@ -4011,6 +4009,21 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                         ((CabbageCheckbox*)comps[i])->button->setToggleState((bool)val, dontSendNotification);
                     }
                 }
+				
+                else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::hrange
+				||getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::vrange)
+                {
+                    if(comps[i])
+                    {
+                        //update look of contorl if need be
+                        if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+                            ((CabbageRangeSlider2*)comps[i])->update(getFilter()->getGUICtrls(i));
+                        int val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value);
+                        ((CabbageRangeSlider2*)comps[i])->setValue(0, getFilter()->getParameter(i));
+                    }
+                }
+
+
             }
         }
 

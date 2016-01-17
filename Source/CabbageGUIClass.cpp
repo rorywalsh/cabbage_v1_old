@@ -36,9 +36,9 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
     cabbageIdentifiers.set("scaley", 1);
     cabbageIdentifiers.set("resize", 0);
     cabbageIdentifiers.set(CabbageIDs::active, 1);
-	cabbageIdentifiers.set(CabbageIDs::parentdir, "");
-	cabbageIdentifiers.set(CabbageIDs::svgdebug, 0);
-	
+    cabbageIdentifiers.set(CabbageIDs::parentdir, "");
+    cabbageIdentifiers.set(CabbageIDs::svgdebug, 0);
+
 
     StringArray strTokens;
     strTokens.addTokens(compStr, " ", "\"");
@@ -81,11 +81,11 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
             cabbageIdentifiers.set(CabbageIDs::kind, "horizontal");
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
-		cabbageIdentifiers.set(CabbageIDs::trackerthickness, .1);
+        cabbageIdentifiers.set(CabbageIDs::trackerthickness, .1);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
-		cabbageIdentifiers.set(CabbageIDs::gradient, 1);
-		cabbageIdentifiers.set(CabbageIDs::svgslider, "");
-		cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");		
+        cabbageIdentifiers.set(CabbageIDs::gradient, 1);
+        cabbageIdentifiers.set(CabbageIDs::svgslider, "");
+        cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");
 
 
     }
@@ -131,11 +131,11 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
             cabbageIdentifiers.set(CabbageIDs::kind, "vertical");
 
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
-		cabbageIdentifiers.set(CabbageIDs::trackerthickness, .1);
+        cabbageIdentifiers.set(CabbageIDs::trackerthickness, .1);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
-		cabbageIdentifiers.set(CabbageIDs::svgslider, "");
-		cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");
+        cabbageIdentifiers.set(CabbageIDs::svgslider, "");
+        cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");
     }
     else if(strTokens[0].trim() == "rslider")
     {
@@ -170,9 +170,9 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::trackerthickness, .7);
-        cabbageIdentifiers.set(CabbageIDs::visible, 1);		
-		cabbageIdentifiers.set(CabbageIDs::svgslider, "");
-		cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");
+        cabbageIdentifiers.set(CabbageIDs::visible, 1);
+        cabbageIdentifiers.set(CabbageIDs::svgslider, "");
+        cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");
     }
 
     else if((strTokens[0].trim() == "sourcebutton")||(strTokens[0].trim() == "loadbutton"))
@@ -197,8 +197,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
-		cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
-		cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
+        cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
+        cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
     }
 
     //===============info button==================//
@@ -225,8 +225,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
-		cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
-		cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
+        cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
+        cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
     }
 
     //===============directory list==================//
@@ -285,8 +285,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         populate.append("");
         cabbageIdentifiers.set("populate", populate);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
-		cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
-		cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
+        cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
+        cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
     }
     //===============file button==================//
     else if(strTokens[0].trim() == "filebutton")
@@ -326,8 +326,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set("populate", populate);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
         cabbageIdentifiers.set(CabbageIDs::filetype, "*");
-		cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
-		cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
+        cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
+        cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
     }
 
     //===============button==================//
@@ -363,8 +363,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::radiogroup, 0);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
-		cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
-		cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
+        cabbageIdentifiers.set(CabbageIDs::svgbuttonon, "");
+        cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, "");
 
     }
 
@@ -653,7 +653,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
     //===============image==================//
     else if(strTokens[0].trim() == "encoder")
     {
-      cabbageIdentifiers.set(CabbageIDs::basetype, "interactive");
+        cabbageIdentifiers.set(CabbageIDs::basetype, "interactive");
         cabbageIdentifiers.set(CabbageIDs::top, 10);
         cabbageIdentifiers.set(CabbageIDs::left, 10);
         cabbageIdentifiers.set(CabbageIDs::width, 60);
@@ -703,7 +703,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
-		cabbageIdentifiers.set(CabbageIDs::svggroupbox, "");
+        cabbageIdentifiers.set(CabbageIDs::svggroupbox, "");
 
     }
     //===============line==================//
@@ -920,11 +920,11 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::scrollbars, 1);
 
     }
-	
-	//===============rangeslider===============//
+
+    //===============rangeslider===============//
     else if(strTokens[0].trim() == "hrange" || strTokens[0].trim() == "vrange")
-    {	
-		cabbageIdentifiers.set(CabbageIDs::basetype, "interactive");
+    {
+        cabbageIdentifiers.set(CabbageIDs::basetype, "interactive");
         cabbageIdentifiers.set(CabbageIDs::top, 10);
         cabbageIdentifiers.set(CabbageIDs::left, 10);
         cabbageIdentifiers.set(CabbageIDs::width, 50);
@@ -952,16 +952,16 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         if(strTokens[0].trim() == "hrange")
             cabbageIdentifiers.set(CabbageIDs::kind, "horizontal");
-        else 
+        else
             cabbageIdentifiers.set(CabbageIDs::kind, "vertical");
 
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
-		cabbageIdentifiers.set(CabbageIDs::trackerthickness, .1);
+        cabbageIdentifiers.set(CabbageIDs::trackerthickness, .1);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
-		cabbageIdentifiers.set(CabbageIDs::svgslider, "");
-		cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");
-	}
+        cabbageIdentifiers.set(CabbageIDs::svgslider, "");
+        cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");
+    }
 
     //===============stepper==================//
     else if(strTokens[0].trim() == "stepper")
@@ -983,8 +983,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
-	
-	//===============non-GUI host widgets==================//
+
+    //===============non-GUI host widgets==================//
     else if(strTokens[0].trim() == "hostbpm")
     {
         cabbageIdentifiers.set(CabbageIDs::basetype, "layout");
@@ -1256,26 +1256,26 @@ void CabbageGUIType::parse(String inStr, String identifier)
 
             else if(identArray[indx].equalsIgnoreCase("svgfile"))
             {
-				if(typeOfWidget=="groupbox")
-					cabbageIdentifiers.set(CabbageIDs::svggroupbox, strTokens[0].trim());
-				else if(typeOfWidget.contains("slider"))
-				{
-					if(strTokens[0].trim().contains("background"))
-					cabbageIdentifiers.set(CabbageIDs::svgsliderbg, strTokens[1].trim());
-					else
-						cabbageIdentifiers.set(CabbageIDs::svgslider, strTokens[1].trim());
-				}
-				else if(typeOfWidget.contains("button"))
-				{
-					if(strTokens[0].trim().contains("off"))
-						cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, strTokens[1].trim());
-					else
-						cabbageIdentifiers.set(CabbageIDs::svgbuttonon, strTokens[1].trim());
-				}
-				//identifiers that appear more than once need to use indx-- so we can check for another instance
+                if(typeOfWidget=="groupbox")
+                    cabbageIdentifiers.set(CabbageIDs::svggroupbox, strTokens[0].trim());
+                else if(typeOfWidget.contains("slider"))
+                {
+                    if(strTokens[0].trim().contains("background"))
+                        cabbageIdentifiers.set(CabbageIDs::svgsliderbg, strTokens[1].trim());
+                    else
+                        cabbageIdentifiers.set(CabbageIDs::svgslider, strTokens[1].trim());
+                }
+                else if(typeOfWidget.contains("button"))
+                {
+                    if(strTokens[0].trim().contains("off"))
+                        cabbageIdentifiers.set(CabbageIDs::svgbuttonoff, strTokens[1].trim());
+                    else
+                        cabbageIdentifiers.set(CabbageIDs::svgbuttonon, strTokens[1].trim());
+                }
+                //identifiers that appear more than once need to use indx-- so we can check for another instance
                 indx--;
             }
-			
+
             else if(identArray[indx].equalsIgnoreCase("fillcolour"))
             {
                 cabbageIdentifiers.set(CabbageIDs::fillcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
@@ -1604,7 +1604,7 @@ void CabbageGUIType::parse(String inStr, String identifier)
             {
                 cabbageIdentifiers.set(CabbageIDs::svgdebug, strTokens[0].trim().getFloatValue());
             }
-			
+
             else if(identArray[indx].equalsIgnoreCase("fill"))
             {
                 cabbageIdentifiers.set(CabbageIDs::fill, strTokens[0].trim().getIntValue());
@@ -1711,7 +1711,7 @@ void CabbageGUIType::parse(String inStr, String identifier)
             {
                 cabbageIdentifiers.set(CabbageIDs::gradient, strTokens[0].trim().getFloatValue());
             }
-			
+
             else if(identArray[indx].equalsIgnoreCase("scrubberposition"))
             {
                 var scrubberInfo;
@@ -1894,10 +1894,10 @@ void CabbageGUIType::parse(String inStr, String identifier)
             {
                 cabbageIdentifiers.set(CabbageIDs::scrollbars, strTokens[0].trim().getIntValue());
             }
-			
-			//============================================
-			//sample identifiers for stepper class
-			//============================================
+
+            //============================================
+            //sample identifiers for stepper class
+            //============================================
             else if(identArray[indx].equalsIgnoreCase("numberofsteps"))
             {
                 cabbageIdentifiers.set("numberofsteps", strTokens[0].trim().getFloatValue());
@@ -1906,9 +1906,9 @@ void CabbageGUIType::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("stepbpm"))
             {
                 cabbageIdentifiers.set("stepbpm", strTokens[0].trim().getIntValue());
-            }			
-			
-			
+            }
+
+
             strTokens.clear();
         }
         else
@@ -2183,15 +2183,15 @@ void CabbageGUIType::setStringProp(Identifier prop, int index, String value)
 //===================================================================
 void CabbageGUIType::scaleWidget(Point<float> scale)
 {
-	Rectangle<int> rect(cabbageIdentifiers.getWithDefault("left", 0),
-						cabbageIdentifiers.getWithDefault("top", 0),
-						cabbageIdentifiers.getWithDefault("width", 10),
-						cabbageIdentifiers.getWithDefault("height", 10));
-						
-	cabbageIdentifiers.set(CabbageIDs::left, rect.getX()*scale.x);
-	cabbageIdentifiers.set(CabbageIDs::top, rect.getY()*scale.y);
-	cabbageIdentifiers.set(CabbageIDs::width, rect.getWidth()*scale.x);
-	cabbageIdentifiers.set(CabbageIDs::height, rect.getHeight()*scale.y);	;
+    Rectangle<int> rect(cabbageIdentifiers.getWithDefault("left", 0),
+                        cabbageIdentifiers.getWithDefault("top", 0),
+                        cabbageIdentifiers.getWithDefault("width", 10),
+                        cabbageIdentifiers.getWithDefault("height", 10));
+
+    cabbageIdentifiers.set(CabbageIDs::left, rect.getX()*scale.x);
+    cabbageIdentifiers.set(CabbageIDs::top, rect.getY()*scale.y);
+    cabbageIdentifiers.set(CabbageIDs::width, rect.getWidth()*scale.x);
+    cabbageIdentifiers.set(CabbageIDs::height, rect.getHeight()*scale.y);	;
 }
 //===================================================================
 void CabbageGUIType::setStringProp(Identifier prop, String val)

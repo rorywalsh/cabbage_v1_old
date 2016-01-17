@@ -135,7 +135,7 @@ public:
     void InsertGUIControls(CabbageGUIType cAttr);
     void ksmpsYieldCallback();
     void updateSize();
-	//used in Android mode to rescale according to screen res
+    //used in Android mode to rescale according to screen res
     ScopedPointer<CabbagePropertiesDialog> propsWindow;
     //main GUI controls vectors..
     OwnedArray<Component> comps;
@@ -155,10 +155,10 @@ public:
 
     int currentPopupIndex;
     void resizeChildren();
-	void showBubble(Component* comp, String message)
-	{
-		popupBubble->showAt(comp, AttributedString(message), 550);		
-	}
+    void showBubble(Component* comp, String message)
+    {
+        popupBubble->showAt(comp, AttributedString(message), 550);
+    }
 
 private:
     WildcardFileFilter wildcardFilter;
@@ -205,9 +205,9 @@ private:
     void InsertPopupMenu(CabbageGUIType &cAttr);
     void InsertGenTable(CabbageGUIType &cAttr);
     void InsertTextbox(CabbageGUIType &cAttr);
-	void InsertRangeSlider(CabbageGUIType &cAttr);
-	//example insert stepper method 
-	void InsertStepper(CabbageGUIType &cAttr);
+    void InsertRangeSlider(CabbageGUIType &cAttr);
+    //example insert stepper method
+    void InsertStepper(CabbageGUIType &cAttr);
     void InsertNumberBox(CabbageGUIType &cAttr);
     void buttonClicked(Button*);
     void textButtonClicked(Button* button);
@@ -223,15 +223,15 @@ private:
     void savePresetsFromParameters(File selectedFile, String mode);
     void refreshDiskReadingGUIControls(String typeOfControl);
     void updatefTableData(GenTable* table);
-	bool checkForIdentifierMessage(CabbageGUIType cAttr, String type)
-	{
-		if(cAttr.getStringProp(CabbageIDs::type).equalsIgnoreCase(type) &&
-			cAttr.getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
-          return true;
+    bool checkForIdentifierMessage(CabbageGUIType cAttr, String type)
+    {
+        if(cAttr.getStringProp(CabbageIDs::type).equalsIgnoreCase(type) &&
+                cAttr.getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+            return true;
 
-		else
-			return false;
-	}
+        else
+            return false;
+    }
     void timerCallback();
     int csoundOutputWidget;
     int mouseX, mouseY;

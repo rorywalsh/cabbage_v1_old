@@ -88,7 +88,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      isMuted(false),
      isBypassed(false),
      vuCounter(0)
-{	
+{
     codeEditor = nullptr;
     if(compileCsoundAndCreateGUI(false)==0)
     {
@@ -129,7 +129,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile, Poin
     isMuted(false),
     isBypassed(false),
     vuCounter(0),
-	scale(instrScale)
+    scale(instrScale)
 {
     //If a sourcefile is not given, Cabbage plugins always try to load a csd file with the same name as the plugin library.
     //Therefore we need to find the name of the library and append a '.csd' to it.
@@ -277,14 +277,14 @@ void CabbagePluginAudioProcessor::initAllChannels()
         //									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
         else
         {
-			if(guiCtrls.getReference(i).getStringProp(CabbageIDs::type)==CabbageIDs::hrange ||
-				guiCtrls.getReference(i).getStringProp(CabbageIDs::type)==CabbageIDs::vrange)
-			{
-				csound->SetChannel( guiCtrls.getReference(i).getStringArrayPropValue(CabbageIDs::channel, 0).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::minvalue));
-				csound->SetChannel( guiCtrls.getReference(i).getStringArrayPropValue(CabbageIDs::channel, 1).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::maxvalue));
-			}
-			else
-				csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::value));
+            if(guiCtrls.getReference(i).getStringProp(CabbageIDs::type)==CabbageIDs::hrange ||
+                    guiCtrls.getReference(i).getStringProp(CabbageIDs::type)==CabbageIDs::vrange)
+            {
+                csound->SetChannel( guiCtrls.getReference(i).getStringArrayPropValue(CabbageIDs::channel, 0).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::minvalue));
+                csound->SetChannel( guiCtrls.getReference(i).getStringArrayPropValue(CabbageIDs::channel, 1).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::maxvalue));
+            }
+            else
+                csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::value));
         }
 
 
@@ -644,8 +644,8 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
 {
 
-	GUILayoutCtrlsArray layoutCtrlsArray;
-	GUICtrlsArray ctrlsArray;
+    GUILayoutCtrlsArray layoutCtrlsArray;
+    GUICtrlsArray ctrlsArray;
 
     if(refresh==true)
     {
@@ -666,8 +666,8 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
     indexOfLastLayoutCtrl = guiLayoutCtrls.size();
 
     String warningMessage;
-	
-	//cUtils::showMessage(scale);
+
+    //cUtils::showMessage(scale);
 
     //setGuiEnabled((false));
     int guiID=0;
@@ -790,13 +790,13 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
 
                 if(!multiComment)
                     //check that the line of Cabbage code contains a valid widget name and
-					//populate the guiLayoutCtrls vector
+                    //populate the guiLayoutCtrls vector
                     if(layoutCtrlsArray.contains(tokes[0]))
                     {
-                        CabbageGUIType cAttr(csdLine.trimEnd(), guiID);						
-						cAttr.setStringProp(CabbageIDs::parentdir, getCsoundInputFile().getParentDirectory().getFullPathName());
-#ifdef AndroidBuild	
-						cAttr.scaleWidget(scale);
+                        CabbageGUIType cAttr(csdLine.trimEnd(), guiID);
+                        cAttr.setStringProp(CabbageIDs::parentdir, getCsoundInputFile().getParentDirectory().getFullPathName());
+#ifdef AndroidBuild
+                        cAttr.scaleWidget(scale);
 #endif
                         if(cAttr.getStringProp(CabbageIDs::type)=="form")
                         {
@@ -931,11 +931,11 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                     else if(ctrlsArray.contains(tokes[0]))
                     {
                         CabbageGUIType cAttr(csdLine.trimEnd(), guiID);
-						cAttr.setStringProp(CabbageIDs::parentdir, getCsoundInputFile().getParentDirectory().getFullPathName());
-#ifdef AndroidBuild	
-						cAttr.scaleWidget(scale);
-#endif						
-						
+                        cAttr.setStringProp(CabbageIDs::parentdir, getCsoundInputFile().getParentDirectory().getFullPathName());
+#ifdef AndroidBuild
+                        cAttr.scaleWidget(scale);
+#endif
+
                         warningMessage = "";
                         warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
                         if(cAttr.getWarningMessages().isNotEmpty())
@@ -943,8 +943,8 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
 
                         cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
                         csdLine = "";
-                        
-						//attach widget to plant if need be
+
+                        //attach widget to plant if need be
                         if(cAttr.getStringProp(String("reltoplant")).equalsIgnoreCase(String("")))
                         {
                             cAttr.setStringProp(String("reltoplant"), plantFlag);
@@ -955,9 +955,9 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                         //xypad contain two control paramters, one for x axis and another for y. As such we add two
                         //to our contorl vector so that plugin hosts display two sliders. We name one of the xypad pads
                         // 'dummy' so that our editor doesn't display it. Our editor only needs to show one xypad.
-                        
-						
-						if(tokes[0].equalsIgnoreCase(String("xypad")))
+
+
+                        if(tokes[0].equalsIgnoreCase(String("xypad")))
                         {
                             cAttr.setStringProp(CabbageIDs::xychannel, String("X"));
                             cAttr.setNumProp(CabbageIDs::range,  cAttr.getNumProp(CabbageIDs::rangex));
@@ -1006,19 +1006,18 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                                 if(tokes[0].equalsIgnoreCase(String("hslider2")) || tokes[0].equalsIgnoreCase(String("vslider2")))
                                 {
                                     cAttr.setStringProp(CabbageIDs::channel, cAttr.getStringArrayPropValue(CabbageIDs::channel, 1));
-
                                     cAttr.setStringProp("name", cAttr.getStringProp(CabbageIDs::name)+String("dummy"));
                                     guiCtrls.add(cAttr);
                                     widgetTypes.add("interactive");
                                     guiID++;
                                 }
-								else if(tokes[0].equalsIgnoreCase(String("hrange")) || tokes[0].equalsIgnoreCase(String("vrange")))
+                                else if(tokes[0].equalsIgnoreCase(String("hrange")) || tokes[0].equalsIgnoreCase(String("vrange")))
                                 {
-//                                    cAttr.setStringProp(CabbageIDs::channel, cAttr.getStringArrayPropValue(CabbageIDs::channel, 1));
-//									cAttr.setStringProp("name", cAttr.getStringProp(CabbageIDs::name)+String("dummy"));
-//                                    guiCtrls.add(cAttr);
-//                                    widgetTypes.add("interactive");
-//                                    guiID++;
+                                    cAttr.setStringProp(CabbageIDs::channel, cAttr.getStringArrayPropValue(CabbageIDs::channel, 1));
+                                    cAttr.setStringProp("name", cAttr.getStringProp(CabbageIDs::name)+String("dummy"));
+                                    guiCtrls.add(cAttr);
+                                    widgetTypes.add("interactive");
+                                    guiID++;
                                 }
                             }
 
@@ -1697,7 +1696,7 @@ float CabbagePluginAudioProcessor::getParameter (int index)
         //Logger::writeToLog("parameterGet-"+String(index)+String("-Min:")+String(min)+" Range:"+String(range)+ " Val:"+String(getGUICtrls(index).getNumProp(CabbageIDs::value)));
         //Logger::writeToLog("parameterGet:"+String(index)+String(":")+String(guiCtrls[index].getNumProp(CabbageIDs::value)));
 
-        /* this gets called at any time by our host or out GUI editor */
+        // this gets called at any time by our host or out GUI editor
         if(index<(int)guiCtrls.size()) //make sure index isn't out of range
         {
 #ifndef Cabbage_Build_Standalone
@@ -2026,7 +2025,7 @@ void CabbagePluginAudioProcessor::setGuiEnabled(bool val)
 
 int CabbagePluginAudioProcessor::getNumPrograms()
 {
-	//seems that we need to report at least one program for some hosts to work properly
+    //seems that we need to report at least one program for some hosts to work properly
     return 1;
 }
 
@@ -2361,7 +2360,7 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
     ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 
     if (xmlState != nullptr)
-    {  
+    {
 #ifdef CABBAGE_AU
         for(int i=0; i<xmlState->getNumAttributes(); i++)
         {

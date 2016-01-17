@@ -67,7 +67,7 @@ class CabbageButton : public Component
     String buttonType;
     String name, caption, tooltipText, buttonText, colour, fontcolour, oncolour, onfontcolour;
     float rotate;
-	File svgFileButtonOn, svgFileButtonOff, svgPath;
+    File svgFileButtonOn, svgFileButtonOff, svgPath;
 public:
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<TextButton> button;
@@ -85,25 +85,25 @@ public:
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
         pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
         tooltipText(String::empty),
-		svgDebug(cAttr.getNumProp(CabbageIDs::svgdebug))
-    {		
+        svgDebug(cAttr.getNumProp(CabbageIDs::svgdebug))
+    {
         setName(name);
         offX=offY=offWidth=offHeight=0;
         groupbox = new GroupComponent(String("groupbox_")+name);
-        button = new TextButton(name);		
+        button = new TextButton(name);
         button->getProperties().set("svgpath",  cAttr.getStringProp(CabbageIDs::svgpath));
-        	
-		
-		svgFileButtonOn = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgbuttonon),
-													cAttr.getStringProp(CabbageIDs::parentdir)));
-		svgFileButtonOff = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgbuttonoff),
-													cAttr.getStringProp(CabbageIDs::parentdir)));		
-		svgPath = File(cAttr.getStringProp(CabbageIDs::svgpath));
-		
-		setSVGs(cAttr);
-		//cUtils::debug(button->getProperties().getWithDefault("svgbuttonwidth", 100).toString());
-		
-		addAndMakeVisible(groupbox);
+
+
+        svgFileButtonOn = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgbuttonon),
+                               cAttr.getStringProp(CabbageIDs::parentdir)));
+        svgFileButtonOff = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgbuttonoff),
+                                cAttr.getStringProp(CabbageIDs::parentdir)));
+        svgPath = File(cAttr.getStringProp(CabbageIDs::svgpath));
+
+        setSVGs(cAttr);
+        //cUtils::debug(button->getProperties().getWithDefault("svgbuttonwidth", 100).toString());
+
+        addAndMakeVisible(groupbox);
         addAndMakeVisible(button);
         groupbox->setVisible(false);
         groupbox->getProperties().set("groupLine", var(1));
@@ -143,11 +143,11 @@ public:
 
     }
 
-	void setSVGs(CabbageGUIType &cAttr)
-	{
-		cUtils::setSVGProperties(*button, svgFileButtonOn, svgPath, "buttonon");		
-		cUtils::setSVGProperties(*button, svgFileButtonOff, svgPath, "buttonoff");	
-	}
+    void setSVGs(CabbageGUIType &cAttr)
+    {
+        cUtils::setSVGProperties(*button, svgFileButtonOn, svgPath, "buttonon");
+        cUtils::setSVGProperties(*button, svgFileButtonOff, svgPath, "buttonoff");
+    }
 
     //update controls
     void update(CabbageGUIType m_cAttr)
@@ -193,10 +193,10 @@ public:
             tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
             button->setTooltip(tooltipText);
         }
-		if(m_cAttr.getNumProp(CabbageIDs::svgdebug)!=svgDebug)
+        if(m_cAttr.getNumProp(CabbageIDs::svgdebug)!=svgDebug)
         {
             setSVGs(m_cAttr);
-			svgDebug = m_cAttr.getNumProp(CabbageIDs::svgdebug);
+            svgDebug = m_cAttr.getNumProp(CabbageIDs::svgdebug);
         }
         setBounds(m_cAttr.getBounds());
         repaint();
@@ -358,7 +358,7 @@ private:
     bool isDraggingRange;
 };
 //==============================================================================
-// custom slider components 
+// custom slider components
 //==============================================================================
 class CabbageSlider : public Component,
     public ChangeBroadcaster
@@ -367,7 +367,7 @@ class CabbageSlider : public Component,
     String sliderType, compName, cl;
     int resizeCount;
     String tracker;
-	File svgFileSlider, svgFileSliderBg, svgPath;
+    File svgFileSlider, svgFileSliderBg, svgPath;
     String name, text, caption, kind, colour, fontColour, textColour, trackerFill, outlineColour, channel, channel2;
     int textBox, decPlaces;
     double min, max, value;
@@ -405,7 +405,7 @@ public:
         rotate(cAttr.getNumProp(CabbageIDs::rotate)),
         pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
         pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
-		svgDebug(0)
+        svgDebug(0)
     {
         setName(name);
 
@@ -426,19 +426,19 @@ public:
         if(sliderType=="horizontal2" || sliderType=="vertical2")
             channel2 = cAttr.getStringArrayPropValue(CabbageIDs::channel, 1);
 
-		svgFileSlider = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgslider),
-													cAttr.getStringProp(CabbageIDs::parentdir)));
-		svgFileSliderBg = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgsliderbg),
-													cAttr.getStringProp(CabbageIDs::parentdir)));		
-		svgPath = File(cAttr.getStringProp(CabbageIDs::svgpath));
-					
-		setSVGs(cAttr);
-		
+        svgFileSlider = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgslider),
+                             cAttr.getStringProp(CabbageIDs::parentdir)));
+        svgFileSliderBg = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgsliderbg),
+                               cAttr.getStringProp(CabbageIDs::parentdir)));
+        svgPath = File(cAttr.getStringProp(CabbageIDs::svgpath));
+
+        setSVGs(cAttr);
+
         slider->toFront(true);
-		
+
         slider->addMouseListener(this, false);
         textLabel->setColour(Label::textColourId, Colour::fromString(textColour));
-		textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
+        textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
         //slider->setPopupDisplayEnabled (true, 0);
 
         slider->setColour(Slider::textBoxHighlightColourId, Colours::lime.withAlpha(.2f));
@@ -469,9 +469,9 @@ public:
         groupbox->setColour(TextButton::buttonColourId, cUtils::getComponentSkin());
         slider->getProperties().set("decimalPlaces", decPlaces);
         slider->getProperties().set("trackerthickness", trackerThickness);
-		slider->getProperties().set("gradient", cAttr.getNumProp(CabbageIDs::gradient));
-		
-		
+        slider->getProperties().set("gradient", cAttr.getNumProp(CabbageIDs::gradient));
+
+
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
 
         this->setWantsKeyboardFocus(false);
@@ -511,24 +511,24 @@ public:
     {
     }
 
-	void setSVGs(CabbageGUIType &cAttr)
-	{
+    void setSVGs(CabbageGUIType &cAttr)
+    {
         if (sliderType.contains("rotary"))
         {
-			cUtils::setSVGProperties(*slider, svgFileSliderBg, svgPath, "rsliderbg");		
-			cUtils::setSVGProperties(*slider, svgFileSlider, svgPath, "rslider");
-		}
-		else if(sliderType.contains("horizontal"))
-		{
-			cUtils::setSVGProperties(*slider, svgFileSliderBg, svgPath, "hsliderbg");		
-			cUtils::setSVGProperties(*slider, svgFileSlider, svgPath, "hslider");			
-		}
-		else if(sliderType.contains("vertical"))
-		{
-			cUtils::setSVGProperties(*slider, svgFileSliderBg, svgPath, "vsliderbg");		
-			cUtils::setSVGProperties(*slider, svgFileSlider, svgPath, "vslider");			
-		}
-	}
+            cUtils::setSVGProperties(*slider, svgFileSliderBg, svgPath, "rsliderbg");
+            cUtils::setSVGProperties(*slider, svgFileSlider, svgPath, "rslider");
+        }
+        else if(sliderType.contains("horizontal"))
+        {
+            cUtils::setSVGProperties(*slider, svgFileSliderBg, svgPath, "hsliderbg");
+            cUtils::setSVGProperties(*slider, svgFileSlider, svgPath, "hslider");
+        }
+        else if(sliderType.contains("vertical"))
+        {
+            cUtils::setSVGProperties(*slider, svgFileSliderBg, svgPath, "vsliderbg");
+            cUtils::setSVGProperties(*slider, svgFileSlider, svgPath, "vslider");
+        }
+    }
 
     void setupMinMaxValue()
     {
@@ -613,11 +613,11 @@ public:
         {
             tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
         }
-		
-		if(m_cAttr.getNumProp(CabbageIDs::svgdebug)!=svgDebug)
+
+        if(m_cAttr.getNumProp(CabbageIDs::svgdebug)!=svgDebug)
         {
             setSVGs(m_cAttr);
-			svgDebug = m_cAttr.getNumProp(CabbageIDs::svgdebug);
+            svgDebug = m_cAttr.getNumProp(CabbageIDs::svgdebug);
         }
         setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
         repaint();
@@ -1182,23 +1182,23 @@ class CabbageEncoder : public Component, public ChangeBroadcaster, public Label:
     int top, left, width, yAxis, textBox, height, line, pivotx, pivoty, resize, corners, progress;
     Point<float> scale;
     AffineTransform transform;
-	bool isMouseOver, shouldDisplayPopup;
-	Rectangle<float> slider;
-	Label textLabel, valueLabel;
-	CabbagePluginAudioProcessorEditor* owner;
+    bool isMouseOver, shouldDisplayPopup;
+    Rectangle<float> slider;
+    Label textLabel, valueLabel;
+    CabbagePluginAudioProcessorEditor* owner;
 
-public:	
+public:
     CabbageEncoder(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
-	void labelTextChanged (Label *label);
-	void mouseDown(const MouseEvent &e);	
-	void mouseEnter(const MouseEvent &e);
-	void mouseDrag(const MouseEvent& e);
-	void mouseExit(const MouseEvent &e);
-	void paint(Graphics &g);
-	void showPopup();
-	void resized();
+    void labelTextChanged (Label *label);
+    void mouseDown(const MouseEvent &e);
+    void mouseEnter(const MouseEvent &e);
+    void mouseDrag(const MouseEvent& e);
+    void mouseExit(const MouseEvent &e);
+    void paint(Graphics &g);
+    void showPopup();
+    void resized();
     void update(CabbageGUIType m_cAttr);
-	
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageEncoder);
 };
 //==============================================================================
@@ -1299,12 +1299,12 @@ public:
 
         if(m_cAttr.getStringProp(CabbageIDs::file)!=file)
         {
-			if(!File(m_cAttr.getStringProp(CabbageIDs::file)).existsAsFile())
-				file = cUtils::returnFullPathForFile(m_cAttr.getStringProp(CabbageIDs::file), currentDirectory);
+            if(!File(m_cAttr.getStringProp(CabbageIDs::file)).existsAsFile())
+                file = cUtils::returnFullPathForFile(m_cAttr.getStringProp(CabbageIDs::file), currentDirectory);
             else
-				file = m_cAttr.getStringProp(CabbageIDs::file);
-				
-			img = ImageCache::getFromFile (File (file));
+                file = m_cAttr.getStringProp(CabbageIDs::file);
+
+            img = ImageCache::getFromFile (File (file));
             repaint(this->getBounds());
         }
 
@@ -1413,7 +1413,7 @@ class CabbageGroupbox : public GroupComponent,
     float rotate;
     int line;
     Point<float> scale;
-	File svgPath, svgFile;
+    File svgPath, svgFile;
 public:
     //---- constructor -----
     CabbageGroupbox(CabbageGUIType &cAttr):
@@ -1431,20 +1431,20 @@ public:
         pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
         tooltipText(String::empty),
         corners(cAttr.getNumProp(CabbageIDs::corners)),
-		svgDebug(cAttr.getNumProp(CabbageIDs::svgdebug))
+        svgDebug(cAttr.getNumProp(CabbageIDs::svgdebug))
     {
         toBack();
         offX=offY=offWidth=offHeight=0;
         setColour(TextButton::buttonColourId, Colour::fromString(colour));
         setName(cAttr.getStringProp(CabbageIDs::name));
         setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
-		
-		svgFile = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svggroupbox),
-													cAttr.getStringProp(CabbageIDs::parentdir)));
-		
-		svgPath = File(cAttr.getStringProp(CabbageIDs::svgpath));
-		cUtils::setSVGProperties(*this, svgFile, svgPath, "groupbox");
-		
+
+        svgFile = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svggroupbox),
+                       cAttr.getStringProp(CabbageIDs::parentdir)));
+
+        svgPath = File(cAttr.getStringProp(CabbageIDs::svgpath));
+        cUtils::setSVGProperties(*this, svgFile, svgPath, "groupbox");
+
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
         this->setText(text);
         this->setWantsKeyboardFocus(false);
@@ -1553,11 +1553,11 @@ public:
         {
             tooltipText = m_cAttr.getStringProp(CabbageIDs::popuptext);
         }
-		
-		if(m_cAttr.getNumProp(CabbageIDs::svgdebug)!=svgDebug)
+
+        if(m_cAttr.getNumProp(CabbageIDs::svgdebug)!=svgDebug)
         {
-			cUtils::setSVGProperties(*this, svgFile, svgPath, "groupbox");
-			svgDebug = m_cAttr.getNumProp(CabbageIDs::svgdebug);
+            cUtils::setSVGProperties(*this, svgFile, svgPath, "groupbox");
+            svgDebug = m_cAttr.getNumProp(CabbageIDs::svgdebug);
         }
     }
 
@@ -2983,28 +2983,28 @@ public:
 //============================================================
 class CabbageStepper	:	public Component, public Timer
 {
-	String name, channel;
-	float numberOfSteps;
-	int stepBPM, currentStep, isRunning;
-	Colour colour;
-	Array<int> stepStates;
-	CabbagePluginAudioProcessorEditor* owner;
-	bool isMouseDown;
+    String name, channel;
+    float numberOfSteps;
+    int stepBPM, currentStep, isRunning;
+    Colour colour;
+    Array<int> stepStates;
+    CabbagePluginAudioProcessorEditor* owner;
+    bool isMouseDown;
 
 public:
     CabbageStepper (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
-	void timerCallback();
+    void timerCallback();
     ~CabbageStepper()
-	{
-		stopTimer();
-		owner = nullptr;
-	}
-    void resized(){}
-	void mouseDown(const MouseEvent& event);
-	void mouseUp(const MouseEvent& event);
-	void mouseEnter(const MouseEvent& event);
+    {
+        stopTimer();
+        owner = nullptr;
+    }
+    void resized() {}
+    void mouseDown(const MouseEvent& event);
+    void mouseUp(const MouseEvent& event);
+    void mouseEnter(const MouseEvent& event);
     void paint(Graphics& g);
-	void update(CabbageGUIType cAttr);	
+    void update(CabbageGUIType cAttr);
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageStepper);
 };
 
@@ -3013,103 +3013,106 @@ public:
 //============================================================
 class RangeSlider	:	public Component
 {
-	
-	
-	String name, tooltipText;
-	StringArray channels;
-	CabbagePluginAudioProcessorEditor* owner;
-	bool shouldDisplayPopup, isVertical;
-	String colour, text;
-	Colour trackerColour;
-	double value1, value2, min, trackerThickness, initVal, minVal, maxVal, max, incr, skew;
-	float thumbIncr;
-	int thumbWidth, thumbHeight, rangeDistance, currentThumb;
+
+
+    String name, tooltipText;
+    StringArray channels;
+    CabbagePluginAudioProcessorEditor* owner;
+    bool shouldDisplayPopup, isVertical;
+    String colour, text;
+    Colour trackerColour;
+    double value1, value2, min, trackerThickness, initVal, minVal, maxVal, max, incr, skew;
+    float thumbIncr;
+    int thumbWidth, thumbHeight, rangeDistance, currentThumb;
 
 
 public:
-	Rectangle<int> sliderThumbBounds;
-	
-	class SliderThumb : public Component
-	{
-		bool isVertical;
-		Point<int> currentPos;
-		RangeSlider* owner;
-		Colour colour;
-		
-		public:
-			SliderThumb(RangeSlider* _owner,String kind);
-			~SliderThumb()
-			{
-				owner=nullptr;
-			}
-			void resized(){}			
-			void paint(Graphics& g);
-			void setColour(Colour _colour){
-				colour = _colour;
-			};
-	};
+    Rectangle<int> sliderThumbBounds;
+
+    class SliderThumb : public Component
+    {
+        bool isVertical;
+        Point<int> currentPos;
+        RangeSlider* owner;
+        Colour colour;
+
+    public:
+        SliderThumb(RangeSlider* _owner,String kind);
+        ~SliderThumb()
+        {
+            owner=nullptr;
+        }
+        void resized() {}
+        void paint(Graphics& g);
+        void setColour(Colour _colour)
+        {
+            colour = _colour;
+        };
+    };
 
 
     RangeSlider(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
     ~RangeSlider()
-	{
-		owner = nullptr;
-	}
-	
-	enum SliderType {
-		left,
-		right,
-		top,
-		bottom
-	  };
-	  
-    void resized();
-	void mouseDown(const MouseEvent& event);
-	void mouseUp(const MouseEvent& event);
-	void mouseEnter(const MouseEvent& event);
-	void mouseDrag(const MouseEvent& event);
-	void horizontalDrag(const MouseEvent& event);
-	void verticalDrag(const MouseEvent& event);
-    void paint(Graphics& g);
-	void update(CabbageGUIType cAttr);	
-	int getSliderPosition(SliderType type);
-	void showPopup();
-	double getSkewedValue(double proportion);
-	void sendValuesToCsound(double val1, double val2);
+    {
+        owner = nullptr;
+    }
 
-	Rectangle<int> getThumbOuterBounds(int type);
+    enum SliderType
+    {
+        left,
+        right,
+        top,
+        bottom
+    };
+
+    void resized();
+    void mouseDown(const MouseEvent& event);
+    void mouseUp(const MouseEvent& event);
+    void mouseEnter(const MouseEvent& event);
+    void mouseDrag(const MouseEvent& event);
+    void horizontalDrag(const MouseEvent& event);
+    void verticalDrag(const MouseEvent& event);
+    void paint(Graphics& g);
+    void update(CabbageGUIType cAttr);
+    int getSliderPosition(SliderType type);
+    void showPopup();
+    double getSkewedValue(double proportion);
+    void sendValuesToCsound(double val1, double val2);
+
+    Rectangle<int> getThumbOuterBounds(int type);
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RangeSlider);
-	
+
 private:
-		SliderThumb sliderThumb;
+    SliderThumb sliderThumb;
 };
 
 //container class for rangeslider widget
 class CabbageRangeSlider2	:	public Component
 {
-	
-	String name, text, textColour;
-	RangeSlider slider;
-	Label textLabel;
-	bool isVertical;
+
+    String name, text, textColour;
+    RangeSlider slider;
+    Label textLabel;
+    bool isVertical;
 
 public:
 
     CabbageRangeSlider2 (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
-	
+
     ~CabbageRangeSlider2()
-	{
-		
-	}
-	
-	void setValue(int index, float value)
-	{
-		cUtils::showMessage(String(index)+" Value:"+String(value));
-	}
-	
-	void resized();
-	
-	void update(CabbageGUIType &cAttr){}
-	
+    {
+
+    }
+
+    void setValue(int index, float value)
+    {
+        cUtils::showMessage(String(index)+" Value:"+String(value));
+    }
+
+    void resized();
+
+
+    void update(CabbageGUIType &cAttr) {}
+
 };
 #endif

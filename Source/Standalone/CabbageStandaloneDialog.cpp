@@ -209,7 +209,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
         if(File(defaultCSDFile).existsAsFile())
         {
             standaloneMode = true;
-           // cUtils::showMessage("Should be standalone");
+            // cUtils::showMessage("Should be standalone");
             openFile(defaultCSDFile);
         }
         else
@@ -1030,7 +1030,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         else
             subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, true);
 
-		subMenu.addItem(301, String("Set external editor"), true, false);
+        subMenu.addItem(301, String("Set external editor"), true, false);
 
         //if(!getPreference(appProperties, "EnablePopupDisplay"))
         //subMenu.addItem(207, String("Enable opcode popup help display"), true, false);
@@ -1148,18 +1148,18 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             else m_ShowMessage("Please open or create a file first", lookAndFeel);
         }
         else
-		{
-			if(File(getPreference(appProperties, "ExternalEditorApplication", "")).existsAsFile())
-			{
-				String editorApp = getPreference(appProperties, "ExternalEditorApplication", "");
-				ChildProcess process;				
-				process.start(editorApp+ " "+csdFile.getFullPathName());				
-			}
-			else
-			 m_ShowMessage("\'Use external editor\' is enabled. If you wish to use the Cabbage editor,\n\
-							please disable 'Use external editor\' from the preferences and try again", lookAndFeel);	
-		}
-           
+        {
+            if(File(getPreference(appProperties, "ExternalEditorApplication", "")).existsAsFile())
+            {
+                String editorApp = getPreference(appProperties, "ExternalEditorApplication", "");
+                ChildProcess process;
+                process.start(editorApp+ " "+csdFile.getFullPathName());
+            }
+            else
+                m_ShowMessage("\'Use external editor\' is enabled. If you wish to use the Cabbage editor,\n\
+							please disable 'Use external editor\' from the preferences and try again", lookAndFeel);
+        }
+
     }
     //-------Csound output console-----
     else if(options==3)

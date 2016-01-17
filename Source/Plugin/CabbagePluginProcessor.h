@@ -339,7 +339,7 @@ public:
 #endif
 
 
-    bool compiledOk()
+    bool csoundCompiledOk()
     {
         return csCompileResult;
     }

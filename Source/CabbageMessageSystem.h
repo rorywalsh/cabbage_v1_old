@@ -72,8 +72,8 @@ class CabbageMessageQueue : public cUtils
 public:
     CabbageMessageQueue() {}
     ~CabbageMessageQueue() {}
-	
-	void addOutgoingChannelMessageToQueue(String _chan, double _val, String _type="");
+
+    void addOutgoingChannelMessageToQueue(String _chan, double _val, String _type="");
     void addOutgoingChannelMessageToQueue(String _chan, String _val, String _type="");
     void addOutgoingTableUpdateMessageToQueue(String fStatement, int tableNumber);
     CabbageChannelMessage &getOutgoingChannelMessageFromQueue(int index);

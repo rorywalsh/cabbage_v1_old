@@ -173,8 +173,8 @@ public:
                                           bool /*isVerticalBar*/,
                                           bool isMouseOver,
                                           bool isMouseDragging);
-										  
-	bool drawBackgroundForSVGSlider(Graphics& g, Component* comp, String type, int x, int y, int width, int height);
+
+    bool drawBackgroundForSVGSlider(Graphics& g, Component* comp, String type, int x, int y, int width, int height);
 
     int getDefaultMenuBarHeight()
     {

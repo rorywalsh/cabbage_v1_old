@@ -16,10 +16,10 @@ public:
     }
 
     void initialise(const String& commandLineParameters)
-    {        
-		filterWindow = new StandaloneFilterWindow ();
-		//Desktop::getInstance().setGlobalScaleFactor(1.3);
-		juce::Thread::setCurrentThreadName("cabbage");
+    {
+        filterWindow = new StandaloneFilterWindow ();
+        //Desktop::getInstance().setGlobalScaleFactor(1.3);
+        juce::Thread::setCurrentThreadName("cabbage");
     }
 
     void shutdown()

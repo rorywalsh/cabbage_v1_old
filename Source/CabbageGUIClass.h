@@ -38,11 +38,24 @@ class GUICtrlsArray : public StringArray
 public:
     GUICtrlsArray()
     {
-		add("hslider");add("hslider2");add("hslider3");add("rslider");add("vslider");add("vslider2");add("hrange");add("vrange");
-		add("vslider3");add("combobox");add("checkbox");add("encoder");add("numberbox");add("xypad");add("button");
+        add("hslider");
+        add("hslider2");
+        add("hslider3");
+        add("rslider");
+        add("vslider");
+        add("vslider2");
+        add("hrange");
+        add("vrange");
+        add("vslider3");
+        add("combobox");
+        add("checkbox");
+        add("encoder");
+        add("numberbox");
+        add("xypad");
+        add("button");
     }
 
-    ~GUICtrlsArray(){}
+    ~GUICtrlsArray() {}
 };
 
 // this array holds the names of all widgets that can only be controlled via the plugin editor GUI
@@ -51,34 +64,137 @@ class GUILayoutCtrlsArray : public StringArray
 public:
     GUILayoutCtrlsArray()
     {
-		add("form");add("image");add("socketsend");add("socketreceive");add("keyboard");add("gentable");add("csoundoutput");
-		add("textbox");add("line");add("recordbutton");add("label");add("hostbpm");add("hosttime");add("hostplaying");
-		add("hostppqpos");add("patmatrix");add("source");add("multitab");add("infobutton");add("filebutton");add("loadbutton");
-		add("soundfiler");add("sourcebutton");add("texteditor");add("popupmenu");add("snapshot");add("table");add("pvsview");
-		add("hostrecording");add("directorylist");add("transport");add("groupbox");
-		//sample widget
-		add("stepper");		
+        add("form");
+        add("image");
+        add("socketsend");
+        add("socketreceive");
+        add("keyboard");
+        add("gentable");
+        add("csoundoutput");
+        add("textbox");
+        add("line");
+        add("recordbutton");
+        add("label");
+        add("hostbpm");
+        add("hosttime");
+        add("hostplaying");
+        add("hostppqpos");
+        add("patmatrix");
+        add("source");
+        add("multitab");
+        add("infobutton");
+        add("filebutton");
+        add("loadbutton");
+        add("soundfiler");
+        add("sourcebutton");
+        add("texteditor");
+        add("popupmenu");
+        add("snapshot");
+        add("table");
+        add("pvsview");
+        add("hostrecording");
+        add("directorylist");
+        add("transport");
+        add("groupbox");
+        //sample widget
+        add("stepper");
     }
 
-    ~GUILayoutCtrlsArray(){}
+    ~GUILayoutCtrlsArray() {}
 };
 class IdentArray : public StringArray
 {
 public:
     IdentArray()
     {
-        add("tablecolour");add("tablecolor");add("tablegridcolour");add("tablegridcolor");add("alpha");add("bounds");add("fontcolour");
-		add("fontcolor");add("fontcolour:1");add("fontcolor:1");add("fontcolour:0");add("fontcolor:0");add("size");add("items");
-		add("pos");add("min");add("radiogroup");add("max");add("value");add("guirefresh");add("outlinethickness");add("linethickness");
-		add("trackerthickness");add("populate");add("range");add("amprange");add("popuptext");add("address");add("scalex");
-		add("scaley");add("rescale");add("rangex");add("rangey");add("plant");add("channeltype");add("channels");add("channel");add("sliderincr");add("widgetarray");
-        add("channelarray");add("textbox");add("active");add("caption");add("kind");add("align");add("wrap");add("tablebackgroundcolour");add("tablebackgroundcolor");
-        add("mode");add("tablenumber");add("tablenumbers");add("fill");add("logger");add("file");add("corners");add("svgpath");add("outlinecolour");add("outlinecolor");
-        add("shape");add("rotate");add("textcolour");add("textcolor");add("pluginid");add("trackercolour");add("trackercolor");add("popup");add("show");add("latched");
-        add("identchannel");add("visible");add("scrubberposition");add("scroll");add("zoom");add("samplerange");add("scrollbars");
-        add("colour");add("colour:0");add("colour:1");add("color");add("color:0");add("color:1");add("text");add("gradient");add("svgfile");add("svgdebug");	
-		//sample identifiers for stepper widget
-		add("numberofsteps");add("stepbpm");		
+        add("tablecolour");
+        add("tablecolor");
+        add("tablegridcolour");
+        add("tablegridcolor");
+        add("alpha");
+        add("bounds");
+        add("fontcolour");
+        add("fontcolor");
+        add("fontcolour:1");
+        add("fontcolor:1");
+        add("fontcolour:0");
+        add("fontcolor:0");
+        add("size");
+        add("items");
+        add("pos");
+        add("min");
+        add("radiogroup");
+        add("max");
+        add("value");
+        add("guirefresh");
+        add("outlinethickness");
+        add("linethickness");
+        add("trackerthickness");
+        add("populate");
+        add("range");
+        add("amprange");
+        add("popuptext");
+        add("address");
+        add("scalex");
+        add("scaley");
+        add("rescale");
+        add("rangex");
+        add("rangey");
+        add("plant");
+        add("channeltype");
+        add("channels");
+        add("channel");
+        add("sliderincr");
+        add("widgetarray");
+        add("channelarray");
+        add("textbox");
+        add("active");
+        add("caption");
+        add("kind");
+        add("align");
+        add("wrap");
+        add("tablebackgroundcolour");
+        add("tablebackgroundcolor");
+        add("mode");
+        add("tablenumber");
+        add("tablenumbers");
+        add("fill");
+        add("logger");
+        add("file");
+        add("corners");
+        add("svgpath");
+        add("outlinecolour");
+        add("outlinecolor");
+        add("shape");
+        add("rotate");
+        add("textcolour");
+        add("textcolor");
+        add("pluginid");
+        add("trackercolour");
+        add("trackercolor");
+        add("popup");
+        add("show");
+        add("latched");
+        add("identchannel");
+        add("visible");
+        add("scrubberposition");
+        add("scroll");
+        add("zoom");
+        add("samplerange");
+        add("scrollbars");
+        add("colour");
+        add("colour:0");
+        add("colour:1");
+        add("color");
+        add("color:0");
+        add("color:1");
+        add("text");
+        add("gradient");
+        add("svgfile");
+        add("svgdebug");
+        //sample identifiers for stepper widget
+        add("numberofsteps");
+        add("stepbpm");
     }
 
     ~IdentArray()
@@ -295,7 +411,7 @@ public:
     String getPropsString();
     String getColourProp(Identifier prop);
     float getNumPropVal(Identifier prop);
-	void scaleWidget(Point<float> scale);
+    void scaleWidget(Point<float> scale);
     void setNumPropVal(Identifier prop, float val);
     static String getCabbageCodeFromIdentifiers(NamedValueSet props);
     static String getStringForIdentifier(var props, String identifier, String type);

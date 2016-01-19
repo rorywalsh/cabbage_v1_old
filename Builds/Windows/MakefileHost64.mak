@@ -4,10 +4,10 @@
 DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 
 # Default csound include path
-CSOUND_INCLUDE ?= "C:\Users\rory\sourceCode\cabbageaudio\csound\include"
+CSOUND_INCLUDE ?= "C:\Users\rory\sourceCode\cabbageaudio\csound64\include"
 
 # Default Csound library path
-CSOUND_LIBRARY ?= "C:\Users\rory\sourceCode\cabbageaudio\csound\build\libcsound64.dll.a"
+CSOUND_LIBRARY ?= "C:\Users\rory\sourceCode\cabbageaudio\csound64\build\libcsound64.dll.a"
 
 ASIO_SDK ?= "C:\SDKs\ASIOSDK2.3\common"
 VST_SDK ?= "C:\SDKs\vstsdk2.4"
@@ -24,13 +24,13 @@ LD = g++.exe
 WINDRES = windres.exe
 
 ifeq ($(CONFIG),Debug)
-  BINDIR := build
-  LIBDIR := build
-  OBJDIR := build/intermediate-host/Debug
-  OUTDIR := build
+  BINDIR := build64
+  LIBDIR := build64
+  OBJDIR := build64/intermediate-host/Debug
+  OUTDIR := build64
 
   ifeq ($(TARGET_ARCH),)
-    TARGET_ARCH := -march=pentium4
+    TARGET_ARCH := -march=x86-64
   endif
 
   CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -DCABBAGE_HOST=1 -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DCabbage_GUI_Editor=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
@@ -39,19 +39,19 @@ ifeq ($(CONFIG),Debug)
   LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY) -static
   LDDEPS :=
   RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DBUILD_DEBUGGER=1 -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
-  TARGET := CabbageStudio.exe
-  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) CabbageStudio32res.o -static-libgcc -static-libstdc++ -mstackrealign -static  $(OSCPACK_LIBRARY) 
+  TARGET := CabbageStudio64.exe
+  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) CabbageStudio64res.o -static-libgcc -static-libstdc++ -mstackrealign -static  $(OSCPACK_LIBRARY) 
 
 endif 
 
 ifeq ($(CONFIG),Release)
-  BINDIR := build
-  LIBDIR := build
-  OBJDIR := build/intermediate-host/Release
-  OUTDIR := build
+  BINDIR := build64
+  LIBDIR := build64
+  OBJDIR := build64/intermediate-host/Release
+  OUTDIR := build64
 
   ifeq ($(TARGET_ARCH),)
-    TARGET_ARCH := -march=native
+    TARGET_ARCH := -march=x86-64
   endif
 
   CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -DCABBAGE_HOST=1 -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DCabbage_GUI_Editor=1 -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
@@ -60,8 +60,8 @@ ifeq ($(CONFIG),Release)
   LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY) -static
   LDDEPS :=
   RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DBUILD_DEBUGGER=1 -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
-  TARGET := CabbageStudio.exe
-  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) CabbageStudio32res.o -static-libgcc -static-libstdc++ -mstackrealign -static  $(OSCPACK_LIBRARY)
+  TARGET := CabbageStudio64.exe
+  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) CabbageStudio64res.o -static-libgcc -static-libstdc++ -mstackrealign -static  $(OSCPACK_LIBRARY)
 
 endif
 
@@ -117,7 +117,6 @@ OBJECTS := \
   $(OBJDIR)/juce_gui_basics_a630dd20.o \
   $(OBJDIR)/juce_gui_extra_7767d6a8.o \
 
-
 .PHONY: clean
 
 $(OUTDIR)/$(TARGET): $(OBJECTS) $(LDDEPS) $(RESOURCES)
@@ -158,16 +157,16 @@ $(OBJDIR)/CabbageLookAndFeel_220a01a6.o: ../../Source/CabbageLookAndFeel.cpp
 	@echo "Compiling CabbageLookAndFeel.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/CabbageMessageSystem_6we1348e.o: ../../Source/CabbageMessageSystem.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling CabbageMessageSystem.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-	
 $(OBJDIR)/CabbageMainPanel_12c1333.o: ../../Source/CabbageMainPanel.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CabbageMainPanel.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/CabbageMessageSystem_6we1348e.o: ../../Source/CabbageMessageSystem.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageMessageSystem.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
 $(OBJDIR)/CabbagePropertiesDialog_5e61b3fd.o: ../../Source/CabbagePropertiesDialog.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CabbagePropertiesDialog.cpp"
@@ -223,6 +222,11 @@ $(OBJDIR)/CabbagePluginProcessor_73d6661b.o: ../../Source/Plugin/CabbagePluginPr
 	@echo "Compiling CabbagePluginProcessor.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/CabbageCustomWidgets_35a2sd62.o: ../../Source/CabbageCustomWidgets.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageCustomWidgets.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
 $(OBJDIR)/Soundfiler_35ae1cd0.o: ../../Source/Soundfiler.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling Soundfiler.cpp"
@@ -278,11 +282,7 @@ $(OBJDIR)/AutomationEditor_2j8hjkd2.o: ../../Source/Host/AutomationEditor.cpp
 	@echo "Compiling AutomationEditor.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/CabbageCustomWidgets_35a2sd62.o: ../../Source/CabbageCustomWidgets.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling CabbageCustomWidgets.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-		
+	
 $(OBJDIR)/FilterGraph_62e9c017.o: ../../Source/Host/FilterGraph.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling FilterGraph.cpp"
@@ -403,5 +403,4 @@ $(OBJDIR)/juce_gui_extra_7767d6a8.o: ../../JuceLibraryCode/modules/juce_gui_extr
 	@echo "Compiling juce_gui_extra.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-	
 -include $(OBJECTS:%.o=%.d)

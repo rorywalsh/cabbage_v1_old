@@ -76,7 +76,9 @@ OBJECTS := \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
+  $(OBJDIR)/CabbageCustomWidgets_35a2sd62.o \
   $(OBJDIR)/Table_35ae1cd9.o \
+  $(OBJDIR)/CabbageMessageSystem_6we1348e.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
@@ -93,7 +95,8 @@ OBJECTS := \
   $(OBJDIR)/juce_PluginUtilities_e2e19a34.o \
   $(OBJDIR)/juce_VST3_Wrapper_77e7c73b.o \
   $(OBJDIR)/juce_VST_Wrapper_bb62e93d.o \
-  
+
+
 .PHONY: clean
 
 $(OUTDIR)/$(TARGET): $(OBJECTS) $(LDDEPS) $(RESOURCES)
@@ -149,6 +152,11 @@ $(OBJDIR)/CabbageTable_d003e736.o: ../../Source/CabbageTable.cpp
 	@echo "Compiling CabbageTable.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/CabbageMessageSystem_6we1348e.o: ../../Source/CabbageMessageSystem.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageMessageSystem.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
 $(OBJDIR)/Table_35ae1cd9.o: ../../Source/Table.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling Table.cpp"
@@ -169,6 +177,11 @@ $(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o: ../../Source/CabbageAu
 	@echo "Compiling CabbageAudioDeviceSelectorComponent.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/CabbageCustomWidgets_35a2sd62.o: ../../Source/CabbageCustomWidgets.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageCustomWidgets.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	
 $(OBJDIR)/CodeEditor_bb1e171d.o: ../../Source/Editor/CodeEditor.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CodeEditor.cpp"
@@ -283,5 +296,6 @@ $(OBJDIR)/juce_VST_Wrapper_bb62e93d.o: ../../JuceLibraryCode/modules/juce_audio_
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling juce_VST_Wrapper.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
 
 -include $(OBJECTS:%.o=%.d)

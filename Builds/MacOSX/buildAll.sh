@@ -67,9 +67,9 @@ then
 
 	xcodebuild -project ./../../CabbageAUEffect/Builds/MacOSX/CabbageAUEffect.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
 
-	xcodebuild -project ./../../CabbageAUEffect/Builds/MacOSX/CabbageAUSynth.xcodeproj clean
+	xcodebuild -project ./../../CabbageAUSynth/Builds/MacOSX/CabbageAUSynth.xcodeproj clean
 
-	xcodebuild -project ./../../CabbageAUEffect/Builds/MacOSX/CabbageAUSynth.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
+	xcodebuild -project ./../../CabbageAUSynth/Builds/MacOSX/CabbageAUSynth.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
 
 	xcodebuild -project Cabbage.xcodeproj clean
 

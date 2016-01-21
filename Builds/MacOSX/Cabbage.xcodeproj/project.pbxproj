@@ -22,6 +22,8 @@
 		43EA5BA74AAB02732D001E8D /* CabbageAudioDeviceSelectorComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE3A103E8622A1D07AB6757 /* CabbageAudioDeviceSelectorComponent.cpp */; };
 		58F8C4A32187FF6503FBBB6F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FBEEDA5026BB3BAA07532DA /* Carbon.framework */; };
 		610EBF6C1959BCF70034C779 /* Table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 610EBF6B1959BCF70034C779 /* Table.cpp */; };
+		611AF4B01C514835009F5FB6 /* CabbageMessageSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 611AF4AE1C514835009F5FB6 /* CabbageMessageSystem.cpp */; };
+		611AF4B11C514835009F5FB6 /* CabbageCustomWidgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 611AF4AF1C514835009F5FB6 /* CabbageCustomWidgets.cpp */; };
 		613496DD1B08E8AE005F97F1 /* CsoundLib64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 613496DC1B08E8AE005F97F1 /* CsoundLib64.framework */; };
 		61385E7B186206B900AC002E /* logo_cabbage.icns in Resources */ = {isa = PBXBuildFile; fileRef = 61385E7A186206B900AC002E /* logo_cabbage.icns */; };
 		61F0559C18F7F8140087675C /* SplitComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 61F0559B18F7F8140087675C /* SplitComponent.cpp */; };
@@ -434,6 +436,8 @@
 		610EBF6A1959BCF60034C779 /* Table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Table.h; path = ../../Source/Table.h; sourceTree = SOURCE_ROOT; };
 		610EBF6B1959BCF70034C779 /* Table.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Table.cpp; path = ../../Source/Table.cpp; sourceTree = SOURCE_ROOT; };
 		611630B95F2A7893EDFFBC48 /* juce_LowLevelGraphicsSoftwareRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_LowLevelGraphicsSoftwareRenderer.cpp; path = ../../JuceLibraryCode/modules/juce_graphics/contexts/juce_LowLevelGraphicsSoftwareRenderer.cpp; sourceTree = SOURCE_ROOT; };
+		611AF4AE1C514835009F5FB6 /* CabbageMessageSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CabbageMessageSystem.cpp; path = ../../Source/CabbageMessageSystem.cpp; sourceTree = "<group>"; };
+		611AF4AF1C514835009F5FB6 /* CabbageCustomWidgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CabbageCustomWidgets.cpp; path = ../../Source/CabbageCustomWidgets.cpp; sourceTree = "<group>"; };
 		613496DC1B08E8AE005F97F1 /* CsoundLib64.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CsoundLib64.framework; path = ../../../../csound/build/CsoundLib64.framework; sourceTree = "<group>"; };
 		613496DF1B08E9D4005F97F1 /* CsoundLib64.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CsoundLib64.framework; path = ../../../../csound/build/CsoundLib64.framework; sourceTree = "<group>"; };
 		61385E7A186206B900AC002E /* logo_cabbage.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = logo_cabbage.icns; sourceTree = "<group>"; };
@@ -2326,6 +2330,8 @@
 		B6D184ADCE29235C149B7B61 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				611AF4AE1C514835009F5FB6 /* CabbageMessageSystem.cpp */,
+				611AF4AF1C514835009F5FB6 /* CabbageCustomWidgets.cpp */,
 				610EBF6A1959BCF60034C779 /* Table.h */,
 				610EBF6B1959BCF70034C779 /* Table.cpp */,
 				1B9C3C7F68C14403D6E1B24A /* BinaryData.cpp */,
@@ -2887,6 +2893,7 @@
 				70CE19C4C711421F4BEA52EB /* CodeEditor.cpp in Sources */,
 				AF67DFC97B135CEB7616EF57 /* CodeWindow.cpp in Sources */,
 				D4069DF0E8E9E3F3CA023DD5 /* CommandManager.cpp in Sources */,
+				611AF4B01C514835009F5FB6 /* CabbageMessageSystem.cpp in Sources */,
 				CEF4EB8F352DAE3D2F89E38D /* CabbagePluginEditor.cpp in Sources */,
 				8D05F893F9F6041DE05BDA61 /* CabbagePluginProcessor.cpp in Sources */,
 				D069A560C2F083CDDB1206E9 /* Soundfiler.cpp in Sources */,
@@ -2900,6 +2907,7 @@
 				8E40A445EE372D26ED6F18FE /* juce_audio_processors.mm in Sources */,
 				80466FCFDA53E894A16A9DB8 /* juce_audio_utils.mm in Sources */,
 				D07F5AF2836E5806ED27C623 /* juce_core.mm in Sources */,
+				611AF4B11C514835009F5FB6 /* CabbageCustomWidgets.cpp in Sources */,
 				AA07F1290E0E949ACAEF7E8C /* juce_cryptography.mm in Sources */,
 				1EBBFD640343792F88A1BF8C /* juce_data_structures.mm in Sources */,
 				E5FFDDF3FFCCF22FB851056F /* juce_events.mm in Sources */,

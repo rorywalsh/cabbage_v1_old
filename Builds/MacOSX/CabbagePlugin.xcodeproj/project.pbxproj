@@ -42,6 +42,8 @@
 		5D410A300D26D5C7814A16FE /* juce_AAX_Wrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = E7476C44AC4D6B4CAF07EC89 /* juce_AAX_Wrapper.mm */; };
 		5E5351F928E75A3CB1C5BCB2 /* CabbageGUIClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A892EB9E80B9D9EBD8D75F20 /* CabbageGUIClass.cpp */; };
 		5FBC3E6E5BB9117DF978F49A /* Table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60A5314356E60BA34728C56C /* Table.cpp */; };
+		611AF4B41C514857009F5FB6 /* CabbageMessageSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 611AF4B21C514857009F5FB6 /* CabbageMessageSystem.cpp */; };
+		611AF4B51C514857009F5FB6 /* CabbageCustomWidgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 611AF4B31C514857009F5FB6 /* CabbageCustomWidgets.cpp */; };
 		613496E21B092094005F97F1 /* CsoundLib64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 613496E11B092094005F97F1 /* CsoundLib64.framework */; };
 		6168A5C61BA9D45C000F356A /* CodeWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6168A5BA1BA9D45C000F356A /* CodeWindow.cpp */; };
 		6168A5C71BA9D45C000F356A /* CodeEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6168A5BC1BA9D45C000F356A /* CodeEditor.cpp */; };
@@ -476,6 +478,8 @@
 		609AB366CFE2BA757A5293F2 /* juce_NamedValueSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_NamedValueSet.h; path = ../../JuceLibraryCode/modules/juce_core/containers/juce_NamedValueSet.h; sourceTree = SOURCE_ROOT; };
 		60A5314356E60BA34728C56C /* Table.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Table.cpp; path = ../../Source/Table.cpp; sourceTree = SOURCE_ROOT; };
 		60EDB33DC66C04A995532A1C /* juce_AudioUnitPluginFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_AudioUnitPluginFormat.h; path = ../../JuceLibraryCode/modules/juce_audio_processors/format_types/juce_AudioUnitPluginFormat.h; sourceTree = SOURCE_ROOT; };
+		611AF4B21C514857009F5FB6 /* CabbageMessageSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CabbageMessageSystem.cpp; path = ../../Source/CabbageMessageSystem.cpp; sourceTree = "<group>"; };
+		611AF4B31C514857009F5FB6 /* CabbageCustomWidgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CabbageCustomWidgets.cpp; path = ../../Source/CabbageCustomWidgets.cpp; sourceTree = "<group>"; };
 		61301C10155AD442503B870F /* BinaryData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BinaryData.h; path = ../../Source/BinaryData.h; sourceTree = SOURCE_ROOT; };
 		613496E11B092094005F97F1 /* CsoundLib64.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CsoundLib64.framework; path = ../../../../csound/build/CsoundLib64.framework; sourceTree = "<group>"; };
 		6168A5BA1BA9D45C000F356A /* CodeWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CodeWindow.cpp; path = ../../Source/Editor/CodeWindow.cpp; sourceTree = "<group>"; };
@@ -1486,6 +1490,8 @@
 		3A1A52938EB41D809370773F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				611AF4B21C514857009F5FB6 /* CabbageMessageSystem.cpp */,
+				611AF4B31C514857009F5FB6 /* CabbageCustomWidgets.cpp */,
 				6168A5A61BA9CE8A000F356A /* Editor */,
 				6D7BC5CEB231ED0F946C9070 /* BinaryData.cpp */,
 				61301C10155AD442503B870F /* BinaryData.h */,
@@ -3215,6 +3221,7 @@
 				5E5351F928E75A3CB1C5BCB2 /* CabbageGUIClass.cpp in Sources */,
 				845D4BB5A601633EA5A48110 /* CabbageLookAndFeel.cpp in Sources */,
 				11A60CE27C90C8EDDAF7FE16 /* CabbageMainPanel.cpp in Sources */,
+				611AF4B41C514857009F5FB6 /* CabbageMessageSystem.cpp in Sources */,
 				899557B5974A41DD5F258F66 /* CabbageTable.cpp in Sources */,
 				01531673AD6B2428B375500A /* CabbagePluginEditor.cpp in Sources */,
 				51997744F8DE842134E61C6C /* CabbagePluginProcessor.cpp in Sources */,
@@ -3229,6 +3236,7 @@
 				ABE18D9ED9B224C60F43CF6D /* AUCarbonViewControl.cpp in Sources */,
 				52C623CAB29B92D084E167CE /* AUCarbonViewDispatch.cpp in Sources */,
 				D7BBF7ED9F51B8D4F6B4FC7B /* AUDispatch.cpp in Sources */,
+				611AF4B51C514857009F5FB6 /* CabbageCustomWidgets.cpp in Sources */,
 				25B68ECDB38B78ED6DABE54A /* AUEffectBase.cpp in Sources */,
 				1E459F951327449CB0614A18 /* AUInputElement.cpp in Sources */,
 				C091567DBA7D7C9318A0700F /* AUMIDIBase.cpp in Sources */,

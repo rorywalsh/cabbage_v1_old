@@ -3023,7 +3023,8 @@ class RangeSlider	:	public Component
     Colour trackerColour;
     double value1, value2, min, trackerThickness, initVal, minVal, maxVal, max, incr, skew;
     float thumbIncr;
-    int thumbWidth, thumbHeight, rangeDistance, currentThumb;
+    int thumbWidth, thumbHeight, rangeDistance, currentThumb, index;
+    float width, height;
 
 
 public:
@@ -3042,7 +3043,8 @@ public:
         {
             owner=nullptr;
         }
-        void resized() {}
+        void resized()
+        {}
         void paint(Graphics& g);
         void setColour(Colour _colour)
         {
@@ -3065,6 +3067,13 @@ public:
         bottom
     };
 
+
+    void setIndex(int _index)
+    {
+        index = _index;
+    }
+
+    void setValue(float val1, float val2);
     void resized();
     void mouseDown(const MouseEvent& event);
     void mouseUp(const MouseEvent& event);
@@ -3104,13 +3113,12 @@ public:
 
     }
 
-    void setValue(int index, float value)
-    {
-        cUtils::showMessage(String(index)+" Value:"+String(value));
-    }
-
     void resized();
 
+    RangeSlider& getSlider()
+    {
+        return slider;
+    }
 
     void update(CabbageGUIType &cAttr) {}
 

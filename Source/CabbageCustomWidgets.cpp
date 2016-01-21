@@ -375,6 +375,8 @@ RangeSlider::RangeSlider(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEdito
       maxVal(cAttr.getNumProp(CabbageIDs::maxvalue)),
       minVal(cAttr.getNumProp(CabbageIDs::minvalue)),
       incr(cAttr.getNumProp(CabbageIDs::sliderincr)),
+      width(cAttr.getNumProp(CabbageIDs::width)),
+      height(cAttr.getNumProp(CabbageIDs::height)),
       skew(cAttr.getNumProp(CabbageIDs::sliderskew)),
       colour(cAttr.getStringProp(CabbageIDs::colour)),
       trackerThickness(cAttr.getNumProp(CabbageIDs::trackerthickness)),
@@ -387,9 +389,10 @@ RangeSlider::RangeSlider(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEdito
     }
 
     sliderThumb.setColour(Colour::fromString(colour));
-    value1 =  isVertical == false ? minVal : maxVal;
-    value2 =  isVertical == false ? maxVal : minVal;
+
+#ifdef Cabbage_Build_Standalone
     sendValuesToCsound(value1, value2);
+#endif
     addAndMakeVisible(&sliderThumb);
 
 }
@@ -397,18 +400,21 @@ RangeSlider::RangeSlider(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEdito
 void RangeSlider::resized()
 {
     thumbIncr = (incr/(max-min))*getWidth();
-
-    if(!isVertical)
-    {
-        const int xPos = getSliderPosition(SliderType::left);
-        const int width = jmax(thumbWidth*2, getSliderPosition(SliderType::right));
-        sliderThumb.setBounds(jmax(0, xPos), 0, width, getHeight());
-    }
-    else
-    {
-        const int height = jmax(thumbHeight*2, getSliderPosition(SliderType::bottom));
-        sliderThumb.setBounds(0, getSliderPosition(SliderType::top), getWidth(), height);
-    }
+    sliderThumb.setBounds(0, 0, getWidth(), getHeight());
+    sliderThumbBounds = getLocalBounds();
+    /*
+        if(!isVertical)
+        {
+            const int xPos = getSliderPosition(SliderType::left);
+            const int width = jmax(thumbWidth*2, getSliderPosition(SliderType::right));
+            sliderThumb.setBounds(jmax(0, xPos), 0, width, getHeight());
+        }
+        else
+        {
+            const int height = jmax(thumbHeight*2, getSliderPosition(SliderType::bottom));
+            sliderThumb.setBounds(0, getSliderPosition(SliderType::top), getWidth(), height);
+        }
+    	 */
 }
 
 int RangeSlider::getSliderPosition(SliderType type)
@@ -515,6 +521,50 @@ void RangeSlider::verticalDrag(const MouseEvent& event)
     sendValuesToCsound(value1, value2);
 }
 
+
+void RangeSlider::setValue(float val1, float val2)
+{
+    if(currentThumb==0)//only update size if the host is controlling the slider
+    {
+        if(!isVertical)
+        {
+#ifdef Cabbage_Build_Standalone
+            cUtils::debug(String(index)+" Value:"+String(value));
+            if(type==RangeSlider::left)
+            {
+                int left = (value/(max-min))*width;
+                sliderThumb.setBounds(sliderThumbBounds.withLeft(jmax(0, left)));
+                sliderThumbBounds = sliderThumb.getBounds();
+            }
+            else if(type==RangeSlider::right)
+            {
+                int right = (value/(max-min))*width;
+                sliderThumb.setBounds(sliderThumbBounds.withRight(jmin(getWidth(), right)));
+                sliderThumbBounds = sliderThumb.getBounds();
+            }
+#else
+            cUtils::debug(String(index)+" Value:"+String(val1*(max-min)*10.f));
+            int left = val1*width;
+            sliderThumb.setBounds(sliderThumbBounds.withLeft(jmax(0, left)));
+            sliderThumbBounds = sliderThumb.getBounds();
+
+            int right = val2*width;
+            cUtils::getBoundsString(sliderThumb.getBounds());
+            sliderThumb.setBounds(sliderThumbBounds.withRight(jmin((int)width, right)));
+            sliderThumbBounds = sliderThumb.getBounds();
+            repaint();
+
+#endif
+
+
+        }
+    }
+
+    //maxVal = value;
+    //minVal = value;
+}
+
+
 void RangeSlider::horizontalDrag(const MouseEvent& event)
 {
     if(currentThumb == 1)
@@ -546,10 +596,19 @@ void RangeSlider::horizontalDrag(const MouseEvent& event)
 
 void RangeSlider::sendValuesToCsound(double val1, double val2)
 {
-    if(owner->getFilter()->csoundCompiledOk())
+    if(owner->getFilter()->csoundCompiledOk()==OK)
     {
-        owner->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channels.getReference(0), isVertical ? val2 : val1);
-        owner->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channels.getReference(1), isVertical ? val1 : val2);
+#ifdef Cabbage_Build_Standalone
+        owner->getFilter()->setParameter(index, (float)(val1));
+        owner->getFilter()->setParameterNotifyingHost(index, (float)(val1));
+        owner->getFilter()->setParameter(index+1, (float)(val2));
+        owner->getFilter()->setParameterNotifyingHost(index+1, (float)(val2));
+#else
+        owner->getFilter()->setParameter(index, (float)(val1/(maxVal-minVal)*0.1f));
+        owner->getFilter()->setParameterNotifyingHost(index, (float)(val1/(maxVal-minVal)*0.1f));
+        owner->getFilter()->setParameter(index+1, (float)(val2/(maxVal-minVal)*0.1f));
+        owner->getFilter()->setParameterNotifyingHost(index+1, (float)(val2/(maxVal-minVal)*0.1f));
+#endif
     }
 }
 
@@ -636,7 +695,6 @@ void RangeSlider::paint(Graphics& g)
 
 void RangeSlider::showPopup()
 {
-    /*
     if(shouldDisplayPopup)
     {
         String popupText;
@@ -649,7 +707,6 @@ void RangeSlider::showPopup()
 
         owner->showBubble(this, popupText);
     }
-     */
 }
 
 void RangeSlider::update(CabbageGUIType cAttr)
@@ -706,7 +763,19 @@ CabbageRangeSlider2::CabbageRangeSlider2(CabbageGUIType &cAttr, CabbagePluginAud
     textLabel(text),
     isVertical(cAttr.getStringProp(CabbageIDs::kind)=="horizontal" ? false : true)
 {
+    cUtils::debug(cAttr.getNumProp(CabbageIDs::sliderskew));
+
     addAndMakeVisible(&slider);
+    slider.setBounds(cAttr.getNumProp(CabbageIDs::left),
+                     cAttr.getNumProp(CabbageIDs::top),
+                     cAttr.getNumProp(CabbageIDs::width),
+                     cAttr.getNumProp(CabbageIDs::height));
+
+    if(!isVertical)
+    {
+        slider.setValue(cAttr.getNumProp(CabbageIDs::minvalue), cAttr.getNumProp(CabbageIDs::maxvalue));
+    }
+
     textLabel.setColour(Label::textColourId, Colour::fromString(textColour));
     textLabel.setColour(Label::outlineColourId, Colours::transparentBlack);
     addAndMakeVisible(&textLabel);

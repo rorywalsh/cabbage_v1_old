@@ -803,29 +803,14 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                             screenWidth = cAttr.getNumProp(CabbageIDs::width);
                             screenHeight = cAttr.getNumProp(CabbageIDs::height);
                         }
-                        //if(cAttr.getStringArrayProp(CabbageIDs::identchannelarray).size()==0)
-                        //    cAttr.setStringProp(CabbageIDs::identchannel, cAttr.getStringProp(CabbageIDs::channel)+"_ident");
 
                         warningMessage = "";
                         warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
                         if(cAttr.getWarningMessages().isNotEmpty())
                             csound->Message(warningMessage.toUTF8().getAddress());
 
-                        //showMessage(csdLine);
-                        cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
-                        if(cAttr.getStringProp("native").length()>0)
-                        {
-                            //create generic plugin editor and break..
-                            //setupNativePluginEditor();
-                            nativePluginEditor = true;
-                            return;
-                        }
-
-
                         if(cAttr.getNumProp(CabbageIDs::guirefresh)>1)
                             guiRefreshRate = cAttr.getNumProp(CabbageIDs::guirefresh);
-                        //showMessage(cAttr.getStringProp("type"));
-
 
                         if(tokes[0].equalsIgnoreCase(String("socketsend")))
                         {
@@ -842,7 +827,6 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                                 Logger::writeToLog(cAttr.getStringArrayPropValue("channel", i));
                                 socketChannelValues.set(cAttr.getStringArrayPropValue("channel", i), 0.f);
                             }
-                            //cUtils::debug(socketChannelValues.size());
                         }
                         else if(tokes[0].equalsIgnoreCase(String("socketreceive")))
                         {
@@ -859,7 +843,6 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                                 Logger::writeToLog(cAttr.getStringArrayPropValue("channel", i));
                                 socketChannelValues.set(cAttr.getStringArrayPropValue("channel", i), 0.f);
                             }
-                            //cUtils::debug(socketChannelValues.size());
                         }
 
 
@@ -869,10 +852,6 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                         //set up stuff for tables
                         if(tokes[0].equalsIgnoreCase(String("table")))
                         {
-                            /*                            if(cAttr.getStringArrayProp(CabbageIDs::channel).size()==0)
-                             for(int i=0; i<cAttr.getIntArrayProp("tablenumber").size(); i++)
-                             cAttr.addDummyChannel("dummy"+String(i));*/
-
                             for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channel).size(); i++)
                                 cAttr.addTableChannelValues();
 
@@ -895,7 +874,6 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                                 CabbageGUIType copy(cAttr);
                                 copy.setStringProp(CabbageIDs::channel, cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
                                 copy.setStringProp(CabbageIDs::identchannel, cAttr.getStringArrayProp(CabbageIDs::identchannelarray).getReference(i));
-                                //Logger::writeToLog(cAttr.getStringArrayProp(CabbageIDs::channelarray).getReference(i));
                                 guiLayoutCtrls.add(copy);
                                 widgetTypes.add("layout");
                                 guiID++;
@@ -915,11 +893,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                                 setPluginName(cAttr.getStringProp("caption"));
                             else setPluginName("Untitled Cabbage Patch!");
 
-                        //StringArray log = logGUIAttributes(cAttr, String("Non-Interactive"));
-                        //debugMessageArray.addArray(logGUIAttributes(cAttr, String("Non-Interactive")));
                         sendChangeMessage();
-                        //if instrument uses any of the host widgets, or an xypad, turn
-                        //on the timer
                         if(tokes[0].equalsIgnoreCase(String("hostbpm"))
                                 ||tokes[0].equalsIgnoreCase(String("hosttime"))
                                 ||tokes[0].equalsIgnoreCase(String("hostplaying"))
@@ -955,8 +929,6 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                         //xypad contain two control paramters, one for x axis and another for y. As such we add two
                         //to our contorl vector so that plugin hosts display two sliders. We name one of the xypad pads
                         // 'dummy' so that our editor doesn't display it. Our editor only needs to show one xypad.
-
-
                         if(tokes[0].equalsIgnoreCase(String("xypad")))
                         {
                             cAttr.setStringProp(CabbageIDs::xychannel, String("X"));
@@ -1732,14 +1704,13 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
         //add index of control that was changed to dirty control vector, unless it's a combobox.
         if(getGUICtrls(index).getStringProp(CabbageIDs::type)!=CabbageIDs::combobox)
             dirtyControls.addIfNotAlreadyThere(index);
-        //Logger::writeToLog("parameterSet:"+String(newValue));
+
         if(index<(int)guiCtrls.size())//make sure index isn't out of range
         {
 #ifndef Cabbage_Build_Standalone
             //scaling in here because incoming values in plugin mode range from 0-1
             range = getGUICtrls(index).getNumProp(CabbageIDs::range);
             comboRange = getGUICtrls(index).getNumProp(CabbageIDs::comborange);
-            //Logger::writeToLog("inValue:"+String(newValue));
             min = getGUICtrls(index).getNumProp(CabbageIDs::min);
 
             if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::xypad)

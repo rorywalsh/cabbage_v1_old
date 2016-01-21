@@ -1537,6 +1537,7 @@ void CabbageGUIType::parse(String inStr, String identifier)
 
                     if(strTokens.size()>3)
                     {
+                        cUtils::debug(strTokens[3]);
                         cabbageIdentifiers.set(CabbageIDs::sliderskew, strTokens[3].trim().getDoubleValue());
                         tempArray.add(strTokens[3].trim());
                     }

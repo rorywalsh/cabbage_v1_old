@@ -158,7 +158,7 @@ public:
         return *this;
     }
    #endif
-
+  
     //==============================================================================
     /** Returns the object that this ScopedPointer refers to. */
     inline operator ObjectType*() const noexcept                                    { return object; }

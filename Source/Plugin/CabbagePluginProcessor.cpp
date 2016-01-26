@@ -2307,12 +2307,14 @@ void CabbagePluginAudioProcessor::getStateInformation (MemoryBlock& destData)
             char string[4096] = {0};
             csound->GetStringChannel(guiLayoutCtrls[i].getStringProp(CabbageIDs::channel).toUTF8().getAddress(), string);
             xml.setAttribute ("filebutton_"+guiLayoutCtrls[i].getStringProp(CabbageIDs::channel), String(string));
-            Logger::writeToLog("filebutton_"+guiLayoutCtrls[i].getStringProp(CabbageIDs::channel));
-            Logger::writeToLog(String(string));
         }
         else if(guiLayoutCtrls[i].getStringProp(CabbageIDs::type)==CabbageIDs::sourcebutton)
         {
             xml.setAttribute("sourcebutton", csdFile.getFullPathName());
+        }
+        else if(guiLayoutCtrls[i].getStringProp(CabbageIDs::type)==CabbageIDs::texteditor)
+        {
+            xml.setAttribute(guiLayoutCtrls[i].getStringProp(CabbageIDs::name), guiLayoutCtrls[i].getStringProp(CabbageIDs::text));
         }
 
 #ifdef CABBAGE_AU
@@ -2343,6 +2345,11 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
                 addWidgetsToEditor(true);
                 recompileCsound(csdFile);
                 updateHostDisplay();
+            }
+            else if(xmlState->getAttributeName(i).contains("texteditor"))
+            {
+                String channel = xmlState->getAttributeName(i).substring(11);
+                guiLayoutCtrls[i].setStringProp(CabbageIDs::text, xmlState->getAttributeValue(i));
             }
         }
 #endif

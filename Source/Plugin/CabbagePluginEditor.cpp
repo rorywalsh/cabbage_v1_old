@@ -477,6 +477,12 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
     if(textEditor)
     {
         getFilter()->messageQueue.addOutgoingChannelMessageToQueue(textEditor->channel, textEditor->getCurrentText(), "string");
+
+        if(textEditor->getProperties().getWithDefault("index", -9999))
+        {
+            getFilter()->getGUILayoutCtrls(textEditor->getProperties().getWithDefault("index", -9999)).setStringProp(CabbageIDs::text, textEditor->getCurrentText());
+        }
+
     }
 
     CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(source);
@@ -3213,7 +3219,11 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                     {
                                         selectedFile = selectedFiles[0];
                                         if(filetype.contains("snaps"))
+                                        {
                                             savePresetsFromParameters(selectedFile, "create");
+                                            int value = getFilter()->getGUILayoutCtrls(i).getNumProp(CabbageIDs::value)==1 ? 0 : 1;
+                                            getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel), value);
+                                        }
                                         else
                                             getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
                                                     selectedFile.getFullPathName(),
@@ -3836,6 +3846,11 @@ void CabbagePluginAudioProcessorEditor::savePresetsFromParameters(File selectedF
     for(int i=0; i<getFilter()->getGUICtrlsSize(); i++)
         xml.setAttribute(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel), getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value));
 
+    for(int i=0; i<getFilter()->getGUILayoutCtrlsSize(); i++)
+        if (getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type) == CabbageIDs::texteditor)
+            xml.setAttribute(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel),
+                             dynamic_cast<CabbageTextEditor*>(layoutComps[i])->editor->getText());
+
     File file(selectedFile.getFullPathName());
     file.replaceWithText(xml.createDocument(""));
 }
@@ -3882,6 +3897,18 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
             }
 
         }
+
+        for(int i=0; i<getFilter()->getGUILayoutCtrlsSize(); i++)
+        {
+            if (getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type) == CabbageIDs::texteditor)
+            {
+                String newText = xml->getStringAttribute(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel));
+                CabbageTextEditor *p = dynamic_cast<CabbageTextEditor*>(layoutComps[i]);
+                p->editor->setText(newText, false);
+                p->textEditorReturnKeyPressed(*(p->editor));
+            }
+        }
+
     }
 }
 //==========================================================================================

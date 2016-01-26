@@ -476,13 +476,9 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
     CabbageTextEditor* textEditor = dynamic_cast<CabbageTextEditor*>(source);
     if(textEditor)
     {
+        //cUtils::debug(getFilter()->getGUILayoutCtrls(textEditor->getProperties().getWithDefault("index", -9999)).getStringProp(CabbageIDs::name));
         getFilter()->messageQueue.addOutgoingChannelMessageToQueue(textEditor->channel, textEditor->getCurrentText(), "string");
-
-        if(textEditor->getProperties().getWithDefault("index", -9999))
-        {
-            getFilter()->getGUILayoutCtrls(textEditor->getProperties().getWithDefault("index", -9999)).setStringProp(CabbageIDs::text, textEditor->getCurrentText());
-        }
-
+        getFilter()->getGUILayoutCtrls(textEditor->getProperties().getWithDefault("index", -9999)).setStringProp(CabbageIDs::text, textEditor->getCurrentText());
     }
 
     CabbageSlider* cabSlider = dynamic_cast<CabbageSlider*>(source);

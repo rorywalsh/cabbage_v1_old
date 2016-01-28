@@ -524,12 +524,13 @@ void RangeSlider::verticalDrag(const MouseEvent& event)
 
 void RangeSlider::setValue(float val1, float val2)
 {
+	/*
     if(currentThumb==0)//only update size if the host is controlling the slider
     {
         if(!isVertical)
         {
 #ifdef Cabbage_Build_Standalone
-            cUtils::debug(String(index)+" Value:"+String(value));
+            //cUtils::debug(String(index)+" Value:"+String(value));
             if(type==RangeSlider::left)
             {
                 int left = (value/(max-min))*width;
@@ -562,6 +563,7 @@ void RangeSlider::setValue(float val1, float val2)
 
     //maxVal = value;
     //minVal = value;
+*/
 }
 
 

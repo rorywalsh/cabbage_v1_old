@@ -6,8 +6,12 @@
 if [ $1 == "standalone" ]
 then
 	echo "Building Standalone Only"	
-	rm -rf ./build/Debug/Cabbage.app
-	xcodebuild -project Cabbage.xcodeproj/
+	xcodebuild -project Cabbage.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
+	cp -rf ../../Docs/_book ./build/Release/Cabbage.app/Contents/MacOS/Docs
+	cp opcodes.txt ./build/Release/Cabbage.app/Contents/MacOS/opcodes.txt 
+	cp IntroScreen.csd ./build/Release/Cabbage.app/Contents/MacOS/IntroScreen.csd
+	cp cabbage.png  ./build/Release/Cabbage.app/Contents/MacOS/cabbage.png 
+	cp cabbageEarphones.png  ./build/Release/Cabbage.app/Contents/MacOS/cabbageEarphones.png 
 fi
 
 if [ $1 == "bundle" ]

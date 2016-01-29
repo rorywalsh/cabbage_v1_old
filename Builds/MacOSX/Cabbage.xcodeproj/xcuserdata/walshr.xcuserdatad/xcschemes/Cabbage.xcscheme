@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/walshr/sourcecode/cabbageaudio/test.csd"
+            argument = "/Users/walshr/Documents/CabbageFiles/test.csd"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

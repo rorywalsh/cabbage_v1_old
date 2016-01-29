@@ -582,8 +582,8 @@ void RangeSlider::setValue(float val1, float val2)
             int topPos = getSkewedPosition((val1/(max-min)));
             int bottomPos = getSkewedPosition(val2/(max-min))+thumbWidth;
 #else
-            int leftPos = getSkewedPosition(val1);
-            int rightPos = getSkewedPosition(val2);
+            int topPos = getSkewedPosition(val1);
+            int bottomPos = getSkewedPosition(val2);
 #endif
             sliderThumb.setBounds(sliderThumbBounds.withTop(jmax(0, topPos)));
             sliderThumbBounds = sliderThumb.getBounds();

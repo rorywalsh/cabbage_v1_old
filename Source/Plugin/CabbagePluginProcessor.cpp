@@ -147,7 +147,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile, Poin
         csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
 #endif
         //cUtils::showMessage(csdFile.getFullPathName());
-#elseif AndroidBuild
+//#elseif AndroidBuild
 //        File inFile(File::getSpecialLocation(File::currentApplicationFile));
 //        ScopedPointer<InputStream> fileStream;
 //        fileStream = File(inFile.getFullPathName()).createInputStream();

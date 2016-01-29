@@ -21,7 +21,6 @@
 #define __PLUGINEDITOR_H_F4EBBBA1__
 
 #include  "../CabbageCustomWidgets.h"
-#include "../CabbageStepper.h"
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "CabbagePluginProcessor.h"
 #include "../CabbagePropertiesDialog.h"

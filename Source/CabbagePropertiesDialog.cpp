@@ -19,7 +19,9 @@
 */
 
 #include "CabbagePropertiesDialog.h"
+#ifdef CABBAGE_HOST
 #include "./Host/SidebarPanel.h"
+#endif
 
 ControlProperty::ControlProperty(String name, var _value):
     PropertyComponent(name),

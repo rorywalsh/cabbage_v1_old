@@ -3021,7 +3021,7 @@ class RangeSlider	:	public Component
     bool shouldDisplayPopup, isVertical;
     String colour, text;
     Colour trackerColour;
-    double value1, value2, min, trackerThickness, initVal, minVal, maxVal, max, incr, skew;
+    double min, trackerThickness, initVal, minVal, maxVal, max, incr, skew;
     float thumbIncr;
     int thumbWidth, thumbHeight, rangeDistance, currentThumb, index;
     float width, height;
@@ -3086,6 +3086,7 @@ public:
     int getSliderPosition(SliderType type);
     void showPopup();
     double getSkewedValue(double proportion);
+    int getSkewedPosition(double proportion);
     void sendValuesToCsound(double val1, double val2);
 
     Rectangle<int> getThumbOuterBounds(int type);

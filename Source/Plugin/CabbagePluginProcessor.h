@@ -34,9 +34,6 @@
 //#include "CabbageGenericAudioProcessorEditor.h"
 #include "../CabbageLookAndFeel.h"
 
-//sample widget
-//#include "../CabbageStepper.h"
-
 #ifndef Cabbage_No_Csound
 #ifdef AndroidBuild
 #include "AndroidCsound.hpp"

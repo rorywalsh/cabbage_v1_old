@@ -441,6 +441,8 @@ public:
         textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
         //slider->setPopupDisplayEnabled (true, 0);
 
+        slider->setVelocityBasedMode(true);
+
         slider->setColour(Slider::textBoxHighlightColourId, Colours::lime.withAlpha(.2f));
         //slider->setColour(Slider::rotarySliderFillColourId, Colours::red);
         slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
@@ -2075,6 +2077,9 @@ public:
 
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
         keyboard->setLowestVisibleKey(cAttr.getNumProp(CabbageIDs::value));
+
+        keyboard->setOctaveForMiddleC(cAttr.getNumProp(CabbageIDs::middlec));
+
 #ifdef AndroidBuild
         keyboard->setKeyWidth(30);
 #endif

@@ -898,6 +898,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::width, 400);
         cabbageIdentifiers.set(CabbageIDs::height, 100);
         cabbageIdentifiers.set(CabbageIDs::value, 60);
+        cabbageIdentifiers.set(CabbageIDs::middlec, 3);
         cabbageIdentifiers.set(CabbageIDs::type, "keyboard");
         cabbageIdentifiers.set(CabbageIDs::name, "keyboard");
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
@@ -1604,6 +1605,11 @@ void CabbageGUIType::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("svgdebug"))
             {
                 cabbageIdentifiers.set(CabbageIDs::svgdebug, strTokens[0].trim().getFloatValue());
+            }
+
+            else if(identArray[indx].equalsIgnoreCase("middlec"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::middlec, strTokens[0].trim().getFloatValue());
             }
 
             else if(identArray[indx].equalsIgnoreCase("fill"))

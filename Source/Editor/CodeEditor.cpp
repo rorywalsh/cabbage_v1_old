@@ -331,9 +331,12 @@ void CsoundCodeEditor::closeCurrentFile()
             }
         }
 
-        setActiveTab(currentEditor);
-        currentEditor--;
-        resized();
+        if(currentEditor>0)
+        {
+            setActiveTab(currentEditor);
+            currentEditor--;
+            resized();
+        }
 
     }
 }
@@ -631,8 +634,15 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
 //==============================================================================
 void CsoundCodeEditorComponenet::handleReturnKey ()
 {
-    insertNewLine("\n");
-    //sendActionMessage("make popup invisible");
+    if(getSelectedText().length()>0)
+    {
+        CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
+        CodeDocument::Position endPos(this->getDocument(), getHighlightedRegion().getEnd());
+        this->getDocument().deleteSection(startPos, endPos);
+        insertNewLine("\n");
+    }
+    else
+        insertNewLine("\n");
 }
 
 void CsoundCodeEditorComponenet::editorHasScrolled()

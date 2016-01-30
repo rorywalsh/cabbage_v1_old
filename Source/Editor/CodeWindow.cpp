@@ -837,7 +837,7 @@ void CodeWindow::showCabbageHelp()
     String path;
     StringArray tokens;
     tokens.addTokens(textEditor->editor[textEditor->currentEditor]->getLineText(), false);
-    
+
     String file = tokens[0];
     if(file.contains("slider"))
         file = "slider";
@@ -847,7 +847,7 @@ void CodeWindow::showCabbageHelp()
         file = "button_info";
     else if(file.contains("output"))
         file = "csound_output";
-    
+
 #if defined(LINUX) || defined(MACOSX)
     path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/"+file+".html";
 #else

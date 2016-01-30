@@ -96,8 +96,7 @@ public:
         add("directorylist");
         add("transport");
         add("groupbox");
-        //sample widget
-        add("stepper");
+        //sample widgetadd("stepper");
     }
 
     ~GUILayoutCtrlsArray() {}
@@ -189,10 +188,11 @@ public:
         add("color:0");
         add("color:1");
         add("text");
+        add("middlec");
         add("gradient");
         add("svgfile");
         add("svgdebug");
-        //sample identifiers for stepper widget
+//sample identifiers for stepper widget
         add("numberofsteps");
         add("stepbpm");
     }
@@ -272,6 +272,7 @@ static const Identifier comborange = "comborange";
 static const Identifier populate = "populate";
 static const Identifier popup = "popup";
 static const Identifier gradient = "gradient";
+static const Identifier middlec = "middlec";
 static const Identifier svgpath = "svgpath";
 static const Identifier plant = "plant";
 static const Identifier trackerthickness = "trackerthickness";

@@ -1,6 +1,6 @@
 ECHO "Build script for Cabbage on Windows. See README.txt for more information"
 
-CALL g++ csound.cpp -o csound.exe -I ..\..\..\csound64\include -L ..\..\..\csound64\build -lcsound64
+CALL g++ csound.cpp -o csoundCabbage.exe -I ..\..\..\csound64\include -L ..\..\..\csound64\build -lcsound64
 
 CALL mingw32-make -f MakefileStandalone64.mak CONFIG=Release clean
 CALL mingw32-make -f MakefileStandalone64.mak -j8 CONFIG=Release

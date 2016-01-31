@@ -53,8 +53,6 @@ fi
 	cp ./build/CabbageStudio CabbageBuild/CabbageStudio
 	cp -rf ../../Docs/_book CabbageBuild/Docs
 	cp -rf ../../Examples/ CabbageBuild/Examples
-	cp ../../Images/cabbage.png CabbageBuild/cabbage.png
-	cp ../../Images/CabbageStudio.png CabbageBuild/CabbageStudio.png
 	sed "s@CURRENTDIR@$(pwd)@" dummy.desktop > CabbageBuild/cabbage.desktop
 	cp CabbageBuild/cabbage.desktop ~/.local/share/applications/
 	sed "s@CURRENTDIR@$(pwd)@" dummyStudio.desktop > CabbageBuild/cabbageStudio.desktop

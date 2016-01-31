@@ -2099,6 +2099,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                         yieldCounter = 0;
                         sendOutgoingMessagesToCsound();
                         updateCabbageControls();
+                        sendChangeMessage();
                     }
                     else
                         ++yieldCounter;
@@ -2125,6 +2126,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                         ++current_buffer;
                         ++pos;
                     }
+
                 }
                 else
                     buffer.clear();
@@ -2140,6 +2142,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 
             rmsLeft = buffer.getRMSLevel(0, 0, numSamples);
             rmsRight = buffer.getRMSLevel(1, 0, numSamples);
+            currentBuffer = buffer;
 
         }//if not compiled just mute output
         else
@@ -2152,6 +2155,8 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                 }
             }
         }
+
+
 
 #endif
     }

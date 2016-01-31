@@ -590,7 +590,7 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
 //==============================================================================
 
 //==============================================================================
-// listener Callback - updates WinXound compiler output with Cabbage messages
+// listener Callback
 //==============================================================================
 void StandaloneFilterWindow::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 {
@@ -610,6 +610,12 @@ void StandaloneFilterWindow::changeListenerCallback(juce::ChangeBroadcaster* /*s
     	}
     */
     updateEditorOutputConsole=true;
+
+    if(specty)
+    {
+        specty->setAudioBlock(filter->currentBuffer);
+    }
+
 }
 //==============================================================================
 // Delete filter
@@ -995,10 +1001,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             subMenu.addItem(7, String("Always on Top"), true, true);
         else
             subMenu.addItem(7, String("Always on Top"), true, false);
-//        if(getPreference(appProperties, "ShowConsoleWithEditor"))
-//            subMenu.addItem(20, String("Auto-launch Csound Console with Editor"), true, true);
-//        else
-//            subMenu.addItem(20, String("Auto-launch Csound Console with Editor"), true, false);
+
         //preferences....
         subMenu.addItem(203, "Set Cabbage Plant Directory");
         subMenu.addItem(200, "Set Csound Manual Directory");
@@ -1020,11 +1023,6 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         else
             subMenu.addItem(300, String("Use native file dialogue"), true, true);
 
-//        if(!getPreference(appProperties, "showTabs"))
-//            subMenu.addItem(298, String("Show tabs in editor"), true, false);
-//        else
-//            subMenu.addItem(298, String("Show tabs in editor"), true, true);
-
         if(!getPreference(appProperties, "DisableGUIEditModeWarning"))
             subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, false);
         else
@@ -1032,28 +1030,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
         subMenu.addItem(301, String("Set external editor"), true, false);
 
-        //if(!getPreference(appProperties, "EnablePopupDisplay"))
-        //subMenu.addItem(207, String("Enable opcode popup help display"), true, false);
-        //else
-        //subMenu.addItem(207, String("Enable opcode popup help display"), true, true);
-
-
-//        if(!getPreference(appProperties, "UseCabbageIO"))
-//            subMenu.addItem(204, String("Use Cabbage IO"), true, false);
-//        else
-//            subMenu.addItem(204, String("Use Cabbage IO"), true, true);
-//when buiding for inclusion with the Windows Csound installer comment out
-//this section
-//#if !defined(LINUX) && !defined(MACOSX)
-//        if(!getPreference(appProperties, "UsingCabbageCsound"))
-//            subMenu.addItem(206, String("Using Cabbage-Csound"), true, false);
-//        else
-//            subMenu.addItem(206, String("Using Cabbage-Csound"), true, true);
-//#endif
-//END of commented section for Windows Csound installer
         m.addSubMenu("Preferences", subMenu);
         m.addItem(2000, "About");
-        //m.addItem(2345, "Test button");
+        m.addItem(6000, "View Spectrogram");
     }
 
     int options = m.showAt (&optionsButton);
@@ -1503,6 +1482,14 @@ void StandaloneFilterWindow::buttonClicked (Button*)
                     //setPreference(appProperties, "ExternalEditor", 0);
                 }
             else m_ShowMessage("Open or create a file first", &getLookAndFeel());
+        }
+    }
+    else if(options==6000)
+    {
+        if(!specty)
+        {
+            specty = new CabbageSpectrogram();
+            specty->setVisible(true);
         }
     }
     isUsingExternalEditor = getPreference(appProperties, "ExternalEditor");

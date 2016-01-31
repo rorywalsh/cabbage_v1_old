@@ -2316,7 +2316,7 @@ void CabbagePluginAudioProcessorEditor::InsertFileButton(CabbageGUIType &cAttr)
     float top = cAttr.getNumProp(CabbageIDs::top);
     float width = cAttr.getNumProp(CabbageIDs::width);
     float height = cAttr.getNumProp(CabbageIDs::height);
-    setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
+    setPositionOfComponent(left, top, width, height, cabbageButton, cAttr.getStringProp("reltoplant"));
     cabbageButton->button->addListener(this);
     //((CabbageButton*)layoutComps[idx])->button->setName("button");
     if(cAttr.getStringArrayProp(CabbageIDs::text).size()>0)
@@ -4061,16 +4061,8 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                                 static_cast<CabbageRangeSlider2*>(comps[index])->update(getFilter()->getGUICtrls(index));
 
 #ifndef Cabbage_Build_Standalone
-//                            if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::kind)=="horizontal")
-//                            {
                             static_cast<CabbageRangeSlider2*>(comps[index])->getSlider().setValue(getFilter()->getParameter(index),
                                     getFilter()->getParameter(index+1));
-//                            }
-//                            else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::kind)=="vertical")
-//                            {
-//                                static_cast<CabbageRangeSlider2*>(comps[index])->getSlider().setValue(getFilter()->getParameter(index+1),
-//                                        getFilter()->getParameter(index));
-//                            }
 #endif
                         }
                     }

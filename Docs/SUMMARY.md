@@ -20,6 +20,8 @@
 	* [Keyboard](keyboard.md)
 	* [Labels](label.md)
 	* [Sliders](sliders.md)	
+	* [Hrange](hrange.md)	
+	* [Vrange](vrange.md)	
 	* [Soundfiler](soundfiler.md)
 	* [Table (Deprecated)](table.md)
 	* [Textbox](textbox.md)

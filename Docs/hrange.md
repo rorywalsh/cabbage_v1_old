@@ -1,29 +1,29 @@
-# Sliders
+# Hrange
 
-Slider can be used to create an on-screen slider. Data can be sent to Csound on the channel specified through the channel string. Sliders can be rotary, vertical or horizontal, and can react in both a linear and non-linear fashion. 
+Create an on-screen slider with a dragable, and user selectable range. Data can be sent to Csound on the channel specified through the channel string.  
 
 
 ```csharp
-hslider bounds(x, y, width, height), channel("chan"), \
+hrange bounds(x, y, width, height), channel("chan"), \
 text("name"), textbox(val), range(min, max, value, skew, incr), \
 min(val), max(val), textcolour("colour"), fontcolour("colour"), \
 trackercolour("colour"), outlinecolour("colour"), trackerthickness(val)
 identchannel("channel"), alpha(val), visible(val), caption("caption"), \
 rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") \
-active(val), svgfile("type", "file")
+active(val)
 ```
 <!--(End of syntax)/-->
 
 ##Identifiers
 **bounds(x, y, width, height)** integer values that set position and size on screen(in pixels). 
 
-**channel("chan")** "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode. If you are using a hslider2 or vslider2 widget you will need to pass two channel names, e.g., channel("sliderMin", "slidermax"), as the slider will be sending data over two channels. 
+**channel("min", "max")** The names of the channels that Cabbage will communicate with Csound on. The current value of this widget#s min and max can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode.  
 
-**range(min, max, value, skew, incr)** the first 2 parameters are required. The rest are optional. The first two parameters let you set the minimum value and the maximum value. The next parameter determines the initial value of the slider. If you are using slider with 2 thumbs, you must pass two values here separated by a colon. For example, if you are using a hslider2, your range() identifiers might read range(0, 100, 20:60, 1, .1). The next allows you to adjust the skew factor. Tweaking the skew factor can cause the slider to output values in a non linear fashion. A skew of 0.5 will cause the slider to output values in an exponential fashion. A skew of 1 is the default value, which causes the slider to behave is a typical linear form. The final parameter sets the incremental step size for the slider. If you need to have very fine control of steps you may wish to look at using an [Endless Encoder](./encoder.md) instead. 
+**range(min, max, value, skew, incr)** the first 2 parameters are required. The rest are optional. The first two parameters let you set the minimum value and the maximum value. The next parameter determines the initial value of the slider. For a range slider you must pass two values here separated by a colon. For example, your range() identifier might read range(0, 100, 20:60, 1, .1). The next parameter allows you to adjust the skew factor. Tweaking the skew factor can cause the slider to output values in a non linear fashion. A skew of 0.5 will cause the slider to output values in an exponential fashion. A skew of 1 is the default value, which causes the slider to behave is a typical linear form. The final parameter sets the incremental step size for the slider. If you need to have very fine control of steps you may wish to look at using an [Endless Encoder](./encoder.md) instead. 
 
-**min(val)** If using a double or triple pointer slider (hslider2, hslider3, vslider2, vslider3), min() will set the default minimum position of the minimum thumb controller. The absolute minimum is set using the range identifier. See above.
+**min(val)** min() will set the default minimum position of the minimum thumb controller. The absolute minimum is set using the range identifier. This identifier is not needed if you passed two values to the range identifier. See above. 
 
-**max(val)** If using a double or triple pointer slider (hslider2, hslider3, vslider2, vslider3), max() will set the default maximum position of the maximum thumb controller. The absolute maximum is set using the range identifier. See above. 
+**max(val)** max() will set the default maximum position of the maximum thumb controller. The absolute maximum is set using the range identifier. See above. This identifier is not needed if you passed two values to the range identifier. See above.  
 
 **text("name")** The string passed in for "name" will appear on a label beside the slider. This is useful for naming sliders.   
 
@@ -53,31 +53,11 @@ active(val), svgfile("type", "file")
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
-**svgfile("type", "file")** Use this identifier to pass a unique svg file to use instead of the default look and feel. "type" should be one of the following:
-
-- "background" : sets the slider background image
-- "slider" : sets the slider thumb, or in the case of a rotary slider, the inner circle. This image moves in sympathy with that the mouse as users move the slider.
-
-For more information see [Using SVGs](./using_svgs.md)
-
 **popuptext("text")** Sets the text that will appear in the popup text bubble when a user hovers over the widget. This can be used to override the defaul text which displays the channel name and the current value. 
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 
 <!--(End of identifiers)/-->
-
-##Slider types:
-
-* *rslider*, a standard rotary or knob slider
-
-* *hslider*, a standard horizontal slider
-
-* *vslider*, a standard vertical slider
-
-* *hslider2*, two value horizontal range slider (**deprecated, use hrange**)
-
-* *vslider2*, two value vertical range slider (**deprecated, use vrange**)
-
 
 >Make sure to use two unique channel names when using hslider2 and vslider2, otherwise min and max will be set to the same value. 
 
@@ -85,14 +65,13 @@ For more information see [Using SVGs](./using_svgs.md)
 
 ```csharp
 <Cabbage>
-form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)
-vslider bounds(12, 8, 35, 200), channel("vslider1"), range(0, 1, .6), colour("yellow"), textbox(1)
-vslider bounds(48, 8, 30, 200), channel("vslider2"), range(0, 1, .6), trackercolour("purple")
-rslider bounds(88, 8, 50, 50), text("R-Slider"), channel("rslider1"), range(0, 1, 0)
-rslider bounds(88, 62, 50, 50), channel("rslider2"), range(0, 1, .5), colour("lime"), trackercolour("pink")
-hslider bounds(144, 8, 200, 30), channel("hslider1"), range(0, 1, .2), trackercolour("red"), textbox(1)
-hslider bounds(144, 42, 200, 30), text("H-Slider"), channel("hslider2"), range(0, 1, 1)
+form caption("Test") size(615, 480), pluginID("add1"), guirefresh(1) 
+hrange bounds(92, 16, 400, 30), channel("rangeone1", "rangetwo1"), range(-2000, 100, -100:100, 1, .001)
+hrange bounds(92, 50, 400, 30), channel("rangeone2", "rangetwo2"), range(-2000, 100, -300:200, 1, .001)
+vrange bounds(16, 16, 36, 119), channel("vrange1", "vrange2"), range(0, 300, 10:200, 1, 1)
+hrange bounds(92, 84, 400, 30) channel("rangeone2", "rangetwo2"), range(-2000, 100, -1000:-100, 1, .001)
+vrange bounds(54, 16, 36, 119), channel("vrange1", "vrange2"), range(0, 300, 0:100, 1, 1)
 </Cabbage>
 ```
 
-![](images/sliderExample.png)
+![](images/rangeSliders.png)

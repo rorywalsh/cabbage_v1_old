@@ -256,6 +256,9 @@ StandaloneFilterWindow::~StandaloneFilterWindow()
 // MOD - End
 #endif
 
+
+    specty = nullptr;
+
     PropertySet* const globalSettings = getGlobalSettings();
 
     if (globalSettings != nullptr)

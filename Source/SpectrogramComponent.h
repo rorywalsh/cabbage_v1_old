@@ -19,7 +19,7 @@ public:
           nextFFTBlockReady (false)
     {
         setOpaque (true);
-        startTimerHz (60);
+        startTimer(100);
         setSize (700, 500);
     }
 
@@ -85,7 +85,7 @@ public:
         const int imageHeight = spectrogramImage.getHeight();
 
         // first, shuffle our image leftwards by 1 pixel..
-        spectrogramImage.moveImageSection (0, 0, 1, 0, rightHandEdge, imageHeight);
+        spectrogramImage.moveImageSection (0, 0, 2, 0, rightHandEdge, imageHeight);
 
         // then render our FFT data..
         forwardFFT.performFrequencyOnlyForwardTransform (fftData);
@@ -98,15 +98,16 @@ public:
         {
             const float skewedProportionY = 1.0f - std::exp (std::log (y / (float) imageHeight) * 0.2f);
             const int fftDataIndex = jlimit (0, fftSize / 2, (int) (skewedProportionY * fftSize / 2));
-            const float level = jmap (fftData[fftDataIndex], 0.0f, maxLevel.getEnd(), 0.0f, 1.0f);
+            const float level = jmap(fftData[fftDataIndex], 0.0f, maxLevel.getEnd(), 0.0f, 1.0f);
 
-            spectrogramImage.setPixelAt (rightHandEdge, y, Colour::fromHSV (level, 1.0f, level, 1.0f));
+            spectrogramImage.setPixelAt(rightHandEdge, y, Colour::fromHSV (level, 1.0f, level, 1.0f));
+            spectrogramImage.setPixelAt(rightHandEdge-1, y, Colour::fromHSV (level, 1.0f, level, 1.0f));
         }
     }
 
     enum
     {
-        fftOrder = 12,
+        fftOrder = 10,
         fftSize  = 1 << fftOrder
     };
 

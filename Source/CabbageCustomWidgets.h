@@ -3084,6 +3084,7 @@ public:
     void mouseUp(const MouseEvent& event);
     void mouseEnter(const MouseEvent& event);
     void mouseDrag(const MouseEvent& event);
+    void mouseMove(const MouseEvent& event);
     void horizontalDrag(const MouseEvent& event);
     void verticalDrag(const MouseEvent& event);
     void paint(Graphics& g);
@@ -3092,7 +3093,7 @@ public:
     void showPopup();
     double getSkewedValue(double proportion);
     int getSkewedPosition(double proportion);
-    void sendValuesToCsound(double val1, double val2);
+    void sendValuesToCsound(double val1, double val2, int thumb);
 
     Rectangle<int> getThumbOuterBounds(int type);
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RangeSlider);

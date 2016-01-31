@@ -4060,8 +4060,18 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                             if(getFilter()->getGUICtrls(index).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
                                 static_cast<CabbageRangeSlider2*>(comps[index])->update(getFilter()->getGUICtrls(index));
 
-                            ((CabbageRangeSlider2*)comps[index])->getSlider().setValue(getFilter()->getParameter(index),
+#ifndef Cabbage_Build_Standalone
+//                            if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::kind)=="horizontal")
+//                            {
+                            static_cast<CabbageRangeSlider2*>(comps[index])->getSlider().setValue(getFilter()->getParameter(index),
                                     getFilter()->getParameter(index+1));
+//                            }
+//                            else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::kind)=="vertical")
+//                            {
+//                                static_cast<CabbageRangeSlider2*>(comps[index])->getSlider().setValue(getFilter()->getParameter(index+1),
+//                                        getFilter()->getParameter(index));
+//                            }
+#endif
                         }
                     }
                 }

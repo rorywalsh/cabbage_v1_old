@@ -3110,6 +3110,7 @@ class CabbageRangeSlider2	:	public Component
     RangeSlider slider;
     Label textLabel;
     bool isVertical;
+    float initVal1, initVal2, min, max;
 
 public:
 

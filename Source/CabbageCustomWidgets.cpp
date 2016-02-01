@@ -626,9 +626,8 @@ void RangeSlider::sendValuesToCsound(double val1, double val2, int thumb)
         }
 
 #else
-        const float value1 = ((abs(min)+val1)/(max-min));
-        const float value2 = ((max-min)-(max-val2))/(max-min);
-
+        const float value1 = jmap(val1, min, max, 0.0, 1.0);
+        const float value2 = jmap(val2, min, max, 0.0, 1.0);
 
         if(thumb==1)
             owner->getFilter()->setParameterNotifyingHost(index, value1);
@@ -787,21 +786,15 @@ CabbageRangeSlider2::CabbageRangeSlider2(CabbageGUIType &cAttr, CabbagePluginAud
     slider.setBounds(cAttr.getNumProp(CabbageIDs::left), cAttr.getNumProp(CabbageIDs::top),
                      cAttr.getNumProp(CabbageIDs::width), cAttr.getNumProp(CabbageIDs::height));
 
-    float initMinVal = cAttr.getNumProp(CabbageIDs::minvalue);
-    float initMaxVal = cAttr.getNumProp(CabbageIDs::maxvalue);
-    float min = cAttr.getNumProp(CabbageIDs::min);
-    float max = cAttr.getNumProp(CabbageIDs::max);
-    const float range = max-min;
-    const float val1 = ((abs(min)+initMinVal)/(max-min));
-    const float val2 = ((max-min)-(max-initMaxVal))/(max-min);
+    initVal1 = cAttr.getNumProp(CabbageIDs::minvalue);
+    initVal2 = cAttr.getNumProp(CabbageIDs::maxvalue);
+    min = cAttr.getNumProp(CabbageIDs::min);
+    max = cAttr.getNumProp(CabbageIDs::max);
 
+    const float value1 = jmap(initVal1, min, max, 0.f, 1.f);
+    const float value2 = jmap(initVal2, min, max, 0.f, 1.f);
 
-    //if(!isVertical)
-    slider.setValue(val1, val2);
-    //else
-    //    slider.setValue(val2, val1);
-
-
+    slider.setValue(value1, value2);
 
     textLabel.setColour(Label::textColourId, Colour::fromString(textColour));
     textLabel.setColour(Label::outlineColourId, Colours::transparentBlack);
@@ -829,6 +822,10 @@ void CabbageRangeSlider2::resized()
             textLabel.setVisible(true);
             slider.setBounds(width, 0, getWidth()-(width*1.10), getHeight());
         }
+
+        const float value1 = jmap(initVal1, min, max, 0.f, 1.f);
+        const float value2 = jmap(initVal2, min, max, 0.f, 1.f);
+        slider.setValue(value1, value2);
     }
     else
         slider.setBounds(getLocalBounds());

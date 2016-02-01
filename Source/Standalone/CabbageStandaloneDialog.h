@@ -25,7 +25,8 @@
 #include "../Plugin/CabbagePluginProcessor.h"
 #include "../Plugin/CabbagePluginEditor.h"
 #include "../CabbageAudioDeviceSelectorComponent.h"
-#include "../SpectrogramComponent.h"
+//#include "../SpectrogramComponent.h"
+//#include "../dRowAudio_AudioOscilloscope.h"
 
 extern ApplicationProperties* appProperties;
 extern PropertySet* defaultPropSet;
@@ -42,7 +43,10 @@ public:
                                                 DocumentWindow::allButtons)
     {
         setUsingNativeTitleBar (true);
-        setContentOwned (spectogram = new SpectrogramComponent(), true);
+        //setContentOwned (spectogram = new SpectrogramComponent(), true);
+        //setContentOwned (oscilloscope = new AudioOscilloscope(), true);
+        //oscilloscope->setSize(300, 300);
+        //oscilloscope->setHorizontalZoom(.00100);
         setResizable (true, true);
         centreWithSize (getWidth(), getHeight());
         setVisible (true);
@@ -58,10 +62,12 @@ public:
 
     void setAudioBlock (AudioSampleBuffer& buffer)
     {
-        spectogram->setAudioBlock(buffer);
+        //spectogram->setAudioBlock(buffer);
+        //oscilloscope->processBlock(buffer.getWritePointer(0), buffer.getNumSamples());
     }
 private:
-    ScopedPointer<SpectrogramComponent> spectogram;
+    //ScopedPointer<SpectrogramComponent> spectogram;
+    //ScopedPointer<AudioOscilloscope> oscilloscope;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageSpectrogram)
 };
 //==============================================================================

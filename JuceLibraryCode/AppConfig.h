@@ -35,8 +35,11 @@
 #define JUCE_MODULE_AVAILABLE_juce_events                   1
 #define JUCE_MODULE_AVAILABLE_juce_graphics                 1
 #define JUCE_MODULE_AVAILABLE_juce_gui_basics               1
-#define JUCE_MODULE_AVAILABLE_juce_opengl                	1
 
+
+#if !defined(MAXOSX) && !defined(WIN32)
+	#define JUCE_MODULE_AVAILABLE_juce_opengl                	1
+#endif
 //==============================================================================
 // juce_audio_devices flags:
 

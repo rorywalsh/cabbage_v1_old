@@ -27,8 +27,8 @@
 #include "modules/juce_gui_basics/juce_gui_basics.h"
 #include "modules/juce_gui_extra/juce_gui_extra.h"
 
+
 #if !defined(MAXOSX) && !defined(WIN32)
-    sdf
 	#include "modules/juce_opengl/juce_opengl.h"
 #endif
 

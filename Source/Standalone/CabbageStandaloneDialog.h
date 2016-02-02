@@ -25,8 +25,7 @@
 #include "../Plugin/CabbagePluginProcessor.h"
 #include "../Plugin/CabbagePluginEditor.h"
 #include "../CabbageAudioDeviceSelectorComponent.h"
-//#include "../SpectrogramComponent.h"
-//#include "../dRowAudio_AudioOscilloscope.h"
+
 
 extern ApplicationProperties* appProperties;
 extern PropertySet* defaultPropSet;
@@ -34,42 +33,6 @@ extern String currentApplicationDirectory;
 extern StringArray undoHistory;
 class StandaloneFileDialogue;
 
-//==============================================================================
-class CabbageSpectrogram    : public DocumentWindow
-{
-public:
-    CabbageSpectrogram()  : DocumentWindow (ProjectInfo::projectName,
-                                                Colours::lightgrey,
-                                                DocumentWindow::allButtons)
-    {
-        setUsingNativeTitleBar (true);
-        //setContentOwned (spectogram = new SpectrogramComponent(), true);
-        //setContentOwned (oscilloscope = new AudioOscilloscope(), true);
-        //oscilloscope->setSize(300, 300);
-        //oscilloscope->setHorizontalZoom(.00100);
-        setResizable (true, true);
-        centreWithSize (getWidth(), getHeight());
-        setVisible (true);
-    }
-
-    void closeButtonPressed() override
-    {
-        // This is called when the user tries to close this window. Here, we'll just
-        // ask the app to quit when this happens, but you can change this to do
-        // whatever you need.
-        delete this;
-    }
-
-    void setAudioBlock (AudioSampleBuffer& buffer)
-    {
-        //spectogram->setAudioBlock(buffer);
-        //oscilloscope->processBlock(buffer.getWritePointer(0), buffer.getNumSamples());
-    }
-private:
-    //ScopedPointer<SpectrogramComponent> spectogram;
-    //ScopedPointer<AudioOscilloscope> oscilloscope;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageSpectrogram)
-};
 //==============================================================================
 class CsoundMessageConsole : public DocumentWindow
 {
@@ -222,7 +185,6 @@ private:
     String consoleMessages;
     ScopedPointer<CsoundMessageConsole> outputConsole;
     StringArray previousScoreEvents;
-    ScopedPointer<CabbageSpectrogram> specty;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StandaloneFilterWindow);

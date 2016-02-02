@@ -42,6 +42,7 @@
 #endif
 #endif
 
+#include <cwindow.h>
 #include "csdl.h"
 
 
@@ -145,6 +146,12 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     static int OpenMidiOutputDevice(CSOUND * csnd, void **userData, const char *devName);
     static int ReadMidiData(CSOUND *csound, void *userData, unsigned char *mbuf, int nbytes);
     static int WriteMidiData(CSOUND *csound, void *userData, const unsigned char *mbuf, int nbytes);
+
+    //graphing functions
+    static void makeGraphCallback(CSOUND *csound, WINDAT *windat, const char *name);
+    static void drawGraphCallback(CSOUND *csound, WINDAT *windat);
+    static void killGraphCallback(CSOUND *csound, WINDAT *windat);
+    static int exitGraphCallback(CSOUND *csound);
 #endif
 
     void updateCabbageControls();
@@ -397,8 +404,9 @@ public:
     void getStateInformation (MemoryBlock& destData);
     void setStateInformation (const void* data, int sizeInBytes);
     StringArray getTableStatement(int tableNum);
-    const Array<double, CriticalSection> getTable(int tableNum);
+    //const Array<double, CriticalSection> getTable(int tableNum);
     const Array<float, CriticalSection> getTableFloats(int tableNum);
+    const Array<float, CriticalSection> getFFTTableFloats(int tableNum);
     void initialiseWidgets(String source, bool refresh);
     void addWidgetsToEditor(bool refresh);
     int checkTable(int tableNum);
@@ -538,7 +546,12 @@ public:
         return pluginName;
     }
 
+    //hold values from function tables
     Array<Array <float > > tableArrays;
+    //holds value from FFT function table created using dispfft
+    Array<Array <float, CriticalSection > > fftArrays;
+    Array<int> windowIDs;
+
 
     Array<float> getTableArray(int index)
     {

@@ -96,7 +96,9 @@ public:
         add("directorylist");
         add("transport");
         add("groupbox");
-        //sample widgetadd("stepper");
+        add("fftdisplay");
+        //sample widget
+        add("stepper");
     }
 
     ~GUILayoutCtrlsArray() {}

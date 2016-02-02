@@ -3131,4 +3131,54 @@ public:
     void update(CabbageGUIType &cAttr) {}
 
 };
+
+
+class CabbageFFTDisplay	:	public Component
+{
+    String name;
+    Colour colour, backgroundColour;
+
+public:
+
+    CabbageFFTDisplay (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner)
+        : Component(),
+          owner(_owner),
+          internalCounter(0)
+    {}
+
+    ~CabbageFFTDisplay()
+    {}
+
+    void paint(Graphics& g)
+    {
+        g.fillAll(Colour(30, 30, 30));
+
+        g.setColour(Colours::lime);
+        for (int i=0; i<points.size(); i++)
+        {
+            int position = jmap(i, 0, points.size(), 0, getWidth());
+            g.drawVerticalLine(i, getHeight()-(3*points[i]*2*getHeight()), getHeight());
+        }
+    }
+
+    void setPoints(Array<float, CriticalSection> _points)
+    {
+        if(internalCounter==0)
+        {
+            points = _points;
+            repaint();
+        }
+
+        internalCounter = internalCounter>10 ? 0 : internalCounter+1;
+    }
+
+    void update(CabbageGUIType m_cAttr) {}
+
+private:
+    CabbagePluginAudioProcessorEditor* owner;
+    Array<float, CriticalSection> points;
+    int internalCounter;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageFFTDisplay);
+};
 #endif

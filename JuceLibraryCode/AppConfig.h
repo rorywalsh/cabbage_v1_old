@@ -43,6 +43,10 @@
 //==============================================================================
 // juce_audio_devices flags:
 
+#ifndef    DROWAUDIO_USE_CURL
+ #define DROWAUDIO_USE_CURL 0
+#endif
+
 #ifndef    JUCE_ASIO
  #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST) 
    #define JUCE_ASIO 1

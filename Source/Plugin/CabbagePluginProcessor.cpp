@@ -355,7 +355,14 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
     csound->SetExternalMidiReadCallback(ReadMidiData);
     csound->SetExternalMidiOutOpenCallback(OpenMidiOutputDevice);
     csound->SetExternalMidiWriteCallback(WriteMidiData);
-    csound->SetIsGraphable(0);
+
+
+    csound->SetIsGraphable(true);
+    csound->SetMakeGraphCallback(makeGraphCallback);
+    csound->SetDrawGraphCallback(drawGraphCallback);
+    csound->SetKillGraphCallback(killGraphCallback);
+    csound->SetExitGraphCallback(exitGraphCallback);
+
 
     csoundChanList = NULL;
     numCsoundChannels = 0;
@@ -503,7 +510,11 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
     csound->SetExternalMidiWriteCallback(WriteMidiData);
     //csound->SetIsGraphable(0);
 
-
+    csound->SetIsGraphable(true);
+    csound->SetMakeGraphCallback(makeGraphCallback);
+    csound->SetDrawGraphCallback(drawGraphCallback);
+    csound->SetKillGraphCallback(killGraphCallback);
+    csound->SetExitGraphCallback(exitGraphCallback);
 
     csoundParams = nullptr;
     csoundParams = new CSOUND_PARAMS();
@@ -515,7 +526,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
     //csoundParams->control_rate_override = cUtils::getKrFromFile(file.getFullPathName(), (int)getSampleRate());
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
-    csound->SetOption((char*)"-d");
+    //csound->SetOption((char*)"-d");
 
     setScreenMacros();
 
@@ -1004,6 +1015,38 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
         else break;
     } //end of scan through entire csd text, control vectors are now populated
 
+}
+
+//===========================================================================================
+// graphing functions...
+//===========================================================================================
+
+void CabbagePluginAudioProcessor::makeGraphCallback(CSOUND *csound, WINDAT *windat, const char * /*name*/)
+{
+    CabbagePluginAudioProcessor *ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
+    ud->windowIDs.addIfNotAlreadyThere(windat->windid);
+    cUtils::debug("tableID:"+String(windat->windid));
+    ud->fftArrays.resize(ud->windowIDs.size());
+}
+
+void CabbagePluginAudioProcessor::drawGraphCallback(CSOUND *csound, WINDAT *windat)
+{
+    CabbagePluginAudioProcessor *ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
+    Array<float, CriticalSection> points = Array<float, CriticalSection>(&windat->fdata[0], windat->npts);
+    ud->fftArrays.getReference(windat->windid).swapWith(points);
+}
+
+void CabbagePluginAudioProcessor::killGraphCallback(CSOUND *csound, WINDAT *windat)
+{
+    CabbagePluginAudioProcessor *udata = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
+    cUtils::debug("killGraphCallback");
+}
+
+int CabbagePluginAudioProcessor::exitGraphCallback(CSOUND *csound)
+{
+    CabbagePluginAudioProcessor *udata = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
+    cUtils::debug("exitGraphCallback");
+    return 0;
 }
 
 //===========================================================================================
@@ -1602,23 +1645,11 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
     return fdata;
 }
 //==============================================================================
-const Array<double, CriticalSection> CabbagePluginAudioProcessor::getTable(int tableNum)
+const Array<float, CriticalSection> CabbagePluginAudioProcessor::getFFTTableFloats(int tableNum)
 {
-    Array<double, CriticalSection> points;
-    if(csCompileResult==OK)
-    {
-        int tableSize=0;
-#ifndef Cabbage_No_Csound
-        MYFLT* temp;
-        tableSize = csound->GetTable(temp, tableNum);
-#else
-        float *temp;
-#endif
-        if(tableSize>0)
-            points = Array<double, CriticalSection>(temp, tableSize);
-    }
-    return points;
+    return fftArrays.getReference(tableNum);
 }
+
 
 const Array<float, CriticalSection> CabbagePluginAudioProcessor::getTableFloats(int tableNum)
 {
@@ -1702,8 +1733,13 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
 #ifndef Cabbage_No_Csound
         float range, min, comboRange;
         //add index of control that was changed to dirty control vector, unless it's a combobox.
+#ifdef Cabbage_Build_Standalone
+        if(!getGUICtrls(index).getStringProp("filetype").contains("snaps"))
+            dirtyControls.addIfNotAlreadyThere(index);
+#else
         if(getGUICtrls(index).getStringProp(CabbageIDs::type)!=CabbageIDs::combobox)
             dirtyControls.addIfNotAlreadyThere(index);
+#endif
 
         if(index<(int)guiCtrls.size())//make sure index isn't out of range
         {

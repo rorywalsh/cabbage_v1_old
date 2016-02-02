@@ -205,6 +205,7 @@ private:
     void InsertGenTable(CabbageGUIType &cAttr);
     void InsertTextbox(CabbageGUIType &cAttr);
     void InsertRangeSlider(CabbageGUIType &cAttr);
+    void InsertFFTDisplay(CabbageGUIType &cAttr);
     //example insert stepper method
     void InsertStepper(CabbageGUIType &cAttr);
     void InsertNumberBox(CabbageGUIType &cAttr);

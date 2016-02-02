@@ -965,6 +965,27 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
     }
 
     //===============stepper==================//
+    else if(strTokens[0].trim() == "fftdisplay")
+    {
+        cabbageIdentifiers.set("basetype", "layout");
+        top = 10;
+        left = 10;
+        width = 180;
+        height = 2;
+
+        cabbageIdentifiers.set(CabbageIDs::top, 10);
+        cabbageIdentifiers.set(CabbageIDs::left, 10);
+        cabbageIdentifiers.set(CabbageIDs::width, 260);
+        cabbageIdentifiers.set(CabbageIDs::height, 100);
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::type, "fftdisplay");
+        cabbageIdentifiers.set(CabbageIDs::name, "fftdisplay");
+        cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+        cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+        cabbageIdentifiers.set(CabbageIDs::visible, 1);
+    }
+
+    //===============stepper==================//
     else if(strTokens[0].trim() == "stepper")
     {
         cabbageIdentifiers.set("basetype", "layout");

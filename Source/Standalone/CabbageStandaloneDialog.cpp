@@ -256,9 +256,6 @@ StandaloneFilterWindow::~StandaloneFilterWindow()
 // MOD - End
 #endif
 
-
-    specty = nullptr;
-
     PropertySet* const globalSettings = getGlobalSettings();
 
     if (globalSettings != nullptr)
@@ -597,27 +594,7 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
 //==============================================================================
 void StandaloneFilterWindow::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 {
-    /*
-    String text;
-    if(!cabbageCsoundEditor || !outputConsole){
-    	for(int i=0;i<filter->getDebugMessageArray().size();i++)
-    		  {
-    			  if(filter->getDebugMessageArray().getReference(i).length()>0)
-    			  {
-    				  text += String(filter->getDebugMessageArray().getReference(i).toUTF8());
-
-    			  }
-
-    		  }
-    	consoleMessages = consoleMessages+text+"\n";
-    	}
-    */
     updateEditorOutputConsole=true;
-
-    if(specty)
-    {
-        specty->setAudioBlock(filter->currentBuffer);
-    }
 
 }
 //==============================================================================
@@ -1035,7 +1012,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
         m.addSubMenu("Preferences", subMenu);
         m.addItem(2000, "About");
-        m.addItem(6000, "View Spectrogram");
+        //m.addItem(6000, "View Spectrogram");
     }
 
     int options = m.showAt (&optionsButton);
@@ -1489,11 +1466,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     }
     else if(options==6000)
     {
-        if(!specty)
-        {
-            specty = new CabbageSpectrogram();
-            specty->setVisible(true);
-        }
+
     }
     isUsingExternalEditor = getPreference(appProperties, "ExternalEditor");
     repaint();

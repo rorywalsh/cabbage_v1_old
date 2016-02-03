@@ -622,7 +622,7 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
             insertTextAtCaret (String::charToString (key.getTextCharacter()));
             scrollToKeepCaretOnScreen();
         }
-        else if(key.getKeyCode() ==  268435488)
+        else if(key.getKeyCode() ==  KeyPress::tabKey && key.getModifiers().isShiftDown())
             handleTabKey("backwards");
         else if(key ==  KeyPress::tabKey)
             handleTabKey("forwards");
@@ -745,7 +745,7 @@ void CsoundCodeEditorComponenet::toggleComments()
     {
         String lineText = csdArray[i];
         if(lineText.substring(0, 1)==";")
-            csdArray.set(i, lineText.substring(1));
+            csdArray.set(i, lineText.substring(lineText.indexOf(";")+1));
         else
             csdArray.set(i, ";"+lineText);
 
@@ -1254,6 +1254,7 @@ void CsoundCodeEditorComponenet::handleTabKey(String direction)
             for(int i=startPos.getLineNumber(); i<endPos.getLineNumber()+1; i++)
                 csdArray.set(i, "\t"+csdArray[i]);
         }
+
         setAllText(csdArray.joinIntoString("\n"));
         highlightLines(startPos.getLineNumber(), endPos.getLineNumber());
 

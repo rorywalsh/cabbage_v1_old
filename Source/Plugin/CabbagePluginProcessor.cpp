@@ -1724,7 +1724,7 @@ float CabbagePluginAudioProcessor::getParameter (int index)
         return 0.0f;
     }
 }
-
+//-------------------------------------------------------------------------------------------
 void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
 {
     if(isPositiveAndBelow(index, getGUICtrlsSize()))

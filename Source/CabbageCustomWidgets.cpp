@@ -639,6 +639,9 @@ void RangeSlider::sendValuesToCsound(double val1, double val2, int thumb)
             owner->getFilter()->setParameterNotifyingHost(index+1, value2);
         }
 #endif
+
+        owner->getFilter()->getGUICtrls(index).setNumProp(CabbageIDs::minvalue, val1);
+        owner->getFilter()->getGUICtrls(index+1).setNumProp(CabbageIDs::maxvalue, val2);
     }
 
 }

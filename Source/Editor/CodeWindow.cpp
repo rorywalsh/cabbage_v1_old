@@ -963,7 +963,7 @@ void CodeWindow::newFile(String type)
         untitledCSD=
             "<Cabbage>\n"
             "form caption(\"Untitled\") size(400, 300), colour(58, 110, 182), pluginID(\"def1\")\n"
-            "rslider bounds(296, 162, 100, 100), channel(\"gain\"), text(\"Gain\"), trackercolour(\"lime\"), outlinecolour(0, 0, 0, 50), textcolour(\"black\")\n"
+            "rslider bounds(296, 162, 100, 100), channel(\"gain\"), range(0, 1, 0, 1, .01), text(\"Gain\"), trackercolour(\"lime\"), outlinecolour(0, 0, 0, 50), textcolour(\"black\")\n"
             "\n"
             "</Cabbage>\n"
             "<CsoundSynthesizer>\n"

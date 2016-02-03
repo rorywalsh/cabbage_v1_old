@@ -8,7 +8,7 @@
 ApplicationProperties* appProperties = nullptr;
 PropertySet* defaultPropSet = nullptr;
 String currentApplicationDirectory;
-CabbageTimer* cabbageTimer =nullptr;
+
 StringArray undoHistory;
 
 
@@ -83,7 +83,6 @@ public:
         appProperties->closeFiles();
         deleteAndZero(appProperties);
         deleteAndZero(defaultPropSet);
-        deleteAndZero(cabbageTimer);
         deleteAndZero(lookAndFeel);
         deleteAndZero(lookAndFeelBasic);
     }

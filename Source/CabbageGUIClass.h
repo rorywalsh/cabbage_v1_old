@@ -194,6 +194,7 @@ public:
         add("gradient");
         add("svgfile");
         add("svgdebug");
+        add("ffttablenumber");
 //sample identifiers for stepper widget
         add("numberofsteps");
         add("stepbpm");
@@ -331,6 +332,7 @@ static const Identifier child = "child";
 static const Identifier scrollbars = "scrollbars";
 static const Identifier socketport = "socketport";
 static const Identifier socketaddress = "socketaddress";
+static const Identifier ffttablenumber = "ffttablenumber";
 
 //list of static consts for types of widgets
 static const String combobox = "combobox";

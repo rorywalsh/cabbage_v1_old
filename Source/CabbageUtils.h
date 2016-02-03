@@ -53,7 +53,44 @@ using namespace std;
 
 #define OK 0
 
+//simple to hold information about about fft displays
+class fftDisplay
+{
+public:
+    float yScale;
+    int windid, min ,max, size;
+    String caption;
 
+    fftDisplay(String _caption, int _id, float _scale, int _min, int _max, int _size):
+        caption(_caption),
+        windid(_id),
+        yScale(_scale),
+        min(_min),
+        max(_max),
+        size(_size)
+    {}
+
+    ~fftDisplay()
+    {
+        points.clear();
+    }
+
+    Array<float, CriticalSection> getPoints()
+    {
+        return points;
+    }
+
+    void setPoints(Array <float, CriticalSection > tablePoints)
+    {
+        points.swapWith(tablePoints);
+    }
+
+private:
+    Array <float, CriticalSection > points;
+};
+
+
+//not used yet.....
 class KeyboardShortcutKeys
 {
 public:
@@ -76,90 +113,8 @@ public:
     int keyCode;
     ModifierKeys mods;
     ScopedPointer<XmlElement> xmlData;
-
 };
 
-class CabbageTimer : public Timer,
-    public ActionBroadcaster
-{
-public:
-    CabbageTimer(): time(0), go(false)
-    {
-    };
-    ~CabbageTimer() {};
-
-    void timerCallback()
-    {
-        time++;
-        if(time>seconds)
-        {
-            sendActionMessage(event);
-            stopTimer();
-        }
-    }
-
-    bool startTimedEvent(int _seconds, String _event)
-    {
-        time=0;
-        seconds = _seconds,
-        event =_event;
-        startTimer(200);
-        return true;
-    }
-
-
-
-    bool go;
-    int time;
-    int seconds;
-    String event;
-};
-
-
-//simple component class for popup displays
-class PopupText : public Component,
-    public Timer
-{
-public:
-    PopupText():timerCount(0) {}
-    ~PopupText() {}
-
-    void setText(String input)
-    {
-        Font font = Font ("Verdana", 11.5, 1);
-        textWidth = font.getStringWidth(input);
-        setSize(textWidth, 15);
-        text = input;
-        timerCount = 0;
-        startTimer(20);
-    }
-
-    void timerCallback()
-    {
-        timerCount++;
-        if(timerCount>30)
-        {
-            stopTimer();
-            setVisible(false);
-        }
-    }
-
-    void paint(Graphics &g)
-    {
-        g.fillAll(Colours::whitesmoke);
-        g.setColour(Colours::black);
-
-        g.drawFittedText (text,
-                          0, 0, textWidth, getHeight(),
-                          Justification::centredLeft, 1);
-    }
-
-private:
-    float textWidth;
-    int timerCount;
-    String text;
-
-};
 
 //===========================================================================================
 //some utility functions used across classes...

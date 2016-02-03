@@ -87,7 +87,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      firstTime(true),
      isMuted(false),
      isBypassed(false),
-     vuCounter(0)
+     vuCounter(0),
+     updateFFTDisplay(false)
 {
     codeEditor = nullptr;
     if(compileCsoundAndCreateGUI(false)==0)
@@ -129,7 +130,8 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile, Poin
     isMuted(false),
     isBypassed(false),
     vuCounter(0),
-    scale(instrScale)
+    scale(instrScale),
+    updateFFTDisplay(false)
 {
     //If a sourcefile is not given, Cabbage plugins always try to load a csd file with the same name as the plugin library.
     //Therefore we need to find the name of the library and append a '.csd' to it.
@@ -823,40 +825,6 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                         if(cAttr.getNumProp(CabbageIDs::guirefresh)>1)
                             guiRefreshRate = cAttr.getNumProp(CabbageIDs::guirefresh);
 
-                        if(tokes[0].equalsIgnoreCase(String("socketsend")))
-                        {
-                            //set up server...
-                            server = new CabbageInterprocessConnectionServer (*this);
-                            socketChannelIdentifiers.clear();
-                            socketChannelValues.clear();
-                            openInterprocess(false, true, cAttr.getStringProp(CabbageIDs::socketaddress),
-                                             cAttr.getNumProp(CabbageIDs::socketport));
-
-                            for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channel).size(); i++)
-                            {
-                                socketChannelIdentifiers.add(cAttr.getStringArrayPropValue("channel", i));
-                                Logger::writeToLog(cAttr.getStringArrayPropValue("channel", i));
-                                socketChannelValues.set(cAttr.getStringArrayPropValue("channel", i), 0.f);
-                            }
-                        }
-                        else if(tokes[0].equalsIgnoreCase(String("socketreceive")))
-                        {
-                            server = new CabbageInterprocessConnectionServer (*this);
-                            socketChannelIdentifiers.clear();
-                            socketChannelValues.clear();
-
-                            openInterprocess(false, false, cAttr.getStringProp(CabbageIDs::socketaddress),
-                                             cAttr.getNumProp(CabbageIDs::socketport));
-
-                            for(int i=0; i<cAttr.getStringArrayProp(CabbageIDs::channel).size(); i++)
-                            {
-                                socketChannelIdentifiers.add(cAttr.getStringArrayPropValue("channel", i));
-                                Logger::writeToLog(cAttr.getStringArrayPropValue("channel", i));
-                                socketChannelValues.set(cAttr.getStringArrayPropValue("channel", i), 0.f);
-                            }
-                        }
-
-
                         csdLine = "";
 
 
@@ -1025,15 +993,30 @@ void CabbagePluginAudioProcessor::makeGraphCallback(CSOUND *csound, WINDAT *wind
 {
     CabbagePluginAudioProcessor *ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
     ud->windowIDs.addIfNotAlreadyThere(windat->windid);
-    cUtils::debug("tableID:"+String(windat->windid));
-    ud->fftArrays.resize(ud->windowIDs.size());
+    cUtils::debug("tableMin:"+String(windat->min));
+    cUtils::debug("tableMa:"+String(windat->max));
+
+    fftDisplay* fft = new fftDisplay(String(windat->caption),windat->windid, windat->oabsmax, windat->min, windat->max, windat->npts);
+
+    bool addFFT = true;
+    for(int i=0; i<ud->fftArrays.size(); i++)
+    {
+        if(ud->fftArrays[i]->windid==windat->windid)
+            addFFT = false;
+    }
+
+    if(addFFT)
+        ud->fftArrays.add(fft);
+
+    //cUtils::debug(String(ud->fftArrays.size())+":"+String(windat->windid));
 }
 
 void CabbagePluginAudioProcessor::drawGraphCallback(CSOUND *csound, WINDAT *windat)
 {
     CabbagePluginAudioProcessor *ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
-    Array<float, CriticalSection> points = Array<float, CriticalSection>(&windat->fdata[0], windat->npts);
-    ud->fftArrays.getReference(windat->windid).swapWith(points);
+    Array<float, CriticalSection> tablePoints = Array<float, CriticalSection>(&windat->fdata[0], windat->npts);
+    ud->fftArrays.getUnchecked(windat->windid)->setPoints(tablePoints);
+    ud->updateFFTDisplay = true;
 }
 
 void CabbagePluginAudioProcessor::killGraphCallback(CSOUND *csound, WINDAT *windat)
@@ -1296,81 +1279,6 @@ void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
     }
 
 #endif
-}
-
-//============= deal with interprocess communication =========================
-void CabbagePluginAudioProcessor::CabbageInterprocessConnection::messageReceived(const MemoryBlock& message)
-{
-    StringArray data;
-    data.addTokens(message.toString(), " ");
-    owner.messageQueue.addOutgoingChannelMessageToQueue(data[0], data[1].getFloatValue());
-    //owner.appendMessage ("Connection #" + String (ourNumber) + " - message received: " + message.toString());
-}
-
-void CabbagePluginAudioProcessor::openInterprocess (bool asSocket, bool asSender, String address, int port)
-{
-    closeInterprocess();
-
-    // Make the appropriate bits of UI visible..
-
-
-    // and try to open the socket or pipe...
-    bool openedOk = false;
-
-    if (asSender)
-    {
-        // if we're connecting to an existing server, we can just create a connection object
-        // directly.
-        ScopedPointer<CabbageInterprocessConnection> newConnection (new CabbageInterprocessConnection (*this));
-
-        if (asSocket)
-        {
-            openedOk = newConnection->connectToSocket(address,
-                       port,
-                       1000);
-        }
-        else
-        {
-            openedOk = newConnection->connectToPipe ("CabbagePipe", 100);
-        }
-
-        if (openedOk)
-        {
-            activeConnections.add (newConnection.release());
-
-        }
-        else
-            csound->Message("Couldn't create connection?");
-    }
-    else
-    {
-        // if we're starting up a server, we need to tell the server to start waiting for
-        // clients to connect. It'll then create connection objects for us when clients arrive.
-        if (asSocket)
-        {
-            openedOk = server->beginWaitingForSocket (port);
-
-            if (openedOk)
-                csound->Message("Waiting for another app to connect to Cabbage server..");
-        }
-        else
-        {
-            ScopedPointer<CabbageInterprocessConnection> newConnection (new CabbageInterprocessConnection (*this));
-
-            openedOk = newConnection->createPipe ("CabbagePipe", 100);
-
-            if (openedOk)
-            {
-                csound->Message("Waiting for another app to connect to Cabbage server..");
-                activeConnections.add (newConnection.release());
-            }
-        }
-    }
-
-    if (! openedOk)
-    {
-        csound->Message("Failed to open pipe...");
-    }
 }
 
 //============================================================================
@@ -1645,9 +1553,12 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
     return fdata;
 }
 //==============================================================================
-const Array<float, CriticalSection> CabbagePluginAudioProcessor::getFFTTableFloats(int tableNum)
+fftDisplay* CabbagePluginAudioProcessor::getFFTTable(int tableNum)
 {
-    return fftArrays.getReference(tableNum);
+    if(fftArrays[tableNum])
+        return fftArrays[tableNum];
+    else
+        return new fftDisplay("", -1, 0, 0, 0, 0);
 }
 
 

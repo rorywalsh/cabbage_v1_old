@@ -4341,7 +4341,16 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
                 }
 
-                static_cast<CabbageFFTDisplay*>(layoutComps[i])->setPoints(getFilter()->getFFTTableFloats(0));
+                if(getFilter()->shouldUpdateFFTDisplay())
+                {
+                    const int tableNumber = getFilter()->getGUILayoutCtrls(i).getNumProp(CabbageIDs::ffttablenumber);
+
+                    const int min = getFilter()->getFFTTable(tableNumber)->min;
+                    const int max = getFilter()->getFFTTable(tableNumber)->min;
+                    static_cast<CabbageFFTDisplay*>(layoutComps[i])->setPoints(getFilter()->getFFTTable(tableNumber)->getPoints());
+                    static_cast<CabbageFFTDisplay*>(layoutComps[i])->setBins(min, max);
+                    getFilter()->resetUpdateFFTDisplayFlag();
+                }
             }
         }
 

@@ -977,9 +977,12 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::left, 10);
         cabbageIdentifiers.set(CabbageIDs::width, 260);
         cabbageIdentifiers.set(CabbageIDs::height, 100);
-        cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::tablecolour, Colours::lime.toString());
+        cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::tablebackgroundcolour, Colour(30, 30, 38).toString());
         cabbageIdentifiers.set(CabbageIDs::type, "fftdisplay");
         cabbageIdentifiers.set(CabbageIDs::name, "fftdisplay");
+        cabbageIdentifiers.set(CabbageIDs::ffttablenumber, 0);
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
@@ -1651,6 +1654,11 @@ void CabbageGUIType::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("pivoty"))
             {
                 cabbageIdentifiers.set(CabbageIDs::pivoty, strTokens[0].trim().getFloatValue());
+            }
+
+            else if(identArray[indx].equalsIgnoreCase("ffttablenumber"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::ffttablenumber, strTokens[0].trim().getFloatValue()-1);
             }
 
             else if(identArray[indx].equalsIgnoreCase("pivotx"))

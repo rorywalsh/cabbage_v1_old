@@ -28,7 +28,7 @@
 
 
 extern ApplicationProperties* appProperties;
-extern CabbageTimer* cabbageTimer;
+//extern CabbageTimer* cabbageTimer;
 
 class FlatButton;
 class HelpComp;

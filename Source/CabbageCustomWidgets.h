@@ -441,7 +441,9 @@ public:
         textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
         //slider->setPopupDisplayEnabled (true, 0);
 
-        slider->setVelocityBasedMode(true);
+        //slider->setVelocityBasedMode(true);
+
+        slider->setVelocityModeParameters(1.0, 1, 0.0, true);
 
         slider->setColour(Slider::textBoxHighlightColourId, Colours::lime.withAlpha(.2f));
         //slider->setColour(Slider::rotarySliderFillColourId, Colours::red);
@@ -3136,48 +3138,62 @@ public:
 class CabbageFFTDisplay	:	public Component
 {
     String name;
-    Colour colour, backgroundColour;
+    int minFFTBin, maxFFTBin, size;
+    CabbagePluginAudioProcessorEditor* owner;
+    Array<float, CriticalSection> points;
+    int tableNumber, freq;
+    Colour fontColour, colour, backgroundColour, outlineColour;
 
 public:
 
     CabbageFFTDisplay (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner)
         : Component(),
           owner(_owner),
-          internalCounter(0)
+          tableNumber(cAttr.getNumProp(CabbageIDs::ffttablenumber)),
+          colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablecolour))),
+          backgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablebackgroundcolour))),
+          fontColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
+          minFFTBin(0),
+          maxFFTBin(2048),
+          size(2048)
     {}
 
-    ~CabbageFFTDisplay()
-    {}
+    ~CabbageFFTDisplay() {}
+
+    void setBins(int min, int max)
+    {
+        minFFTBin = min;
+        maxFFTBin = max;
+    }
 
     void paint(Graphics& g)
     {
-        g.fillAll(Colour(30, 30, 30));
+        g.fillAll(backgroundColour);
 
-        g.setColour(Colours::lime);
-        for (int i=0; i<points.size(); i++)
+        g.setColour(fontColour);
+
+        for(int i=0; i<freq; i+=4)
+            g.drawFittedText(String(freq*i), jmap(i, 0, freq, 0, getWidth()), getHeight()-20, 40, 12, Justification::centred, 1);
+
+        g.setColour(colour);
+        for (int i=0; i<size; i++)
         {
-            int position = jmap(i, 0, points.size(), 0, getWidth());
-            g.drawVerticalLine(i, getHeight()-(3*points[i]*2*getHeight()), getHeight());
+            int position = jmap(i, 0, size, 0, getWidth());
+            g.drawVerticalLine(position, getHeight()-(3*points[i]*2*getHeight()), getHeight());
         }
     }
 
     void setPoints(Array<float, CriticalSection> _points)
     {
-        if(internalCounter==0)
-        {
-            points = _points;
-            repaint();
-        }
-
-        internalCounter = internalCounter>10 ? 0 : internalCounter+1;
+        points = _points;
+        size = points.size();
+        freq = 44100/size;
+        //cUtils::debug(points.size());
+        repaint();
     }
 
     void update(CabbageGUIType m_cAttr) {}
 
-private:
-    CabbagePluginAudioProcessorEditor* owner;
-    Array<float, CriticalSection> points;
-    int internalCounter;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageFFTDisplay);
 };

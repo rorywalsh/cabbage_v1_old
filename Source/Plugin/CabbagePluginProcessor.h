@@ -116,6 +116,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     File logFile;
     bool isAutomator;
     bool isWinXP;
+    bool updateFFTDisplay;
     bool isNativeThreadRunning;
     String csoundDebuggerOutput;
     float rmsLeft, rmsRight;
@@ -195,81 +196,6 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 
 public:
 
-    //------------------------------- interprocess comms -------------------------------
-    void appendMessage (const String& message)
-    {
-        cUtils::debug(message);
-    }
-
-
-    class CabbageInterprocessConnection  : public InterprocessConnection
-    {
-    public:
-        CabbageInterprocessConnection (CabbagePluginAudioProcessor& owner_)
-            : InterprocessConnection (true),
-              owner (owner_)
-        {
-            static int totalConnections = 0;
-            ourNumber = ++totalConnections;
-        }
-
-        void connectionMade()
-        {
-            const String message = "Connection #" + String (ourNumber) + " - connection started";
-            owner.csound->Message(message.toUTF8());
-        }
-
-        void connectionLost()
-        {
-            const String message = "Connection #" + String (ourNumber) + " - connection lost";
-            owner.csound->Message(message.toUTF8());
-        }
-
-        void messageReceived (const MemoryBlock& message);
-
-    private:
-        CabbagePluginAudioProcessor& owner;
-        int ourNumber;
-    };
-
-    class CabbageInterprocessConnectionServer   : public InterprocessConnectionServer
-    {
-    public:
-        CabbageInterprocessConnectionServer (CabbagePluginAudioProcessor& owner_)
-            : owner (owner_)
-        {
-        }
-
-        InterprocessConnection* createConnectionObject()
-        {
-            CabbageInterprocessConnection* newConnection = new CabbageInterprocessConnection (owner);
-
-            owner.activeConnections.add (newConnection);
-            return newConnection;
-        }
-
-    private:
-        CabbagePluginAudioProcessor& owner;
-    };
-
-    OwnedArray <CabbageInterprocessConnection, CriticalSection> activeConnections;
-    ScopedPointer<CabbageInterprocessConnectionServer> server;
-    void openInterprocess (bool asSocket, bool asSender, String address, int port);
-
-    void closeInterprocess()
-    {
-        server->stop();
-        activeConnections.clear();
-
-    }
-
-
-    //--------------------------------------------------------------
-
-    bool isFirstTime()
-    {
-        return firstTime;
-    };
     String changeMessage;
     Array<int> dirtyControls;
     bool CSOUND_DEBUG_MODE;
@@ -288,6 +214,20 @@ public:
     int compileCsoundAndCreateGUI(bool isPlugin);
     void setScreenMacros();
 
+    bool isFirstTime()
+    {
+        return firstTime;
+    }
+
+    bool shouldUpdateFFTDisplay()
+    {
+        return updateFFTDisplay;
+    }
+
+    void resetUpdateFFTDisplayFlag()
+    {
+        updateFFTDisplay = false;
+    }
 
     int getNumberCsoundOutChannels()
     {
@@ -406,7 +346,7 @@ public:
     StringArray getTableStatement(int tableNum);
     //const Array<double, CriticalSection> getTable(int tableNum);
     const Array<float, CriticalSection> getTableFloats(int tableNum);
-    const Array<float, CriticalSection> getFFTTableFloats(int tableNum);
+    fftDisplay* getFFTTable(int tableNum);
     void initialiseWidgets(String source, bool refresh);
     void addWidgetsToEditor(bool refresh);
     int checkTable(int tableNum);
@@ -549,7 +489,7 @@ public:
     //hold values from function tables
     Array<Array <float > > tableArrays;
     //holds value from FFT function table created using dispfft
-    Array<Array <float, CriticalSection > > fftArrays;
+    OwnedArray <fftDisplay, CriticalSection> fftArrays;
     Array<int> windowIDs;
 
 

@@ -618,11 +618,15 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
         //else if (key == KeyPress ('[', ModifierKeys::commandModifier, 0))   unindentSelection();
         //else if (key == KeyPress (']', ModifierKeys::commandModifier, 0))   indentSelection();
         else if (key.getTextCharacter() >= ' ')
+        {
             insertTextAtCaret (String::charToString (key.getTextCharacter()));
+            scrollToKeepCaretOnScreen();
+        }
         else if(key.getKeyCode() ==  268435488)
             handleTabKey("backwards");
         else if(key ==  KeyPress::tabKey)
             handleTabKey("forwards");
+
 
 
         else
@@ -643,6 +647,8 @@ void CsoundCodeEditorComponenet::handleReturnKey ()
     }
     else
         insertNewLine("\n");
+
+    scrollToKeepCaretOnScreen();
 }
 
 void CsoundCodeEditorComponenet::editorHasScrolled()
@@ -1124,6 +1130,9 @@ bool CsoundCodeEditorComponenet::deleteBackwards (const bool moveInWholeWordStep
 
 
     }
+
+    scrollToKeepCaretOnScreen();
+
     return true;
 }
 //==============================================================================
@@ -1265,6 +1274,7 @@ void CsoundCodeEditorComponenet::handleTabKey(String direction)
             setAllText(csdArray.joinIntoString("\n"));
             highlightLines(startPos.getLineNumber(), endPos.getLineNumber());
         }
+
 }
 //==============================================================================
 bool CsoundCodeEditorComponenet::moveCaretLeft (const bool moveInWholeWordSteps, const bool selecting)

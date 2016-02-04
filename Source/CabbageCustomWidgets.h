@@ -3150,15 +3150,18 @@ public:
         : Component(),
           owner(_owner),
           tableNumber(cAttr.getNumProp(CabbageIDs::ffttablenumber)),
-          colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablecolour))),
+          colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::colour))),
           backgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablebackgroundcolour))),
           fontColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
           minFFTBin(0),
           maxFFTBin(2048),
           size(2048)
-    {}
+    {
+        cUtils::debug(colour.toString());
+    }
 
-    ~CabbageFFTDisplay() {}
+    ~CabbageFFTDisplay()
+    {}
 
     void setBins(int min, int max)
     {
@@ -3170,16 +3173,38 @@ public:
     {
         g.fillAll(backgroundColour);
 
-        g.setColour(fontColour);
+        //g.setColour(fontColour);
 
-        for(int i=0; i<freq; i+=4)
-            g.drawFittedText(String(freq*i), jmap(i, 0, freq, 0, getWidth()), getHeight()-20, 40, 12, Justification::centred, 1);
+        //for(int i=0; i<freq; i+=4)
+        //    g.drawFittedText(String(freq*i), jmap(i, 0, freq, 0, getWidth()), getHeight()-20, 40, 12, Justification::centred, 1);
 
-        g.setColour(colour);
+
+
+        //g.drawLine()
         for (int i=0; i<size; i++)
         {
-            int position = jmap(i, 0, size, 0, getWidth());
-            g.drawVerticalLine(position, getHeight()-(3*points[i]*2*getHeight()), getHeight());
+            const int position = jmap(i, 0, size, 0, getWidth());
+            const int amp = (points[i]*6*getHeight());
+            const int lineWidth = jmax(1, getWidth()/size);
+            g.setColour(colour);
+
+            if(lineWidth>1)
+            {
+                //g.setColour(colour.withAlpha(.2f));
+                g.fillRect(position, getHeight()-amp, lineWidth, 5);
+                g.setColour(colour.withAlpha(.9f));
+                g.fillRect(position, (getHeight()-amp)+5, lineWidth, 5);
+                g.setColour(colour.withAlpha(.7f));
+                g.fillRect(position, (getHeight()-amp)+10, lineWidth, 5);
+                g.setColour(colour.withAlpha(.5f));
+                g.fillRect(position, (getHeight()-amp)+15, lineWidth, 5);
+                g.setColour(colour.withAlpha(.3f));
+                g.fillRect(position, (getHeight()-amp)+20, lineWidth, getHeight()-(getHeight()-amp));
+            }
+
+            g.drawVerticalLine(position, getHeight()-amp, getHeight());
+            //g.setColour(colour);
+            //g.drawVerticalLine(position, getHeight()-(3*points[i]*2*getHeight()), getHeight()-(3*points[i]*2*getHeight())+5);
         }
     }
 

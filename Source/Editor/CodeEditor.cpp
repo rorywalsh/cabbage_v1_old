@@ -725,6 +725,14 @@ bool CsoundCodeEditorComponenet::pasteFromClipboard()
 
     return true;
 }
+
+bool CsoundCodeEditorComponenet::cutToClipboard()
+{
+    CodeDocument::Position startPos(getDocument(), getCaretPos().getPosition());
+    copyToClipboard();
+    moveCaretTo(startPos, false);
+    return true;
+}
 //==============================================================================
 void CsoundCodeEditorComponenet::toggleComments()
 {

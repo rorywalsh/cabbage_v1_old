@@ -92,6 +92,7 @@ public:
     void codeDocumentTextDeleted(int,int);
     void codeDocumentTextInserted(const juce::String &,int);
     bool pasteFromClipboard();
+    bool cutToClipboard();
     void insertNewLine(String text);
     void changeListenerCallback(juce::ChangeBroadcaster* source);
     void enableColumnEditMode(bool enable);

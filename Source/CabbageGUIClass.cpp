@@ -985,6 +985,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::ffttablenumber, 0);
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+        cabbageIdentifiers.set(CabbageIDs::displaytype, "spectroscope");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
 
@@ -1419,6 +1420,11 @@ void CabbageGUIType::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("tabpage"))
             {
                 cabbageIdentifiers.set(CabbageIDs::tabpage, strTokens[0].trim());
+            }
+
+            else if(identArray[indx].equalsIgnoreCase("displaytype"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::displaytype, strTokens[0].trim());
             }
 
             else if(identArray[indx].equalsIgnoreCase("include"))

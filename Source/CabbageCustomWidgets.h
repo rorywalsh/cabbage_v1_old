@@ -3137,11 +3137,11 @@ public:
 
 class CabbageFFTDisplay	:	public Component
 {
-    String name;
+    String name, displayType;
     int minFFTBin, maxFFTBin, size;
     CabbagePluginAudioProcessorEditor* owner;
     Array<float, CriticalSection> points;
-    int tableNumber, freq;
+    int tableNumber, freq, shouldDrawSonogram;
     Colour fontColour, colour, backgroundColour, outlineColour;
 
 public:
@@ -3155,7 +3155,11 @@ public:
           fontColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
           minFFTBin(0),
           maxFFTBin(2048),
-          size(2048)
+          size(2048),
+          shouldDrawSonogram(cAttr.getStringProp(CabbageIDs::displaytype)=="spectroscope" ? false : true),
+          displayType(cAttr.getStringProp(CabbageIDs::displaytype)),
+          spectrogramImage(Image::RGB, 512, 300, true)
+
     {
         cUtils::debug(colour.toString());
     }
@@ -3169,42 +3173,61 @@ public:
         maxFFTBin = max;
     }
 
+    void drawSonogram()
+    {
+        const int rightHandEdge = spectrogramImage.getWidth() - 2;
+        const int imageHeight = spectrogramImage.getHeight();
+
+
+        spectrogramImage.moveImageSection (0, 0, 1, 0, rightHandEdge, imageHeight);
+
+        Graphics g(spectrogramImage);
+
+
+        Range<float> maxLevel = FloatVectorOperations::findMinAndMax(points.getRawDataPointer(), points.size());
+
+        for (int y = 0; y < imageHeight; y++)
+        {
+            const int index = jmap(y, 0, imageHeight, 0, size);
+            const float level = jmap (points[index], 0.0f, maxLevel.getEnd(), 0.0f, 1.0f);
+            g.setColour(Colour::fromHSV (level, 1.0f, level, 1.0f));
+            g.drawHorizontalLine(imageHeight-y, rightHandEdge, rightHandEdge+2);
+        }
+    }
+
     void paint(Graphics& g)
     {
         g.fillAll(backgroundColour);
 
-        //g.setColour(fontColour);
-
-        //for(int i=0; i<freq; i+=4)
-        //    g.drawFittedText(String(freq*i), jmap(i, 0, freq, 0, getWidth()), getHeight()-20, 40, 12, Justification::centred, 1);
-
-
-
-        //g.drawLine()
-        for (int i=0; i<size; i++)
+        if(shouldDrawSonogram)
         {
-            const int position = jmap(i, 0, size, 0, getWidth());
-            const int amp = (points[i]*6*getHeight());
-            const int lineWidth = jmax(1, getWidth()/size);
-            g.setColour(colour);
-
-            if(lineWidth>1)
+            g.drawImageWithin (spectrogramImage, 0, 0, getWidth(), getHeight(), RectanglePlacement::stretchToFit);
+        }
+        else
+        {
+            for (int i=0; i<size; i++)
             {
-                //g.setColour(colour.withAlpha(.2f));
-                g.fillRect(position, getHeight()-amp, lineWidth, 5);
-                g.setColour(colour.withAlpha(.9f));
-                g.fillRect(position, (getHeight()-amp)+5, lineWidth, 5);
-                g.setColour(colour.withAlpha(.7f));
-                g.fillRect(position, (getHeight()-amp)+10, lineWidth, 5);
-                g.setColour(colour.withAlpha(.5f));
-                g.fillRect(position, (getHeight()-amp)+15, lineWidth, 5);
-                g.setColour(colour.withAlpha(.3f));
-                g.fillRect(position, (getHeight()-amp)+20, lineWidth, getHeight()-(getHeight()-amp));
-            }
+                const int position = jmap(i, 0, size, 0, getWidth());
+                const int amp = (points[i]*6*getHeight());
+                const int lineWidth = jmax(1, getWidth()/size);
+                g.setColour(colour);
 
-            g.drawVerticalLine(position, getHeight()-amp, getHeight());
-            //g.setColour(colour);
-            //g.drawVerticalLine(position, getHeight()-(3*points[i]*2*getHeight()), getHeight()-(3*points[i]*2*getHeight())+5);
+                if(lineWidth>1)
+                {
+                    //g.setColour(colour.withAlpha(.2f));
+                    g.fillRect(position, getHeight()-amp, lineWidth, 5);
+                    g.setColour(colour.withAlpha(.9f));
+                    g.fillRect(position, (getHeight()-amp)+5, lineWidth, 5);
+                    g.setColour(colour.withAlpha(.7f));
+                    g.fillRect(position, (getHeight()-amp)+10, lineWidth, 5);
+                    g.setColour(colour.withAlpha(.5f));
+                    g.fillRect(position, (getHeight()-amp)+15, lineWidth, 5);
+                    g.setColour(colour.withAlpha(.3f));
+                    g.fillRect(position, (getHeight()-amp)+20, lineWidth, getHeight()-(getHeight()-amp));
+                }
+
+                g.drawVerticalLine(position, getHeight()-amp, getHeight());
+            }
         }
     }
 
@@ -3213,12 +3236,27 @@ public:
         points = _points;
         size = points.size();
         freq = 44100/size;
-        //cUtils::debug(points.size());
+        if(shouldDrawSonogram)
+            drawSonogram();
         repaint();
+
     }
 
-    void update(CabbageGUIType m_cAttr) {}
+    void resized()
+    {
 
+    }
+
+    void update(CabbageGUIType m_cAttr)
+    {
+        if(m_cAttr.getStringProp(CabbageIDs::displaytype)!=displayType)
+        {
+            displayType = m_cAttr.getStringProp(CabbageIDs::displaytype);
+            shouldDrawSonogram = displayType=="spectrogram" ? true : false;
+        }
+    }
+
+    Image spectrogramImage;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageFFTDisplay);
 };

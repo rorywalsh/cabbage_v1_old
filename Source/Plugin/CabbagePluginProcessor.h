@@ -370,8 +370,6 @@ public:
     int mouseX, mouseY;
     int breakCount;
     Array<int> breakpointInstruments;
-    AudioSampleBuffer currentBuffer;
-
 
     //==============================================================================
     File getCsoundInputFile()

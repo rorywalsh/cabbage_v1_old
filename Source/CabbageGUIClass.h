@@ -176,6 +176,7 @@ public:
         add("popup");
         add("show");
         add("latched");
+        add("displaytype");
         add("identchannel");
         add("visible");
         add("scrubberposition");
@@ -276,6 +277,7 @@ static const Identifier populate = "populate";
 static const Identifier popup = "popup";
 static const Identifier gradient = "gradient";
 static const Identifier middlec = "middlec";
+static const Identifier displaytype = "displaytype";
 static const Identifier svgpath = "svgpath";
 static const Identifier plant = "plant";
 static const Identifier trackerthickness = "trackerthickness";

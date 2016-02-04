@@ -2001,7 +2001,6 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     float** audioBuffers = buffer.getArrayOfWritePointers();
     const int numSamples = buffer.getNumSamples();
     const int output_channel_count = getNumOutputChannels();
-    currentBuffer = buffer;
 
     if(stopProcessing || isGuiEnabled())
     {
@@ -2071,8 +2070,6 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                         float samp = *current_buffer * cs_scale;
                         CSspin[pos] = samp;
                         *current_buffer = (CSspout[pos] / cs_scale);
-                        //this is for spectrogram in standalone mode...
-                        currentBuffer.addSample(channel, i, CSspout[pos] / cs_scale);
                         ++current_buffer;
                         ++pos;
 

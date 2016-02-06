@@ -4,10 +4,10 @@
 DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 
 # Default csound include path
-CSOUND_INCLUDE ?= "C:\Users\rory\sourceCode\cabbageaudio\csound\include"
+CSOUND_INCLUDE ?= "C:\Users\rory\sourceCode\csound32\csound\include"
 
 # Default Csound library path
-CSOUND_LIBRARY ?= "C:\Users\rory\sourceCode\cabbageaudio\csound\build\libcsound64.dll.a"
+CSOUND_LIBRARY ?= "C:\Users\rory\sourcecode\csound32\csound\mingw64\csound-mingw64\libcsound64.dll.a"
 
 ASIO_SDK ?= "C:\SDKs\ASIOSDK2.3\common"
 VST_SDK ?= "C:\SDKs\vstsdk2.4"

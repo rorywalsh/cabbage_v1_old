@@ -71,39 +71,39 @@ Section "Core components" SEC01
   File "csound.exe"
   File "commandLineTest.csd"
 
-  File "..\..\..\csound\build\ampmidid.dll"
-  File "..\..\..\csound\build\buchla.dll"
-  File "..\..\..\csound\build\cellular.dll"
-  File "..\..\..\csound\build\cs_date.dll"
-  File "..\..\..\csound\build\csladspa.dll"
-  File "..\..\..\csound\build\csnd6.dll"
-  File "..\..\..\csound\build\csound64.dll"
-  File "..\..\..\csound\build\doppler.dll"
-  File "..\..\..\csound\build\exciter.dll"
-  File "..\..\..\csound\build\fareygen.dll"
-  File "..\..\..\csound\build\fractalnoise.dll"
-  File "..\..\..\csound\build\framebuffer.dll"
-  File "..\..\..\csound\build\ipmidi.dll"
-  File "..\..\..\csound\build\libportaudio-2.dll"
-  File "..\..\..\csound\build\mixer.dll"
-  File "..\..\..\csound\build\osc.dll"
-  File "..\..\..\csound\build\padsynth.dll"
-  File "..\..\..\csound\build\platerev.dll"
-  File "..\..\..\csound\build\rtpa.dll"
-  File "..\..\..\csound\build\rtwinmm.dll"
-  File "..\..\..\csound\build\scansyn.dll"
-  File "..\..\..\csound\build\serial.dll"
-  File "..\..\..\csound\build\signalflowgraph.dll"
-  File "..\..\..\csound\build\stdutil.dll"
-  File "..\..\..\csound\build\system_call.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\ampmidid.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\buchla.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\cellular.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\cs_date.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\csladspa.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\csnd6.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\csound64.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\doppler.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\exciter.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\fareygen.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\fractalnoise.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\framebuffer.dll"
+;  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\ipmidi.dll"
+;  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\libportaudio-2.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\mixer.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\osc.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\padsynth.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\platerev.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\rtpa.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\rtwinmm.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\scansyn.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\serial.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\signalflowgraph.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\stdutil.dll"
+  File "..\..\..\..\csound32\csound\mingw64\csound-mingw64\system_call.dll"
 
   ;libsndfile
-  File "C:\Program Files (x86)\Mega-Nerd\libsndfile\bin\libsndfile-1.dll"
-  ;liblo
-  File "C:\Users\rory\sourcecode\liblo-0.28\src\.libs\liblo-7.dll"
-  ;mingw files
-  File "C:\mingw32\bin\libwinpthread-1.dll"
-  ;File "C:\mingw32\bin\libgcc_s_dw2-1.dll"
+  ; File "C:\Program Files (x86)\Mega-Nerd\libsndfile\bin\libsndfile-1.dll"
+  ; ;liblo
+  ; File "C:\Users\rory\sourcecode\liblo-0.28\src\.libs\liblo-7.dll"
+  ; ;mingw files
+  ; File "C:\mingw32\bin\libwinpthread-1.dll"
+  ; ;File "C:\mingw32\bin\libgcc_s_dw2-1.dll"
   ;File "C:\mingw32\bin\libstdc++-6.dll"
   ;docs and examples
   SetOutPath "$INSTDIR\Docs\_book\"
@@ -115,14 +115,9 @@ Section "Core components" SEC01
 
 SectionEnd
 
-Section /o "Python opcodes" SEC02
-  File "..\..\..\csound\build\py.dll"
-SectionEnd
-
 ; Section descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC01} "Installs Cabbage, Csound and all core components"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SEC02} "Installs Csound python opcodes, requires Python 2.7 to be pre-installed"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Section -AdditionalIcons

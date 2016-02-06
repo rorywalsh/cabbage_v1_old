@@ -54,6 +54,7 @@ Section "Core components" SEC01
   ${EnvVarUpdate} $0 "CABBAGE_OPCODE_PATH64" "A" "HKLM" "$INSTDIR"                            ; Prepend
   SetOverwrite ifnewer
   File "build64\Cabbage64.exe"
+  File "build64\CabbageStudio64.exe"
   CreateDirectory "$SMPROGRAMS\Cabbage64"
   CreateShortCut "$SMPROGRAMS\Cabbage64\Cabbage64.lnk" "$INSTDIR\Cabbage64.exe"
   CreateShortCut "$DESKTOP\Cabbage64.lnk" "$INSTDIR\Cabbage64.exe"
@@ -101,15 +102,14 @@ Section "Core components" SEC01
 
 SectionEnd
 
-;Section /o "Python opcodes" SEC02
-;  File "..\..\..\csound\build\py.dll"
-;SectionEnd
+Section /o "Python opcodes" SEC02
+ File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\py.dll"
+SectionEnd
 
-; Section descriptions
-;!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-;  !insertmacro MUI_DESCRIPTION_TEXT ${SEC01} "Installs Cabbage, Csound and all core components"
-;  !insertmacro MUI_DESCRIPTION_TEXT ${SEC02} "Installs Csound python opcodes, requires Python 2.7 to be pre-installed"
-;!insertmacro MUI_FUNCTION_DESCRIPTION_END
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC01} "Installs Cabbage, Csound and all core components"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC02} "Installs Csound python opcodes, requires Python 2.7 to be pre-installed"
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Section -AdditionalIcons
   WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"

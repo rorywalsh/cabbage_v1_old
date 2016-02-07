@@ -3067,12 +3067,17 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                 else if(button->getName()=="infobutton")
                 {
                     String file = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
-#ifdef LINUX
+#if defined(LINUX) || defined(AndroidBuild)
                     ChildProcess process;
                     file.append("/", 5);
                     file.append(button->getProperties().getWithDefault("filename", ""), 1024);
+#ifdef LINUX
                     if(!process.start("xdg-open "+file))
+#else
+                    if(!process.start(file))
+#endif
                         cUtils::showMessage("Couldn't show file", &getLookAndFeel());
+
 #else
                     file.append("\\", 5);
                     file.append(button->getProperties().getWithDefault("filename", ""), 1024);

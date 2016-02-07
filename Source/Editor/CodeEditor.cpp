@@ -728,8 +728,10 @@ bool CsoundCodeEditorComponenet::pasteFromClipboard()
 
 bool CsoundCodeEditorComponenet::cutToClipboard()
 {
-    CodeDocument::Position startPos(getDocument(), getCaretPos().getPosition());
+    CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
+    CodeDocument::Position endPos(this->getDocument(), getHighlightedRegion().getEnd());
     copyToClipboard();
+    getDocument().deleteSection(startPos, endPos);
     moveCaretTo(startPos, false);
     return true;
 }

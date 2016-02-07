@@ -2274,7 +2274,6 @@ void CabbagePluginAudioProcessorEditor::InsertTextEditor(CabbageGUIType &cAttr)
     float width = cAttr.getNumProp(CabbageIDs::width);
     float height = cAttr.getNumProp(CabbageIDs::height);
     setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
-    layoutComps[idx]->setName("csoundoutput");
     layoutComps[idx]->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));
     //if control is not part of a plant, add mouse listener
     if(cAttr.getStringProp("plant").isEmpty())
@@ -2309,7 +2308,7 @@ void CabbagePluginAudioProcessorEditor::InsertInfoButton(CabbageGUIType &cAttr)
     float width = cAttr.getNumProp(CabbageIDs::width);
     float height = cAttr.getNumProp(CabbageIDs::height);
 
-    setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
+    setPositionOfComponent(left, top, width, height, cabbageButton, cAttr.getStringProp("reltoplant"));
     cabbageButton->button->setName("infobutton");
     cabbageButton->button->getProperties().set(String("filename"), cAttr.getStringProp(CabbageIDs::file));
     cabbageButton->getProperties().set(String("plant"), var(cAttr.getStringProp("plant")));

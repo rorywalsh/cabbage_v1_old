@@ -799,7 +799,7 @@ void CodeWindow::toggleManuals(String manual)
 #else
         URL urlCsound(helpDir+"\\"+opcode.trim()+String(".html"));
         String homePage = helpDir+"\\index.html";
-		cUtils::debug(homePage);
+        cUtils::debug(homePage);
 #endif
         String urlCabbage;
         ChildProcess process;

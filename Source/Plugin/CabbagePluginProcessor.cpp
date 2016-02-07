@@ -817,6 +817,9 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                             screenHeight = cAttr.getNumProp(CabbageIDs::height);
                         }
 
+
+                        cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
+
                         warningMessage = "";
                         warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
                         if(cAttr.getWarningMessages().isNotEmpty())
@@ -2139,7 +2142,7 @@ int CabbagePluginAudioProcessor::ReadMidiData(CSOUND* /*csound*/, void *userData
         cout << "\n\nInvalid";
         return 0;
     }
-	
+
     int cnt=0;
 
     if(!midiData->midiBuffer.isEmpty() && cnt <= (nbytes - 3))
@@ -2184,12 +2187,12 @@ int CabbagePluginAudioProcessor::ReadMidiData(CSOUND* /*csound*/, void *userData
                 cnt += 2;
             }
             else if(message.isPitchWheel())
-            {  
-                 const int pitch_bend = message.getPitchWheelValue();
-				 *mbuf++ = (unsigned char)0xE0 + message.getChannel()-1;
-                 *mbuf++ = (unsigned char)(pitch_bend & 0xFF);
-				 *mbuf++ = (unsigned char)((pitch_bend >> 7) & 0xFF);
-				cnt += 3;
+            {
+                const int pitch_bend = message.getPitchWheelValue();
+                *mbuf++ = (unsigned char)0xE0 + message.getChannel()-1;
+                *mbuf++ = (unsigned char)(pitch_bend & 0xFF);
+                *mbuf++ = (unsigned char)((pitch_bend >> 7) & 0xFF);
+                cnt += 3;
             }
 
         }

@@ -127,6 +127,7 @@ void ChildAlias::applyToTarget (String triggeredFrom)
                                                    origBounds[i].getHeight()*y);
 
                 cUtils::debug(c->getChildComponent(i)->getProperties().getWithDefault("index", -999).toString());
+                cUtils::debug(c->getChildComponent(i)->getName());
 
                 ((CabbageMainPanel*)(getTarget()->getParentComponent()))->childBounds.add(c->getChildComponent(i)->getBounds());
                 ((CabbageMainPanel*)(getTarget()->getParentComponent()))->origChildBounds.add(origBounds[i]);

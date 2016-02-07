@@ -42,7 +42,7 @@ public:
         String homeDir = appProperties->getCommonSettings(true)->getFile().getParentDirectory().getFullPathName();
         String manualPath;
 #if !defined(MACOSX)
-        manualPath = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/CsoundDocs/index.html";
+        manualPath = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/CsoundDocs";
 #else
         manualPath = "/Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual";
 #endif

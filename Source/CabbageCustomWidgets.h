@@ -3144,6 +3144,52 @@ class CabbageFFTDisplay	:	public Component
     int tableNumber, freq, shouldDrawSonogram;
     Colour fontColour, colour, backgroundColour, outlineColour;
 
+    class FrequencyRangeDisplayComponent : public Component
+    {
+        int maxFreq, minFreq;
+        Colour fontColour, backgroundColour;
+
+    public:
+        FrequencyRangeDisplayComponent(Colour fColour, Colour bgColour) :
+            Component(),
+            fontColour(fColour),
+            backgroundColour(bgColour),
+            minFreq(0),
+            maxFreq(22050)
+        {}
+
+        ~FrequencyRangeDisplayComponent() {}
+        void resized() {}
+
+        void paint(Graphics &g)
+        {
+            g.fillAll(backgroundColour);
+            g.setColour(fontColour);
+            for(int i=0; i<10; i++)
+            {
+                const int width = getWidth()/10;
+                int freq = jmap(i, 0, 10, minFreq, maxFreq);
+
+                String freqStr = String(freq);
+                if(freqStr.length()>4)
+                    freqStr = freqStr.substring(0, 2) + "." + freqStr.substring(2, 3)+"kHz";
+                else if(freqStr.length()>3)
+                    freqStr = freqStr.substring(0, 1) + "." + freqStr.substring(1, 2)+"kHz";
+                else
+                    freqStr = freqStr+"Hz";
+
+                g.drawFittedText(String(freqStr), i*width, getHeight()-15, 35, 7, Justification::left, 1);
+            }
+        }
+
+        void setMinMax(int min, int max)
+        {
+            minFreq = min;
+            maxFreq = max;
+        }
+    };
+
+
 public:
 
     CabbageFFTDisplay (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner)
@@ -3154,14 +3200,17 @@ public:
           backgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablebackgroundcolour))),
           fontColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
           minFFTBin(0),
-          maxFFTBin(2048),
+          maxFFTBin(1024),
           size(2048),
           shouldDrawSonogram(cAttr.getStringProp(CabbageIDs::displaytype)=="spectroscope" ? false : true),
           displayType(cAttr.getStringProp(CabbageIDs::displaytype)),
-          spectrogramImage(Image::RGB, 512, 300, true)
-
+          spectrogramImage(Image::RGB, 512, 300, true),
+          spectroscopeImage(Image::RGB, 512, 300, true),
+          freqRangeDisplay(fontColour, backgroundColour),
+          freqRange(cAttr.getNumProp(CabbageIDs::min), cAttr.getNumProp(CabbageIDs::max))
     {
         cUtils::debug(colour.toString());
+        //addAndMakeVisible(&freqRangeDisplay);
     }
 
     ~CabbageFFTDisplay()
@@ -3182,8 +3231,7 @@ public:
         spectrogramImage.moveImageSection (0, 0, 1, 0, rightHandEdge, imageHeight);
 
         Graphics g(spectrogramImage);
-
-
+        g.fillAll(backgroundColour);
         Range<float> maxLevel = FloatVectorOperations::findMinAndMax(points.getRawDataPointer(), points.size());
 
         for (int y = 0; y < imageHeight; y++)
@@ -3195,39 +3243,47 @@ public:
         }
     }
 
+    void drawSpectroscope(Graphics& g)
+    {
+        //Graphics g(spectroscopeImage);
+        g.fillAll(backgroundColour);
+        for (int i=0; i<size; i++)
+        {
+            const int position = jmap(i, 0, size, 0, getWidth());
+            const int height = getHeight();
+            const int amp = (points[i]*6*height);
+            const int lineWidth = jmax(1, getWidth()/size);
+
+
+            g.setColour(colour);
+
+            if(lineWidth>1)
+            {
+                //g.setColour(colour.withAlpha(.2f));
+                g.fillRect(position, getHeight()-amp, lineWidth, 5);
+                g.setColour(colour.withAlpha(.9f));
+                g.fillRect(position, (getHeight()-amp)+5, lineWidth, 5);
+                g.setColour(colour.withAlpha(.7f));
+                g.fillRect(position, (getHeight()-amp)+10, lineWidth, 5);
+                g.setColour(colour.withAlpha(.5f));
+                g.fillRect(position, (getHeight()-amp)+15, lineWidth, 5);
+                g.setColour(colour.withAlpha(.3f));
+                g.fillRect(position, (getHeight()-amp)+20, lineWidth, height-(height-amp));
+            }
+            else
+                g.drawVerticalLine(position, height-amp, height);
+        }
+    }
+
     void paint(Graphics& g)
     {
-        g.fillAll(backgroundColour);
-
         if(shouldDrawSonogram)
-        {
-            g.drawImageWithin (spectrogramImage, 0, 0, getWidth(), getHeight(), RectanglePlacement::stretchToFit);
-        }
+            g.drawImageWithin(spectrogramImage, 0, 0, getWidth(), getHeight(), RectanglePlacement::stretchToFit);
         else
         {
-            for (int i=0; i<size; i++)
-            {
-                const int position = jmap(i, 0, size, 0, getWidth());
-                const int amp = (points[i]*6*getHeight());
-                const int lineWidth = jmax(1, getWidth()/size);
-                g.setColour(colour);
-
-                if(lineWidth>1)
-                {
-                    //g.setColour(colour.withAlpha(.2f));
-                    g.fillRect(position, getHeight()-amp, lineWidth, 5);
-                    g.setColour(colour.withAlpha(.9f));
-                    g.fillRect(position, (getHeight()-amp)+5, lineWidth, 5);
-                    g.setColour(colour.withAlpha(.7f));
-                    g.fillRect(position, (getHeight()-amp)+10, lineWidth, 5);
-                    g.setColour(colour.withAlpha(.5f));
-                    g.fillRect(position, (getHeight()-amp)+15, lineWidth, 5);
-                    g.setColour(colour.withAlpha(.3f));
-                    g.fillRect(position, (getHeight()-amp)+20, lineWidth, getHeight()-(getHeight()-amp));
-                }
-
-                g.drawVerticalLine(position, getHeight()-amp, getHeight());
-            }
+            drawSpectroscope(g);
+            //g.drawImageWithin(spectroscopeImage, 0, 0, getWidth(), getHeight(), RectanglePlacement::stretchToFit);
+            //freqRangeDisplay.setBounds(-100, getHeight()-10, getWidth()+100, 15);
         }
     }
 
@@ -3238,13 +3294,17 @@ public:
         freq = 44100/size;
         if(shouldDrawSonogram)
             drawSonogram();
+        //else
+        //	drawSpectroscope();
+
         repaint();
 
     }
 
     void resized()
     {
-
+        //if(!shouldDrawSonogram)
+        //	freqRangeDisplay.setBounds(0, getHeight()-10, getWidth(), 15);
     }
 
     void update(CabbageGUIType m_cAttr)
@@ -3253,10 +3313,22 @@ public:
         {
             displayType = m_cAttr.getStringProp(CabbageIDs::displaytype);
             shouldDrawSonogram = displayType=="spectrogram" ? true : false;
+            if(shouldDrawSonogram)
+                freqRangeDisplay.setVisible(false);
+            else
+                freqRangeDisplay.setVisible(true);
+        }
+
+        if(freqRange!=Range<int>(m_cAttr.getNumProp(CabbageIDs::min),m_cAttr.getNumProp(CabbageIDs::max)))
+        {
+            freqRange = Range<int>(m_cAttr.getNumProp(CabbageIDs::min),m_cAttr.getNumProp(CabbageIDs::max));
+            freqRangeDisplay.setMinMax(freqRange.getStart(), freqRange.getEnd());
         }
     }
 
-    Image spectrogramImage;
+    Image spectrogramImage, spectroscopeImage;
+    FrequencyRangeDisplayComponent freqRangeDisplay;
+    Range<int> freqRange;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageFFTDisplay);
 };

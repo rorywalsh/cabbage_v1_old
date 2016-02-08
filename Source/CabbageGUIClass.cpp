@@ -982,6 +982,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::tablebackgroundcolour, Colour(30, 30, 38).toString());
         cabbageIdentifiers.set(CabbageIDs::type, "fftdisplay");
         cabbageIdentifiers.set(CabbageIDs::name, "fftdisplay");
+        cabbageIdentifiers.set(CabbageIDs::min, 0);
+        cabbageIdentifiers.set(CabbageIDs::max, 2048);
         cabbageIdentifiers.set(CabbageIDs::ffttablenumber, 0);
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");

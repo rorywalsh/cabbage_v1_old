@@ -69,6 +69,10 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     this->setLookAndFeel(lookAndFeel);
     oldLookAndFeel = new LookAndFeel_V1();
 
+    CabbageGUIType cAttr("hslider bounds(\"0, 0, 100, 30\"), range(1, 28, 1, 1, 1), textbox(1), text(\"GridSize\")", -99);
+    gridSizeSlider = new CabbageSlider(cAttr);
+    //gridSizeSlider.setRange(1, 28, 1);
+    //gridSizeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxRight, true, 20, 20);
 
     JUCE_TRY
     {
@@ -859,6 +863,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     Array<File> exampleFiles;
     recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
 
+    //set custom slider position
+
+    gridSizeSlider->setSliderValue(getPreference(appProperties, "GridSize"));
+    //cUtils::showMessage(value);
+
+
 #ifndef Release
     standaloneMode=false;
 #endif
@@ -1009,6 +1019,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, true);
 
         subMenu.addItem(301, String("Set external editor"), true, false);
+
+        subMenu.addCustomItem(303, gridSizeSlider,  100, 30, true);
 
         m.addSubMenu("Preferences", subMenu);
         m.addItem(2000, "About");
@@ -1336,25 +1348,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         }
     }
     //--------preference Show tabs
-    else if(options==298)
+    else if(options==303)
     {
-        /*
-        if(getPreference(appProperties, "showTabs")==0)
-        {
-        	setPreference(appProperties, "showTabs", 1);
-        	//if(!cabbageCsoundEditor){
-        		cabbageCsoundEditor->textEditor->showTabs(true);
-        		cabbageCsoundEditor->textEditor->showInstrs(true);
-        	//}
-        }
-        else
-        {
-        	setPreference(appProperties, "showTabs", 0);
-        	//if(!cabbageCsoundEditor){
-        		cabbageCsoundEditor->textEditor->showTabs(false);
-        		cabbageCsoundEditor->textEditor->showInstrs(false);
-        	//}
-        }*/
+        setPreference(appProperties, "GridSize", gridSizeSlider->slider->getValue());
     }
 
     else if(options==204)

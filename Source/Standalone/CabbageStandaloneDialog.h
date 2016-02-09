@@ -185,6 +185,7 @@ private:
     String consoleMessages;
     ScopedPointer<CsoundMessageConsole> outputConsole;
     StringArray previousScoreEvents;
+    ScopedPointer<CabbageSlider> gridSizeSlider;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StandaloneFilterWindow);

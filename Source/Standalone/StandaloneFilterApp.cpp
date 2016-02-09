@@ -58,6 +58,7 @@ public:
         defaultPropSet->setValue("AudioEnabled", 1);
         defaultPropSet->setValue("DisableGUIEditModeWarning", 1);
         defaultPropSet->setValue("SetAlwaysOnTop", 1);
+        defaultPropSet->setValue("GridSize", 4);
         defaultPropSet->setValue("PlantRepository", xml);
         defaultPropSet->setValue("EditorColourScheme", 0);
         defaultPropSet->setValue("showTabs", 1);

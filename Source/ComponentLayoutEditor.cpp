@@ -508,7 +508,7 @@ void ChildAlias::mouseDrag (const MouseEvent& e)
                         dragY = e.getDistanceFromDragStartY();
 
                         //snap to grid....
-                        int gridSize = 2;
+                        const int gridSize = appProperties->getUserSettings()->getValue("GridSize", "").getIntValue();;
 
                         Rectangle<int> bounds = getLayoutEditor()->getLassoRect(getLayoutEditor()->getLassoSelection());
 
@@ -531,7 +531,7 @@ void ChildAlias::mouseDrag (const MouseEvent& e)
                     int selectedCompsPosX = startBounds.getX()+dragX;
                     int selectedCompsPosY = startBounds.getY()+dragY;
                     //snap to grid....
-                    int gridSize = 2;
+                    const int gridSize = appProperties->getUserSettings()->getValue("GridSize", "").getIntValue();
                     selectedCompsPosX = selectedCompsPosX/gridSize*gridSize;
                     selectedCompsPosY = selectedCompsPosY/gridSize*gridSize;
 

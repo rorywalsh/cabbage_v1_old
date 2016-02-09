@@ -515,6 +515,11 @@ public:
     {
     }
 
+    void setSliderValue(float val)
+    {
+        value = val;
+    }
+
     void setSVGs(CabbageGUIType &cAttr)
     {
         if (sliderType.contains("rotary"))

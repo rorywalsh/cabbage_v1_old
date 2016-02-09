@@ -67,6 +67,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::textcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
         cabbageIdentifiers.set(CabbageIDs::sliderincr, .001);
+        cabbageIdentifiers.set(CabbageIDs::velocity, 0);
+
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);
         cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
         //these don't appear in the props dialog
@@ -117,6 +119,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::textcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::sliderskew, 1);
         cabbageIdentifiers.set(CabbageIDs::sliderincr, .001);
+        cabbageIdentifiers.set(CabbageIDs::velocity, 0);
         cabbageIdentifiers.set(CabbageIDs::midichan, -99);
         cabbageIdentifiers.set(CabbageIDs::midictrl, -99);
         //these don't appear in the props dialog
@@ -168,6 +171,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::kind, "rotary");
         cabbageIdentifiers.set(CabbageIDs::decimalplaces, 1);
+        cabbageIdentifiers.set(CabbageIDs::velocity, 0);
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::trackerthickness, .7);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
@@ -1749,6 +1753,11 @@ void CabbageGUIType::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("textbox"))
             {
                 cabbageIdentifiers.set(CabbageIDs::textbox, strTokens[0].trim().getFloatValue());
+            }
+
+            else if(identArray[indx].equalsIgnoreCase("velocity"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::velocity, strTokens[0].trim().getFloatValue());
             }
 
             else if(identArray[indx].equalsIgnoreCase("gradient"))

@@ -2905,7 +2905,11 @@ public:
         slider->setColour(Slider::textBoxHighlightColourId, slider->findColour(Slider::textBoxBackgroundColourId));
         slider->setColour(Slider::textBoxTextColourId, fontcolour);
         slider->setColour(Slider::textBoxBackgroundColourId, colour);
-        slider->setVelocityBasedMode(true);
+
+
+        slider->setVelocityBasedMode(cAttr.getNumProp(CabbageIDs::velocity)==1 ? true : false);
+
+
         slider->setVelocityModeParameters(80);
         slider->getProperties().set("decimalPlaces", decPlaces);
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));

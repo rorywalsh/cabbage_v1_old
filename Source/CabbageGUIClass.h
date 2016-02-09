@@ -153,6 +153,7 @@ public:
         add("caption");
         add("kind");
         add("align");
+        add("velocity");
         add("wrap");
         add("tablebackgroundcolour");
         add("tablebackgroundcolor");
@@ -335,6 +336,7 @@ static const Identifier scrollbars = "scrollbars";
 static const Identifier socketport = "socketport";
 static const Identifier socketaddress = "socketaddress";
 static const Identifier ffttablenumber = "ffttablenumber";
+static const Identifier velocity = "velocity";
 
 //list of static consts for types of widgets
 static const String combobox = "combobox";

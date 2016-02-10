@@ -1025,7 +1025,6 @@ public:
             return svgImg;
         }
         return Image::null;
-
     }
 
 

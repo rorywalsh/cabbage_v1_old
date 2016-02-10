@@ -98,6 +98,7 @@ public:
                                cAttr.getStringProp(CabbageIDs::parentdir)));
         svgFileButtonOff = File(cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgbuttonoff),
                                 cAttr.getStringProp(CabbageIDs::parentdir)));
+								
         svgPath = File(cAttr.getStringProp(CabbageIDs::svgpath));
 
         setSVGs(cAttr);
@@ -441,9 +442,10 @@ public:
         textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
         //slider->setPopupDisplayEnabled (true, 0);
 
-        //slider->setVelocityBasedMode(true);
+		slider->setVelocityModeParameters(1.0, 1, 0.0, true);
+        slider->setVelocityBasedMode(cAttr.getNumProp(CabbageIDs::velocity)==1 ? true : false);
 
-        slider->setVelocityModeParameters(1.0, 1, 0.0, true);
+        
 
         slider->setColour(Slider::textBoxHighlightColourId, Colours::lime.withAlpha(.2f));
         //slider->setColour(Slider::rotarySliderFillColourId, Colours::red);
@@ -1241,9 +1243,13 @@ public:
 
     {
         setName(name);
-        //picPath = File(file).getParentDirectory();
-        img = ImageCache::getFromFile (File (file));
+
+		if(file.containsIgnoreCase(".svg"))
+			img = cUtils::drawFromSVG(File(file).loadFileAsString(), cUtils::getSVGWidth(File(file).loadFileAsString()), cUtils::getSVGHeight(File(file).loadFileAsString()), AffineTransform::identity);
+		else
+			img = ImageCache::getFromFile (File (file));
         this->setWantsKeyboardFocus(false);
+		
         //if widget is a plant intercept mouse events
         if(cAttr.getStringProp(CabbageIDs::plant).isNotEmpty())
             this->setInterceptsMouseClicks(true, true);

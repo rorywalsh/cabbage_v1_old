@@ -3852,6 +3852,13 @@ void CabbagePluginAudioProcessorEditor::refreshDiskReadingGUIControls(String typ
                 const String filetype = getFilter()->getGUICtrls(i).getStringProp("filetype");
                 Array<File> dirFiles;
                 pluginDir.findChildFiles(dirFiles, 2, false, filetype);
+				
+				StringArray comboItems;
+				for(int i=0;i<cabCombo->combo->getNumItems();i++)
+				{
+					comboItems.add(cabCombo->combo->getItemText(i));	
+				}
+				
                 cabCombo->combo->clear(dontSendNotification);
                 for (int i = 0; i < dirFiles.size(); ++i)
                     if(filetype.contains("snaps"))
@@ -3859,6 +3866,10 @@ void CabbagePluginAudioProcessorEditor::refreshDiskReadingGUIControls(String typ
                     else
                         cabCombo->combo->addItem(dirFiles[i].getFileName(), i+1);
 
+				for(int i=0;i<cabCombo->combo->getNumItems();i++)
+					if(!comboItems.contains(cabCombo->combo->getItemText(i)))
+						currentItemID = i+1;
+						
                 cabCombo->combo->setSelectedId(currentItemID, dontSendNotification);
             }
         }

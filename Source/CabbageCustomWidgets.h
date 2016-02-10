@@ -3118,7 +3118,7 @@ public:
 private:
     SliderThumb sliderThumb;
 };
-
+//=============================================================================
 //container class for rangeslider widget
 class CabbageRangeSlider2	:	public Component
 {
@@ -3149,19 +3149,26 @@ public:
 
 };
 
-
-class CabbageFFTDisplay	:	public Component
+//=============================================================================
+// FFT Display Widget
+//=============================================================================
+class CabbageFFTDisplay	:	public Component,
+    private ScrollBar::Listener,
+    public ChangeListener
 {
     String name, displayType;
     int minFFTBin, maxFFTBin, size;
     CabbagePluginAudioProcessorEditor* owner;
+    RoundButton zoomIn, zoomOut;
     Array<float, CriticalSection> points;
     int tableNumber, freq, shouldDrawSonogram;
     Colour fontColour, colour, backgroundColour, outlineColour;
+    ScrollBar scrollbar;
+    int zoomLevel;
 
     class FrequencyRangeDisplayComponent : public Component
     {
-        int maxFreq, minFreq;
+        int maxFreq, minFreq, resolution;
         Colour fontColour, backgroundColour;
 
     public:
@@ -3170,20 +3177,29 @@ class CabbageFFTDisplay	:	public Component
             fontColour(fColour),
             backgroundColour(bgColour),
             minFreq(0),
-            maxFreq(22050)
+            maxFreq(22050),
+            resolution(10)
         {}
 
         ~FrequencyRangeDisplayComponent() {}
-        void resized() {}
+        void resized()
+        {
+
+        }
+
+        void setResolution(int res)
+        {
+            resolution = res;
+        }
 
         void paint(Graphics &g)
         {
             g.fillAll(backgroundColour);
             g.setColour(fontColour);
-            for(int i=0; i<10; i++)
+            for(int i=0; i<resolution; i++)
             {
-                const int width = getWidth()/10;
-                int freq = jmap(i, 0, 10, minFreq, maxFreq);
+                const int width = getWidth()/resolution;
+                int freq = jmap(i, 0, resolution, minFreq, maxFreq);
 
                 String freqStr = String(freq);
                 if(freqStr.length()>4)
@@ -3222,10 +3238,23 @@ public:
           spectrogramImage(Image::RGB, 512, 300, true),
           spectroscopeImage(Image::RGB, 512, 300, true),
           freqRangeDisplay(fontColour, backgroundColour),
-          freqRange(cAttr.getNumProp(CabbageIDs::min), cAttr.getNumProp(CabbageIDs::max))
+          freqRange(cAttr.getNumProp(CabbageIDs::min), cAttr.getNumProp(CabbageIDs::max)),
+          scrollbar(false),
+          zoomIn("zoomIn", Colours::white),
+          zoomOut("zoomOut", Colours::white),
+          zoomLevel(0)
     {
         cUtils::debug(colour.toString());
-        //addAndMakeVisible(&freqRangeDisplay);
+        addAndMakeVisible(zoomIn);
+        addAndMakeVisible(zoomOut);
+        addAndMakeVisible(freqRangeDisplay);
+        addAndMakeVisible(scrollbar);
+        scrollbar.setCurrentRange(Range<double>(0, 1));
+        scrollbar.setVisible(false);
+        zoomIn.addChangeListener(this);
+        zoomOut.addChangeListener(this);
+        //hide scrollbar, visible not working for disabling it...
+        scrollbar.setBounds(-1000, getHeight()-15, getWidth(), 15);
     }
 
     ~CabbageFFTDisplay()
@@ -3237,11 +3266,43 @@ public:
         maxFFTBin = max;
     }
 
+    void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
+    {
+
+    }
+
+    void changeListenerCallback(ChangeBroadcaster *source)
+    {
+        RoundButton* button = dynamic_cast<RoundButton*>(source);
+        if(button->getName()=="zoomIn")
+        {
+            zoomLevel++;
+            const Range<double> newRange (0.0, zoomLevel);
+            scrollbar.setRangeLimits (newRange);
+            freqRangeDisplay.setBounds(0, getHeight()-15, getWidth()*zoomLevel+1, 18);
+            freqRangeDisplay.setResolution(10*zoomLevel+1);
+        }
+        else
+        {
+            zoomLevel = zoomLevel>1 ? zoomLevel-1 : 0;
+            const Range<double> newRange (0.0, zoomLevel);
+            scrollbar.setRangeLimits (newRange);
+            freqRangeDisplay.setBounds(0, getHeight()-15, getWidth()*jmax(1, zoomLevel+1), 18);
+            freqRangeDisplay.setResolution(jmax(10, 10*zoomLevel+1));
+        }
+
+        if(zoomLevel>0)
+            scrollbar.setBounds(0, getHeight()-20, getWidth(), 20);
+        else
+            scrollbar.setBounds(-1000, getHeight()-20, getWidth(), 20);
+
+
+    }
+
     void drawSonogram()
     {
         const int rightHandEdge = spectrogramImage.getWidth() - 2;
         const int imageHeight = spectrogramImage.getHeight();
-
 
         spectrogramImage.moveImageSection (0, 0, 1, 0, rightHandEdge, imageHeight);
 
@@ -3265,7 +3326,7 @@ public:
         for (int i=0; i<size; i++)
         {
             const int position = jmap(i, 0, size, 0, getWidth());
-            const int height = getHeight();
+            const int height = getHeight()-20;
             const int amp = (points[i]*6*height);
             const int lineWidth = jmax(1, getWidth()/size);
 
@@ -3297,8 +3358,6 @@ public:
         else
         {
             drawSpectroscope(g);
-            //g.drawImageWithin(spectroscopeImage, 0, 0, getWidth(), getHeight(), RectanglePlacement::stretchToFit);
-            //freqRangeDisplay.setBounds(-100, getHeight()-10, getWidth()+100, 15);
         }
     }
 
@@ -3309,8 +3368,6 @@ public:
         freq = 44100/size;
         if(shouldDrawSonogram)
             drawSonogram();
-        //else
-        //	drawSpectroscope();
 
         repaint();
 
@@ -3318,8 +3375,12 @@ public:
 
     void resized()
     {
-        //if(!shouldDrawSonogram)
-        //	freqRangeDisplay.setBounds(0, getHeight()-10, getWidth(), 15);
+        if(!shouldDrawSonogram)
+        {
+            freqRangeDisplay.setBounds(0, getHeight()-15, getWidth(), 18);
+            zoomIn.setBounds(getWidth()-40, getHeight()-41, 20, 20);
+            zoomOut.setBounds(getWidth()-20, getHeight()-41, 20, 20);
+        }
     }
 
     void update(CabbageGUIType m_cAttr)
@@ -3329,9 +3390,18 @@ public:
             displayType = m_cAttr.getStringProp(CabbageIDs::displaytype);
             shouldDrawSonogram = displayType=="spectrogram" ? true : false;
             if(shouldDrawSonogram)
+            {
                 freqRangeDisplay.setVisible(false);
+                zoomIn.setVisible(false);
+                zoomOut.setVisible(false);
+                scrollbar.setVisible(false);
+            }
             else
+            {
                 freqRangeDisplay.setVisible(true);
+                zoomIn.setVisible(true);
+                zoomOut.setVisible(true);
+            }
         }
 
         if(freqRange!=Range<int>(m_cAttr.getNumProp(CabbageIDs::min),m_cAttr.getNumProp(CabbageIDs::max)))

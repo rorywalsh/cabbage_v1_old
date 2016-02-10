@@ -2070,12 +2070,12 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                     pos = csndIndex * output_channel_count;
                     for(int channel = 0; channel < output_channel_count; ++channel)
                     {
-                        float *&current_buffer = audioBuffers[channel];
-                        samp = *current_buffer * cs_scale;
-                        CSspin[pos] = samp;
-                        *current_buffer = (CSspout[pos] / cs_scale);
-                        ++current_buffer;
-                        ++pos;
+//                        float *&current_buffer = audioBuffers[channel];
+//                        samp = *current_buffer * cs_scale;
+//                        CSspin[pos] = samp;
+//                        *current_buffer = (CSspout[pos] / cs_scale);
+//                        ++current_buffer;
+//                        ++pos;
 
                     }
 

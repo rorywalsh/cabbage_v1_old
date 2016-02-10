@@ -313,10 +313,10 @@ void CabbageLookAndFeel::layoutFileBrowserComponent (FileBrowserComponent& brows
         y = listAsComp->getBottom() + 4;
     }
 
-	filenameBox->setColour(TextEditor::backgroundColourId, Colour(210,210,210));
-	filenameBox->setColour(TextEditor::textColourId, Colour(10, 10, 10));
+    filenameBox->setColour(TextEditor::backgroundColourId, Colour(210,210,210));
+    filenameBox->setColour(TextEditor::textColourId, Colour(10, 10, 10));
     filenameBox->setBounds (x + 53, y, w - 56, controlsHeight);
-	filenameBox->grabKeyboardFocus();
+    filenameBox->grabKeyboardFocus();
 }
 
 // Pulls a drawable out of compressed valuetree data..

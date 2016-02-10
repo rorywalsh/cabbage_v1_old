@@ -388,8 +388,8 @@ public:
                 if(look!=nullptr)
                     box.setLookAndFeel(look);
 
-				box.setAlwaysOnTop(true);
-				
+                box.setAlwaysOnTop(true);
+
                 if (box.show())
                 {
                     for (int i = 0; i < browserComponent.getNumSelectedFiles(); ++i)
@@ -422,7 +422,7 @@ public:
                 if(look!=nullptr)
                     box.setLookAndFeel(look);
 
-				box.setAlwaysOnTop(true);
+                box.setAlwaysOnTop(true);
 
                 if (box.show())
                 {
@@ -454,8 +454,8 @@ public:
 
                 if(look!=nullptr)
                     box.setLookAndFeel(look);
-					
-				box.setAlwaysOnTop(true);
+
+                box.setAlwaysOnTop(true);
 
                 if (box.show())
                 {

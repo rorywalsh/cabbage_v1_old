@@ -508,8 +508,11 @@ void ChildAlias::mouseDrag (const MouseEvent& e)
                         dragY = e.getDistanceFromDragStartY();
 
                         //snap to grid....
+#ifdef Cabbage_Build_Standalone
                         const int gridSize = appProperties->getUserSettings()->getValue("GridSize", "").getIntValue();;
-
+#else
+						const int gridSize = 2;
+#endif
                         Rectangle<int> bounds = getLayoutEditor()->getLassoRect(getLayoutEditor()->getLassoSelection());
 
                         int selectedCompsPosX = getLayoutEditor()->selectedCompsOrigCoordinates[i].getX();
@@ -531,7 +534,11 @@ void ChildAlias::mouseDrag (const MouseEvent& e)
                     int selectedCompsPosX = startBounds.getX()+dragX;
                     int selectedCompsPosY = startBounds.getY()+dragY;
                     //snap to grid....
-                    const int gridSize = appProperties->getUserSettings()->getValue("GridSize", "").getIntValue();
+#ifdef Cabbage_Build_Standalone
+                        const int gridSize = appProperties->getUserSettings()->getValue("GridSize", "").getIntValue();;
+#else
+						const int gridSize = 2;
+#endif
                     selectedCompsPosX = selectedCompsPosX/gridSize*gridSize;
                     selectedCompsPosY = selectedCompsPosY/gridSize*gridSize;
 

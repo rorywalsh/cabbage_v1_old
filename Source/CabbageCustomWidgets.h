@@ -3164,7 +3164,7 @@ class CabbageFFTDisplay	:	public Component,
     int tableNumber, freq, shouldDrawSonogram;
     Colour fontColour, colour, backgroundColour, outlineColour;
     ScrollBar scrollbar;
-    int zoomLevel;
+    int zoomLevel, scopeWidth;
 
     class FrequencyRangeDisplayComponent : public Component
     {
@@ -3240,6 +3240,7 @@ public:
           freqRangeDisplay(fontColour, backgroundColour),
           freqRange(cAttr.getNumProp(CabbageIDs::min), cAttr.getNumProp(CabbageIDs::max)),
           scrollbar(false),
+          scopeWidth(cAttr.getNumProp(CabbageIDs::width)),
           zoomIn("zoomIn", Colours::white),
           zoomOut("zoomOut", Colours::white),
           zoomLevel(0)
@@ -3249,12 +3250,13 @@ public:
         addAndMakeVisible(zoomOut);
         addAndMakeVisible(freqRangeDisplay);
         addAndMakeVisible(scrollbar);
-        scrollbar.setCurrentRange(Range<double>(0, 1));
-        scrollbar.setVisible(false);
+        scrollbar.setRangeLimits(Range<double>(0, 20));
         zoomIn.addChangeListener(this);
         zoomOut.addChangeListener(this);
         //hide scrollbar, visible not working for disabling it...
         scrollbar.setBounds(-1000, getHeight()-15, getWidth(), 15);
+        scrollbar.setAutoHide(false);
+        scrollbar.addListener(this);
     }
 
     ~CabbageFFTDisplay()
@@ -3268,28 +3270,40 @@ public:
 
     void scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
     {
-
+        ScrollBar* scroll = dynamic_cast<ScrollBar*>(scrollBarThatHasMoved);
+        if(scroll)
+        {
+            float moveBy = newRangeStart/scrollBarThatHasMoved->getCurrentRange().getLength();
+            moveBy = freqRangeDisplay.getWidth()*moveBy;
+            cUtils::debug("MoveBy:", moveBy);
+            freqRangeDisplay.setTopLeftPosition(-moveBy, getHeight()-15);
+        }
     }
 
     void changeListenerCallback(ChangeBroadcaster *source)
     {
         RoundButton* button = dynamic_cast<RoundButton*>(source);
+
         if(button->getName()=="zoomIn")
         {
-            zoomLevel++;
-            const Range<double> newRange (0.0, zoomLevel);
-            scrollbar.setRangeLimits (newRange);
-            freqRangeDisplay.setBounds(0, getHeight()-15, getWidth()*zoomLevel+1, 18);
+            zoomLevel = zoomLevel<20 ? zoomLevel+1 : 20;
+            const Range<double> newRange (0.0, 20-zoomLevel);
+            scrollbar.setCurrentRange (newRange);
+            freqRangeDisplay.setBounds(0, getHeight()-15, getWidth()*(zoomLevel+1), 18);
             freqRangeDisplay.setResolution(10*zoomLevel+1);
+            scopeWidth = scopeWidth*(zoomLevel+1);
         }
         else
         {
             zoomLevel = zoomLevel>1 ? zoomLevel-1 : 0;
-            const Range<double> newRange (0.0, zoomLevel);
-            scrollbar.setRangeLimits (newRange);
+            const Range<double> newRange (0.0, 20-zoomLevel);
+            scrollbar.setCurrentRange (newRange);
             freqRangeDisplay.setBounds(0, getHeight()-15, getWidth()*jmax(1, zoomLevel+1), 18);
             freqRangeDisplay.setResolution(jmax(10, 10*zoomLevel+1));
+            scopeWidth = scopeWidth*jmax(1, zoomLevel+1);
         }
+
+        cUtils::debug(zoomLevel);
 
         if(zoomLevel>0)
             scrollbar.setBounds(0, getHeight()-20, getWidth(), 20);
@@ -3325,10 +3339,10 @@ public:
         g.fillAll(backgroundColour);
         for (int i=0; i<size; i++)
         {
-            const int position = jmap(i, 0, size, 0, getWidth());
+            const int position = jmap(i, 0, size, 0, scopeWidth);
             const int height = getHeight()-20;
             const int amp = (points[i]*6*height);
-            const int lineWidth = jmax(1, getWidth()/size);
+            const int lineWidth = 1;//jmax(1, scopeWidth/size);
 
 
             g.setColour(colour);

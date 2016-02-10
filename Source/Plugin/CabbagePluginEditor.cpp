@@ -3230,6 +3230,8 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                             lastOpenedDirectory = selectedFile.getParentDirectory().getFullPathName();
                                         }
                                     }
+									
+									refreshDiskReadingGUIControls("combobox");
                                 }
                                 else
                                 {
@@ -3247,7 +3249,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                         selectedFile = selectedFiles[0];
                                         if(filetype.contains("snaps"))
                                         {
-                                            savePresetsFromParameters(selectedFile, "create");
+                                            savePresetsFromParameters(selectedFile.withFileExtension(".snaps"), "create");
                                             int value = getFilter()->getGUILayoutCtrls(i).getNumProp(CabbageIDs::value)==1 ? 0 : 1;
                                             getFilter()->messageQueue.addOutgoingChannelMessageToQueue(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::channel), value);
                                         }

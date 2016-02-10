@@ -2144,24 +2144,27 @@ int CabbagePluginAudioProcessor::ReadMidiData(CSOUND* /*csound*/, void *userData
         return 0;
     }
     /*
-    int cnt=0;
+        int cnt=0;
 
-    if(!midiData->midiBuffer.isEmpty() && cnt <= (nbytes - 3))
-    {
-        MidiMessage message(0xf4, 0, 0, 0);
-        MidiBuffer::Iterator i (midiData->midiBuffer);
-        int messageFrameRelativeTothisProcess;
-        while (i.getNextEvent (message, messageFrameRelativeTothisProcess))
+        if(!midiData->midiBuffer.isEmpty() && cnt <= (nbytes - 3))
         {
-            mbuf = message.getRawData();
-            if(message.isProgramChange() || message.isChannelPressure())
-                cnt+=2;
-            else
-                cnt+=3;
+            MidiMessage message(0xf4, 0, 0, 0);
+            MidiBuffer::Iterator i (midiData->midiBuffer);
+            int messageFrameRelativeTothisProcess;
+            while (i.getNextEvent (message, messageFrameRelativeTothisProcess))
+            {
+                mbuf[cnt+0] = message.getRawData()[cnt+0];
+                mbuf[cnt+1] = message.getRawData()[cnt+1];
+                mbuf[cnt+2] = message.getRawData()[cnt+2];
+
+                if(message.isProgramChange() || message.isChannelPressure())
+                    cnt+=2;
+                else
+                    cnt+=3;
+            }
+            midiData->midiBuffer.clear();
         }
-        midiData->midiBuffer.clear();
-    }
-    return cnt;
+        return cnt;
 
     */
     int cnt=0;

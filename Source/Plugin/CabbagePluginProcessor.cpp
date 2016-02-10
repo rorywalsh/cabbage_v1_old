@@ -2143,30 +2143,7 @@ int CabbagePluginAudioProcessor::ReadMidiData(CSOUND* /*csound*/, void *userData
         cout << "\nInvalid";
         return 0;
     }
-    /*
-        int cnt=0;
 
-        if(!midiData->midiBuffer.isEmpty() && cnt <= (nbytes - 3))
-        {
-            MidiMessage message(0xf4, 0, 0, 0);
-            MidiBuffer::Iterator i (midiData->midiBuffer);
-            int messageFrameRelativeTothisProcess;
-            while (i.getNextEvent (message, messageFrameRelativeTothisProcess))
-            {
-                mbuf[cnt+0] = message.getRawData()[cnt+0];
-                mbuf[cnt+1] = message.getRawData()[cnt+1];
-                mbuf[cnt+2] = message.getRawData()[cnt+2];
-
-                if(message.isProgramChange() || message.isChannelPressure())
-                    cnt+=2;
-                else
-                    cnt+=3;
-            }
-            midiData->midiBuffer.clear();
-        }
-        return cnt;
-
-    */
     int cnt=0;
 
     if(!midiData->midiBuffer.isEmpty() && cnt <= (nbytes - 3))
@@ -2176,54 +2153,78 @@ int CabbagePluginAudioProcessor::ReadMidiData(CSOUND* /*csound*/, void *userData
         int messageFrameRelativeTothisProcess;
         while (i.getNextEvent (message, messageFrameRelativeTothisProcess))
         {
-            if(message.isNoteOn())
-            {
-                *mbuf++ = (unsigned char)0x90 + message.getChannel()-1;
-                *mbuf++ = (unsigned char)message.getNoteNumber();
-                *mbuf++ = (unsigned char)message.getVelocity();
-                cnt += 3;
-            }
-            else if(message.isNoteOff())
-            {
-                *mbuf++ = (unsigned char)0x80 + message.getChannel()-1;
-                *mbuf++ = (unsigned char)message.getNoteNumber();
-                *mbuf++ = (unsigned char)message.getVelocity();
-                cnt += 3;
-            }
-            else if(message.isAllSoundOff())
-            {
-                *mbuf++ = (unsigned char)0x7B + message.getChannel()-1;
-                *mbuf++ = (unsigned char)message.getNoteNumber();
-                *mbuf++ = (unsigned char)message.getVelocity();
-                cnt += 3;
-            }
-            else if(message.isController())
-            {
-                *mbuf++ = (unsigned char)0xB0 + message.getChannel()-1;
-                *mbuf++ = (unsigned char)message.getControllerNumber();
-                *mbuf++ = (unsigned char)message.getControllerValue();
-                cnt += 3;
-            }
-            else if(message.isProgramChange())
-            {
-                *mbuf++ = (unsigned char)0xC0 + message.getChannel()-1;
-                *mbuf++ = (unsigned char)message.getProgramChangeNumber();
-                cnt += 2;
-            }
-            else if(message.isPitchWheel())
-            {
-                const int pitch_bend = message.getPitchWheelValue();
-                *mbuf++ = (unsigned char)0xE0 + message.getChannel()-1;
-                *mbuf++ = (unsigned char)(pitch_bend & 0xFF);
-                *mbuf++ = (unsigned char)((pitch_bend >> 7) & 0xFF);
-                cnt += 3;
-            }
+            const uint8* data = message.getRawData();
+            *mbuf++ = *data++;
+            *mbuf++ = *data++;
+            *mbuf++ = *data++;
 
+            if(message.isProgramChange() || message.isChannelPressure())
+                cnt+=2;
+            else
+                cnt+=3;
         }
         midiData->midiBuffer.clear();
     }
     return cnt;
 
+    /*
+     int cnt=0;
+
+     if(!midiData->midiBuffer.isEmpty() && cnt <= (nbytes - 3))
+     {
+         MidiMessage message(0xf4, 0, 0, 0);
+         MidiBuffer::Iterator i (midiData->midiBuffer);
+         int messageFrameRelativeTothisProcess;
+         while (i.getNextEvent (message, messageFrameRelativeTothisProcess))
+         {
+             if(message.isNoteOn())
+             {
+                 *mbuf++ = (unsigned char)0x90 + message.getChannel()-1;
+                 *mbuf++ = (unsigned char)message.getNoteNumber();
+                 *mbuf++ = (unsigned char)message.getVelocity();
+                 cnt += 3;
+             }
+             else if(message.isNoteOff())
+             {
+                 *mbuf++ = (unsigned char)0x80 + message.getChannel()-1;
+                 *mbuf++ = (unsigned char)message.getNoteNumber();
+                 *mbuf++ = (unsigned char)message.getVelocity();
+                 cnt += 3;
+             }
+             else if(message.isAllSoundOff())
+             {
+                 *mbuf++ = (unsigned char)0x7B + message.getChannel()-1;
+                 *mbuf++ = (unsigned char)message.getNoteNumber();
+                 *mbuf++ = (unsigned char)message.getVelocity();
+                 cnt += 3;
+             }
+             else if(message.isController())
+             {
+                 *mbuf++ = (unsigned char)0xB0 + message.getChannel()-1;
+                 *mbuf++ = (unsigned char)message.getControllerNumber();
+                 *mbuf++ = (unsigned char)message.getControllerValue();
+                 cnt += 3;
+             }
+             else if(message.isProgramChange())
+             {
+                 *mbuf++ = (unsigned char)0xC0 + message.getChannel()-1;
+                 *mbuf++ = (unsigned char)message.getProgramChangeNumber();
+                 cnt += 2;
+             }
+             else if(message.isPitchWheel())
+             {
+                 const int pitch_bend = message.getPitchWheelValue();
+                 *mbuf++ = (unsigned char)0xE0 + message.getChannel()-1;
+                 *mbuf++ = (unsigned char)(pitch_bend & 0xFF);
+                 *mbuf++ = (unsigned char)((pitch_bend >> 7) & 0xFF);
+                 cnt += 3;
+             }
+
+         }
+         midiData->midiBuffer.clear();
+     }
+     return cnt;
+    */
 }
 
 //==============================================================================

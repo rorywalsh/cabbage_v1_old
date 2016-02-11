@@ -20,7 +20,7 @@ widgetarray("chan", number), active(val), svgfile("filename")
 
 **fontcolour("colour")** Sets the colour of the font to appear on the groupbox. See above for details on valid colours. .
 
-**line(value)** Turns off the line that appears on a groupbox. 
+**linethickess(value)** Sets the thickness of the line that appears on a groupbox. Set to 0 to disable the line. 
 
 **plant("name")** Sets the name of the plant. No two plants can have the same name. See [Plants](./plants.md)
 

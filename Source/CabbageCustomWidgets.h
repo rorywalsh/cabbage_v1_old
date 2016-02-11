@@ -1466,7 +1466,7 @@ public:
         if(line==0)
             this->getProperties().set("groupLine", var(0));
         else
-            this->getProperties().set("groupLine", var(1));
+            this->getProperties().set("groupLine", line);
         //repaint();
 
         //if widget is a plant intercept mouse events

@@ -1137,9 +1137,12 @@ void CabbageLookAndFeel::drawGroupComponentOutline (Graphics &g, int w, int h, c
         g.drawRoundedRectangle (0.5, 0.5, w-1, h-1, corners, 1);
 
         g.setColour (group.findColour(GroupComponent::textColourId));
-        if(!group.getProperties().getWithDefault("groupLine", 0).equals(var(0)))
+		
+		float lineThickness = group.getProperties().getWithDefault("groupLine", 0);
+		
+        if(lineThickness>0)
         {
-            g.drawLine (10, 20, w-10, 20, 0.2);
+            g.drawLine (10, 20, w-10, 20, lineThickness);
         }
     }
 

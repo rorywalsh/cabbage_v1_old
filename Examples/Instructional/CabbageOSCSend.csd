@@ -1,7 +1,7 @@
 <Cabbage>
 form caption("OSCSend"), size(470, 260), pluginID("band"), guirefresh(10)
-rslider bounds(10, 10, 80, 80), channel("rslider1"), colour("red")
-rslider bounds(100, 10, 80, 80), channel("rslider2"), colour("red")
+rslider bounds(10, 10, 80, 80), channel("rslider1"), colour("red"), range(0, 1, 0, 1, .01)
+rslider bounds(100, 10, 80, 80), channel("rslider2"), colour("red"), range(0, 1, 0, 1, .01)
 
 </Cabbage>
 <CsoundSynthesizer>
@@ -20,7 +20,7 @@ kData1 chnget "rslider1"
 kData2 chnget "rslider2"
 
 
-OSCsend   kData1+kData2, "localhost", 7770, "/foo/bar", "ii", kData1, kData2
+OSCsend   kData1+kData2, "localhost", 7770, "/foo/bar", "ff", kData1, kData2
 
 endin
 

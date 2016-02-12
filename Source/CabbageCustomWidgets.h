@@ -442,8 +442,13 @@ public:
         textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
         //slider->setPopupDisplayEnabled (true, 0);
 
-        slider->setVelocityModeParameters(1.0, 1, 0.0, true);
-        slider->setVelocityBasedMode(cAttr.getNumProp(CabbageIDs::velocity)==1 ? true : false);
+
+
+        if(cAttr.getNumProp(CabbageIDs::velocity) > 0)
+        {
+            slider->setVelocityModeParameters(cAttr.getNumProp(CabbageIDs::velocity), 1, 0.0, true);
+            slider->setVelocityBasedMode(true);
+        }
 
 
 
@@ -2913,7 +2918,7 @@ public:
         slider->setColour(Slider::textBoxBackgroundColourId, colour);
 
 
-        slider->setVelocityBasedMode(cAttr.getNumProp(CabbageIDs::velocity)==1 ? true : false);
+        //slider->setVelocityBasedMode(cAttr.getNumProp(CabbageIDs::velocity)==1 ? true : false);
 
 
         slider->setVelocityModeParameters(80);
@@ -3158,7 +3163,7 @@ class CabbageFFTDisplay	:	public Component,
 {
     String name, displayType;
     CabbagePluginAudioProcessorEditor* owner;
-    RoundButton zoomIn, zoomOut;
+    RoundButton zoomInButton, zoomOutButton;
     Array<float, CriticalSection> points;
     int tableNumber, freq, shouldDrawSonogram, leftPos, scrollbarHeight,
         minFFTBin, maxFFTBin, size, zoomLevel, scopeWidth;
@@ -3215,7 +3220,7 @@ class CabbageFFTDisplay	:	public Component,
                 else
                     freqStr = freqStr+"Hz";
 
-                g.drawFittedText(String(freqStr), i*width, getHeight()-15, 35, 7, Justification::left, 1);
+                g.drawFittedText(String(freqStr), i*width, 4, 35, 7, Justification::left, 1);
             }
         }
 
@@ -3245,6 +3250,8 @@ public:
     void mouseMove(const MouseEvent &e);
     void showPopup(String text);
     void showScrollbar(bool show);
+    void zoomOut(int factor=1);
+    void zoomIn(int factor=1);
     Image spectrogramImage, spectroscopeImage;
     FrequencyRangeDisplayComponent freqRangeDisplay;
     Range<int> freqRange;

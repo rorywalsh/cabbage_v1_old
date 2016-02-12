@@ -857,25 +857,27 @@ CabbageFFTDisplay::CabbageFFTDisplay (CabbageGUIType &cAttr, CabbagePluginAudioP
       freqRange(cAttr.getNumProp(CabbageIDs::min), cAttr.getNumProp(CabbageIDs::max)),
       scrollbar(false),
       scopeWidth(cAttr.getNumProp(CabbageIDs::width)),
-      zoomIn("zoomIn", Colours::white),
-      zoomOut("zoomOut", Colours::white),
-      zoomLevel(0),
+      zoomInButton("zoomIn", Colours::white),
+      zoomOutButton("zoomOut", Colours::white),
+      zoomLevel(cAttr.getNumProp(CabbageIDs::zoom)),
       leftPos(0),
       isScrollbarShowing(false),
       scrollbarHeight(20)
 {
-    cUtils::debug(colour.toString());
-    addAndMakeVisible(zoomIn);
-    addAndMakeVisible(zoomOut);
     addAndMakeVisible(freqRangeDisplay);
     addAndMakeVisible(scrollbar);
     scrollbar.setRangeLimits(Range<double>(0, 20));
-    zoomIn.addChangeListener(this);
-    zoomOut.addChangeListener(this);
+    zoomInButton.addChangeListener(this);
+    zoomOutButton.addChangeListener(this);
     //hide scrollbar, visible not working for disabling it...
     scrollbar.setBounds(-1000, getHeight()-15, getWidth(), 15);
     scrollbar.setAutoHide(false);
     scrollbar.addListener(this);
+    if(zoomLevel>=0)
+    {
+        addAndMakeVisible(zoomInButton);
+        addAndMakeVisible(zoomOutButton);
+    }
 }
 
 void CabbageFFTDisplay::setBins(int min, int max)
@@ -902,15 +904,28 @@ void CabbageFFTDisplay::changeListenerCallback(ChangeBroadcaster *source)
     RoundButton* button = dynamic_cast<RoundButton*>(source);
 
     if(button->getName()=="zoomIn")
+        zoomIn();
+    else
+        zoomOut();
+}
+
+void CabbageFFTDisplay::zoomIn(int factor)
+{
+    for(int i=0; i<factor; i++)
     {
         zoomLevel = zoomLevel<20 ? zoomLevel+1 : 20;
         const Range<double> newRange (0.0, 20-zoomLevel);
         scrollbar.setCurrentRange (newRange);
-        freqRangeDisplay.setBounds(0, 0, getWidth()*(zoomLevel+1), 18);
+        freqRangeDisplay.setBounds(1, 0, getWidth()*(zoomLevel+1), 18);
         freqRangeDisplay.setResolution(10*zoomLevel+1);
         scopeWidth = freqRangeDisplay.getWidth();
+        showScrollbar(true);
     }
-    else
+}
+
+void CabbageFFTDisplay::zoomOut(int factor)
+{
+    for(int i=0; i<factor; i++)
     {
         zoomLevel = zoomLevel>1 ? zoomLevel-1 : 0;
         const Range<double> newRange (0.0, 20-zoomLevel);
@@ -918,14 +933,9 @@ void CabbageFFTDisplay::changeListenerCallback(ChangeBroadcaster *source)
         freqRangeDisplay.setBounds(0, 0, getWidth()*jmax(1, zoomLevel+1), 18);
         freqRangeDisplay.setResolution(jmax(10, 10*zoomLevel+1));
         scopeWidth = freqRangeDisplay.getWidth();
+        if(zoomLevel<1)
+            showScrollbar(false);
     }
-
-
-    if(zoomLevel>0)
-        showScrollbar(true);
-    else
-        showScrollbar(false);
-
 }
 
 void CabbageFFTDisplay::showScrollbar(bool show)
@@ -933,15 +943,15 @@ void CabbageFFTDisplay::showScrollbar(bool show)
     if(show)
     {
         scrollbar.setBounds(0, getHeight()-scrollbarHeight, getWidth(), scrollbarHeight);
-        zoomIn.setBounds(getWidth()-40, getHeight()-(scrollbarHeight*2+5), 20, 20);
-        zoomOut.setBounds(getWidth()-20, getHeight()-(scrollbarHeight*2+5), 20, 20);
+        zoomInButton.setBounds(getWidth()-40, getHeight()-(scrollbarHeight*2+5), 20, 20);
+        zoomOutButton.setBounds(getWidth()-20, getHeight()-(scrollbarHeight*2+5), 20, 20);
         isScrollbarShowing=true;
     }
     else
     {
         scrollbar.setBounds(-1000, getHeight()-scrollbarHeight, getWidth(), scrollbarHeight);
-        zoomIn.setBounds(getWidth()-40, getHeight()-scrollbarHeight-5, 20, 20);
-        zoomOut.setBounds(getWidth()-20, getHeight()-scrollbarHeight-5, 20, 20);
+        zoomInButton.setBounds(getWidth()-40, getHeight()-scrollbarHeight-5, 20, 20);
+        zoomOutButton.setBounds(getWidth()-20, getHeight()-scrollbarHeight-5, 20, 20);
         isScrollbarShowing=false;
     }
 }
@@ -993,8 +1003,16 @@ void CabbageFFTDisplay:: paint(Graphics& g)
 
 void CabbageFFTDisplay::mouseMove(const MouseEvent &e)
 {
-    const int position = jmap(e.getPosition().getX(), 0, scopeWidth, 0, 22050);
-    showPopup(String(position)+"Hz.");
+    if(shouldDrawSonogram)
+    {
+        const int position = jmap(e.getPosition().getY(), 0, getHeight(), 22050, 0);
+        showPopup(String(position)+"Hz.");
+    }
+    else
+    {
+        const int position = jmap(e.getPosition().getX(), 0, scopeWidth, 0, 22050);
+        showPopup(String(position)+"Hz.");
+    }
 }
 
 void CabbageFFTDisplay::setPoints(Array<float, CriticalSection> _points)
@@ -1016,14 +1034,16 @@ void CabbageFFTDisplay::showPopup(String text)
 
 void CabbageFFTDisplay::resized()
 {
-    scrollbarHeight = getHeight()*.09;
+    scrollbarHeight = jmin(15.0, getHeight()*.09);
     if(!shouldDrawSonogram)
     {
-        freqRangeDisplay.setBounds(0, 0, getWidth(), 18);
+        freqRangeDisplay.setBounds(1, 0, getWidth(), 18);
         const int offset = isScrollbarShowing==true ? 41 : 22;
-        zoomIn.setBounds(getWidth()-40, getHeight()-offset, 20, 20);
-        zoomOut.setBounds(getWidth()-20, getHeight()-offset, 20, 20);
+        zoomInButton.setBounds(getWidth()-40, getHeight()-offset, 20, 20);
+        zoomOutButton.setBounds(getWidth()-20, getHeight()-offset, 20, 20);
     }
+
+    zoomIn(zoomLevel);
 }
 
 
@@ -1036,15 +1056,15 @@ void CabbageFFTDisplay::update(CabbageGUIType m_cAttr)
         if(shouldDrawSonogram)
         {
             freqRangeDisplay.setVisible(false);
-            zoomIn.setVisible(false);
-            zoomOut.setVisible(false);
+            zoomInButton.setVisible(false);
+            zoomOutButton.setVisible(false);
             scrollbar.setVisible(false);
         }
         else
         {
             freqRangeDisplay.setVisible(true);
-            zoomIn.setVisible(true);
-            zoomOut.setVisible(true);
+            zoomInButton.setVisible(true);
+            zoomOutButton.setVisible(true);
         }
     }
 

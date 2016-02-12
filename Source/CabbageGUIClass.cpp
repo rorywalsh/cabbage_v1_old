@@ -427,6 +427,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+        cabbageIdentifiers.set(CabbageIDs::velocity, 80);
     }
     //===============popupmenu==================//
     else if(strTokens[0].trim() == "popupmenu")
@@ -995,6 +996,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::displaytype, "spectroscope");
+        cabbageIdentifiers.set(CabbageIDs::zoom, 0);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
 

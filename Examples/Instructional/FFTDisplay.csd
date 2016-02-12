@@ -20,7 +20,7 @@ a1 vco2 1, kFreq			;generate some frequencies using a sawtooth
 outs a1, a1
 							;dispfft takes a signal, analyses it, and send the FFT data
 							;to the fftdisplay widget
-dispfft a1, .1, 2048, 0, 0, 0, 0, 2048/10
+dispfft a1, .1, 2048
 
 
 							; allows users to toggle the type of display

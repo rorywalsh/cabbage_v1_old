@@ -3412,6 +3412,7 @@ void CabbagePluginAudioProcessorEditor::toggleButtonClicked(Button* button)
 void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIType &cAttr)
 {
     String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
+    cUtils::debug(cAttr.getStringProp(CabbageIDs::workingdir));
     String path = cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::workingdir), currentFileLocation);
 
 
@@ -3839,19 +3840,19 @@ void CabbagePluginAudioProcessorEditor::refreshDiskReadingGUIControls(String typ
             CabbageComboBox* cabCombo = dynamic_cast<CabbageComboBox*>(comps[i]);
             if(cabCombo)
             {
-                File pluginDir;
+                File fileDir;
                 int currentItemID = cabCombo->combo->getSelectedId();
                 String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
 
 
-                if(getFilter()->getGUICtrls(i).getStringProp("workingDir").isEmpty())
-                    pluginDir = File(currentFileLocation);
+                if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::workingdir).isEmpty())
+                    fileDir = File(currentFileLocation);
                 else
-                    pluginDir = File(getFilter()->getGUICtrls(i).getStringProp("workingdir"));
+                    fileDir = File(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::workingdir));
 
-                const String filetype = getFilter()->getGUICtrls(i).getStringProp("filetype");
+                const String filetype = getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::filetype);
                 Array<File> dirFiles;
-                pluginDir.findChildFiles(dirFiles, 2, false, filetype);
+                fileDir.findChildFiles(dirFiles, 2, false, filetype);
 
                 StringArray comboItems;
                 for(int i=0; i<cabCombo->combo->getNumItems(); i++)

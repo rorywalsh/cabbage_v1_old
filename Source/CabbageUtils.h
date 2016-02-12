@@ -1681,6 +1681,7 @@ public:
 //====================================================================================================
     static String returnFullPathForFile(String file, String fullPath)
     {
+        cUtils::debug(file);
         String filePath;
         if(file.isNotEmpty())
         {

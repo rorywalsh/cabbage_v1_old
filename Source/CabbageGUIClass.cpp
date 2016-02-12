@@ -40,6 +40,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
     cabbageIdentifiers.set(CabbageIDs::svgdebug, 0);
 
 
+
     StringArray strTokens;
     strTokens.addTokens(compStr, " ", "\"");
 
@@ -500,6 +501,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+        cabbageIdentifiers.set(CabbageIDs::workingdir, "");
+
     }
     //===============label==================//
     else if(strTokens[0].trim() == "label")
@@ -1396,6 +1399,7 @@ void CabbageGUIType::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("populate"))
             {
                 cabbageIdentifiers.set(CabbageIDs::filetype, strTokens[0].trim());
+
                 if(strTokens.size()>1)
                 {
                     cabbageIdentifiers.set(CabbageIDs::workingdir, strTokens[1].trim());

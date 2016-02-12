@@ -968,7 +968,6 @@ void CabbageFFTDisplay::drawSonogram()
 
 void CabbageFFTDisplay::drawSpectroscope(Graphics& g)
 {
-    //Graphics g(spectroscopeImage);
     g.fillAll(backgroundColour);
     for (int i=0; i<size; i++)
     {
@@ -977,27 +976,7 @@ void CabbageFFTDisplay::drawSpectroscope(Graphics& g)
         const int height = getHeight()-offset;
         const int amp = (points[i]*6*height);
         const int lineWidth = jmax(1, scopeWidth/size);
-
-
         g.setColour(colour);
-
-//		if(lineWidth>1)
-//		{
-//			if(amp>20)
-//			{
-//				g.setColour(colour.withAlpha(.2f));
-//				g.fillRect(position, height-amp, lineWidth, 5);
-//				g.setColour(colour.withAlpha(.9f));
-//				g.fillRect(position, (height-amp)+5, lineWidth, 5);
-//				g.setColour(colour.withAlpha(.7f));
-//				g.fillRect(position, (height-amp)+10, lineWidth, 5);
-//				g.setColour(colour.withAlpha(.5f));
-//				g.fillRect(position, (height-amp)+15, lineWidth, 5);
-//			}
-//			g.setColour(colour.withAlpha(.3f));
-//			g.fillRect(position, (height-amp)+20, lineWidth, height-(height-amp)-20);
-//		}
-//		else
         g.drawVerticalLine(position, height-amp, height);
     }
 }

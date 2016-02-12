@@ -1,7 +1,7 @@
 <Cabbage>
 form caption("OSCRec"), size(470, 260), pluginID("band"), guirefresh(10)
-rslider bounds(10, 10, 80, 80), channel("test1"), range(0, 100, 1)
-rslider bounds(100, 10, 80, 80), channel("test2")
+rslider bounds(10, 10, 80, 80), channel("test1"), range(0, 1, 0, 1, .01)
+rslider bounds(100, 10, 80, 80), channel("test2"), range(0, 1, 0, 1, .01)
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>
@@ -29,4 +29,3 @@ endin
 i 1 0 [3600*24*7]
 </CsScore>
 </CsoundSynthesizer>
-

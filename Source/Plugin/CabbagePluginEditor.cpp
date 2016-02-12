@@ -2066,7 +2066,7 @@ void CabbagePluginAudioProcessorEditor::InsertTransport(CabbageGUIType &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertFFTDisplay(CabbageGUIType &cAttr)
 {
-    CabbageFFTDisplay* stepper = new CabbageFFTDisplay(cAttr, this);
+    CabbageFFTDisplay* fftDisplay = new CabbageFFTDisplay(cAttr, this);
 
     float left = cAttr.getNumProp(CabbageIDs::left);
     float top = cAttr.getNumProp(CabbageIDs::top);
@@ -2075,14 +2075,14 @@ void CabbagePluginAudioProcessorEditor::InsertFFTDisplay(CabbageGUIType &cAttr)
 
     //if control is not part of a plant, add mouse listener
     if(cAttr.getStringProp("plant").isEmpty())
-        stepper->addMouseListener(this, true);
+        fftDisplay->addMouseListener(this, true);
 
-    stepper->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
-    stepper->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
-    stepper->getProperties().set(CabbageIDs::index, layoutComps.size());
+    fftDisplay->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+    fftDisplay->getProperties().set(CabbageIDs::index, layoutComps.size());
 
     layoutComps.add(new CabbageFFTDisplay(cAttr, this));
     int idx = layoutComps.size()-1;
+    layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
     setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
     cAttr.setStringProp(CabbageIDs::type, "label");
 }
@@ -2102,12 +2102,12 @@ void CabbagePluginAudioProcessorEditor::InsertStepper(CabbageGUIType &cAttr)
     if(cAttr.getStringProp("plant").isEmpty())
         stepper->addMouseListener(this, true);
 
-    stepper->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
     stepper->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
     stepper->getProperties().set(CabbageIDs::index, layoutComps.size());
 
     layoutComps.add(stepper);
     int idx = layoutComps.size()-1;
+    layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
     setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
     cAttr.setStringProp(CabbageIDs::type, "label");
 }

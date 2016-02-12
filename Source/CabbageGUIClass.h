@@ -386,6 +386,7 @@ static const String mousedownleft = "MOUSE_DOWN_LEFT";
 static const String mousedownright = "MOUSE_DOWN_RIGHT";
 static const String mousedownlmiddle = "MOUSE_DOWN_MIDDLE";
 static const String csoundoutput = "csoundoutput";
+static const String fftdisplay = "fftdisplay";
 };
 
 

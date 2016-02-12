@@ -3157,14 +3157,15 @@ class CabbageFFTDisplay	:	public Component,
     public ChangeListener
 {
     String name, displayType;
-    int minFFTBin, maxFFTBin, size;
     CabbagePluginAudioProcessorEditor* owner;
     RoundButton zoomIn, zoomOut;
     Array<float, CriticalSection> points;
-    int tableNumber, freq, shouldDrawSonogram;
+    int tableNumber, freq, shouldDrawSonogram, leftPos, scrollbarHeight,
+        minFFTBin, maxFFTBin, size, zoomLevel, scopeWidth;
     Colour fontColour, colour, backgroundColour, outlineColour;
     ScrollBar scrollbar;
-    int zoomLevel, scopeWidth;
+    bool isScrollbarShowing;
+
 
     class FrequencyRangeDisplayComponent : public Component
     {
@@ -3182,14 +3183,19 @@ class CabbageFFTDisplay	:	public Component,
         {}
 
         ~FrequencyRangeDisplayComponent() {}
+
         void resized()
         {
-
+            if(getWidth()<400)
+                resolution = resolution/2.f;
         }
 
         void setResolution(int res)
         {
             resolution = res;
+            if(getWidth()<400)
+                resolution = resolution/3.f;
+
         }
 
         void paint(Graphics &g)
@@ -3236,8 +3242,9 @@ public:
     void setPoints(Array<float, CriticalSection> _points);
     void resized();
     void update(CabbageGUIType m_cAttr);
-	void mouseMove(const MouseEvent &e);
-
+    void mouseMove(const MouseEvent &e);
+    void showPopup(String text);
+    void showScrollbar(bool show);
     Image spectrogramImage, spectroscopeImage;
     FrequencyRangeDisplayComponent freqRangeDisplay;
     Range<int> freqRange;

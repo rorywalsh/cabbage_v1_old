@@ -207,6 +207,7 @@ void CabbageEncoder::showPopup()
         owner->showBubble(this, popupText);
     }
 }
+
 void CabbageEncoder::mouseExit(const MouseEvent &e)
 {
     isMouseOver = false;
@@ -839,206 +840,238 @@ void CabbageRangeSlider2::resized()
 // FFTDisplay widget
 //================================================================================================================
 CabbageFFTDisplay::CabbageFFTDisplay (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner)
-	: Component(),
-	  owner(_owner),
-	  tableNumber(cAttr.getNumProp(CabbageIDs::ffttablenumber)),
-	  colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::colour))),
-	  backgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablebackgroundcolour))),
-	  fontColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
-	  minFFTBin(0),
-	  maxFFTBin(1024),
-	  size(2048),
-	  shouldDrawSonogram(cAttr.getStringProp(CabbageIDs::displaytype)=="spectroscope" ? false : true),
-	  displayType(cAttr.getStringProp(CabbageIDs::displaytype)),
-	  spectrogramImage(Image::RGB, 512, 300, true),
-	  spectroscopeImage(Image::RGB, 512, 300, true),
-	  freqRangeDisplay(fontColour, backgroundColour),
-	  freqRange(cAttr.getNumProp(CabbageIDs::min), cAttr.getNumProp(CabbageIDs::max)),
-	  scrollbar(false),
-	  scopeWidth(cAttr.getNumProp(CabbageIDs::width)),
-	  zoomIn("zoomIn", Colours::white),
-	  zoomOut("zoomOut", Colours::white),
-	  zoomLevel(0)
+    : Component(),
+      owner(_owner),
+      tableNumber(cAttr.getNumProp(CabbageIDs::ffttablenumber)),
+      colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::colour))),
+      backgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablebackgroundcolour))),
+      fontColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
+      minFFTBin(0),
+      maxFFTBin(1024),
+      size(2048),
+      shouldDrawSonogram(cAttr.getStringProp(CabbageIDs::displaytype)=="spectroscope" ? false : true),
+      displayType(cAttr.getStringProp(CabbageIDs::displaytype)),
+      spectrogramImage(Image::RGB, 512, 300, true),
+      spectroscopeImage(Image::RGB, 512, 300, true),
+      freqRangeDisplay(fontColour, backgroundColour),
+      freqRange(cAttr.getNumProp(CabbageIDs::min), cAttr.getNumProp(CabbageIDs::max)),
+      scrollbar(false),
+      scopeWidth(cAttr.getNumProp(CabbageIDs::width)),
+      zoomIn("zoomIn", Colours::white),
+      zoomOut("zoomOut", Colours::white),
+      zoomLevel(0),
+      leftPos(0),
+      isScrollbarShowing(false),
+      scrollbarHeight(20)
 {
-	cUtils::debug(colour.toString());
-	addAndMakeVisible(zoomIn);
-	addAndMakeVisible(zoomOut);
-	addAndMakeVisible(freqRangeDisplay);
-	addAndMakeVisible(scrollbar);
-	scrollbar.setRangeLimits(Range<double>(0, 20));
-	zoomIn.addChangeListener(this);
-	zoomOut.addChangeListener(this);
-	//hide scrollbar, visible not working for disabling it...
-	scrollbar.setBounds(-1000, getHeight()-15, getWidth(), 15);
-	scrollbar.setAutoHide(false);
-	scrollbar.addListener(this);
+    cUtils::debug(colour.toString());
+    addAndMakeVisible(zoomIn);
+    addAndMakeVisible(zoomOut);
+    addAndMakeVisible(freqRangeDisplay);
+    addAndMakeVisible(scrollbar);
+    scrollbar.setRangeLimits(Range<double>(0, 20));
+    zoomIn.addChangeListener(this);
+    zoomOut.addChangeListener(this);
+    //hide scrollbar, visible not working for disabling it...
+    scrollbar.setBounds(-1000, getHeight()-15, getWidth(), 15);
+    scrollbar.setAutoHide(false);
+    scrollbar.addListener(this);
 }
 
 void CabbageFFTDisplay::setBins(int min, int max)
 {
-	minFFTBin = min;
-	maxFFTBin = max;
+    minFFTBin = min;
+    maxFFTBin = max;
 }
 
 void CabbageFFTDisplay::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
 {
-	ScrollBar* scroll = dynamic_cast<ScrollBar*>(scrollBarThatHasMoved);
-	if(scroll)
-	{
-		float moveBy = newRangeStart/scrollBarThatHasMoved->getCurrentRange().getLength();
-		moveBy = freqRangeDisplay.getWidth()*moveBy;
-		cUtils::debug("MoveBy:", moveBy);
-		freqRangeDisplay.setTopLeftPosition(-moveBy, getHeight()-15);
-	}
+    ScrollBar* scroll = dynamic_cast<ScrollBar*>(scrollBarThatHasMoved);
+    if(scroll)
+    {
+        float moveBy = newRangeStart/scrollBarThatHasMoved->getCurrentRange().getLength();
+        moveBy = freqRangeDisplay.getWidth()*moveBy;
+        cUtils::debug("MoveBy:", moveBy);
+        freqRangeDisplay.setTopLeftPosition(-moveBy, 0);
+        leftPos = -moveBy;
+    }
 }
 
 void CabbageFFTDisplay::changeListenerCallback(ChangeBroadcaster *source)
 {
-	RoundButton* button = dynamic_cast<RoundButton*>(source);
+    RoundButton* button = dynamic_cast<RoundButton*>(source);
 
-	if(button->getName()=="zoomIn")
-	{
-		zoomLevel = zoomLevel<20 ? zoomLevel+1 : 20;
-		const Range<double> newRange (0.0, 20-zoomLevel);
-		scrollbar.setCurrentRange (newRange);
-		freqRangeDisplay.setBounds(0, getHeight()-15, getWidth()*(zoomLevel+1), 18);
-		freqRangeDisplay.setResolution(10*zoomLevel+1);
-		scopeWidth = freqRangeDisplay.getWidth();
-	}
-	else
-	{
-		zoomLevel = zoomLevel>1 ? zoomLevel-1 : 0;
-		const Range<double> newRange (0.0, 20-zoomLevel);
-		scrollbar.setCurrentRange (newRange);
-		freqRangeDisplay.setBounds(0, getHeight()-15, getWidth()*jmax(1, zoomLevel+1), 18);
-		freqRangeDisplay.setResolution(jmax(10, 10*zoomLevel+1));
-		scopeWidth = freqRangeDisplay.getWidth();
-	}
-
-	cUtils::debug(zoomLevel);
-
-	if(zoomLevel>0)
-		scrollbar.setBounds(0, getHeight()-20, getWidth(), 20);
-	else
-		scrollbar.setBounds(-1000, getHeight()-20, getWidth(), 20);
+    if(button->getName()=="zoomIn")
+    {
+        zoomLevel = zoomLevel<20 ? zoomLevel+1 : 20;
+        const Range<double> newRange (0.0, 20-zoomLevel);
+        scrollbar.setCurrentRange (newRange);
+        freqRangeDisplay.setBounds(0, 0, getWidth()*(zoomLevel+1), 18);
+        freqRangeDisplay.setResolution(10*zoomLevel+1);
+        scopeWidth = freqRangeDisplay.getWidth();
+    }
+    else
+    {
+        zoomLevel = zoomLevel>1 ? zoomLevel-1 : 0;
+        const Range<double> newRange (0.0, 20-zoomLevel);
+        scrollbar.setCurrentRange (newRange);
+        freqRangeDisplay.setBounds(0, 0, getWidth()*jmax(1, zoomLevel+1), 18);
+        freqRangeDisplay.setResolution(jmax(10, 10*zoomLevel+1));
+        scopeWidth = freqRangeDisplay.getWidth();
+    }
 
 
+    if(zoomLevel>0)
+        showScrollbar(true);
+    else
+        showScrollbar(false);
+
+}
+
+void CabbageFFTDisplay::showScrollbar(bool show)
+{
+    if(show)
+    {
+        scrollbar.setBounds(0, getHeight()-scrollbarHeight, getWidth(), scrollbarHeight);
+        zoomIn.setBounds(getWidth()-40, getHeight()-(scrollbarHeight*2+5), 20, 20);
+        zoomOut.setBounds(getWidth()-20, getHeight()-(scrollbarHeight*2+5), 20, 20);
+        isScrollbarShowing=true;
+    }
+    else
+    {
+        scrollbar.setBounds(-1000, getHeight()-scrollbarHeight, getWidth(), scrollbarHeight);
+        zoomIn.setBounds(getWidth()-40, getHeight()-scrollbarHeight-5, 20, 20);
+        zoomOut.setBounds(getWidth()-20, getHeight()-scrollbarHeight-5, 20, 20);
+        isScrollbarShowing=false;
+    }
 }
 
 void CabbageFFTDisplay::drawSonogram()
 {
-	const int rightHandEdge = spectrogramImage.getWidth() - 2;
-	const int imageHeight = spectrogramImage.getHeight();
+    const int rightHandEdge = spectrogramImage.getWidth() - 2;
+    const int imageHeight = spectrogramImage.getHeight();
 
-	spectrogramImage.moveImageSection (0, 0, 1, 0, rightHandEdge, imageHeight);
+    spectrogramImage.moveImageSection (0, 0, 1, 0, rightHandEdge, imageHeight);
 
-	Graphics g(spectrogramImage);
-	g.fillAll(backgroundColour);
-	Range<float> maxLevel = FloatVectorOperations::findMinAndMax(points.getRawDataPointer(), points.size());
+    Graphics g(spectrogramImage);
+    //g.fillAll(backgroundColour);
+    Range<float> maxLevel = FloatVectorOperations::findMinAndMax(points.getRawDataPointer(), points.size());
 
-	for (int y = 0; y < imageHeight; y++)
-	{
-		const int index = jmap(y, 0, imageHeight, 0, size);
-		const float level = jmap (points[index], 0.0f, maxLevel.getEnd(), 0.0f, 1.0f);
-		g.setColour(Colour::fromHSV (level, 1.0f, level, 1.0f));
-		g.drawHorizontalLine(imageHeight-y, rightHandEdge, rightHandEdge+2);
-	}
+    for (int y = 0; y < imageHeight; y++)
+    {
+        const int index = jmap(y, 0, imageHeight, 0, size);
+        const float level = jmap (points[index], 0.0f, maxLevel.getEnd(), 0.0f, 1.0f);
+        g.setColour(Colour::fromHSV (level, 1.0f, level, 1.0f));
+        g.drawHorizontalLine(imageHeight-y, rightHandEdge, rightHandEdge+2);
+    }
 }
 
 void CabbageFFTDisplay::drawSpectroscope(Graphics& g)
 {
-	//Graphics g(spectroscopeImage);
-	g.fillAll(backgroundColour);
-	for (int i=0; i<size; i++)
-	{
-		const int position = jmap(i, 0, size, 0, scopeWidth);
-		const int height = getHeight()-20;
-		const int amp = (points[i]*6*height);
-		const int lineWidth = 1;//jmax(1, scopeWidth/size);
+    //Graphics g(spectroscopeImage);
+    g.fillAll(backgroundColour);
+    for (int i=0; i<size; i++)
+    {
+        const int position = jmap(i, 0, size, leftPos, scopeWidth);
+        const int offset = isScrollbarShowing==true ? scrollbarHeight : 0;
+        const int height = getHeight()-offset;
+        const int amp = (points[i]*6*height);
+        const int lineWidth = jmax(1, scopeWidth/size);
 
 
-		g.setColour(colour);
+        g.setColour(colour);
 
-		if(lineWidth>1)
-		{
-			//g.setColour(colour.withAlpha(.2f));
-			g.fillRect(position, getHeight()-amp, lineWidth, 5);
-			g.setColour(colour.withAlpha(.9f));
-			g.fillRect(position, (getHeight()-amp)+5, lineWidth, 5);
-			g.setColour(colour.withAlpha(.7f));
-			g.fillRect(position, (getHeight()-amp)+10, lineWidth, 5);
-			g.setColour(colour.withAlpha(.5f));
-			g.fillRect(position, (getHeight()-amp)+15, lineWidth, 5);
-			g.setColour(colour.withAlpha(.3f));
-			g.fillRect(position, (getHeight()-amp)+20, lineWidth, height-(height-amp));
-		}
-		else
-			g.drawVerticalLine(position, height-amp, height);
-	}
+//		if(lineWidth>1)
+//		{
+//			if(amp>20)
+//			{
+//				g.setColour(colour.withAlpha(.2f));
+//				g.fillRect(position, height-amp, lineWidth, 5);
+//				g.setColour(colour.withAlpha(.9f));
+//				g.fillRect(position, (height-amp)+5, lineWidth, 5);
+//				g.setColour(colour.withAlpha(.7f));
+//				g.fillRect(position, (height-amp)+10, lineWidth, 5);
+//				g.setColour(colour.withAlpha(.5f));
+//				g.fillRect(position, (height-amp)+15, lineWidth, 5);
+//			}
+//			g.setColour(colour.withAlpha(.3f));
+//			g.fillRect(position, (height-amp)+20, lineWidth, height-(height-amp)-20);
+//		}
+//		else
+        g.drawVerticalLine(position, height-amp, height);
+    }
 }
 
 void CabbageFFTDisplay:: paint(Graphics& g)
 {
-	if(shouldDrawSonogram)
-		g.drawImageWithin(spectrogramImage, 0, 0, getWidth(), getHeight(), RectanglePlacement::stretchToFit);
-	else
-	{
-		drawSpectroscope(g);
-	}
+    if(shouldDrawSonogram)
+        g.drawImageWithin(spectrogramImage, 0, 0, getWidth(), getHeight(), RectanglePlacement::stretchToFit);
+    else
+    {
+        drawSpectroscope(g);
+    }
 }
 
 void CabbageFFTDisplay::mouseMove(const MouseEvent &e)
 {
-	const int position = jmap(e.getPosition().getX(), 0, getWidth(), 0, 22050);
-	cUtils::debug("CurrentFreq:", position);
+    const int position = jmap(e.getPosition().getX(), 0, scopeWidth, 0, 22050);
+    showPopup(String(position)+"Hz.");
 }
 
 void CabbageFFTDisplay::setPoints(Array<float, CriticalSection> _points)
 {
-	points = _points;
-	size = points.size();
-	freq = 44100/size;
-	if(shouldDrawSonogram)
-		drawSonogram();
+    points = _points;
+    size = points.size();
+    freq = 44100/size;
+    if(shouldDrawSonogram)
+        drawSonogram();
 
-	repaint();
+    repaint();
 
+}
+
+void CabbageFFTDisplay::showPopup(String text)
+{
+    owner->showBubble(this, text);
 }
 
 void CabbageFFTDisplay::resized()
 {
-	if(!shouldDrawSonogram)
-	{
-		freqRangeDisplay.setBounds(0, getHeight()-15, getWidth(), 18);
-		zoomIn.setBounds(getWidth()-40, getHeight()-41, 20, 20);
-		zoomOut.setBounds(getWidth()-20, getHeight()-41, 20, 20);
-	}
+    scrollbarHeight = getHeight()*.09;
+    if(!shouldDrawSonogram)
+    {
+        freqRangeDisplay.setBounds(0, 0, getWidth(), 18);
+        const int offset = isScrollbarShowing==true ? 41 : 22;
+        zoomIn.setBounds(getWidth()-40, getHeight()-offset, 20, 20);
+        zoomOut.setBounds(getWidth()-20, getHeight()-offset, 20, 20);
+    }
 }
+
 
 void CabbageFFTDisplay::update(CabbageGUIType m_cAttr)
 {
-	if(m_cAttr.getStringProp(CabbageIDs::displaytype)!=displayType)
-	{
-		displayType = m_cAttr.getStringProp(CabbageIDs::displaytype);
-		shouldDrawSonogram = displayType=="spectrogram" ? true : false;
-		if(shouldDrawSonogram)
-		{
-			freqRangeDisplay.setVisible(false);
-			zoomIn.setVisible(false);
-			zoomOut.setVisible(false);
-			scrollbar.setVisible(false);
-		}
-		else
-		{
-			freqRangeDisplay.setVisible(true);
-			zoomIn.setVisible(true);
-			zoomOut.setVisible(true);
-		}
-	}
+    if(m_cAttr.getStringProp(CabbageIDs::displaytype)!=displayType)
+    {
+        displayType = m_cAttr.getStringProp(CabbageIDs::displaytype);
+        shouldDrawSonogram = displayType=="spectrogram" ? true : false;
+        if(shouldDrawSonogram)
+        {
+            freqRangeDisplay.setVisible(false);
+            zoomIn.setVisible(false);
+            zoomOut.setVisible(false);
+            scrollbar.setVisible(false);
+        }
+        else
+        {
+            freqRangeDisplay.setVisible(true);
+            zoomIn.setVisible(true);
+            zoomOut.setVisible(true);
+        }
+    }
 
-	if(freqRange!=Range<int>(m_cAttr.getNumProp(CabbageIDs::min),m_cAttr.getNumProp(CabbageIDs::max)))
-	{
-		freqRange = Range<int>(m_cAttr.getNumProp(CabbageIDs::min),m_cAttr.getNumProp(CabbageIDs::max));
-		freqRangeDisplay.setMinMax(freqRange.getStart(), freqRange.getEnd());
-	}
+    if(freqRange!=Range<int>(m_cAttr.getNumProp(CabbageIDs::min),m_cAttr.getNumProp(CabbageIDs::max)))
+    {
+        freqRange = Range<int>(m_cAttr.getNumProp(CabbageIDs::min),m_cAttr.getNumProp(CabbageIDs::max));
+        freqRangeDisplay.setMinMax(freqRange.getStart(), freqRange.getEnd());
+    }
 }

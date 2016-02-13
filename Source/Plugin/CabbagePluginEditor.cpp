@@ -3883,7 +3883,7 @@ void CabbagePluginAudioProcessorEditor::refreshDiskReadingGUIControls(String typ
 //========================================================================================
 void CabbagePluginAudioProcessorEditor::savePresetsFromParameters(File selectedFile, String mode)
 {
-    XmlElement xml (getFilter()->getCsoundInputFile().getFileNameWithoutExtension());
+    XmlElement xml (getFilter()->getCsoundInputFile().getFileNameWithoutExtension().replace(" ", "_"));
     for(int i=0; i<getFilter()->getGUICtrlsSize(); i++)
         xml.setAttribute(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel), getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::value));
 
@@ -3901,7 +3901,7 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
     ScopedPointer<XmlElement> xml;
     xml = xmlState;
     // make sure that it's actually our type of XML object..
-    if (xml->hasTagName (getFilter()->getCsoundInputFile().getFileNameWithoutExtension()))
+    if (xml->hasTagName (getFilter()->getCsoundInputFile().getFileNameWithoutExtension().replace(" ", "_")))
     {
         for(int i=0; i<getFilter()->getNumParameters(); i++)
         {

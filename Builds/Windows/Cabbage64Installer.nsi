@@ -84,7 +84,6 @@ Section "Core components" SEC01
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\padsynth.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\platerev.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\osc.dll"
-  File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\py.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\rtpa.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\rtwinmm.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\scansyn.dll"
@@ -180,6 +179,7 @@ Section Uninstall
   Delete "$INSTDIR\libgcc_s_dw2-1.dll"
   Delete "$INSTDIR\libstdc++-6.dll"
   Delete "$INSTDIR\py.dll"
+  Delete "$INSTDIR\osc.dll"
   Delete "$INSTDIR\csound64.dll"
   Delete "$INSTDIR\libsndfile-1.dll"
 
@@ -195,6 +195,7 @@ Section Uninstall
   
   ;CLI for Csound
   File "csoundCabbage.exe"
+  File "CabbageStudio64.exe"
 
   SetOutPath $SMPROGRAMS
   RMDir /r "$INSTDIR\csoundDocs"

@@ -1757,6 +1757,11 @@ void CabbageGUIType::parse(String inStr, String identifier)
                 cabbageIdentifiers.set(CabbageIDs::guirefresh, strTokens[0].trim().getFloatValue());
             }
 
+            else if(identArray[indx].equalsIgnoreCase("bold"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::bold, strTokens[0].trim().getIntValue());
+            }
+
             else if(identArray[indx].equalsIgnoreCase("textbox"))
             {
                 cabbageIdentifiers.set(CabbageIDs::textbox, strTokens[0].trim().getFloatValue());

@@ -1970,7 +1970,7 @@ private:
 class CabbageLabel	:	public Component
 {
     float rotate;
-    int pivotx, pivoty;
+    int pivotx, pivoty, bold;
 public:
     CabbageLabel (CabbageGUIType &cAttr)
         : text(cAttr.getStringProp(CabbageIDs::text)),
@@ -1980,7 +1980,8 @@ public:
           textAlign(Justification::centred),
           rotate(cAttr.getNumProp(CabbageIDs::rotate)),
           pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-          pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+          pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+          bold(cAttr.getNumProp(CabbageIDs::bold))
     {
         if(!cAttr.getNumProp(CabbageIDs::visible))
         {
@@ -2020,7 +2021,7 @@ public:
         g.setColour(Colour::fromString(colour));
         g.fillRoundedRectangle(getLocalBounds().toFloat(), 3.f);
         g.setColour(Colour::fromString(fontcolour));
-        g.setFont(cUtils::getComponentFont());
+        g.setFont(cUtils::getComponentFont(bold));
         g.setFont(getHeight());
         g.drawFittedText(text, 0, 0, getWidth(), getHeight(), textAlign, 1, 1);
     }
@@ -2057,6 +2058,11 @@ public:
         if(!m_cAttr.getNumProp(CabbageIDs::active))
         {
             setEnabled(false);
+        }
+
+        if(bold!=m_cAttr.getNumProp(CabbageIDs::bold))
+        {
+            bold = m_cAttr.getNumProp(CabbageIDs::bold);
         }
         else
         {

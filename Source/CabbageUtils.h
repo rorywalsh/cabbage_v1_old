@@ -567,9 +567,9 @@ public:
     }
 
 //========= Normal font for components ===============================================
-    static Font getComponentFont()
+    static Font getComponentFont(int bold=1)
     {
-        Font font = Font ("Verdana", 11.5, 1);
+        Font font = Font ("Verdana", 11.5, bold);
         return font;
     }
 

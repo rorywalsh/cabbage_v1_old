@@ -142,6 +142,7 @@ public:
         add("rangex");
         add("rangey");
         add("plant");
+        add("bold");
         add("channeltype");
         add("channels");
         add("channel");
@@ -231,6 +232,7 @@ static const Identifier identchannelarray = "identchannelarray";
 static const Identifier outlinecolour = "outlinecolour";
 static const Identifier fillcolour = "fillcolour";
 static const Identifier fill = "fill";
+static const Identifier bold = "bold";
 static const Identifier textcolour = "textcolour";
 static const Identifier trackercolour = "trackercolour";
 static const Identifier tablecolour = "tablecolour";

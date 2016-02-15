@@ -1588,6 +1588,7 @@ void CabbageGUIType::parse(String inStr, String identifier)
                     if(strTokens.size()>4)
                     {
                         tempArray.add(strTokens[4].trim());
+                        cUtils::debug(strTokens.joinIntoString("\n"));
                         cabbageIdentifiers.set(CabbageIDs::sliderincr, strTokens[4].trim().getDoubleValue());
                     }
 

@@ -607,6 +607,9 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
         this->getParentComponent()->repaint();
 
 
+    if (key == KeyPress ('z', ModifierKeys::commandModifier, 0))
+        undoText();
+
     if (! TextEditorKeyMapper<CodeEditorComponent>::invokeKeyFunction (*this, key))
     {
 
@@ -615,7 +618,6 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
 
         else if (key == KeyPress::escapeKey)
             handleEscapeKey();
-        //else if (key == KeyPress ('[', ModifierKeys::commandModifier, 0))   unindentSelection();
         //else if (key == KeyPress (']', ModifierKeys::commandModifier, 0))   indentSelection();
         else if (key.getTextCharacter() >= ' ')
         {
@@ -818,6 +820,12 @@ Rectangle<int> CsoundCodeEditorComponenet::getCaretPoisition()
     return getCharacterBounds(pos1);
 }
 
+void CsoundCodeEditorComponenet::undoText()
+{
+    CodeDocument::Position startPos = getCaretPos();
+    getDocument().undo();
+    moveCaretTo(startPos, false);
+}
 //==============================================================================
 void CsoundCodeEditorComponenet::performPopupMenuAction (int menuItemID)
 {

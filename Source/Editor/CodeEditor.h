@@ -86,6 +86,7 @@ public:
     void addToRepository();
     StringArray repoEntries;
     String getAllText();
+    void undoText();
     void setAllText(String text);
     void highlightLine(String line);
     void highlightLines(int firstLine, int lastLine);

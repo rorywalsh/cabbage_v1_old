@@ -572,7 +572,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
 
     else if(info.commandID==CommandIDs::editUndo)
     {
-        textEditor->editor[textEditor->currentEditor]->undo();
+        textEditor->editor[textEditor->currentEditor]->undoText();
     }
 
     else if(info.commandID==CommandIDs::fileKeyboardShorts)

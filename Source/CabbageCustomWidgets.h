@@ -373,8 +373,7 @@ class CabbageSlider : public Component,
     int textBox, decPlaces;
     double min, max, value;
     ScopedPointer<Label> textLabel;
-
-    float incr, skew, trackerThickness, rotate;
+    float incr, skew, trackerThickness, rotate, velocity;
     ScopedPointer<CabbageLookAndFeel> lookAndFeel;
 public:
 
@@ -437,19 +436,12 @@ public:
 
         slider->toFront(true);
 
+        velocity = cAttr.getNumProp(CabbageIDs::velocity);
+
         slider->addMouseListener(this, false);
         textLabel->setColour(Label::textColourId, Colour::fromString(textColour));
         textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
         //slider->setPopupDisplayEnabled (true, 0);
-
-
-
-        if(cAttr.getNumProp(CabbageIDs::velocity) > 0)
-        {
-            slider->setVelocityModeParameters(cAttr.getNumProp(CabbageIDs::velocity), 1, 0.0, true);
-            slider->setVelocityBasedMode(true);
-        }
-
 
 
         slider->setColour(Slider::textBoxHighlightColourId, Colours::lime.withAlpha(.2f));
@@ -505,6 +497,15 @@ public:
 //            setupMinMaxValue();
 
         //Logger::writeToLog(String(cAttr.getNumProp(CabbageIDs::value)));
+
+        if(velocity > 0)
+        {
+            slider->setVelocityModeParameters(velocity, 1, 0.0, true);
+            slider->setVelocityBasedMode(true);
+        }
+        else
+            slider->setVelocityBasedMode(false);
+
         incr = cAttr.getNumProp(CabbageIDs::sliderincr);
         skew = cAttr.getNumProp(CabbageIDs::sliderskew);
         slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
@@ -642,6 +643,7 @@ public:
     //---------------------------------------------
     void resized()
     {
+
         //if rotary
         if (sliderType.contains("rotary"))
         {
@@ -820,6 +822,7 @@ public:
 
         if(rotate!=0)
             setTransform(AffineTransform::rotation(rotate, getX()+pivotx, pivoty+getY()));
+
     }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageSlider);
@@ -867,6 +870,8 @@ public:
         groupbox->setColour(TextButton::buttonColourId, cUtils::getComponentSkin());
 
         button->setButtonText(buttonText);
+
+
 
         button->getProperties().set("cornersize", corners);
 

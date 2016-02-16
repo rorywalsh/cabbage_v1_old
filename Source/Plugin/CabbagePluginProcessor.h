@@ -415,7 +415,7 @@ public:
     void setOpcodeDirEnv()
     {
 #ifdef CANONICAL
-	cUtils::debug("Opcode6Dir is set to:"+String(getenv("OPCODE6DIR64")));
+        cUtils::debug("Opcode6Dir is set to:"+String(getenv("OPCODE6DIR64")));
 #else
 #ifdef WIN32
         String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName();

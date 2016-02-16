@@ -2462,7 +2462,7 @@ String CabbageGUIType::getCabbageCodeFromIdentifiers(NamedValueSet props)
             else if(identifier=="sliderskew")
                 skew = props.getValueAt(i).toString();
             else if(identifier=="sliderincr")
-                incr = props.getValueAt(i).toString();
+                incr = String(cUtils::roundToPrec(props.getValueAt(i), 5));
 
             //grab xypad x-ranges...
             else if(identifier=="minx")

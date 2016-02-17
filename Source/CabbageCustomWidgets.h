@@ -1969,7 +1969,7 @@ private:
 //==============================================================================
 class CabbageLabel	:	public Component
 {
-    float rotate;
+    float rotate, corners;
     int pivotx, pivoty, bold;
 public:
     CabbageLabel (CabbageGUIType &cAttr)
@@ -1981,7 +1981,8 @@ public:
           rotate(cAttr.getNumProp(CabbageIDs::rotate)),
           pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
           pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
-          bold(cAttr.getNumProp(CabbageIDs::bold))
+          bold(cAttr.getNumProp(CabbageIDs::bold)),
+          corners(cAttr.getNumProp(CabbageIDs::corners))
     {
         if(!cAttr.getNumProp(CabbageIDs::visible))
         {
@@ -2019,7 +2020,7 @@ public:
     void paint(Graphics& g)
     {
         g.setColour(Colour::fromString(colour));
-        g.fillRoundedRectangle(getLocalBounds().toFloat(), 3.f);
+        g.fillRoundedRectangle(getLocalBounds().toFloat(), corners);
         g.setColour(Colour::fromString(fontcolour));
         g.setFont(cUtils::getComponentFont(bold));
         g.setFont(getHeight());

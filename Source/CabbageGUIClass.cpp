@@ -523,6 +523,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::align, "centre");
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+        cabbageIdentifiers.set(CabbageIDs::corners, 3);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
     //===============multitab==================//

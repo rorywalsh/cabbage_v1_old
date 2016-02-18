@@ -32,6 +32,7 @@ CsoundCodeEditor::CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTo
     documentIndex(0)
 {
     editor.add(new CsoundCodeEditorComponenet("csound", document, codeTokeniser));
+    editor[currentEditor]->setOpaque(false);
     addAndMakeVisible(editor[currentEditor]);
     editor[currentEditor]->getDocument().setSavePoint();
     openFiles.add("CABBAGE_CSOUND_FILE");
@@ -43,7 +44,6 @@ CsoundCodeEditor::CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTo
     addAndMakeVisible(searchReplaceComp);
     searchReplaceComp->setVisible(true);
 #endif
-
 
     addAndMakeVisible(helpComp);
     helpComp->setVisible(false);
@@ -163,8 +163,10 @@ void CsoundCodeEditor::resized()
 void CsoundCodeEditor::paint(Graphics& g)
 {
     g.fillAll(cUtils::getDarkerBackgroundSkin());
-
+    g.setColour(backgroundColour);
+    g.fillRect(35, 20, getWidth(), getHeight());
 #ifndef CABBAGE_HOST
+    int index = 0;
     if(editor[currentEditor] != 0)
     {
         g.setColour(juce::Colours::white);
@@ -173,12 +175,20 @@ void CsoundCodeEditor::paint(Graphics& g)
         int firstLineToDraw = editor[currentEditor]->getFirstLineOnScreen();
         int lastLineToDraw = firstLineToDraw + editor[currentEditor]->getNumLinesOnScreen() + 2;
 
-        int index = 0;
         for (int j = firstLineToDraw; j < lastLineToDraw; ++j)
         {
+
+            for(int i=0; i<selectedRegions.size(); i++)
+            {
+                g.setColour(selectedRegions.getReference(i).getColour());
+                if(selectedRegions.getReference(i).getLinesRange().contains(Range<int>(j, j+1)))
+                    g.fillRoundedRectangle(35, (editor[currentEditor]->getLineHeight() * index)+editor[currentEditor]->getLineHeight(), getWidth()-54, editor[currentEditor]->getLineHeight()*2, 10);
+            }
+
+            g.setColour(juce::Colours::white);
             for(int i=0; i<breakpointLines.size(); i++)
             {
-                CodeDocument::Position startPos(editor[currentEditor]->getDocument(), editor[currentEditor]->getCaretPos().getPosition());
+                //CodeDocument::Position startPos(editor[currentEditor]->getDocument(), editor[currentEditor]->getCaretPos().getPosition());
                 if(j+1==breakpointLines[i])
                 {
                     g.setColour(Colours::brown);
@@ -202,9 +212,9 @@ void CsoundCodeEditor::paint(Graphics& g)
             }
 
             index += 1;
-
         }
     }
+
 #endif
 }
 
@@ -438,6 +448,8 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
             replaceText(searchReplaceComp->getSearchText(), searchReplaceComp->getReplaceText());
     }
 
+
+
 }
 
 //=========================================================================
@@ -530,14 +542,24 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
         sendActionMessage(message);
         repaint();
     }
+    else if(message.contains("HightlightRegionOfInterest"))
+    {
+        String range  = message.substring(message.indexOf("_")+1);
+        int hStart = range.substring(0, range.indexOf(":")+1).getIntValue();
+        range =  range.substring(range.indexOf(":")+1);
+        int hEnd = range.substring(0, range.indexOf("=")).getIntValue();
+        String colourString = range.substring(range.indexOf("=")+1);
+        Colour colour = Colour::fromString(colourString);
+        SelectedRegion selR(Range<int>(hStart, hEnd), colour);
+        selectedRegions.add(selR);
+        repaint();
+    }
     else if(message=="Launch help")
         sendActionMessage("Launch help");
 
     if(helpComp->isVisible())
         helpComp->setText(editor[currentEditor]->getOpcodeToken(2).removeCharacters("\""),
                           editor[currentEditor]->getOpcodeToken(3).removeCharacters("\""));
-
-
 
 }
 
@@ -546,7 +568,6 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
 CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument &document, CodeTokeniser *codeTokeniser)
     : CodeEditorComponent(document, codeTokeniser), type(type), columnEditMode(false), fontSize(15)
 {
-
     document.addListener(this);
     setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(35, 35, 35));
     setColour(CodeEditorComponent::lineNumberBackgroundId, cUtils::getDarkerBackgroundSkin());
@@ -784,6 +805,7 @@ void CsoundCodeEditorComponenet::addPopupMenuItems (PopupMenu &menuToAddTo, cons
     menuToAddTo.addSeparator();
     menuToAddTo.addItem(5, "Opcode Help");
     menuToAddTo.addSeparator();
+    menuToAddTo.addItem(6, "Mark region of interest");
     menuToAddTo.addItem(11, "Add instrument breakpoint");
     menuToAddTo.addItem(12, "Remove instrument breakpoint");
     menuToAddTo.addSeparator();
@@ -817,6 +839,19 @@ void CsoundCodeEditorComponenet::undoText()
     moveCaretTo(startPos, false);
 }
 //==============================================================================
+void CsoundCodeEditorComponenet::changeListenerCallback(ChangeBroadcaster *source)
+{
+//	colourPallete* cs = dynamic_cast <ColourPallete*> (source);
+//	if(cs->getNameOfParent()==name)
+//		colour = cs->getCurrentColour();
+//	repaint();
+//	value.resize(0);
+//	value.append(colour.getRed());
+//	value.append(colour.getGreen());
+//	value.append(colour.getBlue());
+//	value.append(colour.getAlpha());
+}
+//==============================================================================
 void CsoundCodeEditorComponenet::performPopupMenuAction (int menuItemID)
 {
     if(menuItemID==1)
@@ -830,7 +865,26 @@ void CsoundCodeEditorComponenet::performPopupMenuAction (int menuItemID)
     else if(menuItemID==5)
         sendActionMessage("Launch help");
 
+    else if(menuItemID==6)
+    {
+        colourSelector.setBounds(0, 0, 300, 300);
+        colourSelector.addChangeListener(this);
+        colourSelector.setNameOfParent("Test");
+        juce::Rectangle<int> rect;
+        CabbageCallOutBox callOut (colourSelector, rect, nullptr);
+        callOut.setTopLeftPosition(this->getCaretRectangle().getX(), this->getCaretRectangle().getY());
+        callOut.setAlwaysOnTop(true);
 
+#if !defined(AndroidBuild)
+        callOut.runModalLoop();
+#endif
+        String colour = colourSelector.getCurrentColour().toString();
+
+        CodeDocument::Position startPos(getDocument(), getHighlightedRegion().getStart());
+        CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
+        String message = "HightlightRegionOfInterest_"+String(startPos.getLineNumber())+":"+String(endPos.getLineNumber())+"="+colour;
+        sendActionMessage(message);
+    }
     else if(menuItemID==1000)
     {
         pos1 = getDocument().findWordBreakBefore(getCaretPos());

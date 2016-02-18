@@ -25,18 +25,87 @@
 #include "PythonTokeniser.h"
 #include "CommandManager.h"
 #include "../CabbageUtils.h"
+#include "../CabbageCallOutBox.h"
 
 
 extern ApplicationProperties* appProperties;
 //extern CabbageTimer* cabbageTimer;
 
+
 class FlatButton;
 class HelpComp;
 class SearchReplaceComp;
 
+//============================================================
+// class for displaying colour selector
+//============================================================
+class ColourPallete : public ColourSelector
+{
+public:
+    ColourPallete(): ColourSelector()
+    {
+        setColour(ColourSelector::backgroundColourId, Colours::black);
+        setColour(ColourSelector::labelTextColourId, Colours::white);
+        //setup swatches for colour selector.
+        swatchColours.set(0, Colour(0xFF000000));
+        swatchColours.set(1, Colour(0xFFFFFFFF));
+        swatchColours.set(2, Colour(0xFFFF0000));
+        swatchColours.set(3, Colour(0xFF00FF00));
+        swatchColours.set(4, Colour(0xFF0000FF));
+        swatchColours.set(5, Colour(0xFFFFFF00));
+        swatchColours.set(6, Colour(0xFFFF00FF));
+        swatchColours.set(7, Colour(0xFF00FFFF));
+        swatchColours.set(8, Colour(0x80000000));
+        swatchColours.set(9, Colour(0x80FFFFFF));
+        swatchColours.set(10, Colour(0x80FF0000));
+        swatchColours.set(11, Colour(0x8000FF00));
+        swatchColours.set(12, Colour(0x800000FF));
+        swatchColours.set(13, Colour(0x80FFFF00));
+        swatchColours.set(14, Colour(0x80FF00FF));
+        swatchColours.set(15, Colour(0x8000FFFF));
+    };
+
+    ~ColourPallete() {};
+
+
+    int getNumSwatches() const
+    {
+        return swatchColours.size();
+    }
+
+    Colour getSwatchColour(int index) const
+    {
+        return swatchColours[index];
+    }
+
+    void setSwatchColour (const int index, const Colour &newColour) const
+    {
+        swatchColours.getReference(index) = newColour;
+    }
+
+    String getNameOfParent()
+    {
+        return nameOfParent;
+    }
+
+    void setNameOfParent(String parent)
+    {
+        nameOfParent = parent;
+    }
+
+private:
+    String nameOfParent;
+    Array <Colour> swatchColours;
+
+};
+
+//============================================================
+// code editor
+//============================================================
 class CsoundCodeEditorComponenet : public CodeEditorComponent,
     public ActionBroadcaster,
     public ChangeBroadcaster,
+    public ChangeListener,
     public CodeDocument::Listener
 {
 public:
@@ -95,7 +164,7 @@ public:
     bool pasteFromClipboard();
     bool cutToClipboard();
     void insertNewLine(String text);
-    void changeListenerCallback(juce::ChangeBroadcaster* source);
+
     void enableColumnEditMode(bool enable);
     void setOpcodeStrings(String opcodes)
     {
@@ -114,19 +183,31 @@ public:
     void mouseWheelMove (const MouseEvent&, const MouseWheelDetails&);
 
 
+    void setBackgroundColour(Colour col)
+    {
+        backgroundColour = col;
+    }
+
+    void changeListenerCallback(ChangeBroadcaster *source);
+
+    ColourPallete colourSelector;
+
 private:
     int xPos, yPos, prevXpos;
     CodeDocument::Position pos1, pos2;
-    Colour selectedColour;
+    Colour selectedColour, backgroundColour;
     int fontSize;
     String font;
     String type;
     StringArray opcodeStrings;
     StringArray opcodeTokens;
 
+
 };
 
-//=================================================================
+//============================================================
+// class that holds our code editor
+//============================================================
 class CsoundCodeEditor : public Component,
     public ChangeListener,
     public ActionListener,
@@ -138,6 +219,25 @@ class CsoundCodeEditor : public Component,
     int searchStartIndex;
     bool highlightedWord;
     Array<int> breakpointLines;
+
+    class SelectedRegion
+    {
+        Range<int> lines;
+        Colour colour;
+    public:
+        SelectedRegion(Range<int> _lines, Colour _col):lines(_lines), colour(_col)
+        {}
+        ~SelectedRegion() {}
+
+        Range<int> getLinesRange()
+        {
+            return lines;
+        }
+        Colour getColour()
+        {
+            return colour;
+        }
+    };
 
 public:
     CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTokeniser);
@@ -179,7 +279,9 @@ public:
     StringArray openFiles;
     int documentIndex;
     void enableColumnEdit(bool enable);
+    Colour backgroundColour;
 
+    Array<SelectedRegion> selectedRegions;
 };
 
 
@@ -336,7 +438,7 @@ private:
 };
 
 //============================================================
-// class for displaying popup text
+// class for displaying SearchReplaceComp
 //============================================================
 class SearchReplaceComp : public Component,
     public TextEditor::Listener,

@@ -47,9 +47,9 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
     appProperties->setStorageParameters (options);
 #endif
 
+
     fontsComp = new FontsComponent();
     fontsComp->addActionListener(this);
-
     setApplicationCommandManagerToWatch(&commandManager);
     commandManager.registerAllCommandsForTarget(this);
     addKeyListener(commandManager.getKeyMappings());
@@ -926,23 +926,28 @@ void CodeWindow::setColourScheme(String theme)
     if(theme=="white")
     {
         textEditor->editor[textEditor->currentEditor]->setColourScheme(csoundToker.getDefaultColourScheme());
-        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
+        //textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colours::transparentWhite);
+        textEditor->backgroundColour = Colours::white;
         textEditor->editor[textEditor->currentEditor]->setColour(CaretComponent::caretColourId, Colours::black);
         textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::lime);
         appProperties->getUserSettings()->setValue("EditorColourScheme", 0);
         repaint();
+        textEditor->editor[textEditor->currentEditor]->repaint();
     }
     else if(theme=="dark")
     {
         textEditor->editor[textEditor->currentEditor]->setColourScheme(csoundToker.getDarkColourScheme());
+        textEditor->backgroundColour = Colour(30, 30, 30);
         textEditor->editor[textEditor->currentEditor]->setColour(CaretComponent::caretColourId, Colours::white);
 #ifdef CABBAGE_HOST
-        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(30, 30, 30));
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colours::transparentBlack);
 #else
-        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(30, 30, 30));
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colours::transparentBlack);
 #endif
         textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f));
         appProperties->getUserSettings()->setValue("EditorColourScheme", 1);
+        textEditor->editor[textEditor->currentEditor]->repaint();
     }
 }
 

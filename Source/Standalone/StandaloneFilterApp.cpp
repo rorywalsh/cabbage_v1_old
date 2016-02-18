@@ -67,6 +67,14 @@ public:
         defaultPropSet->setValue("EnableNativePopup", 0);
         defaultPropSet->setValue("windowX", 100);
         defaultPropSet->setValue("windowY", 100);
+#if defined(WIN32)
+        defaultPropSet->setValue("Fonttype", "Consolas");
+#elif defined(MACOSX)
+        defaultPropSet->setValue("Fonttype", "Courier New");
+#else
+        defaultPropSet->setValue("Fonttype", "Droid Sans Mono");
+#endif
+
         appProperties->getUserSettings()->setFallbackPropertySet(defaultPropSet);
         filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black, getCommandLineParameters());
         filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);

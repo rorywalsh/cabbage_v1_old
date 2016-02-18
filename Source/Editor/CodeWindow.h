@@ -24,6 +24,7 @@
 #include "KeyboardShortcuts.h"
 #include "SplitComponent.h"
 #include "../Plugin/CabbagePluginProcessor.h"
+#include "FontsComponent.h"
 //class LiveCsound;
 class PythonEditor;
 
@@ -251,7 +252,7 @@ public:
     ScopedPointer<SplitComponent> splitBottomWindow;
     ScopedPointer<CsoundOutputComponent> csoundOutputComponent;
     ScopedPointer<CsoundDebuggerComponent> csoundDebuggerComponent;
-
+    ScopedPointer<FontsComponent> fontsComp ;
     StringArray opcodeStrings;
     CsoundCodeEditor* textEditor;
     CsoundTokeniser csoundToker;

@@ -547,14 +547,6 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
     : CodeEditorComponent(document, codeTokeniser), type(type), columnEditMode(false), fontSize(15)
 {
 
-#if defined(WIN32)
-    font = "Consolas";
-#elif defined(MACOSX)
-    font = "Courier New";
-#else
-    font = "Droid Sans Mono";
-#endif
-
     document.addListener(this);
     setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(35, 35, 35));
     setColour(CodeEditorComponent::lineNumberBackgroundId, cUtils::getDarkerBackgroundSkin());
@@ -571,13 +563,9 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
     fontSize = (cUtils::getPreference(appProperties, "FontSize")>7 ?
                 cUtils::getPreference(appProperties, "FontSize") : 13);
 
-#if defined(WIN32)
-    setFont(Font(String("Consolas"), fontSize, 1));
-#elif defined(MACOSX)
-    setFont(Font(String("Courier New"), fontSize, 1));
-#else
-    setFont(Font(String("Droid Sans Mono"), fontSize, 1));
-#endif
+    font = cUtils::getPreference(appProperties, "Fonttype", "");
+    setFont(Font(font, fontSize, 0));
+
 }
 //==============================================================================
 CsoundCodeEditorComponenet::~CsoundCodeEditorComponenet()

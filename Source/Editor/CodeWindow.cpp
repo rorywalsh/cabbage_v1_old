@@ -47,6 +47,9 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
     appProperties->setStorageParameters (options);
 #endif
 
+    fontsComp = new FontsComponent();
+    fontsComp->addActionListener(this);
+
     setApplicationCommandManagerToWatch(&commandManager);
     commandManager.registerAllCommandsForTarget(this);
     addKeyListener(commandManager.getKeyMappings());
@@ -170,6 +173,7 @@ void CodeWindow::getAllCommands (Array <CommandID>& commands)
         CommandIDs::editZoomIn,
         CommandIDs::editZoomOut,
         CommandIDs::editMode,
+        CommandIDs::editFontType,
         CommandIDs::whiteBackground,
         CommandIDs::blackBackground,
         CommandIDs::insertFromRepo,
@@ -210,13 +214,7 @@ void CodeWindow::menuItemSelected (int menuItemID, int topLevelMenuIndex)
 void CodeWindow::setFontSize(String zoom)
 {
 
-#if defined(WIN32)
-    String font = "Consolas";
-#elif defined(MACOSX)
-    String font = "Courier New";
-#else
-    String font = "Droid Sans Mono";
-#endif
+    String font = cUtils::getPreference(appProperties, "Fonttype", "");
 
     if(zoom==String("in"))
     {
@@ -319,6 +317,10 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
         result.setTicked(isEditModeEnabled);
         result.addDefaultKeypress ('e', ModifierKeys::commandModifier);
         break;
+    case CommandIDs::editFontType:
+        result.setInfo (String("Change Font"), String("Change font"), CommandCategories::edit, 0);
+        break;
+
     case CommandIDs::whiteBackground:
         result.setInfo (String("White background"), String("White scheme"), CommandCategories::edit, 0);
         break;
@@ -416,6 +418,8 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
     m1.clear();
     m2.clear();
     m2.setLookAndFeel(&getLookAndFeel());
+
+
     if(topLevelMenuIndex==0)
     {
         //m1.addCommandItem(&commandManager, CommandIDs::fileNew);
@@ -453,6 +457,11 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
         m1.addCommandItem(&commandManager, CommandIDs::editSearchReplace);
         m1.addCommandItem(&commandManager, CommandIDs::editColumnEdit);
         m1.addSeparator();
+        m2.clear();
+        m2.addCustomItem(CommandIDs::editFontType, fontsComp, 400, 150, false);
+        //m2.addCommandItem(&commandManager, CommandIDs::editFontType);
+        m1.addSubMenu(String("Change Font"), m2);
+
         m2.addCommandItem(&commandManager, CommandIDs::editZoomIn);
         m2.addCommandItem(&commandManager, CommandIDs::editZoomOut);
         m1.addSubMenu(String("Font Size"), m2);
@@ -650,6 +659,11 @@ bool CodeWindow::perform (const InvocationInfo& info)
     {
         setFontSize("out");
     }
+    else if(info.commandID==CommandIDs::editFontType)
+    {
+        cUtils::showMessage("Changing font");
+    }
+
     else if(info.commandID==CommandIDs::whiteBackground)
     {
         setEditorColourScheme("white");
@@ -892,8 +906,18 @@ void CodeWindow::setEditorColourScheme(String theme)
 //==============================================================================
 void CodeWindow::actionListenerCallback(const String &message)
 {
+
     if(message=="Launch help")
         toggleManuals("Csound");
+    else
+    {
+        PopupMenu::dismissAllActiveMenus();
+        cUtils::setPreference(appProperties, "Fonttype", message);
+        textEditor->editor[textEditor->currentEditor]->setFont(Font(message, fontSize, 0));
+
+    }
+
+
     sendActionMessage(message);
 }
 //==============================================================================

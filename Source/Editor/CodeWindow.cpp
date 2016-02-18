@@ -909,16 +909,16 @@ void CodeWindow::actionListenerCallback(const String &message)
 
     if(message=="Launch help")
         toggleManuals("Csound");
-    else
+    else if(message.contains("FONT:"))
     {
+        String newFont  = message.substring(message.indexOf(":")+1);
+        //cUtils::showMessage(newFont);
         PopupMenu::dismissAllActiveMenus();
-        cUtils::setPreference(appProperties, "Fonttype", message);
-        textEditor->editor[textEditor->currentEditor]->setFont(Font(message, fontSize, 0));
-
+        cUtils::setPreference(appProperties, "Fonttype", newFont);
+        textEditor->editor[textEditor->currentEditor]->setFont(Font(newFont, fontSize, 0));
     }
-
-
-    sendActionMessage(message);
+    else
+        sendActionMessage(message);
 }
 //==============================================================================
 void CodeWindow::setColourScheme(String theme)

@@ -671,10 +671,12 @@ void CsoundCodeEditorComponenet::mouseWheelMove (const MouseEvent& e, const Mous
 //==============================================================================
 void CsoundCodeEditorComponenet::insertText(String text)
 {
+
     if(this->isHighlightActive())
     {
         getDocument().replaceSection(getHighlightedRegion().getStart(), getHighlightedRegion().getEnd(), "");
     }
+
     getDocument().insertText(getCaretPos(), text);
 }
 //==============================================================================

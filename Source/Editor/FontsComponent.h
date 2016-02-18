@@ -108,7 +108,7 @@ public:
 
     void listBoxItemDoubleClicked(int row, const MouseEvent &e)
     {
-        sendActionMessage(currentFont);
+        sendActionMessage("FONT:"+currentFont);
     }
 
 

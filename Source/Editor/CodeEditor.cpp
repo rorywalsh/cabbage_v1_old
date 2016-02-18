@@ -180,8 +180,8 @@ void CsoundCodeEditor::paint(Graphics& g)
 
             for(int i=0; i<selectedRegions.size(); i++)
             {
-                g.setColour(selectedRegions.getReference(i).getColour());
-                if(selectedRegions.getReference(i).getLinesRange().contains(Range<int>(j, j+1)))
+                g.setColour(selectedRegions[i]->getColour());
+                if(selectedRegions[i]->getLinesRange().contains(Range<int>(j, j+1)))
                     g.fillRoundedRectangle(35, (editor[currentEditor]->getLineHeight() * index)+editor[currentEditor]->getLineHeight(), getWidth()-54, editor[currentEditor]->getLineHeight()*2, 10);
             }
 
@@ -551,7 +551,19 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
         String colourString = range.substring(range.indexOf("=")+1);
         Colour colour = Colour::fromString(colourString);
         SelectedRegion selR(Range<int>(hStart, hEnd), colour);
-        selectedRegions.add(selR);
+        selectedRegions.add(new SelectedRegion(Range<int>(hStart, hEnd), colour));
+        repaint();
+    }
+    else if(message.contains("RemoveRegionOfInterest_"))
+    {
+        int lineNumber  = message.substring(message.indexOf("_")+1).getIntValue();
+        for(int i=0; i<selectedRegions.size(); i++)
+        {
+            if(selectedRegions[i]->getLinesRange().contains(Range<int>(lineNumber, lineNumber)))
+            {
+                selectedRegions.remove(i);
+            }
+        }
         repaint();
     }
     else if(message=="Launch help")
@@ -806,6 +818,7 @@ void CsoundCodeEditorComponenet::addPopupMenuItems (PopupMenu &menuToAddTo, cons
     menuToAddTo.addItem(5, "Opcode Help");
     menuToAddTo.addSeparator();
     menuToAddTo.addItem(6, "Mark region of interest");
+    menuToAddTo.addItem(7, "Remove region of interest");
     menuToAddTo.addItem(11, "Add instrument breakpoint");
     menuToAddTo.addItem(12, "Remove instrument breakpoint");
     menuToAddTo.addSeparator();
@@ -885,6 +898,13 @@ void CsoundCodeEditorComponenet::performPopupMenuAction (int menuItemID)
         String message = "HightlightRegionOfInterest_"+String(startPos.getLineNumber())+":"+String(endPos.getLineNumber())+"="+colour;
         sendActionMessage(message);
     }
+
+    else if(menuItemID==7)
+    {
+        String message = "RemoveRegionOfInterest_"+String(getCaretPos().getLineNumber());
+        sendActionMessage(message);
+    }
+
     else if(menuItemID==1000)
     {
         pos1 = getDocument().findWordBreakBefore(getCaretPos());

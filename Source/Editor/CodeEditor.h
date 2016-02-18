@@ -281,7 +281,7 @@ public:
     void enableColumnEdit(bool enable);
     Colour backgroundColour;
 
-    Array<SelectedRegion> selectedRegions;
+    OwnedArray<SelectedRegion> selectedRegions;
 };
 
 

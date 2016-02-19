@@ -495,6 +495,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::type, "combobox");
         cabbageIdentifiers.set(CabbageIDs::name, "combobox");
         cabbageIdentifiers.set(CabbageIDs::comborange, 4);
+        cabbageIdentifiers.set(CabbageIDs::file, "");
         var populate;
         populate.append("");
         populate.append("");

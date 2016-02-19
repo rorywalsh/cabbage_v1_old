@@ -1105,6 +1105,18 @@ public:
         //populate combo with files
         Array<File> dirFiles;
 
+
+        if(cAttr.getStringProp(CabbageIDs::file).isNotEmpty())
+        {
+            combo->clear(dontSendNotification);
+            String file = File(cAttr.getStringProp(CabbageIDs::file)).loadFileAsString();
+            StringArray lines = StringArray::fromLines(file);
+            for (int i = 0; i < lines.size(); ++i)
+            {
+                combo->addItem(lines[i], i+1);
+            }
+        }
+
         if(cAttr.getStringProp(CabbageIDs::filetype).length()<1)
             for(int i=0; i<cAttr.getStringArrayProp("text").size(); i++)
             {

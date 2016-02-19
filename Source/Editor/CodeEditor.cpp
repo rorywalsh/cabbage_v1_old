@@ -885,7 +885,7 @@ void CsoundCodeEditorComponenet::performPopupMenuAction (int menuItemID)
         colourSelector.setNameOfParent("Test");
         juce::Rectangle<int> rect;
         CabbageCallOutBox callOut (colourSelector, rect, nullptr);
-        callOut.setTopLeftPosition(this->getCaretRectangle().getX(), this->getCaretRectangle().getY());
+        callOut.setTopLeftPosition(Desktop::getInstance().getDisplays().getMainDisplay().userArea.getCentre());
         callOut.setAlwaysOnTop(true);
 
 #if !defined(AndroidBuild)

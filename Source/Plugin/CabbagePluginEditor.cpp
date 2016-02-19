@@ -1959,7 +1959,6 @@ void CabbagePluginAudioProcessorEditor::InsertImage(CabbageGUIType &cAttr)
     {
         String pic = returnFullPathForFile(cAttr.getStringProp(CabbageIDs::file), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());
         cAttr.setStringProp(CabbageIDs::file, pic);
-
     }
 
     layoutComps.add(new CabbageImage(cAttr));
@@ -3411,6 +3410,13 @@ void CabbagePluginAudioProcessorEditor::toggleButtonClicked(Button* button)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIType &cAttr)
 {
+
+    if((!File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::file))&&(cAttr.getStringProp(CabbageIDs::file).isNotEmpty())))
+    {
+        String file = returnFullPathForFile(cAttr.getStringProp(CabbageIDs::file), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());
+        cAttr.setStringProp(CabbageIDs::file, file);
+    }
+
     String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
     cUtils::debug(cAttr.getStringProp(CabbageIDs::workingdir));
     String path = cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::workingdir), currentFileLocation);

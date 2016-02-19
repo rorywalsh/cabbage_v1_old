@@ -105,6 +105,8 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
         textEditor->editor[textEditor->currentEditor]->setOpcodeStrings(File(opcodeFile).loadFileAsString());
     //else csound->Message("Could not open opcodes.txt file, parameter display disabled..");
 
+    fontSize = cUtils::getPreference(appProperties, "FontSize");
+    font = Font(cUtils::getPreference(appProperties, "Fonttype", ""), fontSize, 0);
 
     bool showConsole = (appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1 ? true : false);
     if(showConsole == false)
@@ -213,17 +215,18 @@ void CodeWindow::menuItemSelected (int menuItemID, int topLevelMenuIndex)
 //==============================================================================
 void CodeWindow::setFontSize(String zoom)
 {
-
-    String font = cUtils::getPreference(appProperties, "Fonttype", "");
-
     if(zoom==String("in"))
     {
-        textEditor->editor[textEditor->currentEditor]->setFont(Font(font, ++fontSize, 1));
+        fontSize+=1;
+        font.setHeight(fontSize);
+        textEditor->editor[textEditor->currentEditor]->setFont(font);
         cUtils::setPreference(appProperties, "FontSize", String(fontSize));
     }
     else
     {
-        textEditor->editor[textEditor->currentEditor]->setFont(Font(font, --fontSize, 1));
+        fontSize-=1;
+        font.setHeight(fontSize);
+        textEditor->editor[textEditor->currentEditor]->setFont(font);
         cUtils::setPreference(appProperties, "FontSize", String(fontSize));
     }
 }
@@ -914,7 +917,9 @@ void CodeWindow::actionListenerCallback(const String &message)
         String newFont  = message.substring(message.indexOf(":")+1);
         //cUtils::showMessage(newFont);
         PopupMenu::dismissAllActiveMenus();
+        font = Font(newFont, fontSize, 0);
         cUtils::setPreference(appProperties, "Fonttype", newFont);
+        textEditor->editor[textEditor->currentEditor]->setEditorFont(newFont);
         textEditor->editor[textEditor->currentEditor]->setFont(Font(newFont, fontSize, 0));
     }
     else

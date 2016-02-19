@@ -192,6 +192,11 @@ public:
 
     ColourPallete colourSelector;
 
+    void setEditorFont(String _font)
+    {
+        font = _font;
+    }
+
 private:
     int xPos, yPos, prevXpos;
     CodeDocument::Position pos1, pos2;

@@ -45,21 +45,7 @@ public:
 
         Font::findFonts(fonts);   // Generate the list of fonts
 
-        //run through fonts and remove anything that's note mono spaced..
-        for(int i=fonts.size(); i>=0; i--)
-        {
-            Font font (fonts [i]);
-            if(font.getTypefaceName().containsIgnoreCase("mono")==false)
-            {
-                fonts.remove(i);
-            }
-        }
 
-        for(int i=0; i<fonts.size(); i++)
-        {
-            Font font (fonts [i]);
-            cUtils::debug(font.getTypefaceName());
-        }
 
         listBox.setRowHeight (20);
         listBox.setModel (this);   // Tell the listbox where to get its data model
@@ -108,7 +94,9 @@ public:
 
     void listBoxItemDoubleClicked(int row, const MouseEvent &e)
     {
-        sendActionMessage("FONT:"+currentFont);
+        Font font (fonts [row]);
+        cUtils::showMessage("If the selected font is not monospaced, you may experience some strange behaviour when editing text", &getLookAndFeel());
+        sendActionMessage("FONT:"+font.getTypefaceName());
     }
 
 

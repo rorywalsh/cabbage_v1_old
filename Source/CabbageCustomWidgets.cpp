@@ -1074,3 +1074,160 @@ void CabbageFFTDisplay::update(CabbageGUIType m_cAttr)
         freqRangeDisplay.setMinMax(freqRange.getStart(), freqRange.getEnd());
     }
 }
+
+//================================================================================================================
+// Listbox widget
+//================================================================================================================
+
+CabbageListbox::CabbageListbox(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner):
+    owner(_owner),
+    Component(),
+    justify(Justification::centred),
+    align(cAttr.getStringProp(CabbageIDs::align)),
+    colour(cAttr.getStringProp(CabbageIDs::colour)),
+    fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
+    channel(cAttr.getStringProp(CabbageIDs::channel)),
+    highlightcolour(cAttr.getStringProp(CabbageIDs::highlightcolour)),
+    channelType(cAttr.getStringProp(CabbageIDs::channeltype)),
+    rotate(cAttr.getNumProp(CabbageIDs::rotate))
+{
+    addAndMakeVisible(listBox);
+    listBox.setRowHeight (20);
+    listBox.setModel (this);   // Tell the listbox where to get its data model
+
+    bgColour = Colour::fromString(colour);
+
+    if(align=="left")
+        justify = Justification::left;
+    else if(align=="centre")
+        justify = Justification::centred;
+    else
+        justify = Justification::right;
+
+    if(cAttr.getStringProp(CabbageIDs::file).isNotEmpty())
+    {
+        items.clear();
+        String file = File(cAttr.getStringProp(CabbageIDs::file)).loadFileAsString();
+        StringArray lines = StringArray::fromLines(file);
+        for (int i = 0; i < lines.size(); ++i)
+        {
+            items.add(lines[i]);
+        }
+    }
+    else if(cAttr.getStringProp(CabbageIDs::filetype).length()<1)
+    {
+        items.clear();
+        for(int i=0; i<cAttr.getStringArrayProp("text").size(); i++)
+        {
+            String item  = cAttr.getStringArrayPropValue("text", i);
+            items.add(item);
+        }
+    }
+    else
+    {
+        items.clear();
+        Array<File> dirFiles;
+        File pluginDir(cAttr.getStringProp(CabbageIDs::workingdir));
+
+        const String filetype = cAttr.getStringProp("filetype");
+
+        pluginDir.findChildFiles(dirFiles, 2, false, filetype);
+
+        for (int i = 0; i < dirFiles.size(); ++i)
+        {
+            String filename;
+            if(filetype.contains("snaps"))
+                filename = dirFiles[i].getFileNameWithoutExtension();
+            else
+                filename = dirFiles[i].getFileName();
+            items.add(filename);
+        }
+    }
+    //cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
+    listBox.updateContent();
+    listBox.selectRow(cAttr.getNumProp(CabbageIDs::value)-1);
+
+}
+
+CabbageListbox::~CabbageListbox()
+{
+    owner = nullptr;
+}
+
+void CabbageListbox::paint (Graphics& g)
+{
+    g.fillAll(Colour::fromString(colour));
+}
+
+void CabbageListbox::resized()
+{
+    listBox.setBounds(0, 0, getWidth(), getHeight());
+    //demoTextBox.setBounds(0, getHeight()*.3, getWidth(), getHeight()*.7);
+}
+
+
+// The following methods implement the ListBoxModel virtual methods:
+int CabbageListbox::getNumRows()
+{
+    return items.size();
+}
+
+void CabbageListbox::listBoxItemDoubleClicked(int row, const MouseEvent &e)
+{
+    if(channelType!="string")
+        owner->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, row+1);
+    else
+        owner->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, items[row], "string");
+}
+
+
+void CabbageListbox::paintListBoxItem (int rowNumber, Graphics& g,
+                                       int width, int height, bool rowIsSelected)
+{
+    if (rowIsSelected)
+        g.fillAll (Colour::fromString(highlightcolour));
+    else
+        g.fillAll(bgColour);
+
+    g.setColour(Colour::fromString(fontcolour));
+    g.drawFittedText(items[rowNumber], Rectangle<int> (width, height), justify, 0);
+}
+
+void CabbageListbox::selectedRowsChanged (int /*lastRowselected*/)
+{
+
+}
+
+void CabbageListbox::update(CabbageGUIType m_cAttr)
+{
+    const MessageManagerLock mmLock;
+    colour = m_cAttr.getStringProp(CabbageIDs::colour);
+    fontcolour = m_cAttr.getStringProp(CabbageIDs::fontcolour);
+    highlightcolour = m_cAttr.getStringProp(CabbageIDs::highlightcolour);
+    setBounds(m_cAttr.getBounds());
+    setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
+    if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
+    {
+        rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
+        setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
+    }
+    if(!m_cAttr.getNumProp(CabbageIDs::visible))
+    {
+        setVisible(false);
+        setEnabled(false);
+    }
+    else
+    {
+        setVisible(true);
+        setEnabled(true);
+    }
+    if(!m_cAttr.getNumProp(CabbageIDs::active))
+    {
+        setEnabled(false);
+    }
+    else
+    {
+        setEnabled(true);
+    }
+    repaint();
+}

@@ -365,6 +365,10 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIType cAttr)
     {
         InsertMultiTab(cAttr);
     }
+    else if(cAttr.getStringProp(CabbageIDs::type)==String("listbox"))
+    {
+        InsertListbox(cAttr);
+    }
     else if(cAttr.getStringProp(CabbageIDs::type)==String("line"))
     {
         InsertLineSeparator(cAttr);
@@ -2111,6 +2115,37 @@ void CabbagePluginAudioProcessorEditor::InsertStepper(CabbageGUIType &cAttr)
     cAttr.setStringProp(CabbageIDs::type, "label");
 }
 
+//+++++++++++++++++++++++++++++++++++++++++++
+//                             sample stepper widget
+//+++++++++++++++++++++++++++++++++++++++++++
+void CabbagePluginAudioProcessorEditor::InsertListbox(CabbageGUIType &cAttr)
+{
+    if((!File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::file))&&(cAttr.getStringProp(CabbageIDs::file).isNotEmpty())))
+    {
+        String file = returnFullPathForFile(cAttr.getStringProp(CabbageIDs::file), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());
+        cAttr.setStringProp(CabbageIDs::file, file);
+    }
+
+    CabbageListbox* listbox = new CabbageListbox(cAttr, this);
+
+    float left = cAttr.getNumProp(CabbageIDs::left);
+    float top = cAttr.getNumProp(CabbageIDs::top);
+    float width = cAttr.getNumProp(CabbageIDs::width);
+    float height = cAttr.getNumProp(CabbageIDs::height);
+
+    //if control is not part of a plant, add mouse listener
+    if(cAttr.getStringProp("plant").isEmpty())
+        listbox->addMouseListener(this, true);
+
+    listbox->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+    listbox->getProperties().set(CabbageIDs::index, layoutComps.size());
+
+    layoutComps.add(listbox);
+    int idx = layoutComps.size()-1;
+    layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+    setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
+    cAttr.setStringProp(CabbageIDs::type, "label");
+}
 //+++++++++++++++++++++++++++++++++++++++++++
 //                                      label
 //+++++++++++++++++++++++++++++++++++++++++++
@@ -4047,6 +4082,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     CabbageButton* cabButton = static_cast<CabbageButton*>(comps[i]);
                     cabButton->button->setToggleState(inValue, dontSendNotification);
                     cabButton->button->setButtonText(getFilter()->getGUICtrls(i).getStringArrayPropValue(CabbageIDs::text, inValue));
+
                 }
 
                 else if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::xypad &&

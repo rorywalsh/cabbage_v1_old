@@ -82,6 +82,7 @@ public:
         add("patmatrix");
         add("source");
         add("multitab");
+        add("listbox");
         add("infobutton");
         add("filebutton");
         add("loadbutton");
@@ -143,6 +144,7 @@ public:
         add("rangey");
         add("plant");
         add("bold");
+        add("highlightcolour");
         add("channeltype");
         add("channels");
         add("channel");
@@ -339,6 +341,7 @@ static const Identifier socketport = "socketport";
 static const Identifier socketaddress = "socketaddress";
 static const Identifier ffttablenumber = "ffttablenumber";
 static const Identifier velocity = "velocity";
+static const Identifier highlightcolour = "highlightcolour";
 
 //list of static consts for types of widgets
 static const String combobox = "combobox";
@@ -355,6 +358,7 @@ static const String hrange = "hrange";
 static const String checkbox = "checkbox";
 static const String soundfiler = "sounfiler";
 static const String button = "button";
+static const String listbox = "listbox";
 static const String infobutton = "infobutton";
 static const String filebutton = "filebutton";
 static const String loadbutton = "loadbutton";

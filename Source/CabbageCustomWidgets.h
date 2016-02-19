@@ -1117,12 +1117,15 @@ public:
             }
         }
 
-        if(cAttr.getStringProp(CabbageIDs::filetype).length()<1)
+        else if(cAttr.getStringProp(CabbageIDs::filetype).length()<1)
+        {
+            combo->clear(dontSendNotification);
             for(int i=0; i<cAttr.getStringArrayProp("text").size(); i++)
             {
                 String item  = cAttr.getStringArrayPropValue("text", i);
                 combo->addItem(item, i+1);
             }
+        }
         else
         {
             //appProperties->getUserSettings()->getValue("CsoundPluginDirectory");
@@ -3059,6 +3062,33 @@ public:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageStepper);
 };
 
+//============================================================
+//example CabbageListbox class
+//============================================================
+class CabbageListbox	:	public Component, ListBoxModel
+{
+    String name, channel;
+    float rotate;
+    Colour bgColour;
+    String align, colour, highlightcolour, fontcolour, channelType;
+    Justification justify;
+    CabbagePluginAudioProcessorEditor* owner;
+    StringArray items;
+
+public:
+    CabbageListbox (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
+    ~CabbageListbox();
+    void paint (Graphics& g) override;
+    void resized() override;
+    int getNumRows() override;
+    void listBoxItemDoubleClicked(int row, const MouseEvent &e);
+    void paintListBoxItem (int rowNumber, Graphics& g,
+                           int width, int height, bool rowIsSelected) override;
+    void selectedRowsChanged (int /*lastRowselected*/) override;
+    void update(CabbageGUIType cAttr);
+    ListBox listBox;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageListbox);
+};
 //============================================================
 // homegrown version of JUCE's two value, slider with dragable range
 //============================================================

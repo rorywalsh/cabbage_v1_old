@@ -506,6 +506,51 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::workingdir, "");
 
     }
+
+    //===============combobox==================//
+    else if(strTokens[0].trim() == "listbox")
+    {
+        cabbageIdentifiers.set("basetype", "layout");
+
+        top = 10;
+        left = 10;
+        width = 80;
+        height = 22;
+        //add one item by befault, will be overwritten by users values
+        var array;
+        array.append("Item 1");
+        array.append("Item 2");
+        array.append("Item 3");
+        array.append("Item 4");
+        cabbageIdentifiers.set(CabbageIDs::top, 10);
+        cabbageIdentifiers.set(CabbageIDs::left, 10);
+        cabbageIdentifiers.set(CabbageIDs::width, 80);
+        cabbageIdentifiers.set(CabbageIDs::height, 20);
+        var channels;
+        channels.append("listbox");
+        cabbageIdentifiers.set(CabbageIDs::channel, channels);
+        cabbageIdentifiers.set(CabbageIDs::channeltype, "number");
+        cabbageIdentifiers.set(CabbageIDs::text, array);
+        cabbageIdentifiers.set(CabbageIDs::value, 1);
+        cabbageIdentifiers.set(CabbageIDs::caption, "");
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
+        cabbageIdentifiers.set(CabbageIDs::highlightcolour, Colours::black.contrasting().toString());
+        cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
+        cabbageIdentifiers.set(CabbageIDs::type, "listbox");
+        cabbageIdentifiers.set(CabbageIDs::name, "listbox");
+        cabbageIdentifiers.set(CabbageIDs::comborange, 4);
+        cabbageIdentifiers.set(CabbageIDs::file, "");
+        cabbageIdentifiers.set(CabbageIDs::align, "centre");
+        var populate;
+        populate.append("");
+        populate.append("");
+        cabbageIdentifiers.set(CabbageIDs::populate, populate);
+        cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+        cabbageIdentifiers.set(CabbageIDs::identchannel, "");
+        cabbageIdentifiers.set(CabbageIDs::visible, 1);
+        cabbageIdentifiers.set(CabbageIDs::workingdir, "");
+
+    }
     //===============label==================//
     else if(strTokens[0].trim() == "label")
     {
@@ -1276,6 +1321,11 @@ void CabbageGUIType::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("trackercolour"))
             {
                 cabbageIdentifiers.set(CabbageIDs::trackercolour, getColourFromText(strTokens.joinIntoString(",")).toString());
+            }
+
+            else if(identArray[indx].equalsIgnoreCase("highlightcolour"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::highlightcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
             }
 
             else if(identArray[indx].equalsIgnoreCase("kind"))

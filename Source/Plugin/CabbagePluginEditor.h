@@ -201,6 +201,7 @@ private:
     void InsertPatternMatrix(CabbageGUIType &cAttr);
     void InsertSnapshot(CabbageGUIType &cAttr);
     void InsertTransport(CabbageGUIType &cAttr);
+    void InsertListbox(CabbageGUIType &cAttr);
     void InsertPopupMenu(CabbageGUIType &cAttr);
     void InsertGenTable(CabbageGUIType &cAttr);
     void InsertTextbox(CabbageGUIType &cAttr);

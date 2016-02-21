@@ -102,6 +102,122 @@ void CabbageStepper::update(CabbageGUIType cAttr)
     if(colour.toString()!=cAttr.getStringProp("colour"))
         colour = Colour::fromString(cAttr.getStringProp("colour"));
 }
+//==============================================================================================
+// Cabbage Label widget
+//==============================================================================================
+CabbageLabel::CabbageLabel (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner)
+    : text(cAttr.getStringProp(CabbageIDs::text)),
+      owner(_owner),
+      channel(cAttr.getStringProp(CabbageIDs::channel)),
+      colour(cAttr.getStringProp(CabbageIDs::colour)),
+      fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
+      align(cAttr.getStringProp(CabbageIDs::align)),
+      textAlign(Justification::centred),
+      rotate(cAttr.getNumProp(CabbageIDs::rotate)),
+      pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+      pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+      bold(cAttr.getNumProp(CabbageIDs::bold)),
+      corners(cAttr.getNumProp(CabbageIDs::corners))
+{
+    if(!cAttr.getNumProp(CabbageIDs::visible))
+    {
+        setVisible(false);
+        //Logger::writeToLog("visivle");
+    }
+    else
+    {
+        setVisible(true);
+        //Logger::writeToLog("visivle");
+    }
+
+    cUtils::debug(cAttr.getStringProp(CabbageIDs::channel));
+
+    setText(cAttr.getStringProp(CabbageIDs::text));
+
+    if(align=="centre")
+        textAlign = Justification::centred;
+    else if(align=="left")
+        textAlign = Justification::left;
+    else
+        textAlign = Justification::right;
+
+    setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
+}
+
+CabbageLabel::~CabbageLabel()
+{
+}
+
+void CabbageLabel::resized()
+{
+    if(rotate!=0)
+        setTransform(AffineTransform::rotation(rotate, getX()+pivotx, getY()+pivoty));
+}
+
+void CabbageLabel::paint(Graphics& g)
+{
+    g.setColour(Colour::fromString(colour));
+    g.fillRoundedRectangle(getLocalBounds().toFloat(), corners);
+    g.setColour(Colour::fromString(fontcolour));
+    g.setFont(cUtils::getComponentFont(bold));
+    g.setFont(getHeight());
+    g.drawFittedText(text, 0, 0, getWidth(), getHeight(), textAlign, 1, 1);
+}
+
+void CabbageLabel::setText(String _text)
+{
+    text = _text;
+    repaint();
+}
+
+void CabbageLabel::mouseDown(const MouseEvent& event)
+{
+    if(!event.mods.isPopupMenu())
+    {
+        counter = (counter==0 ? 1 : 0);
+        owner->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, counter);
+    }
+}
+
+//update control
+void CabbageLabel::update(CabbageGUIType m_cAttr)
+{
+    colour = m_cAttr.getStringProp(CabbageIDs::colour);
+    fontcolour = m_cAttr.getStringProp(CabbageIDs::fontcolour);
+    setBounds(m_cAttr.getBounds());
+    setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
+    if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
+    {
+        rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
+        setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
+    }
+    if(!m_cAttr.getNumProp(CabbageIDs::visible))
+    {
+        setVisible(false);
+        setEnabled(false);
+    }
+    else
+    {
+        setEnabled(true);
+        setVisible(true);
+    }
+    if(!m_cAttr.getNumProp(CabbageIDs::active))
+    {
+        setEnabled(false);
+    }
+
+    if(bold!=m_cAttr.getNumProp(CabbageIDs::bold))
+    {
+        bold = m_cAttr.getNumProp(CabbageIDs::bold);
+    }
+    else
+    {
+        setEnabled(true);
+    }
+    setText(m_cAttr.getStringProp(CabbageIDs::text));
+    repaint();
+}
+
 
 //==============================================================================================
 // Encoder widget

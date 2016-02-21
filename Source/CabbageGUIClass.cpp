@@ -568,6 +568,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::transparentBlack.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::align, "centre");
+        cabbageIdentifiers.set(CabbageIDs::channel, "");
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::corners, 3);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
@@ -1209,6 +1210,7 @@ void CabbageGUIType::parse(String inStr, String identifier)
             {
                 var array;
                 array.append(strTokens[0].trim());
+                cUtils::debug(strTokens[0].trim());
                 if(str.containsIgnoreCase("xypad"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::xchannel, strTokens[0].trim());

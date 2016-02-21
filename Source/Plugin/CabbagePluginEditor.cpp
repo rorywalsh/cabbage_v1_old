@@ -578,15 +578,11 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
     CabbageImage* image = dynamic_cast<CabbageImage*>(source);
     if(image)
     {
-        if(image->leftButton)
-        {
-            String channel;
+        String channel;
 
-            int index = image->getProperties().getWithDefault(CabbageIDs::index, -99);
-            channel = getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel)[0];
-            getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, image->counter);
-
-        }
+        int index = image->getProperties().getWithDefault(CabbageIDs::index, -99);
+        channel = getFilter()->getGUILayoutCtrls(index).getStringArrayProp(CabbageIDs::channel)[0];
+        getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, image->counter);
     }
 
 }
@@ -2151,7 +2147,7 @@ void CabbagePluginAudioProcessorEditor::InsertListbox(CabbageGUIType &cAttr)
 //+++++++++++++++++++++++++++++++++++++++++++
 void CabbagePluginAudioProcessorEditor::InsertLabel(CabbageGUIType &cAttr)
 {
-    layoutComps.add(new CabbageLabel(cAttr));
+    layoutComps.add(new CabbageLabel(cAttr, this));
     int idx = layoutComps.size()-1;
 
     float left = cAttr.getNumProp(CabbageIDs::left);

@@ -779,7 +779,7 @@ void CsoundCodeEditorComponenet::toggleComments()
     for(int i=startPos.getLineNumber(); i<=endPos.getLineNumber(); i++)
     {
         String lineText = csdArray[i];
-        if(lineText.substring(0, 1)==";")
+        if(lineText.trim().startsWith(";"))
             csdArray.set(i, lineText.substring(lineText.indexOf(";")+1));
         else
             csdArray.set(i, ";"+lineText);

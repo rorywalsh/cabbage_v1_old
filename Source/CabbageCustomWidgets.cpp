@@ -117,7 +117,8 @@ CabbageLabel::CabbageLabel (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEd
       pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
       pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
       bold(cAttr.getNumProp(CabbageIDs::bold)),
-      corners(cAttr.getNumProp(CabbageIDs::corners))
+      corners(cAttr.getNumProp(CabbageIDs::corners)),
+      counter(0)
 {
     if(!cAttr.getNumProp(CabbageIDs::visible))
     {

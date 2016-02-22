@@ -1818,10 +1818,16 @@ void CabbageGUIType::parse(String inStr, String identifier)
                     cabbageIdentifiers.set(CabbageIDs::fontstyle, 1);
                 else if(strTokens[0].trim()=="italic")
                     cabbageIdentifiers.set(CabbageIDs::fontstyle, 2);
-                else if(strTokens[0].trim()=="bolditalic")
+                else if(strTokens[0].trim()=="bold italic")
                     cabbageIdentifiers.set(CabbageIDs::fontstyle, 3);
                 else if(strTokens[0].trim()=="underlined")
                     cabbageIdentifiers.set(CabbageIDs::fontstyle, 4);
+                else if(strTokens[0].trim()=="bold underlined")
+                    cabbageIdentifiers.set(CabbageIDs::fontstyle, 5);
+                else if(strTokens[0].trim()=="italic underlined")
+                    cabbageIdentifiers.set(CabbageIDs::fontstyle, 6);
+                else if(strTokens[0].trim()=="bold italic underlined")
+                    cabbageIdentifiers.set(CabbageIDs::fontstyle, 7);
                 else
                     cabbageIdentifiers.set(CabbageIDs::fontstyle, 0);
             }

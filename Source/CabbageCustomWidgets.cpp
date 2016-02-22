@@ -116,7 +116,7 @@ CabbageLabel::CabbageLabel (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEd
       rotate(cAttr.getNumProp(CabbageIDs::rotate)),
       pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
       pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
-      bold(cAttr.getNumProp(CabbageIDs::bold)),
+      fontstyle(cAttr.getNumProp(CabbageIDs::fontstyle)),
       corners(cAttr.getNumProp(CabbageIDs::corners)),
       counter(0)
 {
@@ -160,7 +160,7 @@ void CabbageLabel::paint(Graphics& g)
     g.setColour(Colour::fromString(colour));
     g.fillRoundedRectangle(getLocalBounds().toFloat(), corners);
     g.setColour(Colour::fromString(fontcolour));
-    g.setFont(cUtils::getComponentFont(bold));
+    g.setFont(cUtils::getComponentFont(fontstyle));
     g.setFont(getHeight());
     g.drawFittedText(text, 0, 0, getWidth(), getHeight(), textAlign, 1, 1);
 }
@@ -207,9 +207,9 @@ void CabbageLabel::update(CabbageGUIType m_cAttr)
         setEnabled(false);
     }
 
-    if(bold!=m_cAttr.getNumProp(CabbageIDs::bold))
+    if(fontstyle!=m_cAttr.getNumProp(CabbageIDs::fontstyle))
     {
-        bold = m_cAttr.getNumProp(CabbageIDs::bold);
+        fontstyle = m_cAttr.getNumProp(CabbageIDs::fontstyle);
     }
     else
     {

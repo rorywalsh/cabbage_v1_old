@@ -2952,7 +2952,7 @@ public:
 class CabbageLabel	:	public Component
 {
     float rotate, corners;
-    int pivotx, pivoty, bold;
+    int pivotx, pivoty, fontstyle;
     String channel;
     CabbagePluginAudioProcessorEditor* owner;
     int counter;

@@ -128,6 +128,7 @@ public:
         add("radiogroup");
         add("max");
         add("value");
+        add("fontstyle");
         add("guirefresh");
         add("outlinethickness");
         add("linethickness");
@@ -342,6 +343,7 @@ static const Identifier socketaddress = "socketaddress";
 static const Identifier ffttablenumber = "ffttablenumber";
 static const Identifier velocity = "velocity";
 static const Identifier highlightcolour = "highlightcolour";
+static const Identifier fontstyle = "fontstyle";
 
 //list of static consts for types of widgets
 static const String combobox = "combobox";

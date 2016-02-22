@@ -568,6 +568,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::transparentBlack.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());
         cabbageIdentifiers.set(CabbageIDs::align, "centre");
+        cabbageIdentifiers.set(CabbageIDs::fontstyle, 1);
         cabbageIdentifiers.set(CabbageIDs::channel, "");
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::corners, 3);
@@ -1811,9 +1812,18 @@ void CabbageGUIType::parse(String inStr, String identifier)
                 cabbageIdentifiers.set(CabbageIDs::guirefresh, strTokens[0].trim().getFloatValue());
             }
 
-            else if(identArray[indx].equalsIgnoreCase("bold"))
+            else if(identArray[indx].equalsIgnoreCase("fontstyle"))
             {
-                cabbageIdentifiers.set(CabbageIDs::bold, strTokens[0].trim().getIntValue());
+                if(strTokens[0].trim()=="bold")
+                    cabbageIdentifiers.set(CabbageIDs::fontstyle, 1);
+                else if(strTokens[0].trim()=="italic")
+                    cabbageIdentifiers.set(CabbageIDs::fontstyle, 2);
+                else if(strTokens[0].trim()=="bolditalic")
+                    cabbageIdentifiers.set(CabbageIDs::fontstyle, 3);
+                else if(strTokens[0].trim()=="underlined")
+                    cabbageIdentifiers.set(CabbageIDs::fontstyle, 4);
+                else
+                    cabbageIdentifiers.set(CabbageIDs::fontstyle, 0);
             }
 
             else if(identArray[indx].equalsIgnoreCase("textbox"))

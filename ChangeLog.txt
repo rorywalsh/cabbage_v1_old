@@ -1,0 +1,52 @@
+Cabbage v0.5.18
+
+Additions:
+- added new listbox widget
+- added new FFTDisplay widget, for use with the dispfft opcodes, use --displays in the CsOptions to enable it
+- added fontstyle() identifier to label for italics, bold, underlined, and normal font
+- added new endless encoder widget
+- added new vertical and horizontal range slider widgets, hrange, and vrange
+- added channel support to labels and images so they can act as an on off switch
+- added support for file() identifier in comboboxes, users can now load entire files as indexed lines
+- added colouring of "regions of interest" in code editor
+- added font chooser to editor
+- added corners() identifier support to images, groupboxes, and labels
+- added updating of snapshots when user saves with a filebutton
+- added option to use custom SVGs for drawing widgets and added SVG examples
+- added SVG support to image widget
+- added velocity() identifier to enable/disable velocity sensitivity for sliders
+- added grid size settings to preferences menu
+- added scale identifier for resizing plants, esp. for Android
+- added new Android Cabbage app
+- added new AudioUnit plugins 
+- added sample 'stepper' widget, as part of the tutorial on developing custom Cabbage widgets
+
+Fixes: 
+- fixed resizing method for Android apps, instruments now open full screen
+- fixed issue with increment figure being to 10 decimals places when using the dialogue property editor
+- fixed undo function in editor so that is no longer scrolls to the end of the page each time
+- fixed bug in presets when filename contains white-spaces
+- fixed bug with filebutton not setting working directory correctly
+- fixed linethickness() identifier for groupbox
+- fixed midi input method, should now read all type of incoming MIDI messages
+- fixed issue with file browser appearing behind instruments. 
+- fixed file browser text field so that it's no longer black in colour
+- fixed presets combobox so that it sets the last saved preset as active
+- fixed copy problem with editor
+- fixed undo issue in code editor
+- fixed toggle comments issue, ctrl+/ now toggles comments on and off
+- fixed text scrolling issue in code editor window
+- fixed sorting of examples on Linux
+- fixed problem with table on init
+- fixed problem with ftable 1 duplication
+- fixed filebutton bug
+- fixed editor bugs when closing aux files 
+- fixed manual bug on OSX
+- fixed texteditors so they retain text even if the plugin's editor has been closed
+- fixed image file bug
+- fixed code editor component bug
+
+Updates:
+- updated Examples and added new examples to 'Intructional' folder. 
+- updated Docs and added several new sections for Beginners, and further short tutorials on various aspects of Cabbage and custom widget development. 
+

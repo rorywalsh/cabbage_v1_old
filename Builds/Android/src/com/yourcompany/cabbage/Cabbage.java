@@ -30,8 +30,9 @@ import android.content.DialogInterface;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.content.res.Configuration;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
@@ -72,6 +73,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import android.view.MotionEvent;
+import android.widget.CheckBox;
 import android.widget.ViewFlipper;
 
 
@@ -235,7 +237,7 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
     {
         super.onCreate (savedInstanceState);
         files = new ArrayList<String>();
-
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         viewHolder = new ViewHolder (this);
         //setContentView (viewHolder);
         setContentView (R.layout.activity_home);
@@ -247,6 +249,7 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
         //textView2.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);    
         //setVolumeControlStream (AudioManager.STREAM_MUSIC);
         juceViewContainer = (LinearLayout) findViewById(R.id.juce_container);
+        juceViewContainer.setOrientation(LinearLayout.VERTICAL);
         juceViewContainer.addView(viewHolder);
 
         copyAssets();
@@ -260,6 +263,16 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
         //addBufferSizesToListView();
         setVolumeControlStream (AudioManager.STREAM_MUSIC);
 
+        // SharedPreferences settings = getSharedPreferences("CabbagePrefs", 0);
+        // int orientation = settings.getInt("orientation", 0);       
+        // CheckBox checkBox = (CheckBox) findViewById(R.id.orientationButton); 
+        // if(orientation==1)
+        // {
+        //     checkBox.setChecked(true);
+        //     //showNativeMessage("Prefer", "shuld be enbled");
+        // }
+        // else
+        //     checkBox.setChecked(false);
     }
 
     public void buttonOnClick(View view) 
@@ -268,7 +281,7 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
         {
             showNativeMessage("Info", "Cabbage. Developed by Rory Walsh.\nWebsite: cabbageaudio.com\nUser forum: forum.cabbageaudio.com");
         }
-        else
+        else if(view.getId()==R.id.settingsButton)
         {
             final CharSequence[] items = {
                     "Smallest", "Medium", "Largest"
@@ -288,6 +301,16 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
             AlertDialog alert = builder.create();
             alert.show();
         }
+        // else
+        // {
+        //     CheckBox checkBox = (CheckBox) findViewById(R.id.orientationButton); 
+        //     SharedPreferences settings = getSharedPreferences("CabbagePrefs", 0);
+        //     int checked = checkBox.isChecked()==true ? 1 : 0; 
+        //     SharedPreferences.Editor editor = settings.edit();
+        //     editor.putInt("orientation", checked);
+        //     editor.apply(); 
+        //     //showNativeMessage("Prefer", checked);           
+        // }
     }
 
     //add tune types to list view
@@ -384,7 +407,20 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
         alert.show();
     }
 
-
+    void showNativeMessage(String title, int value)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(String.valueOf(value))
+               .setTitle(title)
+               .setCancelable(false)
+               .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                   public void onClick(DialogInterface dialog, int id) {
+                        //do things
+                   }
+               });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
 
     static String convertStreamToString(java.io.InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
@@ -405,6 +441,7 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
     {
         showInfoFromCsdFile(files.get(position));
         viewFlipper.showNext();
+        //CheckBox checkBox = (CheckBox) findViewById(R.id.orientationButton); 
         Cabbage.loadCabbageFile(files.get(position), bufferSize); 
     }
 

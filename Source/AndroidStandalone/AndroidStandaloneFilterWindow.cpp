@@ -164,7 +164,7 @@ void StandaloneFilterWindow::loadFile(String filename)
         }
         else
         {
-            scale = Point<float>(desktopRect.getWidth()/originalPluginHeight,
+            scale = Point<float>(desktopRect.getHeight()/originalPluginHeight,
                                  (desktopRect.getHeight()/originalPluginHeight)*.95);
         }
 

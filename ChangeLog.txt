@@ -8,6 +8,7 @@ Additions:
 - added new vertical and horizontal range slider widgets, hrange, and vrange
 - added channel support to labels and images so they can act as an on off switch
 - added support for file() identifier in comboboxes, users can now load entire files as indexed lines
+- added Cabbage Studio to installers on all platforms
 - added colouring of "regions of interest" in code editor
 - added font chooser to editor
 - added corners() identifier support to images, groupboxes, and labels
@@ -47,6 +48,16 @@ Fixes:
 - fixed code editor component bug
 
 Updates:
-- updated Examples and added new examples to 'Intructional' folder. 
-- updated Docs and added several new sections for Beginners, and further short tutorials on various aspects of Cabbage and custom widget development. 
+- updated Examples and added new examples to 'Instructional' folder. 
+- updated Docs:
+	- added section on Widget arrays
+	- added section on Presets
+	- added section on using SVGs to draw custom widgets
+	- added section on Identifier channels
+	- added section on Managing large numbers of Widgets
+	- added section on Cabbage for Android
+	- added section on Cabbage Studio 
+	- added Beginners section, covering the basics of Csound and getting started with a first synthesiser
+	- added section on Developing new Widgets  
 
+A more in-depth list of changes since the last release can be found in the git commit log. 

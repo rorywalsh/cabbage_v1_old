@@ -19,6 +19,7 @@ public:
     {
         filterWindow = new StandaloneFilterWindow ();
         //Desktop::getInstance().setGlobalScaleFactor(1.3);
+        filterWindow->setFullScreen(true);
         juce::Thread::setCurrentThreadName("cabbage");
     }
 

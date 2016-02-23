@@ -3133,6 +3133,7 @@ class CabbageFFTDisplay	:	public Component,
     Colour fontColour, colour, backgroundColour, outlineColour;
     ScrollBar scrollbar;
     bool isScrollbarShowing;
+    float rotate;
 
 
     class FrequencyRangeDisplayComponent : public Component

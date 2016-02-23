@@ -15,7 +15,7 @@ StandaloneFilterWindow::StandaloneFilterWindow ()
       firstRun(true)
 {
     setOpenGLRenderingEngine();
-    Desktop::getInstance().setKioskModeComponent(this);
+    //Desktop::getInstance().setKioskModeComponent(this);
     setTitleBarButtonsRequired(0, false);
     Component::setLookAndFeel(lookAndFeel);
     pluginHolder = new StandalonePluginHolder ();
@@ -155,8 +155,18 @@ void StandaloneFilterWindow::loadFile(String filename)
             }
         }
 
-        Point<float> scale = Point<float>(desktopRect.getWidth()/originalPluginWidth,
-                                          (desktopRect.getHeight()/originalPluginHeight)*.95);
+        Point<float> scale;
+
+        if(originalPluginWidth>=originalPluginHeight)
+        {
+            scale = Point<float>(desktopRect.getWidth()/originalPluginWidth,
+                                 (desktopRect.getHeight()/originalPluginHeight)*.95);
+        }
+        else
+        {
+            scale = Point<float>(desktopRect.getWidth()/originalPluginHeight,
+                                 (desktopRect.getHeight()/originalPluginHeight)*.95);
+        }
 
         pluginHolder->createPlugin(file.getFullPathName(), scale);
         AudioProcessorEditor* ed = createEditorComp();

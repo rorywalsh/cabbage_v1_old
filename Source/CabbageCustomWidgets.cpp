@@ -979,7 +979,8 @@ CabbageFFTDisplay::CabbageFFTDisplay (CabbageGUIType &cAttr, CabbagePluginAudioP
       zoomLevel(cAttr.getNumProp(CabbageIDs::zoom)),
       leftPos(0),
       isScrollbarShowing(false),
-      scrollbarHeight(20)
+      scrollbarHeight(20),
+      rotate(cAttr.getNumProp(CabbageIDs::rotate))
 {
     addAndMakeVisible(freqRangeDisplay);
     addAndMakeVisible(scrollbar);
@@ -1189,6 +1190,34 @@ void CabbageFFTDisplay::update(CabbageGUIType m_cAttr)
     {
         freqRange = Range<int>(m_cAttr.getNumProp(CabbageIDs::min),m_cAttr.getNumProp(CabbageIDs::max));
         freqRangeDisplay.setMinMax(freqRange.getStart(), freqRange.getEnd());
+    }
+
+    setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
+
+    if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
+    {
+        rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
+        setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
+    }
+
+    if(!m_cAttr.getNumProp(CabbageIDs::visible))
+    {
+        setVisible(false);
+        setEnabled(false);
+    }
+    else
+    {
+        setEnabled(true);
+        setVisible(true);
+    }
+
+    if(!m_cAttr.getNumProp(CabbageIDs::active))
+    {
+        setEnabled(false);
+    }
+    else
+    {
+        setEnabled(true);
     }
 }
 

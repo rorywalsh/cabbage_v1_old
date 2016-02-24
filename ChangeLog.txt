@@ -1,4 +1,4 @@
-Cabbage v0.5.18
+Cabbage v0.5.17
 
 Additions:
 - added new listbox widget

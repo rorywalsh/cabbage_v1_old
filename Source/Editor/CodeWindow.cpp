@@ -31,7 +31,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
     csoundOutputText(""),
     debugMessage(""),
     firstTime(true),
-    font(String("Courier New"), 15, 1),
+    font(String("Courier New"), 15, 0),
     isColumnModeEnabled(false),
     isEditModeEnabled(false),
     isInstrTabEnabled(false)
@@ -531,7 +531,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
         Logger::writeToLog("fileSaved");
         if(textEditor->currentEditor!=0)
         {
-            cUtils::showMessage("Saving an auxillary file!");
+            cUtils::showMessage("Saving an auxillary file!", &getLookAndFeel());
             textEditor->saveAuxFile();
         }
         else

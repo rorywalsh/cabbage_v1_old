@@ -4,10 +4,10 @@ Labels can be used for placing text on-screen.
 
 
 ```csharp
-label bounds(x, y, width, height), text("text"), colour("colour"), \
+label bounds(x, y, width, height), text("text"), colour("colour"), channel("chan") \
 fontcolour("colour"), align("position"), identchannel("channel"), \
-alpha(val), visible(val), rotate(radians, pivotx, pivoty), \
-widgetarray("chan", number), active(val)
+alpha(val), visible(val), rotate(radians, pivotx, pivoty), corners(val)\
+widgetarray("chan", number), active(val), fontstyle("style")
 ```
 <!--(End of syntax)/-->
 
@@ -20,6 +20,8 @@ widgetarray("chan", number), active(val)
 **align("position")** Aligns the label's text. "position" should be 'left', 'right' or 'centre'. 
 
 **colour("colour")** This sets the background colour of the label. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.  
+
+**channel("chan")** "chan" is the name of the channel that Cabbage will communicate with Csound on. A left-mouse click on an a label will send a 1 to the channel passed to channel(). Subsequent clicks will toggle between 0 and 1. 
 
 **fontcolour("colour")** This sets the colour of the image if no file name is given with the file identifier. Any CSS or HTML colour string can be passed to this identifier. The colour identifier can also be passed an RBG, or RGBA value. All channel values must be between 0 and 255. For instance colour(0, 0, 255) will create a blue, while colour(0, 255, 0, 255) will create a green with an alpha channel set to full.  
 
@@ -34,6 +36,10 @@ widgetarray("chan", number), active(val)
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
+**corners(val)** Sets the radius size of the widget's corners.
+
+**fontstyle("style")** Sets the style of the font. Valid styles are, "plain", "bold"(default), "bolditalic", "italic" and "underlined" 
 
 <!--(End of identifiers)/-->
 

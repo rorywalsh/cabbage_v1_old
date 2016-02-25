@@ -279,7 +279,7 @@ public class Cabbage   extends Activity implements AdapterView.OnItemClickListen
     {
         if (view.getId()==R.id.aboutButton)
         {
-            showNativeMessage("Info", "Cabbage 5.17. Developed by Rory Walsh.\nWebsite: cabbageaudio.com\nUser forum: forum.cabbageaudio.com");
+            showNativeMessage("Info", "Cabbage for Android v0.1 beta. Developed by Rory Walsh.\nWebsite: cabbageaudio.com\nUser forum: forum.cabbageaudio.com");
         }
         else if(view.getId()==R.id.settingsButton)
         {

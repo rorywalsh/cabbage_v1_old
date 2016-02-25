@@ -1013,10 +1013,10 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         else
             subMenu.addItem(300, String("Use native file dialogue"), true, true);
 
-        if(!getPreference(appProperties, "DisableGUIEditModeWarning"))
-            subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, false);
+        if(!getPreference(appProperties, "DisableCompilerErrorWarning"))
+            subMenu.addItem(202, String("Disable Compiler Error Warning"), true, false);
         else
-            subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, true);
+            subMenu.addItem(202, String("Disable Compiler Error Warning"), true, true);
 
         subMenu.addItem(301, String("Set external editor"), true, false);
 
@@ -1424,41 +1424,36 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     //------- preference disable gui edit warning ------
     else if(options==202)
     {
-        toggleOnOffPreference(appProperties, "DisableGUIEditModeWarning");
+        toggleOnOffPreference(appProperties, "DisableCompilerErrorWarning");
     }
     //------- enable GUI edit mode------
     else if(options==100)
     {
-        if(!getPreference(appProperties, "DisableGUIEditModeWarning"))
-            showMessage("", "Warning!! This feature is still under development! Whilst every effort has been made to make it as usable as possible, there might still be some teething problems that need sorting out. If you find a problem, please try to recreate it, note the steps involved, and report it to the Cabbage users forum (www.TheCabbageFoundation.org). Thank you. You may disable this warning in 'Options->Preferences'", lookAndFeel);
-        else
+        //if(getPreference(appProperties, "ExternalEditor")==0)
+        if(hasEditorBeingOpened==false)
         {
-            //if(getPreference(appProperties, "ExternalEditor")==0)
-            if(hasEditorBeingOpened==false)
-            {
-                openTextEditor();
-                hasEditorBeingOpened = true;
-            }
-            if(isAFileOpen == true)
-                if(filter->isGuiEnabled())
-                {
-                    if(getPreference(appProperties, "ExternalEditor")==1)
-                        csdFile = File(csdFile.getFullPathName());
-                    startTimer(500);
-                    //filter->suspendProcessing(false);
-                    ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
-                    filter->setGuiEnabled(false);
-                }
-                else
-                {
-                    ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(true);
-                    filter->setGuiEnabled(true);
-                    //filter->suspendProcessing(true);
-                    stopTimer();
-                    //setPreference(appProperties, "ExternalEditor", 0);
-                }
-            else m_ShowMessage("Open or create a file first", &getLookAndFeel());
+            openTextEditor();
+            hasEditorBeingOpened = true;
         }
+        if(isAFileOpen == true)
+            if(filter->isGuiEnabled())
+            {
+                if(getPreference(appProperties, "ExternalEditor")==1)
+                    csdFile = File(csdFile.getFullPathName());
+                startTimer(500);
+                //filter->suspendProcessing(false);
+                ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
+                filter->setGuiEnabled(false);
+            }
+            else
+            {
+                ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(true);
+                filter->setGuiEnabled(true);
+                //filter->suspendProcessing(true);
+                stopTimer();
+                //setPreference(appProperties, "ExternalEditor", 0);
+            }
+        else m_ShowMessage("Open or create a file first", &getLookAndFeel());
     }
     else if(options==6000)
     {

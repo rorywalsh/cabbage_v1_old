@@ -758,8 +758,8 @@ void RangeSlider::sendValuesToCsound(double val1, double val2, int thumb)
         }
 #endif
 
-        owner->getFilter()->getGUICtrls(index).setNumProp(CabbageIDs::minvalue, val1);
-        owner->getFilter()->getGUICtrls(index+1).setNumProp(CabbageIDs::maxvalue, val2);
+        //owner->getFilter()->getGUICtrls(index).setNumProp(CabbageIDs::minvalue, val1);
+        //owner->getFilter()->getGUICtrls(index+1).setNumProp(CabbageIDs::maxvalue, val2);
     }
 
 }
@@ -898,10 +898,10 @@ CabbageRangeSlider2::CabbageRangeSlider2(CabbageGUIType &cAttr, CabbagePluginAud
     slider(cAttr, _owner),
     text(cAttr.getStringProp(CabbageIDs::text)),
     textColour(cAttr.getStringProp(CabbageIDs::textcolour)),
-    textLabel(text),
-    isVertical(cAttr.getStringProp(CabbageIDs::kind)=="horizontal" ? false : true)
+    textLabel(text)
 {
-    cUtils::debug(cAttr.getNumProp(CabbageIDs::sliderskew));
+    isVertical = cAttr.getStringProp(CabbageIDs::kind)=="horizontal" ? false : true;
+    //cUtils::debug(cAttr.getNumProp(CabbageIDs::sliderskew));
 
     addAndMakeVisible(&slider);
     slider.setBounds(cAttr.getNumProp(CabbageIDs::left), cAttr.getNumProp(CabbageIDs::top),

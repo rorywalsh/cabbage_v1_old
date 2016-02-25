@@ -21,7 +21,6 @@ nchnls = 2
 
 ;instrument will be triggered by keyboard widget
 instr 1
-
 kEnv madsr chnget:i("att"), chnget:i("dec"), chnget:i("sus"), chnget:i("rel")
 aOut vco2 p5*kEnv, p4
 outs aOut, aOut
@@ -33,3 +32,4 @@ endin
 f0 z
 </CsScore>
 </CsoundSynthesizer>
+Guillermo

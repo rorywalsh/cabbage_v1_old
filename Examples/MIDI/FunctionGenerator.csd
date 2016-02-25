@@ -1,4 +1,6 @@
-
+; FunctionGenerator.csd
+; Written by Iain McCurdy, 2015
+	
 ; GENERATOR section generates a function using one of a variety of methods. 
 ; (The range of values output by 'GENERATOR' are always within the range zero to 1.)
 
@@ -348,7 +350,7 @@ instr	1
  
  
  
- printk	1,kfn
+; printk	1,kfn
  
 ; OUTPUT 
  kchannel	chnget	"channel"

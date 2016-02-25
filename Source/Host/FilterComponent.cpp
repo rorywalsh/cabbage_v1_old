@@ -492,7 +492,7 @@ void FilterComponent::actionListenerCallback (const String &message)
             {
 
                 instance->suspendProcessing(true);
-                instance->reCompileCsound(file);
+                instance->recompileCsound(file);
                 instance->setPlayConfigDetails(newChannelCount,
                                                newChannelCount,
                                                instance->getCsoundSamplingRate(),
@@ -500,7 +500,8 @@ void FilterComponent::actionListenerCallback (const String &message)
 
                 numIns = instance->getNumberCsoundOutChannels();
                 numOuts = instance->getNumberCsoundOutChannels();
-                instance->createGUI(file.loadFileAsString(), true);
+                instance->initialiseWidgets(file.loadFileAsString(), true);
+                instance->addWidgetsToEditor(true);
 
 
                 if(instance->getActiveEditor() != nullptr)
@@ -1287,7 +1288,7 @@ int FilterComponent::setUniquePluginID(File binFile, File csdFile, bool AU)
         tokes.addTokens(csdText[i].trimEnd(), ", ", "\"");
         if(tokes[0].equalsIgnoreCase(String("form")))
         {
-            CabbageGUIClass cAttr(csdText[i].trimEnd(), 0);
+            CabbageGUIType cAttr(csdText[i].trimEnd(), 0);
             if(cAttr.getStringProp(CabbageIDs::pluginid).length()!=4)
             {
                 cUtils::showMessage("Your plugin ID is not the right size. It MUST be 4 characters long. Some hosts may not be able to load your plugin");

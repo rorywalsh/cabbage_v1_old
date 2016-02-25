@@ -32,6 +32,7 @@ visible(val), rotate(radians, pivotx, pivoty), widgetarray("chan", number) \ pop
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
 <!--(End of identifiers)/-->
 
 ##Example

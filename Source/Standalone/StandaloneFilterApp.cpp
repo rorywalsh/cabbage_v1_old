@@ -8,7 +8,7 @@
 ApplicationProperties* appProperties = nullptr;
 PropertySet* defaultPropSet = nullptr;
 String currentApplicationDirectory;
-CabbageTimer* cabbageTimer =nullptr;
+
 StringArray undoHistory;
 
 
@@ -42,7 +42,7 @@ public:
         String homeDir = appProperties->getCommonSettings(true)->getFile().getParentDirectory().getFullPathName();
         String manualPath;
 #if !defined(MACOSX)
-        manualPath = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/CsoundDocs/index.html";
+        manualPath = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/CsoundDocs";
 #else
         manualPath = "/Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual";
 #endif
@@ -56,8 +56,9 @@ public:
         defaultPropSet->setValue("ShowConsoleWithEditor", 1);
         defaultPropSet->setValue("UsingCabbageCsound", 1);
         defaultPropSet->setValue("AudioEnabled", 1);
-        defaultPropSet->setValue("DisableGUIEditModeWarning", 1);
+        defaultPropSet->setValue("DisableCompilerErrorWarning", 0);
         defaultPropSet->setValue("SetAlwaysOnTop", 1);
+        defaultPropSet->setValue("GridSize", 4);
         defaultPropSet->setValue("PlantRepository", xml);
         defaultPropSet->setValue("EditorColourScheme", 0);
         defaultPropSet->setValue("showTabs", 1);
@@ -66,6 +67,14 @@ public:
         defaultPropSet->setValue("EnableNativePopup", 0);
         defaultPropSet->setValue("windowX", 100);
         defaultPropSet->setValue("windowY", 100);
+#if defined(WIN32)
+        defaultPropSet->setValue("Fonttype", "Consolas");
+#elif defined(MACOSX)
+        defaultPropSet->setValue("Fonttype", "Courier New");
+#else
+        defaultPropSet->setValue("Fonttype", "Droid Sans Mono");
+#endif
+
         appProperties->getUserSettings()->setFallbackPropertySet(defaultPropSet);
         filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black, getCommandLineParameters());
         filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
@@ -83,7 +92,6 @@ public:
         appProperties->closeFiles();
         deleteAndZero(appProperties);
         deleteAndZero(defaultPropSet);
-        deleteAndZero(cabbageTimer);
         deleteAndZero(lookAndFeel);
         deleteAndZero(lookAndFeelBasic);
     }

@@ -112,12 +112,7 @@ void ChildAlias::applyToTarget (String triggeredFrom)
         ((CabbageMainPanel*)(getTarget()->getParentComponent()))->childBounds.clear();
         ((CabbageMainPanel*)(getTarget()->getParentComponent()))->origChildBounds.clear();
 
-        if(type.containsIgnoreCase("CabbageGroupbox")||
-                type.containsIgnoreCase("CabbageImage"))
-            c->toBack();
-
-        else
-            c->toFront(true);
+        //c->toFront(true);
 
         //if just resizing is taking place we need to resize child components..
         if(startBounds.getTopLeft()==c->getBounds().getTopLeft())
@@ -132,6 +127,7 @@ void ChildAlias::applyToTarget (String triggeredFrom)
                                                    origBounds[i].getHeight()*y);
 
                 cUtils::debug(c->getChildComponent(i)->getProperties().getWithDefault("index", -999).toString());
+                cUtils::debug(c->getChildComponent(i)->getName());
 
                 ((CabbageMainPanel*)(getTarget()->getParentComponent()))->childBounds.add(c->getChildComponent(i)->getBounds());
                 ((CabbageMainPanel*)(getTarget()->getParentComponent()))->origChildBounds.add(origBounds[i]);
@@ -221,7 +217,7 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         getLayoutEditor()->selectedCompsOrigCoordinates.add(this->getBounds());
         getLayoutEditor()->selectedLineNumbers.add(this->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
 
-        toFront (true);
+        // toFront (true);
         if(!e.mods.isCommandDown())
             getProperties().set("interest", "current");
         repaint ();
@@ -275,10 +271,19 @@ void ChildAlias::mouseDown (const MouseEvent& e)
 #ifdef Cabbage_Build_Standalone
     if(e.mods.isPopupMenu())
     {
-        PopupMenu m;
+        PopupMenu m, subMenu;
         m.setLookAndFeel(&getParentComponent()->getLookAndFeel());
         m.addItem(2, "Delete");
         m.addItem(3, "Duplicate");
+        subMenu.addItem(10, "To back");
+        subMenu.addItem(11, "One");
+        m.addSubMenu("Backwards", subMenu);
+        subMenu.clear();
+        subMenu.addItem(12, "To front");
+        subMenu.addItem(13, "One");
+        m.addSubMenu("Forwards", subMenu);
+        m.addItem(12, "Bring to front");
+        m.addItem(13, "Forward one");
         m.addItem(4, "Create plant");
         m.addItem(5, "Break up plant");
         m.addItem(1, "Add to repository");
@@ -286,6 +291,9 @@ void ChildAlias::mouseDown (const MouseEvent& e)
 #if !defined(AndroidBuild)
         choice = m.show();
 #endif
+
+        ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
+
         if(choice==1)
         {
             String plantDir;
@@ -323,7 +331,6 @@ void ChildAlias::mouseDown (const MouseEvent& e)
                     if(plants[i]==alert.getTextEditorContents("textEditor"))
                         clashingNames = true;
 
-                ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
                 if(parent)
                 {
                     parent->currentEvent = "addPlantToRepo:"+alert.getTextEditorContents("textEditor");
@@ -348,8 +355,6 @@ void ChildAlias::mouseDown (const MouseEvent& e)
         }
         else if(choice==2)
         {
-            //notify host to delete component/s
-            ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
             if(parent)
             {
                 parent->currentEvent = "deleteComponents";
@@ -359,8 +364,6 @@ void ChildAlias::mouseDown (const MouseEvent& e)
 
         else if(choice==3)
         {
-            //notify host to delete component/s
-            ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
             if(parent)
             {
                 parent->currentEvent = "duplicateComponents";
@@ -370,8 +373,6 @@ void ChildAlias::mouseDown (const MouseEvent& e)
 
         else if(choice==4)
         {
-            //notify host to delete component/s
-            ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
             if(parent)
             {
                 parent->currentEvent = "convertToPlant";
@@ -381,11 +382,45 @@ void ChildAlias::mouseDown (const MouseEvent& e)
 
         else if(choice==5)
         {
-            //notify host to delete component/s
-            ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
             if(parent)
             {
                 parent->currentEvent = "breakUpPlant";
+                parent->sendChangeMessage();
+            }
+        }
+
+        else if(choice==10)
+        {
+            if(parent)
+            {
+                parent->currentEvent = "sendToBack";
+                parent->sendChangeMessage();
+            }
+        }
+        else if(choice==11)
+        {
+
+            if(parent)
+            {
+                parent->currentEvent = "sendBackOne";
+                parent->sendChangeMessage();
+            }
+        }
+        else if(choice==12)
+        {
+
+            if(parent)
+            {
+                parent->currentEvent = "sendForward";
+                parent->sendChangeMessage();
+            }
+        }
+        else if(choice==13)
+        {
+
+            if(parent)
+            {
+                parent->currentEvent = "sendForwardOne";
                 parent->sendChangeMessage();
             }
         }
@@ -425,12 +460,6 @@ void ChildAlias::mouseUp (const MouseEvent& e)
 
 
     applyToTarget("");
-
-    if(type.containsIgnoreCase("CabbageGroupbox")||
-            type.containsIgnoreCase("CabbageImage"))
-        toBack();
-    else
-        toFront(true);
 
     //notify host of mouseUp event
     ComponentLayoutEditor* parent = findParentComponentOfClass <ComponentLayoutEditor>();
@@ -479,8 +508,11 @@ void ChildAlias::mouseDrag (const MouseEvent& e)
                         dragY = e.getDistanceFromDragStartY();
 
                         //snap to grid....
-                        int gridSize = 2;
-
+#ifdef Cabbage_Build_Standalone
+                        const int gridSize = appProperties->getUserSettings()->getValue("GridSize", "").getIntValue();;
+#else
+                        const int gridSize = 2;
+#endif
                         Rectangle<int> bounds = getLayoutEditor()->getLassoRect(getLayoutEditor()->getLassoSelection());
 
                         int selectedCompsPosX = getLayoutEditor()->selectedCompsOrigCoordinates[i].getX();
@@ -502,7 +534,11 @@ void ChildAlias::mouseDrag (const MouseEvent& e)
                     int selectedCompsPosX = startBounds.getX()+dragX;
                     int selectedCompsPosY = startBounds.getY()+dragY;
                     //snap to grid....
-                    int gridSize = 2;
+#ifdef Cabbage_Build_Standalone
+                    const int gridSize = appProperties->getUserSettings()->getValue("GridSize", "").getIntValue();;
+#else
+                    const int gridSize = 2;
+#endif
                     selectedCompsPosX = selectedCompsPosX/gridSize*gridSize;
                     selectedCompsPosY = selectedCompsPosY/gridSize*gridSize;
 
@@ -511,16 +547,8 @@ void ChildAlias::mouseDrag (const MouseEvent& e)
                     setTopLeftPosition(selectedCompsPosX,selectedCompsPosY);
                 }
                 applyToTarget ("");
-                if(type.containsIgnoreCase("juce::GroupComponent")||
-                        type.containsIgnoreCase("CabbageImage"))
-                    toBack();
             }
         }
-        if(type.containsIgnoreCase("juce::GroupComponent")||
-                type.containsIgnoreCase("CabbageImage"))
-            toBack();
-        else
-            toFront(true);
     }//end of left click check
 }
 //=====================================
@@ -659,8 +687,8 @@ void ComponentLayoutEditor::updateFrames ()
             {
                 ChildAlias* alias = createAlias (c, type, compIndex++);
                 //pass on relative X and Y's to alias components so they are plant aware...
-                alias->getProperties().set("plantX", var(c->getProperties().getWithDefault(var::identifier("plantX"), 0)));
-                alias->getProperties().set("plantY", var(c->getProperties().getWithDefault(var::identifier("plantY"), 0)));
+                alias->getProperties().set("plantX", var(c->getProperties().getWithDefault("plantX", 0)));
+                alias->getProperties().set("plantY", var(c->getProperties().getWithDefault("plantY", 0)));
                 alias->getProperties().set(CabbageIDs::lineNumber, c->getProperties().getWithDefault(CabbageIDs::lineNumber, -99));
                 if (alias)
                 {

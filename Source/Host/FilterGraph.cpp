@@ -246,7 +246,8 @@ AudioProcessorGraph::Node::Ptr FilterGraph::createNode(const PluginDescription* 
         CabbagePluginAudioProcessor* cabbageNativePlugin = new CabbagePluginAudioProcessor(desc->fileOrIdentifier, false, AUDIO_PLUGIN);
         int numChannels = cUtils::getNchnlsFromFile(File(desc->fileOrIdentifier).loadFileAsString());
         //create GUI for selected plugin...
-        cabbageNativePlugin->createGUI(File(desc->fileOrIdentifier).loadFileAsString(), true);
+        cabbageNativePlugin->initialiseWidgets(File(desc->fileOrIdentifier).loadFileAsString(), true);
+        cabbageNativePlugin->addWidgetsToEditor(true);
         cabbageNativePlugin->setPlayConfigDetails(numChannels,
                 numChannels,
                 cabbageNativePlugin->getCsoundSamplingRate(),

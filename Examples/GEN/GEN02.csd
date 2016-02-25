@@ -21,9 +21,9 @@ form caption("GEN02"), size(720, 440), scrollbars(0), colour( 50, 50, 50),plugin
 #define RSliderStyle2 # colour("green"),  outlinecolour(100,100,100), trackercolour(150,150,150) #
 #define RSliderStyle3 # colour("blue"),   outlinecolour(100,100,100), trackercolour(150,150,150) #
                                                                                   
-gentable bounds(  5,  5, 400,140), identchannel("table1"),  tablenumber(1), tablecolour("yellow"),amprange(36,108,1,1), zoom(-1), tablegridcolour(0,0,0,0)
-gentable bounds(  5,150, 400,140), identchannel("table2"),  tablenumber(2), tablecolour("green"), amprange(0,1,2), zoom(-1), tablegridcolour(0,0,0,0)
-gentable bounds(  5,295, 400,140), identchannel("table3"),  tablenumber(3), tablecolour("blue"),  amprange(1,4,3,1), zoom(-1), tablegridcolour(0,0,0,0)
+gentable bounds(  5,  5, 400,140), identchannel("table1"),  tablenumber(1), tablecolour("yellow"), active(1), amprange(36,108,1,1), zoom(-1), tablegridcolour(0,0,0,0)
+gentable bounds(  5,150, 400,140), identchannel("table2"),  tablenumber(2), tablecolour("green"), active(1), amprange(0,1,2), zoom(-1), tablegridcolour(0,0,0,0)
+gentable bounds(  5,295, 400,140), identchannel("table3"),  tablenumber(3), tablecolour("blue"), active(1), amprange(1,4,3,1), zoom(-1), tablegridcolour(0,0,0,0)
 label    bounds(  7,  5, 100, 12), text("NOTES"),      align("left"), fontcolour(255,255,255,50)
 label    bounds(  7,150, 100, 12), text("AMPLITUDES"), align("left"), fontcolour(255,255,255,50)
 label    bounds(  7,295, 100, 12), text("DURATIONS"),  align("left"), fontcolour(255,255,255,50)

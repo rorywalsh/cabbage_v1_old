@@ -35,8 +35,8 @@ ifeq ($(CONFIG),Debug)
 
   CPPFLAGS := $(DEPFLAGS) -DJUCE_FORCE_DEBUG=0 -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D"BUILD_DEBUGGER=1" -D "Cabbage_Build_Standalone=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I $(VST_SDK) -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules -I $(CSOUND_INCLUDE)
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -std=c++11 -g -ggdb -O0
-  CXXFLAGS += $(CFLAGS)
-  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile`
+  CXXFLAGS += $(CFLAGS) -std=c++11
+  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -L/usr/X11R6/lib/ -lX11 -lGL -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile`
   LDDEPS :=
   RESFLAGS := -I $(CSOUND_INCLUDE)  -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := Cabbage
@@ -55,8 +55,8 @@ ifeq ($(CONFIG),Release)
 
   CPPFLAGS := $(DEPFLAGS) -I $(CSOUND_INCLUDE) -D "LINUX=1" -D "CSOUND6=1" -D "Cabbage_Build_Standalone=1" -D"Release=1" -D "Cabbage_GUI_Editor=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ~/SDKs/vstsdk2.4  -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules -I $(CSOUND_INCLUDE)
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -std=c++11 -Os
-  CXXFLAGS += $(CFLAGS)
-  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -fvisibility=hidden -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile`
+  CXXFLAGS += $(CFLAGS) -std=c++11
+  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -fvisibility=hidden -lGL -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile`
   LDDEPS :=
   RESFLAGS := -I $(CSOUND_INCLUDE) -D"Release=1" -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "Cabbage_GUI_Editor=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I $(VST_SDK)  -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := Cabbage
@@ -79,6 +79,8 @@ OBJECTS := \
   $(OBJDIR)/CabbageAudioDeviceSelectorComponent_87e6d820.o \
   $(OBJDIR)/CommandManager_f4ac7445.o \
   $(OBJDIR)/CabbagePluginEditor_5a11f64e.o \
+  $(OBJDIR)/CabbageMessageSystem_6we1348e.o \
+  $(OBJDIR)/CabbageCustomWidgets_35a2sd62.o \
   $(OBJDIR)/CabbagePluginProcessor_73d6661b.o \
   $(OBJDIR)/Soundfiler_35ae1cd0.o \
   $(OBJDIR)/Table_35ae1cd9.o \
@@ -97,7 +99,7 @@ OBJECTS := \
   $(OBJDIR)/juce_graphics_c8f1e7a4.o \
   $(OBJDIR)/juce_gui_basics_a630dd20.o \
   $(OBJDIR)/juce_gui_extra_7767d6a8.o \
-
+  $(OBJDIR)/juce_opengl_7767dsdf8.o \
 
 .PHONY: clean
 
@@ -128,6 +130,11 @@ $(OBJDIR)/CabbageCallOutBox_1ced38fd.o: ../../Source/CabbageCallOutBox.cpp
 	@echo "Compiling CabbageCallOutBox.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/CabbageMessageSystem_6we1348e.o: ../../Source/CabbageMessageSystem.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageMessageSystem.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
 $(OBJDIR)/CabbageGUIClass_79b9049f.o: ../../Source/CabbageGUIClass.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CabbageGUIClass.cpp"
@@ -156,6 +163,11 @@ $(OBJDIR)/CabbageTable_d003e736.o: ../../Source/CabbageTable.cpp
 $(OBJDIR)/Table_35ae1cd9.o: ../../Source/Table.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling Table.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbageCustomWidgets_35a2sd62.o: ../../Source/CabbageCustomWidgets.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageCustomWidgets.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/ComponentLayoutEditor_aa38c835.o: ../../Source/ComponentLayoutEditor.cpp
@@ -286,6 +298,11 @@ $(OBJDIR)/juce_gui_basics_a630dd20.o: ../../JuceLibraryCode/modules/juce_gui_bas
 $(OBJDIR)/juce_gui_extra_7767d6a8.o: ../../JuceLibraryCode/modules/juce_gui_extra/juce_gui_extra.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling juce_gui_extra.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/juce_opengl_7767dsdf8.o: ../../JuceLibraryCode/modules/juce_opengl/juce_opengl.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling juce_opengl.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 -include $(OBJECTS:%.o=%.d)

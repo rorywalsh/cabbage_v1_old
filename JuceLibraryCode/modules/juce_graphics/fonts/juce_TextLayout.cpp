@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -331,9 +331,8 @@ namespace TextLayoutHelpers
         Token& operator= (const Token&);
     };
 
-    class TokenList
+    struct TokenList
     {
-    public:
         TokenList() noexcept  : totalLines (0) {}
 
         void createLayout (const AttributedString& text, TextLayout& layout)
@@ -342,7 +341,7 @@ namespace TextLayoutHelpers
             layout.ensureStorageAllocated (totalLines);
 
             addTextRuns (text);
-            layoutRuns (layout.getWidth());
+            layoutRuns (layout.getWidth(), text.getLineSpacing());
 
             int charPosition = 0;
             int lineStartPosition = 0;
@@ -505,7 +504,7 @@ namespace TextLayoutHelpers
                 tokens.add (new Token (currentString, font, colour, lastCharType == 2));
         }
 
-        void layoutRuns (const float maxWidth)
+        void layoutRuns (const float maxWidth, const float extraLineSpacing)
         {
             float x = 0, y = 0, h = 0;
             int i;
@@ -516,7 +515,7 @@ namespace TextLayoutHelpers
                 t.area.setPosition (x, y);
                 t.line = totalLines;
                 x += t.area.getWidth();
-                h = jmax (h, t.area.getHeight());
+                h = jmax (h, t.area.getHeight() + extraLineSpacing);
 
                 const Token* const nextTok = tokens[i + 1];
 
@@ -634,5 +633,10 @@ void TextLayout::recalculateSize (const AttributedString& text)
 
         width  = bounds.getWidth();
         height = bounds.getHeight();
+    }
+    else
+    {
+        width = 0;
+        height = 0;
     }
 }

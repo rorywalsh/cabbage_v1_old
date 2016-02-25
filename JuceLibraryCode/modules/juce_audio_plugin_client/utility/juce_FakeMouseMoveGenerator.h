@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -40,7 +40,7 @@ public:
     void timerCallback() override
     {
         // workaround for carbon windows not getting mouse-moves..
-        const Point<int> screenPos (Desktop::getInstance().getMainMouseSource().getScreenPosition().toInt());
+        const Point<float> screenPos (Desktop::getInstance().getMainMouseSource().getScreenPosition());
 
         if (screenPos != lastScreenPos)
         {
@@ -48,15 +48,16 @@ public:
             const ModifierKeys mods (ModifierKeys::getCurrentModifiers());
 
             if (! mods.isAnyMouseButtonDown())
-                if (Component* const comp = Desktop::getInstance().findComponentAt (screenPos))
+                if (Component* const comp = Desktop::getInstance().findComponentAt (screenPos.roundToInt()))
                     if (ComponentPeer* const peer = comp->getPeer())
                         if (! peer->isFocused())
-                            peer->handleMouseEvent (0.f, peer->globalToLocal (screenPos).toFloat(), mods, Time::currentTimeMillis());
+                            peer->handleMouseEvent (0, peer->globalToLocal (screenPos), mods,
+                                                    MouseInputSource::invalidPressure, Time::currentTimeMillis());
         }
     }
 
 private:
-    Point<int> lastScreenPos;
+    Point<float> lastScreenPos;
 };
 
 #else

@@ -26,6 +26,7 @@
 #include "../Plugin/CabbagePluginEditor.h"
 #include "../CabbageAudioDeviceSelectorComponent.h"
 
+
 extern ApplicationProperties* appProperties;
 extern PropertySet* defaultPropSet;
 extern String currentApplicationDirectory;
@@ -116,6 +117,17 @@ public:
     void setupWindowDimensions();
     void m_ShowMessage(String mess, LookAndFeel* feel, String title="Cabbage");
     int exportPlugin(String type, bool saveAs, String fileName="");
+//    int exportAsAndroid();
+//    StringArray getRenderingEngines();
+//    void setRenderingEngine (int index);
+//    void setOpenGLRenderingEngine();
+//    int getActiveRenderingEngine();
+
+#if JUCE_OPENGL
+//    OpenGLContext openGLContext;
+#endif
+
+
     Array<File> cabbageFiles;
     ScopedPointer<StandaloneFileDialogue> standaloneFileDialogue;
 
@@ -173,6 +185,7 @@ private:
     String consoleMessages;
     ScopedPointer<CsoundMessageConsole> outputConsole;
     StringArray previousScoreEvents;
+    ScopedPointer<CabbageSlider> gridSizeSlider;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StandaloneFilterWindow);

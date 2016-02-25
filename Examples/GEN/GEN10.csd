@@ -104,7 +104,7 @@ instr	1
 
 	kSoloSum	=	gksolo1+gksolo2+gksolo3+gksolo4+gksolo5+gksolo6+gksolo7+gksolo8	; sum of all solo buttons
 
-#define	SOLO_MUTE_STATUS(N)			; macro to define solo/mute status for each partial 
+#define	SOLO_MUTE_STATUS(N) 
 	#
 	if gksolo$N==1 then			; if solo for this voice is on...
 	 kstatus$N	=	1		; this partial will be active

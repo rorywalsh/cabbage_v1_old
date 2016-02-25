@@ -5,7 +5,7 @@ Combobox creates a drop-down list of items which users can choose from. Once the
 
 ```csharp
 combobox bounds(x, y, width, height), channel("chan"), \
-value(val), items("item1", "item2", ...), populate("filetype", "dir"),\
+value(val), items("item1", "item2", ...), file("filename.txt"), populate("filetype", "dir"),\
 channeltype("type"), colour("colour"), fontcolour("colour"), \
 identchannel("channel"), alpha(val), visible(val), caption("caption"), \
 rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") \
@@ -13,7 +13,7 @@ active(val)
 ```
 <!--(End of syntax)/-->
 
-##Identifiers
+## Identifiers
 **bounds(x, y, width, height)** integer values that set position and size on screen(in pixels).
 
 **channel("chan")** "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode. 
@@ -22,7 +22,7 @@ active(val)
 
 **value(val)** val sets the initial state of the widget
   
-**populate("filetype", "dir")** This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "\*.snaps". When using the populate() identifier you do not need to use the items() identifier. If no directory is specified, Cabbage will look in the current working directory. See <<presets, Presets>> <<filebutton, Filebutton>>  
+**populate("filetype", "dir")** This will auto-populate the combobox with a set of files from a given directory. Users should specify the file type and the directory to look in. If using a combobox to recall previously recorded preset snapshots you must specify a filetype of "\*.snaps". When using the populate() identifier you do not need to use the items() identifier. If no directory is specified, Cabbage will look in the current working directory. See [Presets](./presets.md)
   
 **caption("caption")** This identifier lets you place your widget within a groupbox. "caption" is the text that will appear on groupbox. This identifier is useful for naming and containing widgets.  
 
@@ -45,6 +45,8 @@ active(val)
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
+**file("filename")** Using this identifier will cause Cabbage to load lines from the given file into the combo box. If a full file path is not given, file() will search  in the current directory, i.e., the directory that contains the csd file that is open. It is best to keep all files in the same directory as your csd file, but if you wish to keep them in a sperate folder you can pass a full path to the file() identifier. 
 <!--(End of identifiers)/-->
 
 ##Example

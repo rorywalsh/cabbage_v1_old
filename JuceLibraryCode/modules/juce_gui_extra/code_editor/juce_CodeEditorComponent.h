@@ -91,14 +91,14 @@ public:
 
     /** Returns the selection end caret position. */
     CodeDocument::Position getSelectionEndCaretPos() const                  { return selectionEnd; }
-	
+  
     /** Returns the current caret position. */
     CodeDocument::Position getCaretPos() const                  { return caretPos; }
 
      /** Sets the current caret position. */
     void setCaretPos(Rectangle<int> caretPos);
    
-	/** Returns the position of the caret, relative to the editor's origin. */
+  /** Returns the position of the caret, relative to the editor's origin. */
     Rectangle<int> getCaretRectangle() override;
 
     /** Moves the caret.
@@ -137,7 +137,7 @@ public:
     virtual bool deleteBackwards (bool moveInWholeWordSteps);
     virtual bool deleteForwards (bool moveInWholeWordSteps);
     bool deleteWhitespaceBackwardsToTabStop();
-    bool copyToClipboard();
+    virtual bool copyToClipboard();
     bool cutToClipboard();
     virtual bool pasteFromClipboard();
     bool undo();
@@ -301,7 +301,7 @@ public:
     */
     virtual void addPopupMenuItems (PopupMenu& menuToAddTo,
                                     const MouseEvent* mouseClickEvent);
-									
+                  
     /** This is called to perform one of the items that was shown on the popup menu.
 
         If you've overridden addPopupMenuItems(), you should also override this
@@ -417,7 +417,7 @@ private:
     void insertText (const String&);
     virtual void updateCaretPosition();
     void updateScrollBars();
-	virtual void editorHasScrolled(){}
+  virtual void editorHasScrolled(){}
     void scrollToLineInternal (int line);
     void scrollToColumnInternal (double column);
     void newTransaction();

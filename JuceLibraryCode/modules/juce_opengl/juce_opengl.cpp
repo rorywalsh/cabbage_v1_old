@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -147,20 +147,20 @@ static void checkGLError (const char* file, const int line)
  #define JUCE_CHECK_OPENGL_ERROR ;
 #endif
 
-static void clearGLError()
+static void clearGLError() noexcept
 {
     while (glGetError() != GL_NO_ERROR) {}
 }
 
 struct OpenGLTargetSaver
 {
-    OpenGLTargetSaver (const OpenGLContext& c)
+    OpenGLTargetSaver (const OpenGLContext& c) noexcept
         : context (c), oldFramebuffer (OpenGLFrameBuffer::getCurrentFrameBufferTarget())
     {
         glGetIntegerv (GL_VIEWPORT, oldViewport);
     }
 
-    ~OpenGLTargetSaver()
+    ~OpenGLTargetSaver() noexcept
     {
         context.extensions.glBindFramebuffer (GL_FRAMEBUFFER, oldFramebuffer);
         glViewport (oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]);

@@ -31,7 +31,7 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
     csoundOutputText(""),
     debugMessage(""),
     firstTime(true),
-    font(String("Courier New"), 15, 1),
+    font(String("Courier New"), 15, 0),
     isColumnModeEnabled(false),
     isEditModeEnabled(false),
     isInstrTabEnabled(false)
@@ -47,6 +47,9 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
     appProperties->setStorageParameters (options);
 #endif
 
+
+    fontsComp = new FontsComponent();
+    fontsComp->addActionListener(this);
     setApplicationCommandManagerToWatch(&commandManager);
     commandManager.registerAllCommandsForTarget(this);
     addKeyListener(commandManager.getKeyMappings());
@@ -102,6 +105,8 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
         textEditor->editor[textEditor->currentEditor]->setOpcodeStrings(File(opcodeFile).loadFileAsString());
     //else csound->Message("Could not open opcodes.txt file, parameter display disabled..");
 
+    fontSize = cUtils::getPreference(appProperties, "FontSize");
+    font = Font(cUtils::getPreference(appProperties, "Fonttype", ""), fontSize, 0);
 
     bool showConsole = (appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1 ? true : false);
     if(showConsole == false)
@@ -170,6 +175,7 @@ void CodeWindow::getAllCommands (Array <CommandID>& commands)
         CommandIDs::editZoomIn,
         CommandIDs::editZoomOut,
         CommandIDs::editMode,
+        CommandIDs::editFontType,
         CommandIDs::whiteBackground,
         CommandIDs::blackBackground,
         CommandIDs::insertFromRepo,
@@ -209,23 +215,18 @@ void CodeWindow::menuItemSelected (int menuItemID, int topLevelMenuIndex)
 //==============================================================================
 void CodeWindow::setFontSize(String zoom)
 {
-
-#if defined(WIN32)
-    String font = "Consolas";
-#elif defined(MACOSX)
-    String font = "Courier New";
-#else
-    String font = "Droid Sans Mono";
-#endif
-
     if(zoom==String("in"))
     {
-        textEditor->editor[textEditor->currentEditor]->setFont(Font(font, ++fontSize, 1));
+        fontSize+=1;
+        font.setHeight(fontSize);
+        textEditor->editor[textEditor->currentEditor]->setFont(font);
         cUtils::setPreference(appProperties, "FontSize", String(fontSize));
     }
     else
     {
-        textEditor->editor[textEditor->currentEditor]->setFont(Font(font, --fontSize, 1));
+        fontSize-=1;
+        font.setHeight(fontSize);
+        textEditor->editor[textEditor->currentEditor]->setFont(font);
         cUtils::setPreference(appProperties, "FontSize", String(fontSize));
     }
 }
@@ -319,6 +320,10 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
         result.setTicked(isEditModeEnabled);
         result.addDefaultKeypress ('e', ModifierKeys::commandModifier);
         break;
+    case CommandIDs::editFontType:
+        result.setInfo (String("Change Font"), String("Change font"), CommandCategories::edit, 0);
+        break;
+
     case CommandIDs::whiteBackground:
         result.setInfo (String("White background"), String("White scheme"), CommandCategories::edit, 0);
         break;
@@ -416,6 +421,8 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
     m1.clear();
     m2.clear();
     m2.setLookAndFeel(&getLookAndFeel());
+
+
     if(topLevelMenuIndex==0)
     {
         //m1.addCommandItem(&commandManager, CommandIDs::fileNew);
@@ -453,6 +460,11 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
         m1.addCommandItem(&commandManager, CommandIDs::editSearchReplace);
         m1.addCommandItem(&commandManager, CommandIDs::editColumnEdit);
         m1.addSeparator();
+        m2.clear();
+        m2.addCustomItem(CommandIDs::editFontType, fontsComp, 400, 150, false);
+        //m2.addCommandItem(&commandManager, CommandIDs::editFontType);
+        m1.addSubMenu(String("Change Font"), m2);
+
         m2.addCommandItem(&commandManager, CommandIDs::editZoomIn);
         m2.addCommandItem(&commandManager, CommandIDs::editZoomOut);
         m1.addSubMenu(String("Font Size"), m2);
@@ -519,7 +531,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
         Logger::writeToLog("fileSaved");
         if(textEditor->currentEditor!=0)
         {
-            cUtils::showMessage("Saving an auxillary file!");
+            cUtils::showMessage("Saving an auxillary file!", &getLookAndFeel());
             textEditor->saveAuxFile();
         }
         else
@@ -572,7 +584,7 @@ bool CodeWindow::perform (const InvocationInfo& info)
 
     else if(info.commandID==CommandIDs::editUndo)
     {
-        textEditor->editor[textEditor->currentEditor]->undo();
+        textEditor->editor[textEditor->currentEditor]->undoText();
     }
 
     else if(info.commandID==CommandIDs::fileKeyboardShorts)
@@ -650,6 +662,11 @@ bool CodeWindow::perform (const InvocationInfo& info)
     {
         setFontSize("out");
     }
+    else if(info.commandID==CommandIDs::editFontType)
+    {
+        cUtils::showMessage("Changing font");
+    }
+
     else if(info.commandID==CommandIDs::whiteBackground)
     {
         setEditorColourScheme("white");
@@ -799,6 +816,7 @@ void CodeWindow::toggleManuals(String manual)
 #else
         URL urlCsound(helpDir+"\\"+opcode.trim()+String(".html"));
         String homePage = helpDir+"\\index.html";
+        cUtils::debug(homePage);
 #endif
         String urlCabbage;
         ChildProcess process;
@@ -806,7 +824,7 @@ void CodeWindow::toggleManuals(String manual)
         if(temp1.exists())
         {
 #ifdef LINUX
-            if(!process.start("xdg-open "+urlCsound.toString(false).toUTF8()))
+            if(!process.start(String("xdg-open "+urlCsound.toString(false)).toUTF8()))
                 cUtils::showMessage("Couldn't show file, see 'Set Csound manual directory' in Options->Preferences", &getLookAndFeel());
 #else
             urlCsound.launchInDefaultBrowser();
@@ -837,10 +855,21 @@ void CodeWindow::showCabbageHelp()
     String path;
     StringArray tokens;
     tokens.addTokens(textEditor->editor[textEditor->currentEditor]->getLineText(), false);
+
+    String file = tokens[0];
+    if(file.contains("slider"))
+        file = "slider";
+    else if(file.contains("file"))
+        file = "button_file";
+    else if(file.contains("button_info"))
+        file = "button_info";
+    else if(file.contains("output"))
+        file = "csound_output";
+
 #if defined(LINUX) || defined(MACOSX)
-    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/"+tokens[0]+".html";
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/"+file+".html";
 #else
-    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\"+tokens[0]+".html";
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\_book\\"+file+".html";
 #endif
 
 
@@ -880,9 +909,21 @@ void CodeWindow::setEditorColourScheme(String theme)
 //==============================================================================
 void CodeWindow::actionListenerCallback(const String &message)
 {
+
     if(message=="Launch help")
         toggleManuals("Csound");
-    sendActionMessage(message);
+    else if(message.contains("FONT:"))
+    {
+        String newFont  = message.substring(message.indexOf(":")+1);
+        //cUtils::showMessage(newFont);
+        PopupMenu::dismissAllActiveMenus();
+        font = Font(newFont, fontSize, 0);
+        cUtils::setPreference(appProperties, "Fonttype", newFont);
+        textEditor->editor[textEditor->currentEditor]->setEditorFont(newFont);
+        textEditor->editor[textEditor->currentEditor]->setFont(Font(newFont, fontSize, 0));
+    }
+    else
+        sendActionMessage(message);
 }
 //==============================================================================
 void CodeWindow::setColourScheme(String theme)
@@ -890,23 +931,28 @@ void CodeWindow::setColourScheme(String theme)
     if(theme=="white")
     {
         textEditor->editor[textEditor->currentEditor]->setColourScheme(csoundToker.getDefaultColourScheme());
-        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
+        //textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colours::white);
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colours::transparentWhite);
+        textEditor->backgroundColour = Colours::white;
         textEditor->editor[textEditor->currentEditor]->setColour(CaretComponent::caretColourId, Colours::black);
         textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::lime);
         appProperties->getUserSettings()->setValue("EditorColourScheme", 0);
         repaint();
+        textEditor->editor[textEditor->currentEditor]->repaint();
     }
     else if(theme=="dark")
     {
         textEditor->editor[textEditor->currentEditor]->setColourScheme(csoundToker.getDarkColourScheme());
+        textEditor->backgroundColour = Colour(30, 30, 30);
         textEditor->editor[textEditor->currentEditor]->setColour(CaretComponent::caretColourId, Colours::white);
 #ifdef CABBAGE_HOST
-        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(30, 30, 30));
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colours::transparentBlack);
 #else
-        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(30, 30, 30));
+        textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::backgroundColourId, Colours::transparentBlack);
 #endif
         textEditor->editor[textEditor->currentEditor]->setColour(CodeEditorComponent::highlightColourId, Colours::green.withAlpha(.6f));
         appProperties->getUserSettings()->setValue("EditorColourScheme", 1);
+        textEditor->editor[textEditor->currentEditor]->repaint();
     }
 }
 
@@ -951,64 +997,73 @@ void CodeWindow::newFile(String type)
     {
         untitledCSD=
             "<Cabbage>\n"
-            "form size(400, 300), caption(\"Untitled\"), pluginID(\"plu1\")\n"
+            "form caption(\"Untitled\") size(400, 300), colour(58, 110, 182), pluginID(\"def1\")\n"
+            "rslider bounds(296, 162, 100, 100), channel(\"gain\"), range(0, 1, 0, 1, .01), text(\"Gain\"), trackercolour(\"lime\"), outlinecolour(0, 0, 0, 50), textcolour(\"black\")\n"
             "\n"
             "</Cabbage>\n"
             "<CsoundSynthesizer>\n"
             "<CsOptions>\n"
-            "-m0d\n"
+            "-n -d -+rtmidi=NULL -M0 -m0d \n"
             "</CsOptions>\n"
             "<CsInstruments>\n"
+            "; Initialize the global variables. \n"
             "sr = 44100\n"
-            "ksmps = 64\n"
+            "ksmps = 32\n"
             "nchnls = 2\n"
-            "0dbfs=1\n"
+            "0dbfs = 1\n"
+            "\n"
             "\n"
             "instr 1\n"
+            "kGain chnget \"gain\"\n"
+            "\n"
             "a1 inch 1\n"
             "a2 inch 2\n"
             "\n"
-            "\n"
-            ";outs a1, a2\n"
+            "outs a1*kGain, a2*kGain\n"
             "endin\n"
             "\n"
-            "</CsInstruments>  \n"
+            "</CsInstruments>\n"
             "<CsScore>\n"
-            "f1 0 1024 10 1\n"
-            "i1 0 3600\n"
+            ";causes Csound to run for about 7000 years...\n"
+            "f0 z\n"
+            ";starts instrument 1 and runs it for a week\n"
+            "i1 0 [60*60*24*7] \n"
             "</CsScore>\n"
-            "</CsoundSynthesizer>";
+            "</CsoundSynthesizer>\n"
+            "";
     }
     else if(type=="instrument")
     {
         untitledCSD=
             "<Cabbage>\n"
-            "form size(400, 300), caption(\"Untitled\"), pluginID(\"plu1\")\n"
-            "keyboard bounds(10, 200, 360, 100)\n"
-            "\n"
+            "form caption(\"Untitled\") size(400, 300), colour(58, 110, 182), pluginID(\"def1\")\n"
+            "keyboard bounds(8, 158, 381, 95)\n"
             "</Cabbage>\n"
             "<CsoundSynthesizer>\n"
             "<CsOptions>\n"
-            "-m0d -+rtmidi=NULL -M0 --midi-key-cps=4 --midi-velocity-amp=5\n"
+            "-n -d -+rtmidi=NULL -M0 -m0d --midi-key-cps=4 --midi-velocity-amp=5\n"
             "</CsOptions>\n"
             "<CsInstruments>\n"
+            "; Initialize the global variables. \n"
             "sr = 44100\n"
-            "ksmps = 64\n"
+            "ksmps = 32\n"
             "nchnls = 2\n"
-            "0dbfs=1\n"
+            "0dbfs = 1\n"
             "\n"
+            ";instrument will be triggered by keyboard widget\n"
             "instr 1\n"
-            "a1 oscili p5, p4, 1\n"
-            "outs a1, a1"
-            "\n"
+            "kEnv madsr .1, .2, .6, .4\n"
+            "aOut vco2 p5, p4\n"
+            "outs aOut*kEnv, aOut*kEnv\n"
             "endin\n"
             "\n"
-            "</CsInstruments>  \n"
+            "</CsInstruments>\n"
             "<CsScore>\n"
-            "f1 0 1024 10 1\n"
-            "f0 3600\n"
+            ";causes Csound to run for about 7000 years...\n"
+            "f0 z\n"
             "</CsScore>\n"
-            "</CsoundSynthesizer>";
+            "</CsoundSynthesizer>\n"
+            "";
     }
     csoundDoc.replaceAllContent(untitledCSD);
     unSaved = true;

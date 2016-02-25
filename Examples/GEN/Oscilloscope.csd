@@ -53,13 +53,13 @@ rslider  bounds(   0,20, 80, 80), channel("brite"), text("Brite"), textBox(1), r
 rslider  bounds(  70,20, 80, 80), channel("octcnt"), text("Width"), textBox(1), range(2, 10.00, 3,1,1)
 }
 groupbox bounds( 100,260,235, 100), text("PD Half X"), plant("pdhalfx"), visible(0), identchannel("6") {
-combobox bounds(   5, 30, 70, 20), channel("PDHalfIP"), value(1), text("Sine", "Saw", "Triangle","Square","User")
+combobox bounds(   5, 30, 70, 20), channel("PDHalfIP"), value(1), text("Cosine", "Saw", "Triangle","Square","User")
 rslider  bounds(  70, 20, 80, 80), channel("PD_amount"), text("P.Distort"), textBox(1), range(-1, 1.00, 0,1,0.001)
 combobox bounds(150, 30, 80, 20), channel("polarX"), value(1), text("Unipolar", "Bipolar")
 }
 groupbox bounds( 100,260,235, 100), text("PD Half Y"), plant("pdhalfy"), visible(0), identchannel("7") {
 combobox bounds(   5, 30, 70, 20), channel("PDHalfyIP"), value(1), text("Sine", "Saw", "Triangle","Square","User")
-rslider  bounds(  70,20, 80, 80), channel("PD_amountY"), text("P.Distort"), textBox(1), range(-1, 1.00, 0,1,0.001)
+rslider  bounds(  70,20, 80, 80), channel("PD_amountY"), text("P.Distort"), textBox(1), range(-1, 2.00, 0,1,0.001)
 combobox bounds(150, 30, 80, 20), channel("polarY"), value(1), text("Unipolar", "Bipolar")
 }
 groupbox bounds( 100,260,450, 100), text("FOF"), plant("fof"), visible(0), identchannel("8") {
@@ -278,8 +278,9 @@ instr	2
    reinit PDHALF_INIT
   endif
   PDHALF_INIT:
-  if i(gkPDHalfIP)==1 then 						; sine
-   asig   	tablei	aphsr,gisine,1
+  if i(gkPDHalfIP)==1 then 						; cos
+   icos		ftgentmp	0,0,1024, 11, 1
+   asig   	tablei	aphsr,icos,1
   elseif i(gkPDHalfIP)==2 then 						; saw
    isaw		ftgentmp	0,0,1024,7,1,1024,-1
    isawBL	ftgentmp	0, 0, 1024, -30, isaw, 1, imaxh	
@@ -313,7 +314,7 @@ instr	2
   PDHALFY_INIT:
   if i(gkPDHalfyIP)==1 then 						; sine
    asig   	tablei	aphsr,gisine,1
-  elseif i(gkPDHalfyIP)==2 then 						; saw
+  elseif i(gkPDHalfyIP)==2 then 					; saw
    isaw		ftgentmp	0,0,1024,7,1,1024,-1
    isawBL	ftgentmp	0, 0, 1024, -30, isaw, 1, imaxh	
    asig   	tablei	aphsr,isawBL,1

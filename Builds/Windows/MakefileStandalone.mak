@@ -4,10 +4,10 @@
 DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 
 # Default csound include path
-CSOUND_INCLUDE ?= "C:\Users\rory\sourceCode\cabbageaudio\csound\include"
+CSOUND_INCLUDE ?= "C:\Users\rory\sourceCode\csound32\csound\include"
 
 # Default Csound library path
-CSOUND_LIBRARY ?= "C:\Users\rory\sourceCode\cabbageaudio\csound\build\libcsound64.dll.a"
+CSOUND_LIBRARY ?= "C:\Users\rory\sourcecode\csound32\csound\mingw64\csound-mingw64\libcsound64.dll.a"
 
 ASIO_SDK ?= "C:\SDKs\ASIOSDK2.3\common"
 VST_SDK ?= "C:\SDKs\vstsdk2.4"
@@ -40,7 +40,7 @@ ifeq ($(CONFIG),Debug)
   LDDEPS :=
   RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DBUILD_DEBUGGER=1 -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := Cabbage.exe
-  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) cabbage32.o -static-libgcc -static-libstdc++ -mstackrealign -static  $(OSCPACK_LIBRARY) 
+  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) cabbage32res.o -static-libgcc -static-libstdc++ -mstackrealign -static  $(OSCPACK_LIBRARY) 
 endif
 
 ifeq ($(CONFIG),Release)
@@ -60,7 +60,7 @@ ifeq ($(CONFIG),Release)
   LDDEPS :=
   RESFLAGS := -I $(CSOUND_INCLUDE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -DBUILD_DEBUGGER=1 -D "Cabbage_Build_Standalone=1" -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_GUI_Editor=1" -D "USE_DOUBLE=1"  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := Cabbage.exe
-  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) cabbage32.o -static-libgcc -static-libstdc++ -mstackrealign -static
+  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) -mwindows $(TARGET_ARCH) cabbage32res.o -static-libgcc -static-libstdc++ -mstackrealign -static
 endif
 
 OBJECTS := \
@@ -84,8 +84,10 @@ OBJECTS := \
   $(OBJDIR)/CabbageStandaloneDialog_72d272cd.o \
   $(OBJDIR)/StandaloneFilterApp_d9ee3663.o \
   $(OBJDIR)/SplitComponent_d9ee366f.o \
+  $(OBJDIR)/CabbageMessageSystem_6we1348e.o \
   $(OBJDIR)/XYPad_6eaa3453.o \
   $(OBJDIR)/XYPadAutomation_2865c48a.o \
+  $(OBJDIR)/CabbageCustomWidgets_35a2sd62.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
   $(OBJDIR)/juce_audio_formats_d349f0c8.o \
@@ -154,6 +156,16 @@ $(OBJDIR)/CabbagePropertiesDialog_5e61b3fd.o: ../../Source/CabbagePropertiesDial
 	@echo "Compiling CabbagePropertiesDialog.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+$(OBJDIR)/CabbageCustomWidgets_35a2sd62.o: ../../Source/CabbageCustomWidgets.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageCustomWidgets.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/CabbageMessageSystem_6we1348e.o: ../../Source/CabbageMessageSystem.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling CabbageMessageSystem.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+		
 $(OBJDIR)/CabbageTable_d003e736.o: ../../Source/CabbageTable.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling CabbageTable.cpp"
@@ -294,4 +306,5 @@ $(OBJDIR)/juce_gui_extra_7767d6a8.o: ../../JuceLibraryCode/modules/juce_gui_extr
 	@echo "Compiling juce_gui_extra.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
+	
 -include $(OBJECTS:%.o=%.d)

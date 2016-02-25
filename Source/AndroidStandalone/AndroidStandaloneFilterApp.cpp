@@ -6,7 +6,7 @@
 ApplicationProperties* appProperties = nullptr;
 PropertySet* defaultPropSet = nullptr;
 
-
+StandaloneFilterWindow* filterWindow;
 
 class CabbageStandalone : public JUCEApplication
 {
@@ -17,18 +17,15 @@ public:
 
     void initialise(const String& commandLineParameters)
     {
-        filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black, defaultPropSet);
-        filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
-        filterWindow->setVisible (true);
-        //turn off resizeable...
-        //filterWindow->setResizable(true, true);
-        //filterWindow->setFullScreen(true);
+        filterWindow = new StandaloneFilterWindow ();
+        //Desktop::getInstance().setGlobalScaleFactor(1.3);
+        filterWindow->setFullScreen(true);
         juce::Thread::setCurrentThreadName("cabbage");
     }
 
     void shutdown()
     {
-        filterWindow = 0;// = nullptr;
+        filterWindow = nullptr;
         appProperties->closeFiles();
         deleteAndZero(appProperties);
         deleteAndZero(lookAndFeel);
@@ -47,11 +44,12 @@ public:
 
     bool moreThanOneInstanceAllowed()
     {
-        return true;
+        return false;
     }
 
 private:
-    ScopedPointer<StandaloneFilterWindow> filterWindow;
+
 };
+
 
 START_JUCE_APPLICATION (CabbageStandalone)

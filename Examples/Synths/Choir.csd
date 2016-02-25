@@ -14,7 +14,7 @@ N.Voices value is not strictly speaking accurate: 	1 = 1 voice
 form caption("Choir") size(770, 335), pluginID("choi")
 
 ; main container
-image bounds(  0,  0,770, 335), colour(255,100,  0, 40), shape("rounded"), oulinecolour("white"), outlinethickness(3)
+image bounds(  0,  0,770, 335), colour(255,100,  0, 40), shape("rounded"), outlinecolour("white"), outlinethickness(3)
 ; horizontal stripes
 ;image bounds(  0, 40,770,  75), colour(100,100,  0, 60), shape("sharp")
 ;image bounds(  0,130,770,  35), colour(  0,  0,255, 60), shape("sharp")
@@ -258,6 +258,7 @@ instr	1	;instrument that continuously scans widgets
 endin
 
 instr	2	;triggered via MIDI
+	print	notnum()
 	gkNoteTrig	init	1	;at the beginning of a new note set note trigger flag to '1'
 	icps		cpsmidi		;read in midi note pitch in cycles per second
 	givel		veloc	0,1	;read in midi note velocity

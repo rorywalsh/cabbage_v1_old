@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission to use, copy, modify, and/or distribute this software for any purpose with
    or without fee is hereby granted, provided that the above copyright notice and this
@@ -45,7 +45,7 @@ public:
     typedef char CharType;
 
     inline explicit CharPointer_ASCII (const CharType* const rawPointer) noexcept
-        : data (const_cast <CharType*> (rawPointer))
+        : data (const_cast<CharType*> (rawPointer))
     {
     }
 
@@ -62,7 +62,7 @@ public:
 
     inline CharPointer_ASCII operator= (const CharType* text) noexcept
     {
-        data = const_cast <CharType*> (text);
+        data = const_cast<CharType*> (text);
         return *this;
     }
 
@@ -276,10 +276,10 @@ public:
 
     int compareIgnoreCase (const CharPointer_ASCII other) const
     {
-       #if JUCE_MSVC
-        return stricmp (data, other.data);
-       #elif JUCE_MINGW
+       #if JUCE_MINGW || (JUCE_WINDOWS && JUCE_CLANG)
         return CharacterFunctions::compareIgnoreCase (*this, other);
+       #elif JUCE_WINDOWS
+        return stricmp (data, other.data);
        #else
         return strcasecmp (data, other.data);
        #endif

@@ -30,6 +30,7 @@
 //  and make it create an instance of the filter subclass that you're building.
 extern CabbagePluginAudioProcessor* JUCE_CALLTYPE createCabbagePluginFilter(String inputfile, bool guiOnOff, int plugType);
 
+static const char* openGLRendererName = "OpenGL Renderer";
 
 //==============================================================================
 StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
@@ -48,7 +49,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     isUsingExternalEditor(false),
     wildcardFilter("*.*", "*", "File Filter")
 {
-
+    //setOpenGLRenderingEngine();
     consoleMessages = "";
     cabbageDance = 0;
     setTitleBarButtonsRequired (DocumentWindow::minimiseButton | DocumentWindow::closeButton, false);
@@ -68,6 +69,10 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     this->setLookAndFeel(lookAndFeel);
     oldLookAndFeel = new LookAndFeel_V1();
 
+    CabbageGUIType cAttr("hslider bounds(\"0, 0, 100, 30\"), range(1, 28, 1, 1, 1), textbox(1), text(\"GridSize\")", -99);
+    gridSizeSlider = new CabbageSlider(cAttr);
+    //gridSizeSlider.setRange(1, 28, 1);
+    //gridSizeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxRight, true, 20, 20);
 
     JUCE_TRY
     {
@@ -75,7 +80,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
         filter->addChangeListener(this);
         filter->addActionListener(this);
         filter->sendChangeMessage();
-        filter->createGUI("", true);
+        filter->createEditorIfNeeded();
     }
     JUCE_CATCH_ALL
 
@@ -208,7 +213,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
         if(File(defaultCSDFile).existsAsFile())
         {
             standaloneMode = true;
-            cUtils::showMessage("Should be standalone");
+            // cUtils::showMessage("Should be standalone");
             openFile(defaultCSDFile);
         }
         else
@@ -286,6 +291,59 @@ StandaloneFilterWindow::~StandaloneFilterWindow()
 }
 
 //==============================================================================
+// rendering routines
+//==============================================================================
+/*
+StringArray StandaloneFilterWindow::getRenderingEngines()
+{
+    StringArray renderingEngines;
+
+    if (ComponentPeer* peer = getPeer())
+        renderingEngines = peer->getAvailableRenderingEngines();
+
+#if JUCE_OPENGL
+    renderingEngines.add (openGLRendererName);
+#endif
+
+    return renderingEngines;
+}
+
+void StandaloneFilterWindow::setRenderingEngine (int index)
+{
+    //showMessageBubble (getRenderingEngines()[index]);
+
+#if JUCE_OPENGL
+    if (getRenderingEngines()[index] == openGLRendererName)
+    {
+        openGLContext.attachTo (*getTopLevelComponent());
+        return;
+    }
+
+    openGLContext.detach();
+#endif
+
+    if (ComponentPeer* peer = getPeer())
+        peer->setCurrentRenderingEngine (index);
+}
+
+void StandaloneFilterWindow::setOpenGLRenderingEngine()
+{
+    setRenderingEngine (getRenderingEngines().indexOf (openGLRendererName));
+}
+
+int StandaloneFilterWindow::getActiveRenderingEngine()
+{
+#if JUCE_OPENGL
+    if (openGLContext.isAttached())
+        return getRenderingEngines().indexOf (openGLRendererName);
+#endif
+
+    if (ComponentPeer* peer = getPeer())
+        return peer->getCurrentRenderingEngine();
+
+    return 0;
+}*/
+//==============================================================================
 // insane Cabbage dancing....
 //==============================================================================
 void StandaloneFilterWindow::timerCallback()
@@ -320,7 +378,10 @@ void StandaloneFilterWindow::timerCallback()
     if(cabbageCsoundEditor->isVisible())
     {
         if(cabbageCsoundEditor->csoundOutputComponent->getText()!=filter->getCsoundOutput())
+        {
             cabbageCsoundEditor->csoundOutputComponent->setText(filter->getCsoundOutput());
+            filter->clearDebugMessage();
+        }
 #ifdef BUILD_DEBUGGER
         cabbageCsoundEditor->csoundDebuggerComponent->setText(filter->getDebuggerOutput());
 #endif
@@ -345,7 +406,8 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
     {
         //if something changes in the properties panel we need to update our GUI so
         //that the changes are reflected in the on screen components
-        filter->createGUI(csdFile.loadFileAsString(), true);
+        filter->initialiseWidgets(csdFile.loadFileAsString(), true);
+        filter->addWidgetsToEditor(true);
         if(cabbageCsoundEditor)
         {
             //cabbageCsoundEditor->csoundDoc.replaceAllContent(filter->getCsoundInputFile().loadFileAsString());
@@ -454,7 +516,8 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
 
     else if(message.contains("fileUpdateGUI"))
     {
-        filter->createGUI(cabbageCsoundEditor->getText(), true);
+        filter->initialiseWidgets(cabbageCsoundEditor->getText(), true);
+        filter->addWidgetsToEditor(true);
         csdFile.replaceWithText(cabbageCsoundEditor->getText());
         if(cabbageCsoundEditor)
         {
@@ -470,7 +533,10 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
         openFile("");
 
     else if(message.contains("MENU COMMAND: manual update GUI"))
-        filter->createGUI(csdFile.loadFileAsString(), true);
+    {
+        filter->initialiseWidgets(csdFile.loadFileAsString(), true);
+        filter->addWidgetsToEditor(true);
+    }
 
     else if(message.contains("MENU COMMAND: toggle edit"))
     {
@@ -528,26 +594,12 @@ void StandaloneFilterWindow::actionListenerCallback (const String& message)
 //==============================================================================
 
 //==============================================================================
-// listener Callback - updates WinXound compiler output with Cabbage messages
+// listener Callback
 //==============================================================================
 void StandaloneFilterWindow::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 {
-    /*
-    String text;
-    if(!cabbageCsoundEditor || !outputConsole){
-    	for(int i=0;i<filter->getDebugMessageArray().size();i++)
-    		  {
-    			  if(filter->getDebugMessageArray().getReference(i).length()>0)
-    			  {
-    				  text += String(filter->getDebugMessageArray().getReference(i).toUTF8());
-
-    			  }
-
-    		  }
-    	consoleMessages = consoleMessages+text+"\n";
-    	}
-    */
     updateEditorOutputConsole=true;
+
 }
 //==============================================================================
 // Delete filter
@@ -599,14 +651,15 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         deviceManager->initialise(filter->getNumInputChannels(),
                                   filter->getNumOutputChannels(), savedState, false);
 
-        filter->createGUI(csdFile.loadFileAsString(), true);
+        //filter->createGUI(csdFile.loadFileAsString(), true);
     }
     else
     {
         //deviceManager->closeAudioDevice();
-        filter->createGUI(csdFile.loadFileAsString(), true);
-        filter->reCompileCsound(csdFile);
-        
+        filter->initialiseWidgets(csdFile.loadFileAsString(), true);
+        filter->addWidgetsToEditor(true);
+        filter->recompileCsound(csdFile);
+
     }
 
 
@@ -634,7 +687,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
     }
     else
     {
-        filter->performEntireScore();
+        // filter->performEntireScore();
     }
 
 
@@ -655,18 +708,18 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         filter->codeEditor = cabbageCsoundEditor->textEditor;
         //cabbageCsoundEditor->textEditor->setSavePoint();
     }
-	
-	StringArray csdArray;
-	csdArray.addLines(csdFile.loadFileAsString());
-	for(int i=0;i<csdArray.size();i++)
-	{
-		if(csdArray[i].contains("form "))
-		{
-			CabbageGUIClass cAttr(csdArray[i], -99);
-			this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));
-			this->lookAndFeelChanged();
-		}
-	}
+
+    StringArray csdArray;
+    csdArray.addLines(csdFile.loadFileAsString());
+    for(int i=0; i<csdArray.size(); i++)
+    {
+        if(csdArray[i].contains("form "))
+        {
+            CabbageGUIType cAttr(csdArray[i], -99);
+            this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));
+            this->lookAndFeelChanged();
+        }
+    }
 
 }
 
@@ -738,9 +791,11 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
     const int numIns = filter->getNumInputChannels() <= 0 ? JucePlugin_MaxNumInputChannels : filter->getNumInputChannels();
     const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutputChannels : filter->getNumOutputChannels();
     filter->stopProcessing = true;
-    CabbageAudioDeviceSelectorComponent selectorComp (*deviceManager,
+
+    AudioDeviceSelectorComponent selectorComp (*deviceManager,
             numIns, numIns, numOuts, numOuts,
             true, false, true, false);
+
     selectorComp.setSize (400, 550);
     setAlwaysOnTop(false);
     selectorComp.setLookAndFeel(lookAndFeel);
@@ -807,6 +862,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     RecentlyOpenedFilesList recentFiles;
     Array<File> exampleFiles;
     recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
+
+    //set custom slider position
+
+    gridSizeSlider->setSliderValue(getPreference(appProperties, "GridSize"));
+    //cUtils::showMessage(value);
+
 
 #ifndef Release
     standaloneMode=false;
@@ -902,6 +963,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         m.addSubMenu("Batch Convert (Directory)", subMenu);
 #endif
 #endif
+
+        //m.addItem(1001, "Export Android .apk");
         m.addSeparator();
     }
 
@@ -928,10 +991,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             subMenu.addItem(7, String("Always on Top"), true, true);
         else
             subMenu.addItem(7, String("Always on Top"), true, false);
-//        if(getPreference(appProperties, "ShowConsoleWithEditor"))
-//            subMenu.addItem(20, String("Auto-launch Csound Console with Editor"), true, true);
-//        else
-//            subMenu.addItem(20, String("Auto-launch Csound Console with Editor"), true, false);
+
         //preferences....
         subMenu.addItem(203, "Set Cabbage Plant Directory");
         subMenu.addItem(200, "Set Csound Manual Directory");
@@ -953,38 +1013,18 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         else
             subMenu.addItem(300, String("Use native file dialogue"), true, true);
 
-//        if(!getPreference(appProperties, "showTabs"))
-//            subMenu.addItem(298, String("Show tabs in editor"), true, false);
-//        else
-//            subMenu.addItem(298, String("Show tabs in editor"), true, true);
-
-        if(!getPreference(appProperties, "DisableGUIEditModeWarning"))
-            subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, false);
+        if(!getPreference(appProperties, "DisableCompilerErrorWarning"))
+            subMenu.addItem(202, String("Disable Compiler Error Warning"), true, false);
         else
-            subMenu.addItem(202, String("Disable GUI Edit Mode warning"), true, true);
+            subMenu.addItem(202, String("Disable Compiler Error Warning"), true, true);
 
-        //if(!getPreference(appProperties, "EnablePopupDisplay"))
-        //subMenu.addItem(207, String("Enable opcode popup help display"), true, false);
-        //else
-        //subMenu.addItem(207, String("Enable opcode popup help display"), true, true);
+        subMenu.addItem(301, String("Set external editor"), true, false);
 
+        subMenu.addCustomItem(303, gridSizeSlider,  100, 30, true);
 
-//        if(!getPreference(appProperties, "UseCabbageIO"))
-//            subMenu.addItem(204, String("Use Cabbage IO"), true, false);
-//        else
-//            subMenu.addItem(204, String("Use Cabbage IO"), true, true);
-//when buiding for inclusion with the Windows Csound installer comment out
-//this section
-//#if !defined(LINUX) && !defined(MACOSX)
-//        if(!getPreference(appProperties, "UsingCabbageCsound"))
-//            subMenu.addItem(206, String("Using Cabbage-Csound"), true, false);
-//        else
-//            subMenu.addItem(206, String("Using Cabbage-Csound"), true, true);
-//#endif
-//END of commented section for Windows Csound installer
         m.addSubMenu("Preferences", subMenu);
         m.addItem(2000, "About");
-        //m.addItem(2345, "Test button");
+        //m.addItem(6000, "View Spectrogram");
     }
 
     int options = m.showAt (&optionsButton);
@@ -1079,7 +1119,18 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             else m_ShowMessage("Please open or create a file first", lookAndFeel);
         }
         else
-            m_ShowMessage("Please disable \'Use external editor\' from preferences first", lookAndFeel);
+        {
+            if(File(getPreference(appProperties, "ExternalEditorApplication", "")).existsAsFile())
+            {
+                String editorApp = getPreference(appProperties, "ExternalEditorApplication", "");
+                ChildProcess process;
+                process.start(editorApp+ " "+csdFile.getFullPathName());
+            }
+            else
+                m_ShowMessage("\'Use external editor\' is enabled. If you wish to use the Cabbage editor,\n\
+							please disable 'Use external editor\' from the preferences and try again", lookAndFeel);
+        }
+
     }
     //-------Csound output console-----
     else if(options==3)
@@ -1219,7 +1270,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     }
     //----- update GUI only -----
     else if(options==9)
-        filter->createGUI(csdFile.loadFileAsString(), true);
+    {
+        filter->initialiseWidgets(csdFile.loadFileAsString(), true);
+        filter->addWidgetsToEditor(true);
+
+    }
 
     //----- batch process ------
     else if(options==11)
@@ -1283,26 +1338,19 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             setPreference(appProperties, "PlantFileDir", browser.getResult().getFullPathName());
         }
     }
-    //--------preference Show tabs
-    else if(options==298)
+    else if(options==301)
     {
-        /*
-        if(getPreference(appProperties, "showTabs")==0)
+        String dir = getPreference(appProperties, "ExternalEditorApplication", "");
+        FileChooser browser(String("Please select your preferred external editor..."), File(dir), String("*.*"), UseNativeDialogue);
+        if(browser.browseForFileToOpen())
         {
-        	setPreference(appProperties, "showTabs", 1);
-        	//if(!cabbageCsoundEditor){
-        		cabbageCsoundEditor->textEditor->showTabs(true);
-        		cabbageCsoundEditor->textEditor->showInstrs(true);
-        	//}
+            setPreference(appProperties, "ExternalEditorApplication", browser.getResult().getFullPathName());
         }
-        else
-        {
-        	setPreference(appProperties, "showTabs", 0);
-        	//if(!cabbageCsoundEditor){
-        		cabbageCsoundEditor->textEditor->showTabs(false);
-        		cabbageCsoundEditor->textEditor->showInstrs(false);
-        	//}
-        }*/
+    }
+    //--------preference Show tabs
+    else if(options==303)
+    {
+        setPreference(appProperties, "GridSize", gridSizeSlider->slider->getValue());
     }
 
     else if(options==204)
@@ -1376,41 +1424,40 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     //------- preference disable gui edit warning ------
     else if(options==202)
     {
-        toggleOnOffPreference(appProperties, "DisableGUIEditModeWarning");
+        toggleOnOffPreference(appProperties, "DisableCompilerErrorWarning");
     }
     //------- enable GUI edit mode------
     else if(options==100)
     {
-        if(!getPreference(appProperties, "DisableGUIEditModeWarning"))
-            showMessage("", "Warning!! This feature is still under development! Whilst every effort has been made to make it as usable as possible, there might still be some teething problems that need sorting out. If you find a problem, please try to recreate it, note the steps involved, and report it to the Cabbage users forum (www.TheCabbageFoundation.org). Thank you. You may disable this warning in 'Options->Preferences'", lookAndFeel);
-        else
+        //if(getPreference(appProperties, "ExternalEditor")==0)
+        if(hasEditorBeingOpened==false)
         {
-            //if(getPreference(appProperties, "ExternalEditor")==0)
-            if(hasEditorBeingOpened==false)
-            {
-                openTextEditor();
-                hasEditorBeingOpened = true;
-            }
-            if(isAFileOpen == true)
-                if(filter->isGuiEnabled())
-                {
-                    if(getPreference(appProperties, "ExternalEditor")==1)
-                        csdFile = File(csdFile.getFullPathName());
-                    startTimer(500);
-                    //filter->suspendProcessing(false);
-                    ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
-                    filter->setGuiEnabled(false);
-                }
-                else
-                {
-                    ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(true);
-                    filter->setGuiEnabled(true);
-                    //filter->suspendProcessing(true);
-                    stopTimer();
-                    //setPreference(appProperties, "ExternalEditor", 0);
-                }
-            else m_ShowMessage("Open or create a file first", &getLookAndFeel());
+            openTextEditor();
+            hasEditorBeingOpened = true;
         }
+        if(isAFileOpen == true)
+            if(filter->isGuiEnabled())
+            {
+                if(getPreference(appProperties, "ExternalEditor")==1)
+                    csdFile = File(csdFile.getFullPathName());
+                startTimer(500);
+                //filter->suspendProcessing(false);
+                ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(false);
+                filter->setGuiEnabled(false);
+            }
+            else
+            {
+                ((CabbagePluginAudioProcessorEditor*)filter->getActiveEditor())->setEditMode(true);
+                filter->setGuiEnabled(true);
+                //filter->suspendProcessing(true);
+                stopTimer();
+                //setPreference(appProperties, "ExternalEditor", 0);
+            }
+        else m_ShowMessage("Open or create a file first", &getLookAndFeel());
+    }
+    else if(options==6000)
+    {
+
     }
     isUsingExternalEditor = getPreference(appProperties, "ExternalEditor");
     repaint();
@@ -1593,6 +1640,7 @@ void StandaloneFilterWindow::saveFileAs()
     filter->saveText();
 
 }
+
 //==============================================================================
 // Export plugin method
 //==============================================================================
@@ -1839,7 +1887,7 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
         tokes.addTokens(csdText[i].trimEnd(), ", ", "\"");
         if(tokes[0].equalsIgnoreCase(String("form")))
         {
-            CabbageGUIClass cAttr(csdText[i].trimEnd(), 0);
+            CabbageGUIType cAttr(csdText[i].trimEnd(), 0);
             if(cAttr.getStringProp(CabbageIDs::pluginid).length()!=4)
             {
                 m_ShowMessage("Your plugin ID is not the right size. It MUST be 4 characters long. Some hosts may not be able to load your plugin", lookAndFeel);

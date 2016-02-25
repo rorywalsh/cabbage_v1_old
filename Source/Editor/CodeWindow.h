@@ -24,6 +24,7 @@
 #include "KeyboardShortcuts.h"
 #include "SplitComponent.h"
 #include "../Plugin/CabbagePluginProcessor.h"
+#include "FontsComponent.h"
 //class LiveCsound;
 class PythonEditor;
 
@@ -52,7 +53,7 @@ public:
     void setText(String text)
     {
         //textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue.brighter());
-        textEditor->setText(text);
+        textEditor->insertTextAtCaret(text);
         textEditor->setCaretPosition(textEditor->getText().length());
     }
 
@@ -251,7 +252,7 @@ public:
     ScopedPointer<SplitComponent> splitBottomWindow;
     ScopedPointer<CsoundOutputComponent> csoundOutputComponent;
     ScopedPointer<CsoundDebuggerComponent> csoundDebuggerComponent;
-
+    ScopedPointer<FontsComponent> fontsComp ;
     StringArray opcodeStrings;
     CsoundCodeEditor* textEditor;
     CsoundTokeniser csoundToker;

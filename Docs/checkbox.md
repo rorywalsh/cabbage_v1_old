@@ -7,13 +7,13 @@ Checkbox creates a checkbox which functions like a button, but the associated ca
 checkbox bounds(x, y, width, height), channel("chan"), \
 text("name"), value(val), caption("Caption"), colour:0("colour"), \
 colour:1("colour"), shape("shape"), fontcolour("colour"), \
-identchannel("channel"), alpha(val), visible(val), \
+identchannel("channel"), alpha(val), visible(val), corners(val), \
 rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") \
 active(val)
 ```
 <!--(End of syntax)/-->
 
-##Identifiers
+## Identifiers
 **bounds(x, y, width, height)** integer values that set position and size on screen(in pixels). 
 
 **channel("chan")** "chan" is the name of the channel that Cabbage will communicate with Csound on. The current value of this widget can be retrieved in Csound using a chnget opcode, or can be set using a chnset opcode. 
@@ -29,7 +29,6 @@ active(val)
 **colour:1("colour")** Sets the colour of the widget when it is in its ON state. See above for details on valid colours.
 
 >You can create an invisible checkbox by setting the colour to something with an alpha value of 0. Images can then be placed under the checkbox to create an image button. See the PVSampler instrument as an example of this. 
-
 
 **fontcolour("colour")** Sets the colour of the font to appear on the groupbox. See above for details on valid colours.
 
@@ -48,11 +47,13 @@ active(val)
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
+**corners(val)** Sets the radius size of the widget's corners.
 <!--(End of identifiers)/-->
 
 >colour:1() can be set using colour(). However, it's recommended that you use the numerated colour identifiers in order to make your code more readable. 
 
-##Example
+## Example
 ```csharp
 <Cabbage>
 form size(400, 500), caption("Untitled"), pluginID("plu1"), colour(39, 40, 34)

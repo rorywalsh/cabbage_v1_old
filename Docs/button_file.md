@@ -7,7 +7,7 @@ filebutton bounds(x, y, width, height), channel("chan"), \
 text("offCaption"), populate("filetype", "dir"), value(val), \
 colour("colour"), fontcolour("colour"), identchannel("channel"), \
 alpha(val), visible(val), mode("mode"), rotate(radians, pivotx, pivoty), \
-widgetarray("chan", number), popuptext("text"), active(val)
+widgetarray("chan", number), popuptext("text"), active(val), svgfile("type", "file")
 ```
 <!--(End of syntax)/-->
 
@@ -34,13 +34,21 @@ widgetarray("chan", number), popuptext("text"), active(val)
 
 * *file*, Default. Will let the browser to select a file
 * *directory*, Will let the browser to select a folder/directory
-* *snapshot*, Will stop the file browser from opening, and instead will write a preset file to disk with a default file name. See <<presets, Presets>> <<combobox, Combobox>> 
+* *snapshot*, Will stop the file browser from opening, and instead will write a preset file to disk with a default file name. See [Presets](./presets.md) 
 
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
+**svgfile("type", "file")** Use this identifier to set a unique .svg file to use instead of the default look and feel. "type" should be one of the following:
+
+- "on" : sets the button image when it is on
+- "off" : sets the button image when it is off
+
+For more information see [Using SVGs](./using_svgs.md)
+
 <!--(End of identifiers)/-->
 
 ##Example

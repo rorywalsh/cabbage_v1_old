@@ -30,8 +30,8 @@ class GraphDocumentComponent;
 #include "../CabbagePropertiesDialog.h"
 
 
-const char* const filenameSuffix = ".filtergraph";
-const char* const filenameWildcard = "*.filtergraph";
+const char* const filenameSuffix = ".cabbagegraph";
+const char* const filenameWildcard = "*.cabbagegraph";
 
 //simple class to hold midi mappings
 class CabbageMidiMapping

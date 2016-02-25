@@ -7,7 +7,7 @@ groupbox bounds(x, y, width, height), text("Caption"), \
 colour("colour"), fontcolour("colour"), line(value), plant("name"), \
 popup(val), child(val), visible(val), alpha(val), show(val), \
 identchannel("channel"), rotate(radians, pivotx, pivoty), \
-widgetarray("chan", number), active(val)
+widgetarray("chan", number), active(val), svgfile("filename")
 ```
 <!--(End of syntax)/-->
 
@@ -20,17 +20,17 @@ widgetarray("chan", number), active(val)
 
 **fontcolour("colour")** Sets the colour of the font to appear on the groupbox. See above for details on valid colours. .
 
-**line(value)** Turns off the line that appears on a groupbox. 
+**linethickess(value)** Sets the thickness of the line that appears on a groupbox. Set to 0 to disable the line. 
 
-**plant("name")** Sets the name of the plant. No two plants can have the same name. See link#_plants[Plants]
+**plant("name")** Sets the name of the plant. No two plants can have the same name. See [Plants](./plants.md)
 
 **alpha(val)** A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
 
 **visible(val)** A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 
-**popup(val)** If the groupbox is a plant, a value of 1 will cause the groupbox to open in a new window when show(1) is called. popup() should always be used in conjunction with the show() identifier. See WORKING_WITH_PLANTS
+**popup(val)** (Deprecated) If the groupbox is a plant, a value of 1 will cause the groupbox to open in a new window when show(1) is called. popup() should always be used in conjunction with the show() identifier. See [Plants](./plants.md)
 
-**show(val)** A value of 1 will cause the popup plant to show. A value of 0 will close the popup plant. See WORKING_WITH_PLANTS
+**show(val)** A value of 1 will cause the popup plant to show. A value of 0 will close the popup plant. See [Plants](./plants.md)
 
 **child(0)** A value of 1 will cause the popup plant to be a child of the main form. By default, popup plants are not children of the main form and can therefore appear anywhere on screen. If the popup plant is a child of the main form, it can only appear within the bounds of the main form. 
 
@@ -41,6 +41,8 @@ widgetarray("chan", number), active(val)
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
+**svgfile("filename")** Use this identifier to set a unique .svg file to use instead of the default look and feel. Note, the same affect can also be achieved using an image widget. 
 <!--(End of identifiers)/-->
 
 ##Example

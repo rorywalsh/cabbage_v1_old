@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -261,11 +261,13 @@ static void shutdownNSApp()
 
 void MessageManager::stopDispatchLoop()
 {
+   #if JUCE_PROJUCER_LIVE_BUILD
     quitMessagePosted = true;
+   #else
 
-   #if ! JUCE_PROJUCER_LIVE_BUILD
     if (isThisTheMessageThread())
     {
+        quitMessagePosted = true;
         shutdownNSApp();
     }
     else
@@ -273,7 +275,7 @@ void MessageManager::stopDispatchLoop()
         struct QuitCallback  : public CallbackMessage
         {
             QuitCallback() {}
-            void messageCallback() override   { shutdownNSApp(); }
+            void messageCallback() override    { MessageManager::getInstance()->stopDispatchLoop(); }
         };
 
         (new QuitCallback())->post();
@@ -328,14 +330,6 @@ void MessageManager::doPlatformSpecificInitialisation()
 {
     if (appDelegate == nil)
         appDelegate = new AppDelegate();
-
-   #if ! (defined (MAC_OS_X_VERSION_10_5) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
-    // This launches a dummy thread, which forces Cocoa to initialise NSThreads correctly (needed prior to 10.5)
-    if (! [NSThread isMultiThreaded])
-        [NSThread detachNewThreadSelector: @selector (dummyMethod)
-                                 toTarget: appDelegate->delegate
-                               withObject: nil];
-   #endif
 }
 
 void MessageManager::doPlatformSpecificShutdown()

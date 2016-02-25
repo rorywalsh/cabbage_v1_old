@@ -61,7 +61,7 @@ keyboard bounds( 5,230,1015, 75)
 
 <CsInstruments>
 
-sr = 48000
+sr = 44100
 ksmps = 64
 nchnls = 2
 0dbfs=1

@@ -25,17 +25,17 @@
 #define JucePlugin_Build_AU     1  // (If you change this value, you'll also need to re-export the projects using the Jucer)
 #define JucePlugin_Build_RTAS   0  // (If you change this value, you'll also need to re-export the projects using the Jucer)
 
-#define JucePlugin_Name                 "CabbageEffectNam"
+#define JucePlugin_Name                 "CabbageAudioUnit"
 #define JucePlugin_Desc                 "CabbagePlugin"
 #define JucePlugin_Manufacturer         "Cabbage"
-#define JucePlugin_ManufacturerCode     'Cabbu'
+#define JucePlugin_ManufacturerCode     'Cabb'
 #define JucePlugin_PluginCode           'RORY'
 #define JucePlugin_MaxNumInputChannels  2
 #define JucePlugin_MaxNumOutputChannels 2
 #define JucePlugin_PreferredChannelConfigurations   {1, 1}, {2, 2}
 //if you define this in the IDE make sure to remove it when building from the command line...
 #ifndef Cabbage_Plugin_Synth
-#define JucePlugin_IsSynth             1
+#define JucePlugin_IsSynth             0
 #else
 #define JucePlugin_IsSynth              1
 #endif

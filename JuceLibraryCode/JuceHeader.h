@@ -26,13 +26,22 @@
 #include "modules/juce_graphics/juce_graphics.h"
 #include "modules/juce_gui_basics/juce_gui_basics.h"
 #include "modules/juce_gui_extra/juce_gui_extra.h"
+
+
+#if !defined(MAXOSX) && !defined(WIN32)
+	#include "modules/juce_opengl/juce_opengl.h"
+#endif
+
 #include "BinaryData.h"
+
+
 
 #if ! DONT_SET_USING_JUCE_NAMESPACE
  // If your code uses a lot of JUCE classes, then this will obviously save you
  // a lot of typing, but can be disabled by setting DONT_SET_USING_JUCE_NAMESPACE.
  using namespace juce;
 #endif
+
 
 #if ! JUCE_DONT_DECLARE_PROJECTINFO
 namespace ProjectInfo

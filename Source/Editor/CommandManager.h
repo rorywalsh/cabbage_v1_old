@@ -54,6 +54,7 @@ static const int insertFromRepo		= 2021;
 static const int addFromRepo		= 2022;
 static const int insertRecentEvent	= 2023;
 static const int openPythonEditor	= 2024;
+static const int editFontType		= 2025;
 
 static const int setBreakpoint		= 3000;
 static const int removeBreakpoint	= 3001;

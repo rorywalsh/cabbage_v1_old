@@ -85,21 +85,21 @@ label     bounds( 10,  5,100, 13), text("Rule"), align("left")
 numberbox bounds( 10, 20, 55, 30), text("Length"), channel("RuleLen"), range(1,27,8,1,1)
 numberbox bounds( 75, 20, 55, 30), text("Radius"), channel("radius"), range(1,2,2,1,1)
 image     bounds(135, 20,200, 50), colour(30,30,30), outlinecolour("white"), outlinethickness(1), shape("sharp"), identchannel("RuleRange")
-gentable  bounds(135, 30,675, 25),  tablenumber(3), tablecolour("GoldenRod"), amprange(0,1,3,1), zoom(-1)
+gentable  bounds(135, 30,675, 25),  tablenumber(3), tablecolour("GoldenRod"), amprange(0,1,3,1), zoom(-1), active(1)
 }
 
 ; Initial State
 image    bounds(  5,155,820, 85), colour(0,0,0,0), outlinecolour("white"), outlinethickness(1), shape("sharp"), plant("InitTable") {
 label    bounds( 10,  5,100, 13), text("Initial States"), align("left")
 image    bounds( 10, 26,800, 32), colour(60,60,60), outlinecolour("white"), outlinethickness(1), shape("sharp"), identchannel("InputRange")
-gentable bounds( 10, 35,800, 15), tablenumber(1), tablecolour("FireBrick"), amprange(0,1,1,1), zoom(-1)
+gentable bounds( 10, 35,800, 15), tablenumber(1), tablecolour("FireBrick"), amprange(0,1,1,1), zoom(-1), active(1)
 button   bounds( 10, 60,140, 20), text("Resend Initial State","Resend Initial State"), channel("reinit")
 }
 
 image     bounds(  5,245,820, 95), colour(0,0,0,0), outlinecolour("white"), outlinethickness(1), shape("sharp"), plant("OutTable") {
 label     bounds( 10,  5,100, 13), text("Output States"), align("left")
 image     bounds( 10, 26,800, 32), colour(60,60,60), outlinecolour("white"), outlinethickness(2), shape("sharp"), identchannel("OutputRange")
-gentable  bounds( 10, 35,800, 15),  tablenumber(2), tablecolour("green"), amprange(0,1,2,1), zoom(-1), identchannel("OutTable")
+gentable  bounds( 10, 35,800, 15),  tablenumber(2), tablecolour("green"), amprange(0,1,2,1), zoom(-1), identchannel("OutTable"), active(1)
 numberbox bounds( 10, 60, 60, 30), text("Elements"), channel("elements"), range(1,64,32,1,1)
 numberbox bounds( 80, 60, 60, 30), text("Iterations"), channel("iter"), range(0,100000,0,1,1)
 }
@@ -123,7 +123,7 @@ seed	0
 
 giInitTable	ftgen	1,0, 64,-2,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0	; initial states table
 giOutTable	ftgen	2,0, 64, 2,0			; output states table
-giRuleFunc	ftgen	3,0,-27,-2,0,1,0,1,0,0,0,1 ,0,0,1,0,1,0,0,1, 0,0,1,1,0,1,0,0	; rule function table
+giRuleFunc	ftgen	3,0, 27,-2,0,1,0,1,0,0,0,1 ,0,0,1,0,1,0,0,1, 0,0,1,1,0,1,0,0	; rule function table
 
 opcode TriggerToGatei,k,ki
  ktrig,idur xin

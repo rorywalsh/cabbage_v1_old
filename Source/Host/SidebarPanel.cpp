@@ -120,9 +120,9 @@ void SidebarPanel::updatePluginParameters()
 
 
     for(int y=0; y<panel->getSectionNames().size()-1; y++)
-        panel->setSectionOpen(y, false, true);
+        panel->setSectionOpen(y, false);
 
-    panel->setSectionOpen(panel->getSectionNames().size()-1, true, true);
+    panel->setSectionOpen(panel->getSectionNames().size()-1, true);
 
     concertinaPanel.expandPanelFully(concertinaPanel.getPanel(PLUGIN_PARAMS), true);
 
@@ -193,9 +193,9 @@ void SidebarPanel::showParametersForNode(int nodeId)
     if(PropertyPanel* propPanel = (PropertyPanel*)concertinaPanel.getPanel(PLUGIN_PARAMS))
     {
         for(int i=0; i<propPanel->getSectionNames().size(); i++)
-            propPanel->setSectionOpen(i, false, false);
+            propPanel->setSectionOpen(i, false);
 
-        propPanel->setSectionOpen(indexOfNode, true, true);
+        propPanel->setSectionOpen(indexOfNode, true);
 
     }
 
@@ -298,7 +298,7 @@ void SidebarPanel::actionListenerCallback (const String &message)
         concertinaPanel.removePanel(concertinaPanel.getPanel(WIDGET_PROPS));
     }
 
-    CabbageGUIClass cAttr(message, -1);
+    CabbageGUIType cAttr(message, -1);
     CabbagePropertiesPanel* panel = new CabbagePropertiesPanel("Widget Properties");
     panel->updateProperties(cAttr);
     panel->addChangeListener(filterGraph);

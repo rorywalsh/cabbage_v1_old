@@ -55,6 +55,7 @@ rotate(radians, pivotx, pivoty), widgetarray("chan", number), active(val)
 **widgetarray("chan", number)** Creates an number of widgets in a single pass. See [Widget arrays](./widget_arrays.md)
 
 **active(val)** Set to 0 by default. Will enable or disable on-screen editing of the table. Note that tables must use a negative GEN 02, 05, or 07 in order for manual editing to work. 
+
 <!--(End of identifiers)/-->
 
 >If you need to redraw tables quickly, make sure they don't use negative GEN routines as it will seriously slow down redrawing. 

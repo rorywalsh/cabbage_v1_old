@@ -942,7 +942,8 @@ const Image GenTable::drawGridImage(bool redraw, double width, double height, do
                                                   (waveformBuffer[i]>0.0 ? true : false),
                                                   colour,
                                                   true,
-                                                  ""),
+                                                  "",
+                                                  4.f),
                           i*(widthOfGridElement)+2,
                           1.f);
         }

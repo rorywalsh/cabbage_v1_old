@@ -2,14 +2,15 @@
 ; Written by Iain McCurdy, 2012.
 
 <Cabbage>
-form caption("pvsWarp") size(440, 90), pluginID("warp")
-image pos(0, 0), size(440, 90), colour( 50, 50,75,220), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
+form caption("pvsWarp") size(535, 90), pluginID("warp")
+image pos(0, 0), size(535, 90), colour( 50, 50,75,220), shape("rounded"), outlinecolour("white"), outlinethickness(4) 
 rslider bounds( 10, 11, 70, 70), text("Scale"),    channel("scal"),      range(0.1, 4, 1, 0.5, 0.001), colour("LightSlateGrey"), textcolour("white"), trackercolour("white")
 rslider bounds( 80, 11, 70, 70), text("Shift"),    channel("shift"),     range(-5000, 5000, 0),        colour("LightSlateGrey"), textcolour("white"), trackercolour("white")
 rslider bounds(150, 11, 70, 70), text("Feedback"), channel("FB"),        range(0, 0.99, 0),            colour("LightSlateGrey"), textcolour("white"), trackercolour("white")
 rslider bounds(220, 10, 70, 70), text("FFT Size"), channel("att_table"), range(1, 8, 5, 1,1),          colour("LightSlateGrey"), textcolour("white"), trackercolour("white")
-rslider bounds(290, 11, 70, 70), text("Mix"),      channel("mix"),       range(0, 1.00, 1),            colour("LightSlateGrey"), textcolour("white"), trackercolour("white")
-rslider bounds(360, 11, 70, 70), text("Level"),    channel("lev"),       range(0, 1.00, 0.5),          colour("LightSlateGrey"), textcolour("white"), trackercolour("white")
+checkbox bounds(290,30, 95,15), channel("DelayComp"), text("Delay Comp.")
+rslider bounds(385, 11, 70, 70), text("Mix"),      channel("mix"),       range(0, 1.00, 1),            colour("LightSlateGrey"), textcolour("white"), trackercolour("white")
+rslider bounds(455, 11, 70, 70), text("Level"),    channel("lev"),       range(0, 1.00, 0.5),          colour("LightSlateGrey"), textcolour("white"), trackercolour("white")
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -38,8 +39,8 @@ giFFTattributes6	ftgen	0, 0, 4, -2, 2048, 512, 2048, 1
 giFFTattributes7	ftgen	0, 0, 4, -2, 4096,1024, 4096, 1
 giFFTattributes8	ftgen	0, 0, 4, -2, 8192,2048, 8192, 1
 
-opcode	pvswarp_module,a,akkkkiiii
-	ain,kscal,kshift,kfeedback,kmix,iFFTsize,ioverlap,iwinsize,iwintype	xin
+opcode	pvswarp_module,a,akkkkiiiii
+	ain,kscal,kshift,kfeedback,kmix,iFFTsize,ioverlap,iwinsize,iwintype,iDelayComp	xin
 	aout		init	0
 	;f_FB		pvsinit iFFTsize,ioverlap,iwinsize,iwintype, 0			;INITIALISE FEEDBACK FSIG
 	f_anal  	pvsanal	ain+(aout*kfeedback), iFFTsize, ioverlap, iwinsize, iwintype		;ANALYSE AUDIO INPUT SIGNAL AND OUTPUT AN FSIG
@@ -49,6 +50,9 @@ opcode	pvswarp_module,a,akkkkiiii
 	aout		pvsynth f_warp                      				;RESYNTHESIZE THE f-SIGNAL AS AN AUDIO SIGNAL
 	if(kfeedback>0) then
 	 aout		clip	aout,0,0dbfs
+	endif
+	if iDelayComp==1 then
+	 ain	delay	ain,iwinsize/sr
 	endif
 	amix		ntrpol		ain, aout, kmix					;CREATE DRY/WET MIX
 			xout		amix	
@@ -62,13 +66,14 @@ instr	1
 	kfeedback	chnget	"FB"
 	kmix		chnget	"mix"
 	klev		chnget	"lev"
+	kDelayComp	chnget	"DelayComp"
 	ainL		=	ainL*klev
 	ainR		=	ainR*klev
 
 	/* SET FFT ATTRIBUTES */
 	katt_table	chnget	"att_table"	; FFT atribute table
 	katt_table	init	5
-	ktrig		changed	katt_table
+	ktrig		changed	katt_table,kDelayComp
 	if ktrig==1 then
 	 reinit update
 	endif
@@ -79,9 +84,9 @@ instr	1
 	iwintype	table	3, giFFTattributes1 + i(katt_table) - 1
 	/*-------------------*/
 
-	aoutL		pvswarp_module	ainL,kscal,kshift,kfeedback,kmix,iFFTsize,ioverlap,iwinsize,iwintype
-	aoutR		pvswarp_module	ainR,kscal,kshift,kfeedback,kmix,iFFTsize,ioverlap,iwinsize,iwintype
-			outs	aoutR,aoutR
+	aoutL		pvswarp_module	ainL,kscal,kshift,kfeedback,kmix,iFFTsize,ioverlap,iwinsize,iwintype,i(kDelayComp)
+	aoutR		pvswarp_module	ainR,kscal,kshift,kfeedback,kmix,iFFTsize,ioverlap,iwinsize,iwintype,i(kDelayComp)
+			outs	aoutL,aoutR
 endin
 
 </CsInstruments>

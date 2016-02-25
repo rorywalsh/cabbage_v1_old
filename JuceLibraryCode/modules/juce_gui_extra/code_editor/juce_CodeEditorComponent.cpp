@@ -264,7 +264,7 @@ private:
             owner.scrollToLineInternal ((int) newRangeStart);
         else
             owner.scrollToColumnInternal (newRangeStart);
-		owner.editorHasScrolled();
+    owner.editorHasScrolled();
     }
 
     void codeDocumentTextInserted (const String& newText, int pos) override
@@ -570,13 +570,13 @@ void CodeEditorComponent::codeDocumentChanged (const int startIndex, const int e
 //==============================================================================
 void CodeEditorComponent::setCaretPos(Rectangle<int> rect)
 {
-	caret->setCaretPosition(rect);    
+  caret->setCaretPosition(rect);    
 }
 
 //==============================================================================
 void CodeEditorComponent::updateCaretPosition()
 {
-	caret->setCaretPosition (getCharacterBounds (getCaretPos()));    
+  caret->setCaretPosition (getCharacterBounds (getCaretPos()));    
 }
 
 void CodeEditorComponent::moveCaretTo (const CodeDocument::Position& newPos, const bool highlighting)
@@ -655,7 +655,7 @@ void CodeEditorComponent::updateScrollBars()
 
     horizontalScrollBar.setRangeLimits (0, jmax ((double) document.getMaximumLineLength(), xOffset + columnsOnScreen));
     horizontalScrollBar.setCurrentRange (xOffset, columnsOnScreen);
-	repaint();
+  repaint();
 }
 
 void CodeEditorComponent::scrollToLineInternal (int newFirstLineOnScreen)

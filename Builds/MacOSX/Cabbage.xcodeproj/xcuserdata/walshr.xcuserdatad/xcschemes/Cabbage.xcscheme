@@ -42,7 +42,6 @@
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      debugAsWhichUser = "root"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Debug"
@@ -60,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/walshr/sourcecode/cabbageaudio/test.csd"
+            argument = "/Users/walshr/Documents/CabbageFiles/test.csd"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

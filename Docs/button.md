@@ -1,18 +1,18 @@
-##Button
+# Button
 
-Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which the host will communicate with an instance of Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish. 
+Button creates a button on screen that can be used for a whole range of different tasks. The "channel" string identifies the channel on which Cabbage will communicate with Csound. "OnCaption" and "OffCaption" determine the strings that will appear on the button as users toggle between two states, i.e., 0 or 1. By default these captions are set to "On" and "Off" but the user can specify any strings they wish. 
 
 ```csharp
 button bounds(x, y, width, height), channel("chan"), text("offCaption","onCaption"), \
 value(val), colour("colour"), fontcolour("colour"), latched(val), \
 identchannel("channel"), alpha(val), visible(val), caption("caption"), \ 
 rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") \
-active(val)
+active(val), svgfile("type", "file")
 ```
 <!--(End of syntax)/-->
 
 
-### Identifiers
+##Identifiers
 
 **bounds(x, y, width, height)** 
 integer values that set position and size on screen(in pixels). 
@@ -45,7 +45,6 @@ With latched set to 0 the button will send a message to Csound on the initial mo
 
 **identchannel("channel")**
 Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See [Identifier channels](./identchannels.md)
-[Identifier channels](./identchannels.md)  
 
 **rotate(radians, pivotx, pivoty)**
 Rotates the widget by a number of radians(2xPI=full rotation). pivotx and pivoty will determine the rotation pivot points, where 0, 0 represents the component's top-left position. 
@@ -64,6 +63,14 @@ This identifier will place the widget within a groupbox. "caption" is the text t
 **popuptext("text")** Displays a popup text box when a user hovers over the widget.
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
+**svgfile("type", "file")** Use this identifier to set a unique .svg file to use instead of the default look and feel. "type" should be one of the following:
+
+- "on" : sets the button image when it is on
+- "off" : sets the button image when it is off
+
+For more information see [Using SVGs](./using_svgs.md)
+
 <!--(End of identifiers)/-->
 
 >colour:1() and fontcolour:1() can be set using colour() and fontcolour(). However, it's recommended that you use the numerated colour identifiers in order to make your code as readable a possible. 

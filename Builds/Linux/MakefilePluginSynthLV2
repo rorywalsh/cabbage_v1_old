@@ -26,7 +26,7 @@ ifeq ($(CONFIG),Debug)
 
   CPPFLAGS := $(DEPFLAGS) -DJucePlugin_Build_LV2=1 -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_Plugin_LV2=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -D "Cabbage_Plugin_Synth=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -g -ggdb -fPIC -O0
-  CXXFLAGS += $(CFLAGS)
+  CXXFLAGS += $(CFLAGS) -std=c++11
   LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -L/usr/X11R6/lib/ -lGL -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile` -Wl,--no-undefined
   LDDEPS :=
   RESFLAGS :=  -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
@@ -46,7 +46,7 @@ ifeq ($(CONFIG),Release)
 
   CPPFLAGS := $(DEPFLAGS) -DJucePlugin_Build_LV2=1 -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "Cabbage_Plugin_Synth=1" -D "_DEBUG=1" -D "Cabbage_Plugin_LV2=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -fPIC -Os
-  CXXFLAGS += $(CFLAGS)
+  CXXFLAGS += $(CFLAGS) -std=c++11
   LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -fvisibility=hidden -L/usr/X11R6/lib/ -lGL -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile` -Wl,--no-undefined
   LDDEPS :=
   RESFLAGS := -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "_DEBUG=1" -D "Cabbage_Plugin_Synth=1"  -D "USE_DOUBLE=1" -D "Cabbage_Plugin_LV2=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I ~/SDKs/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
@@ -88,6 +88,7 @@ OBJECTS := \
   $(OBJDIR)/juce_gui_extra_7767d6a8.o \
   $(OBJDIR)/juce_PluginUtilities_e2e19a34.o \
   $(OBJDIR)/juce_LV2_Wrapper_bb62e93d.o \
+  $(OBJDIR)/juce_opengl_7767dsdf8.o \
 
 
 .PHONY: clean
@@ -283,6 +284,11 @@ $(OBJDIR)/juce_PluginUtilities_e2e19a34.o: ../../JuceLibraryCode/modules/juce_au
 $(OBJDIR)/juce_LV2_Wrapper_bb62e93d.o: ../../JuceLibraryCode/modules/juce_audio_plugin_client/LV2/juce_LV2_Wrapper.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling juce_LV2_Wrapper.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/juce_opengl_7767dsdf8.o: ../../JuceLibraryCode/modules/juce_opengl/juce_opengl.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling juce_opengl.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 -include $(OBJECTS:%.o=%.d)

@@ -25,12 +25,14 @@
 #include "../CabbageGUIClass.h"
 #include "../XYPadAutomation.h"
 #include "../CabbageMessageSystem.h"
+//sample widget
 #include "../Soundfiler.h"
+#ifndef AndroidBuild
 #include "../Editor/CodeWindow.h"
 #include "../Editor/CodeEditor.h"
+#endif
 //#include "CabbageGenericAudioProcessorEditor.h"
 #include "../CabbageLookAndFeel.h"
-
 
 #ifndef Cabbage_No_Csound
 #ifdef AndroidBuild
@@ -40,6 +42,7 @@
 #endif
 #endif
 
+#include <cwindow.h>
 #include "csdl.h"
 
 
@@ -48,9 +51,9 @@ class CodeWindow;
 #endif
 
 #ifdef Cabbage64Bit
-#define CABBAGE_VERSION "Cabbage(64bit) v0.5.15"
+#define CABBAGE_VERSION "Cabbage(64bit) v1.0.0"
 #else
-#define CABBAGE_VERSION "Cabbage(32bit) v0.5.15"
+#define CABBAGE_VERSION "Cabbage(32bit) v1.0.0"
 #endif
 
 #define AUDIO_PLUGIN 1
@@ -113,6 +116,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     File logFile;
     bool isAutomator;
     bool isWinXP;
+    bool updateFFTDisplay;
     bool isNativeThreadRunning;
     String csoundDebuggerOutput;
     float rmsLeft, rmsRight;
@@ -143,8 +147,14 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     static int OpenMidiOutputDevice(CSOUND * csnd, void **userData, const char *devName);
     static int ReadMidiData(CSOUND *csound, void *userData, unsigned char *mbuf, int nbytes);
     static int WriteMidiData(CSOUND *csound, void *userData, const unsigned char *mbuf, int nbytes);
+
+    //graphing functions
+    static void makeGraphCallback(CSOUND *csound, WINDAT *windat, const char *name);
+    static void drawGraphCallback(CSOUND *csound, WINDAT *windat);
+    static void killGraphCallback(CSOUND *csound, WINDAT *windat);
+    static int exitGraphCallback(CSOUND *csound);
 #endif
-    static void YieldCallback(void* data);
+
     void updateCabbageControls();
     void sendOutgoingMessagesToCsound();
     int ksmpsOffset;
@@ -158,8 +168,8 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     //guiLayoutControls are not used to send data to Csound, and don't show
     //as parameters in a host, guiCtrls do show are parameters, and can send
     //channel messages to Csound.
-    Array<CabbageGUIClass, CriticalSection> guiLayoutCtrls;
-    Array<CabbageGUIClass, CriticalSection> guiCtrls;
+    Array<CabbageGUIType, CriticalSection> guiLayoutCtrls;
+    Array<CabbageGUIType, CriticalSection> guiCtrls;
     String plantFlag, presetFlag;
     String debugMessage;
     StringArray debugMessageArray;
@@ -186,93 +196,38 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
 
 public:
 
-    //------------------------------- interprocess comms -------------------------------
-    void appendMessage (const String& message)
-    {
-        cUtils::debug(message);
-    }
-
-
-    class CabbageInterprocessConnection  : public InterprocessConnection
-    {
-    public:
-        CabbageInterprocessConnection (CabbagePluginAudioProcessor& owner_)
-            : InterprocessConnection (true),
-              owner (owner_)
-        {
-            static int totalConnections = 0;
-            ourNumber = ++totalConnections;
-        }
-
-        void connectionMade()
-        {
-            const String message = "Connection #" + String (ourNumber) + " - connection started";
-            owner.csound->Message(message.toUTF8());
-        }
-
-        void connectionLost()
-        {
-            const String message = "Connection #" + String (ourNumber) + " - connection lost";
-            owner.csound->Message(message.toUTF8());
-        }
-
-        void messageReceived (const MemoryBlock& message);
-
-    private:
-        CabbagePluginAudioProcessor& owner;
-        int ourNumber;
-    };
-
-    class CabbageInterprocessConnectionServer   : public InterprocessConnectionServer
-    {
-    public:
-        CabbageInterprocessConnectionServer (CabbagePluginAudioProcessor& owner_)
-            : owner (owner_)
-        {
-        }
-
-        InterprocessConnection* createConnectionObject()
-        {
-            CabbageInterprocessConnection* newConnection = new CabbageInterprocessConnection (owner);
-
-            owner.activeConnections.add (newConnection);
-            return newConnection;
-        }
-
-    private:
-        CabbagePluginAudioProcessor& owner;
-    };
-
-    OwnedArray <CabbageInterprocessConnection, CriticalSection> activeConnections;
-    ScopedPointer<CabbageInterprocessConnectionServer> server;
-    void openInterprocess (bool asSocket, bool asSender, String address, int port);
-
-    void closeInterprocess()
-    {
-        server->stop();
-        activeConnections.clear();
-
-    }
-
-
-    //--------------------------------------------------------------
-
-    bool isFirstTime()
-    {
-        return firstTime;
-    };
     String changeMessage;
     Array<int> dirtyControls;
     bool CSOUND_DEBUG_MODE;
+    int indexOfLastLayoutCtrl;
+    int indexOfLastGUICtrl;
     void setCsoundInstrumentBreakpoint(int instr, int line);
     void removeCsoundInstrumentBreakpoint(int instr);
     void continueCsoundDebug();
     void nextCsoundDebug();
     void cleanCsoundDebug();
+    void initAllChannels();
     void createAndShowSourceEditor(LookAndFeel* looky);
     void actionListenerCallback (const String& message);
+    void addMacros(String csdText);
+    int screenWidth, screenHeight;
+    int compileCsoundAndCreateGUI(bool isPlugin);
+    void setScreenMacros();
 
+    bool isFirstTime()
+    {
+        return firstTime;
+    }
 
+    bool shouldUpdateFFTDisplay()
+    {
+        return updateFFTDisplay;
+    }
+
+    void resetUpdateFFTDisplayFlag()
+    {
+        updateFFTDisplay = false;
+    }
 
     int getNumberCsoundOutChannels()
     {
@@ -313,22 +268,22 @@ public:
     //==============================================================================
 
 #if defined(Cabbage_Build_Standalone) || (CABBAGE_HOST)
-    CabbagePluginAudioProcessor(String inputfile, bool guiOnOff, int pluginType);
+    CabbagePluginAudioProcessor(String inputfile, bool guiOnOff, float scale);
 #else
-    CabbagePluginAudioProcessor();
+    CabbagePluginAudioProcessor(String file="", Point<float> scale = Point<float>(1, 1));
 #endif
     ~CabbagePluginAudioProcessor();
 
-//#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
+#ifndef AndroidBuild
     CsoundCodeEditor* codeEditor;
-//#else
+#endif
 
-#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST)
+#if !defined(Cabbage_Build_Standalone) && !defined(CABBAGE_HOST) && !defined(AndroidBuild)
     CodeWindow* cabbageCsoundEditor;
 #endif
 
 
-    bool compiledOk()
+    bool csoundCompiledOk()
     {
         return csCompileResult;
     }
@@ -348,10 +303,10 @@ public:
         return 1;
     }
 
-    int performEntireScore();
     void startRecording();
     void stopRecording();
-    int reCompileCsound(File file);
+    int recompileCsound(File file);
+    void openFile(LookAndFeel* looky);
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock);
     void releaseResources();
@@ -389,9 +344,11 @@ public:
     void getStateInformation (MemoryBlock& destData);
     void setStateInformation (const void* data, int sizeInBytes);
     StringArray getTableStatement(int tableNum);
-    const Array<double, CriticalSection> getTable(int tableNum);
+    //const Array<double, CriticalSection> getTable(int tableNum);
     const Array<float, CriticalSection> getTableFloats(int tableNum);
-    void createGUI(String source, bool refresh);
+    fftDisplay* getFFTTable(int tableNum);
+    void initialiseWidgets(String source, bool refresh);
+    void addWidgetsToEditor(bool refresh);
     int checkTable(int tableNum);
     MidiKeyboardState keyboardState;
     //midiBuffers
@@ -407,13 +364,12 @@ public:
     int averageSampleIndex;
     bool stopProcessing;
     float outputNo1;
-    int pluginType;
+    Point<float> scale;
     float automationAmp;
     int automationParamID;
     int mouseX, mouseY;
     int breakCount;
     Array<int> breakpointInstruments;
-
 
     //==============================================================================
     File getCsoundInputFile()
@@ -458,19 +414,29 @@ public:
 
     void setOpcodeDirEnv()
     {
+        String opcodeDir;
+#ifdef CANONICAL
+        cUtils::debug("Opcode6Dir is set to:"+String(getenv("OPCODE6DIR64")));
+#else
 #ifdef WIN32
-        String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\CsoundPlugins";
-        if(!File(opcodeDir).exists())
-            opcodeDir = String(getenv("CABBAGE_OPCODE_PATH"));
+#ifdef Cabbage64Bit
+        opcodeDir = String(getenv("CABBAGE_OPCODE_PATH64"));
+#else
+        opcodeDir = String(getenv("CABBAGE_OPCODE_PATH"));
+#endif
 
         Logger::writeToLog("\n================================\nCabbage opcode plugins are located at:"+opcodeDir);
         //showMessage(opcodeDir);
         if(File(opcodeDir).exists())
         {
-            String env = "OPCODE6DIR="+opcodeDir;
+            String env = "OPCODE6DIR64="+opcodeDir;
             _putenv(env.toUTF8().getAddress());
-            Logger::writeToLog("Current opcodeDir is:"+String(getenv("OPCODE6DIR")));
+            Logger::writeToLog("Current opcodeDir is:"+String(getenv("OPCODE6DIR64")));
+
+            //String setCLI = "set "+env;
+            //system(setCLI.toUTF8().getAddress());
         }
+#endif
 #endif
     }
 
@@ -508,7 +474,7 @@ public:
 
     void clearDebugMessage()
     {
-        debugMessage="";
+        csoundOutput="";
     }
 
     void setPluginName(String name)
@@ -521,7 +487,12 @@ public:
         return pluginName;
     }
 
+    //hold values from function tables
     Array<Array <float > > tableArrays;
+    //holds value from FFT function table created using dispfft
+    OwnedArray <fftDisplay, CriticalSection> fftArrays;
+    Array<int> windowIDs;
+
 
     Array<float> getTableArray(int index)
     {
@@ -537,7 +508,7 @@ public:
         return showMIDI;
     }
     //======== log information about GUI controls ===============
-    StringArray logGUIAttributes(CabbageGUIClass cAttr, String type)
+    StringArray logGUIAttributes(CabbageGUIType cAttr, String type)
     {
 
         StringArray arr;
@@ -569,12 +540,12 @@ public:
         return (int)guiLayoutCtrls.size();
     }
 
-    inline CabbageGUIClass &getGUILayoutCtrls(int index)
+    inline CabbageGUIType &getGUILayoutCtrls(int index)
     {
         return guiLayoutCtrls.getReference(index);
     }
 
-    inline CabbageGUIClass &getGUICtrls(int index)
+    inline CabbageGUIType &getGUICtrls(int index)
     {
         return guiCtrls.getReference(index);
     }
@@ -640,12 +611,12 @@ public:
     }
 
 #endif
-    void addLayoutCtrl(CabbageGUIClass cAttr)
+    void addLayoutCtrl(CabbageGUIType cAttr)
     {
         guiLayoutCtrls.add(cAttr);
     }
 
-    void addGUICtrl(CabbageGUIClass cAttr)
+    void addGUICtrl(CabbageGUIType cAttr)
     {
         guiCtrls.add(cAttr);
     }

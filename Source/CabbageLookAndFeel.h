@@ -62,8 +62,6 @@ public:
                                 const Slider::SliderStyle style,
                                 Slider &slider);
 
-    class SliderLabelComp;
-    Label* createSliderTextBox (Slider&) override;
     void drawButtonBackground (Graphics&, Button&, const Colour&, bool, bool);
     void drawButtonText (Graphics &g, TextButton &button, bool isMouseOverButton, bool isButtonDown);
 
@@ -175,6 +173,8 @@ public:
                                           bool /*isVerticalBar*/,
                                           bool isMouseOver,
                                           bool isMouseDragging);
+
+    bool drawBackgroundForSVGSlider(Graphics& g, Component* comp, String type, int x, int y, int width, int height);
 
     int getDefaultMenuBarHeight()
     {

@@ -194,8 +194,8 @@ Section Uninstall
   Delete "$INSTDIR\cabbage.png"
   
   ;CLI for Csound
-  File "$INSTDIR\csoundCabbage.exe"
-  File "$INSTDIR\CabbageStudio64.exe"
+  ;File "$INSTDIR\csoundCabbage.exe"
+  ;File "$INSTDIR\CabbageStudio64.exe"
 
   SetOutPath $SMPROGRAMS
   RMDir /r "$INSTDIR\csoundDocs"

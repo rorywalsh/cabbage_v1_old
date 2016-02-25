@@ -1,4 +1,5 @@
-Cabbage v0.5.17
+
+Cabbage v1.0.0
 
 Additions:
 - added new listbox widget
@@ -61,3 +62,251 @@ Updates:
 	- added section on Developing new Widgets  
 
 A more in-depth list of changes since the last release can be found in the git commit log. 
+
+=====================================================================================================================
+Cabbage v0.5.17
+
+=====================================================================================================================
+Cabbage v0.5.15
+
+Fixes/Modifications/Additions
+
+- added new intro screen and images
+- fixed xypad issue
+- sorted init values reported by t_grey
+- fixed xypad mode selector colour problem
+- updated docs, now using gitbook
+- added keyboard identchannel support
+- added optimisations from andy-fillebrown
+- fixed checkbox colour issue
+- removed kr override in recompile
+- updating background colour for code editor
+- sorted image bugs
+- added mechanism to send text to Csound from texteditor when return keystrokes are robbed by hosts.
+- updated linux readme with info about building the docs using gi
+- fixed texteditor ident bug
+- added -m0d by default to speed up perf on osx
+- updating docs
+- changing zoom to -1 as default for tables
+- updating gentable to be non-editable from the off
+- fixed string channel problem
+- added channel() to macro. Added IS_A_PLUGIN as reserved channel and updated docs
+- fixed comments multiline bug
+- inactive widgets no longer turn grey when disabled
+- fixed issue with checkbox colours when round or square
+- fixed bug with widgets in plants
+- fixed problems with tables in edit mode and negative values
+- added updated active() for tables
+- fixed issues with popups in popup plant windows
+- added popuptext() identifier
+- added active() identifier for enabling/disabling widgets
+- fixed gen02 problem reported by Iain
+- reinstated output console
+- updated audio device selector for multiple midi inputs..
+- fixed bpm problem in host
+- removed conflicting powershape example
+- fixed bug with table that was preventing them from updating on load
+- updating logo for OSX
+- updating console output
+- increased size of message output
+- fixed save file mode button
+- updating examples
+- updating midi mapping window
+- started adding midi mappings dialog
+- added tooltips to soundfiler windows and nodes in host
+- removed max object from installer
+=====================================================================================================================
+Cabbage v0.5.14
+
+Modifications/Fixes
+
+- added soundfiler widget
+- added gentable widget
+- added numberbox widget
+- added text editor widget
+- added new indentchnnel() system
+- fixed source code editor crash on OSX
+- updating OSX builds
+- added export to host
+- updating crash on close for host
+- fixed crash when saving csd with error
+- fixed numberbox issue with identchannels
+- added saving of last opened file in editor to plugin settings
+- added file open for sourcebutton editor
+- added experimental sourcebutton to plugin builds
+- fixed problem with plugin build
+- reverted back to csoundCompile() are issues with compileCsd(), also sorted sample rate / kr issues
+- changed default slider ranges to go between 0 and 1
+- updated ksmps issue
+- added sample rate override
+- fixed errors resulting from OSX changes, and removing csPerfThread from all builds
+- updated look and feel
+- deprecated table, use gentable instead
+- created universal builds - now bundling Csound in bundle
+- added a short term fix to audio device problem on OSX. Need checking for multichannel cards
+- fixed audio device issue
+- fixed console view
+- fixing audio driver issue
+- fixed notification type error and recompile issues
+- fixed bug on resave
+- fixed slider text problem
+- added option to manually set cabbage examples directory
+- removed message callback buffer
+- improved updating cabbage controls methods, should be more efficient now
+- sorted problem with load recent
+- allowed setting of CSD_PATH at init rate only
+- fixed combobox bug for string channels
+- fixed path issue with comboboxes
+- added channels to new interprocess coms
+- added socket send and recieve for quick interprocess communication between instances of cabbage
+- put back in tableArgs call
+- fixed MIDI thru issue
+- updating older 10_6 projects
+- added -n and -d default options
+- fixed problem with non cabbage text appearing at top of csd file
+- added looping to soundin object and add component contrainer to handles
+- fixed problem with release build to do with split component for debug view
+- sorted multi-channel bug
+
+=====================================================================================================================
+Cabbage v0.5.13
+
+Modifictions/Fixes
+
+- Updating windows intallers, now includes signalflow opcodes..
+- Sorted bug on escape press in OSX from props dialogue
+- Fixed issue with audio device settings on Windows
+- Fixed populate combobox bug
+- fixed mouse position problem
+- filebutton: last opened file now saved in plugin settings
+- quick update
+- implemented basic OSC server
+- updating linux make files and LV2 build
+
+=====================================================================================================================
+Cabbage v0.5.12
+
+Modifications/Fixes(Git Commit log)
+
+- fixed duplicate or missing pluginID issue
+- fixing table issue with previous Csound version
+- updating standalone mode feature and fixed identhcannel problem
+- updating InnoSetup windows script
+- adding InnoSetup windows script
+- source editor only launches now the first time you enter edit mode
+- updated issue with identifiers when featuring text that uses identifiers.
+- fixed channel problems for strings
+- updating plant title window
+- reimp of keyboard
+- added init support for texteditor widget
+- fixed scrollbars issue with plants
+- added text editor widget..
+
+=====================================================================================================================
+Cabbage v0.5.11
+
+Modifications/Fixes
+
+- added support for 64bit windows version
+- fixed MIDI selector issue on windows and updated make files
+- fixing editor resizing issue, line numbers, Giorgio's Chowning and Granular examples.
+- added option to enable non-native dialogue windows
+- updating OSX build project plugin
+- updating OSX build project
+- fixed scrolling problem with editor, and added support for command line parameters to the Cabbage binary
+- updating windows installer
+- updated windows standalone make files
+- fixed problems with zooming
+- added drawmode identifier for VU meters
+- removed handles from table editor
+- updating master
+- added mouse wheel zoom in and out of text
+- updated ampranges() identifier
+- updated JUCE source
+- making gen02 tables with toggle on and off behave like grids
+- added toggling when for gen02 tables when snapto value is the same as max amp
+- added snaptogrid for y-values, tested with gen02 only..
+- more additions made to table editor, stack on top spacing improved, better scrolling, more table colours, support for gen02 added
+- added basic scrolling to new table widget..
+- updated rounding functions part 5
+- updated rounding functions part 4
+- sorted handle spacing problems being caused by floating points
+- updated rounding functions part 3
+- updated rounding functions part 2
+- updated no-csound build next next step
+- updated no-csound build next step
+- updated no-csound build
+- added table buttons for bring front
+- cleaned .org files from source
+- updating table widget
+- formatted source
+- updating makefiles again
+- updated makefiles linux
+- fixed scrolling problem with editor
+- fixed standalone nchnls
+- sorted multichannel problems
+- updated lib paths for makefiles linux
+- added sndfile linker options to plugin makefiles
+- fixed processBlock !=OK issue
+- added more functionality to the new table viewer..x positions now update when moving handle, and zooming is almost there
+- added more functionality to the new table viewer.
+- updating windows make files
+- updating gentable widget
+- updating to latest JUCE tip
+- updating audioSampleBuffer class
+
+=====================================================================================================================
+Cabbage v0.5.08
+
+Modifications/Fixes
+
+- added column edit mode to editor
+- added jump to Cabbage/Csound code in editor
+- updated save mechanism in editor
+- added open Aux files to editor, with tabs for extra files
+- added search/replace (ctrl+f) to editor
+- updated windows installer to include Csound help manual
+- fixed bug with GUI editor with previous placed widget
+- added inteli-tab and multi-tab issue
+- added gui warning mode to preferences
+- simplified and updated help mechanism
+- fixed table colours and updated Iain's GEN examples accordingly
+- fixed MIDI selector in audio settings
+- updated colour tags
+- added justification and background colour to label
+- updated plant popup mechanism
+- added logger identifier
+- added popupmenu
+- sorted batch process, and auto-scrolling
+- added scrolling to soundfiler
+- fixed midi channel offset issues and added program change
+- fixed file string on Linux
+- fixed parameter mapping on save
+- updated editor background colour
+- fixed slider text problem
+- windows installer now includes OSC opcodes
+- updated opcode list
+- updated keywords
+- added identChannel() identifier so Csound can be used to control any aspect of a widget's behavior
+- changes to GUI editor, duplicate and delete now work with new line index system
+- fixed popup plants
+- updated GUI designer so controls can now share the same bounds, caught problem with button indices too
+- sorted combobox issue which resulted from addition of dirtyControls array
+- sorted filebutton problem in last release
+- added reserved mouseDown channels for left middle and right mouse buttons
+- added mouseX and mouseY reserved channels
+- updated slider so skew and name can be set dynamicaly from Csound
+- fixed slider increment issue
+- sorted xypad problem resutling from file save
+- added directory to process batch
+
+=====================================================================================================================
+Cabbage v0.5.07
+
+Modifications/Fixes
+- Fixed PDC issue, Cabbage now notifies the host of the desired latency offset.
+- Made host BPM, PPQ pos, isRecording, isPlaying and time in seconds reserved channels, see Docs.
+- Reinstated batch process mode for windows, and added a directory option
+- Updated Csound to latest development snapshot for windows.
+- Updated CABBAGE_CSD_PATH reserved string channel to CSD_PATH.
+- Fxp/Fxb settings can now be saved by host(if supported) and used to recall plugin settings.

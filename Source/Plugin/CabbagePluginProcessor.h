@@ -51,9 +51,9 @@ class CodeWindow;
 #endif
 
 #ifdef Cabbage64Bit
-#define CABBAGE_VERSION "Cabbage(64bit) v0.5.17"
+#define CABBAGE_VERSION "Cabbage(64bit) v1.0.0"
 #else
-#define CABBAGE_VERSION "Cabbage(32bit) v0.5.17"
+#define CABBAGE_VERSION "Cabbage(32bit) v1.0.0"
 #endif
 
 #define AUDIO_PLUGIN 1
@@ -414,30 +414,29 @@ public:
 
     void setOpcodeDirEnv()
     {
+		String opcodeDir;
 #ifdef CANONICAL
         cUtils::debug("Opcode6Dir is set to:"+String(getenv("OPCODE6DIR64")));
 #else
-#ifdef WIN32
-        String opcodeDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName();
-        if(!File(opcodeDir).exists())
-#ifdef Cabbage64Bit
-            opcodeDir = String(getenv("CABBAGE_OPCODE_PATH64"));
-#else
-            opcodeDir = String(getenv("CABBAGE_OPCODE_PATH"));
-#endif
+	#ifdef WIN32
+		#ifdef Cabbage64Bit
+				opcodeDir = String(getenv("CABBAGE_OPCODE_PATH64"));
+		#else
+				opcodeDir = String(getenv("CABBAGE_OPCODE_PATH"));
+		#endif
 
-        Logger::writeToLog("\n================================\nCabbage opcode plugins are located at:"+opcodeDir);
-        //showMessage(opcodeDir);
-        if(File(opcodeDir).exists())
-        {
-            String env = "OPCODE6DIR64="+opcodeDir;
-            _putenv(env.toUTF8().getAddress());
-            Logger::writeToLog("Current opcodeDir is:"+String(getenv("OPCODE6DIR64")));
+			Logger::writeToLog("\n================================\nCabbage opcode plugins are located at:"+opcodeDir);
+			//showMessage(opcodeDir);
+			if(File(opcodeDir).exists())
+			{
+				String env = "OPCODE6DIR64="+opcodeDir;
+				_putenv(env.toUTF8().getAddress());
+				Logger::writeToLog("Current opcodeDir is:"+String(getenv("OPCODE6DIR64")));
 
-            //String setCLI = "set "+env;
-            //system(setCLI.toUTF8().getAddress());
-        }
-#endif
+				//String setCLI = "set "+env;
+				//system(setCLI.toUTF8().getAddress());
+			}
+	#endif
 #endif
     }
 

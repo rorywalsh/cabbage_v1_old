@@ -24,7 +24,7 @@
 #include "CabbageUtils.h"
 
 #ifndef Cabbage_No_Csound
-#include <csound.hpp>
+#include "csound.hpp"
 #endif
 
 using namespace std;

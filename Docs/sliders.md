@@ -2,6 +2,7 @@
 
 Slider can be used to create an on-screen slider. Data can be sent to Csound on the channel specified through the channel string. Sliders can be rotary, vertical or horizontal, and can react in both a linear and non-linear fashion. 
 
+> Pressing the Ctrl button switches on velocity mode. This gives better resolution when changing slider values. 
 
 ```csharp
 hslider bounds(x, y, width, height), channel("chan"), \
@@ -10,7 +11,7 @@ min(val), max(val), textcolour("colour"), fontcolour("colour"), \
 trackercolour("colour"), outlinecolour("colour"), trackerthickness(val)
 identchannel("channel"), alpha(val), visible(val), caption("caption"), \
 rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") \
-active(val), svgfile("type", "file")
+active(val), svgfile("type", "file"), velocity(val)
 ```
 <!--(End of syntax)/-->
 
@@ -63,6 +64,8 @@ For more information see [Using SVGs](./using_svgs.md)
 **popuptext("text")** Sets the text that will appear in the popup text bubble when a user hovers over the widget. This can be used to override the defaul text which displays the channel name and the current value. 
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
+
+**velocity(val)** Sets the sensitivity of the slider to mouse movement. The value passed should be in the range of 1 upwards. Note that velocity mode will only work if the range of the slider is greater than the distance in pixels between min and max. 
 
 <!--(End of identifiers)/-->
 

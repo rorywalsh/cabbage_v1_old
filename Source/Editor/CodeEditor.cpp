@@ -290,9 +290,11 @@ void CsoundCodeEditor::addNewFile(File newFile)
             tabButtons[i]->isActive(false);
 
     Logger::writeToLog(newFile.loadFileAsString());
+    editor[currentEditor-1]->setVisible(false);
     editor[currentEditor]->addActionListener(this);
     addAndMakeVisible(editor[currentEditor]);
     editor[currentEditor]->toFront(true);
+    editor[currentEditor]->setOpaque(false);
     editor[currentEditor]->loadContent(newFile.loadFileAsString());
     //editor[currentEditor]->getDocument().replaceAllContent(newFile.loadFileAsString());
     editor[currentEditor]->getDocument().setSavePoint();
@@ -374,8 +376,23 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
         {
             //editor[currentEditor]->setVisible(false);
             currentEditor=0;
-            //editor[currentEditor]->setVisible(true);
+            editor[currentEditor]->setVisible(true);
             editor[currentEditor]->toFront(true);
+
+            for( int i=0; i<editor.size(); i++)
+            {
+                if(i==currentEditor)
+                {
+                    editor[i]->setVisible(true);
+                    editor[i]->toFront(true);
+                }
+                else
+                {
+                    editor[i]->setVisible(false);
+                    editor[i]->toFront(false);
+                }
+            }
+
             if(button->getName()=="Cabbage code")
             {
                 showInstrs(true);
@@ -406,7 +423,22 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
         {
             currentEditor = button->currentTab;
             //cUtils::showMessage(currentEditor);
-            editor[currentEditor]->toFront(true);
+            //editor[currentEditor]->toFront(true);
+
+            for( int i=0; i<editor.size(); i++)
+            {
+                if(i==currentEditor)
+                {
+                    editor[i]->setVisible(true);
+                    editor[i]->toFront(true);
+                }
+                else
+                {
+                    editor[i]->setVisible(false);
+                    editor[i]->toFront(false);
+                }
+            }
+
             editor[currentEditor]->enableColumnEditMode(false);
             button->isActive(true);
             for(int i=0; i<tabButtons.size(); i++)

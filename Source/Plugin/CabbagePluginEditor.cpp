@@ -1813,7 +1813,7 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
 void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 {
 #ifdef Cabbage_Build_Standalone
-    if(getFilter()->isFirstTime())
+    if(getFilter()->isFirstTime() && getFilter()->csoundCompiledOk()==true)
     {
         ///home/rory/sourcecode/cabbageaudio/cabbage/Builds/Linux/build/test.csd
         g.fillAll(Colours::black);
@@ -1821,15 +1821,6 @@ void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
         g.setColour(Colours::whitesmoke);
         String startupMessage = "Please click the 'Options' button to launch an instrument....";
         g.drawText(startupMessage, 10, 320, 400, 50, Justification::centred, true);
-    }
-    else if(getFilter()->csoundCompiledOk()!=OK)
-    {
-        g.setColour (Colours::white);
-        String error;
-        for(int i=0; i<getHeight()/10; i++)
-            error+="Csound syntax error.Please check the Csound output console for details.";
-        g.setColour(Colours::red);
-        //g.drawFittedText(error, getLocalBounds().reduced(.8f).withLeft(20), Justification::left, 100, 10);
     }
     else
     {

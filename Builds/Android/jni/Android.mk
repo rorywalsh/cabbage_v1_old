@@ -54,6 +54,8 @@ LOCAL_SRC_FILES := \
   ../../../Source/Table.cpp\
   ../../../Source/XYPad.cpp\
   ../../../Source/XYPadAutomation.cpp\
+  ../../../Source/CabbageMessageSystem.cpp\
+  ../../../Source/CabbageCustomWidgets.cpp\
   ../../../Source/AndroidStandalone/AndroidStandaloneFilterApp.cpp\
   ../../../Source/AndroidStandalone/AndroidStandaloneFilterWindow.cpp\
   ../../../Source/AndroidStandalone/AndroidCsound.cpp\

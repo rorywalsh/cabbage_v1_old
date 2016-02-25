@@ -94,24 +94,24 @@ Out simple **InsertStepper(...)** method looks like this.
 ```csharp
 void CabbagePluginAudioProcessorEditor::InsertStepper(CabbageGUIType &cAttr)
 {
-	CabbageStepper* stepper = new CabbageStepper(cAttr, this);
-	
+    CabbageStepper* stepper = new CabbageStepper(cAttr, this);
+
     float left = cAttr.getNumProp(CabbageIDs::left);
     float top = cAttr.getNumProp(CabbageIDs::top);
     float width = cAttr.getNumProp(CabbageIDs::width);
     float height = cAttr.getNumProp(CabbageIDs::height);
-    
+
     //if control is not part of a plant, add mouse listener
     if(cAttr.getStringProp("plant").isEmpty())
         stepper->addMouseListener(this, true);
 
-    stepper->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
-    stepper->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));	
+    stepper->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
     stepper->getProperties().set(CabbageIDs::index, layoutComps.size());
-	
-    layoutComps.add(new CabbageStepper(cAttr, this));
+
+    layoutComps.add(stepper);
     int idx = layoutComps.size()-1;
-	setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));		
+    layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+    setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
     cAttr.setStringProp(CabbageIDs::type, "label");
 }
 ```

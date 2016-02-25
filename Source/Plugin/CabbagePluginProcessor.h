@@ -418,25 +418,25 @@ public:
 #ifdef CANONICAL
         cUtils::debug("Opcode6Dir is set to:"+String(getenv("OPCODE6DIR64")));
 #else
-    #ifdef WIN32
-        #ifdef Cabbage64Bit
-                opcodeDir = String(getenv("CABBAGE_OPCODE_PATH64"));
-        #else
-                opcodeDir = String(getenv("CABBAGE_OPCODE_PATH"));
-        #endif
+#ifdef WIN32
+#ifdef Cabbage64Bit
+        opcodeDir = String(getenv("CABBAGE_OPCODE_PATH64"));
+#else
+        opcodeDir = String(getenv("CABBAGE_OPCODE_PATH"));
+#endif
 
-            Logger::writeToLog("\n================================\nCabbage opcode plugins are located at:"+opcodeDir);
-            //showMessage(opcodeDir);
-            if(File(opcodeDir).exists())
-            {
-                String env = "OPCODE6DIR64="+opcodeDir;
-                _putenv(env.toUTF8().getAddress());
-                Logger::writeToLog("Current opcodeDir is:"+String(getenv("OPCODE6DIR64")));
+        Logger::writeToLog("\n================================\nCabbage opcode plugins are located at:"+opcodeDir);
+        //showMessage(opcodeDir);
+        if(File(opcodeDir).exists())
+        {
+            String env = "OPCODE6DIR64="+opcodeDir;
+            _putenv(env.toUTF8().getAddress());
+            Logger::writeToLog("Current opcodeDir is:"+String(getenv("OPCODE6DIR64")));
 
-                //String setCLI = "set "+env;
-                //system(setCLI.toUTF8().getAddress());
-            }
-    #endif
+            //String setCLI = "set "+env;
+            //system(setCLI.toUTF8().getAddress());
+        }
+#endif
 #endif
     }
 

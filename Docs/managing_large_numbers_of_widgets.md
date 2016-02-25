@@ -4,6 +4,8 @@ It can seem like a lot of work at times to deal with large numbers of widgets, b
 
 The [WidgetArrays](./widget_arrays.md) example dynamically created and positioned 100 check box widgets to the screen. So let's say that we want to turn the matrix of check boxes into a simple step sequencer. To do so we will need to check the value of each check box in each column at a set rate. The long way to do this would be to test the state of each check box manually on every k-cycle. The code for that might look like this.
 
+> Note that the Csound code presented in this section will only work with Csound 6.07 onwards due to changes made in how array opcodes are handled during looping operations.
+
 ```csharp
 instr 1
 k1 chnget "checkbox1"

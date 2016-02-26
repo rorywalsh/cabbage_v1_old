@@ -472,9 +472,11 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
     else
     {
         cUtils::debug("Csound couldn't compile your file");
+#ifndef AndroidBuild
         String message= "Csound couldn't compile your file. Please check the Csound output console for more information\n\nYou can disable this warning from the Options->Preference menu.";
         if(getActiveEditor() && getPreference(appProperties, "DisableCompilerErrorWarning")==0)
             showMessage(message, &getActiveEditor()->getLookAndFeel());
+#endif
         csoundStatus=false;
         return 0;
     }
@@ -644,9 +646,11 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
     {
         Logger::writeToLog("Csound couldn't compile your file");
         csoundStatus=false;
+#ifndef AndroidBuild
         String message= "Csound couldn't compile your file. Please check the Csound output console for more information\n\nYou can disable this warning from the Options->Preference menu.";
         if(getActiveEditor() && getPreference(appProperties, "DisableCompilerErrorWarning")==0)
             showMessage(message, &getActiveEditor()->getLookAndFeel());
+#endif
     }
     getCallbackLock().exit();
 

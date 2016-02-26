@@ -512,7 +512,13 @@ public:
         slider->setRange(cAttr.getNumProp(CabbageIDs::min), cAttr.getNumProp(CabbageIDs::max), cAttr.getNumProp(CabbageIDs::sliderincr));
 
         if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
-            tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
+        {
+            if(cAttr.getStringProp(CabbageIDs::popuptext)=="0")
+                shouldDisplayPopup=false;
+            else
+                tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
+
+        }
 
         slider->setDoubleClickReturnValue(true, cAttr.getNumProp(CabbageIDs::value));
 

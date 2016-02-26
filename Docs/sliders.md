@@ -61,7 +61,7 @@ active(val), svgfile("type", "file"), velocity(val)
 
 For more information see [Using SVGs](./using_svgs.md)
 
-**popuptext("text")** Sets the text that will appear in the popup text bubble when a user hovers over the widget. This can be used to override the defaul text which displays the channel name and the current value. 
+**popuptext("text")** Sets the text that will appear in the popup text bubble when a user hovers over the widget. This can be used to override the defaul text which displays the channel name and the current value. Passing a 0 will disable all popuptext notices completely.  
 
 **active(val)** Will deactivate a control if 0 is passed. Controls which are deactivate can still be updated from Csound.
 

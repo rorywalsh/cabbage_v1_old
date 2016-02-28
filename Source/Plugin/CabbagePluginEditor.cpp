@@ -2113,6 +2113,19 @@ void CabbagePluginAudioProcessorEditor::InsertListbox(CabbageGUIType &cAttr)
         cAttr.setStringProp(CabbageIDs::file, file);
     }
 
+    String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
+    cUtils::debug(cAttr.getStringProp(CabbageIDs::workingdir));
+    String path = cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::workingdir), currentFileLocation);
+
+
+    if(File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::workingdir))==false)
+    {
+        if(File::isAbsolutePath(path)!=true)
+            cAttr.setStringProp(CabbageIDs::workingdir, currentFileLocation);
+        else
+            cAttr.setStringProp(CabbageIDs::workingdir, path);
+    }
+
     CabbageListbox* listbox = new CabbageListbox(cAttr, this);
 
     float left = cAttr.getNumProp(CabbageIDs::left);

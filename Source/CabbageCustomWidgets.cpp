@@ -1275,6 +1275,8 @@ CabbageListbox::CabbageListbox(CabbageGUIType &cAttr, CabbagePluginAudioProcesso
         Array<File> dirFiles;
         File pluginDir(cAttr.getStringProp(CabbageIDs::workingdir));
 
+        cUtils::debug(cAttr.getStringProp(CabbageIDs::workingdir));
+
         const String filetype = cAttr.getStringProp("filetype");
 
         pluginDir.findChildFiles(dirFiles, 2, false, filetype);

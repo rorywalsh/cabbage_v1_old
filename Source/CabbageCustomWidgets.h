@@ -491,13 +491,6 @@ public:
         min = (cAttr.getNumProp(CabbageIDs::minvalue)==-9999 ? cAttr.getNumProp(CabbageIDs::min) : cAttr.getNumProp(CabbageIDs::minvalue));
         max = (cAttr.getNumProp(CabbageIDs::maxvalue)==-9999 ? cAttr.getNumProp(CabbageIDs::max) : cAttr.getNumProp(CabbageIDs::maxvalue));
 
-//        if(sliderType=="vertical" || sliderType=="horizontal" || sliderType=="rotary")
-//            slider->setValue(cAttr.getNumProp(CabbageIDs::value));
-//        else
-//            setupMinMaxValue();
-
-        //Logger::writeToLog(String(cAttr.getNumProp(CabbageIDs::value)));
-
         if(velocity > 0)
         {
             slider->setVelocityModeParameters(velocity, 1, 0.0, true);

@@ -828,7 +828,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                         }
 
 
-                        cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
+                        cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber+lineWhichCabbageSectionStarts);
 
                         warningMessage = "";
                         warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
@@ -907,7 +907,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                         if(cAttr.getWarningMessages().isNotEmpty())
                             csound->Message(warningMessage.toUTF8().getAddress());
 
-                        cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
+                        cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber+lineWhichCabbageSectionStarts);
                         csdLine = "";
 
                         //attach widget to plant if need be

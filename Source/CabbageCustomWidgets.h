@@ -1149,10 +1149,10 @@ public:
                 fileNames.add(filename);
                 //cAttr.setStringArrayPropValue(CabbageIDs::text, i, filename);
             }
-			
-			fileNames.sort(true);
-			for( int i=0;i<fileNames.size();i++)
-					combo->addItem(fileNames[i], i+1);
+
+            fileNames.sort(true);
+            for( int i=0; i<fileNames.size(); i++)
+                combo->addItem(fileNames[i], i+1);
         }
         //cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
         combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);

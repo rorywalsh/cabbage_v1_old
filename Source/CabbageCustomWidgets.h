@@ -1064,7 +1064,7 @@ public:
     {
         setName(name);
         offX=offY=offWidth=offHeight=0;
-        var fileNames;
+        StringArray fileNames;
         groupbox = new GroupComponent(String("groupbox_")+name);
         combo = new ComboBox(name);
 
@@ -1145,10 +1145,14 @@ public:
                     filename = dirFiles[i].getFileNameWithoutExtension();
                 else
                     filename = dirFiles[i].getFileName();
-                combo->addItem(filename, i+1);
-                fileNames.append(filename);
+
+                fileNames.add(filename);
                 //cAttr.setStringArrayPropValue(CabbageIDs::text, i, filename);
             }
+			
+			fileNames.sort(true);
+			for( int i=0;i<fileNames.size();i++)
+					combo->addItem(fileNames[i], i+1);
         }
         //cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
         combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);

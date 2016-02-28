@@ -1290,8 +1290,11 @@ CabbageListbox::CabbageListbox(CabbageGUIType &cAttr, CabbagePluginAudioProcesso
                 filename = dirFiles[i].getFileName();
             items.add(filename);
         }
+		
+		items.sort(true);
     }
     //cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
+
     listBox.updateContent();
     listBox.selectRow(cAttr.getNumProp(CabbageIDs::value)-1);
 

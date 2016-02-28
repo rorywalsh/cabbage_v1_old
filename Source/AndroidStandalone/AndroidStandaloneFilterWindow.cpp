@@ -22,7 +22,7 @@ StandaloneFilterWindow::StandaloneFilterWindow ()
     desktopRect = Desktop::getInstance().getDisplays().getMainDisplay().userArea.toDouble();
     loadFile(filename);
     setVisible (true);
-    //setFullScreen(true);
+    setFullScreen(true);
 }
 
 StandaloneFilterWindow::~StandaloneFilterWindow()
@@ -177,6 +177,7 @@ void StandaloneFilterWindow::loadFile(String filename)
         //this->resized();
 
         setName(pluginHolder->processor->getName());
+        this->setFullScreen(true);
         pluginHolder->startPlaying();
 
     }

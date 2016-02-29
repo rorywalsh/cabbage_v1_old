@@ -3,7 +3,7 @@
 Encoder creates an endless rotary encoder similar to those found in certain well-known hardware samplers. Unlike regular sliders, *encoder* doesn't have a start and stop point. One may set a starting point, but after this the user can drag up or down as long as they like. By setting a very small slider increment these widgets can offer a level of fine grain control not possible with regular sliders. 
 
 ```csharp
-encoder bounds(x, y, width, height), channel("chan"), \
+encoder bounds(x, y, width, height), channel("chan"), min(val), max(val)\
 text("name"), textbox(val), value(val), sliderincr(val), textcolour("colour"), fontcolour("colour"), \
 trackercolour("colour"), outlinecolour("colour"), identchannel("channel"), alpha(val), \
 visible(val), caption("caption"), rotate(radians, pivotx, pivoty),\
@@ -19,6 +19,10 @@ widgetarray("chan", number), popuptext("text") active(val)
 **value(val)** Used to set the initial value of the encoder.
 
 **sliderincr(val)** Set the incremental step size for the encoder.
+
+**max(val)** Sets the maximum value of the encoder. If left out, there is no maximum limit. 
+
+**min(val)** Sets the minimum value of the encoder. If left out, there is no minimum limit. 
 
 **text("name")** The string passed in for "name" will appear on a label beside the slider. This is useful for naming sliders.   
 

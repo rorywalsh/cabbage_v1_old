@@ -1358,9 +1358,9 @@ void CabbageListbox::paintListBoxItem (int rowNumber, Graphics& g,
     g.drawFittedText(items[rowNumber], Rectangle<int> (width, height), justify, 0);
 }
 
-void CabbageListbox::selectedRowsChanged (int /*lastRowselected*/)
+void CabbageListbox::selectedRowsChanged (int lastRowselected)
 {
-
+    currentRow = lastRowselected;
 }
 
 void CabbageListbox::update(CabbageGUIType m_cAttr)

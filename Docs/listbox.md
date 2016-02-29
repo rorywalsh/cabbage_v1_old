@@ -6,7 +6,7 @@ Listbox creates a list of custom items. Similary to a combobox in functionality,
 ```csharp
 listbox bounds(x, y, width, height), channel("chan"), highlightcolour("colour") \
 value(val), items("item1", "item2", ...), populate("filetype", "dir"),\
-channeltype("type"), colour("colour"), fontcolour("colour"), \
+channeltype("type"), colour("colour"), fontcolour("colour"), align("position"), \
 identchannel("channel"), alpha(val), file("filename.txt"), visible(val), caption("caption"), \
 rotate(radians, pivotx, pivoty), widgetarray("chan", number), popuptext("text") \
 active(val)
@@ -39,6 +39,8 @@ active(val)
 **identchannel("channel")** Sets the channel which messages from Csound are sent to the widget on. When used with a chnset opcode users can override widget attributes. See [Identifier channels](./identchannels.md)  
 
 **alpha(val)** A value between 0 and 1 will set the alpha blend value for the entire component. Can be useful if you need to fade widgets in and out. 
+
+**align("position")** Aligns the widget's text. "position" should be 'left', 'right' or 'centre'. 
 
 **visible(val)** A value of 0 will cause the widget to become invisible. Widgets have their visibility set to 1 by default. 
 

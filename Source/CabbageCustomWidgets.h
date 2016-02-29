@@ -1097,7 +1097,17 @@ public:
         }
 
         combo->setEditableText (false);
-        combo->setJustificationType (Justification::centredLeft);
+
+        Justification justify(Justification::centred);
+
+        if(cAttr.getStringProp(CabbageIDs::align)=="left")
+            justify = Justification::left;
+        else if(cAttr.getStringProp(CabbageIDs::align)=="centre")
+            justify = Justification::centred;
+        else
+            justify = Justification::right;
+
+        combo->setJustificationType (justify);
         combo->setTextWhenNothingSelected(text);
         this->setWantsKeyboardFocus(false);
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
@@ -1163,6 +1173,8 @@ public:
     {
 
     }
+
+
 
     //update controls
     void update(CabbageGUIType m_cAttr)
@@ -2979,18 +2991,19 @@ private:
 //============================================================
 class CabbageListbox	:	public Component, ListBoxModel
 {
-    String name, channel;
+    String name, channel, currentRowText;
     float rotate;
+    int currentRow;
     Colour bgColour;
     String align, colour, highlightcolour, fontcolour, channelType;
     Justification justify;
     CabbagePluginAudioProcessorEditor* owner;
-    StringArray items;
 
 public:
     CabbageListbox (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
     ~CabbageListbox();
     void paint (Graphics& g) override;
+
     void resized() override;
     int getNumRows() override;
     void listBoxItemDoubleClicked(int row, const MouseEvent &e);
@@ -2999,6 +3012,12 @@ public:
     void selectedRowsChanged (int /*lastRowselected*/) override;
     void update(CabbageGUIType cAttr);
     ListBox listBox;
+    StringArray items;
+    int getCurrentRow()
+    {
+        return currentRow;
+    }
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageListbox);
 };
 //============================================================

@@ -1244,7 +1244,9 @@ CabbageListbox::CabbageListbox(CabbageGUIType &cAttr, CabbagePluginAudioProcesso
     channel(cAttr.getStringProp(CabbageIDs::channel)),
     highlightcolour(cAttr.getStringProp(CabbageIDs::highlightcolour)),
     channelType(cAttr.getStringProp(CabbageIDs::channeltype)),
-    rotate(cAttr.getNumProp(CabbageIDs::rotate))
+    rotate(cAttr.getNumProp(CabbageIDs::rotate)),
+    currentRow(-1),
+    currentRowText("")
 {
     addAndMakeVisible(listBox);
     listBox.setRowHeight (20);
@@ -1338,6 +1340,9 @@ void CabbageListbox::listBoxItemDoubleClicked(int row, const MouseEvent &e)
         owner->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, row+1);
     else
         owner->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, items[row], "string");
+
+    currentRow = row;
+
 }
 
 

@@ -247,6 +247,10 @@ CabbageEncoder::CabbageEncoder(CabbageGUIType &cAttr, CabbagePluginAudioProcesso
     sliderIncr(cAttr.getNumProp(CabbageIDs::sliderincr)),
     sliderPos(0),
     yAxis(0),
+    maxEnabled(cAttr.getNumProp(CabbageIDs::maxenabled)),
+    minEnabled(cAttr.getNumProp(CabbageIDs::minenabled)),
+    min(cAttr.getNumProp(CabbageIDs::minvalue)),
+    max(cAttr.getNumProp(CabbageIDs::maxvalue)),
     shouldDisplayPopup(false),
     currentValue(value),
     startingValue(value),
@@ -303,6 +307,11 @@ void CabbageEncoder::mouseDrag(const MouseEvent& e)
     {
         sliderPos = sliderPos+(e.getOffsetFromDragStart().getY()<yAxis ? -50 : 50);
         currentValue = cUtils::roundToPrec(currentValue+(e.getOffsetFromDragStart().getY()<yAxis ? sliderIncr : -sliderIncr), 5);
+        if (minEnabled==1)
+            currentValue = jmax(min, currentValue);
+        if (maxEnabled==1)
+            currentValue = jmin(max, currentValue);
+
         yAxis = e.getOffsetFromDragStart().getY();
         repaint();
         valueLabel.setText(String(currentValue, 2), dontSendNotification);

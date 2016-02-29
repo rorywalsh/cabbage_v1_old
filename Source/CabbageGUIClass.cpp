@@ -738,6 +738,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::trackerthickness, .05);
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+        cabbageIdentifiers.set(CabbageIDs::minenabled, 0);
+        cabbageIdentifiers.set(CabbageIDs::maxenabled, 0);
     }
 
     //===============groupbox==================//
@@ -1697,6 +1699,7 @@ void CabbageGUIType::parse(String inStr, String identifier)
             }
             else if(identArray[indx].equalsIgnoreCase("min"))
             {
+                cabbageIdentifiers.set(CabbageIDs::minenabled, 1);
                 cabbageIdentifiers.set(CabbageIDs::minvalue, strTokens[0].trim().getFloatValue());
             }
 
@@ -1754,6 +1757,7 @@ void CabbageGUIType::parse(String inStr, String identifier)
             }
             else if(identArray[indx].equalsIgnoreCase("max"))
             {
+                cabbageIdentifiers.set(CabbageIDs::maxenabled, 1);
                 cabbageIdentifiers.set(CabbageIDs::maxvalue, strTokens[0].trim().getFloatValue());
             }
 

@@ -1216,7 +1216,7 @@ public:
 class CabbageEncoder : public Component, public ChangeBroadcaster, public Label::Listener
 {
     String name, channel, outlinecolour, colour, trackercolour, text, textcolour, tooltipText;
-    float rotate, sliderincr, value, sliderIncr, startingValue, sliderPos, currentValue;
+    float rotate, sliderincr, value, sliderIncr, startingValue, sliderPos, currentValue, max, min, maxEnabled, minEnabled;
     Image img;
     int top, left, width, yAxis, textBox, height, line, pivotx, pivoty, resize, corners, progress;
     Point<float> scale;

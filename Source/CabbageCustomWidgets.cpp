@@ -1230,6 +1230,229 @@ void CabbageFFTDisplay::update(CabbageGUIType m_cAttr)
     }
 }
 
+
+//================================================================================================================
+// combobox widget
+//================================================================================================================
+CabbageComboBox::CabbageComboBox(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner):
+    name(cAttr.getStringProp(CabbageIDs::name)),
+    caption(cAttr.getStringProp(CabbageIDs::caption)),
+    colour(cAttr.getStringProp(CabbageIDs::colour)),
+    fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
+    rotate(cAttr.getNumProp(CabbageIDs::rotate)),
+    pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+    pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+    tooltipText(String::empty),
+    refresh(0),
+    owner(_owner)
+{
+    setName(name);
+    offX=offY=offWidth=offHeight=0;
+    StringArray fileNames;
+    groupbox = new GroupComponent(String("groupbox_")+name);
+    combo = new ComboBox(name);
+
+    addAndMakeVisible(groupbox);
+    addAndMakeVisible(combo);
+    groupbox->setVisible(false);
+    groupbox->getProperties().set("groupLine", var(1));
+    combo->setColour(ComboBox::textColourId, Colour::fromString(fontcolour));
+    combo->setColour(ComboBox::backgroundColourId, Colour::fromString(colour));
+    combo->lookAndFeelChanged();
+    combo->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
+
+    groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
+    groupbox->setColour(TextButton::buttonColourId, cUtils::getComponentSkin());
+
+    if(caption.length()>0)
+    {
+        offX=10;
+        offY=35;
+        offWidth=-20;
+        offHeight=-45;
+        groupbox->setVisible(true);
+        groupbox->setText(caption);
+    }
+
+    if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
+    {
+        tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
+        combo->setTooltip(tooltipText);
+    }
+
+    combo->setEditableText (false);
+
+    Justification justify(Justification::centred);
+
+    if(cAttr.getStringProp(CabbageIDs::align)=="left")
+        justify = Justification::left;
+    else if(cAttr.getStringProp(CabbageIDs::align)=="centre")
+        justify = Justification::centred;
+    else
+        justify = Justification::right;
+
+    combo->setJustificationType (justify);
+    combo->setTextWhenNothingSelected(text);
+    this->setWantsKeyboardFocus(false);
+    setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
+    //populate combo with files
+    Array<File> dirFiles;
+
+
+    if(cAttr.getStringProp(CabbageIDs::file).isNotEmpty())
+    {
+        combo->clear(dontSendNotification);
+        String file = File(cAttr.getStringProp(CabbageIDs::file)).loadFileAsString();
+        StringArray lines = StringArray::fromLines(file);
+        for (int i = 0; i < lines.size(); ++i)
+        {
+            combo->addItem(lines[i], i+1);
+        }
+    }
+
+    else if(cAttr.getStringProp(CabbageIDs::filetype).length()<1)
+    {
+        combo->clear(dontSendNotification);
+        for(int i=0; i<cAttr.getStringArrayProp("text").size(); i++)
+        {
+            String item  = cAttr.getStringArrayPropValue("text", i);
+            combo->addItem(item, i+1);
+        }
+    }
+    else
+    {
+        //appProperties->getUserSettings()->getValue("CsoundPluginDirectory");
+        combo->clear(dontSendNotification);
+        //cUtils::showMessage(cAttr.getStringProp(CabbageIDs::workingdir));
+        pluginDir = File(cAttr.getStringProp(CabbageIDs::workingdir));
+
+        filetype = cAttr.getStringProp("filetype");
+
+        pluginDir.findChildFiles(dirFiles, 2, false, filetype);
+
+        for (int i = 0; i < dirFiles.size(); ++i)
+        {
+            //m.addItem (i + menuSize, cabbageFiles[i].getFileNameWithoutExtension());
+            //String test  = String(i+1)+": "+dirFiles[i].getFileName();
+            String filename;
+            if(filetype.contains("snaps"))
+                filename = dirFiles[i].getFileNameWithoutExtension();
+            else
+                filename = dirFiles[i].getFileName();
+
+            fileNames.add(filename);
+            //cAttr.setStringArrayPropValue(CabbageIDs::text, i, filename);
+        }
+
+        fileNames.sort(true);
+        for( int i=0; i<fileNames.size(); i++)
+            combo->addItem(fileNames[i], i+1);
+    }
+    //cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
+    combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);
+
+}
+//---------------------------------------------
+CabbageComboBox::~CabbageComboBox()
+{
+
+}
+
+void CabbageComboBox::refreshFileList()
+{
+//        //appProperties->getUserSettings()->getValue("CsoundPluginDirectory");
+//
+//        //cUtils::showMessage(cAttr.getStringProp(CabbageIDs::workingdir));
+//		Array<File> dirFiles;
+//		String currentItemText = combo->getText();
+//
+//        //const String filetype = cAttr.getStringProp("filetype");
+//
+//        pluginDir.findChildFiles(dirFiles, 2, false, filetype);
+//		StringArray fileNames;
+//        for (int i = 0; i < dirFiles.size(); ++i)
+//        {
+//            //m.addItem (i + menuSize, cabbageFiles[i].getFileNameWithoutExtension());
+//            //String test  = String(i+1)+": "+dirFiles[i].getFileName();
+//            String filename;
+//            if(filetype.contains("snaps"))
+//                filename = dirFiles[i].getFileNameWithoutExtension();
+//            else
+//                filename = dirFiles[i].getFileName();
+//
+//            fileNames.add(filename);
+//            //cAttr.setStringArrayPropValue(CabbageIDs::text, i, filename);
+//        }
+//
+//		int index=-1;
+//        fileNames.sort(true);
+//        for( int i=0; i<fileNames.size(); i++)
+//		{
+//			cUtils::debug(fileNames[i]);
+////            combo->addItem(fileNames[i], i+1);
+//			if(currentItemText==fileNames[i])
+//				index = i;
+//		}
+
+    combo->clear(dontSendNotification);
+
+//		combo->setSelectedItemIndex(index);
+
+}
+
+//update controls
+void CabbageComboBox::update(CabbageGUIType m_cAttr)
+{
+    const MessageManagerLock mmLock;
+    combo->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
+    combo->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+    setBounds(m_cAttr.getBounds());
+    setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
+    if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
+    {
+        rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
+        setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
+    }
+    if(!m_cAttr.getNumProp(CabbageIDs::visible))
+    {
+        setVisible(false);
+        setEnabled(false);
+    }
+    else
+    {
+        setVisible(true);
+        setEnabled(true);
+    }
+
+    if(refresh != m_cAttr.getNumProp(CabbageIDs::refreshfiles))
+    {
+        refresh = m_cAttr.getNumProp(CabbageIDs::refreshfiles);
+        owner->refreshDiskReadingGUIControls("combobox");
+    }
+
+    if(!m_cAttr.getNumProp(CabbageIDs::active))
+    {
+        setEnabled(false);
+    }
+    else
+    {
+        setEnabled(true);
+    }
+    repaint();
+}
+
+
+//---------------------------------------------
+void CabbageComboBox::resized()
+{
+    groupbox->setBounds(0, 0, getWidth(), getHeight());
+    combo->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight);
+    if(rotate!=0)
+        setTransform(AffineTransform::rotation(rotate, getX()+pivotx, pivoty+getY()));
+    this->setWantsKeyboardFocus(false);
+}
+
+
 //================================================================================================================
 // Listbox widget
 //================================================================================================================
@@ -1246,7 +1469,8 @@ CabbageListbox::CabbageListbox(CabbageGUIType &cAttr, CabbagePluginAudioProcesso
     channelType(cAttr.getStringProp(CabbageIDs::channeltype)),
     rotate(cAttr.getNumProp(CabbageIDs::rotate)),
     currentRow(-1),
-    currentRowText("")
+    currentRowText(""),
+    refresh(0)
 {
     addAndMakeVisible(listBox);
     listBox.setRowHeight (20);
@@ -1386,6 +1610,13 @@ void CabbageListbox::update(CabbageGUIType m_cAttr)
         setVisible(true);
         setEnabled(true);
     }
+
+    if(refresh != m_cAttr.getNumProp(CabbageIDs::refreshfiles))
+    {
+        refresh = m_cAttr.getNumProp(CabbageIDs::refreshfiles);
+        owner->refreshDiskReadingGUIControls("listbox");
+    }
+
     if(!m_cAttr.getNumProp(CabbageIDs::active))
     {
         setEnabled(false);
@@ -1396,3 +1627,4 @@ void CabbageListbox::update(CabbageGUIType m_cAttr)
     }
     repaint();
 }
+

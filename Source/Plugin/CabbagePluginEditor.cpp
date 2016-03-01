@@ -3473,7 +3473,7 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIType &cAttr)
                         cAttr.getStringProp(CabbageIDs::svgpath), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName() :
                         globalSVGPath));
 
-    comps.add(new CabbageComboBox(cAttr));
+    comps.add(new CabbageComboBox(cAttr, this));
 
     int idx = comps.size()-1;
     float left = cAttr.getNumProp(CabbageIDs::left);
@@ -3899,6 +3899,7 @@ void CabbagePluginAudioProcessorEditor::refreshDiskReadingGUIControls(String typ
 
                     const String filetype = getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::filetype);
                     Array<File> dirFiles;
+                    var newItems;
                     fileDir.findChildFiles(dirFiles, 2, false, filetype);
 
                     StringArray comboItems;
@@ -3915,9 +3916,16 @@ void CabbagePluginAudioProcessorEditor::refreshDiskReadingGUIControls(String typ
 
                     for (int i = 0; i < dirFiles.size(); ++i)
                         if(filetype.contains("snaps"))
+                        {
                             cabCombo->combo->addItem(dirFiles[i].getFileNameWithoutExtension(), i+1);
+                            newItems.append(dirFiles[i].getFileNameWithoutExtension());
+                        }
                         else
+                        {
                             cabCombo->combo->addItem(dirFiles[i].getFileName(), i+1);
+                            newItems.append(dirFiles[i].getFileName());
+                        }
+
 
                     if(filetype.contains("snaps"))
                     {
@@ -3933,6 +3941,8 @@ void CabbagePluginAudioProcessorEditor::refreshDiskReadingGUIControls(String typ
                     }
 
                     cabCombo->combo->setSelectedId(currentItemID, dontSendNotification);
+                    getFilter()->getGUICtrls(i).setStringArrayProp(CabbageIDs::text, newItems);
+
                 }
             }
         }
@@ -3970,11 +3980,13 @@ void CabbagePluginAudioProcessorEditor::refreshDiskReadingGUIControls(String typ
                     listbox->items.clear();
 
                     for (int i = 0; i < dirFiles.size(); ++i)
+                    {
+                        cUtils::debug(dirFiles[i].getFullPathName());
                         if(filetype.contains("snaps"))
                             listbox->items.add(dirFiles[i].getFileNameWithoutExtension());
                         else
                             listbox->items.add(dirFiles[i].getFileName());
-
+                    }
                     if(filetype.contains("snaps"))
                     {
                         for(int i=0; i<listbox->items.size(); i++)
@@ -4406,6 +4418,13 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
             {
                 static_cast<CabbageEncoder*>(layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
+                getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
+            }
+            //listbox
+            else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("listbox") &&
+                    getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+            {
+                static_cast<CabbageListbox*>(layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
                 getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
             }
             //table

@@ -133,6 +133,7 @@ public:
     void setEditMode(bool on);
     void InsertGUIControls(CabbageGUIType cAttr);
     void ksmpsYieldCallback();
+    void refreshDiskReadingGUIControls(String typeOfControl);
     void updateSize();
     //used in Android mode to rescale according to screen res
     ScopedPointer<CabbagePropertiesDialog> propsWindow;
@@ -222,7 +223,6 @@ private:
     void insertScoreStatementText(Table *table, bool overwrite);
     void restoreParametersFromPresets(XmlElement* xmlData);
     void savePresetsFromParameters(File selectedFile, String mode);
-    void refreshDiskReadingGUIControls(String typeOfControl);
     void updatefTableData(GenTable* table);
     bool checkForIdentifierMessage(CabbageGUIType cAttr, String type)
     {

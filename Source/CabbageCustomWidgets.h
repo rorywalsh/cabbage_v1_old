@@ -1040,186 +1040,30 @@ public:
 };
 
 //==============================================================================
-// custom checkbox component with optional surrounding groupbox
+// custom checkbox component
 //==============================================================================
 class CabbageComboBox : public Component
 {
     //ScopedPointer<LookAndFeel> lookFeel;
-    int offX, offY, offWidth, offHeight, pivotx, pivoty;
-    String name, tooltipText, caption, text, colour, fontcolour;
+    int offX, offY, offWidth, offHeight, pivotx, pivoty, refresh;
+    String name, tooltipText, caption, text, colour, fontcolour, filetype;
     float rotate;
+    File pluginDir;
+    CabbagePluginAudioProcessorEditor* owner;
+
+
 public:
     ScopedPointer<GroupComponent> groupbox;
     ScopedPointer<ComboBox> combo;
     //---- constructor -----
-    CabbageComboBox(CabbageGUIType &cAttr):
-        name(cAttr.getStringProp(CabbageIDs::name)),
-        caption(cAttr.getStringProp(CabbageIDs::caption)),
-        colour(cAttr.getStringProp(CabbageIDs::colour)),
-        fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
-        rotate(cAttr.getNumProp(CabbageIDs::rotate)),
-        pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-        pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
-        tooltipText(String::empty)
-    {
-        setName(name);
-        offX=offY=offWidth=offHeight=0;
-        StringArray fileNames;
-        groupbox = new GroupComponent(String("groupbox_")+name);
-        combo = new ComboBox(name);
-
-        addAndMakeVisible(groupbox);
-        addAndMakeVisible(combo);
-        groupbox->setVisible(false);
-        groupbox->getProperties().set("groupLine", var(1));
-        combo->setColour(ComboBox::textColourId, Colour::fromString(fontcolour));
-        combo->setColour(ComboBox::backgroundColourId, Colour::fromString(colour));
-        combo->lookAndFeelChanged();
-        combo->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
-
-        groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
-        groupbox->setColour(TextButton::buttonColourId, cUtils::getComponentSkin());
-
-        if(caption.length()>0)
-        {
-            offX=10;
-            offY=35;
-            offWidth=-20;
-            offHeight=-45;
-            groupbox->setVisible(true);
-            groupbox->setText(caption);
-        }
-
-        if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
-        {
-            tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
-            combo->setTooltip(tooltipText);
-        }
-
-        combo->setEditableText (false);
-
-        Justification justify(Justification::centred);
-
-        if(cAttr.getStringProp(CabbageIDs::align)=="left")
-            justify = Justification::left;
-        else if(cAttr.getStringProp(CabbageIDs::align)=="centre")
-            justify = Justification::centred;
-        else
-            justify = Justification::right;
-
-        combo->setJustificationType (justify);
-        combo->setTextWhenNothingSelected(text);
-        this->setWantsKeyboardFocus(false);
-        setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
-        //populate combo with files
-        Array<File> dirFiles;
-
-
-        if(cAttr.getStringProp(CabbageIDs::file).isNotEmpty())
-        {
-            combo->clear(dontSendNotification);
-            String file = File(cAttr.getStringProp(CabbageIDs::file)).loadFileAsString();
-            StringArray lines = StringArray::fromLines(file);
-            for (int i = 0; i < lines.size(); ++i)
-            {
-                combo->addItem(lines[i], i+1);
-            }
-        }
-
-        else if(cAttr.getStringProp(CabbageIDs::filetype).length()<1)
-        {
-            combo->clear(dontSendNotification);
-            for(int i=0; i<cAttr.getStringArrayProp("text").size(); i++)
-            {
-                String item  = cAttr.getStringArrayPropValue("text", i);
-                combo->addItem(item, i+1);
-            }
-        }
-        else
-        {
-            //appProperties->getUserSettings()->getValue("CsoundPluginDirectory");
-            combo->clear(dontSendNotification);
-            //cUtils::showMessage(cAttr.getStringProp(CabbageIDs::workingdir));
-            File pluginDir(cAttr.getStringProp(CabbageIDs::workingdir));
-
-            const String filetype = cAttr.getStringProp("filetype");
-
-            pluginDir.findChildFiles(dirFiles, 2, false, filetype);
-
-            for (int i = 0; i < dirFiles.size(); ++i)
-            {
-                //m.addItem (i + menuSize, cabbageFiles[i].getFileNameWithoutExtension());
-                //String test  = String(i+1)+": "+dirFiles[i].getFileName();
-                String filename;
-                if(filetype.contains("snaps"))
-                    filename = dirFiles[i].getFileNameWithoutExtension();
-                else
-                    filename = dirFiles[i].getFileName();
-
-                fileNames.add(filename);
-                //cAttr.setStringArrayPropValue(CabbageIDs::text, i, filename);
-            }
-
-            fileNames.sort(true);
-            for( int i=0; i<fileNames.size(); i++)
-                combo->addItem(fileNames[i], i+1);
-        }
-        //cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
-        combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);
-
-    }
+    CabbageComboBox(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
     //---------------------------------------------
-    ~CabbageComboBox()
-    {
-
-    }
-
-
-
+    ~CabbageComboBox();
+    void refreshFileList();
     //update controls
-    void update(CabbageGUIType m_cAttr)
-    {
-        const MessageManagerLock mmLock;
-        combo->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
-        combo->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
-        setBounds(m_cAttr.getBounds());
-        setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
-        if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
-        {
-            rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
-            setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
-        }
-        if(!m_cAttr.getNumProp(CabbageIDs::visible))
-        {
-            setVisible(false);
-            setEnabled(false);
-        }
-        else
-        {
-            setVisible(true);
-            setEnabled(true);
-        }
-        if(!m_cAttr.getNumProp(CabbageIDs::active))
-        {
-            setEnabled(false);
-        }
-        else
-        {
-            setEnabled(true);
-        }
-        repaint();
-    }
-
-
+    void update(CabbageGUIType m_cAttr);
     //---------------------------------------------
-    void resized()
-    {
-        groupbox->setBounds(0, 0, getWidth(), getHeight());
-        combo->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight);
-        if(rotate!=0)
-            setTransform(AffineTransform::rotation(rotate, getX()+pivotx, pivoty+getY()));
-        this->setWantsKeyboardFocus(false);
-    }
+    void resized();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageComboBox);
 };
@@ -1967,7 +1811,6 @@ public:
         soundFiler->setWaveform(buffer, channels);
     }
 
-
     int getPosition()
     {
         return soundFiler->getCurrentPlayPosInSamples();
@@ -2000,12 +1843,15 @@ private:
 class CabbageKeyboard	:	public Component
 {
     float rotate;
-    int pivotx, pivoty;
+    int pivotx, pivoty, scrollbars;
+    float keyWidth;
 public:
     CabbageKeyboard (CabbageGUIType &cAttr, MidiKeyboardState &state)
         : rotate(cAttr.getNumProp(CabbageIDs::rotate)),
           pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
-          pivoty(cAttr.getNumProp(CabbageIDs::pivoty))
+          pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+          keyWidth(cAttr.getNumProp(CabbageIDs::keywidth)),
+          scrollbars(cAttr.getNumProp(CabbageIDs::keywidth))
     {
         addAndMakeVisible(keyboard = new MidiKeyboardComponent(state, MidiKeyboardComponent::horizontalKeyboard));
         if(!cAttr.getNumProp(CabbageIDs::visible))
@@ -2021,13 +1867,9 @@ public:
 
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
         keyboard->setLowestVisibleKey(cAttr.getNumProp(CabbageIDs::value));
-
         keyboard->setOctaveForMiddleC(cAttr.getNumProp(CabbageIDs::middlec));
-
-#ifdef AndroidBuild
-        keyboard->setKeyWidth(30);
-#endif
-        keyboard->setScrollButtonsVisible(true);
+        keyboard->setKeyWidth(keyWidth);
+        keyboard->setScrollButtonsVisible(scrollbars==1 ? true : false);
 
     }
 
@@ -2998,6 +2840,7 @@ class CabbageListbox	:	public Component, ListBoxModel
     String align, colour, highlightcolour, fontcolour, channelType;
     Justification justify;
     CabbagePluginAudioProcessorEditor* owner;
+    int refresh;
 
 public:
     CabbageListbox (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);

@@ -28,6 +28,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
     height(0),
     left(0),
     top(0),
+    refreshFromDisk(false),
     warningMessages("")
 {
 //Default values are assigned to all attributres
@@ -962,6 +963,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, "keyboard");
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
+        cabbageIdentifiers.set(CabbageIDs::keywidth, 16);
     }
     //===============form==================//
     else if(strTokens[0].trim() == "form")
@@ -1177,6 +1179,13 @@ void CabbageGUIType::parse(String inStr, String identifier)
             //showMessage(newString, nullptr);
             String tstr = newString.substring(newString.indexOf("(")+1, newString.indexOf(0, ")"));
             //showMessage(tstr, nullptr);
+
+            //refreshfiles works like a function call, it takes no parameters
+            if(identArray[indx].equalsIgnoreCase("refreshfiles"))
+            {
+                refreshFromDisk =! refreshFromDisk;
+                cabbageIdentifiers.set(CabbageIDs::refreshfiles, refreshFromDisk==true ? 1: 0);
+            }
 
             if(tstr.length()==0)
                 return;
@@ -1716,6 +1725,11 @@ void CabbageGUIType::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("fill"))
             {
                 cabbageIdentifiers.set(CabbageIDs::fill, strTokens[0].trim().getIntValue());
+            }
+
+            else if(identArray[indx].equalsIgnoreCase("keywidth"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::keywidth, strTokens[0].trim().getFloatValue());
             }
 
             else if(identArray[indx].equalsIgnoreCase("rotate"))

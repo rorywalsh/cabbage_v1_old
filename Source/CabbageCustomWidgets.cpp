@@ -507,7 +507,8 @@ RangeSlider::RangeSlider(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEdito
       skew(cAttr.getNumProp(CabbageIDs::sliderskew)),
       colour(cAttr.getStringProp(CabbageIDs::colour)),
       trackerThickness(cAttr.getNumProp(CabbageIDs::trackerthickness)),
-      trackerColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::trackercolour)))
+      trackerColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::trackercolour))),
+      index(-99)
 {
     if(cAttr.getStringArrayProp(CabbageIDs::channel).size()>1)
     {
@@ -765,10 +766,8 @@ void RangeSlider::sendValuesToCsound(double val1, double val2, int thumb)
             owner->getFilter()->setParameterNotifyingHost(index, value1);
             owner->getFilter()->setParameterNotifyingHost(index+1, value2);
         }
-#endif
 
-        //owner->getFilter()->getGUICtrls(index).setNumProp(CabbageIDs::minvalue, val1);
-        //owner->getFilter()->getGUICtrls(index+1).setNumProp(CabbageIDs::maxvalue, val2);
+#endif
     }
 
 }
@@ -1358,47 +1357,6 @@ CabbageComboBox::~CabbageComboBox()
 
 }
 
-void CabbageComboBox::refreshFileList()
-{
-//        //appProperties->getUserSettings()->getValue("CsoundPluginDirectory");
-//
-//        //cUtils::showMessage(cAttr.getStringProp(CabbageIDs::workingdir));
-//		Array<File> dirFiles;
-//		String currentItemText = combo->getText();
-//
-//        //const String filetype = cAttr.getStringProp("filetype");
-//
-//        pluginDir.findChildFiles(dirFiles, 2, false, filetype);
-//		StringArray fileNames;
-//        for (int i = 0; i < dirFiles.size(); ++i)
-//        {
-//            //m.addItem (i + menuSize, cabbageFiles[i].getFileNameWithoutExtension());
-//            //String test  = String(i+1)+": "+dirFiles[i].getFileName();
-//            String filename;
-//            if(filetype.contains("snaps"))
-//                filename = dirFiles[i].getFileNameWithoutExtension();
-//            else
-//                filename = dirFiles[i].getFileName();
-//
-//            fileNames.add(filename);
-//            //cAttr.setStringArrayPropValue(CabbageIDs::text, i, filename);
-//        }
-//
-//		int index=-1;
-//        fileNames.sort(true);
-//        for( int i=0; i<fileNames.size(); i++)
-//		{
-//			cUtils::debug(fileNames[i]);
-////            combo->addItem(fileNames[i], i+1);
-//			if(currentItemText==fileNames[i])
-//				index = i;
-//		}
-
-    combo->clear(dontSendNotification);
-
-//		combo->setSelectedItemIndex(index);
-
-}
 
 //update controls
 void CabbageComboBox::update(CabbageGUIType m_cAttr)

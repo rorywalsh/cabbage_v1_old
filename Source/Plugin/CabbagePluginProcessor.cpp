@@ -289,9 +289,9 @@ void CabbagePluginAudioProcessor::initAllChannels()
                 csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::value));
         }
 
-
-        messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
-                guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
+        if(guiCtrls.getReference(i).getStringProp(CabbageIDs::type)!="hrange" && guiCtrls.getReference(i).getStringProp(CabbageIDs::type)!="vrange")
+            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
+                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
     }
 
     //init all channels with their init val, and set parameters
@@ -2060,7 +2060,6 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                         yieldCounter = 0;
                         sendOutgoingMessagesToCsound();
                         updateCabbageControls();
-                        sendChangeMessage();
                     }
                     else
                         ++yieldCounter;

@@ -1059,7 +1059,7 @@ public:
     CabbageComboBox(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
     //---------------------------------------------
     ~CabbageComboBox();
-    void refreshFileList();
+
     //update controls
     void update(CabbageGUIType m_cAttr);
     //---------------------------------------------
@@ -1851,7 +1851,7 @@ public:
           pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
           pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
           keyWidth(cAttr.getNumProp(CabbageIDs::keywidth)),
-          scrollbars(cAttr.getNumProp(CabbageIDs::keywidth))
+          scrollbars(cAttr.getNumProp(CabbageIDs::scrollbars))
     {
         addAndMakeVisible(keyboard = new MidiKeyboardComponent(state, MidiKeyboardComponent::horizontalKeyboard));
         if(!cAttr.getNumProp(CabbageIDs::visible))

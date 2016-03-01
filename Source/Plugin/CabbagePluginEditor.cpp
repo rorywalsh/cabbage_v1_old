@@ -2935,6 +2935,8 @@ void CabbagePluginAudioProcessorEditor::InsertRangeSlider(CabbageGUIType &cAttr)
     rangeSlider->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
     rangeSlider->getProperties().set(CabbageIDs::index, idx);
 
+
+
     rangeSlider->getSlider().setIndex(idx);
 
     comps.add(rangeSlider);
@@ -4234,8 +4236,8 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     {
                         int index = getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name).contains("dummy") ? i-1 : i;
                         {
-                            if(getFilter()->getGUICtrls(index).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
-                                static_cast<CabbageRangeSlider2*>(comps[index])->update(getFilter()->getGUICtrls(index));
+//                            if(getFilter()->getGUICtrls(index).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+//                                static_cast<CabbageRangeSlider2*>(comps[index])->update(getFilter()->getGUICtrls(index));
 
 #ifndef Cabbage_Build_Standalone
                             static_cast<CabbageRangeSlider2*>(comps[index])->getSlider().setValue(getFilter()->getParameter(index),

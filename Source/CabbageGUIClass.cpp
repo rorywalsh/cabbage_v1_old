@@ -964,6 +964,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
         cabbageIdentifiers.set(CabbageIDs::keywidth, 16);
+        cabbageIdentifiers.set(CabbageIDs::scrollbars, 1);
+
     }
     //===============form==================//
     else if(strTokens[0].trim() == "form")

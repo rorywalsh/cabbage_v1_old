@@ -289,9 +289,9 @@ void CabbagePluginAudioProcessor::initAllChannels()
                 csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::value));
         }
 
-
-        messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
-                guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
+        if(guiCtrls.getReference(i).getStringProp(CabbageIDs::type)!="hrange" && guiCtrls.getReference(i).getStringProp(CabbageIDs::type)!="vrange")
+            messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
+                    guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
     }
 
     //init all channels with their init val, and set parameters
@@ -472,9 +472,11 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
     else
     {
         cUtils::debug("Csound couldn't compile your file");
+#ifndef AndroidBuild
         String message= "Csound couldn't compile your file. Please check the Csound output console for more information\n\nYou can disable this warning from the Options->Preference menu.";
         if(getActiveEditor() && getPreference(appProperties, "DisableCompilerErrorWarning")==0)
             showMessage(message, &getActiveEditor()->getLookAndFeel());
+#endif
         csoundStatus=false;
         return 0;
     }
@@ -644,9 +646,11 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
     {
         Logger::writeToLog("Csound couldn't compile your file");
         csoundStatus=false;
+#ifndef AndroidBuild
         String message= "Csound couldn't compile your file. Please check the Csound output console for more information\n\nYou can disable this warning from the Options->Preference menu.";
         if(getActiveEditor() && getPreference(appProperties, "DisableCompilerErrorWarning")==0)
             showMessage(message, &getActiveEditor()->getLookAndFeel());
+#endif
     }
     getCallbackLock().exit();
 
@@ -824,7 +828,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                         }
 
 
-                        cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
+                        cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber+lineWhichCabbageSectionStarts);
 
                         warningMessage = "";
                         warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
@@ -903,7 +907,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                         if(cAttr.getWarningMessages().isNotEmpty())
                             csound->Message(warningMessage.toUTF8().getAddress());
 
-                        cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber);
+                        cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber+lineWhichCabbageSectionStarts);
                         csdLine = "";
 
                         //attach widget to plant if need be
@@ -2056,7 +2060,6 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                         yieldCounter = 0;
                         sendOutgoingMessagesToCsound();
                         updateCabbageControls();
-                        sendChangeMessage();
                     }
                     else
                         ++yieldCounter;

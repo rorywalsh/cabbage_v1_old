@@ -200,7 +200,10 @@ public:
         add("gradient");
         add("svgfile");
         add("svgdebug");
-        add("ffttablenumber");
+        add("minenabled");
+        add("maxenabled");
+        add("keywidth");
+        add("refreshfiles");
 //sample identifiers for stepper widget
         add("numberofsteps");
         add("stepbpm");
@@ -344,7 +347,10 @@ static const Identifier ffttablenumber = "ffttablenumber";
 static const Identifier velocity = "velocity";
 static const Identifier highlightcolour = "highlightcolour";
 static const Identifier fontstyle = "fontstyle";
-
+static const Identifier minenabled = "minenabled";
+static const Identifier maxenabled = "maxenabled";
+static const Identifier keywidth = "keywidth";
+static const Identifier refreshfiles = "refreshfiles";
 //list of static consts for types of widgets
 static const String combobox = "combobox";
 static const String numberbox = "numberbox";
@@ -406,6 +412,7 @@ class CabbageGUIType : public cUtils
     Array<int> tableNumbers;
     Array<float> tableChannelValues;
     String warningMessages;
+    bool refreshFromDisk;
 
 public:
     String getWarningMessages()

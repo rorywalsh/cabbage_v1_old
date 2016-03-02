@@ -39,7 +39,7 @@ widgetarray("chan", number), active(val), fontstyle("style")
 
 **corners(val)** Sets the radius size of the widget's corners.
 
-**fontstyle("style")** Sets the style of the font. Valid styles are, "plain", "bold"(default), "bolditalic", "italic" and "underlined" 
+**fontstyle("style")** Sets the style of the font. Valid styles are, "plain", "bold"(default), "bold italic", "italic", "underlined", "bold underlined", "italic underlined" and "bold italic underlined". 
 
 <!--(End of identifiers)/-->
 

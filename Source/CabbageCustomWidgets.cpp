@@ -247,6 +247,10 @@ CabbageEncoder::CabbageEncoder(CabbageGUIType &cAttr, CabbagePluginAudioProcesso
     sliderIncr(cAttr.getNumProp(CabbageIDs::sliderincr)),
     sliderPos(0),
     yAxis(0),
+    maxEnabled(cAttr.getNumProp(CabbageIDs::maxenabled)),
+    minEnabled(cAttr.getNumProp(CabbageIDs::minenabled)),
+    min(cAttr.getNumProp(CabbageIDs::minvalue)),
+    max(cAttr.getNumProp(CabbageIDs::maxvalue)),
     shouldDisplayPopup(false),
     currentValue(value),
     startingValue(value),
@@ -303,6 +307,11 @@ void CabbageEncoder::mouseDrag(const MouseEvent& e)
     {
         sliderPos = sliderPos+(e.getOffsetFromDragStart().getY()<yAxis ? -50 : 50);
         currentValue = cUtils::roundToPrec(currentValue+(e.getOffsetFromDragStart().getY()<yAxis ? sliderIncr : -sliderIncr), 5);
+        if (minEnabled==1)
+            currentValue = jmax(min, currentValue);
+        if (maxEnabled==1)
+            currentValue = jmin(max, currentValue);
+
         yAxis = e.getOffsetFromDragStart().getY();
         repaint();
         valueLabel.setText(String(currentValue, 2), dontSendNotification);
@@ -498,7 +507,8 @@ RangeSlider::RangeSlider(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEdito
       skew(cAttr.getNumProp(CabbageIDs::sliderskew)),
       colour(cAttr.getStringProp(CabbageIDs::colour)),
       trackerThickness(cAttr.getNumProp(CabbageIDs::trackerthickness)),
-      trackerColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::trackercolour)))
+      trackerColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::trackercolour))),
+      index(-99)
 {
     if(cAttr.getStringArrayProp(CabbageIDs::channel).size()>1)
     {
@@ -756,10 +766,8 @@ void RangeSlider::sendValuesToCsound(double val1, double val2, int thumb)
             owner->getFilter()->setParameterNotifyingHost(index, value1);
             owner->getFilter()->setParameterNotifyingHost(index+1, value2);
         }
-#endif
 
-        //owner->getFilter()->getGUICtrls(index).setNumProp(CabbageIDs::minvalue, val1);
-        //owner->getFilter()->getGUICtrls(index+1).setNumProp(CabbageIDs::maxvalue, val2);
+#endif
     }
 
 }
@@ -1221,6 +1229,188 @@ void CabbageFFTDisplay::update(CabbageGUIType m_cAttr)
     }
 }
 
+
+//================================================================================================================
+// combobox widget
+//================================================================================================================
+CabbageComboBox::CabbageComboBox(CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner):
+    name(cAttr.getStringProp(CabbageIDs::name)),
+    caption(cAttr.getStringProp(CabbageIDs::caption)),
+    colour(cAttr.getStringProp(CabbageIDs::colour)),
+    fontcolour(cAttr.getStringProp(CabbageIDs::fontcolour)),
+    rotate(cAttr.getNumProp(CabbageIDs::rotate)),
+    pivotx(cAttr.getNumProp(CabbageIDs::pivotx)),
+    pivoty(cAttr.getNumProp(CabbageIDs::pivoty)),
+    tooltipText(String::empty),
+    refresh(0),
+    owner(_owner)
+{
+    setName(name);
+    offX=offY=offWidth=offHeight=0;
+    StringArray fileNames;
+    groupbox = new GroupComponent(String("groupbox_")+name);
+    combo = new ComboBox(name);
+
+    addAndMakeVisible(groupbox);
+    addAndMakeVisible(combo);
+    groupbox->setVisible(false);
+    groupbox->getProperties().set("groupLine", var(1));
+    combo->setColour(ComboBox::textColourId, Colour::fromString(fontcolour));
+    combo->setColour(ComboBox::backgroundColourId, Colour::fromString(colour));
+    combo->lookAndFeelChanged();
+    combo->getProperties().set("svgpath", cAttr.getStringProp(CabbageIDs::svgpath));
+
+    groupbox->setColour(GroupComponent::textColourId, Colour::fromString(fontcolour));
+    groupbox->setColour(TextButton::buttonColourId, cUtils::getComponentSkin());
+
+    if(caption.length()>0)
+    {
+        offX=10;
+        offY=35;
+        offWidth=-20;
+        offHeight=-45;
+        groupbox->setVisible(true);
+        groupbox->setText(caption);
+    }
+
+    if(cAttr.getStringProp(CabbageIDs::popuptext).isNotEmpty())
+    {
+        tooltipText = cAttr.getStringProp(CabbageIDs::popuptext);
+        combo->setTooltip(tooltipText);
+    }
+
+    combo->setEditableText (false);
+
+    Justification justify(Justification::centred);
+
+    if(cAttr.getStringProp(CabbageIDs::align)=="left")
+        justify = Justification::left;
+    else if(cAttr.getStringProp(CabbageIDs::align)=="centre")
+        justify = Justification::centred;
+    else
+        justify = Justification::right;
+
+    combo->setJustificationType (justify);
+    combo->setTextWhenNothingSelected(text);
+    this->setWantsKeyboardFocus(false);
+    setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
+    //populate combo with files
+    Array<File> dirFiles;
+
+
+    if(cAttr.getStringProp(CabbageIDs::file).isNotEmpty())
+    {
+        combo->clear(dontSendNotification);
+        String file = File(cAttr.getStringProp(CabbageIDs::file)).loadFileAsString();
+        StringArray lines = StringArray::fromLines(file);
+        for (int i = 0; i < lines.size(); ++i)
+        {
+            combo->addItem(lines[i], i+1);
+        }
+    }
+
+    else if(cAttr.getStringProp(CabbageIDs::filetype).length()<1)
+    {
+        combo->clear(dontSendNotification);
+        for(int i=0; i<cAttr.getStringArrayProp("text").size(); i++)
+        {
+            String item  = cAttr.getStringArrayPropValue("text", i);
+            combo->addItem(item, i+1);
+        }
+    }
+    else
+    {
+        //appProperties->getUserSettings()->getValue("CsoundPluginDirectory");
+        combo->clear(dontSendNotification);
+        //cUtils::showMessage(cAttr.getStringProp(CabbageIDs::workingdir));
+        pluginDir = File(cAttr.getStringProp(CabbageIDs::workingdir));
+
+        filetype = cAttr.getStringProp("filetype");
+
+        pluginDir.findChildFiles(dirFiles, 2, false, filetype);
+
+        for (int i = 0; i < dirFiles.size(); ++i)
+        {
+            //m.addItem (i + menuSize, cabbageFiles[i].getFileNameWithoutExtension());
+            //String test  = String(i+1)+": "+dirFiles[i].getFileName();
+            String filename;
+            if(filetype.contains("snaps"))
+                filename = dirFiles[i].getFileNameWithoutExtension();
+            else
+                filename = dirFiles[i].getFileName();
+
+            fileNames.add(filename);
+            //cAttr.setStringArrayPropValue(CabbageIDs::text, i, filename);
+        }
+
+        fileNames.sort(true);
+        for( int i=0; i<fileNames.size(); i++)
+            combo->addItem(fileNames[i], i+1);
+    }
+    //cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
+    combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);
+
+}
+//---------------------------------------------
+CabbageComboBox::~CabbageComboBox()
+{
+
+}
+
+
+//update controls
+void CabbageComboBox::update(CabbageGUIType m_cAttr)
+{
+    const MessageManagerLock mmLock;
+    combo->getProperties().set("colour", m_cAttr.getStringProp(CabbageIDs::colour));
+    combo->getProperties().set("fontcolour", m_cAttr.getStringProp(CabbageIDs::fontcolour));
+    setBounds(m_cAttr.getBounds());
+    setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));
+    if(rotate!=m_cAttr.getNumProp(CabbageIDs::rotate))
+    {
+        rotate = m_cAttr.getNumProp(CabbageIDs::rotate);
+        setTransform(AffineTransform::rotation(rotate, getX()+m_cAttr.getNumProp(CabbageIDs::pivotx), getY()+m_cAttr.getNumProp(CabbageIDs::pivoty)));
+    }
+    if(!m_cAttr.getNumProp(CabbageIDs::visible))
+    {
+        setVisible(false);
+        setEnabled(false);
+    }
+    else
+    {
+        setVisible(true);
+        setEnabled(true);
+    }
+
+    if(refresh != m_cAttr.getNumProp(CabbageIDs::refreshfiles))
+    {
+        refresh = m_cAttr.getNumProp(CabbageIDs::refreshfiles);
+        owner->refreshDiskReadingGUIControls("combobox");
+    }
+
+    if(!m_cAttr.getNumProp(CabbageIDs::active))
+    {
+        setEnabled(false);
+    }
+    else
+    {
+        setEnabled(true);
+    }
+    repaint();
+}
+
+
+//---------------------------------------------
+void CabbageComboBox::resized()
+{
+    groupbox->setBounds(0, 0, getWidth(), getHeight());
+    combo->setBounds(offX, offY, getWidth()+offWidth, getHeight()+offHeight);
+    if(rotate!=0)
+        setTransform(AffineTransform::rotation(rotate, getX()+pivotx, pivoty+getY()));
+    this->setWantsKeyboardFocus(false);
+}
+
+
 //================================================================================================================
 // Listbox widget
 //================================================================================================================
@@ -1235,7 +1425,10 @@ CabbageListbox::CabbageListbox(CabbageGUIType &cAttr, CabbagePluginAudioProcesso
     channel(cAttr.getStringProp(CabbageIDs::channel)),
     highlightcolour(cAttr.getStringProp(CabbageIDs::highlightcolour)),
     channelType(cAttr.getStringProp(CabbageIDs::channeltype)),
-    rotate(cAttr.getNumProp(CabbageIDs::rotate))
+    rotate(cAttr.getNumProp(CabbageIDs::rotate)),
+    currentRow(-1),
+    currentRowText(""),
+    refresh(0)
 {
     addAndMakeVisible(listBox);
     listBox.setRowHeight (20);
@@ -1275,6 +1468,8 @@ CabbageListbox::CabbageListbox(CabbageGUIType &cAttr, CabbagePluginAudioProcesso
         Array<File> dirFiles;
         File pluginDir(cAttr.getStringProp(CabbageIDs::workingdir));
 
+        cUtils::debug(cAttr.getStringProp(CabbageIDs::workingdir));
+
         const String filetype = cAttr.getStringProp("filetype");
 
         pluginDir.findChildFiles(dirFiles, 2, false, filetype);
@@ -1288,8 +1483,11 @@ CabbageListbox::CabbageListbox(CabbageGUIType &cAttr, CabbagePluginAudioProcesso
                 filename = dirFiles[i].getFileName();
             items.add(filename);
         }
+
+        items.sort(true);
     }
     //cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
+
     listBox.updateContent();
     listBox.selectRow(cAttr.getNumProp(CabbageIDs::value)-1);
 
@@ -1324,6 +1522,9 @@ void CabbageListbox::listBoxItemDoubleClicked(int row, const MouseEvent &e)
         owner->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, row+1);
     else
         owner->getFilter()->messageQueue.addOutgoingChannelMessageToQueue(channel, items[row], "string");
+
+    currentRow = row;
+
 }
 
 
@@ -1339,9 +1540,9 @@ void CabbageListbox::paintListBoxItem (int rowNumber, Graphics& g,
     g.drawFittedText(items[rowNumber], Rectangle<int> (width, height), justify, 0);
 }
 
-void CabbageListbox::selectedRowsChanged (int /*lastRowselected*/)
+void CabbageListbox::selectedRowsChanged (int lastRowselected)
 {
-
+    currentRow = lastRowselected;
 }
 
 void CabbageListbox::update(CabbageGUIType m_cAttr)
@@ -1367,6 +1568,13 @@ void CabbageListbox::update(CabbageGUIType m_cAttr)
         setVisible(true);
         setEnabled(true);
     }
+
+    if(refresh != m_cAttr.getNumProp(CabbageIDs::refreshfiles))
+    {
+        refresh = m_cAttr.getNumProp(CabbageIDs::refreshfiles);
+        owner->refreshDiskReadingGUIControls("listbox");
+    }
+
     if(!m_cAttr.getNumProp(CabbageIDs::active))
     {
         setEnabled(false);
@@ -1377,3 +1585,4 @@ void CabbageListbox::update(CabbageGUIType m_cAttr)
     }
     repaint();
 }
+

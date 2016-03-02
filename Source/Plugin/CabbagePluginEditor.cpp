@@ -2113,6 +2113,19 @@ void CabbagePluginAudioProcessorEditor::InsertListbox(CabbageGUIType &cAttr)
         cAttr.setStringProp(CabbageIDs::file, file);
     }
 
+    String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
+    cUtils::debug(cAttr.getStringProp(CabbageIDs::workingdir));
+    String path = cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::workingdir), currentFileLocation);
+
+
+    if(File::isAbsolutePath(cAttr.getStringProp(CabbageIDs::workingdir))==false)
+    {
+        if(File::isAbsolutePath(path)!=true)
+            cAttr.setStringProp(CabbageIDs::workingdir, currentFileLocation);
+        else
+            cAttr.setStringProp(CabbageIDs::workingdir, path);
+    }
+
     CabbageListbox* listbox = new CabbageListbox(cAttr, this);
 
     float left = cAttr.getNumProp(CabbageIDs::left);
@@ -2922,6 +2935,8 @@ void CabbagePluginAudioProcessorEditor::InsertRangeSlider(CabbageGUIType &cAttr)
     rangeSlider->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
     rangeSlider->getProperties().set(CabbageIDs::index, idx);
 
+
+
     rangeSlider->getSlider().setIndex(idx);
 
     comps.add(rangeSlider);
@@ -3195,6 +3210,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                     {
                                         savePresetsFromParameters(File(fullFileName), "create");
                                         refreshDiskReadingGUIControls("combobox");
+                                        refreshDiskReadingGUIControls("listbox");
                                         return;
                                     }
                                 }
@@ -3253,6 +3269,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                     }
 
                                     refreshDiskReadingGUIControls("combobox");
+                                    refreshDiskReadingGUIControls("listbox");
                                 }
                                 else
                                 {
@@ -3279,6 +3296,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                                                     selectedFile.getFullPathName(),
                                                     "string");
                                         refreshDiskReadingGUIControls("combobox");
+                                        refreshDiskReadingGUIControls("listbox");
                                         lastOpenedDirectory = selectedFile.getFullPathName();
                                     }
                                 }
@@ -3457,7 +3475,7 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIType &cAttr)
                         cAttr.getStringProp(CabbageIDs::svgpath), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName() :
                         globalSVGPath));
 
-    comps.add(new CabbageComboBox(cAttr));
+    comps.add(new CabbageComboBox(cAttr, this));
 
     int idx = comps.size()-1;
     float left = cAttr.getNumProp(CabbageIDs::left);
@@ -3862,44 +3880,131 @@ void CabbagePluginAudioProcessorEditor::refreshDiskReadingGUIControls(String typ
     for(int i=0; i<getFilter()->getGUICtrlsSize(); i++)
     {
         //if typeOfControl == combobox, user must have file type set for comboboxes to refresh
-        if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase(typeOfControl) &&
-                getFilter()->getGUICtrls(i).getStringProp("filetype").isNotEmpty())
+        if(typeOfControl=="combobox")
         {
-            CabbageComboBox* cabCombo = dynamic_cast<CabbageComboBox*>(comps[i]);
-            if(cabCombo)
+            if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase(typeOfControl) &&
+                    getFilter()->getGUICtrls(i).getStringProp("filetype").isNotEmpty())
             {
-                File fileDir;
-                int currentItemID = cabCombo->combo->getSelectedId();
-                String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
-
-
-                if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::workingdir).isEmpty())
-                    fileDir = File(currentFileLocation);
-                else
-                    fileDir = File(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::workingdir));
-
-                const String filetype = getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::filetype);
-                Array<File> dirFiles;
-                fileDir.findChildFiles(dirFiles, 2, false, filetype);
-
-                StringArray comboItems;
-                for(int i=0; i<cabCombo->combo->getNumItems(); i++)
+                CabbageComboBox* cabCombo = dynamic_cast<CabbageComboBox*>(comps[i]);
+                if(cabCombo)
                 {
-                    comboItems.add(cabCombo->combo->getItemText(i));
-                }
+                    File fileDir;
+                    int currentItemID = cabCombo->combo->getSelectedId();
+                    String currentText = cabCombo->combo->getText();
+                    String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
 
-                cabCombo->combo->clear(dontSendNotification);
-                for (int i = 0; i < dirFiles.size(); ++i)
-                    if(filetype.contains("snaps"))
-                        cabCombo->combo->addItem(dirFiles[i].getFileNameWithoutExtension(), i+1);
+
+                    if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::workingdir).isEmpty())
+                        fileDir = File(currentFileLocation);
                     else
-                        cabCombo->combo->addItem(dirFiles[i].getFileName(), i+1);
+                        fileDir = File(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::workingdir));
 
-                for(int i=0; i<cabCombo->combo->getNumItems(); i++)
-                    if(!comboItems.contains(cabCombo->combo->getItemText(i)))
-                        currentItemID = i+1;
+                    const String filetype = getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::filetype);
+                    Array<File> dirFiles;
+                    var newItems;
+                    fileDir.findChildFiles(dirFiles, 2, false, filetype);
 
-                cabCombo->combo->setSelectedId(currentItemID, dontSendNotification);
+                    StringArray comboItems;
+                    for(int i=0; i<cabCombo->combo->getNumItems(); i++)
+                    {
+                        comboItems.add(cabCombo->combo->getItemText(i));
+                    }
+
+                    cabCombo->combo->clear(dontSendNotification);
+
+                    comboItems.sort(true);
+
+                    dirFiles.sort();
+
+                    for (int i = 0; i < dirFiles.size(); ++i)
+                        if(filetype.contains("snaps"))
+                        {
+                            cabCombo->combo->addItem(dirFiles[i].getFileNameWithoutExtension(), i+1);
+                            newItems.append(dirFiles[i].getFileNameWithoutExtension());
+                        }
+                        else
+                        {
+                            cabCombo->combo->addItem(dirFiles[i].getFileName(), i+1);
+                            newItems.append(dirFiles[i].getFileName());
+                        }
+
+
+                    if(filetype.contains("snaps"))
+                    {
+                        for(int i=0; i<cabCombo->combo->getNumItems(); i++)
+                            if(!comboItems.contains(cabCombo->combo->getItemText(i)))
+                                currentItemID = i+1;
+                    }
+                    else
+                    {
+                        for(int i=0; i<cabCombo->combo->getNumItems(); i++)
+                            if(currentText==cabCombo->combo->getItemText(i))
+                                currentItemID = i+1;
+                    }
+
+                    cabCombo->combo->setSelectedId(currentItemID, dontSendNotification);
+                    getFilter()->getGUICtrls(i).setStringArrayProp(CabbageIDs::text, newItems);
+
+                }
+            }
+        }
+    }
+
+    for(int i=0; i<getFilter()->getGUILayoutCtrlsSize(); i++)
+    {
+        if(typeOfControl=="listbox")
+        {
+            if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase(typeOfControl) &&
+                    getFilter()->getGUILayoutCtrls(i).getStringProp("filetype").isNotEmpty())
+            {
+                CabbageListbox* listbox = dynamic_cast<CabbageListbox*>(layoutComps[i]);
+                if(listbox)
+                {
+                    File fileDir;
+                    int currentItemID = listbox->getCurrentRow();
+                    String currentText = listbox->items[currentItemID];
+                    String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
+
+
+                    if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::workingdir).isEmpty())
+                        fileDir = File(currentFileLocation);
+                    else
+                        fileDir = File(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::workingdir));
+
+                    const String filetype = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::filetype);
+                    Array<File> dirFiles;
+                    fileDir.findChildFiles(dirFiles, 2, false, filetype);
+
+                    StringArray listboxItems = listbox->items;
+                    listboxItems.sort(true);
+
+                    dirFiles.sort();
+                    listbox->items.clear();
+
+                    for (int i = 0; i < dirFiles.size(); ++i)
+                    {
+                        cUtils::debug(dirFiles[i].getFullPathName());
+                        if(filetype.contains("snaps"))
+                            listbox->items.add(dirFiles[i].getFileNameWithoutExtension());
+                        else
+                            listbox->items.add(dirFiles[i].getFileName());
+                    }
+                    if(filetype.contains("snaps"))
+                    {
+                        for(int i=0; i<listbox->items.size(); i++)
+                            if(!listboxItems.contains(listbox->items[i]))
+                                currentItemID = i;
+                    }
+                    else
+                    {
+                        for(int i=0; i<listbox->items.size(); i++)
+                            if(currentText==listbox->items[i])
+                                currentItemID = i;
+                    }
+
+                    listbox->listBox.selectRow(currentItemID);
+                    listbox->listBox.updateContent();
+                }
             }
         }
     }
@@ -4131,8 +4236,8 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     {
                         int index = getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name).contains("dummy") ? i-1 : i;
                         {
-                            if(getFilter()->getGUICtrls(index).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
-                                static_cast<CabbageRangeSlider2*>(comps[index])->update(getFilter()->getGUICtrls(index));
+//                            if(getFilter()->getGUICtrls(index).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+//                                static_cast<CabbageRangeSlider2*>(comps[index])->update(getFilter()->getGUICtrls(index));
 
 #ifndef Cabbage_Build_Standalone
                             static_cast<CabbageRangeSlider2*>(comps[index])->getSlider().setValue(getFilter()->getParameter(index),
@@ -4315,6 +4420,13 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
             {
                 static_cast<CabbageEncoder*>(layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
+                getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
+            }
+            //listbox
+            else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("listbox") &&
+                    getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
+            {
+                static_cast<CabbageListbox*>(layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
                 getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
             }
             //table

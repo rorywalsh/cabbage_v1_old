@@ -163,11 +163,6 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
     String defaultCSDFile;
 
-#if defined(MACOSX)
-    //hocus pocus for OSX. It seems to append some gibbrish to the command line flags
-    commandLineParams = commandLineParams.substring(0, commandLineParams.indexOf("-")-1);
-#endif
-
     if(commandLineParams.contains("--export-VSTi"))
     {
         String inputFileName = commandLineParams.substring(commandLineParams.indexOf("--export-VSTi")+13).trim().removeCharacters("\"");
@@ -1120,11 +1115,17 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         }
         else
         {
-            if(File(getPreference(appProperties, "ExternalEditorApplication", "")).existsAsFile())
+            if(File(getPreference(appProperties, "ExternalEditorApplication", "")).exists())
             {
                 String editorApp = getPreference(appProperties, "ExternalEditorApplication", "");
                 ChildProcess process;
-                process.start(editorApp+ " "+csdFile.getFullPathName());
+#ifdef MACOSX
+                //process.start("open -a \""+editorApp+ "\" "+csdFile.getFullPathName());
+                String fullCommand = "open -a \""+editorApp+ "\" "+csdFile.getFullPathName();
+                system(fullCommand.toUTF8());
+#else
+                process.start(editorApp+" "+csdFile.getFullPathName());
+#endif
             }
             else
                 m_ShowMessage("\'Use external editor\' is enabled. If you wish to use the Cabbage editor,\n\
@@ -1537,6 +1538,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
 {
     if(File(_csdfile).existsAsFile())
     {
+        cUtils::debug("Foudn teh file to open"+_csdfile);
         csdFile = File(_csdfile);
         originalCsdFile = csdFile;
         lastSaveTime = csdFile.getLastModificationTime();

@@ -76,7 +76,8 @@ public:
 #endif
 
         appProperties->getUserSettings()->setFallbackPropertySet(defaultPropSet);
-        filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black, getCommandLineParameters());
+        cUtils::debug("======================="+commandLineParameters+"============================");
+        filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black, commandLineParameters);
         filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
         filterWindow->setVisible (true);
         //turn off resizeable...

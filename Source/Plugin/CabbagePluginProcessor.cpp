@@ -288,7 +288,7 @@ void CabbagePluginAudioProcessor::initAllChannels()
             else
                 csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(), guiCtrls[i].getNumProp(CabbageIDs::value));
         }
-        z
+
         if(guiCtrls.getReference(i).getStringProp(CabbageIDs::type)!="hrange" && guiCtrls.getReference(i).getStringProp(CabbageIDs::type)!="vrange")
             messageQueue.addOutgoingChannelMessageToQueue(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel),
                     guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));

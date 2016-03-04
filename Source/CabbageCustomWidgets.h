@@ -649,7 +649,7 @@ public:
             slider->setColour(Slider::rotarySliderFillColourId, Colour::fromString(cl));
             getProperties().set("type", var("rslider"));
             slider->setSliderStyle(Slider::RotaryVerticalDrag);
-            slider->setValue((value));
+            slider->setValue(value, dontSendNotification);
             if(textBox>0)
                 slider->setTextBoxStyle(Slider::TextBoxBelow, false, 40, 15);
 
@@ -703,7 +703,7 @@ public:
             {
                 slider->setSliderStyle(Slider::ThreeValueVertical);
                 setupMinMaxValue();
-                slider->setValue(value);
+                slider->setValue(value, dontSendNotification);
             }
             else if(sliderType=="vertical2")
             {
@@ -713,7 +713,7 @@ public:
             else
             {
                 slider->setSliderStyle(Slider::LinearVertical);
-                slider->setValue(value);
+                slider->setValue(value, dontSendNotification);
             }
 
 
@@ -759,7 +759,7 @@ public:
             {
                 slider->setSliderStyle(Slider::ThreeValueHorizontal);
                 setupMinMaxValue();
-                slider->setValue(value);
+                slider->setValue(value, dontSendNotification);
             }
             else if(sliderType=="horizontal2")
             {
@@ -769,7 +769,7 @@ public:
             else
             {
                 slider->setSliderStyle(Slider::LinearHorizontal);
-                slider->setValue(value);
+                slider->setValue(value, dontSendNotification);
             }
 
 
@@ -2709,7 +2709,7 @@ public:
         skew = cAttr.getNumProp(CabbageIDs::sliderskew);
         slider->setSkewFactor(cAttr.getNumProp(CabbageIDs::sliderskew));
         slider->setRange(cAttr.getNumProp("min"), cAttr.getNumProp("max"), cAttr.getNumProp(CabbageIDs::sliderincr));
-        slider->setValue(cAttr.getNumProp(CabbageIDs::value));
+        slider->setValue(cAttr.getNumProp(CabbageIDs::value), dontSendNotification);
     }
 
     ~CabbageNumberBox() {}

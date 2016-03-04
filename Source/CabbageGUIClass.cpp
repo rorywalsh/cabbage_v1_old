@@ -1183,11 +1183,11 @@ void CabbageGUIType::parse(String inStr, String identifier)
             //showMessage(tstr, nullptr);
 
             //refreshfiles works like a function call, it takes no parameters
-            if(identArray[indx].equalsIgnoreCase("refreshfiles"))
-            {
-                refreshFromDisk =! refreshFromDisk;
-                cabbageIdentifiers.set(CabbageIDs::refreshfiles, refreshFromDisk==true ? 1: 0);
-            }
+//            if(identArray[indx].equalsIgnoreCase("refreshfiles"))
+//            {
+//                refreshFromDisk =! refreshFromDisk;
+//                cabbageIdentifiers.set(CabbageIDs::refreshfiles, refreshFromDisk==true ? 1: 0);
+//            }
 
             if(tstr.length()==0)
                 return;
@@ -1224,7 +1224,6 @@ void CabbageGUIType::parse(String inStr, String identifier)
             {
                 var array;
                 array.append(strTokens[0].trim());
-                cUtils::debug(strTokens[0].trim());
                 if(str.containsIgnoreCase("xypad"))
                 {
                     cabbageIdentifiers.set(CabbageIDs::xchannel, strTokens[0].trim());
@@ -1648,7 +1647,6 @@ void CabbageGUIType::parse(String inStr, String identifier)
 
                     if(strTokens.size()>3)
                     {
-                        cUtils::debug(strTokens[3]);
                         cabbageIdentifiers.set(CabbageIDs::sliderskew, strTokens[3].trim().getDoubleValue());
                         tempArray.add(strTokens[3].trim());
                     }
@@ -1656,7 +1654,6 @@ void CabbageGUIType::parse(String inStr, String identifier)
                     if(strTokens.size()>4)
                     {
                         tempArray.add(strTokens[4].trim());
-                        cUtils::debug(strTokens.joinIntoString("\n"));
                         cabbageIdentifiers.set(CabbageIDs::sliderincr, strTokens[4].trim().getDoubleValue());
                     }
 

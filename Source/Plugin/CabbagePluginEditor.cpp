@@ -2114,7 +2114,6 @@ void CabbagePluginAudioProcessorEditor::InsertListbox(CabbageGUIType &cAttr)
     }
 
     String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
-    cUtils::debug(cAttr.getStringProp(CabbageIDs::workingdir));
     String path = cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::workingdir), currentFileLocation);
 
 
@@ -2861,6 +2860,11 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
                 || sliderThatWasMoved->getSliderStyle()==Slider::ThreeValueVertical
                 || sliderThatWasMoved->getSliderStyle()==Slider::ThreeValueHorizontal)
         {
+            cUtils::debug("SliderChanged:", min);
+            cUtils::debug("SliderChanged:", range);
+            cUtils::debug("SliderChanged:", getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel));
+            cUtils::debug("SliderChanged:", sliderThatWasMoved->getValue());
+
             getFilter()->setParameter(i, (float)((sliderThatWasMoved->getValue()-min)/range));
             getFilter()->setParameterNotifyingHost(i, (float)((sliderThatWasMoved->getValue()-min)/range));
         }
@@ -3079,7 +3083,6 @@ void CabbagePluginAudioProcessorEditor::buttonStateChanged(Button* button)
 void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 {
 #ifndef Cabbage_No_Csound
-    cUtils::debug(button->getName());
     //loadbuttons are special case AU buttons....
     if(button->getName()=="loadbutton")
     {
@@ -3324,7 +3327,7 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
 //--------------------------------------------------------
 void CabbagePluginAudioProcessorEditor::textButtonClicked(Button* button)
 {
-    cUtils::debug(button->getName());
+
     int i = button->getProperties().getWithDefault("index", -9999);
 
     if(isPositiveAndBelow(i, getFilter()->getGUICtrlsSize()))
@@ -3458,7 +3461,7 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIType &cAttr)
     }
 
     String currentFileLocation = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
-    cUtils::debug(cAttr.getStringProp(CabbageIDs::workingdir));
+
     String path = cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::workingdir), currentFileLocation);
 
 
@@ -3983,7 +3986,6 @@ void CabbagePluginAudioProcessorEditor::refreshDiskReadingGUIControls(String typ
 
                     for (int i = 0; i < dirFiles.size(); ++i)
                     {
-                        cUtils::debug(dirFiles[i].getFullPathName());
                         if(filetype.contains("snaps"))
                             listbox->items.add(dirFiles[i].getFileNameWithoutExtension());
                         else

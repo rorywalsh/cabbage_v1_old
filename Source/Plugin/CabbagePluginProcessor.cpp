@@ -1733,18 +1733,12 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 channelMessage = String(tmp_string);
                 if(channelMessage!=guiCtrl.getStringProp(CabbageIDs::currenttext))
                 {
-                    //THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE..
-                    cUtils::debug("updateCabbageCOntrols::", channelMessage);
                     guiCtrl.setStringProp(CabbageIDs::currenttext, channelMessage);
                     StringArray items = guiCtrl.getStringArrayProp(CabbageIDs::text);
                     int itemIndex = items.indexOf(channelMessage);
-                    cUtils::debug("Index:", itemIndex);
                     guiCtrl.setNumProp(CabbageIDs::value, itemIndex+1);
-                    //dirtyControls.addIfNotAlreadyThere(index);
                     shouldUpdate = true;
                 }
-                //dirtyControls.addIfNotAlreadyThere(index);
-                //shouldUpdate = true;
             }
             else
             {

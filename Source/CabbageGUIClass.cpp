@@ -490,6 +490,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::channeltype, "number");
         cabbageIdentifiers.set(CabbageIDs::text, array);
         cabbageIdentifiers.set(CabbageIDs::value, 1);
+        cabbageIdentifiers.set(CabbageIDs::currenttext, "");
         cabbageIdentifiers.set(CabbageIDs::caption, "");
         cabbageIdentifiers.set(CabbageIDs::colour, Colours::black.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, cUtils::getComponentFontColour().toString());

@@ -1629,7 +1629,10 @@ float CabbagePluginAudioProcessor::getParameter (int index)
 #ifndef Cabbage_Build_Standalone
             float val = (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
             if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox)
-                return (getGUICtrls(index).getNumProp(CabbageIDs::value)/getGUICtrls(index).getNumProp(CabbageIDs::comborange));
+            {
+                val = jmap(getGUICtrls(index).getNumProp(CabbageIDs::value), 0.f, getGUICtrls(index).getNumProp(CabbageIDs::comborange), 0.f, 1.f);
+                return val;
+            }
             else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::checkbox ||
                     getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::button)
                 return getGUICtrls(index).getNumProp(CabbageIDs::value);
@@ -1661,8 +1664,8 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
         if(!getGUICtrls(index).getStringProp("filetype").contains("snaps"))
             dirtyControls.addIfNotAlreadyThere(index);
 #else
-        if(getGUICtrls(index).getStringProp(CabbageIDs::type)!=CabbageIDs::combobox)
-            dirtyControls.addIfNotAlreadyThere(index);
+        // if(getGUICtrls(index).getStringProp(CabbageIDs::type)!=CabbageIDs::combobox)
+        dirtyControls.addIfNotAlreadyThere(index);
 #endif
 
         if(index<(int)guiCtrls.size())//make sure index isn't out of range
@@ -1676,7 +1679,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
             if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::xypad)
                 newValue = (jmax(0.f, newValue)*range)+min;
             else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox)//combo box value need to be rounded...
-                newValue = (newValue*comboRange);
+                newValue = jmap(newValue, 0.f, 1.f, 0.f, comboRange);
             else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::checkbox ||
                     getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::button)
                 range=1;
@@ -1724,9 +1727,22 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
         for(int index=0; index<guiCtrls_count; ++index)
         {
             CabbageGUIType &guiCtrl = guiCtrls.getReference(index);
-            if(guiCtrl.getStringProp(CabbageIDs::channeltype).equalsIgnoreCase(CabbageIDs::stringchannel))
+            if(guiCtrl.getStringProp(CabbageIDs::channeltype).equalsIgnoreCase(CabbageIDs::stringchannel) && guiCtrl.getStringProp(CabbageIDs::type)=="combobox")
             {
-                //THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE..
+                csound->GetStringChannel(guiCtrl.getStringProp(CabbageIDs::channel).toUTF8().getAddress(), tmp_string);
+                channelMessage = String(tmp_string);
+                if(channelMessage!=guiCtrl.getStringProp(CabbageIDs::currenttext))
+                {
+                    //THIS NEEDS TO ALLOW COMBOBOXEX THAT CONTAIN SNAPSHOTS TO UPDATE..
+                    cUtils::debug("updateCabbageCOntrols::", channelMessage);
+                    guiCtrl.setStringProp(CabbageIDs::currenttext, channelMessage);
+                    StringArray items = guiCtrl.getStringArrayProp(CabbageIDs::text);
+                    int itemIndex = items.indexOf(channelMessage);
+                    cUtils::debug("Index:", itemIndex);
+                    guiCtrl.setNumProp(CabbageIDs::value, itemIndex+1);
+                    //dirtyControls.addIfNotAlreadyThere(index);
+                    shouldUpdate = true;
+                }
                 //dirtyControls.addIfNotAlreadyThere(index);
                 //shouldUpdate = true;
             }
@@ -2233,7 +2249,9 @@ void CabbagePluginAudioProcessor::getStateInformation (MemoryBlock& destData)
     XmlElement xml ("CABBAGE_PLUGIN_SETTINGS");
     cUtils::debug(guiCtrls.size());
     for(int i=0; i<guiCtrls.size(); i++)
+    {
         xml.setAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel),getParameter(i));
+    }
 
     for(int i=0; i<guiLayoutCtrls.size(); i++)
         if(guiLayoutCtrls[i].getStringProp(CabbageIDs::type)==CabbageIDs::filebutton)

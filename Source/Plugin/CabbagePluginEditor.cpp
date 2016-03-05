@@ -3503,6 +3503,8 @@ void CabbagePluginAudioProcessorEditor::InsertComboBox(CabbageGUIType &cAttr)
     for( int i=0; i<((CabbageComboBox*)comps[idx])->combo->getNumItems(); i++)
         items.append(((CabbageComboBox*)comps[idx])->combo->getItemText(i));
 
+    getFilter()->getGUICtrls(idx).setNumProp(CabbageIDs::comborange, items.size());
+
     getFilter()->getGUICtrls(idx).setStringArrayProp(CabbageIDs::text, items);
 
 
@@ -4208,15 +4210,12 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 #if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
                     val = getFilter()->getParameter(i);
                     ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex((int)val-1, notify);
-                    //Logger::writeToLog(String("timerCallback():")+String(val));
 #else
-                    //needed to move combobox to full when controlled by a host
-                    if(getFilter()->getParameter(i)>=0.98)
-                        val = getFilter()->getGUICtrls(i).getNumProp(CabbageIDs::comborange);
-                    else
-                        val = getFilter()->getGUICtrls(i).getNumProp("comborange")*getFilter()->getParameter(i);
-
+                    float comborange = getFilter()->getGUICtrls(i).getNumProp("comborange");
+                    val = jmap(getFilter()->getParameter(i), 0.f, 1.f, 0.f, comborange);
                     ((CabbageComboBox*)comps[i])->combo->setSelectedItemIndex(int(val)-1, notify);
+                    String currentItemText = ((CabbageComboBox*)comps[i])->combo->getItemText(int(val)-1);
+                    getFilter()->getGUICtrls(i).setStringProp(CabbageIDs::currenttext, currentItemText);
 #endif
                 }
 
@@ -4238,9 +4237,6 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     {
                         int index = getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::name).contains("dummy") ? i-1 : i;
                         {
-//                            if(getFilter()->getGUICtrls(index).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
-//                                static_cast<CabbageRangeSlider2*>(comps[index])->update(getFilter()->getGUICtrls(index));
-
 #ifndef Cabbage_Build_Standalone
                             static_cast<CabbageRangeSlider2*>(comps[index])->getSlider().setValue(getFilter()->getParameter(index),
                                     getFilter()->getParameter(index+1));

@@ -204,6 +204,7 @@ public:
         add("maxenabled");
         add("keywidth");
         add("refreshfiles");
+        add("currenttext");
 //sample identifiers for stepper widget
         add("numberofsteps");
         add("stepbpm");
@@ -351,6 +352,7 @@ static const Identifier minenabled = "minenabled";
 static const Identifier maxenabled = "maxenabled";
 static const Identifier keywidth = "keywidth";
 static const Identifier refreshfiles = "refreshfiles";
+static const Identifier currenttext = "currenttext";
 //list of static consts for types of widgets
 static const String combobox = "combobox";
 static const String numberbox = "numberbox";

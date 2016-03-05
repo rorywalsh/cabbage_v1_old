@@ -1348,7 +1348,8 @@ CabbageComboBox::CabbageComboBox(CabbageGUIType &cAttr, CabbagePluginAudioProces
             combo->addItem(fileNames[i], i+1);
     }
     //cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
-    combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1);
+
+    combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1, dontSendNotification);
 
 }
 //---------------------------------------------

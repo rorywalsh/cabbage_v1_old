@@ -1664,7 +1664,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
         if(!getGUICtrls(index).getStringProp("filetype").contains("snaps"))
             dirtyControls.addIfNotAlreadyThere(index);
 #else
-        // if(getGUICtrls(index).getStringProp(CabbageIDs::type)!=CabbageIDs::combobox)
+
         dirtyControls.addIfNotAlreadyThere(index);
 #endif
 

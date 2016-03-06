@@ -1348,6 +1348,7 @@ void CabbageLookAndFeel::drawDocumentWindowTitleBar (DocumentWindow &window, Gra
 {
     window.setUsingNativeTitleBar(false);
     Colour background = Colour::fromString(window.getProperties().getWithDefault("colour", "").toString());
+    String fontcolour = window.getProperties().getWithDefault("fontcolour", "").toString();
 #ifdef CABBAGE_HOST
     window.setOpaque(true);
     g.setColour (background);
@@ -1357,7 +1358,10 @@ void CabbageLookAndFeel::drawDocumentWindowTitleBar (DocumentWindow &window, Gra
     g.fillAll();
 #endif
 
-    g.setColour (cUtils::getComponentFontColour());
+    if(fontcolour.isNotEmpty())
+        g.setColour (Colour::fromString(fontcolour));
+    else
+        g.setColour (cUtils::getComponentFontColour());
     Font font = cUtils::getTitleFont();
 #ifndef MACOSX
     font.setFallbackFontName("Verdana");

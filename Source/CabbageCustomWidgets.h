@@ -800,7 +800,7 @@ public:
                     textLabel->setBounds(0, 0, width, getHeight());
                     textLabel->setText(text, dontSendNotification);
                     textLabel->setVisible(true);
-                    slider->setBounds(width-1, 0, getWidth()-width, getHeight());
+                    slider->setBounds(width-3, 0, getWidth()-(width-4), getHeight());
                 }
                 else
                 {

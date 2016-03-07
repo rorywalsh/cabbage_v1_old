@@ -692,6 +692,11 @@ void RangeSlider::setValue(float val1, float val2)
             sliderThumbBounds = sliderThumb.getBounds();
             sliderThumb.setBounds(sliderThumbBounds.withRight(jlimit(leftPos+thumbWidth, (int)width, rightPos)));
             sliderThumbBounds = sliderThumb.getBounds();
+            sliderThumb.setBounds(sliderThumbBounds.withWidth(jlimit(thumbWidth*2, (int)width, sliderThumbBounds.getWidth())));
+            sliderThumbBounds = sliderThumb.getBounds();
+            if(val1==val2)
+                sliderThumb.setCentrePosition(jlimit(thumbWidth, (int)width-thumbWidth, sliderThumbBounds.getCentre().getX()-thumbWidth), sliderThumbBounds.getCentre().getY());
+
             repaint();
         }
         else
@@ -702,6 +707,10 @@ void RangeSlider::setValue(float val1, float val2)
             sliderThumbBounds = sliderThumb.getBounds();
             sliderThumb.setBounds(sliderThumbBounds.withBottom(jmin((int)height, (int)height-bottomPos)));
             sliderThumbBounds = sliderThumb.getBounds();
+            sliderThumb.setBounds(sliderThumbBounds.withHeight(jlimit(thumbHeight*2, (int)height, sliderThumbBounds.getHeight())));
+            sliderThumbBounds = sliderThumb.getBounds();
+            if(val1==val2)
+                sliderThumb.setCentrePosition(sliderThumbBounds.getCentre().getX(), jlimit(thumbHeight, (int)height-thumbHeight, sliderThumbBounds.getCentre().getY()-thumbHeight));
             repaint();
         }
 
@@ -779,17 +788,21 @@ void RangeSlider::mouseEnter(const MouseEvent& event)
 
 void RangeSlider::paint(Graphics& g)
 {
-    const int width = getWidth();
-    const int height = getHeight();
+    //the juce native sliders seem to have their width reduced by 18 for som reason or another...
+
+
+    int sliderThumbWidth=7;
 
     g.fillAll(Colours::transparentBlack);
     if(!isVertical)
     {
+        const int height = getHeight();
+        const int width = getWidth()-18;
         g.setColour (Colours::whitesmoke);
         g.setOpacity (0.6);
-        const float midPoint = getWidth()/2.f;
-        const float markerGap = getWidth()/9.f;
-        g.drawLine (midPoint, height*0.2, midPoint, height*0.8, 1);
+        const float midPoint = width/2.f+sliderThumbWidth;
+        const float markerGap = width/9.f;
+        g.drawLine (midPoint, height*0.25, midPoint, height*0.75, 1.5);
         g.setOpacity (0.3);
         for (int i=1; i<5; i++)
         {
@@ -798,10 +811,10 @@ void RangeSlider::paint(Graphics& g)
         }
         //backgrounds
         g.setColour (Colours::whitesmoke);
-        g.setOpacity (0.3);
-        g.fillRoundedRectangle (0, height*0.41, width, height*0.15, height*0.05); //for light effect
+        g.setOpacity (0.1);
+        g.fillRoundedRectangle (sliderThumbWidth/2.f, height*0.44, width*1.025, height*0.15, height*0.05); //for light effect
         g.setColour (Colour::fromRGBA(5, 5, 5, 255));
-        g.fillRoundedRectangle (0, height*0.40, width*0.995, height*0.15, height*0.05); //main rectangle
+        g.fillRoundedRectangle (sliderThumbWidth/2.f, height*0.425, width*1.02, height*0.15, height*0.05); //main rectangle
         //tracker
         g.setColour(trackerColour);
         const float scale = trackerThickness;
@@ -812,9 +825,11 @@ void RangeSlider::paint(Graphics& g)
     }
     else
     {
+        const int width = getWidth();
+        const int height = getHeight()-18;
         g.setColour (Colours::whitesmoke);
         g.setOpacity (0.6);
-        const float midPoint = height/2.f;
+        const float midPoint = height/2.f+sliderThumbWidth;
         const float markerGap = height/9.f;
         g.drawLine (width*0.25, midPoint, width*0.75, midPoint, 1.59);
         g.setOpacity (0.3);
@@ -827,9 +842,9 @@ void RangeSlider::paint(Graphics& g)
 
         g.setColour(Colours::whitesmoke);
         g.setOpacity (0.1);
-        g.fillRoundedRectangle(width*0.44, 0, width*0.15, height, width*0.05);
+        g.fillRoundedRectangle(width*0.44, sliderThumbWidth/2.f, width*0.15, height*1.003, width*0.05);
         g.setColour (Colour::fromRGBA(5, 5, 5, 255));
-        g.fillRoundedRectangle (width*0.425, 0, width*0.15, height*0.99, width*0.05);
+        g.fillRoundedRectangle (width*0.425, sliderThumbWidth/2.f, width*0.15, height*1.029, width*0.05);
         //tracker
         g.setColour(trackerColour);
         const float scale = trackerThickness;

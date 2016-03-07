@@ -803,7 +803,10 @@ public:
                     slider->setBounds(width-1, 0, getWidth()-width, getHeight());
                 }
                 else
+                {
+                    cUtils::debug(getWidth());
                     slider->setBounds(0, 0, getWidth(), getHeight());
+                }
             }
         }
 

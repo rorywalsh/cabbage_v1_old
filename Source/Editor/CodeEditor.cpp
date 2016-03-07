@@ -629,6 +629,17 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
                 cUtils::getPreference(appProperties, "FontSize") : 13);
 
     font = cUtils::getPreference(appProperties, "Fonttype", "");
+
+#ifdef CabbageHost
+#ifdef WIN32
+    font = "Consolas";
+#elif defined(MACOSX)
+    font = "Courier New";
+#else
+    font = "Droid Sans Mono";
+#endif
+#endif
+
     setFont(Font(font, fontSize, 0));
 
 }

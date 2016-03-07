@@ -76,7 +76,6 @@ public:
 #endif
 
         appProperties->getUserSettings()->setFallbackPropertySet(defaultPropSet);
-        cUtils::debug("======================="+commandLineParameters+"============================");
         filterWindow = new StandaloneFilterWindow (String("Cabbage"), Colours::black, commandLineParameters);
         filterWindow->setTitleBarButtonsRequired (DocumentWindow::allButtons, false);
         filterWindow->setVisible (true);

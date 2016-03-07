@@ -971,8 +971,10 @@ void CabbageRangeSlider2::resized()
         const float value2 = jmap(initVal2, min, max, 0.f, 1.f);
         slider.setValue(value1, value2);
     }
+    else if(isVertical)
+        slider.setBounds(getLocalBounds().withTop(3).withHeight(getHeight()-8));
     else
-        slider.setBounds(getLocalBounds());
+        slider.setBounds(getLocalBounds().withLeft(3).withWidth(getWidth()-8));
 
 }
 

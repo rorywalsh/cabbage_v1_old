@@ -619,9 +619,10 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
     {
         if(!useSVG)
         {
+            width = width-8;
             g.setColour (Colours::whitesmoke);
             g.setOpacity (0.6);
-            const float midPoint = width/2.f+sliderRadius;
+            const float midPoint = (width/2.f+sliderRadius)+3;
             const float markerGap = width/9.f;
             g.drawLine (midPoint, height*0.25, midPoint, height*0.75, 1.5);
             g.setOpacity (0.3);
@@ -633,9 +634,9 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
             //backgrounds
             g.setColour (Colours::whitesmoke);
             g.setOpacity (0.1);
-            g.fillRoundedRectangle (sliderRadius/2.f, height*0.44, width*1.025, height*0.15, height*0.05); //for light effect
+            g.fillRoundedRectangle (sliderRadius, height*0.44, width*1.021, height*0.15, height*0.05); //for light effect
             g.setColour (Colour::fromRGBA(5, 5, 5, 255));
-            g.fillRoundedRectangle (sliderRadius/2.f, height*0.425, width*1.02, height*0.15, height*0.05); //main rectangle
+            g.fillRoundedRectangle (sliderRadius, height*0.425, width*1.016, height*0.15, height*0.05); //main rectangle
         }
 
         const float scale = trackerThickness;
@@ -697,9 +698,10 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
     {
         if(!useSVG)
         {
+            height = height-8;
             g.setColour (Colours::whitesmoke);
             g.setOpacity (0.6);
-            const float midPoint = height/2.f+sliderRadius;
+            const float midPoint = (height/2.f+sliderRadius)+3;
             const float markerGap = height/9.f;
             g.drawLine (width*0.25, midPoint, width*0.75, midPoint, 1.59);
             g.setOpacity (0.3);
@@ -712,9 +714,9 @@ void CabbageLookAndFeel::drawLinearSliderBackground (Graphics &g, int x, int y, 
 
             g.setColour(Colours::whitesmoke);
             g.setOpacity (0.1);
-            g.fillRoundedRectangle(width*0.44, sliderRadius/2.f, width*0.15, height*1.003, width*0.05);
+            g.fillRoundedRectangle(width*0.44, sliderRadius, width*0.15, height*1.003, width*0.05);
             g.setColour (Colour::fromRGBA(5, 5, 5, 255));
-            g.fillRoundedRectangle (width*0.425, sliderRadius/2.f, width*0.15, height*1.029, width*0.05);
+            g.fillRoundedRectangle (width*0.425, sliderRadius, width*0.15, height*1.029, width*0.05);
         }
 
 //        const float ix = x + width * 0.5f - sliderRadius * 0.25f;

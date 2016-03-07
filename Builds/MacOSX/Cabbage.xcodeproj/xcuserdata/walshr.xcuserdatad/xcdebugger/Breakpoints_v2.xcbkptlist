@@ -79,6 +79,36 @@
             endingLineNumber = "1334"
             landmarkName = "mouseDown(const MouseEvent&amp; event)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CabbageGroupbox::CabbageGroupbox(CabbageGUIType&amp;)"
+                  moduleName = "Cabbage"
+                  urlString = "file:///Users/walshr/sourcecode/cabbageaudio/cabbage/Source/Plugin/../CabbageCustomWidgets.h"
+                  timestampString = "478709084.499159"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1370"
+                  endingLineNumber = "1370"
+                  offsetFromSymbolStart = "20">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CabbageGroupbox::CabbageGroupbox(CabbageGUIType&amp;)"
+                  moduleName = "Cabbage"
+                  urlString = "file:///Users/walshr/sourcecode/cabbageaudio/cabbage/Source/Plugin/../CabbageCustomWidgets.h"
+                  timestampString = "478709084.499486"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1326"
+                  endingLineNumber = "1326"
+                  offsetFromSymbolStart = "26">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -184,11 +214,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/Standalone/CabbageStandaloneDialog.cpp"
-            timestampString = "475775159.759186"
+            timestampString = "478708934.67027"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "861"
-            endingLineNumber = "861"
+            startingLineNumber = "862"
+            endingLineNumber = "862"
             landmarkName = "StandaloneFilterWindow::buttonClicked (Button*)"
             landmarkType = "5">
          </BreakpointContent>
@@ -200,11 +230,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/Standalone/CabbageStandaloneDialog.cpp"
-            timestampString = "475775309.962876"
+            timestampString = "478708934.67027"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "863"
-            endingLineNumber = "863"
+            startingLineNumber = "864"
+            endingLineNumber = "864"
             landmarkName = "StandaloneFilterWindow::buttonClicked (Button*)"
             landmarkType = "5">
          </BreakpointContent>
@@ -216,11 +246,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/Standalone/CabbageStandaloneDialog.cpp"
-            timestampString = "475775352.897856"
+            timestampString = "478708934.67027"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1059"
-            endingLineNumber = "1059"
+            startingLineNumber = "1060"
+            endingLineNumber = "1060"
             landmarkName = "StandaloneFilterWindow::buttonClicked (Button*)"
             landmarkType = "5">
          </BreakpointContent>
@@ -238,6 +268,54 @@
             startingLineNumber = "841"
             endingLineNumber = "841"
             landmarkName = "CodeWindow::showCabbageHelp()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/Standalone/CabbageStandaloneDialog.cpp"
+            timestampString = "478709084.057288"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1548"
+            endingLineNumber = "1548"
+            landmarkName = "StandaloneFilterWindow::buttonClicked (Button*)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/Standalone/CabbageStandaloneDialog.cpp"
+            timestampString = "478709081.799657"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1546"
+            endingLineNumber = "1546"
+            landmarkName = "StandaloneFilterWindow::buttonClicked (Button*)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/Standalone/CabbageStandaloneDialog.cpp"
+            timestampString = "478709085.254727"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1547"
+            endingLineNumber = "1547"
+            landmarkName = "StandaloneFilterWindow::buttonClicked (Button*)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

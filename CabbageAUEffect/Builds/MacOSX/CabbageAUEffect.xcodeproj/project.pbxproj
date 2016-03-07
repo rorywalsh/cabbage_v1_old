@@ -43,6 +43,8 @@
 		5E5AECB7EB88ACD3E1A2B658 /* juce_AU_Wrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4BACB4DC7A02685231A61FE /* juce_AU_Wrapper.mm */; };
 		5E63F72963A0D51DCFA624E4 /* AUScopeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B49B2D35236A1A2DEA882409 /* AUScopeElement.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		5FFD2B629DFF4412CDD944BE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0742DD4C094889BB4824104C /* Accelerate.framework */; };
+		6113F52A1C8DBBEB00D4D033 /* CabbageCustomWidgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6113F5281C8DBBEB00D4D033 /* CabbageCustomWidgets.cpp */; };
+		6113F52B1C8DBBEB00D4D033 /* CabbageMessageSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6113F5291C8DBBEB00D4D033 /* CabbageMessageSystem.cpp */; };
 		61D5339F1C1B801800C55FF8 /* CsoundLib64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38B455A5DD8B850D8E47F0E5 /* CsoundLib64.framework */; };
 		65107E65C41E17819F82F152 /* juce_audio_utils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 832CBDFA7BD38F30B31C76C9 /* juce_audio_utils.mm */; };
 		66AF9A6044C2F70D679852A3 /* AUOutputElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F424B80F717696840ECF619E /* AUOutputElement.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -456,6 +458,8 @@
 		60531CA9AF0F7229616438AC /* juce_SHA256.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_SHA256.h; path = ../../../JuceLibraryCode/modules/juce_cryptography/hashing/juce_SHA256.h; sourceTree = SOURCE_ROOT; };
 		607B268F64D4B1C400821645 /* juce_ToolbarItemComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_ToolbarItemComponent.h; path = ../../../JuceLibraryCode/modules/juce_gui_basics/widgets/juce_ToolbarItemComponent.h; sourceTree = SOURCE_ROOT; };
 		60D9724EF08323C242A9E6AE /* juce_SpinLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_SpinLock.h; path = ../../../JuceLibraryCode/modules/juce_core/threads/juce_SpinLock.h; sourceTree = SOURCE_ROOT; };
+		6113F5281C8DBBEB00D4D033 /* CabbageCustomWidgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CabbageCustomWidgets.cpp; path = ../../../Source/CabbageCustomWidgets.cpp; sourceTree = "<group>"; };
+		6113F5291C8DBBEB00D4D033 /* CabbageMessageSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CabbageMessageSystem.cpp; path = ../../../Source/CabbageMessageSystem.cpp; sourceTree = "<group>"; };
 		61E55EF09C84096BE5FF8CD4 /* juce_FileListComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_FileListComponent.h; path = ../../../JuceLibraryCode/modules/juce_gui_basics/filebrowser/juce_FileListComponent.h; sourceTree = SOURCE_ROOT; };
 		6232889017736118498EBFDD /* juce_ScrollBar.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_ScrollBar.cpp; path = ../../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_ScrollBar.cpp; sourceTree = SOURCE_ROOT; };
 		624496790292F6FB26A45DBB /* juce_android_WebBrowserComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_android_WebBrowserComponent.cpp; path = ../../../JuceLibraryCode/modules/juce_gui_extra/native/juce_android_WebBrowserComponent.cpp; sourceTree = SOURCE_ROOT; };
@@ -1199,6 +1203,8 @@
 		05D020D47EAAFB6B35EE2032 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6113F5281C8DBBEB00D4D033 /* CabbageCustomWidgets.cpp */,
+				6113F5291C8DBBEB00D4D033 /* CabbageMessageSystem.cpp */,
 				8847D8DD50F4A74E1CA41171 /* Editor */,
 				2F1061302CE845734E17D6C2 /* Plugin */,
 				10B6A027551829C7B8068124 /* BinaryData.cpp */,
@@ -3175,6 +3181,7 @@
 				CC30DCA7F63F29A738E0AE69 /* CabbagePluginEditor.cpp in Sources */,
 				14818C3FFA3B0826987D3DE8 /* CabbagePluginProcessor.cpp in Sources */,
 				33EE784C197B0E00857CCA88 /* BinaryData.cpp in Sources */,
+				6113F52B1C8DBBEB00D4D033 /* CabbageMessageSystem.cpp in Sources */,
 				4D8C55313AFEFBA24B878B0B /* CabbageCallOutBox.cpp in Sources */,
 				D545484C9A948E806DD39883 /* CabbageGUIClass.cpp in Sources */,
 				8D4BACA7CE4CD11DF0F70AE3 /* CabbageLookAndFeel.cpp in Sources */,
@@ -3216,6 +3223,7 @@
 				172969637B62F8340A58852F /* juce_cryptography.mm in Sources */,
 				1FE2888D1132634AB0903E30 /* juce_data_structures.mm in Sources */,
 				C4F6EDE094FA9E5C922E476F /* juce_events.mm in Sources */,
+				6113F52A1C8DBBEB00D4D033 /* CabbageCustomWidgets.cpp in Sources */,
 				95613F69D378B8DC26D31F00 /* juce_graphics.mm in Sources */,
 				759F18EEF961049F3D6DDB20 /* juce_gui_basics.mm in Sources */,
 				1BD2486085F0AE862B70872B /* juce_gui_extra.mm in Sources */,
@@ -3259,6 +3267,7 @@
 					"JUCER_XCODE_MAC_F6D2F4CF=1",
 					"JUCE_APP_VERSION=1.0.0",
 					"JUCE_APP_VERSION_HEX=0x10000",
+					"USE_DOUBLE=1",
 				);
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GENERATE_PKGINFO_FILE = YES;
@@ -3301,6 +3310,7 @@
 					"JUCER_XCODE_MAC_F6D2F4CF=1",
 					"JUCE_APP_VERSION=1.0.0",
 					"JUCE_APP_VERSION_HEX=0x10000",
+					"USE_DOUBLE=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;

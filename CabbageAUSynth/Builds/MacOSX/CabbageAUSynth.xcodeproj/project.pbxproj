@@ -30,6 +30,8 @@
 		55EC3BFBFA8E089433733DC6 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 780F3F67D3A0AD27E861F68E /* QTKit.framework */; };
 		5788C303F1B77468C0390851 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B27F639129774722B3581264 /* WebKit.framework */; };
 		5A73A57A3F2A50D510068FFB /* AUCarbonViewDispatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1D90FC649C219FB68C31778 /* AUCarbonViewDispatch.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
+		6113F52E1C8DBDF400D4D033 /* CabbageCustomWidgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6113F52C1C8DBDF400D4D033 /* CabbageCustomWidgets.cpp */; };
+		6113F52F1C8DBDF400D4D033 /* CabbageMessageSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6113F52D1C8DBDF400D4D033 /* CabbageMessageSystem.cpp */; };
 		61D7ABBC1C1C3AEC007B53B8 /* CsoundLib64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61D7ABBB1C1C3AEC007B53B8 /* CsoundLib64.framework */; };
 		61D7ABE81C1C3BDF007B53B8 /* BinaryData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 61D7ABBD1C1C3BDF007B53B8 /* BinaryData.cpp */; };
 		61D7ABE91C1C3BDF007B53B8 /* CabbageCallOutBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 61D7ABBF1C1C3BDF007B53B8 /* CabbageCallOutBox.cpp */; };
@@ -470,6 +472,8 @@
 		6098C311D9C5DBF183422ABA /* juce_WindowsRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_WindowsRegistry.h; path = ../../../JuceLibraryCode/modules/juce_core/misc/juce_WindowsRegistry.h; sourceTree = SOURCE_ROOT; };
 		60CAB8A75D53E8F7D4CF6848 /* AUMIDIEffectBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AUMIDIEffectBase.cpp; path = ../../../JuceLibraryCode/modules/juce_audio_plugin_client/AU/CoreAudioUtilityClasses/AUMIDIEffectBase.cpp; sourceTree = SOURCE_ROOT; };
 		6102216C56A5410C5316971A /* juce_Sampler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_Sampler.cpp; path = ../../../JuceLibraryCode/modules/juce_audio_formats/sampler/juce_Sampler.cpp; sourceTree = SOURCE_ROOT; };
+		6113F52C1C8DBDF400D4D033 /* CabbageCustomWidgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CabbageCustomWidgets.cpp; path = ../../../Source/CabbageCustomWidgets.cpp; sourceTree = "<group>"; };
+		6113F52D1C8DBDF400D4D033 /* CabbageMessageSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CabbageMessageSystem.cpp; path = ../../../Source/CabbageMessageSystem.cpp; sourceTree = "<group>"; };
 		6180D499BC78A37BBAB93F4E /* juce_MenuBarModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_MenuBarModel.h; path = ../../../JuceLibraryCode/modules/juce_gui_basics/menus/juce_MenuBarModel.h; sourceTree = SOURCE_ROOT; };
 		61D7ABBB1C1C3AEC007B53B8 /* CsoundLib64.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CsoundLib64.framework; path = ../../../../CsoundLib64.framework; sourceTree = "<group>"; };
 		61D7ABBD1C1C3BDF007B53B8 /* BinaryData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BinaryData.cpp; path = ../../../Source/BinaryData.cpp; sourceTree = "<group>"; };
@@ -2412,6 +2416,8 @@
 		B303CB21D30C0D767AFFE169 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6113F52C1C8DBDF400D4D033 /* CabbageCustomWidgets.cpp */,
+				6113F52D1C8DBDF400D4D033 /* CabbageMessageSystem.cpp */,
 				61D7ABBD1C1C3BDF007B53B8 /* BinaryData.cpp */,
 				61D7ABBE1C1C3BDF007B53B8 /* BinaryData.h */,
 				61D7ABBF1C1C3BDF007B53B8 /* CabbageCallOutBox.cpp */,
@@ -3179,6 +3185,7 @@
 				5A73A57A3F2A50D510068FFB /* AUCarbonViewDispatch.cpp in Sources */,
 				DB475752E60F36E801719485 /* AUDispatch.cpp in Sources */,
 				61D7ABEF1C1C3BDF007B53B8 /* CodeWindow.cpp in Sources */,
+				6113F52F1C8DBDF400D4D033 /* CabbageMessageSystem.cpp in Sources */,
 				2365580BE06FC3FD57D715A4 /* AUEffectBase.cpp in Sources */,
 				65449EF3DF985237FC5E14E2 /* AUInputElement.cpp in Sources */,
 				61D7ABF31C1C3BDF007B53B8 /* CabbagePluginEditor.cpp in Sources */,
@@ -3220,6 +3227,7 @@
 				4D785653E5517FB0C145B862 /* juce_RTAS_DigiCode1.cpp in Sources */,
 				61D7ABEE1C1C3BDF007B53B8 /* CodeEditor.cpp in Sources */,
 				528E1F87B8954216EB33EAF2 /* juce_RTAS_DigiCode2.cpp in Sources */,
+				6113F52E1C8DBDF400D4D033 /* CabbageCustomWidgets.cpp in Sources */,
 				34D4CCC7F2385DFE48308EC7 /* juce_RTAS_DigiCode3.cpp in Sources */,
 				47F4D39B89526D1BF5988BBA /* juce_RTAS_MacUtilities.mm in Sources */,
 				61D7ABF41C1C3BDF007B53B8 /* CabbagePluginProcessor.cpp in Sources */,

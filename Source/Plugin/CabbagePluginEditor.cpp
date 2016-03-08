@@ -2860,11 +2860,6 @@ void CabbagePluginAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWa
                 || sliderThatWasMoved->getSliderStyle()==Slider::ThreeValueVertical
                 || sliderThatWasMoved->getSliderStyle()==Slider::ThreeValueHorizontal)
         {
-            cUtils::debug("SliderChanged:", min);
-            cUtils::debug("SliderChanged:", range);
-            cUtils::debug("SliderChanged:", getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel));
-            cUtils::debug("SliderChanged:", sliderThatWasMoved->getValue());
-
             getFilter()->setParameter(i, (float)((sliderThatWasMoved->getValue()-min)/range));
             getFilter()->setParameterNotifyingHost(i, (float)((sliderThatWasMoved->getValue()-min)/range));
         }

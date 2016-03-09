@@ -89,8 +89,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
         JUCEApplication::quit();
     }
 
-    filter->setPlayConfigDetails (JucePlugin_MaxNumInputChannels,
-                                  JucePlugin_MaxNumOutputChannels,
+    filter->setPlayConfigDetails (2,
+                                  2,
                                   44100, 512);
 
     PropertySet* const globalSettings = getGlobalSettings();

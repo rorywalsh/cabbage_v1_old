@@ -2036,7 +2036,9 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 {
     float** audioBuffers = buffer.getArrayOfWritePointers();
     const int numSamples = buffer.getNumSamples();
-    const int output_channel_count = getNumOutputChannels();
+
+	int output_channel_count = getNumOutputChannels();
+
     float samp;
 
     if(stopProcessing || isGuiEnabled())

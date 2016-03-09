@@ -291,7 +291,7 @@ void CabbagePluginAudioProcessor::initAllChannels()
 
         if(guiCtrls[i].getStringProp(CabbageIDs::type)!="hrange" && guiCtrls.getReference(i).getStringProp(CabbageIDs::type)!="vrange")
         {
-           
+
             messageQueue.addOutgoingChannelMessageToQueue(guiCtrls[i].getStringProp(CabbageIDs::channel),
                     guiCtrls[i].getNumProp(CabbageIDs::value), guiCtrls[i].getStringProp(CabbageIDs::type));
         }
@@ -376,7 +376,9 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
 
     csoundParams = nullptr;
     csoundParams = new CSOUND_PARAMS();
-#ifndef CABBAGE_HOST
+#if defined(Cabbage_Build_Standalone)
+    csoundParams->nchnls_override = 2;
+#else
     csoundParams->nchnls_override = this->getNumOutputChannels();
 #endif
 
@@ -528,9 +530,13 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 
     csoundParams = nullptr;
     csoundParams = new CSOUND_PARAMS();
-#ifndef CABBAGE_HOST
-    csoundParams->nchnls_override =2;
+
+#if defined(Cabbage_Build_Standalone)
+    csoundParams->nchnls_override = 2;
+#else
+    csoundParams->nchnls_override = this->getNumOutputChannels();
 #endif
+
     csoundParams->displays = 0;
     //csoundParams->sample_rate_override = this->getSampleRate();
     //csoundParams->control_rate_override = cUtils::getKrFromFile(file.getFullPathName(), (int)getSampleRate());
@@ -553,7 +559,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 
     csCompileResult = csound->Compile(const_cast<char*>(file.getFullPathName().toUTF8().getAddress()));
     file.getParentDirectory().setAsCurrentWorkingDirectory();
-    
+
     initAllChannels();
 
 #ifdef BUILD_DEBUGGER
@@ -625,8 +631,8 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
                     guiCtrls.getReference(i).getNumProp(CabbageIDs::value), guiCtrls.getReference(i).getStringProp(CabbageIDs::type));
             csound->SetChannel( guiCtrls.getReference(i).getStringProp(CabbageIDs::channel).toUTF8(),
                                 guiCtrls.getReference(i).getNumProp(CabbageIDs::value));
-            
-            
+
+
             this->updateCabbageControls();
         }
 
@@ -909,7 +915,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
 #endif
 
 
-                        
+
                         warningMessage = "";
                         warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
                         if(cAttr.getWarningMessages().isNotEmpty())
@@ -973,7 +979,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                             else
                             {
                                 guiCtrls.add(cAttr);
-                               
+
                                 widgetTypes.add("interactive");
                                 guiID++;
                                 if(tokes[0].equalsIgnoreCase(String("hslider2")) || tokes[0].equalsIgnoreCase(String("vslider2")))
@@ -1127,8 +1133,8 @@ void CabbagePluginAudioProcessor::createAndShowSourceEditor(LookAndFeel* looky)
 
 void CabbagePluginAudioProcessor::openFile(LookAndFeel* looky)
 {
-    
-    
+
+
     WildcardFileFilter wildcardFilter = WildcardFileFilter("*.csd", "", "File filter");
     Array<File> selectedFiles = cUtils::launchFileBrowser("Open a file",
                                 wildcardFilter,
@@ -2037,7 +2043,11 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     float** audioBuffers = buffer.getArrayOfWritePointers();
     const int numSamples = buffer.getNumSamples();
 
-	int output_channel_count = getNumOutputChannels();
+#ifdef Cabbage_Build_Standalone
+    int output_channel_count = 2;
+#else
+    int output_channel_count = getNumOutputChannels();
+#endif
 
     float samp;
 
@@ -2049,6 +2059,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     {
 #ifndef Cabbage_No_Csound
         //if no inputs are used clear buffer in case it's not empty..
+
         if(getNumInputChannels()==0)
             buffer.clear();
 

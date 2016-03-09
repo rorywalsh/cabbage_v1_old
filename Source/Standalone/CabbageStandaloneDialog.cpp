@@ -106,8 +106,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     if (globalSettings != nullptr)
         savedState = globalSettings->getXmlValue ("audioSetup");
 
-    deviceManager->initialise(filter->getNumInputChannels(),
-                              filter->getNumOutputChannels(), savedState, false);
+    deviceManager->initialise(2,
+                              2, savedState, false);
 
 
     //deviceManager->closeAudioDevice();
@@ -643,8 +643,8 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
             cabbageCsoundEditor->textEditor->editor[0]->loadContent(csdFile.loadFileAsString());
         }
 
-        deviceManager->initialise(filter->getNumInputChannels(),
-                                  filter->getNumOutputChannels(), savedState, false);
+        deviceManager->initialise(2,
+                                  2, savedState, false);
 
         //filter->createGUI(csdFile.loadFileAsString(), true);
     }

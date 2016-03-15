@@ -151,7 +151,10 @@ void StandaloneFilterWindow::loadFile(String filename)
                 originalPluginWidth = cAttr.getNumProp(CabbageIDs::width);
                 originalPluginHeight = cAttr.getNumProp(CabbageIDs::height);
                 this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));
+                this->getProperties().set("fontcolour", cAttr.getStringProp(CabbageIDs::fontcolour));
+                this->getProperties().set("titlebarcolour", cAttr.getStringProp(CabbageIDs::titlebarcolour));
                 this->lookAndFeelChanged();
+
             }
         }
 

@@ -98,6 +98,7 @@ public:
         add("transport");
         add("groupbox");
         add("fftdisplay");
+        add("scope");
         //sample widget
         add("stepper");
     }
@@ -205,6 +206,7 @@ public:
         add("keywidth");
         add("refreshfiles");
         add("currenttext");
+        add("titlebarcolour");
 //sample identifiers for stepper widget
         add("numberofsteps");
         add("stepbpm");
@@ -353,6 +355,7 @@ static const Identifier maxenabled = "maxenabled";
 static const Identifier keywidth = "keywidth";
 static const Identifier refreshfiles = "refreshfiles";
 static const Identifier currenttext = "currenttext";
+static const Identifier titlebarcolour =  "titlebarcolour";
 //list of static consts for types of widgets
 static const String combobox = "combobox";
 static const String numberbox = "numberbox";

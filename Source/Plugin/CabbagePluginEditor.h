@@ -199,6 +199,7 @@ private:
     void InsertEncoder(CabbageGUIType &cAttr);
     void InsertInfoButton(CabbageGUIType &cAttr);
     void InsertLineSeparator(CabbageGUIType &cAttr);
+    void InsertScope(CabbageGUIType &cAttr);
     void InsertPatternMatrix(CabbageGUIType &cAttr);
     void InsertSnapshot(CabbageGUIType &cAttr);
     void InsertTransport(CabbageGUIType &cAttr);

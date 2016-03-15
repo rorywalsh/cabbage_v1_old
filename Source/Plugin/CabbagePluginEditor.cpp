@@ -291,6 +291,10 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIType cAttr)
     {
         InsertFFTDisplay(cAttr);
     }
+    else if(cAttr.getStringProp(CabbageIDs::type)==String("scope"))
+    {
+        InsertScope(cAttr);
+    }
     //insert sample stepper widget
     else if(cAttr.getStringProp(CabbageIDs::type)==String("stepper"))
     {
@@ -2071,6 +2075,31 @@ void CabbagePluginAudioProcessorEditor::InsertFFTDisplay(CabbageGUIType &cAttr)
     fftDisplay->getProperties().set(CabbageIDs::index, layoutComps.size());
 
     layoutComps.add(new CabbageFFTDisplay(cAttr, this));
+    int idx = layoutComps.size()-1;
+    layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
+    setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
+    cAttr.setStringProp(CabbageIDs::type, "label");
+}
+//+++++++++++++++++++++++++++++++++++++++++++
+//                             sample stepper widget
+//+++++++++++++++++++++++++++++++++++++++++++
+void CabbagePluginAudioProcessorEditor::InsertScope(CabbageGUIType &cAttr)
+{
+    CabbageScope* stepper = new CabbageScope(cAttr, this);
+
+    float left = cAttr.getNumProp(CabbageIDs::left);
+    float top = cAttr.getNumProp(CabbageIDs::top);
+    float width = cAttr.getNumProp(CabbageIDs::width);
+    float height = cAttr.getNumProp(CabbageIDs::height);
+
+    //if control is not part of a plant, add mouse listener
+    if(cAttr.getStringProp("plant").isEmpty())
+        stepper->addMouseListener(this, true);
+
+    stepper->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+    stepper->getProperties().set(CabbageIDs::index, layoutComps.size());
+
+    layoutComps.add(stepper);
     int idx = layoutComps.size()-1;
     layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
     setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
@@ -4476,13 +4505,6 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                 getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
             }
 
-            //sample stepper widget
-            else if(checkForIdentifierMessage(getFilter()->getGUILayoutCtrls(i), "stepper"))
-            {
-                static_cast<CabbageStepper*>(layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
-                getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
-            }
-
 
             //FFT Widget
             else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("fftdisplay"))
@@ -4504,6 +4526,22 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     getFilter()->resetUpdateFFTDisplayFlag();
                 }
             }
+
+            //sample stepper widget
+            else if(checkForIdentifierMessage(getFilter()->getGUILayoutCtrls(i), "scope"))
+            {
+                static_cast<CabbageScope*>(layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
+                getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
+            }
+
+            //sample stepper widget
+            else if(checkForIdentifierMessage(getFilter()->getGUILayoutCtrls(i), "stepper"))
+            {
+                static_cast<CabbageStepper*>(layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
+                getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
+            }
+
+
         }
 
 

@@ -376,7 +376,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
 
     csoundParams = nullptr;
     csoundParams = new CSOUND_PARAMS();
-#if defined(Cabbage_Build_Standalone)
+#if defined(Cabbage_Build_Standalone) || defined(AndroidBuild)
     csoundParams->nchnls_override = 2;
 #else
     csoundParams->nchnls_override = this->getNumOutputChannels();
@@ -531,7 +531,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
     csoundParams = nullptr;
     csoundParams = new CSOUND_PARAMS();
 
-#if defined(Cabbage_Build_Standalone)
+#if defined(Cabbage_Build_Standalone) || defined(AndroidBuild)
     csoundParams->nchnls_override = 2;
 #else
     csoundParams->nchnls_override = this->getNumOutputChannels();
@@ -2043,7 +2043,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     float** audioBuffers = buffer.getArrayOfWritePointers();
     const int numSamples = buffer.getNumSamples();
 
-#ifdef Cabbage_Build_Standalone
+#if defined(Cabbage_Build_Standalone) || defined(AndroidBuild)
     int output_channel_count = 2;
 #else
     int output_channel_count = getNumOutputChannels();

@@ -983,7 +983,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
         cabbageIdentifiers.set(CabbageIDs::scrollbars, 1);
-
+        cabbageIdentifiers.set(CabbageIDs::titlebarcolour, "");
+        cabbageIdentifiers.set(CabbageIDs::fontcolour, "");
     }
 
     //===============rangeslider===============//
@@ -1028,7 +1029,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");
     }
 
-    //===============stepper==================//
+    //===============fftdisplay==================//
     else if(strTokens[0].trim() == "fftdisplay")
     {
         cabbageIdentifiers.set("basetype", "layout");
@@ -1053,6 +1054,27 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::displaytype, "spectroscope");
         cabbageIdentifiers.set(CabbageIDs::zoom, 0);
+        cabbageIdentifiers.set(CabbageIDs::visible, 1);
+    }
+
+    //===============stepper==================//
+    else if(strTokens[0].trim() == "scope")
+    {
+        cabbageIdentifiers.set("basetype", "layout");
+        top = 10;
+        left = 10;
+        width = 180;
+        height = 2;
+
+        cabbageIdentifiers.set(CabbageIDs::top, 10);
+        cabbageIdentifiers.set(CabbageIDs::left, 10);
+        cabbageIdentifiers.set(CabbageIDs::width, 160);
+        cabbageIdentifiers.set(CabbageIDs::height, 2);
+        cabbageIdentifiers.set(CabbageIDs::colour, Colours::white.toString());
+        cabbageIdentifiers.set(CabbageIDs::type, "scope");
+        cabbageIdentifiers.set(CabbageIDs::name, "scope");
+        cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
+        cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::visible, 1);
     }
 
@@ -1342,6 +1364,11 @@ void CabbageGUIType::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("highlightcolour"))
             {
                 cabbageIdentifiers.set(CabbageIDs::highlightcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
+            }
+
+            else if(identArray[indx].equalsIgnoreCase("titlebarcolour"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::titlebarcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
             }
 
             else if(identArray[indx].equalsIgnoreCase("kind"))

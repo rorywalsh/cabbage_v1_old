@@ -1351,6 +1351,7 @@ void CabbageLookAndFeel::drawDocumentWindowTitleBar (DocumentWindow &window, Gra
     window.setUsingNativeTitleBar(false);
     Colour background = Colour::fromString(window.getProperties().getWithDefault("colour", "").toString());
     String fontcolour = window.getProperties().getWithDefault("fontcolour", "").toString();
+    String titlebarcolour = window.getProperties().getWithDefault("titlebarcolour", "").toString();
 #ifdef CABBAGE_HOST
     window.setOpaque(true);
     g.setColour (background);
@@ -1358,6 +1359,15 @@ void CabbageLookAndFeel::drawDocumentWindowTitleBar (DocumentWindow &window, Gra
 #else
     g.setColour (background);
     g.fillAll();
+
+    if(titlebarcolour.length()>1)
+    {
+        g.setColour (Colour::fromString(titlebarcolour));
+        g.fillRect(0, 0, w, h+22);
+
+    }
+    g.fillRoundedRectangle(0, 0, w, h+20, 10);
+
 #endif
 
     if(fontcolour.isNotEmpty())

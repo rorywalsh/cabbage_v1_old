@@ -858,7 +858,7 @@ void CodeWindow::showCabbageHelp()
 
     String file = tokens[0];
     if(file.contains("slider"))
-        file = "slider";
+        file = "sliders";
     else if(file.contains("file"))
         file = "button_file";
     else if(file.contains("button_info"))

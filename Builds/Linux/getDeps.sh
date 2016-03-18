@@ -9,4 +9,5 @@ sudo apt-get -y install libxcomposite-dev
 sudo apt-get install libsndfile1
 sudo apt-get install libsndfile1-dev
 sudo apt-get install libjack-dev
+sudo apt-get install libxrandr-dev
 sudo apt-get install msttcorefonts

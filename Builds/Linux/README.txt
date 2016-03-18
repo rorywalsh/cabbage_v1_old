@@ -20,8 +20,9 @@ sudo apt-get install libcsnd-dev
 sudo apt-get install libsndfile1
 sudo apt-get install libsndfile1-dev
 sudo apt-get install libjack-dev
+sudo apt-get install libxrandr-dev
 
-Please make sure that the version of Csound you use is 6.03 or newer, otherwise you will get build problems. You'll also need to have the VST SDK. 
+Please make sure that the version of Csound you use is 6.03 or newer, otherwise you will get build problems. You'll also need to have the VST SDK.
 
 If you are having problems viewing fonts you should get the following package:
 

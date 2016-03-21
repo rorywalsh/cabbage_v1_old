@@ -179,9 +179,7 @@ private:
         //this list of keywords is not completely up to date!
         static const char* const keywords[] =
         {
-            "scale",
-            "!=", "#define", "#include", "#undef", "#ifdef", "#ifndef", "$", "%", "&&", ">", ">=", "<", "<=", "*", "+",
-            "-",            "/",            "=","=+","==","ˆ","||","0dbfs","<<",">>","&",
+            "scale", "!=", "#define", "#include", "#undef", "#ifdef", "#ifndef", "$", "%", "&&", ">", ">=", "<", "<=", "*", "+","-","/","=","=+","==","ˆ","||","0dbfs","<<",">>","&",
             "|","¬","#","a","alwayson","ampmidid","ATSadd","ATSaddnz","ATSbufread","ATScross","ATSinfo","ATSinterpread","ATSread","ATSreadnz","ATSpartialtap","ATSsinnoi","barmodel","bformenc1",
             "bformdec1","binit","cauchyi","cell","centroid","chebyshevpoly","chnrecv","chnsend","chuap","combinv","compress","compileorc","compilestr","connect","copya2ftab","copyf2array","cosseg",
             "cossegb","cossegr","cpsmidinn","cpumeter","crossfm","date","dates","dcblock2","diskgrain","distort","doppler","dust","dust2","ephasor","eqfil","evalstr","expcurve","exprandi",

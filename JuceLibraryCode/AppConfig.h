@@ -225,7 +225,7 @@
     #endif
 #endif
 
-//#ifdef CABBAGE_HOST
+#ifdef CABBAGE_HOST
 	#ifndef  JucePlugin_MaxNumInputChannels
 	#define JucePlugin_MaxNumInputChannels    8
 	#endif
@@ -235,17 +235,17 @@
 	#ifndef  JucePlugin_PreferredChannelConfigurations
 	#define JucePlugin_PreferredChannelConfigurations {8,8}
 	#endif
-//#else
-//	#ifndef  JucePlugin_MaxNumInputChannels
-//	#define JucePlugin_MaxNumInputChannels    2
-//	#endif
-//	#ifndef  JucePlugin_MaxNumOutputChannels
-//	#define JucePlugin_MaxNumOutputChannels   2
-//	#endif
-//	#ifndef  JucePlugin_PreferredChannelConfigurations
-//	#define JucePlugin_PreferredChannelConfigurations  {2,2}
-//	#endif
-//#endif
+#else
+	#ifndef  JucePlugin_MaxNumInputChannels
+	#define JucePlugin_MaxNumInputChannels    2
+	#endif
+	#ifndef  JucePlugin_MaxNumOutputChannels
+	#define JucePlugin_MaxNumOutputChannels   2
+	#endif
+	#ifndef  JucePlugin_PreferredChannelConfigurations
+	#define JucePlugin_PreferredChannelConfigurations  {2,2}
+	#endif
+#endif
 
 #ifdef Cabbage_Plugin_LV2
 	#define JucePlugin_LV2URI               "urn:cabbage:plugin"

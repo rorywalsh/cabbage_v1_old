@@ -713,6 +713,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
             CabbageGUIType cAttr(csdArray[i], -99);
             this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));
             this->getProperties().set("fontcolour", cAttr.getStringProp(CabbageIDs::fontcolour));
+            this->getProperties().set("titlebarcolour", cAttr.getStringProp(CabbageIDs::titlebarcolour));
             this->lookAndFeelChanged();
         }
     }

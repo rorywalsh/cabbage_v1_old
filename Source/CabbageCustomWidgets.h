@@ -1130,7 +1130,6 @@ public:
 
     {
         setName(name);
-
         if(file.containsIgnoreCase(".svg"))
             img = cUtils::drawFromSVG(File(file).loadFileAsString(), cUtils::getSVGWidth(File(file).loadFileAsString()), cUtils::getSVGHeight(File(file).loadFileAsString()), AffineTransform::identity);
         else
@@ -3090,4 +3089,123 @@ public:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageFFTDisplay);
 };
+
+//=============================================================================
+// CRO Scope Widget
+//=============================================================================
+class CabbageScope    :   public Component, public Timer
+{
+    String name;
+    Array<float, CriticalSection> points;
+    Colour colour, backgroundColour;
+    Rectangle<int> pixel;
+    Rectangle<int> oldPixel;
+    int size;
+    Array<Rectangle <int>> pixels;
+public:
+
+    CabbageScope (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner)
+        : Component(),
+          owner(_owner),
+          pixel(0, 0),
+          oldPixel(0,0)
+    {
+        startTimer(100);
+    }
+
+    ~CabbageScope()
+    {}
+
+    void paint(Graphics& g)
+    {
+        //g.fillAll(Colours::black);
+        //g.fillAll(Colours::black.withAlpha(.01f));
+        g.setColour(Colours::white);
+        //g.fillRoundedRectangle(pixel.toFloat(), 5);
+        if(pixel.getX()>oldPixel.getX())
+            g.drawLine(oldPixel.getX(), oldPixel.getY(), pixel.getX(), pixel.getY(), pixel.getWidth());
+
+    }
+
+    void timerCallback()
+    {
+        repaint();
+    }
+
+    void setPoints(Array<float, CriticalSection> _points)
+    {
+        points = _points;
+        size = points.size();
+        repaint();
+
+    }
+
+    void update(CabbageGUIType m_cAttr)
+    {
+        oldPixel = pixel;
+        pixel = m_cAttr.getBounds();
+        repaint();
+    }
+
+private:
+    CabbagePluginAudioProcessorEditor* owner;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageScope);
+};
+
+//=============================================================================
+// CRO ScopeOLD Widget
+//=============================================================================
+//class CabbageScopeOld2    :   public Component, public Timer
+//{
+//String name;
+//int numberOfSteps, tempo;
+//Colour colour, backgroundColour;
+//Rectangle<int> pixel;
+//Rectangle<int> oldPixel;
+//int counter;
+//Array<Rectangle <int>> pixels;
+//public:
+//
+//    CabbageScope (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner)
+//        : Component(),
+//        owner(_owner),
+//		pixel(0, 0),
+//		oldPixel(0,0)
+//    {
+//			setOpaque(true);
+//			startTimer(100);
+//	}
+//
+//    ~CabbageScope()
+//    {}
+//
+//    void paint(Graphics& g)
+//    {
+//        //g.fillAll(Colours::black);
+//		g.fillAll(Colours::black.withAlpha(.01f));
+//		g.setColour(Colours::white);
+//		//g.fillRoundedRectangle(pixel.toFloat(), 5);
+//		if(pixel.getX()>oldPixel.getX())
+//			g.drawLine(oldPixel.getX(), oldPixel.getY(), pixel.getX(), pixel.getY(), pixel.getWidth());
+//
+//    }
+//
+//	void timerCallback()
+//	{
+//		repaint();
+//	}
+//
+//    void update(CabbageGUIType m_cAttr)
+//	{
+//		oldPixel = pixel;
+//		pixel = m_cAttr.getBounds();
+//		repaint();
+//	}
+//
+//private:
+//    CabbagePluginAudioProcessorEditor* owner;
+//
+//    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageScope);
+//};
 #endif

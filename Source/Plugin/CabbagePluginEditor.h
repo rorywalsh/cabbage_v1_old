@@ -135,6 +135,7 @@ public:
     void ksmpsYieldCallback();
     void refreshDiskReadingGUIControls(String typeOfControl);
     void updateSize();
+    void restoreParametersFromPresets(XmlElement* xmlData);
     //used in Android mode to rescale according to screen res
     ScopedPointer<CabbagePropertiesDialog> propsWindow;
     //main GUI controls vectors..
@@ -222,7 +223,6 @@ private:
     void buttonStateChanged(Button*);
     void showInsertControlsMenu(int x, int y);
     void insertScoreStatementText(Table *table, bool overwrite);
-    void restoreParametersFromPresets(XmlElement* xmlData);
     void savePresetsFromParameters(File selectedFile, String mode);
     void updatefTableData(GenTable* table);
     bool checkForIdentifierMessage(CabbageGUIType cAttr, String type)

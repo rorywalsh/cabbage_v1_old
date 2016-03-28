@@ -4061,6 +4061,8 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
 {
     ScopedPointer<XmlElement> xml;
     xml = xmlState;
+
+
     // make sure that it's actually our type of XML object..
     if (xml->hasTagName (getFilter()->getCsoundInputFile().getFileNameWithoutExtension().replace(" ", "_")))
     {
@@ -4091,12 +4093,12 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
             //getFilter()->getGUICtrls(i)->setNumProp(CabbageIDs::value, newValue);
 #endif
 
-            if(!getFilter()->getGUICtrls(i).getStringProp("filetype").contains("snaps"))
-            {
-                getFilter()->setParameterNotifyingHost(i, newValue);
-                getFilter()->setParameter(i, newValue);
-                getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, newValue);
-            }
+            // if(!getFilter()->getGUICtrls(i).getStringProp("filetype").contains("snaps"))
+            //{
+            getFilter()->setParameterNotifyingHost(i, newValue);
+            getFilter()->setParameter(i, newValue);
+            getFilter()->getGUICtrls(i).setNumProp(CabbageIDs::value, newValue);
+            //}
 
         }
 

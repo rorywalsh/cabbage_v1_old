@@ -650,6 +650,16 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 
         csound->SetChannel("IS_A_PLUGIN", 0.0);
 
+
+        //if user has requested a preset file to be loaded on startup...
+        CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
+        if(editor && selectedPresetFile.isNotEmpty())
+        {
+            //remove any messages from queue
+            messageQueue.flushOutgoingChannelMessages();
+            //editor->restoreParametersFromPresets(XmlDocument::parse(File(selectedPresetFile)));
+        }
+
         stopProcessing = false;
 
         return csCompileResult;
@@ -1105,6 +1115,16 @@ void CabbagePluginAudioProcessor::addWidgetsToEditor(bool refresh)
         if(!getPreference(appProperties, "ExternalEditor") && refresh)
             editor->setEditMode(isGuiEnabled());
 #endif
+
+        if(selectedPresetFile.isNotEmpty())
+        {
+            cUtils::debug(selectedPresetFile);
+            CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
+            //if(editor)
+            //	editor->restoreParametersFromPresets(XmlDocument::parse(File(selectedPresetFile)));
+        }
+
+
     }
 }
 

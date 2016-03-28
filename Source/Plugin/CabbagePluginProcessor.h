@@ -192,7 +192,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     CriticalSection writerLock;
     AudioFormatWriter::ThreadedWriter* volatile activeWriter;
     bool firstTime, isBypassed, isMuted;
-
+    String selectedPresetFile {""};
 
 public:
 
@@ -217,6 +217,11 @@ public:
     bool isFirstTime()
     {
         return firstTime;
+    }
+
+    void setSelectedPresetFile(String preset)
+    {
+        selectedPresetFile = preset;
     }
 
     bool shouldUpdateFFTDisplay()

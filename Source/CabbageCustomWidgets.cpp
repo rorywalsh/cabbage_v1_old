@@ -1262,6 +1262,7 @@ CabbageComboBox::CabbageComboBox(CabbageGUIType &cAttr, CabbagePluginAudioProces
     refresh(0),
     owner(_owner)
 {
+    bool isPresetCombo = false;
     setName(name);
     offX=offY=offWidth=offHeight=0;
     StringArray fileNames;
@@ -1352,7 +1353,10 @@ CabbageComboBox::CabbageComboBox(CabbageGUIType &cAttr, CabbagePluginAudioProces
             //String test  = String(i+1)+": "+dirFiles[i].getFileName();
             String filename;
             if(filetype.contains("snaps"))
+            {
                 filename = dirFiles[i].getFileNameWithoutExtension();
+                isPresetCombo = true;
+            }
             else
                 filename = dirFiles[i].getFileName();
 
@@ -1366,7 +1370,8 @@ CabbageComboBox::CabbageComboBox(CabbageGUIType &cAttr, CabbagePluginAudioProces
     }
     //cAttr.setStringArrayProp(CabbageIDs::text, fileNames);
 
-    combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1, dontSendNotification);
+    combo->setSelectedItemIndex(cAttr.getNumProp(CabbageIDs::value)-1, isPresetCombo ? sendNotification : dontSendNotification);
+    //owner->getFilter()->setSelectedPresetFile(fileNames[cAttr.getNumProp(CabbageIDs::value)-1]+".snaps");
 
 }
 //---------------------------------------------

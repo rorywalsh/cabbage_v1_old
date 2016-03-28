@@ -23,4 +23,5 @@ rslider bounds(10, 10, 100, 100), range(0, 1, .5)
 ```
 Not all widgets support the same identifiers however. For example, a groupbox will never need to have a channel assigned to it because it's a static control. Likewise buttons don't need to use the range() identifier. Parameters presented in the following reference manual within quotation marks represent string values, while those without represent floating point decimals, or integer values. Please use the menu on the left to navigate through the various types of widget's supported be Cabbage. 
 
-> bounds() must be set for every widget. All other identifiers will be given default values if none are set.  
+> bounds() must be set for every widget. All other identifiers will be given default values if none are set. 
+> Only ; type comments can be used in the Cabbage section of code, /**/ will not work. 

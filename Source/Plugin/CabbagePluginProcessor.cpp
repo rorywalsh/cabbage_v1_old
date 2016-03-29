@@ -131,7 +131,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile, Poin
     isBypassed(false),
     vuCounter(0),
     scale(instrScale),
-    updateFFTDisplay(false)
+    updateSignalDisplay(false)
 {
     //If a sourcefile is not given, Cabbage plugins always try to load a csd file with the same name as the plugin library.
     //Therefore we need to find the name of the library and append a '.csd' to it.

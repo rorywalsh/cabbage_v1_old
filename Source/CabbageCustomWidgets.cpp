@@ -979,19 +979,18 @@ void CabbageRangeSlider2::resized()
 }
 
 //================================================================================================================
-// FFTDisplay widget
+// Display widget
 //================================================================================================================
-CabbageFFTDisplay::CabbageFFTDisplay (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner)
+CabbageSignalDisplay::CabbageSignalDisplay (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner)
     : Component(),
       owner(_owner),
-      tableNumber(cAttr.getNumProp(CabbageIDs::ffttablenumber)),
       colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::colour))),
       backgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablebackgroundcolour))),
       fontColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
       minFFTBin(0),
       maxFFTBin(1024),
       size(2048),
-      shouldDrawSonogram(cAttr.getStringProp(CabbageIDs::displaytype)=="spectroscope" ? false : true),
+      shouldDrawSonogram(cAttr.getStringProp(CabbageIDs::displaytype)=="spectrogram" ? true : false),
       displayType(cAttr.getStringProp(CabbageIDs::displaytype)),
       spectrogramImage(Image::RGB, 512, 300, true),
       spectroscopeImage(Image::RGB, 512, 300, true),
@@ -1005,9 +1004,14 @@ CabbageFFTDisplay::CabbageFFTDisplay (CabbageGUIType &cAttr, CabbagePluginAudioP
       leftPos(0),
       isScrollbarShowing(false),
       scrollbarHeight(20),
-      rotate(cAttr.getNumProp(CabbageIDs::rotate))
+      rotate(cAttr.getNumProp(CabbageIDs::rotate)),
+      lineThickness(cAttr.getNumProp(CabbageIDs::outlinethickness))
 {
     addAndMakeVisible(freqRangeDisplay);
+
+    if(displayType=="waveform")
+        freqRangeDisplay.setVisible(false);
+
     addAndMakeVisible(scrollbar);
     scrollbar.setRangeLimits(Range<double>(0, 20));
     zoomInButton.addChangeListener(this);
@@ -1023,13 +1027,13 @@ CabbageFFTDisplay::CabbageFFTDisplay (CabbageGUIType &cAttr, CabbagePluginAudioP
     }
 }
 
-void CabbageFFTDisplay::setBins(int min, int max)
+void CabbageSignalDisplay::setBins(int min, int max)
 {
     minFFTBin = min;
     maxFFTBin = max;
 }
 
-void CabbageFFTDisplay::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
+void CabbageSignalDisplay::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)
 {
     ScrollBar* scroll = dynamic_cast<ScrollBar*>(scrollBarThatHasMoved);
     if(scroll)
@@ -1042,7 +1046,7 @@ void CabbageFFTDisplay::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double
     }
 }
 
-void CabbageFFTDisplay::changeListenerCallback(ChangeBroadcaster *source)
+void CabbageSignalDisplay::changeListenerCallback(ChangeBroadcaster *source)
 {
     RoundButton* button = dynamic_cast<RoundButton*>(source);
 
@@ -1052,7 +1056,7 @@ void CabbageFFTDisplay::changeListenerCallback(ChangeBroadcaster *source)
         zoomOut();
 }
 
-void CabbageFFTDisplay::zoomIn(int factor)
+void CabbageSignalDisplay::zoomIn(int factor)
 {
     for(int i=0; i<factor; i++)
     {
@@ -1066,7 +1070,7 @@ void CabbageFFTDisplay::zoomIn(int factor)
     }
 }
 
-void CabbageFFTDisplay::zoomOut(int factor)
+void CabbageSignalDisplay::zoomOut(int factor)
 {
     for(int i=0; i<factor; i++)
     {
@@ -1081,7 +1085,7 @@ void CabbageFFTDisplay::zoomOut(int factor)
     }
 }
 
-void CabbageFFTDisplay::showScrollbar(bool show)
+void CabbageSignalDisplay::showScrollbar(bool show)
 {
     if(show)
     {
@@ -1099,7 +1103,7 @@ void CabbageFFTDisplay::showScrollbar(bool show)
     }
 }
 
-void CabbageFFTDisplay::drawSonogram()
+void CabbageSignalDisplay::drawSonogram()
 {
     const int rightHandEdge = spectrogramImage.getWidth() - 2;
     const int imageHeight = spectrogramImage.getHeight();
@@ -1119,7 +1123,7 @@ void CabbageFFTDisplay::drawSonogram()
     }
 }
 
-void CabbageFFTDisplay::drawSpectroscope(Graphics& g)
+void CabbageSignalDisplay::drawSpectroscope(Graphics& g)
 {
     g.fillAll(backgroundColour);
     for (int i=0; i<size; i++)
@@ -1134,17 +1138,39 @@ void CabbageFFTDisplay::drawSpectroscope(Graphics& g)
     }
 }
 
-void CabbageFFTDisplay:: paint(Graphics& g)
+void CabbageSignalDisplay::drawWaveform(Graphics& g)
 {
-    if(shouldDrawSonogram)
-        g.drawImageWithin(spectrogramImage, 0, 0, getWidth(), getHeight(), RectanglePlacement::stretchToFit);
-    else
+    g.fillAll(backgroundColour);
+    const int offset = isScrollbarShowing==true ? scrollbarHeight : 0;
+    const int height = getHeight()-offset;
+    int newSize = 512;
+    int prevXPos = 0;
+    int prevYPos = height/2;
+
+    for (int i=0; i<newSize; i++)
     {
-        drawSpectroscope(g);
+        const int position = jmap(i, 0, newSize, leftPos, scopeWidth);
+        const int amp = jmap(points[i], -1.f, 1.f, 0.f, 1.f)*height;
+        const int lineWidth = jmax(1, scopeWidth/size);
+        g.setColour(colour);
+        g.drawLine(prevXPos, prevYPos, position, amp, lineThickness);
+        prevXPos = position;
+        prevYPos = amp;
     }
 }
 
-void CabbageFFTDisplay::mouseMove(const MouseEvent &e)
+void CabbageSignalDisplay:: paint(Graphics& g)
+{
+    if(shouldDrawSonogram)
+        g.drawImageWithin(spectrogramImage, 0, 0, getWidth(), getHeight(), RectanglePlacement::stretchToFit);
+    else if(displayType=="spectroscope")
+        drawSpectroscope(g);
+    else if(displayType=="waveform")
+        drawWaveform(g);
+
+}
+
+void CabbageSignalDisplay::mouseMove(const MouseEvent &e)
 {
     if(shouldDrawSonogram)
     {
@@ -1158,24 +1184,28 @@ void CabbageFFTDisplay::mouseMove(const MouseEvent &e)
     }
 }
 
-void CabbageFFTDisplay::setPoints(Array<float, CriticalSection> _points)
+void CabbageSignalDisplay::setPoints(Array<float, CriticalSection> _points)
 {
     points = _points;
     size = points.size();
-    freq = 44100/size;
-    if(shouldDrawSonogram)
-        drawSonogram();
+    if(size>0)
+    {
+        freq = 44100/size;
+        //spectrogram works on a scrolling image, the other displays are drawn directly
+        if(displayType=="spectrogram")
+            drawSonogram();
 
-    repaint();
+        repaint();
+    }
 
 }
 
-void CabbageFFTDisplay::showPopup(String text)
+void CabbageSignalDisplay::showPopup(String text)
 {
     owner->showBubble(this, text);
 }
 
-void CabbageFFTDisplay::resized()
+void CabbageSignalDisplay::resized()
 {
     scrollbarHeight = jmin(15.0, getHeight()*.09);
     if(!shouldDrawSonogram)
@@ -1190,7 +1220,7 @@ void CabbageFFTDisplay::resized()
 }
 
 
-void CabbageFFTDisplay::update(CabbageGUIType m_cAttr)
+void CabbageSignalDisplay::update(CabbageGUIType m_cAttr)
 {
     if(m_cAttr.getStringProp(CabbageIDs::displaytype)!=displayType)
     {
@@ -1203,9 +1233,15 @@ void CabbageFFTDisplay::update(CabbageGUIType m_cAttr)
             zoomOutButton.setVisible(false);
             scrollbar.setVisible(false);
         }
-        else
+        else if(displayType=="spectroscope")
         {
             freqRangeDisplay.setVisible(true);
+            zoomInButton.setVisible(true);
+            zoomOutButton.setVisible(true);
+        }
+        else if(displayType=="waveform")
+        {
+            freqRangeDisplay.setVisible(false);
             zoomInButton.setVisible(true);
             zoomOutButton.setVisible(true);
         }

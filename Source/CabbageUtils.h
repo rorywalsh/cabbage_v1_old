@@ -53,15 +53,15 @@ using namespace std;
 
 #define OK 0
 
-//simple to hold information about about fft displays
-class fftDisplay
+//simple abstract class used to hold information about about displays
+class SignalDisplay
 {
 public:
     float yScale;
     int windid, min ,max, size;
     String caption;
 
-    fftDisplay(String _caption, int _id, float _scale, int _min, int _max, int _size):
+    SignalDisplay(String _caption, int _id, float _scale, int _min, int _max, int _size):
         caption(_caption),
         windid(_id),
         yScale(_scale),
@@ -70,7 +70,7 @@ public:
         size(_size)
     {}
 
-    ~fftDisplay()
+    ~SignalDisplay()
     {
         points.clear();
     }

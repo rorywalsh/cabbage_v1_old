@@ -1029,8 +1029,8 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::svgsliderbg, "");
     }
 
-    //===============fftdisplay==================//
-    else if(strTokens[0].trim() == "fftdisplay")
+    //===============signaldisplay==================//
+    else if(strTokens[0].trim() == "fftdisplay" || strTokens[0].trim() == "signaldisplay")
     {
         cabbageIdentifiers.set("basetype", "layout");
         top = 10;
@@ -1045,11 +1045,12 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::tablecolour, Colours::lime.toString());
         cabbageIdentifiers.set(CabbageIDs::fontcolour, Colours::white.toString());
         cabbageIdentifiers.set(CabbageIDs::tablebackgroundcolour, Colour(30, 30, 38).toString());
-        cabbageIdentifiers.set(CabbageIDs::type, "fftdisplay");
-        cabbageIdentifiers.set(CabbageIDs::name, "fftdisplay");
+        cabbageIdentifiers.set(CabbageIDs::type, "signaldisplay");
+        cabbageIdentifiers.set(CabbageIDs::name, "signaldisplay");
         cabbageIdentifiers.set(CabbageIDs::min, 0);
         cabbageIdentifiers.set(CabbageIDs::max, 2048);
-        cabbageIdentifiers.set(CabbageIDs::ffttablenumber, 0);
+        cabbageIdentifiers.set(CabbageIDs::signalvariable, "");
+        cabbageIdentifiers.set(CabbageIDs::outlinethickness, 1);
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
         cabbageIdentifiers.set(CabbageIDs::displaytype, "spectroscope");
@@ -1239,6 +1240,12 @@ void CabbageGUIType::parse(String inStr, String identifier)
             {
                 cabbageIdentifiers.set(CabbageIDs::caption, strTokens[0].trim());
             }
+
+            else if(identArray[indx].equalsIgnoreCase("signalvariable"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::signalvariable, strTokens[0].trim());
+            }
+
 
             else if(identArray[indx].equalsIgnoreCase("channel")||
                     identArray[indx].equalsIgnoreCase("channels")||

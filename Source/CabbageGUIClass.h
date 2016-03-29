@@ -98,6 +98,7 @@ public:
         add("transport");
         add("groupbox");
         add("fftdisplay");
+        add("signaldisplay");
         add("scope");
         //sample widget
         add("stepper");
@@ -188,6 +189,7 @@ public:
         add("scrubberposition");
         add("scroll");
         add("zoom");
+        add("signalvariable");
         add("samplerange");
         add("scrollbars");
         add("colour");
@@ -326,6 +328,7 @@ static const Identifier radiogroup = "radiogroup";
 static const Identifier tabpage = "tabpage";
 static const Identifier filetype = "filetype";
 static const Identifier workingdir = "workingdir";
+static const Identifier signalvariable = "signalvariable";
 static const Identifier author = "author";
 static const Identifier xychannel = "xychannel";
 static const Identifier guirefresh = "guirefresh";
@@ -406,6 +409,7 @@ static const String mousedownright = "MOUSE_DOWN_RIGHT";
 static const String mousedownlmiddle = "MOUSE_DOWN_MIDDLE";
 static const String csoundoutput = "csoundoutput";
 static const String fftdisplay = "fftdisplay";
+static const String signaldisplay = "signaldisplay";
 };
 
 

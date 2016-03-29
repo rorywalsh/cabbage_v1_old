@@ -116,7 +116,7 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     File logFile;
     bool isAutomator;
     bool isWinXP;
-    bool updateFFTDisplay;
+    bool updateSignalDisplay;
     bool isNativeThreadRunning;
     String csoundDebuggerOutput;
     float rmsLeft, rmsRight;
@@ -224,14 +224,14 @@ public:
         selectedPresetFile = preset;
     }
 
-    bool shouldUpdateFFTDisplay()
+    bool shouldUpdateSignalDisplay()
     {
-        return updateFFTDisplay;
+        return updateSignalDisplay;
     }
 
-    void resetUpdateFFTDisplayFlag()
+    void resetUpdateSignalDisplayFlag()
     {
-        updateFFTDisplay = false;
+        updateSignalDisplay = false;
     }
 
     int getNumberCsoundOutChannels()
@@ -351,7 +351,7 @@ public:
     StringArray getTableStatement(int tableNum);
     //const Array<double, CriticalSection> getTable(int tableNum);
     const Array<float, CriticalSection> getTableFloats(int tableNum);
-    fftDisplay* getFFTTable(int tableNum);
+    SignalDisplay* getSignalArray(String signalName, String displayType="");
     void initialiseWidgets(String source, bool refresh);
     void addWidgetsToEditor(bool refresh);
     int checkTable(int tableNum);
@@ -495,9 +495,7 @@ public:
     //hold values from function tables
     Array<Array <float > > tableArrays;
     //holds value from FFT function table created using dispfft
-    OwnedArray <fftDisplay, CriticalSection> fftArrays;
-    Array<int> windowIDs;
-
+    OwnedArray <SignalDisplay, CriticalSection> signalArrays;
 
     Array<float> getTableArray(int index)
     {

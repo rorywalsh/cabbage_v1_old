@@ -88,7 +88,7 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String inputfile, bool 
      isMuted(false),
      isBypassed(false),
      vuCounter(0),
-     updateFFTDisplay(false)
+     updateSignalDisplay(false)
 {
     codeEditor = nullptr;
     if(compileCsoundAndCreateGUI(false)==0)
@@ -1030,31 +1030,33 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
 void CabbagePluginAudioProcessor::makeGraphCallback(CSOUND *csound, WINDAT *windat, const char * /*name*/)
 {
     CabbagePluginAudioProcessor *ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
-    ud->windowIDs.addIfNotAlreadyThere(windat->windid);
+
     cUtils::debug("tableMin:"+String(windat->min));
-    cUtils::debug("tableMa:"+String(windat->max));
+    cUtils::debug("size:"+String(windat->npts));
 
-    fftDisplay* fft = new fftDisplay(String(windat->caption),windat->windid, windat->oabsmax, windat->min, windat->max, windat->npts);
+    SignalDisplay* display = new SignalDisplay(String(windat->caption),windat->windid, windat->oabsmax, windat->min, windat->max, windat->npts);
 
-    bool addFFT = true;
-    for(int i=0; i<ud->fftArrays.size(); i++)
+    bool addDisplay = true;
+    for(int i=0; i<ud->signalArrays.size(); i++)
     {
-        if(ud->fftArrays[i]->windid==windat->windid)
-            addFFT = false;
+        if(ud->signalArrays[i]->caption==windat->caption)
+            addDisplay  = false;
     }
 
-    if(addFFT)
-        ud->fftArrays.add(fft);
+    if(addDisplay)
+        ud->signalArrays.add(display);
 
     //cUtils::debug(String(ud->fftArrays.size())+":"+String(windat->windid));
 }
 
 void CabbagePluginAudioProcessor::drawGraphCallback(CSOUND *csound, WINDAT *windat)
 {
+    //this has to find the correct signal vector, at the moment it's only getting the first one...
     CabbagePluginAudioProcessor *ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
     Array<float, CriticalSection> tablePoints = Array<float, CriticalSection>(&windat->fdata[0], windat->npts);
-    ud->fftArrays.getUnchecked(windat->windid)->setPoints(tablePoints);
-    ud->updateFFTDisplay = true;
+    ud->getSignalArray(windat->caption)->setPoints(tablePoints);
+    //ud->signalArrays.getUnchecked(windat->windid)->setPoints(tablePoints);
+    ud->updateSignalDisplay = true;
 }
 
 void CabbagePluginAudioProcessor::killGraphCallback(CSOUND *csound, WINDAT *windat)
@@ -1606,12 +1608,30 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
     return fdata;
 }
 //==============================================================================
-fftDisplay* CabbagePluginAudioProcessor::getFFTTable(int tableNum)
+SignalDisplay* CabbagePluginAudioProcessor::getSignalArray(String variableName, String displayType)
 {
-    if(fftArrays[tableNum])
-        return fftArrays[tableNum];
-    else
-        return new fftDisplay("", -1, 0, 0, 0, 0);
+    for(int i=0; i<signalArrays.size(); i++)
+    {
+        if(signalArrays[i]->caption.contains(variableName))
+        {
+            if(displayType.isEmpty())
+            {
+                return signalArrays[i];
+            }
+            else if(displayType=="waveform" && !signalArrays[i]->caption.contains("fft"))
+            {
+                //cUtils::debug(signalArrays.size());
+                return signalArrays[i];
+            }
+            else if(displayType!="waveform" && signalArrays[i]->caption.contains("fft"))
+            {
+                //cUtils::debug(signalArrays.size());
+                return signalArrays[i];
+            }
+        }
+    }
+
+    return new SignalDisplay("", -1, 0, 0, 0, 0);
 }
 
 
@@ -1850,7 +1870,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 csound->SetChannel(guiLayoutCtrl.getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
             }
         }
-        if(shouldUpdate || shouldUpdateFFTDisplay())
+        if(shouldUpdate || shouldUpdateSignalDisplay())
             sendChangeMessage();
     }
 #endif
@@ -1876,7 +1896,6 @@ void CabbagePluginAudioProcessor::sendOutgoingMessagesToCsound()
             csound->SetChannel(CabbageIDs::timeinsamples.toUTF8(), hostInfo.timeInSamples);
             csound->SetChannel(CabbageIDs::timeSigDenom.toUTF8(), hostInfo.timeSigDenominator);
             csound->SetChannel(CabbageIDs::timeSigNum.toUTF8(), hostInfo.timeSigNumerator);
-
         }
 #endif
         const int message_count = messageQueue.getNumberOfOutgoingChannelMessagesInQueue();

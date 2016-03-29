@@ -287,9 +287,9 @@ void CabbagePluginAudioProcessorEditor::InsertGUIControls(CabbageGUIType cAttr)
     {
         InsertMIDIKeyboard(cAttr);
     }
-    else if(cAttr.getStringProp(CabbageIDs::type)==String("fftdisplay"))
+    else if(cAttr.getStringProp(CabbageIDs::type)==String("signaldisplay"))
     {
-        InsertFFTDisplay(cAttr);
+        InsertSignalDisplay(cAttr);
     }
     else if(cAttr.getStringProp(CabbageIDs::type)==String("scope"))
     {
@@ -2056,11 +2056,11 @@ void CabbagePluginAudioProcessorEditor::InsertTransport(CabbageGUIType &cAttr)
     jassert(1);
 }
 //+++++++++++++++++++++++++++++++++++++++++++
-//                             FFT Display widget
+//                             Display widget
 //+++++++++++++++++++++++++++++++++++++++++++
-void CabbagePluginAudioProcessorEditor::InsertFFTDisplay(CabbageGUIType &cAttr)
+void CabbagePluginAudioProcessorEditor::InsertSignalDisplay(CabbageGUIType &cAttr)
 {
-    CabbageFFTDisplay* fftDisplay = new CabbageFFTDisplay(cAttr, this);
+    CabbageSignalDisplay* signalDisplay = new CabbageSignalDisplay(cAttr, this);
 
     float left = cAttr.getNumProp(CabbageIDs::left);
     float top = cAttr.getNumProp(CabbageIDs::top);
@@ -2069,12 +2069,12 @@ void CabbagePluginAudioProcessorEditor::InsertFFTDisplay(CabbageGUIType &cAttr)
 
     //if control is not part of a plant, add mouse listener
     if(cAttr.getStringProp("plant").isEmpty())
-        fftDisplay->addMouseListener(this, true);
+        signalDisplay->addMouseListener(this, true);
 
-    fftDisplay->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
-    fftDisplay->getProperties().set(CabbageIDs::index, layoutComps.size());
+    signalDisplay->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+    signalDisplay->getProperties().set(CabbageIDs::index, layoutComps.size());
 
-    layoutComps.add(new CabbageFFTDisplay(cAttr, this));
+    layoutComps.add(new CabbageSignalDisplay(cAttr, this));
     int idx = layoutComps.size()-1;
     layoutComps[idx]->getProperties().set(CabbageIDs::lineNumber, cAttr.getNumProp(CabbageIDs::lineNumber));
     setPositionOfComponent(left, top, width, height, layoutComps[idx], cAttr.getStringProp("reltoplant"));
@@ -4508,24 +4508,22 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
             }
 
 
-            //FFT Widget
-            else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("fftdisplay"))
+            //Signal display widget
+            else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("signaldisplay"))
             {
-                if(checkForIdentifierMessage(getFilter()->getGUILayoutCtrls(i), "fftdisplay"))
+                if(checkForIdentifierMessage(getFilter()->getGUILayoutCtrls(i), "signaldisplay"))
                 {
-                    static_cast<CabbageFFTDisplay*>(layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
+                    static_cast<CabbageSignalDisplay*>(layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
                     getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
                 }
 
-                if(getFilter()->shouldUpdateFFTDisplay())
+                if(getFilter()->shouldUpdateSignalDisplay())
                 {
-                    const int tableNumber = getFilter()->getGUILayoutCtrls(i).getNumProp(CabbageIDs::ffttablenumber);
+                    const String variable = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::signalvariable);
+                    const String displayType = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::displaytype);
 
-                    //const int min = getFilter()->getFFTTable(tableNumber)->min;
-                    //const int max = getFilter()->getFFTTable(tableNumber)->min;
-                    static_cast<CabbageFFTDisplay*>(layoutComps[i])->setPoints(getFilter()->getFFTTable(tableNumber)->getPoints());
-                    //static_cast<CabbageFFTDisplay*>(layoutComps[i])->setBins(min, max);
-                    getFilter()->resetUpdateFFTDisplayFlag();
+                    static_cast<CabbageSignalDisplay*>(layoutComps[i])->setPoints(getFilter()->getSignalArray(variable, displayType)->getPoints());
+                    getFilter()->resetUpdateSignalDisplayFlag();
                 }
             }
 

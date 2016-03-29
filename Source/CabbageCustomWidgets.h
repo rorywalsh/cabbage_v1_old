@@ -2985,9 +2985,9 @@ public:
 };
 
 //=============================================================================
-// FFT Display Widget
+//  Display Widget
 //=============================================================================
-class CabbageFFTDisplay	:	public Component,
+class CabbageSignalDisplay	:	public Component,
     private ScrollBar::Listener,
     public ChangeListener
 {
@@ -2996,7 +2996,7 @@ class CabbageFFTDisplay	:	public Component,
     RoundButton zoomInButton, zoomOutButton;
     Array<float, CriticalSection> points;
     int tableNumber, freq, shouldDrawSonogram, leftPos, scrollbarHeight,
-        minFFTBin, maxFFTBin, size, zoomLevel, scopeWidth;
+        minFFTBin, maxFFTBin, size, zoomLevel, scopeWidth, lineThickness;
     Colour fontColour, colour, backgroundColour, outlineColour;
     ScrollBar scrollbar;
     bool isScrollbarShowing;
@@ -3065,8 +3065,8 @@ class CabbageFFTDisplay	:	public Component,
 
 public:
 
-    CabbageFFTDisplay (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
-    ~CabbageFFTDisplay()
+    CabbageSignalDisplay (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
+    ~CabbageSignalDisplay()
     {}
 
     void setBins(int min, int max);
@@ -3074,6 +3074,7 @@ public:
     void changeListenerCallback(ChangeBroadcaster *source);
     void drawSonogram();
     void drawSpectroscope(Graphics& g);
+    void drawWaveform(Graphics& g);
     void paint(Graphics& g);
     void setPoints(Array<float, CriticalSection> _points);
     void resized();
@@ -3087,7 +3088,7 @@ public:
     FrequencyRangeDisplayComponent freqRangeDisplay;
     Range<int> freqRange;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageFFTDisplay);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CabbageSignalDisplay);
 };
 
 //=============================================================================

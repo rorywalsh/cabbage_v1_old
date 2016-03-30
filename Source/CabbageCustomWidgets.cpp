@@ -985,11 +985,11 @@ CabbageSignalDisplay::CabbageSignalDisplay (CabbageGUIType &cAttr, CabbagePlugin
     : Component(),
       owner(_owner),
       colour(Colour::fromString(cAttr.getStringProp(CabbageIDs::colour))),
-      backgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::tablebackgroundcolour))),
+      backgroundColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::backgroundcolour))),
       fontColour(Colour::fromString(cAttr.getStringProp(CabbageIDs::fontcolour))),
       minFFTBin(0),
       maxFFTBin(1024),
-      size(2048),
+      vectorSize(512),
       shouldDrawSonogram(cAttr.getStringProp(CabbageIDs::displaytype)=="spectrogram" ? true : false),
       displayType(cAttr.getStringProp(CabbageIDs::displaytype)),
       spectrogramImage(Image::RGB, 512, 300, true),
@@ -1009,7 +1009,7 @@ CabbageSignalDisplay::CabbageSignalDisplay (CabbageGUIType &cAttr, CabbagePlugin
 {
     addAndMakeVisible(freqRangeDisplay);
 
-    if(displayType=="waveform")
+    if(displayType=="waveform" || displayType=="lissajous")
         freqRangeDisplay.setVisible(false);
 
     addAndMakeVisible(scrollbar);
@@ -1020,7 +1020,7 @@ CabbageSignalDisplay::CabbageSignalDisplay (CabbageGUIType &cAttr, CabbagePlugin
     scrollbar.setBounds(-1000, getHeight()-15, getWidth(), 15);
     scrollbar.setAutoHide(false);
     scrollbar.addListener(this);
-    if(zoomLevel>=0)
+    if(zoomLevel>=0 && displayType!="lissajous")
     {
         addAndMakeVisible(zoomInButton);
         addAndMakeVisible(zoomOutButton);
@@ -1112,12 +1112,12 @@ void CabbageSignalDisplay::drawSonogram()
 
     Graphics g(spectrogramImage);
     //g.fillAll(backgroundColour);
-    Range<float> maxLevel = FloatVectorOperations::findMinAndMax(points.getRawDataPointer(), points.size());
+    Range<float> maxLevel = FloatVectorOperations::findMinAndMax(signalFloatArray.getRawDataPointer(), signalFloatArray.size());
 
     for (int y = 0; y < imageHeight; y++)
     {
-        const int index = jmap(y, 0, imageHeight, 0, size);
-        const float level = jmap (points[index], 0.0f, maxLevel.getEnd(), 0.0f, 1.0f);
+        const int index = jmap(y, 0, imageHeight, 0, vectorSize);
+        const float level = jmap (signalFloatArray[index], 0.0f, maxLevel.getEnd(), 0.0f, 1.0f);
         g.setColour(Colour::fromHSV (level, 1.0f, level, 1.0f));
         g.drawHorizontalLine(imageHeight-y, rightHandEdge, rightHandEdge+2);
     }
@@ -1126,13 +1126,13 @@ void CabbageSignalDisplay::drawSonogram()
 void CabbageSignalDisplay::drawSpectroscope(Graphics& g)
 {
     g.fillAll(backgroundColour);
-    for (int i=0; i<size; i++)
+    for (int i=0; i<vectorSize; i++)
     {
-        const int position = jmap(i, 0, size, leftPos, scopeWidth);
+        const int position = jmap(i, 0, vectorSize, leftPos, scopeWidth);
         const int offset = isScrollbarShowing==true ? scrollbarHeight : 0;
         const int height = getHeight()-offset;
-        const int amp = (points[i]*6*height);
-        const int lineWidth = jmax(1, scopeWidth/size);
+        const int amp = (signalFloatArray[i]*6*height);
+        const int lineWidth = jmax(1, scopeWidth/vectorSize);
         g.setColour(colour);
         g.drawVerticalLine(position, height-amp, height);
     }
@@ -1143,15 +1143,32 @@ void CabbageSignalDisplay::drawWaveform(Graphics& g)
     g.fillAll(backgroundColour);
     const int offset = isScrollbarShowing==true ? scrollbarHeight : 0;
     const int height = getHeight()-offset;
-    int newSize = 512;
     int prevXPos = 0;
-    int prevYPos = height/2;
+    int prevYPos = jmap(signalFloatArray[0], -1.f, 1.f, 0.f, 1.f)*height;
 
-    for (int i=0; i<newSize; i++)
+    for (int i=0; i<vectorSize; i++)
     {
-        const int position = jmap(i, 0, newSize, leftPos, scopeWidth);
-        const int amp = jmap(points[i], -1.f, 1.f, 0.f, 1.f)*height;
-        const int lineWidth = jmax(1, scopeWidth/size);
+        const int position = jmap(i, 0, vectorSize, leftPos, scopeWidth);
+        const int amp = jmap(signalFloatArray[i], -1.f, 1.f, 0.f, 1.f)*height;
+        g.setColour(colour);
+        g.drawLine(prevXPos, prevYPos, position, amp, lineThickness);
+        prevXPos = position;
+        prevYPos = amp;
+    }
+}
+
+void CabbageSignalDisplay::drawLissajous(Graphics& g)
+{
+    g.fillAll(backgroundColour);
+    const int offset = isScrollbarShowing==true ? scrollbarHeight : 0;
+    const int height = getHeight()-offset;
+    int prevXPos = jmap(signalFloatArray[0], -1.f, 1.f, (float)leftPos, (float)scopeWidth);;
+    int prevYPos = jmap(signalFloatArray2[1], -1.f, 1.f, 0.f, 1.f)*height;
+
+    for (int i=0; i<vectorSize; i++)
+    {
+        const int position = jmap(signalFloatArray[i], -1.f, 1.f, (float)leftPos, (float)scopeWidth);
+        const int amp = jmap(signalFloatArray2[i], -1.f, 1.f, 0.f, 1.f)*height;
         g.setColour(colour);
         g.drawLine(prevXPos, prevYPos, position, amp, lineThickness);
         prevXPos = position;
@@ -1167,7 +1184,8 @@ void CabbageSignalDisplay:: paint(Graphics& g)
         drawSpectroscope(g);
     else if(displayType=="waveform")
         drawWaveform(g);
-
+    else if(displayType=="lissajous")
+        drawLissajous(g);
 }
 
 void CabbageSignalDisplay::mouseMove(const MouseEvent &e)
@@ -1184,21 +1202,36 @@ void CabbageSignalDisplay::mouseMove(const MouseEvent &e)
     }
 }
 
-void CabbageSignalDisplay::setPoints(Array<float, CriticalSection> _points)
+void CabbageSignalDisplay::setSignalFloatArray(Array<float, CriticalSection> _points)
 {
-    points = _points;
-    size = points.size();
-    if(size>0)
+    signalFloatArray.swapWith(_points);
+    if(displayType=="lissajous" || displayType=="waveform")
+        vectorSize = signalFloatArray.size()/2;
+    else
+        vectorSize = signalFloatArray.size();
+
+    if(vectorSize>0)
     {
-        freq = 44100/size;
         //spectrogram works on a scrolling image, the other displays are drawn directly
         if(displayType=="spectrogram")
             drawSonogram();
 
         repaint();
     }
-
 }
+
+void CabbageSignalDisplay::setSignalFloatArraysForLissajous(Array<float, CriticalSection> _points1, Array<float, CriticalSection> _points2)
+{
+    signalFloatArray.swapWith(_points1);
+    signalFloatArray2.swapWith(_points2);
+    vectorSize = signalFloatArray.size();
+    if(vectorSize>0)
+    {
+        repaint();
+    }
+}
+
+
 
 void CabbageSignalDisplay::showPopup(String text)
 {
@@ -1245,12 +1278,23 @@ void CabbageSignalDisplay::update(CabbageGUIType m_cAttr)
             zoomInButton.setVisible(true);
             zoomOutButton.setVisible(true);
         }
+        else if(displayType=="lissajous")
+        {
+            freqRangeDisplay.setVisible(false);
+            zoomInButton.setVisible(false);
+            zoomOutButton.setVisible(false);
+        }
     }
 
     if(freqRange!=Range<int>(m_cAttr.getNumProp(CabbageIDs::min),m_cAttr.getNumProp(CabbageIDs::max)))
     {
         freqRange = Range<int>(m_cAttr.getNumProp(CabbageIDs::min),m_cAttr.getNumProp(CabbageIDs::max));
         freqRangeDisplay.setMinMax(freqRange.getStart(), freqRange.getEnd());
+    }
+
+    if(signalVariables!=m_cAttr.getVarArrayProp(CabbageIDs::signalvariable))
+    {
+        signalVariables = m_cAttr.getVarArrayProp(CabbageIDs::signalvariable);
     }
 
     setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));

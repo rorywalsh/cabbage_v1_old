@@ -4522,7 +4522,19 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     const String variable = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::signalvariable);
                     const String displayType = getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::displaytype);
 
-                    static_cast<CabbageSignalDisplay*>(layoutComps[i])->setPoints(getFilter()->getSignalArray(variable, displayType)->getPoints());
+                    if(displayType!="lissajous")
+                    {
+                        static_cast<CabbageSignalDisplay*>(layoutComps[i])->setSignalFloatArray(getFilter()->getSignalArray(variable, displayType)->getPoints());
+                    }
+                    else
+                    {
+                        var signalVariables = getFilter()->getGUILayoutCtrls(i).getVarArrayProp(CabbageIDs::signalvariable);
+                        if(signalVariables.size()==2)
+                            static_cast<CabbageSignalDisplay*>(layoutComps[i])->setSignalFloatArraysForLissajous(getFilter()->getSignalArray(signalVariables[0], displayType)->getPoints(),
+                                    getFilter()->getSignalArray(signalVariables[1], displayType)->getPoints());
+
+                    }
+
                     getFilter()->resetUpdateSignalDisplayFlag();
                 }
             }

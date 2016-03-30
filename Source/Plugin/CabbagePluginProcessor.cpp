@@ -1011,9 +1011,6 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                             }
 
                         }
-
-                        //debugMessageArray.addArray(logGUIAttributes(cAttr, String("Interactive")));
-                        //sendChangeMessage();
                     }
 
             }
@@ -1051,9 +1048,11 @@ void CabbagePluginAudioProcessor::makeGraphCallback(CSOUND *csound, WINDAT *wind
 
 void CabbagePluginAudioProcessor::drawGraphCallback(CSOUND *csound, WINDAT *windat)
 {
-    //this has to find the correct signal vector, at the moment it's only getting the first one...
     CabbagePluginAudioProcessor *ud = (CabbagePluginAudioProcessor *) csoundGetHostData(csound);
-    Array<float, CriticalSection> tablePoints = Array<float, CriticalSection>(&windat->fdata[0], windat->npts);
+    Array<float, CriticalSection> tablePoints;
+    //only take all sample sif dealing with fft, waveforms and lissajous curves can be drawn with less samples
+    tablePoints = Array<float, CriticalSection>(&windat->fdata[0], windat->npts);
+
     ud->getSignalArray(windat->caption)->setPoints(tablePoints);
     //ud->signalArrays.getUnchecked(windat->windid)->setPoints(tablePoints);
     ud->updateSignalDisplay = true;
@@ -1619,6 +1618,11 @@ SignalDisplay* CabbagePluginAudioProcessor::getSignalArray(String variableName, 
                 return signalArrays[i];
             }
             else if(displayType=="waveform" && !signalArrays[i]->caption.contains("fft"))
+            {
+                //cUtils::debug(signalArrays.size());
+                return signalArrays[i];
+            }
+            else if(displayType=="lissajous" && !signalArrays[i]->caption.contains("fft"))
             {
                 //cUtils::debug(signalArrays.size());
                 return signalArrays[i];

@@ -1030,13 +1030,16 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
     }
 
     //===============signaldisplay==================//
-    else if(strTokens[0].trim() == "fftdisplay" || strTokens[0].trim() == "signaldisplay")
+    else if(strTokens[0].trim() == "signaldisplay" || strTokens[0].trim() == "fftdisplay")
     {
         cabbageIdentifiers.set("basetype", "layout");
         top = 10;
         left = 10;
         width = 180;
         height = 2;
+
+        var signalVariables;
+        signalVariables.append("");
 
         cabbageIdentifiers.set(CabbageIDs::top, 10);
         cabbageIdentifiers.set(CabbageIDs::left, 10);
@@ -1049,7 +1052,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, "signaldisplay");
         cabbageIdentifiers.set(CabbageIDs::min, 0);
         cabbageIdentifiers.set(CabbageIDs::max, 2048);
-        cabbageIdentifiers.set(CabbageIDs::signalvariable, "");
+        cabbageIdentifiers.set(CabbageIDs::signalvariable, signalVariables);
         cabbageIdentifiers.set(CabbageIDs::outlinethickness, 1);
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
         cabbageIdentifiers.set(CabbageIDs::identchannel, "");
@@ -1243,7 +1246,13 @@ void CabbageGUIType::parse(String inStr, String identifier)
 
             else if(identArray[indx].equalsIgnoreCase("signalvariable"))
             {
-                cabbageIdentifiers.set(CabbageIDs::signalvariable, strTokens[0].trim());
+                var array;
+                array.append(strTokens[0].trim());
+                for(int i=1; i<strTokens.size(); i++)
+                {
+                    array.append(strTokens[i].trim());
+                }
+                cabbageIdentifiers.set(CabbageIDs::signalvariable, array);
             }
 
 
@@ -1269,11 +1278,10 @@ void CabbageGUIType::parse(String inStr, String identifier)
                 }
                 else
                 {
-                    if(strTokens.size()>1)
-                        for(int i=1; i<strTokens.size(); i++)
-                        {
-                            array.append(strTokens[i].trim());
-                        }
+                    for(int i=1; i<strTokens.size(); i++)
+                    {
+                        array.append(strTokens[i].trim());
+                    }
                 }
 
                 if(identArray[indx].equalsIgnoreCase("channelarray"))
@@ -1344,6 +1352,11 @@ void CabbageGUIType::parse(String inStr, String identifier)
             else if(identArray[indx].equalsIgnoreCase("tablebackgroundcolour"))
             {
                 cabbageIdentifiers.set(CabbageIDs::tablebackgroundcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
+            }
+
+            else if(identArray[indx].equalsIgnoreCase("backgroundcolour"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::backgroundcolour, getColourFromText(strTokens.joinIntoString(",")).toString());
             }
 
             else if(identArray[indx].equalsIgnoreCase("tablegridcolour"))

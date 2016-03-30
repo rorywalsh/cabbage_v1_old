@@ -2994,9 +2994,11 @@ class CabbageSignalDisplay	:	public Component,
     String name, displayType;
     CabbagePluginAudioProcessorEditor* owner;
     RoundButton zoomInButton, zoomOutButton;
-    Array<float, CriticalSection> points;
+    Array<float, CriticalSection> signalFloatArray;
+    Array<float, CriticalSection> signalFloatArray2;
+    var signalVariables;
     int tableNumber, freq, shouldDrawSonogram, leftPos, scrollbarHeight,
-        minFFTBin, maxFFTBin, size, zoomLevel, scopeWidth, lineThickness;
+        minFFTBin, maxFFTBin, vectorSize, zoomLevel, scopeWidth, lineThickness;
     Colour fontColour, colour, backgroundColour, outlineColour;
     ScrollBar scrollbar;
     bool isScrollbarShowing;
@@ -3075,8 +3077,10 @@ public:
     void drawSonogram();
     void drawSpectroscope(Graphics& g);
     void drawWaveform(Graphics& g);
+    void drawLissajous(Graphics& g);
     void paint(Graphics& g);
-    void setPoints(Array<float, CriticalSection> _points);
+    void setSignalFloatArray(Array<float, CriticalSection> _points);
+    void setSignalFloatArraysForLissajous(Array<float, CriticalSection> _points1, Array<float, CriticalSection> _points2);
     void resized();
     void update(CabbageGUIType m_cAttr);
     void mouseMove(const MouseEvent &e);

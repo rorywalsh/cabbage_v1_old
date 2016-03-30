@@ -162,7 +162,9 @@ public:
         add("velocity");
         add("wrap");
         add("tablebackgroundcolour");
-        add("tablebackgroundcolor");
+        add("tablebackgroundcolour");
+        add("backgroundcolor");
+        add("backgroundcolour");
         add("mode");
         add("tablenumber");
         add("tablenumbers");
@@ -252,6 +254,7 @@ static const Identifier onfontcolour= "onfontcolour";
 static const Identifier colour = "colour";
 static const Identifier oncolour = "oncolour";
 static const Identifier tablebackgroundcolour = "tablebackgroundcolour";
+static const Identifier backgroundcolour = "backgroundcolour";
 static const Identifier items = "items";
 static const Identifier text = "text";
 static const Identifier popuptext = "popuptext";

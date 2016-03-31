@@ -106,7 +106,8 @@ class CsoundCodeEditorComponenet : public CodeEditorComponent,
     public ActionBroadcaster,
     public ChangeBroadcaster,
     public ChangeListener,
-    public CodeDocument::Listener
+    public CodeDocument::Listener,
+    public ListBoxModel
 {
 public:
     CodeDocument::Position positionInCode;
@@ -117,8 +118,30 @@ public:
     void toggleComments();
     void handleDirectionKey() {}
 
+    int getNumRows()
+    {
+        return variableNamesToShow.size();
+    }
+
+    void listBoxItemDoubleClicked(int row, const MouseEvent &e) {};
+
+    void paintListBoxItem (int rowNumber, Graphics& g,
+                           int width, int height, bool rowIsSelected)
+    {
+        if (rowIsSelected)
+            g.fillAll (Colour(40,40,40));
+        else
+            g.fillAll(Colour(0,0,0));
+
+        g.setColour(Colour(255,255,255));
+        g.drawFittedText(variableNamesToShow[rowNumber], Rectangle<int> (width, height), Justification::centredLeft, 0);
+    }
+
+    void selectedRowsChanged (int /*lastRowselected*/) {};
+
     void handleEscapeKey()
     {
+        autoCompleteListBox.setVisible(false);
         if(type=="python")
             sendActionMessage("make python invisible");
         if(type=="csound")
@@ -164,6 +187,7 @@ public:
     bool pasteFromClipboard();
     bool cutToClipboard();
     void insertNewLine(String text);
+    void parseTextForVariables();
 
     void enableColumnEditMode(bool enable);
     void setOpcodeStrings(String opcodes)
@@ -206,6 +230,8 @@ private:
     String type;
     StringArray opcodeStrings;
     StringArray opcodeTokens;
+    ListBox autoCompleteListBox;
+    StringArray variableNames, variableNamesToShow;
 
 
 };

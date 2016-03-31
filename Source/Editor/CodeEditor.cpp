@@ -610,7 +610,7 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
 
 //==============================================================================
 CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument &document, CodeTokeniser *codeTokeniser)
-    : CodeEditorComponent(document, codeTokeniser), type(type), columnEditMode(false), fontSize(15)
+    : CodeEditorComponent(document, codeTokeniser), type(type), columnEditMode(false), fontSize(15), autoCompleteListBox()
 {
     document.addListener(this);
     setColour(CodeEditorComponent::backgroundColourId, Colour::fromRGB(35, 35, 35));
@@ -623,6 +623,11 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
     //setLineNumbersShown(40);
     //setColour(CodeEditorComponent::highlightColourId, Colours::yellow);
     setColour(CodeEditorComponent::lineNumberTextId, Colours::whitesmoke);
+
+    autoCompleteListBox.setRowHeight (16);
+    autoCompleteListBox.setModel (this);   // Tell the listbox where to get its data model
+    addChildComponent(autoCompleteListBox);
+
     setLineNumbersShown(false);
 
     fontSize = (cUtils::getPreference(appProperties, "FontSize")>7 ?
@@ -641,6 +646,12 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
 #endif
 
     setFont(Font(font, fontSize, 0));
+
+    variableNames.add("Test1");
+    variableNames.add("Test2");
+    variableNames.add("Test3");
+    variableNames.add("Test4");
+    autoCompleteListBox.updateContent();
 
 }
 //==============================================================================
@@ -666,10 +677,21 @@ void CsoundCodeEditorComponenet::highlightLines(int firstLine, int lastLine)
 bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
 {
     //Logger::writeToLog(String(key.getKeyCode()));
-    if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down")
-            || key.getTextDescription().contains("cursor left") || key.getTextDescription().contains("cursor right"))
-        this->getParentComponent()->repaint();
+    if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down"))
+    {
+        if(autoCompleteListBox.isVisible())
+        {
+            int selectedRow = autoCompleteListBox.getSelectedRow();
+            if(key.getTextDescription().contains("cursor down"))
+                autoCompleteListBox.selectRow(jmax(0, selectedRow+1));
+            else if(key.getTextDescription().contains("cursor up"))
+                autoCompleteListBox.selectRow(jmax(0, selectedRow-1));
+            return true;
 
+        }
+    }
+
+    this->getParentComponent()->repaint();
 
     if (key == KeyPress ('z', ModifierKeys::commandModifier, 0))
         undoText();
@@ -704,6 +726,17 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
 //==============================================================================
 void CsoundCodeEditorComponenet::handleReturnKey ()
 {
+    if(autoCompleteListBox.isVisible() && autoCompleteListBox.getSelectedRow()!=-1)
+    {
+        pos1 = getDocument().findWordBreakBefore(getCaretPos());
+        pos2 = getCaretPos();
+        getDocument().deleteSection(pos1, pos2);
+        //cUtils::debug(currentWord);
+        insertText(variableNamesToShow[autoCompleteListBox.getSelectedRow()]);
+        autoCompleteListBox.setVisible(false);
+        return;
+    }
+
     if(getSelectedText().length()>0)
     {
         CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
@@ -715,6 +748,7 @@ void CsoundCodeEditorComponenet::handleReturnKey ()
         insertNewLine("\n");
 
     scrollToKeepCaretOnScreen();
+    autoCompleteListBox.setVisible(false);
 }
 
 void CsoundCodeEditorComponenet::editorHasScrolled()
@@ -747,13 +781,18 @@ void CsoundCodeEditorComponenet::mouseWheelMove (const MouseEvent& e, const Mous
 //==============================================================================
 void CsoundCodeEditorComponenet::insertText(String text)
 {
-
     if(this->isHighlightActive())
     {
         getDocument().replaceSection(getHighlightedRegion().getStart(), getHighlightedRegion().getEnd(), "");
     }
 
     getDocument().insertText(getCaretPos(), text);
+
+    if(variableNamesToShow.size()>0)
+    {
+        const int height = jmin(200, variableNamesToShow.size()*16);
+        autoCompleteListBox.setBounds(getCaretRectangle().getX(),getCaretRectangle().getY()+16, 300, height);
+    }
 }
 //==============================================================================
 void CsoundCodeEditorComponenet::insertNewLine(String text)
@@ -803,6 +842,7 @@ bool CsoundCodeEditorComponenet::cutToClipboard()
     moveCaretTo(startPos, false);
     return true;
 }
+
 //==============================================================================
 void CsoundCodeEditorComponenet::toggleComments()
 {
@@ -1169,10 +1209,65 @@ String CsoundCodeEditorComponenet::getInstrumentText()
     return selectedText;
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::codeDocumentTextInserted(const juce::String &,int)
+void CsoundCodeEditorComponenet::parseTextForVariables()
+{
+    String csdText = getDocument().getAllContent();
+    StringArray tokens;
+    variableNames.clear();
+    tokens.addTokens(csdText, "  (),", "");
+
+    for(int i=0; i<tokens.size(); i++)
+    {
+        const String currentWord = tokens[i];
+        if(currentWord.startsWith("a") || currentWord.startsWith("i") ||
+                currentWord.startsWith("k") ||currentWord.startsWith("S") ||
+                currentWord.startsWith("f"))
+        {
+            if(!currentWord.contains("\n") && currentWord.isNotEmpty())
+                variableNames.addIfNotAlreadyThere(currentWord);
+        }
+    }
+}
+
+//==============================================================================
+void CsoundCodeEditorComponenet::codeDocumentTextInserted(const juce::String &text,int)
 {
 
     pos1 = getDocument().findWordBreakBefore(getCaretPos());
+    pos2 = getDocument().findWordBreakAfter(getCaretPos());
+    String currentWord = getDocument().getTextBetween(pos1, pos2);
+    cUtils::debug(currentWord);
+    currentWord = currentWord.trim();
+
+    if(currentWord.startsWith("a") || currentWord.startsWith("i") ||
+            currentWord.startsWith("k") ||currentWord.startsWith("S") ||
+            currentWord.startsWith("f"))
+    {
+        if(text==" " && currentWord.isNotEmpty())
+        {
+            variableNames.addIfNotAlreadyThere(currentWord);
+            autoCompleteListBox.updateContent();
+        }
+    }
+
+    variableNamesToShow.clear();
+    autoCompleteListBox.setVisible(false);
+
+    if(currentWord.isNotEmpty())
+    {
+        for (int i = 0; i < variableNames.size(); ++i)
+        {
+            const String item (variableNames[i]);
+            if (item.startsWith (currentWord))
+            {
+                variableNamesToShow.addIfNotAlreadyThere(item.trim());
+                autoCompleteListBox.updateContent();
+                autoCompleteListBox.setVisible(true);
+            }
+        }
+    }
+
+
     String lineFromCsd = getDocument().getLine(pos1.getLineNumber());
 
     String opcodeHelpString;

@@ -5,7 +5,7 @@ All widget identifiers can be updated in real-time if an identifier channel has 
 chnset "bounds(10, 10, 100, 100)", "checkboxIdent"
 ```
 
-> Note that only one identChannel string can be sent in a single k-cycle. This is important. If you wish to update several attributes of a widget place them in the same string. If two **chnset** opcodes are used in the same instrument to send an identifier string to a widget, the second will overwrite the first.   
+> Note that only one identChannel string can be sent in a single k-cycle. This is important. If two **chnset** opcodes are used in the same instrument to send an identifier string to a widget, the second will overwrite the first. If you wish to update several attributes of a widget place them in the same string or concatenate each attribute into a single string.   
 
 To control the position of a checkbox in real-time, one can use the **sprintfk** opcode to dynamically create an identifier string that can be passed to the widget. In this example random values are passed to sprintfk to create a new bounds() strings 5 times a second. **metro(5)**
 

@@ -1093,7 +1093,7 @@ void GenTable::paint (Graphics& g)
 
         int gridIndex=ceil(visibleStart);
         float lineDepth=1;
-        for(double i=visibleStart; i<=visibleEnd; i+=incr)
+        for(double i=visibleStart; i<=visibleEnd+1; i+=incr)
         {
             //when qsteps == 1 we draw a grid
             if(qsteps==1)

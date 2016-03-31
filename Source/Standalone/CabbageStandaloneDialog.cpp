@@ -641,6 +641,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         {
             cabbageCsoundEditor->setName(csdFile.getFileName());
             cabbageCsoundEditor->textEditor->editor[0]->loadContent(csdFile.loadFileAsString());
+            cabbageCsoundEditor->textEditor->editor[0]->parseTextForVariables();
         }
 
         deviceManager->initialise(2,

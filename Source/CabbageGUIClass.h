@@ -148,6 +148,7 @@ public:
         add("plant");
         add("bold");
         add("highlightcolour");
+        add("updaterate");
         add("channeltype");
         add("channels");
         add("channel");
@@ -410,6 +411,7 @@ static const String mousey = "MOUSE_Y";
 static const String mousedownleft = "MOUSE_DOWN_LEFT";
 static const String mousedownright = "MOUSE_DOWN_RIGHT";
 static const String mousedownlmiddle = "MOUSE_DOWN_MIDDLE";
+static const String updaterate = "updaterate";
 static const String csoundoutput = "csoundoutput";
 static const String fftdisplay = "fftdisplay";
 static const String signaldisplay = "signaldisplay";

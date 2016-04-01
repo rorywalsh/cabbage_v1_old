@@ -1025,6 +1025,8 @@ CabbageSignalDisplay::CabbageSignalDisplay (CabbageGUIType &cAttr, CabbagePlugin
         addAndMakeVisible(zoomInButton);
         addAndMakeVisible(zoomOutButton);
     }
+
+    startTimer(updateRate);
 }
 
 void CabbageSignalDisplay::setBins(int min, int max)
@@ -1178,14 +1180,19 @@ void CabbageSignalDisplay::drawLissajous(Graphics& g)
 
 void CabbageSignalDisplay:: paint(Graphics& g)
 {
-    if(shouldDrawSonogram)
-        g.drawImageWithin(spectrogramImage, 0, 0, getWidth(), getHeight(), RectanglePlacement::stretchToFit);
-    else if(displayType=="spectroscope")
-        drawSpectroscope(g);
-    else if(displayType=="waveform")
-        drawWaveform(g);
-    else if(displayType=="lissajous")
-        drawLissajous(g);
+    if(shouldPaint)
+    {
+        if(shouldDrawSonogram)
+            g.drawImageWithin(spectrogramImage, 0, 0, getWidth(), getHeight(), RectanglePlacement::stretchToFit);
+        else if(displayType=="spectroscope")
+            drawSpectroscope(g);
+        else if(displayType=="waveform")
+            drawWaveform(g);
+        else if(displayType=="lissajous")
+            drawLissajous(g);
+    }
+
+    shouldPaint = false;
 }
 
 void CabbageSignalDisplay::mouseMove(const MouseEvent &e)
@@ -1216,7 +1223,7 @@ void CabbageSignalDisplay::setSignalFloatArray(Array<float, CriticalSection> _po
         if(displayType=="spectrogram")
             drawSonogram();
 
-        repaint();
+        shouldPaint = true;
     }
 }
 
@@ -1227,11 +1234,14 @@ void CabbageSignalDisplay::setSignalFloatArraysForLissajous(Array<float, Critica
     vectorSize = signalFloatArray.size();
     if(vectorSize>0)
     {
-        repaint();
+        shouldPaint = true;
     }
 }
 
-
+void CabbageSignalDisplay::timerCallback()
+{
+    repaint();
+}
 
 void CabbageSignalDisplay::showPopup(String text)
 {
@@ -1295,6 +1305,12 @@ void CabbageSignalDisplay::update(CabbageGUIType m_cAttr)
     if(signalVariables!=m_cAttr.getVarArrayProp(CabbageIDs::signalvariable))
     {
         signalVariables = m_cAttr.getVarArrayProp(CabbageIDs::signalvariable);
+    }
+
+    if(updateRate!= m_cAttr.getNumProp(CabbageIDs::updaterate))
+    {
+        updateRate = m_cAttr.getNumProp(CabbageIDs::updaterate);
+        startTimer(updateRate);
     }
 
     setAlpha(m_cAttr.getNumProp(CabbageIDs::alpha));

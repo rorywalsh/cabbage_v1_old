@@ -1052,6 +1052,7 @@ CabbageGUIType::CabbageGUIType(String compStr, int ID):
         cabbageIdentifiers.set(CabbageIDs::name, "signaldisplay");
         cabbageIdentifiers.set(CabbageIDs::min, 0);
         cabbageIdentifiers.set(CabbageIDs::max, 2048);
+        cabbageIdentifiers.set(CabbageIDs::updaterate, 100);
         cabbageIdentifiers.set(CabbageIDs::signalvariable, signalVariables);
         cabbageIdentifiers.set(CabbageIDs::outlinethickness, 1);
         cabbageIdentifiers.set(CabbageIDs::name, cabbageIdentifiers.getWithDefault("name", "").toString()+String(ID));
@@ -1774,6 +1775,11 @@ void CabbageGUIType::parse(String inStr, String identifier)
                 cabbageIdentifiers.set(CabbageIDs::fill, strTokens[0].trim().getIntValue());
             }
 
+            else if(identArray[indx].equalsIgnoreCase("updaterate"))
+            {
+                cabbageIdentifiers.set(CabbageIDs::updaterate, strTokens[0].trim().getIntValue());
+            }
+
             else if(identArray[indx].equalsIgnoreCase("keywidth"))
             {
                 cabbageIdentifiers.set(CabbageIDs::keywidth, strTokens[0].trim().getFloatValue());
@@ -2111,12 +2117,6 @@ void CabbageGUIType::parse(String inStr, String identifier)
 
             strTokens.clear();
         }
-        else
-        {
-
-        }
-
-        //}
     }
 }
 //=========================================================================

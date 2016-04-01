@@ -2987,7 +2987,8 @@ public:
 //=============================================================================
 class CabbageSignalDisplay	:	public Component,
     private ScrollBar::Listener,
-    public ChangeListener
+    public ChangeListener,
+    public Timer
 {
     String name, displayType;
     CabbagePluginAudioProcessorEditor* owner;
@@ -3001,6 +3002,10 @@ class CabbageSignalDisplay	:	public Component,
     ScrollBar scrollbar;
     bool isScrollbarShowing;
     float rotate;
+    bool shouldPaint {false};
+    int updateRate {100};
+
+
 
 
     class FrequencyRangeDisplayComponent : public Component
@@ -3086,6 +3091,7 @@ public:
     void showScrollbar(bool show);
     void zoomOut(int factor=1);
     void zoomIn(int factor=1);
+    void timerCallback();
     Image spectrogramImage, spectroscopeImage;
     FrequencyRangeDisplayComponent freqRangeDisplay;
     Range<int> freqRange;

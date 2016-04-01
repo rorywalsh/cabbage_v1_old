@@ -5,7 +5,7 @@ Displays a graphical representation of a signal. Must be used with the **display
 ```csharp
 fftdisplay bounds(x, y, width, height), colour("colour"), groundcolour("colour"), \
 signalvariable("a-rate variables"), displaytype("type"), identchannel("channel"), alpha(val), \
-visible(val), active(val), zoom(val)
+visible(val), active(val), zoom(val), updaterate(val)
 ```
 <!--(End of syntax)/-->
 
@@ -31,9 +31,10 @@ visible(val), active(val), zoom(val)
 
 **zoom(val)** Sets the initial zoom value. Passing a -1 to zoom will cause the zoom buttons to disappear.  
 
+**updaterate(val)** Set the rate at which the display will update. val determines the number of milliseconds between update. The update rate is set to 100 milliseconds by default, which means the display will update itself 10 times a second. Smaller update rates will produce smoother images, but will cost more in terms of CPU.  
 <!--(End of identifiers)/-->
 
-> To enable the use of the fftdisplay widget you must pass --displays to your CsOptions. See the FFTDisplay example for details.  
+> To enable the use of the signaldisplay widget you must pass --displays to your CsOptions. See the FFTDisplay example for details. Also note that the Lissajous display is the most CPU expensive display option, followed by waveform. The spectral modes are the least CPU expensive.   
 
 ##Example
 ```csharp

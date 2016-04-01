@@ -167,6 +167,7 @@ public:
     void addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEvent *mouseClickEvent);
     void performPopupMenuAction (int menuItemID);
     void modifyInstrumentBreakpoint(bool remove);
+    void showAutoComplete(String currentWord);
     String getLineText();
     String getTempChannelInstr();
     String getSelectedText();

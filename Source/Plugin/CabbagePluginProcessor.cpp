@@ -412,7 +412,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
             setPlayConfigDetails(getNumberCsoundOutChannels(),
                                  getNumberCsoundOutChannels(),
                                  getCsoundSamplingRate(),
-                                 getCsoundKsmpsSize());
+                                 32);
         }
 
         Logger::writeToLog("compiled Ok");
@@ -2137,12 +2137,12 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                     if (guiRefreshRate < yieldCounter)
                     {
                         yieldCounter = 0;
-                        sendOutgoingMessagesToCsound();
                         updateCabbageControls();
                     }
                     else
                         ++yieldCounter;
 
+                    sendOutgoingMessagesToCsound();
                     csCompileResult = csound->PerformKsmps();
 
                     if(csCompileResult!=OK)

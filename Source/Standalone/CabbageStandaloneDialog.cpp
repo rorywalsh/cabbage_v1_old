@@ -91,7 +91,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
     filter->setPlayConfigDetails (2,
                                   2,
-                                  44100, 512);
+                                  44100, 32);
 
     PropertySet* const globalSettings = getGlobalSettings();
 

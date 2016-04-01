@@ -1214,7 +1214,7 @@ void CsoundCodeEditorComponenet::parseTextForVariables()
     String csdText = getDocument().getAllContent();
     StringArray tokens;
     variableNames.clear();
-    tokens.addTokens(csdText, "  (),", "");
+    tokens.addTokens(csdText, "  (),*%=", "");
 
     for(int i=0; i<tokens.size(); i++)
     {
@@ -1229,6 +1229,20 @@ void CsoundCodeEditorComponenet::parseTextForVariables()
     }
 }
 
+//==============================================================================
+void CsoundCodeEditorComponenet::showAutoComplete(String currentWord)
+{
+    for (int i = 0; i < variableNames.size(); ++i)
+    {
+        const String item (variableNames[i]);
+        if (item.startsWith (currentWord))
+        {
+            variableNamesToShow.addIfNotAlreadyThere(item.trim());
+            autoCompleteListBox.updateContent();
+            autoCompleteListBox.setVisible(true);
+        }
+    }
+}
 //==============================================================================
 void CsoundCodeEditorComponenet::codeDocumentTextInserted(const juce::String &text,int)
 {
@@ -1255,16 +1269,7 @@ void CsoundCodeEditorComponenet::codeDocumentTextInserted(const juce::String &te
 
     if(currentWord.isNotEmpty())
     {
-        for (int i = 0; i < variableNames.size(); ++i)
-        {
-            const String item (variableNames[i]);
-            if (item.startsWith (currentWord))
-            {
-                variableNamesToShow.addIfNotAlreadyThere(item.trim());
-                autoCompleteListBox.updateContent();
-                autoCompleteListBox.setVisible(true);
-            }
-        }
+        showAutoComplete(currentWord);
     }
 
 
@@ -1348,7 +1353,16 @@ bool CsoundCodeEditorComponenet::deleteBackwards (const bool moveInWholeWordStep
             getDocument().deleteSection(startPos.getPosition(), endPos.getPosition());
         }
 
+        pos1 = getDocument().findWordBreakBefore(getCaretPos());
+        pos2 = getDocument().findWordBreakAfter(getCaretPos());
+        String currentWord = getDocument().getTextBetween(pos1, pos2);
+        variableNamesToShow.clear();
+        autoCompleteListBox.setVisible(false);
 
+        if(currentWord.isNotEmpty())
+        {
+            showAutoComplete(currentWord);
+        }
     }
 
     scrollToKeepCaretOnScreen();
@@ -1402,6 +1416,17 @@ bool CsoundCodeEditorComponenet::deleteForwards (const bool moveInWholeWordSteps
         else
         {
             getDocument().deleteSection(startPos.getPosition(), endPos.getPosition());
+        }
+
+        pos1 = getDocument().findWordBreakBefore(getCaretPos());
+        pos2 = getDocument().findWordBreakAfter(getCaretPos());
+        String currentWord = getDocument().getTextBetween(pos1, pos2);
+        variableNamesToShow.clear();
+        autoCompleteListBox.setVisible(false);
+
+        if(currentWord.isNotEmpty())
+        {
+            showAutoComplete(currentWord);
         }
     }
     return true;

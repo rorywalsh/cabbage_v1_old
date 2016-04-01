@@ -2688,10 +2688,8 @@ public:
         slider->setColour(Slider::textBoxBackgroundColourId, colour);
 
 
-        //slider->setVelocityBasedMode(cAttr.getNumProp(CabbageIDs::velocity)==1 ? true : false);
-
-
-        slider->setVelocityModeParameters(80);
+        slider->setVelocityBasedMode(cAttr.getNumProp(CabbageIDs::velocity)==1 ? true : false);
+        slider->setVelocityModeParameters(cAttr.getNumProp(CabbageIDs::velocity));
         slider->getProperties().set("decimalPlaces", decPlaces);
         setAlpha(cAttr.getNumProp(CabbageIDs::alpha));
 

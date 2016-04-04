@@ -189,6 +189,7 @@ public:
     bool cutToClipboard();
     void insertNewLine(String text);
     void parseTextForVariables();
+    void showOpcodeInlineHelp(String lineFromCsd);
 
     void enableColumnEditMode(bool enable);
     void setOpcodeStrings(String opcodes)

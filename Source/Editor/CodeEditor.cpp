@@ -898,7 +898,8 @@ void CsoundCodeEditorComponenet::addPopupMenuItems (PopupMenu &menuToAddTo, cons
     menuToAddTo.addItem(3, "Paste");
     menuToAddTo.addItem(4, "Select All");
     menuToAddTo.addSeparator();
-    menuToAddTo.addItem(5, "Opcode Help");
+    menuToAddTo.addItem(12, "Opcode Help: Inline");
+    menuToAddTo.addItem(5, "Opcode Help: Manual");
     menuToAddTo.addSeparator();
     menuToAddTo.addItem(6, "Mark region of interest");
     menuToAddTo.addItem(7, "Remove region of interest");
@@ -980,6 +981,13 @@ void CsoundCodeEditorComponenet::performPopupMenuAction (int menuItemID)
         CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
         String message = "HightlightRegionOfInterest_"+String(startPos.getLineNumber())+":"+String(endPos.getLineNumber())+"="+colour;
         sendActionMessage(message);
+    }
+
+    else if(menuItemID==12)
+    {
+        pos1 = getDocument().findWordBreakBefore(getCaretPos());
+        String line = getDocument().getLine(pos1.getLineNumber());
+        showOpcodeInlineHelp(line);
     }
 
     else if(menuItemID==7)
@@ -1230,6 +1238,37 @@ void CsoundCodeEditorComponenet::parseTextForVariables()
 }
 
 //==============================================================================
+void CsoundCodeEditorComponenet::showOpcodeInlineHelp(String lineFromCsd)
+{
+    String opcodeHelpString;
+    StringArray syntaxTokens, csdLineTokens;
+    csdLineTokens.clear();
+    csdLineTokens.addTokens(lineFromCsd, " ,\t", "");
+
+    for(int i=0; i<opcodeStrings.size(); i++)
+    {
+        opcodeHelpString = opcodeStrings[i];
+        syntaxTokens.clear();
+        syntaxTokens.addTokens(opcodeHelpString, ";", "\"");
+        if(syntaxTokens.size()>3)
+            for(int x=0; x<csdLineTokens.size(); x++)
+            {
+                //Logger::writeToLog(csdLineTokens[x]);
+                if(syntaxTokens[0].removeCharacters("\"")==csdLineTokens[x].trim())
+                {
+                    if(syntaxTokens[0].length()>3)
+                    {
+                        //Logger::writeToLog(syntaxTokens[0]);
+                        sendActionMessage("helpDisplay"+syntaxTokens[2]);
+                        opcodeTokens = syntaxTokens;
+                        x=csdLineTokens.size();
+                        i=opcodeStrings.size();
+                    }
+                }
+            }
+    }
+}
+//==============================================================================
 void CsoundCodeEditorComponenet::showAutoComplete(String currentWord)
 {
     for (int i = 0; i < variableNames.size(); ++i)
@@ -1273,35 +1312,9 @@ void CsoundCodeEditorComponenet::codeDocumentTextInserted(const juce::String &te
     }
 
 
-    String lineFromCsd = getDocument().getLine(pos1.getLineNumber());
+    const String lineFromCsd = getDocument().getLine(pos1.getLineNumber());
+    showOpcodeInlineHelp(lineFromCsd);
 
-    String opcodeHelpString;
-    StringArray syntaxTokens, csdLineTokens;
-    csdLineTokens.clear();
-    csdLineTokens.addTokens(lineFromCsd, " ,\t", "");
-
-    for(int i=0; i<opcodeStrings.size(); i++)
-    {
-        opcodeHelpString = opcodeStrings[i];
-        syntaxTokens.clear();
-        syntaxTokens.addTokens(opcodeHelpString, ";", "\"");
-        if(syntaxTokens.size()>3)
-            for(int x=0; x<csdLineTokens.size(); x++)
-            {
-                //Logger::writeToLog(csdLineTokens[x]);
-                if(syntaxTokens[0].removeCharacters("\"")==csdLineTokens[x].trim())
-                {
-                    if(syntaxTokens[0].length()>3)
-                    {
-                        //Logger::writeToLog(syntaxTokens[0]);
-                        sendActionMessage("helpDisplay"+syntaxTokens[2]);
-                        opcodeTokens = syntaxTokens;
-                        x=csdLineTokens.size();
-                        i=opcodeStrings.size();
-                    }
-                }
-            }
-    }
 }
 //==============================================================================
 bool CsoundCodeEditorComponenet::deleteBackwards (const bool moveInWholeWordSteps)
@@ -1480,7 +1493,6 @@ void CsoundCodeEditorComponenet::handleTabKey(String direction)
     //selectedText.addLines(getSelectedText());
     csdArray.addLines(getAllText());
     String csdText;
-    String currentLine;
     CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
     CodeDocument::Position endPos(this->getDocument(), getHighlightedRegion().getEnd());
     pos1 = getCaretPos();

@@ -1326,7 +1326,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 #ifdef MACOSX
         dir = "Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual";
 #endif
-        FileChooser browser(String("Please select the Csound manual directory...\n"), File(dir), String("*.csd"), UseNativeDialogue);
+        FileChooser browser(String("Please select the Csound manual directory...\n"), File(dir), String("*.*"), UseNativeDialogue);
         if(browser.browseForDirectory())
         {
             setPreference(appProperties, "CsoundHelpDir", browser.getResult().getFullPathName());
@@ -1336,12 +1336,25 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     else if(options==203)
     {
         String dir = getPreference(appProperties, "PlantFileDir", "");
-        FileChooser browser(String("Please select your Plant file directory..."), File(dir), String("*.csd"), UseNativeDialogue);
+        FileChooser browser(String("Please select your Plant file directory..."), File(dir), String("*.*"), UseNativeDialogue);
         if(browser.browseForDirectory())
         {
             setPreference(appProperties, "PlantFileDir", browser.getResult().getFullPathName());
         }
     }
+
+    //------- preference Examples dir ------
+    else if(options==205)
+    {
+        String dir = getPreference(appProperties, "ExamplesDir", "");
+        cUtils::debug("Example Directory:"+dir);
+        FileChooser browser(String("Please select your Examples directory..."), File(dir), String("*.*"), UseNativeDialogue);
+        if(browser.browseForDirectory())
+        {
+            setPreference(appProperties, "ExamplesDir", browser.getResult().getFullPathName());
+        }
+    }
+
     else if(options==301)
     {
         String dir = getPreference(appProperties, "ExternalEditorApplication", "");
@@ -1388,18 +1401,6 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             if(!File(csoundDLL).moveFileTo(File(homeFolder+"\\Disabled_csound64.dll")))
                 m_ShowMessage("Could not find Disabled_Csound64.dll?", &getLookAndFeel());
 
-        }
-    }
-
-    //------- preference Examples dir ------
-    else if(options==205)
-    {
-        String dir = getPreference(appProperties, "ExamplesDir", "");
-        cUtils::debug("Example Directory:"+dir);
-        FileChooser browser(String("Please select your Examples directory..."), File(dir), String("*.*"), UseNativeDialogue);
-        if(browser.browseForDirectory())
-        {
-            setPreference(appProperties, "ExamplesDir", browser.getResult().getFullPathName());
         }
     }
 

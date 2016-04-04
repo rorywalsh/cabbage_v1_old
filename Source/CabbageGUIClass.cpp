@@ -1688,7 +1688,7 @@ void CabbageGUIType::parse(String inStr, String identifier)
                         }
                         else
                         {
-                            cabbageIdentifiers.set(CabbageIDs::value, strTokens[2].trim().getDoubleValue());
+                            cabbageIdentifiers.set(CabbageIDs::value, strTokens[2].trim().getDoubleValue() < min ? min : strTokens[2].trim().getDoubleValue());
                             tempArray.add(strTokens[2].trim());
                         }
                     }

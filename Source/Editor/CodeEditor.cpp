@@ -480,30 +480,13 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
             replaceText(searchReplaceComp->getSearchText(), searchReplaceComp->getReplaceText());
     }
 
-
-
 }
 
 //=========================================================================
 int CsoundCodeEditor::findText(String text)
 {
     if(searchReplaceComp->getSearchText().isNotEmpty())
-    {
-        String fullText = editor[currentEditor]->getAllText();
-        String searchTerm = text;
-        searchStartIndex = fullText.indexOf(searchStartIndex, searchTerm);
-        if(searchStartIndex==-1)return -1;
-        editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(),
-                                           editor[currentEditor]->getAllText().indexOf(searchStartIndex, searchTerm)),
-                                           false);
-        editor[currentEditor]->moveCaretTo(CodeDocument::Position(editor[currentEditor]->getDocument(),
-                                           editor[currentEditor]->getAllText().indexOf(searchStartIndex, searchTerm)+searchTerm.length()),
-                                           true);
-        searchStartIndex=searchStartIndex+searchTerm.length();
-        if(fullText.indexOf(searchStartIndex, searchTerm)<searchStartIndex)
-            searchStartIndex=0;
-    }
-    return searchStartIndex;
+        editor[currentEditor]->findText(text);
 }
 
 //=========================================================================
@@ -597,6 +580,10 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
             }
         }
         repaint();
+    }
+    else if(message.contains("HightlightMultipleInstances"))
+    {
+        
     }
     else if(message=="Launch help")
         sendActionMessage("Launch help");
@@ -750,13 +737,13 @@ void CsoundCodeEditorComponenet::handleReturnKey ()
     scrollToKeepCaretOnScreen();
     autoCompleteListBox.setVisible(false);
 }
-
+//==============================================================================
 void CsoundCodeEditorComponenet::editorHasScrolled()
 {
     if(getParentComponent())
         this->getParentComponent()->repaint();
 }
-
+//==============================================================================
 void CsoundCodeEditorComponenet::mouseWheelMove (const MouseEvent& e, const MouseWheelDetails& mouse)
 {
 
@@ -778,6 +765,64 @@ void CsoundCodeEditorComponenet::mouseWheelMove (const MouseEvent& e, const Mous
             scrollBy(-10);
     }
 }
+//==============================================================================
+void CsoundCodeEditorComponenet::mouseDoubleClick (const MouseEvent& e)
+{
+    CodeDocument::Position tokenStart (getPositionAt (e.x, e.y));
+    CodeDocument::Position tokenEnd (tokenStart);
+    
+    if (e.getNumberOfClicks() > 2)
+        getDocument().findLineContaining (tokenStart, tokenStart, tokenEnd);
+    else
+        getDocument().findTokenContaining (tokenStart, tokenStart, tokenEnd);
+    
+    selectRegion (tokenStart, tokenEnd);
+    
+    String word = getDocument().getTextBetween(tokenStart, tokenEnd);
+    
+    
+    int instances = 0;
+    while(findText(word, true)!=-2)
+        instances++;
+    
+    //cUtils::debug(instances);
+    
+    dragType = notDragging;
+}
+
+//==============================================================================
+int CsoundCodeEditorComponenet::findText(String text, bool multi)
+{
+    String fullText = getDocument().getAllContent();
+    String searchTerm = text;
+    searchStartIndex = fullText.indexOf(searchStartIndex, searchTerm);
+    if(searchStartIndex==-1)return -1;
+    
+    if(multi==true)
+    {
+        
+    }
+    
+    else
+    {
+        moveCaretTo(CodeDocument::Position(getDocument(),
+                                           fullText.indexOf(searchStartIndex, searchTerm)),
+                    false);
+        moveCaretTo(CodeDocument::Position(getDocument(),
+                                           fullText.indexOf(searchStartIndex, searchTerm)+searchTerm.length()),
+                    true);
+    }
+
+    searchStartIndex=searchStartIndex+searchTerm.length();
+    
+    //selectedWordRegions.add(
+    
+    if(fullText.indexOf(searchStartIndex, searchTerm)<searchStartIndex)
+        searchStartIndex=-2;
+    
+    return searchStartIndex;
+}
+
 //==============================================================================
 void CsoundCodeEditorComponenet::insertText(String text)
 {

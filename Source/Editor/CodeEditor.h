@@ -205,6 +205,9 @@ public:
         return opcodeTokens[index];
     }
 
+    int findText(String text, bool multiSelect=false);
+    
+    void mouseDoubleClick (const MouseEvent& e) override;
     bool columnEditMode;
     void mouseWheelMove (const MouseEvent&, const MouseWheelDetails&);
 
@@ -234,6 +237,7 @@ private:
     StringArray opcodeTokens;
     ListBox autoCompleteListBox;
     StringArray variableNames, variableNamesToShow;
+    int searchStartIndex {0};
 
 
 };
@@ -257,6 +261,8 @@ class CsoundCodeEditor : public Component,
     {
         Range<int> lines;
         Colour colour;
+        int lineNumber;
+        Range<int> wordPositionInLine;
     public:
         SelectedRegion(Range<int> _lines, Colour _col):lines(_lines), colour(_col)
         {}
@@ -269,6 +275,16 @@ class CsoundCodeEditor : public Component,
         Colour getColour()
         {
             return colour;
+        }
+        
+        int getLineNumber()
+        {
+            return lineNumber;
+        }
+        
+        Range<int> getWordPositionInLine()
+        {
+            return wordPositionInLine;
         }
     };
 
@@ -315,6 +331,7 @@ public:
     Colour backgroundColour;
 
     OwnedArray<SelectedRegion> selectedRegions;
+    OwnedArray<SelectedRegion> selectedWordRegions;
 };
 
 

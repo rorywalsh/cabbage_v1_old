@@ -36,6 +36,29 @@ class FlatButton;
 class HelpComp;
 class SearchReplaceComp;
 
+//============================================================================
+// simple abstract class for storing information about highlighted tokens
+//============================================================================
+class SelectedToken
+{
+    int lineNumber;
+    Range<int> positionOfWordInLine;
+public:
+    SelectedToken(int line, Range<int> positionOfWord):lineNumber(line), positionOfWordInLine(positionOfWord)
+    {}
+    ~SelectedToken() {}
+
+
+    int getLineNumber()
+    {
+        return lineNumber;
+    }
+
+    Range<int> getPositionOfTokenInLine()
+    {
+        return positionOfWordInLine;
+    }
+};
 //============================================================
 // class for displaying colour selector
 //============================================================
@@ -102,7 +125,7 @@ private:
 //============================================================
 // code editor
 //============================================================
-class CsoundCodeEditorComponenet : public CodeEditorComponent,
+class CsoundCodeEditorComponent : public CodeEditorComponent,
     public ActionBroadcaster,
     public ChangeBroadcaster,
     public ChangeListener,
@@ -110,9 +133,10 @@ class CsoundCodeEditorComponenet : public CodeEditorComponent,
     public ListBoxModel
 {
 public:
+
     CodeDocument::Position positionInCode;
-    CsoundCodeEditorComponenet(String type, CodeDocument &document, CodeTokeniser *codeTokeniser);
-    ~CsoundCodeEditorComponenet();
+    CsoundCodeEditorComponent(String type, CodeDocument &document, CodeTokeniser *codeTokeniser);
+    ~CsoundCodeEditorComponent();
     bool keyPressed (const KeyPress& key);
     void handleTabKey(String direction);
     void toggleComments();
@@ -129,9 +153,9 @@ public:
                            int width, int height, bool rowIsSelected)
     {
         if (rowIsSelected)
-            g.fillAll (Colour(40,40,40));
+            g.fillAll (Colours::cornflowerblue);
         else
-            g.fillAll(Colour(0,0,0));
+            g.fillAll(Colours::cornflowerblue.darker(.7f));
 
         g.setColour(Colour(255,255,255));
         g.drawFittedText(variableNamesToShow[rowNumber], Rectangle<int> (width, height), Justification::centredLeft, 0);
@@ -190,7 +214,7 @@ public:
     void insertNewLine(String text);
     void parseTextForVariables();
     void showOpcodeInlineHelp(String lineFromCsd);
-
+    OwnedArray<SelectedToken> selectedTokens;
     void enableColumnEditMode(bool enable);
     void setOpcodeStrings(String opcodes)
     {
@@ -206,8 +230,9 @@ public:
     }
 
     int findText(String text, bool multiSelect=false);
-    
+
     void mouseDoubleClick (const MouseEvent& e) override;
+    void mouseDown (const MouseEvent& e) override;
     bool columnEditMode;
     void mouseWheelMove (const MouseEvent&, const MouseWheelDetails&);
 
@@ -240,6 +265,7 @@ private:
     int searchStartIndex {0};
 
 
+
 };
 
 //============================================================
@@ -261,8 +287,6 @@ class CsoundCodeEditor : public Component,
     {
         Range<int> lines;
         Colour colour;
-        int lineNumber;
-        Range<int> wordPositionInLine;
     public:
         SelectedRegion(Range<int> _lines, Colour _col):lines(_lines), colour(_col)
         {}
@@ -275,16 +299,6 @@ class CsoundCodeEditor : public Component,
         Colour getColour()
         {
             return colour;
-        }
-        
-        int getLineNumber()
-        {
-            return lineNumber;
-        }
-        
-        Range<int> getWordPositionInLine()
-        {
-            return wordPositionInLine;
         }
     };
 
@@ -317,7 +331,7 @@ public:
     ScopedPointer<HelpComp> helpComp;
     ScopedPointer<SearchReplaceComp> searchReplaceComp;
     bool textChanged;
-    OwnedArray<CsoundCodeEditorComponenet> editor;
+    OwnedArray<CsoundCodeEditorComponent> editor;
     int currentEditor;
     void addNewFile(File newFile);
     void paint(Graphics& g);
@@ -331,7 +345,7 @@ public:
     Colour backgroundColour;
 
     OwnedArray<SelectedRegion> selectedRegions;
-    OwnedArray<SelectedRegion> selectedWordRegions;
+    OwnedArray<SelectedToken> selectedEditorTokens;
 };
 
 

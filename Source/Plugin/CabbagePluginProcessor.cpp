@@ -852,11 +852,6 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
 
                         cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber+lineWhichCabbageSectionStarts);
 
-                        warningMessage = "";
-                        warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
-                        if(cAttr.getWarningMessages().isNotEmpty())
-                            csound->Message(warningMessage.toUTF8().getAddress());
-
                         if(cAttr.getNumProp(CabbageIDs::guirefresh)>1)
                             guiRefreshRate = cAttr.getNumProp(CabbageIDs::guirefresh);
 
@@ -925,11 +920,6 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
 #endif
 
 
-
-                        warningMessage = "";
-                        warningMessage << "Line Number:" << csdLineNumber+1 << "\n" << cAttr.getWarningMessages();
-                        if(cAttr.getWarningMessages().isNotEmpty())
-                            csound->Message(warningMessage.toUTF8().getAddress());
 
                         cAttr.setNumProp(CabbageIDs::lineNumber, csdLineNumber+lineWhichCabbageSectionStarts);
                         csdLine = "";

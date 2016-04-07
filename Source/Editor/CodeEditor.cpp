@@ -31,7 +31,7 @@ CsoundCodeEditor::CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTo
     highlightedWord(false),
     documentIndex(0)
 {
-    editor.add(new CsoundCodeEditorComponenet("csound", document, codeTokeniser));
+    editor.add(new CsoundCodeEditorComponent("csound", document, codeTokeniser));
     editor[currentEditor]->setOpaque(false);
     addAndMakeVisible(editor[currentEditor]);
     editor[currentEditor]->getDocument().setSavePoint();
@@ -185,6 +185,20 @@ void CsoundCodeEditor::paint(Graphics& g)
                     g.fillRoundedRectangle(35, (editor[currentEditor]->getLineHeight() * index)+editor[currentEditor]->getLineHeight(), getWidth()-54, editor[currentEditor]->getLineHeight()*2, 10);
             }
 
+            for(int i=1; i<selectedEditorTokens.size(); i++)
+            {
+                g.setColour(Colours::lime.withAlpha(.1f));
+                if(selectedEditorTokens[i]->getLineNumber() == j)
+                {
+                    int startPos = selectedEditorTokens[i]->getPositionOfTokenInLine().getStart();
+                    int endPos = selectedEditorTokens[i]->getPositionOfTokenInLine().getEnd();
+                    int xPos = editor[currentEditor]->getFont().getStringWidth(" ")*startPos+35;
+                    int width = startPos+(endPos-startPos)*editor[currentEditor]->getFont().getStringWidth(" ");
+                    g.fillRoundedRectangle(xPos, (editor[currentEditor]->getLineHeight() * index)+editor[currentEditor]->getLineHeight(), width, editor[currentEditor]->getLineHeight(), 3);
+
+                }
+            }
+
             g.setColour(juce::Colours::white);
             for(int i=0; i<breakpointLines.size(); i++)
             {
@@ -282,7 +296,7 @@ Range<int> CsoundCodeEditor::getCabbageSectionRange()
 void CsoundCodeEditor::addNewFile(File newFile)
 {
     codeDocuments.add(new CodeDocument());
-    editor.add(new CsoundCodeEditorComponenet("csound", *codeDocuments[codeDocuments.size()-1], &codeToker));
+    editor.add(new CsoundCodeEditorComponent("csound", *codeDocuments[codeDocuments.size()-1], &codeToker));
     documentIndex++;
     currentEditor = editor.size()-1;
     for(int i=0; i<tabButtons.size(); i++)
@@ -369,9 +383,16 @@ void CsoundCodeEditor::saveAuxFile()
 //==============================================================================
 void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-    if(dynamic_cast<FlatButton*>(source))
+    if(CsoundCodeEditorComponent* editor = dynamic_cast<CsoundCodeEditorComponent*>(source))
     {
-        FlatButton* button = dynamic_cast<FlatButton*>(source);
+        cUtils::debug("hti me!");
+        selectedEditorTokens.swapWith(editor->selectedTokens);
+        return;
+    }
+
+    if(FlatButton* button = dynamic_cast<FlatButton*>(source))
+    {
+
         if(button->type=="Native")
         {
             //editor[currentEditor]->setVisible(false);
@@ -471,6 +492,8 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
 
             editor[currentEditor]->scrollToLine(editor[currentEditor]->getCaretPos().getLineNumber());
         }
+
+        return;
     }
     else if(dynamic_cast<SearchReplaceComp*>(source))
     {
@@ -478,6 +501,8 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
             findText(searchReplaceComp->getSearchText().trim());
         else
             replaceText(searchReplaceComp->getSearchText(), searchReplaceComp->getReplaceText());
+
+        return;
     }
 
 }
@@ -583,7 +608,8 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
     }
     else if(message.contains("HightlightMultipleInstances"))
     {
-        
+
+
     }
     else if(message=="Launch help")
         sendActionMessage("Launch help");
@@ -596,7 +622,7 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
 
 
 //==============================================================================
-CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument &document, CodeTokeniser *codeTokeniser)
+CsoundCodeEditorComponent::CsoundCodeEditorComponent(String type, CodeDocument &document, CodeTokeniser *codeTokeniser)
     : CodeEditorComponent(document, codeTokeniser), type(type), columnEditMode(false), fontSize(15), autoCompleteListBox()
 {
     document.addListener(this);
@@ -642,12 +668,12 @@ CsoundCodeEditorComponenet::CsoundCodeEditorComponenet(String type, CodeDocument
 
 }
 //==============================================================================
-CsoundCodeEditorComponenet::~CsoundCodeEditorComponenet()
+CsoundCodeEditorComponent::~CsoundCodeEditorComponent()
 {
 
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::highlightLine(String line)
+void CsoundCodeEditorComponent::highlightLine(String line)
 {
     String temp = getDocument().getAllContent();
     moveCaretTo(CodeDocument::Position (getDocument(), temp.indexOf(line)+line.length()), false);
@@ -655,13 +681,13 @@ void CsoundCodeEditorComponenet::highlightLine(String line)
 }
 
 //==============================================================================
-void CsoundCodeEditorComponenet::highlightLines(int firstLine, int lastLine)
+void CsoundCodeEditorComponent::highlightLines(int firstLine, int lastLine)
 {
     moveCaretTo(CodeDocument::Position (getDocument(), firstLine, 0), false);
     moveCaretTo(CodeDocument::Position (getDocument(), lastLine, 5000), true);
 }
 //==============================================================================
-bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
+bool CsoundCodeEditorComponent::keyPressed (const KeyPress& key)
 {
     //Logger::writeToLog(String(key.getKeyCode()));
     if (key.getTextDescription().contains("cursor up") || key.getTextDescription().contains("cursor down"))
@@ -711,7 +737,7 @@ bool CsoundCodeEditorComponenet::keyPressed (const KeyPress& key)
     return true;
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::handleReturnKey ()
+void CsoundCodeEditorComponent::handleReturnKey ()
 {
     if(autoCompleteListBox.isVisible() && autoCompleteListBox.getSelectedRow()!=-1)
     {
@@ -738,13 +764,13 @@ void CsoundCodeEditorComponenet::handleReturnKey ()
     autoCompleteListBox.setVisible(false);
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::editorHasScrolled()
+void CsoundCodeEditorComponent::editorHasScrolled()
 {
     if(getParentComponent())
         this->getParentComponent()->repaint();
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::mouseWheelMove (const MouseEvent& e, const MouseWheelDetails& mouse)
+void CsoundCodeEditorComponent::mouseWheelMove (const MouseEvent& e, const MouseWheelDetails& mouse)
 {
 
     if(e.mods.isCommandDown() && mouse.deltaY>0)
@@ -765,44 +791,113 @@ void CsoundCodeEditorComponenet::mouseWheelMove (const MouseEvent& e, const Mous
             scrollBy(-10);
     }
 }
+
 //==============================================================================
-void CsoundCodeEditorComponenet::mouseDoubleClick (const MouseEvent& e)
+static void codeEditorMenuCallback (int menuResult, CsoundCodeEditorComponent* editor)
+{
+    if (editor != nullptr && menuResult != 0)
+        editor->performPopupMenuAction (menuResult);
+}
+
+void CsoundCodeEditorComponent::mouseDown (const MouseEvent& e)
+{
+//    newTransaction();
+    dragType = notDragging;
+
+    if (e.mods.isPopupMenu())
+    {
+        setMouseCursor (MouseCursor::NormalCursor);
+
+        if (getHighlightedRegion().isEmpty())
+        {
+            CodeDocument::Position start, end;
+            getDocument().findTokenContaining (getPositionAt (e.x, e.y), start, end);
+
+            if (start.getPosition() < end.getPosition())
+                selectRegion (start, end);
+        }
+
+        PopupMenu m;
+        m.setLookAndFeel (&getLookAndFeel());
+        addPopupMenuItems (m, &e);
+
+        m.showMenuAsync (PopupMenu::Options(),
+                         ModalCallbackFunction::forComponent (codeEditorMenuCallback, this));
+    }
+    else
+    {
+        beginDragAutoRepeat (100);
+        moveCaretTo (getPositionAt (e.x, e.y), e.mods.isShiftDown());
+        autoCompleteListBox.setVisible(false);
+        selectedTokens.clear();
+        sendChangeMessage();
+    }
+}
+//==============================================================================
+void CsoundCodeEditorComponent::mouseDoubleClick (const MouseEvent& e)
 {
     CodeDocument::Position tokenStart (getPositionAt (e.x, e.y));
     CodeDocument::Position tokenEnd (tokenStart);
-    
+
     if (e.getNumberOfClicks() > 2)
         getDocument().findLineContaining (tokenStart, tokenStart, tokenEnd);
     else
         getDocument().findTokenContaining (tokenStart, tokenStart, tokenEnd);
-    
+
     selectRegion (tokenStart, tokenEnd);
-    
+
     String word = getDocument().getTextBetween(tokenStart, tokenEnd);
-    
-    
+
+
     int instances = 0;
-    while(findText(word, true)!=-2)
-        instances++;
-    
-    //cUtils::debug(instances);
-    
+    selectedTokens.clear();
+    while(findText(word, true)!=-2);
+
+
+    cUtils::debug(selectedTokens.size());
+    sendChangeMessage();
+
     dragType = notDragging;
 }
 
 //==============================================================================
-int CsoundCodeEditorComponenet::findText(String text, bool multi)
+int CsoundCodeEditorComponent::findText(String text, bool multi)
 {
+    Range<int> positionOfWordInLine;
     String fullText = getDocument().getAllContent();
     String searchTerm = text;
     searchStartIndex = fullText.indexOf(searchStartIndex, searchTerm);
     if(searchStartIndex==-1)return -1;
-    
+
     if(multi==true)
     {
-        
+
+        CodeDocument::Position start(getDocument(), fullText.indexOf(searchStartIndex, searchTerm));
+        CodeDocument::Position end(getDocument(), fullText.indexOf(searchStartIndex, searchTerm)+searchTerm.length());
+        const int lineNumber = start.getLineNumber();
+
+        //deal with tabs
+        String line = getDocument().getLine(lineNumber);
+        if(line.contains("\t"))
+        {
+            line = line.replace("\t", "    ");
+            const int startIndex = line.indexOf(0, searchTerm);
+            const int endIndex =   line.indexOf(0, searchTerm)+searchTerm.length();
+            positionOfWordInLine.setStart(startIndex);
+            positionOfWordInLine.setEnd(endIndex);
+        }
+
+        else
+        {
+            positionOfWordInLine.setStart(start.getIndexInLine());
+            positionOfWordInLine.setEnd(end.getIndexInLine());
+        }
+
+        selectedTokens.add(new SelectedToken(lineNumber, positionOfWordInLine));
+
+
     }
-    
+
     else
     {
         moveCaretTo(CodeDocument::Position(getDocument(),
@@ -814,17 +909,15 @@ int CsoundCodeEditorComponenet::findText(String text, bool multi)
     }
 
     searchStartIndex=searchStartIndex+searchTerm.length();
-    
-    //selectedWordRegions.add(
-    
+
     if(fullText.indexOf(searchStartIndex, searchTerm)<searchStartIndex)
         searchStartIndex=-2;
-    
+
     return searchStartIndex;
 }
 
 //==============================================================================
-void CsoundCodeEditorComponenet::insertText(String text)
+void CsoundCodeEditorComponent::insertText(String text)
 {
     if(this->isHighlightActive())
     {
@@ -840,7 +933,7 @@ void CsoundCodeEditorComponenet::insertText(String text)
     }
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::insertNewLine(String text)
+void CsoundCodeEditorComponent::insertNewLine(String text)
 {
     pos1 = getCaretPos();
     StringArray csdArray;
@@ -866,7 +959,7 @@ void CsoundCodeEditorComponenet::insertNewLine(String text)
 }
 
 //==============================================================================
-bool CsoundCodeEditorComponenet::pasteFromClipboard()
+bool CsoundCodeEditorComponent::pasteFromClipboard()
 {
     const String clip (SystemClipboard::getTextFromClipboard());
     if (clip.isNotEmpty())
@@ -878,7 +971,7 @@ bool CsoundCodeEditorComponenet::pasteFromClipboard()
     return true;
 }
 
-bool CsoundCodeEditorComponenet::cutToClipboard()
+bool CsoundCodeEditorComponent::cutToClipboard()
 {
     CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
     CodeDocument::Position endPos(this->getDocument(), getHighlightedRegion().getEnd());
@@ -889,7 +982,7 @@ bool CsoundCodeEditorComponenet::cutToClipboard()
 }
 
 //==============================================================================
-void CsoundCodeEditorComponenet::toggleComments()
+void CsoundCodeEditorComponent::toggleComments()
 {
 
     CodeDocument::Position startPos(this->getDocument(), getHighlightedRegion().getStart());
@@ -936,7 +1029,7 @@ void CsoundCodeEditorComponenet::toggleComments()
 }
 
 //=================== addPopupMenuItems =======================
-void CsoundCodeEditorComponenet::addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEvent *mouseClickEvent)
+void CsoundCodeEditorComponent::addPopupMenuItems (PopupMenu &menuToAddTo, const MouseEvent *mouseClickEvent)
 {
     menuToAddTo.addItem(1, "Cut");
     menuToAddTo.addItem(2, "Copy");
@@ -968,20 +1061,20 @@ void CsoundCodeEditorComponenet::addPopupMenuItems (PopupMenu &menuToAddTo, cons
 };
 
 //==============================================================================
-Rectangle<int> CsoundCodeEditorComponenet::getCaretPoisition()
+Rectangle<int> CsoundCodeEditorComponent::getCaretPoisition()
 {
     pos1 = getCaretPos();
     return getCharacterBounds(pos1);
 }
 
-void CsoundCodeEditorComponenet::undoText()
+void CsoundCodeEditorComponent::undoText()
 {
     CodeDocument::Position startPos = getCaretPos();
     getDocument().undo();
     moveCaretTo(startPos, false);
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::changeListenerCallback(ChangeBroadcaster *source)
+void CsoundCodeEditorComponent::changeListenerCallback(ChangeBroadcaster *source)
 {
 //	colourPallete* cs = dynamic_cast <ColourPallete*> (source);
 //	if(cs->getNameOfParent()==name)
@@ -994,7 +1087,7 @@ void CsoundCodeEditorComponenet::changeListenerCallback(ChangeBroadcaster *sourc
 //	value.append(colour.getAlpha());
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::performPopupMenuAction (int menuItemID)
+void CsoundCodeEditorComponent::performPopupMenuAction (int menuItemID)
 {
     if(menuItemID==1)
         this->cutToClipboard();
@@ -1080,7 +1173,7 @@ void CsoundCodeEditorComponenet::performPopupMenuAction (int menuItemID)
 };
 
 //==============================================================================
-void CsoundCodeEditorComponenet::modifyInstrumentBreakpoint(bool remove)
+void CsoundCodeEditorComponent::modifyInstrumentBreakpoint(bool remove)
 {
     int index=0;
     CodeDocument::Position startPos(getDocument(), getCaretPos().getPosition());
@@ -1104,13 +1197,13 @@ void CsoundCodeEditorComponenet::modifyInstrumentBreakpoint(bool remove)
 }
 
 //==============================================================================
-void CsoundCodeEditorComponenet::addRepoToSettings()
+void CsoundCodeEditorComponent::addRepoToSettings()
 {
 
 }
 
 //==============================================================================
-void CsoundCodeEditorComponenet::enableColumnEditMode(bool enable)
+void CsoundCodeEditorComponent::enableColumnEditMode(bool enable)
 {
     if(enable)
     {
@@ -1128,7 +1221,7 @@ void CsoundCodeEditorComponenet::enableColumnEditMode(bool enable)
 
 
 //==============================================================================
-void CsoundCodeEditorComponenet::updateCaretPosition()
+void CsoundCodeEditorComponent::updateCaretPosition()
 {
     //Logger::writeToLog("Updating caret position");
     if(columnEditMode==1)
@@ -1150,7 +1243,7 @@ void CsoundCodeEditorComponenet::updateCaretPosition()
         setCaretPos(getCharacterBounds (getCaretPos()));
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::addToRepository()
+void CsoundCodeEditorComponent::addToRepository()
 {
     AlertWindow alert("Add to Repository", "Enter a name and hit 'escape'", AlertWindow::NoIcon, this->getTopLevelComponent());
     //CabbageLookAndFeel basicLookAndFeel;
@@ -1179,7 +1272,7 @@ void CsoundCodeEditorComponenet::addToRepository()
     }
 }
 //==============================================================================
-String CsoundCodeEditorComponenet::getLineText()
+String CsoundCodeEditorComponent::getLineText()
 {
     StringArray csdLines;
     csdLines.addLines(getDocument().getAllContent());
@@ -1189,17 +1282,17 @@ String CsoundCodeEditorComponenet::getLineText()
 }
 
 //==============================================================================
-String CsoundCodeEditorComponenet::getAllText()
+String CsoundCodeEditorComponent::getAllText()
 {
     return getDocument().getAllContent();
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::setAllText(String text)
+void CsoundCodeEditorComponent::setAllText(String text)
 {
     getDocument().replaceAllContent(text);
 }
 //==============================================================================
-String CsoundCodeEditorComponenet::getTempChannelInstr()
+String CsoundCodeEditorComponent::getTempChannelInstr()
 {
     String channel = "event_i \"i\", 999.999, 0, .1\n";
     channel << "instr 999\n";
@@ -1209,14 +1302,14 @@ String CsoundCodeEditorComponenet::getTempChannelInstr()
     return channel;
 }
 //==============================================================================
-String CsoundCodeEditorComponenet::getSelectedText()
+String CsoundCodeEditorComponent::getSelectedText()
 {
     String selectedText = getTextInRange(this->getHighlightedRegion());
     Logger::writeToLog(selectedText);
     return selectedText;
 }
 //==============================================================================
-StringArray CsoundCodeEditorComponenet::getSelectedTextArray()
+StringArray CsoundCodeEditorComponent::getSelectedTextArray()
 {
     StringArray tempArray;
     String selectedText = getTextInRange(this->getHighlightedRegion());
@@ -1225,7 +1318,7 @@ StringArray CsoundCodeEditorComponenet::getSelectedTextArray()
     return tempArray;
 }
 //==============================================================================
-String CsoundCodeEditorComponenet::getInstrumentText()
+String CsoundCodeEditorComponent::getInstrumentText()
 {
     StringArray csdLines;
     csdLines.addLines(getDocument().getAllContent());
@@ -1262,12 +1355,12 @@ String CsoundCodeEditorComponenet::getInstrumentText()
     return selectedText;
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::parseTextForVariables()
+void CsoundCodeEditorComponent::parseTextForVariables()
 {
     String csdText = getDocument().getAllContent();
     StringArray tokens;
     variableNames.clear();
-    tokens.addTokens(csdText, "  (),*%=", "");
+    tokens.addTokens(csdText, "  (),*%=\t", "");
 
     for(int i=0; i<tokens.size(); i++)
     {
@@ -1283,7 +1376,7 @@ void CsoundCodeEditorComponenet::parseTextForVariables()
 }
 
 //==============================================================================
-void CsoundCodeEditorComponenet::showOpcodeInlineHelp(String lineFromCsd)
+void CsoundCodeEditorComponent::showOpcodeInlineHelp(String lineFromCsd)
 {
     String opcodeHelpString;
     StringArray syntaxTokens, csdLineTokens;
@@ -1314,7 +1407,7 @@ void CsoundCodeEditorComponenet::showOpcodeInlineHelp(String lineFromCsd)
     }
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::showAutoComplete(String currentWord)
+void CsoundCodeEditorComponent::showAutoComplete(String currentWord)
 {
     for (int i = 0; i < variableNames.size(); ++i)
     {
@@ -1328,7 +1421,7 @@ void CsoundCodeEditorComponenet::showAutoComplete(String currentWord)
     }
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::codeDocumentTextInserted(const juce::String &text,int)
+void CsoundCodeEditorComponent::codeDocumentTextInserted(const juce::String &text,int)
 {
 
     pos1 = getDocument().findWordBreakBefore(getCaretPos());
@@ -1362,7 +1455,7 @@ void CsoundCodeEditorComponenet::codeDocumentTextInserted(const juce::String &te
 
 }
 //==============================================================================
-bool CsoundCodeEditorComponenet::deleteBackwards (const bool moveInWholeWordSteps)
+bool CsoundCodeEditorComponent::deleteBackwards (const bool moveInWholeWordSteps)
 {
     CodeDocument::Position startPos(getDocument(), getHighlightedRegion().getStart());
     CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
@@ -1417,10 +1510,6 @@ bool CsoundCodeEditorComponenet::deleteBackwards (const bool moveInWholeWordStep
         variableNamesToShow.clear();
         autoCompleteListBox.setVisible(false);
 
-        if(currentWord.isNotEmpty())
-        {
-            showAutoComplete(currentWord);
-        }
     }
 
     scrollToKeepCaretOnScreen();
@@ -1428,7 +1517,7 @@ bool CsoundCodeEditorComponenet::deleteBackwards (const bool moveInWholeWordStep
     return true;
 }
 //==============================================================================
-bool CsoundCodeEditorComponenet::deleteForwards (const bool moveInWholeWordSteps)
+bool CsoundCodeEditorComponent::deleteForwards (const bool moveInWholeWordSteps)
 {
     CodeDocument::Position startPos(getDocument(), getHighlightedRegion().getStart());
     CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
@@ -1490,7 +1579,7 @@ bool CsoundCodeEditorComponenet::deleteForwards (const bool moveInWholeWordSteps
     return true;
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::insertTextAtCaret (const String &textToInsert)
+void CsoundCodeEditorComponent::insertTextAtCaret (const String &textToInsert)
 {
     if(!columnEditMode)
         insertText(textToInsert);
@@ -1498,7 +1587,7 @@ void CsoundCodeEditorComponenet::insertTextAtCaret (const String &textToInsert)
         insertMultiLineTextAtCaret(textToInsert);
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::insertMultiLineTextAtCaret (String text)
+void CsoundCodeEditorComponent::insertMultiLineTextAtCaret (String text)
 {
     //sendActionMessage("make popup invisible");
     StringArray csdArray;
@@ -1527,7 +1616,7 @@ void CsoundCodeEditorComponenet::insertMultiLineTextAtCaret (String text)
     moveCaretTo(newEndPos, true);
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::handleTabKey(String direction)
+void CsoundCodeEditorComponent::handleTabKey(String direction)
 {
     /* multi line action, get highlited text, find the position of
      * it within the text editor, remove it from editor and reinsert it with
@@ -1580,7 +1669,7 @@ void CsoundCodeEditorComponenet::handleTabKey(String direction)
 
 }
 //==============================================================================
-bool CsoundCodeEditorComponenet::moveCaretLeft (const bool moveInWholeWordSteps, const bool selecting)
+bool CsoundCodeEditorComponent::moveCaretLeft (const bool moveInWholeWordSteps, const bool selecting)
 {
     CodeDocument::Position startPos(getDocument(), getHighlightedRegion().getStart());
     CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
@@ -1610,7 +1699,7 @@ bool CsoundCodeEditorComponenet::moveCaretLeft (const bool moveInWholeWordSteps,
     return true;
 }
 //==============================================================================
-bool CsoundCodeEditorComponenet::moveCaretRight (const bool moveInWholeWordSteps, const bool selecting)
+bool CsoundCodeEditorComponent::moveCaretRight (const bool moveInWholeWordSteps, const bool selecting)
 {
     CodeDocument::Position startPos(getDocument(), getHighlightedRegion().getStart());
     CodeDocument::Position endPos(getDocument(), getHighlightedRegion().getEnd());
@@ -1640,7 +1729,7 @@ bool CsoundCodeEditorComponenet::moveCaretRight (const bool moveInWholeWordSteps
     return true;
 }
 //==============================================================================
-void CsoundCodeEditorComponenet::codeDocumentTextDeleted(int start,int end)
+void CsoundCodeEditorComponent::codeDocumentTextDeleted(int start,int end)
 {
 
 }

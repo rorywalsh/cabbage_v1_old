@@ -187,7 +187,10 @@ void CsoundCodeEditor::paint(Graphics& g)
 
             for(int i=1; i<selectedEditorTokens.size(); i++)
             {
-                g.setColour(Colours::lime.withAlpha(.1f));
+                if(appProperties->getUserSettings()->getIntValue("EditorColourScheme", 0)==1)
+                    g.setColour(Colour(80,80,80));
+                else
+                    g.setColour(Colours::cornflowerblue.withAlpha(.4f));
                 if(selectedEditorTokens[i]->getLineNumber() == j)
                 {
                     int startPos = selectedEditorTokens[i]->getPositionOfTokenInLine().getStart();

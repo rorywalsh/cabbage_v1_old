@@ -1705,7 +1705,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
                 File dll(bundle.getChildFile(filename+".so"));
                 Logger::writeToLog(bundle.getFullPathName());
                 Logger::writeToLog(dll.getFullPathName());
-                if(!VSTData.copyFileTo(dll)) m_ShowMessage("Can not move lib", lookAndFeel);
+                if(!VSTData.copyFileTo(dll)) m_ShowMessage("Cannot move lib", lookAndFeel);
                 File loc_csdFile(bundle.getChildFile(filename+".csd").getFullPathName());
                 loc_csdFile.replaceWithText(csdFile.loadFileAsString());
 
@@ -1715,7 +1715,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
                 TTL_Generator_Function genFunc = (TTL_Generator_Function)lib.getFunction("lv2_generate_ttl");
                 if(!genFunc)
                 {
-                    showMessage("", "Can not generate LV2 data", lookAndFeel, this);
+                    showMessage("", "Cannot generate LV2 data", lookAndFeel, this);
                     return 1;
                 }
 

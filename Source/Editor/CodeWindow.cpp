@@ -360,6 +360,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
         result.setInfo (String("Show opcode help"), String("Show opcode help"), CommandCategories::view, 0);
         break;
 
+
     case CommandIDs::viewCsoundHelp:
 #ifndef MACOSX
         result.setInfo (String("View Csound Manual"), String("View Csound Manual"), CommandCategories::help, 0);
@@ -370,6 +371,14 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 #endif
         break;
 
+    case CommandIDs::viewCabbageHelp:
+        result.setInfo (String("View Cabbage Manual"), String("View Cabbage Manual"), CommandCategories::help, 0);
+#ifndef MACOSX
+        result.defaultKeypresses.add(KeyPress(KeyPress::F1Key));
+#else
+        result.addDefaultKeypress ('1', ModifierKeys::commandModifier);
+#endif
+        break;
 
     case CommandIDs::setBreakpoint:
         result.setInfo (String("Add Breakpoint"), String("Add Breakpoint"), CommandCategories::debug, 0);
@@ -401,10 +410,6 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
 #endif
         break;
 
-    case CommandIDs::viewCabbageHelp:
-        result.setInfo (String("View Cabbage Manual"), String("View Cabbage Manual"), CommandCategories::help, 0);
-        result.defaultKeypresses.add(KeyPress(KeyPress::F1Key));
-        break;
     case CommandIDs::viewCsoundOutput:
         result.setInfo (String("View Csound Output"), String("View Csound Output"), CommandCategories::help, 0);
         result.addDefaultKeypress ('p', ModifierKeys::commandModifier);
@@ -505,8 +510,8 @@ PopupMenu CodeWindow::getMenuForIndex (int topLevelMenuIndex, const String& menu
 
     else if(topLevelMenuIndex==4)
     {
-        m1.addCommandItem(&commandManager, CommandIDs::viewCsoundHelp);
         m1.addCommandItem(&commandManager, CommandIDs::viewCabbageHelp);
+        m1.addCommandItem(&commandManager, CommandIDs::viewCsoundHelp);
         return m1;
     }
 
@@ -777,6 +782,13 @@ bool CodeWindow::perform (const InvocationInfo& info)
         toggleManuals("Cabbage");
     }
 
+    else if(info.commandID==CommandIDs::viewHelp)
+    {
+        sendActionMessage("toggleCsoundOutput");
+        sendActionMessage("hideOutputWindow");
+        toggleManuals("Cabbage");
+    }
+
     return true;
 }
 
@@ -858,7 +870,7 @@ void CodeWindow::showCabbageHelp()
 
     String file = tokens[0];
     if(file.contains("slider"))
-        file = "sliders	";
+        file = "sliders";
     else if(file.contains("file"))
         file = "button_file";
     else if(file.contains("button_info"))
@@ -866,12 +878,23 @@ void CodeWindow::showCabbageHelp()
     else if(file.contains("output"))
         file = "csound_output";
 
-#if defined(LINUX) || defined(MACOSX)
+
+#if defined(MACOSX)
     path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/"+file+".html";
-#else
+#elseif defined(WIN32)
     path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\_book\\"+file+".html";
+#else
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"//Docs//_book//"+file+".html";
 #endif
 
+    if(!File(path).existsAsFile())
+#if defined(MACOSX)
+        path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/index.html";
+#elseif defined(WIN32)
+        path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\_book\\index.html";
+#else
+    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"//Docs//_book//index.html";
+#endif
 
 
 

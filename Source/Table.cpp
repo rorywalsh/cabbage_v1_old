@@ -1084,7 +1084,10 @@ void GenTable::paint (Graphics& g)
 
         if(genRoutine==7 || genRoutine==5 || genRoutine==2 || genRoutine==27)
         {
-            midPoint = ampToPixel(thumbHeight, minMax, minMax.getStart());
+            if(minMax.getStart()<0)
+                midPoint = ampToPixel(thumbHeight, minMax, minMax.getLength()/2.f-minMax.getEnd());
+            else
+                midPoint = ampToPixel(thumbHeight, minMax, minMax.getStart());
             drawTrace= false;
         }
 

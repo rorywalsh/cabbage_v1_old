@@ -20,7 +20,7 @@
   02111-1307 USA
 */
 
-
+#include "../CabbageUtils.h"
 //==============================================================================
 class FontsComponent  : public Component,
     public ActionBroadcaster,
@@ -44,6 +44,26 @@ public:
         addAndMakeVisible (demoTextBox);
 
         Font::findFonts(fonts);   // Generate the list of fonts
+
+        FontsArray monoFonts;
+
+        bool keepFont = false;
+
+        for (int i = 0; i<fonts.size(); i++)
+        {
+            keepFont = false;
+            for (int y = 0; y<monoFonts.size(); y++)
+            {
+                if(fonts[i].getTypefaceName().contains(monoFonts[y]))
+                    keepFont = true;
+
+            }
+            if(keepFont==false)
+            {
+                fonts.remove(i);
+                cUtils::debug(fonts[i].getTypefaceName());
+            }
+        }
 
 
 

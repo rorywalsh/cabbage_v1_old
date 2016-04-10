@@ -1790,4 +1790,67 @@ public:
         mode=mod;
     }
 };
+
+class FontsArray : public StringArray
+{
+public:
+    FontsArray()
+    {
+        add("Andale");
+        add("Anonymous");
+        add("Arial");
+        add("BatangChe");
+        add("Bitstream");
+        add("Consolas");
+        add("Courier");
+        add("CourierHP");
+        add("Courier");
+        add("CourierPS");
+        add("Fontcraft");
+        add("DejaVu");
+        add("Droid");
+        add("Everson");
+        add("Fedra ");
+        add("Fixed");
+        add("Fixedsys");
+        add("Fixedsys");
+        add("HyperFont");
+        add("Inconsolata");
+        add("KaiTi");
+        add("Letter");
+        add("Liberation");
+        add("Lucida");
+        add("Menlo");
+        add("MICR");
+        add("Miriam");
+        add("Monaco");
+        add("Monofur");
+        add("Monospace");
+        add("Gothic");
+        add("Mincho");
+        add("Nimbus");
+        add("OCR-A");
+        add("OCR-B");
+        add("Orator");
+        add("Ormaxx");
+        add("PragmataPro");
+        add("Prestige");
+        add("ProFont");
+        add("Proggy");
+        add("SimHei");
+        add("SimSun");
+        add("Sydnie");
+        add("Terminal");
+        add("Tex");
+        add("Trixie");
+        add("Mono");
+        add("Vera");
+        add("Bitstream");
+        add("William M");
+        add("monospaced");
+    }
+
+    ~FontsArray() {}
+
+};
 #endif

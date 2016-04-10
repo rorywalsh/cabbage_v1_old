@@ -65,6 +65,7 @@ static const int nextDebug			= 3003;
 static const int viewCsoundHelp		= 4025;
 static const int viewCabbageHelp	= 4026;
 static const int viewCsoundOutput	= 4032;
+static const int viewHelp			= 4033;
 static const int viewSource			= 4027;
 static const int viewOpcodeHelp			= 4028;
 static const int viewLinesNumbers		 = 4029;

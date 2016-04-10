@@ -1073,7 +1073,7 @@ Rectangle<int> CsoundCodeEditorComponent::getCaretPoisition()
 void CsoundCodeEditorComponent::undoText()
 {
     CodeDocument::Position startPos = getCaretPos();
-    getDocument().undo();
+    //getDocument().undo();
     moveCaretTo(startPos, false);
 }
 //==============================================================================

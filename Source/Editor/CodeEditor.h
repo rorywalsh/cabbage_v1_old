@@ -597,4 +597,5 @@ private:
     String syntax, info;
 
 };
+
 #endif

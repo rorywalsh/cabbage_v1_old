@@ -47,23 +47,22 @@ public:
 
         FontsArray monoFonts;
 
-        bool keepFont = false;
 
-//        for (int i = 0; i<fonts.size(); i++)
-//        {
-//            keepFont = false;
-//            for (int y = 0; y<monoFonts.size(); y++)
-//            {
-//                if(fonts[i].getTypefaceName().contains(monoFonts[y]))
-//                    keepFont = true;
-//
-//            }
-//            if(keepFont==false)
-//            {
-//                fonts.remove(i);
-//                cUtils::debug(fonts[i].getTypefaceName());
-//            }
-//        }
+
+        for (int i = fonts.size(); i>=0 ; i--)
+        {
+            bool keepFont = false;
+            for (int y = 0; y<monoFonts.size(); y++)
+            {
+                if(fonts[i].getTypefaceName().contains(monoFonts[y]))
+                    keepFont = true;
+            }
+
+            if(keepFont==false)
+            {
+                fonts.remove(i);
+            }
+        }
 
 
 

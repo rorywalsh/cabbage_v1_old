@@ -657,8 +657,9 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
     {
         //deviceManager->closeAudioDevice();
         filter->initialiseWidgets(csdFile.loadFileAsString(), true);
-        filter->addWidgetsToEditor(true);
+
         filter->recompileCsound(csdFile);
+        filter->addWidgetsToEditor(true);
 
     }
 

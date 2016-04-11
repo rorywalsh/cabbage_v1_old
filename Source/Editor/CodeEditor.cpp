@@ -343,6 +343,10 @@ void CsoundCodeEditor::highlightLine(String line)
 //==============================================================================
 void CsoundCodeEditor::closeCurrentFile()
 {
+
+    if(currentEditor==0)
+        currentEditor=openFiles.size()-1;
+
     if(openFiles.size()>1)
     {
         String file = openFiles[currentEditor];
@@ -366,6 +370,9 @@ void CsoundCodeEditor::closeCurrentFile()
             currentEditor--;
             resized();
         }
+
+        editor[currentEditor]->setVisible(true);
+        editor[currentEditor]->toFront(true);
 
     }
 }

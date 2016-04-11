@@ -72,13 +72,13 @@ CabbageLookAndFeel::CabbageLookAndFeel()
     setColour(TooltipWindow::backgroundColourId, cUtils::getDarkerBackgroundSkin());
     setColour(TooltipWindow::textColourId, cUtils::getComponentFontColour());
 
-
+    setColour(CaretComponent::caretColourId, Colours::white);
     setColour(ListBox::outlineColourId, cUtils::getDarkerBackgroundSkin());
     //browserComponent.setColour(Label::backgroundColourId, Colours::cornflowerblue);
     //setColour(ListBox::textColourId, Colours::cornflowerblue);
     setColour(TextEditor::backgroundColourId, cUtils::getDarkerBackgroundSkin());
     setColour(TextEditor::textColourId, Colours::white);
-    setColour(TextEditor::highlightedTextColourId, Colours::lime);
+    //setColour(TextEditor::highlightedTextColourId, Colours::lime);
     setColour(TextEditor::shadowColourId, Colours::pink);
     setColour(FileChooserDialogBox::titleTextColourId, Colours::lime);
 }

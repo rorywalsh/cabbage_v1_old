@@ -1039,7 +1039,9 @@ void CsoundCodeEditorComponent::addPopupMenuItems (PopupMenu &menuToAddTo, const
     menuToAddTo.addItem(3, "Paste");
     menuToAddTo.addItem(4, "Select All");
     menuToAddTo.addSeparator();
-    menuToAddTo.addItem(12, "Opcode Help: Inline");
+    menuToAddTo.addItem(14, "Toggle comments");
+    menuToAddTo.addSeparator();
+    menuToAddTo.addItem(13, "Opcode Help: Inline");
     menuToAddTo.addItem(5, "Opcode Help: Manual");
     menuToAddTo.addSeparator();
     menuToAddTo.addItem(6, "Mark region of interest");
@@ -1124,7 +1126,7 @@ void CsoundCodeEditorComponent::performPopupMenuAction (int menuItemID)
         sendActionMessage(message);
     }
 
-    else if(menuItemID==12)
+    else if(menuItemID==13)
     {
         pos1 = getDocument().findWordBreakBefore(getCaretPos());
         String line = getDocument().getLine(pos1.getLineNumber());
@@ -1151,6 +1153,12 @@ void CsoundCodeEditorComponent::performPopupMenuAction (int menuItemID)
     else if(menuItemID==10)
     {
         addToRepository();
+    }
+
+    //add to repo
+    else if(menuItemID==14)
+    {
+        toggleComments();
     }
 
     //insert from repo

@@ -647,7 +647,11 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         deviceManager->initialise(2,
                                   2, savedState, false);
 
+
+
         //filter->createGUI(csdFile.loadFileAsString(), true);
+        if(!deviceManager->getCurrentAudioDevice())
+            cUtils::showMessage("Cabbage could not initialise the selected audio device. Please select a valid audio device in Audio Settings", &this->getLookAndFeel());
     }
     else
     {

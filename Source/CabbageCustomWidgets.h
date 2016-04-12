@@ -527,6 +527,11 @@ public:
         value = val;
     }
 
+    int getNumberOfDecimalPlaces()
+    {
+        return decPlaces;
+    }
+
     void setSVGs(CabbageGUIType &cAttr)
     {
         if (sliderType.contains("rotary"))

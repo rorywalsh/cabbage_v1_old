@@ -523,10 +523,12 @@ void CabbagePluginAudioProcessorEditor::changeListenerCallback(ChangeBroadcaster
             }
             else
             {
+                int decimalPlaces = cabSlider->getNumberOfDecimalPlaces();
+
                 if(cabSlider->tooltipText.isNotEmpty())
                     popupText = cabSlider->tooltipText;
                 else
-                    popupText = cabSlider->getChannel()+": "+String(value);
+                    popupText = cabSlider->getChannel()+": "+String(cUtils::roundToPrec(value, decimalPlaces));
 
                 popupBubble->showAt(cabSlider->slider, AttributedString(popupText), 550);
             }

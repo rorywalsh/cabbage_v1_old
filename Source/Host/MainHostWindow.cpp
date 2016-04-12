@@ -368,6 +368,7 @@ void MainHostWindow::addCabbagePluginsToMenu (PopupMenu& m, Array<File> &cabbage
                 cUtils::debug(subFolders[subs].getFullPathName());
                 fileCnt = cabbageFiles.size();
                 subFolders[subs].findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
+
                 subMenu.clear();
 
                 for (int fileIndex=fileCnt+1; fileIndex < cabbageFiles.size(); fileIndex++)
@@ -424,7 +425,7 @@ void MainHostWindow::addCabbagePluginsToMenu (PopupMenu& m, Array<File> &cabbage
             subFolders[subs].findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
             subMenu.clear();
 
-            for (int fileIndex=fileCnt+1; fileIndex < cabbageFiles.size(); fileIndex++)
+            for (int fileIndex=fileCnt; fileIndex < cabbageFiles.size(); fileIndex++)
                 subMenu.addItem (fileIndex+1, cabbageFiles[fileIndex].getFileNameWithoutExtension());
 
 

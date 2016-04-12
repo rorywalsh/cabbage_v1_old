@@ -356,31 +356,21 @@ void CabbageEncoder::paint(Graphics &g)
 
     if (radius > 12.0f)
     {
-        g.setColour (Colour::fromString(trackercolour).withAlpha (isMouseOver ? 1.0f : 0.9f));
-
-        const float thickness = 0.7f;
-        {
-            Path filledArc;
-            filledArc.addPieSegment (rx, ry, rw, rw, angle-.25, angle+.25f, thickness);
-            g.fillPath (filledArc);
-        }
-
         g.setColour (Colour::fromString(outlinecolour).withAlpha (isMouseOver ? 1.0f : 0.7f));
-        g.drawEllipse(slider.reduced(1.f).toFloat(), isMouseOver ? 1.5f : 1.f);
-        g.drawEllipse(slider.reduced(getWidth()*.11).toFloat(), isMouseOver ? 1.5f : 1.f);
+        //g.drawEllipse(slider.reduced(1.f).toFloat(), isMouseOver ? 1.5f : 1.f);
+        //g.drawEllipse(slider.reduced(getWidth()*.11).toFloat(), isMouseOver ? 1.5f : 1.f);
 
         Path newPolygon;
         Point<float> centre (centreX, centreY);
 
         if (diameter >= 25)   //If diameter is >= 40 then polygon has 12 steps
         {
-            newPolygon.addPolygon(centre, 12.f, radius*.65, 0.f);
+            newPolygon.addPolygon(centre, 12.f, radius, 0.f);
             newPolygon.applyTransform (AffineTransform::rotation (angle,
                                        centreX, centreY));
         }
         else //Else just use a circle. This is clearer than a polygon when very small.
             newPolygon.addEllipse (-radius*.2, -radius*.2, radius * .3f, radius * .3f);
-
 
         g.setColour (Colour::fromString(colour));
 
@@ -389,6 +379,16 @@ void CabbageEncoder::paint(Graphics &g)
         //if(slider.findColour (Slider::thumbColourId)!=Colour(0.f,0.f,0.f,0.f))
         g.setGradientFill (cg);
         g.fillPath (newPolygon);
+
+
+        g.setColour (Colour::fromString(trackercolour).withAlpha (isMouseOver ? 1.0f : 0.9f));
+
+        const float thickness = 0.7f;
+        {
+            Path filledArc;
+            filledArc.addPieSegment (rx, ry, rw, rw, angle-.25, angle+.25f, thickness);
+            g.fillPath (filledArc);
+        }
     }
     else
     {

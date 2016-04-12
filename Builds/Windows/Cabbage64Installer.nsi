@@ -85,12 +85,14 @@ Section "Core components" SEC01
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\platerev.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\osc.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\rtpa.dll"
+  File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\ftsamplebank.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\rtwinmm.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\scansyn.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\serial.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\signalflowgraph.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\stdutil.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\system_call.dll"
+  File "C:\msys64\mingw64\bin\libwinpthread-1.dll"
   ;docs and examples
   SetOutPath "$INSTDIR\Docs\_book\"
   File /r "..\..\Docs\_book\*"
@@ -182,6 +184,7 @@ Section Uninstall
   Delete "$INSTDIR\osc.dll"
   Delete "$INSTDIR\csound64.dll"
   Delete "$INSTDIR\libsndfile-1.dll"
+  Delete "$INSTDIR\libwinpthread-1.dll"
 
   Delete "$SMPROGRAMS\Cabbage64\Uninstall.lnk"
   Delete "$SMPROGRAMS\Cabbage64\Website.lnk"

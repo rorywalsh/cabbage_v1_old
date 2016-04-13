@@ -8,7 +8,7 @@ keyboard bounds(0,0,400,80)
 <CsOptions>
 ;-dm0 --midi-key=4 --midi-velocity=5 -n -M0 -Q0
 ;-dm0 -n -+rtmidi=null -M0 -Q0
--dm0 -n -+rtmidi=null -M0 -Q0
+-dm0 -n -+rtmidi=null -M0 -Q0 --midi-key=4 --midi-velocity=5
 </CsOptions>
 
 <CsInstruments>
@@ -22,7 +22,7 @@ massign	0,1
 
 instr	1	; receive midi and note on
  prints	"note on\n"
- noteon	1,p4,p5
+ noteon	1, p4, p5
  krel release
  if krel==1 then
   event "i",3,0,0,p4,p5

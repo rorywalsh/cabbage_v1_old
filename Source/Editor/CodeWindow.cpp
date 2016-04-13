@@ -881,7 +881,7 @@ void CodeWindow::showCabbageHelp()
 
 #if defined(MACOSX)
     path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/"+file+".html";
-#elseif defined(WIN32)
+#elif defined(WIN32)
     path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\_book\\"+file+".html";
 #else
     path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"//Docs//_book//"+file+".html";
@@ -890,7 +890,7 @@ void CodeWindow::showCabbageHelp()
     if(!File(path).existsAsFile())
 #if defined(MACOSX)
         path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"/Docs/index.html";
-#elseif defined(WIN32)
+#elif defined(WIN32)
         path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\_book\\index.html";
 #else
     path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"//Docs//_book//index.html";

@@ -263,14 +263,17 @@ void FilterComponent::mouseDown (const MouseEvent& e)
                 codeWindow = new CodeWindow(csdFile.getFileNameWithoutExtension());
                 codeWindow->addActionListener(this);
                 codeWindow->splitBottomWindow->SetSplitBarPosition(codeWindow->getWidth()/3);
-                codeWindow->textEditor->setShowTabButtons(false);
                 codeWindow->setSize(500, 400);
                 codeWindow->setTopLeftPosition(e.getScreenX()-100, e.getScreenY()+100);
                 codeWindow->setVisible(true);
                 codeWindow->toFront(true);
                 codeWindow->setAlwaysOnTop(true);
-                codeWindow->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
-                codeWindow->textEditor->setAllText(csdFile.loadFileAsString());
+//                codeWindow->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
+//                codeWindow->textEditor->setAllText(csdFile.loadFileAsString());
+
+                codeWindow->setName(csdFile.getFileName());
+                codeWindow->textEditor->editor[0]->loadContent(csdFile.loadFileAsString());
+                codeWindow->textEditor->editor[0]->parseTextForVariables();
 
                 CabbagePluginAudioProcessor* const processor = (CabbagePluginAudioProcessor*)graph.getNodeForId (filterID)->getProcessor();
                 processor->codeEditor = codeWindow->textEditor;

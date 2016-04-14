@@ -40,10 +40,9 @@ CsoundCodeEditor::CsoundCodeEditor(CodeDocument &document, CodeTokeniser *codeTo
     helpComp = new HelpComp();
     searchReplaceComp = new SearchReplaceComp();
 
-#ifndef CABBAGE_HOST
+
     addAndMakeVisible(searchReplaceComp);
     searchReplaceComp->setVisible(true);
-#endif
 
     addAndMakeVisible(helpComp);
     helpComp->setVisible(false);
@@ -165,7 +164,7 @@ void CsoundCodeEditor::paint(Graphics& g)
     g.fillAll(cUtils::getDarkerBackgroundSkin());
     g.setColour(backgroundColour);
     g.fillRect(35, 20, getWidth(), getHeight());
-#ifndef CABBAGE_HOST
+
     int index = 0;
     if(editor[currentEditor] != 0)
     {
@@ -232,7 +231,6 @@ void CsoundCodeEditor::paint(Graphics& g)
         }
     }
 
-#endif
 }
 
 
@@ -560,17 +558,12 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
 {
     if(message.contains("helpDisplay"))
     {
-#ifdef CABBAGE_HOST
-        helpComp->setVisible(true);
-        resized();
-#else
         if(!helpComp->isVisible())
         {
             searchReplaceComp->setVisible(false);
             helpComp->setVisible(true);
             resized();
         }
-#endif
     }
     else if(message.contains("InstrumentBreakpoint"))
     {

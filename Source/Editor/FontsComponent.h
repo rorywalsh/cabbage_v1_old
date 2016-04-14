@@ -114,7 +114,6 @@ public:
     void listBoxItemDoubleClicked(int row, const MouseEvent &e)
     {
         Font font (fonts [row]);
-        cUtils::showMessage("If the selected font is not monospaced, you may experience some strange behaviour when editing text", &getLookAndFeel());
         sendActionMessage("FONT:"+font.getTypefaceName());
     }
 

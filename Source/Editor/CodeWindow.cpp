@@ -105,7 +105,8 @@ CodeWindow::CodeWindow(String name):DocumentWindow (name, Colours::white,
         textEditor->editor[textEditor->currentEditor]->setOpcodeStrings(File(opcodeFile).loadFileAsString());
     //else csound->Message("Could not open opcodes.txt file, parameter display disabled..");
 
-    fontSize = cUtils::getPreference(appProperties, "FontSize");
+    fontSize = cUtils::getPreference(appProperties, "FontSize")==0 ? 15 : cUtils::getPreference(appProperties, "FontSize");
+
     font = Font(cUtils::getPreference(appProperties, "Fonttype", ""), fontSize, 0);
 
     bool showConsole = (appProperties->getUserSettings()->getValue("ShowEditorConsole").getIntValue()==1 ? true : false);
@@ -893,7 +894,7 @@ void CodeWindow::showCabbageHelp()
 #elif defined(WIN32)
         path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"\\Docs\\_book\\index.html";
 #else
-    path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"//Docs//_book//index.html";
+        path = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getFullPathName()+"//Docs//_book//index.html";
 #endif
 
 
@@ -943,7 +944,7 @@ void CodeWindow::actionListenerCallback(const String &message)
         font = Font(newFont, fontSize, 0);
         cUtils::setPreference(appProperties, "Fonttype", newFont);
         textEditor->editor[textEditor->currentEditor]->setEditorFont(newFont);
-        textEditor->editor[textEditor->currentEditor]->setFont(Font(newFont, fontSize, 0));
+        textEditor->editor[textEditor->currentEditor]->setFont(font);
     }
     else
         sendActionMessage(message);

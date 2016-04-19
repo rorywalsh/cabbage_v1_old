@@ -51,9 +51,10 @@ fi
 	cp ./build/CabbagePluginSynth.so CabbageBuild/CabbagePluginSynth.so
 	cp ./build/CabbagePluginEffect.so CabbageBuild/CabbagePluginEffect.so
 	cp ./build/CabbageStudio CabbageBuild/CabbageStudio
+	cp ../../Images/CabbageStudio.png CabbageBuild/CabbageStudio.png
 	cp -rf ../../Docs/_book CabbageBuild/Docs
 	cp -rf ../../Examples/ CabbageBuild/Examples
 	sed "s@CURRENTDIR@$(pwd)@" dummy.desktop > CabbageBuild/cabbage.desktop
 	cp CabbageBuild/cabbage.desktop ~/.local/share/applications/
-	sed "s@CURRENTDIR@$(pwd)@" dummyStudio.desktop > CabbageBuild/cabbageStudio.desktop
+	sed "s@CURRENTDIR@$(pwd)@" dummyStudio.desktop > CabbageBuild/CabbageStudio.desktop
 	cp CabbageBuild/cabbageStudio.desktop ~/.local/share/applications/

@@ -51,17 +51,16 @@ To build run the following command from the Linux directory:
 Running this script without any input parameters will build with default paths, i.e:
 Csound include: "/usr/local/include/csound 
 Csound library: "/usr/local/lib
-VST SDK: "~/SDKs/vstsdk2.4"
+VST SDK: "${HOME}/SDKs/vstsdk2.4"
 
-Or if you've downloaded the VST3 SDK you should do something like 'foo/bar/VST3\ SDK' so as to avoid problems with the space in the folder name. 
-You can also simply rename the VST3 folder so that it doesn't contain and spaces. 
+Or if you've downloaded the VST3 SDK you should probably rename the folder so that is contains no white spaces, i.e, change it from "VST3 SDK" to "VST3SDK" 
 
 If you wish to use custom paths please pass them to the buildCabbage script in this order: 
 "csound include" "csound library" "vst sdk" 
 
 Examples usuage with custom paths:
 
-./buildCabbage "/usr/local/csound" "/usr/lib" "~/VST_SDK"
+./buildCabbage "/usr/local/csound" "/usr/lib" "${HOME}/VST_SDK"
 
 buildCabbage will create a CabbageBuild directory that will contain everything you need to run Cabbage. It will also install Cabbage to the system menu through the use of a .desktop file. Please run Cabbage from the system menu in order to ensure that all examples and documentation are found
 when using Cabbage. Some users have reported issues when running Cabbage directly from the build directory. 

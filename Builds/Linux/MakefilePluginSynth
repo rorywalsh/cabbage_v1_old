@@ -16,10 +16,10 @@ endif
 
 #default VST SDK path
 ifndef VST_SDK
-VST_SDK ?= "/home/rory/SDKs/vstsdk2.4/"
+VST_SDK ?= "${HOME}/SDKs/VST3SDK"
 endif
 
-#echo $VST_SDK
+
 
 ifndef CONFIG
   CONFIG=Debug
@@ -30,6 +30,8 @@ ifeq ($(CONFIG),Debug)
   LIBDIR := build
   OBJDIR := build/intermediate/Debug
   OUTDIR := build
+
+  
 
   ifeq ($(TARGET_ARCH),)
     TARGET_ARCH := -march=native
@@ -55,6 +57,7 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := -march=native
   endif
 
+
   CPPFLAGS := $(DEPFLAGS) -I $(CSOUND_INCLUDE) -D "CSOUND6=1" -D "Cabbage_Plugin_Synth=1" -D "_DEBUG=1" -D "Cabbage_Plugin_LV2=1" -D "USE_DOUBLE=1" -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I /usr/include -I /usr/include/freetype2 -I$(VST_SDK) -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -fPIC -Os
   CXXFLAGS += $(CFLAGS) -std=c++11
@@ -66,6 +69,8 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS := \
+  $(OBJDIR)/CabbageCustomWidgets_35a2sd62.o \
+  $(OBJDIR)/CabbageMessageSystem_6we1348e.o \
   $(OBJDIR)/BinaryData_5ba7f54.o \
   $(OBJDIR)/CabbageCallOutBox_1ced38fd.o \
   $(OBJDIR)/CabbageGUIClass_79b9049f.o \
@@ -100,8 +105,6 @@ OBJECTS := \
   $(OBJDIR)/juce_VST3_Wrapper_77e7c73b.o \
   $(OBJDIR)/juce_VST_Wrapper_bb62e93d.o \
   $(OBJDIR)/juce_opengl_7767dsdf8.o \
-  $(OBJDIR)/CabbageCustomWidgets_35a2sd62.o \
-  $(OBJDIR)/CabbageMessageSystem_6we1348e.o \
     
 .PHONY: clean
 

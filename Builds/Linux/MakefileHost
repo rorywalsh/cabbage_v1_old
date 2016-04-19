@@ -16,7 +16,7 @@ endif
 
 #default VST SDK path
 ifndef VST_SDK
-VST_SDK ?= "~/SDKs/vstsdk2.4"
+VST_SDK ?= "${HOME}/SDKs/vstsdk2.4"
 endif
 
 ifndef CONFIG

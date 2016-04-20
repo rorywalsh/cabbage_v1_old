@@ -6,17 +6,17 @@ DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 
 # Default csound include path
 ifndef CSOUND_INCLUDE
-CSOUND_INCLUDE ?= "/usr/local/include/csound"
+CSOUND_INCLUDE = "/usr/local/include/csound"
 endif
 
 # Default Csound library path
 ifndef CSOUND_LIBRARY
-CSOUND_LIBRARY ?= "/usr/local/lib"
+CSOUND_LIBRARY = "/usr/local/lib"
 endif
 
 #default VST SDK path
 ifndef VST_SDK
-VST_SDK ?= "${HOME}/SDKs/vstsdk2.4/"
+VST_SDK = "${HOME}/SDKs/vstsdk2.4/"
 endif
 
 ifndef CONFIG

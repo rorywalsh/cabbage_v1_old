@@ -16,7 +16,7 @@ endif
 
 #default VST SDK path
 ifndef VST_SDK
-VST_SDK = "${HOME}/SDKs/vstsdk2.4"
+VST_SDK = "${HOME}/SDKs/VST3SDK"
 endif
 
 ifndef CONFIG
@@ -53,7 +53,7 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := -march=native
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(CSOUND_INCLUDE) -D "LINUX=1" -D "CSOUND6=1" -D "Cabbage_Build_Standalone=1" -D"Release=1" -D "Cabbage_GUI_Editor=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I ~/SDKs/vstsdk2.4  -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules -I $(CSOUND_INCLUDE)
+  CPPFLAGS := $(DEPFLAGS) -I $(CSOUND_INCLUDE) -D "LINUX=1" -D "CSOUND6=1" -D "Cabbage_Build_Standalone=1" -D"Release=1" -D "Cabbage_GUI_Editor=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -I $(VST_SDK)  -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules -I $(CSOUND_INCLUDE)
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -std=c++11 -Os
   CXXFLAGS += $(CFLAGS) -std=c++11
   LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -fvisibility=hidden -lGL -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt -lm -L$(CSOUND_LIBRARY) -lcsound64 `pkg-config --libs sndfile`

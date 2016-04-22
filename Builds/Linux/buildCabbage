@@ -57,4 +57,4 @@ fi
 	sed "s@CURRENTDIR@$(pwd)@" dummy.desktop > CabbageBuild/cabbage.desktop
 	cp CabbageBuild/cabbage.desktop ~/.local/share/applications/
 	sed "s@CURRENTDIR@$(pwd)@" dummyStudio.desktop > CabbageBuild/CabbageStudio.desktop
-	cp CabbageBuild/cabbageStudio.desktop ~/.local/share/applications/
+	cp CabbageBuild/CabbageStudio.desktop ~/.local/share/applications/

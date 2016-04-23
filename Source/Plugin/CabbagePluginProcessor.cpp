@@ -308,6 +308,7 @@ void CabbagePluginAudioProcessor::initAllChannels()
             csound->SetChannel(guiLayoutCtrls[i].getStringProp(CabbageIDs::identchannel).toUTF8(), "");
     }
     this->updateCabbageControls();
+    updateHostDisplay();
 }
 
 //============================================================================
@@ -383,7 +384,10 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
 #endif
 
     csoundParams->sample_rate_override = this->getSampleRate();
-    //csoundParams->control_rate_override = cUtils::getKrFromFile(csdFile.getFullPathName(), (int)getSampleRate());
+    
+#ifdef CABBAGE_AU
+    csoundParams->control_rate_override = csound->GetSr()/32;
+#endif
 
 
     csoundParams->displays = 0;
@@ -431,7 +435,6 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
         cs_scale = csound->Get0dBFS();
         csndIndex = csound->GetKsmps();
         this->setLatencySamples(csound->GetKsmps());
-        updateHostDisplay();
         csoundStatus = true;
         debugMessageArray.add(VERSION);
         debugMessageArray.add(String("\n"));
@@ -488,7 +491,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
 #endif
 
     addWidgetsToEditor(true);
-
+    updateHostDisplay();
     return 1;
 }
 //============================================================================
@@ -539,7 +542,11 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 
     csoundParams->displays = 0;
     //csoundParams->sample_rate_override = this->getSampleRate();
-    //csoundParams->control_rate_override = cUtils::getKrFromFile(file.getFullPathName(), (int)getSampleRate());
+
+#if CABBAGE_AU
+    csoundParams->control_rate_override = csound->GetSr()/32;
+#endif
+    
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
     //csound->SetOption((char*)"-d");
@@ -673,7 +680,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 #endif
     }
     getCallbackLock().exit();
-
+    updateHostDisplay();
     return csCompileResult;
 #endif
 }
@@ -1160,9 +1167,9 @@ void CabbagePluginAudioProcessor::openFile(LookAndFeel* looky)
         getCallbackLock().enter();
         //cabbageCsoundEditor->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
         initialiseWidgets(selectedFiles[0].loadFileAsString(), true);
-        addWidgetsToEditor(true);
         getCallbackLock().exit();
         recompileCsound(csdFile);
+        addWidgetsToEditor(true);	
     }
 }
 void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
@@ -2130,7 +2137,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                     else
                         ++yieldCounter;
 
-                    sendOutgoingMessagesToCsound();
+                    //sendOutgoingMessagesToCsound();
                     csCompileResult = csound->PerformKsmps();
 
                     if(csCompileResult!=OK)

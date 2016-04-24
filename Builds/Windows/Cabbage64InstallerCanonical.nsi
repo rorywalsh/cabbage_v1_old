@@ -30,7 +30,7 @@
 ; Instfiles page
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
-!define MUI_FINISHPAGE_RUN "$INSTDIR\Cabbage.exe"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\Cabbage64.exe"
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller pages
@@ -44,7 +44,7 @@
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "Output\Cabbage64CanonicalSetup.exe"
-InstallDir "$PROGRAMFILES\Cabbage64Canonical"
+InstallDir "$PROGRAMFILES64\Cabbage64Canonical"
 ;InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
@@ -54,18 +54,18 @@ Section "Core components" SEC01
   ${EnvVarUpdate} $0 "PATH" "P" "HKLM" "$INSTDIR"                            ; Prepend
   ${EnvVarUpdate} $0 "CABBAGE_OPCODE_PATH" "A" "HKLM" "$INSTDIR"                            ; Prepend
   SetOverwrite ifnewer
-  File "buildCanon\Cabbage.exe"
-  File "buildCanon\CabbageStudio.exe"
-  CreateDirectory "$SMPROGRAMS\Cabbage64Canonical"
-  CreateShortCut "$SMPROGRAMS\Cabbage64Canonical\Cabbage64.lnk" "$INSTDIR\Cabbage.exe"
-  CreateShortCut "$SMPROGRAMS\Cabbage64Canonical\CabbageStudio64.lnk" "$INSTDIR\CabbageStudio.exe"
+  File "buildCanon64\Cabbage64.exe"
+  File "buildCanon64\CabbageStudio64.exe"
+  CreateDirectory "$SMPROGRAMS64\Cabbage64Canonical"
+  CreateShortCut "$SMPROGRAMS64\Cabbage64Canonical\Cabbage64.lnk" "$INSTDIR\Cabbage64.exe"
+  CreateShortCut "$SMPROGRAMS64\Cabbage64Canonical\CabbageStudio64.lnk" "$INSTDIR\CabbageStudio64.exe"
   CreateShortCut "$DESKTOP\Cabbage64.lnk" "$INSTDIR\Cabbage.exe"
-  File "buildCanon\CabbagePluginEffect.dat"
-  File "buildCanon\CabbagePluginSynth.dat"
-  File "buildCanon\opcodes.txt"
-  File "buildCanon\IntroScreen.csd"
-  File "buildCanon\cabbageEarphones.png"
-  File "buildCanon\cabbage.png"
+  File "buildCanon64\CabbagePluginEffect.dat"
+  File "buildCanon64\CabbagePluginSynth.dat"
+  File "build\opcodes.txt"
+  File "build\IntroScreen.csd"
+  File "build\cabbageEarphones.png"
+  File "build\cabbage.png"
   
   ;libsndfile
   ; File "C:\Program Files (x86)\Mega-Nerd\libsndfile\bin\libsndfile-1.dll"
@@ -87,7 +87,7 @@ SectionEnd
 
 ; Section descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SEC01} "Installs Cabbage, Csound and all core components"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC01} "Installs Cabbage64, Csound should already be installed."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Section -AdditionalIcons
@@ -98,7 +98,7 @@ SectionEnd
 
 Section -Post
   WriteUninstaller "$INSTDIR\uninst.exe"
-  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\Cabbage.exe"
+  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\Cabbage64.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\Cabbage.exe"
@@ -125,19 +125,18 @@ Section Uninstall
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"
 
-  Delete "$SMPROGRAMS\Cabbage64\Uninstall.lnk"
-  Delete "$SMPROGRAMS\Cabbage64\Website.lnk"
+  Delete "$SMPROGRAMS64\Cabbage64\Uninstall.lnk"
+  Delete "$SMPROGRAMS64\Cabbage64\Website.lnk"
   Delete "$INSTDIR\IntroScreen.csd"
   Delete "$INSTDIR\cabbage.png"
   Delete "$INSTDIR\cabbageEarphones.png"
   Delete "$DESKTOP\Cabbage64.lnk"
   Delete "$SMPROGRAMS\Cabbage64\Cabbage64.lnk"
-  Delete "$INSTDIR\csound.exe"
   Delete "$INSTDIR\commandLineTest.csd"
-  Delete "$INSTDIR\Cabbage.exe"
+  Delete "$INSTDIR\Cabbage64.exe"
   Delete "$INSTDIR\CabbagePluginEffect.dat"
   Delete "$INSTDIR\CabbagePluginSynth.dat"
-  Delete "$INSTDIR\CabbageStudio.exe"
+  Delete "$INSTDIR\CabbageStudio64.exe"
   Delete "$INSTDIR\opcodes.txt"
 
 

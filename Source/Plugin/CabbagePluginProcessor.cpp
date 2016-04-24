@@ -2137,7 +2137,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                     else
                         ++yieldCounter;
 
-                    //sendOutgoingMessagesToCsound();
+                    sendOutgoingMessagesToCsound();
                     csCompileResult = csound->PerformKsmps();
 
                     if(csCompileResult!=OK)

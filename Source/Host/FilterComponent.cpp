@@ -547,6 +547,8 @@ void FilterComponent::timerCallback()
 
             if(codeWindow->csoundDebuggerComponent->getText()!=instance->getDebuggerOutput())
                 codeWindow->csoundDebuggerComponent->setText(instance->getDebuggerOutput());
+                
+            instance->clearDebugMessage();
         }
     }
 

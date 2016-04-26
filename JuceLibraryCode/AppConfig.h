@@ -218,11 +218,7 @@
 #endif
 
 #ifndef  JucePlugin_PluginCode
-    #ifndef CabbageAU
         #define JucePlugin_PluginCode             'RORY'
-    #else
-        #define JucePlugin_PluginCode             'CABU'
-    #endif
 #endif
 
 #ifdef CABBAGE_HOST

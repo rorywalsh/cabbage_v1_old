@@ -1839,7 +1839,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         String newPList = pl.loadFileAsString();
         //write our identifiers to the plist file
         newPList = newPList.replace("CabbagePlugin", saveFC.getResult().getFileNameWithoutExtension());
-        newPList = newPList.replace("NewProject", saveFC.getResult().getFileNameWithoutExtension());
+
         //write plist file
         pl.replaceWithText(newPList);
 
@@ -1861,9 +1861,10 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
 
             File pluginBinary(dll.getFullPathName()+String("/Contents/MacOS/")+saveFC.getResult().getFileNameWithoutExtension());
 
-            bin.moveFileTo(pluginBinary);
-            //else
-            //showMessage("could not copy library binary file");
+            if(bin.moveFileTo(pluginBinary))
+               cUtils::debug("file moved Ok");
+            else
+               showMessage("could not copy library binary file", &this->getLookAndFeel());
 
             setUniquePluginID(pluginBinary, loc_csdFile, true);
         }
@@ -1954,17 +1955,25 @@ int StandaloneFilterWindow::setUniquePluginID(File binFile, File csdFile, bool A
             for(int y=plugLibName.length(); y<16; y++)
                 plugLibName.append(String(" "), 1);
 
-        mFile.seekg (0, ios::beg);
+        mFile.seekg (0, ios::end);
         buffer = (unsigned char*)malloc(sizeof(unsigned char)*file_size);
-        mFile.read((char*)&buffer[0], file_size);
-        loc = cabbageFindPluginID(buffer, file_size, pluginName);
-        if (loc < 0)
-            m_ShowMessage("Plugin name could not be set?!?", lookAndFeel);
-        else
+        
+        for(int i=0;i<5;i++)
         {
-            //showMessage("plugin name set!");
-            mFile.seekg (loc, ios::beg);
-            mFile.write(csdFile.getFileNameWithoutExtension().toUTF8(), 16);
+            
+            mFile.seekg (0, ios::beg);
+            mFile.read((char*)&buffer[0], file_size);
+        
+
+            loc = cabbageFindPluginID(buffer, file_size, pluginName);
+            if (loc < 0)
+                break;
+            else
+            {
+                //showMessage("plugin name set!");
+                mFile.seekg (loc, ios::beg);
+                mFile.write(csdFile.getFileNameWithoutExtension().toUTF8(), 16);
+            }
         }
         //#endif
 

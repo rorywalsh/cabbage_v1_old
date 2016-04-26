@@ -67,13 +67,13 @@ then
 	# install_name_tool -id @executable_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \
 	# /Users/walshr/sourcecode/csound/build/CsoundLib64.framework/Versions/6.0/CsoundLib64
 
-	xcodebuild -project ./../../CabbageAUEffect/Builds/MacOSX/CabbageAUEffect.xcodeproj clean
+	#xcodebuild -project ./../../CabbageAUEffect/Builds/MacOSX/CabbageAUEffect.xcodeproj clean
 
-	xcodebuild -project ./../../CabbageAUEffect/Builds/MacOSX/CabbageAUEffect.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
+	#xcodebuild -project ./../../CabbageAUEffect/Builds/MacOSX/CabbageAUEffect.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
 
-	xcodebuild -project ./../../CabbageAUSynth/Builds/MacOSX/CabbageAUSynth.xcodeproj clean
+	#xcodebuild -project ./../../CabbageAUSynth/Builds/MacOSX/CabbageAUSynth.xcodeproj clean
 
-	xcodebuild -project ./../../CabbageAUSynth/Builds/MacOSX/CabbageAUSynth.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
+	#xcodebuild -project ./../../CabbageAUSynth/Builds/MacOSX/CabbageAUSynth.xcodeproj/ ONLY_ACTIVE_ARCH=NO -configuration Release
 
 	xcodebuild -project Cabbage.xcodeproj clean
 

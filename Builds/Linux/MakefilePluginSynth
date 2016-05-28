@@ -16,7 +16,8 @@ endif
 
 #default VST SDK path
 ifndef VST_SDK
-VST_SDK = "${HOME}/SDKs/VST3SDK"
+VST_DIR = "VST3 SDK"
+VST_SDK = ${HOME}/SDKs/${VST_DIR}
 endif
 
 

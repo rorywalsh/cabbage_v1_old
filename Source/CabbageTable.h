@@ -227,7 +227,7 @@ private:
   ====================================================================================
 */
 class CabbageTableViewer : public Viewport
-    //public Component
+//public Component
 {
 public:
     CabbageTableViewer();

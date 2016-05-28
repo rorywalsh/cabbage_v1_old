@@ -41,16 +41,16 @@ FilterGraph::FilterGraph (AudioPluginFormatManager& formatManager_)
                          filenameWildcard,
                          "Load a filter graph",
                          "Save a filter graph"),
-    formatManager (formatManager_),
-    lastUID (0),
-    audioPlayHead(),
-    timeInSeconds(0),
-    currentBPM(60),
-    playPosition(0),
-    PPQN(24),
-    ppqPosition(1),
-    automationNodeID(-1),
-    subTicks(0)
+      formatManager (formatManager_),
+      lastUID (0),
+      audioPlayHead(),
+      timeInSeconds(0),
+      currentBPM(60),
+      playPosition(0),
+      PPQN(24),
+      ppqPosition(1),
+      automationNodeID(-1),
+      subTicks(0)
 {
     startTimer(0);
     stopTimer();
@@ -505,8 +505,8 @@ static XmlElement* createNodeXml (AudioProcessorGraph::Node* const node) noexcep
     else if(PluginWrapper* plugin = dynamic_cast <PluginWrapper*> (node->getProcessor()))
         plugin->fillInPluginDescription (pd);
     else if(dynamic_cast <CabbagePluginAudioProcessor*> (node->getProcessor())||
-    dynamic_cast <AudioFilePlaybackProcessor*> (node->getProcessor())||
-    dynamic_cast <AutomationProcessor*> (node->getProcessor()))
+            dynamic_cast <AudioFilePlaybackProcessor*> (node->getProcessor())||
+            dynamic_cast <AutomationProcessor*> (node->getProcessor()))
     {
         //grab description of native plugin for saving...
         String xmlPluginDescriptor = node->properties.getWithDefault("pluginDesc", "").toString();

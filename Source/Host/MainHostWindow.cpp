@@ -35,7 +35,7 @@ public:
     PluginListWindow (MainHostWindow& owner_, AudioPluginFormatManager& formatManager)
         : DocumentWindow ("Available Plugins", Colours::black,
                           DocumentWindow::minimiseButton | DocumentWindow::closeButton),
-        owner (owner_)
+          owner (owner_)
     {
         const File deadMansPedalFile (getAppProperties().getUserSettings()
                                       ->getFile().getSiblingFile ("RecentlyCrashedPluginsList"));
@@ -79,8 +79,8 @@ private:
 MainHostWindow::MainHostWindow()
     : DocumentWindow (JUCEApplication::getInstance()->getApplicationName(), Colours::black,
                       DocumentWindow::allButtons),
-    deadMansPedalFile (getAppProperties().getUserSettings()
-                       ->getFile().getSiblingFile ("RecentlyCrashedPluginsList"))
+      deadMansPedalFile (getAppProperties().getUserSettings()
+                         ->getFile().getSiblingFile ("RecentlyCrashedPluginsList"))
 {
     setColour(DocumentWindow::textColourId, Colours::whitesmoke);
     setColour(DocumentWindow::backgroundColourId, cUtils::getDarkerBackgroundSkin());

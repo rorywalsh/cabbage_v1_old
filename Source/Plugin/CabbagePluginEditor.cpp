@@ -3132,7 +3132,12 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                 else if(button->getName()=="infobutton")
                 {
                     String file = getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName();
-#if defined(LINUX) || defined(AndroidBuild)
+
+#if defined(AndroidBuild)
+                    URL urlCsound(file);
+                    urlCsound.launchInDefaultBrowser();
+
+#elif defined(LINUX)
                     ChildProcess process;
                     file.append("/", 5);
                     file.append(button->getProperties().getWithDefault("filename", ""), 1024);
@@ -4487,19 +4492,19 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
 
                         const int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
                         tableValues = getFilter()->getTableFloats(tableNumber);
-                        
-                            if(table->getTableFromFtNumber(tableNumber)->tableSize>=MAX_TABLE_SIZE)
-                            {
-                                tableBuffer.clear();
-                                tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());
-                                table->setWaveform(tableBuffer, tableNumber);
-                            }
-                            else
-                            {
-                                table->setWaveform(tableValues, tableNumber, false);
-                                StringArray pFields = getFilter()->getTableStatement(tableNumber);
-                                table->enableEditMode(pFields, tableNumber);
-                            }
+
+                        if(table->getTableFromFtNumber(tableNumber)->tableSize>=MAX_TABLE_SIZE)
+                        {
+                            tableBuffer.clear();
+                            tableBuffer.addFrom(y, 0, tableValues.getRawDataPointer(), tableValues.size());
+                            table->setWaveform(tableBuffer, tableNumber);
+                        }
+                        else
+                        {
+                            table->setWaveform(tableValues, tableNumber, false);
+                            StringArray pFields = getFilter()->getTableStatement(tableNumber);
+                            table->enableEditMode(pFields, tableNumber);
+                        }
                     }
                 }
                 else if(message.contains("file("))

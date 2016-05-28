@@ -132,8 +132,8 @@ MainHostWindow::MainHostWindow()
 
     getCommandManager().setFirstCommandTarget (this);
 
-    String userDir = appProperties->getUserSettings()->getValue("CabbageFilePaths");
-    if(!File(userDir).exists())
+    FileSearchPath filePaths(appProperties->getUserSettings()->getValue("CabbageFilePaths"));
+    if(filePaths.getNumPaths()==0)
         cUtils::showMessage("There is no user directory set for Cabbage instruments. Please go to Preferences and select the directory/directories where you store your Cabbage files");
 
 }
@@ -329,16 +329,17 @@ void MainHostWindow::addCabbagePluginsToMenu (PopupMenu& m, Array<File> &cabbage
     }
 
 
-    String userDir = getAppProperties().getUserSettings()->getValue("CabbageFilePaths");
+    FileSearchPath filePaths(appProperties->getUserSettings()->getValue("CabbageFilePaths"));
 
-    if(File(userDir).exists())
+    if(filePaths.getNumPaths()>0)
     {
-        FileSearchPath filePaths(appProperties->getUserSettings()->getValue("CabbageFilePaths"));
+
         //cUtils::showMessage(appProperties->getUserSettings()->getValue("CabbageFilePaths"))
 
         //add all files in root of specifed directories
         for(int i=0; i<filePaths.getNumPaths(); i++)
         {
+            cUtils::debug(filePaths[i].getFileNameWithoutExtension());
             File pluginDir(filePaths[i]);
             pluginDir.findChildFiles(cabbageFiles, File::findFiles, false, "*.csd");
 

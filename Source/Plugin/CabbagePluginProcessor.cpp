@@ -384,7 +384,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
 #endif
 
     csoundParams->sample_rate_override = this->getSampleRate();
-    
+
 #ifdef CABBAGE_AU
     csoundParams->control_rate_override = csound->GetSr()/32;
 #endif
@@ -546,7 +546,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 #if CABBAGE_AU
     csoundParams->control_rate_override = csound->GetSr()/32;
 #endif
-    
+
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
     //csound->SetOption((char*)"-d");
@@ -1169,7 +1169,7 @@ void CabbagePluginAudioProcessor::openFile(LookAndFeel* looky)
         initialiseWidgets(selectedFiles[0].loadFileAsString(), true);
         getCallbackLock().exit();
         recompileCsound(csdFile);
-        addWidgetsToEditor(true);	
+        addWidgetsToEditor(true);
     }
 }
 void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
@@ -1687,6 +1687,7 @@ float CabbagePluginAudioProcessor::getParameter (int index)
         {
 #ifndef Cabbage_Build_Standalone
             float val = (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
+            float retVal = 0;
             if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox)
             {
                 val = jmap(getGUICtrls(index).getNumProp(CabbageIDs::value), 0.f, getGUICtrls(index).getNumProp(CabbageIDs::comborange), 0.f, 1.f);
@@ -1694,9 +1695,14 @@ float CabbagePluginAudioProcessor::getParameter (int index)
             }
             else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::checkbox ||
                     getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::button)
-                return getGUICtrls(index).getNumProp(CabbageIDs::value);
+                retVal = getGUICtrls(index).getNumProp(CabbageIDs::value);
             else
-                return (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
+                retVal = (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
+
+            cUtils::debug("retval:", retVal);
+
+            return retVal;
+
 #else
             return guiCtrls[index].getNumProp(CabbageIDs::value);
 #endif
@@ -1745,7 +1751,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
             else
                 newValue = (newValue*range)+min;
 
-
+            cUtils::debug("Value set tp:", newValue);
 
 #endif
             if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox &&
@@ -1761,7 +1767,8 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
                         newValue, guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
 
             }
-            //guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
+            //this is needed for settings parameters to values set in saved sessions
+            guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
         }
 #endif
     }
@@ -2369,7 +2376,8 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
         {
             for(int i=0; i<this->getNumParameters(); i++)
             {
-                this->setParameter(i, (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel)));
+                cUtils::debug(guiCtrls[i].getStringProp(CabbageIDs::channel), (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel)));
+                setParameterNotifyingHost(i, (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel)));
             }
 
 

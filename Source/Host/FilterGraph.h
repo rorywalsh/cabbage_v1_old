@@ -66,7 +66,10 @@ public:
     ~FilterGraph();
 
     //==============================================================================
-    AudioProcessorGraph& getGraph() noexcept         { return graph; }
+    AudioProcessorGraph& getGraph() noexcept
+    {
+        return graph;
+    }
 
     int getNumFilters() const noexcept;
     const AudioProcessorGraph::Node::Ptr getNode (const int index) const noexcept;

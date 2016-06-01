@@ -38,16 +38,16 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     : DocumentWindow (title, backgroundColour,
                       DocumentWindow::minimiseButton
                       | DocumentWindow::closeButton),
-    optionsButton ("Options"),
-    isGUIOn(false),
-    pipeOpenedOk(false),
-    AudioEnabled(true),
-    isAFileOpen(false),
-    standaloneMode(false),
-    updateEditorOutputConsole(false),
-    hasEditorBeingOpened(false),
-    isUsingExternalEditor(false),
-    wildcardFilter("*.*", "*", "File Filter")
+      optionsButton ("Options"),
+      isGUIOn(false),
+      pipeOpenedOk(false),
+      AudioEnabled(true),
+      isAFileOpen(false),
+      standaloneMode(false),
+      updateEditorOutputConsole(false),
+      hasEditorBeingOpened(false),
+      isUsingExternalEditor(false),
+      wildcardFilter("*.*", "*", "File Filter")
 {
     //setOpenGLRenderingEngine();
     consoleMessages = "";
@@ -1012,9 +1012,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
 
         if(getPreference(appProperties, "ShowNativeFileDialogues"))
-            subMenu.addItem(300, String("Use native file dialogues"), true, false);
+            subMenu.addItem(300, String("Use Cabbage file dialogues"), true, false);
         else
-            subMenu.addItem(300, String("Use native file dialogue"), true, true);
+            subMenu.addItem(300, String("Use Cabbage file dialogues"), true, true);
 
         if(!getPreference(appProperties, "DisableCompilerErrorWarning"))
             subMenu.addItem(202, String("Disable Compiler Error Warning"), true, false);

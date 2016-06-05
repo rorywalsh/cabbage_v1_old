@@ -1331,7 +1331,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 #ifdef MACOSX
         dir = "Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual";
 #endif
-        FileChooser browser(String("Please select the Csound manual directory...\n"), File(dir), String("*.*"), UseNativeDialogue);
+		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+        FileChooser browser(String("Please select the Csound manual directory...\n"), File(dir), String("*.*"), showNative);
         if(browser.browseForDirectory())
         {
             setPreference(appProperties, "CsoundHelpDir", browser.getResult().getFullPathName());
@@ -1341,7 +1342,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     else if(options==203)
     {
         String dir = getPreference(appProperties, "PlantFileDir", "");
-        FileChooser browser(String("Please select your Plant file directory..."), File(dir), String("*.*"), UseNativeDialogue);
+		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+        FileChooser browser(String("Please select your Plant file directory..."), File(dir), String("*.*"), showNative);
         if(browser.browseForDirectory())
         {
             setPreference(appProperties, "PlantFileDir", browser.getResult().getFullPathName());
@@ -1353,7 +1355,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     {
         String dir = getPreference(appProperties, "ExamplesDir", "");
         cUtils::debug("Example Directory:"+dir);
-        FileChooser browser(String("Please select your Examples directory..."), File(dir), String("*.*"), UseNativeDialogue);
+		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+        FileChooser browser(String("Please select your Examples directory..."), File(dir), String("*.*"), showNative);
         if(browser.browseForDirectory())
         {
             setPreference(appProperties, "ExamplesDir", browser.getResult().getFullPathName());
@@ -1363,7 +1366,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     else if(options==301)
     {
         String dir = getPreference(appProperties, "ExternalEditorApplication", "");
-        FileChooser browser(String("Please select your preferred external editor..."), File(dir), String("*.*"), UseNativeDialogue);
+		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+        FileChooser browser(String("Please select your preferred external editor..."), File(dir), String("*.*"), showNative);
         if(browser.browseForFileToOpen())
         {
             setPreference(appProperties, "ExternalEditorApplication", browser.getResult().getFullPathName());
@@ -1558,7 +1562,8 @@ void StandaloneFilterWindow::openFile(String _csdfile)
     {
         File currentDir = File(_csdfile);
 #ifdef MACOSX
-        FileChooser openFC(String("Open a Cabbage .csd file..."), currentDir, String("*.csd;*.vst"), UseNativeDialogue);
+		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+        FileChooser openFC(String("Open a Cabbage .csd file..."), currentDir, String("*.csd;*.vst"), showNative);
         if(openFC.browseForFileToOpen())
         {
             csdFile = openFC.getResult();
@@ -1629,7 +1634,8 @@ void StandaloneFilterWindow::saveFile()
 
 void StandaloneFilterWindow::saveFileAs()
 {
-    FileChooser saveFC(String("Save Cabbage file as..."), File::nonexistent, String("*.csd"), UseNativeDialogue);
+	bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+    FileChooser saveFC(String("Save Cabbage file as..."), File::nonexistent, String("*.csd"), showNative);
     this->setAlwaysOnTop(false);
     if(saveFC.browseForFileToSave(true))
     {
@@ -1743,7 +1749,8 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         }
     }
 #elif WIN32
-    FileChooser saveFC(String("Save plugin as..."), File::nonexistent, String("*.dll"), UseNativeDialogue);
+	bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+    FileChooser saveFC(String("Save plugin as..."), File::nonexistent, String("*.dll"), showNative);
     String VST;
     if(type.contains("VSTi"))
         VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbagePluginSynth.dat");
@@ -1792,8 +1799,8 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
 #endif
 
 #if MACOSX
-
-    FileChooser saveFC(String("Save as..."), File::nonexistent, String("*.vst"), UseNativeDialogue);
+	bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+    FileChooser saveFC(String("Save as..."), File::nonexistent, String("*.vst"), showNative);
     String VST;
     if (saveFC.browseForFileToSave(true))
     {
@@ -2012,7 +2019,8 @@ void StandaloneFilterWindow::batchProcess(String type, bool dir)
 {
     File thisFile(File::getSpecialLocation(File::currentApplicationFile));
 #ifdef WIN32
-    FileChooser saveFC(String("Select files..."), File::nonexistent, String("*.csd;"), UseNativeDialogue);
+	bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+    FileChooser saveFC(String("Select files..."), File::nonexistent, String("*.csd;"), showNative);
     String VST;
 
     Array<File> files;

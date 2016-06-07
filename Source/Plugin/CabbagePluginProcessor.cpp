@@ -1751,8 +1751,6 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
             else
                 newValue = (newValue*range)+min;
 
-            cUtils::debug("Value set tp:", newValue);
-
 #endif
             if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox &&
                     getGUICtrls(index).getStringProp(CabbageIDs::channeltype)==CabbageIDs::stringchannel)

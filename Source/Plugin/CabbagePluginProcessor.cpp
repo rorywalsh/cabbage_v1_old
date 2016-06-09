@@ -1766,7 +1766,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
 
             }
             //this is needed for settings parameters to values set in saved sessions
-            guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
+            //guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
         }
 #endif
     }

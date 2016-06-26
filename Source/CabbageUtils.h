@@ -33,6 +33,8 @@
 
 using namespace std;
 
+#define QUADBEZIER 999
+
 #define svgRSliderDiameter 100
 
 #define svgVSliderWidth 30

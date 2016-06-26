@@ -2605,8 +2605,6 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIType &cAttr)
     }
 
 
-
-
     var tables = cAttr.getVarArrayProp(CabbageIDs::tablenumber);
     for(int y=0; y<tables.size(); y++)
     {

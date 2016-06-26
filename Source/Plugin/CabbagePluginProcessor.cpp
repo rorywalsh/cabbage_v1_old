@@ -1582,10 +1582,21 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
     fdata.add(String::empty);
     if(csCompileResult==OK)
     {
+		char genName[1024];
         MYFLT* argsPtr, *temp;
+		bool isNamedGen = false;
         int noOfArgs = csoundGetTableArgs(csound->GetCsound(), &argsPtr, tableNum);
         if(noOfArgs!=-1)
-        {
+        {			
+					
+			const int len = csoundIsNamedGEN(csound->GetCsound(), abs(argsPtr[0]));
+			if(len>0)
+			{
+				csoundGetNamedGEN(csound->GetCsound(), argsPtr[0], genName, 1024);
+				isNamedGen = true;
+				cUtils::debug(String(genName));
+			}		
+		
             int tableSize = csound->GetTable(temp, tableNum);
             fdata.add(String(tableNum));
             fdata.add("0");
@@ -1595,7 +1606,10 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
             else
                 for(int i=0; i<noOfArgs; i++)
                 {
-                    fdata.add(String(argsPtr[i]));
+					if(i==0 && isNamedGen==true)
+						fdata.add(String(QUADBEZIER));
+					else
+						fdata.add(String(argsPtr[i]));
                 }
         }
     }

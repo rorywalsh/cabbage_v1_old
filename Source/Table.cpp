@@ -731,10 +731,18 @@ Array<double> GenTable::getPfields()
             cUtils::debug("Amp:" + String(amp));
             prevXPos = roundToIntAccurate(handleViewer->handles[i]->xPosRelative*waveformBuffer.size());
         }
-		else if(genRoutine==QUADBEZIER)
-		{
-				cUtils::debug("Get points from QuadBezier table");
-		}
+	else if(genRoutine==QUADBEZIER)
+	{
+	    cUtils::debug("Get points from QuadBezier table");
+            currXPos = handleViewer->handles[i]->xPosRelative*waveformBuffer.size();
+
+            //add x position
+            values.add(jmax(0.0, ceil(currXPos)));
+            //hack to prevent csound from bawking with a 0 in gen05
+            float amp = pixelToAmp(handleViewer->getHeight(), minMax, currYPos);
+            values.add(amp);
+            cUtils::debug("Amp:" + String(amp));
+	}
         else if(genRoutine==2)
         {
             if(this->displayAsGrid())
@@ -819,7 +827,7 @@ void GenTable::enableEditMode(StringArray m_pFields)
         pFields = m_pFields;
 
     //only enable editing on non normalising tables
-    if(realGenRoutine>=0 && realGenRoutine!=999)
+    if(realGenRoutine>=0 && realGenRoutine!=QUADBEZIER)
         return;
 
     Array<float, CriticalSection> pFieldAmps;
@@ -832,13 +840,13 @@ void GenTable::enableEditMode(StringArray m_pFields)
 	}
 	else if(genRoutine==QUADBEZIER)
 	{
-		for(int i=6; i<pFields.size(); i+=3)
+		for(int i=6; i<pFields.size(); i+=2)
 		{
 			//cUtils::debug(pFields[i]);
-			pFieldAmps.add(pFields[i].getFloatValue());	
+			pFieldAmps.add(pFields[i+1].getFloatValue());	
 		}	
         //pFieldAmps.add(pFields[i+1].getFloatValue());		
-	}
+         }
     Range<float> pFieldMinMax = findMinMax(pFieldAmps);
     normalised = pFields[4].getIntValue();
     double xPos = 0;
@@ -864,25 +872,27 @@ void GenTable::enableEditMode(StringArray m_pFields)
             }
             handleViewer->fixEdgePoints(genRoutine);
         }
-		else if(genRoutine==QUADBEZIER)
-		{
-			cUtils::debug("Need to create handles for a QUADBEZIER table");
-            float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
+	else if(genRoutine==QUADBEZIER)
+	{
+	    cUtils::debug("Need to create handles for a QUADBEZIER table");
+            //float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
+            float pFieldAmpValue = pFields[5].getFloatValue();
             handleViewer->addHandle(0, ampToPixel(thumbHeight, minMax, pFieldAmpValue),(width>10 ? width : 15), (width>10 ? 5 : 15), this->colour);
-			
-			for(int i=6; i<pFields.size(); i+=4)
+	    for(int i=6; i<pFields.size(); i+=4)
             {
-				//cUtils::debug(pFields[i].getFloatValue());
                 xPos = pFields[i].getFloatValue();
-                pFieldAmpValue = (normalised<0 ? pFields[i+1].getFloatValue() : pFields[i+1].getFloatValue()/pFieldMinMax.getEnd());
-				cUtils::debug(ampToPixel(thumbHeight, minMax, pFieldAmpValue));
+		pFieldAmpValue = pFields[i+1].getFloatValue();
+                handleViewer->addHandle(xPos/(double)waveformBuffer.size(), ampToPixel(thumbHeight, minMax, pFieldAmpValue), (width>10 ? width : 15), (width>10 ? 5 : 15), Colour(0,0,255));
+            
+                xPos = pFields[i+2].getFloatValue();
+                //cUtils::debug(xPos);
+                //pFieldAmpValue = (normalised<0 ? pFields[i+1].getFloatValue() : pFields[i+1].getFloatValue()/pFieldMinMax.getEnd());
+		pFieldAmpValue = pFields[i+3].getFloatValue();
+		//cUtils::debug(ampToPixel(thumbHeight, minMax, pFieldAmpValue));
                 handleViewer->addHandle(xPos/(double)waveformBuffer.size(), ampToPixel(thumbHeight, minMax, pFieldAmpValue), (width>10 ? width : 15), (width>10 ? 5 : 15), this->colour);
             }
-			
-			
-			
-			handleViewer->fixEdgePoints(genRoutine);
-		}
+            	handleViewer->fixEdgePoints(genRoutine);
+	}
         else if(genRoutine==2)
         {
             float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());

@@ -721,7 +721,7 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 #ifndef Cabbage_No_Csound
 
     Array<double> pFields = table->getPfields();
-    if( table->genRoutine==5 || table->genRoutine==7 || table->genRoutine==2)
+    if( table->genRoutine==5 || table->genRoutine==7 || table->genRoutine==2 || table->genRoutine == QUADBEZIER)
     {
         FUNC *ftpp;
         EVTBLK  evt;
@@ -733,18 +733,26 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
 
 //		cUtils::debug("table->tableSize", table->tableSize);
 
-
         //setting table number to 0.
         evt.p[1]=0;
         evt.p[2]=0;
         evt.p[3]=table->tableSize;
-        evt.p[4]=table->realGenRoutine;
+        if (table->genRoutine == QUADBEZIER)
+        {
+            MYFLT* argsPtr;
+            int noOfArgs = csoundGetTableArgs(getFilter()->getCsound()->GetCsound(), &argsPtr, table->tableNumber);
+            if(noOfArgs!=-1)
+                evt.p[4]= abs(argsPtr[0]);
+        }
+        else
+            evt.p[4]= table->realGenRoutine;
+
         if(table->genRoutine==5)
         {
             for(int i=0; i<pFields.size()-1; i++)
                 evt.p[5+i]= jmax(0.00001, pFields[i+1]);
         }
-        else if(table->genRoutine==7)
+        else if(table->genRoutine==7 || table->genRoutine==QUADBEZIER)
         {
             for(int i=0; i<pFields.size()-1; i++)
                 evt.p[5+i]= pFields[i+1];
@@ -765,7 +773,7 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
             pCnt=i;
         }
 
-        if(table->genRoutine!=2)
+        if(table->genRoutine!=2 && table->genRoutine!=QUADBEZIER)
         {
             fStatement.add(String(1));
             fStatement.add(String(evt.p[pCnt]));
@@ -774,6 +782,7 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
         //now set table number and set score char to f
         fStatement.set(1, String(table->tableNumber));
         fStatement.set(0, "f");
+        cUtils::debug(fStatement.joinIntoString(" "));
 
         //Logger::writeToLog(fStatement.joinIntoString(" "));
         getFilter()->getCsound()->GetCsound()->hfgens(getFilter()->getCsound()->GetCsound(), &ftpp, &evt, 1);

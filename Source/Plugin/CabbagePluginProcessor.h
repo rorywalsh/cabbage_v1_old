@@ -349,6 +349,7 @@ public:
     void getStateInformation (MemoryBlock& destData);
     void setStateInformation (const void* data, int sizeInBytes);
     StringArray getTableStatement(int tableNum);
+    bool isQuadbezier(int gn);
     //const Array<double, CriticalSection> getTable(int tableNum);
     const Array<float, CriticalSection> getTableFloats(int tableNum);
     SignalDisplay* getSignalArray(String signalName, String displayType="");

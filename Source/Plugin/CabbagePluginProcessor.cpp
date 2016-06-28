@@ -1582,20 +1582,12 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
     fdata.add(String::empty);
     if(csCompileResult==OK)
     {
-		char genName[1024];
+		//char genName[1024];
         MYFLT* argsPtr, *temp;
-		bool isNamedGen = false;
+		//bool isNamedGen = false;
         int noOfArgs = csoundGetTableArgs(csound->GetCsound(), &argsPtr, tableNum);
         if(noOfArgs!=-1)
         {			
-					
-			const int len = csoundIsNamedGEN(csound->GetCsound(), abs(argsPtr[0]));
-			if(len>0)
-			{
-				csoundGetNamedGEN(csound->GetCsound(), argsPtr[0], genName, 1024);
-				isNamedGen = true;
-				cUtils::debug(String(genName));
-			}		
 		
             int tableSize = csound->GetTable(temp, tableNum);
             fdata.add(String(tableNum));
@@ -1606,15 +1598,31 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
             else
                 for(int i=0; i<noOfArgs; i++)
                 {
-					if(i==0 && isNamedGen==true)
-						fdata.add(String(QUADBEZIER));
-					else
+					//if(i==0 && isNamedGen==true)
+					//	fdata.add(String(QUADBEZIER));
+					//else
 						fdata.add(String(argsPtr[i]));
                 }
         }
     }
     return fdata;
 }
+
+//==============================================================================
+// Ask Csound whether gn is a quadbezier gen routine.
+//==============================================================================
+bool CabbagePluginAudioProcessor::isQuadbezier(int gn)
+{
+    const int len = csoundIsNamedGEN(csound->GetCsound(), gn);
+    char genName[1024];
+    if(len>0)
+    {
+	csoundGetNamedGEN(csound->GetCsound(), gn, genName, 1024);
+        genName[len] = '\0';
+    }		
+    return String(genName) == String("quadbezier");
+}                        
+                        
 //==============================================================================
 SignalDisplay* CabbagePluginAudioProcessor::getSignalArray(String variableName, String displayType)
 {

@@ -739,10 +739,11 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
         evt.p[3]=table->tableSize;
         if (table->genRoutine == QUADBEZIER)
         {
-            MYFLT* argsPtr;
-            int noOfArgs = csoundGetTableArgs(getFilter()->getCsound()->GetCsound(), &argsPtr, table->tableNumber);
-            if(noOfArgs!=-1)
-                evt.p[4]= abs(argsPtr[0]);
+            //MYFLT* argsPtr;
+            //int noOfArgs = csoundGetTableArgs(getFilter()->getCsound()->GetCsound(), &argsPtr, table->tableNumber);
+            //if(noOfArgs!=-1)
+               // evt.p[4]= abs(argsPtr[0]);
+                evt.p[4] = 65;
         }
         else
             evt.p[4]= table->realGenRoutine;
@@ -2606,7 +2607,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIType &cAttr)
     {
         table->addTable(44100,
                         Colours::findColourForName(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, 0), Colours::white),
-                        1,
+                        1, 0,
                         Array<float>(),
                         0, this);
         fileTable=1;
@@ -2626,14 +2627,14 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIType &cAttr)
 
             StringArray pFields = getFilter()->getTableStatement(tableNumber);
             int genRoutine = pFields[4].getIntValue();
-
+            bool isQb = getFilter()->isQuadbezier(genRoutine);
             Array<float> ampRange = getAmpRangeArray(cAttr.getFloatArrayProp("amprange"), tableNumber);
 
             if(getFilter()->csoundCompiledOk()==OK)
             {
                 table->addTable(44100,
                                 Colours::findColourForName(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y+fileTable), Colours::white),
-                                (tableValues.size()>=MAX_TABLE_SIZE ? 1 : genRoutine),
+                                (tableValues.size()>=MAX_TABLE_SIZE ? 1 : genRoutine), isQb,
                                 ampRange,
                                 tableNumber, this);
 

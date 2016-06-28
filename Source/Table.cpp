@@ -121,7 +121,7 @@ void TableManager::changeListenerCallback(ChangeBroadcaster *source)
 
 }
 //==============================================================================
-void TableManager::addTable(int sr, const Colour col, int gen, Array<float> ampRange, int ftnumber, ChangeListener* listener)
+void TableManager::addTable(int sr, const Colour col, int gen, bool qbezier, Array<float> ampRange, int ftnumber, ChangeListener* listener)
 {
     GenTable* table = new GenTable();
     table->tableNumber = ftnumber;
@@ -137,7 +137,7 @@ void TableManager::addTable(int sr, const Colour col, int gen, Array<float> ampR
         ampRange.add(0.01);
     }
 
-    table->addTable(sr, col, gen, ampRange);
+    table->addTable(sr, col, gen, qbezier, ampRange);
     addAndMakeVisible(table);
     tables.add(table);
     RoundButton* button = new RoundButton(String(ftnumber), col);
@@ -562,12 +562,12 @@ GenTable::~GenTable()
         thumbnail->removeChangeListener (this);
 }
 //==============================================================================
-void GenTable::addTable(int sr, const Colour col, int igen, Array<float> ampRange)
+void GenTable::addTable(int sr, const Colour col, int igen, bool qbezier, Array<float> ampRange)
 {
     sampleRate = sr;
     colour = col;
     currentPositionMarker->setFill(colour.brighter());
-    genRoutine = abs(igen);
+    genRoutine = (qbezier ? QUADBEZIER : abs(igen));
     handleViewer->handleViewerGen = igen;
     realGenRoutine = igen;
     handleViewer->colour = col;
@@ -827,7 +827,7 @@ void GenTable::enableEditMode(StringArray m_pFields)
         pFields = m_pFields;
 
     //only enable editing on non normalising tables
-    if(realGenRoutine>=0 && realGenRoutine!=QUADBEZIER)
+    if(realGenRoutine>=0 && genRoutine!=QUADBEZIER)
         return;
 
     Array<float, CriticalSection> pFieldAmps;

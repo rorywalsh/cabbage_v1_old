@@ -737,16 +737,7 @@ void CabbagePluginAudioProcessorEditor::updatefTableData(GenTable* table)
         evt.p[1]=0;
         evt.p[2]=0;
         evt.p[3]=table->tableSize;
-        if (table->genRoutine == QUADBEZIER)
-        {
-            //MYFLT* argsPtr;
-            //int noOfArgs = csoundGetTableArgs(getFilter()->getCsound()->GetCsound(), &argsPtr, table->tableNumber);
-            //if(noOfArgs!=-1)
-               // evt.p[4]= abs(argsPtr[0]);
-                evt.p[4] = 65;
-        }
-        else
-            evt.p[4]= table->realGenRoutine;
+        evt.p[4]=table->realGenRoutine;
 
         if(table->genRoutine==5)
         {

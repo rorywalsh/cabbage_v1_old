@@ -569,7 +569,7 @@ void GenTable::addTable(int sr, const Colour col, int igen, bool qbezier, Array<
     currentPositionMarker->setFill(colour.brighter());
     genRoutine = (qbezier ? QUADBEZIER : abs(igen));
     handleViewer->handleViewerGen = igen;
-    realGenRoutine = igen;
+    realGenRoutine = (qbezier ? abs (igen) : igen);
     handleViewer->colour = col;
 
 

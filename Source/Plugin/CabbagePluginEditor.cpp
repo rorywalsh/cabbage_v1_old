@@ -2620,6 +2620,19 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIType &cAttr)
             int genRoutine = pFields[4].getIntValue();
             bool isQb = getFilter()->isQuadbezier(genRoutine);
             Array<float> ampRange = getAmpRangeArray(cAttr.getFloatArrayProp("amprange"), tableNumber);
+            if (isQb && !ampRange[2])
+            {
+                ampRange.set(0, pFields[5].getFloatValue());
+                ampRange.set(1, pFields[5].getFloatValue());
+                for(int i=5; i<pFields.size(); i += 2)
+                {
+                    if(pFields[i].getFloatValue()>ampRange[1])
+                        ampRange.set(1, pFields[i].getFloatValue());
+                    if(pFields[i].getFloatValue()<ampRange[0])
+                        ampRange.set(0, pFields[i].getFloatValue());
+                }
+                ampRange.set(2, tableNumber);
+            }
 
             if(getFilter()->csoundCompiledOk()==OK)
             {

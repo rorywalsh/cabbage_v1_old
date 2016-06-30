@@ -306,6 +306,7 @@ public:
     void mouseDrag(const MouseEvent& e);
     void positionHandle(const MouseEvent& e);
     void repaint(Graphics &g);
+    void paint(Graphics &g);
     void resized();
     void addHandle(double x, double y, double width, double height, Colour colour, bool status=false);
     void insertHandle(double x, double y, Colour colour);

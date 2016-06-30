@@ -568,7 +568,7 @@ void GenTable::addTable(int sr, const Colour col, int igen, bool qbezier, Array<
     colour = col;
     currentPositionMarker->setFill(colour.brighter());
     genRoutine = (qbezier ? QUADBEZIER : abs(igen));
-    handleViewer->handleViewerGen = igen;
+    handleViewer->handleViewerGen = (qbezier ? QUADBEZIER : igen);
     realGenRoutine = (qbezier ? abs (igen) : igen);
     handleViewer->colour = col;
 
@@ -738,7 +738,6 @@ Array<double> GenTable::getPfields()
 
             //add x position
             values.add(jmax(0.0, ceil(currXPos)));
-            //hack to prevent csound from bawking with a 0 in gen05
             float amp = pixelToAmp(handleViewer->getHeight(), minMax, currYPos);
             values.add(amp);
             cUtils::debug("Amp:" + String(amp));
@@ -878,14 +877,13 @@ void GenTable::enableEditMode(StringArray m_pFields)
             //float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
             float pFieldAmpValue = pFields[5].getFloatValue();
             handleViewer->addHandle(0, ampToPixel(thumbHeight, minMax, pFieldAmpValue),(width>10 ? width : 15), (width>10 ? 5 : 15), this->colour);
-	    for(int i=6; i<pFields.size(); i+=4)
+            for(int i=6; i<pFields.size(); i+=4)
             {
                 xPos = pFields[i].getFloatValue();
 		pFieldAmpValue = pFields[i+1].getFloatValue();
-                handleViewer->addHandle(xPos/(double)waveformBuffer.size(), ampToPixel(thumbHeight, minMax, pFieldAmpValue), (width>10 ? width : 15), (width>10 ? 5 : 15), Colour(0,0,255));
+                handleViewer->addHandle(xPos/(double)waveformBuffer.size(), ampToPixel(thumbHeight, minMax, pFieldAmpValue), (width>10 ? width : 15), (width>10 ? 5 : 15), this->colour.withRotatedHue(0.8f));
             
                 xPos = pFields[i+2].getFloatValue();
-                //cUtils::debug(xPos);
                 //pFieldAmpValue = (normalised<0 ? pFields[i+1].getFloatValue() : pFields[i+1].getFloatValue()/pFieldMinMax.getEnd());
 		pFieldAmpValue = pFields[i+3].getFloatValue();
 		//cUtils::debug(ampToPixel(thumbHeight, minMax, pFieldAmpValue));
@@ -1411,7 +1409,7 @@ void HandleViewer::showHandles(bool show)
 //==============================================================================
 void HandleViewer::mouseDown(const MouseEvent& e)
 {
-    if(handleViewerGen==-5 || handleViewerGen==-7 || handleViewerGen==-2)
+    if(handleViewerGen==-5 || handleViewerGen==-7 || handleViewerGen==-2 || handleViewerGen==QUADBEZIER)
         positionHandle(e);
 }
 
@@ -1467,7 +1465,20 @@ void HandleViewer::positionHandle(const MouseEvent& e)
     //if handle doesn't exist, create one
     if(handleExists==false)
     {
-        insertHandle(getSnapXPosition(e.x)/(double)getWidth(), getSnapYPosition(e.y), colour);
+        if (handleViewerGen == QUADBEZIER)
+        {
+            insertHandle(getSnapXPosition(e.x)/(double)getWidth(), getSnapYPosition(e.y), colour.withRotatedHue(0.8f));
+            insertHandle(getSnapXPosition(e.x)/(double)getWidth(), getSnapYPosition(e.y), colour.withRotatedHue(0.8f));
+            GenTable* table = findParentComponentOfClass <GenTable>();
+            if(table)
+                for (int i=1; i<handles.size(); i++)
+                {
+                    handles[i++]->setColour(colour.withRotatedHue(0.8f));
+                    handles[i]->setColour(colour);
+                }
+        }
+        else
+            insertHandle(getSnapXPosition(e.x)/(double)getWidth(), getSnapYPosition(e.y), colour);
     }
 
 }
@@ -1534,6 +1545,23 @@ void HandleViewer::repaint(Graphics &g)
 {
     g.fillAll(Colours::transparentBlack);
 }
+
+//==============================================================================
+void HandleViewer::paint(Graphics &g)
+{
+    if (handleViewerGen == QUADBEZIER)
+    {
+        Path path;
+        path.startNewSubPath (((double)getWidth()*handles[0]->xPosRelative),((double)getHeight()*handles[0]->yPosRelative));
+        for(int i=1; i<handles.size(); i++)
+            path.lineTo (((double)getWidth()*handles[i]->xPosRelative),((double)getHeight()*handles[i]->yPosRelative));
+        float dashes[] = { 3, 3 };
+        PathStrokeType (1.0f).createDashedStroke (path, path, dashes, 2);
+        g.setColour (this->colour.withRotatedHue(0.8f));
+        g.fillPath (path);
+    }
+}
+
 //==============================================================================
 void HandleViewer::fixEdgePoints(int gen)
 {
@@ -1643,7 +1671,19 @@ void HandleComponent::paint (Graphics& g)
 //==================================================================================
 void HandleComponent::removeThisHandle()
 {
-    getParentHandleViewer()->removeHandle (this);
+    int handleGen = getParentHandleViewer()->handleViewerGen;
+    if (handleGen == QUADBEZIER)
+    {
+        HandleComponent* nxtHndlComp = getNextHandle();
+        int sz = getParentHandleViewer()->handles.size();
+        if  (getParentHandleViewer()->getHandleIndex(nxtHndlComp) != (sz - 1))
+        {
+            getParentHandleViewer()->removeHandle (nxtHndlComp);
+            getParentHandleViewer()->removeHandle (this);
+        }
+    }
+    else
+        getParentHandleViewer()->removeHandle (this);
 }
 //==================================================================================
 void HandleComponent::mouseEnter (const MouseEvent& e)
@@ -1691,6 +1731,7 @@ void HandleComponent::mouseDown (const MouseEvent& e)
     setMouseCursor (MouseCursor::DraggingHandCursor);
     dragger.startDraggingComponent (this, e);
 
+    //FIXME: The PopupMenu("Delete") is still shown after this.
     if ((e.mods.isShiftDown() == true) && (e.mods.isRightButtonDown() == true))
         removeThisHandle();
 

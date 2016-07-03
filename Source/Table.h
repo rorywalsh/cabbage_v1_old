@@ -305,6 +305,7 @@ public:
     void mouseDown(const MouseEvent& e);
     void mouseDrag(const MouseEvent& e);
     void positionHandle(const MouseEvent& e);
+    void updateBezierColours();
     void repaint(Graphics &g);
     void paint(Graphics &g);
     void resized();

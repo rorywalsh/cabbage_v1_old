@@ -733,14 +733,14 @@ Array<double> GenTable::getPfields()
         }
 	else if(genRoutine==QUADBEZIER)
 	{
-	    cUtils::debug("Get points from QuadBezier table");
+	    //cUtils::debug("Get points from QuadBezier table");
             currXPos = handleViewer->handles[i]->xPosRelative*waveformBuffer.size();
 
             //add x position
             values.add(jmax(0.0, ceil(currXPos)));
             float amp = pixelToAmp(handleViewer->getHeight(), minMax, currYPos);
             values.add(amp);
-            cUtils::debug("Amp:" + String(amp));
+            //cUtils::debug("Amp:" + String(amp));
 	}
         else if(genRoutine==2)
         {
@@ -1444,7 +1444,6 @@ void HandleViewer::positionHandle(const MouseEvent& e)
         {
             if(steps==1) 	//if toggle mode is enabled..
             {
-                //cUtils::debug(getSnapYPosition(getHeight()*int(handles[i]->status));
                 handles[i]->status=!handles[i]->status;
                 handles[i]->setTopLeftPosition(handles[i]->getPosition().withY(getSnapYPosition(getHeight()*int(handles[i]->status))));
                 handles[i]->setRelativePosition(handles[i]->getPosition().toDouble().withY(getSnapYPosition(getHeight()*double(handles[i]->status))));
@@ -1466,22 +1465,35 @@ void HandleViewer::positionHandle(const MouseEvent& e)
     if(handleExists==false)
     {
         if (handleViewerGen == QUADBEZIER)
-        {
-            insertHandle(getSnapXPosition(e.x)/(double)getWidth(), getSnapYPosition(e.y), colour.withRotatedHue(0.8f));
-            insertHandle(getSnapXPosition(e.x)/(double)getWidth(), getSnapYPosition(e.y), colour.withRotatedHue(0.8f));
-            GenTable* table = findParentComponentOfClass <GenTable>();
-            if(table)
-                for (int i=1; i<handles.size(); i++)
-                {
-                    handles[i++]->setColour(colour.withRotatedHue(0.8f));
-                    handles[i]->setColour(colour);
-                }
-        }
-        else
             insertHandle(getSnapXPosition(e.x)/(double)getWidth(), getSnapYPosition(e.y), colour);
+       insertHandle(getSnapXPosition(e.x)/(double)getWidth(), getSnapYPosition(e.y), colour);
     }
-
+    
+    if (handleViewerGen == QUADBEZIER)
+        updateBezierColours();
 }
+
+void HandleViewer::updateBezierColours()
+{
+    GenTable* table = findParentComponentOfClass <GenTable>();
+    if(table)
+        for (int i=1; i<handles.size(); i += 2)
+        {
+            float midX = (handles[i-1]->getX() + handles[i+1]->getX()) / 2.f / handles[i]->getX();
+            float midY = (handles[i-1]->getY() + handles[i+1]->getY()) / 2.f / handles[i]->getY();
+            cUtils::debug(midX, midY);
+            if (midX >= 0.99 && midX <= 1.01)
+            {
+                if (midY >= 0.99 && midY <= 1.01)
+                    handles[i]->setColour(colour.withRotatedHue(0.3f));
+            }
+            else
+                handles[i]->setColour(colour.withRotatedHue(0.8f));
+
+            handles[i+1]->setColour(colour);
+       }
+}
+
 
 double HandleViewer::getSnapXPosition(const double x)
 {
@@ -1490,7 +1502,7 @@ double HandleViewer::getSnapXPosition(const double x)
 
     double tableSize = getParentTable()->tableSize;
     double jump = (double)getWidth()/(double)getParentTable()->tableSize;
-
+    
     for(double i=0; i<=tableSize; i++)
     {
         if(x>i*jump && x<(i+1)*jump)
@@ -1516,7 +1528,7 @@ double HandleViewer::getSnapYPosition(const double y)
 
     ySnapPos = round(y / jump) * jump;
 
-
+    
     return ySnapPos;
 
 }
@@ -1671,8 +1683,7 @@ void HandleComponent::paint (Graphics& g)
 //==================================================================================
 void HandleComponent::removeThisHandle()
 {
-    int handleGen = getParentHandleViewer()->handleViewerGen;
-    if (handleGen == QUADBEZIER)
+    if (genRoutine == QUADBEZIER)
     {
         HandleComponent* nxtHndlComp = getNextHandle();
         int sz = getParentHandleViewer()->handles.size();
@@ -1796,7 +1807,6 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
         {
             const int previousX = previousHandle == 0 ? 0 : previousHandle->getX()+getWidth()/2.f;
             const int nextX = nextHandle == 0 ? getParentWidth() : nextHandle->getX()+getWidth()/2.f;
-
             if(fixed && xPos>viewer->getWidth()/2.f)
             {
                 xPos = x+getWidth()/2.f + handleViewerWidth/genTableWidth;
@@ -1806,10 +1816,11 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
                 xPos = 1.f;
 
             else if(previousX>=xPos)
-                xPos = previousX+1;
+                xPos = previousX+2;
 
-            else if(xPos+getWidth() > nextX)
-                xPos = nextX+1;
+            else if(nextX <= xPos)
+                xPos = nextX;
+
         }
         else
         {
@@ -1839,13 +1850,15 @@ void HandleComponent::mouseDrag (const MouseEvent& e)
         //with a gen02 each handle is fixed in place.
         xPos = x;
     }
-
     //cUtils::debug("Handle height", getHeight());
 
     yPos = jlimit(0.0, getParentComponent()->getHeight()+0.0, yPos+(getHeight()/2.f));
 
     setPosition(viewer->getSnapXPosition(xPos), viewer->getSnapYPosition(yPos), (getWidth()==FIXED_WIDTH ? true : false));
     setRelativePosition(Point<double>(viewer->getSnapXPosition(xPos), viewer->getSnapYPosition(yPos)));
+
+    if (genRoutine == QUADBEZIER)
+        viewer->updateBezierColours();
 
     mouseStatus = "mouseDrag";
     sendChangeMessage();

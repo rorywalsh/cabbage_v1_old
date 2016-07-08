@@ -269,19 +269,14 @@ StandaloneFilterWindow::~StandaloneFilterWindow()
         }
     }
 
+	deleteFilter();
+
     deviceManager->removeMidiInputCallback (String::empty, &player);
     deviceManager->removeAudioCallback (&player);
     deviceManager = nullptr;
 
-    if (globalSettings != nullptr && filter != nullptr)
-    {
-        MemoryBlock data;
-        filter->getStateInformation (data);
 
-        globalSettings->setValue ("filterState", data.toBase64Encoding());
-    }
-
-    deleteFilter();
+   
 
 }
 
@@ -621,14 +616,15 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
     stopTimer();
 
     filter->stopProcessing=true;
-    deviceManager->addAudioCallback (&player);
-    deviceManager->addMidiInputCallback (String::empty, &player);
+
 
     if(shouldResetFilter)
     {
         deviceManager->closeAudioDevice();
         deleteFilter();
 
+		deviceManager->addAudioCallback (&player);
+		deviceManager->addMidiInputCallback (String::empty, &player);
         PropertySet* const globalSettings = getGlobalSettings();
         ScopedPointer<XmlElement> savedState;
         if (globalSettings != nullptr)
@@ -828,8 +824,8 @@ void StandaloneFilterWindow::closeButtonPressed()
         if(!getPreference(appProperties, "ExternalEditor"))
             if(!filter->saveEditorFiles())
                 return;
-        filter->getCallbackLock().enter();
-        deleteFilter();
+        //filter->getCallbackLock().enter();
+        //deleteFilter();
     }
     JUCEApplication::quit();
 }

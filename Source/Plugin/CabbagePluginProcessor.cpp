@@ -460,7 +460,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
         else
             csound->SetChannel("IS_A_PLUGIN", 0.0);
 
-        if(isPlugin)
+        if(isPlugin)  
         {
             if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             {
@@ -679,10 +679,9 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
             showMessage(message, &getActiveEditor()->getLookAndFeel());
 #endif
     }
-
-    if(csCompileResult==OK)
-        getCallbackLock().exit();
     
+	getCallbackLock().exit();
+	
     updateHostDisplay();
     return csCompileResult;
 #endif
@@ -1076,6 +1075,7 @@ void CabbagePluginAudioProcessor::addWidgetsToEditor(bool refresh)
 {
     if(this->createEditorIfNeeded())
     {
+		this->getCallbackLock().enter();
         CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
 
         if(refresh)
@@ -1123,6 +1123,7 @@ void CabbagePluginAudioProcessor::addWidgetsToEditor(bool refresh)
             //	editor->restoreParametersFromPresets(XmlDocument::parse(File(selectedPresetFile)));
         }
 
+	this->getCallbackLock().exit();
 
     }
 }

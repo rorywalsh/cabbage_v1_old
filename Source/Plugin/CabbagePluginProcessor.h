@@ -51,15 +51,17 @@ class CodeWindow;
 #endif
 
 #ifdef Cabbage64Bit
-#define CABBAGE_VERSION "Cabbage(64bit) v1.1.01"
+#define CABBAGE_VERSION "Cabbage(64bit) v1.1.02"
 #else
-#define CABBAGE_VERSION "Cabbage(32bit) v1.1.01"
+#define CABBAGE_VERSION "Cabbage(32bit) v1.1.02"
 #endif
 
 #define AUDIO_PLUGIN 1
 #define EXTERNAL_PLUGIN 2
 #define AUTOMATION_PLUGIN 3
 
+
+#define COMPILED_OK 0
 //#if defined(Cabbage_Build_Standalone) || defined(CABBAGE_HOST)
 //class CsoundCodeEditor;
 //#endif

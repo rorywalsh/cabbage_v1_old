@@ -679,7 +679,10 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
             showMessage(message, &getActiveEditor()->getLookAndFeel());
 #endif
     }
-    getCallbackLock().exit();
+
+    if(csCompileResult==OK)
+        getCallbackLock().exit();
+    
     updateHostDisplay();
     return csCompileResult;
 #endif
@@ -1589,13 +1592,13 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
         if(noOfArgs!=-1)
         {			
 					
-			const int len = csoundIsNamedGEN(csound->GetCsound(), abs(argsPtr[0]));
-			if(len>0)
-			{
-				csoundGetNamedGEN(csound->GetCsound(), argsPtr[0], genName, 1024);
-				isNamedGen = true;
-				cUtils::debug(String(genName));
-			}		
+//			const int len = csoundIsNamedGEN(csound->GetCsound(), abs(argsPtr[0]));
+//			if(len>0)
+//			{
+//				csoundGetNamedGEN(csound->GetCsound(), argsPtr[0], genName, 1024);
+//				isNamedGen = true;
+//				cUtils::debug(String(genName));
+//			}		
 		
             int tableSize = csound->GetTable(temp, tableNum);
             fdata.add(String(tableNum));

@@ -1768,6 +1768,9 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
                 range=1;
             else
                 newValue = (newValue*range)+min;
+				
+			//this is needed for settings parameters to values set in saved sessions
+            guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);	
 
 #endif
             if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox &&
@@ -1783,8 +1786,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
                         newValue, guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
 
             }
-            //this is needed for settings parameters to values set in saved sessions
-            //guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
+
         }
 #endif
     }

@@ -596,6 +596,7 @@ void StandaloneFilterWindow::changeListenerCallback(juce::ChangeBroadcaster* /*s
 //==============================================================================
 void StandaloneFilterWindow::deleteFilter()
 {
+	filter->getCallbackLock().exit();
     player.setProcessor (nullptr);
 
     if (filter != nullptr && getContentComponent() != nullptr)
@@ -615,11 +616,12 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 //first we check that the audio device is up and running ok
     stopTimer();
 
-    filter->stopProcessing=true;
+    //filter->stopProcessing=true;
 
 
     if(shouldResetFilter)
     {
+		//deviceManager->addAudioCallback (nullptr);
         deviceManager->closeAudioDevice();
         deleteFilter();
 

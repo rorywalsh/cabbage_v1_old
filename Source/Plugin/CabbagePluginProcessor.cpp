@@ -190,7 +190,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile, Poin
 CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 {
     //deleteAndZero(cabbageCsoundEditor);
-
     deleteAndZero(lookAndFeel);
     deleteAndZero(lookAndFeelBasic);
     Logger::setCurrentLogger (nullptr);
@@ -204,7 +203,7 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
     if(csound)
     {
         this->getCallbackLock().enter();
-        csound->DeleteChannelList(csoundChanList);
+        //csound->DeleteChannelList(csoundChanList);
         Logger::writeToLog("about to cleanup Csound");
         //csoundDebugContinue(csound);
         //csound->Cleanup();
@@ -486,6 +485,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
             showMessage(message, &getActiveEditor()->getLookAndFeel());
 #endif
         csoundStatus=false;
+		getCallbackLock().enter();
         return 0;
     }
 #endif
@@ -680,7 +680,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 #endif
     }
     
-	getCallbackLock().exit();
+	//getCallbackLock().exit();
 	
     updateHostDisplay();
     return csCompileResult;

@@ -187,16 +187,16 @@ void CsoundCodeEditor::paint(Graphics& g)
             for(int i=1; i<selectedEditorTokens.size(); i++)
             {
                 if(appProperties->getUserSettings()->getIntValue("EditorColourScheme", 0)==1)
-                    g.setColour(Colour(80,80,80));
+                    g.setColour(Colours::green);
                 else
                     g.setColour(Colours::cornflowerblue.withAlpha(.4f));
                 if(selectedEditorTokens[i]->getLineNumber() == j)
                 {
                     int startPos = selectedEditorTokens[i]->getPositionOfTokenInLine().getStart();
                     int endPos = selectedEditorTokens[i]->getPositionOfTokenInLine().getEnd();
-                    int xPos = editor[currentEditor]->getFont().getStringWidth(" ")*startPos+35;
+                    int height = editor[currentEditor]->getFont().getHeight();
                     int width = startPos+(endPos-startPos)*editor[currentEditor]->getFont().getStringWidth(" ");
-                    g.fillRoundedRectangle(xPos, (editor[currentEditor]->getLineHeight() * index)+editor[currentEditor]->getLineHeight(), width, editor[currentEditor]->getLineHeight(), 3);
+                    g.fillRoundedRectangle(33.f, (editor[currentEditor]->getLineHeight() * index)+(editor[currentEditor]->getLineHeight()*1.25), 5, editor[currentEditor]->getLineHeight()*.75f, 2);
 
                 }
             }

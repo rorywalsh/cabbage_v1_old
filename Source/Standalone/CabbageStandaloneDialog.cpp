@@ -1009,10 +1009,16 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             subMenu.addItem(299, String("Use external editor"), true, true);
 
 
+
         if(getPreference(appProperties, "ShowNativeFileDialogues"))
             subMenu.addItem(300, String("Use Cabbage file dialogues"), true, false);
         else
             subMenu.addItem(300, String("Use Cabbage file dialogues"), true, true);
+			
+        if(!getPreference(appProperties, "ShowAutoComplete"))
+            subMenu.addItem(303, String("Show Auto-Complete"), true, false);
+        else
+            subMenu.addItem(303, String("Show Auto-Complete"), true, true);			
 
         if(!getPreference(appProperties, "DisableCompilerErrorWarning"))
             subMenu.addItem(202, String("Disable Compiler Error Warning"), true, false);
@@ -1322,6 +1328,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         toggleOnOffPreference(appProperties, "ShowNativeFileDialogues");
     }
 
+    else if(options==303)
+    {
+        toggleOnOffPreference(appProperties, "ShowAutoComplete");
+    }
+	
     //------- preference Csound manual dir ------
     else if(options==200)
     {

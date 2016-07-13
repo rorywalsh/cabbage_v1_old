@@ -184,23 +184,32 @@ void CsoundCodeEditor::paint(Graphics& g)
                     g.fillRoundedRectangle(35, (editor[currentEditor]->getLineHeight() * index)+editor[currentEditor]->getLineHeight(), getWidth()-54, editor[currentEditor]->getLineHeight()*2, 10);
             }
 
-            for(int i=1; i<selectedEditorTokens.size(); i++)
-            {
-                if(appProperties->getUserSettings()->getIntValue("EditorColourScheme", 0)==1)
-                    g.setColour(Colours::green);
-                else
-                    g.setColour(Colours::cornflowerblue.withAlpha(.4f));
-                if(selectedEditorTokens[i]->getLineNumber() == j)
-                {
-                    int startPos = selectedEditorTokens[i]->getPositionOfTokenInLine().getStart();
-                    int endPos = selectedEditorTokens[i]->getPositionOfTokenInLine().getEnd();
-                    int height = editor[currentEditor]->getFont().getHeight();
-                    int width = startPos+(endPos-startPos)*editor[currentEditor]->getFont().getStringWidth(" ");
-                    g.fillRoundedRectangle(33.f, (editor[currentEditor]->getLineHeight() * index)+(editor[currentEditor]->getLineHeight()*1.25), 5, editor[currentEditor]->getLineHeight()*.75f, 2);
 
-                }
-            }
+			if(selectedEditorTokens.size()>0)
+			{
+				for(int i=1; i<selectedEditorTokens.size(); i++)
+				{
+					if(appProperties->getUserSettings()->getIntValue("EditorColourScheme", 0)==1)
+						g.setColour(Colours::green);
+					else
+						g.setColour(Colours::cornflowerblue.withAlpha(.4f));
+					if(selectedEditorTokens[i]->getLineNumber() == j)
+					{
+//						int startPos = selectedEditorTokens[i]->getPositionOfTokenInLine().getStart();
+//						int endPos = selectedEditorTokens[i]->getPositionOfTokenInLine().getEnd();
+//						int height = editor[currentEditor]->getFont().getHeight();
+//						int width = startPos+(endPos-startPos)*editor[currentEditor]->getFont().getStringWidth("0");
+						//g.fillRoundedRectangle(20.f, (editor[currentEditor]->getLineHeight() * index)+(editor[currentEditor]->getLineHeight()*1.25), 5, editor[currentEditor]->getLineHeight()*.75f, 2);
+						g.fillRoundedRectangle(10, (editor[currentEditor]->getLineHeight() * index)+22, 22, editor[currentEditor]->getLineHeight()-4, 4);
+						g.setColour(Colours::black);
+						g.drawFittedText(String(j+1), 0, (editor[currentEditor]->getLineHeight() * index)+20, 33, editor[currentEditor]->getLineHeight(),
+										 juce::Justification::centredRight, false);
+					}
+				}
+			}
 
+				
+			
             g.setColour(juce::Colours::white);
             for(int i=0; i<breakpointLines.size(); i++)
             {
@@ -226,6 +235,7 @@ void CsoundCodeEditor::paint(Graphics& g)
                 g.drawFittedText(String(j+1), 0, (editor[currentEditor]->getLineHeight() * index)+20, 33, editor[currentEditor]->getLineHeight(),
                                  juce::Justification::centredRight, false);
             }
+
 
             index += 1;
         }
@@ -519,7 +529,10 @@ void CsoundCodeEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
 int CsoundCodeEditor::findText(String text)
 {
     if(searchReplaceComp->getSearchText().isNotEmpty())
-        editor[currentEditor]->findText(text);
+	{
+		editor[currentEditor]->findText(text);
+	}
+        
 }
 
 //=========================================================================
@@ -609,10 +622,9 @@ void CsoundCodeEditor::actionListenerCallback(const juce::String& message)
         }
         repaint();
     }
-    else if(message.contains("HightlightMultipleInstances"))
+    else if(message.contains("HightlightMultipleLines"))
     {
-
-
+		repaint();
     }
     else if(message=="Launch help")
         sendActionMessage("Launch help");
@@ -834,6 +846,7 @@ void CsoundCodeEditorComponent::mouseDown (const MouseEvent& e)
         autoCompleteListBox.setVisible(false);
         selectedTokens.clear();
         sendChangeMessage();
+		sendActionMessage("HightlightMultipleLines");
     }
 }
 //==============================================================================
@@ -854,11 +867,14 @@ void CsoundCodeEditorComponent::mouseDoubleClick (const MouseEvent& e)
 
     int instances = 0;
     selectedTokens.clear();
-    while(findText(word, true)!=-2);
+	
+	for(int i = 0; i<2;i++)
+		while(findText(word, true)!=-2);
 
 
     cUtils::debug(selectedTokens.size());
     sendChangeMessage();
+	sendActionMessage("HightlightMultipleLines");
 
     dragType = notDragging;
 }

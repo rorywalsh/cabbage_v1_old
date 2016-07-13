@@ -1427,7 +1427,8 @@ void CsoundCodeEditorComponent::showAutoComplete(String currentWord)
         {
             variableNamesToShow.addIfNotAlreadyThere(item.trim());
             autoCompleteListBox.updateContent();
-            autoCompleteListBox.setVisible(true);
+			if(cUtils::getPreference(appProperties, "ShowAutoComplete")==1)
+				autoCompleteListBox.setVisible(true);
         }
     }
 }

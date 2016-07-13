@@ -141,7 +141,10 @@ public:
     {
         return processor;
     }
-    MidiMessageCollector& getMidiMessageCollector() noexcept        { return messageCollector; }
+    MidiMessageCollector& getMidiMessageCollector() noexcept
+    {
+        return messageCollector;
+    }
     void audioDeviceIOCallback (const float**, int, float**, int, int) override;
     void audioDeviceAboutToStart (AudioIODevice*) override;
     void audioDeviceStopped() override;

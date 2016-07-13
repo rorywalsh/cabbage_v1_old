@@ -552,6 +552,7 @@ void FilterComponent::timerCallback()
                 codeWindow->csoundDebuggerComponent->setText(instance->getDebuggerOutput());
 
             instance->clearDebugMessage();
+ß
         }
     }
 
@@ -662,7 +663,7 @@ void FilterComponent::drawLevelMeter (Graphics& g, float x, float y, int width, 
             g.setColour (Colours::lightblue.withAlpha (0.1f));
         else
             g.setColour (i < totalBlocks - 1 ? (isBypassed ? Colours::cornflowerblue : Colours::lime.withAlpha (0.5f))
-                             : Colours::red);
+                         : Colours::red);
 
         g.fillRoundedRectangle (x + i * w + w * 0.1f,
                                 y+1,

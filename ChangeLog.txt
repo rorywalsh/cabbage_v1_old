@@ -1,4 +1,87 @@
+Cabbage 1.1.0
 
+Changes/Modifications/Fixes
+
+- add signaldisplay widget for waveform, spectrogram, spectroscope, and lissajous displays
+- updating Cabbage AudioUnits
+- updated Linux build files
+- fixed editor problems with Cabbage Studio
+- fixed typos in codeeditor source
+- updated Windows installers for 64-bit
+- modified fft widget
+- updated encoder widget look
+- fixed menu in Cabbage studio that was hiding some files from the user
+- fixed deadzone issue with sliders
+- update font selection so that it only shows monospaced fonts
+- fix auxilary file issue
+- fixed problem with having to save twice to update a table
+- changed cursor colour when editing slider text boxes
+- fixed check on startup for valid audio device, added comment code option to popupmenu in editor
+- fixed table issue reported by Iain
+- fixed manual issue
+- updating LV2 makefiles
+- changed colour scheme for highlighted words
+- finished highlighting of all words that match those currently highlighted with a double click
+- started implementing multi hightlight mode
+- if value is lower than min, value becomes min
+- added inline opcode help to contenxt menu in editor
+- fixed issue with setting Csound directory, and addressed the issue of Csound help not opening when an opcode is followed by another character
+- fixed ksmps issue reported by Oeyvind
+- added support for velocity sensitivity to number boxes
+- fixed ksmps slow-down issue reported by Oeyvind
+- fixed table bug and added autocomplete box for variable names
+- added lissajous display to signaldisplay widget
+- Update CabbagePluginProcessor.cpp
+- updating fft widget with new multipurpose singaldisplay widget, still need polishing
+- added numberbox entry to manual
+- fixed issue with presets not loading on startup
+- added missing keywords to syntax highlighting
+- Merge pull request #1 from MrMormon/patch-2
+- reverting to stereo configuration for plugins
+- fixed issue with slider pages not opening in manual
+- fixed linux title bar problem
+- testing multichannel IO on Linux
+- still working on mutlichannel support
+- updated minor build version number
+- added 8-channel support for plugins, not included in builds yet, needs work..
+- fixed gui quirks in range sliders
+- updating AU builds
+- fixed rendering issues withnew range sliders
+- added fontcolour() identifier to form widget
+- updated combobox so they recall properly when instruments settings are saved by a host
+- fixed recalling of parameters for sliders
+- removed some calls to debug output
+- fixed external editor and open file on startup issue
+- fixed fftdisplay issue
+- pushed through fix for init problems with range sliders, needs testing
+- added scrollbars() ktwidth() identifiers to midi keyboard widget, and added refreshfiles() method to comboboxex and listbox widgets
+- added refresh of listbox contents when the file save button is pressed to match the behaviour of combobox
+- added text alignment identifiers for combobox and listbox, updated manual entries
+- updating version number
+- incrememted minor version number to 1
+- updated help files with new identifiers for encoder
+- added support for min() and max() in encoder widgets.
+- fixed dragable window issue on Android
+- fixed problem with GUI editor when Cabbage section doesn't start on line 1 of csd file
+- added sorting of files that get added to comboboxes and listboxes.
+- fixed issue with populate() and new listbox widget
+- updating docs
+- updated Docs regarding changes to popuptext identifier
+- added option to completely disable popup text on slider, use popuptext(0)
+- updated docs
+- updating docs
+- Merge branch 'develop' of https://github.com/rorywalsh/cabbage into develop
+- updating summary
+- updating hrange sliders
+- updated Cabbage64 installer
+- updating presets example
+- updating examples
+- udating docs
+- udating docs
+- added note in mananging large numbers of widgets article about needing latest Csound
+- updated mousr scroll-drag issue in editor and updated opcodeDir mechanism on Windows
+
+=====================================================================================================================
 Cabbage v1.0.0
 
 Additions:

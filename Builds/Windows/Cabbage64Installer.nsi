@@ -55,9 +55,12 @@ Section "Core components" SEC01
   SetOverwrite ifnewer
   File "build64\Cabbage64.exe"
   File "build64\CabbageStudio64.exe"
+
   CreateDirectory "$SMPROGRAMS\Cabbage64"
+  
   CreateShortCut "$SMPROGRAMS\Cabbage64\Cabbage64.lnk" "$INSTDIR\Cabbage64.exe"
   CreateShortCut "$DESKTOP\Cabbage64.lnk" "$INSTDIR\Cabbage64.exe"
+
   File "build64\CabbagePluginEffect.dat"
   File "build64\CabbagePluginSynth.dat"
   File "build\opcodes.txt"

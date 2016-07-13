@@ -38,16 +38,16 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     : DocumentWindow (title, backgroundColour,
                       DocumentWindow::minimiseButton
                       | DocumentWindow::closeButton),
-    optionsButton ("Options"),
-    isGUIOn(false),
-    pipeOpenedOk(false),
-    AudioEnabled(true),
-    isAFileOpen(false),
-    standaloneMode(false),
-    updateEditorOutputConsole(false),
-    hasEditorBeingOpened(false),
-    isUsingExternalEditor(false),
-    wildcardFilter("*.*", "*", "File Filter")
+      optionsButton ("Options"),
+      isGUIOn(false),
+      pipeOpenedOk(false),
+      AudioEnabled(true),
+      isAFileOpen(false),
+      standaloneMode(false),
+      updateEditorOutputConsole(false),
+      hasEditorBeingOpened(false),
+      isUsingExternalEditor(false),
+      wildcardFilter("*.*", "*", "File Filter")
 {
     //setOpenGLRenderingEngine();
     consoleMessages = "";
@@ -269,19 +269,14 @@ StandaloneFilterWindow::~StandaloneFilterWindow()
         }
     }
 
+	deleteFilter();
+
     deviceManager->removeMidiInputCallback (String::empty, &player);
     deviceManager->removeAudioCallback (&player);
     deviceManager = nullptr;
 
-    if (globalSettings != nullptr && filter != nullptr)
-    {
-        MemoryBlock data;
-        filter->getStateInformation (data);
 
-        globalSettings->setValue ("filterState", data.toBase64Encoding());
-    }
-
-    deleteFilter();
+   
 
 }
 
@@ -601,6 +596,7 @@ void StandaloneFilterWindow::changeListenerCallback(juce::ChangeBroadcaster* /*s
 //==============================================================================
 void StandaloneFilterWindow::deleteFilter()
 {
+	filter->getCallbackLock().exit();
     player.setProcessor (nullptr);
 
     if (filter != nullptr && getContentComponent() != nullptr)
@@ -620,15 +616,17 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 //first we check that the audio device is up and running ok
     stopTimer();
 
-    filter->stopProcessing=true;
-    deviceManager->addAudioCallback (&player);
-    deviceManager->addMidiInputCallback (String::empty, &player);
+    //filter->stopProcessing=true;
+
 
     if(shouldResetFilter)
     {
+		//deviceManager->addAudioCallback (nullptr);
         deviceManager->closeAudioDevice();
         deleteFilter();
 
+		deviceManager->addAudioCallback (&player);
+		deviceManager->addMidiInputCallback (String::empty, &player);
         PropertySet* const globalSettings = getGlobalSettings();
         ScopedPointer<XmlElement> savedState;
         if (globalSettings != nullptr)
@@ -828,8 +826,8 @@ void StandaloneFilterWindow::closeButtonPressed()
         if(!getPreference(appProperties, "ExternalEditor"))
             if(!filter->saveEditorFiles())
                 return;
-        filter->getCallbackLock().enter();
-        deleteFilter();
+        //filter->getCallbackLock().enter();
+        //deleteFilter();
     }
     JUCEApplication::quit();
 }
@@ -1011,10 +1009,16 @@ void StandaloneFilterWindow::buttonClicked (Button*)
             subMenu.addItem(299, String("Use external editor"), true, true);
 
 
+
         if(getPreference(appProperties, "ShowNativeFileDialogues"))
-            subMenu.addItem(300, String("Use native file dialogues"), true, false);
+            subMenu.addItem(300, String("Use Cabbage file dialogues"), true, false);
         else
-            subMenu.addItem(300, String("Use native file dialogue"), true, true);
+            subMenu.addItem(300, String("Use Cabbage file dialogues"), true, true);
+			
+        if(!getPreference(appProperties, "ShowAutoComplete"))
+            subMenu.addItem(303, String("Show Auto-Complete"), true, false);
+        else
+            subMenu.addItem(303, String("Show Auto-Complete"), true, true);			
 
         if(!getPreference(appProperties, "DisableCompilerErrorWarning"))
             subMenu.addItem(202, String("Disable Compiler Error Warning"), true, false);
@@ -1324,6 +1328,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         toggleOnOffPreference(appProperties, "ShowNativeFileDialogues");
     }
 
+    else if(options==303)
+    {
+        toggleOnOffPreference(appProperties, "ShowAutoComplete");
+    }
+	
     //------- preference Csound manual dir ------
     else if(options==200)
     {
@@ -1331,7 +1340,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 #ifdef MACOSX
         dir = "Library/Frameworks/CsoundLib64.framework/Versions/6.0/Resources/Manual";
 #endif
-        FileChooser browser(String("Please select the Csound manual directory...\n"), File(dir), String("*.*"), UseNativeDialogue);
+		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+        FileChooser browser(String("Please select the Csound manual directory...\n"), File(dir), String("*.*"), showNative);
         if(browser.browseForDirectory())
         {
             setPreference(appProperties, "CsoundHelpDir", browser.getResult().getFullPathName());
@@ -1341,7 +1351,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     else if(options==203)
     {
         String dir = getPreference(appProperties, "PlantFileDir", "");
-        FileChooser browser(String("Please select your Plant file directory..."), File(dir), String("*.*"), UseNativeDialogue);
+		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+        FileChooser browser(String("Please select your Plant file directory..."), File(dir), String("*.*"), showNative);
         if(browser.browseForDirectory())
         {
             setPreference(appProperties, "PlantFileDir", browser.getResult().getFullPathName());
@@ -1353,7 +1364,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     {
         String dir = getPreference(appProperties, "ExamplesDir", "");
         cUtils::debug("Example Directory:"+dir);
-        FileChooser browser(String("Please select your Examples directory..."), File(dir), String("*.*"), UseNativeDialogue);
+		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+        FileChooser browser(String("Please select your Examples directory..."), File(dir), String("*.*"), showNative);
         if(browser.browseForDirectory())
         {
             setPreference(appProperties, "ExamplesDir", browser.getResult().getFullPathName());
@@ -1363,7 +1375,8 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     else if(options==301)
     {
         String dir = getPreference(appProperties, "ExternalEditorApplication", "");
-        FileChooser browser(String("Please select your preferred external editor..."), File(dir), String("*.*"), UseNativeDialogue);
+		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+        FileChooser browser(String("Please select your preferred external editor..."), File(dir), String("*.*"), showNative);
         if(browser.browseForFileToOpen())
         {
             setPreference(appProperties, "ExternalEditorApplication", browser.getResult().getFullPathName());
@@ -1558,7 +1571,8 @@ void StandaloneFilterWindow::openFile(String _csdfile)
     {
         File currentDir = File(_csdfile);
 #ifdef MACOSX
-        FileChooser openFC(String("Open a Cabbage .csd file..."), currentDir, String("*.csd;*.vst"), UseNativeDialogue);
+		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+        FileChooser openFC(String("Open a Cabbage .csd file..."), currentDir, String("*.csd;*.vst"), showNative);
         if(openFC.browseForFileToOpen())
         {
             csdFile = openFC.getResult();
@@ -1629,7 +1643,8 @@ void StandaloneFilterWindow::saveFile()
 
 void StandaloneFilterWindow::saveFileAs()
 {
-    FileChooser saveFC(String("Save Cabbage file as..."), File::nonexistent, String("*.csd"), UseNativeDialogue);
+	bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+    FileChooser saveFC(String("Save Cabbage file as..."), File::nonexistent, String("*.csd"), showNative);
     this->setAlwaysOnTop(false);
     if(saveFC.browseForFileToSave(true))
     {
@@ -1743,7 +1758,8 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         }
     }
 #elif WIN32
-    FileChooser saveFC(String("Save plugin as..."), File::nonexistent, String("*.dll"), UseNativeDialogue);
+	bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+    FileChooser saveFC(String("Save plugin as..."), File::nonexistent, String("*.dll"), showNative);
     String VST;
     if(type.contains("VSTi"))
         VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbagePluginSynth.dat");
@@ -1792,8 +1808,8 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
 #endif
 
 #if MACOSX
-
-    FileChooser saveFC(String("Save as..."), File::nonexistent, String("*.vst"), UseNativeDialogue);
+	bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+    FileChooser saveFC(String("Save as..."), File::nonexistent, String("*.vst"), showNative);
     String VST;
     if (saveFC.browseForFileToSave(true))
     {
@@ -2021,7 +2037,8 @@ void StandaloneFilterWindow::batchProcess(String type, bool dir)
 {
     File thisFile(File::getSpecialLocation(File::currentApplicationFile));
 #ifdef WIN32
-    FileChooser saveFC(String("Select files..."), File::nonexistent, String("*.csd;"), UseNativeDialogue);
+	bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
+    FileChooser saveFC(String("Select files..."), File::nonexistent, String("*.csd;"), showNative);
     String VST;
 
     Array<File> files;

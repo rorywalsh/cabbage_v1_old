@@ -238,7 +238,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
     KeyboardShortcutKeys shortcuts(appProperties->getUserSettings()->getXmlValue("KeyboardShortcutXmlData"));
     switch (commandID)
     {
-        //file commands
+    //file commands
     case CommandIDs::fileNew:
         result.setInfo (String("New"), String("Create a new file"), CommandCategories::file, 0);
         result.addDefaultKeypress ('n', ModifierKeys::commandModifier);
@@ -274,7 +274,7 @@ void CodeWindow::getCommandInfo (const CommandID commandID, ApplicationCommandIn
     case CommandIDs::fileKeyboardShorts:
         result.setInfo (String("Keyboard Shortcuts"), String("Update GUI"), CommandCategories::file, 0);
         break;
-        //edit commands
+    //edit commands
     case CommandIDs::editUndo:
         result.setInfo (String("Undo"), String("Undo last action"), CommandCategories::edit, 0);
         result.addDefaultKeypress ('z', ModifierKeys::commandModifier);

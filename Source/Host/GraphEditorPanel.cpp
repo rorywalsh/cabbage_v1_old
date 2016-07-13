@@ -35,10 +35,10 @@ PluginWindow::PluginWindow (Component* const pluginEditor,
                             WindowFormatType t)
     : DocumentWindow (pluginEditor->getName(), Colours::black,
                       DocumentWindow::minimiseButton | DocumentWindow::closeButton),
-    owner (o),
-    type (t),
-    editor(pluginEditor),
-    basicLookAndFeel(new CabbageLookAndFeelBasic())
+      owner (o),
+      type (t),
+      editor(pluginEditor),
+      basicLookAndFeel(new CabbageLookAndFeelBasic())
 {
     setSize (400, 300);
     this->setTitleBarHeight(18);

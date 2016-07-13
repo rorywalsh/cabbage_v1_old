@@ -190,7 +190,6 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile, Poin
 CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
 {
     //deleteAndZero(cabbageCsoundEditor);
-
     deleteAndZero(lookAndFeel);
     deleteAndZero(lookAndFeelBasic);
     Logger::setCurrentLogger (nullptr);
@@ -204,7 +203,7 @@ CabbagePluginAudioProcessor::~CabbagePluginAudioProcessor()
     if(csound)
     {
         this->getCallbackLock().enter();
-        csound->DeleteChannelList(csoundChanList);
+        //csound->DeleteChannelList(csoundChanList);
         Logger::writeToLog("about to cleanup Csound");
         //csoundDebugContinue(csound);
         //csound->Cleanup();
@@ -384,7 +383,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
 #endif
 
     csoundParams->sample_rate_override = this->getSampleRate();
-    
+
 #ifdef CABBAGE_AU
     csoundParams->control_rate_override = csound->GetSr()/32;
 #endif
@@ -460,7 +459,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
         else
             csound->SetChannel("IS_A_PLUGIN", 0.0);
 
-        if(isPlugin)
+        if(isPlugin)  
         {
             if (getPlayHead() != 0 && getPlayHead()->getCurrentPosition (hostInfo))
             {
@@ -486,6 +485,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
             showMessage(message, &getActiveEditor()->getLookAndFeel());
 #endif
         csoundStatus=false;
+		getCallbackLock().enter();
         return 0;
     }
 #endif
@@ -546,7 +546,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 #if CABBAGE_AU
     csoundParams->control_rate_override = csound->GetSr()/32;
 #endif
-    
+
     csound->SetParams(csoundParams);
     csound->SetOption((char*)"-n");
     //csound->SetOption((char*)"-d");
@@ -679,7 +679,9 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
             showMessage(message, &getActiveEditor()->getLookAndFeel());
 #endif
     }
-    getCallbackLock().exit();
+    
+	//getCallbackLock().exit();
+	
     updateHostDisplay();
     return csCompileResult;
 #endif
@@ -1073,6 +1075,7 @@ void CabbagePluginAudioProcessor::addWidgetsToEditor(bool refresh)
 {
     if(this->createEditorIfNeeded())
     {
+		this->getCallbackLock().enter();
         CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
 
         if(refresh)
@@ -1120,6 +1123,7 @@ void CabbagePluginAudioProcessor::addWidgetsToEditor(bool refresh)
             //	editor->restoreParametersFromPresets(XmlDocument::parse(File(selectedPresetFile)));
         }
 
+	this->getCallbackLock().exit();
 
     }
 }
@@ -1169,7 +1173,7 @@ void CabbagePluginAudioProcessor::openFile(LookAndFeel* looky)
         initialiseWidgets(selectedFiles[0].loadFileAsString(), true);
         getCallbackLock().exit();
         recompileCsound(csdFile);
-        addWidgetsToEditor(true);	
+        addWidgetsToEditor(true);
     }
 }
 void CabbagePluginAudioProcessor::actionListenerCallback (const String& message)
@@ -1582,10 +1586,21 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
     fdata.add(String::empty);
     if(csCompileResult==OK)
     {
+		char genName[1024];
         MYFLT* argsPtr, *temp;
+		bool isNamedGen = false;
         int noOfArgs = csoundGetTableArgs(csound->GetCsound(), &argsPtr, tableNum);
         if(noOfArgs!=-1)
-        {
+        {			
+					
+//			const int len = csoundIsNamedGEN(csound->GetCsound(), abs(argsPtr[0]));
+//			if(len>0)
+//			{
+//				csoundGetNamedGEN(csound->GetCsound(), argsPtr[0], genName, 1024);
+//				isNamedGen = true;
+//				cUtils::debug(String(genName));
+//			}		
+		
             int tableSize = csound->GetTable(temp, tableNum);
             fdata.add(String(tableNum));
             fdata.add("0");
@@ -1595,7 +1610,10 @@ StringArray CabbagePluginAudioProcessor::getTableStatement(int tableNum)
             else
                 for(int i=0; i<noOfArgs; i++)
                 {
-                    fdata.add(String(argsPtr[i]));
+					if(i==0 && isNamedGen==true)
+						fdata.add(String(QUADBEZIER));
+					else
+						fdata.add(String(argsPtr[i]));
                 }
         }
     }
@@ -1687,6 +1705,7 @@ float CabbagePluginAudioProcessor::getParameter (int index)
         {
 #ifndef Cabbage_Build_Standalone
             float val = (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
+            float retVal = 0;
             if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox)
             {
                 val = jmap(getGUICtrls(index).getNumProp(CabbageIDs::value), 0.f, getGUICtrls(index).getNumProp(CabbageIDs::comborange), 0.f, 1.f);
@@ -1694,9 +1713,14 @@ float CabbagePluginAudioProcessor::getParameter (int index)
             }
             else if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::checkbox ||
                     getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::button)
-                return getGUICtrls(index).getNumProp(CabbageIDs::value);
+                retVal = getGUICtrls(index).getNumProp(CabbageIDs::value);
             else
-                return (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
+                retVal = (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
+
+            cUtils::debug("retval:", retVal);
+
+            return retVal;
+
 #else
             return guiCtrls[index].getNumProp(CabbageIDs::value);
 #endif
@@ -1744,8 +1768,9 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
                 range=1;
             else
                 newValue = (newValue*range)+min;
-
-
+				
+			//this is needed for settings parameters to values set in saved sessions
+            guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);	
 
 #endif
             if(getGUICtrls(index).getStringProp(CabbageIDs::type)==CabbageIDs::combobox &&
@@ -1761,7 +1786,7 @@ void CabbagePluginAudioProcessor::setParameter (int index, float newValue)
                         newValue, guiCtrls.getReference(index).getStringProp(CabbageIDs::type));
 
             }
-            //guiCtrls.getReference(index).setNumProp(CabbageIDs::value, newValue);
+
         }
 #endif
     }
@@ -2369,7 +2394,8 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
         {
             for(int i=0; i<this->getNumParameters(); i++)
             {
-                this->setParameter(i, (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel)));
+                cUtils::debug(guiCtrls[i].getStringProp(CabbageIDs::channel), (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel)));
+                setParameterNotifyingHost(i, (float)xmlState->getDoubleAttribute(guiCtrls[i].getStringProp(CabbageIDs::channel)));
             }
 
 

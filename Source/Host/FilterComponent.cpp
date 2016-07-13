@@ -552,7 +552,7 @@ void FilterComponent::timerCallback()
                 codeWindow->csoundDebuggerComponent->setText(instance->getDebuggerOutput());
 
             instance->clearDebugMessage();
-ß
+		
         }
     }
 

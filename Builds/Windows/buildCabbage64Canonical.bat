@@ -15,4 +15,4 @@ CALL mingw32-make -f MakefileHostCanonical64.mak CONFIG=Release clean
 CALL mingw32-make -f MakefileHostCanonical64.mak CONFIG=Release -j6
 
 
-CALL makensis Cabbage64InstallerCanonical.nsi
+CALL "C:\Program Files (x86)\NSIS\makensis" Cabbage64InstallerCanonical.nsi

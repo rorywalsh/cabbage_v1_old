@@ -17,4 +17,4 @@ CALL mingw32-make -f MakefileHost.mak CONFIG=Release clean
 CALL mingw32-make -f MakefileHost.mak CONFIG=Release -j6
 
 
-CALL makensis Cabbage32Installer.nsi
+CALL "C:\Program Files (x86)\NSIS\makensis" Cabbage64Installer.nsi

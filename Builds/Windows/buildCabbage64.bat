@@ -16,4 +16,5 @@ CALL mv build64\CabbagePluginSynth.dll build64\CabbagePluginSynth.dat
 CALL mingw32-make -f MakefileHost64.mak CONFIG=Release clean
 CALL mingw32-make -f MakefileHost64.mak -j8 CONFIG=Release
 
-CALL makensis Cabbage64Installer.nsi
+CALL "C:\Program Files (x86)\NSIS\makensis" Cabbage64Installer.nsi
+

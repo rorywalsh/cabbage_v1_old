@@ -891,13 +891,16 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         //subMenu.addItem(160, TRANS("Plugin Effect(Csound bundle)"));
 #endif
 #endif
-        m.addSubMenu(TRANS("Export..."), subMenu);
+        //m.addSubMenu(TRANS("Export..."), subMenu);
 
 
 #ifndef MACOSX
         subMenu.clear();
         subMenu.addItem(5, TRANS("Plugin Synth"));
         subMenu.addItem(6, TRANS("Plugin Effect"));
+#ifdef Cabbage64Bit
+		subMenu.addItem(20, TRANS("FMOD Plugin Sound"));
+#endif
 #if !defined(LINUX)
         m.addSubMenu(TRANS("Export As..."), subMenu);
 #endif
@@ -1208,6 +1211,9 @@ void StandaloneFilterWindow::buttonClicked (Button*)
 
     else if(options==6)
         exportPlugin(String("VST"), true);
+		
+    else if(options==20)
+        exportPlugin(String("FMOD Plugin Sound"), true);	
 
     //----- always on top  ------
     else if(options==7)
@@ -1651,9 +1657,9 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
             VST = currentApplicationDirectory + String("/CabbagePluginSynthLV2.so");
         else if(type.contains(String("LV2-fx")))
             VST = currentApplicationDirectory + String("/CabbagePluginEffectLV2.so");
-        else if(type.contains(String("AU")))
+        else if(type.contains(String("FMOD Plugin Sound")))
         {
-            m_ShowMessage("This feature only works on computers running OSX", lookAndFeel);
+            m_ShowMessage("FMODy..", lookAndFeel);
         }
         //Logger::writeToLog(VST);
 
@@ -1714,6 +1720,10 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbagePluginSynth.dat");
     else if(type.contains(String("VST")))
         VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbagePluginEffect.dat");
+	else if(type.contains(String("FMOD Plugin Sound")))
+        {
+             VST = thisFile.getParentDirectory().getFullPathName() + String("\\fmod_csoundL64.dll");
+        }
 
     File VSTData(VST);
 
@@ -1745,7 +1755,9 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
             m_ShowMessage("Problem moving plugin lib, make sure it's not currently open in your plugin host!", lookAndFeel);
 
         loc_csdFile.replaceWithText(csdFile.loadFileAsString());
-        setUniquePluginID(dll, loc_csdFile, false);
+		if(!type.contains(String("FMOD Plugin Sound")))
+			setUniquePluginID(dll, loc_csdFile, false);
+			
         String info;
         info = String("Your plugin has been created. It's called:\n\n")+dll.getFullPathName()+String("\n\nIn order to modify this plugin you only have to edit the associated .csd file. You do not need to export every time you make changes.\n\nTo turn off this notice visit 'Preferences' in the main 'options' menu");
 

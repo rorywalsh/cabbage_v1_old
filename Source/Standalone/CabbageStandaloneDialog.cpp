@@ -71,29 +71,6 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
 
     CabbageGUIType cAttr("hslider bounds(\"0, 0, 100, 30\"), range(1, 28, 1, 1, 1), textbox(1), text(\"GridSize\")", -99);
     gridSizeSlider = new CabbageSlider(cAttr);
-    //gridSizeSlider.setRange(1, 28, 1);
-    //gridSizeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxRight, true, 20, 20);
-//
-//    JUCE_TRY
-//    {
-//        filter = createCabbagePluginFilter("", false, AUDIO_PLUGIN);
-//        filter->addChangeListener(this);
-//        filter->addActionListener(this);
-//        filter->sendChangeMessage();
-//        filter->createEditorIfNeeded();
-//    }
-//    JUCE_CATCH_ALL
-//
-//    if (filter == nullptr)
-//    {
-//        JUCEApplication::quit();
-//    }
-//
-//    filter->setPlayConfigDetails (2,
-//                                  2,
-//                                  44100, 32);
-//
-
     PropertySet* const globalSettings = getGlobalSettings();
 
 
@@ -119,7 +96,6 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     else
         centreWithSize (getWidth(), getHeight());
 
-    //setPreference(appProperties, "ExternalEditor",0);
 
     //create editor but don't display it yet...
     cabbageCsoundEditor = new CodeWindow(csdFile.getFileName());
@@ -131,7 +107,6 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     cabbageCsoundEditor->addActionListener(this);
     cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
 
-   // filter->codeEditor = cabbageCsoundEditor->textEditor;
     //start timer for output message, and autoupdate if it's on
     startTimer(500);
 
@@ -1604,7 +1579,8 @@ void StandaloneFilterWindow::saveFile()
         showMessage("no write access..");
         return;
     }
-    resetFilter(false);
+	
+    resetFilter(true);
     RecentlyOpenedFilesList recentFiles;
     recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
     recentFiles.addFile (csdFile);

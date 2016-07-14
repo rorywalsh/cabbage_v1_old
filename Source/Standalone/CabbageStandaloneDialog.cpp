@@ -73,25 +73,26 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     gridSizeSlider = new CabbageSlider(cAttr);
     //gridSizeSlider.setRange(1, 28, 1);
     //gridSizeSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxRight, true, 20, 20);
-
-    JUCE_TRY
-    {
-        filter = createCabbagePluginFilter("", false, AUDIO_PLUGIN);
-        filter->addChangeListener(this);
-        filter->addActionListener(this);
-        filter->sendChangeMessage();
-        filter->createEditorIfNeeded();
-    }
-    JUCE_CATCH_ALL
-
-    if (filter == nullptr)
-    {
-        JUCEApplication::quit();
-    }
-
-    filter->setPlayConfigDetails (2,
-                                  2,
-                                  44100, 32);
+//
+//    JUCE_TRY
+//    {
+//        filter = createCabbagePluginFilter("", false, AUDIO_PLUGIN);
+//        filter->addChangeListener(this);
+//        filter->addActionListener(this);
+//        filter->sendChangeMessage();
+//        filter->createEditorIfNeeded();
+//    }
+//    JUCE_CATCH_ALL
+//
+//    if (filter == nullptr)
+//    {
+//        JUCEApplication::quit();
+//    }
+//
+//    filter->setPlayConfigDetails (2,
+//                                  2,
+//                                  44100, 32);
+//
 
     PropertySet* const globalSettings = getGlobalSettings();
 
@@ -109,31 +110,6 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     deviceManager->initialise(2,
                               2, savedState, false);
 
-
-    //deviceManager->closeAudioDevice();
-
-    filter->stopProcessing = true;
-
-    int runningCabbageIO = getPreference(appProperties, "UseCabbageIO");
-    if(runningCabbageIO)
-    {
-        player.setProcessor (filter);
-        if (globalSettings != nullptr)
-        {
-            MemoryBlock data;
-
-            if (data.fromBase64Encoding (globalSettings->getValue ("filterState"))
-                    && data.getSize() > 0)
-            {
-                filter->setStateInformation (data.getData(), data.getSize());
-            }
-        }
-
-
-    }
-    //deviceManager->closeAudioDevice();
-
-    setContentOwned (filter->createEditorIfNeeded(), true);
 
     const int x = globalSettings->getIntValue ("windowX", -100);
     const int y = globalSettings->getIntValue ("windowY", -100);
@@ -155,7 +131,7 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     cabbageCsoundEditor->addActionListener(this);
     cabbageCsoundEditor->setLookAndFeel(lookAndFeel);
 
-    filter->codeEditor = cabbageCsoundEditor->textEditor;
+   // filter->codeEditor = cabbageCsoundEditor->textEditor;
     //start timer for output message, and autoupdate if it's on
     startTimer(500);
 
@@ -618,15 +594,13 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 
     //filter->stopProcessing=true;
 
-
-    if(shouldResetFilter)
+    if(shouldResetFilter || firstFileOpenedOk==false)
     {
 		//deviceManager->addAudioCallback (nullptr);
         deviceManager->closeAudioDevice();
-        deleteFilter();
+        if(filter)
+			deleteFilter();
 
-		deviceManager->addAudioCallback (&player);
-		deviceManager->addMidiInputCallback (String::empty, &player);
         PropertySet* const globalSettings = getGlobalSettings();
         ScopedPointer<XmlElement> savedState;
         if (globalSettings != nullptr)
@@ -645,8 +619,32 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         deviceManager->initialise(2,
                                   2, savedState, false);
 
+		if(filter->csoundCompiledOk())
+		{
+			firstFileOpenedOk=true;
+			deviceManager->addAudioCallback (&player);
+			deviceManager->addMidiInputCallback (String::empty, &player);
+		}
+
+		setName(filter->getPluginName());
+
+		setContentOwned (filter->createEditorIfNeeded(), true);
+		//filter->addChangeListener(filter->getActiveEditor());
+		CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*> (filter->getActiveEditor());
+		if(editor)
+			filter->addChangeListener(editor);
 
 
+			if (filter != nullptr)
+			{
+				if (deviceManager != nullptr)
+				{
+					player.setProcessor (filter);
+					//deviceManager->setAudioDeviceSetup(audioDeviceSetup, true);
+					//deviceManager->restartLastAudioDevice();
+				}
+			}
+		
         //filter->createGUI(csdFile.loadFileAsString(), true);
         if(!deviceManager->getCurrentAudioDevice())
             cUtils::showMessage("Cabbage could not initialise the selected audio device. Please select a valid audio device in Audio Settings", &this->getLookAndFeel());
@@ -654,39 +652,11 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
     else
     {
         //deviceManager->closeAudioDevice();
+		filter->suspendProcessing(true);
         filter->initialiseWidgets(csdFile.loadFileAsString(), true);
-
         filter->recompileCsound(csdFile);
         filter->addWidgetsToEditor(true);
 
-    }
-
-
-    setName(filter->getPluginName());
-    int runningCabbageProcess = getPreference(appProperties, "UseCabbageIO");
-
-    setContentOwned (filter->createEditorIfNeeded(), true);
-    //filter->addChangeListener(filter->getActiveEditor());
-    CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*> (filter->getActiveEditor());
-    if(editor)
-        filter->addChangeListener(editor);
-
-    if(runningCabbageProcess)
-    {
-        if (filter != nullptr)
-        {
-            if (deviceManager != nullptr)
-            {
-                player.setProcessor (filter);
-                //deviceManager->setAudioDeviceSetup(audioDeviceSetup, true);
-                //deviceManager->restartLastAudioDevice();
-            }
-        }
-
-    }
-    else
-    {
-        // filter->performEntireScore();
     }
 
 
@@ -696,7 +666,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         globalSettings->removeValue ("filterState");
 
 
-    startTimer(500);
+
 
     if(cabbageCsoundEditor)
     {
@@ -719,9 +689,12 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
             this->getProperties().set("fontcolour", cAttr.getStringProp(CabbageIDs::fontcolour));
             this->getProperties().set("titlebarcolour", cAttr.getStringProp(CabbageIDs::titlebarcolour));
             this->lookAndFeelChanged();
+			setName(cAttr.getStringProp(CabbageIDs::caption));
         }
     }
 
+	filter->suspendProcessing(false);
+	startTimer(500);
 }
 
 //==============================================================================

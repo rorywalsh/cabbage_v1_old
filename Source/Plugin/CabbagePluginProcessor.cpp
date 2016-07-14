@@ -485,7 +485,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
             showMessage(message, &getActiveEditor()->getLookAndFeel());
 #endif
         csoundStatus=false;
-		getCallbackLock().enter();
+		//getCallbackLock().enter();
         return 0;
     }
 #endif
@@ -502,7 +502,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 #ifndef Cabbage_No_Csound
 
     stopProcessing = true;
-    getCallbackLock().enter();
+    //getCallbackLock().enter();
     numChannelsChanged();
     midiOutputBuffer.clear();
     //csound->DeleteChannelList(csoundChanList);
@@ -644,7 +644,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
         debugMessageArray.add(CABBAGE_VERSION);
         debugMessageArray.add(String("\n"));
         //removeAllChangeListeners();
-        getCallbackLock().exit();
+        //getCallbackLock().exit();
 
 
 #ifdef WIN32
@@ -1075,7 +1075,7 @@ void CabbagePluginAudioProcessor::addWidgetsToEditor(bool refresh)
 {
     if(this->createEditorIfNeeded())
     {
-		this->getCallbackLock().enter();
+		//this->getCallbackLock().enter();
         CabbagePluginAudioProcessorEditor* editor = dynamic_cast<CabbagePluginAudioProcessorEditor*>(this->getActiveEditor());
 
         if(refresh)
@@ -1123,7 +1123,7 @@ void CabbagePluginAudioProcessor::addWidgetsToEditor(bool refresh)
             //	editor->restoreParametersFromPresets(XmlDocument::parse(File(selectedPresetFile)));
         }
 
-	this->getCallbackLock().exit();
+	//this->getCallbackLock().exit();
 
     }
 }
@@ -2146,13 +2146,13 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                 midiMessages.clear();
 #endif
 
-            const CriticalSection &callback_lock = getCallbackLock();
+            //const CriticalSection &callback_lock = getCallbackLock();
 
             for(int i=0; i<numSamples; i++, ++csndIndex)
             {
                 if(csndIndex == csdKsmps)
                 {
-                    callback_lock.enter();
+                    //callback_lock.enter();
                     //slow down calls to these functions, no need for them to be firing at k-rate
                     if (guiRefreshRate < yieldCounter)
                     {
@@ -2170,7 +2170,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                     else
                         ++ksmpsOffset;
 
-                    callback_lock.exit();
+                    //callback_lock.exit();
                     csndIndex = 0;
                 }
                 if(csCompileResult==OK)

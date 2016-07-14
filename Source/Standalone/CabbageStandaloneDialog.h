@@ -162,6 +162,7 @@ private:
     bool cabbageDance;
     bool timerRunning;
     bool AudioEnabled;
+	bool firstFileOpenedOk;
     bool isAFileOpen;
     bool hasEditorBeingOpened;
     int setUniquePluginID(File inFile, File csdFile, bool AU);

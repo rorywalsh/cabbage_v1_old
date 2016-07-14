@@ -292,7 +292,7 @@ public:
 
     bool csoundCompiledOk()
     {
-        return csCompileResult;
+        return csCompileResult==0 ? true : false;
     }
 
     bool haveXYAutosBeenCreated()

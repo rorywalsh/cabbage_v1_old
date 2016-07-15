@@ -891,7 +891,11 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         //subMenu.addItem(160, TRANS("Plugin Effect(Csound bundle)"));
 #endif
 #endif
-        //m.addSubMenu(TRANS("Export..."), subMenu);
+        
+#if !defined(LINUX) && !defined(Cabbage64Bit)
+        subMenu.addItem(20, TRANS("FMOD Plugin Sound"));
+#endif
+        m.addSubMenu(TRANS("Export..."), subMenu);
 
 
 #ifndef MACOSX
@@ -1272,7 +1276,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     }
 
     //----- show console with editor -------------
-    else if(options==20)
+    else if(options==21)
     {
         toggleOnOffPreference(appProperties, "ShowConsoleWithEditor");
     }
@@ -1785,10 +1789,9 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
             VST = thisFile.getFullPathName()+"/Contents/CabbageCsoundPluginSynth.component";
         else if(type.contains(String("CsoundVST")))
             VST = thisFile.getFullPathName()+"/Contents/CabbageCsoundPluginEffect.component";
-        else if(type.contains(String("AU")))
+        else if(type.contains(String("FMOD Plugin Sound")))
         {
-            showMessage("this feature is coming soon");
-            //VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbageVSTfx.component");
+            VST = thisFile.getFullPathName()+"/Contents/fmod_csound.dylib";
         }
 
         //create a copy of the data package and write it to the new location given by user
@@ -1799,18 +1802,30 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
             return 0;
         }
 
-
-        String plugType = ".vst";
-//		if(type.contains(String("AU")))
-//			plugType = String(".component");
-//		else plugType = String(".vst");
+        
+        String plugType;
+		if(type.contains(String("FMOD")))
+			plugType = String(".dylib");
+		else plugType = String(".vst");
 
         File dll(saveFC.getResult().withFileExtension(plugType).getFullPathName());
+        
 
-        VSTData.copyFileTo(dll);
-        //showMessage("copied");
+        if(!VSTData.copyFileTo(dll))
+            m_ShowMessage("Problem moving plugin lib, make sure it's not currently open in your plugin host!", lookAndFeel);
 
-
+        
+        if(type.contains(String("FMOD Plugin Sound")))
+        {
+            File fmodFile(saveFC.getResult().withFileExtension(".csd").getFullPathName());
+            //loc_csdFile = csdFile.withFileExtension(".csd").getFullPathName();
+            fmodFile.replaceWithText(csdFile.loadFileAsString());
+            
+            String info;
+            info = String("Your plugin has been created. It's called:\n\n")+dll.getFullPathName()+String("\n\nIn order to modify this plugin you only have to edit the associated .csd file. You do not need to export every time you make changes.\n\nTo turn off this notice visit 'Preferences' in the main 'options' menu");
+            
+            return 0;
+        }
 
         File pl(dll.getFullPathName()+String("/Contents/Info.plist"));
         String newPList = pl.loadFileAsString();
@@ -1821,6 +1836,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         pl.replaceWithText(newPList);
 
 
+        
 
         File loc_csdFile(dll.getFullPathName()+String("/Contents/")+saveFC.getResult().getFileNameWithoutExtension()+String(".csd"));
         loc_csdFile.replaceWithText(csdFile.loadFileAsString());

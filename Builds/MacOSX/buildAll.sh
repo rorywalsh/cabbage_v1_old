@@ -98,6 +98,8 @@ then
 	rm -rf ./build/Release/CabbagePluginEffect.component
 	rm -rf ~/Library/Audio/Plug-Ins/VST/CabbagePlugin.vst
 
+	cp -rf  /Users/walshr/sourcecode/FMOD\ Programmers\ API/api/lowlevel/examples/xcode32/_builds/Debug/fmod_csound.dylib ./build/Release/Cabbage.app/Contents/fmod_csound.dylib
+
 	# The following command is no onger used, but I've left it here in case I ever need it again!
 	# It was used to set up Csound so that it can be inside the bundle frameworks folder 
 	# install_name_tool -id @executable_path/../Frameworks/CsoundLib64.framework/Versions/6.0/CsoundLib64 \

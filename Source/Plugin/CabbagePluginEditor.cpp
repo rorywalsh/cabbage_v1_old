@@ -1402,7 +1402,7 @@ void CabbagePluginAudioProcessorEditor::updateSizesAndPositionsOfComponents(int 
 //=============================================================================
 void CabbagePluginAudioProcessorEditor::mouseMove(const MouseEvent& event)
 {
-    if(getFilter()->csoundCompiledOk()==OK)
+    if(getFilter()->csoundCompiledOk())
     {
         //look after mouse message from main plant windows and main window
         int x = event.eventComponent->getTopLevelComponent()->getMouseXYRelative().x;
@@ -1819,7 +1819,7 @@ void CabbagePluginAudioProcessorEditor::insertComponentsFromCabbageText(StringAr
 void CabbagePluginAudioProcessorEditor::paint (Graphics& g)
 {
 #ifdef Cabbage_Build_Standalone
-    if(getFilter()->isFirstTime() && getFilter()->csoundCompiledOk()==true)
+    if(getFilter()->isFirstTime() && getFilter()->csoundCompiledOk())
     {
         ///home/rory/sourcecode/cabbageaudio/cabbage/Builds/Linux/build/test.csd
         g.fillAll(Colours::black);
@@ -2622,7 +2622,7 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIType &cAttr)
 
             Array<float> ampRange = getAmpRangeArray(cAttr.getFloatArrayProp("amprange"), tableNumber);
 
-            if(getFilter()->csoundCompiledOk()==OK)
+            if(getFilter()->csoundCompiledOk())
             {
                 table->addTable(44100,
                                 Colours::findColourForName(cAttr.getStringArrayPropValue(CabbageIDs::tablecolour, y+fileTable), Colours::white),

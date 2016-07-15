@@ -731,10 +731,6 @@ Array<double> GenTable::getPfields()
             cUtils::debug("Amp:" + String(amp));
             prevXPos = roundToIntAccurate(handleViewer->handles[i]->xPosRelative*waveformBuffer.size());
         }
-		else if(genRoutine==QUADBEZIER)
-		{
-				cUtils::debug("Get points from QuadBezier table");
-		}
         else if(genRoutine==2)
         {
             if(this->displayAsGrid())
@@ -783,6 +779,12 @@ void GenTable::setWaveform(Array<float, CriticalSection> buffer, bool updateRang
         waveformBuffer.clear();
         waveformBuffer = buffer;
 
+        for(int i=0; i<buffer.size(); i++)
+        {
+            //cUtils::debug(String(i)+":"+String(buffer[i]));
+        }
+
+
         //waveformBuffer.swapWith(buffer);
         tableSize = waveformBuffer.size();
 
@@ -819,26 +821,15 @@ void GenTable::enableEditMode(StringArray m_pFields)
         pFields = m_pFields;
 
     //only enable editing on non normalising tables
-    if(realGenRoutine>=0 && realGenRoutine!=999)
+    if(realGenRoutine>=0)
         return;
 
     Array<float, CriticalSection> pFieldAmps;
     pFieldAmps.add (pFields[5].getFloatValue());
 
-	if(genRoutine==7 || genRoutine==5)
-	{
     for(int i=6; i<pFields.size(); i+=2)
         pFieldAmps.add(pFields[i+1].getFloatValue());
-	}
-	else if(genRoutine==QUADBEZIER)
-	{
-		for(int i=6; i<pFields.size(); i+=3)
-		{
-			//cUtils::debug(pFields[i]);
-			pFieldAmps.add(pFields[i].getFloatValue());	
-		}	
-        //pFieldAmps.add(pFields[i+1].getFloatValue());		
-	}
+
     Range<float> pFieldMinMax = findMinMax(pFieldAmps);
     normalised = pFields[4].getIntValue();
     double xPos = 0;
@@ -864,25 +855,6 @@ void GenTable::enableEditMode(StringArray m_pFields)
             }
             handleViewer->fixEdgePoints(genRoutine);
         }
-		else if(genRoutine==QUADBEZIER)
-		{
-			cUtils::debug("Need to create handles for a QUADBEZIER table");
-            float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
-            handleViewer->addHandle(0, ampToPixel(thumbHeight, minMax, pFieldAmpValue),(width>10 ? width : 15), (width>10 ? 5 : 15), this->colour);
-			
-			for(int i=6; i<pFields.size(); i+=4)
-            {
-				//cUtils::debug(pFields[i].getFloatValue());
-                xPos = pFields[i].getFloatValue();
-                pFieldAmpValue = (normalised<0 ? pFields[i+1].getFloatValue() : pFields[i+1].getFloatValue()/pFieldMinMax.getEnd());
-				cUtils::debug(ampToPixel(thumbHeight, minMax, pFieldAmpValue));
-                handleViewer->addHandle(xPos/(double)waveformBuffer.size(), ampToPixel(thumbHeight, minMax, pFieldAmpValue), (width>10 ? width : 15), (width>10 ? 5 : 15), this->colour);
-            }
-			
-			
-			
-			handleViewer->fixEdgePoints(genRoutine);
-		}
         else if(genRoutine==2)
         {
             float pFieldAmpValue = (normalised<0 ? pFields[5].getFloatValue() : pFields[5].getFloatValue()/pFieldMinMax.getEnd());
@@ -1112,10 +1084,7 @@ void GenTable::paint (Graphics& g)
 
         if(genRoutine==7 || genRoutine==5 || genRoutine==2 || genRoutine==27)
         {
-            if(minMax.getStart()<0)
-                midPoint = ampToPixel(thumbHeight, minMax, minMax.getLength()/2.f-minMax.getEnd());
-            else
-                midPoint = ampToPixel(thumbHeight, minMax, minMax.getStart());
+            midPoint = ampToPixel(thumbHeight, minMax, minMax.getStart());
             drawTrace= false;
         }
 
@@ -1124,7 +1093,7 @@ void GenTable::paint (Graphics& g)
 
         int gridIndex=ceil(visibleStart);
         float lineDepth=1;
-        for(double i=visibleStart; i<=visibleEnd+1; i+=incr)
+        for(double i=visibleStart; i<=visibleEnd; i+=incr)
         {
             //when qsteps == 1 we draw a grid
             if(qsteps==1)
@@ -1528,7 +1497,7 @@ void HandleViewer::repaint(Graphics &g)
 void HandleViewer::fixEdgePoints(int gen)
 {
     //fix outer handles so they can't be dragged from the edges
-    if(gen==7 || gen==5 || gen==QUADBEZIER)
+    if(gen==7 || gen==5)
     {
         if(handles.size()>1)
         {

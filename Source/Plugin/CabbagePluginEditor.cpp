@@ -2605,6 +2605,8 @@ void CabbagePluginAudioProcessorEditor::InsertGenTable(CabbageGUIType &cAttr)
     }
 
 
+
+
     var tables = cAttr.getVarArrayProp(CabbageIDs::tablenumber);
     for(int y=0; y<tables.size(); y++)
     {
@@ -4476,7 +4478,7 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                 }
                 getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
             }
-            //gentable
+			//gentable
             else if((getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type)==CabbageIDs::gentable) &&
                     getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
             {
@@ -4489,8 +4491,8 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
                     {
 
                         const int tableNumber = getFilter()->getGUILayoutCtrls(i).getIntArrayPropValue(CabbageIDs::tablenumber, y);
-                        tableValues = getFilter()->getTableFloats(tableNumber);
 
+                        tableValues = getFilter()->getTableFloats(tableNumber);
                         if(table->getTableFromFtNumber(tableNumber)->tableSize>=MAX_TABLE_SIZE)
                         {
                             tableBuffer.clear();

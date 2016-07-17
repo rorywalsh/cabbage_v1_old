@@ -56,6 +56,8 @@ FilterGraph::FilterGraph (AudioPluginFormatManager& formatManager_)
     stopTimer();
     setChangedFlag (false);
     setBPM(60);
+	
+
 }
 
 FilterGraph::~FilterGraph()

@@ -622,10 +622,14 @@ void GenTable::changeListenerCallback(ChangeBroadcaster *source)
     if(currentHandle)
     {
         //fill coordinate string and send change message to plugin editor to show bubble
-        float curY = (float)jlimit(minMax.getStart(), minMax.getEnd(), pixelToAmp(thumbArea.getHeight()-zoomButtonsOffset, minMax, currentHandle->getY()));
+        float curY = currentHandle->getY();
+
+        if(genRoutine==QUADBEZIER)
+            curY = currentHandle->yPosRelative*handleViewer->getHeight();
+        
+        curY = (float)jlimit(minMax.getStart(), minMax.getEnd(), pixelToAmp(thumbArea.getHeight()-zoomButtonsOffset, minMax, curY));
         curY = cUtils::roundToMultiple(curY, quantiseSpace);
-
-
+        
         coordinates = "";
         coordinates << roundToIntAccurate(currentHandle->xPosRelative*waveformBuffer.size()) <<
                     ", " << curY;
@@ -1479,12 +1483,15 @@ void HandleViewer::updateBezierColours()
     if(table)
         for (int i=1; i<handles.size(); i += 2)
         {
-            float midX = (handles[i-1]->getX() + handles[i+1]->getX()) / 2.f / handles[i]->getX();
-            float midY = (handles[i-1]->getY() + handles[i+1]->getY()) / 2.f / handles[i]->getY();
-            cUtils::debug(midX, midY);
-            if (midX >= 0.99 && midX <= 1.01)
+            float abX = handles[i-1]->getX() + handles[i+1]->getX();
+            float ctrlX = handles[i]->getX() * 2;
+            
+            float abY = handles[i-1]->getY() + handles[i+1]->getY(); 
+            float ctrlY = handles[i]->getY() * 2;
+            
+            if (ctrlX+2 >= abX && ctrlX-2 <= abX)
             {
-                if (midY >= 0.99 && midY <= 1.01)
+                if (ctrlY+2 >= abY && ctrlY-2 <= abY)
                     handles[i]->setColour(colour.withRotatedHue(0.3f));
             }
             else

@@ -43,9 +43,9 @@
 */
 
 //==============================================================================
-#ifdef JUCE_APP_CONFIG_HEADER
- #include JUCE_APP_CONFIG_HEADER
-#elif ! defined (JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED)
+//#ifdef JUCE_APP_CONFIG_HEADER
+ #include "AppConfig.h"
+//#elif ! defined (JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED)
  /*
     Most projects will contain a global header file containing various settings that
     should be applied to all the code in your project. If you use the projucer, it'll
@@ -60,8 +60,8 @@
     a pre-v4.2 version of the Introjucer/Projucer, it's very easy to fix: just re-save
     your project with the latest version of the Projucer, and it'll magically fix this!
  */
- #error "No global header file was included!"
-#endif
+// #error "No global header file was included!"
+//#endif
 
 //==============================================================================
 #if (defined (_WIN32) || defined (_WIN64))

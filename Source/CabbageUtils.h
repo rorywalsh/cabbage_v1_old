@@ -371,7 +371,7 @@ public:
 #if !defined(CABBAGE_AU) && !defined(Cabbage_Build_Standalone)
             //in plugin mode it's best to use Cabbage file browser instead of a system one
 
-            //useNative=false;
+            useNative=false;
             //cUtils::debug("I shuldn't be here");
 #endif
 

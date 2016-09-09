@@ -963,12 +963,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         else
             subMenu.addItem(299, String("Use external editor"), true, true);
 
-
-
-        if(getPreference(appProperties, "ShowNativeFileDialogues"))
-            subMenu.addItem(300, String("Use Cabbage file dialogues"), true, false);
-        else
-            subMenu.addItem(300, String("Use Cabbage file dialogues"), true, true);
+//
+//
+//        if(getPreference(appProperties, "ShowNativeFileDialogues"))
+//            subMenu.addItem(300, String("Use Cabbage file dialogues"), true, false);
+//        else
+//            subMenu.addItem(300, String("Use Cabbage file dialogues"), true, true);
 			
         if(!getPreference(appProperties, "ShowAutoComplete"))
             subMenu.addItem(303, String("Show Auto-Complete"), true, false);

@@ -252,7 +252,6 @@ GraphEditorPanel::GraphEditorPanel (FilterGraph& graph_)
     graph.addFilter (internalFormat.getDescriptionFor (InternalPluginFormat::audioOutputFilter),
                      0.55f, 0.56f);
 
-
 //	//each patch has an automation track
 //	PluginDescription descript;
 //	descript.descriptiveName = "Automation Track";

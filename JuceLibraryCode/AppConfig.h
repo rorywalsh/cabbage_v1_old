@@ -14,6 +14,9 @@
 #ifndef __JUCE_APPCONFIG_CXQEYL__
 #define __JUCE_APPCONFIG_CXQEYL__
 
+#define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
+#define JUCE_APP_CONFIG_HEADER 1
+
 //==============================================================================
 // [BEGIN_USER_CODE_SECTION]
 #ifndef USE_NATIVE_DIALOGUES 
@@ -38,7 +41,7 @@
 
 
 #if !defined(MAXOSX) && !defined(WIN32)
-	#define JUCE_MODULE_AVAILABLE_juce_opengl                	1
+	#define JUCE_MODULE_AVAILABLE_juce_opengl                1
 #endif
 //==============================================================================
 // juce_audio_devices flags:
@@ -108,7 +111,7 @@
     #endif
 
     #ifndef    JUCE_PLUGINHOST_VST3
-     #define   JUCE_PLUGINHOST_VST3 0
+     #define   JUCE_PLUGINHOST_VST3 3
     #endif
 
     #ifndef    JUCE_PLUGINHOST_AU

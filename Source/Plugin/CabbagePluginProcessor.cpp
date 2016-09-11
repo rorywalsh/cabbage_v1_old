@@ -1843,8 +1843,6 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
         }
 
         //update all layout control widgets
-        //currently this is only needed for table widgets as other layout controls
-        //don't use channel messages...
         const int guiLayoutCtrls_count = getGUILayoutCtrlsSize();
         for(int index=0; index<guiLayoutCtrls_count; ++index)
         {
@@ -2395,6 +2393,19 @@ void CabbagePluginAudioProcessor::setStateInformation (const void* data, int siz
                     //Logger::writeToLog(xmlState->getAttributeValue(i));
                     csound->SetChannel(channel.toUTF8().getAddress(), xmlState->getAttributeValue(i).toUTF8().getAddress());
                 }
+				else if(xmlState->getAttributeName(i).contains("texteditor"))
+				{
+					for(int c=0;c<guiLayoutCtrls.size();c++)
+					{
+						if(guiLayoutCtrls[c].getStringProp(CabbageIDs::name).equalsIgnoreCase(xmlState->getAttributeName(i)))
+						{
+							String text = xmlState->getAttributeValue(i);
+							cUtils::debug(text);
+							guiLayoutCtrls.getReference(c).setStringProp(CabbageIDs::text, xmlState->getAttributeValue(i));						
+						}
+					}
+					
+				}
                 else  if(xmlState->getAttributeName(i).contains("sourcebutton"))
                 {
                     //showMessage(xmlState->getAttributeValue(i));

@@ -153,6 +153,7 @@ public:
 
 private:
     WildcardFileFilter wildcardFilter;
+	RecentlyOpenedFilesList recentFiles;
     AudioDeviceManager::AudioDeviceSetup audioDeviceSetup;
     bool updateEditorOutputConsole;
     bool isUsingExternalEditor;

@@ -808,7 +808,7 @@ void StandaloneFilterWindow::buttonClicked (Button*)
     m.setLookAndFeel(lookAndFeel);
     subMenu.setLookAndFeel(lookAndFeel);
     PopupMenu recentFilesMenu;
-    RecentlyOpenedFilesList recentFiles;
+    
     Array<File> exampleFiles;
     recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
 
@@ -963,12 +963,12 @@ void StandaloneFilterWindow::buttonClicked (Button*)
         else
             subMenu.addItem(299, String("Use external editor"), true, true);
 
-//
-//
-//        if(getPreference(appProperties, "ShowNativeFileDialogues"))
-//            subMenu.addItem(300, String("Use Cabbage file dialogues"), true, false);
-//        else
-//            subMenu.addItem(300, String("Use Cabbage file dialogues"), true, true);
+
+
+        if(getPreference(appProperties, "ShowNativeFileDialogues"))
+            subMenu.addItem(300, String("Use Cabbage file dialogues"), true, false);
+        else
+            subMenu.addItem(300, String("Use Cabbage file dialogues"), true, true);
 			
         if(!getPreference(appProperties, "ShowAutoComplete"))
             subMenu.addItem(303, String("Show Auto-Complete"), true, false);
@@ -1527,7 +1527,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
     }
     else
     {
-        File currentDir = File(_csdfile);
+        File currentDir = recentFiles.getFile(0).getParentDirectory().getFullPathName();
 #ifdef MACOSX
 		bool showNative = cUtils::getPreference(appProperties, "ShowNativeFileDialogues");
         FileChooser openFC(String("Open a Cabbage .csd file..."), currentDir, String("*.csd;*.vst"), showNative);
@@ -1571,11 +1571,10 @@ void StandaloneFilterWindow::openFile(String _csdfile)
             setAlwaysOnTop(false);
 #endif
     }
-    RecentlyOpenedFilesList recentFiles;
+    
     recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
     recentFiles.addFile (csdFile);
-    appProperties->getUserSettings()->setValue ("recentlyOpenedFiles",
-            recentFiles.toString());
+    appProperties->getUserSettings()->setValue ("recentlyOpenedFiles", recentFiles.toString());
 }
 
 void StandaloneFilterWindow::saveFile()
@@ -1591,7 +1590,7 @@ void StandaloneFilterWindow::saveFile()
     }
 	
     resetFilter(true);
-    RecentlyOpenedFilesList recentFiles;
+
     recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
     recentFiles.addFile (csdFile);
     appProperties->getUserSettings()->setValue ("recentlyOpenedFiles",
@@ -1617,7 +1616,7 @@ void StandaloneFilterWindow::saveFileAs()
     else
         setAlwaysOnTop(false);
 
-    RecentlyOpenedFilesList recentFiles;
+    
     recentFiles.restoreFromString (appProperties->getUserSettings()->getValue ("recentlyOpenedFiles"));
     recentFiles.addFile (csdFile);
     appProperties->getUserSettings()->setValue ("recentlyOpenedFiles",

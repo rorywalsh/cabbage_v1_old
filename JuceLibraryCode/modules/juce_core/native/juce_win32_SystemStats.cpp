@@ -43,7 +43,7 @@ void Logger::outputDebugString (const String& text)
 
 static void callCPUID (int result[4], int infoType)
 {
-    __cpuid (result, infoType);
+    //__cpuid (result, infoType);
 }
 
 String SystemStats::getCpuVendor()

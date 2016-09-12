@@ -37,7 +37,7 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := -march=x86-64
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -DCabbage64Bit=1 -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32  -DCANONICAL -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
+  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I ../../JuceLibraryCode/modules -I $(VST_SDK) -I $(ASIO_SDK) -DCabbage64Bit=1 -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1 -DWIN32  -DCANONICAL -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -g -ggdb -O -Wno-reorder -Wwrite-strings -Wmain -std=gnu++0x -mstackrealign -static-libgcc -static-libstdc++ -static 
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY) -static
@@ -57,7 +57,7 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := -march=x86-64
     endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -DCabbage64Bit=1 -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DRELEASE=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1  -DCANONICAL -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
+  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I ../../JuceLibraryCode/modules -I $(VST_SDK) -I $(ASIO_SDK) -DCabbage64Bit=1 -DBUILD_DEBUGGER=1 -I $(CSOUND_INCLUDE) -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DRELEASE=1 -DJucePlugin_Build_Standalone=1 -DCabbage_GUI_Editor=1 -DCabbage_Build_Standalone=1  -DCANONICAL -DWIN32 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -O -Wno-reorder -Wwrite-strings -Wmain -std=gnu++0x -mstackrealign -static-libgcc -static-libstdc++ -static 
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY) -static

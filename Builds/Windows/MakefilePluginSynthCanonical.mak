@@ -35,7 +35,7 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := -march=pentium4
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -D "Cabbage_Plugin_Synth=1" -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DWIN32 -DCANONICAL -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
+  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I ../../JuceLibraryCode/modules -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -D "Cabbage_Plugin_Synth=1" -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJUCE_MINGW=1 -DUSE_DOUBLES=1 -DCSOUND6 -DWIN32 -DCANONICAL -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -g -ggdb -O -Wno-reorder -Wwrite-strings -Wmain -std=gnu++0x -mstackrealign -static-libgcc -static-libstdc++ -static
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += -L$(BINDIR) -L$(LIBDIR) -shared -fvisibility=hidden -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lpthread -lwsock32 $(CSOUND_LIBRARY) -static
@@ -54,7 +54,7 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := -march=pentium4
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -D "Cabbage_Plugin_Synth=1" -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJUCE_MINGW=1 -DCANONICAL -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
+  CPPFLAGS := $(DEPFLAGS) -I $(JUCE_LIBRARY_CODE) -I ../../JuceLibraryCode/modules -I $(VST_SDK) -I $(ASIO_SDK) -I $(CSOUND_INCLUDE) -D "Cabbage_Plugin_Synth=1" -D__MINGW32__=1 -D__MINGW_EXTENSION=1 -DJUCE_MINGW=1 -DCANONICAL -DUSE_DOUBLES=1 -DCSOUND6 -DUSE_DOUBLE=1 -DJUCER_CODEBLOCKS_20734A5D=1
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -O -Wwrite-strings -Wno-reorder -std=gnu++0x -static-libgcc -static-libstdc++ -mstackrealign -static
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += -L$(BINDIR) -L$(LIBDIR) -shared -fvisibility=hidden -lgdi32 -luser32 -lkernel32 -lcomctl32 -lcomdlg32 -limm32 -lole32 -loleaut32 -lrpcrt4 -lshlwapi -luuid -lversion -lwininet -lwinmm -lws2_32 -lwsock32 $(CSOUND_LIBRARY)

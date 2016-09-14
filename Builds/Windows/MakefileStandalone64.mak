@@ -72,7 +72,6 @@ OBJECTS := \
   $(OBJDIR)/CabbagePropertiesDialog_5e61b3fd.o \
   $(OBJDIR)/CabbageTable_d003e736.o \
   $(OBJDIR)/ComponentLayoutEditor_aa38c835.o \
-  $(OBJDIR)/DirectoryContentsComponent_616f5a9f.o \
   $(OBJDIR)/CodeEditor_bb1e171d.o \
   $(OBJDIR)/CodeWindow_86e6d820.o \
   $(OBJDIR)/CabbageAudioDeviceSelectorComponent_86e6d820.o \
@@ -179,11 +178,6 @@ $(OBJDIR)/CabbageCustomWidgets_35a2sd62.o: ../../Source/CabbageCustomWidgets.cpp
 $(OBJDIR)/ComponentLayoutEditor_aa38c835.o: ../../Source/ComponentLayoutEditor.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling ComponentLayoutEditor.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/DirectoryContentsComponent_616f5a9f.o: ../../Source/DirectoryContentsComponent.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling DirectoryContentsComponent.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/CodeEditor_bb1e171d.o: ../../Source/Editor/CodeEditor.cpp

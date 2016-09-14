@@ -359,6 +359,44 @@ public:
         strArray.add(str2Juce(str.substr(0, 100)));
         return strArray;
     }
+	
+
+//==========================================================================================
+	static void addFilesToPluginBundle(File csdFile, File exportDir)
+    {
+		Array<File> invalidFiles;
+		StringArray csdArray;
+		File parentDirectory = csdFile.getParentDirectory();
+		csdArray.addLines(csdFile.loadFileAsString());
+		for(int i=0; i<csdArray.size(); i++)
+		{
+			if(csdArray[i].contains("<CabbageIncludes>"))
+			{
+				int lineIndex = 1;
+				while(!csdArray[i+lineIndex].contains("</CabbageIncludes>") && i+lineIndex<csdArray.size())
+				{
+					File includeFile(parentDirectory.getFullPathName()+"/"+csdArray[i+lineIndex]);					
+					File newFile(exportDir.getParentDirectory().getFullPathName()+"/"+csdArray[i+lineIndex]);
+					if(includeFile.exists())
+					{
+						includeFile.copyFileTo(newFile);
+					}
+					else{
+						invalidFiles.add(includeFile);
+						showMessage("Some files couldn't not be found. Please make sure all include files are valid");
+					}
+					lineIndex++;
+				}
+				
+//					CabbageGUIType cAttr(csdArray[i], -99);
+//					this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));
+//					this->getProperties().set("fontcolour", cAttr.getStringProp(CabbageIDs::fontcolour));
+//					this->getProperties().set("titlebarcolour", cAttr.getStringProp(CabbageIDs::titlebarcolour));
+//					this->lookAndFeelChanged();
+//					setName(cAttr.getStringProp(CabbageIDs::caption));
+			}
+		}
+	}
 //==========================================================================================
     static Array<File> launchFileBrowser(String title, WildcardFileFilter filter, String fileType, int mode, File initialDir, bool useNative, LookAndFeel *look)
     {

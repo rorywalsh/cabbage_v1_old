@@ -1630,6 +1630,9 @@ void StandaloneFilterWindow::saveFileAs()
 //==============================================================================
 int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileName)
 {
+	
+	
+	
     File dll;
     File loc_csdFile;
 #ifndef LINUX
@@ -1702,6 +1705,8 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
                 bundle.setAsCurrentWorkingDirectory();
                 (genFunc)(filename.toRawUTF8());
                 oldCWD.setAsCurrentWorkingDirectory();
+				//bunlde all auxilary files
+				addFilesToPluginBundle(csdFile, dll);	
             }
             else
             {
@@ -1712,7 +1717,13 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
                 File loc_csdFile(selectedFile[0].withFileExtension(".csd").getFullPathName());
                 loc_csdFile.replaceWithText(csdFile.loadFileAsString());
                 setUniquePluginID(dll, loc_csdFile, false);
+				//bunlde all auxilary files
+				addFilesToPluginBundle(csdFile, dll);	
             }
+			
+
+
+			
         }
     }
 #elif WIN32
@@ -1767,6 +1778,8 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         int val = getPreference(appProperties, "DisablePluginInfo");
         if(!val)
             m_ShowMessage(info, lookAndFeel);
+			
+		addFilesToPluginBundle(csdFile, dll);		
     }
 
 #endif

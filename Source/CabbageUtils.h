@@ -362,9 +362,10 @@ public:
 	
 
 //==========================================================================================
-	static void addFilesToPluginBundle(File csdFile, File exportDir)
+	static void addFilesToPluginBundle(File csdFile, File exportDir, LookAndFeel *look)
     {
 		Array<File> invalidFiles;
+        bool invalidFilename = false;
 		StringArray csdArray;
 		File parentDirectory = csdFile.getParentDirectory();
 		csdArray.addLines(csdFile.loadFileAsString());
@@ -379,14 +380,23 @@ public:
 					File newFile(exportDir.getParentDirectory().getFullPathName()+"/"+csdArray[i+lineIndex]);
 					if(includeFile.exists())
 					{
+                        invalidFilename = true;
 						includeFile.copyFileTo(newFile);
 					}
 					else{
 						invalidFiles.add(includeFile);
-						showMessage("Some files couldn't not be found. Please make sure all include files are valid");
 					}
 					lineIndex++;
 				}
+                
+                if(invalidFilename)
+                {
+                    StringArray invalidFileNames;
+                    for(int y=0;y<invalidFiles.size();y++)
+                        invalidFileNames.add(invalidFiles[y].getFullPathName());
+                    showMessage("Cabbage could not bundle the following files\n"+invalidFileNames.joinIntoString("\n")+"\nPlease make sure they are located in the same folder as your .csd file.", look);
+                }
+                
 				
 //					CabbageGUIType cAttr(csdArray[i], -99);
 //					this->getProperties().set("colour", cAttr.getStringProp(CabbageIDs::colour));

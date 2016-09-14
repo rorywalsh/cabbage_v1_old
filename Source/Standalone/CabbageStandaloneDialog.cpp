@@ -1706,7 +1706,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
                 (genFunc)(filename.toRawUTF8());
                 oldCWD.setAsCurrentWorkingDirectory();
 				//bunlde all auxilary files
-				addFilesToPluginBundle(csdFile, dll);	
+				addFilesToPluginBundle(csdFile, dll, lookAndFeel);
             }
             else
             {
@@ -1718,7 +1718,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
                 loc_csdFile.replaceWithText(csdFile.loadFileAsString());
                 setUniquePluginID(dll, loc_csdFile, false);
 				//bunlde all auxilary files
-				addFilesToPluginBundle(csdFile, dll);	
+				addFilesToPluginBundle(csdFile, dll, lookAndFeel);
             }
 			
 
@@ -1779,7 +1779,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         if(!val)
             m_ShowMessage(info, lookAndFeel);
 			
-		addFilesToPluginBundle(csdFile, dll);		
+		addFilesToPluginBundle(csdFile, dll, lookAndFeel);
     }
 
 #endif
@@ -1852,6 +1852,9 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
 
         File loc_csdFile(dll.getFullPathName()+String("/Contents/")+saveFC.getResult().getFileNameWithoutExtension()+String(".csd"));
         loc_csdFile.replaceWithText(csdFile.loadFileAsString());
+        
+        addFilesToPluginBundle(csdFile, loc_csdFile, lookAndFeel);
+        
         //showMessage(loc_csdFile.getFullPathName());
         //showMessage(csdFile.loadFileAsString());
         csdFile = loc_csdFile;
@@ -1881,6 +1884,7 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         if(!val)
             showMessage(info, lookAndFeel);
 
+        
 
     }
 

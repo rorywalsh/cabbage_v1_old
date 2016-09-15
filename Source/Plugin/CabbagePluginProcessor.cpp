@@ -165,6 +165,11 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile, Poin
 #else
         File thisFile(File::getSpecialLocation(File::currentExecutableFile));
         csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
+		if (!csdFile.existsAsFile())
+		{
+			csdFile = File(thisFile.getParentDirectory().getFullPathName()+"/"+thisFile.getFileNameWithoutExtension()+"_data/"+thisFile.withFileExtension(String(".csd")).getFileName());
+			cUtils::debug(csdFile.getFullPathName());
+		}
 #endif
 
         //Logger::writeToLog(File::getSpecialLocation(File::currentExecutableFile).getFullPathName());

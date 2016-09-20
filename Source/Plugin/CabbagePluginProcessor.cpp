@@ -138,16 +138,17 @@ CabbagePluginAudioProcessor::CabbagePluginAudioProcessor(String sourcefile, Poin
 
     if(!File(sourcefile).existsAsFile())
     {
-#ifdef MACOSX
-#ifdef CABBAGE_AU
+#if defined(MACOSX)
+
+    #ifdef CABBAGE_AU
         csdFile = File("~/Music/CabbageAudioUnit/startup.csd");
 
-#else
+    #else
         String osxCSD = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+String("/Contents/")+File::getSpecialLocation(File::currentApplicationFile).getFileName();
         File thisFile(osxCSD);
         Logger::writeToLog("MACOSX defined OK");
         csdFile = thisFile.withFileExtension(String(".csd")).getFullPathName();
-#endif
+    #endif
         //cUtils::showMessage(csdFile.getFullPathName());
 //#elseif AndroidBuild
 //        File inFile(File::getSpecialLocation(File::currentApplicationFile));
@@ -279,8 +280,8 @@ void CabbagePluginAudioProcessor::initAllChannels()
         //		Logger::writeToLog(guiCtrls.getReference(i).getStringProp(CabbageIDs::channel)+": "+String(guiCtrls[i].getNumProp(CabbageIDs::value)));
         if(guiCtrls[i].getStringProp("channeltype")=="string")
             //deal with combobox strings..
-            csound->SetChannel(guiCtrls[i].getStringProp(CabbageIDs::channel).toUTF8(), "");
-        //									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
+            csound->SetChannel(guiCtrls[i].getStringProp(CabbageIDs::channel).toUTF8(),
+        									guiCtrls.getReference(i).getStringArrayPropValue("text", guiCtrls[i].getNumProp(CabbageIDs::value)-1).toUTF8().getAddress());
         else
         {
             if(guiCtrls[i].getStringProp(CabbageIDs::type)==CabbageIDs::hrange ||
@@ -428,7 +429,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
         keyboardState.reset();
 
         //simple hack to allow tables to be set up correctly.
-        csound->PerformKsmps();
+        //csound->PerformKsmps();
         csound->SetScoreOffsetSeconds(0);
         csound->RewindScore();
         csdKsmps = csound->GetKsmps();

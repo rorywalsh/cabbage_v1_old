@@ -312,20 +312,24 @@ void StandaloneFilterWindow::timerCallback()
     }
 
 
-    if(outputConsole)
-        if(outputConsole->getText()!=filter->getCsoundOutput())
-            outputConsole->setText(filter->getCsoundOutput());
-
-    if(cabbageCsoundEditor->isVisible())
+    if(cabbageCsoundEditor->isVisible() || outputConsole)
     {
-        if(cabbageCsoundEditor->csoundOutputComponent->getText()!=filter->getCsoundOutput())
+        
+        const String csoundOutputString = filter->getCsoundOutput();
+        consoleMessages+=csoundOutputString;
+        if(csoundOutputString.length()>0)
         {
-            cabbageCsoundEditor->csoundOutputComponent->setText(filter->getCsoundOutput());
-            filter->clearDebugMessage();
-        }
+            if(outputConsole)
+                outputConsole->setText(csoundOutputString);
+
+            if(cabbageCsoundEditor->isVisible())
+            {
+            cabbageCsoundEditor->csoundOutputComponent->setText(consoleMessages);
+            }
 #ifdef BUILD_DEBUGGER
         cabbageCsoundEditor->csoundDebuggerComponent->setText(filter->getDebuggerOutput());
 #endif
+        }
     }
 
 //	updateEditorOutputConsole=false;

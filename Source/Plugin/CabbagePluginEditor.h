@@ -289,6 +289,7 @@ private:
     ScopedPointer<Label> debugLabel;
     StringArray scoreEvents;
     String globalSVGPath;
+    String consoleMessages;
     Array<int> radioGroups;
     ScopedPointer<BubbleMessageComponent> popupBubble;
 

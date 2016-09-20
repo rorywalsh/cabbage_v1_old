@@ -4638,10 +4638,12 @@ void CabbagePluginAudioProcessorEditor::timerCallback()
     CabbageTextbox* object = dynamic_cast<CabbageTextbox*>(layoutComps[csoundOutputWidget]);
     if(object)
     {
-        if(object->editor->getText()!=getFilter()->getCsoundOutput())
+        const String csoundOutputString = getFilter()->getCsoundOutput();
+        consoleMessages+=csoundOutputString;
+        if(csoundOutputString.length()>0)
         {
-            object->editor->setText(getFilter()->getCsoundOutput());
-            object->editor->setCaretPosition(object->editor->getText().length());
+            object->editor->setText(consoleMessages);
+            object->editor->setCaretPosition(consoleMessages.length());
         }
 
     }

@@ -1433,7 +1433,7 @@ void CabbagePluginAudioProcessor::stopRecording()
 String CabbagePluginAudioProcessor::getCsoundOutput()
 {
     const int messageCnt = csound->GetMessageCnt();
-
+    csoundOutput = "";
     if(messageCnt==0)
         return csoundOutput;
 

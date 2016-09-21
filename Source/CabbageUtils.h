@@ -1142,6 +1142,39 @@ public:
         return Image::null;
     }
 
+//====================================================================================
+    bool isPluginCsd(File csdfile)
+    {
+#if defined(MACOSX)
+        {
+            File binary(csdfile.withFileExtension("").getFullPathName());
+            if(binary.existsAsFile())
+                return true;
+        }
+        {
+            File binary(csdfile.getFullPathName()+"/Contents/MacOS/"+csdfile.getFileNameWithoutExtension());
+            if(binary.existsAsFile())
+              return true;
+        }
+        {
+            File binary(csdfile.getParentDirectory().getFullPathName()+"/MacOS/"+csdfile.getFileNameWithoutExtension());
+            if(binary.existsAsFile())
+                return true;
+        }
+        
+        return false;
+#elif defined(WIN32)
+        if(File(csdfile.withFileExtension("dll")).existsAsFile())
+            return true;
+        else
+            return false;
+#else
+        if(File(csdfile.withFileExtension("so")).existsAsFile())
+            return true;
+        else
+            return false;        
+#endif
+    }
 //========= Text button image ========================================================
     static Image drawTextButtonImage(float width, float height, bool isButtonDown, Colour colour,
                                      String svgFile, int svgWidth, int svgHeight, bool on)

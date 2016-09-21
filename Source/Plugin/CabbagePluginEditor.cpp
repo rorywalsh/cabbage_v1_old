@@ -2291,8 +2291,12 @@ void CabbagePluginAudioProcessorEditor::InsertCsoundOutput(CabbageGUIType &cAttr
     layoutComps[idx]->getProperties().set(CabbageIDs::index, idx);
     //set visiblilty
     layoutComps[idx]->setVisible((cAttr.getNumProp(CabbageIDs::visible)==1 ? true : false));
+#ifdef Cabbage_Build_Standalone
+    static_cast<CabbageTextbox*>(layoutComps[idx])->editor->setText("You are currently in 'Standalone' mode.\nThe csoundoutput widget will only be filled with Csound messages when used in a plugin.");
+#else
     static_cast<CabbageTextbox*>(layoutComps[idx])->editor->setText(getFilter()->getCsoundOutput());
     startTimer(100);
+#endif
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //      Textbox widget.
@@ -4638,6 +4642,9 @@ void CabbagePluginAudioProcessorEditor::timerCallback()
     CabbageTextbox* object = dynamic_cast<CabbageTextbox*>(layoutComps[csoundOutputWidget]);
     if(object)
     {
+#ifdef Cabbage_Build_Standalone
+        object->editor->setText("You are currently in 'Standalone' mode.\nThe csoundoutput widget will only be filled\nwith Csound messages when used in a plugin.");
+#else
         const String csoundOutputString = getFilter()->getCsoundOutput();
         consoleMessages+=csoundOutputString;
         if(csoundOutputString.length()>0)
@@ -4645,7 +4652,7 @@ void CabbagePluginAudioProcessorEditor::timerCallback()
             object->editor->setText(consoleMessages);
             object->editor->setCaretPosition(consoleMessages.length());
         }
-
+#endif
     }
 
 }

@@ -590,7 +590,10 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         filter->addActionListener(this);
         if(cabbageCsoundEditor)
         {
-            cabbageCsoundEditor->setName(csdFile.getFileName());
+            bool isVST = cUtils::isPluginCsd(csdFile);
+            cabbageCsoundEditor->markAsVSTCsd(isVST);
+            String isVSTFile = (isVST == true ? " - VST Plugin" : "");
+            cabbageCsoundEditor->setName(csdFile.getFileName() + isVSTFile);
             cabbageCsoundEditor->textEditor->editor[0]->loadContent(csdFile.loadFileAsString());
             cabbageCsoundEditor->textEditor->editor[0]->parseTextForVariables();
         }
@@ -649,7 +652,11 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 
     if(cabbageCsoundEditor)
     {
-        cabbageCsoundEditor->setName(csdFile.getFileName());
+        bool isVST = cUtils::isPluginCsd(csdFile);
+        cabbageCsoundEditor->markAsVSTCsd(isVST);
+        String isVSTFile = (isVST == true ? " - VST Plugin" : "");
+        cabbageCsoundEditor->setName(csdFile.getFileName() + isVSTFile);
+
         cabbageCsoundEditor->setText(csdFile.loadFileAsString(), csdFile.getFullPathName());
 
         cabbageCsoundEditor->textEditor->textChanged = false;
@@ -1521,8 +1528,8 @@ void StandaloneFilterWindow::openTextEditor()
 void StandaloneFilterWindow::openFile(String _csdfile)
 {
     if(File(_csdfile).existsAsFile())
-    {
-        cUtils::debug("Foudn teh file to open"+_csdfile);
+    {        
+        cUtils::debug("Found the file to open"+_csdfile);
         csdFile = File(_csdfile);
         originalCsdFile = csdFile;
         lastSaveTime = csdFile.getLastModificationTime();
@@ -1541,6 +1548,7 @@ void StandaloneFilterWindow::openFile(String _csdfile)
             originalCsdFile = openFC.getResult();
             lastSaveTime = csdFile.getLastModificationTime();
             csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
+            
             if(csdFile.getFileExtension()==(".vst"))
             {
                 String csd = csdFile.getFullPathName();

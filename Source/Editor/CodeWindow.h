@@ -229,6 +229,15 @@ public:
         textEditor->openFiles.getReference(0) = file;
     }
 
+    void markAsVSTCsd(bool mark)
+    {
+        if(mark)
+        {
+            this->getProperties().set("fontcolour", Colours::white.toString());
+            this->getProperties().set("titlebarcolour", Colours::cornflowerblue.darker().toString());
+            this->lookAndFeelChanged();
+        }
+    }
 
     String getText()
     {

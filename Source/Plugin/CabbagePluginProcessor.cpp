@@ -429,7 +429,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
         keyboardState.reset();
 
         //simple hack to allow tables to be set up correctly.
-        //csound->PerformKsmps();
+        csound->PerformKsmps();
         csound->SetScoreOffsetSeconds(0);
         csound->RewindScore();
         csdKsmps = csound->GetKsmps();

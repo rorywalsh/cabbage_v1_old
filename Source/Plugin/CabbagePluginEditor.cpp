@@ -2211,8 +2211,11 @@ void CabbagePluginAudioProcessorEditor::setupWindow(CabbageGUIType &cAttr)
     int width = cAttr.getNumProp(CabbageIDs::width);
     int height = cAttr.getNumProp(CabbageIDs::height);
 
+#ifdef MACOSX
+    globalSVGPath = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+String("/Contents/");
+#else
     globalSVGPath = cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgpath), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());
-
+#endif
 //   globalSVGPath = cAttr.getStringProp(CabbageIDs::svgpath);
 
     showScrollbars = (bool)cAttr.getNumProp(CabbageIDs::scrollbars);

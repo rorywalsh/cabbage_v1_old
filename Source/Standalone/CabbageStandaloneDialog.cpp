@@ -84,8 +84,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     if (globalSettings != nullptr)
         savedState = globalSettings->getXmlValue ("audioSetup");
 
-    deviceManager->initialise(2,
-                              2, savedState, false);
+    deviceManager->initialise(8,
+                              8, savedState, false);
 
 
     const int x = globalSettings->getIntValue ("windowX", -100);
@@ -598,9 +598,11 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
             cabbageCsoundEditor->textEditor->editor[0]->parseTextForVariables();
         }
 
-        deviceManager->initialise(2,
-                                  2, savedState, false);
+        deviceManager->initialise(8,
+                                  8, savedState, false);
 
+        //deviceManager->getCurrentAudioDevice()->getActiveInputChannels();
+        
 		if(filter->csoundCompiledOk())
 		{
 			firstFileOpenedOk=true;
@@ -619,6 +621,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 
 			if (filter != nullptr)
 			{
+                
 				if (deviceManager != nullptr)
 				{
 					player.setProcessor (filter);

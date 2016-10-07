@@ -376,14 +376,13 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
 
 
     csoundChanList = NULL;
-    numCsoundChannels = 0;
     csndIndex = 32;
     startTimer(20);
 
     csoundParams = nullptr;
     csoundParams = new CSOUND_PARAMS();
 #if defined(Cabbage_Build_Standalone) || defined(AndroidBuild)
-    csoundParams->nchnls_override = 2;
+    //csoundParams->nchnls_override = 2;
 #else
     csoundParams->nchnls_override = this->getNumOutputChannels();
 #endif
@@ -408,6 +407,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
     setScreenMacros();
     addMacros(csdFile.loadFileAsString());
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
+    numCsoundChannels = csound->GetNchnls();
     //csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
     csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
     if(csCompileResult==OK)
@@ -541,7 +541,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
     csoundParams = new CSOUND_PARAMS();
 
 #if defined(Cabbage_Build_Standalone) || defined(AndroidBuild)
-    csoundParams->nchnls_override = 2;
+    //csoundParams->nchnls_override = 2;
 #else
     csoundParams->nchnls_override = this->getNumOutputChannels();
 #endif
@@ -562,7 +562,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
     addMacros(file.loadFileAsString());
     csound->SetHostImplementedMIDIIO(true);
     xyAutosCreated = false;
-    numCsoundChannels = 0;
+    
 
 
     CSspout = nullptr;
@@ -571,6 +571,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 
 
     csCompileResult = csound->Compile(const_cast<char*>(file.getFullPathName().toUTF8().getAddress()));
+    numCsoundChannels = csound->GetNchnls();
     file.getParentDirectory().setAsCurrentWorkingDirectory();
 
     initAllChannels();
@@ -2097,7 +2098,7 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     const int numSamples = buffer.getNumSamples();
 
 #if defined(Cabbage_Build_Standalone) || defined(AndroidBuild)
-    int output_channel_count = 2;
+    int output_channel_count = numCsoundChannels;
 #else
     int output_channel_count = getNumOutputChannels();
 #endif

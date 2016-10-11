@@ -407,7 +407,7 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
     setScreenMacros();
     addMacros(csdFile.loadFileAsString());
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
-    numCsoundChannels = csound->GetNchnls();
+    numCsoundChannels = csound->GetNchnls()>this->getNumOutputChannels()? this->getNumOutputChannels():csound->GetNchnls();
     //csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
     csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
     if(csCompileResult==OK)
@@ -571,7 +571,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 
 
     csCompileResult = csound->Compile(const_cast<char*>(file.getFullPathName().toUTF8().getAddress()));
-    numCsoundChannels = csound->GetNchnls();
+	numCsoundChannels = csound->GetNchnls()>this->getNumOutputChannels()? this->getNumOutputChannels():csound->GetNchnls();
     file.getParentDirectory().setAsCurrentWorkingDirectory();
 
     initAllChannels();
@@ -2098,9 +2098,9 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     const int numSamples = buffer.getNumSamples();
 
 #if defined(Cabbage_Build_Standalone) || defined(AndroidBuild)
-    int output_channel_count = numCsoundChannels;
+    const int output_channel_count = numCsoundChannels;
 #else
-    int output_channel_count = getNumOutputChannels();
+    const int output_channel_count = getNumOutputChannels();
 #endif
 
     float samp;

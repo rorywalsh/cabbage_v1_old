@@ -111,7 +111,7 @@
     #endif
 
     #ifndef    JUCE_PLUGINHOST_VST3
-     #define   JUCE_PLUGINHOST_VST3 3
+     #define   JUCE_PLUGINHOST_VST3 0
     #endif
 
     #ifndef    JUCE_PLUGINHOST_AU
@@ -236,13 +236,13 @@
 	#endif
 #else
 	#ifndef  JucePlugin_MaxNumInputChannels
-	#define JucePlugin_MaxNumInputChannels    2
+	#define JucePlugin_MaxNumInputChannels    8
 	#endif
 	#ifndef  JucePlugin_MaxNumOutputChannels
-	#define JucePlugin_MaxNumOutputChannels   2
+	#define JucePlugin_MaxNumOutputChannels   8
 	#endif
 	#ifndef  JucePlugin_PreferredChannelConfigurations
-	#define JucePlugin_PreferredChannelConfigurations  {2,2}
+	#define JucePlugin_PreferredChannelConfigurations  {2,2}, {4,4}
 	#endif
 #endif
 

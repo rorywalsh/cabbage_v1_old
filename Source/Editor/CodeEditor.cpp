@@ -863,10 +863,12 @@ void CsoundCodeEditorComponent::mouseDoubleClick (const MouseEvent& e)
     selectRegion (tokenStart, tokenEnd);
 
     String word = getDocument().getTextBetween(tokenStart, tokenEnd);
-
+	if(word.length()==0)
+		return;
 
     int instances = 0;
     selectedTokens.clear();
+	
 	
 	for(int i = 0; i<2;i++)
 		while(findText(word, true)!=-2);

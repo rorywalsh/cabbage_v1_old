@@ -853,7 +853,9 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                     if(layoutCtrlsArray.contains(tokes[0]))
                     {
                         CabbageGUIType cAttr(csdLine.trimEnd(), guiID);
+                        cUtils::debug(getCsoundInputFile().getParentDirectory().getFullPathName());
                         cAttr.setStringProp(CabbageIDs::parentdir, getCsoundInputFile().getParentDirectory().getFullPathName());
+                        
 #ifdef AndroidBuild
                         cAttr.scaleWidget(scale);
 #endif
@@ -928,6 +930,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                     else if(ctrlsArray.contains(tokes[0]))
                     {
                         CabbageGUIType cAttr(csdLine.trimEnd(), guiID);
+                        cUtils::debug(getCsoundInputFile().getParentDirectory().getFullPathName());
                         cAttr.setStringProp(CabbageIDs::parentdir, getCsoundInputFile().getParentDirectory().getFullPathName());
 #ifdef AndroidBuild
                         cAttr.scaleWidget(scale);

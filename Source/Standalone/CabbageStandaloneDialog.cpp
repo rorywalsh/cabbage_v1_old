@@ -758,8 +758,8 @@ void StandaloneFilterWindow::showAudioSettingsDialog()
     const int numOuts = JucePlugin_MaxNumOutputChannels;//filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutputChannels : filter->getNumOutputChannels();
     filter->stopProcessing = true;
 
-    AudioDeviceSelectorComponent selectorComp (*deviceManager,
-            numIns, numIns, numOuts, numOuts,
+    AudioDeviceSelectorComponent selectorComp(*deviceManager,
+            0, numIns, 2, numOuts,
             true, false, true, false);
 
     selectorComp.setSize (400, 550);

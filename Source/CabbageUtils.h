@@ -380,10 +380,11 @@ public:
 					File newFile(exportDir.getParentDirectory().getFullPathName()+"/"+csdArray[i+lineIndex]);
 					if(includeFile.exists())
 					{
-                        invalidFilename = true;
 						includeFile.copyFileTo(newFile);
 					}
 					else{
+                        invalidFilename = true;
+                        cUtils::debug(includeFile.getFullPathName());
 						invalidFiles.add(includeFile);
 					}
 					lineIndex++;
@@ -1771,12 +1772,14 @@ public:
             if(file==".")
                 file="";
 
+            
+            cUtils::debug(fullPath);
 #ifdef MACOSX
-#ifndef Cabbage_Build_Standalone
-            filePath.append(String("/Contents/")+file, 1024);
-#else
+//#ifndef Cabbage_Build_Standalone
+//            filePath.append(String("/Contents/")+file, 1024);
+//#else
             filePath = fullPath+String("//")+file;
-#endif
+//#endif
 #endif
 #ifdef LINUX
             filePath = fullPath+String("/")+file;;

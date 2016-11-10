@@ -51,7 +51,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
       tableBuffer(2, 44100),
       showScrollbars(true)
 {
-
+	
     //setup swatches for colour selector.
     swatchColours.set(0, Colour(0xFF000000));
     swatchColours.set(1, Colour(0xFFFFFFFF));

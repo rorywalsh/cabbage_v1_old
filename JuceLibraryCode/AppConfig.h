@@ -242,7 +242,7 @@
 	#define JucePlugin_MaxNumOutputChannels   8
 	#endif
 	#ifndef  JucePlugin_PreferredChannelConfigurations
-	#define JucePlugin_PreferredChannelConfigurations  {2,2}, {4,4}
+	#define JucePlugin_PreferredChannelConfigurations  {2,2}
 	#endif
 #endif
 

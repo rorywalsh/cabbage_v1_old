@@ -1892,7 +1892,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 csound->SetChannel(guiLayoutCtrl.getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
             }
         }
-        if(shouldUpdate || shouldUpdateSignalDisplay())
+        //if(shouldUpdate || shouldUpdateSignalDisplay())
             sendChangeMessage();
     }
 #endif

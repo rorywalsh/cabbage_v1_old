@@ -51,7 +51,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
       tableBuffer(2, 44100),
       showScrollbars(true)
 {
-
+	
     //setup swatches for colour selector.
     swatchColours.set(0, Colour(0xFF000000));
     swatchColours.set(1, Colour(0xFFFFFFFF));
@@ -2973,7 +2973,11 @@ void CabbagePluginAudioProcessorEditor::InsertRangeSlider(CabbageGUIType &cAttr)
     rangeSlider->getProperties().set(CabbageIDs::index, idx);
 
 
-
+	if(Slider* slider = dynamic_cast<Slider*>(&rangeSlider->getSlider()))
+	{
+		int test;
+		cUtils::debug("cast was a succss");
+	}
     rangeSlider->getSlider().setIndex(idx);
 
     comps.add(rangeSlider);
@@ -4082,7 +4086,10 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
 
 
     // make sure that it's actually our type of XML object..
-    if (xml->hasTagName (getFilter()->getCsoundInputFile().getFileNameWithoutExtension().replace(" ", "_")))
+	const String filename = getFilter()->getCsoundInputFile().getFileNameWithoutExtension();
+
+	
+    if (xml->hasTagName (filename.replace(" ", "_")))
     {
         for(int i=0; i<getFilter()->getNumParameters(); i++)
         {
@@ -4095,7 +4102,7 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
             //Logger::writeToLog("inValue:"+String(newValue));
             float min = getFilter()->getGUICtrls(i).getNumProp("min");
 
-            if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="rslider")
+            //if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="rslider")
                 //Logger::writeToLog("slider");
 
                 if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="xypad")

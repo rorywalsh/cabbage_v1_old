@@ -749,7 +749,7 @@ double RangeSlider::getSkewedValue(double proportion)
 void RangeSlider::sendValuesToCsound(double val1, double val2, int thumb)
 {
 
-    if(owner->getFilter()->csoundCompiledOk()==OK)
+    if(owner->getFilter()->csoundCompiledOk())
     {
 #ifdef Cabbage_Build_Standalone
         if(thumb==1)

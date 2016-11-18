@@ -232,7 +232,7 @@ public:
 
     ~CabbageRangeSlider() {};
 
-private:
+
     void mouseDown(const MouseEvent& event)
     {
         isDraggingRange=false;
@@ -353,6 +353,8 @@ private:
             }
         }
     }
+
+private:
 
     int topThumbDownPos, bottomThumbDownPos, rightThumbDownPos, leftThumbDownPos;
     const int thumbWidth;

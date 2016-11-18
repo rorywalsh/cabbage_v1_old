@@ -2973,7 +2973,11 @@ void CabbagePluginAudioProcessorEditor::InsertRangeSlider(CabbageGUIType &cAttr)
     rangeSlider->getProperties().set(CabbageIDs::index, idx);
 
 
-
+	if(Slider* slider = dynamic_cast<Slider*>(&rangeSlider->getSlider()))
+	{
+		int test;
+		cUtils::debug("cast was a succss");
+	}
     rangeSlider->getSlider().setIndex(idx);
 
     comps.add(rangeSlider);

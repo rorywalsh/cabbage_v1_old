@@ -51,7 +51,7 @@ CabbagePluginAudioProcessorEditor::CabbagePluginAudioProcessorEditor (CabbagePlu
       tableBuffer(2, 44100),
       showScrollbars(true)
 {
-
+	
     //setup swatches for colour selector.
     swatchColours.set(0, Colour(0xFF000000));
     swatchColours.set(1, Colour(0xFFFFFFFF));
@@ -2211,8 +2211,11 @@ void CabbagePluginAudioProcessorEditor::setupWindow(CabbageGUIType &cAttr)
     int width = cAttr.getNumProp(CabbageIDs::width);
     int height = cAttr.getNumProp(CabbageIDs::height);
 
+#ifdef MACOSX
+    globalSVGPath = File::getSpecialLocation(File::currentApplicationFile).getFullPathName()+String("/Contents/");
+#else
     globalSVGPath = cUtils::returnFullPathForFile(cAttr.getStringProp(CabbageIDs::svgpath), getFilter()->getCsoundInputFile().getParentDirectory().getFullPathName());
-
+#endif
 //   globalSVGPath = cAttr.getStringProp(CabbageIDs::svgpath);
 
     showScrollbars = (bool)cAttr.getNumProp(CabbageIDs::scrollbars);
@@ -4075,7 +4078,10 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
 
 
     // make sure that it's actually our type of XML object..
-    if (xml->hasTagName (getFilter()->getCsoundInputFile().getFileNameWithoutExtension().replace(" ", "_")))
+	const String filename = getFilter()->getCsoundInputFile().getFileNameWithoutExtension();
+
+	
+    if (xml->hasTagName (filename.replace(" ", "_")))
     {
         for(int i=0; i<getFilter()->getNumParameters(); i++)
         {
@@ -4088,7 +4094,7 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
             //Logger::writeToLog("inValue:"+String(newValue));
             float min = getFilter()->getGUICtrls(i).getNumProp("min");
 
-            if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="rslider")
+            //if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="rslider")
                 //Logger::writeToLog("slider");
 
                 if(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="xypad")

@@ -93,7 +93,7 @@ public:
         add("snapshot");
         add("table");
         add("pvsview");
-        add("hostrecording");
+        add("hostVa	ecording");
         add("directorylist");
         add("transport");
         add("groupbox");

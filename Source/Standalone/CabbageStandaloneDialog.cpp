@@ -84,8 +84,8 @@ StandaloneFilterWindow::StandaloneFilterWindow (const String& title,
     if (globalSettings != nullptr)
         savedState = globalSettings->getXmlValue ("audioSetup");
 
-    deviceManager->initialise(2,
-                              2, savedState, false);
+    deviceManager->initialise(8,
+                              8, savedState, false);
 
 
     const int x = globalSettings->getIntValue ("windowX", -100);
@@ -586,6 +586,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
             savedState = globalSettings->getXmlValue ("audioSetup");
 
         filter = createCabbagePluginFilter(csdFile.getFullPathName(), false, AUDIO_PLUGIN);
+		filter->setPlayConfigDetails(8, 8, 44100, 256);
         filter->addChangeListener(this);
         filter->addActionListener(this);
         if(cabbageCsoundEditor)
@@ -601,6 +602,10 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
         deviceManager->initialise(2,
                                   2, savedState, false);
 
+//        StringArray chans = deviceManager->getCurrentAudioDevice()->getOutputChannelNames();
+//		for(int i=0;i<chans.size();i++)
+//			cUtils::debug(chans[i]);
+        
 		if(filter->csoundCompiledOk())
 		{
 			firstFileOpenedOk=true;
@@ -619,6 +624,7 @@ void StandaloneFilterWindow::resetFilter(bool shouldResetFilter)
 
 			if (filter != nullptr)
 			{
+                
 				if (deviceManager != nullptr)
 				{
 					player.setProcessor (filter);
@@ -748,12 +754,12 @@ PropertySet* StandaloneFilterWindow::getGlobalSettings()
 
 void StandaloneFilterWindow::showAudioSettingsDialog()
 {
-    const int numIns = filter->getNumInputChannels() <= 0 ? JucePlugin_MaxNumInputChannels : filter->getNumInputChannels();
-    const int numOuts = filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutputChannels : filter->getNumOutputChannels();
+    const int numIns = JucePlugin_MaxNumInputChannels;//filter->getNumInputChannels() <= 0 ? JucePlugin_MaxNumInputChannels : filter->getNumInputChannels();
+    const int numOuts = JucePlugin_MaxNumOutputChannels;//filter->getNumOutputChannels() <= 0 ? JucePlugin_MaxNumOutputChannels : filter->getNumOutputChannels();
     filter->stopProcessing = true;
 
-    AudioDeviceSelectorComponent selectorComp (*deviceManager,
-            numIns, numIns, numOuts, numOuts,
+    AudioDeviceSelectorComponent selectorComp(*deviceManager,
+            0, numIns, 2, numOuts,
             true, false, true, false);
 
     selectorComp.setSize (400, 550);

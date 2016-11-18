@@ -376,14 +376,13 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
 
 
     csoundChanList = NULL;
-    numCsoundChannels = 0;
     csndIndex = 32;
     startTimer(20);
 
     csoundParams = nullptr;
     csoundParams = new CSOUND_PARAMS();
 #if defined(Cabbage_Build_Standalone) || defined(AndroidBuild)
-    csoundParams->nchnls_override = 2;
+    //csoundParams->nchnls_override = 2;
 #else
     csoundParams->nchnls_override = this->getNumOutputChannels();
 #endif
@@ -408,6 +407,8 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
     setScreenMacros();
     addMacros(csdFile.loadFileAsString());
     csCompileResult = csound->Compile(const_cast<char*>(csdFile.getFullPathName().toUTF8().getAddress()));
+	int chans = csound->GetNchnls();
+    numCsoundChannels = csound->GetNchnls();
     //csoundSetBreakpointCallback(csound->GetCsound(), breakpointCallback, (void*)this);
     csdFile.getParentDirectory().setAsCurrentWorkingDirectory();
     if(csCompileResult==OK)
@@ -418,18 +419,21 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
 
         if(!isPlugin)
         {
+			
             setPlayConfigDetails(getNumberCsoundOutChannels(),
                                  getNumberCsoundOutChannels(),
                                  getCsoundSamplingRate(),
                                  32);
         }
 
+		int pts = this->getNumOutputChannels();
+
         Logger::writeToLog("compiled Ok");
         keyboardState.allNotesOff(0);
         keyboardState.reset();
 
         //simple hack to allow tables to be set up correctly.
-        //csound->PerformKsmps();
+        csound->PerformKsmps();
         csound->SetScoreOffsetSeconds(0);
         csound->RewindScore();
         csdKsmps = csound->GetKsmps();
@@ -541,7 +545,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
     csoundParams = new CSOUND_PARAMS();
 
 #if defined(Cabbage_Build_Standalone) || defined(AndroidBuild)
-    csoundParams->nchnls_override = 2;
+    //csoundParams->nchnls_override = 2;
 #else
     csoundParams->nchnls_override = this->getNumOutputChannels();
 #endif
@@ -562,7 +566,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
     addMacros(file.loadFileAsString());
     csound->SetHostImplementedMIDIIO(true);
     xyAutosCreated = false;
-    numCsoundChannels = 0;
+    
 
 
     CSspout = nullptr;
@@ -571,6 +575,7 @@ int CabbagePluginAudioProcessor::recompileCsound(File file)
 
 
     csCompileResult = csound->Compile(const_cast<char*>(file.getFullPathName().toUTF8().getAddress()));
+	numCsoundChannels = csound->GetNchnls()>this->getNumOutputChannels()? this->getNumOutputChannels():csound->GetNchnls();
     file.getParentDirectory().setAsCurrentWorkingDirectory();
 
     initAllChannels();
@@ -852,7 +857,9 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                     if(layoutCtrlsArray.contains(tokes[0]))
                     {
                         CabbageGUIType cAttr(csdLine.trimEnd(), guiID);
+                        cUtils::debug(getCsoundInputFile().getParentDirectory().getFullPathName());
                         cAttr.setStringProp(CabbageIDs::parentdir, getCsoundInputFile().getParentDirectory().getFullPathName());
+                        
 #ifdef AndroidBuild
                         cAttr.scaleWidget(scale);
 #endif
@@ -927,6 +934,7 @@ void CabbagePluginAudioProcessor::initialiseWidgets(String source, bool refresh)
                     else if(ctrlsArray.contains(tokes[0]))
                     {
                         CabbageGUIType cAttr(csdLine.trimEnd(), guiID);
+                        cUtils::debug(getCsoundInputFile().getParentDirectory().getFullPathName());
                         cAttr.setStringProp(CabbageIDs::parentdir, getCsoundInputFile().getParentDirectory().getFullPathName());
 #ifdef AndroidBuild
                         cAttr.scaleWidget(scale);
@@ -1884,7 +1892,7 @@ void CabbagePluginAudioProcessor::updateCabbageControls()
                 csound->SetChannel(guiLayoutCtrl.getStringProp(CabbageIDs::identchannel).toUTF8().getAddress(), "");
             }
         }
-        if(shouldUpdate || shouldUpdateSignalDisplay())
+        //if(shouldUpdate || shouldUpdateSignalDisplay())
             sendChangeMessage();
     }
 #endif
@@ -2096,10 +2104,11 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     float** audioBuffers = buffer.getArrayOfWritePointers();
     const int numSamples = buffer.getNumSamples();
 
+
 #if defined(Cabbage_Build_Standalone) || defined(AndroidBuild)
-    int output_channel_count = 2;
+    const int output_channel_count = numCsoundChannels;
 #else
-    int output_channel_count = getNumOutputChannels();
+    const int output_channel_count = getNumOutputChannels();
 #endif
 
     float samp;

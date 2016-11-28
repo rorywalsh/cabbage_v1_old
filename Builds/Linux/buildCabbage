@@ -24,6 +24,10 @@ if [ -z "$1" ]; then
 	make -f MakefilePluginEffect -j8 CONFIG=Release
 	make -f MakefilePluginSynth clean CONFIG=Release
 	make -f MakefilePluginSynth -j8 CONFIG=Release
+	make -f MakefilePluginSynthLV2 clean CONFIG=Release
+	make -f MakefilePluginSynthLv2 -j8 CONFIG=Release
+	make -f MakefilePluginEffectLV2 clean CONFIG=Release
+	make -f MakefilePluginEffectLV2 -j8 CONFIG=Release
 	make -f MakefileHost clean CONFIG=Release
 	make -f MakefileHost -j8 CONFIG=Release
 elif [ "$#" -ne 3 ]; then

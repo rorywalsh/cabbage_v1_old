@@ -3160,7 +3160,11 @@ void CabbagePluginAudioProcessorEditor::buttonClicked(Button* button)
                         cUtils::showMessage("Couldn't show file", &getLookAndFeel());
 
 #else
+#if defined(WIN32)
                     file.append("\\", 5);
+#else
+                    file.append("/", 5);
+#endif
                     file.append(button->getProperties().getWithDefault("filename", ""), 1024);
                     if(!infoWindow)
                     {

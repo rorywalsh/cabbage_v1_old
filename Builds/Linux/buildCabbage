@@ -54,6 +54,8 @@ fi
 	cp ./build/IntroScreen.csd CabbageBuild/IntroScreen.csd
 	cp ./build/CabbagePluginSynth.so CabbageBuild/CabbagePluginSynth.so
 	cp ./build/CabbagePluginEffect.so CabbageBuild/CabbagePluginEffect.so
+	cp ./build/CabbagePluginEffectLV2.so CabbageBuild/CabbagePluginEffectLV2.so
+	cp ./build/CabbagePluginSynthLV2.so CabbageBuild/CabbagePluginSynthLV2.so
 	cp ./build/CabbageStudio CabbageBuild/CabbageStudio
 	cp ../../Images/CabbageStudio.png CabbageBuild/CabbageStudio.png
 	cp -rf ../../Docs/_book CabbageBuild/Docs

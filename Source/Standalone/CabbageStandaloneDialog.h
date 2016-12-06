@@ -66,8 +66,8 @@ public:
     void setText(String text)
     {
         textEditor->setColour(TextEditor::textColourId, Colours::cornflowerblue);
-        textEditor->setText(text);
-        textEditor->setCaretPosition(textEditor->getText().length());
+        textEditor->insertTextAtCaret(text);
+        //textEditor->setCaretPosition(textEditor->getText().length());
     }
 
     String getText()

@@ -4375,11 +4375,13 @@ void CabbagePluginAudioProcessorEditor::updateGUIControls()
             //csoundoutput
             if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).containsIgnoreCase("csoundoutput"))
             {
-                static_cast<CabbageTextbox*>(layoutComps[i])->editor->setText(getFilter()->getCsoundOutput());
-                static_cast<CabbageTextbox*>(layoutComps[i])->editor->setCaretPosition(getFilter()->getCsoundOutput().length());
+#ifndef Cabbage_Build_Standalone
+                //static_cast<CabbageTextbox*>(layoutComps[i])->editor->setText(getFilter()->getCsoundOutput());
+                //static_cast<CabbageTextbox*>(layoutComps[i])->editor->setCaretPosition(getFilter()->getCsoundOutput().length());
                 if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::identchannelmessage).isNotEmpty())
                     static_cast<CabbageTextbox*>(layoutComps[i])->update(getFilter()->getGUILayoutCtrls(i));
                 getFilter()->getGUILayoutCtrls(i).setStringProp(CabbageIDs::identchannelmessage, "");
+#endif
             }
             //label
             else if(getFilter()->getGUILayoutCtrls(i).getStringProp(CabbageIDs::type).equalsIgnoreCase("label") &&
@@ -4660,11 +4662,13 @@ void CabbagePluginAudioProcessorEditor::timerCallback()
         object->editor->setText("You are currently in 'Standalone' mode.\nThe csoundoutput widget will only be filled\nwith Csound messages when used in a plugin.");
 #else
         const String csoundOutputString = getFilter()->getCsoundOutput();
-        consoleMessages+=csoundOutputString;
+		
+        //consoleMessages+=csoundOutputString;
         if(csoundOutputString.length()>0)
         {
-            object->editor->setText(consoleMessages);
-            object->editor->setCaretPosition(consoleMessages.length());
+			//cUtils::debug(consoleMessages);
+            object->editor->insertTextAtCaret(csoundOutputString);
+            //object->editor->setCaretPosition(consoleMessages.length());
         }
 #endif
     }

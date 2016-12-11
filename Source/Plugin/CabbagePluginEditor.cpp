@@ -4085,14 +4085,14 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
 	const String filename = getFilter()->getCsoundInputFile().getFileNameWithoutExtension();
 
 	
-    if (xml->hasTagName (filename.replace(" ", "_")))
-    {
+    //if (xml->hasTagName (filename.replace(" ", "_")))
+    //{
         for(int i=0; i<getFilter()->getNumParameters(); i++)
         {
             float newValue = (float)xml->getDoubleAttribute(getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::channel));
 
 #ifndef Cabbage_Build_Standalone
-
+			//cUtils::debug(getFilter()->getGUICtrls(i).getStringProp("channel"));	
             float range = getFilter()->getGUICtrls(i).getNumProp("range");
             float comboRange = getFilter()->getGUICtrls(i).getNumProp("comborange");
             //Logger::writeToLog("inValue:"+String(newValue));
@@ -4109,7 +4109,8 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
                         getFilter()->getGUICtrls(i).getStringProp(CabbageIDs::type)=="button")
                     range=1;
                 else
-                    newValue = (newValue/range)+min;
+                    newValue = (newValue-min)/range;
+
 
             //getFilter()->getGUICtrls(i)->setNumProp(CabbageIDs::value, newValue);
 #endif
@@ -4134,7 +4135,7 @@ void CabbagePluginAudioProcessorEditor::restoreParametersFromPresets(XmlElement*
             }
         }
 
-    }
+    //}
 }
 //==========================================================================================
 //Gets called periodically to update GUI controls with values coming from Csound and/or host DAW

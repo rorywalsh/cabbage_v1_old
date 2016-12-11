@@ -445,7 +445,6 @@ public:
         textLabel->setColour(Label::outlineColourId, Colours::transparentBlack);
         //slider->setPopupDisplayEnabled (true, 0);
 
-
         slider->setColour(Slider::textBoxHighlightColourId, Colours::lime.withAlpha(.2f));
         //slider->setColour(Slider::rotarySliderFillColourId, Colours::red);
         slider->setColour(Slider::thumbColourId, Colour::fromString(cl));
@@ -2820,6 +2819,7 @@ class CabbageLabel	:	public Component
     String channel;
     CabbagePluginAudioProcessorEditor* owner;
     int counter;
+
 public:
     CabbageLabel (CabbageGUIType &cAttr, CabbagePluginAudioProcessorEditor* _owner);
     ~CabbageLabel();

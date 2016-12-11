@@ -386,7 +386,6 @@ int CabbagePluginAudioProcessor::compileCsoundAndCreateGUI(bool isPlugin)
 #else
     csoundParams->nchnls_override = this->getNumOutputChannels();
 #endif
-
     csoundParams->sample_rate_override = this->getSampleRate();
 
 #ifdef CABBAGE_AU
@@ -1717,7 +1716,7 @@ float CabbagePluginAudioProcessor::getParameter (int index)
             else
                 retVal = (getGUICtrls(index).getNumProp(CabbageIDs::value)/range)-(min/range);
 
-            cUtils::debug("retval:", retVal);
+            //cUtils::debug("retval:", retVal);
 
             return retVal;
 

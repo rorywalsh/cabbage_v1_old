@@ -67,6 +67,8 @@ public:
 		defaultPropSet->setValue("ShowAutoComplete", 0);
         defaultPropSet->setValue("ShowNativeFileDialogues", 1);
         defaultPropSet->setValue("EnableNativePopup", 0);
+        
+        defaultPropSet->setValue("FontSize", 14);
         defaultPropSet->setValue("windowX", 100);
         defaultPropSet->setValue("windowY", 100);
 #if defined(WIN32)

@@ -64,6 +64,7 @@ Section "Core components" SEC01
   File "build64\CabbagePluginEffect.dat"
   File "build64\CabbagePluginSynth.dat"
   File "C:\Users\rory\sourcecode\cabbageaudio\fmod_csoundL64.dll"
+  File "C:\Users\rory\sourcecode\cabbageaudio\msvcp140d.dll"
   File "build\opcodes.txt"
   File "build\IntroScreen.csd"
   File "build\cabbageEarphones.png"

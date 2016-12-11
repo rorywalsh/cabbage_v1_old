@@ -24,6 +24,10 @@ if [ -z "$1" ]; then
 	make -f MakefilePluginEffect -j8 CONFIG=Release
 	make -f MakefilePluginSynth clean CONFIG=Release
 	make -f MakefilePluginSynth -j8 CONFIG=Release
+	make -f MakefilePluginSynthLV2 clean CONFIG=Release
+	make -f MakefilePluginSynthLv2 -j8 CONFIG=Release
+	make -f MakefilePluginEffectLV2 clean CONFIG=Release
+	make -f MakefilePluginEffectLV2 -j8 CONFIG=Release
 	make -f MakefileHost clean CONFIG=Release
 	make -f MakefileHost -j8 CONFIG=Release
 elif [ "$#" -ne 3 ]; then
@@ -50,6 +54,8 @@ fi
 	cp ./build/IntroScreen.csd CabbageBuild/IntroScreen.csd
 	cp ./build/CabbagePluginSynth.so CabbageBuild/CabbagePluginSynth.so
 	cp ./build/CabbagePluginEffect.so CabbageBuild/CabbagePluginEffect.so
+	cp ./build/CabbagePluginEffectLV2.so CabbageBuild/CabbagePluginEffectLV2.so
+	cp ./build/CabbagePluginSynthLV2.so CabbageBuild/CabbagePluginSynthLV2.so
 	cp ./build/CabbageStudio CabbageBuild/CabbageStudio
 	cp ../../Images/CabbageStudio.png CabbageBuild/CabbageStudio.png
 	cp -rf ../../Docs/_book CabbageBuild/Docs

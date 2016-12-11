@@ -62,6 +62,7 @@ Section "Core components" SEC01
   CreateShortCut "$DESKTOP\Cabbage32.lnk" "$INSTDIR\Cabbage.exe"
   File "build\CabbagePluginEffect.dat"
   File "build\CabbagePluginSynth.dat"
+  File "C:\Users\rory\sourcecode\cabbageaudio\32BitFMOD\fmod_csoundL.dll"
   File "build\opcodes.txt"
   File "build\IntroScreen.csd"
   File "build\cabbageEarphones.png"

@@ -1754,7 +1754,11 @@ int StandaloneFilterWindow::exportPlugin(String type, bool saveAs, String fileNa
         VST = thisFile.getParentDirectory().getFullPathName() + String("\\CabbagePluginEffect.dat");
 	else if(type.contains(String("FMOD Plugin Sound")))
         {
-             VST = thisFile.getParentDirectory().getFullPathName() + String("\\fmod_csoundL64.dll");
+            #ifdef Cabbage64Bit
+                VST = thisFile.getParentDirectory().getFullPathName() + String("\\fmod_csoundL64.dll");
+            #else
+                VST = thisFile.getParentDirectory().getFullPathName() + String("\\fmod_csoundL.dll");
+            #endif
         }
 
     File VSTData(VST);

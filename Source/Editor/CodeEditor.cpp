@@ -659,7 +659,7 @@ CsoundCodeEditorComponent::CsoundCodeEditorComponent(String type, CodeDocument &
     setLineNumbersShown(false);
 
     fontSize = (cUtils::getPreference(appProperties, "FontSize")>7 ?
-                cUtils::getPreference(appProperties, "FontSize") : 13);
+                cUtils::getPreference(appProperties, "FontSize") : 14);
 
     font = cUtils::getPreference(appProperties, "Fonttype", "");
 

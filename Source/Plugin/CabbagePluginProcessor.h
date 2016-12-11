@@ -51,9 +51,9 @@ class CodeWindow;
 #endif
 
 #if defined(Cabbage64Bit) || defined(MACOSX)
-#define CABBAGE_VERSION "Cabbage(64bit) v1.1.06"
+#define CABBAGE_VERSION "Cabbage(64bit) v1.1.07"
 #else
-#define CABBAGE_VERSION "Cabbage(32bit) v1.1.06"
+#define CABBAGE_VERSION "Cabbage(32bit) v1.1.07"
 #endif
 
 #define AUDIO_PLUGIN 1

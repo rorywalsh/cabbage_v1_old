@@ -1449,6 +1449,9 @@ String CabbagePluginAudioProcessor::getCsoundOutput()
         csoundOutput+=csound->GetFirstMessage();
         csound->PopFirstMessage();
     }
+	
+	if(createLog)
+		Logger::writeToLog(csoundOutput);
 
     return csoundOutput;
 }
@@ -2088,13 +2091,20 @@ void CabbagePluginAudioProcessor::releaseResources()
 //host widgets are being used
 void CabbagePluginAudioProcessor::timerCallback()
 {
-#ifndef Cabbage_No_Csound
+
+#ifndef Cabbage_Build_Standalone
+	if(createLog==true)
+	{
+		getCsoundOutput();
+	}
+#endif	
+
     for(int y=0; y<xyAutomation.size(); y++)
     {
         if(xyAutomation[y])
             xyAutomation[y]->update();
     }
-#endif
+
 }
 
 //==============================================================================

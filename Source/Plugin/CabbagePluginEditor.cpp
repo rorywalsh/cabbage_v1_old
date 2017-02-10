@@ -4662,15 +4662,21 @@ void CabbagePluginAudioProcessorEditor::timerCallback()
 #ifdef Cabbage_Build_Standalone
         object->editor->setText("You are currently in 'Standalone' mode.\nThe csoundoutput widget will only be filled\nwith Csound messages when used in a plugin.");
 #else
-        const String csoundOutputString = getFilter()->getCsoundOutput();
+		if(getFilter()->createLog == true)
+			object->editor->setText("Logging to file has been enabled. Please disable it if you wish to view Csound output in this window");
+		else
+		{
+			const String csoundOutputString = getFilter()->getCsoundOutput();
+			
+			//consoleMessages+=csoundOutputString;
+			if(csoundOutputString.length()>0)
+			{
+				//cUtils::debug(consoleMessages);
+				object->editor->insertTextAtCaret(csoundOutputString);
+				//object->editor->setCaretPosition(consoleMessages.length());
+			}
 		
-        //consoleMessages+=csoundOutputString;
-        if(csoundOutputString.length()>0)
-        {
-			//cUtils::debug(consoleMessages);
-            object->editor->insertTextAtCaret(csoundOutputString);
-            //object->editor->setCaretPosition(consoleMessages.length());
-        }
+		}
 #endif
     }
 

@@ -108,9 +108,8 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     String socketAddress;
     int scoketPort;
 
-    ScopedPointer<FileLogger> fileLogger;
-    bool createLog;
-
+    
+    
     //ExamplePacketListener listener;
     //UdpListeningReceiveSocket socket;
     //ScopedPointer<OscThread> oscThread;
@@ -197,6 +196,8 @@ class CabbagePluginAudioProcessor  : public AudioProcessor,
     String selectedPresetFile {""};
 
 public:
+	ScopedPointer<FileLogger> fileLogger;
+	bool createLog;
 
     String changeMessage;
     Array<int> dirtyControls;

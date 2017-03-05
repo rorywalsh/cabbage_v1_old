@@ -16,6 +16,7 @@
 
 #define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
 #define JUCE_APP_CONFIG_HEADER 1
+#define JUCE_VST_RETURN_HEX_VERSION_NUMBER_DIRECTLY 1
 
 //==============================================================================
 // [BEGIN_USER_CODE_SECTION]

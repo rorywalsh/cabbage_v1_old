@@ -54,12 +54,12 @@ Section "Core components" SEC01
   ${EnvVarUpdate} $0 "CABBAGE_OPCODE_PATH" "A" "HKLM" "$INSTDIR"                            ; Prepend
   SetOverwrite ifnewer
   File "buildCanon64\Cabbage64.exe"
-  File "buildCanon64\CabbageStudio64.exe"
+  #File "buildCanon64\CabbageStudio64.exe"
 
   CreateDirectory "$SMPROGRAMS64\Cabbage64Canonical"
   
   CreateShortCut "$SMPROGRAMS64\Cabbage64Canonical\Cabbage64.lnk" "$INSTDIR\Cabbage64.exe"
-  CreateShortCut "$SMPROGRAMS64\Cabbage64Canonical\CabbageStudio64.lnk" "$INSTDIR\CabbageStudio64.exe"
+  #CreateShortCut "$SMPROGRAMS64\Cabbage64Canonical\CabbageStudio64.lnk" "$INSTDIR\CabbageStudio64.exe"
   CreateShortCut "$DESKTOP\Cabbage64.lnk" "$INSTDIR\Cabbage64.exe"
 
   File "buildCanon64\CabbagePluginEffect.dat"
@@ -139,7 +139,7 @@ Section Uninstall
   Delete "$INSTDIR\Cabbage64.exe"
   Delete "$INSTDIR\CabbagePluginEffect.dat"
   Delete "$INSTDIR\CabbagePluginSynth.dat"
-  Delete "$INSTDIR\CabbageStudio64.exe"
+  #Delete "$INSTDIR\CabbageStudio64.exe"
   Delete "$INSTDIR\opcodes.txt"
 
 

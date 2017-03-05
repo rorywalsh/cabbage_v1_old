@@ -89,6 +89,7 @@ Section "Core components" SEC01
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\padsynth.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\platerev.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\osc.dll"
+  File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\py.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\rtpa.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\ftsamplebank.dll"
   File "..\..\..\..\csound64\csound\mingw64\csound-mingw64\rtwinmm.dll"

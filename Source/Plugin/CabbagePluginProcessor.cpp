@@ -2160,7 +2160,6 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
             {
                 if(csndIndex == csdKsmps)
                 {
-                    //callback_lock.enter();
                     //slow down calls to these functions, no need for them to be firing at k-rate
                     if (guiRefreshRate < yieldCounter)
                     {
@@ -2171,7 +2170,10 @@ void CabbagePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
                         ++yieldCounter;
 
                     sendOutgoingMessagesToCsound();
+					static int lock = 0;
+					csoundSpinLock(&lock);
                     csCompileResult = csound->PerformKsmps();
+					csoundSpinUnLock(&lock);
 
                     if(csCompileResult!=OK)
                         stopProcessing = true;
